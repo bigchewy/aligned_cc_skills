@@ -1,0 +1,14 @@
+{
+  "name": "aligned",
+  "version": "0.1.0",
+  "description": "Opinionated dev stack: TDD pipeline, eval-driven development, design system, multi-agent debugging",
+  "author": {
+    "name": "Eric Page"
+  },
+  "repository": "https://github.com/ericpage/aligned_cc_skills",
+  "license": "MIT",
+  "keywords": ["tdd", "eval-driven", "pipeline", "design-system"],
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "hooks": "./hooks/hooks.json"
+}

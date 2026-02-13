@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "cat e2e/.eval-audit-last-run 2>/dev/null",
+        "description": "Check eval audit recency for daily cron trigger"
+      }
+    ]
+  }
+}
