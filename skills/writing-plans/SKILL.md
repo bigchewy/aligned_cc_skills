@@ -349,7 +349,7 @@ Then output two execution options (with `{plan-file-path}`, `{feature-name}`, an
 
 ### Option A: Interactive execution (smaller plans)
 Copy into a new Claude Code session:
-> `cd {worktree-path}` then use `/executing-plans` to execute `{plan-file-path}`.
+> `cd {worktree-path}` then use `/aligned:executing-plans` to execute `{plan-file-path}`.
 
 ### Option B: Ralph loop execution (larger plans)
 Run from the worktree directory:
@@ -366,7 +366,7 @@ If the worktree path is not known (e.g., writing-plans was invoked without a pri
 ````
 ### Option A: Interactive execution (smaller plans)
 Copy into a new Claude Code session:
-> Use the /using-git-worktrees skill to create a worktree for branch `feature/{feature-name}`. Once the worktree is ready and tests pass, use the /executing-plans skill to execute the plan at `{plan-file-path}`. Note: the plan file lives on main, not the feature branch — read it using the absolute path from the main worktree.
+> Use the /aligned:using-git-worktrees skill to create a worktree for branch `feature/{feature-name}`. Once the worktree is ready and tests pass, use the /aligned:executing-plans skill to execute the plan at `{plan-file-path}`. Note: the plan file lives on main, not the feature branch — read it using the absolute path from the main worktree.
 
 ### Option B: Ralph loop execution (larger plans)
 First create the worktree, then run from it:

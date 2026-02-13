@@ -75,7 +75,7 @@ The file must include these sections:
 
 These apply regardless of design direction. This is the quality floor.
 
-To populate this section, read the existing craft principles from the local design-principles skill if available (`~/.claude/skills/design-principles/skill.md`, lines 73-237). Extract these subsections verbatim:
+To populate this section, read the existing craft principles from the design-principles skill (`skills/design-principles/SKILL.md`). Extract these subsections verbatim:
 - The 4px Grid
 - Symmetrical Padding
 - Border Radius Consistency

@@ -69,7 +69,7 @@ Same as Round 1 but against the updated document. Use a fresh sub-agent (do NOT 
 
 After committing the design document, invoke `/aligned:using-git-worktrees` to create the worktree for the upcoming implementation work. Then output a ready-to-paste prompt for the next session with the worktree path filled in:
 
-> `cd [worktree-path]` then use `/writing-plans` to write an implementation plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
+> `cd [worktree-path]` then use `/aligned:writing-plans` to write an implementation plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
 
 ## Design Critique
 
