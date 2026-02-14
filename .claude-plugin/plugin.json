@@ -7,8 +7,5 @@
   },
   "repository": "https://github.com/ericpage/aligned_cc_skills",
   "license": "MIT",
-  "keywords": ["tdd", "eval-driven", "pipeline", "design-system"],
-  "skills": "./skills/",
-  "agents": "./agents/",
-  "hooks": "./hooks/hooks.json"
+  "keywords": ["tdd", "eval-driven", "pipeline", "design-system"]
 }

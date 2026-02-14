@@ -4,27 +4,28 @@ Opinionated development stack for Claude Code. 14 skills that enforce TDD, eval-
 
 ## Installation
 
-**For others (private repo):**
-```bash
-claude plugin add github:ericpage/aligned_cc_skills
+```
+/plugin install github:ericpage/aligned_cc_skills
 ```
 
-**For local testing:**
+Run this inside Claude Code. The plugin is then available across all your projects.
+
+For local testing during development:
 ```bash
 claude --plugin-dir /path/to/aligned_cc_skills
 ```
 
 ## Quick Start
 
-1. Run `/aligned:kickstart` on a new project to scaffold conventions
-2. Run `/aligned:design-principles` to define the design direction
-3. Run `/aligned:autopilot` for a feature — it chains the full pipeline automatically
+1. `/aligned:kickstart` — scaffold a new project with standard conventions (also auto-enables the plugin in the project's `.claude/settings.json`)
+2. `/aligned:design-principles` — define the design direction through an interactive session
+3. `/aligned:autopilot` — go from idea to working code with minimal interaction
 
 ## Skill Reference
 
 | Skill | Layer | Invocation | Description |
 |-------|-------|------------|-------------|
-| kickstart | Foundation | `/aligned:kickstart` | Scaffold project with Aligned conventions |
+| kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
 | design-principles | Foundation | `/aligned:design-principles` | Interactive design discovery with Steve Jobs persona |
 | brainstorming | Pipeline | `/aligned:brainstorming` | Explore ideas, generate designs and mockups |
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with TDD and critique |
@@ -37,48 +38,73 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | eval-audit | Problem-solving | `/aligned:eval-audit` | Daily eval coverage auditor |
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 | mockup-generator | Infrastructure | `/aligned:mockup-generator` | Self-contained HTML mockups |
-| autopilot | Meta | `/aligned:autopilot` | Full pipeline: idea → design → plan → implement |
+| autopilot | Meta | `/aligned:autopilot` | Full pipeline: idea to design to plan to implement |
 
-## Conventions
+## Team Setup
 
-Aligned expects (and kickstart scaffolds) this structure:
+Aligned standardizes development environments across a team at two layers:
 
-- `CLAUDE.md` — Project guide referencing Aligned conventions
+**Plugin (cross-project):** Each developer installs the plugin once. All skills are available everywhere.
+
+**Per-project settings:** Running `/aligned:kickstart` creates `.claude/settings.json` with the plugin auto-enabled. Anyone who clones the project gets the same configuration without manual setup.
+
+**Personal overrides:** `.claude/settings.local.json` and `.claude/CLAUDE.local.md` are gitignored — use these for per-developer preferences that shouldn't be shared.
+
+## Project Conventions
+
+Kickstart scaffolds this structure in each project:
+
+- `.claude/settings.json` — Team settings (auto-enables aligned plugin)
+- `CLAUDE.md` — Project guide with skill invocation points and iron rules
 - `docs/Kanban-board.md` — Task and bug tracking
 - `docs/plans/` — Design docs and implementation plans
 - `docs/plans/completed/` — Archived completed plans
-- `docs/design/design-principles.md` — Design tokens and craft rules (triggers Steve Jobs persona)
-- `docs/lessons-learned/` — Folder-based post-mortems (individual files, promoted to `completed/`)
+- `docs/design/design-principles.md` — Design tokens and craft rules
+- `docs/lessons-learned/` — Post-mortems (individual files)
 - `docs/architecture.md` — Mermaid diagrams for system architecture
 - `docs/ralph_loops/` — Ralph loop prompts for autonomous execution
 - `e2e/` — Eval infrastructure (scenarios, config, runner)
 
-## Syncing from Local
+## Iron Rules
 
-Eric's `~/.claude/skills/` is the development environment. To update the plugin after local skill changes:
+These are enforced across all skills:
+
+1. **Tests first, always.** No production code without a failing test (TDD).
+2. **Error path tests for every mock.** Both `mockResolvedValue` and `mockRejectedValue`.
+3. **Verify before claiming done.** Run the command, read the output, then assert success.
+4. **Root cause first.** Investigate before fixing. No symptom-patching.
+
+## Development
+
+### Syncing from local
+
+Skills are developed in `~/.claude/skills/` and synced to this repo. To update after local changes:
 
 ```bash
 cd ~/software/aligned_cc_skills
 ./scripts/sync-from-local.sh
-git diff  # review changes
-git add -A && git commit -m "sync: update skills from local"
+git diff
 ```
 
-The sync script copies skills and applies sed transforms from `scripts/transforms.txt` to generalize VA-specific references. Skills authored directly in the plugin (kickstart, eval-audit, design-principles) are NOT overwritten by sync.
+The sync script applies transforms from `scripts/transforms.txt` to generalize project-specific references. Skills authored directly in the plugin (kickstart, eval-audit, design-principles) are not overwritten by sync.
 
-## Versioning
+### Versioning
 
-Semver. Pre-1.0 while building for initial users:
+Semver, pre-1.0:
 - **0.x.y** — Breaking changes expected, skills evolving
-- **1.0.0** — Stable skill interfaces, committed to backward compatibility
+- **1.0.0** — Stable skill interfaces, backward compatibility commitment
 
-Version bumps happen in `plugin.json`. No auto-versioning.
+Version bumps happen in `.claude-plugin/plugin.json`.
 
 ### Changelog
 
 #### 0.1.0
-- Initial release: 14 skills ported/created
-- Steve Jobs persona integration for design skills
+- Initial release: 14 skills
+- Steve Jobs persona for design review
 - Multi-agent debugging (high severity mode)
-- Eval-audit daily cron
-- Sync script for development workflow
+- Eval-audit daily cron hook
+- Kickstart auto-enables plugin in project settings
+
+## License
+
+MIT

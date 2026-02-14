@@ -27,6 +27,8 @@ Create the following directory structure (skip directories that already exist):
 
 ```
 project/
+├── .claude/
+│   └── settings.json                    # Team settings: auto-enable aligned plugin
 ├── CLAUDE.md
 ├── docs/
 │   ├── design/
@@ -50,7 +52,7 @@ project/
 │   └── .gitignore                      # eval-log.jsonl, .eval-audit-last-run
 ├── scripts/
 ├── eslint-rules/
-└── .gitignore                          # Append eval patterns if not present
+└── .gitignore                          # Append eval + .claude local patterns if not present
 ```
 
 For each file, generate appropriate starter content:
@@ -89,6 +91,21 @@ For each file, generate appropriate starter content:
 
 ## Done
 ```
+
+**.claude/settings.json (create or merge):**
+
+If `.claude/settings.json` does not exist, create it:
+```json
+{
+  "enabledPlugins": {
+    "aligned": true
+  }
+}
+```
+
+If `.claude/settings.json` already exists, read it and add the `enabledPlugins` key (preserving all existing settings). If `enabledPlugins` already exists, merge `"aligned": true` into it.
+
+Also ensure `.claude/settings.local.json` and `.claude/CLAUDE.local.md` are in the project's `.gitignore` (these are per-developer personal overrides that should never be committed).
 
 **e2e/.gitignore:**
 ```
