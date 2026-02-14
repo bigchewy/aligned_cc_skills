@@ -5,7 +5,7 @@
   "author": {
     "name": "Eric Page"
   },
-  "repository": "https://github.com/ericpage/aligned_cc_skills",
+  "repository": "https://github.com/bigchewy/aligned_cc_skills",
   "license": "MIT",
   "keywords": ["tdd", "eval-driven", "pipeline", "design-system"]
 }

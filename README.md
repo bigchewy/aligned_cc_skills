@@ -5,7 +5,7 @@ Opinionated development stack for Claude Code. 14 skills that enforce TDD, eval-
 ## Installation
 
 ```
-/plugin install github:ericpage/aligned_cc_skills
+/plugin install github:bigchewy/aligned_cc_skills
 ```
 
 Run this inside Claude Code. The plugin is then available across all your projects.
