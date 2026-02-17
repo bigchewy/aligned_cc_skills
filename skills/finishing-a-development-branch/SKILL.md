@@ -519,37 +519,19 @@ Then: Cleanup worktree (Step 5)
 
 **For Options 1, 2, 4:**
 
-Check if in worktree by running each command separately (do NOT pipe):
+Since CWD is always the main repo (see "CRITICAL" section), worktree cleanup is straightforward.
 
-```bash
-git worktree list
-```
+**IMPORTANT: Only remove the worktree being finished.** Do NOT touch other worktrees — they may have active Ralph loops or other work in progress. Check `git worktree list` and only operate on the specific worktree for this branch.
 
-```bash
-git branch --show-current
-```
-
-Compare the outputs to determine if the current branch corresponds to a worktree.
-
-If yes — **CWD safety is critical.** If the shell is inside the worktree, removing it will invalidate the CWD and break ALL subsequent commands irreversibly. `git -C` is NOT a substitute for `cd` — it only changes git's context, not the shell's CWD.
-
-**Step 5a: Verify CWD is safe** (run as its own command):
-```bash
-cd <main-repo-path> && pwd
-```
-Confirm `pwd` output shows the main repo path, NOT the worktree path. Do NOT proceed until this succeeds.
-
-**Step 5b: Remove worktree** (separate command):
+**Step 5a: Remove worktree:**
 ```bash
 git worktree remove <worktree-path> --force
 ```
 
-**Step 5c: Delete branch** (separate command):
+**Step 5b: Delete branch:**
 ```bash
 git branch -d <feature-branch>
 ```
-
-**The order is non-negotiable:** cd out (5a) → verify pwd (5a) → remove worktree (5b) → delete branch (5c). Skipping 5a or using `git -C` instead causes an unrecoverable cascade of shell failures.
 
 **For Option 3:** Keep worktree.
 

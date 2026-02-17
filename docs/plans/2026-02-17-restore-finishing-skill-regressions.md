@@ -232,7 +232,7 @@ git commit -m "fix: restore deploy+smoke test as Option 2, replacing PR creation
 
 ---
 
-## Task 4: Restore Step 5 Worktree Cleanup (Simplified Version)
+## ✅ Task 4: Restore Step 5 Worktree Cleanup (Simplified Version)
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
