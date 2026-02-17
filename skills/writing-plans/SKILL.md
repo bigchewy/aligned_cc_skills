@@ -42,6 +42,16 @@ git worktree list
 
 Parse the output to extract the path from the first line (text before the first space). Store this as `main_worktree`. Do NOT use piped commands (`| head | awk`) — run the single command and parse the output.
 
+**Cross-repo guard:** Before writing, verify the plan belongs in this repo. Compare `$main_worktree` against the plan's target working directory (from the user's request, spec, or design doc). If the work targets a different repo (e.g., you're in `~/software/epch-projects` but the plan's tasks modify files in `~/software/aligned_cc_skills`), **STOP.** Tell the user:
+
+```
+This plan targets [target repo], but the current repo is [current repo].
+Plans must live in the repo where the work happens.
+Please start a session in [target repo] and re-run writing-plans there.
+```
+
+Never write a plan for repo B into repo A's `docs/plans/`. The plan, its archival, and its execution all assume they share a repo.
+
 **Save the plan to:** `$main_worktree/docs/plans/YYYY-MM-DD-<feature-name>.md`
 
 **After writing the plan file, commit it to main:**
