@@ -6,7 +6,9 @@
 
 **Source Design Doc:** N/A (this plan is based on the root cause analysis comparing `/Users/ericpage/software/archived-claude-local/skills/finishing-a-development-branch/SKILL.md` against `/Users/ericpage/software/aligned_cc_skills/skills/finishing-a-development-branch/SKILL.md`)
 
-**Architecture:** The current plugin version lost ~130 lines of deploy+smoke test workflow when Option 2 was changed from "Deploy to production + smoke test" to "Push and create a Pull Request". The fix merges the archived version's content back while preserving the current version's improvements (platform detection, lessons-learned gate, generalized paths). The reference file (`deployment-pitfall-catalog.md`) is already correct and does not need changes.
+**Architecture:** The current plugin version lost ~190 lines of deploy+smoke test workflow when Option 2 was changed from "Deploy to production + smoke test" to "Push and create a Pull Request". The fix merges the archived version's content back while preserving the current version's improvements (platform detection, lessons-learned gate, generalized paths). The reference file (`deployment-pitfall-catalog.md`) is already correct and does not need changes.
+
+**Sequential dependency:** Tasks 1-9 must complete in order — Tasks 1-8 all modify `skills/finishing-a-development-branch/SKILL.md`. Complete and commit each task before starting the next.
 
 **Tech Stack:** Markdown (skill definitions), Git
 
@@ -117,6 +119,8 @@ Replace with:
 
 **Step 2: Restore worktree-aware KB commit guidance in Step 1d**
 
+> **Architectural note:** This guidance says "If CWD is a worktree..." which technically contradicts the CRITICAL section's "CWD must always be the main repo." This is intentional defense-in-depth — the CRITICAL section is the primary enforcement, but if somehow violated, the `git -C` fallback prevents silent data loss. The archived version had both, and both should be preserved.
+
 In Step 1d (Code Simplification Scan), find item 4 which currently reads:
 ```
 4. Commit the Kanban entries to the main repo.
@@ -211,8 +215,9 @@ Remove the current PR-creation Option 2 and replace it with the archived version
 3. Keep the `.claude/deployment.json` config format exactly as archived
 4. Keep the Vercel MCP integration exactly as archived
 5. Keep the Playwright smoke test logic exactly as archived
+6. In Step 4f's closing line (archived line 487), remove the parenthetical "(or deferred if session CWD was inside the worktree)" — this deference is eliminated by the CRITICAL section which requires main-repo CWD
 
-The full Option 2 content from archived should be inserted. Read the archived file lines 299-487 and copy them verbatim into the current file, replacing the PR-creation Option 2.
+The full Option 2 content from archived should be inserted. Read the archived file lines 299-487 and copy them into the current file, replacing the PR-creation Option 2, applying adaptation #6 above.
 
 **Step 5: Verify Options 3 and 4 are unchanged**
 
@@ -378,12 +383,16 @@ The merged section should contain ALL entries from archived, with current's impr
 - **Problem:** Plan and design docs left in `docs/plans/` after work is merged, cluttering active plans
 - **Fix:** Always run Step 6 after merge (Options 1, 2) to move completed docs to `docs/plans/completed/`
 
+**Worktree cleanup when CWD is safe**
+- **Problem:** Skip cleanup when CWD is outside the worktree (unnecessary deferral)
+- **Fix:** Since CWD should always be the main repo (per CRITICAL section), worktree cleanup should always proceed immediately — never defer unnecessarily.
+
 **No confirmation for discard**
 - **Problem:** Accidentally delete work
 - **Fix:** Require typed "discard" confirmation
 ```
 
-Note: The "Wrong smoke test scope" entry was generalized from archived's project-specific paths (`src/app/(app)/quick-consult/`, `src/app/(app)/board/`) to generic guidance about "critical flow paths".
+Note: The "Wrong smoke test scope" entry was generalized from archived's project-specific paths (`src/app/(app)/quick-consult/`, `src/app/(app)/board/`) to generic guidance about "critical flow paths". The "Worktree cleanup when CWD is safe" entry was adapted from archived to align with the simplified Step 5 (original referenced Step 5a which no longer exists as a CWD-check step).
 
 **Step 3: Commit**
 
@@ -464,7 +473,42 @@ git commit -m "fix: update frontmatter description to reflect deploy option"
 
 ---
 
-## Task 9: Full File Verification Pass
+## Task 9: Fix Integration Section Callers
+
+**Files:**
+- Modify: `skills/finishing-a-development-branch/SKILL.md`
+
+**Step 1: Read the current Integration section**
+
+The current Integration section still references `subagent-driven-development` (a stale/renamed skill) and has `executing-plans (Step 5)` (should be Step 6). Verify by reading the file's Integration section.
+
+**Step 2: Replace the Integration section**
+
+Find the current Integration block and replace it with:
+
+```markdown
+## Integration
+
+**Called by:**
+- **executing-plans** (Step 6) - After all tasks complete
+- **autopilot** (Phase 6) - After pipeline completes
+
+**Pairs with:**
+- **using-git-worktrees** - Cleans up worktree created by that skill
+```
+
+Note: `subagent-driven-development` was renamed to `autopilot`. The `executing-plans` step number was updated from 5 to 6 to match the current executing-plans skill.
+
+**Step 3: Commit**
+
+```bash
+git add skills/finishing-a-development-branch/SKILL.md
+git commit -m "fix: update integration section callers to current skill names"
+```
+
+---
+
+## Task 10: Full File Verification Pass
 
 **Files:**
 - Read: `skills/finishing-a-development-branch/SKILL.md` (full file)
@@ -493,7 +537,7 @@ Read the full SKILL.md and verify this section order:
 14. Step 5: Cleanup Worktree (simplified, assumes main-repo CWD)
 15. Step 6: Archive Plan Documents
 16. Quick Reference (both tables, with Smoke Test column)
-17. Common Mistakes (all 11 entries)
+17. Common Mistakes (all 12 entries)
 18. Red Flags (complete Never/Always lists)
 19. Lessons-Learned Gate (kept from current)
 20. Kanban Entry Format
@@ -523,7 +567,7 @@ The 4-option interface is internal to the skill (user-facing), so callers are un
 
 ---
 
-## Task 10: Bump Plugin Version
+## Task 11: Bump Plugin Version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`
@@ -581,3 +625,16 @@ git commit -m "chore: bump version to 0.3.1 for finishing-skill regression fix"
 **Why:** The other skills flagged by the agent analysis were verified as false positives (writing-plans features ARE present in current) or intentional changes (depersonalization, path normalization, generalization for plugin architecture). The add-advisor symlink simplification is a minor reduction in specificity, not a broken workflow. Only finishing-a-development-branch has confirmed lost functionality.
 **Alternatives rejected:**
 - Fix all 7 skills: Would introduce unnecessary churn for intentional changes. The agent's analysis conflated generalization (correct) with regression (incorrect) for most skills.
+
+---
+
+## Critique Panel Results
+
+**Round 1 findings applied:**
+- Fixed line count estimate (~130 → ~190)
+- Added sequential dependency note in header
+- Added architectural note to Task 2 Step 2 about defense-in-depth tension
+- Added adaptation #6 to Task 3 Step 4 (remove archived line 487 parenthetical)
+- Added missing "Worktree cleanup when CWD is safe" to Task 6 Common Mistakes (12 entries total)
+- Added Task 9 to fix stale Integration section callers
+- Renumbered Task 10 → Task 11
