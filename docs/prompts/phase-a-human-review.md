@@ -7,7 +7,7 @@ Run this FIRST in an interactive Claude Code session.
 ```
 cd ~/software/aligned_cc_skills
 
-Read the plan at /Users/ericpage/software/epch-projects/docs/plans/2026-02-17-aligned-plugin-parity.md in full.
+Read the plan at <path-to-plan-file> in full.
 
 Execute ONLY these 5 tasks from the plan, in order. STOP after each task and show me what you changed so I can review before you proceed:
 
