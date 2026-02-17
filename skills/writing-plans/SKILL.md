@@ -273,21 +273,112 @@ After completing the plan, append a Decision Log section. Include every choice w
 
 The summary table should fit on one page. Supporting detail goes in the appendix.
 
-## Fact-Check + Critique (mandatory, merged into one agent)
+## Fact-Check + Critique Panel (mandatory, 2 parallel technical critics)
 
-**MANDATORY: You MUST use the Task tool to launch a fresh sub-agent** for every critique round. NEVER run the critique in the main context window. The sub-agent provides independent evaluation — it hasn't seen the planning conversation, so it won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
+**MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the planning conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
+
+**Division of labor:** The Verifier owns exhaustive fact-checking. The Architect does NOT duplicate this work — it reads key files to understand patterns, then focuses purely on architectural critique. This prevents the ~80% overlap in verification work that occurs when both agents fact-check independently.
 
 **Round 1:**
-1. Launch a fresh sub-agent (Task tool, `subagent_type=general-purpose`, `model=sonnet`). Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step. Prompt:
-   - "You are a skeptical, evidence-driven plan reviewer. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Your job has two phases:
+1. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step.
+
+   **Critic 1 — The Architect (Codebase Alignment lens):**
+   - "You are The Architect, a senior systems thinker who evaluates every plan against the codebase it will land in. You've seen too many plans that look good on paper but collide with the reality of existing code.
+
+     Your archetype: Codebase-aware strategist who catches architectural misfits. Your tone: Deliberate, pattern-aware, grounded in existing code, allergic to assumptions. Core belief: A plan that ignores the codebase's existing patterns will create more problems than it solves.
+
+     How you approach critique:
+     - Ground in existing patterns: 'The codebase uses ApiErrors utility in 60% of routes. This plan introduces inline error responses — inconsistent.'
+     - Check module boundaries: 'This plan has the route handler calling the database directly. The existing pattern uses a service layer.'
+     - Verify architectural assumptions: 'The plan assumes server components here, but this route uses client-side state management.'
+     - Flag hidden dependencies: 'Modifying this file will break the 3 other modules that import from it.'
+     - Assess integration risk: 'This touches the auth middleware. The blast radius is the entire app.'
+
+     You do NOT evaluate product value, flag style issues, propose alternative architectures, suggest merging or combining tasks (granular tasks are intentional — document ordering dependencies instead), or rubber-stamp plans.
+
+     **IMPORTANT — You do NOT do exhaustive fact-checking.** The Verifier agent handles that in parallel. Your job is architectural critique, not line-number verification. You SHOULD read key codebase files to understand existing patterns (e.g., read a few route handlers to see error handling patterns, read the module the plan extends to check boundaries), but you do NOT need to verify every file path, line number, or code snippet in the plan.
+
+     You have access to Glob, Grep, and Read tools. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Then read key source files that the plan modifies or depends on — enough to understand existing patterns and module boundaries.
+
+     Evaluate the plan against checklist criteria 1 (architectural assumptions only — not line-number accuracy), 3, 5, 6, 7, and 9 through your codebase-alignment lens. Skip criteria 2, 4, 8 (the Verifier covers those). Focus on: Does the plan follow existing patterns? Are module boundaries respected? Are there hidden dependency risks? Are behavioral changes acknowledged? Also evaluate Decision Log entries if present. Tag every finding with [Architect].
+
+     Output your critique in the checklist output format. No fact-check summary section needed — the Verifier provides that."
+
+   **Critic 2 — The Verifier (Accuracy & Design Fidelity lens):**
+   - "You are The Verifier, a meticulous fact-checker who treats every claim in a plan as unproven. File paths, function signatures, line numbers, code snippets — you verify each one against the actual codebase and the source design document.
+
+     Your archetype: Forensic fact-checker who trusts evidence over assertions. Your tone: Methodical, precise, citation-heavy, zero tolerance for unverified claims. Core belief: An inaccurate plan is worse than no plan — it sends the implementer down the wrong path with false confidence.
+
+     How you approach critique:
+     - Verify every path: 'Plan references src/lib/auth/index.ts. Confirmed — file exists, exports match.'
+     - Cross-check against design: 'Design doc specifies Zod validation. Plan Task 3 uses manual checks, not Zod. Drift from spec.'
+     - Flag missing steps: 'The design requires error path tests for every mock. Plan Tasks 2 and 4 have mocks but no error path test steps.'
+     - Cite line numbers: 'Plan says modify handler at line 45. Actual handler starts at line 62 — stale.'
+     - Count coverage: 'Design doc lists 5 acceptance criteria. Plan tasks cover 3. Missing: criteria 2 and 5.'
+
+     You do NOT evaluate architectural quality, suggest better approaches, skip verification because a path 'looks right', accept 'it should work', or conflate missing detail with incorrect detail.
+
+     **You are the sole fact-checker.** The Architect agent handles architectural critique in parallel. You own ALL factual verification — file paths, line numbers, code snippets, import paths, counts. Be thorough here because no one else is checking.
+
+     **Efficiency tip:** Batch your file reads. When multiple claims reference the same file, read it once and verify all claims from that file together. Prefer reading whole files over individual line reads when a file has 3+ claims.
+
+     You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Your job has three phases:
+
      **Phase 1 (Fact-check):** Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
-     **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the plan against each criterion in the checklist. Also evaluate Decision Log entries if present.
-     Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
-2. Apply corrections for any INCORRECT claims. Apply fixes for medium/high critique issues.
+
+     **Phase 2 (Design fidelity):** Read the source design document (path is in the plan header under 'Source Design Doc:'). If the design doc references mockups or wireframes, read those too. Then systematically verify:
+     - **Requirements coverage:** Walk through each requirement/feature in the design doc. For each one, identify which plan task(s) implement it. Flag any requirement that has no corresponding task.
+     - **Spec drift:** Where the plan's implementation approach differs from what the design doc specifies, flag it as drift — even if the plan's approach might work, the divergence should be acknowledged.
+     - **Mockup fidelity:** If mockups exist, verify that the plan's UI tasks produce what the mockups show (components, layout, data displayed, interactions). Flag any mockup element that no plan task creates.
+     - Output a coverage table: `| Design Requirement | Plan Task(s) | Status |` with status being Covered, Partial, or Missing.
+
+     **Phase 3 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the plan against checklist criteria 1, 2, 4, 7, and 8 through your accuracy-and-fidelity lens. Focus on whether plan tasks map to design requirements and whether all claims are factually correct. Also evaluate Decision Log entries if present. Tag every finding with [Verifier].
+
+     Output a single combined report: fact-check summary at the top, then design fidelity table, then critique in the checklist output format."
+
+2. **Aggregate the two reports:**
+   - **Fact-checks:** Take the Verifier's fact-check report as the authoritative source. If the Architect flagged a factual issue the Verifier missed, include it with an [Architect] tag.
+   - **Critique findings:** Merge both, preserving persona tags (`[Architect]`, `[Verifier]`). De-duplicate — when both flag the same issue, keep the higher-severity version and note both sources.
+   - Present the unified report to the user.
+
+3. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues.
 
 **Round 2 (conditional):**
-Only run if Round 1 found medium or high severity issues.
-Same as Round 1 but against the updated document. Use a fresh sub-agent (do NOT resume Round 1).
+Only run if Round 1 found medium or high severity issues. Use fresh sub-agents (do NOT resume Round 1 agents).
+
+Round 2 is **scoped to changes only** — not a full re-review. Before launching agents, prepare a brief summary of what changed since Round 1 (which sections were edited and why). Pass this summary to both agents.
+
+Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`, `model=haiku`.
+
+   **Critic 1 — The Architect (Round 2):**
+   - "You are The Architect reviewing Round 2 of a plan critique. Round 1 found issues that have been fixed. Your job is to verify the fixes don't introduce NEW architectural problems.
+
+     Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, assess:
+     1. Does the fix maintain consistency with existing codebase patterns?
+     2. Does the fix introduce new dependency or ordering issues?
+     3. Are behavioral changes from the fix properly acknowledged?
+
+     Do NOT re-review unchanged sections. Do NOT re-run the full checklist. Tag findings with [Architect].
+
+     Changes since Round 1:
+     {summary-of-changes}
+
+     Output: List of new issues (if any) with severity, or 'No new issues found.'"
+
+   **Critic 2 — The Verifier (Round 2):**
+   - "You are The Verifier reviewing Round 2 of a plan critique. Round 1 found factual errors and issues that have been fixed. Your job is to verify the fixes are factually correct and complete.
+
+     Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, verify:
+     1. Are new/updated file paths, line numbers, and code snippets accurate? (Use Glob/Grep/Read)
+     2. Do the fixes fully address the Round 1 issues?
+     3. Are there any new factual errors introduced by the fixes?
+
+     Do NOT re-verify claims that were [CONFIRMED] in Round 1 and weren't touched by fixes. Tag findings with [Verifier].
+
+     Changes since Round 1:
+     {summary-of-changes}
+
+     Output: Fact-check of changed sections + list of new issues (if any) with severity, or 'All fixes verified correct.'"
 
 If the plan changes system architecture (new routes, module restructuring, database schema changes), add a final task to update `docs/architecture.md` with the new state.
 
@@ -314,23 +405,28 @@ If a referenced file cannot be found, flag it as `[NOT FOUND]` in the plan rathe
 - **No manual steps mid-plan** — prerequisites before Task 1, manual steps after last task
 - **Standalone scripts need dotenv** — `import 'dotenv/config'` if reading process.env outside Next.js
 
-## Bug Board Entry Format
+## Kanban Entry Format
 
-When filing a discrepancy to `docs/Kanban-board.md`:
+When filing an entry to the Kanban board:
 
-1. Read the board file
-2. Find the highest existing `[BUG-NNN]` number and increment by 1 (start with BUG-001 if none exist)
-3. Use the Edit tool to insert the entry under "## To Do", before any existing entries (most recent first):
+1. Read `docs/kanban/.counter` for the next KB number (pad to 3 digits)
+2. Derive a kebab-case slug from the title (max 50 chars)
+3. Write `docs/kanban/todo/KB-NNN-slug.md`:
 
 ```markdown
-### [BUG-NNN] Short description
-- **Date:** YYYY-MM-DD
-- **Found by:** writing-plans
-- **Category:** architecture-discrepancy
-- **Severity:** low | medium | high
-- **File:** docs/architecture.md:line-range
-- **Details:** Diagram says X, but code at path/to/file shows Y
+# KB-NNN: [Title]
+
+- **Type:** bug
+- **Discovered during:** writing-plans
+- **Location:** `[file path]:[line range]`
+- **Observed:** [What exists and why it's a problem]
+- **Expected:** [What should change]
+- **Why out of scope:** [Why it wasn't fixed when discovered]
+- **Severity:** LOW | MEDIUM | HIGH
+- **Created:** YYYY-MM-DD
 ```
+
+4. Write the incremented number back to `docs/kanban/.counter`
 
 ## Execution Handoff
 
