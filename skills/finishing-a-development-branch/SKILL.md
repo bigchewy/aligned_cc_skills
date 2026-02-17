@@ -159,7 +159,58 @@ If changed files include any of: architecture-relevant paths as defined in the p
 3. Update the affected diagrams to reflect the new state
 4. Commit the update (including any bug board entries) to the feature branch before proceeding
 
-**If no architecture-relevant changes:** Skip silently, continue to Step 2.
+**If no architecture-relevant changes:** Skip silently, continue to Step 1d.
+
+### Step 1d: Code Simplification Scan
+
+**After all verification and doc updates, scan branch changes for simplification opportunities.**
+
+This step is **non-blocking** — findings are filed to the Kanban board as improvement opportunities, but never prevent merge/PR.
+
+**Spawn the `code-simplifier` agent** via the Task tool:
+
+```
+subagent_type: "code-simplifier"
+prompt: "Analyze the branch changes for simplification opportunities.
+  Base branch: <base-branch>
+  Working directory: <project-root>"
+```
+
+**If the agent returns findings** (non-empty JSON array):
+
+1. Read `docs/kanban/.counter` for the next KB number (pad to 3 digits)
+2. For each finding:
+   a. Derive a kebab-case slug from the title (max 50 chars)
+   b. Write `docs/kanban/todo/KB-NNN-slug.md`:
+
+```markdown
+# KB-NNN: [finding title]
+
+- **Type:** simplification
+- **Discovered during:** finishing-a-development-branch (code-simplifier)
+- **Location:** `[file]:[line_range]`
+- **Observed:** [finding observed]
+- **Expected:** [finding suggestion]
+- **Why out of scope:** Simplification opportunity — not a bug or part of the current task
+- **Severity:** [finding severity]
+- **Created:** [today's date]
+```
+
+   c. Increment the KB number
+3. Write the final incremented number back to `docs/kanban/.counter`
+4. Commit the Kanban entries to the main repo.
+
+**Report to user:**
+```
+Code simplification scan: N opportunities filed to Kanban board.
+```
+
+**If the agent returns no findings:** Report silently:
+```
+Code simplification scan: clean.
+```
+
+Continue to Step 2.
 
 ### Step 2: Determine Base Branch
 
@@ -322,6 +373,36 @@ git branch -d <feature-branch>
 
 **For Option 3:** Keep worktree.
 
+### Step 6: Archive Plan Documents
+
+**For Options 1 and 2 only.** After merge and cleanup, move completed plan and design documents to `docs/plans/completed/`.
+
+1. **Check if applicable:** If `docs/plans/` does not exist in the project, skip silently.
+
+2. **Identify plan files:** Scan `docs/plans/*.md` (top-level only, not `completed/`) for files associated with this work. Match by:
+   - Branch name pattern (e.g., branch `feat/repo-agnostic-skills` matches `*repo-agnostic*`)
+   - Files referenced in the conversation when the skill was invoked (the user typically names the plan)
+   - If ambiguous, list the candidates and ask the user which to archive
+
+3. **Include companion docs:** For each plan file found, also check for associated design documents with the same date prefix and topic.
+
+4. **Move to completed:**
+
+   **Before each `git mv`, verify the file is tracked** — untracked files (created but never committed) cannot be `git mv`'d. Use `git ls-files <path>` to check. For untracked files, use plain `mv` (or `rm` if they should be discarded).
+
+   ```bash
+   mkdir -p docs/plans/completed
+   git mv docs/plans/<plan-file>.md docs/plans/completed/
+   git mv docs/plans/<design-file>.md docs/plans/completed/  # if exists
+   ```
+
+5. **Commit the archival:**
+   ```bash
+   git commit -m "chore: archive completed plan docs to docs/plans/completed/"
+   ```
+
+**If no plan files found:** Report: "No plan documents found to archive." and continue.
+
 ## Quick Reference
 
 | Step | Action | Blocks on failure? |
@@ -331,17 +412,19 @@ git branch -d <feature-branch>
 | 1a. Verify build | Run build command | Yes |
 | 1b. LLM eval | Run eval command if surface changed | Yes (fail), No (warn/pass) |
 | 1c. Architecture doc | Update `docs/architecture.md` if structure changed | No |
+| 1d. Simplification scan | Spawn code-simplifier agent, file Kanban entries | No |
 | 2. Base branch | Determine merge target | No |
 | 3. Present options | Show 4 choices | No |
 | 4. Execute | Run chosen workflow | N/A |
 | 5. Cleanup | Remove worktree if applicable | N/A |
+| 6. Archive plans | Move plan/design docs to completed/ | No |
 
-| Option | Merge | Push | Keep Worktree | Cleanup Branch |
-|--------|-------|------|---------------|----------------|
-| 1. Merge locally | yes | - | - | yes |
-| 2. Create PR | - | yes | yes | - |
-| 3. Keep as-is | - | - | yes | - |
-| 4. Discard | - | - | - | yes (force) |
+| Option | Merge | Push | Keep Worktree | Cleanup Branch | Archive Plans |
+|--------|-------|------|---------------|----------------|---------------|
+| 1. Merge locally | yes | - | - | yes | yes |
+| 2. Create PR | - | yes | yes | - | - |
+| 3. Keep as-is | - | - | yes | - | - |
+| 4. Discard | - | - | - | yes (force) | - |
 
 ## Common Mistakes
 
