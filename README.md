@@ -76,17 +76,14 @@ These are enforced across all skills:
 
 ## Development
 
-### Syncing from local
+Edit skills directly in this repo — it is the canonical source. All paths in skill files use the `skills/` prefix (not `~/.claude/skills/`).
 
-Skills are developed in `~/.claude/skills/` and synced to this repo. To update after local changes:
-
+To test changes locally before publishing:
 ```bash
-cd ~/software/aligned_cc_skills
-./scripts/sync-from-local.sh
-git diff
+claude --plugin-dir /path/to/aligned_cc_skills
 ```
 
-The sync script applies transforms from `scripts/transforms.txt` to generalize project-specific references. Skills authored directly in the plugin (kickstart, eval-audit, design-principles) are not overwritten by sync.
+A legacy sync script (`scripts/sync-from-local.sh`) exists from when skills were authored in `~/.claude/skills/` and copied here. It is no longer the intended workflow.
 
 ### Versioning
 
