@@ -39,8 +39,6 @@ Skills reference each other by path and by `/aligned:<name>` invocation. Before 
 
 Three skills were authored directly in this repo: `kickstart`, `eval-audit`, `design-principles`. The rest were originally synced from `~/.claude/skills/` but this repo is now canonical — edit everything here.
 
-The legacy sync script (`scripts/sync-from-local.sh`) still exists. If run, it overwrites skills listed in its `SYNC_SKILLS` array. Do not run it without checking which skills it touches.
-
 ## Version
 
 `.claude-plugin/plugin.json` — semver, pre-1.0.
@@ -48,3 +46,56 @@ The legacy sync script (`scripts/sync-from-local.sh`) still exists. If run, it o
 ## What NOT to Duplicate
 
 The `README.md` already contains the skill reference table, iron rules, installation instructions, team setup, and changelog. Do not duplicate that content here.
+
+## Communication Style
+
+**No sycophancy.** Never open with "Great question!", "This is fascinating", "Excellent point", or similar filler. Skip preamble and get to substance. Just answer.
+
+## Testing
+
+**Always use TDD.** When planning or implementing features, always include test updates. Every design document and implementation plan must specify which test files need to be created, renamed, or updated. Do not ask whether tests should be included - they always should be.
+
+**CRITICAL: Error Path Tests for Mocks.** When tests use mocks (mockResolvedValue, mockReturnValue), you MUST also write tests for error paths (mockRejectedValue). Every async operation that can fail in production must have both success AND error tests. See `skills/test-driven-development/testing-anti-patterns.md` for details.
+
+## Auto-Critique for Design Documents
+
+**After completing brainstorming or writing-plans, automatically critique the document you just created.** Present specific weaknesses, gaps, or concerns. After the first critique, address any concerns the user wants fixed. Run a second critique round only if the first found medium or high severity issues.
+
+## Git Commits
+
+**Never use heredoc syntax for commit messages.** Use plain `-m "message"` format. Heredoc (`$(cat <<'EOF'...EOF)`) contains shell operators that bypass the `Bash(git *)` permission rule and trigger interactive approval prompts. Multi-line messages work fine with a regular quoted string.
+
+## Hook-Triggered Audits
+
+Hooks inject `[TAG]` messages when audits find issues. Handle them before the user's request.
+
+**SessionStart hook** (`[CRON STATUS]` — fires once per new Claude instance):
+A single hook (`hooks/check-cron-results.sh`) shows a dashboard of audit results and signals when checks are due. Present this summary to the user every session.
+
+- Settings Security runs via background launchd cron (global, no LLM)
+- Doc Staleness and Code Simplifier are **on-demand only** — they run when you're active in a repo, not as background crons. The hook checks adaptive intervals and outputs `[DOC STALENESS]` or `[CODE SIMPLIFIER]` tags when a check is due. Dispatch the corresponding agent in the background when you see these tags.
+
+Adaptive intervals: 5 days if last run was clean, 2 days if issues were found.
+
+**UserPromptSubmit hooks** (fire on every message, BLOCKING):
+- `[TEST AUDIT]` → dispatch `test-auditor` agent via Task tool
+
+## Verification Discipline
+
+**Every success claim requires fresh evidence in the current message.** This is non-negotiable and applies everywhere: mid-task, between tasks, before commits.
+
+- Never use "should," "probably," "seems to," or "looks correct" — RUN THE COMMAND
+- Never express satisfaction ("Done!", "Perfect!") before running verification
+- Never trust agent success reports without checking VCS diff independently
+- Never claim "tests pass" without test command output showing 0 failures in this message
+- Never claim "build succeeds" without build command output showing exit 0 in this message
+- Linter passing does NOT mean build passes — verify each independently
+
+| Excuse | Reality |
+|--------|---------|
+| "Should work now" | Run the verification |
+| "I'm confident" | Confidence is not evidence |
+| "Partial check is enough" | Partial proves nothing |
+| "Agent said success" | Verify independently |
+
+Run the command. Read the output. THEN claim the result.
