@@ -24,6 +24,20 @@ LLM eval failures have multiple possible causes. The most common mistake is trea
 
 ## The Process
 
+### Phase 0: Infrastructure Pre-Check
+
+Before classifying quality failures, check for infrastructure errors — these mean the eval runner itself broke, not that the prompt is bad.
+
+| Symptom | Classification | Fix |
+|---------|---------------|-----|
+| Runner crashed / timeout | Infrastructure | Check runner config, increase timeout |
+| Sibling tool call errors | Infrastructure | Isolate eval scenarios, run sequentially |
+| Missing CLI tools (jq, etc.) | Infrastructure | Install dependency or remove from eval |
+| Judge output truncated | Infrastructure | Reduce response length or increase judge token limit |
+| Incoherent judge reasoning | Calibration | Rewrite judge rubric with concrete examples |
+
+Fix infrastructure errors first, re-run, then proceed to Phase 1.
+
 ### Phase 1: Gather Evidence
 
 **Run the eval and capture results.** For intermittent failures, run 2-3 times to distinguish consistent from variable failures.
@@ -94,6 +108,15 @@ Present results as a table:
 ```
 
 If failures remain, return to Phase 2 and reclassify.
+
+## Trend Analysis
+
+When reviewing results across multiple eval runs:
+
+- **Same scenario failing across runs** → likely (a) prompt issue or (c) calibration, not variance
+- **Same dimension failing across scenarios** → systemic issue — shared threshold or template constraint
+- **Intermittent pass/fail** → likely (d) model/judge variance
+- **New failures after prompt change** → likely prompt regression — diff the change and check for removed guidance
 
 ## Key Principles
 
