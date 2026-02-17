@@ -35,33 +35,51 @@ If `docs/lessons-learned/` exists, read all non-completed lesson files. Check if
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
-**Mockup generation (conditional):**
-If the design involves frontend/UI changes, generate HTML mockups using the `mockup-generator` skill before presenting the design document. Create a session subfolder under `docs/mockups/` with a descriptive kebab-case name. Include flow diagrams as Mermaid blocks that render in the HTML. Run `open` on each file so the user can preview in their browser.
-
 ## After the Design
 
 **Documentation:**
 - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- Use elements-of-style:writing-clearly-and-concisely skill if available
 
-**Design Review (Steve Jobs persona, conditional):**
-If `docs/design/design-principles.md` exists in the project, load `agents/steve-jobs.md` and adopt the Steve Jobs persona for evaluating the design against the Four Questions from design-principles.md. Deliver the evaluation in Jobs's voice. This applies only to the design-review portion, not the entire session. If design-principles.md does not exist, skip the persona and evaluate without it.
+**Mockup generation (conditional):**
 
-**Fact-Check + Critique (mandatory, merged into one agent):**
+If the design involves frontend/UI changes, generate mockups AFTER writing the design document and BEFORE the critique round. Dispatch the mockup generator via the Task tool (`subagent_type=general-purpose`). Use this dispatch template — replace placeholders with actual values:
 
-**MANDATORY: You MUST use the Task tool to launch a fresh sub-agent** for every critique round. NEVER run the critique in the main context window. The sub-agent provides independent evaluation — it hasn't seen the brainstorming conversation, so it won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
+   "Read `agents/mockup-generator.md` for your full workflow. Generate mockups for the design at `{design-file-path}`. Project root: `{project-root}`. Focus on these UI elements: {list specific views, pages, or components from the design that need visualization}."
+
+Do not pause for user review — the critique panel will evaluate the mockups alongside the design.
+
+**Fact-Check + Critique Panel (mandatory, dynamic selection):**
+
+**MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
 
 **Round 1:**
-1. Launch a fresh sub-agent (Task tool, `subagent_type=general-purpose`, `model=sonnet`). Replace `{design-file-path}` below with the absolute path of the design document you wrote in the previous step. Prompt:
-   - "You are a skeptical, evidence-driven design reviewer. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Your job has two phases:
-     **Phase 1 (Fact-check):** Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
-     **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist. Also evaluate Decision Log entries if present.
-     Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
-2. Apply corrections for any INCORRECT claims. Apply fixes for medium/high critique issues.
+1. Read `advisors/registry.md`.
+2. Based on the design document's content, select 1-4 critics following the registry's selection guidelines. Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
+3. Read each selected critic's full prompt file (the path listed in the registry entry).
+4. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` below with the absolute path of the design document you wrote in the previous step.
+
+   Each critic's prompt:
+
+   "[Full contents of the critic's prompt file]
+
+   You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. {If mockups were generated, add: Also review the mockups at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visual design alongside the written spec.} Your job has two phases:
+   **Phase 1 (Fact-check):** Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
+   **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name (e.g., [Jobs], [The Architect]).
+   Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
+
+5. **Aggregate the reports:**
+   - **Fact-checks:** Merge all. De-duplicate — if multiple critics verified the same claim, report it once with all confirming sources (e.g., `[The Architect, The QA Engineer]`). If critics disagree on a claim, note both findings.
+   - **Critique findings:** Merge all, preserving persona tags. De-duplicate — when two or more critics flag the same issue, keep the highest-severity version and note all sources.
+   - Present the unified report to the user.
+
+6. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues the user approves.
 
 **Round 2 (conditional):**
-Only run if Round 1 found medium or high severity issues.
-Same as Round 1 but against the updated document. Use a fresh sub-agent (do NOT resume Round 1).
+Only run if Round 1 found medium or high severity issues. Use the same critics from Round 1 with fresh sub-agents (do NOT resume Round 1 agents), against the updated document.
+
+**Escalation:** If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. For example, if The Architect flagged a security concern but The Security Reviewer was not in Round 1, add them for Round 2. State the escalation reason. Maximum one additional critic per round.
+
+Apply any remaining fixes. Present final results to the user.
 
 - Commit the design document to git after critique rounds are complete
 
