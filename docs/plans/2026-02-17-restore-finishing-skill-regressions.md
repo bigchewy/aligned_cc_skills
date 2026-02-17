@@ -280,7 +280,7 @@ git commit -m "fix: simplify Step 5 worktree cleanup assuming main-repo CWD"
 
 ---
 
-## Task 5: Restore Quick Reference Tables
+## ✅ Task 5: Restore Quick Reference Tables
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
@@ -327,7 +327,7 @@ git commit -m "fix: restore quick reference tables with smoke test column"
 
 ---
 
-## Task 6: Restore Common Mistakes Section
+## ✅ Task 6: Restore Common Mistakes Section
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`

@@ -606,13 +606,33 @@ git branch -d <feature-branch>
 - **Problem:** "What should I do next?" — ambiguous
 - **Fix:** Present exactly 4 structured options
 
-**Removing worktree while shell CWD is inside it**
-- **Problem:** `git worktree remove` deletes the directory the shell is in, invalidating CWD. Every subsequent command fails with "No such file or directory", causing an unrecoverable cascade. Using `git -C <main-repo>` does NOT help — `-C` only changes git's context, the shell's CWD is still invalid.
-- **Fix:** Always run `cd <main-repo-path> && pwd` as a separate command FIRST. Verify `pwd` shows the main repo. Only then run `git worktree remove`.
+**Running from inside a worktree**
+- **Problem:** Causes cascading failures: `git add` for KB entries fails (wrong git index), worktree cleanup destroys CWD, `git mv` for plan archival operates on wrong context, test runners pick up duplicate tests from other worktrees.
+- **Fix:** Always run this skill from the main repo directory. See "CRITICAL" section at top.
 
-**Automatic worktree cleanup**
-- **Problem:** Remove worktree when might need it (Option 2, 3)
-- **Fix:** Only cleanup for Options 1 and 4
+**Removing other worktrees during cleanup**
+- **Problem:** Other worktrees may have active Ralph loops or in-progress work. Removing them kills running processes and destroys uncommitted changes.
+- **Fix:** Only remove the specific worktree for the branch being finished. Never touch other worktrees.
+
+**`git mv` on untracked plan files**
+- **Problem:** Plan files created with the Write tool but never committed cause `git mv` to fail with "not under version control".
+- **Fix:** Check `git ls-files <path>` before `git mv`. Use plain `mv` or `rm` for untracked files.
+
+**Assuming Vercel MCP access without checking**
+- **Problem:** Iterating through all Vercel projects searching for a match wastes time and tokens when the project doesn't have MCP access
+- **Fix:** Read `.claude/deployment.json` first. If `vercelMcpAccess: false`, skip Vercel API entirely — use timed wait + production URL
+
+**Wrong smoke test scope**
+- **Problem:** Running quick scope when changes affect critical user flows
+- **Fix:** If branch changed files in critical flow paths (e.g., advisor selection, board flows, checkout), suggest full scope
+
+**Skipping plan archival**
+- **Problem:** Plan and design docs left in `docs/plans/` after work is merged, cluttering active plans
+- **Fix:** Always run Step 6 after merge (Options 1, 2) to move completed docs to `docs/plans/completed/`
+
+**Worktree cleanup when CWD is safe**
+- **Problem:** Skip cleanup when CWD is outside the worktree (unnecessary deferral)
+- **Fix:** Since CWD should always be the main repo (per CRITICAL section), worktree cleanup should always proceed immediately — never defer unnecessarily.
 
 **No confirmation for discard**
 - **Problem:** Accidentally delete work
