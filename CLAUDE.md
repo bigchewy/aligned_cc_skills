@@ -84,6 +84,7 @@ Adaptive intervals: 5 days if last run was clean, 2 days if issues were found.
 
 **UserPromptSubmit hooks** (fire on every message, BLOCKING):
 - `[TEST AUDIT]` → dispatch `test-auditor` agent via Task tool
+- `[EVAL AUDIT]` → suggest running `/aligned:eval-audit` to the user
 
 ## Verification Discipline
 
