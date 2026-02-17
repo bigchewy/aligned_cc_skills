@@ -117,8 +117,9 @@ After writing the plan, run two rounds of critique using fresh sub-agents. Sub-a
 2. Present the sub-agent's findings to the user
 3. Incorporate approved fixes into the plan
 
-**Round 2:**
-1. Launch another fresh sub-agent (same config) — do NOT resume the Round 1 agent
+**Round 2 (conditional):**
+Only run if Round 1 found medium or high severity issues. Use fresh sub-agents (do NOT resume Round 1 agents).
+1. Launch another fresh sub-agent (same config)
 2. Same prompt, same checklist, but against the updated plan
 3. Present Round 2 findings to the user
 4. Incorporate any final fixes
