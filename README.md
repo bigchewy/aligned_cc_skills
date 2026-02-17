@@ -1,6 +1,6 @@
 # Aligned
 
-Opinionated development stack for Claude Code. 17 skills, 5 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
+Opinionated development stack for Claude Code. 25 skills, 8 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
 
 ## Installation
 
@@ -45,7 +45,15 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:use-advisor)",
       "Skill(aligned:use-framework)",
       "Skill(aligned:kanban-resolve)",
-      "Skill(aligned:create-new-skill)"
+      "Skill(aligned:create-new-skill)",
+      "Skill(aligned:add-advisor)",
+      "Skill(aligned:add-framework)",
+      "Skill(aligned:find-potential-advisors)",
+      "Skill(aligned:business-brainstorming)",
+      "Skill(aligned:business-diagnosis)",
+      "Skill(aligned:business-executing)",
+      "Skill(aligned:business-write-plan)",
+      "Skill(aligned:create-design-principles)"
     ]
   }
 }
@@ -59,7 +67,12 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 |-------|-------|------------|-------------|
 | kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
 | design-principles | Foundation | `/aligned:design-principles` | Interactive design discovery with Steve Jobs persona |
+| create-design-principles | Foundation | `/aligned:create-design-principles` | Enforce precise, minimal design system (Linear/Notion/Stripe aesthetic) |
 | brainstorming | Pipeline | `/aligned:brainstorming` | Explore ideas, generate designs with multi-critic review |
+| business-brainstorming | Business | `/aligned:business-brainstorming` | Explore business problems, strategies, decisions |
+| business-diagnosis | Business | `/aligned:business-diagnosis` | Diagnose why business deliverables aren't landing |
+| business-executing | Business | `/aligned:business-executing` | Execute business plans with deliverables |
+| business-write-plan | Business | `/aligned:business-write-plan` | Write business plans with critique panel |
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier) |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
@@ -71,6 +84,9 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 | use-advisor | Advisor | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
 | use-framework | Framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
+| add-advisor | Advisor | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |
+| add-framework | Framework | `/aligned:add-framework` | Add a new framework to an existing advisor |
+| find-potential-advisors | Advisor | `/aligned:find-potential-advisors` | Research and evaluate potential advisors |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
 | autopilot | Meta | `/aligned:autopilot` | Full pipeline: idea to design to plan to implement |
@@ -84,6 +100,9 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | code-simplifier | Scans branch changes for simplification opportunities |
 | mockup-generator | Self-contained HTML mockups for design-phase visualization |
 | kanban-triage | Validates Kanban items through 5-phase root cause analysis |
+| worktree-setup | Isolated git worktree creation with safety checks |
+| error-diagnosis | Classify error patterns from error-tracker hook data |
+| artifact-verifier | 98% accuracy gate for document fact-checking |
 
 ## Hooks
 
@@ -161,6 +180,12 @@ Semver, pre-1.0:
 Version bumps happen in `.claude-plugin/plugin.json`.
 
 ### Changelog
+
+#### 0.3.0
+- **25 skills** (+8: add-advisor, add-framework, find-potential-advisors, business-brainstorming, business-diagnosis, business-executing, business-write-plan, create-design-principles)
+- **8 agents** (+3: worktree-setup, error-diagnosis, artifact-verifier)
+- Enhanced eval-failure-triage with infrastructure pre-check and trend analysis
+- Error-diagnosis agent wired in CLAUDE.md for hook-triggered dispatch
 
 #### 0.2.0 (Breaking)
 - **17 skills** (added: kanban-resolve, create-new-skill, use-advisor, use-framework)
