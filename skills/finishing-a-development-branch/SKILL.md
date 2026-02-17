@@ -581,12 +581,12 @@ git branch -d <feature-branch>
 | 5. Cleanup | Remove worktree if applicable | N/A |
 | 6. Archive plans | Move plan/design docs to completed/ | No |
 
-| Option | Merge | Push | Keep Worktree | Cleanup Branch | Archive Plans |
-|--------|-------|------|---------------|----------------|---------------|
-| 1. Merge locally | yes | - | - | yes | yes |
-| 2. Create PR | - | yes | yes | - | - |
-| 3. Keep as-is | - | - | yes | - | - |
-| 4. Discard | - | - | - | yes (force) | - |
+| Option | Merge | Push | Smoke Test | Keep Worktree | Cleanup Branch | Archive Plans |
+|--------|-------|------|------------|---------------|----------------|---------------|
+| 1. Merge locally | yes | - | - | - | yes | yes |
+| 2. Deploy + smoke test | yes | yes | yes | - | yes | yes |
+| 3. Keep as-is | - | - | - | yes | - | - |
+| 4. Discard | - | - | - | - | yes (force) | - |
 
 ## Common Mistakes
 
