@@ -10,9 +10,9 @@ Opinionated development stack for Claude Code. 14 skills that enforce TDD, eval-
 
 Run this inside Claude Code. The plugin is then available across all your projects.
 
-For local testing during development:
+For plugin authors/contributors, point Claude Code at your local clone so edits take effect immediately:
 ```bash
-claude --plugin-dir /path/to/aligned_cc_skills
+claude --plugin-dir ~/software/aligned_cc_skills
 ```
 
 ## Quick Start
@@ -76,40 +76,18 @@ These are enforced across all skills:
 
 ## Development
 
-### Publishing skills
+Skills are authored directly in this repo. Edit files in `skills/`, commit, push — colleagues get updates via `/plugin update`.
 
-Skills are developed in `~/.claude/skills/` and published to this repo. Three options, from manual to fully automatic:
+**For plugin authors:** Use `--plugin-dir` to point Claude Code at your local clone so edits are live immediately (no reinstall needed):
 
-**One-command publish** (sync + commit + push):
 ```bash
-./scripts/publish.sh              # sync, commit, push
-./scripts/publish.sh --dry-run    # sync only, show diff
-./scripts/publish.sh -m "msg"     # custom commit message
+claude --plugin-dir ~/software/aligned_cc_skills
 ```
 
-**Shell alias** for zero-friction publishing from anywhere:
-```bash
-# Add to ~/.zshrc or ~/.bashrc
-alias aligned-publish="cd ~/software/aligned_cc_skills && ./scripts/publish.sh"
-```
-
-**Auto-publish** (watches `~/.claude/skills/` and publishes on change):
-```bash
-./scripts/auto-publish.sh         # watch forever, publish on .md changes
-./scripts/auto-publish.sh --once  # publish on next change, then exit
-```
-
-Requires `fswatch` (macOS: `brew install fswatch`) or `inotify-tools` (Linux: `apt install inotify-tools`).
-
-### Manual sync (advanced)
-
-To sync without committing (e.g., to review transforms):
-```bash
-./scripts/sync-from-local.sh
-git diff
-```
-
-The sync script applies transforms from `scripts/transforms.txt` to generalize project-specific references. Skills authored directly in the plugin (kickstart, eval-audit, design-principles) are not overwritten by sync.
+**Conventions when editing skills:**
+- Use `aligned:` namespace for cross-references between skills (e.g., `/aligned:brainstorming`, not `/brainstorming`)
+- Use repo-relative paths for file references (e.g., `skills/brainstorming/`, not `~/.claude/skills/brainstorming/`)
+- Use platform-agnostic naming (e.g., `deployment-pitfall-catalog.md`, not `vercel-pitfall-catalog.md`)
 
 ### Versioning
 
