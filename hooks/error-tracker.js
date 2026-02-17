@@ -27,18 +27,21 @@ process.stdin.on('end', () => {
 
 function processEvent(data) {
   const event = data.hook_event_name;
+  const base = {
+    ts: new Date().toISOString(),
+    sid: data.session_id,
+    tool: data.tool_name,
+    input: summarize(data.tool_name, data.tool_input),
+    cwd: data.cwd
+  };
 
   // PostToolUseFailure: tool itself failed (always log)
   if (event === 'PostToolUseFailure') {
     return {
-      ts: new Date().toISOString(),
-      sid: data.session_id,
+      ...base,
       type: 'tool_failure',
-      tool: data.tool_name,
-      input: summarize(data.tool_name, data.tool_input),
       error: data.error || 'Unknown tool failure',
       interrupt: data.is_interrupt || false,
-      cwd: data.cwd
     };
   }
 
@@ -47,13 +50,9 @@ function processEvent(data) {
     const sig = detectError(data.tool_name, data.tool_input, data.tool_response);
     if (sig) {
       return {
-        ts: new Date().toISOString(),
-        sid: data.session_id,
+        ...base,
         type: 'command_error',
-        tool: data.tool_name,
-        input: summarize(data.tool_name, data.tool_input),
         error: sig,
-        cwd: data.cwd
       };
     }
   }
