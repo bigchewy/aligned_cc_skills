@@ -74,6 +74,8 @@ If you need to process multiple files, use Glob to find them, Read to inspect th
 
 Hooks inject `[TAG]` messages when audits find issues. Handle them before the user's request.
 
+**Error diagnosis:** When a session has accumulated repeated tool failures, or the user reports frustration with errors, dispatch the `error-diagnosis` agent to classify patterns and identify root causes. The agent reads `~/.claude/error-tracking/errors.jsonl` (populated by the `error-tracker.js` PostToolUse hook).
+
 **UserPromptSubmit hooks** (fire on every message, BLOCKING):
 - `[EVAL AUDIT]` → suggest running `/aligned:eval-audit` to the user
 
