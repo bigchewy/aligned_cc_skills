@@ -13,6 +13,30 @@ Guide completion of development work by presenting clear options and handling ch
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
+## CRITICAL: Always Run From the Main Repo
+
+**This skill MUST be run from the main repository directory, NOT from inside a worktree.**
+
+Running from inside a worktree causes cascading failures:
+- `git add` for KB entries fails (files are in main repo, not worktree)
+- Worktree cleanup destroys the session CWD
+- `git mv` for plan archival operates on wrong git index
+- Test runners may pick up duplicate test files from other worktrees
+
+**Step 0 (before anything else):** Verify CWD is the main repo, not a worktree.
+
+```bash
+pwd
+git rev-parse --show-toplevel
+```
+
+If CWD is inside a worktree, **stop and ask the user to restart from the main repo.** All subsequent steps assume CWD is the main repo. Use the worktree path only for reading files or running tests against the branch — never `cd` into it.
+
+When the user invokes this skill, they should specify which branch/worktree to finish. Example:
+```
+/finishing-a-development-branch for feature/content-pipeline-phase2 at .worktrees/content-pipeline-phase2
+```
+
 ## The Process
 
 ### Step 0: Deployment Platform Audit
