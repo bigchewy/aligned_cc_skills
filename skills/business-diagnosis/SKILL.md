@@ -1,0 +1,223 @@
+---
+name: business-diagnosis
+description: "Use when a business problem isn't resolving, a deliverable isn't landing, or a strategy isn't working - before proposing solutions"
+---
+
+# Systematic Business Diagnosis
+
+## Overview
+
+Random solutions waste effort and mask real problems. Quick fixes to business issues create new problems elsewhere.
+
+**Core principle:** ALWAYS find root cause before proposing solutions. Treating symptoms is failure.
+
+**Violating the letter of this process is violating the spirit of diagnosis.**
+
+## The Iron Law
+
+```
+NO SOLUTIONS WITHOUT ROOT CAUSE INVESTIGATION FIRST
+```
+
+If you haven't completed Phase 1, you cannot propose solutions.
+
+## When to Use
+
+Use for ANY business issue:
+- Deliverable isn't landing with the audience
+- Client relationship friction
+- Process inefficiency or breakdown
+- Strategy not producing results
+- Revenue/pipeline problems
+- Team or operational issues
+- A document or proposal that keeps getting rejected or revised
+
+**Use this ESPECIALLY when:**
+- Under pressure to "just fix it"
+- The obvious solution seems clear
+- Multiple attempts haven't resolved it
+- Previous solution didn't work
+- You don't fully understand why something isn't working
+
+## The Four Phases
+
+You MUST complete each phase before proceeding to the next.
+
+### Phase 1: Root Cause Investigation
+
+**BEFORE proposing ANY solution:**
+
+1. **Gather Evidence**
+   - What specifically isn't working? (Not vague - concrete examples)
+   - What feedback exists? (Client comments, data, meeting notes)
+   - What does "working" look like? (Define the gap precisely)
+   - Collect actual data, not assumptions
+
+2. **Define the Gap**
+   - What was expected to happen?
+   - What is actually happening?
+   - How big is the gap?
+   - Is this a gap in quality, direction, scope, or understanding?
+
+3. **Check What Changed**
+   - What's different from when this was working (or from the plan)?
+   - New information, changed requirements, shifted context?
+   - Environmental changes (market, client situation, team)?
+   - Assumptions that turned out to be wrong?
+
+4. **Trace the Cause**
+
+   **WHEN the problem spans multiple layers (strategy > messaging > deliverable > execution):**
+
+   For EACH layer:
+   - Is the input to this layer sound?
+   - Is this layer doing its job correctly?
+   - Is the output reaching the next layer intact?
+
+   **Example (client engagement not producing results):**
+   ```
+   Layer 1: Strategy - Is the overall approach right for this client?
+   Layer 2: Messaging - Are we communicating the right value?
+   Layer 3: Deliverables - Do the documents support the message?
+   Layer 4: Execution - Are deliverables reaching the right people at the right time?
+   ```
+
+   **This reveals:** Which layer is actually failing (strategy is sound, messaging is off)
+
+5. **Identify the Real Problem**
+   - Where does the breakdown actually originate?
+   - What's the root cause, not the symptom?
+   - Trace upstream until you find the source
+   - Fix at source, not at symptom
+
+### Phase 2: Pattern Analysis
+
+**Find the pattern before solving:**
+
+1. **Find Comparable Successes**
+   - What similar work has succeeded? (Same client, similar client, related domain)
+   - What's different about the successes?
+   - Check the project directory for prior work that landed well
+
+2. **Compare Against What Works**
+   - What specifically works in the successful examples?
+   - Don't skim - analyze the successful example thoroughly
+   - Understand the pattern fully before applying
+
+3. **Identify Key Differences**
+   - What's different between what's working and what's broken?
+   - List every difference, however small
+   - Don't assume "that can't matter"
+
+4. **Understand Context Dependencies**
+   - What conditions enabled the success?
+   - What audience, timing, or relationship factors matter?
+   - What assumptions does the current approach make?
+
+### Phase 3: Hypothesis and Testing
+
+**Scientific method, applied to business:**
+
+1. **Form Single Hypothesis**
+   - State clearly: "I think X is the root cause because Y"
+   - Write it down
+   - Be specific, not vague
+   - Example: "The proposal isn't landing because it leads with our capabilities instead of their problem"
+
+2. **Test Minimally**
+   - Make the SMALLEST possible change to test the hypothesis
+   - One variable at a time
+   - Don't overhaul everything at once
+   - Example: Rewrite just the executive summary to lead with their problem, see if reception changes
+
+3. **Verify Before Continuing**
+   - Did it work? Yes > Phase 4
+   - Didn't work? Form NEW hypothesis
+   - DON'T layer more changes on top
+
+4. **When You Don't Know**
+   - Say "I don't understand X"
+   - Don't pretend to know
+   - Ask for more context
+   - Gather more evidence
+
+### Phase 4: Implementation
+
+**Fix the root cause, not the symptom:**
+
+1. **Define Success Criteria**
+   - What specifically needs to be true for this to be resolved?
+   - How will we measure it?
+   - Make it concrete and observable
+
+2. **Implement Single Change**
+   - Address the root cause identified
+   - ONE change at a time
+   - No "while we're at it" scope expansion
+   - No bundled improvements
+
+3. **Verify the Fix**
+   - Does it meet success criteria?
+   - Any unintended consequences?
+   - Issue actually resolved?
+
+4. **If Fix Doesn't Work**
+   - STOP
+   - Count: How many approaches have you tried?
+   - If < 3: Return to Phase 1, re-analyze with new information
+   - **If >= 3: STOP and question the strategy (step 5 below)**
+   - DON'T attempt Approach #4 without strategic discussion
+
+5. **If 3+ Approaches Failed: Question the Strategy**
+
+   **Pattern indicating strategic problem:**
+   - Each approach reveals new issues in different areas
+   - Fixes require fundamentally rethinking the objective
+   - Each fix creates new problems elsewhere
+
+   **STOP and question fundamentals:**
+   - Is this the right objective?
+   - Are we solving the right problem?
+   - Should we reframe the entire approach?
+
+   **Discuss with the user before attempting more fixes.**
+
+   This is NOT a failed hypothesis - this is a wrong strategy.
+
+## Red Flags - STOP and Follow Process
+
+If you catch yourself thinking:
+- "Quick fix for now, investigate later"
+- "Just try changing X and see if it works"
+- "Make multiple changes, see what sticks"
+- "Skip the evidence, I know what's wrong"
+- "It's probably X, let me fix that"
+- "I don't fully understand but this might work"
+- "Here are the main problems: [lists solutions without investigation]"
+- Proposing solutions before tracing the cause
+- **"One more attempt" (when already tried 2+)**
+- **Each attempt reveals new problems in different areas**
+
+**ALL of these mean: STOP. Return to Phase 1.**
+
+**If 3+ approaches failed:** Question the strategy (see Phase 4.5)
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Issue is obvious, don't need process" | Obvious issues have root causes too. Process is fast for simple problems. |
+| "Urgent, no time for process" | Systematic diagnosis is FASTER than solution-hopping. |
+| "Just try this first, then investigate" | First solution sets the direction. Do it right from the start. |
+| "Multiple changes at once saves effort" | Can't isolate what worked. Causes new issues. |
+| "I see the problem, let me fix it" | Seeing symptoms does not equal understanding root cause. |
+| "One more attempt" (after 2+ failures) | 3+ failures = strategic problem. Question the approach, don't try again. |
+
+## Quick Reference
+
+| Phase | Key Activities | Success Criteria |
+|-------|---------------|------------------|
+| **1. Root Cause** | Gather evidence, define gap, check changes, trace cause | Understand WHAT and WHY |
+| **2. Pattern** | Find successes, compare, identify differences | Know what works and why this doesn't |
+| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
+| **4. Implementation** | Define criteria, single change, verify | Problem resolved, criteria met |
