@@ -403,7 +403,7 @@ git commit -m "fix: restore all common mistakes including worktree, MCP, and smo
 
 ---
 
-## Task 7: Restore Red Flags Section
+## ✅ Task 7: Restore Red Flags Section
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`

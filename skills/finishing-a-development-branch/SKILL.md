@@ -653,7 +653,12 @@ git branch -d <feature-branch>
 - Verify build passes before offering options
 - Present exactly 4 options
 - Get typed confirmation for Option 4
-- Clean up worktree for Options 1 & 4 only
+- Always run from the main repo, never from inside a worktree
+- Only remove the worktree being finished — never touch other worktrees
+- Read `.claude/deployment.json` before Step 4d — respect per-project deployment config
+- Kill stale Chrome processes before each Playwright session
+- Report smoke test auth expiry as a non-blocking failure
+- Archive plan/design docs to `docs/plans/completed/` after merge (Options 1, 2)
 
 ## Lessons-Learned Gate
 
