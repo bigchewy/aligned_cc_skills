@@ -1,10 +1,79 @@
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/auto-approve-worktrees.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/check-cron-results.sh",
+            "statusMessage": "Checking background audit results..."
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
-        "type": "command",
-        "command": "cat e2e/.eval-audit-last-run 2>/dev/null",
-        "description": "Check eval audit recency for daily cron trigger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/check-test-audit.sh",
+            "statusMessage": "Checking test audit status..."
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/check-eval-audit.sh",
+            "statusMessage": "Checking eval audit status..."
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/error-tracker.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/error-tracker.js",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Skill|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/usage-tracker.js",
+            "timeout": 5
+          }
+        ]
       }
     ]
   }
