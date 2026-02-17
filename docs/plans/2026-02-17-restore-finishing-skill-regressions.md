@@ -445,7 +445,7 @@ git commit -m "fix: restore complete red flags section with deployment and smoke
 
 ---
 
-## Task 8: Update Frontmatter Description
+## ✅ Task 8: Update Frontmatter Description
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
@@ -473,7 +473,7 @@ git commit -m "fix: update frontmatter description to reflect deploy option"
 
 ---
 
-## Task 9: Fix Integration Section Callers
+## ✅ Task 9: Fix Integration Section Callers
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
