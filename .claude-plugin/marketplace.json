@@ -1,0 +1,12 @@
+{
+  "name": "aligned",
+  "owner": { "name": "Eric Page" },
+  "plugins": [
+    {
+      "name": "aligned",
+      "source": ".",
+      "description": "Opinionated dev stack: TDD pipeline, 25 skills, 8 agents, 62 advisor personas",
+      "version": "0.3.0"
+    }
+  ]
+}
