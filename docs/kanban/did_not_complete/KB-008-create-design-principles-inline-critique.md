@@ -8,3 +8,6 @@
 - **Why out of scope:** Simplification opportunity — not a bug or part of the current task
 - **Severity:** MEDIUM
 - **Created:** 2026-02-17
+
+- **Resolved:** 2026-02-17
+- **Fix:** Closed during triage — false positive. The premise is incorrect: brainstorming (`skills/brainstorming/SKILL.md:62-68`) and writing-plans (`skills/writing-plans/SKILL.md:293-347`) both embed their sub-agent dispatch prompt strings inline in SKILL.md and reference external checklist files for critics to read. create-design-principles follows the same pattern — dispatch text is inline, critics are instructed to read `skills/create-design-principles/design-critique-checklist.md`. No inconsistency exists. The code simplifier flagged a surface-level difference without verifying what the reference pattern actually does.
