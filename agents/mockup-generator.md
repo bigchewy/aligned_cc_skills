@@ -1,8 +1,3 @@
----
-name: mockup-generator
-description: Generate self-contained HTML mockups for design-phase visualization. Reads design tokens from the project's design principles file at runtime.
----
-
 # Mockup Generator
 
 ## Overview

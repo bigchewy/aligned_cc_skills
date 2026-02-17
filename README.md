@@ -1,6 +1,6 @@
 # Aligned
 
-Opinionated development stack for Claude Code. 18 skills, 5 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
+Opinionated development stack for Claude Code. 17 skills, 5 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
 
 ## Installation
 
@@ -40,7 +40,6 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:eval-audit)",
       "Skill(aligned:kickstart)",
       "Skill(aligned:design-principles)",
-      "Skill(aligned:mockup-generator)",
       "Skill(aligned:test-driven-development)",
       "Skill(aligned:verification-before-completion)",
       "Skill(aligned:use-advisor)",
@@ -70,7 +69,6 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | eval-failure-triage | Problem-solving | `/aligned:eval-failure-triage` | Classify LLM eval failures before fixing |
 | eval-audit | Problem-solving | `/aligned:eval-audit` | Eval coverage auditor with hook trigger |
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
-| mockup-generator | Infrastructure | `/aligned:mockup-generator` | Self-contained HTML mockups |
 | use-advisor | Advisor | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
 | use-framework | Framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
@@ -84,17 +82,13 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | steve-jobs | Design critique persona for brainstorming reviews |
 | code-reviewer | Post-implementation review against plan and coding standards |
 | code-simplifier | Scans branch changes for simplification opportunities |
-| test-auditor | Orchestrates 4 parallel workers for test suite quality audit |
+| mockup-generator | Self-contained HTML mockups for design-phase visualization |
 | kanban-triage | Validates Kanban items through 5-phase root cause analysis |
-
-The test-auditor dispatches 4 specialized workers: business-logic, value, coverage-gap, and isolation-antipattern. Reference files for scoring and output schema are in `agents/references/`.
 
 ## Hooks
 
 | Event | Script | What It Does |
 |-------|--------|-------------|
-| SessionStart | `check-cron-results.sh` | Dashboard of background audit results |
-| UserPromptSubmit | `check-test-audit.sh` | Triggers `[TEST AUDIT]` when test audit is overdue |
 | UserPromptSubmit | `check-eval-audit.sh` | Triggers `[EVAL AUDIT]` when eval audit is overdue |
 | PreToolUse | `auto-approve-worktrees.js` | Auto-approves Edit/Write in worktree directories |
 | PostToolUseFailure | `error-tracker.js` | Tracks error patterns for diagnosis |
@@ -169,18 +163,18 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 ### Changelog
 
 #### 0.2.0 (Breaking)
-- **18 skills** (added: kanban-resolve, create-new-skill, use-advisor, use-framework)
-- **5 agents** (added: code-reviewer, code-simplifier, test-auditor + 4 workers, kanban-triage)
+- **17 skills** (added: kanban-resolve, create-new-skill, use-advisor, use-framework)
+- **5 agents** (added: code-reviewer, code-simplifier, mockup-generator, kanban-triage)
 - **62 advisor prompts** shipped with plugin (va-web-app, epch-projects, .claude)
 - **130 frameworks** shipped with plugin
-- **7 hook scripts** with all 5 event types configured
+- **5 hook scripts** with 4 event types configured
 - Multi-critic brainstorming (opus, domain-selected from advisor pool)
 - Dual-critic writing-plans (Architect + Verifier, parallel)
 - Code simplification scan in finishing-a-development-branch (Step 1d)
 - Plan archival in finishing-a-development-branch (Step 6)
 - Eval-audit hook with threshold comparison
 - Behavioral guardrails in CLAUDE.md (TDD, verification discipline, auto-critique)
-- **Breaking:** Kanban format changed from single-file `docs/Kanban-board.md` to folder-based `docs/kanban/` with individual `KB-NNN-slug.md` files. Existing projects using v0.1.0 must migrate: create `docs/kanban/{todo,in-progress,completed,did_not_complete}/` directories and a `.counter` file.
+- **Breaking:** Kanban format changed from single-file `docs/Kanban-board.md` to folder-based `docs/kanban/` with individual `KB-NNN-slug.md` files. Existing projects using v0.1.0 must migrate: create `docs/kanban/{todo,in-progress,done,did_not_complete}/` directories and a `.counter` file.
 
 #### 0.1.0
 - Initial release: 14 skills

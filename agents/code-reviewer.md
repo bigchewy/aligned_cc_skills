@@ -108,7 +108,7 @@ When reviewing completed work, you will:
 
    **If any error path test is missing, this is a CRITICAL issue that must be fixed before proceeding.**
 
-   Reference: test-driven-development/testing-anti-patterns.md - Anti-Pattern 6
+   Reference: skills/test-driven-development/testing-anti-patterns.md - Anti-Pattern 6
 
 6. **Issue Identification and Recommendations**:
    - Clearly categorize issues as: Critical (must fix), Important (should fix), or Suggestions (nice to have)

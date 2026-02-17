@@ -89,7 +89,7 @@ For each file, generate appropriate starter content:
 **Kanban directory structure:**
 Create the following directories and file:
 ```bash
-mkdir -p docs/kanban/todo docs/kanban/in-progress docs/kanban/completed docs/kanban/did_not_complete
+mkdir -p docs/kanban/todo docs/kanban/in-progress docs/kanban/done docs/kanban/did_not_complete
 echo "1" > docs/kanban/.counter
 ```
 

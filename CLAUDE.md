@@ -74,16 +74,7 @@ If you need to process multiple files, use Glob to find them, Read to inspect th
 
 Hooks inject `[TAG]` messages when audits find issues. Handle them before the user's request.
 
-**SessionStart hook** (`[CRON STATUS]` — fires once per new Claude instance):
-A single hook (`hooks/check-cron-results.sh`) shows a dashboard of audit results and signals when checks are due. Present this summary to the user every session.
-
-- Settings Security runs via background launchd cron (global, no LLM)
-- Doc Staleness and Code Simplifier are **on-demand only** — they run when you're active in a repo, not as background crons. The hook checks adaptive intervals and outputs `[DOC STALENESS]` or `[CODE SIMPLIFIER]` tags when a check is due. Dispatch the corresponding agent in the background when you see these tags.
-
-Adaptive intervals: 5 days if last run was clean, 2 days if issues were found.
-
 **UserPromptSubmit hooks** (fire on every message, BLOCKING):
-- `[TEST AUDIT]` → dispatch `test-auditor` agent via Task tool
 - `[EVAL AUDIT]` → suggest running `/aligned:eval-audit` to the user
 
 ## Verification Discipline

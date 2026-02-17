@@ -70,7 +70,7 @@ After the coverage check, if new LLM surface patterns were added (new advisor ty
 
 1. **Generate real examples immediately.** Read the new prompt/framework, run a single eval scenario against it (or make a direct API call), and use the actual output to write a concrete classification example.
 
-2. **Classify the example.** Apply the decision tree from `eval-failure-triage/references/classification-patterns.md`.
+2. **Classify the example.** Apply the decision tree from `skills/eval-failure-triage/references/classification-patterns.md`.
 
 3. **Write the pattern entry** to the project's classification patterns file (if it exists, typically at `e2e/references/classification-patterns.md`).
 

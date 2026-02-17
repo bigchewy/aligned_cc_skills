@@ -9,8 +9,8 @@ Adopt an advisor's persona for the current conversation.
 
 ## Invocation
 
-- `/use-advisor byron katie` — fuzzy match, adopt persona
-- `/use-advisor` — list available advisors
+- `/aligned:use-advisor byron katie` — fuzzy match, adopt persona
+- `/aligned:use-advisor` — list available advisors
 
 ## Step 1: Discover Available Advisors
 
@@ -86,13 +86,13 @@ When a match is found:
 
 ## Switching or Ending a Persona
 
-- To switch advisors, the user invokes `/use-advisor` again with a different name. Drop the previous persona entirely and adopt the new one.
+- To switch advisors, the user invokes `/aligned:use-advisor` again with a different name. Drop the previous persona entirely and adopt the new one.
 - To end a persona without switching, the user says something like "drop the persona" or "back to normal." Acknowledge briefly and return to default Claude behavior.
 - Do not blend personas. Only one advisor voice is active at a time.
 
-## Composability with /use-framework
+## Composability with /aligned:use-framework
 
-When both `/use-advisor` and `/use-framework` appear in the same prompt (detectable because both skill instructions will be loaded into context simultaneously):
+When both `/aligned:use-advisor` and `/aligned:use-framework` appear in the same prompt (detectable because both skill instructions will be loaded into context simultaneously):
 
 - Skip the greeting and framework menu
 - Defer to the framework skill, which will begin Phase 1 immediately

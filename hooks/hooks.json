@@ -12,27 +12,7 @@
         ]
       }
     ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "hooks/check-cron-results.sh",
-            "statusMessage": "Checking background audit results..."
-          }
-        ]
-      }
-    ],
     "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "hooks/check-test-audit.sh",
-            "statusMessage": "Checking test audit status..."
-          }
-        ]
-      },
       {
         "hooks": [
           {

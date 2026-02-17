@@ -9,8 +9,8 @@ Guide the user through a framework's phases interactively.
 
 ## Invocation
 
-- `/use-framework the work` — fuzzy match, start framework session
-- `/use-framework` — list available frameworks
+- `/aligned:use-framework the work` — fuzzy match, start framework session
+- `/aligned:use-framework` — list available frameworks
 
 ## Step 1: Discover Available Frameworks
 
@@ -95,12 +95,12 @@ A phase is complete when: (a) the scripted content for that phase has been deliv
 
 ## Voice
 
-- If an advisor persona is active (via `/use-advisor`): deliver the framework in that advisor's voice
+- If an advisor persona is active (via `/aligned:use-advisor`): deliver the framework in that advisor's voice
 - If no advisor is active: follow the framework prompt as-is — it already names an advisor in its opening line ("You are {Advisor}, guiding someone through..."), so adopt that advisor's voice as written in the prompt
 
-## Composability with /use-advisor
+## Composability with /aligned:use-advisor
 
-When both `/use-advisor` and `/use-framework` appear in the same prompt (detectable because both skill instructions will be loaded into context simultaneously):
+When both `/aligned:use-advisor` and `/aligned:use-framework` appear in the same prompt (detectable because both skill instructions will be loaded into context simultaneously):
 
 1. Load the advisor prompt (sets the voice)
 2. Load the framework prompt + examples + anti-examples (sets the structure)
