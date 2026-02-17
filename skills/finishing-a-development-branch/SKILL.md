@@ -260,7 +260,7 @@ Present exactly these 4 options:
 Implementation complete. What would you like to do?
 
 1. Merge back to <base-branch> locally
-2. Push and create a Pull Request
+2. Deploy to production + smoke test
 3. Keep the branch as-is (I'll handle it later)
 4. Discard this work
 
@@ -273,63 +273,219 @@ Which option?
 
 #### Option 1: Merge Locally
 
-**If working in a worktree**, use `git -C <main-repo-path>` for all commands since checkout isn't possible from a worktree of the same repo:
+Since we are always running from the main repo (see "CRITICAL" section above), merge commands run directly:
 
 Run each command separately (do NOT chain with `&&`):
 
 ```bash
-git -C <main-repo-path> checkout <base-branch>
+git checkout <base-branch>
 ```
 
 ```bash
-git -C <main-repo-path> pull
+git pull
 ```
 
 ```bash
-git -C <main-repo-path> merge <feature-branch>
+git merge <feature-branch>
 ```
 
-Verify tests on merged result — `cd` first, then run tests as a separate command:
-
-```bash
-cd <main-repo-path>
-```
+Verify tests on merged result:
 
 ```bash
 <test command>
 ```
 
-Cleanup: cd out of worktree first, THEN remove it, THEN delete branch (Step 5 handles this).
+Then: Cleanup worktree (Step 5), then archive plan docs (Step 6).
 
-**If NOT in a worktree:**
+#### Option 2: Deploy to Production + Smoke Test
+
+**Parse scope:** If the user said "full smoke tests" or similar, set scope to FULL. Otherwise default to QUICK.
+
+**Step 4a: Merge to main**
+
+Same as Option 1's merge logic. Since CWD is the main repo:
 
 ```bash
 git checkout <base-branch>
+```
+
+```bash
 git pull
+```
+
+```bash
 git merge <feature-branch>
-<test command>
-git branch -d <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
-
-#### Option 2: Push and Create PR
+**Step 4b: Push to remote**
 
 ```bash
-git push -u origin <feature-branch>
+git push origin <base-branch>
 ```
 
-Then create the PR. Do NOT use heredoc syntax — pass the body as a quoted string:
+Record the push timestamp for deployment matching.
+
+**Step 4c: Worktree cleanup**
+
+Run Step 5 (Cleanup Worktree) now — since CWD is always the main repo, cleanup is safe.
+
+**Step 4d: Wait for deployment**
+
+First, read `.claude/deployment.json` from the project root. This file configures per-project deployment behavior:
+
+```json
+{
+  "productionUrl": "https://example.vercel.app",
+  "vercelMcpAccess": true,
+  "deployWaitSeconds": 120,
+  "smokeTestProfiles": ["playwright-full", "playwright-summaries"]
+}
+```
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `productionUrl` | (none) | URL to smoke test against |
+| `vercelMcpAccess` | `true` | Whether Vercel MCP tools can access this project's deployments |
+| `deployWaitSeconds` | `120` | Seconds to wait before smoke testing (Path B only) |
+| `smokeTestProfiles` | `[]` | Playwright MCP profile names. Empty array = no auth, use headless |
+
+**If `.claude/deployment.json` doesn't exist:** Create it interactively. Ask the user:
+1. What is the production URL? (e.g., `https://myapp.vercel.app`)
+2. Do you have Vercel MCP access to this project's deployments? (yes/no, default: no)
+3. Do you use named Playwright auth profiles for smoke tests? (if yes, list them; default: none)
+
+Write the answers to `.claude/deployment.json`, commit it, and continue. This ensures the config exists for all future runs.
+
+**Path A: `vercelMcpAccess` is true (or config missing)**
+
+Read `.vercel/project.json` from the main repo path to get `projectId` and `orgId`:
 
 ```bash
-gh pr create --title "<title>" --body "## Summary
-<2-3 bullets of what changed>
-
-## Test Plan
-- [ ] <verification steps>"
+cat <main-repo-path>/.vercel/project.json
 ```
 
-Then: Cleanup worktree (Step 5)
+If `.vercel/project.json` doesn't exist, fall through to Path B.
+
+Use the Vercel MCP tool `list_deployments` with the `projectId` and `teamId` (which is the `orgId` value). Poll every 30 seconds (initial estimate — tune based on observed behavior). Look for a deployment in the response array where:
+- `target` is `"production"`
+- `meta.githubCommitRef` is `"main"`
+- `created` (ms timestamp) is after the push timestamp
+- `state` is `"READY"`
+
+Verified API response fields: `created` (number, ms), `state` ("READY"/"ERROR"), `target` ("production"), `meta.githubCommitRef`, `meta.githubCommitSha`, `inspectorUrl`.
+
+**Note:** This assumes only one Claude Code instance uses Playwright MCP at a time.
+
+**If state is `ERROR`:** Report the build failure and stop. Skip smoke tests.
+
+```
+Vercel build failed. Check the deployment logs:
+[deployment URL]
+Smoke tests skipped.
+```
+
+**If Vercel API call fails:** Report the error and stop.
+
+```
+Vercel API error: [error message]
+Could not verify deployment status. Run smoke tests manually later.
+```
+
+**Timeout after 10 minutes:**
+
+```
+Deployment not ready after 10 minutes. Check Vercel dashboard.
+Smoke tests skipped.
+```
+
+**Path B: `vercelMcpAccess` is false (or `.vercel/project.json` missing)**
+
+No Vercel API available. Wait for the configured deploy time, then proceed directly to smoke tests.
+
+```
+Vercel MCP access not available for this project.
+Waiting <deploy_wait>s for Vercel auto-deploy from GitHub push...
+```
+
+Wait `deployWaitSeconds` (default 120s). Then check if the production URL responds:
+
+1. Use Playwright to navigate to the production URL
+2. If the page loads (any 2xx response), proceed to smoke tests
+3. If the page returns an error or doesn't load, report and skip smoke tests:
+
+```
+Production URL <url> not responding after deploy wait. Smoke tests skipped.
+Check deployment status manually.
+```
+
+**If no `productionUrl` is configured:** Report and skip.
+
+```
+No productionUrl in .claude/deployment.json. Smoke tests skipped.
+Add a .claude/deployment.json with productionUrl to enable post-deploy testing.
+```
+
+**Step 4e: Run smoke tests**
+
+Read `e2e/smoke-test-flows.md` for the flow definitions. The production URL comes from `productionUrl` in `.claude/deployment.json` (Path B) or the Vercel deployment URL (Path A).
+
+Before each Playwright session, kill stale Chrome processes:
+
+```bash
+pgrep -f "mcp-chrome" | xargs kill 2>/dev/null || true
+```
+
+Wait 2 seconds, then verify no processes remain:
+
+```bash
+pgrep -f "mcp-chrome" || echo "Clean"
+```
+
+**Branch on `smokeTestProfiles` from `.claude/deployment.json`:**
+
+**If `smokeTestProfiles` is empty `[]` (or config missing and no `e2e/auth/` directory exists):**
+
+No auth profiles needed. Run smoke tests directly against the production URL using the default Playwright MCP connection:
+
+1. Navigate to `<production_url>` using `playwright-headless`
+2. Execute flows from `e2e/smoke-test-flows.md` based on scope:
+   - QUICK: flows tagged `[QUICK]`
+   - FULL: all flows
+3. Close the browser
+
+**If `smokeTestProfiles` has entries (e.g., `["playwright-full", "playwright-summaries"]`):**
+
+For each profile:
+
+1. Navigate to the production URL using the profile's Playwright MCP connection
+2. Check if redirected to `/login` — if so, auth is expired:
+   ```
+   Auth expired for <profile>. Re-authenticate before next deploy.
+   Skipping <profile> smoke tests.
+   ```
+3. If authenticated, run flows from `e2e/smoke-test-flows.md` based on scope
+4. Close the browser
+5. Kill stale Chrome processes before starting the next profile
+
+**Step 4f: Report results**
+
+```
+## Post-Deploy Smoke Test Results
+
+### Deployment
+- Commit: <sha> (pushed to <base-branch>)
+- Deploy URL: <production_url>
+- Deploy verification: <Vercel API | timed wait (Ns)>
+
+### Results
+[For each flow executed, report PASS/FAIL with details on failure]
+
+[Summary: All passed / N failures found]
+```
+
+Smoke test failures are non-blocking — the code is already deployed. Report what to fix.
+
+Then: Archive plan docs (Step 6).
 
 #### Option 3: Keep As-Is
 

@@ -144,7 +144,7 @@ git commit -m "fix: restore core principle archive step and KB commit worktree g
 
 ---
 
-## Task 3: Restore Step 3 Options and Step 4 Option 2 Deploy+Smoke Test Workflow
+## ✅ Task 3: Restore Step 3 Options and Step 4 Option 2 Deploy+Smoke Test Workflow
 
 This is the largest task — it restores the primary lost functionality.
 
