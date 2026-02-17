@@ -106,7 +106,7 @@ For each major obstacle identified in Phase 2:
 After writing the design, run critique using fresh sub-agents. Sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions.
 
 **Round 1:**
-1. Read `skills/brainstorming/critic-registry.md`.
+1. Read `advisors/registry.md`.
 2. Based on the design document's content, select 1-4 critics following the registry's selection guidelines. Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
 3. Read each selected critic's full prompt file (the path listed in the registry entry).
 4. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` below with the absolute path of the design document you wrote in the previous step.
