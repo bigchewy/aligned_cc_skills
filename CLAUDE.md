@@ -35,10 +35,6 @@ Skills reference each other by path and by `/aligned:<name>` invocation. Before 
 3. Add entry to the skill reference table in `README.md`
 4. Bump version in `.claude-plugin/plugin.json`
 
-## Editing Existing Skills
-
-Three skills were authored directly in this repo: `kickstart`, `eval-audit`, `design-principles`. The rest were originally synced from `~/.claude/skills/` but this repo is now canonical — edit everything here.
-
 ## Version
 
 `.claude-plugin/plugin.json` — semver, pre-1.0.
@@ -46,6 +42,15 @@ Three skills were authored directly in this repo: `kickstart`, `eval-audit`, `de
 ## What NOT to Duplicate
 
 The `README.md` already contains the skill reference table, iron rules, installation instructions, team setup, and changelog. Do not duplicate that content here.
+
+## Bash Tool Restrictions
+
+**Never use Bash for file search or content search.** Permission rules like `Bash(find *)` and `Bash(grep *)` use `*` which does NOT match across shell operators (`|`, `&&`, `;`). Any Bash command with pipes or chaining triggers interactive approval prompts. Instead:
+- Use **Glob** instead of `find`
+- Use **Grep** instead of `grep`/`rg`
+- Use **Read** instead of `cat`/`head`/`sed`/`awk`
+
+If you need to process multiple files, use Glob to find them, Read to inspect them, and analyze the results in context.
 
 ## Communication Style
 

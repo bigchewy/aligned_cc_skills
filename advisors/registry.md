@@ -154,23 +154,15 @@ When dynamically selecting critics for any critique workflow:
 - **best_for:** Tooling designs, skill/agent architecture, CI/CD pipelines, developer workflows, SDK design.
 - **not_for:** User-facing product features, business strategy, marketing, content.
 
----
-
-## Project-Specific Advisors
-
-These advisors exist only in specific project codebases, not as global prompt files. They are listed here for completeness and cross-project awareness.
-
 ### Brand Copywriter
 - **id:** copywriter
-- **project:** EPCH (`src/lib/advisors/prompts/copywriter.ts`)
-- **role:** author
+- **prompt:** advisors/epch-projects/copywriter.md
 - **domains:** copywriting, brand voice, headlines, CTAs
 - **note:** Writes content in the brand voice. Not used for critique — serves as the author in content pipeline recipes.
 
 ### SEO Expert
 - **id:** seo-expert
-- **project:** EPCH (`src/lib/advisors/prompts/seo-expert.ts`)
-- **role:** critic
+- **prompt:** advisors/epch-projects/seo-expert.md
 - **domains:** seo, search-optimization, keyword-strategy
 - **evaluation_expertise:** Evaluates content for search performance. Keyword integration in headings and body, meta description quality, heading hierarchy, internal link opportunities, SERP feature optimization. Grounds every recommendation in keyword data.
 - **best_for:** Website copy, blog posts, landing pages — any content that needs organic search visibility.
@@ -178,8 +170,7 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Robb Wolf
 - **id:** robb-wolf
-- **project:** EPCH (`src/lib/advisors/prompts/robb-wolf.ts`)
-- **role:** critic
+- **prompt:** advisors/epch-projects/robb-wolf.md
 - **domains:** health-product-gtm, health-claims, science-to-consumer, trust-building, DTC-health
 - **evaluation_expertise:** Evaluates health product content for scientific defensibility and trust-building through substance. Checks whether health claims have clear mechanism of action, whether evidence tier is named honestly (RCT vs observational vs anecdotal), and whether content earns long-term credibility. Evaluates GTM approach against content-led organic distribution. Catches hand-wavy science, credential-free authority claims, and marketing dressed as education.
 - **best_for:** Health product content, health claims review, DTC health GTM strategy, content-led health product launches.
@@ -187,8 +178,7 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Patrick Campbell
 - **id:** patrick-campbell
-- **project:** EPCH (`src/lib/advisors/prompts/patrick-campbell.ts`)
-- **role:** strategist
+- **prompt:** advisors/epch-projects/patrick-campbell.md
 - **domains:** pricing, packaging, monetization, churn, retention, value-metrics, subscription
 - **evaluation_expertise:** Evaluates pricing, packaging, and monetization strategy. Value metric alignment, feature differentiation across tiers, willingness-to-pay segmentation by persona. Retention mechanics — voluntary vs involuntary churn, payment recovery, cancel flow design. Catches monetization neglect and packaging misalignment.
 - **best_for:** Pricing strategy, subscription packaging, paywall design, churn analysis, monetization decisions, free-to-paid conversion.
@@ -196,8 +186,7 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Joe Pulizzi
 - **id:** joe-pulizzi
-- **project:** EPCH (`src/lib/advisors/prompts/joe-pulizzi.ts`)
-- **role:** strategist
+- **prompt:** advisors/epch-projects/joe-pulizzi.md
 - **domains:** content-strategy, audience-building, content-first-business, content-tilt, content-operations
 - **evaluation_expertise:** Evaluates content strategy through audience-first lens. Does the content have a clear content tilt? Is it serving the audience or selling the product? Is there a consistent publishing cadence on a focused platform? Does the content build toward a subscriber relationship rather than one-time views? Catches product-first thinking disguised as content marketing.
 - **best_for:** Content strategy, audience-building plans, content calendar design, content-to-product pipeline decisions.
@@ -205,8 +194,7 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Rob Walling
 - **id:** rob-walling
-- **project:** EPCH (`src/lib/advisors/prompts/rob-walling.ts`)
-- **role:** strategist
+- **prompt:** advisors/epch-projects/rob-walling.md
 - **domains:** bootstrapped-saas, smb-gtm, self-serve, acquisition-channels, product-market-fit
 - **evaluation_expertise:** Evaluates bootstrapped SaaS viability and go-to-market strategy. Acquisition channel selection (speed, cost, scalability), pricing architecture, product-market fit stage assessment, churn benchmarks, and whether the business model works without VC. Catches building without evidence — features or products launched without validated willingness to pay.
 - **best_for:** B2B SMB go-to-market, self-serve acquisition strategy, bootstrapped business viability, channel selection.
@@ -214,8 +202,7 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Robbie Kellman Baxter
 - **id:** robbie-kellman-baxter
-- **project:** EPCH (`src/lib/advisors/prompts/robbie-kellman-baxter.ts`)
-- **role:** strategist
+- **prompt:** advisors/epch-projects/robbie-kellman-baxter.md
 - **domains:** subscription, membership, retention, forever-promise, recurring-revenue
 - **evaluation_expertise:** Evaluates whether content reflects membership thinking vs transaction thinking. Is the forever promise clear — an ongoing outcome, not a feature list? Does the content frame the offer as a relationship, not a purchase? Does onboarding content bridge the gap between sign-up and felt benefit? Catches subscription-as-billing framing — recurring price without ongoing value justification.
 - **best_for:** Subscription model design, membership strategy, retention planning, onboarding content, health subscription products.
@@ -223,8 +210,7 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Oli Gardner
 - **id:** oli-gardner
-- **project:** EPCH (`src/lib/advisors/prompts/oli-gardner.ts`)
-- **role:** critic
+- **prompt:** advisors/epch-projects/oli-gardner.md
 - **domains:** landing-page-conversion, attention-ratio, conversion-centered-design, page-focus
 - **evaluation_expertise:** Evaluates through Conversion-Centered Design lens. Attention ratio — ratio of interactive elements to campaign goals (ideal 1:1). Page focus — does every element serve a single conversion goal? Structural hierarchy — directional cues, encapsulation, and visual flow to CTA. Trust signals, friction reduction, benefit clarity, message match.
 - **best_for:** Landing pages, conversion flows, signup pages, campaign-specific pages.
@@ -232,8 +218,7 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Joanna Wiebe
 - **id:** joanna-wiebe
-- **project:** EPCH (`src/lib/advisors/prompts/joanna-wiebe.ts`)
-- **role:** critic
+- **prompt:** advisors/epch-projects/joanna-wiebe.md
 - **domains:** conversion-copy, voice-of-customer, headline-writing, cta-optimization
 - **evaluation_expertise:** Evaluates conversion copy through Seven Sweeps lens. Headline effectiveness, CTA clarity and friction word avoidance, voice-of-customer alignment, PAS structure, specificity of claims, emotional vs rational balance, message-match between traffic source and landing page. "So what?" and "Prove it." applied to every claim.
 - **best_for:** Landing page copy, email copy, ad copy, CTAs, headlines — any copy that must convert.
@@ -241,15 +226,20 @@ These advisors exist only in specific project codebases, not as global prompt fi
 
 ### Julian Shapiro
 - **id:** julian-shapiro
-- **project:** EPCH (`src/lib/advisors/prompts/julian-shapiro.ts`)
-- **role:** author
+- **prompt:** advisors/epch-projects/julian-shapiro.md
 - **domains:** growth-marketing, writing-craft, content-creation
 - **note:** Writes content. Not yet profiled with evaluation expertise.
 
+### Seth Godin
+- **id:** seth-godin
+- **prompt:** advisors/epch-projects/seth-godin.md
+- **domains:** marketing, permission-marketing, remarkable-products, tribes
+- **note:** Not yet profiled with evaluation expertise.
+
 ---
 
-## Other VBOA Advisors (Not Yet Profiled)
+## Advisors Not Yet Profiled
 
-The following advisors have prompts in `advisors/va-web-app/` but are not yet profiled with domains and evaluation expertise. Add entries above when they're needed for critique workflows.
+The following advisors have prompt files in `advisors/va-web-app/` but are not yet profiled with domains and evaluation expertise. Add entries above when they're needed for critique workflows.
 
 andreo-spina, arielle-nissenblatt, benjamin-levine, blair-grubb, brene-brown, byron-katie, chris-voss, clayton-christensen, danny-iny, diana-chapman, don-draper, elise-darma, gabor-mate, italo-biaggioni, jasmine-star, jay-clouse, jenna-kutcher, jeremy-enns, jim-loehr, kelly-starrett, marsha-linehan, martin-seligman, matt-chapman, rachel-pedersen, roy-freeman, sean-ellis, shirley-sahrmann, steven-hayes, stuart-mcgill, sue-b-zimmerman, tim-ferriss, wise-eric
