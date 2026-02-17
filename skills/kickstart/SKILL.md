@@ -36,7 +36,12 @@ project/
 │   ├── architecture.md                 # Empty Mermaid template with section stubs
 │   ├── plans/
 │   │   └── completed/
-│   ├── Kanban-board.md                 # Task/bug tracking board
+│   ├── kanban/
+│   │   ├── todo/                       # Individual KB-NNN-slug.md files
+│   │   ├── in-progress/
+│   │   ├── completed/
+│   │   ├── did_not_complete/
+│   │   └── .counter                    # Auto-incrementing KB number
 │   ├── mockups/
 │   ├── lessons-learned/
 │   │   └── completed/
@@ -81,15 +86,11 @@ For each file, generate appropriate starter content:
 <!-- Schema diagram if applicable -->
 ```
 
-**Kanban-board.md:**
-```markdown
-# Kanban Board
-
-## In Progress
-
-## To Do
-
-## Done
+**Kanban directory structure:**
+Create the following directories and file:
+```bash
+mkdir -p docs/kanban/todo docs/kanban/in-progress docs/kanban/completed docs/kanban/did_not_complete
+echo "1" > docs/kanban/.counter
 ```
 
 **.claude/settings.json (create or merge):**
@@ -141,7 +142,7 @@ Generate a project-specific CLAUDE.md including:
 - Architecture doc location: `docs/architecture.md`
 - Design principles location: `docs/design/design-principles.md`
 - Eval conventions: `e2e/` directory structure
-- Kanban board location: `docs/Kanban-board.md`
+- Kanban board location: `docs/kanban/` (folder-based with individual `KB-NNN-slug.md` files)
 - Plans location: `docs/plans/`
 - Lessons-learned location: `docs/lessons-learned/`
 

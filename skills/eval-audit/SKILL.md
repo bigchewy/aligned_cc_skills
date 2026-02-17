@@ -60,7 +60,7 @@ For each changed LLM surface file:
 
 **If gaps found and substantial** (new scenarios needed):
 - Report what's missing with specifics (e.g., "New advisor added in commit abc123, no eval scenario exists")
-- Create a Kanban board entry for each gap at `docs/Kanban-board.md`
+- Create a Kanban board entry for each gap in `docs/kanban/todo/` (see Kanban Entry Format below)
 - Ask: "Should I trigger the pipeline to create these eval scenarios now?"
 - If yes, kick off `/aligned:brainstorming` → `/aligned:writing-plans` → `/aligned:executing-plans` → `/aligned:finishing-a-development-branch` for the eval scenario creation work
 
@@ -74,7 +74,30 @@ After the coverage check, if new LLM surface patterns were added (new advisor ty
 
 3. **Write the pattern entry** to the project's classification patterns file (if it exists, typically at `e2e/references/classification-patterns.md`).
 
-4. **If the API call can't run** (missing credentials, rate limits, CI environment), flag it as a Kanban board item with the specific instruction: "Run one eval pass against [scenario] and document the classification pattern."
+4. **If the API call can't run** (missing credentials, rate limits, CI environment), file a Kanban entry (see format below) with the specific instruction: "Run one eval pass against [scenario] and document the classification pattern."
+
+## Kanban Entry Format
+
+When filing an entry to the Kanban board:
+
+1. Read `docs/kanban/.counter` for the next KB number (pad to 3 digits)
+2. Derive a kebab-case slug from the title (max 50 chars)
+3. Write `docs/kanban/todo/KB-NNN-slug.md`:
+
+```markdown
+# KB-NNN: [Title]
+
+- **Type:** bug
+- **Discovered during:** eval-audit
+- **Location:** `[file path]:[line range]`
+- **Observed:** [What exists and why it's a problem]
+- **Expected:** [What should change]
+- **Why out of scope:** [Why it wasn't fixed when discovered]
+- **Severity:** LOW | MEDIUM | HIGH
+- **Created:** YYYY-MM-DD
+```
+
+4. Write the incremented number back to `docs/kanban/.counter`
 
 ## Integration
 

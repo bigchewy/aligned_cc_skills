@@ -109,26 +109,31 @@ When you encounter a problem that is **outside the current task's scope** during
 
 1. **Don't fix it** — stay focused on the current task
 2. **Don't stop** — this isn't a blocker for the current work
-3. **Log it** to the bug kanban board:
+3. **Log it** to the Kanban board:
 
-Read `docs/Kanban-board.md`. Find the highest existing BUG number (or start at BUG-001). Append a new entry under `## To Do`:
+Read `docs/kanban/.counter` for the next KB number (pad to 3 digits). Derive a kebab-case slug from the description (max 50 chars). Write `docs/kanban/todo/KB-NNN-slug.md`:
 
 ```markdown
-### BUG-NNN: [Short description]
+# KB-NNN: [Short description]
+
+- **Type:** bug
 - **Discovered during:** [plan filename / Task N]
 - **Location:** `src/path/to/file.ts:NN`
 - **Observed:** [What you saw — be specific enough for a fresh session to reproduce]
 - **Expected:** [What should happen instead]
 - **Why out of scope:** [Why this isn't part of the current task]
 - **Severity:** CRITICAL | HIGH | MEDIUM | LOW
+- **Created:** [today's date]
 ```
+
+Write the incremented number back to `docs/kanban/.counter`.
 
 4. **Continue** with the current task
 
 **At the end of execution (Step 6),** if any bugs were logged during this session, add to the completion report:
 
 ```
-N bug(s) were discovered and logged to `docs/Kanban-board.md`. Review them and pick up in a fresh session with `/aligned:systematic-debugging`.
+N bug(s) were discovered and logged to `docs/kanban/todo/`. Review them and pick up in a fresh session with `/aligned:systematic-debugging`.
 ```
 
 **What qualifies as a bug to log:**
@@ -153,23 +158,28 @@ N bug(s) were discovered and logged to `docs/Kanban-board.md`. Review them and p
 ## Tool Usage
 **Never use Bash for file search or content search.** Use Glob (not `find`), Grep (not `grep`/`rg`), and Read (not `cat`/`head`/`sed`/`awk`) — even when searching across many files. Complex Bash pipelines with `|`, `&&`, or subshells trigger interactive approval prompts that break autonomous execution. If you need to process multiple files, use Glob to find them, Read to inspect them, and analyze the content in context.
 
-## Bug Board Entry Format
+## Kanban Entry Format
 
-When filing a discrepancy to `docs/Kanban-board.md`:
+When filing an entry to the Kanban board:
 
-1. Read the board file
-2. Find the highest existing BUG number and increment by 1 (start with BUG-001 if none exist)
-3. Use the Edit tool to insert the entry under "## To Do", before any existing entries (most recent first):
+1. Read `docs/kanban/.counter` for the next KB number (pad to 3 digits)
+2. Derive a kebab-case slug from the title (max 50 chars)
+3. Write `docs/kanban/todo/KB-NNN-slug.md`:
 
 ```markdown
-### BUG-NNN: [Short description]
+# KB-NNN: [Title]
+
+- **Type:** bug
 - **Discovered during:** [plan filename / Task N]
-- **Location:** `docs/architecture.md:line-range`
-- **Observed:** [Diagram says X]
-- **Expected:** [Code at path/to/file shows Y]
-- **Why out of scope:** Architecture discrepancy found during plan review
+- **Location:** `[file path]:[line range]`
+- **Observed:** [What exists and why it's a problem]
+- **Expected:** [What should change]
+- **Why out of scope:** [Why it wasn't fixed when discovered]
 - **Severity:** LOW | MEDIUM | HIGH
+- **Created:** [today's date]
 ```
+
+4. Write the incremented number back to `docs/kanban/.counter`
 
 ## Remember
 - Review plan critically first

@@ -327,23 +327,28 @@ If systematic investigation reveals issue is truly environmental, timing-depende
 
 **But:** 95% of "no root cause" cases are incomplete investigation.
 
-## Bug Board Entry Format
+## Kanban Entry Format
 
-When filing a discrepancy to `docs/Kanban-board.md`:
+When filing an entry to the Kanban board:
 
-1. Read the board file
-2. Find the highest existing `[BUG-NNN]` number and increment by 1 (start with BUG-001 if none exist)
-3. Use the Edit tool to insert the entry under "## To Do", before any existing entries (most recent first):
+1. Read `docs/kanban/.counter` for the next KB number (pad to 3 digits)
+2. Derive a kebab-case slug from the title (max 50 chars)
+3. Write `docs/kanban/todo/KB-NNN-slug.md`:
 
 ```markdown
-### [BUG-NNN] Short description
-- **Date:** YYYY-MM-DD
-- **Found by:** systematic-debugging
-- **Category:** architecture-discrepancy
-- **Severity:** low | medium | high
-- **File:** docs/architecture.md:line-range
-- **Details:** Diagram says X, but code at path/to/file shows Y
+# KB-NNN: [Title]
+
+- **Type:** bug
+- **Discovered during:** systematic-debugging
+- **Location:** `[file path]:[line range]`
+- **Observed:** [What exists and why it's a problem]
+- **Expected:** [What should change]
+- **Why out of scope:** [Why it wasn't fixed when discovered]
+- **Severity:** LOW | MEDIUM | HIGH
+- **Created:** [today's date]
 ```
+
+4. Write the incremented number back to `docs/kanban/.counter`
 
 ## Supporting Techniques
 
