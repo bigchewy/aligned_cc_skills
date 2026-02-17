@@ -76,12 +76,35 @@ These are enforced across all skills:
 
 ## Development
 
-### Syncing from local
+### Publishing skills
 
-Skills are developed in `~/.claude/skills/` and synced to this repo. To update after local changes:
+Skills are developed in `~/.claude/skills/` and published to this repo. Three options, from manual to fully automatic:
 
+**One-command publish** (sync + commit + push):
 ```bash
-cd ~/software/aligned_cc_skills
+./scripts/publish.sh              # sync, commit, push
+./scripts/publish.sh --dry-run    # sync only, show diff
+./scripts/publish.sh -m "msg"     # custom commit message
+```
+
+**Shell alias** for zero-friction publishing from anywhere:
+```bash
+# Add to ~/.zshrc or ~/.bashrc
+alias aligned-publish="cd ~/software/aligned_cc_skills && ./scripts/publish.sh"
+```
+
+**Auto-publish** (watches `~/.claude/skills/` and publishes on change):
+```bash
+./scripts/auto-publish.sh         # watch forever, publish on .md changes
+./scripts/auto-publish.sh --once  # publish on next change, then exit
+```
+
+Requires `fswatch` (macOS: `brew install fswatch`) or `inotify-tools` (Linux: `apt install inotify-tools`).
+
+### Manual sync (advanced)
+
+To sync without committing (e.g., to review transforms):
+```bash
 ./scripts/sync-from-local.sh
 git diff
 ```

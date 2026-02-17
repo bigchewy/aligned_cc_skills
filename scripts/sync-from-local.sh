@@ -12,6 +12,15 @@ LOCAL_SKILLS="$HOME/.claude/skills"
 TRANSFORMS="$SCRIPT_DIR/transforms.txt"
 VA_REPO="$HOME/software/va-web-app"
 
+# Cross-platform sed in-place (macOS requires '' arg, Linux does not)
+sedi() {
+  if [[ "$OSTYPE" == darwin* ]]; then
+    sed -i '' "$@"
+  else
+    sed -i "$@"
+  fi
+}
+
 # Skills to sync (excludes kickstart, eval-audit, design-principles — authored directly in plugin)
 SYNC_SKILLS=(
   brainstorming
@@ -63,7 +72,7 @@ for skill in "${SYNC_SKILLS[@]}"; do
       [ -z "$old" ] && continue
       [[ "$old" == \#* ]] && continue
       # Use | as sed delimiter since paths contain /
-      sed -i '' "s|$old|$new|g" "$file"
+      sedi "s|$old|$new|g" "$file"
     done < "$TRANSFORMS"
   done
 
