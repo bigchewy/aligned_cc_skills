@@ -9,7 +9,7 @@ description: Use when implementation is complete, all tests pass, and you need t
 
 Guide completion of development work by presenting clear options and handling chosen workflow.
 
-**Core principle:** Deployment audit → Verify tests → Verify build → Present options → Execute choice → Clean up.
+**Core principle:** Deployment audit → Verify tests → Verify build → Present options → Execute choice → Clean up → Archive plans.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
@@ -222,7 +222,7 @@ prompt: "Analyze the branch changes for simplification opportunities.
 
    c. Increment the KB number
 3. Write the final incremented number back to `docs/kanban/.counter`
-4. Commit the Kanban entries to the main repo.
+4. Commit the Kanban entries. **If CWD is a worktree**, KB files are written to the main repo's `docs/kanban/` via absolute paths — use `git -C <main-repo-path> add` and `git -C <main-repo-path> commit` (not bare `git add` from the worktree). If CWD is the main repo, use bare `git add/commit` as normal.
 
 **Report to user:**
 ```

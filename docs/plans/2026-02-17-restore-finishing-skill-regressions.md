@@ -44,7 +44,7 @@ When skills were migrated from `~/.claude/` (archived-claude-local) to the plugi
 
 ---
 
-## Task 1: Add "CRITICAL: Always Run From the Main Repo" Section
+## ✅ Task 1: Add "CRITICAL: Always Run From the Main Repo" Section
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
@@ -100,7 +100,7 @@ git commit -m "fix: restore CRITICAL always-run-from-main-repo section"
 
 ---
 
-## Task 2: Restore Core Principle and Step 1d KB Commit Guidance
+## ✅ Task 2: Restore Core Principle and Step 1d KB Commit Guidance
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
