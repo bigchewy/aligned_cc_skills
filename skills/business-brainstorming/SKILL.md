@@ -134,9 +134,15 @@ Only run if Round 1 found medium or high severity issues. Same critics (not re-s
 
 Apply any remaining fixes. Present final results to the user.
 
-**Execution (if continuing):**
-- Ask: "Ready to plan out the work?"
-- **REQUIRED SUB-SKILL:** Use /aligned:business-write-plan to create detailed work plan
+**Post-design steps:**
+
+- Commit the design document to git after critique rounds are complete
+
+**Next step prompt (mandatory):**
+
+After committing the design document, output a ready-to-paste prompt for the next session:
+
+> Use `/aligned:business-write-plan` to write an execution plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
 
 ## Design Critique
 
