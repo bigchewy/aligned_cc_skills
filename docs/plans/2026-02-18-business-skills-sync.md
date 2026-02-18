@@ -18,7 +18,7 @@ None. All work happens in Markdown files within the repo.
 
 ---
 
-### Task 1: Add MANDATORY sub-agent enforcement language to business-brainstorming
+### ✅ Task 1: Add MANDATORY sub-agent enforcement language to business-brainstorming
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md:104-106`

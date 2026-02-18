@@ -103,7 +103,7 @@ For each major obstacle identified in Phase 2:
 
 **Fact-Check + Critique Panel (mandatory, dynamic selection):**
 
-After writing the design, run critique using fresh sub-agents. Sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions.
+**MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
 
 **Round 1:**
 1. Read `advisors/registry.md`.
