@@ -238,6 +238,17 @@ If you catch yourself thinking:
 
 **If 3+ approaches failed:** Question the strategy (see Phase 4.5)
 
+## Your Human Partner's Signals You're Doing It Wrong
+
+**Watch for these redirections:**
+- They keep saying "but why?" after your explanations → you haven't gone deep enough
+- They're getting frustrated because you keep proposing solutions → you skipped root cause investigation
+- They say "we tried that already" → you didn't check history
+- They redirect you to talk to someone else → you're missing a stakeholder perspective
+- They ask you to "just fix it" → the process feels too slow, but don't skip steps — explain what you're doing and why
+
+**When you see these:** STOP. Return to Phase 1.
+
 ## Common Rationalizations
 
 | Excuse | Reality |
