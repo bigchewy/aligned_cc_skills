@@ -17,7 +17,7 @@
 Token burn comes from multiplicative effects:
 - **CLAUDE.md duplication**: 6 sections (~60 lines) are verbatim in both `~/.claude/CLAUDE.md` and project `CLAUDE.md`. Both load in every context including subagents.
 - **Kanban Entry Format**: Identical 22-line section copy-pasted into 5 skills. Loaded every time any of those skills is invoked.
-- **Verbose skill files**: The top 5 skills total 2,707 lines. Some sections (rationalizations tables, red flag lists) repeat structural patterns across skills without adding unique value proportional to their size.
+- **Verbose skill files**: The top 5 skills total 2,607 lines. Some sections (rationalizations tables, red flag lists) repeat structural patterns across skills without adding unique value proportional to their size.
 
 **What we're NOT changing** (because it would risk losing effectiveness):
 - Critique checklists — the 5 checklist files have intentionally different domain-specific criteria (software vs business vs design). They are NOT duplicates.
@@ -79,9 +79,9 @@ git commit -m "chore: deduplicate CLAUDE.md — remove sections already in globa
 **Files:**
 - Create: `skills/_shared/kanban-entry-format.md`
 
-**Step 1: Create the `skills/_shared/` directory and shared file**
+**Step 1: Write `skills/_shared/kanban-entry-format.md`**
 
-Extract the Kanban Entry Format section that is currently duplicated in 5 skills. The content is identical across all 5 — use any as the source.
+The directory will be created automatically when the file is written. Extract the Kanban Entry Format section that is currently duplicated in 5 skills.
 
 Content for `skills/_shared/kanban-entry-format.md`:
 
@@ -112,7 +112,11 @@ When filing an entry to the Kanban board:
 
 Note: The `Discovered during` field uses `[skill-name]` as a placeholder — the referencing skill should fill in its own name when filing entries.
 
-**Step 2: Commit the shared file**
+**Step 2: Verify `_shared/` does not appear as a skill**
+
+The `_shared/` directory has no `SKILL.md` file, so the Claude Code plugin system should not register it as a skill. Confirm by checking that `skills/_shared/SKILL.md` does not exist (it shouldn't — we only created `kanban-entry-format.md`). If for any reason the directory is picked up as a skill, move the file to `docs/_shared/kanban-entry-format.md` instead (outside the `skills/` tree).
+
+**Step 3: Commit the shared file**
 
 ```bash
 git add skills/_shared/kanban-entry-format.md
@@ -130,27 +134,40 @@ git commit -m "chore: extract shared Kanban entry format to _shared/"
 - Modify: `skills/systematic-debugging/SKILL.md` (~lines 330-351)
 - Modify: `skills/eval-audit/SKILL.md` (~lines 79-100)
 
-**Step 1: In each of the 5 files, replace the full Kanban Entry Format section with a reference**
+**Step 0: Verify all 5 Kanban sections are structurally identical before extracting**
 
-Replace the entire `## Kanban Entry Format` section (heading through the final line about `.counter`) with:
+Read the Kanban Entry Format section in all 5 files. Confirm the template body is identical (the only expected difference is the `Discovered during` value — each skill hard-codes its own name). If any file has a structural difference beyond the skill name, note it and adjust the shared template accordingly.
 
+**Step 1: In each of the 5 files, replace the full Kanban Entry Format section with a skill-specific reference**
+
+Replace the entire `## Kanban Entry Format` section (heading through the final line about `.counter`) with a reference that embeds at the workflow point where KB entries are filed. Each skill gets a slightly different replacement to preserve its current `Discovered during` value:
+
+For `writing-plans/SKILL.md`, `finishing-a-development-branch/SKILL.md`, `systematic-debugging/SKILL.md`, and `eval-audit/SKILL.md`:
 ```markdown
 ## Kanban Entry Format
 
-Read and follow `skills/_shared/kanban-entry-format.md`. Use `[skill-name]` as the "Discovered during" value (replace `[skill-name]` with the current skill's name, e.g., `writing-plans`).
+When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `writing-plans` as the "Discovered during" value.
+```
+(Replace `writing-plans` with the actual skill name in each file: `finishing-a-development-branch`, `systematic-debugging`, `eval-audit`.)
+
+For `executing-plans/SKILL.md` (which currently uses a more specific format):
+```markdown
+## Kanban Entry Format
+
+When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `[plan filename / Task N]` as the "Discovered during" value (more specific than just the skill name).
 ```
 
-Do this for all 5 files. The replacement text is 3 lines instead of 22 lines per file = 95 lines saved across 5 skills.
+This is 3 lines instead of 22 lines per file = 95 lines saved across 5 skills. The `Discovered during` values remain static (not runtime-substituted), matching the current behavior.
 
 **Step 2: Verify each file still has the Kanban section header**
 
-Run: `grep -l "Kanban Entry Format" skills/*/SKILL.md`
+Use the Grep tool to search for `Kanban Entry Format` in `skills/*/SKILL.md` with output mode `files_with_matches`.
 
 Expected: All 5 files still match.
 
 **Step 3: Verify the shared file reference is correct**
 
-Run: `grep "_shared/kanban-entry-format" skills/*/SKILL.md`
+Use the Grep tool to search for `_shared/kanban-entry-format` in `skills/*/SKILL.md` with output mode `files_with_matches`.
 
 Expected: All 5 files reference the shared file.
 
@@ -198,12 +215,14 @@ git commit -m "chore: condense rationalizations tables to top entries"
 
 ### Task 5: Trim Red Flags section overlap in systematic-debugging
 
+**Prerequisite: Complete Task 4 first** — both modify `systematic-debugging/SKILL.md` and Task 5's Step 2 depends on Task 4's output.
+
 **Files:**
-- Modify: `skills/systematic-debugging/SKILL.md` (lines ~244-295)
+- Modify: `skills/systematic-debugging/SKILL.md` (lines ~266-294)
 
 **Step 1: Read the "Red Flags" and "your human partner's Signals" sections**
 
-These two sections (lines ~244-295) partially overlap with the Common Rationalizations table and with each other. Read them to identify unique content vs. repetition.
+These two sections (lines ~266-294) partially overlap with the Common Rationalizations table and with each other. Read them to identify unique content vs. repetition.
 
 **Step 2: Condense where there's overlap**
 
@@ -305,12 +324,14 @@ If any skill references a specific section of project CLAUDE.md that was removed
 
 **Step 3: Verify no broken cross-references remain**
 
-Run: `grep -r "CLAUDE.md" skills/ agents/` and verify all references are valid.
+Use the Grep tool to search for `CLAUDE.md` in `skills/` and `agents/` directories with output mode `content`. Verify all references are valid.
 
 **Step 4: Commit (if changes were needed)**
 
+Stage only the specific files modified in Step 2 by name (e.g., `git add skills/foo/SKILL.md agents/bar.md`). Do not use `git add -u` or `git add .`.
+
 ```bash
-git add -u
+git add <each modified file by name>
 git commit -m "chore: update cross-references after token optimization"
 ```
 
@@ -385,11 +406,12 @@ git commit -m "chore: bump version to 0.3.2 for token optimization"
 - Remove from global, keep in project: Would break these instructions for every other repo the user works in. The global file is the correct canonical location for universal rules.
 
 #### Decision 2: How to share Kanban Entry Format
-**Chose:** Create `skills/_shared/kanban-entry-format.md` and replace inline sections with "Read and follow `skills/_shared/kanban-entry-format.md`".
-**Why:** This approach means the Kanban format is only loaded into context when the agent actually needs to file a KB entry (when it reads the referenced file). The SKILL.md stays short. The agent reads the shared file on-demand. The `_shared/` directory name signals "not a skill" and won't appear in the plugin's skill list.
+**Chose:** Create `skills/_shared/kanban-entry-format.md` and replace inline sections with a skill-specific reference that embeds at the workflow point where KB entries are filed. Each skill's replacement preserves its hard-coded `Discovered during` value (no runtime substitution). The `executing-plans` skill retains its more specific `[plan filename / Task N]` format.
+**Why:** This approach means the Kanban format is only loaded into context when the agent actually needs to file a KB entry (when it reads the referenced file). The SKILL.md stays short. The agent reads the shared file on-demand. The reference follows the codebase's established pattern of instructing reads at the point of need (e.g., `finishing-a-development-branch` line 46: "Read CLAUDE.md to determine the deployment platform"). The `_shared/` directory has no SKILL.md so won't register as a skill.
 **Alternatives rejected:**
 - `@` auto-load reference: Using `@kanban-entry-format.md` would auto-load the file into context when the skill is invoked — no savings over inline content.
 - CLAUDE.md instruction: Adding Kanban format to CLAUDE.md would load it in every context, not just skills that need it. Worse than the current duplication.
+- Generic `[skill-name]` placeholder: Would change `Discovered during` from static values to runtime-substituted, a behavioral regression. Especially problematic for `executing-plans` which uses a richer format than just the skill name.
 
 #### Decision 3: Critique checklist consolidation
 **Chose:** Do not consolidate the 5 checklist files.
