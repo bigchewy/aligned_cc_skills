@@ -6,6 +6,8 @@ Critique a business design document for rigor, completeness, and actionability. 
 
 ## Instructions
 
+**Applicability assessment:** After reading the design document, quickly assess which of the 8 criteria below are relevant to its scope. If a criterion clearly doesn't apply (e.g., "Missing stakeholders" when the design is a solo deliverable with no external dependencies; "Feasibility and constraints" when the design is a pure analysis with no resource requirements), mark it **N/A** with a one-line reason in the Checklist Results table and skip verification for that criterion.
+
 1. Read the design document at the path provided. If the file cannot be read or is empty, report the error and stop.
 2. For each criterion below, verify against the document's own logic and any referenced materials:
    - **Read** referenced documents, meeting notes, or prior designs mentioned in the document
