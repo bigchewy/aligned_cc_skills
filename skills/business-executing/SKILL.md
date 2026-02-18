@@ -128,7 +128,7 @@ When unexpected business issues surface during execution (scope gaps not covered
 ## Remember
 - Review plan critically first
 - Follow plan steps exactly
-- Don't skip review checkpoints
 - Apply writing quality standards to all output
-- Between batches: report and wait
 - Stop when blocked, don't guess
+- Raise issues in-thread, don't fix inline
+- Archive plan files when done
