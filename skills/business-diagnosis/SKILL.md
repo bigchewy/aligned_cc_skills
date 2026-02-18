@@ -257,3 +257,15 @@ If you catch yourself thinking:
 | **2. Pattern** | Find successes, compare, identify differences | Know what works and why this doesn't |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
 | **4. Implementation** | Define criteria, single change, verify | Problem resolved, criteria met |
+
+## When Process Reveals No Root Cause
+
+If systematic investigation surfaces no clear root cause, consider these possibilities:
+
+- **External/environmental factors:** Market shifts, competitor actions, regulatory changes that are outside the team's control
+- **Timing issues:** The problem is intermittent or context-dependent — it only manifests under specific conditions (certain clients, certain times, certain workloads)
+- **Third-party dependencies:** The root cause lies in a partner, vendor, or platform the team doesn't control
+
+**Action:** Document what was investigated, what was ruled out, and what external factors are suspected. Recommend monitoring rather than fixing.
+
+**But:** 95% of "no root cause" cases are incomplete investigation. Before concluding the cause is external, verify you have genuinely exhausted the 4-phase process.
