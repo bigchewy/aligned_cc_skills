@@ -262,6 +262,7 @@ If you catch yourself thinking:
 
 | Phase | Key Activities | Success Criteria |
 |-------|---------------|------------------|
+| **0. Multi-Agent** (high only) | Fan out subagents, synthesize | Consensus hypothesis or competing theories |
 | **1. Root Cause** | Gather evidence, define gap, check changes, trace cause | Understand WHAT and WHY |
 | **2. Pattern** | Find successes, compare, identify differences | Know what works and why this doesn't |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
