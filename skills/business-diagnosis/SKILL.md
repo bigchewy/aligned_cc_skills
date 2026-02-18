@@ -39,6 +39,42 @@ Use for ANY business issue:
 - Previous solution didn't work
 - You don't fully understand why something isn't working
 
+## Severity Levels
+
+Default severity is **low** (single investigator, standard 4-phase process). Pass `high` as an argument for multi-agent fan-out investigation.
+
+- `/aligned:business-diagnosis` — low severity (default)
+- `/aligned:business-diagnosis high` — high severity, multi-agent
+
+### High Severity — Phase 0: Multi-Agent Investigation
+
+Added before the existing four phases. Use when low-severity investigation is insufficient.
+
+Fan out 5 subagents via Task tool, each with a different analytical method:
+
+| Agent | Method | Prompt Directive |
+|-------|--------|-----------------|
+| Backward Tracer | Trace from symptoms to origin | "Start at the problem symptoms. Trace backward: when did this start? What changed? What was working before? Follow the chain to find the origin point." |
+| Stakeholder Mapper | Map human system around the problem | "Identify all affected parties, their perspectives, incentives, and potential blind spots. Map the human system around this problem. Who benefits from the status quo? Who has veto power?" |
+| Data Analyst | Analyze quantitative evidence | "Gather and analyze relevant metrics, timelines, and quantitative evidence. Look for correlations, trends, and anomalies. What does the data say vs. what people believe?" |
+| Pattern Matcher | Search for similar past problems | "Search project history for similar past problems and how they were resolved. Check if this is a recurring pattern. What was tried before? What worked and what didn't?" |
+| JudgeAgent | Synthesize and resolve contradictions | "Read the other agents' reports. For each proposed root cause, try to disprove it. Identify agreements and contradictions. Produce a unified hypothesis ranked by evidence strength." |
+
+First 4 agents run in parallel. Each returns: hypothesis, evidence, confidence level.
+
+JudgeAgent runs second, receiving all 4 reports. Challenges each hypothesis, resolves contradictions.
+
+Main thread synthesizes. If consensus → proceed to Phase 1 with strong starting hypothesis. If no consensus → present competing theories to user.
+
+### When to Use High Severity
+
+- Previous low-severity investigation didn't find root cause (clearest signal)
+- Cross-functional issues affecting multiple teams or stakeholders
+- Multi-stakeholder impact with conflicting perspectives
+- Recurring problems that have resisted 2+ prior fix attempts
+- Time-critical situations (deadline pressure, escalation risk)
+- User explicitly requests high severity
+
 ## The Four Phases
 
 You MUST complete each phase before proceeding to the next.
