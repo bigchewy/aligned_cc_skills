@@ -202,27 +202,13 @@ prompt: "Analyze the branch changes for simplification opportunities.
 
 **If the agent returns findings** (non-empty JSON array):
 
-1. Read `docs/kanban/.counter` for the next KB number (pad to 3 digits)
-2. For each finding:
-   a. Derive a kebab-case slug from the title (max 50 chars)
-   b. Write `docs/kanban/todo/KB-NNN-slug.md`:
-
-```markdown
-# KB-NNN: [finding title]
-
-- **Type:** simplification
-- **Discovered during:** finishing-a-development-branch (code-simplifier)
-- **Location:** `[file]:[line_range]`
-- **Observed:** [finding observed]
-- **Expected:** [finding suggestion]
-- **Why out of scope:** Simplification opportunity — not a bug or part of the current task
-- **Severity:** [finding severity]
-- **Created:** [today's date]
-```
-
-   c. Increment the KB number
-3. Write the final incremented number back to `docs/kanban/.counter`
-4. Commit the Kanban entries. **If CWD is a worktree**, KB files are written to the main repo's `docs/kanban/` via absolute paths — use `git -C <main-repo-path> add` and `git -C <main-repo-path> commit` (not bare `git add` from the worktree). If CWD is the main repo, use bare `git add/commit` as normal.
+1. Read `skills/_shared/kanban-entry-format.md` for the KB template and counter instructions
+2. For each finding, file a KB entry with:
+   - **Type:** `simplification`
+   - **Discovered during:** `finishing-a-development-branch (code-simplifier)`
+   - **Why out of scope:** `Simplification opportunity — not a bug or part of the current task`
+   - Map finding fields: title → KB title, `file:line_range` → Location, observed → Observed, suggestion → Expected, severity → Severity
+3. Commit the Kanban entries. **If CWD is a worktree**, use `git -C <main-repo-path> add/commit` (KB files are in main repo). If CWD is the main repo, use bare `git add/commit`.
 
 **Report to user:**
 ```
@@ -301,33 +287,11 @@ Then: Cleanup worktree (Step 5), then archive plan docs (Step 6).
 
 **Parse scope:** If the user said "full smoke tests" or similar, set scope to FULL. Otherwise default to QUICK.
 
-**Step 4a: Merge to main**
+**Step 4a: Merge to main** — Same as Option 1's merge logic (checkout, pull, merge).
 
-Same as Option 1's merge logic. Since CWD is the main repo:
+**Step 4b: Push to remote** — `git push origin <base-branch>`. Record push timestamp for deployment matching.
 
-```bash
-git checkout <base-branch>
-```
-
-```bash
-git pull
-```
-
-```bash
-git merge <feature-branch>
-```
-
-**Step 4b: Push to remote**
-
-```bash
-git push origin <base-branch>
-```
-
-Record the push timestamp for deployment matching.
-
-**Step 4c: Worktree cleanup**
-
-Run Step 5 (Cleanup Worktree) now — since CWD is always the main repo, cleanup is safe.
+**Step 4c: Worktree cleanup** — Run Step 5 now.
 
 **Step 4d: Wait for deployment**
 
@@ -376,116 +340,23 @@ Verified API response fields: `created` (number, ms), `state` ("READY"/"ERROR"),
 
 **Note:** This assumes only one Claude Code instance uses Playwright MCP at a time.
 
-**If state is `ERROR`:** Report the build failure and stop. Skip smoke tests.
-
-```
-Vercel build failed. Check the deployment logs:
-[deployment URL]
-Smoke tests skipped.
-```
-
-**If Vercel API call fails:** Report the error and stop.
-
-```
-Vercel API error: [error message]
-Could not verify deployment status. Run smoke tests manually later.
-```
-
-**Timeout after 10 minutes:**
-
-```
-Deployment not ready after 10 minutes. Check Vercel dashboard.
-Smoke tests skipped.
-```
+**If deployment fails:** Report and skip smoke tests. Covers: state `ERROR` (show deployment URL), API call failure (show error message), timeout after 10 minutes (suggest checking dashboard).
 
 **Path B: `vercelMcpAccess` is false (or `.vercel/project.json` missing)**
 
-No Vercel API available. Wait for the configured deploy time, then proceed directly to smoke tests.
-
-```
-Vercel MCP access not available for this project.
-Waiting <deploy_wait>s for Vercel auto-deploy from GitHub push...
-```
-
-Wait `deployWaitSeconds` (default 120s). Then check if the production URL responds:
-
-1. Use Playwright to navigate to the production URL
-2. If the page loads (any 2xx response), proceed to smoke tests
-3. If the page returns an error or doesn't load, report and skip smoke tests:
-
-```
-Production URL <url> not responding after deploy wait. Smoke tests skipped.
-Check deployment status manually.
-```
-
-**If no `productionUrl` is configured:** Report and skip.
-
-```
-No productionUrl in .claude/deployment.json. Smoke tests skipped.
-Add a .claude/deployment.json with productionUrl to enable post-deploy testing.
-```
+No Vercel API available. Wait `deployWaitSeconds` (default 120s) for auto-deploy, then check if production URL responds (Playwright navigate, expect 2xx). If no response or no `productionUrl` configured, report and skip smoke tests.
 
 **Step 4e: Run smoke tests**
 
 Read `e2e/smoke-test-flows.md` for the flow definitions. The production URL comes from `productionUrl` in `.claude/deployment.json` (Path B) or the Vercel deployment URL (Path A).
 
-Before each Playwright session, kill stale Chrome processes:
+Before each Playwright session, kill stale Chrome: `pgrep -f "mcp-chrome" | xargs kill 2>/dev/null || true`, wait 2s, verify clean.
 
-```bash
-pgrep -f "mcp-chrome" | xargs kill 2>/dev/null || true
-```
+**If `smokeTestProfiles` is empty** (or no `e2e/auth/` directory): Run flows directly using `playwright-headless`. QUICK = flows tagged `[QUICK]`, FULL = all flows.
 
-Wait 2 seconds, then verify no processes remain:
+**If `smokeTestProfiles` has entries:** For each profile, navigate with that profile's Playwright MCP connection. If redirected to `/login`, report auth expired and skip that profile. Otherwise run flows based on scope. Kill stale Chrome between profiles.
 
-```bash
-pgrep -f "mcp-chrome" || echo "Clean"
-```
-
-**Branch on `smokeTestProfiles` from `.claude/deployment.json`:**
-
-**If `smokeTestProfiles` is empty `[]` (or config missing and no `e2e/auth/` directory exists):**
-
-No auth profiles needed. Run smoke tests directly against the production URL using the default Playwright MCP connection:
-
-1. Navigate to `<production_url>` using `playwright-headless`
-2. Execute flows from `e2e/smoke-test-flows.md` based on scope:
-   - QUICK: flows tagged `[QUICK]`
-   - FULL: all flows
-3. Close the browser
-
-**If `smokeTestProfiles` has entries (e.g., `["playwright-full", "playwright-summaries"]`):**
-
-For each profile:
-
-1. Navigate to the production URL using the profile's Playwright MCP connection
-2. Check if redirected to `/login` — if so, auth is expired:
-   ```
-   Auth expired for <profile>. Re-authenticate before next deploy.
-   Skipping <profile> smoke tests.
-   ```
-3. If authenticated, run flows from `e2e/smoke-test-flows.md` based on scope
-4. Close the browser
-5. Kill stale Chrome processes before starting the next profile
-
-**Step 4f: Report results**
-
-```
-## Post-Deploy Smoke Test Results
-
-### Deployment
-- Commit: <sha> (pushed to <base-branch>)
-- Deploy URL: <production_url>
-- Deploy verification: <Vercel API | timed wait (Ns)>
-
-### Results
-[For each flow executed, report PASS/FAIL with details on failure]
-
-[Summary: All passed / N failures found]
-```
-
-Smoke test failures are non-blocking — the code is already deployed. Report what to fix.
-
-Then: Archive plan docs (Step 6).
+**Step 4f: Report results** — Show deployment info (commit, URL, verification method) and PASS/FAIL per flow with failure details. Smoke test failures are non-blocking — code is already deployed. Then: Archive plan docs (Step 6).
 
 #### Option 3: Keep As-Is
 
@@ -590,75 +461,19 @@ git branch -d <feature-branch>
 
 ## Common Mistakes
 
-**Skipping deployment audit**
-- **Problem:** Deploy code that breaks silently in production
-- **Fix:** Always run Step 0 before tests — tests can't catch deployment pitfalls
-
-**Skipping test verification**
-- **Problem:** Merge broken code, create failing PR
-- **Fix:** Always verify tests before offering options
-
-**Skipping build verification**
-- **Problem:** Tests pass but deploy fails — different module resolution between test runners and bundlers
-- **Fix:** Always run the build command after tests pass
-
-**Open-ended questions**
-- **Problem:** "What should I do next?" — ambiguous
-- **Fix:** Present exactly 4 structured options
-
-**Running from inside a worktree**
-- **Problem:** Causes cascading failures: `git add` for KB entries fails (wrong git index), worktree cleanup destroys CWD, `git mv` for plan archival operates on wrong context, test runners pick up duplicate tests from other worktrees.
-- **Fix:** Always run this skill from the main repo directory. See "CRITICAL" section at top.
-
-**Removing other worktrees during cleanup**
-- **Problem:** Other worktrees may have active Ralph loops or in-progress work. Removing them kills running processes and destroys uncommitted changes.
-- **Fix:** Only remove the specific worktree for the branch being finished. Never touch other worktrees.
-
-**`git mv` on untracked plan files**
-- **Problem:** Plan files created with the Write tool but never committed cause `git mv` to fail with "not under version control".
-- **Fix:** Check `git ls-files <path>` before `git mv`. Use plain `mv` or `rm` for untracked files.
-
-**Assuming Vercel MCP access without checking**
-- **Problem:** Iterating through all Vercel projects searching for a match wastes time and tokens when the project doesn't have MCP access
-- **Fix:** Read `.claude/deployment.json` first. If `vercelMcpAccess: false`, skip Vercel API entirely — use timed wait + production URL
-
-**Wrong smoke test scope**
-- **Problem:** Running quick scope when changes affect critical user flows
-- **Fix:** If branch changed files in critical flow paths (e.g., advisor selection, board flows, checkout), suggest full scope
-
-**Skipping plan archival**
-- **Problem:** Plan and design docs left in `docs/plans/` after work is merged, cluttering active plans
-- **Fix:** Always run Step 6 after merge (Options 1, 2) to move completed docs to `docs/plans/completed/`
-
-**Worktree cleanup when CWD is safe**
-- **Problem:** Skip cleanup when CWD is outside the worktree (unnecessary deferral)
-- **Fix:** Since CWD should always be the main repo (per CRITICAL section), worktree cleanup should always proceed immediately — never defer unnecessarily.
-
-**No confirmation for discard**
-- **Problem:** Accidentally delete work
-- **Fix:** Require typed "discard" confirmation
+| Mistake | Why it matters | Fix |
+|---------|---------------|-----|
+| Running from inside a worktree | Cascading failures: wrong git index, CWD destroyed on cleanup, duplicate tests | Run from main repo (see CRITICAL section) |
+| Removing other worktrees during cleanup | Kills active processes, destroys uncommitted work | Only remove the worktree being finished |
+| `git mv` on untracked plan files | Write tool files never committed cause `git mv` to fail | Check `git ls-files` first; use plain `mv` for untracked |
+| Assuming Vercel MCP access | Wastes time iterating projects without access | Read `.claude/deployment.json` first |
+| No confirmation for discard | Accidentally delete work | Require typed "discard" confirmation |
 
 ## Red Flags
 
-**Never:**
-- Proceed with CRITICAL deployment findings
-- Proceed with failing tests
-- Merge without verifying tests on result
-- Delete work without confirmation
-- Force-push without explicit request
+**Never:** Proceed with CRITICAL deployment findings or failing tests/build. Never merge without verifying tests on result. Never delete work without confirmation or force-push without explicit request.
 
-**Always:**
-- Run deployment audit before tests
-- Verify tests before offering options
-- Verify build passes before offering options
-- Present exactly 4 options
-- Get typed confirmation for Option 4
-- Always run from the main repo, never from inside a worktree
-- Only remove the worktree being finished — never touch other worktrees
-- Read `.claude/deployment.json` before Step 4d — respect per-project deployment config
-- Kill stale Chrome processes before each Playwright session
-- Report smoke test auth expiry as a non-blocking failure
-- Archive plan/design docs to `docs/plans/completed/` after merge (Options 1, 2)
+**Always:** Follow the step order (audit → tests → build → eval → options). Present exactly 4 options. Run from main repo. Only remove the specific worktree being finished. Read `.claude/deployment.json` before deploy. Kill stale Chrome before Playwright. Archive plans after merge.
 
 ## Lessons-Learned Gate
 
