@@ -29,6 +29,14 @@ Only stop for: unresolvable ambiguity in the design document.
 
 **Save plans to:** Relevant project directory with naming: `YYYY-MM-DD-<topic>-plan.md`
 
+## Before Writing
+
+Gather context before writing any plan:
+1. Read the source design document (if one exists — path typically provided by the user or in a prior brainstorming session)
+2. Check for prior plans on the same topic in the project's `docs/plans/` directory (if it exists)
+3. Review any relevant business documents in the project directory
+4. Identify stakeholders, dependencies, and constraints mentioned in project docs
+
 ## Bite-Sized Task Granularity
 
 **Each step is one focused action:**
