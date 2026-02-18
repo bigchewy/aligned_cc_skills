@@ -18,7 +18,7 @@ None. All work happens in Markdown files within the repo.
 
 ---
 
-### Task 1: Add MANDATORY sub-agent enforcement language to business-brainstorming
+### ✅ Task 1: Add MANDATORY sub-agent enforcement language to business-brainstorming
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md:104-106`
@@ -54,7 +54,7 @@ git commit -m "feat(business-brainstorming): add MANDATORY sub-agent enforcement
 
 ---
 
-### Task 2: Restructure fact-check into explicit two-phase format in business-brainstorming
+### ✅ Task 2: Restructure fact-check into explicit two-phase format in business-brainstorming
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md:117-119` (the critic prompt block)
@@ -94,7 +94,7 @@ git commit -m "feat(business-brainstorming): restructure critic prompt into two-
 
 ---
 
-### Task 3: Add escalation protocol for Round 2 in business-brainstorming
+### ✅ Task 3: Add escalation protocol for Round 2 in business-brainstorming
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md:128-129`
@@ -132,7 +132,7 @@ git commit -m "feat(business-brainstorming): add escalation protocol for Round 2
 
 ---
 
-### Task 4: Add git commit and handoff prompt to business-brainstorming
+### ✅ Task 4: Add git commit and handoff prompt to business-brainstorming
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md:131-133`
@@ -179,7 +179,7 @@ git commit -m "feat(business-brainstorming): add git commit step and next-step h
 
 ---
 
-### Task 5: Create critic-registry.md pointer file for business-brainstorming
+### ✅ Task 5: Create critic-registry.md pointer file for business-brainstorming
 
 **Files:**
 - Create: `skills/business-brainstorming/critic-registry.md`
@@ -205,7 +205,7 @@ git commit -m "feat(business-brainstorming): add critic-registry.md pointer file
 
 ---
 
-### Task 6: Add applicability assessment directive to business design-critique-checklist.md
+### ✅ Task 6: Add applicability assessment directive to business design-critique-checklist.md
 
 **Files:**
 - Modify: `skills/business-brainstorming/design-critique-checklist.md:7-9`
@@ -247,7 +247,7 @@ git commit -m "feat(business-brainstorming): add applicability assessment direct
 
 ---
 
-### Task 7: Add autonomous execution mode to business-write-plan
+### ✅ Task 7: Add autonomous execution mode to business-write-plan
 
 **Files:**
 - Modify: `skills/business-write-plan/SKILL.md:18-20`
@@ -293,7 +293,7 @@ git commit -m "feat(business-write-plan): add autonomous execution mode"
 
 ---
 
-### Task 8: Add research/exploration phase to business-write-plan
+### ✅ Task 8: Add research/exploration phase to business-write-plan
 
 **Files:**
 - Modify: `skills/business-write-plan/SKILL.md` (after the Save plans line, before `## Bite-Sized Task Granularity`)
@@ -337,7 +337,7 @@ git commit -m "feat(business-write-plan): add research/exploration phase before 
 
 ---
 
-### Task 9: Add verification gate and Source Design Doc header field to business-write-plan
+### ✅ Task 9: Add verification gate and Source Design Doc header field to business-write-plan
 
 **Files:**
 - Modify: `skills/business-write-plan/SKILL.md` (plan header template + new section)
@@ -399,7 +399,7 @@ git commit -m "feat(business-write-plan): add verification gate and Source Desig
 
 ---
 
-### Task 10: Add mandatory Decision Log section to business-write-plan
+### ✅ Task 10: Add mandatory Decision Log section to business-write-plan
 
 **Ordering dependency:** Complete Task 9 before Task 10 — Task 10 inserts before `## Verification Gate`, which Task 9 creates.
 
@@ -459,7 +459,7 @@ git commit -m "feat(business-write-plan): add mandatory Decision Log section"
 
 ---
 
-### Task 11: Replace single-critic with dual-critic architecture in business-write-plan
+### ✅ Task 11: Replace single-critic with dual-critic architecture in business-write-plan
 
 **Files:**
 - Modify: `skills/business-write-plan/SKILL.md` (the `## Sub-Agent Critique (mandatory)` section)
@@ -538,7 +538,7 @@ git commit -m "feat(business-write-plan): replace single critic with dual-critic
 
 ---
 
-### Task 12: Update handoff prompt in business-write-plan
+### ✅ Task 12: Update handoff prompt in business-write-plan
 
 **Files:**
 - Modify: `skills/business-write-plan/SKILL.md` (the `## Execution Handoff` section)
@@ -588,7 +588,7 @@ git commit -m "feat(business-write-plan): update handoff to commit + ready-to-pa
 
 ---
 
-### Task 13: Update business plan-critique-checklist.md with new directives and 9th criterion
+### ✅ Task 13: Update business plan-critique-checklist.md with new directives and 9th criterion
 
 **Files:**
 - Modify: `skills/business-write-plan/plan-critique-checklist.md`
@@ -660,7 +660,7 @@ git commit -m "feat(business-write-plan): add applicability assessment, anti-mer
 
 ---
 
-### Task 14: Add severity levels and Phase 0 header to business-diagnosis
+### ✅ Task 14: Add severity levels and Phase 0 header to business-diagnosis
 
 **Files:**
 - Modify: `skills/business-diagnosis/SKILL.md`
@@ -735,7 +735,7 @@ git commit -m "feat(business-diagnosis): add severity levels and Phase 0 multi-a
 
 ---
 
-### Task 15: Add "When Process Reveals No Root Cause" section to business-diagnosis
+### ✅ Task 15: Add "When Process Reveals No Root Cause" section to business-diagnosis
 
 **Files:**
 - Modify: `skills/business-diagnosis/SKILL.md` (insert after Quick Reference, before end of file)
@@ -772,7 +772,7 @@ git commit -m "feat(business-diagnosis): add 'When Process Reveals No Root Cause
 
 ---
 
-### Task 16: Add User Signals section to business-diagnosis
+### ✅ Task 16: Add User Signals section to business-diagnosis
 
 **Files:**
 - Modify: `skills/business-diagnosis/SKILL.md` (insert after Red Flags, before Common Rationalizations)
@@ -823,7 +823,7 @@ git commit -m "feat(business-diagnosis): add User Signals section"
 
 ---
 
-### Task 17: Trim rationalizations table in business-diagnosis
+### ✅ Task 17: Trim rationalizations table in business-diagnosis
 
 **Files:**
 - Modify: `skills/business-diagnosis/SKILL.md`
@@ -867,7 +867,7 @@ git commit -m "feat(business-diagnosis): trim rationalizations table from 6 to 4
 
 ---
 
-### Task 18: Update Quick Reference table in business-diagnosis
+### ✅ Task 18: Update Quick Reference table in business-diagnosis
 
 **Files:**
 - Modify: `skills/business-diagnosis/SKILL.md`
@@ -910,7 +910,7 @@ git commit -m "feat(business-diagnosis): expand Quick Reference table to include
 
 ---
 
-### Task 19: Add autonomous mode and increase batch size in business-executing
+### ✅ Task 19: Add autonomous mode and increase batch size in business-executing
 
 **Files:**
 - Modify: `skills/business-executing/SKILL.md:14-16`
@@ -1006,7 +1006,7 @@ git commit -m "feat(business-executing): add autonomous mode and increase batch 
 
 ---
 
-### Task 20: Add plan archival step to business-executing
+### ✅ Task 20: Add plan archival step to business-executing
 
 **Files:**
 - Modify: `skills/business-executing/SKILL.md` (replace Step 5 section)
@@ -1065,7 +1065,7 @@ git commit -m "feat(business-executing): add plan archival step and structured c
 
 ---
 
-### Task 21: Add issue discovery protocol to business-executing
+### ✅ Task 21: Add issue discovery protocol to business-executing
 
 **Files:**
 - Modify: `skills/business-executing/SKILL.md` (insert after "When to Use Business-Diagnosis", before "Remember")
@@ -1121,7 +1121,7 @@ git commit -m "feat(business-executing): add issue discovery protocol"
 
 ---
 
-### Task 22: Update Remember section in business-executing
+### ✅ Task 22: Update Remember section in business-executing
 
 **Files:**
 - Modify: `skills/business-executing/SKILL.md`
@@ -1165,7 +1165,7 @@ git commit -m "feat(business-executing): update Remember section for autonomous 
 
 ---
 
-### Task 23: Final verification — cross-reference check
+### ✅ Task 23: Final verification — cross-reference check
 
 **Files:**
 - Read: all 4 modified SKILL.md files + 2 checklists + 1 new file
