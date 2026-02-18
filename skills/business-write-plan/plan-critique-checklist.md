@@ -6,6 +6,10 @@ Critique a business work plan for executability, completeness, and scope discipl
 
 ## Instructions
 
+**Applicability assessment:** After reading the plan, quickly assess which of the 9 criteria below are relevant to its scope. If a criterion clearly doesn't apply (e.g., "Dependencies and ordering" when the plan has only 1-2 tasks; "Review gates" when the plan is a solo deliverable with no stakeholder checkpoints), mark it **N/A** with a one-line reason in the Checklist Results table and skip verification for that criterion.
+
+**Never suggest merging, combining, or consolidating tasks** — granular tasks are intentional. Document ordering dependencies instead.
+
 1. Read the plan file at the path provided. If the file cannot be read or is empty, report the error and stop.
 2. For each criterion below, verify against referenced materials and the plan's own logic:
    - **Read** referenced documents, designs, and source materials mentioned in the plan
@@ -117,6 +121,18 @@ Task dependencies must be documented and the ordering must be logical.
 - BAD: Task 5 references "the competitor analysis from Task 3" but Task 3 doesn't produce a competitor analysis
 - GOOD: Dependencies are explicit, outputs of each task are clear, ordering follows the natural workflow
 
+### 9. Decision quality
+
+Every non-obvious choice in the plan should be captured in the Decision Log with sufficient rationale.
+
+- Does the plan include a Decision Log section?
+- For each decision, are alternatives listed with reasons for rejection?
+- Are there non-obvious choices in the plan that are NOT logged? (Flag as missing)
+- Is the rationale sufficient to understand why the choice was made without additional context?
+
+- BAD: Decision Log missing entirely, or decisions listed without alternatives
+- GOOD: Every non-trivial choice documented with rationale and rejected alternatives
+
 ## Critique Output Format
 
 ```markdown
@@ -150,6 +166,7 @@ Task dependencies must be documented and the ordering must be logical.
 | 6 | Review gates | {Pass / N issues found} |
 | 7 | Acceptance criteria | {Pass / N issues found} |
 | 8 | Dependencies and ordering | {Pass / N issues found} |
+| 9 | Decision quality | {Pass / N issues found} |
 ```
 
 ## Important
