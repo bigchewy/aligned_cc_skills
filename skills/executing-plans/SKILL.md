@@ -160,26 +160,7 @@ N bug(s) were discovered and logged to `docs/kanban/todo/`. Review them and pick
 
 ## Kanban Entry Format
 
-When filing an entry to the Kanban board:
-
-1. Read `docs/kanban/.counter` for the next KB number (pad to 3 digits)
-2. Derive a kebab-case slug from the title (max 50 chars)
-3. Write `docs/kanban/todo/KB-NNN-slug.md`:
-
-```markdown
-# KB-NNN: [Title]
-
-- **Type:** bug
-- **Discovered during:** [plan filename / Task N]
-- **Location:** `[file path]:[line range]`
-- **Observed:** [What exists and why it's a problem]
-- **Expected:** [What should change]
-- **Why out of scope:** [Why it wasn't fixed when discovered]
-- **Severity:** LOW | MEDIUM | HIGH
-- **Created:** [today's date]
-```
-
-4. Write the incremented number back to `docs/kanban/.counter`
+When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `[plan filename / Task N]` as the "Discovered during" value (more specific than just the skill name).
 
 ## Remember
 - Review plan critically first
