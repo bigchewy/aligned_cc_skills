@@ -17,6 +17,16 @@ Assume the executor is capable but knows nothing about this client, project, or 
 
 **Context:** This should follow a design created by /aligned:business-brainstorming, or a clear objective from the user.
 
+**Autonomous execution:** Run to completion without pausing for user feedback.
+Pre-approved actions (do not ask):
+- Read any file in the project
+- Search the project for context
+- Write plan sections to the plan file
+- Launch critique sub-agents
+- Commit the plan to git
+
+Only stop for: unresolvable ambiguity in the design document.
+
 **Save plans to:** Relevant project directory with naming: `YYYY-MM-DD-<topic>-plan.md`
 
 ## Bite-Sized Task Granularity
