@@ -105,6 +105,26 @@ If during execution:
 
 **REQUIRED SUB-SKILL:** Use /aligned:business-diagnosis to find root cause before continuing.
 
+## Issue Discovery During Execution
+
+When unexpected business issues surface during execution (scope gaps not covered by the plan, stakeholder conflicts, assumption failures):
+
+1. **Don't fix inline** — stay focused on the current task
+2. **Raise immediately** — flag the issue in the conversation thread so the user is aware
+3. **If it's a blocker** (dependency that prevents the current task from completing) — route to "When to Stop and Ask" above. Don't push through.
+4. **Collect all issues** — include all raised issues in the Step 6 completion summary under "Discovered Issues" for user triage
+
+**What qualifies as an issue to raise:**
+- Scope gaps the plan doesn't cover but the deliverable needs
+- Assumptions in the plan that turned out to be wrong
+- Stakeholder conflicts or missing approvals that affect deliverable quality
+- Evidence or data that contradicts the plan's direction
+
+**What does NOT qualify:**
+- Things that are part of a later task in the current plan (the plan handles it)
+- Minor wording or formatting preferences (just handle them)
+- Improvements beyond the plan's stated goal (not your job right now)
+
 ## Remember
 - Review plan critically first
 - Follow plan steps exactly
