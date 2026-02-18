@@ -127,22 +127,56 @@ Before completing any plan, verify:
 | Scope discipline | Is anything included that doesn't serve the goal? |
 | Review points | Are there enough checkpoints to catch drift early? |
 
-## Sub-Agent Critique (mandatory)
+## Fact-Check + Critique Panel (mandatory, 2 parallel critics)
 
-After writing the plan, run two rounds of critique using fresh sub-agents. Sub-agents provide independent evaluation — they haven't seen the planning conversation, so they won't anchor on the author's assumptions.
+**MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the planning conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
+
+**Critic selection:** Default critics are listed below. If the plan's domain clearly warrants different critics (e.g., a technical plan that needs The Architect instead of Rumelt), select from `advisors/registry.md` instead. State which critics you selected and why.
 
 **Round 1:**
-1. Launch a fresh sub-agent (Task tool, `subagent_type=general-purpose`, `model=opus`). Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step. Prompt:
-   - "You are a skeptical, evidence-driven business plan reviewer. You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/business-write-plan/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Follow every instruction in the checklist to critique the plan using its output format. Verify all claims against referenced documents in the project directory — check that cited files exist and contain the data the plan references. Flag any claims you cannot verify as [UNVERIFIABLE]. Only report issues you can prove with evidence — do not speculate. Do not suggest expanding the plan's scope. Output a critique only — do not modify the plan file. If you cannot locate the checklist or plan file, report the error and stop."
-2. Present the sub-agent's findings to the user
-3. Incorporate approved fixes into the plan
+1. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step.
+
+   **Critic 1 — Richard Rumelt (Strategic Alignment lens):**
+   - Read Richard Rumelt's full prompt file (path listed in `advisors/registry.md`). Then:
+
+   "[Full contents of Rumelt's prompt file]
+
+   You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/business-write-plan/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full.
+
+   Evaluate the plan through your strategic lens. Focus on: Does the plan identify and attack the crux? Are priorities correctly ordered? Does the guiding policy cohere? Do the tasks form a coordinated set of actions?
+
+   You own checklist criteria 1 (Task sizing — are tasks focused on the crux?), 2 (Audience clarity), 5 (Scope discipline), and 9 (Decision quality). Skip criteria 3, 4, 6, 7, 8 (The PM covers those). You do NOT fact-check individual claims — The PM handles that.
+
+   Also evaluate Decision Log entries if present. Tag every finding with [Rumelt].
+   Output a critique in the checklist output format."
+
+   **Critic 2 — The PM (Operability lens):**
+   - Read The PM's full prompt file (path listed in `advisors/registry.md`). Then:
+
+   "[Full contents of The PM's prompt file]
+
+   You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/business-write-plan/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Your job has two phases:
+
+   **Phase 1 (Fact-check):** Extract every factual claim (referenced documents, data points, stakeholder names, deliverable descriptions). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
+
+   **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the plan against checklist criteria 3 (Evidence requirements), 4 ('So what?' test), 6 (Review gates), 7 (Acceptance criteria), and 8 (Dependencies and ordering). Focus on: Are tasks correctly sized? Are acceptance criteria measurable? Is the plan executable by someone with zero context? Are review gates at the right points?
+
+   Also evaluate Decision Log entries if present. Tag every finding with [The PM].
+   Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
+
+2. **Aggregate the two reports:**
+   - **Fact-checks:** Take The PM's fact-check report as the authoritative source. If Rumelt flagged a factual issue The PM missed, include it with a [Rumelt] tag.
+   - **Critique findings:** Merge both, preserving persona tags (`[Rumelt]`, `[The PM]`). De-duplicate — when both flag the same issue, keep the higher-severity version and note both sources.
+   - Present the unified report to the user.
+
+3. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues.
 
 **Round 2 (conditional):**
 Only run if Round 1 found medium or high severity issues. Use fresh sub-agents (do NOT resume Round 1 agents).
-1. Launch another fresh sub-agent (same config)
-2. Same prompt, same checklist, but against the updated plan
-3. Present Round 2 findings to the user
-4. Incorporate any final fixes
+
+Round 2 is **scoped to changes only** — not a full re-review. Before launching agents, prepare a brief summary of what changed since Round 1.
+
+Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`, `model=haiku`. Same critic identities (Rumelt + The PM), scoped prompts focusing only on changed sections with the summary of changes provided. Tag findings with persona names. Apply any remaining fixes.
 
 ## Plan Critique
 
