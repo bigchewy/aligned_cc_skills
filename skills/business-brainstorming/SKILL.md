@@ -128,7 +128,11 @@ For each major obstacle identified in Phase 2:
 6. Incorporate approved fixes into the design.
 
 **Round 2 (conditional):**
-Only run if Round 1 found medium or high severity issues. Same critics (not re-selected), fresh sub-agents (do NOT resume Round 1 agents), against the updated document. Incorporate any final fixes. Present final results to the user.
+Only run if Round 1 found medium or high severity issues. Same critics (not re-selected), fresh sub-agents (do NOT resume Round 1 agents), against the updated document.
+
+**Escalation:** If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. For example, if a financial critic flagged a legal compliance concern but no legal advisor was in Round 1, add one for Round 2. State the escalation reason. Maximum one additional critic per round.
+
+Apply any remaining fixes. Present final results to the user.
 
 **Execution (if continuing):**
 - Ask: "Ready to plan out the work?"
