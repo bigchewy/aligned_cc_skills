@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 # Artifact Verifier Agent
 
 Verifies factual claims in generated documentation artifacts against the actual codebase. Dispatched when skills generate architecture diagrams, design docs, or technical references that make claims about file paths, function names, data flows, etc.

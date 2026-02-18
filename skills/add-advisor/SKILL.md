@@ -208,6 +208,20 @@ For Option B, if `~/.claude/advisors/prompts/{repo-name}` doesn't exist yet:
 2. Register in `~/.claude/advisors/prompts/.repos` manifest (append repo-name if not listed)
 3. Verify: Glob `~/.claude/advisors/prompts/{repo-name}/**/*.md` returns the advisor files
 
+### 8b. Update the Directory
+
+If `advisors/directory.md` exists (plugin-relative), append one row to the table under the appropriate `### {repo-name}` heading:
+
+```
+| {slug} | {display-name} | {summary} |
+```
+
+- **slug:** The advisor's kebab-case filename (without `.md`)
+- **display-name:** Extracted from the prompt file's first line ("You are [Name], ...")
+- **summary:** A concise phrase from the opening sentence describing the advisor
+
+If `directory.md` doesn't exist, skip this step — the advisor is still discoverable via glob fallback in `use-advisor`.
+
 ### 9. Commit
 
 Commit all changes with message: `feat: add {advisor-name} advisor`

@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 # Mockup Generator
 
 ## Overview

@@ -429,7 +429,12 @@ After saving the plan (to the main worktree and committed to main), generate rea
 Plan complete and saved to `docs/plans/<filename>.md` (committed to main).
 ```
 
-Then output two execution options (with `{plan-file-path}`, `{feature-name}`, and `{worktree-path}` filled in):
+Then output two execution options (with `{plan-file-path}`, `{feature-name}`, and `{worktree-path}` filled in). **Before the options, state your recommendation** of which option fits this plan better and why. Use these heuristics:
+
+- **Option A (Interactive)** when: plan has ≤10 tasks, tasks require judgment calls or creative decisions, the feature touches shared/sensitive code where you'd want human review at checkpoints, or the plan has ambiguities that may need mid-execution clarification.
+- **Option B (Ralph loop)** when: plan has >10 well-specified tasks, every task has unambiguous acceptance criteria and verification commands, the work is mechanical (rote file edits, repetitive patterns), or context window bloat would degrade quality in a single session.
+
+State the recommendation as a single sentence, e.g.: "**Recommendation:** Option B (Ralph loop) — this plan has 23 mechanical tasks with clear verification steps; fresh context per task will prevent quality drift."
 
 ````
 ## Next Steps

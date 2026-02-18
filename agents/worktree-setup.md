@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 # Worktree Setup Agent
 
 Sets up isolated git worktrees for feature development. Dispatched by brainstorming and autopilot skills — not user-invocable.
