@@ -103,7 +103,7 @@ For each major obstacle identified in Phase 2:
 
 **Fact-Check + Critique Panel (mandatory, dynamic selection):**
 
-After writing the design, run critique using fresh sub-agents. Sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions.
+**MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
 
 **Round 1:**
 1. Read `advisors/registry.md`.
@@ -115,8 +115,10 @@ After writing the design, run critique using fresh sub-agents. Sub-agents provid
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/business-brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Follow every instruction in the checklist to critique the design using its output format. Verify all claims against referenced documents in the domain folder. Flag any claims you cannot verify as [UNVERIFIABLE]. Only report issues you can prove with evidence — do not speculate. Do not suggest expanding scope or adding sections. Tag every finding with your name (e.g., [Dalio], [The PM]).
-   Output a critique report in the checklist output format."
+   You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying claims. Read `skills/business-brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Your job has two phases:
+   **Phase 1 (Fact-check):** Extract every factual claim (market data, competitor assertions, financial assumptions, stakeholder claims, timeline assertions). Verify against evidence provided in the document and referenced domain materials. Use WebSearch/WebFetch to check external claims where possible. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage. Include source URLs for verified external claims.
+   **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name (e.g., [Dalio], [The PM]).
+   Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
 
 5. **Aggregate the reports:**
    - **Fact-checks:** Merge all. De-duplicate — if multiple critics verified the same claim, report it once with all confirming sources. If critics disagree on a claim, note both findings.
@@ -126,11 +128,21 @@ After writing the design, run critique using fresh sub-agents. Sub-agents provid
 6. Incorporate approved fixes into the design.
 
 **Round 2 (conditional):**
-Only run if Round 1 found medium or high severity issues. Same critics (not re-selected), fresh sub-agents (do NOT resume Round 1 agents), against the updated document. Incorporate any final fixes. Present final results to the user.
+Only run if Round 1 found medium or high severity issues. Same critics (not re-selected), fresh sub-agents (do NOT resume Round 1 agents), against the updated document.
 
-**Execution (if continuing):**
-- Ask: "Ready to plan out the work?"
-- **REQUIRED SUB-SKILL:** Use /aligned:business-write-plan to create detailed work plan
+**Escalation:** If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. For example, if a financial critic flagged a legal compliance concern but no legal advisor was in Round 1, add one for Round 2. State the escalation reason. Maximum one additional critic per round.
+
+Apply any remaining fixes. Present final results to the user.
+
+**Post-design steps:**
+
+- Commit the design document to git after critique rounds are complete
+
+**Next step prompt (mandatory):**
+
+After committing the design document, output a ready-to-paste prompt for the next session:
+
+> Use `/aligned:business-write-plan` to write an execution plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
 
 ## Design Critique
 

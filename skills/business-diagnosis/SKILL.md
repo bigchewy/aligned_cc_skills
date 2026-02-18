@@ -39,6 +39,42 @@ Use for ANY business issue:
 - Previous solution didn't work
 - You don't fully understand why something isn't working
 
+## Severity Levels
+
+Default severity is **low** (single investigator, standard 4-phase process). Pass `high` as an argument for multi-agent fan-out investigation.
+
+- `/aligned:business-diagnosis` — low severity (default)
+- `/aligned:business-diagnosis high` — high severity, multi-agent
+
+### High Severity — Phase 0: Multi-Agent Investigation
+
+Added before the existing four phases. Use when low-severity investigation is insufficient.
+
+Fan out 5 subagents via Task tool, each with a different analytical method:
+
+| Agent | Method | Prompt Directive |
+|-------|--------|-----------------|
+| Backward Tracer | Trace from symptoms to origin | "Start at the problem symptoms. Trace backward: when did this start? What changed? What was working before? Follow the chain to find the origin point." |
+| Stakeholder Mapper | Map human system around the problem | "Identify all affected parties, their perspectives, incentives, and potential blind spots. Map the human system around this problem. Who benefits from the status quo? Who has veto power?" |
+| Data Analyst | Analyze quantitative evidence | "Gather and analyze relevant metrics, timelines, and quantitative evidence. Look for correlations, trends, and anomalies. What does the data say vs. what people believe?" |
+| Pattern Matcher | Search for similar past problems | "Search project history for similar past problems and how they were resolved. Check if this is a recurring pattern. What was tried before? What worked and what didn't?" |
+| JudgeAgent | Synthesize and resolve contradictions | "Read the other agents' reports. For each proposed root cause, try to disprove it. Identify agreements and contradictions. Produce a unified hypothesis ranked by evidence strength." |
+
+First 4 agents run in parallel. Each returns: hypothesis, evidence, confidence level.
+
+JudgeAgent runs second, receiving all 4 reports. Challenges each hypothesis, resolves contradictions.
+
+Main thread synthesizes. If consensus → proceed to Phase 1 with strong starting hypothesis. If no consensus → present competing theories to user.
+
+### When to Use High Severity
+
+- Previous low-severity investigation didn't find root cause (clearest signal)
+- Cross-functional issues affecting multiple teams or stakeholders
+- Multi-stakeholder impact with conflicting perspectives
+- Recurring problems that have resisted 2+ prior fix attempts
+- Time-critical situations (deadline pressure, escalation risk)
+- User explicitly requests high severity
+
 ## The Four Phases
 
 You MUST complete each phase before proceeding to the next.
@@ -202,14 +238,23 @@ If you catch yourself thinking:
 
 **If 3+ approaches failed:** Question the strategy (see Phase 4.5)
 
+## Your Human Partner's Signals You're Doing It Wrong
+
+**Watch for these redirections:**
+- They keep saying "but why?" after your explanations → you haven't gone deep enough
+- They're getting frustrated because you keep proposing solutions → you skipped root cause investigation
+- They say "we tried that already" → you didn't check history
+- They redirect you to talk to someone else → you're missing a stakeholder perspective
+- They ask you to "just fix it" → the process feels too slow, but don't skip steps — explain what you're doing and why
+
+**When you see these:** STOP. Return to Phase 1.
+
 ## Common Rationalizations
 
 | Excuse | Reality |
 |--------|---------|
 | "Issue is obvious, don't need process" | Obvious issues have root causes too. Process is fast for simple problems. |
 | "Urgent, no time for process" | Systematic diagnosis is FASTER than solution-hopping. |
-| "Just try this first, then investigate" | First solution sets the direction. Do it right from the start. |
-| "Multiple changes at once saves effort" | Can't isolate what worked. Causes new issues. |
 | "I see the problem, let me fix it" | Seeing symptoms does not equal understanding root cause. |
 | "One more attempt" (after 2+ failures) | 3+ failures = strategic problem. Question the approach, don't try again. |
 
@@ -217,7 +262,20 @@ If you catch yourself thinking:
 
 | Phase | Key Activities | Success Criteria |
 |-------|---------------|------------------|
+| **0. Multi-Agent** (high only) | Fan out subagents, synthesize | Consensus hypothesis or competing theories |
 | **1. Root Cause** | Gather evidence, define gap, check changes, trace cause | Understand WHAT and WHY |
 | **2. Pattern** | Find successes, compare, identify differences | Know what works and why this doesn't |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
 | **4. Implementation** | Define criteria, single change, verify | Problem resolved, criteria met |
+
+## When Process Reveals No Root Cause
+
+If systematic investigation surfaces no clear root cause, consider these possibilities:
+
+- **External/environmental factors:** Market shifts, competitor actions, regulatory changes that are outside the team's control
+- **Timing issues:** The problem is intermittent or context-dependent — it only manifests under specific conditions (certain clients, certain times, certain workloads)
+- **Third-party dependencies:** The root cause lies in a partner, vendor, or platform the team doesn't control
+
+**Action:** Document what was investigated, what was ruled out, and what external factors are suspected. Recommend monitoring rather than fixing.
+
+**But:** 95% of "no root cause" cases are incomplete investigation. Before concluding the cause is external, verify you have genuinely exhausted the 4-phase process.
