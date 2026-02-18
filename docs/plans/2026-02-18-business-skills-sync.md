@@ -147,9 +147,13 @@ In `skills/business-brainstorming/SKILL.md`, find the execution section (approxi
 - **REQUIRED SUB-SKILL:** Use /aligned:business-write-plan to create detailed work plan
 ```
 
+Note: The software counterpart (`brainstorming`) has a "Create worktree + next step prompt" section that invokes `/aligned:using-git-worktrees`. Business skills have no feature branch workflow, so the worktree step is intentionally omitted.
+
 Replace with:
 
 ```markdown
+**Post-design steps:**
+
 - Commit the design document to git after critique rounds are complete
 
 **Next step prompt (mandatory):**
@@ -162,8 +166,9 @@ After committing the design document, output a ready-to-paste prompt for the nex
 **Step 2: Verify the change**
 
 Read `skills/business-brainstorming/SKILL.md` and confirm:
-1. The git commit instruction is present
-2. The handoff prompt references `/aligned:business-write-plan` with the correct path pattern
+1. The `**Post-design steps:**` header is present
+2. The git commit instruction is present
+3. The handoff prompt references `/aligned:business-write-plan` with the correct path pattern
 
 **Step 3: Commit**
 
@@ -203,11 +208,11 @@ git commit -m "feat(business-brainstorming): add critic-registry.md pointer file
 ### Task 6: Add applicability assessment directive to business design-critique-checklist.md
 
 **Files:**
-- Modify: `skills/business-brainstorming/design-critique-checklist.md:7-8`
+- Modify: `skills/business-brainstorming/design-critique-checklist.md:7-9`
 
 **Step 1: Add applicability assessment after the instructions preamble**
 
-In `skills/business-brainstorming/design-critique-checklist.md`, find lines 7-8:
+In `skills/business-brainstorming/design-critique-checklist.md`, find:
 
 ```markdown
 ## Instructions
@@ -215,15 +220,9 @@ In `skills/business-brainstorming/design-critique-checklist.md`, find lines 7-8:
 1. Read the design document at the path provided. If the file cannot be read or is empty, report the error and stop.
 ```
 
-Insert after line 8 (before the numbered list continues at line 9):
+(Note: line 7 = `## Instructions`, line 8 = blank, line 9 = `1. Read the design document...`)
 
-Actually, insert a new directive between the `## Instructions` header and the numbered list. Replace lines 8-9:
-
-```markdown
-## Instructions
-
-1. Read the design document at the path provided. If the file cannot be read or is empty, report the error and stop.
-```
+Replace with:
 
 with:
 
@@ -251,11 +250,11 @@ git commit -m "feat(business-brainstorming): add applicability assessment direct
 ### Task 7: Add autonomous execution mode to business-write-plan
 
 **Files:**
-- Modify: `skills/business-write-plan/SKILL.md:16-19`
+- Modify: `skills/business-write-plan/SKILL.md:18-20`
 
 **Step 1: Add autonomy block after the context line**
 
-In `skills/business-write-plan/SKILL.md`, find lines 17-19:
+In `skills/business-write-plan/SKILL.md`, find (lines 18-20):
 
 ```markdown
 **Context:** This should follow a design created by /aligned:business-brainstorming, or a clear objective from the user.
@@ -402,6 +401,8 @@ git commit -m "feat(business-write-plan): add verification gate and Source Desig
 
 ### Task 10: Add mandatory Decision Log section to business-write-plan
 
+**Ordering dependency:** Complete Task 9 before Task 10 — Task 10 inserts before `## Verification Gate`, which Task 9 creates.
+
 **Files:**
 - Modify: `skills/business-write-plan/SKILL.md` (insert before Verification Gate)
 
@@ -426,9 +427,9 @@ Every non-obvious choice in the plan gets logged. Append this section after comp
 ## Decision Log
 
 ### Summary
-| # | Decision | Choice Made | Alternatives Considered |
-|---|----------|------------|------------------------|
-| 1 | [topic]  | [choice]   | [alt A], [alt B]       |
+| # | Decision | Choice | Rationale |
+|---|----------|--------|-----------|
+| 1 | [topic]  | [choice] | [brief rationale] |
 
 ### Appendix: Decision Details
 
@@ -594,13 +595,15 @@ git commit -m "feat(business-write-plan): update handoff to commit + ready-to-pa
 
 **Step 1: Add applicability assessment directive**
 
-In `skills/business-write-plan/plan-critique-checklist.md`, find lines 8-9:
+In `skills/business-write-plan/plan-critique-checklist.md`, find:
 
 ```markdown
 ## Instructions
 
 1. Read the plan file at the path provided. If the file cannot be read or is empty, report the error and stop.
 ```
+
+(Note: line 7 = `## Instructions`, line 8 = blank, line 9 = `1. Read the plan file...`)
 
 Insert the applicability assessment after `## Instructions` and before the numbered list:
 
@@ -910,11 +913,13 @@ git commit -m "feat(business-diagnosis): expand Quick Reference table to include
 ### Task 19: Add autonomous mode and increase batch size in business-executing
 
 **Files:**
-- Modify: `skills/business-executing/SKILL.md:10-12`
+- Modify: `skills/business-executing/SKILL.md:14-16`
+
+**Behavioral change:** business-executing's core principle shifts from checkpoint-gated execution to autonomous batch execution. This removes the user review loop between batches. The "When to Stop and Ask" section remains as the only interruption path.
 
 **Step 1: Add autonomous mode after the announce line**
 
-In `skills/business-executing/SKILL.md`, find lines 12-14:
+In `skills/business-executing/SKILL.md`, find (lines 14-16):
 
 ```markdown
 **Announce at start:** "I'm using the business-executing skill to implement this plan."
@@ -1035,20 +1040,13 @@ If either move fails (file doesn't exist or already moved), skip and continue.
 
 ### Step 6: Report Completion
 
-After all tasks complete and validated:
+After all tasks complete and validated, output a structured summary:
 
-```
-## Execution Complete
+**"Execution Complete"**
 
-### Deliverables Produced
-- [list each deliverable with acceptance criteria status]
-
-### Discovered Issues
-- [list any issues surfaced during execution, or "None"]
-
-### Suggested Next Steps
-- [based on the deliverables and any issues]
-```
+- **Deliverables Produced:** List each deliverable with acceptance criteria status
+- **Discovered Issues:** List any issues surfaced during execution, or "None"
+- **Suggested Next Steps:** Based on the deliverables and any issues
 ```
 
 **Step 2: Verify the change**
@@ -1188,6 +1186,9 @@ For each modified file, confirm:
    - `/aligned:business-diagnosis` — skill exists
 5. `skills/business-brainstorming/critic-registry.md` references:
    - `advisors/registry.md` — exists
+6. Advisor prompt files used by business-write-plan dual-critic (Task 11):
+   - `advisors/va-web-app/richard-rumelt.md` — exists
+   - `advisors/.claude/the-pm.md` — exists
 
 **Step 2: Verify all preserved content is intact**
 
@@ -1197,7 +1198,13 @@ Spot-check that these business-domain sections still exist unchanged:
 - business-diagnosis: Iron Law block, 4-layer tracing model, red flags list
 - business-executing: task type guidance (document sections, action items, research/analysis)
 
-**Step 3: Commit (if any fixes needed)**
+**Step 3: Verify new content from checklist updates**
+
+Confirm:
+- `skills/business-brainstorming/design-critique-checklist.md` contains the applicability assessment directive between `## Instructions` and the numbered list (added by Task 6)
+- `skills/business-write-plan/plan-critique-checklist.md` contains the applicability assessment directive, anti-merge directive, and criterion 9 (added by Task 13)
+
+**Step 4: Commit (if any fixes needed)**
 
 If any cross-references are broken or preserved content is missing, fix and commit. Otherwise, no commit needed.
 
@@ -1213,6 +1220,7 @@ If any cross-references are broken or preserved content is missing, fix and comm
 | 3 | Round 2 model for business-write-plan | `model=haiku` (matching writing-plans) | `model=sonnet` (matching Round 1) |
 | 4 | business-executing Step 3/4 rewrite | Remove "Ready for feedback" and feedback loop | Keep feedback loop alongside autonomous mode |
 | 5 | business-diagnosis description field | Keep existing description unchanged | Update to mention severity support |
+| 6 | Critic model: business-write-plan vs business-brainstorming | `model=sonnet` for write-plan (matching writing-plans counterpart) | `model=opus` (matching business-brainstorming) |
 
 ### Appendix: Decision Details
 
@@ -1244,6 +1252,12 @@ If any cross-references are broken or preserved content is missing, fix and comm
 
 #### Decision 5: business-diagnosis description field
 **Chose:** Keep the existing frontmatter description unchanged
-**Why:** The description focuses on when to use the skill ("when a business problem isn't resolving"), which remains accurate. The systematic-debugging counterpart includes "Supports low (default) and high severity" in its description, but that's implementation detail that makes the description less scannable. Users learn about severity from the skill content itself.
+**Why:** The description focuses on when to use the skill ("when a business problem isn't resolving"), which remains accurate. The systematic-debugging counterpart includes "Supports low (default) and high severity" in its description, but that's implementation detail that makes the description less scannable. Users learn about severity from the skill content itself. This is an intentional divergence from the software counterpart's description pattern — the trade-off favors scannability over counterpart consistency.
 **Alternatives rejected:**
 - Add severity mention: Would make the description longer without improving discoverability. The `/aligned:business-diagnosis high` syntax is documented inside the skill.
+
+#### Decision 6: Critic model — business-write-plan vs business-brainstorming
+**Chose:** `model=sonnet` for business-write-plan critics (Round 1)
+**Why:** Each business skill aligns with its own software counterpart. `writing-plans` uses `model=sonnet` for both critics; `brainstorming` uses `model=opus`. business-write-plan follows writing-plans → sonnet. business-brainstorming follows brainstorming → opus. The cross-skill asymmetry (sonnet vs opus) mirrors the asymmetry in the software counterparts. Aligning to opus for both would diverge from the writing-plans counterpart pattern, and critique quality at sonnet is sufficient for plan review (plans contain fewer codebase-specific facts than designs).
+**Alternatives rejected:**
+- `model=opus` to match business-brainstorming: Would diverge from the writing-plans counterpart. The sync goal is to align each business skill with its own software counterpart, not to harmonize across business skills.
