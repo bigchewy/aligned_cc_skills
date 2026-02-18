@@ -57,6 +57,8 @@ Gather context before writing any plan:
 
 **Goal:** [One sentence describing the desired outcome]
 
+**Source Design Doc:** [path to design doc, e.g. `docs/plans/2026-01-15-topic-design.md`, or `N/A` if none]
+
 **Audience:** [Who will receive/use this]
 
 **Format:** [Document type, structure, tone]
@@ -145,6 +147,14 @@ Only run if Round 1 found medium or high severity issues. Use fresh sub-agents (
 ## Plan Critique
 
 When critiquing an existing plan (instead of writing one), use the checklist in `plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source materials — don't trust that referenced documents exist, contain the cited data, or support the conclusions drawn from them without checking.
+
+## Verification Gate
+
+Before including any claim in the plan:
+- Confirm referenced data points against the source design document
+- Check that cited deliverables, documents, or artifacts actually exist (use Glob/Read)
+- Verify stakeholder names and roles are accurate per project docs
+- If a referenced file or document cannot be found, flag it as `[NOT FOUND]` in the plan rather than guessing
 
 ## Remember
 - Specific deliverable descriptions, not vague ("write the pricing section" not "add content")
