@@ -148,6 +148,32 @@ Only run if Round 1 found medium or high severity issues. Use fresh sub-agents (
 
 When critiquing an existing plan (instead of writing one), use the checklist in `plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source materials — don't trust that referenced documents exist, contain the cited data, or support the conclusions drawn from them without checking.
 
+## Decision Log (mandatory)
+
+Every non-obvious choice in the plan gets logged. Append this section after completing the plan.
+
+### Format
+
+```markdown
+## Decision Log
+
+### Summary
+| # | Decision | Choice | Rationale |
+|---|----------|--------|-----------|
+| 1 | [topic]  | [choice] | [brief rationale] |
+
+### Appendix: Decision Details
+
+#### Decision 1: [topic]
+**Chose:** [choice]
+**Why:** [reasoning, trade-offs]
+**Alternatives rejected:**
+- [Alt A]: [why not]
+- [Alt B]: [why not]
+```
+
+The summary table should fit on one page. Supporting detail goes in the appendix.
+
 ## Verification Gate
 
 Before including any claim in the plan:
