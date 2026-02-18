@@ -255,8 +255,6 @@ If you catch yourself thinking:
 |--------|---------|
 | "Issue is obvious, don't need process" | Obvious issues have root causes too. Process is fast for simple problems. |
 | "Urgent, no time for process" | Systematic diagnosis is FASTER than solution-hopping. |
-| "Just try this first, then investigate" | First solution sets the direction. Do it right from the start. |
-| "Multiple changes at once saves effort" | Can't isolate what worked. Causes new issues. |
 | "I see the problem, let me fix it" | Seeing symptoms does not equal understanding root cause. |
 | "One more attempt" (after 2+ failures) | 3+ failures = strategic problem. Question the approach, don't try again. |
 
