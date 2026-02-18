@@ -307,7 +307,7 @@ git commit -m "chore: trim verbosity in create-new-skill skill"
 
 ---
 
-### Task 8: Update cross-references after restructuring
+### ✅ Task 8: Update cross-references after restructuring
 
 **Files:**
 - Potentially modify: any file referencing the removed CLAUDE.md sections or the old Kanban format location
