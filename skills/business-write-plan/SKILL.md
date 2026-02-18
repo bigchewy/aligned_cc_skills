@@ -225,10 +225,12 @@ Before including any claim in the plan:
 
 ## Execution Handoff
 
-After saving the plan, offer execution:
+After saving the plan, commit it to git and output:
 
-**"Plan complete and saved to `<filename>.md`. Ready to start executing?"**
+```
+Plan complete and saved to `<filename>.md` (committed to git).
+```
 
-**If yes:**
-- **REQUIRED SUB-SKILL:** Use /aligned:business-executing
-- Work through tasks in batches with review checkpoints
+Then output a ready-to-paste prompt:
+
+> Use `/aligned:business-executing` to execute the plan at `<plan-file-path>`.
