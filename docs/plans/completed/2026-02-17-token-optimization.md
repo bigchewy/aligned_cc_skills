@@ -27,7 +27,7 @@ Token burn comes from multiplicative effects:
 
 ---
 
-### Task 1: Deduplicate project CLAUDE.md
+### ✅ Task 1: Deduplicate project CLAUDE.md
 
 **Files:**
 - Modify: `CLAUDE.md` (project root)
@@ -74,7 +74,7 @@ git commit -m "chore: deduplicate CLAUDE.md — remove sections already in globa
 
 ---
 
-### Task 2: Create shared Kanban Entry Format reference
+### ✅ Task 2: Create shared Kanban Entry Format reference
 
 **Files:**
 - Create: `skills/_shared/kanban-entry-format.md`
@@ -125,7 +125,7 @@ git commit -m "chore: extract shared Kanban entry format to _shared/"
 
 ---
 
-### Task 3: Replace inline Kanban sections with references
+### ✅ Task 3: Replace inline Kanban sections with references
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (~lines 418-439)
@@ -180,7 +180,7 @@ git commit -m "chore: replace inline Kanban sections with shared reference"
 
 ---
 
-### Task 4: Condense rationalizations tables in top 3 skills
+### ✅ Task 4: Condense rationalizations tables in top 3 skills
 
 **Files:**
 - Modify: `skills/test-driven-development/SKILL.md` (lines ~258-272)
@@ -213,7 +213,7 @@ git commit -m "chore: condense rationalizations tables to top entries"
 
 ---
 
-### Task 5: Trim Red Flags section overlap in systematic-debugging
+### ✅ Task 5: Trim Red Flags section overlap in systematic-debugging
 
 **Prerequisite: Complete Task 4 first** — both modify `systematic-debugging/SKILL.md` and Task 5's Step 2 depends on Task 4's output.
 
@@ -239,7 +239,7 @@ git commit -m "chore: remove Red Flags entries that overlap with rationalization
 
 ---
 
-### Task 6: Trim finishing-a-development-branch (700 lines)
+### ✅ Task 6: Trim finishing-a-development-branch (700 lines)
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
@@ -273,7 +273,7 @@ git commit -m "chore: trim verbosity in finishing-a-development-branch skill"
 
 ---
 
-### Task 7: Trim create-new-skill (664 lines)
+### ✅ Task 7: Trim create-new-skill (664 lines)
 
 **Files:**
 - Modify: `skills/create-new-skill/SKILL.md`
@@ -337,7 +337,7 @@ git commit -m "chore: update cross-references after token optimization"
 
 ---
 
-### Task 9: Verify plugin still loads correctly
+### ✅ Task 9: Verify plugin still loads correctly
 
 **Step 1: Check that plugin.json is still valid**
 
