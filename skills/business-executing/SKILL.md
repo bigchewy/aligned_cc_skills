@@ -13,6 +13,14 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 
 **Announce at start:** "I'm using the business-executing skill to implement this plan."
 
+**Autonomous mode:** Execute all tasks without pausing for review between batches. Only stop if a task hits a blocker or the user intervenes.
+
+Pre-approved actions (do not ask):
+- Read any file in the project
+- Search for context in project files
+- Write deliverable content
+- Run verification checks
+
 ## The Process
 
 ### Step 1: Load and Review Plan
@@ -22,7 +30,7 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 4. If no concerns: Create task list and proceed
 
 ### Step 2: Execute Batch
-**Default: First 3 tasks**
+**Default: First 5 tasks**
 
 For each task:
 1. Mark as in_progress
@@ -51,11 +59,8 @@ When batch complete:
 - Show what was produced
 - Show how it meets acceptance criteria
 - Flag any concerns or decisions needed
-- Say: "Ready for feedback."
 
 ### Step 4: Continue
-Based on feedback:
-- Apply changes if needed
 - Execute next batch
 - Repeat until complete
 
