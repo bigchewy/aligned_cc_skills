@@ -64,12 +64,26 @@ When batch complete:
 - Execute next batch
 - Repeat until complete
 
-### Step 5: Complete
+### Step 5: Archive Plan Files
 
-After all tasks complete and validated:
-- Compile final deliverable if tasks produced sections of a larger document
-- Present summary of all outputs (documents created, action items identified, decisions made)
-- Ask: "Anything to adjust before we call this done?"
+When all tasks are complete, move the plan file (and associated design doc if one exists) to a `completed/` subfolder within the plans directory. If the `completed/` subfolder doesn't exist, create it.
+
+1. Parse the plan's `**Source Design Doc:**` field (if present) to get the design doc path.
+2. Move the plan file to `completed/`.
+3. If the source design doc is not `N/A` and exists, move it too.
+4. Commit the moves.
+
+If either move fails (file doesn't exist or already moved), skip and continue.
+
+### Step 6: Report Completion
+
+After all tasks complete and validated, output a structured summary:
+
+**"Execution Complete"**
+
+- **Deliverables Produced:** List each deliverable with acceptance criteria status
+- **Discovered Issues:** List any issues surfaced during execution, or "None"
+- **Suggested Next Steps:** Based on the deliverables and any issues
 
 ## When to Stop and Ask
 
