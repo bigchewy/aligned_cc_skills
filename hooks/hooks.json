@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node hooks/auto-approve-worktrees.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/auto-approve-worktrees.js",
             "timeout": 5
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "hooks/check-eval-audit.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-eval-audit.sh",
             "statusMessage": "Checking eval audit status..."
           }
         ]
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node hooks/error-tracker.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/error-tracker.js",
             "timeout": 5
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node hooks/error-tracker.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/error-tracker.js",
             "timeout": 5
           }
         ]
@@ -50,7 +50,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node hooks/usage-tracker.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/usage-tracker.js",
             "timeout": 5
           }
         ]
