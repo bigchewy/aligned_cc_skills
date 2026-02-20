@@ -465,6 +465,8 @@ Worktree: {worktree-path}" && [ -f .ralph-done ] && rm .ralph-done && break; don
 ```
 ````
 
+**Dashboard:** After generating the plan, `.kanban.html` is available at the project root. Open it in a browser — it auto-refreshes every 5 seconds during execution.
+
 If the worktree path is not known (e.g., writing-plans was invoked without a prior brainstorming session), fall back to the format that includes worktree creation. **Both options must be shown** — Option B uses the worktree path that Option A creates:
 
 ````
