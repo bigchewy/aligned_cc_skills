@@ -39,10 +39,16 @@ Check the output. If it shows `main` or `master`, STOP. Tell the user and offer 
 **Default: First 5 tasks**
 
 For each task:
-1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+1. Mark as in_progress (TaskUpdate)
+2. **Plan file status marking:** Update the task heading in the plan file:
+   - When starting: replace `### Task N:` with `### 🔄 Task N:` (in-progress)
+   - When done: replace `### 🔄 Task N:` with `### ✅ Task N:` (completed and verified)
+   - If blocked: keep `### 🔄 Task N:` and add `> BLOCKED: [reason]` below the heading
+   This matches the Ralph loop convention and keeps the plan file as the single source of truth.
+3. Follow each step exactly (plan has bite-sized steps)
+4. Run verifications as specified
+5. Mark as completed (TaskUpdate)
+6. **Kanban dashboard update:** After updating any task status in the plan file, regenerate `.kanban.html` by following the instructions in `skills/_shared/kanban-html-generator.md`. Parse the plan file's current state and the `docs/kanban/` directories across all repos in `~/.claude/kanban-repos.json`. Write the result to `.kanban.html` at the worktree root (or project root if not in a worktree). Use the atomic write pattern (write to `.kanban.html.tmp`, then rename).
 
 **LLM surface check:** If the task involved changes to advisor prompts, framework prompts, prompt builders, or personalization logic, run the project's eval command (as defined in `CLAUDE.md` or `e2e/eval-config.ts`) to verify quality. Don't wait until all tasks are done — catching regressions early is cheaper than debugging across multiple steps. If evals fail, run the `/aligned:eval-failure-triage` skill to classify and fix before continuing.
 

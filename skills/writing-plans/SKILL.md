@@ -421,7 +421,19 @@ When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the
 
 ## Execution Handoff
 
-After saving the plan (to the main worktree and committed to main), generate ready-to-paste prompts for executing the plan. Since the brainstorming phase already created the worktree, these prompts reference the existing worktree path.
+After saving the plan (to the main worktree and committed to main), generate the initial Kanban HTML dashboard and then the ready-to-paste prompts for executing the plan.
+
+**Initial Kanban HTML generation:**
+1. Read `skills/_shared/kanban-html-generator.md` for the template and parsing instructions
+2. Parse the plan file — all tasks will be in Todo state
+3. Also parse `docs/kanban/` across all repos listed in `~/.claude/kanban-repos.json` for the Project Kanban tab
+4. Write `.kanban.html` to the project root (main worktree) using the atomic write pattern (write to `.kanban.html.tmp`, then rename)
+5. Tell the user which file to open based on their execution method:
+   - Option A (interactive in worktree): "During execution, the dashboard updates at `{worktree-path}/.kanban.html`."
+   - Option B (Ralph loop in worktree): "During execution, the dashboard updates at `{worktree-path}/.kanban.html`."
+   - Note: The initial generation writes to the main worktree root; subsequent updates during execution write to the worktree root (a different filesystem path). The user should open the worktree copy once execution starts.
+
+Since the brainstorming phase already created the worktree, these prompts reference the existing worktree path.
 
 **Output this to the user:**
 
@@ -452,6 +464,8 @@ Plan: {plan-file-path}
 Worktree: {worktree-path}" && [ -f .ralph-done ] && rm .ralph-done && break; done
 ```
 ````
+
+**Dashboard:** After generating the plan, `.kanban.html` is available at the project root. Open it in a browser — it auto-refreshes every 5 seconds during execution.
 
 If the worktree path is not known (e.g., writing-plans was invoked without a prior brainstorming session), fall back to the format that includes worktree creation. **Both options must be shown** — Option B uses the worktree path that Option A creates:
 
