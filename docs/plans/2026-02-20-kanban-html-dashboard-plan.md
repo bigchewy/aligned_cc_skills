@@ -10,6 +10,10 @@
 
 **Tech Stack:** Markdown instruction files (no runtime code), HTML/CSS (no JavaScript)
 
+**Note — `.gitignore`:** The design doc lists `.gitignore` changes, but `.kanban.html` and `.kanban.html.tmp` are already in this repo's `.gitignore` (added in commit 665d67b). No `.gitignore` task is needed for this repo. Other repos that adopt this feature will need to add these entries manually.
+
+**Note — `~/.claude/kanban-repos.json`:** The design doc lists this as a new file with all four repo paths. The generator's auto-create behavior (documented in Task 1) creates a single-entry file on first use. The user can add additional repos by editing the file. No dedicated task creates the full four-repo file — this is intentional to avoid hardcoding paths that may not exist on all machines.
+
 ---
 
 ### Task 1: Create the shared Kanban HTML generator instructions
@@ -209,7 +213,7 @@ Read the file back and confirm:
 - Project Kanban parsing rules cover all four subdirectories
 - HTML template specifies both tabs with radio button hack
 - Atomic write pattern is documented
-- All 13 edge cases from the design doc are addressed
+- All 13 edge cases from the design doc (lines 224-248) are addressed — cross-reference each numbered case against the generator content
 
 **Step 3: Commit**
 
@@ -223,11 +227,11 @@ git commit -m "feat: add shared kanban HTML generator instructions"
 ### Task 2: Add plan-file status marking convention to executing-plans
 
 **Files:**
-- Modify: `skills/executing-plans/SKILL.md:38-46`
+- Modify: `skills/executing-plans/SKILL.md:38-48`
 
 **Step 1: Add the plan-file status marking instructions**
 
-In `skills/executing-plans/SKILL.md`, locate the Step 2 section. The current content at lines 38-46 is:
+In `skills/executing-plans/SKILL.md`, locate the Step 2 section. The section spans lines 38-48 (including the LLM surface check paragraph at lines 47-48). The "For each task:" list we're replacing is at lines 41-45:
 
 ```markdown
 ### Step 2: Execute Build Tasks
@@ -272,6 +276,8 @@ git commit -m "feat: add plan-file status marking to executing-plans"
 ---
 
 ### Task 3: Add Kanban HTML regeneration to executing-plans
+
+> **Depends on Task 2** — complete Task 2 first. This task extends the "For each task:" list produced by Task 2.
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (the section modified in Task 2)
@@ -318,9 +324,13 @@ In `docs/ralph_loops/EXECUTE-PLAN.md`, the current "Execute the task" section ha
 
 Insert a new step between 6 and 7 (renumbering 7 and 8):
 
+> **Behavior change:** The commit step moves from position 7 to position 8. The new step 7 (HTML regeneration) runs between marking done and committing. `.kanban.html` is gitignored and will not be staged. The atomic rename via Bash (`mv .kanban.html.tmp .kanban.html`) introduces a new Write-then-Bash pattern not previously used in the Ralph loop.
+
+> **Error handling reconciliation:** HTML generation failures in the Ralph loop must NOT trigger the 🔄 blocked state — they are warnings only. If the atomic rename or JSON parsing fails, skip the dashboard and proceed to the commit step. The generator's "never fail a task over dashboard issues" policy takes precedence over the loop's "mark blocked and exit" rule for dashboard-related errors only.
+
 ```markdown
 6. Mark the task with ✅ in the plan file (replace the task heading)
-7. Regenerate `.kanban.html` at the worktree root. Read `skills/_shared/kanban-html-generator.md` and follow the generation instructions using the plan file's current state. Also include the multi-repo Project Kanban tab per `~/.claude/kanban-repos.json`. Use the atomic write pattern (write to `.kanban.html.tmp`, then rename to `.kanban.html`).
+7. Regenerate `.kanban.html` at the worktree root. Read `skills/_shared/kanban-html-generator.md` and follow the generation instructions using the plan file's current state. Also include the multi-repo Project Kanban tab per `~/.claude/kanban-repos.json`. Use the atomic write pattern (write to `.kanban.html.tmp`, then rename to `.kanban.html`). **If generation fails for any reason (missing plan file, malformed JSON, Bash error), warn and continue to the next step — do not mark the task as blocked.**
 8. Commit: `git add [changed files] && git commit -m "task N: [description]"`
 9. Exit
 ```
@@ -369,7 +379,10 @@ After saving the plan (to the main worktree and committed to main), generate the
 2. Parse the plan file — all tasks will be in Todo state
 3. Also parse `docs/kanban/` across all repos listed in `~/.claude/kanban-repos.json` for the Project Kanban tab
 4. Write `.kanban.html` to the project root (main worktree) using the atomic write pattern (write to `.kanban.html.tmp`, then rename)
-5. Tell the user: "Kanban dashboard generated at `.kanban.html` — open in your browser to track progress during execution."
+5. Tell the user which file to open based on their execution method:
+   - Option A (interactive in worktree): "During execution, the dashboard updates at `{worktree-path}/.kanban.html`."
+   - Option B (Ralph loop in worktree): "During execution, the dashboard updates at `{worktree-path}/.kanban.html`."
+   - Note: The initial generation writes to the main worktree root; subsequent updates during execution write to the worktree root (a different filesystem path). The user should open the worktree copy once execution starts.
 ```
 
 **Step 2: Verify the edit**
@@ -392,6 +405,8 @@ git commit -m "feat: add initial kanban HTML generation to writing-plans handoff
 
 ### Task 6: Add Kanban dashboard reference to execution prompts
 
+> **Depends on Task 5** — complete Task 5 first. Task 5 modifies lines 422-454 of this file; this task inserts a note within that range.
+
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (the execution prompts section after the Handoff, around line 439-454)
 
@@ -406,6 +421,8 @@ Copy into a new Claude Code session:
 ```
 
 This does not need changes — the executing-plans skill itself now knows to regenerate the dashboard (from Task 3).
+
+> **Deviation from design:** The design doc (line 183) says to add `.kanban.html` to the "ready-to-paste prompt" section so executing agents know to update it. This plan achieves agent awareness via Task 3 (skill-level instruction in executing-plans) rather than modifying the prompt templates. The skill-level approach is more reliable — it works regardless of which prompt template the user copies.
 
 However, add a note after the execution options block (after the closing ``````) to inform users about the dashboard:
 
@@ -495,9 +512,19 @@ No commit needed — `.kanban.html` is in `.gitignore`. This task is verificatio
 
 ## Manual Steps (Post-Automation)
 
+**Visual verification:**
 - [ ] Open `.kanban.html` in a browser and visually confirm: dark theme renders, tabs switch, cards show task numbers and titles, progress bar is at 0%
 - [ ] If the Project Kanban tab appears, confirm it shows repos with `docs/kanban/` items grouped by column
 - [ ] Let the file sit open for 10+ seconds to confirm the `<meta refresh>` auto-reload works (page should reload every 5s — check the browser's network tab or watch for a brief flash)
+
+**End-to-end execution verification:**
+- [ ] Run a sample 3-task plan through executing-plans. Verify: plan file gets 🔄/✅ emoji markers, `.kanban.html` updates after each task, cards move from Todo → In Progress → Done
+- [ ] Run a sample 3-task plan through the Ralph loop. Verify same behavior as above
+
+**Edge case spot-checks:**
+- [ ] Create a `.md` file in `docs/kanban/todo/` with no `# KB-NNN:` heading — regenerate and verify it shows an "unparseable" card
+- [ ] Delete `~/.claude/kanban-repos.json` and regenerate the dashboard — verify it auto-creates with the current project root
+- [ ] Parse a plan file with no `### Task N:` headings — verify the Plan Execution tab shows "No tasks found — check plan heading format"
 
 ---
 
@@ -510,6 +537,8 @@ No commit needed — `.kanban.html` is in `.gitignore`. This task is verificatio
 | 2 | Granularity of executing-plans changes | Two tasks (marking + regeneration) | Single task for both changes |
 | 3 | Testing approach | Manual HTML generation + visual check | Automated tests, skip verification |
 | 4 | Cross-reference verification | Dedicated verification task | Inline in each consumer task |
+| 5 | Agent awareness of dashboard | Via skill-level instruction (Task 3) | Via execution prompt templates |
+| 6 | `kanban-repos.json` initial content | Auto-create with single repo | Pre-populate with all 4 repos |
 
 ### Appendix: Decision Details
 
@@ -538,3 +567,15 @@ No commit needed — `.kanban.html` is in `.gitignore`. This task is verificatio
 **Why:** Cross-reference breakage is silent — nothing fails immediately if a path is wrong, but the next agent that follows the reference will be confused. A dedicated verification task catches this before the plan is considered complete. The CLAUDE.md warns: "Before renaming or moving any `.md` file, grep all `skills/**/*.md` for the old path — breakage is silent."
 **Alternatives rejected:**
 - Inline in each consumer task: Each task would verify only its own reference, missing the holistic check (does the generator's header list all consumers?). Also adds verification overhead to every task instead of consolidating it.
+
+#### Decision 5: Agent awareness via skill-level instruction
+**Chose:** Make executing agents aware of the dashboard via the executing-plans skill instruction (Task 3) rather than modifying the execution prompt templates.
+**Why:** The design doc (line 183) says to add `.kanban.html` to the "ready-to-paste prompt" section. However, the skill-level approach is more reliable — it works regardless of which prompt template the user copies, and it doesn't require the user to remember to include dashboard instructions when crafting custom prompts. The prompt templates remain clean and focused on execution flow.
+**Alternatives rejected:**
+- Modify execution prompt templates: Would couple the dashboard feature to prompt text. If the user writes a custom execution prompt, they'd miss the dashboard instruction. The skill-level approach is more robust.
+
+#### Decision 6: `kanban-repos.json` auto-create with single repo
+**Chose:** The generator auto-creates `~/.claude/kanban-repos.json` with only the current project's root path on first use, rather than pre-populating with all four repos.
+**Why:** Pre-populating with hardcoded paths (`va-web-app`, `epch-projects`, etc.) couples the generator to a specific machine setup. If this plugin is used on a different machine, those paths won't exist. The auto-create approach is portable — it always works with the current project and the user adds other repos as needed. The design doc's four-repo example is illustrative, not prescriptive.
+**Alternatives rejected:**
+- Pre-populate with all 4 repos: Hardcodes machine-specific paths into a generated config file. Breaks portability. Would cause silent skip warnings on machines where those repos don't exist.
