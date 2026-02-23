@@ -4,13 +4,16 @@ Opinionated development stack for Claude Code. 25 skills, 8 agents, 62 advisor p
 
 ## Installation
 
+Run these inside Claude Code (the repo is private — you'll need collaborator access):
+
 ```
-/plugin install github:bigchewy/aligned_cc_skills
+/plugin marketplace add bigchewy/aligned_cc_skills
+/plugin install aligned@bigchewy-aligned_cc_skills
 ```
 
-Run this inside Claude Code. The plugin is then available across all your projects.
+The first command registers the GitHub repo as a plugin source. The second installs it. Claude Code uses your existing git credentials automatically. The plugin is then available across all your projects.
 
-For local testing during development:
+For local development and testing:
 ```bash
 claude --plugin-dir /path/to/aligned_cc_skills
 ```
