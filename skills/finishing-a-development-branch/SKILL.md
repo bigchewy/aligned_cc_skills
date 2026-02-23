@@ -197,7 +197,14 @@ This step is **non-blocking** — findings are filed to the Kanban board as impr
 subagent_type: "aligned:code-simplifier"
 prompt: "Analyze the branch changes for simplification opportunities.
   Base branch: <base-branch>
-  Working directory: <project-root>"
+  Working directory: <project-root>
+
+  CRITICAL CONSTRAINTS:
+  - You are READ-ONLY. Do not use Edit, Write, NotebookEdit, or any file-modifying Bash commands.
+  - Do NOT run git checkout, git switch, or any branch-switching command. The correct branch is already checked out.
+  - Do NOT create Kanban entries or write files. Return ONLY a JSON array in your final message.
+  - Use the Read tool to read files, not cat/Bash.
+  - Allowed Bash: git diff, git log, git show, git ls-files only."
 ```
 
 **If the agent returns findings** (non-empty JSON array):

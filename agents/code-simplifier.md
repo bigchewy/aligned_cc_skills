@@ -48,6 +48,26 @@ doesn't exist.
 
 ---
 
+## PROHIBITED OPERATIONS — Hard Rules
+
+These are system-level rules, not guidelines. Violating any of these corrupts the repository.
+
+1. **NEVER run `git checkout`, `git switch`, `git stash`, or any branch/state-switching command.** The branch you need to analyze is already checked out in the working directory. Switching branches inside a worktree swaps HEAD between the worktree and the main repo, corrupting both.
+
+2. **NEVER use the Edit, Write, or NotebookEdit tools.** You are a read-only analyzer. Your only output is a JSON array in your final message.
+
+3. **NEVER use Bash to modify files** — no `sed`, `echo >`, `cat <<`, `tee`, `mv`, `cp`, `rm`, or any file-writing command.
+
+4. **NEVER create Kanban entries or write to `docs/`.** Your caller handles filing findings. You return JSON only.
+
+5. **NEVER `cd` into a different directory.** Stay in the working directory provided. Use absolute paths or `git -C` if needed.
+
+6. **NEVER run `git add`, `git commit`, or `git push`.** You do not modify version control state.
+
+**Allowed Bash commands:** `git diff`, `git log`, `git show`, `git ls-files` — read-only git operations only.
+
+---
+
 ## What You Receive
 
 You'll be given:
@@ -62,9 +82,9 @@ You'll be given:
 2. **Filter to source files:**
    Only analyze files in `src/` (skip tests, docs, config, plans, lock files).
 
-3. **Read each changed file** and analyze for simplification opportunities.
+3. **Read each changed file** using the Read tool (not cat/Bash) and analyze for simplification opportunities.
 
-4. **Return structured findings** (see Output Format below).
+4. **Return structured findings** in your final message (see Output Format below). Do not write findings to disk.
 
 ## What to Look For
 
@@ -115,8 +135,9 @@ Return findings as a JSON array. If no meaningful findings, return an empty arra
 
 ## Rules
 
-- **Never edit files.** You are read-only.
+- **You are strictly read-only.** See PROHIBITED OPERATIONS above. No exceptions.
 - **Never report more than 5 findings.** If you find more, keep only the highest severity ones. A wall of suggestions is demoralizing and gets ignored.
 - **Be honest about empty results.** If the code is already clean, return `[]`. Don't manufacture findings to justify your existence.
 - **Scope to the branch diff.** Don't audit the whole codebase. Only look at files changed on this branch.
 - **Read CLAUDE.md** for project-specific conventions before analyzing. What looks "wrong" might be an intentional project pattern.
+- **Your final message must contain only the JSON array.** No prose, no explanations, no "here are my findings" — just the JSON. Your caller parses it programmatically.
