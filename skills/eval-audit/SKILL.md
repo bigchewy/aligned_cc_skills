@@ -23,7 +23,7 @@ Ensure every LLM behavior surface change has eval coverage. Catches gaps the pip
 
 ### Phase 1: Detect Changes Since Last Audit
 
-Read the last audit timestamp from `e2e/.eval-audit-last-run` (ISO date, gitignored).
+Read the last audit timestamp from `e2e/.eval-audit-last-run` (Unix epoch or ISO date, gitignored).
 
 Gather two sources of change:
 
@@ -52,7 +52,7 @@ For each changed LLM surface file:
 
 ### Phase 3: Report or Trigger Pipeline
 
-**If no gaps found:** Write current timestamp to `e2e/.eval-audit-last-run`, report clean, done.
+**If no gaps found:** Write current Unix epoch (`date +%s`) to `e2e/.eval-audit-last-run`, report clean, done.
 
 **If gaps found but minor** (existing scenarios need keyword/threshold updates):
 - Report the gaps as a checklist

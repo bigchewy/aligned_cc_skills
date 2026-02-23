@@ -15,7 +15,13 @@ if [ ! -f "$TIMESTAMP_FILE" ]; then
   exit 0
 fi
 
-last_check=$(cat "$TIMESTAMP_FILE")
+raw=$(cat "$TIMESTAMP_FILE")
+# Support both Unix epoch and ISO 8601 timestamps
+if echo "$raw" | grep -qE '^[0-9]+$'; then
+  last_check="$raw"
+else
+  last_check=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$raw" +%s 2>/dev/null || date -d "$raw" +%s 2>/dev/null || echo 0)
+fi
 elapsed=$(( now - last_check ))
 days_since=$(( elapsed / (24 * 60 * 60) ))
 
