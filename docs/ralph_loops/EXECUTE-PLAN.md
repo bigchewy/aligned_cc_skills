@@ -23,9 +23,8 @@ Say "All tasks complete! Run `/aligned:finishing-a-development-branch` to wrap u
 5. If the task involves LLM behavior surface files (prompts, prompt builders),
    run the project's eval command and verify it passes
 6. Mark the task with ✅ in the plan file (replace the task heading)
-7. Regenerate `.kanban.html` at the worktree root. Read `skills/_shared/kanban-html-generator.md` and follow the generation instructions using the plan file's current state. Also include the multi-repo Project Kanban tab per `~/.claude/kanban-repos.json`. Use the atomic write pattern (write to `.kanban.html.tmp`, then rename to `.kanban.html`). **If generation fails for any reason (missing plan file, malformed JSON, Bash error), warn and continue to the next step — do not mark the task as blocked.**
-8. Commit: `git add [changed files] && git commit -m "task N: [description]"`
-9. Exit
+7. Commit: `git add [changed files] && git commit -m "task N: [description]"`
+8. Exit
 
 ## Rules
 - ONE task per invocation. Do not continue to the next task.

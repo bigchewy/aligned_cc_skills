@@ -421,19 +421,7 @@ When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the
 
 ## Execution Handoff
 
-After saving the plan (to the main worktree and committed to main), generate the initial Kanban HTML dashboard and then the ready-to-paste prompts for executing the plan.
-
-**Initial Kanban HTML generation:**
-1. Read `skills/_shared/kanban-html-generator.md` for the template and parsing instructions
-2. Parse the plan file — all tasks will be in Todo state
-3. Also parse `docs/kanban/` across all repos listed in `~/.claude/kanban-repos.json` for the Project Kanban tab
-4. Write `.kanban.html` to the project root (main worktree) using the atomic write pattern (write to `.kanban.html.tmp`, then rename)
-5. Tell the user which file to open based on their execution method:
-   - Option A (interactive in worktree): "During execution, the dashboard updates at `{worktree-path}/.kanban.html`."
-   - Option B (Ralph loop in worktree): "During execution, the dashboard updates at `{worktree-path}/.kanban.html`."
-   - Note: The initial generation writes to the main worktree root; subsequent updates during execution write to the worktree root (a different filesystem path). The user should open the worktree copy once execution starts.
-
-Since the brainstorming phase already created the worktree, these prompts reference the existing worktree path.
+After saving the plan (to the main worktree and committed to main), generate ready-to-paste prompts for executing the plan. Since the brainstorming phase already created the worktree, these prompts reference the existing worktree path.
 
 **Output this to the user:**
 
@@ -465,8 +453,6 @@ Worktree: {worktree-path}" && [ -f .ralph-done ] && rm .ralph-done && break; don
 ```
 ````
 
-**Dashboard:** After generating the plan, `.kanban.html` is available at the project root. Open it in a browser — it auto-refreshes every 5 seconds during execution.
-
 If the worktree path is not known (e.g., writing-plans was invoked without a prior brainstorming session), fall back to the format that includes worktree creation. **Both options must be shown** — Option B uses the worktree path that Option A creates:
 
 ````
@@ -479,10 +465,13 @@ First create the worktree, then run from it:
 ```bash
 cd /path/to/your/project && git worktree add .worktrees/{feature-name} -b feature/{feature-name}
 cd .worktrees/{feature-name} && npm install && ln -sf ../../.env.local .env.local
+```
+Then start the loop (**must run from the worktree directory — verify your prompt shows the worktree path before pasting**):
+```bash
 rm -f .ralph-done && while :; do claude -p "$(cat docs/ralph_loops/EXECUTE-PLAN.md)
 
 Plan: {plan-file-path}
 Worktree: $(pwd)" && [ -f .ralph-done ] && rm .ralph-done && break; done
 ```
-Note: Replace `/path/to/your/project` with the actual project root. The `$(pwd)` resolves the worktree path automatically after `cd`.
+Note: Replace `/path/to/your/project` with the actual project root. The `$(pwd)` resolves the worktree path automatically. **IMPORTANT:** If the `cd` above failed, do NOT paste the loop command — it would run against your main repo.
 ````
