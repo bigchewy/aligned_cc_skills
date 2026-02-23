@@ -191,10 +191,10 @@ If changed files include any of: architecture-relevant paths as defined in the p
 
 This step is **non-blocking** — findings are filed to the Kanban board as improvement opportunities, but never prevent merge/PR.
 
-**Spawn the `code-simplifier` agent** via the Task tool:
+**Spawn the `aligned:code-simplifier` agent** via the Task tool:
 
 ```
-subagent_type: "code-simplifier"
+subagent_type: "aligned:code-simplifier"
 prompt: "Analyze the branch changes for simplification opportunities.
   Base branch: <base-branch>
   Working directory: <project-root>"
