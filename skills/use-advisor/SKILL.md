@@ -14,29 +14,31 @@ Adopt an advisor's persona for the current conversation.
 
 ## Step 1: Discover Available Advisors
 
-Discovery reads a pre-built directory file for speed, with glob-based fallback if the directory doesn't exist.
+Run ALL three discovery sources unconditionally. Merge results, deduplicating by slug+repo (first source wins).
 
-**Step 1a (Primary): Read directory**
+**Step 1a: User advisors (`~/.claude/advisors/prompts/`)**
 
-Read the file `advisors/directory.md` (plugin-relative). Parse each table under `## Directory` — rows give slug, display name, and summary. The repo is determined by the `### {repo-name}` heading above each table. This is the complete plugin listing. No globbing needed.
+1. Read `~/.claude/advisors/prompts/.repos`. Each line is a repo name.
+2. For each repo, glob `~/.claude/advisors/prompts/{repo-name}/**/*.md`. Each file is one advisor (slug = filename minus `.md`).
+3. Read the first line of each file to extract the display name and summary. Do not read full file contents during discovery.
 
-**Step 1b (Fallback): Glob-based discovery**
+If `~/.claude/advisors/prompts/.repos` does not exist, skip this step and continue.
 
-If `advisors/directory.md` doesn't exist, fall back to glob-based discovery:
+To add advisors here, create `.md` files in `~/.claude/advisors/prompts/{repo-name}/` following the "You are [Name], ..." format, and add the repo name to `~/.claude/advisors/prompts/.repos`.
+
+**Step 1b: Plugin directory (`advisors/directory.md`)**
+
+Read the file `advisors/directory.md` (plugin-relative). Parse each table under `## Directory` — rows give slug, display name, and summary. The repo is determined by the `### {repo-name}` heading above each table. Skip any slug+repo already found in Step 1a.
+
+If `advisors/directory.md` does not exist, skip this step and continue.
+
+**Step 1c: Plugin glob fallback (`advisors/.repos`)**
 
 1. Read `advisors/.repos` (plugin-relative). Each line is a repo name.
 2. For each repo, glob `advisors/{repo-name}/**/*.md`. Each file is one advisor (slug = filename minus `.md`).
-3. Read the first line of each file to extract the display name and summary. Do not read full file contents during discovery.
+3. Read the first line of each file to extract the display name and summary. Skip any slug+repo already found in earlier steps.
 
-**Step 1c: User-added advisors (supplement)**
-
-After loading from the directory (or glob fallback), also check `~/.claude/advisors/prompts/.repos`. If it exists:
-
-1. For each repo name in that manifest, glob `~/.claude/advisors/prompts/{repo-name}/**/*.md`.
-2. Skip any slug+repo combination already in the directory listing.
-3. For genuinely new advisors, read the first line to extract name and summary, then append to the listing.
-
-This allows users to add custom advisors beyond what the plugin ships. To add custom advisors, create `.md` files in `~/.claude/advisors/prompts/{repo-name}/` following the "You are [Name], ..." format, and add the repo name to `~/.claude/advisors/prompts/.repos`.
+If `advisors/.repos` does not exist, skip this step and continue.
 
 ## Step 2: Extract Advisor Names
 
@@ -45,8 +47,8 @@ Read the first line of each file. All files follow the format: "You are [Name], 
 If a file doesn't match this format, skip it and continue. Do not fail the entire listing because one file is malformed.
 
 For each discovered file, note which repo it belongs to based on the directory structure:
+- User files in `~/.claude/advisors/prompts/{repo-name}/*.md` → group: the repo name (e.g., "va-web-app", ".claude")
 - Plugin files in `advisors/{repo-name}/*.md` → group: the repo name (e.g., "va-web-app", ".claude")
-- User files in `~/.claude/advisors/prompts/{repo-name}/*.md` → group: "{repo-name} (user-added)"
 
 The repo name is derived from the directory structure, not from git commands.
 
