@@ -329,6 +329,7 @@ When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the
 These techniques are part of systematic debugging and available in this directory:
 
 - **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger
+- **`fix-the-right-layer.md`** - Fix producers/callers, never weaken guards or patch consumers
 - **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
 - **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
 
