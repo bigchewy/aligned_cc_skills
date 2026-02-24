@@ -14,7 +14,25 @@ Start by understanding the current project context, then ask questions one at a 
 ## The Process
 
 **Understanding the idea:**
-- Check out the current project state first (files, docs, recent commits)
+
+First, dispatch a project scan sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) to survey the project and build context. Use this dispatch template — replace `{topic}` with a short slug for the brainstorm topic and `{project-root}` with the project root:
+
+   "Survey the project at `{project-root}` to build context for a brainstorming session. You have access to Glob, Grep, Read, and Write tools.
+
+   Investigate:
+   - Project structure (key directories, entry points, config files)
+   - Recent git activity (last 10-15 commits — run `git log --oneline -15` via Bash)
+   - Existing docs (README, CLAUDE.md, any docs/ directory)
+   - Architecture patterns (how modules are organized, key abstractions, data flow conventions)
+   - Tech stack and dependencies (package.json, requirements.txt, go.mod, etc.)
+
+   Write your full detailed findings to `/tmp/brainstorm-context-{topic}/project-scan.md` using the Write tool. Include file paths, code patterns, and specific details you discovered.
+
+   Then return ONLY a concise summary (under 300 words) covering: what this project is, tech stack, key architectural patterns, and anything notable about recent activity. Do not return the full scan — just the summary."
+
+Wait for the scan to complete, then proceed with the Q&A using the summary as your working context. If a question during the brainstorm requires deeper detail about the project (e.g., how a specific module works, what pattern an existing feature follows), read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring the codebase in the main thread.
+
+Then:
 - Ask questions one at a time to refine the idea
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
@@ -25,8 +43,37 @@ Start by understanding the current project context, then ask questions one at a 
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 
-**Check lessons-learned (conditional):**
-If `docs/lessons-learned/` exists, read all non-completed lesson files. Check if any relate to the design area being brainstormed. If relevant lessons exist, factor their prevention guidance into the design.
+**Architect auto-consult (technical questions only):**
+
+When you're about to present a question with options that is technical in nature, consult The Architect before presenting it to the user. This applies during both "Understanding the idea" and "Exploring approaches" — any phase where you're about to ask the user to choose between options.
+
+**What counts as technical:** Data model choices, type structures, where to put state, which layer handles something, API shape, streaming behavior, tool design, module boundaries, persistence strategies, integration approach — anything where the answer depends on the existing codebase rather than user preference.
+
+**What stays user-facing without consult:** Product direction, UX preferences, feature scope, naming/branding, "do you want X or Y feature", interaction style choices.
+
+**Workflow:**
+1. Formulate the question and options as you normally would
+2. Before presenting to the user, dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with The Architect's persona to evaluate the options against the actual codebase. Use this dispatch template — replace placeholders with actual values:
+
+   "[Full contents of `advisors/.claude/the-architect.md`]
+
+   You have access to Glob, Grep, and Read tools. Evaluate these technical options for the project at `{project-root}`:
+
+   Question: {the question you were about to ask}
+   Options:
+   {numbered list of options with brief descriptions}
+
+   Investigate the existing codebase to determine which option best aligns with current patterns, module boundaries, and architecture. Consider blast radius, integration risk, and consistency with established conventions.
+
+   Output format:
+   - **Recommended option:** Which one and why, grounded in specific codebase evidence (file paths, patterns found, existing conventions)
+   - **Key findings:** Specific files, patterns, or conventions that informed the recommendation
+   - **Risks of alternatives:** Brief note on why the other options are weaker fits for this codebase"
+
+3. Incorporate The Architect's recommendation into your presentation to the user:
+   - Lead with the architect-recommended option
+   - Include their codebase-grounded reasoning (e.g., "The Architect recommends Option B — the codebase uses X pattern in 8 modules, and this option follows it")
+   - Still present all options with trade-offs — The Architect advises, the user decides
 
 **Presenting the design:**
 - Once you believe you understand what you're building, present the design
@@ -79,35 +126,45 @@ Do not pause for user review — the critique panel will evaluate the mockups al
    State the full assignment table before launching agents (e.g., "Steve Jobs: criteria 1, 3, 8. The QA Engineer [fact-checker]: criteria 4, 5, 7 + fact-checking.").
 
 4. Read each selected critic's full prompt file (the path listed in the registry entry).
-5. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` with the absolute path of the design document, and `{criteria-list}` with the assigned criteria numbers for each critic.
+5. Create a temporary directory for this critique round: `/tmp/brainstorm-critique-{topic}/round-1/`. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` with the absolute path of the design document, `{criteria-list}` with the assigned criteria numbers, and `{report-path}` with `/tmp/brainstorm-critique-{topic}/round-1/{critic-slug}-report.md`.
 
    **For the designated fact-checker, use this prompt:**
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. {If mockups were generated, add: Also review the mockups at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visual design alongside the written spec.} Your job has two phases:
+   You have access to Glob, Grep, Read, and Write tools. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. {If mockups were generated, add: Also review the mockups at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visual design alongside the written spec.} Your job has two phases:
    **Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
    **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-   Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
+   Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
 
    **For all other critics, use this prompt:**
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, and Read tools. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. {If mockups were generated, add: Also review the mockups at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visual design alongside the written spec.}
+   You have access to Glob, Grep, Read, and Write tools. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. {If mockups were generated, add: Also review the mockups at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visual design alongside the written spec.}
    **IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of file paths, line numbers, and code claims in parallel. Do not extract and verify every claim — that work is covered.
    Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-   Output your critique in the checklist output format. No fact-check summary section needed."
+   Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-6. **Aggregate the reports:**
-   - **Fact-checks:** Take the designated fact-checker's report as the authoritative source. If another critic flagged a factual issue incidentally, include it with their tag.
-   - **Critique findings:** Merge all, preserving persona tags. De-duplicate — when two or more critics flag the same issue, keep the highest-severity version and note all sources.
-   - Present the unified report to the user.
+6. **Aggregate via sub-agent (do NOT aggregate in the main thread):**
 
-7. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues the user approves.
+   After all critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
+
+   "You are a critique aggregator. Read all report files in `/tmp/brainstorm-critique-{topic}/round-1/`. Also read the design document at `{design-file-path}` for context.
+
+   Produce a unified report:
+   - **Fact-checks:** The report from {fact-checker-slug} is the authoritative fact-check source. Summarize: total claims checked, accuracy percentage, list every INCORRECT claim with the correction. If another critic flagged a factual issue incidentally, include it.
+   - **Critique findings:** Merge all critic findings, preserving persona tags. De-duplicate — when two or more critics flag the same issue, keep the highest-severity version and note all sources. Group by severity (high → medium → low).
+   - **Action items:** List concrete changes needed, ordered by severity. For each, note which critic(s) raised it.
+
+   Be concise — the goal is to give the design author a clear, actionable summary without needing to read the raw reports. Keep the unified report under 1500 words."
+
+   Present the aggregation agent's unified report to the user.
+
+7. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues the user approves. If you need to review a specific critic's raw findings in detail, read the report file directly — do not ask the user to summarize it.
 
 **Round 2 (conditional):**
-Only run if Round 1 found medium or high severity issues. Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Scope Round 2 to changes only — prepare a brief summary of what changed since Round 1 and pass it to each agent. The fact-checker re-verifies only changed claims. Other critics re-evaluate only changed sections against their assigned criteria.
+Only run if Round 1 found medium or high severity issues. Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Write to `/tmp/brainstorm-critique-{topic}/round-2/`. Scope Round 2 to changes only — prepare a brief summary of what changed since Round 1 and pass it to each agent. The fact-checker re-verifies only changed claims. Other critics re-evaluate only changed sections against their assigned criteria. Aggregate Round 2 the same way — dispatch an aggregation agent, do not aggregate inline.
 
 **Escalation:** If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. For example, if The Architect flagged a security concern but The Security Reviewer was not in Round 1, add them for Round 2. State the escalation reason. Maximum one additional critic per round.
 
