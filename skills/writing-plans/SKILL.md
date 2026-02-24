@@ -63,6 +63,16 @@ git -C "$main_worktree" commit -m "docs: add implementation plan for <feature-na
 
 **Why:** Plan files written inside a worktree only exist on the feature branch. If that branch is discarded (Option 4 in finishing-a-development-branch), the plan is permanently lost. Writing to main ensures plans survive regardless of what happens to the feature branch.
 
+### Chunked Writing for Large Plans
+
+The Write tool has a content size limit (~32K tokens). Plans with >15 tasks and full code snippets will often exceed this. When writing a large plan:
+
+1. **Write the first chunk** via Write tool — header through approximately Task 8-10 (aim for well under the limit)
+2. **Append remaining tasks** via successive Edit calls — set `old_string` to the last task heading and its first line (e.g., `### Task 10: Component Name\n\n**Files:**`), and `new_string` to that same text plus the next batch of tasks after it. Use a full task heading as the match target — it will be unique in the document. Do not match on generic lines like `---` or blank lines.
+3. **Append the Decision Log last** — it's always the final section
+
+If you hit a Write tool size error, do not retry the same content. Split it in half and use the chunked approach above.
+
 ## Before Writing
 
 Explore the codebase before writing any plan:
@@ -71,8 +81,7 @@ Explore the codebase before writing any plan:
 3. Use Glob/Grep to find files relevant to the feature
 4. Read key files to understand current patterns and conventions
 5. **Sub-agent research:** When exploring the codebase (reading multiple files, searching for patterns across the project), prefer launching a sub-agent (`subagent_type=Explore`) to keep the main context window lean. Reserve direct Glob/Grep/Read for targeted lookups where you know the exact file or pattern.
-6. **Check lessons-learned:** If `docs/lessons-learned/` exists, read all non-completed lesson files. Check if any relate to the feature being planned. Factor prevention guidance into task design to avoid repeating known mistakes.
-7. Only then begin writing the plan with verified file paths and code references
+6. Only then begin writing the plan with verified file paths and code references
 
 ## Manual Steps Policy
 
@@ -290,7 +299,7 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 **Division of labor:** The Verifier owns exhaustive fact-checking. The Architect does NOT duplicate this work — it reads key files to understand patterns, then focuses purely on architectural critique. This prevents the ~80% overlap in verification work that occurs when both agents fact-check independently.
 
 **Round 1:**
-1. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step.
+1. Create a temporary directory for this critique round: `/tmp/plan-critique-{feature}/round-1/`. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` with the absolute path of the plan document, and `{report-path}` with `/tmp/plan-critique-{feature}/round-1/{critic-slug}-report.md`.
 
    **Critic 1 — The Architect (Codebase Alignment lens):**
    - "You are The Architect, a senior systems thinker who evaluates every plan against the codebase it will land in. You've seen too many plans that look good on paper but collide with the reality of existing code.
@@ -308,11 +317,11 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
      **IMPORTANT — You do NOT do exhaustive fact-checking.** The Verifier agent handles that in parallel. Your job is architectural critique, not line-number verification. You SHOULD read key codebase files to understand existing patterns (e.g., read a few route handlers to see error handling patterns, read the module the plan extends to check boundaries), but you do NOT need to verify every file path, line number, or code snippet in the plan.
 
-     You have access to Glob, Grep, and Read tools. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Then read key source files that the plan modifies or depends on — enough to understand existing patterns and module boundaries.
+     You have access to Glob, Grep, Read, and Write tools. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Then read key source files that the plan modifies or depends on — enough to understand existing patterns and module boundaries.
 
      Evaluate the plan against checklist criteria 1 (architectural assumptions only — not line-number accuracy), 3, 5, 6, 7, and 9 through your codebase-alignment lens. Skip criteria 2, 4, 8 (the Verifier covers those). Focus on: Does the plan follow existing patterns? Are module boundaries respected? Are there hidden dependency risks? Are behavioral changes acknowledged? Also evaluate Decision Log entries if present. Tag every finding with [Architect].
 
-     Output your critique in the checklist output format. No fact-check summary section needed — the Verifier provides that."
+     Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed — the Verifier provides that. Return only a one-line confirmation: 'Report written to {report-path}'."
 
    **Critic 2 — The Verifier (Accuracy & Design Fidelity lens):**
    - "You are The Verifier, a meticulous fact-checker who treats every claim in a plan as unproven. File paths, function signatures, line numbers, code snippets — you verify each one against the actual codebase and the source design document.
@@ -332,7 +341,7 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
      **Efficiency tip:** Batch your file reads. When multiple claims reference the same file, read it once and verify all claims from that file together. Prefer reading whole files over individual line reads when a file has 3+ claims.
 
-     You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Your job has three phases:
+     You have access to Glob, Grep, Read, and Write tools for verifying claims. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Your job has three phases:
 
      **Phase 1 (Fact-check):** Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
 
@@ -344,26 +353,36 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
      **Phase 3 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the plan against checklist criteria 1, 2, 4, 7, and 8 through your accuracy-and-fidelity lens. Focus on whether plan tasks map to design requirements and whether all claims are factually correct. Also evaluate Decision Log entries if present. Tag every finding with [Verifier].
 
-     Output a single combined report: fact-check summary at the top, then design fidelity table, then critique in the checklist output format."
+     Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then design fidelity table, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-2. **Aggregate the two reports:**
-   - **Fact-checks:** Take the Verifier's fact-check report as the authoritative source. If the Architect flagged a factual issue the Verifier missed, include it with an [Architect] tag.
-   - **Critique findings:** Merge both, preserving persona tags (`[Architect]`, `[Verifier]`). De-duplicate — when both flag the same issue, keep the higher-severity version and note both sources.
-   - Present the unified report to the user.
+2. **Aggregate via sub-agent (do NOT aggregate in the main thread):**
 
-3. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues.
+   After both critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=sonnet`):
+
+   "You are a plan critique aggregator. You have access to Glob and Read tools. Read all report files in `/tmp/plan-critique-{feature}/round-1/`. Also read the plan at `{plan-file-path}` for context.
+
+   Produce a unified report:
+   - **Fact-checks:** The report from `the-verifier-report.md` is the authoritative fact-check source. Summarize: total claims checked, accuracy percentage, list every INCORRECT claim with the correction. Include the design fidelity coverage table.
+   - **Critique findings:** Merge all findings from both critics, preserving persona tags ([Architect], [Verifier]). De-duplicate — when both flag the same issue, keep the higher-severity version and note both sources. Group by severity (high -> medium -> low).
+   - **Action items:** List concrete changes needed, ordered by severity. For each, note which critic raised it.
+
+   Be concise — the goal is to give the plan author a clear, actionable summary without needing to read the raw reports. Keep the unified report under 1500 words."
+
+   Present the aggregation agent's unified report to the user.
+
+3. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues. If you need to review a specific critic's raw findings in detail, read the report file directly — do not ask the user to summarize it.
 
 **Round 2 (conditional):**
 Only run if Round 1 found medium or high severity issues. Use fresh sub-agents (do NOT resume Round 1 agents).
 
-Round 2 is **scoped to changes only** — not a full re-review. Before launching agents, prepare a brief summary of what changed since Round 1 (which sections were edited and why). Pass this summary to both agents.
+Round 2 is **scoped to changes only** — not a full re-review. Before launching agents, prepare a brief summary of what changed since Round 1 (which sections were edited and why). Pass this summary to both agents. Write to `/tmp/plan-critique-{feature}/round-2/`.
 
-Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`, `model=haiku`.
+Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`, `model=haiku`. Both critics write their reports to `/tmp/plan-critique-{feature}/round-2/{critic-slug}-report.md` and return only a one-line confirmation.
 
    **Critic 1 — The Architect (Round 2):**
    - "You are The Architect reviewing Round 2 of a plan critique. Round 1 found issues that have been fixed. Your job is to verify the fixes don't introduce NEW architectural problems.
 
-     Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, assess:
+     You have access to Glob, Grep, Read, and Write tools. Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, assess:
      1. Does the fix maintain consistency with existing codebase patterns?
      2. Does the fix introduce new dependency or ordering issues?
      3. Are behavioral changes from the fix properly acknowledged?
@@ -373,12 +392,12 @@ Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`,
      Changes since Round 1:
      {summary-of-changes}
 
-     Output: List of new issues (if any) with severity, or 'No new issues found.'"
+     Write your report to `{report-path}` using the Write tool. Return only a one-line confirmation: 'Report written to {report-path}'."
 
    **Critic 2 — The Verifier (Round 2):**
    - "You are The Verifier reviewing Round 2 of a plan critique. Round 1 found factual errors and issues that have been fixed. Your job is to verify the fixes are factually correct and complete.
 
-     Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, verify:
+     You have access to Glob, Grep, Read, and Write tools. Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, verify:
      1. Are new/updated file paths, line numbers, and code snippets accurate? (Use Glob/Grep/Read)
      2. Do the fixes fully address the Round 1 issues?
      3. Are there any new factual errors introduced by the fixes?
@@ -388,7 +407,9 @@ Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`,
      Changes since Round 1:
      {summary-of-changes}
 
-     Output: Fact-check of changed sections + list of new issues (if any) with severity, or 'All fixes verified correct.'"
+     Write your report to `{report-path}` using the Write tool. Return only a one-line confirmation: 'Report written to {report-path}'."
+
+Aggregate Round 2 the same way — dispatch an aggregation agent, do not aggregate inline.
 
 If the plan changes system architecture (new routes, module restructuring, database schema changes), add a final task to update `docs/architecture.md` with the new state.
 
@@ -422,6 +443,8 @@ When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the
 ## Execution Handoff
 
 After saving the plan (to the main worktree and committed to main), generate ready-to-paste prompts for executing the plan. Since the brainstorming phase already created the worktree, these prompts reference the existing worktree path.
+
+**CRITICAL — `{plan-file-path}` must be an absolute path on the main worktree.** The plan was committed to main, not the feature branch. A relative path like `docs/plans/...` will fail when run from the worktree because the file doesn't exist there. Always use the full absolute path: `$main_worktree/docs/plans/YYYY-MM-DD-<feature-name>.md` (e.g., `/Users/alice/software/myproject/docs/plans/2026-02-24-feature.md`).
 
 **Output this to the user:**
 
@@ -475,3 +498,11 @@ Worktree: $(pwd)" && [ -f .ralph-done ] && rm .ralph-done && break; done
 ```
 Note: Replace `/path/to/your/project` with the actual project root. The `$(pwd)` resolves the worktree path automatically. **IMPORTANT:** If the `cd` above failed, do NOT paste the loop command — it would run against your main repo.
 ````
+
+**Verification gate (mandatory before presenting the handoff):**
+
+Before outputting the execution options to the user, verify the generated commands by checking all three conditions. If any fail, fix the command before presenting it.
+
+1. **Plan path is absolute and on main:** `{plan-file-path}` starts with `/` and points to the main worktree (not the feature worktree). Run: `ls {plan-file-path}` — must succeed.
+2. **EXECUTE-PLAN.md exists in worktree:** The `cat docs/ralph_loops/EXECUTE-PLAN.md` in the Ralph loop resolves relative to the worktree CWD. Run: `ls {worktree-path}/docs/ralph_loops/EXECUTE-PLAN.md` — must succeed. If it doesn't exist (worktree was created before this file was added to main), use the absolute path from main instead: `cat $main_worktree/docs/ralph_loops/EXECUTE-PLAN.md`.
+3. **Worktree path exists:** Run: `ls {worktree-path}` — must succeed.

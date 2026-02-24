@@ -17,7 +17,7 @@ Start by understanding the current project context, then ask questions one at a 
 
 First, dispatch a project scan sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) to survey the project and build context. Use this dispatch template — replace `{topic}` with a short slug for the brainstorm topic and `{project-root}` with the project root:
 
-   "Survey the project at `{project-root}` to build context for a brainstorming session. You have access to Glob, Grep, Read, and Write tools.
+   "Survey the project at `{project-root}` to build context for a brainstorming session. You have access to Bash, Glob, Grep, Read, and Write tools.
 
    Investigate:
    - Project structure (key directories, entry points, config files)
@@ -31,6 +31,8 @@ First, dispatch a project scan sub-agent via Task tool (`subagent_type=general-p
    Then return ONLY a concise summary (under 300 words) covering: what this project is, tech stack, key architectural patterns, and anything notable about recent activity. Do not return the full scan — just the summary."
 
 Wait for the scan to complete, then proceed with the Q&A using the summary as your working context. If a question during the brainstorm requires deeper detail about the project (e.g., how a specific module works, what pattern an existing feature follows), read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring the codebase in the main thread.
+
+**Sequencing rule:** Do not dispatch an Architect auto-consult (see below) until the project scan has completed and you've reviewed the summary. For early technical questions, check whether the scan findings already answer the question before dispatching a separate sub-agent.
 
 Then:
 - Ask questions one at a time to refine the idea
@@ -57,8 +59,13 @@ When you're about to present a question with options that is technical in nature
 
    "[Full contents of `advisors/.claude/the-architect.md`]
 
-   You have access to Glob, Grep, and Read tools. Evaluate these technical options for the project at `{project-root}`:
+   Note: Your usual role is to critique, not propose. In this context, you are evaluating pre-formulated options against the codebase — you are not proposing new architectures. Recommend the option that best fits the existing codebase.
 
+   You have access to Glob, Grep, and Read tools. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md` — it contains a prior scan of the project structure, patterns, and conventions. Use this as a starting point rather than re-exploring from scratch.
+
+   Evaluate these technical options for the project at `{project-root}`:
+
+   Context: {1-2 sentences on what the user is building and key constraints/decisions established so far}
    Question: {the question you were about to ask}
    Options:
    {numbered list of options with brief descriptions}
@@ -100,6 +107,8 @@ Do not pause for user review — the critique panel will evaluate the mockups al
 **MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
 
 **Division of labor:** One critic owns exhaustive fact-checking. The others do NOT duplicate this work — they read key files to understand context, then focus purely on their domain-specific checklist criteria. This prevents the ~50% token waste that occurs when every critic independently fact-checks the same claims and evaluates the same criteria.
+
+**Architect independence note:** If The Architect was consulted during the auto-consult phase and is also selected as a critique panel critic, add this to The Architect's critique prompt: "This design followed an earlier Architect recommendation during brainstorming. Challenge the design with fresh eyes — do not assume the earlier recommendation was correct. Look for integration risks or pattern violations that a quick options evaluation might have missed."
 
 **Round 1:**
 1. Read `advisors/registry.md`.
@@ -150,7 +159,7 @@ Do not pause for user review — the critique panel will evaluate the mockups al
 
    After all critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
 
-   "You are a critique aggregator. Read all report files in `/tmp/brainstorm-critique-{topic}/round-1/`. Also read the design document at `{design-file-path}` for context.
+   "You are a critique aggregator. You have access to Glob and Read tools. Read all report files in `/tmp/brainstorm-critique-{topic}/round-1/`. Also read the design document at `{design-file-path}` for context.
 
    Produce a unified report:
    - **Fact-checks:** The report from {fact-checker-slug} is the authoritative fact-check source. Summarize: total claims checked, accuracy percentage, list every INCORRECT claim with the correction. If another critic flagged a factual issue incidentally, include it.
