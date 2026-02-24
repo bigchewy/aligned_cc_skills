@@ -4,7 +4,10 @@
   "plugins": [
     {
       "name": "aligned",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "bigchewy/aligned_cc_skills"
+      },
       "description": "Opinionated dev stack: TDD pipeline, 25 skills, 8 agents, 62 advisor personas",
       "version": "0.3.0"
     }
