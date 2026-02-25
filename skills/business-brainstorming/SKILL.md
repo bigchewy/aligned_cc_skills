@@ -115,7 +115,7 @@ For each major obstacle identified in Phase 2:
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying claims. Read `skills/business-brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Your job has two phases:
+   You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `skills/business-brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Your job has two phases:
    **Phase 1 (Fact-check):** Extract every factual claim (market data, competitor assertions, financial assumptions, stakeholder claims, timeline assertions). Verify against evidence provided in the document and referenced domain materials. Use WebSearch/WebFetch to check external claims where possible. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage. Include source URLs for verified external claims.
    **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name (e.g., [Dalio], [The PM]).
    Output a single combined report: fact-check summary at the top, then critique in the checklist output format."

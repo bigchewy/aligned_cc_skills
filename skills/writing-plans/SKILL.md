@@ -298,8 +298,13 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
 **Division of labor:** The Verifier owns exhaustive fact-checking. The Architect does NOT duplicate this work — it reads key files to understand patterns, then focuses purely on architectural critique. This prevents the ~80% overlap in verification work that occurs when both agents fact-check independently.
 
+**Before dispatching critics:** Resolve the checklist absolute path:
+1. If this skill's base directory is known (printed when the skill loaded), the checklist is at `{base-directory}/plan-critique-checklist.md`.
+2. If the base directory is not available, use Glob to find `**/writing-plans/plan-critique-checklist.md`.
+Verify the resolved path exists with Read. Use it as `{checklist-path}` in the sub-agent prompts below.
+
 **Round 1:**
-1. Create a temporary directory for this critique round: `/tmp/plan-critique-{feature}/round-1/`. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` with the absolute path of the plan document, and `{report-path}` with `/tmp/plan-critique-{feature}/round-1/{critic-slug}-report.md`.
+1. Create a temporary directory for this critique round: `/tmp/plan-critique-{feature}/round-1/`. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` with the absolute path of the plan document, `{checklist-path}` with the resolved checklist path, and `{report-path}` with `/tmp/plan-critique-{feature}/round-1/{critic-slug}-report.md`.
 
    **Critic 1 — The Architect (Codebase Alignment lens):**
    - "You are The Architect, a senior systems thinker who evaluates every plan against the codebase it will land in. You've seen too many plans that look good on paper but collide with the reality of existing code.
@@ -317,7 +322,7 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
      **IMPORTANT — You do NOT do exhaustive fact-checking.** The Verifier agent handles that in parallel. Your job is architectural critique, not line-number verification. You SHOULD read key codebase files to understand existing patterns (e.g., read a few route handlers to see error handling patterns, read the module the plan extends to check boundaries), but you do NOT need to verify every file path, line number, or code snippet in the plan.
 
-     You have access to Glob, Grep, Read, and Write tools. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Then read key source files that the plan modifies or depends on — enough to understand existing patterns and module boundaries.
+     You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{plan-file-path}` in full. Then read key source files that the plan modifies or depends on — enough to understand existing patterns and module boundaries.
 
      Evaluate the plan against checklist criteria 1 (architectural assumptions only — not line-number accuracy), 3, 5, 6, 7, and 9 through your codebase-alignment lens. Skip criteria 2, 4, 8 (the Verifier covers those). Focus on: Does the plan follow existing patterns? Are module boundaries respected? Are there hidden dependency risks? Are behavioral changes acknowledged? Also evaluate Decision Log entries if present. Tag every finding with [Architect].
 
@@ -341,7 +346,7 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
      **Efficiency tip:** Batch your file reads. When multiple claims reference the same file, read it once and verify all claims from that file together. Prefer reading whole files over individual line reads when a file has 3+ claims.
 
-     You have access to Glob, Grep, Read, and Write tools for verifying claims. Read `skills/writing-plans/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Your job has three phases:
+     You have access to Glob, Grep, Read, and Write tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{plan-file-path}` in full. Your job has three phases:
 
      **Phase 1 (Fact-check):** Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
 
@@ -359,7 +364,7 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
    After both critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=sonnet`):
 
-   "You are a plan critique aggregator. You have access to Glob and Read tools. Read all report files in `/tmp/plan-critique-{feature}/round-1/`. Also read the plan at `{plan-file-path}` for context.
+   "You are a plan critique aggregator. You have access to Glob and Read tools. Do not use Bash for searching. Read all report files in `/tmp/plan-critique-{feature}/round-1/`. Also read the plan at `{plan-file-path}` for context.
 
    Produce a unified report:
    - **Fact-checks:** The report from `the-verifier-report.md` is the authoritative fact-check source. Summarize: total claims checked, accuracy percentage, list every INCORRECT claim with the correction. Include the design fidelity coverage table.
@@ -382,7 +387,7 @@ Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`,
    **Critic 1 — The Architect (Round 2):**
    - "You are The Architect reviewing Round 2 of a plan critique. Round 1 found issues that have been fixed. Your job is to verify the fixes don't introduce NEW architectural problems.
 
-     You have access to Glob, Grep, Read, and Write tools. Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, assess:
+     You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, assess:
      1. Does the fix maintain consistency with existing codebase patterns?
      2. Does the fix introduce new dependency or ordering issues?
      3. Are behavioral changes from the fix properly acknowledged?
@@ -397,7 +402,7 @@ Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`,
    **Critic 2 — The Verifier (Round 2):**
    - "You are The Verifier reviewing Round 2 of a plan critique. Round 1 found factual errors and issues that have been fixed. Your job is to verify the fixes are factually correct and complete.
 
-     You have access to Glob, Grep, Read, and Write tools. Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, verify:
+     You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{plan-file-path}` in full. Focus ONLY on the sections that changed (listed below). For each change, verify:
      1. Are new/updated file paths, line numbers, and code snippets accurate? (Use Glob/Grep/Read)
      2. Do the fixes fully address the Round 1 issues?
      3. Are there any new factual errors introduced by the fixes?
@@ -503,6 +508,6 @@ Note: Replace `/path/to/your/project` with the actual project root. The `$(pwd)`
 
 Before outputting the execution options to the user, verify the generated commands by checking all three conditions. If any fail, fix the command before presenting it.
 
-1. **Plan path is absolute and on main:** `{plan-file-path}` starts with `/` and points to the main worktree (not the feature worktree). Run: `ls {plan-file-path}` — must succeed.
-2. **EXECUTE-PLAN.md exists in worktree:** The `cat docs/ralph_loops/EXECUTE-PLAN.md` in the Ralph loop resolves relative to the worktree CWD. Run: `ls {worktree-path}/docs/ralph_loops/EXECUTE-PLAN.md` — must succeed. If it doesn't exist (worktree was created before this file was added to main), use the absolute path from main instead: `cat $main_worktree/docs/ralph_loops/EXECUTE-PLAN.md`.
-3. **Worktree path exists:** Run: `ls {worktree-path}` — must succeed.
+1. **Plan path is absolute and on main:** `{plan-file-path}` starts with `/` and points to the main worktree (not the feature worktree). Use Read to open `{plan-file-path}` — must succeed.
+2. **EXECUTE-PLAN.md exists in worktree:** The Ralph loop reads `docs/ralph_loops/EXECUTE-PLAN.md` relative to the worktree CWD. Use Read to open `{worktree-path}/docs/ralph_loops/EXECUTE-PLAN.md` — must succeed. If it doesn't exist (worktree was created before this file was added to main), update the Ralph loop command to use the absolute path from main instead: `$main_worktree/docs/ralph_loops/EXECUTE-PLAN.md`.
+3. **Worktree path exists:** Use Glob with pattern `{worktree-path}/*` — must return results.

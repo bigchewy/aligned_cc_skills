@@ -134,14 +134,19 @@ Before completing any plan, verify:
 **Critic selection:** Default critics are listed below. If the plan's domain clearly warrants different critics (e.g., a technical plan that needs The Architect instead of Rumelt), select from `advisors/registry.md` instead. State which critics you selected and why.
 
 **Round 1:**
-1. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step.
+**Before dispatching critics:** Resolve the checklist absolute path:
+1. If this skill's base directory is known (printed when the skill loaded), the checklist is at `{base-directory}/plan-critique-checklist.md`.
+2. If the base directory is not available, use Glob to find `**/business-write-plan/plan-critique-checklist.md`.
+Verify the resolved path exists with Read. Use it as `{checklist-path}` in the sub-agent prompts below.
+
+1. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step, and `{checklist-path}` with the resolved checklist path.
 
    **Critic 1 — Richard Rumelt (Strategic Alignment lens):**
    - Read Richard Rumelt's full prompt file (path listed in `advisors/registry.md`). Then:
 
    "[Full contents of Rumelt's prompt file]
 
-   You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/business-write-plan/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full.
+   You have access to Glob, Grep, and Read tools for verifying claims. Do not use Bash for searching — use the Grep tool instead. Read `{checklist-path}` in full, then read `{plan-file-path}` in full.
 
    Evaluate the plan through your strategic lens. Focus on: Does the plan identify and attack the crux? Are priorities correctly ordered? Does the guiding policy cohere? Do the tasks form a coordinated set of actions?
 
@@ -155,7 +160,7 @@ Before completing any plan, verify:
 
    "[Full contents of The PM's prompt file]
 
-   You have access to Glob, Grep, and Read tools for verifying claims. Read `skills/business-write-plan/plan-critique-checklist.md` in full, then read `{plan-file-path}` in full. Your job has two phases:
+   You have access to Glob, Grep, and Read tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{plan-file-path}` in full. Your job has two phases:
 
    **Phase 1 (Fact-check):** Extract every factual claim (referenced documents, data points, stakeholder names, deliverable descriptions). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
 

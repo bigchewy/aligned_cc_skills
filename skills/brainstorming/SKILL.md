@@ -17,12 +17,13 @@ Start by understanding the current project context, then ask questions one at a 
 
 First, dispatch a project scan sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) to survey the project and build context. Use this dispatch template — replace `{topic}` with a short slug for the brainstorm topic and `{project-root}` with the project root:
 
-   "Survey the project at `{project-root}` to build context for a brainstorming session. You have access to Bash, Glob, Grep, Read, and Write tools.
+   "Survey the project at `{project-root}` to build context for a brainstorming session. You have access to Bash, Glob, Grep, Read, and Write tools. Use Bash only for system commands (e.g., npm, git) — never for content search. Use the Grep tool for searching file contents.
 
    Investigate:
    - Project structure (key directories, entry points, config files)
    - Recent git activity (last 10-15 commits — run `git log --oneline -15` via Bash)
    - Existing docs (README, CLAUDE.md, any docs/ directory)
+   - Architecture docs (`docs/architecture.md` if it exists — read in full; note data flows, module dependencies, system diagrams, and anything that looks stale)
    - Architecture patterns (how modules are organized, key abstractions, data flow conventions)
    - Tech stack and dependencies (package.json, requirements.txt, go.mod, etc.)
 
@@ -45,42 +46,40 @@ Then:
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 
-**Architect auto-consult (technical questions only):**
+**Architect auto-consult:**
 
-When you're about to present a question with options that is technical in nature, consult The Architect before presenting it to the user. This applies during both "Understanding the idea" and "Exploring approaches" — any phase where you're about to ask the user to choose between options.
+Before presenting technical content to the user — whether it's a question with options or a design section — consult The Architect first. This applies in every phase: understanding, exploring approaches, and presenting the design.
 
-**What counts as technical:** Data model choices, type structures, where to put state, which layer handles something, API shape, streaming behavior, tool design, module boundaries, persistence strategies, integration approach — anything where the answer depends on the existing codebase rather than user preference.
+**Trigger:** You are about to show the user something that contains technical decisions. This includes questions asking the user to choose between technical alternatives AND design sections that embed technical choices as assertions (e.g., "here's the state machine with states X, Y, Z"). The second case is easy to miss — presenting a design section *is* presenting a technical decision, even though it looks like a statement rather than a question.
+
+**What counts as technical:** Data model choices, type structures, where to put state, which layer handles something, API shape, streaming behavior, tool design, module boundaries, persistence strategies, integration approach, state machines, lifecycle flows — anything where the answer depends on the existing codebase rather than user preference.
 
 **What stays user-facing without consult:** Product direction, UX preferences, feature scope, naming/branding, "do you want X or Y feature", interaction style choices.
 
 **Workflow:**
-1. Formulate the question and options as you normally would
-2. Before presenting to the user, dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with The Architect's persona to evaluate the options against the actual codebase. Use this dispatch template — replace placeholders with actual values:
+1. Draft the content you're about to present (options, design section, or both)
+2. Before presenting to the user, dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with The Architect's persona to review it against the codebase. Use this dispatch template — replace placeholders with actual values:
 
    "[Full contents of `advisors/.claude/the-architect.md`]
 
-   Note: Your usual role is to critique, not propose. In this context, you are evaluating pre-formulated options against the codebase — you are not proposing new architectures. Recommend the option that best fits the existing codebase.
+   You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md` — it contains a prior scan of the project structure, patterns, and conventions. Use this as a starting point rather than re-exploring from scratch.
 
-   You have access to Glob, Grep, and Read tools. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md` — it contains a prior scan of the project structure, patterns, and conventions. Use this as a starting point rather than re-exploring from scratch.
-
-   Evaluate these technical options for the project at `{project-root}`:
+   Review this technical content before it is presented to the user for the project at `{project-root}`:
 
    Context: {1-2 sentences on what the user is building and key constraints/decisions established so far}
-   Question: {the question you were about to ask}
-   Options:
-   {numbered list of options with brief descriptions}
+   Content to review:
+   {the draft question with options OR design section text}
 
-   Investigate the existing codebase to determine which option best aligns with current patterns, module boundaries, and architecture. Consider blast radius, integration risk, and consistency with established conventions.
+   Investigate the existing codebase. If the content presents options, recommend which best fits current patterns. If the content presents a design, validate it — check for missing states, broken flows, wrong assumptions, integration risks. In either case, ground your analysis in specific codebase evidence.
 
    Output format:
-   - **Recommended option:** Which one and why, grounded in specific codebase evidence (file paths, patterns found, existing conventions)
-   - **Key findings:** Specific files, patterns, or conventions that informed the recommendation
-   - **Risks of alternatives:** Brief note on why the other options are weaker fits for this codebase"
+   - **Verdict:** APPROVE or REVISE
+   - **Recommendation:** What to change and why, citing specific files, patterns, or conventions
+   - **Key findings:** Codebase evidence that informed the review"
 
-3. Incorporate The Architect's recommendation into your presentation to the user:
-   - Lead with the architect-recommended option
-   - Include their codebase-grounded reasoning (e.g., "The Architect recommends Option B — the codebase uses X pattern in 8 modules, and this option follows it")
-   - Still present all options with trade-offs — The Architect advises, the user decides
+3. Incorporate The Architect's findings:
+   - If REVISE: fix the issues before presenting. Note the input briefly (e.g., "The Architect caught a missing 'deploying' state — added.")
+   - If presenting options: lead with the architect-recommended option and include their codebase-grounded reasoning. Still present all options — The Architect advises, the user decides.
 
 **Presenting the design:**
 - Once you believe you understand what you're building, present the design
@@ -94,13 +93,35 @@ When you're about to present a question with options that is technical in nature
 **Documentation:**
 - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
 
-**Mockup generation (conditional):**
+**Visualization (mandatory):**
 
-If the design involves frontend/UI changes, generate mockups AFTER writing the design document and BEFORE the critique round. Dispatch the mockup generator via the Task tool (`subagent_type=general-purpose`). Use this dispatch template — replace placeholders with actual values:
+Every brainstorm produces at least one visual artifact. After writing the design document and BEFORE the critique round, determine which visualization type(s) the design needs and dispatch the appropriate agent(s).
 
-   "Read `agents/mockup-generator.md` for your full workflow. Generate mockups for the design at `{design-file-path}`. Project root: `{project-root}`. Focus on these UI elements: {list specific views, pages, or components from the design that need visualization}."
+**Classification rules — apply in order, select ALL that match:**
 
-Do not pause for user review — the critique panel will evaluate the mockups alongside the design.
+| Design involves... | Agent to dispatch | Output |
+|---|---|---|
+| UI/frontend changes (pages, components, layouts) | mockup-generator | `docs/mockups/{session}/` HTML mockups |
+| Data flows, process flows, pipelines, or decision logic | flowchart-generator | `docs/mockups/{session}/` HTML flowchart |
+| New modules, services, routes, or system structure changes | architecture-diagram-generator | `docs/mockups/{session}/architecture.html` + updates `docs/architecture.md` |
+
+If multiple types apply, dispatch all matching agents **in parallel** (single message, multiple Task tool calls). If none of the above clearly fits (rare — e.g., pure config changes), generate a flowchart showing the before/after system behavior.
+
+**Dispatch templates** — replace placeholders with actual values. All agents use `subagent_type=general-purpose`.
+
+*For UI mockups:*
+
+   "Read `agents/mockup-generator.md` for your full workflow. Generate mockups for the design at `{design-file-path}`. Project root: `{project-root}`. Brainstorming session topic: `{topic}`. Focus on these UI elements: {list specific views, pages, or components from the design that need visualization}. Include a descriptive header in each HTML file that names the brainstorming session and describes what the mockup shows."
+
+*For flowcharts (data flow, process flow, decision trees):*
+
+   "Read `agents/flowchart-generator.md` for your full workflow. Generate flowcharts for the design at `{design-file-path}`. Project root: `{project-root}`. Brainstorming session: `{topic}`. Save to `docs/mockups/{session-name}/`. Focus on these flows: {list specific data flows, process steps, or decision logic from the design that need visualization}. Include a descriptive header and subtitle in each HTML file that names the brainstorming session and explains what the diagram shows. Open each file in the browser after generating."
+
+*For architecture diagrams:*
+
+   "Read `agents/architecture-diagram-generator.md` for your full workflow. Generate architecture visualization and update `docs/architecture.md` based on the design at `{design-file-path}`. Project root: `{project-root}`. Brainstorming session: `{topic}`. Save HTML to `docs/mockups/{session-name}/architecture.html`. Architectural changes to capture: {list new modules, services, data flows, or structural changes from the design}. Open the file in the browser after generating."
+
+Do not pause for user review — the critique panel will evaluate the visuals alongside the design.
 
 **Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
 
@@ -141,7 +162,7 @@ Do not pause for user review — the critique panel will evaluate the mockups al
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, and Write tools. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. {If mockups were generated, add: Also review the mockups at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visual design alongside the written spec.} Your job has two phases:
+   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec. Your job has two phases:
    **Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
    **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
    Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
@@ -150,7 +171,7 @@ Do not pause for user review — the critique panel will evaluate the mockups al
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, and Write tools. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. {If mockups were generated, add: Also review the mockups at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visual design alongside the written spec.}
+   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec.
    **IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of file paths, line numbers, and code claims in parallel. Do not extract and verify every claim — that work is covered.
    Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
    Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
@@ -159,7 +180,7 @@ Do not pause for user review — the critique panel will evaluate the mockups al
 
    After all critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
 
-   "You are a critique aggregator. You have access to Glob and Read tools. Read all report files in `/tmp/brainstorm-critique-{topic}/round-1/`. Also read the design document at `{design-file-path}` for context.
+   "You are a critique aggregator. You have access to Glob and Read tools. Do not use Bash for searching. Read all report files in `/tmp/brainstorm-critique-{topic}/round-1/`. Also read the design document at `{design-file-path}` for context.
 
    Produce a unified report:
    - **Fact-checks:** The report from {fact-checker-slug} is the authoritative fact-check source. Summarize: total claims checked, accuracy percentage, list every INCORRECT claim with the correction. If another critic flagged a factual issue incidentally, include it.
@@ -179,7 +200,7 @@ Only run if Round 1 found medium or high severity issues. Use the same critics a
 
 Apply any remaining fixes. Present final results to the user.
 
-- Commit the design document to git after critique rounds are complete
+- Commit the design document, visual artifacts (`docs/mockups/{session-name}/`), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
 
 **Create worktree + next step prompt (mandatory):**
 

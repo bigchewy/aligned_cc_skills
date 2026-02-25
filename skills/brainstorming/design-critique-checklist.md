@@ -175,9 +175,9 @@ If the design includes a Decision Log, evaluate each decision entry.
 
 ## Important
 
-- Verify against the actual codebase, not memory — read files, run greps
+- Verify against the actual codebase, not memory — use Read, Grep, and Glob tools (never Bash grep)
 - Report what IS wrong, not what MIGHT be wrong
-- Include evidence (actual code patterns, grep results) for every issue
+- Include evidence (actual code patterns, Grep tool output) for every issue
 - Do NOT rewrite the design — just identify issues
 - Do NOT suggest additions or enhancements — only flag what is broken, missing, or inconsistent in what the design already proposes
 - Severity guide: **high** = will cause failure during implementation, **medium** = will cause confusion or rework, **low** = cosmetic or minor inconsistency

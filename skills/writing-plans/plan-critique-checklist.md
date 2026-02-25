@@ -43,7 +43,7 @@ Check every factual claim in the plan against the actual codebase.
 
 When a plan claims to address "all" of something, verify the count.
 
-- Run a grep/glob to get the actual count, compare to the plan's list
+- Use Grep (output_mode: count) or Glob to get the actual count, compare to the plan's list
 - Flag any items in scope that the plan misses
 - If something is intentionally deferred, verify it's noted as out of scope
 
@@ -171,8 +171,8 @@ If the plan includes a Decision Log, evaluate each decision entry.
 
 ## Important
 
-- Verify against source code, not memory — read files, run greps
+- Verify against source code, not memory — use Read, Grep, and Glob tools (never Bash grep)
 - Report what IS wrong, not what MIGHT be wrong
-- Include evidence (actual line content, grep counts) for every issue
+- Include evidence (actual line content, Grep tool output) for every issue
 - Do NOT rewrite the plan — just identify issues
 - Severity guide: **high** = will cause failure during execution, **medium** = will cause confusion or incomplete work, **low** = cosmetic or minor inconsistency
