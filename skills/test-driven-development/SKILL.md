@@ -255,6 +255,27 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 
 30 minutes of tests after ≠ TDD. You get coverage, lose proof tests work.
 
+## Test Value Spectrum
+
+Not all tests provide equal value. Before writing a test, assess where it falls:
+
+| Level | What It Tests | Value | Example |
+|-------|---------------|-------|---------|
+| **Behavioral** | Observable output for given input | Highest | `expect(sort([3,1,2])).toEqual([1,2,3])` |
+| **Integration** | Multiple units working together | High | Full render pipeline with realistic data |
+| **Boundary** | Edge cases at system boundaries | High | Invalid user input, malformed API responses |
+| **Error handling** | Code that handles failures | Medium | try/catch fallback, retry logic, error transformation |
+| **Interaction** | That A calls B correctly | Low | `expect(redis.hset).toHaveBeenCalledWith(...)` |
+| **Tautological** | That assignment works | Zero | `const x = 1; expect(x).toBe(1)` |
+
+**When NOT to write a test:**
+- Function is a one-line delegation with no logic (test the callee instead)
+- Test would only verify that `async/await` propagates exceptions (no try/catch in function)
+- Test assigns a typed literal and asserts a field equals the assigned value (TypeScript checks this)
+- Test verifies mock returns what you told it to return
+
+**See also:** @testing-anti-patterns.md Anti-Pattern 7 (Testing Language Features)
+
 ## Common Rationalizations
 
 | Excuse | Reality |
@@ -333,6 +354,7 @@ Before marking work complete:
 - [ ] Edge cases and errors covered
 - [ ] **Every mock with mockResolvedValue has a corresponding mockRejectedValue test**
 - [ ] **Error handling paths are tested, not just success paths**
+- [ ] **No tautological tests** (see Anti-Pattern 7 — no language feature tests, no type-shape assertions)
 
 Can't check all boxes? You skipped TDD. Start over.
 
