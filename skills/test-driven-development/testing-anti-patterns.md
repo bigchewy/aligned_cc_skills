@@ -334,6 +334,71 @@ BEFORE completing tests that use mocks:
     Both are REQUIRED. One without the other is incomplete.
 ```
 
+## Anti-Pattern 7: Testing Language Features
+
+**The violation:**
+```typescript
+// ❌ BAD: Testing that async/await propagates exceptions
+it('saveIdea propagates Redis error', async () => {
+  mockRedis.hset.mockRejectedValueOnce(new Error('Timeout'));
+  await expect(saveIdea(testIdea)).rejects.toThrow('Timeout');
+});
+```
+
+**Why this is wrong:**
+- `saveIdea` has no try/catch. It's a thin wrapper around `redis.hset()`
+- This test verifies that JavaScript's `async/await` propagates exceptions — a language guarantee
+- The test cannot fail unless JavaScript itself is broken
+- These accumulate to hundreds of tests that catch zero bugs
+
+**Common forms:**
+- **Error propagation without handling:** `mockRejectedValue` on a function with no try/catch
+- **Type shape assertion:** `const x: Type = { a: 1 }; expect(x.a).toBe(1)` — testing that assignment works
+- **Null pass-through:** Mock returns null, function returns null, no conditional logic
+
+**The Iron Rule:** Only test error paths where your code HANDLES the error (try/catch, fallback, transformation, retry). If the function just passes through, the test is redundant.
+
+**When error path tests ARE needed:**
+```typescript
+// ✅ GOOD: Function actually handles the error
+async function getIdeaWithFallback(id: string) {
+  try {
+    return await getIdea(id);
+  } catch {
+    return DEFAULT_IDEA; // Fallback logic — worth testing
+  }
+}
+
+it('returns default idea when db fails', async () => {
+  mockRedis.hget.mockRejectedValueOnce(new Error('Timeout'));
+  const result = await getIdeaWithFallback('id');
+  expect(result).toEqual(DEFAULT_IDEA); // Tests real behavior
+});
+```
+
+### Gate Function
+
+```
+BEFORE writing an error path test:
+  Ask: "Does this function HANDLE the error?"
+
+  Check for:
+    - try/catch block
+    - .catch() handler
+    - Conditional logic on error type
+    - Fallback/default return value
+    - Error transformation (wrapping, enriching)
+    - Retry logic
+
+  IF none of these exist:
+    STOP — Don't write the test. You'd be testing async/await.
+
+  IF error handling exists:
+    REQUIRED — Write the test. Verify the handling behavior.
+```
+
+**The distinction matters:** Anti-Pattern 6 says "every mock that resolves must have a test where it rejects." Anti-Pattern 7 clarifies: that rule applies only to code that handles errors. For pure pass-through functions, the caller's error test already covers the path.
+
 ## When Mocks Become Too Complex
 
 **Warning signs:**
@@ -367,6 +432,7 @@ BEFORE completing tests that use mocks:
 | Tests as afterthought | TDD - tests first |
 | Over-complex mocks | Consider integration tests |
 | **Mock only success paths** | **Test both resolve AND reject cases** |
+| **Mock error path for pass-through** | **Only test error handling where handling exists** |
 
 ## Red Flags
 
@@ -378,6 +444,7 @@ BEFORE completing tests that use mocks:
 - Mocking "just to be safe"
 - **Every mockResolvedValue without a corresponding mockRejectedValue test**
 - **No tests for what happens when external operations fail**
+- **mockRejectedValue tests on functions with no try/catch**
 
 ## The Bottom Line
 
