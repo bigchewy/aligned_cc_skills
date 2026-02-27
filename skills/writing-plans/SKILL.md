@@ -136,6 +136,8 @@ If dotenv is not a project dependency, the plan should either:
 
 **Source Design Doc:** [path relative to repo root, e.g. `docs/plans/2026-01-15-feature-design.md`, or `N/A` if none]
 
+**Mockups:** [path to mockups directory, e.g. `docs/mockups/feature-name/`, or omit if none — read from design doc's `**Mockups:**` field]
+
 **Architecture:** [2-3 sentences about approach]
 
 **Tech Stack:** [Key technologies/libraries]
@@ -193,6 +195,31 @@ git add tests/path/test.py src/path/file.py
 git commit -m "feat: add specific feature"
 ```
 ```
+
+## Mockup Verification in UI Tasks
+
+When the source design doc references mockups (in `docs/mockups/{session}/`) and a task involves UI changes (creating or modifying pages, components, or layouts), add a **mockup verification step** to that task — between "verify tests pass" and "commit."
+
+**Only add this step to tasks that change UI.** Non-UI tasks (API routes, data models, config, scripts) skip it.
+
+### Template for the mockup verification step
+
+```markdown
+**Step N: Verify mockup fidelity**
+
+Read the mockup at `docs/mockups/{session}/{file}.html`. Compare your implementation:
+- Layout structure matches (sections, columns, ordering)
+- Components present and positioned correctly
+- Data displayed matches mockup examples (labels, columns, field names)
+- Interactive elements present (tabs, accordions, hover states, modals)
+
+If you intentionally deviate from the mockup (e.g., discovered a better approach during implementation), add a note below the task heading:
+> MOCKUP DEVIATION: [what changed and why]
+```
+
+**Relationship to The Verifier:** The Verifier critic (see Fact-Check + Critique Panel) verifies at plan-writing time that the plan's tasks cover all mockup elements. This per-task step ensures the executor actually matches the mockup at implementation time — plan coverage and execution fidelity are complementary checks.
+
+**How this works with Ralph loops:** Each Ralph loop invocation reads the task spec. If the task includes a mockup verification step, the loop checks fidelity for that task before marking it complete. Drift is caught per-task, not just at the end.
 
 ## MANDATORY: Error Path Tests for Mocks
 
@@ -261,6 +288,35 @@ BEFORE completing any test spec that uses mocks:
   Reference: skills/test-driven-development/testing-anti-patterns.md
              See Anti-Pattern 6: Mocking Away Error Paths
 ```
+
+### Test Value Gate (Anti-Inflation)
+
+When specifying tests in a plan, every test must pass this check:
+
+```
+BEFORE adding a test to the plan:
+
+  1. Does the function under test contain LOGIC?
+     Logic = conditionals, loops, transformations, error handling,
+     sorting, filtering, mapping, calculations, state machines
+
+  2. If NO logic (pure delegation, one-line wrapper):
+     SKIP — Don't add a test for this function.
+     The function's callee should have tests instead.
+
+  3. If YES logic, what KIND of test?
+     - Behavioral (input → output)? ✅ Always write
+     - Error handling (try/catch behavior)? ✅ Write if handling exists
+     - Error propagation (no try/catch)? ❌ Skip — Anti-Pattern 7
+     - Type shape (assign + assert)? ❌ Skip — TypeScript handles this
+     - Interaction only (toHaveBeenCalledWith)? ⚠️ Only if the CALL is the logic
+
+  4. Does the test use realistic data?
+     - ❌ Single-word strings ('Fast', 'test')
+     - ✅ Realistic content that exercises edge cases
+```
+
+**Why this matters:** TDD discipline can produce test inflation when applied mechanically. A codebase with 1,000 thin-wrapper tests and 400 logic tests has worse coverage than one with just the 400 logic tests — because the 1,000 padding tests create noise, slow the suite, and give false confidence about areas that are actually untested.
 
 ## Eval Scenarios Section
 
