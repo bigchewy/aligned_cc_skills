@@ -116,10 +116,16 @@ Test specifications must be internally consistent and complete.
 - Are new components/modules getting their own test files?
 - Do extracted/refactored components rely solely on parent tests? (They shouldn't)
 - Do test descriptions match actual hook/function behavior? (Read the source — don't assume the plan's description is correct)
+- Do any test specs test pure delegation functions with no logic? (They shouldn't — see Anti-Pattern 7)
+- Do test specs use realistic data or just placeholder strings like 'test', 'foo', 'Fast'?
+- Are there tests that only assert `toHaveBeenCalledWith` on a one-line wrapper function?
 
 - BAD: Header says "5 tests" but only 4 bullets listed
 - BAD: Test spec says "Uses fallback title when API fails" but the hook has no fallback logic — it calls onError and aborts
+- BAD: Plan specifies "propagates Redis error" tests for 20 wrapper functions with no error handling
+- BAD: All test fixtures use single-word strings that can't trigger escaping or parsing edge cases
 - GOOD: Header count matches bullets; every mock has success + error test; test descriptions verified against source
+- GOOD: Tests focus on functions with conditionals/transformations; error tests only where handling exists
 
 ### 9. Decision quality (if Decision Log present)
 
