@@ -1,7 +1,7 @@
 # Testing Anti-Patterns
 
 <!-- Forked from SuperPowers v4.0.3 (2025-01-22) -->
-<!-- Custom modifications: Added Anti-Pattern 6 (Mocking Away Error Paths) -->
+<!-- Custom modifications: Added Anti-Pattern 6 (Mocking Away Error Paths), Anti-Pattern 7 (Testing Language Features) -->
 
 **Load this reference when:** writing or changing tests, adding mocks, or tempted to add test-only methods to production code.
 
@@ -280,7 +280,7 @@ test('processes uploaded file', async () => {
 - **Tests pass, production fails** - the exact scenario that prompted this anti-pattern
 - **False confidence** - 100% test coverage means nothing if error paths aren't tested
 
-**The Iron Rule:** Every mock that resolves must also have a test where it rejects.
+**The Iron Rule:** Every mock that resolves must also have a test where it rejects — **where the function handles the error** (see Anti-Pattern 7).
 
 **The fix:**
 ```typescript
