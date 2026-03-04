@@ -13,18 +13,21 @@ Write a sentinel file to signal the loop to stop:
 ```bash
 touch .ralph-done
 ```
-Say "All tasks complete! Run `/aligned:finishing-a-development-branch` to wrap up." and exit.
+Say "All tasks complete!" and exit.
 
 ## Execute the task
 1. Change to the worktree directory specified below
 2. Read the task spec carefully — it contains full test code and implementation code
 3. Follow TDD: write failing test first, then implement, then verify
 4. Run the specific test file to confirm it passes
-5. If the task involves LLM behavior surface files (prompts, prompt builders),
+5. If the task spec includes a mockup verification step, perform it now —
+   read the referenced mockup HTML and compare against your implementation.
+   If you intentionally deviate, add `> MOCKUP DEVIATION: [what and why]` below the task heading.
+6. If the task involves LLM behavior surface files (prompts, prompt builders),
    run the project's eval command and verify it passes
-6. Mark the task with ✅ in the plan file (replace the task heading)
-7. Commit: `git add [changed files] && git commit -m "task N: [description]"`
-8. Exit
+7. Mark the task with ✅ in the plan file (replace the task heading)
+8. Commit: `git add [changed files] && git commit -m "task N: [description]"`
+9. Exit
 
 ## Rules
 - ONE task per invocation. Do not continue to the next task.
@@ -35,5 +38,5 @@ Say "All tasks complete! Run `/aligned:finishing-a-development-branch` to wrap u
   - Add a note below the task heading: `> BLOCKED: [description of issue]`
   - Commit the plan file update
   - Exit (the next iteration will see the blocker note and attempt to resolve)
-- Do NOT run /aligned:finishing-a-development-branch — the user runs that manually
+- Do NOT run /aligned:finishing-a-development-branch — the user will handle finishing after the loop completes
 - Do NOT modify tasks you are not currently executing

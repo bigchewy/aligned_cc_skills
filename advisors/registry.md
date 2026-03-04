@@ -138,6 +138,14 @@ When dynamically selecting critics for any critique workflow:
 - **best_for:** Designs touching authentication, user data, APIs, external integrations, RLS policies, secrets management.
 - **not_for:** UI-only changes, content strategy, marketing, internal tools with no auth surface.
 
+### Steve Krug
+- **id:** steve-krug
+- **prompt:** advisors/.claude/steve-krug.md
+- **domains:** usability, scanning, conventions, question-marks, trunk-test, clarity, happy-talk
+- **evaluation_expertise:** Evaluates whether the user has to think. Runs the Trunk Test (can you orient yourself instantly?), counts question marks (moments of confusion), checks scanning hierarchy, identifies happy talk, tests convention compliance, and applies the "mindless, unambiguous choice" test. Catches clever-over-clear design, label mismatches, convention violations, and question mark accumulation.
+- **best_for:** UI layout comparisons, navigation design, page clarity, label and icon evaluation, user flow simplicity. Pairs well with The Designer — Krug evaluates clarity, The Designer evaluates craft.
+- **not_for:** Visual polish (spacing, typography, color), backend architecture, business strategy, data models, quantitative optimization.
+
 ### The Designer
 - **id:** the-designer
 - **prompt:** advisors/.claude/the-designer.md
@@ -156,13 +164,13 @@ When dynamically selecting critics for any critique workflow:
 
 ### Brand Copywriter
 - **id:** copywriter
-- **prompt:** advisors/epch-projects/copywriter.md
+- **prompt:** advisors/epch/copywriter.md
 - **domains:** copywriting, brand voice, headlines, CTAs
 - **note:** Writes content in the brand voice. Not used for critique — serves as the author in content pipeline recipes.
 
 ### SEO Expert
 - **id:** seo-expert
-- **prompt:** advisors/epch-projects/seo-expert.md
+- **prompt:** advisors/epch/seo-expert.md
 - **domains:** seo, search-optimization, keyword-strategy
 - **evaluation_expertise:** Evaluates content for search performance. Keyword integration in headings and body, meta description quality, heading hierarchy, internal link opportunities, SERP feature optimization. Grounds every recommendation in keyword data.
 - **best_for:** Website copy, blog posts, landing pages — any content that needs organic search visibility.
@@ -170,7 +178,7 @@ When dynamically selecting critics for any critique workflow:
 
 ### Robb Wolf
 - **id:** robb-wolf
-- **prompt:** advisors/epch-projects/robb-wolf.md
+- **prompt:** advisors/epch/robb-wolf.md
 - **domains:** health-product-gtm, health-claims, science-to-consumer, trust-building, DTC-health
 - **evaluation_expertise:** Evaluates health product content for scientific defensibility and trust-building through substance. Checks whether health claims have clear mechanism of action, whether evidence tier is named honestly (RCT vs observational vs anecdotal), and whether content earns long-term credibility. Evaluates GTM approach against content-led organic distribution. Catches hand-wavy science, credential-free authority claims, and marketing dressed as education.
 - **best_for:** Health product content, health claims review, DTC health GTM strategy, content-led health product launches.
@@ -178,7 +186,7 @@ When dynamically selecting critics for any critique workflow:
 
 ### Patrick Campbell
 - **id:** patrick-campbell
-- **prompt:** advisors/epch-projects/patrick-campbell.md
+- **prompt:** advisors/epch/patrick-campbell.md
 - **domains:** pricing, packaging, monetization, churn, retention, value-metrics, subscription
 - **evaluation_expertise:** Evaluates pricing, packaging, and monetization strategy. Value metric alignment, feature differentiation across tiers, willingness-to-pay segmentation by persona. Retention mechanics — voluntary vs involuntary churn, payment recovery, cancel flow design. Catches monetization neglect and packaging misalignment.
 - **best_for:** Pricing strategy, subscription packaging, paywall design, churn analysis, monetization decisions, free-to-paid conversion.
@@ -186,7 +194,7 @@ When dynamically selecting critics for any critique workflow:
 
 ### Joe Pulizzi
 - **id:** joe-pulizzi
-- **prompt:** advisors/epch-projects/joe-pulizzi.md
+- **prompt:** advisors/epch/joe-pulizzi.md
 - **domains:** content-strategy, audience-building, content-first-business, content-tilt, content-operations
 - **evaluation_expertise:** Evaluates content strategy through audience-first lens. Does the content have a clear content tilt? Is it serving the audience or selling the product? Is there a consistent publishing cadence on a focused platform? Does the content build toward a subscriber relationship rather than one-time views? Catches product-first thinking disguised as content marketing.
 - **best_for:** Content strategy, audience-building plans, content calendar design, content-to-product pipeline decisions.
@@ -194,7 +202,7 @@ When dynamically selecting critics for any critique workflow:
 
 ### Rob Walling
 - **id:** rob-walling
-- **prompt:** advisors/epch-projects/rob-walling.md
+- **prompt:** advisors/epch/rob-walling.md
 - **domains:** bootstrapped-saas, smb-gtm, self-serve, acquisition-channels, product-market-fit
 - **evaluation_expertise:** Evaluates bootstrapped SaaS viability and go-to-market strategy. Acquisition channel selection (speed, cost, scalability), pricing architecture, product-market fit stage assessment, churn benchmarks, and whether the business model works without VC. Catches building without evidence — features or products launched without validated willingness to pay.
 - **best_for:** B2B SMB go-to-market, self-serve acquisition strategy, bootstrapped business viability, channel selection.
@@ -202,7 +210,7 @@ When dynamically selecting critics for any critique workflow:
 
 ### Robbie Kellman Baxter
 - **id:** robbie-kellman-baxter
-- **prompt:** advisors/epch-projects/robbie-kellman-baxter.md
+- **prompt:** advisors/epch/robbie-kellman-baxter.md
 - **domains:** subscription, membership, retention, forever-promise, recurring-revenue
 - **evaluation_expertise:** Evaluates whether content reflects membership thinking vs transaction thinking. Is the forever promise clear — an ongoing outcome, not a feature list? Does the content frame the offer as a relationship, not a purchase? Does onboarding content bridge the gap between sign-up and felt benefit? Catches subscription-as-billing framing — recurring price without ongoing value justification.
 - **best_for:** Subscription model design, membership strategy, retention planning, onboarding content, health subscription products.
@@ -210,7 +218,7 @@ When dynamically selecting critics for any critique workflow:
 
 ### Oli Gardner
 - **id:** oli-gardner
-- **prompt:** advisors/epch-projects/oli-gardner.md
+- **prompt:** advisors/epch/oli-gardner.md
 - **domains:** landing-page-conversion, attention-ratio, conversion-centered-design, page-focus
 - **evaluation_expertise:** Evaluates through Conversion-Centered Design lens. Attention ratio — ratio of interactive elements to campaign goals (ideal 1:1). Page focus — does every element serve a single conversion goal? Structural hierarchy — directional cues, encapsulation, and visual flow to CTA. Trust signals, friction reduction, benefit clarity, message match.
 - **best_for:** Landing pages, conversion flows, signup pages, campaign-specific pages.
@@ -218,7 +226,7 @@ When dynamically selecting critics for any critique workflow:
 
 ### Joanna Wiebe
 - **id:** joanna-wiebe
-- **prompt:** advisors/epch-projects/joanna-wiebe.md
+- **prompt:** advisors/epch/joanna-wiebe.md
 - **domains:** conversion-copy, voice-of-customer, headline-writing, cta-optimization
 - **evaluation_expertise:** Evaluates conversion copy through Seven Sweeps lens. Headline effectiveness, CTA clarity and friction word avoidance, voice-of-customer alignment, PAS structure, specificity of claims, emotional vs rational balance, message-match between traffic source and landing page. "So what?" and "Prove it." applied to every claim.
 - **best_for:** Landing page copy, email copy, ad copy, CTAs, headlines — any copy that must convert.
@@ -226,13 +234,13 @@ When dynamically selecting critics for any critique workflow:
 
 ### Julian Shapiro
 - **id:** julian-shapiro
-- **prompt:** advisors/epch-projects/julian-shapiro.md
+- **prompt:** advisors/epch/julian-shapiro.md
 - **domains:** growth-marketing, writing-craft, content-creation
 - **note:** Writes content. Not yet profiled with evaluation expertise.
 
 ### Seth Godin
 - **id:** seth-godin
-- **prompt:** advisors/epch-projects/seth-godin.md
+- **prompt:** advisors/epch/seth-godin.md
 - **domains:** marketing, permission-marketing, remarkable-products, tribes
 - **note:** Not yet profiled with evaluation expertise.
 

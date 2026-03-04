@@ -322,7 +322,7 @@ If systematic investigation reveals issue is truly environmental, timing-depende
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `systematic-debugging` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `systematic-debugging` as the "Discovered during" value.
 
 ## Supporting Techniques
 

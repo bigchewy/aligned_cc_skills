@@ -1,6 +1,6 @@
 ---
 name: eval-audit
-description: "Daily eval coverage auditor. Detects LLM behavior surface changes without eval coverage. Runs via daily cron hook or manually."
+description: "Eval coverage auditor. Detects LLM behavior surface changes without eval coverage. Manual invocation only."
 ---
 
 # Eval Coverage Audit
@@ -9,13 +9,12 @@ description: "Daily eval coverage auditor. Detects LLM behavior surface changes 
 
 Ensure every LLM behavior surface change has eval coverage. Catches gaps the pipeline missed and triggers the standard pipeline to fill them.
 
-**Invocation:** `/aligned:eval-audit` (manual) or daily via UserPromptSubmit hook.
+**Invocation:** `/aligned:eval-audit` (manual only).
 
 **Core principle:** Every change to prompts, prompt builders, personalization logic, or framework routing should have a corresponding eval scenario that verifies the behavior.
 
 ## When to Use
 
-- Triggered automatically by the daily cron hook (checks if 24 hours have passed since last audit)
 - Run manually after adding new advisors, frameworks, or prompt logic
 - Run after completing a batch of LLM-related changes
 
@@ -70,7 +69,7 @@ After the coverage check, if new LLM surface patterns were added (new advisor ty
 
 1. **Generate real examples immediately.** Read the new prompt/framework, run a single eval scenario against it (or make a direct API call), and use the actual output to write a concrete classification example.
 
-2. **Classify the example.** Apply the decision tree from `skills/eval-failure-triage/references/classification-patterns.md`.
+2. **Classify the example.** Apply the decision tree from `{base-directory}/../eval-failure-triage/references/classification-patterns.md` (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load).
 
 3. **Write the pattern entry** to the project's classification patterns file (if it exists, typically at `e2e/references/classification-patterns.md`).
 
@@ -78,7 +77,7 @@ After the coverage check, if new LLM surface patterns were added (new advisor ty
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `eval-audit` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `eval-audit` as the "Discovered during" value.
 
 ## Integration
 

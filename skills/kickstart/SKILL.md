@@ -46,7 +46,6 @@ project/
 │   ├── lessons-learned/
 │   │   └── completed/
 │   └── ralph_loops/
-│       ├── EXECUTE-PLAN.md
 │       └── BEST-PRACTICES.md
 ├── e2e/
 │   ├── scenarios/
@@ -114,8 +113,8 @@ eval-log.jsonl
 .eval-audit-last-run
 ```
 
-**ralph_loops/EXECUTE-PLAN.md and BEST-PRACTICES.md:**
-Copy content from the plugin's `docs/ralph_loops/` directory.
+**ralph_loops/BEST-PRACTICES.md:**
+Copy content from the plugin's `docs/ralph_loops/BEST-PRACTICES.md`. (Note: `EXECUTE-PLAN.md` and `run-ralph.sh` are sourced from the plugin at runtime — do not copy them into projects.)
 
 ## Phase 3: Seed CLAUDE.md
 
@@ -135,7 +134,6 @@ Generate a project-specific CLAUDE.md including:
   - `/aligned:executing-plans` — to implement a plan
   - `/aligned:finishing-a-development-branch` — to complete work
   - `/aligned:systematic-debugging` — for any bug
-  - `/aligned:autopilot` — for end-to-end feature work
   - `/aligned:design-principles` — to define design direction
   - `/aligned:eval-failure-triage` — when evals fail
   - `/aligned:eval-audit` — to check eval coverage

@@ -46,6 +46,19 @@ Then:
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 
+**When options involve UI or layout:** Never use ASCII art in AskUserQuestion markdown previews for UI comparisons — they are too low-fidelity for the user to evaluate. Instead:
+
+1. Draft the approach options as normal.
+2. Classify the options and consult the right advisor:
+   - **Technical UI decisions** (component patterns, state management, module boundaries, where logic lives) → run the Architect auto-consult (below).
+   - **UX/usability decisions** (layout clarity, navigation, scanning, labeling, user flow, conventions) → consult Steve Krug (`advisors/.claude/steve-krug.md`) using the same auto-consult dispatch pattern, substituting Krug's prompt for The Architect's.
+   - **Both apply?** Consult both in parallel.
+3. Dispatch the mockup-generator agent with the advisor-refined options to create a comparison mockup with all options as switchable tabs. Use this dispatch template — replace placeholders with actual values. Uses `subagent_type=general-purpose`.
+
+   "Read `agents/mockup-generator.md` for your full workflow. Generate a comparison mockup showing {number} approach options for: {brief description of what's being compared}. Project root: `{project-root}`. Brainstorming session topic: `{topic}`. Create a single HTML file at `docs/mockups/{session-name}/approach-comparison.html` with tabbed navigation to switch between options. Each tab should be labeled with the approach name and include a short description of the trade-offs. Open the file in the browser after generating."
+
+4. After the user has reviewed the HTML mockup in the browser, proceed with the approach selection question.
+
 **Architect auto-consult:**
 
 Before presenting technical content to the user — whether it's a question with options or a design section — consult The Architect first. This applies in every phase: understanding, exploring approaches, and presenting the design.
@@ -92,6 +105,7 @@ Before presenting technical content to the user — whether it's a question with
 
 **Documentation:**
 - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
+- After visualization artifacts are generated, add a `**Mockups:**` field to the design document header listing the mockup directory path (e.g., `**Mockups:** docs/mockups/{session-name}/`). This field is consumed by writing-plans and finishing-a-development-branch to locate mockups without guessing. If no visual artifacts were generated, omit the field.
 
 **Visualization (mandatory):**
 
@@ -156,13 +170,17 @@ Do not pause for user review — the critique panel will evaluate the visuals al
    State the full assignment table before launching agents (e.g., "Steve Jobs: criteria 1, 3, 8. The QA Engineer [fact-checker]: criteria 4, 5, 7 + fact-checking.").
 
 4. Read each selected critic's full prompt file (the path listed in the registry entry).
-5. Create a temporary directory for this critique round: `/tmp/brainstorm-critique-{topic}/round-1/`. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` with the absolute path of the design document, `{criteria-list}` with the assigned criteria numbers, and `{report-path}` with `/tmp/brainstorm-critique-{topic}/round-1/{critic-slug}-report.md`.
+5. **Resolve the checklist (MANDATORY):** The checklist is a sibling file in this skill's directory. Resolve its absolute path:
+   - Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/design-critique-checklist.md`.
+   - **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/brainstorming/design-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+   Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
+6. Create a temporary directory for this critique round: `/tmp/brainstorm-critique-{topic}/round-1/`. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` with the absolute path of the design document, `{criteria-list}` with the assigned criteria numbers, and `{report-path}` with `/tmp/brainstorm-critique-{topic}/round-1/{critic-slug}-report.md`.
 
    **For the designated fact-checker, use this prompt:**
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec. Your job has two phases:
+   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec. Your job has two phases:
    **Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
    **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
    Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
@@ -171,12 +189,12 @@ Do not pause for user review — the critique panel will evaluate the visuals al
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `skills/brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec.
+   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec.
    **IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of file paths, line numbers, and code claims in parallel. Do not extract and verify every claim — that work is covered.
    Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
    Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-6. **Aggregate via sub-agent (do NOT aggregate in the main thread):**
+7. **Aggregate via sub-agent (do NOT aggregate in the main thread):**
 
    After all critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
 
@@ -191,7 +209,7 @@ Do not pause for user review — the critique panel will evaluate the visuals al
 
    Present the aggregation agent's unified report to the user.
 
-7. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues the user approves. If you need to review a specific critic's raw findings in detail, read the report file directly — do not ask the user to summarize it.
+8. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues the user approves. If you need to review a specific critic's raw findings in detail, read the report file directly — do not ask the user to summarize it.
 
 **Round 2 (conditional):**
 Only run if Round 1 found medium or high severity issues. Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Write to `/tmp/brainstorm-critique-{topic}/round-2/`. Scope Round 2 to changes only — prepare a brief summary of what changed since Round 1 and pass it to each agent. The fact-checker re-verifies only changed claims. Other critics re-evaluate only changed sections against their assigned criteria. Aggregate Round 2 the same way — dispatch an aggregation agent, do not aggregate inline.
@@ -210,7 +228,7 @@ After committing the design document, invoke `/aligned:using-git-worktrees` to c
 
 ## Design Critique
 
-When critiquing an existing design (instead of writing one), use the checklist in `design-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against the actual codebase — don't trust file paths, architecture claims, or integration assumptions without checking.
+When critiquing an existing design (instead of writing one), resolve the checklist path using the same MANDATORY resolution steps described above (base directory → Glob fallback → STOP if not found). Use the checklist at `{base-directory}/design-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against the actual codebase — don't trust file paths, architecture claims, or integration assumptions without checking.
 
 ## Key Principles
 

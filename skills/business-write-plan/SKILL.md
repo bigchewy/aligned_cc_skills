@@ -134,10 +134,11 @@ Before completing any plan, verify:
 **Critic selection:** Default critics are listed below. If the plan's domain clearly warrants different critics (e.g., a technical plan that needs The Architect instead of Rumelt), select from `advisors/registry.md` instead. State which critics you selected and why.
 
 **Round 1:**
-**Before dispatching critics:** Resolve the checklist absolute path:
-1. If this skill's base directory is known (printed when the skill loaded), the checklist is at `{base-directory}/plan-critique-checklist.md`.
-2. If the base directory is not available, use Glob to find `**/business-write-plan/plan-critique-checklist.md`.
-Verify the resolved path exists with Read. Use it as `{checklist-path}` in the sub-agent prompts below.
+**Before dispatching critics — resolve the checklist (MANDATORY):**
+The checklist is a sibling file in this skill's directory. Resolve its absolute path:
+1. Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/plan-critique-checklist.md`.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/business-write-plan/plan-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
 
 1. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` below with the absolute path of the plan document you wrote in the previous step, and `{checklist-path}` with the resolved checklist path.
 
@@ -185,7 +186,7 @@ Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`,
 
 ## Plan Critique
 
-When critiquing an existing plan (instead of writing one), use the checklist in `plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source materials — don't trust that referenced documents exist, contain the cited data, or support the conclusions drawn from them without checking.
+When critiquing an existing plan (instead of writing one), resolve the checklist path using the same MANDATORY resolution steps described above (base directory → Glob fallback → STOP if not found). Use the checklist at `{base-directory}/plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source materials — don't trust that referenced documents exist, contain the cited data, or support the conclusions drawn from them without checking.
 
 ## Decision Log (mandatory)
 

@@ -90,7 +90,7 @@ If either move fails (file already moved or doesn't exist), skip it and continue
 
 Report what was implemented and instruct the user to run `/aligned:finishing-a-development-branch` in a new session. Do NOT invoke it directly.
 
-> **For large plans:** Consider using the Ralph Wiggum loop (`docs/ralph_loops/EXECUTE-PLAN.md`) instead. Each task runs in a fresh context, avoiding quality degradation from context window bloat.
+> **For large plans:** Consider using the Ralph loop instead. Each task runs in a fresh context, avoiding quality degradation from context window bloat. The writing-plans skill generates the correct `run-ralph.sh` command with resolved paths. After the loop completes, run `/aligned:finishing-a-development-branch` manually.
 
 ## When to Stop and Ask for Help
 
@@ -160,7 +160,7 @@ N bug(s) were discovered and logged to `docs/kanban/todo/`. Review them and pick
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `[plan filename / Task N]` as the "Discovered during" value (more specific than just the skill name).
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `[plan filename / Task N]` as the "Discovered during" value (more specific than just the skill name).
 
 ## Remember
 - Review plan critically first

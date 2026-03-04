@@ -63,6 +63,14 @@ git -C "$main_worktree" commit -m "docs: add implementation plan for <feature-na
 
 **Why:** Plan files written inside a worktree only exist on the feature branch. If that branch is discarded (Option 4 in finishing-a-development-branch), the plan is permanently lost. Writing to main ensures plans survive regardless of what happens to the feature branch.
 
+**If running in a worktree, merge main forward so the plan is available there:**
+
+```bash
+git -C "$worktree_path" merge main --no-edit
+```
+
+The worktree was typically created before writing-plans ran, so its branch doesn't have the plan commit. This merge brings the plan file into the worktree's working tree, where EXECUTE-PLAN.md needs to read it, mark tasks with ✅, and commit those updates. Skip this step if no worktree exists (plan was written directly on main).
+
 ### Chunked Writing for Large Plans
 
 The Write tool has a content size limit (~32K tokens). Plans with >15 tasks and full code snippets will often exceed this. When writing a large plan:
@@ -160,7 +168,7 @@ If dotenv is not a project dependency, the plan should either:
 
 **Files:**
 - Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
+- Modify: `exact/path/to/existing.py` (the `handle_request` function)
 - Test: `tests/exact/path/to/test.py`
 
 **Step 1: Write the failing test**
@@ -354,10 +362,11 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 
 **Division of labor:** The Verifier owns exhaustive fact-checking. The Architect does NOT duplicate this work — it reads key files to understand patterns, then focuses purely on architectural critique. This prevents the ~80% overlap in verification work that occurs when both agents fact-check independently.
 
-**Before dispatching critics:** Resolve the checklist absolute path:
-1. If this skill's base directory is known (printed when the skill loaded), the checklist is at `{base-directory}/plan-critique-checklist.md`.
-2. If the base directory is not available, use Glob to find `**/writing-plans/plan-critique-checklist.md`.
-Verify the resolved path exists with Read. Use it as `{checklist-path}` in the sub-agent prompts below.
+**Before dispatching critics — resolve the checklist (MANDATORY):**
+The checklist is a sibling file in this skill's directory. Resolve its absolute path:
+1. Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/plan-critique-checklist.md`.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/writing-plans/plan-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
 
 **Round 1:**
 1. Create a temporary directory for this critique round: `/tmp/plan-critique-{feature}/round-1/`. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` with the absolute path of the plan document, `{checklist-path}` with the resolved checklist path, and `{report-path}` with `/tmp/plan-critique-{feature}/round-1/{critic-slug}-report.md`.
@@ -393,7 +402,7 @@ Verify the resolved path exists with Read. Use it as `{checklist-path}` in the s
      - Verify every path: 'Plan references src/lib/auth/index.ts. Confirmed — file exists, exports match.'
      - Cross-check against design: 'Design doc specifies Zod validation. Plan Task 3 uses manual checks, not Zod. Drift from spec.'
      - Flag missing steps: 'The design requires error path tests for every mock. Plan Tasks 2 and 4 have mocks but no error path test steps.'
-     - Cite line numbers: 'Plan says modify handler at line 45. Actual handler starts at line 62 — stale.'
+     - Catch stale line numbers: 'Plan says modify handler at line 45. Actual handler starts at line 62 — flag as stale. Content anchors (function names, section headers) are more resilient.'
      - Count coverage: 'Design doc lists 5 acceptance criteria. Plan tasks cover 3. Missing: criteria 2 and 5.'
 
      You do NOT evaluate architectural quality, suggest better approaches, skip verification because a path 'looks right', accept 'it should work', or conflate missing detail with incorrect detail.
@@ -476,14 +485,16 @@ If the plan changes system architecture (new routes, module restructuring, datab
 
 ## Plan Critique
 
-When critiquing an existing plan (instead of writing one), use the checklist in `plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source code — don't trust line numbers, file paths, code snippets, or test counts without checking.
+When critiquing an existing plan (instead of writing one), resolve the checklist path using the same MANDATORY resolution steps described above (base directory → Glob fallback → STOP if not found). Use the checklist at `{base-directory}/plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source code — don't trust line numbers, file paths, code snippets, or test counts without checking.
 
 ## Verification Gate
 
-Before including any file path, line number, or code snippet in the plan, verify it exists in the codebase:
+Before including any file path or code snippet in the plan, verify it exists in the codebase:
 - **Glob** to confirm file paths exist (or confirm "Create" targets don't already exist)
-- **Read** to verify line numbers and code snippets are accurate
+- **Read** to verify code snippets are accurate
 - **Grep** to confirm counts, imports, and usage patterns
+
+**Use content anchors, not line numbers.** Line numbers go stale between plan writing and execution. Instead of `Modify: src/app/page.tsx:133-154`, write `Modify: src/app/page.tsx (the StageIndicator entries)`. Function names, section headers, component names, and variable names are stable anchors that survive edits to surrounding code.
 
 If a referenced file cannot be found, flag it as `[NOT FOUND]` in the plan rather than guessing.
 
@@ -499,13 +510,18 @@ If a referenced file cannot be found, flag it as `[NOT FOUND]` in the plan rathe
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `writing-plans` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `writing-plans` as the "Discovered during" value.
 
 ## Execution Handoff
 
-After saving the plan (to the main worktree and committed to main), generate ready-to-paste prompts for executing the plan. Since the brainstorming phase already created the worktree, these prompts reference the existing worktree path.
+**Resolve the plugin root path (MANDATORY):** The Ralph loop script lives in this plugin's `docs/ralph_loops/` directory.
+1. Find the "Base directory for this skill:" line printed when this skill loaded. The plugin root is two levels up: `{base-directory}/../..` (i.e., strip `skills/writing-plans/`).
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/docs/ralph_loops/run-ralph.sh`. Use the match whose parent directory contains `.claude-plugin/plugin.json`.
+3. Verify the resolved path exists by reading `{plugin-root}/docs/ralph_loops/run-ralph.sh`. **If it cannot be found after both strategies, STOP and tell the user.**
 
-**CRITICAL — `{plan-file-path}` must be an absolute path on the main worktree.** The plan was committed to main, not the feature branch. A relative path like `docs/plans/...` will fail when run from the worktree because the file doesn't exist there. Always use the full absolute path: `$main_worktree/docs/plans/YYYY-MM-DD-<feature-name>.md` (e.g., `/Users/alice/software/myproject/docs/plans/2026-02-24-feature.md`).
+Store as `{plugin-root}`.
+
+After saving the plan (to the main worktree and committed to main), present execution options.
 
 **Output this to the user:**
 
@@ -523,47 +539,49 @@ State the recommendation as a single sentence, e.g.: "**Recommendation:** Option
 ````
 ## Next Steps
 
-### Option A: Interactive execution (smaller plans)
+### Option A: Interactive execution (smaller plans, judgment calls needed)
 Copy into a new Claude Code session:
 > `cd {worktree-path}` then use `/aligned:executing-plans` to execute `{plan-file-path}`.
 
 ### Option B: Ralph loop execution (larger plans)
-Run from the worktree directory:
+Run from any terminal:
 ```bash
-cd {worktree-path} && rm -f .ralph-done && while :; do claude -p "$(cat docs/ralph_loops/EXECUTE-PLAN.md)
-
-Plan: {plan-file-path}
-Worktree: {worktree-path}" && [ -f .ralph-done ] && rm .ralph-done && break; done
+cd {worktree-path}
+bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
 ```
 ````
 
-If the worktree path is not known (e.g., writing-plans was invoked without a prior brainstorming session), fall back to the format that includes worktree creation. **Both options must be shown** — Option B uses the worktree path that Option A creates:
+**After execution completes** (either option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
+
+### When worktree path is unknown
+
+If the worktree path is not known (e.g., writing-plans was invoked without a prior brainstorming session):
 
 ````
 ### Option A: Interactive execution (smaller plans)
 Copy into a new Claude Code session:
-> Use the /aligned:using-git-worktrees skill to create a worktree for branch `feature/{feature-name}`. Once the worktree is ready and tests pass, use the /aligned:executing-plans skill to execute the plan at `{plan-file-path}`. Note: the plan file lives on main, not the feature branch — read it using the absolute path from the main worktree.
+> Use /aligned:using-git-worktrees to create a worktree for branch `feature/{feature-name}`. Once ready, merge main (`git merge main --no-edit`) to bring in the plan, then use `/aligned:executing-plans` to execute `{worktree-path}/docs/plans/YYYY-MM-DD-<feature-name>.md`.
 
 ### Option B: Ralph loop execution (larger plans)
-First create the worktree, then run from it:
+First create the worktree:
 ```bash
 cd /path/to/your/project && git worktree add .worktrees/{feature-name} -b feature/{feature-name}
-cd .worktrees/{feature-name} && npm install && ln -sf ../../.env.local .env.local
+cd .worktrees/{feature-name} && npm install && ln -sf ../../.env.local .env.local && git merge main --no-edit
 ```
-Then start the loop (**must run from the worktree directory — verify your prompt shows the worktree path before pasting**):
+Then run:
 ```bash
-rm -f .ralph-done && while :; do claude -p "$(cat docs/ralph_loops/EXECUTE-PLAN.md)
-
-Plan: {plan-file-path}
-Worktree: $(pwd)" && [ -f .ralph-done ] && rm .ralph-done && break; done
+cd .worktrees/{feature-name}
+bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
 ```
-Note: Replace `/path/to/your/project` with the actual project root. The `$(pwd)` resolves the worktree path automatically. **IMPORTANT:** If the `cd` above failed, do NOT paste the loop command — it would run against your main repo.
+**IMPORTANT:** If the worktree setup above failed, do NOT run the script — it would execute against your main repo.
 ````
+
+**After execution completes** (either option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
 
 **Verification gate (mandatory before presenting the handoff):**
 
-Before outputting the execution options to the user, verify the generated commands by checking all three conditions. If any fail, fix the command before presenting it.
+Before outputting the execution options, verify by checking all three conditions. If any fail, fix before presenting.
 
-1. **Plan path is absolute and on main:** `{plan-file-path}` starts with `/` and points to the main worktree (not the feature worktree). Use Read to open `{plan-file-path}` — must succeed.
-2. **EXECUTE-PLAN.md exists in worktree:** The Ralph loop reads `docs/ralph_loops/EXECUTE-PLAN.md` relative to the worktree CWD. Use Read to open `{worktree-path}/docs/ralph_loops/EXECUTE-PLAN.md` — must succeed. If it doesn't exist (worktree was created before this file was added to main), update the Ralph loop command to use the absolute path from main instead: `$main_worktree/docs/ralph_loops/EXECUTE-PLAN.md`.
-3. **Worktree path exists:** Use Glob with pattern `{worktree-path}/*` — must return results.
+1. **Plan file exists on main:** Read `$main_worktree/docs/plans/YYYY-MM-DD-<feature-name>.md` — must succeed.
+2. **run-ralph.sh exists:** Read `{plugin-root}/docs/ralph_loops/run-ralph.sh` — must succeed.
+3. **Worktree path exists:** Glob `{worktree-path}/*` — must return results.

@@ -92,9 +92,39 @@ Every mockup file follows this structure. Replace the placeholder values with to
       margin: 0 auto;
       min-height: 100vh;
     }
+    /* Mockup context header — sits above the mockup content */
+    .mockup-header {
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #e5e5e5;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .mockup-header h1 {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin: 0 0 2px 0;
+    }
+    .mockup-header .subtitle {
+      font-size: 0.88rem;
+      color: #666;
+      margin: 0 0 2px 0;
+    }
+    .mockup-header .context {
+      font-size: 0.82rem;
+      color: #888;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
+  <!-- Context header — describes what this mockup shows and which brainstorming session it belongs to -->
+  <div class="mockup-header">
+    <h1>[Mockup Title]</h1>
+    <p class="subtitle">Brainstorming session: [session topic]</p>
+    <p class="context">[1-2 sentence description of what this mockup visualizes]</p>
+  </div>
+
   <!-- Mockup content here -->
 
   <!-- For flow diagrams, use Mermaid -->
@@ -135,11 +165,4 @@ If `docs/design/design-principles.md` exists in the project, load `agents/steve-
 
 If design-principles.md does not exist, skip the persona critique.
 
-## Commit
-
-Mockups are committed to version control as design reference:
-
-```bash
-git add docs/mockups/[session-name]/
-git commit -m "docs: add mockups for [session-name]"
-```
+**Do NOT commit.** The brainstorming skill commits all visual artifacts together with the design document after the critique round completes. Committing here would capture a pre-critique draft.

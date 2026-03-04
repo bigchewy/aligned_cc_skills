@@ -1,12 +1,12 @@
 #!/bin/bash
-# Checks if an eval coverage audit is overdue (1+ days since last run).
+# Checks if an eval coverage audit is overdue (7+ days since last run).
 # Used as a UserPromptSubmit hook — stdout is injected into Claude's context.
 # Self-gating: only fires in projects with an e2e/ directory.
 
 [ ! -d "$PWD/e2e" ] && exit 0
 
 TIMESTAMP_FILE="$PWD/e2e/.eval-audit-last-run"
-INTERVAL_DAYS=1
+INTERVAL_DAYS=7
 
 now=$(date +%s)
 

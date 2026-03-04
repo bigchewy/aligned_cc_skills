@@ -260,18 +260,23 @@ The goal: intricate minimalism with appropriate personality. Same quality bar, c
 
 Three voices evaluate every design in parallel. Each catches what the others miss.
 
+**Resolve the checklist (MANDATORY):** The checklist is a sibling file in this skill's directory. Resolve its absolute path:
+1. Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/design-critique-checklist.md`.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/create-design-principles/design-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
+
 **Round 1 — Launch all three sub-agents simultaneously** (Task tool, `subagent_type=general-purpose`, `model=sonnet`):
 
-Replace `{design-description}` below with either the file path of the design/mockup document, or a description of what was just built and where to find it in the codebase.
+Replace `{design-description}` below with either the file path of the design/mockup document, or a description of what was just built and where to find it in the codebase. Also resolve the Steve Jobs advisor prompt path: the plugin root is the parent of the parent of `{base-directory}` (i.e., `{base-directory}/../../`). The advisor file is at `{plugin-root}/advisors/va-web-app/steve-jobs.md`. Verify it exists with Read. Use the absolute path as `{advisor-path}` in the sub-agent prompt below.
 
 **Sub-agent 1 — Steve Jobs (Product Vision):**
-> "Read `skills/create-design-principles/design-critique-checklist.md` in full. Find the 'Voice 1: Steve Jobs' section. Follow ALL instructions there — load the full advisor prompt from `advisors/va-web-app/steve-jobs.md`, adopt his voice completely, then critique {design-description} using the criteria and output format specified. Be binary. Be brutal. Be Steve."
+> "Read `{checklist-path}` in full. Find the 'Voice 1: Steve Jobs' section. Follow ALL instructions there — load the full advisor prompt from `{advisor-path}`, adopt his voice completely, then critique {design-description} using the criteria and output format specified. Be binary. Be brutal. Be Steve."
 
 **Sub-agent 2 — Senior Product Designer (Craft & Execution):**
-> "Read `skills/create-design-principles/design-critique-checklist.md` in full. Find the 'Voice 2: Senior Product Designer' section. You are a lead designer who ships production interfaces daily. Critique {design-description} using the criteria and output format specified. Focus on whether this is buildable, coherent, and complete."
+> "Read `{checklist-path}` in full. Find the 'Voice 2: Senior Product Designer' section. You are a lead designer who ships production interfaces daily. Critique {design-description} using the criteria and output format specified. Focus on whether this is buildable, coherent, and complete."
 
 **Sub-agent 3 — Customer Experience Lead (Real User Behavior):**
-> "Read `skills/create-design-principles/design-critique-checklist.md` in full. Find the 'Voice 3: Customer Experience Lead' section. You have watched hundreds of real humans try to use software. Critique {design-description} using the criteria and output format specified. Represent the person who will never read a design document — they just want to do their job."
+> "Read `{checklist-path}` in full. Find the 'Voice 3: Customer Experience Lead' section. You have watched hundreds of real humans try to use software. Critique {design-description} using the criteria and output format specified. Represent the person who will never read a design document — they just want to do their job."
 
 **After all three return — Aggregation (in Steve Jobs' voice):**
 

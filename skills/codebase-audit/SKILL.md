@@ -52,14 +52,14 @@ Launch all applicable workers simultaneously via Task tool. Each worker uses `su
 
 **CRITICAL: Launch all workers in a single message with multiple Task tool calls.** Do not dispatch sequentially.
 
-For each worker, use this base dispatch template — replace placeholders with actual values. **Then apply the per-worker customizations below** before dispatching.
+For each worker, use this base dispatch template — replace placeholders with actual values. **Then apply the per-worker customizations below** before dispatching. Replace `{worker-instructions-path}` with the absolute path `{base-directory}/workers/{dimension}.md` (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load).
 
 ```
 "You are a codebase audit worker specialized in {dimension}.
 
 You have access to Glob, Grep, and Read tools. Do NOT use Bash for file search or content search — use Grep instead. Bash grep triggers permission prompts that halt execution.
 
-Read your full instructions from `skills/codebase-audit/workers/{dimension}.md`.
+Read your full instructions from `{worker-instructions-path}`.
 
 Project context:
 - Project root: `{project-root}`
@@ -168,7 +168,7 @@ Otherwise, ask the user:
 
 If the user declines, the skill is done.
 
-If the user agrees, file each finding using the `skills/_shared/kanban-entry-format.md` template with these field mappings:
+If the user agrees, file each finding using the `{base-directory}/../_shared/kanban-entry-format.md` template (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load) with these field mappings:
 
 | Finding field | KB field |
 |---------------|----------|

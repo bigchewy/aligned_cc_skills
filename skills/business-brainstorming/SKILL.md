@@ -109,23 +109,27 @@ For each major obstacle identified in Phase 2:
 1. Read `advisors/registry.md`.
 2. Based on the design document's content, select 1-4 critics following the registry's selection guidelines. Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
 3. Read each selected critic's full prompt file (the path listed in the registry entry).
-4. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` below with the absolute path of the design document you wrote in the previous step.
+4. **Resolve the checklist (MANDATORY):** The checklist is a sibling file in this skill's directory. Resolve its absolute path:
+   - Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/design-critique-checklist.md`.
+   - **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/business-brainstorming/design-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+   Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
+5. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` below with the absolute path of the design document you wrote in the previous step.
 
    Each critic's prompt:
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `skills/business-brainstorming/design-critique-checklist.md` in full, then read `{design-file-path}` in full. Your job has two phases:
+   You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Your job has two phases:
    **Phase 1 (Fact-check):** Extract every factual claim (market data, competitor assertions, financial assumptions, stakeholder claims, timeline assertions). Verify against evidence provided in the document and referenced domain materials. Use WebSearch/WebFetch to check external claims where possible. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage. Include source URLs for verified external claims.
    **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name (e.g., [Dalio], [The PM]).
    Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
 
-5. **Aggregate the reports:**
+6. **Aggregate the reports:**
    - **Fact-checks:** Merge all. De-duplicate — if multiple critics verified the same claim, report it once with all confirming sources. If critics disagree on a claim, note both findings.
    - **Critique findings:** Merge all, preserving persona tags. De-duplicate — when two or more critics flag the same issue, keep the highest-severity version and note all sources.
    - Present the unified report to the user.
 
-6. Incorporate approved fixes into the design.
+7. Incorporate approved fixes into the design.
 
 **Round 2 (conditional):**
 Only run if Round 1 found medium or high severity issues. Same critics (not re-selected), fresh sub-agents (do NOT resume Round 1 agents), against the updated document.
@@ -146,7 +150,7 @@ After committing the design document, output a ready-to-paste prompt for the nex
 
 ## Design Critique
 
-When critiquing an existing design (instead of writing one), use the checklist in `design-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against referenced documents and domain folder materials — don't trust stated problems, root causes, or stakeholder positions without checking.
+When critiquing an existing design (instead of writing one), resolve the checklist path using the same MANDATORY resolution steps described above (base directory → Glob fallback → STOP if not found). Use the checklist at `{base-directory}/design-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against referenced documents and domain folder materials — don't trust stated problems, root causes, or stakeholder positions without checking.
 
 ## Key Principles
 

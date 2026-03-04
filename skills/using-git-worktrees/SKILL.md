@@ -17,39 +17,21 @@ Git worktrees create isolated workspaces sharing the same repository, allowing w
 
 Follow this priority order:
 
-### 1. Check Existing Directories
+### 1. Check CLAUDE.md for Override
 
-Use the Glob tool to check for existing worktree directories:
-
-```
-Glob(".worktrees")    # Preferred (hidden)
-Glob("worktrees")     # Alternative
-```
-
-**If found:** Use that directory. If both exist, `.worktrees` wins.
-
-### 2. Check CLAUDE.md
-
-Use the Grep tool to search for worktree directory preferences:
+Use the Grep tool to search for a worktree directory override:
 
 ```
 Grep("worktree.*director", path="CLAUDE.md", "-i": true)
 ```
 
-**If preference specified:** Use it without asking.
+**If override specified:** Use that directory instead of the default.
 
-### 3. Ask User
+### 2. Use `.worktrees` (Default)
 
-If no directory exists and no CLAUDE.md preference:
+The default worktree directory is `.worktrees/` (project-local, hidden). **Do not use Glob to detect it** — Glob only matches files and skips gitignored directories, so it will never find `.worktrees`.
 
-```
-No worktree directory found. Where should I create worktrees?
-
-1. .worktrees/ (project-local, hidden)
-2. ~/.config/aligned/worktrees/<project-name>/ (global location)
-
-Which would you prefer?
-```
+Just use it. If the directory doesn't exist yet, `git worktree add` will create it.
 
 ## Safety Verification
 
@@ -209,10 +191,8 @@ Ready to implement <feature-name>
 
 | Situation | Action |
 |-----------|--------|
-| `.worktrees/` exists | Use it (verify ignored) |
-| `worktrees/` exists | Use it (verify ignored) |
-| Both exist | Use `.worktrees/` |
-| Neither exists | Check CLAUDE.md → Ask user |
+| No CLAUDE.md override | Use `.worktrees/` (default) |
+| CLAUDE.md specifies directory | Use that directory |
 | Directory not ignored | Add to .gitignore + commit |
 | Tests fail during baseline | Report failures + ask |
 | No package.json/Cargo.toml | Skip dependency install |
@@ -225,10 +205,10 @@ Ready to implement <feature-name>
 - **Problem:** Worktree contents get tracked, pollute git status
 - **Fix:** Always use `git check-ignore` before creating project-local worktree
 
-### Assuming directory location
+### Using Glob to detect worktree directories
 
-- **Problem:** Creates inconsistency, violates project conventions
-- **Fix:** Follow priority: existing > CLAUDE.md > ask
+- **Problem:** Glob only matches files, not directories. Worktree directories are also gitignored, making them completely invisible to Glob. Detection always fails, forcing unnecessary user prompts even when `.worktrees` exists.
+- **Fix:** Don't detect at all. `.worktrees` is the hardcoded default — just use it. `git worktree add` creates the directory if missing.
 
 ### Proceeding with failing tests
 
@@ -268,11 +248,11 @@ Ready to implement auth feature
 - Create worktree without verifying it's ignored (project-local)
 - Skip baseline test verification
 - Proceed with failing tests without asking
-- Assume directory location when ambiguous
-- Skip CLAUDE.md check
+- Use Glob to detect `.worktrees` (it can't — see Common Mistakes)
+- Ask the user to pick a directory (use `.worktrees` default)
 
 **Always:**
-- Follow directory priority: existing > CLAUDE.md > ask
+- Use `.worktrees` unless CLAUDE.md specifies an override
 - Verify directory is ignored for project-local
 - Auto-detect and run project setup
 - Verify clean test baseline

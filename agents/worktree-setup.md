@@ -4,12 +4,11 @@ model: sonnet
 
 # Worktree Setup Agent
 
-Sets up isolated git worktrees for feature development. Dispatched by brainstorming and autopilot skills — not user-invocable.
+Sets up isolated git worktrees for feature development. Dispatched by brainstorming skill — not user-invocable.
 
 ## When Dispatched
 
 - From **brainstorming** (after design critique and commit)
-- From **autopilot** (Phase 4, before execution)
 - From any skill needing an isolated workspace
 
 ## Directory Selection Process
@@ -221,7 +220,6 @@ Ready to implement <feature-name>
 
 **Dispatched by:**
 - **brainstorming** — After design critique and commit
-- **autopilot** (Phase 4) — Before execution
 
 **Pairs with:**
 - **finishing-a-development-branch** — Cleanup after work complete

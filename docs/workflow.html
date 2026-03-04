@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How I Build Software with Claude Code</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+    :root {
+      --cream-50: #FDFCFA;
+      --cream-100: #FAF8F5;
+      --cream-200: #F5F2EE;
+      --cream-300: #EBE6E0;
+      --bark-900: #2C2825;
+      --bark-700: #3D3833;
+      --bark-500: #6B6560;
+      --bark-400: #8A847E;
+      --forest-500: #4A7C59;
+      --forest-600: #3D6B4A;
+      --forest-400: #6B9E7A;
+      --error: #A65D5D;
+      --success: #5B8A5B;
+      --shadow-sm: 0 1px 2px rgba(44, 40, 37, 0.04);
+      --shadow-md: 0 2px 8px rgba(44, 40, 37, 0.06);
+      --shadow-lg: 0 4px 16px rgba(44, 40, 37, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', -apple-system, sans-serif;
+      background: var(--cream-100);
+      color: var(--bark-700);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .header h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 500;
+      font-size: 2.4rem;
+      color: var(--bark-900);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .header .subtitle {
+      font-size: 1.05rem;
+      color: var(--bark-500);
+      font-weight: 300;
+    }
+
+    .header .subtitle code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.88rem;
+      background: var(--cream-200);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--forest-600);
+    }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Vertical connector */
+    .connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .connector .line {
+      width: 2px;
+      height: 32px;
+      background: linear-gradient(to bottom, var(--cream-300), var(--forest-400), var(--cream-300));
+      border-radius: 1px;
+    }
+
+    .connector .arrow {
+      position: absolute;
+      bottom: 4px;
+      color: var(--forest-400);
+      font-size: 0.75rem;
+    }
+
+    /* Phase card */
+    .phase {
+      background: var(--cream-50);
+      border: 1px solid var(--cream-300);
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .phase:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-1px);
+    }
+
+    .phase-header {
+      padding: 20px 24px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .phase-number {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      margin-top: 2px;
+    }
+
+    .phase-1 .phase-number { background: #7C8B6F; }
+    .phase-2 .phase-number { background: var(--forest-500); }
+    .phase-3 .phase-number { background: #4A6F7C; }
+    .phase-4 .phase-number { background: #6B5E7C; }
+
+    .phase-info { flex: 1; }
+
+    .phase-info h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.35rem;
+      color: var(--bark-900);
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
+    }
+
+    .phase-info .skill-name {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--forest-500);
+      background: rgba(74, 124, 89, 0.08);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .phase-info .description {
+      font-size: 0.95rem;
+      color: var(--bark-500);
+      font-weight: 300;
+    }
+
+    .expand-icon {
+      color: var(--bark-400);
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+      margin-top: 8px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .phase.expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Phase detail */
+    .phase-detail {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .phase.expanded .phase-detail {
+      max-height: 1200px;
+    }
+
+    .phase-detail-inner {
+      padding: 0 24px 24px;
+      padding-left: 80px;
+    }
+
+    /* Steps */
+    .steps {
+      list-style: none;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 1.5px;
+      background: var(--cream-300);
+    }
+
+    .step {
+      position: relative;
+      padding-left: 28px;
+      padding-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .step:last-child { padding-bottom: 0; }
+
+    .step::before {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 8px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--cream-200);
+      border: 1.5px solid var(--cream-300);
+    }
+
+    .step.key::before {
+      background: var(--forest-400);
+      border-color: var(--forest-500);
+    }
+
+    .step .step-label {
+      color: var(--bark-700);
+      font-weight: 400;
+    }
+
+    .step .step-note {
+      color: var(--bark-400);
+      font-size: 0.82rem;
+      font-weight: 300;
+      margin-left: 2px;
+    }
+
+    /* Sub-skill tags */
+    .sub-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--cream-200);
+    }
+
+    .sub-skills .label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--bark-400);
+      width: 100%;
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+
+    .tag {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 8px;
+      background: var(--cream-100);
+      border: 1px solid var(--cream-300);
+      color: var(--bark-500);
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .tag:hover {
+      background: var(--cream-200);
+      border-color: var(--bark-400);
+    }
+
+    .tag.required {
+      background: rgba(74, 124, 89, 0.06);
+      border-color: rgba(74, 124, 89, 0.25);
+      color: var(--forest-600);
+    }
+
+    .tag.conditional {
+      background: rgba(107, 94, 124, 0.05);
+      border-color: rgba(107, 94, 124, 0.2);
+      color: #6B5E7C;
+    }
+
+    /* Section headers */
+    .section-header {
+      margin-top: 48px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .section-header h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.5rem;
+      color: var(--bark-900);
+    }
+
+    .section-header p {
+      color: var(--bark-400);
+      font-size: 0.88rem;
+      font-weight: 300;
+      margin-top: 4px;
+    }
+
+    /* Cross-cutting section */
+    .cross-cutting {
+      margin-top: 48px;
+    }
+
+    .cross-cutting h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.5rem;
+      color: var(--bark-900);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .utilities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .utility-card {
+      background: var(--cream-50);
+      border: 1px solid var(--cream-300);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .utility-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .utility-card h3 {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      color: var(--forest-500);
+      margin-bottom: 4px;
+    }
+
+    .utility-card p {
+      font-size: 0.85rem;
+      color: var(--bark-500);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .utility-card .phase-badges {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .phase-badge {
+      font-size: 0.65rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .phase-badge.b { background: rgba(124, 139, 111, 0.12); color: #6B7A60; }
+    .phase-badge.p { background: rgba(74, 124, 89, 0.1); color: var(--forest-600); }
+    .phase-badge.e { background: rgba(74, 111, 124, 0.1); color: #3D5F6B; }
+    .phase-badge.f { background: rgba(107, 94, 124, 0.1); color: #5A4F6B; }
+    .phase-badge.biz { background: rgba(168, 132, 80, 0.12); color: #8A6D3B; }
+
+    /* Iron rules */
+    .iron-rules {
+      margin-top: 48px;
+      background: var(--cream-50);
+      border: 1px solid var(--cream-300);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .iron-rules h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.3rem;
+      color: var(--bark-900);
+      margin-bottom: 16px;
+    }
+
+    .rules-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 8px;
+    }
+
+    .rules-list li {
+      font-size: 0.88rem;
+      color: var(--bark-700);
+      padding: 8px 12px;
+      background: var(--cream-100);
+      border-radius: 8px;
+      border-left: 3px solid var(--forest-400);
+      font-weight: 300;
+    }
+
+    .rules-list li strong {
+      font-weight: 500;
+      color: var(--bark-900);
+    }
+
+    /* Alt execution path */
+    .alt-path {
+      background: var(--cream-200);
+      border: 1px dashed var(--cream-300);
+      border-radius: 12px;
+      padding: 16px 24px;
+      margin: -4px 0;
+    }
+
+    .alt-path .alt-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--bark-400);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .alt-path .alt-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.05rem;
+      color: var(--bark-900);
+    }
+
+    .alt-path .alt-skill {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      color: #4A6F7C;
+    }
+
+    .alt-path .alt-desc {
+      font-size: 0.88rem;
+      color: var(--bark-500);
+      font-weight: 300;
+      margin-top: 4px;
+    }
+
+    .alt-path code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      background: rgba(74, 111, 124, 0.08);
+      padding: 1px 6px;
+      border-radius: 3px;
+      color: #4A6F7C;
+    }
+
+    /* OR divider */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 0;
+    }
+
+    .or-divider .or-line {
+      flex: 1;
+      height: 1px;
+      background: var(--cream-300);
+    }
+
+    .or-divider .or-text {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--bark-400);
+      font-weight: 500;
+    }
+
+    /* Meta banner */
+    .meta-banner {
+      margin-top: 48px;
+      background: linear-gradient(135deg, rgba(74, 124, 89, 0.06), rgba(107, 94, 124, 0.06));
+      border: 1px solid var(--cream-300);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .meta-banner h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.2rem;
+      color: var(--bark-900);
+      margin-bottom: 6px;
+    }
+
+    .meta-banner .meta-skill {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--forest-500);
+    }
+
+    .meta-banner p {
+      font-size: 0.9rem;
+      color: var(--bark-500);
+      font-weight: 300;
+      margin-top: 8px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .meta-banner .meta-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .meta-flow .meta-step {
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .meta-flow .meta-arrow {
+      color: var(--bark-400);
+      font-size: 0.75rem;
+    }
+
+    /* Parallel pipeline */
+    .parallel-section {
+      margin-top: 48px;
+    }
+
+    .parallel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .parallel-card {
+      background: var(--cream-50);
+      border: 1px solid var(--cream-300);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .parallel-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .parallel-card h3 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.1rem;
+      color: var(--bark-900);
+      margin-bottom: 4px;
+    }
+
+    .parallel-card .card-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--bark-400);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .parallel-card p {
+      font-size: 0.88rem;
+      color: var(--bark-500);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .parallel-card .card-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--cream-300);
+      font-size: 0.82rem;
+      color: var(--bark-400);
+      font-weight: 300;
+    }
+
+    .footer code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.76rem;
+      background: var(--cream-200);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container { padding: 24px 16px 48px; }
+      .header h1 { font-size: 1.8rem; }
+      .phase-detail-inner { padding-left: 24px; }
+      .utilities-grid { grid-template-columns: 1fr; }
+      .rules-list { grid-template-columns: 1fr; }
+      .parallel-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>How I Build Software with Claude Code</h1>
+      <p class="subtitle">A skill-driven workflow powered by <code>aligned</code> plugin v0.3</p>
+    </header>
+
+    <div class="pipeline">
+
+      <!-- PHASE 1: BRAINSTORM -->
+      <div class="phase phase-1" onclick="this.classList.toggle('expanded')">
+        <div class="phase-header">
+          <div class="phase-number">1</div>
+          <div class="phase-info">
+            <span class="skill-name">/aligned:brainstorming</span>
+            <h2>Brainstorm</h2>
+            <p class="description">Explore the idea, question assumptions, design the approach, generate mockups, and critique everything before writing a single line of code.</p>
+          </div>
+          <div class="expand-icon">&#9662;</div>
+        </div>
+        <div class="phase-detail">
+          <div class="phase-detail-inner">
+            <ul class="steps">
+              <li class="step key"><span class="step-label">Project scan sub-agent</span> <span class="step-note">&mdash; surveys structure, git history, patterns, tech stack</span></li>
+              <li class="step"><span class="step-label">Understand the idea</span> <span class="step-note">&mdash; one question at a time, no rush</span></li>
+              <li class="step"><span class="step-label">Architect auto-consult</span> <span class="step-note">&mdash; technical options vetted against codebase before presenting</span></li>
+              <li class="step"><span class="step-label">Explore 2&ndash;3 approaches</span> <span class="step-note">&mdash; trade-offs for each, lead with architect-recommended</span></li>
+              <li class="step key"><span class="step-label">Present the design</span> <span class="step-note">&mdash; 200&ndash;300 word sections, clear structure</span></li>
+              <li class="step key"><span class="step-label">Generate visualization</span> <span class="step-note">&mdash; mandatory: mockup, flowchart, and/or architecture diagram auto-selected</span></li>
+              <li class="step"><span class="step-label">Write design doc</span> <span class="step-note">&mdash; saved to docs/plans/</span></li>
+              <li class="step key"><span class="step-label">Multi-critic review</span> <span class="step-note">&mdash; 1&ndash;4 critics auto-selected from advisor pool, with division of labor</span></li>
+              <li class="step"><span class="step-label">Critique round 2</span> <span class="step-note">&mdash; only if medium/high severity issues found</span></li>
+              <li class="step key"><span class="step-label">Create git worktree</span> <span class="step-note">&mdash; isolated workspace for implementation</span></li>
+            </ul>
+            <div class="sub-skills">
+              <div class="label">Sub-skills invoked</div>
+              <span class="tag required">using-git-worktrees</span>
+              <span class="tag required">visualization agents</span>
+              <span class="tag conditional">Sub-agent: project scan</span>
+              <span class="tag conditional">Sub-agent: Architect consult</span>
+              <span class="tag conditional">Advisor pool: 1&ndash;4 critics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="connector"><div class="line"></div><span class="arrow">&#9662;</span></div>
+
+      <!-- PHASE 2: PLAN -->
+      <div class="phase phase-2" onclick="this.classList.toggle('expanded')">
+        <div class="phase-header">
+          <div class="phase-number">2</div>
+          <div class="phase-info">
+            <span class="skill-name">/aligned:writing-plans</span>
+            <h2>Plan</h2>
+            <p class="description">Convert the design into bite-sized, TDD-focused tasks with exact file paths, code snippets, and test specifications. Every task is 2&ndash;5 minutes of work. Outputs two execution options: interactive or Ralph Loop.</p>
+          </div>
+          <div class="expand-icon">&#9662;</div>
+        </div>
+        <div class="phase-detail">
+          <div class="phase-detail-inner">
+            <ul class="steps">
+              <li class="step"><span class="step-label">Research the codebase</span> <span class="step-note">&mdash; read architecture docs, grep for patterns</span></li>
+              <li class="step key"><span class="step-label">Write tasks in small steps</span> <span class="step-note">&mdash; test file first, then implementation</span></li>
+              <li class="step"><span class="step-label">Verify every file path & snippet</span> <span class="step-note">&mdash; no hallucinated references</span></li>
+              <li class="step"><span class="step-label">No manual steps mid-sequence</span> <span class="step-note">&mdash; Ralph Loop can't pause for humans</span></li>
+              <li class="step"><span class="step-label">Add decision log</span> <span class="step-note">&mdash; document architectural choices</span></li>
+              <li class="step key"><span class="step-label">Dual-critic review</span> <span class="step-note">&mdash; Architect + Verifier agents in parallel</span></li>
+              <li class="step"><span class="step-label">Critique round 2</span> <span class="step-note">&mdash; if issues found</span></li>
+              <li class="step key"><span class="step-label">Save plan to main branch</span> <span class="step-note">&mdash; commit to docs/plans/ on main</span></li>
+              <li class="step"><span class="step-label">Recommend execution mode</span> <span class="step-note">&mdash; interactive for &le;10 tasks, Ralph Loop for &gt;10</span></li>
+            </ul>
+            <div class="sub-skills">
+              <div class="label">Sub-skills invoked</div>
+              <span class="tag required">test-driven-development</span>
+              <span class="tag conditional">Sub-agent: codebase research</span>
+              <span class="tag conditional">Sub-agent: Architect critic</span>
+              <span class="tag conditional">Sub-agent: Verifier critic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="connector"><div class="line"></div><span class="arrow">&#9662;</span></div>
+
+      <!-- PHASE 3: EXECUTE -->
+      <div class="phase phase-3" onclick="this.classList.toggle('expanded')">
+        <div class="phase-header">
+          <div class="phase-number">3</div>
+          <div class="phase-info">
+            <span class="skill-name">/aligned:executing-plans</span>
+            <h2>Execute</h2>
+            <p class="description">Load the plan and implement it task-by-task, running tests after each. Batches of 5 tasks with review checkpoints. For larger plans, the Ralph Loop keeps context fresh.</p>
+          </div>
+          <div class="expand-icon">&#9662;</div>
+        </div>
+        <div class="phase-detail">
+          <div class="phase-detail-inner">
+            <ul class="steps">
+              <li class="step"><span class="step-label">Load plan from main worktree</span></li>
+              <li class="step key"><span class="step-label">Implement in batches of 5</span> <span class="step-note">&mdash; TDD: test first, then code</span></li>
+              <li class="step"><span class="step-label">Run verifications per task</span></li>
+              <li class="step"><span class="step-label">Check LLM surface changes</span> <span class="step-note">&mdash; auto-trigger evals if prompts changed</span></li>
+              <li class="step"><span class="step-label">Report & wait for review</span> <span class="step-note">&mdash; user approves before next batch</span></li>
+              <li class="step"><span class="step-label">Log out-of-scope bugs</span> <span class="step-note">&mdash; to Kanban board, no detours</span></li>
+            </ul>
+            <div class="sub-skills">
+              <div class="label">Sub-skills invoked</div>
+              <span class="tag required">test-driven-development</span>
+              <span class="tag conditional">eval-audit</span>
+              <span class="tag conditional">eval-failure-triage</span>
+              <span class="tag conditional">systematic-debugging</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OR divider -->
+      <div class="or-divider">
+        <div class="or-line"></div>
+        <span class="or-text">or</span>
+        <div class="or-line"></div>
+      </div>
+
+      <!-- Alt path: Ralph Loop -->
+      <div class="alt-path">
+        <div class="alt-label">Alternative execution mode</div>
+        <div class="alt-title">Ralph Loop</div>
+        <div class="alt-skill">while :; do claude -p "$(cat docs/ralph_loops/EXECUTE-PLAN.md)" ; done</div>
+        <p class="alt-desc">Runs Claude in a bash loop &mdash; one task per iteration, then exits. Fresh context every time, no quality drift from window bloat. Each iteration reads the plan, finds the next un-checked task, implements it with TDD, marks it <code>&#10003;</code>, commits, and exits. The loop restarts for the next task. Writes a <code>.ralph-done</code> sentinel when all tasks are complete.</p>
+      </div>
+
+      <div class="connector"><div class="line"></div><span class="arrow">&#9662;</span></div>
+
+      <!-- PHASE 4: FINISH -->
+      <div class="phase phase-4" onclick="this.classList.toggle('expanded')">
+        <div class="phase-header">
+          <div class="phase-number">4</div>
+          <div class="phase-info">
+            <span class="skill-name">/aligned:finishing-a-development-branch</span>
+            <h2>Finish</h2>
+            <p class="description">Verify everything works, scan for code simplification opportunities, then merge, PR, or keep the branch. Archive the plan and clean up the worktree.</p>
+          </div>
+          <div class="expand-icon">&#9662;</div>
+        </div>
+        <div class="phase-detail">
+          <div class="phase-detail-inner">
+            <ul class="steps">
+              <li class="step key"><span class="step-label">Deployment platform audit</span> <span class="step-note">&mdash; file system access, env vars, dynamic requires, native deps</span></li>
+              <li class="step key"><span class="step-label">Run full test suite</span> <span class="step-note">&mdash; hard stop if failing</span></li>
+              <li class="step"><span class="step-label">Run production build</span> <span class="step-note">&mdash; hard stop if failing</span></li>
+              <li class="step"><span class="step-label">LLM eval</span> <span class="step-note">&mdash; if prompt/surface files changed</span></li>
+              <li class="step"><span class="step-label">Update architecture docs</span> <span class="step-note">&mdash; if architecture changed</span></li>
+              <li class="step"><span class="step-label">Code simplification scan</span> <span class="step-note">&mdash; code-simplifier agent reviews branch diff</span></li>
+              <li class="step key"><span class="step-label">Present 4 options</span> <span class="step-note">&mdash; merge locally, deploy + smoke test, keep, or discard</span></li>
+              <li class="step"><span class="step-label">Execute chosen option</span> <span class="step-note">&mdash; deploy option includes Vercel MCP + Playwright smoke tests</span></li>
+              <li class="step"><span class="step-label">Archive plan to completed/</span></li>
+              <li class="step"><span class="step-label">Cleanup worktree</span></li>
+            </ul>
+            <div class="sub-skills">
+              <div class="label">Sub-skills invoked</div>
+              <span class="tag required">code-simplifier agent</span>
+              <span class="tag conditional">eval-audit</span>
+              <span class="tag conditional">eval-failure-triage</span>
+              <span class="tag conditional">artifact-verifier agent</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Business Pipeline -->
+    <div class="parallel-section">
+      <div class="section-header">
+        <h2>Parallel Tracks</h2>
+        <p>Separate pipelines for business work and advisory &mdash; used alongside or independently of the dev pipeline</p>
+      </div>
+      <div class="parallel-grid">
+        <div class="parallel-card">
+          <div class="card-label">Business Pipeline</div>
+          <h3>Strategy & Planning</h3>
+          <p>A parallel 4-phase workflow for non-code deliverables: brainstorm the business problem, diagnose root causes, write an execution plan, then execute with checkpoints.</p>
+          <div class="card-skills">
+            <span class="tag" style="border-color: rgba(168, 132, 80, 0.3); color: #8A6D3B;">business-brainstorming</span>
+            <span class="tag" style="border-color: rgba(168, 132, 80, 0.3); color: #8A6D3B;">business-diagnosis</span>
+            <span class="tag" style="border-color: rgba(168, 132, 80, 0.3); color: #8A6D3B;">business-write-plan</span>
+            <span class="tag" style="border-color: rgba(168, 132, 80, 0.3); color: #8A6D3B;">business-executing</span>
+          </div>
+        </div>
+        <div class="parallel-card">
+          <div class="card-label">Virtual Board of Advisors</div>
+          <h3>62 Personas &middot; 130 Frameworks</h3>
+          <p>Domain experts for brainstorming critique, strategic thinking, and specialized guidance. Auto-selected by skills or invoked directly. Add your own advisors and frameworks.</p>
+          <div class="card-skills">
+            <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">use-advisor</span>
+            <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">use-framework</span>
+            <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">add-advisor</span>
+            <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">find-potential-advisors</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Utility Skills -->
+    <div class="cross-cutting">
+      <h2>Utility Skills & Agents</h2>
+      <p style="text-align:center; color: var(--bark-400); font-size: 0.88rem; font-weight: 300; margin-bottom: 20px;">Available at any phase &mdash; invoked automatically or on demand</p>
+      <div class="utilities-grid">
+        <div class="utility-card">
+          <h3>test-driven-development</h3>
+          <p>Red&ndash;green&ndash;refactor. No production code without a failing test first. Error path tests mandatory for every mock.</p>
+          <div class="phase-badges">
+            <span class="phase-badge p">Plan</span>
+            <span class="phase-badge e">Execute</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>systematic-debugging</h3>
+          <p>Root cause investigation before fixes. Low severity: single-agent. High severity: multi-agent parallel investigation.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>verification-before-completion</h3>
+          <p>No completion claims without fresh evidence. Run the command, confirm the output. Evidence before assertions.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>eval-audit</h3>
+          <p>Detects LLM behavior surface changes that lack eval coverage. Hook-triggered or manual.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>eval-failure-triage</h3>
+          <p>Classifies eval failures: prompt quality issue, eval calibration problem, or model variance. Targeted fix per category.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>code-reviewer agent</h3>
+          <p>Post-implementation review against plan and coding standards. Dispatched as a sub-agent for independent review.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>code-simplifier agent</h3>
+          <p>Scans branch diff for simplification opportunities. Writes findings to Kanban board, never edits code directly.</p>
+          <div class="phase-badges">
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>design-principles</h3>
+          <p>Interactive design system discovery with Steve Jobs persona. Generates tokens, patterns, and anti-patterns.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>using-git-worktrees</h3>
+          <p>Isolated workspaces per feature. Smart directory selection, safety verification, env file handling.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>mockup-generator agent</h3>
+          <p>Self-contained HTML mockups using project design tokens. Visual before code.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>flowchart-generator agent</h3>
+          <p>SVG flowcharts for data flows, process flows, and decision trees. Self-contained HTML.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>architecture-diagram-generator agent</h3>
+          <p>HTML architecture diagrams with change highlighting. Also updates docs/architecture.md.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>kanban-resolve</h3>
+          <p>Triage and resolve accumulated Kanban board items in a single automated pass.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>error-diagnosis agent</h3>
+          <p>Classifies error patterns from hook-tracked data. Identifies systemic issues across sessions.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Iron rules -->
+    <div class="iron-rules">
+      <h2>Iron Rules</h2>
+      <ul class="rules-list">
+        <li><strong>Tests first.</strong> No production code without a failing test.</li>
+        <li><strong>Error paths too.</strong> Every mockResolvedValue needs a mockRejectedValue test.</li>
+        <li><strong>Verify before claiming.</strong> No "it works" without fresh evidence.</li>
+        <li><strong>Root cause first.</strong> No fix without investigation. No symptom-patching.</li>
+        <li><strong>Fresh agents for critique.</strong> Never self-review; always spawn a sub-agent.</li>
+        <li><strong>Plans live on main.</strong> Committed to docs/plans/ on the main branch.</li>
+        <li><strong>3 strikes = rethink.</strong> If 3 fixes fail, question the architecture.</li>
+        <li><strong>No detours.</strong> Out-of-scope bugs go to the Kanban board.</li>
+      </ul>
+    </div>
+
+    <!-- Kickstart -->
+    <div class="meta-banner" style="margin-top: 16px; background: linear-gradient(135deg, rgba(74, 124, 89, 0.04), rgba(74, 111, 124, 0.04));">
+      <h2>Project Setup</h2>
+      <p class="meta-skill">/aligned:kickstart</p>
+      <p>Scaffolds a new project with all conventions: CLAUDE.md, docs structure (plans, kanban, ralph_loops, design, lessons-learned, architecture), eval infrastructure, and design principles placeholder. Auto-enables the plugin in project settings.</p>
+    </div>
+
+    <footer class="footer">
+      Built with Claude Code &middot; <code>aligned</code> plugin &middot; 25 skills &middot; 8 agents &middot; 62 advisors
+    </footer>
+  </div>
+</body>
+</html>

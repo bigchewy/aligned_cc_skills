@@ -8,10 +8,10 @@ Run these inside Claude Code (the repo is private — you'll need collaborator a
 
 ```
 /plugin marketplace add bigchewy/aligned_cc_skills
-/plugin install aligned@bigchewy-aligned_cc_skills
+/plugin install aligned@aligned
 ```
 
-The first command registers the GitHub repo as a plugin source. The second installs it. Claude Code uses your existing git credentials automatically. The plugin is then available across all your projects.
+The first command registers the GitHub repo as a plugin source (`bigchewy/aligned_cc_skills`). The second installs the `aligned` plugin from the `aligned` marketplace. Claude Code uses your existing git credentials automatically. The plugin is then available across all your projects.
 
 For local development and testing:
 ```bash
@@ -22,7 +22,9 @@ claude --plugin-dir /path/to/aligned_cc_skills
 
 1. `/aligned:kickstart` — scaffold a new project with standard conventions (also auto-enables the plugin in the project's `.claude/settings.json`)
 2. `/aligned:design-principles` — define the design direction through an interactive session
-3. `/aligned:autopilot` — go from idea to working code with minimal interaction
+3. `/aligned:brainstorming` → `/aligned:writing-plans` → auto-launch pipeline (brainstorm, plan, then confirm to execute + merge in background)
+
+See [docs/workflow.html](docs/workflow.html) for an interactive visual overview of the full pipeline.
 
 ## Permissions
 
@@ -36,7 +38,6 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:writing-plans)",
       "Skill(aligned:executing-plans)",
       "Skill(aligned:finishing-a-development-branch)",
-      "Skill(aligned:autopilot)",
       "Skill(aligned:systematic-debugging)",
       "Skill(aligned:using-git-worktrees)",
       "Skill(aligned:eval-failure-triage)",
@@ -48,6 +49,7 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:use-advisor)",
       "Skill(aligned:use-framework)",
       "Skill(aligned:kanban-resolve)",
+      "Skill(aligned:codebase-audit)",
       "Skill(aligned:create-new-skill)",
       "Skill(aligned:add-advisor)",
       "Skill(aligned:add-framework)",
@@ -63,6 +65,10 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
 ```
 
 Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlugins: { "aligned": true }` in new projects, but skill-level permissions must be added to the user's `~/.claude/settings.json`.
+
+### Recommended: Bash path auto-approve hook
+
+Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` paths. See [docs/recommended-hooks.md](docs/recommended-hooks.md) for setup.
 
 ## Skill Reference
 
@@ -90,9 +96,9 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | add-advisor | Advisor | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |
 | add-framework | Framework | `/aligned:add-framework` | Add a new framework to an existing advisor |
 | find-potential-advisors | Advisor | `/aligned:find-potential-advisors` | Research and evaluate potential advisors |
+| codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
-| autopilot | Meta | `/aligned:autopilot` | Full pipeline: idea to design to plan to implement |
 
 ## Agents
 
@@ -113,6 +119,7 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 |-------|--------|-------------|
 | UserPromptSubmit | `check-eval-audit.sh` | Triggers `[EVAL AUDIT]` when eval audit is overdue |
 | PreToolUse | `auto-approve-worktrees.js` | Auto-approves Edit/Write in worktree directories |
+| PreToolUse | `auto-approve-safe-bash-paths.js` | Auto-approves Bash commands targeting `/tmp/` and `~/.claude/` only (recommended, see Permissions) |
 | PostToolUseFailure | `error-tracker.js` | Tracks error patterns for diagnosis |
 | PostToolUse | `error-tracker.js` | Tracks Bash errors for diagnosis |
 | PostToolUse | `usage-tracker.js` | Tracks Skill/Task usage patterns |
@@ -183,6 +190,19 @@ Semver, pre-1.0:
 Version bumps happen in `.claude-plugin/plugin.json`.
 
 ### Changelog
+
+#### 0.6.0
+- **25 skills** (-1: removed autopilot, replaced by automated post-plan pipeline)
+- New `FINISH-BRANCH.md` Ralph loop prompt for non-interactive merge-to-main
+- Writing-plans handoff restructured: 3 options (Interactive / Automated background / Manual command)
+- Option B auto-launches Ralph loop + finish as a single background pipeline
+- `.finish-status` sentinel file for background pipeline observability
+
+#### 0.5.0
+- **26 skills** (+1: codebase-audit)
+- Multi-dimensional codebase audit with 5 parallel workers (code quality, test quality, security, dead code, architecture)
+- Confidence-scored findings with deduplication and severity filtering
+- Project-agnostic source discovery (auto-detects language and source roots)
 
 #### 0.3.0
 - **25 skills** (+8: add-advisor, add-framework, find-potential-advisors, business-brainstorming, business-diagnosis, business-executing, business-write-plan, create-design-principles)

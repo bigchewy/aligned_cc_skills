@@ -9,7 +9,7 @@ description: Use when implementation is complete, all tests pass, and you need t
 
 Guide completion of development work by presenting clear options and handling chosen workflow.
 
-**Core principle:** Deployment audit → Verify tests → Verify build → Present options → Execute choice → Clean up → Archive plans.
+**Core principle:** Deployment audit → Verify tests → Verify build → Present options → Execute choice → Clean up → Archive plans → Completion summary.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
@@ -209,7 +209,7 @@ prompt: "Analyze the branch changes for simplification opportunities.
 
 **If the agent returns findings** (non-empty JSON array):
 
-1. Read `skills/_shared/kanban-entry-format.md` for the KB template and counter instructions
+1. Read `{base-directory}/../_shared/kanban-entry-format.md` for the KB template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load)
 2. For each finding, file a KB entry with:
    - **Type:** `simplification`
    - **Discovered during:** `finishing-a-development-branch (code-simplifier)`
@@ -227,7 +227,80 @@ Code simplification scan: N opportunities filed to Kanban board.
 Code simplification scan: clean.
 ```
 
-Continue to Step 2.
+Continue to Step 1e.
+
+### Step 1e: Mockup Fidelity Check
+
+**After all verification and scans, check if the branch's design has associated mockups.**
+
+This step is **non-blocking** — deviations are reported so the user can decide whether to fix them before merge.
+
+1. **Find the plan file:** Scan both `docs/plans/*.md` and `docs/plans/completed/*.md` for the plan associated with this branch (match by branch name pattern). The plan may already be in `completed/` if executing-plans archived it. Read the plan header's `**Mockups:**` field for the mockups directory path. If the plan has no `**Mockups:**` field, fall back to the `**Source Design Doc:**` field and check that design doc for a `**Mockups:**` field.
+
+2. **Check for mockups:** If a mockups path was found, verify the directory exists. If no mockups path was found or the directory doesn't exist, skip silently — not all features have UI components.
+
+3. **If mockups exist, dispatch a fidelity check agent** via Task tool (`subagent_type=general-purpose`, `model=sonnet`):
+
+   ```
+   "You are a mockup fidelity checker. Compare the brainstorming mockups against
+   the actual implementation to find visual deviations.
+
+   You have access to Glob, Grep, and Read tools. Do not use Bash for searching.
+
+   Step 1: Read each HTML mockup file in `{mockups-dir}/`. For each file, extract:
+   - Page/component layout structure
+   - Components present (buttons, cards, lists, inputs, etc.)
+   - Data displayed (column names, field labels, example content)
+   - Interactive elements (tabs, accordions, hover states, modals)
+
+   Step 2: Read the plan file at `{plan-file-path}`. For each UI task that has a
+   mockup verification step, note which source files it creates/modifies and which
+   mockup file it references. This gives you the mockup-to-source-file mapping.
+   Then read those implementation source files.
+
+   Step 3: Compare mockup elements against implementation. For each mockup:
+   - What matches the implementation
+   - What deviates (present in mockup but missing/different in code)
+   - What was added (present in code but not in mockup)
+
+   Step 4: Search the plan file for 'MOCKUP DEVIATION' annotations — these are
+   intentional deviations documented during execution.
+
+   Return a JSON report:
+   {
+     \"mockups_checked\": N,
+     \"matches\": [\"brief description of what matches\"],
+     \"deviations\": [
+       {
+         \"mockup\": \"filename.html\",
+         \"element\": \"what's different\",
+         \"type\": \"missing|changed|added\",
+         \"intentional\": true/false,
+         \"annotation\": \"text of MOCKUP DEVIATION note, if any\"
+       }
+     ]
+   }"
+   ```
+
+4. **Report findings:**
+
+```
+## Mockup Fidelity Check
+
+Mockups checked: N
+- Matches: N elements verified
+- Intentional deviations: N (documented with MOCKUP DEVIATION)
+- Unannounced deviations: N
+
+### Unannounced Deviations (if any)
+- [mockup file]: [element] — [missing|changed|added]
+```
+
+**If no unannounced deviations:** Report clean, continue to Step 2.
+
+**If unannounced deviations exist:** Show them. The user decides whether to fix before merge. Continue to Step 2 regardless (non-blocking).
+
+**If no mockups found:** Skip silently, continue to Step 2.
 
 ### Step 2: Determine Base Branch
 
@@ -247,7 +320,26 @@ Or ask: "This branch split from main - is that correct?"
 
 ### Step 3: Present Options
 
-Present exactly these 4 options:
+**If Step 1e found unannounced mockup deviations**, present this:
+
+```
+⚠ {N} unannounced mockup deviations found:
+{bullet list of deviation summaries — one line each}
+
+Implementation complete. What would you like to do?
+
+1. Fix mockup deviations first, then come back to this step
+2. Merge back to <base-branch> locally (accepting deviations as-is)
+3. Deploy to production + smoke test (accepting deviations as-is)
+4. Keep the branch as-is (I'll handle it later)
+5. Discard this work
+
+Which option?
+```
+
+**If Option 1 is chosen:** List each deviation with its mockup file and element. Ask the user which deviations to fix (all, specific numbers, or none — in which case fall back to options 2–5). For each deviation to fix, make the code change in the worktree, then re-run tests (Step 1) and build (Step 1a) to verify. After fixes, return to Step 3 and re-present options (without the fixed deviations).
+
+**If no unannounced deviations**, present the original 4 options:
 
 ```
 Implementation complete. What would you like to do?
@@ -264,7 +356,53 @@ Which option?
 
 ### Step 4: Execute Choice
 
-#### Option 1: Merge Locally
+#### Option 1: Fix Mockup Deviations (only when unannounced deviations exist)
+
+List each unannounced deviation with its number, mockup file, and element. Ask the user which to fix (all, specific numbers, or none).
+
+**If none:** Fall back to options 2–5.
+
+**If any selected:**
+
+**Step 4-1a: Diagnose deviations in parallel.** For each selected deviation, spawn a sub-agent (`subagent_type=general-purpose`) with the `/aligned:systematic-debugging` skill. Launch all agents in parallel. Each agent receives:
+
+```
+Use the /aligned:systematic-debugging skill to diagnose this mockup deviation.
+
+Deviation: {deviation summary}
+Mockup file: {mockup file path}
+Element: {element description}
+Type: {missing|changed|added}
+Implementation file(s): {source file paths from Step 1e agent report}
+
+The "bug" is the gap between the mockup spec and the implementation.
+Investigate root cause — is it a missed requirement, a CSS issue,
+a component logic error, a data-flow problem, etc.?
+
+Do NOT make any code changes. Report your findings only.
+```
+
+**Step 4-1b: Synthesize findings.** Collect all agent reports. Present a consolidated summary:
+
+```
+## Deviation Diagnosis
+
+| # | Deviation | Root Cause | Complexity |
+|---|-----------|------------|------------|
+| 1 | ...       | ...        | low/med/high |
+| ...
+
+### Common Themes
+{any shared root causes or patterns across deviations}
+```
+
+**Step 4-1c: Plan fixes.** Invoke the `/aligned:writing-plans` skill to produce a plan that resolves all selected deviations. Feed in the synthesized diagnosis as the spec/requirements input. The plan should reference the specific files and root causes identified in Step 4-1b.
+
+**Step 4-1d: Execute plan.** After the user approves the plan, execute the fixes in the worktree. Then re-run tests (Step 1) and build (Step 1a) to verify.
+
+Return to Step 3 and re-present options (without the fixed deviations). If all deviations were fixed, present the standard 4-option menu.
+
+#### Option 2: Merge Locally
 
 Since we are always running from the main repo (see "CRITICAL" section above), merge commands run directly:
 
@@ -290,11 +428,11 @@ Verify tests on merged result:
 
 Then: Cleanup worktree (Step 5), then archive plan docs (Step 6).
 
-#### Option 2: Deploy to Production + Smoke Test
+#### Option 3: Deploy to Production + Smoke Test
 
 **Parse scope:** If the user said "full smoke tests" or similar, set scope to FULL. Otherwise default to QUICK.
 
-**Step 4a: Merge to main** — Same as Option 1's merge logic (checkout, pull, merge).
+**Step 4a: Merge to main** — Same as Option 2's merge logic (checkout, pull, merge).
 
 **Step 4b: Push to remote** — `git push origin <base-branch>`. Record push timestamp for deployment matching.
 
@@ -365,13 +503,13 @@ Before each Playwright session, kill stale Chrome: `pgrep -f "mcp-chrome" | xarg
 
 **Step 4f: Report results** — Show deployment info (commit, URL, verification method) and PASS/FAIL per flow with failure details. Smoke test failures are non-blocking — code is already deployed. Then: Archive plan docs (Step 6).
 
-#### Option 3: Keep As-Is
+#### Option 4: Keep As-Is
 
 Report: "Keeping branch <name>. Worktree preserved at <path>."
 
 **Don't cleanup worktree.**
 
-#### Option 4: Discard
+#### Option 5: Discard
 
 **Confirm first:**
 ```
@@ -395,7 +533,7 @@ Then: Cleanup worktree (Step 5)
 
 ### Step 5: Cleanup Worktree
 
-**For Options 1, 2, 4:**
+**For Options 2, 3, 5:**
 
 Since CWD is always the main repo (see "CRITICAL" section), worktree cleanup is straightforward.
 
@@ -411,11 +549,11 @@ git worktree remove <worktree-path> --force
 git branch -d <feature-branch>
 ```
 
-**For Option 3:** Keep worktree.
+**For Option 4:** Keep worktree.
 
 ### Step 6: Archive Plan Documents
 
-**For Options 1 and 2 only.** After merge and cleanup, move completed plan and design documents to `docs/plans/completed/`.
+**For Options 2 and 3 only.** After merge and cleanup, move completed plan and design documents to `docs/plans/completed/`.
 
 1. **Check if applicable:** If `docs/plans/` does not exist in the project, skip silently.
 
@@ -443,6 +581,39 @@ git branch -d <feature-branch>
 
 **If no plan files found:** Report: "No plan documents found to archive." and continue.
 
+### Step 7: Completion Summary
+
+**After all steps complete, present a completion summary.**
+
+Analyze the branch's commit history to understand what was built:
+
+```bash
+git log --oneline <base-branch>...<feature-branch>
+```
+
+Then present:
+
+```
+## Completion Summary
+
+<1-3 sentence overview of the features or changes implemented on this branch.>
+
+| Step | Result |
+|------|--------|
+| Deployment audit | <Clean / N critical, N high findings> |
+| Tests | <N/N passing> |
+| Build | <Passed / Failed> |
+| LLM eval | <Passed / Warned / Skipped — reason> |
+| Architecture doc | <Updated / Skipped> |
+| Code simplification | <N findings filed / Clean> |
+| Mockup fidelity | <N matches, N deviations / No mockups / Skipped> |
+| Integration | <Option chosen + outcome, e.g., "Merged feature/x → main"> |
+| Worktree | <Removed / Kept> |
+| Plan archive | <Archived N files / No plans found / Skipped> |
+```
+
+**Populate each row from the actual results of the preceding steps.** Omit rows for steps that were not applicable (e.g., no worktree involved → omit Worktree row).
+
 ## Quick Reference
 
 | Step | Action | Blocks on failure? |
@@ -453,18 +624,21 @@ git branch -d <feature-branch>
 | 1b. LLM eval | Run eval command if surface changed | Yes (fail), No (warn/pass) |
 | 1c. Architecture doc | Update `docs/architecture.md` if structure changed | No |
 | 1d. Simplification scan | Spawn code-simplifier agent, file Kanban entries | No |
+| 1e. Mockup fidelity | Compare implementation against brainstorming mockups | No |
 | 2. Base branch | Determine merge target | No |
-| 3. Present options | Show 4 choices | No |
+| 3. Present options | Show 4 or 5 choices (5 if unannounced mockup deviations) | No |
 | 4. Execute | Run chosen workflow | N/A |
 | 5. Cleanup | Remove worktree if applicable | N/A |
 | 6. Archive plans | Move plan/design docs to completed/ | No |
+| 7. Completion summary | Present changes overview + results table | No |
 
 | Option | Merge | Push | Smoke Test | Keep Worktree | Cleanup Branch | Archive Plans |
 |--------|-------|------|------------|---------------|----------------|---------------|
-| 1. Merge locally | yes | - | - | - | yes | yes |
-| 2. Deploy + smoke test | yes | yes | yes | - | yes | yes |
-| 3. Keep as-is | - | - | - | yes | - | - |
-| 4. Discard | - | - | - | - | yes (force) | - |
+| 1. Fix deviations (conditional) | - | - | - | - | - | - |
+| 2. Merge locally | yes | - | - | - | yes | yes |
+| 3. Deploy + smoke test | yes | yes | yes | - | yes | yes |
+| 4. Keep as-is | - | - | - | yes | - | - |
+| 5. Discard | - | - | - | - | yes (force) | - |
 
 ## Common Mistakes
 
@@ -480,7 +654,7 @@ git branch -d <feature-branch>
 
 **Never:** Proceed with CRITICAL deployment findings or failing tests/build. Never merge without verifying tests on result. Never delete work without confirmation or force-push without explicit request.
 
-**Always:** Follow the step order (audit → tests → build → eval → options). Present exactly 4 options. Run from main repo. Only remove the specific worktree being finished. Read `.claude/deployment.json` before deploy. Kill stale Chrome before Playwright. Archive plans after merge.
+**Always:** Follow the step order (audit → tests → build → eval → mockup fidelity → options). Present exactly 4 options (or 5 if unannounced mockup deviations exist). Run from main repo. Only remove the specific worktree being finished. Read `.claude/deployment.json` before deploy. Kill stale Chrome before Playwright. Archive plans after merge.
 
 ## Lessons-Learned Gate
 
@@ -491,13 +665,13 @@ BEFORE completing this skill's process:
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `skills/_shared/kanban-entry-format.md` for the template and counter instructions. Use `finishing-a-development-branch` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `finishing-a-development-branch` as the "Discovered during" value.
 
 ## Integration
 
 **Called by:**
-- **executing-plans** (Step 6) - After all tasks complete
-- **autopilot** (Phase 6) - After pipeline completes
+- **executing-plans** (Step 6) — After all tasks complete
+- **run-ralph.sh** (aligned plugin's `docs/ralph_loops/`) — User runs manually after Ralph loop completes
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill
