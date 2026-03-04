@@ -10,10 +10,10 @@ Each invocation handles ONE task, then stops. The loop handles repetition.
 Do NOT read the entire plan file. Instead, use Grep to find task headings:
 
 ```
-Grep pattern="^### " path="<plan-file>" output_mode="content" -n=true
+Grep pattern="^### (✅|🔄)?\s*\d" path="<plan-file>" output_mode="content" -n=true
 ```
 
-This returns all task headings with line numbers. Find the first heading that does NOT contain ✅. If a task is marked 🔄, resume it (previous iteration may have failed mid-task).
+This matches only numbered task headings (e.g., `### 1. Setup auth`, `### ✅ 2. Add routes`) and ignores non-task headings like `### Notes` or `### Dependencies`. Find the first heading that does NOT contain ✅. If a task is marked 🔄, resume it (previous iteration may have failed mid-task).
 
 Then use Read with offset and limit to read ONLY that task's section — from its heading line to just before the next `### ` heading. For example, if your task starts at line 45 and the next heading is at line 80:
 
