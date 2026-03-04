@@ -381,6 +381,8 @@ Never fix bugs without a test.
 - Mocking without understanding dependencies
 - **Mocking away error paths (Anti-Pattern 6)** - CRITICAL
 - **Testing language features instead of behavior (Anti-Pattern 7)**
+- **Reimplementing production logic in mocks (Anti-Pattern 8)**
+- **Mocking intermediate layers instead of I/O boundary (Anti-Pattern 9)**
 
 **Anti-Pattern 6 is the most commonly missed.** Every mock that resolves must also have a test where it rejects — **where the function handles the error** (see Anti-Pattern 7).
 
