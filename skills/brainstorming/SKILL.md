@@ -35,11 +35,16 @@ Wait for the scan to complete, then proceed with the Q&A using the summary as yo
 
 **Sequencing rule:** Do not dispatch an Architect auto-consult (see below) until the project scan has completed and you've reviewed the summary. For early technical questions, check whether the scan findings already answer the question before dispatching a separate sub-agent.
 
-Then:
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+Then ask questions one at a time to refine the idea. Before asking each question, classify it:
+
+- **Business questions** (ask the user): See "What stays user-facing" under Architect auto-consult below.
+- **Technical questions** (auto-resolve via Architect): See "What counts as technical" under Architect auto-consult below.
+
+**For business questions:** Ask the user directly. Prefer multiple choice when possible. One question per message.
+
+**For technical questions:** Do NOT ask the user. Instead, dispatch The Architect as the user's proxy to answer the question (see "Architect as proxy" under Architect auto-consult below). Each technical question gets its own fresh sub-agent dispatch — the answer comes back to the main thread, you incorporate it, and it shapes what questions come next (which may be business or technical). Briefly note each decision to the user: what was decided and why (one sentence), plus any constraints flagged — so they have visibility without needing to weigh in.
+
+**Gray area:** If a question has both business and technical dimensions (e.g., "should we support offline mode?" is business scope + technical feasibility), ask the user the business dimension **first** ("Is offline support important for your users?"). Only after the user answers, and only if their answer warrants it, dispatch The Architect as proxy for the technical dimension (e.g., if the user says offline matters, send The Architect the question "what's the best offline architecture approach given the current codebase?").
 
 **Exploring approaches:**
 - Propose 2-3 different approaches with trade-offs
@@ -63,13 +68,46 @@ Then:
 
 Before presenting technical content to the user — whether it's a question with options or a design section — consult The Architect first. This applies in every phase: understanding, exploring approaches, and presenting the design.
 
-**Trigger:** You are about to show the user something that contains technical decisions. This includes questions asking the user to choose between technical alternatives AND design sections that embed technical choices as assertions (e.g., "here's the state machine with states X, Y, Z"). The second case is easy to miss — presenting a design section *is* presenting a technical decision, even though it looks like a statement rather than a question.
+**Trigger:** Any of these situations:
+- **Q&A phase (proxy mode):** You need to answer a technical question to continue the brainstorm (routed here instead of asking the user — see question classification above). Use the "Architect as proxy" dispatch below.
+- **Presenting options (review mode):** You are about to show the user options that contain technical alternatives. Use the standard review dispatch below.
+- **Presenting design sections (review mode):** You are about to present a design section that embeds technical choices as assertions (e.g., "here's the state machine with states X, Y, Z"). This case is easy to miss — presenting a design section *is* presenting a technical decision, even though it looks like a statement rather than a question. Use the standard review dispatch below.
 
-**What counts as technical:** Data model choices, type structures, where to put state, which layer handles something, API shape, streaming behavior, tool design, module boundaries, persistence strategies, integration approach, state machines, lifecycle flows — anything where the answer depends on the existing codebase rather than user preference.
+**Mode difference:** In proxy mode, The Architect makes decisions (its "do not propose alternatives" constraint is lifted). In review mode, The Architect critiques only — it recommends which option fits best but does not override the user's choice. These are different behavioral contracts for the same persona.
 
-**What stays user-facing without consult:** Product direction, UX preferences, feature scope, naming/branding, "do you want X or Y feature", interaction style choices.
+**What counts as technical:** Data model choices, type structures, where to put state, which layer handles something, API shape, streaming behavior, tool design, module boundaries, persistence strategies, integration approach, state machines, lifecycle flows, component patterns — anything where the answer depends on the existing codebase rather than user preference.
 
-**Workflow:**
+**What stays user-facing without consult:** Product direction, feature scope, success criteria, priorities, UX preferences, target audience, naming/branding, "do you want X or Y feature", what problem to solve, what outcome matters, deadlines, trade-off preferences between scope/quality/speed, interaction style choices.
+
+**Architect as proxy** (Q&A-phase technical questions):
+
+The user has delegated technical decision authority to The Architect. The brainstorm's iterative back-and-forth rhythm stays the same — but technical turns go to The Architect (via fresh sub-agent each time) instead of to the user. Each Architect answer feeds back into the main thread and shapes what comes next, just like a human technical advisor sitting in the session.
+
+1. Dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with this template:
+
+   "[Full contents of `advisors/.claude/the-architect.md`]
+
+   **Role override for this dispatch:** You are acting as the user's proxy for technical decisions during a brainstorming session. Your normal constraint of 'do not propose alternatives' is suspended — the user has explicitly delegated technical decision-making to you. Investigate the codebase and make a recommendation.
+
+   You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md` — it contains a prior scan of the project structure, patterns, and conventions. Use this as a starting point rather than re-exploring from scratch.
+
+   Technical question to resolve for the project at `{project-root}`:
+
+   Context: {1-2 sentences on what the user is building and key constraints/decisions established so far}
+   Question: {the technical question that needs answering}
+
+   Investigate the existing codebase. Make a decision grounded in existing patterns, conventions, and architecture. If you identify multiple viable approaches, pick the one that best fits the codebase and explain why.
+
+   Output format:
+   - **Decision:** What to do (one clear answer)
+   - **Reasoning:** Why this fits the existing codebase, citing specific files, patterns, or conventions
+   - **Constraints:** Any preconditions, caveats, or risks that affect the design (e.g., 'requires migrating X first', 'incompatible with planned move to Y')"
+
+2. Incorporate the decision into the brainstorm's working context. The Architect's answer will often shape what the next question is — that's the point. Continue the Q&A flow: if the next question is business, ask the user; if technical, dispatch a fresh Architect agent. Each new dispatch includes accumulated context from prior decisions (e.g., "Prior decisions: {list}. New question: {question}").
+3. Briefly note each Architect decision to the user: what was decided and why (one sentence), plus any constraints flagged — do not drop caveats that affect the design.
+
+**Standard review workflow** (presenting options or design sections):
+
 1. Draft the content you're about to present (options, design section, or both)
 2. Before presenting to the user, dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with The Architect's persona to review it against the codebase. Use this dispatch template — replace placeholders with actual values:
 
