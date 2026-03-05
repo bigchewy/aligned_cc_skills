@@ -10,14 +10,14 @@ set -euo pipefail
 #
 # Environment variables:
 #   MAX_ITERATIONS      — safety cap (default: 50)
-#   ITERATION_TIMEOUT   — seconds per iteration before kill (default: 300 = 5 min)
+#   ITERATION_TIMEOUT   — seconds per iteration before kill (default: 900 = 15 min)
 #   MAX_TIMEOUTS        — consecutive timeout cap before abort (default: 5)
 #   HEARTBEAT_INTERVAL  — seconds between heartbeat messages (default: 30)
 
 WORKTREE="${1:?Usage: run-ralph.sh <worktree-path> <plan-file-path>}"
 PLAN="${2:?Usage: run-ralph.sh <worktree-path> <plan-file-path>}"
 MAX_ITERATIONS="${MAX_ITERATIONS:-50}"
-ITERATION_TIMEOUT="${ITERATION_TIMEOUT:-300}"
+ITERATION_TIMEOUT="${ITERATION_TIMEOUT:-900}"
 MAX_TIMEOUTS="${MAX_TIMEOUTS:-5}"
 HEARTBEAT_INTERVAL="${HEARTBEAT_INTERVAL:-30}"
 
