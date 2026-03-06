@@ -387,9 +387,11 @@ Verify the resolved path exists with Read. **If the checklist cannot be found af
 
      **IMPORTANT — You do NOT do exhaustive fact-checking.** The Verifier agent handles that in parallel. Your job is architectural critique, not line-number verification. You SHOULD read key codebase files to understand existing patterns (e.g., read a few route handlers to see error handling patterns, read the module the plan extends to check boundaries), but you do NOT need to verify every file path, line number, or code snippet in the plan.
 
+     **Gap analysis (criterion 10):** After reviewing the plan's architecture, perform a gap analysis. Ask: What assumptions does this plan make that haven't been validated? Look for: environment/service assumptions not listed in Prerequisites, implicit task ordering dependencies, failure modes no task handles, and undocumented conventions the plan relies on. Example: 'This plan assumes Redis is available but no task checks for connection failure or lists Redis in Prerequisites.'
+
      You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{plan-file-path}` in full. Then read key source files that the plan modifies or depends on — enough to understand existing patterns and module boundaries.
 
-     Evaluate the plan against checklist criteria 1 (architectural assumptions only — not line-number accuracy), 3, 5, 6, 7, and 9 through your codebase-alignment lens. Skip criteria 2, 4, 8 (the Verifier covers those). Focus on: Does the plan follow existing patterns? Are module boundaries respected? Are there hidden dependency risks? Are behavioral changes acknowledged? Also evaluate Decision Log entries if present. Tag every finding with [Architect].
+     Evaluate the plan against checklist criteria 1 (architectural assumptions only — not line-number accuracy), 3, 5, 6, 7, 9, and 10 through your codebase-alignment lens. Skip criteria 2, 4, 8 (the Verifier covers those). Focus on: Does the plan follow existing patterns? Are module boundaries respected? Are there hidden dependency risks? Are behavioral changes acknowledged? Are there unvalidated assumptions? Also evaluate Decision Log entries if present. Tag every finding with [Architect].
 
      Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed — the Verifier provides that. Return only a one-line confirmation: 'Report written to {report-path}'."
 
@@ -533,6 +535,7 @@ Then output two execution options (with `{plan-file-path}`, `{feature-name}`, an
 
 - **Option A (Interactive)** when: plan has ≤10 tasks, tasks require judgment calls or creative decisions, the feature touches shared/sensitive code where you'd want human review at checkpoints, or the plan has ambiguities that may need mid-execution clarification.
 - **Option B (Ralph loop)** when: plan has >10 well-specified tasks, every task has unambiguous acceptance criteria and verification commands, the work is mechanical (rote file edits, repetitive patterns), or context window bloat would degrade quality in a single session.
+- **Option C (Autopilot)** when: the user has a design doc AND wants fully unattended execution from plan through verification. Subsumes Option B — also handles worktree setup, mockup fidelity checks, and branch verification. Best for hands-off workflows where the user doesn't want to babysit transitions.
 
 State the recommendation as a single sentence, e.g.: "**Recommendation:** Option B (Ralph loop) — this plan has 23 mechanical tasks with clear verification steps; fresh context per task will prevent quality drift."
 
@@ -549,9 +552,15 @@ Run from any terminal:
 cd {worktree-path}
 bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
 ```
+
+### Option C: Autopilot (fully unattended — plan through verification)
+Run from any terminal. Creates the worktree, runs the Ralph loop, checks mockup fidelity, and verifies the branch — but does NOT merge:
+```bash
+bash {plugin-root}/docs/ralph_loops/autopilot.sh "{project-path}" "{design-doc-path}" "feature/{feature-name}"
+```
 ````
 
-**After execution completes** (either option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
+**After execution completes** (any option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
 
 ### When worktree path is unknown
 

@@ -258,11 +258,31 @@ Apply any remaining fixes. Present final results to the user.
 
 - Commit the design document, visual artifacts (`docs/mockups/{session-name}/`), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
 
-**Create worktree + next step prompt (mandatory):**
+**Next step prompt (mandatory):**
 
-After committing the design document, invoke `/aligned:using-git-worktrees` to create the worktree for the upcoming implementation work. Then output a ready-to-paste prompt for the next session with the worktree path filled in:
+After committing the design document, present two options. **Resolve the plugin root path first:** the plugin root is two levels up from the base directory for this skill (`{base-directory}/../..`). If the base-directory line was compressed out of context, use Glob to search `$HOME` for `**/docs/ralph_loops/autopilot.sh` and use the match whose parent directory contains `.claude-plugin/plugin.json`. Store as `{plugin-root}`.
+
+````
+## Next Steps
+
+### Option A: Hands-on (write plan interactively, then choose execution method)
+I'll create a worktree and write the implementation plan now. You'll review the plan and choose how to execute it.
+
+> Ready to proceed? I'll invoke `/aligned:using-git-worktrees` to create the worktree, then `/aligned:writing-plans` to write the plan.
+
+### Option B: Autopilot (fully unattended — plan through verification)
+Run from any terminal. Writes the plan, creates a worktree, executes all tasks via Ralph loop, checks mockup fidelity, and verifies the branch — but does NOT merge:
+```bash
+bash {plugin-root}/docs/ralph_loops/autopilot.sh "{project-path}" "{design-doc-path}"
+```
+Review the work when it finishes, then merge manually or run `/aligned:finishing-a-development-branch`.
+````
+
+If the user chooses Option A, invoke `/aligned:using-git-worktrees` to create the worktree, then output:
 
 > `cd [worktree-path]` then use `/aligned:writing-plans` to write an implementation plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
+
+If the user chooses Option B, no further action is needed — the terminal command handles everything.
 
 ## Design Critique
 

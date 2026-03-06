@@ -14,7 +14,7 @@ Critique an implementation plan for correctness, completeness, and executability
 3. Write a critique to stdout (do NOT rewrite the plan)
 4. Output a numbered list of specific issues with severity
 
-**Applicability assessment:** After reading the plan, quickly assess which of the 8 criteria below are relevant to its scope. If a criterion clearly doesn't apply (e.g., "Missing coverage" when the plan doesn't claim to address "all" of anything; "Behavioral changes" when no code replacements change observable behavior; "Dependency conflicts" when all tasks touch different files), mark it **N/A** with a one-line reason in the Checklist Results table and skip codebase verification for that criterion.
+**Applicability assessment:** After reading the plan, quickly assess which of the 10 criteria below are relevant to its scope. If a criterion clearly doesn't apply (e.g., "Missing coverage" when the plan doesn't claim to address "all" of anything; "Behavioral changes" when no code replacements change observable behavior; "Dependency conflicts" when all tasks touch different files), mark it **N/A** with a one-line reason in the Checklist Results table and skip codebase verification for that criterion.
 
 **When you can't verify:** If a source file has been deleted, moved, or the plan references something you can't locate, flag it as `[UNVERIFIABLE]` with the reason — don't skip it or assume it's correct.
 
@@ -139,6 +139,25 @@ If the plan includes a Decision Log, evaluate each decision entry.
 - BAD: Decision claims "no alternatives exist" when obvious alternatives are visible in the codebase
 - GOOD: Decision clearly explains trade-offs and the choice aligns with evidence
 
+### 10. Gap analysis — unvalidated assumptions
+
+Identify assumptions the plan makes without validation or acknowledgment.
+
+| Check | What to look for |
+|-------|-----------------|
+| Environment assumptions | Does the plan assume services, env vars, or database state without listing them in Prerequisites? |
+| External dependencies | Does the plan assume API availability, rate limits, or response formats without verification? |
+| Implicit ordering | Are there hidden dependencies between tasks that aren't documented? |
+| Failure modes | Are there plausible failure scenarios that no task handles? (Service unavailable, timeout, permission denied) |
+| Tribal knowledge | Does the plan depend on undocumented conventions or setup steps? |
+| Scale assumptions | Does the plan assume data volumes, request rates, or file sizes without stating them? |
+
+- BAD: Plan uses Stripe webhook without verifying webhook endpoint is configured in Stripe dashboard
+- BAD: Plan assumes Redis is running locally but doesn't list it in Prerequisites
+- BAD: Task 5 reads a file that Task 3 creates, but no ordering dependency is noted
+- GOOD: Prerequisites section lists "Configure Stripe webhook for /api/webhooks/stripe"
+- GOOD: Plan notes "Assumes < 10K records — if larger, Task 4 needs pagination"
+
 ## Critique Output Format
 
 ```markdown
@@ -173,6 +192,7 @@ If the plan includes a Decision Log, evaluate each decision entry.
 | 7 | Behavioral changes | {Pass / N issues found / N/A — reason} |
 | 8 | Test spec accuracy | {Pass / N issues found / N/A — reason} |
 | 9 | Decision quality | {Pass / N issues found / N/A — reason} |
+| 10 | Gap analysis | {Pass / N issues found / N/A — reason} |
 ```
 
 ## Important

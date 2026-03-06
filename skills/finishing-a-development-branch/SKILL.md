@@ -401,10 +401,10 @@ Commit fixes to the feature branch before re-verifying: `git -C <worktree-path> 
 2. If any fixed files match LLM behavior surface patterns, also re-run Step 1b (LLM eval)
 3. Re-run the mockup fidelity check (Step 1e) to confirm deviations are resolved
 
-**Cycle limit:** Track the number of completed fix-then-verify cycles.
+**Cycle limit:** Track the number of completed fix-then-verify cycles. Keep iterating until all unannounced deviations are resolved or the user chooses to skip.
 
-- **After cycle 1:** If unannounced deviations remain, present them and ask the user: fix or accept?
-- **After cycle 2:** If deviations still remain, present them as informational. Do NOT offer to fix again. Continue to Step 2.
+- **After each cycle:** If unannounced deviations remain, present them and ask the user: fix or accept?
+- **After cycle 5:** If deviations still remain after 5 fix cycles, present them as informational. Do NOT offer to fix again — the deviations likely require manual intervention or a design decision. Continue to Step 2.
 
 ### Step 2: Determine Base Branch
 
@@ -712,6 +712,7 @@ When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-forma
 **Called by:**
 - **executing-plans** (Step 6) — After all tasks complete
 - **run-ralph.sh** (aligned plugin's `docs/ralph_loops/`) — User runs manually after Ralph loop completes
+- **autopilot.sh** (aligned plugin's `docs/ralph_loops/`) — User runs manually after autopilot completes (autopilot stops at verification, does not merge)
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill
