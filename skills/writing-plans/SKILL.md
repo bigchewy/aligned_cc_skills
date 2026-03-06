@@ -583,9 +583,15 @@ cd .worktrees/{feature-name}
 bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
 ```
 **IMPORTANT:** If the worktree setup above failed, do NOT run the script — it would execute against your main repo.
+
+### Option C: Autopilot (fully unattended — plan through verification)
+No worktree setup needed — autopilot creates it automatically:
+```bash
+bash {plugin-root}/docs/ralph_loops/autopilot.sh "{project-path}" "{plan-file-path}"
+```
 ````
 
-**After execution completes** (either option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
+**After execution completes** (any option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
 
 **Verification gate (mandatory before presenting the handoff):**
 

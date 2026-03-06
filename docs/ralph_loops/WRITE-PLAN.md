@@ -16,7 +16,7 @@ These override specific sections of the skill:
 2. **After committing the plan to main**, write exactly two lines to the file specified as `Plan path sentinel` in the Parameters: line 1 is the design document path (from Parameters), line 2 is the plan file's absolute path. No other content.
 3. **Do not pause for user input.** Run to completion autonomously.
 4. **For the Kanban entry format**, the path is specified in Parameters. Do not search for it.
-5. **If running in a worktree**, still merge main forward after committing the plan (as the skill instructs). The autopilot will need the plan file in the worktree.
+5. **After committing the plan to main**, if the project has worktrees, merge main forward into any relevant worktree (as the skill instructs). The autopilot handles its own worktree creation separately.
 
 Everything else in the skill applies as written: codebase exploration, plan structure, TDD task format, critique panel (full 2-round process with sub-agents), verification gate, decision log.
 

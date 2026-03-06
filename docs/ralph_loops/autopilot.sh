@@ -164,7 +164,6 @@ run_claude_phase() {
   if [ "$CLAUDE_EXIT_CODE" -eq 143 ] || [ "$CLAUDE_EXIT_CODE" -eq 137 ]; then
     echo ""
     echo "ERROR: $phase timed out after ${timeout}s." >&2
-    echo "Increase PHASE_TIMEOUT (currently ${PHASE_TIMEOUT}s) if plan writing legitimately needs more time." >&2
     return 1
   elif [ "$CLAUDE_EXIT_CODE" -ne 0 ]; then
     echo ""
@@ -340,6 +339,8 @@ if [ "$MERGE_EXIT" -ne 0 ]; then
 fi
 
 # Verify plan file exists in worktree
+# Plan path in worktree: reconstructed from basename because the plan was committed
+# to main and merged forward. This assumes writing-plans enforces docs/plans/ convention.
 PLAN_IN_WORKTREE="$WORKTREE/docs/plans/$(basename "$PLAN_FILE")"
 if [ ! -f "$PLAN_IN_WORKTREE" ]; then
   echo "ERROR: Plan file not found in worktree at $PLAN_IN_WORKTREE" >&2
@@ -546,6 +547,10 @@ if [ -f "$STATUS" ]; then
     echo "Fix the issues in the worktree, then either:"
     echo "  1. Re-run this script (it will skip completed phases)"
     echo "  2. Fix manually in the worktree at: $WORKTREE"
+    echo ""
+    echo "If mockup fixes caused the failure, also run:"
+    echo "  rm $WORKTREE/.mockup-clean"
+    echo "to re-enable the mockup fidelity loop on the next run."
     # Clean up status so re-run will re-verify
     rm -f "$STATUS"
     exit 1

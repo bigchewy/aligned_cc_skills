@@ -273,7 +273,7 @@ I'll create a worktree and write the implementation plan now. You'll review the 
 ### Option B: Autopilot (fully unattended — plan through verification)
 Run from any terminal. Writes the plan, creates a worktree, executes all tasks via Ralph loop, checks mockup fidelity, and verifies the branch — but does NOT merge:
 ```bash
-bash {plugin-root}/docs/ralph_loops/autopilot.sh "{project-path}" "{design-doc-path}"
+bash {plugin-root}/docs/ralph_loops/autopilot.sh "{project-root}" "{design-doc-path}"
 ```
 Review the work when it finishes, then merge manually or run `/aligned:finishing-a-development-branch`.
 ````

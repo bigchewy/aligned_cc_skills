@@ -1,7 +1,7 @@
 # Verify Branch (Pre-Review)
 
-<!-- Coupling note: Steps 1-3 mirror FINISH-BRANCH.md Steps 1-1b.
-     If the finishing skill's verification logic changes, update this file too. -->
+<!-- Coupling note: Steps 1-3 mirror FINISH-BRANCH.md Steps 1-3 (and
+     finishing-a-development-branch/SKILL.md Steps 1-1b). Update in tandem. -->
 
 You are verifying a development branch after automated implementation. Run all verification checks, report results, then exit. Do NOT merge, clean up worktrees, or archive plan documents.
 
