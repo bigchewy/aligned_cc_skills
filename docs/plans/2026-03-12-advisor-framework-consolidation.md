@@ -43,7 +43,7 @@ If migration is interrupted or verification fails:
 
 ---
 
-### Task 1: Copy Missing Frameworks from EPCH Source
+### ✅ Task 1: Copy Missing Frameworks from EPCH Source
 
 **Files:**
 - Create: `frameworks/epch-projects/design-principles/prompt.md`
@@ -88,7 +88,9 @@ git commit -m "feat: add 2 missing EPCH frameworks (design-principles, landing-p
 
 ---
 
-### Task 2: Apply Divergence Decisions
+### ⏭️ Task 2: Apply Divergence Decisions
+
+> SKIPPED: The prerequisite divergence report (`docs/plans/advisor-divergence-report.md`) was never created. Source repos (`epch-projects`, `va-web-app`) are outside the allowed working directories so the comparison cannot be performed from this session. Plugin copies are treated as authoritative. User can revisit post-consolidation if needed.
 
 **Files:**
 - Modify: various files in `advisors/` and `frameworks/` per divergence report
@@ -119,7 +121,7 @@ git commit -m "fix: apply divergence decisions from audit report"
 
 ---
 
-### Task 3: Delete Duplicate EPCH Advisors
+### ✅ Task 3: Delete Duplicate EPCH Advisors
 
 **Files:**
 - Delete: `advisors/epch/april-dunford.md`
@@ -149,7 +151,7 @@ git commit -m "chore: remove 3 duplicate EPCH advisors (va-web-app versions are 
 
 ---
 
-### Task 4: Update `use-advisor/SKILL.md` Discovery Logic
+### ✅ Task 4: Update `use-advisor/SKILL.md` Discovery Logic
 
 > **Behavior change:** The no-argument listing changes from repo-grouped headers (va-web-app, epch, .claude) to a single flat alphabetical list. This is intentional — the repo distinction no longer exists.
 
@@ -205,7 +207,7 @@ git commit -m "refactor: simplify use-advisor discovery to single flat glob"
 
 ---
 
-### Task 5: Update `use-framework/SKILL.md` Discovery Logic
+### ✅ Task 5: Update `use-framework/SKILL.md` Discovery Logic
 
 > **Behavior change:** The no-argument listing changes from repo-grouped headers to a single flat alphabetical list. This is intentional — the repo distinction no longer exists.
 
@@ -255,7 +257,7 @@ git commit -m "refactor: simplify use-framework discovery to single flat glob"
 
 ---
 
-### Task 6: Update `add-advisor/SKILL.md` — Remove Symlink Option, Update Paths
+### ✅ Task 6: Update `add-advisor/SKILL.md` — Remove Symlink Option, Update Paths
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (Step 8 symlink option, line 102 canonical example, Step 8b directory reference)
@@ -320,7 +322,7 @@ git commit -m "refactor: simplify add-advisor to flat directory, remove symlink 
 
 ---
 
-### Task 7: Update `add-framework/SKILL.md` — Remove Symlink Option, Update Paths, Fix Step 0
+### ✅ Task 7: Update `add-framework/SKILL.md` — Remove Symlink Option, Update Paths, Fix Step 0
 
 **Files:**
 - Modify: `skills/add-framework/SKILL.md` (Step 0 path detection, Step 7 symlink option, lines 64, 106, 117 canonical examples)
@@ -385,7 +387,7 @@ git commit -m "refactor: simplify add-framework to flat directory, remove symlin
 
 ---
 
-### Task 8: Update `brainstorming/SKILL.md` Advisor Path References
+### ✅ Task 8: Update `brainstorming/SKILL.md` Advisor Path References
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (lines 59, 88, 114)
@@ -422,7 +424,7 @@ git commit -m "fix: update brainstorming advisor paths to flat directory"
 
 ---
 
-### Task 9: Update `create-design-principles` Advisor Path References
+### ✅ Task 9: Update `create-design-principles` Advisor Path References
 
 **Files:**
 - Modify: `skills/create-design-principles/SKILL.md` (lines 12, 270)
@@ -453,7 +455,7 @@ git commit -m "fix: update create-design-principles advisor paths to flat direct
 
 ---
 
-### Task 10: Update `README.md`
+### ✅ Task 10: Update `README.md`
 
 **Files:**
 - Modify: `README.md` (framework count, any old path references)
@@ -487,7 +489,7 @@ git commit -m "docs: update README for flat advisor/framework directories"
 
 ---
 
-### Task 11: Pre-Move Collision Check
+### ✅ Task 11: Pre-Move Collision Check
 
 Complete Task 3 before starting — Step 3 depends on the Task 3 deletion commit.
 
@@ -513,7 +515,7 @@ Expected: shows the deletion commit from Task 3.
 
 ---
 
-### Task 12: Flatten Advisors Directory
+### ✅ Task 12: Flatten Advisors Directory
 
 Complete Task 11 first — this task depends on the collision check passing.
 
@@ -563,7 +565,7 @@ git commit -m "refactor: flatten advisors into single advisors/prompts/ director
 
 ---
 
-### Task 13: Flatten Frameworks Directory
+### ✅ Task 13: Flatten Frameworks Directory
 
 **Files:**
 - Move: all framework directories from `frameworks/va-web-app/` and `frameworks/epch-projects/` up one level into `frameworks/`
@@ -612,7 +614,7 @@ git commit -m "refactor: flatten frameworks into single-level directories"
 
 ---
 
-### Task 14: Stale Path Verification Gate
+### ✅ Task 14: Stale Path Verification Gate
 
 **Files:**
 - No file changes — verification only
@@ -645,7 +647,7 @@ git commit -m "fix: update remaining stale advisor/framework path references"
 
 ---
 
-### Task 15: Rewrite `advisors/registry.md` — Merge directory.md, Add Quick Reference
+### ✅ Task 15: Rewrite `advisors/registry.md` — Merge directory.md, Add Quick Reference
 
 **Files:**
 - Modify: `advisors/registry.md` (add Quick Reference table, update all `prompt:` paths)
@@ -702,7 +704,7 @@ git commit -m "refactor: merge directory.md into registry.md, add Quick Referenc
 
 ---
 
-### Task 16: Delete `advisors/directory.md` and Update Cross-References
+### ✅ Task 16: Delete `advisors/directory.md` and Update Cross-References
 
 **Files:**
 - Delete: `advisors/directory.md`
@@ -743,7 +745,7 @@ git commit -m "chore: delete directory.md (merged into registry.md Quick Referen
 
 ---
 
-### Task 17: Clean Up `~/.claude/` Artifacts
+### ✅ Task 17: Clean Up `~/.claude/` Artifacts
 
 **Files:**
 - Delete: `~/.claude/advisors/prompts/epch-projects` (symlink)
@@ -836,7 +838,7 @@ If `git status` shows "nothing to commit" (all artifacts were untracked), skip t
 
 ---
 
-### Task 18: Version Bump
+### ✅ Task 18: Version Bump
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`
@@ -876,7 +878,7 @@ git commit -m "chore: bump version to 0.8.0 for advisor/framework consolidation"
 
 ---
 
-### Task 19: Final Verification
+### ✅ Task 19: Final Verification
 
 **Files:**
 - No file changes — verification only

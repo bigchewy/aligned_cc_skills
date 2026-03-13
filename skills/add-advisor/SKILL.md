@@ -99,7 +99,7 @@ Add the advisor to the project's registry file (the path and format vary by proj
 
 Create `{detected-prompt-path}/{advisor-id}.md` (kebab-case filename), where `{detected-prompt-path}` is the path determined in Step 0. If the directory doesn't exist yet, create it.
 
-Reference `advisors/va-web-app/diana-chapman.md` as the canonical example of a well-structured advisor prompt.
+Reference `advisors/prompts/diana-chapman.md` as the canonical example of a well-structured advisor prompt.
 
 #### Prompt Structure
 
@@ -197,30 +197,23 @@ Run the scenario to verify baseline quality. If it fails, dispatch the `eval-fai
 
 ### 8. Register Advisor for Discovery
 
-Add the advisor prompt file to the appropriate location for cross-project discovery:
+Add the advisor prompt file to `advisors/prompts/` in the plugin directory. This makes the advisor available in all plugin-enabled sessions.
 
-**Option A (plugin-shared advisor):** Add the file to `advisors/{repo-name}/` in the plugin directory. This makes the advisor available in all plugin-enabled sessions.
+Place the file at `advisors/prompts/{advisor-id}.md`.
 
-**Option B (project-specific advisor):** Keep the file in the project's local prompt path (from Step 0). If you want it discoverable across projects without the plugin, add it to `~/.claude/advisors/prompts/{repo-name}/` as well.
+### 8b. Update the Registry
 
-For Option B, if `~/.claude/advisors/prompts/{repo-name}` doesn't exist yet:
-1. Create it as a symlink to the project's prompt path
-2. Register in `~/.claude/advisors/prompts/.repos` manifest (append repo-name if not listed)
-3. Verify: Glob `~/.claude/advisors/prompts/{repo-name}/**/*.md` returns the advisor files
-
-### 8b. Update the Directory
-
-If `advisors/directory.md` exists (plugin-relative), append one row to the table under the appropriate `### {repo-name}` heading:
+Append one row to the Quick Reference table in `advisors/registry.md`:
 
 ```
-| {slug} | {display-name} | {summary} |
+| {slug} | {display-name} | {domains} | {summary} |
 ```
 
+Where:
 - **slug:** The advisor's kebab-case filename (without `.md`)
-- **display-name:** Extracted from the prompt file's first line ("You are [Name], ...")
-- **summary:** A concise phrase from the opening sentence describing the advisor
-
-If `directory.md` doesn't exist, skip this step — the advisor is still discoverable via glob fallback in `use-advisor`.
+- **display-name:** The advisor's full name
+- **domains:** Comma-separated expertise areas
+- **summary:** One-line description
 
 ### 9. Commit
 
