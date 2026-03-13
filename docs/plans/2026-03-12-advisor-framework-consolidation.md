@@ -515,7 +515,7 @@ Expected: shows the deletion commit from Task 3.
 
 ---
 
-### Task 12: Flatten Advisors Directory
+### ✅ Task 12: Flatten Advisors Directory
 
 Complete Task 11 first — this task depends on the collision check passing.
 
