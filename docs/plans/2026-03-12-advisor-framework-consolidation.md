@@ -207,7 +207,7 @@ git commit -m "refactor: simplify use-advisor discovery to single flat glob"
 
 ---
 
-### Task 5: Update `use-framework/SKILL.md` Discovery Logic
+### ✅ Task 5: Update `use-framework/SKILL.md` Discovery Logic
 
 > **Behavior change:** The no-argument listing changes from repo-grouped headers to a single flat alphabetical list. This is intentional — the repo distinction no longer exists.
 

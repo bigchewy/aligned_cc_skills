@@ -14,37 +14,13 @@ Guide the user through a framework's phases interactively.
 
 ## Step 1: Discover Available Frameworks
 
-Discovery uses a two-stage process: plugin-shipped frameworks first, then user-added frameworks as a fallback.
+Discover all frameworks from the plugin's flat directory.
 
-**Step 1a: Read the plugin repo manifest**
+**Step 1a: Glob plugin frameworks**
 
-Read the file `frameworks/.repos` (plugin-relative). Each line is a repo name (e.g., `va-web-app`). If the file doesn't exist or is empty, report: "No framework repos found in plugin. Check your plugin installation."
+Glob `frameworks/*/prompt.md`. Each `prompt.md` represents one framework. The slug is the parent directory name (e.g., for `frameworks/clearing-model/prompt.md`, the slug is `clearing-model`).
 
-**Step 1b: Glob each repo (plugin frameworks)**
-
-For each repo name from the manifest, glob:
-
-```
-frameworks/{repo-name}/**/prompt.md
-```
-
-Combine all results across repos. Each `prompt.md` represents one framework. The slug is the **parent directory** name of `prompt.md` (e.g., for `frameworks/va-web-app/clearing-model/prompt.md`, the slug is `clearing-model`).
-
-If a repo from the manifest returns zero results, report: "No framework files found in `frameworks/{repo-name}/`. The directory may be empty."
-
-**Step 1c: Discover user-added frameworks (fallback)**
-
-Additionally, if `~/.claude/frameworks/prompts/.repos` exists, also discover frameworks from there:
-
-For each repo name in that manifest, glob:
-
-```
-~/.claude/frameworks/prompts/{repo-name}/**/prompt.md
-```
-
-Merge these with plugin frameworks. If the same slug appears in both plugin and user locations, the plugin version takes precedence (skip the user-added duplicate).
-
-This allows users to add their own frameworks beyond what the plugin ships. To add custom frameworks, create a directory in `~/.claude/frameworks/prompts/{repo-name}/{framework-name}/` containing `prompt.md` (required), `examples.md` (optional), and `anti-examples.md` (optional). Add the repo name to `~/.claude/frameworks/prompts/.repos`.
+If no results, report: "No framework files found. Check your plugin installation."
 
 **Context management:** When listing all frameworks, glob first to get folder names, then read only the first line of each `prompt.md`. Do not read full file contents during discovery — full reads happen only after matching.
 
@@ -70,7 +46,7 @@ If the user provided a framework name argument:
 4. **Multiple matches:** Ask the user which one they meant
 5. **No match:** List all available frameworks with their display names
 
-If no argument was provided, list all available frameworks grouped by repo, then alphabetically within each group. Show each repo as a header (e.g., "**va-web-app**"), then list frameworks with display name, advisor, and purpose. If all frameworks come from a single repo, skip the repo header.
+If no argument was provided, list all available frameworks alphabetically. Show each framework with its display name, advisor, and purpose.
 
 ## Step 4: Load Framework Content
 
