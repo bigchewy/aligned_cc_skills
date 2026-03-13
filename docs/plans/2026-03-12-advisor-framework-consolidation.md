@@ -151,7 +151,7 @@ git commit -m "chore: remove 3 duplicate EPCH advisors (va-web-app versions are 
 
 ---
 
-### Task 4: Update `use-advisor/SKILL.md` Discovery Logic
+### ✅ Task 4: Update `use-advisor/SKILL.md` Discovery Logic
 
 > **Behavior change:** The no-argument listing changes from repo-grouped headers (va-web-app, epch, .claude) to a single flat alphabetical list. This is intentional — the repo distinction no longer exists.
 
