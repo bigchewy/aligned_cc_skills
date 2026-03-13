@@ -136,7 +136,7 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 
 Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.md` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 
-To add custom advisors beyond what the plugin ships, create `.md` files in `~/.claude/advisors/prompts/{repo-name}/` following the "You are [Name], ..." format.
+To add a new advisor, use `/aligned:add-advisor` which guides you through creation and registration in `advisors/prompts/`.
 
 ## Team Setup
 
@@ -214,7 +214,7 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 - **17 skills** (added: kanban-resolve, create-new-skill, use-advisor, use-framework)
 - **5 agents** (added: code-reviewer, code-simplifier, mockup-generator, kanban-triage)
 - **62 advisor prompts** shipped with plugin (va-web-app, epch-projects, .claude)
-- **130 frameworks** shipped with plugin
+- **132 frameworks** shipped with plugin
 - **5 hook scripts** with 4 event types configured
 - Multi-critic brainstorming (opus, domain-selected from advisor pool)
 - Dual-critic writing-plans (Architect + Verifier, parallel)
