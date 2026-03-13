@@ -489,7 +489,7 @@ git commit -m "docs: update README for flat advisor/framework directories"
 
 ---
 
-### Task 11: Pre-Move Collision Check
+### ✅ Task 11: Pre-Move Collision Check
 
 Complete Task 3 before starting — Step 3 depends on the Task 3 deletion commit.
 
