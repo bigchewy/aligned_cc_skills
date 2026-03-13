@@ -56,7 +56,7 @@ Then ask questions one at a time to refine the idea. Before asking each question
 1. Draft the approach options as normal.
 2. Classify the options and consult the right advisor:
    - **Technical UI decisions** (component patterns, state management, module boundaries, where logic lives) → run the Architect auto-consult (below).
-   - **UX/usability decisions** (layout clarity, navigation, scanning, labeling, user flow, conventions) → consult Steve Krug (`advisors/.claude/steve-krug.md`) using the same auto-consult dispatch pattern, substituting Krug's prompt for The Architect's.
+   - **UX/usability decisions** (layout clarity, navigation, scanning, labeling, user flow, conventions) → consult Steve Krug (`advisors/prompts/steve-krug.md`) using the same auto-consult dispatch pattern, substituting Krug's prompt for The Architect's.
    - **Both apply?** Consult both in parallel.
 3. Dispatch the mockup-generator agent with the advisor-refined options to create a comparison mockup with all options as switchable tabs. Use this dispatch template — replace placeholders with actual values. Uses `subagent_type=general-purpose`.
 
@@ -85,7 +85,7 @@ The user has delegated technical decision authority to The Architect. The brains
 
 1. Dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with this template:
 
-   "[Full contents of `advisors/.claude/the-architect.md`]
+   "[Full contents of `advisors/prompts/the-architect.md`]
 
    **Role override for this dispatch:** You are acting as the user's proxy for technical decisions during a brainstorming session. Your normal constraint of 'do not propose alternatives' is suspended — the user has explicitly delegated technical decision-making to you. Investigate the codebase and make a recommendation.
 
@@ -111,7 +111,7 @@ The user has delegated technical decision authority to The Architect. The brains
 1. Draft the content you're about to present (options, design section, or both)
 2. Before presenting to the user, dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with The Architect's persona to review it against the codebase. Use this dispatch template — replace placeholders with actual values:
 
-   "[Full contents of `advisors/.claude/the-architect.md`]
+   "[Full contents of `advisors/prompts/the-architect.md`]
 
    You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md` — it contains a prior scan of the project structure, patterns, and conventions. Use this as a starting point rather than re-exploring from scratch.
 

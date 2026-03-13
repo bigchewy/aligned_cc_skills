@@ -387,7 +387,7 @@ git commit -m "refactor: simplify add-framework to flat directory, remove symlin
 
 ---
 
-### Task 8: Update `brainstorming/SKILL.md` Advisor Path References
+### ✅ Task 8: Update `brainstorming/SKILL.md` Advisor Path References
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (lines 59, 88, 114)
