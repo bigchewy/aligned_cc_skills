@@ -97,9 +97,11 @@ fi
 PROMPT_FILE=""
 CLAUDE_PID=""
 WATCHDOG_PID=""
+HEARTBEAT_PID=""
 
 cleanup() {
   [ -n "$PROMPT_FILE" ] && rm -f "$PROMPT_FILE"
+  stop_heartbeat
   stop_watchdog
   kill_claude
 }
@@ -109,6 +111,32 @@ kill_claude() {
     kill "$CLAUDE_PID" 2>/dev/null || true
     wait "$CLAUDE_PID" 2>/dev/null || true
     CLAUDE_PID=""
+  fi
+}
+
+start_heartbeat() {
+  local timeout="$1"
+  local label="$2"
+  (
+    elapsed=0
+    while true; do
+      sleep 30
+      elapsed=$((elapsed + 30))
+      remaining=$((timeout - elapsed))
+      if [ "$remaining" -lt 0 ]; then remaining=0; fi
+      rem_min=$((remaining / 60))
+      rem_sec=$((remaining % 60))
+      printf "  [heartbeat] %s — %ds elapsed (%dm%02ds remaining)\n" "$label" "$elapsed" "$rem_min" "$rem_sec"
+    done
+  ) &
+  HEARTBEAT_PID=$!
+}
+
+stop_heartbeat() {
+  if [ -n "$HEARTBEAT_PID" ]; then
+    kill "$HEARTBEAT_PID" 2>/dev/null || true
+    wait "$HEARTBEAT_PID" 2>/dev/null || true
+    HEARTBEAT_PID=""
   fi
 }
 
@@ -228,9 +256,13 @@ PROMPT_EOF
 
   cd "$PROJECT"
 
+  start_heartbeat "$PHASE_TIMEOUT" "plan writing"
+
   if ! run_claude_phase "Phase 1 (plan writing)" "$PHASE_TIMEOUT"; then
+    stop_heartbeat
     exit 1
   fi
+  stop_heartbeat
   rm -f "$PROMPT_FILE"
   PROMPT_FILE=""
 
