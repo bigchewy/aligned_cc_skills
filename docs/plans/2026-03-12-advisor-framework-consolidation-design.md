@@ -13,6 +13,20 @@ Advisor and framework files live in three overlapping locations: this plugin rep
 
 Make this plugin the single source of truth for all advisors and frameworks. Remove all symlinks, `~/.claude/` discovery paths, and repo-based directory grouping. Flatten everything into clean, single-level directories. Resolve all content divergences with user approval.
 
+## Prerequisites
+
+1. **Close all other Claude sessions** using this plugin before starting the migration. Concurrent sessions will see broken discovery paths during the transition.
+2. **Create safety tag:** `git tag pre-consolidation` in both this repo and `~/.claude/` for rollback.
+3. **Pause `~/.claude/` autocommit:** `launchctl unload ~/Library/LaunchAgents/com.ericpage.claude-skills-autocommit.plist` — re-enable after Phase 6 completes.
+4. **Execute all phases in a single session on a feature branch.** Merge to main atomically after verification passes. This prevents any broken-window state from reaching main.
+
+## Rollback
+
+If migration is interrupted or verification fails:
+- **Plugin repo:** `git checkout main` (branch work is discarded). Or `git reset --hard pre-consolidation` if changes landed on main.
+- **`~/.claude/` repo:** `git -C ~/.claude reset --hard pre-consolidation` to restore symlinks and manifests.
+- Re-enable autocommit: `launchctl load ~/Library/LaunchAgents/com.ericpage.claude-skills-autocommit.plist`
+
 ## Decision Log
 
 | Decision | Rationale |
@@ -24,7 +38,7 @@ Make this plugin the single source of truth for all advisors and frameworks. Rem
 | Per-advisor divergence review | User decides each diverged file individually rather than blanket "source wins" or "plugin wins" |
 | Remove all `~/.claude/` advisor/framework artifacts | Plugin-only lookup; no symlinks, no manifests, no duplicate registries |
 | Leave source repos untouched | Source repos keep their advisor files (will become stale) — not our concern |
-| Merge directory.md into registry.md | Two files duplicated data and created a sync obligation; merged file ~300 lines (~10K tokens); `use-advisor` reads only the Quick Reference section, not the full file |
+| Merge directory.md into registry.md | Two files duplicated data and created a sync obligation; merged file ~300 lines (~10K tokens); `use-advisor` reads only the Quick Reference section, not the full file. This is a "while we're here" improvement — deferrable to a follow-up if it adds risk. |
 | Keep `advisors/prompts/` subdirectory | Cleanly separates metadata (registry.md) from prompt files; avoids filtering registry.md out of advisor globs |
 
 ## New Directory Structure
@@ -78,8 +92,11 @@ Same report format.
 Compare `frameworks/va-web-app/` against va-web-app source and `frameworks/epch-projects/` against EPCH source.
 Identify the 2 known missing frameworks plus any other divergences.
 
-### 1d. Present divergence report
-For each DIVERGED or MISSING_FROM_PLUGIN item, present the user a summary of what differs. User decides each one: keep plugin version, take source version, or merge.
+### 1d. Completeness gate
+Before presenting results, verify file counts: confirm each sub-agent examined the expected number of files (11 EPCH advisors, 42 va-web-app advisors, all framework directories). If any agent silently skipped files, re-run that agent.
+
+### 1e. Present divergence report
+Write the full divergence report to `docs/plans/advisor-divergence-report.md` so it survives session boundaries. For each DIVERGED or MISSING_FROM_PLUGIN item, present the user a summary of what differs. User decides each one: keep plugin version, take source version, or merge.
 
 ## Phase 2: Content Consolidation
 
@@ -140,19 +157,22 @@ Update all references first so discovery paths point to new locations before fil
 
 ## Phase 4: Flatten Directories
 
-### 4a. Flatten advisors
+### 4a. Pre-move collision check
+List all target filenames from all advisor source directories. If any filename appears in more than one source (beyond the 3 already deleted in Phase 2c), stop and report. Same check for framework directory names.
+
+### 4b. Flatten advisors
 1. Create `advisors/prompts/`
 2. Move all `.md` files from `advisors/va-web-app/`, `advisors/epch/`, `advisors/.claude/` into `advisors/prompts/`
 3. Delete empty repo subdirectories
 4. Delete `advisors/.repos`
 
-### 4b. Flatten frameworks
+### 4c. Flatten frameworks
 1. Move all framework directories from `frameworks/va-web-app/` and `frameworks/epch-projects/` up one level into `frameworks/`
 2. Delete empty repo subdirectories
 3. Delete `frameworks/.repos`
 
-### 4c. Stale path verification gate
-Grep all `skills/**/*.md` for old paths: `advisors/va-web-app/`, `advisors/epch/`, `advisors/.claude/`, `frameworks/va-web-app/`, `frameworks/epch-projects/`. Must return 0 results (excluding `docs/plans/completed/`). If any remain, fix before proceeding.
+### 4d. Stale path verification gate
+Grep all `**/*.md` (excluding `docs/plans/completed/` and `node_modules/`) for old paths: `advisors/va-web-app/`, `advisors/epch/`, `advisors/.claude/`, `frameworks/va-web-app/`, `frameworks/epch-projects/`. Must return 0 results. If any remain, fix before proceeding.
 
 ## Phase 5: Registry Rewrite (merge directory.md into registry.md)
 
@@ -172,6 +192,8 @@ Grep all `skills/**/*.md` for old paths: `advisors/va-web-app/`, `advisors/epch/
 
 ## Phase 6: `~/.claude/` Cleanup
 
+**Note:** The `~/.claude/` autocommit daemon should already be paused (see Prerequisites). If not, pause it now before proceeding.
+
 Remove all advisor/framework artifacts from `~/.claude/`:
 ```
 ~/.claude/advisors/prompts/epch-projects    (symlink)
@@ -184,7 +206,13 @@ Remove all advisor/framework artifacts from `~/.claude/`:
 ~/.claude/frameworks/prompts/.repos          (manifest)
 ```
 
-Then remove empty parent directories. The `~/.claude/` repo auto-commits via launchd.
+Then remove empty parent directories. Commit explicitly:
+```
+git -C ~/.claude add -u
+git -C ~/.claude commit -m "chore: remove advisor/framework symlinks — plugin is now single source of truth"
+```
+
+Re-enable autocommit: `launchctl load ~/Library/LaunchAgents/com.ericpage.claude-skills-autocommit.plist`
 
 ## Phase 7: Version Bump
 
@@ -192,9 +220,9 @@ Update `.claude-plugin/plugin.json` — bump to next minor version (breaking cha
 
 ## Testing & Verification
 
-**TDD note:** This migration involves no application code — only markdown skill files, markdown metadata, and file moves. No test files are created or modified. The verification checklist below serves as the manual test plan.
+**TDD exemption:** This migration involves no application code — only markdown skill files, markdown metadata, and file moves. No test files are created or modified. The verification checklist below serves as the manual test plan.
 
-1. **Stale path gate (Phase 4c):** Grep all `skills/**/*.md` for old paths — must return 0 results (excluding `docs/plans/completed/`)
+1. **Stale path gate (Phase 4d):** Grep all `**/*.md` for old paths — must return 0 results (excluding `docs/plans/completed/`)
 2. **Advisor discovery:** `/aligned:use-advisor` with no args — all ~60 advisors listed alphabetically, Steve Krug included
 3. **Framework discovery:** `/aligned:use-framework` with no args — all ~132 frameworks listed, 2 new EPCH ones included
 4. **Glob sanity:** `advisors/prompts/*.md` → ~60 files; `frameworks/*/prompt.md` → ~132
