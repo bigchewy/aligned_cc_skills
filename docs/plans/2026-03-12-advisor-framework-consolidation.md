@@ -565,7 +565,7 @@ git commit -m "refactor: flatten advisors into single advisors/prompts/ director
 
 ---
 
-### Task 13: Flatten Frameworks Directory
+### ✅ Task 13: Flatten Frameworks Directory
 
 **Files:**
 - Move: all framework directories from `frameworks/va-web-app/` and `frameworks/epch-projects/` up one level into `frameworks/`
@@ -614,7 +614,7 @@ git commit -m "refactor: flatten frameworks into single-level directories"
 
 ---
 
-### Task 14: Stale Path Verification Gate
+### ✅ Task 14: Stale Path Verification Gate
 
 **Files:**
 - No file changes — verification only
