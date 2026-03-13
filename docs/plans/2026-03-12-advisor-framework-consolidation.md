@@ -647,7 +647,7 @@ git commit -m "fix: update remaining stale advisor/framework path references"
 
 ---
 
-### Task 15: Rewrite `advisors/registry.md` — Merge directory.md, Add Quick Reference
+### ✅ Task 15: Rewrite `advisors/registry.md` — Merge directory.md, Add Quick Reference
 
 **Files:**
 - Modify: `advisors/registry.md` (add Quick Reference table, update all `prompt:` paths)

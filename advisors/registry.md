@@ -2,6 +2,71 @@
 
 Canonical source of truth for all advisor personas across projects. Skills (brainstorming, writing-plans) and project runtimes (EPCH, VBOA) derive their local formats from this registry.
 
+## Quick Reference
+
+| slug | name | domains | summary |
+|------|------|---------|---------|
+| andreo-spina | Dr. Andreo Spina | | Creator of FRC and founder of Functional Anatomy Seminars |
+| andy-raskin | Andy Raskin | narrative, storytelling, strategic-narrative | Strategic narrative consultant |
+| april-dunford | April Dunford | positioning, messaging, competitive-analysis, differentiation, go-to-market | Positioning consultant, helped 200+ tech companies position products |
+| arielle-nissenblatt | Arielle Nissenblatt | | Founder of EarBuds Podcast Collective, community alchemist at SquadCast |
+| benjamin-levine | Dr. Benjamin Levine | | Director of Institute for Exercise and Environmental Medicine, NASA cardiovascular consultant |
+| blair-grubb | Dr. Blair Grubb | | Expert in autonomic disorders and POTS |
+| brene-brown | Brene Brown | | Research professor on courage, shame, and wholehearted leadership |
+| byron-katie | Byron Katie | | Creator of The Work and self-inquiry guide |
+| chris-voss | Chris Voss | | Former FBI lead kidnapping negotiator, author of Never Split the Difference |
+| clayton-christensen | Clayton Christensen | | Harvard professor, pioneer of disruptive innovation and Jobs to Be Done |
+| copywriter | Senior Brand Copywriter | copywriting, brand voice, headlines, CTAs | 20 years experience in SaaS, DTC, and tech |
+| danny-iny | Danny Iny | | Founder of Mirasee, creator of Course Builder's Laboratory |
+| diana-chapman | Diana Chapman | | Co-founder of the Conscious Leadership Group |
+| don-draper | Don Draper | | Creative director |
+| elise-darma | Elise Darma | | Instagram strategist |
+| elon-musk | Elon Musk | first principles, 10x thinking, breaking assumptions, efficiency | Serial founder who builds from physics up |
+| eric-ries | Eric Ries | validation, hypothesis testing, lean methodology, MVP scoping | Entrepreneur who treats startups as scientific experiments |
+| gabor-mate | Gabor Mate | | Physician and author on trauma, addiction, and mind-body connection |
+| italo-biaggioni | Dr. Italo Biaggioni | | Clinical pharmacologist, director emeritus of Vanderbilt's Autonomic Dysfunction Center |
+| jasmine-star | Jasmine Star | | Social media strategist, founder of Social Curator |
+| jay-clouse | Jay Clouse | | Founder of Creator Science |
+| jeff-bezos | Jeff Bezos | customer obsession, scalability, long-term strategy, reversibility | Founder who works backwards from the customer and thinks in decades |
+| jenna-kutcher | Jenna Kutcher | | Host of Goal Digger Podcast, NYT bestselling author |
+| jeremy-enns | Jeremy Enns | | Founder of Podcast Marketing Academy |
+| jim-loehr | Jim Loehr | | Sports psychologist, co-founder of Human Performance Institute |
+| joanna-wiebe | Joanna Wiebe | conversion-copy, voice-of-customer, headline-writing, cta-optimization | Founder of Copyhackers, coined "conversion copywriting" |
+| joe-pulizzi | Joe Pulizzi | content-strategy, audience-building, content-first-business, content-tilt, content-operations | Founder of Content Marketing Institute, author of Content Inc. |
+| julian-shapiro | Julian Shapiro | growth-marketing, writing-craft, content-creation | Founder of Demand Curve and Bell Curve |
+| kelly-starrett | Dr. Kelly Starrett | | Physical therapist, movement coach, founder of The Ready State |
+| marsha-linehan | Marsha Linehan | | Creator of DBT and radical acceptance pioneer |
+| martin-seligman | Martin Seligman | | Founder of Positive Psychology and learned optimism researcher |
+| matt-chapman | Matt Chapman | | Executive coach, founder of Braveheart Incorporated |
+| oli-gardner | Oli Gardner | landing-page-conversion, attention-ratio, conversion-centered-design, page-focus | Co-founder of Unbounce |
+| patrick-campbell | Patrick Campbell | pricing, packaging, monetization, churn, retention, value-metrics, subscription | Founder of ProfitWell (acquired by Paddle for $200M) |
+| rachel-pedersen | Rachel Pedersen | | The Queen of Social Media |
+| ray-dalio | Ray Dalio | systems thinking, decision-making, strategy, radical truth | Founder who converts radical truth and transparency into decision-making systems |
+| richard-rumelt | Richard Rumelt | strategic clarity, focus, cutting fluff, identifying the crux | UCLA professor who cuts through strategic fluff |
+| richard-schwartz | Richard Schwartz | | Founder of Internal Family Systems Therapy |
+| rob-walling | Rob Walling | bootstrapped-saas, smb-gtm, self-serve, acquisition-channels, product-market-fit | Serial entrepreneur, founder of MicroConf and TinySeed |
+| robb-wolf | Robb Wolf | health-product-gtm, health-claims, science-to-consumer, trust-building, DTC-health | Research biochemist, co-founder of LMNT |
+| robbie-kellman-baxter | Robbie Kellman Baxter | subscription, membership, retention, forever-promise, recurring-revenue | Founder of Peninsula Strategies, author of The Membership Economy |
+| roy-freeman | Roy Freeman | | Director of Center for Autonomic and Peripheral Nerve Disorders at Beth Israel/Harvard |
+| sean-ellis | Sean Ellis | | Coined "growth hacking," scaled Dropbox, LogMeIn, Eventbrite to IPO |
+| seo-expert | SEO Expert | seo, search-optimization, keyword-strategy | Technical and content SEO specialist |
+| seth-godin | Seth Godin | marketing, permission-marketing, remarkable-products, tribes | Author of Purple Cow, The Dip, and This Is Marketing |
+| shirin-oreizy | Shirin Oreizy | behavioral-science, conversion, ux-psychology, cognitive-load, friction | Founder of Next Step, a behavioral design agency |
+| shirley-sahrmann | Dr. Shirley Sahrmann | | Physical therapist and researcher on movement dysfunction |
+| steve-jobs | Steve Jobs | product design, simplicity, UX, focus, user experience | Co-founder of Apple who demanded insanely great products |
+| steve-krug | Steve Krug | usability, scanning, conventions, question-marks, trunk-test, clarity | Usability expert, author of Don't Make Me Think |
+| steven-hayes | Steven Hayes | | Founder of ACT and psychological flexibility researcher |
+| stuart-mcgill | Dr. Stuart McGill | | Spine biomechanist, 32 years of research at University of Waterloo |
+| sue-b-zimmerman | Sue B. Zimmerman | | #TheInstagramExpert |
+| the-architect | The Architect | codebase alignment, patterns, module boundaries, integration risk, blast radius | Senior systems thinker who evaluates designs against the codebase |
+| the-designer | The Designer | visual hierarchy, spacing, typography, color contrast, responsiveness, design tokens | Senior visual and interaction designer who evaluates UI craft quality |
+| the-devex-engineer | The DevEx Engineer | developer ergonomics, maintainability, onboarding, tooling, CI/CD, DX | Developer experience obsessive who evaluates tools by how they feel |
+| the-pm | The PM | product value, prioritization, user problems, scope control, success criteria | Product leader who evaluates features through user value lens |
+| the-qa-engineer | The QA Engineer | edge cases, failure modes, testing, reliability, error handling | Edge-case hunter who assumes everything will break |
+| the-security-reviewer | The Security Reviewer | authentication, data exposure, injection, OWASP, API security, access control | Security engineer who sees every input as hostile |
+| tim-ferriss | Tim Ferriss | | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
+| wise-eric | Wise Eric | | The app creator's highest self as conscious leader and systems architect |
+
 ## How to Use
 
 - **Skills:** Read this file to select critics for critique rounds. Use the selection guidelines below.
@@ -248,6 +313,4 @@ When dynamically selecting critics for any critique workflow:
 
 ## Advisors Not Yet Profiled
 
-The following advisors have prompt files in `advisors/prompts/` but are not yet profiled with domains and evaluation expertise. Add entries above when they're needed for critique workflows.
-
-andreo-spina, arielle-nissenblatt, benjamin-levine, blair-grubb, brene-brown, byron-katie, chris-voss, clayton-christensen, danny-iny, diana-chapman, don-draper, elise-darma, gabor-mate, italo-biaggioni, jasmine-star, jay-clouse, jenna-kutcher, jeremy-enns, jim-loehr, kelly-starrett, marsha-linehan, martin-seligman, matt-chapman, rachel-pedersen, roy-freeman, sean-ellis, shirley-sahrmann, steven-hayes, stuart-mcgill, sue-b-zimmerman, tim-ferriss, wise-eric
+Advisors with empty domains in the Quick Reference table have prompt files in `advisors/prompts/` but are not yet profiled with domains and evaluation expertise. Add full entries to the sections above when they're needed for critique workflows.
