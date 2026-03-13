@@ -745,7 +745,7 @@ git commit -m "chore: delete directory.md (merged into registry.md Quick Referen
 
 ---
 
-### Task 17: Clean Up `~/.claude/` Artifacts
+### ✅ Task 17: Clean Up `~/.claude/` Artifacts
 
 **Files:**
 - Delete: `~/.claude/advisors/prompts/epch-projects` (symlink)
