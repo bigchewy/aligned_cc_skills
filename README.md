@@ -126,13 +126,7 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 
 ## Advisors
 
-62 advisor prompts ship with the plugin across 3 categories:
-
-| Category | Count | Source |
-|----------|-------|--------|
-| va-web-app | 42 | Virtual Board of Advisors app |
-| epch-projects | 14 | Business and strategy advisors |
-| .claude | 6 | Technical advisors for Claude Code |
+60 advisor prompts ship with the plugin in `advisors/prompts/`.
 
 Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.md` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 
