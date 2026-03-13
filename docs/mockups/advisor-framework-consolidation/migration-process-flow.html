@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Migration Process Flow — Advisor &amp; Framework Consolidation</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #fafafa;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .context {
+      font-size: 0.88rem;
+      color: #888;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .flowchart-container {
+      background: white;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 32px;
+      overflow-x: auto;
+    }
+    .legend {
+      margin-top: 24px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <h1>7-Phase Migration Process Flow</h1>
+  <p class="subtitle">Brainstorming session: advisor-framework-consolidation</p>
+  <p class="context">The full migration pipeline from divergence audit through version bump, showing parallel sub-agent dispatches in Phase 1, user decision points in Phase 1d and Phase 2b, and sequential dependencies between phases.</p>
+
+  <div class="flowchart-container">
+    <pre class="mermaid">
+graph TD
+    START([Start Migration]) --> P1_TITLE[Phase 1: Divergence Audit]
+
+    subgraph Phase1["Phase 1 — Divergence Audit"]
+        P1_TITLE --> DISPATCH["Dispatch parallel sub-agents"]
+        DISPATCH --> P1A["1a: Diff EPCH advisors\n11 files vs source"]
+        DISPATCH --> P1B["1b: Diff va-web-app advisors\n42 files vs source"]
+        DISPATCH --> P1C["1c: Diff all frameworks\nvs both source repos"]
+        P1A --> COLLECT["Collect results"]
+        P1B --> COLLECT
+        P1C --> COLLECT
+        COLLECT --> REPORT[/"1d: Present divergence report\nper-file: IDENTICAL | DIVERGED | MISSING"/]
+    end
+
+    REPORT --> REVIEW{User reviews\neach divergence}
+    REVIEW -->|"Keep plugin"| DECISION_LOG["Record decision"]
+    REVIEW -->|"Take source"| DECISION_LOG
+    REVIEW -->|"Merge"| DECISION_LOG
+    DECISION_LOG --> ALL_DECIDED{All items\ndecided?}
+    ALL_DECIDED -->|No| REVIEW
+    ALL_DECIDED -->|Yes| P2_TITLE[Phase 2: Content Consolidation]
+
+    subgraph Phase2["Phase 2 — Content Consolidation"]
+        P2_TITLE --> P2A["2a: Copy 2 missing frameworks\ndesign-principles, landing-page-assembly"]
+        P2A --> P2B["2b: Apply user-approved\ndivergence decisions"]
+        P2B --> P2C["2c: Delete 3 duplicate\nEPCH advisors"]
+    end
+
+    P2C --> P3_TITLE[Phase 3: Flatten Directories]
+
+    subgraph Phase3["Phase 3 — Flatten Directories"]
+        P3_TITLE --> P3A["3a: Move all advisors\ninto advisors/prompts/"]
+        P3A --> P3A_DEL["Delete repo subdirs\nand .repos manifest"]
+        P3A_DEL --> P3B["3b: Move all frameworks\nup one level"]
+        P3B --> P3B_DEL["Delete repo subdirs\nand .repos manifest"]
+    end
+
+    P3B_DEL --> P4_TITLE[Phase 4: Skill Code Updates]
+
+    subgraph Phase4["Phase 4 — Skill Code Updates"]
+        P4_TITLE --> P4A["4a: use-advisor\nSingle glob discovery"]
+        P4_TITLE --> P4B["4b: use-framework\nSingle glob discovery"]
+        P4_TITLE --> P4C["4c: add-advisor\nRemove symlink option"]
+        P4_TITLE --> P4D["4d: add-framework\nRemove symlink option"]
+        P4_TITLE --> P4E["4e: brainstorming\nUpdate 3 paths"]
+        P4_TITLE --> P4F["4f: create-design-principles\nUpdate 1 path"]
+        P4A --> P4_DONE["All skills updated"]
+        P4B --> P4_DONE
+        P4C --> P4_DONE
+        P4D --> P4_DONE
+        P4E --> P4_DONE
+        P4F --> P4_DONE
+    end
+
+    P4_DONE --> P5_TITLE[Phase 5: Registry Rewrite]
+
+    subgraph Phase5["Phase 5 — Registry Rewrite"]
+        P5_TITLE --> P5A["5a: Merge directory.md\ninto registry.md"]
+        P5A --> P5A_QR["Add Quick Reference table\nfor all ~60 advisors"]
+        P5A_QR --> P5A_PATHS["Rewrite all prompt: paths\nto advisors/prompts/"]
+        P5A_PATHS --> P5B["5b: Delete directory.md\nUpdate skill refs"]
+    end
+
+    P5B --> P6_TITLE[Phase 6: Cleanup]
+
+    subgraph Phase6["Phase 6 — ~/.claude/ Cleanup"]
+        P6_TITLE --> P6_SYM["Remove symlinks\nepch-projects, va-web-app"]
+        P6_SYM --> P6_DUP["Remove duplicate files\n.claude/ dir, registry copy"]
+        P6_DUP --> P6_MAN["Remove manifests\n.repos files"]
+        P6_MAN --> P6_EMPTY["Remove empty\nparent directories"]
+    end
+
+    P6_EMPTY --> P7[Phase 7: Version Bump\nplugin.json minor bump]
+
+    P7 --> VERIFY_TITLE{Verification\nChecklist}
+
+    subgraph Verification["Phase 7+ — Verification"]
+        VERIFY_TITLE -->|Check 1| V1["use-advisor lists\n~60 advisors alphabetically"]
+        VERIFY_TITLE -->|Check 2| V2["use-framework lists\n~132 frameworks"]
+        VERIFY_TITLE -->|Check 3| V3["Glob sanity:\nfile counts match"]
+        VERIFY_TITLE -->|Check 4| V4["Grep for stale paths\n0 results"]
+        VERIFY_TITLE -->|Check 5| V5["Registry prompt: paths\nall resolve"]
+        VERIFY_TITLE -->|Check 6| V6["No ~/.claude/\nadvisor artifacts"]
+        V1 --> PASS{All pass?}
+        V2 --> PASS
+        V3 --> PASS
+        V4 --> PASS
+        V5 --> PASS
+        V6 --> PASS
+    end
+
+    PASS -->|Yes| DONE([Migration Complete])
+    PASS -->|No| FIX["Fix failing checks"]
+    FIX --> VERIFY_TITLE
+
+    style START fill:#48bb78,stroke:#38a169,color:#fff
+    style DONE fill:#48bb78,stroke:#38a169,color:#fff
+    style P1_TITLE fill:#4299e1,stroke:#3182ce,color:#fff
+    style DISPATCH fill:#4299e1,stroke:#3182ce,color:#fff
+    style P1A fill:#4299e1,stroke:#3182ce,color:#fff
+    style P1B fill:#4299e1,stroke:#3182ce,color:#fff
+    style P1C fill:#4299e1,stroke:#3182ce,color:#fff
+    style COLLECT fill:#4299e1,stroke:#3182ce,color:#fff
+    style REPORT fill:#9f7aea,stroke:#805ad5,color:#fff
+    style REVIEW fill:#f59e0b,stroke:#d97706,color:#fff
+    style DECISION_LOG fill:#4299e1,stroke:#3182ce,color:#fff
+    style ALL_DECIDED fill:#f59e0b,stroke:#d97706,color:#fff
+    style P2_TITLE fill:#4299e1,stroke:#3182ce,color:#fff
+    style P2A fill:#4299e1,stroke:#3182ce,color:#fff
+    style P2B fill:#4299e1,stroke:#3182ce,color:#fff
+    style P2C fill:#e53e3e,stroke:#c53030,color:#fff
+    style P3_TITLE fill:#4299e1,stroke:#3182ce,color:#fff
+    style P3A fill:#4299e1,stroke:#3182ce,color:#fff
+    style P3A_DEL fill:#e53e3e,stroke:#c53030,color:#fff
+    style P3B fill:#4299e1,stroke:#3182ce,color:#fff
+    style P3B_DEL fill:#e53e3e,stroke:#c53030,color:#fff
+    style P4_TITLE fill:#4299e1,stroke:#3182ce,color:#fff
+    style P4A fill:#4299e1,stroke:#3182ce,color:#fff
+    style P4B fill:#4299e1,stroke:#3182ce,color:#fff
+    style P4C fill:#4299e1,stroke:#3182ce,color:#fff
+    style P4D fill:#4299e1,stroke:#3182ce,color:#fff
+    style P4E fill:#4299e1,stroke:#3182ce,color:#fff
+    style P4F fill:#4299e1,stroke:#3182ce,color:#fff
+    style P4_DONE fill:#4299e1,stroke:#3182ce,color:#fff
+    style P5_TITLE fill:#4299e1,stroke:#3182ce,color:#fff
+    style P5A fill:#4299e1,stroke:#3182ce,color:#fff
+    style P5A_QR fill:#4299e1,stroke:#3182ce,color:#fff
+    style P5A_PATHS fill:#4299e1,stroke:#3182ce,color:#fff
+    style P5B fill:#e53e3e,stroke:#c53030,color:#fff
+    style P6_TITLE fill:#4299e1,stroke:#3182ce,color:#fff
+    style P6_SYM fill:#e53e3e,stroke:#c53030,color:#fff
+    style P6_DUP fill:#e53e3e,stroke:#c53030,color:#fff
+    style P6_MAN fill:#e53e3e,stroke:#c53030,color:#fff
+    style P6_EMPTY fill:#e53e3e,stroke:#c53030,color:#fff
+    style P7 fill:#4299e1,stroke:#3182ce,color:#fff
+    style VERIFY_TITLE fill:#f59e0b,stroke:#d97706,color:#fff
+    style V1 fill:#4299e1,stroke:#3182ce,color:#fff
+    style V2 fill:#4299e1,stroke:#3182ce,color:#fff
+    style V3 fill:#4299e1,stroke:#3182ce,color:#fff
+    style V4 fill:#4299e1,stroke:#3182ce,color:#fff
+    style V5 fill:#4299e1,stroke:#3182ce,color:#fff
+    style V6 fill:#4299e1,stroke:#3182ce,color:#fff
+    style PASS fill:#f59e0b,stroke:#d97706,color:#fff
+    style FIX fill:#e53e3e,stroke:#c53030,color:#fff
+    </pre>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#48bb78"></div>Start / End</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4299e1"></div>Process</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Decision</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9f7aea"></div>Data / I/O</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div>Deletion / Cleanup</div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#666',
+        primaryColor: '#4299e1',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#3182ce'
+      },
+      flowchart: {
+        curve: 'basis',
+        padding: 20,
+        nodeSpacing: 50,
+        rankSpacing: 60
+      }
+    });
+  </script>
+</body>
+</html>

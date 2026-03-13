@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Framework Discovery Before/After — Advisor &amp; Framework Consolidation</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #fafafa;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .context {
+      font-size: 0.88rem;
+      color: #888;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .flowchart-container {
+      background: white;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 32px;
+      overflow-x: auto;
+      margin-bottom: 32px;
+    }
+    .flowchart-container h2 {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .legend {
+      margin-top: 24px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Framework Discovery: Before vs. After</h1>
+  <p class="subtitle">Brainstorming session: advisor-framework-consolidation</p>
+  <p class="context">Side-by-side swim-lane comparison of how <code>use-framework</code> discovers framework prompts. The BEFORE flow reads a .repos manifest, globs per-repo subdirectories, and falls back to ~/.claude/. The AFTER flow is a single flat glob of <code>frameworks/*/prompt.md</code>.</p>
+
+  <div class="flowchart-container">
+    <h2>BEFORE: Manifest + Per-Repo Globs + Fallback</h2>
+    <pre class="mermaid">
+graph LR
+    START([use-framework invoked]) --> STEP1A
+
+    subgraph Tier1["Tier 1 — .repos manifest"]
+        STEP1A["Read frameworks/.repos\nparse repo list"] --> GLOB_VA["Glob: frameworks/\nva-web-app/*/prompt.md\n~130 frameworks"]
+        STEP1A --> GLOB_EPCH["Glob: frameworks/\nepch-projects/*/prompt.md"]
+        GLOB_EPCH --> BUG["BUG: epch-projects\ndoesn't exist!\nActual dir is epch/"]
+    end
+
+    subgraph Tier2["Tier 2 — ~/.claude/ fallback"]
+        STEP1C["Read ~/.claude/frameworks/\nprompts/ directory"] --> SYM_VA["Follow symlink:\nva-web-app/"]
+        STEP1C --> SYM_EPCH["Follow symlink:\nepch-projects/"]
+    end
+
+    GLOB_VA --> MERGE
+    BUG -->|"0 results\nsilent failure"| MERGE
+    SYM_VA --> MERGE
+    SYM_EPCH --> MERGE
+    MERGE["Merge results\nacross tiers"] --> MISSING{Missing\nframeworks?}
+    MISSING -->|"Yes — 2 EPCH\nframeworks lost"| LIST[/"List frameworks\ngrouped by repo"/]
+    MISSING -->|No| LIST
+
+    style START fill:#48bb78,stroke:#38a169,color:#fff
+    style STEP1A fill:#4299e1,stroke:#3182ce,color:#fff
+    style GLOB_VA fill:#4299e1,stroke:#3182ce,color:#fff
+    style GLOB_EPCH fill:#4299e1,stroke:#3182ce,color:#fff
+    style BUG fill:#e53e3e,stroke:#c53030,color:#fff
+    style STEP1C fill:#4299e1,stroke:#3182ce,color:#fff
+    style SYM_VA fill:#9f7aea,stroke:#805ad5,color:#fff
+    style SYM_EPCH fill:#9f7aea,stroke:#805ad5,color:#fff
+    style MERGE fill:#4299e1,stroke:#3182ce,color:#fff
+    style MISSING fill:#f59e0b,stroke:#d97706,color:#fff
+    style LIST fill:#9f7aea,stroke:#805ad5,color:#fff
+    </pre>
+  </div>
+
+  <div class="flowchart-container">
+    <h2>AFTER: Single Flat Glob</h2>
+    <pre class="mermaid">
+graph LR
+    START2([use-framework invoked]) --> GLOB["Glob: frameworks/\n*/prompt.md"]
+    GLOB --> LIST2[/"List ~132 frameworks\nalphabetically"/]
+
+    style START2 fill:#48bb78,stroke:#38a169,color:#fff
+    style GLOB fill:#4299e1,stroke:#3182ce,color:#fff
+    style LIST2 fill:#9f7aea,stroke:#805ad5,color:#fff
+    </pre>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#48bb78"></div>Start / End</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4299e1"></div>Process</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Decision</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9f7aea"></div>Data / I/O</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div>Error / Bug</div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#666',
+        primaryColor: '#4299e1',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#3182ce'
+      },
+      flowchart: {
+        curve: 'basis',
+        padding: 20,
+        nodeSpacing: 50,
+        rankSpacing: 60
+      }
+    });
+  </script>
+</body>
+</html>
