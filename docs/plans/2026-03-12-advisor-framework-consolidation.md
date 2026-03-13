@@ -257,7 +257,7 @@ git commit -m "refactor: simplify use-framework discovery to single flat glob"
 
 ---
 
-### Task 6: Update `add-advisor/SKILL.md` — Remove Symlink Option, Update Paths
+### ✅ Task 6: Update `add-advisor/SKILL.md` — Remove Symlink Option, Update Paths
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (Step 8 symlink option, line 102 canonical example, Step 8b directory reference)
@@ -322,7 +322,7 @@ git commit -m "refactor: simplify add-advisor to flat directory, remove symlink 
 
 ---
 
-### Task 7: Update `add-framework/SKILL.md` — Remove Symlink Option, Update Paths, Fix Step 0
+### ✅ Task 7: Update `add-framework/SKILL.md` — Remove Symlink Option, Update Paths, Fix Step 0
 
 **Files:**
 - Modify: `skills/add-framework/SKILL.md` (Step 0 path detection, Step 7 symlink option, lines 64, 106, 117 canonical examples)

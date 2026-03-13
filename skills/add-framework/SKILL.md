@@ -23,9 +23,9 @@ Before any framework work, detect what infrastructure exists in the current repo
 
 **Framework path detection:**
 1. Check the project's CLAUDE.md for framework prompt path configuration
-2. If `frameworks/prompts/` exists at repo root → use it
+2. If `frameworks/` exists at repo root and contains subdirectories with `prompt.md` files → use it
 3. Else check for app-specific paths (e.g., `src/lib/frameworks/prompts/`) → use if found
-4. Else → default to `frameworks/prompts/` at repo root (will create on first use)
+4. Else → default to `frameworks/` at repo root (will create on first use)
 
 **Infrastructure detection (check each):**
 
@@ -61,7 +61,7 @@ Where `{detected-framework-path}` is the path determined in Step 0. If the direc
 
 ### 2. Create prompt.md
 
-Reference `frameworks/va-web-app/clearing-model/prompt.md` and `frameworks/va-web-app/braving-trust-inventory/prompt.md` as canonical examples of well-structured framework prompts.
+Reference `frameworks/clearing-model/prompt.md` and `frameworks/braving-trust-inventory/prompt.md` as canonical examples of well-structured framework prompts.
 
 Structure:
 ```markdown
@@ -103,7 +103,7 @@ Close with:
 
 ### 3. Create examples.md
 
-Reference `frameworks/va-web-app/clearing-model/examples.md` as the canonical example.
+Reference `frameworks/clearing-model/examples.md` as the canonical example.
 
 Structure by phase with 2-3 examples each:
 - Golden path (user doing it right)
@@ -114,7 +114,7 @@ Include notes explaining WHY each response works.
 
 ### 4. Create anti-examples.md
 
-Reference `frameworks/va-web-app/clearing-model/anti-examples.md` as the canonical example.
+Reference `frameworks/clearing-model/anti-examples.md` as the canonical example.
 
 Include 3-5 failure modes with:
 - User input that triggers the mistake
@@ -181,16 +181,9 @@ Run the scenario to verify baseline quality. If it fails, dispatch the `eval-fai
 
 ### 7. Register Framework for Discovery
 
-Add the framework to the appropriate location for cross-project discovery:
+Add the framework folder to `frameworks/` in the plugin directory. This makes the framework available in all plugin-enabled sessions.
 
-**Option A (plugin-shared framework):** Add the framework folder to `frameworks/{repo-name}/` in the plugin directory. This makes the framework available in all plugin-enabled sessions.
-
-**Option B (project-specific framework):** Keep the framework in the project's local path (from Step 0). If you want it discoverable across projects without the plugin, add it to `~/.claude/frameworks/prompts/{repo-name}/` as well.
-
-For Option B, if `~/.claude/frameworks/prompts/{repo-name}` doesn't exist yet:
-1. Create it as a symlink to the project's framework path
-2. Register in `~/.claude/frameworks/prompts/.repos` manifest (append repo-name if not listed)
-3. Verify: Glob `~/.claude/frameworks/prompts/{repo-name}/**/prompt.md` returns framework files
+Place the framework at `frameworks/{framework-slug}/` containing `prompt.md` (required), `examples.md` (optional), and `anti-examples.md` (optional).
 
 ### 8. Verify
 
