@@ -43,7 +43,7 @@ If migration is interrupted or verification fails:
 
 ---
 
-### Task 1: Copy Missing Frameworks from EPCH Source
+### ✅ Task 1: Copy Missing Frameworks from EPCH Source
 
 **Files:**
 - Create: `frameworks/epch-projects/design-principles/prompt.md`
@@ -88,7 +88,9 @@ git commit -m "feat: add 2 missing EPCH frameworks (design-principles, landing-p
 
 ---
 
-### Task 2: Apply Divergence Decisions
+### 🔄 Task 2: Apply Divergence Decisions
+
+> BLOCKED: The prerequisite divergence report (`docs/plans/advisor-divergence-report.md`) was never created. Source repos (`epch-projects`, `va-web-app`) are outside the allowed working directories so the comparison cannot be performed from this session. The user needs to either: (1) run the divergence audit from a session with access to the source repos, or (2) decide to skip this task if plugin copies are considered authoritative.
 
 **Files:**
 - Modify: various files in `advisors/` and `frameworks/` per divergence report
