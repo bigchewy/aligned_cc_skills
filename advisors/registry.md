@@ -35,12 +35,14 @@ Canonical source of truth for all advisor personas across projects. Skills (brai
 | joe-pulizzi | Joe Pulizzi | content-strategy, audience-building, content-first-business, content-tilt, content-operations | Founder of Content Marketing Institute, author of Content Inc. |
 | julian-shapiro | Julian Shapiro | growth-marketing, writing-craft, content-creation | Founder of Demand Curve and Bell Curve |
 | kelly-starrett | Dr. Kelly Starrett | | Physical therapist, movement coach, founder of The Ready State |
+| lara-hogan | Lara Hogan | management-transitions, engineering-leadership, team-dynamics, BICEPS | Leadership transition coach for technical leaders, author of Resilient Management |
 | marsha-linehan | Marsha Linehan | | Creator of DBT and radical acceptance pioneer |
 | martin-seligman | Martin Seligman | | Founder of Positive Psychology and learned optimism researcher |
 | matt-chapman | Matt Chapman | | Executive coach, founder of Braveheart Incorporated |
 | oli-gardner | Oli Gardner | landing-page-conversion, attention-ratio, conversion-centered-design, page-focus | Co-founder of Unbounce |
 | patrick-campbell | Patrick Campbell | pricing, packaging, monetization, churn, retention, value-metrics, subscription | Founder of ProfitWell (acquired by Paddle for $200M) |
 | rachel-pedersen | Rachel Pedersen | | The Queen of Social Media |
+| ram-charan | Ram Charan | leadership-transitions, pipeline-passages, performance-by-level, management-development | Management consultant who diagnoses leadership passage gaps |
 | ray-dalio | Ray Dalio | systems thinking, decision-making, strategy, radical truth | Founder who converts radical truth and transparency into decision-making systems |
 | richard-rumelt | Richard Rumelt | strategic clarity, focus, cutting fluff, identifying the crux | UCLA professor who cuts through strategic fluff |
 | richard-schwartz | Richard Schwartz | | Founder of Internal Family Systems Therapy |
@@ -126,6 +128,22 @@ When dynamically selecting critics for any critique workflow:
 - **evaluation_expertise:** Questions inherited assumptions. Is this approach built from first principles or copied from convention? Could the scope be 10x simpler by removing unnecessary constraints? Catches incremental thinking when radical simplification is possible.
 - **best_for:** Designs where conventional thinking may be limiting. Questioning inherited assumptions.
 - **not_for:** Incremental improvements, polish work, emotional/therapeutic features, content strategy.
+
+### Ram Charan
+- **id:** ram-charan
+- **prompt:** advisors/prompts/ram-charan.md
+- **domains:** leadership-transitions, pipeline-passages, performance-by-level, management-development
+- **evaluation_expertise:** Evaluates leadership behavior against passage requirements. Is the leader performing at the level their role demands, or one level below? Are they adding new responsibilities without letting go of old ones? Diagnoses gaps across three dimensions — skills, time application, and work values. Catches the universal failure mode: someone doing Passage N-1 work well while neglecting Passage N work entirely.
+- **best_for:** Leadership transitions, management development plans, performance diagnosis for leaders stuck at the wrong level, org scaling decisions about when to add management layers.
+- **not_for:** IC technical decisions, product strategy, marketing, content, early-stage startups with fewer than 15 people.
+
+### Lara Hogan
+- **id:** lara-hogan
+- **prompt:** advisors/prompts/lara-hogan.md
+- **domains:** management-transitions, engineering-leadership, team-dynamics, BICEPS
+- **evaluation_expertise:** Evaluates leadership transitions through the lens of level-specific competencies and core human needs. Is the leader operating at the right level or clinging to work from the level below? Are they wearing the right hat — mentoring, coaching, sponsoring, or feedback? Which BICEPS need is being threatened or unmet? Catches identity-level resistance disguised as tactical problems.
+- **best_for:** Engineering management transitions, team friction during reorgs, coaching first-time managers, diagnosing why a technical leader is struggling in a new role, navigating skip-level dynamics.
+- **not_for:** Product strategy, marketing, content, technical architecture, pure IC career development, non-engineering management contexts.
 
 ### Richard Rumelt
 - **id:** richard-rumelt

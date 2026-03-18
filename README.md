@@ -126,7 +126,7 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 
 ## Advisors
 
-60 advisor prompts ship with the plugin in `advisors/prompts/`.
+62 advisor prompts ship with the plugin in `advisors/prompts/`.
 
 Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.md` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 
