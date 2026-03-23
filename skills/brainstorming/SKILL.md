@@ -160,6 +160,15 @@ Open the file in the browser after verification passes."
 
 Do not pause for user review — the critique panel will evaluate the visuals alongside the design.
 
+**Nested sub-tabs rule (applies to session-document-generator AND mockup-generator dispatches):**
+
+When a tabbed HTML document is generated, use nested sub-tabs (progressive disclosure) whenever a single tab contains more detail than can be scanned in one view. Do not flatten into many top-level tabs or cram everything into one scrollable panel. The pattern is:
+- **Top-level tabs** for major conceptual sections
+- **Sub-tabs within each** for natural subdivisions (phases, layers, concerns)
+- Each sub-tab holds **one focused diagram or content block**
+
+The check: if a tab contains multiple diagrams, subgraphs, or sections that each deserve their own view, break them into nested sub-tabs rather than stacking vertically.
+
 **Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
 
 **MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
@@ -240,6 +249,23 @@ Only run if Round 1 found medium or high severity issues. Use the same critics a
 **Escalation:** If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. For example, if The Architect flagged a security concern but The Security Reviewer was not in Round 1, add them for Round 2. State the escalation reason. Maximum one additional critic per round.
 
 Apply any remaining fixes. Present final results to the user.
+
+**Visualization refresh (conditional):**
+
+If the design document was modified after the initial visualization was generated — whether by fact-check corrections, user-approved critique fixes of any severity, or structural revisions — re-dispatch the session-document-generator to regenerate the visualization from the final design. This ensures the committed HTML matches the post-critique design exactly.
+
+Only skip this step if the design document is unchanged from when the initial visualization was generated (i.e., all critique verdicts were APPROVE with no corrections applied).
+
+Dispatch via Task tool (`subagent_type=general-purpose`). The output path is the same as the initial visualization — the Mockups header field in the design document remains valid without modification.
+
+"Read `agents/session-document-generator.md` for your full workflow.
+Regenerate the consolidated visualization document to reflect post-critique design changes at `{design-file-path}`.
+Session name: `{session-name}`. Project root: `{project-root}`.
+Output to `docs/mockups/{session-name}.html` (overwrite the pre-critique version).
+Verify all Mermaid diagrams render without errors before opening.
+Open the file in the browser after verification passes."
+
+Do not pause for user review — the critique has already validated the design content. The refresh ensures visual fidelity only.
 
 - Commit the design document, visual artifacts (`docs/mockups/{session-name}.html`), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
 
