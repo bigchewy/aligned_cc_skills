@@ -68,15 +68,25 @@ For each framework element, the skill:
 
 ### Output format
 
-```markdown
-# {Title}
+When generating content, produce it in this MDX structure. The frontmatter drives page layout in the consuming site's template — no title, header, meta, or byline markup appears in the MDX body.
 
-*{Meta description — under 160 characters}*
+```mdx
+---
+title: "{Title — under 70 chars, no brand name}"
+date: "{YYYY-MM-DD}"
+description: "{Meta description — under 160 chars, standalone summary of core insight}"
+category: "{topic category}"
+featured: {true or false}
+heroImage: "/images/blog/{slug}/hero.webp"
+readingTime: "{N} min"
+---
 
 {Hook — 2-3 sentences, ends with tension or question}
 
 ## {Problem section heading}
 {2-3 paragraphs — names the shift, describes failing status quo}
+
+> {Pull quote — uses standard blockquote syntax}
 
 ## {Insight section heading}
 {2-3 paragraphs — names root cause, offers new lens}
@@ -87,11 +97,31 @@ For each framework element, the skill:
 ## {Implication section heading}
 {2-3 paragraphs — New Reality + 80/20 brand mention}
 
-## {Conclusion heading}
-{1 paragraph — restate insight, New Reality, single CTA}
+<Callout>
+{Key takeaway or insight summary — 1-2 sentences}
+</Callout>
+
+<CTA>
+
+### {CTA heading}
+
+{1 paragraph — single call to action}
+
+[{Link text}]({link path})
+
+</CTA>
 ```
 
 Target length: 1,000–1,500 words.
+
+**Key principles:**
+- Body starts with hook paragraph — no title or meta in body
+- Pull quotes use standard `>` blockquote syntax
+- Only 2 MDX components: `<Callout>` (key takeaway) and `<CTA>` (call to action)
+- `description` stays in frontmatter only (SEO/social cards) — not rendered visually
+- `author` field omitted (single-author site, YAGNI)
+- `heroImage` uses `/images/blog/{slug}/` path convention
+- `readingTime` is calculated from word count (roughly 250 words/minute)
 
 ### Generation status
 
@@ -103,9 +133,9 @@ Generating blog post on "{topic}" using {vertical or 'cross-vertical'} positioni
 
 The requestor does not interact during generation.
 
-### Quality gates (all 14 must pass before presenting draft)
+### Quality gates (all 16 must pass before presenting draft)
 
-1. All 8 structural elements present: Title, Meta Description, Hook, Problem, Insight, Evidence, Implication, Conclusion/CTA
+1. All 9 structural elements present: Title (frontmatter), Meta Description (frontmatter `description`), Hook, Problem, Insight, Evidence, Implication, Callout (`<Callout>` component), CTA (`<CTA>` component)
 2. Title under 70 characters, no brand name in title
 3. Uses correct terminology per terminology.md (if loaded)
 4. All statistics match proof-points.md exactly — no invented numbers (if proof-points.md loaded)
@@ -119,6 +149,8 @@ The requestor does not interact during generation.
 12. No generic enterprise jargon (per terminology.md)
 13. Reference example used as style guide (if available)
 14. Meta description under 160 characters, contains core insight
+15. Hook/Problem differentiation: The Hook and the Problem section's first paragraph must not share sentence openers, character introductions, or scene descriptions. If the Hook opens with a character ("A CEO I work with..."), the Problem section must open with a different angle — a statistic, a trend, a contrasting scene. Test: could a reader mistake the Hook and Problem opening for the same paragraph? If yes, fail. (Note: the mockup suggests a ">50% significant word overlap" threshold; the design doc uses this qualitative judgment test instead — follow the design doc.)
+16. Meta description isolation: The `description` frontmatter field must be a standalone summary of the post's core insight — not an excerpt from the Hook or Problem section. It must not appear verbatim anywhere in the article body.
 
 ## Step 3: Review
 
@@ -212,17 +244,101 @@ The accepted finding numbers are passed as the explicit input to the revision st
 
 ## Step 4: Deliver
 
+### Context detection
+
+Before delivering, detect the project's blog infrastructure to determine output format.
+
+**Detection logic (ordered, stop at first match):**
+
+| Context | Detection Signal | Output |
+|---------|-----------------|--------|
+| A: Next.js/MDX | `src/content/blog/*.mdx` exists AND (`next.config.ts` or `next.config.js` exists) | MDX to `src/content/blog/` + HTML preview to `output/` |
+| Fallback | Neither condition met | Markdown to `output/` (current behavior) |
+
+Use Glob to check for `src/content/blog/*.mdx` and `next.config.*`. If either is absent, use the fallback. Do not probe further — a wrong detection is worse than a conservative fallback.
+
+Store the detected context (A or Fallback) for use in steps 4b and 4d.
+
+### Unregistered component handling
+
+When Context A is detected, check whether `Callout` appears in `src/lib/mdx-components.tsx` using Grep. If not found, strip `<Callout>` and `<CTA>` from the MDX output to prevent `next-mdx-remote` from throwing on unrecognized capitalized components:
+
+- `<Callout>` content becomes a standard `> blockquote`
+- `<CTA>` content becomes a standard `## heading` + paragraph + link
+
+Emit a setup notice:
+> "Callout and CTA components not found in mdx-components.tsx. Using markdown equivalents. For richer rendering, see the setup guide at `skills/generate-blog-post/references/ewp-site-setup.md`."
+
+Also check whether `heroImage` appears in `src/lib/blog.ts`. If not found, still include `heroImage` and `readingTime` in frontmatter (they're harmlessly ignored by the MDX parser) and emit:
+> "Your site's blog infrastructure doesn't yet support heroImage or readingTime fields. The MDX includes them in frontmatter, but they won't render until you update `blog.ts` and `[slug]/page.tsx`. See the setup guide."
+
 ### 4a. Apply findings
 
 Apply all accepted findings (by number from Step 3 triage) to the markdown draft. Re-run the Step 2 quality gates on the revised post. **Maximum 2 revision attempts.** If the quality gates still fail after 2 attempts, present the current draft to the requestor with the failing gates noted — do not loop indefinitely.
 
 ### 4b. Save output
 
-Save the finalized blog post to `output/blog-{topic-slug}-{date}.md`.
+**Context A (Next.js/MDX detected):**
+
+1. Save the MDX file to `src/content/blog/{slug}.mdx`
+2. Generate the HTML preview (see "HTML preview generation" below) and save to `output/blog-{slug}-preview.html`
+
+**Fallback (no MDX infrastructure):**
+
+Save the finalized blog post as markdown to `output/blog-{slug}-{date}.md` (current behavior — no MDX frontmatter, no components, plain markdown format).
+
+### HTML preview generation
+
+**Purpose:** The skill user reviews the preview to verify visual hierarchy, content flow, and brand alignment before publishing. The preview can also be shared with stakeholders for approval. It is generated automatically alongside the MDX when Context A is detected.
+
+**Token extraction from `globals.css`:**
+
+Use Glob to locate `globals.css` (try `src/app/globals.css`, then `app/globals.css`). Once found, perform a simple string scan of the `@theme inline { }` block. Extract CSS custom properties for use in the preview's inline styles.
+
+Minimum required tokens: `--color-background`, `--color-foreground`, `--color-accent`, `--font-sans`.
+
+**Fallback chain (use first tier that succeeds — no partial extraction):**
+1. `globals.css` `@theme inline` block — primary source
+2. `brand/guidelines/visual-identity.md` tokens — fallback if globals.css missing or malformed
+3. Neutral palette (`#faf9f7` background, `#1a1a1a` foreground, `#ff6900` accent) — final fallback
+
+If the `@theme inline` block is missing, malformed, or contains fewer than the 4 minimum tokens, log a warning: "Could not extract sufficient tokens from globals.css. Falling back to visual-identity.md." Then try the next tier.
+
+**HTML preview structure:**
+
+Generate a standalone HTML file with:
+- Tailwind CDN script tag (`<script src="https://cdn.tailwindcss.com"></script>`)
+- Extracted CSS custom properties as inline `<style>` block
+- Full page layout: hero image area (placeholder box if image not placed), title, category badge, reading time, date
+- Article body: hook, PIEI sections, blockquotes
+- `<Callout>` rendered as a `<div>` with accent-colored left border, subtle background, and padding
+- `<CTA>` rendered as a `<div>` with background color, centered text, and prominent link styling
+- Placeholder boxes for images not yet placed (gray box with alt text and recommended dimensions)
+- Footer note: *"Preview — approximate rendering. Final output uses your site's Tailwind build and MDX pipeline."*
+
+**What the preview does NOT render:** site navigation, header, footer, or functional interactive elements.
+
+**Output path:** `output/blog-{slug}-preview.html`
+
+**Preview validation:** After generating the HTML preview, verify:
+- Required HTML elements present (title, article body, callout div, CTA div)
+- Tailwind CDN script tag present
+- Token extraction produced valid CSS custom property declarations in the `<style>` block
+
+### Asset manifest
+
+When Context A is detected, include a manifest of required images in the delivery output. The user places actual image files before publishing. The HTML preview shows placeholder boxes for images that don't exist yet.
+
+```
+Required images:
+- public/images/blog/{slug}/hero.webp — Hero image (recommended 1360×800)
+```
+
+Note: The `heroImage` frontmatter field uses `/images/blog/{slug}/hero.webp` (web path), while the asset manifest uses `public/images/blog/{slug}/hero.webp` (filesystem path). Both refer to the same file.
 
 ### 4c. Write critique log
 
-Save to `learnings/blog-posts/{topic-slug}-{date}.md`:
+Save to `learnings/blog-posts/{slug}-{date}.md`:
 
 ```markdown
 ---
@@ -249,9 +365,27 @@ author: "{requestor name if known}"
 
 ### 4d. Present final output
 
+**Context A (Next.js/MDX detected):**
+
 ```
-Blog post generated: output/blog-{topic-slug}-{date}.md
-Critique log: learnings/blog-posts/{topic-slug}-{date}.md
+Blog post generated:
+  MDX: src/content/blog/{slug}.mdx
+  Preview: output/blog-{slug}-preview.html
+  Critique log: learnings/blog-posts/{slug}-{date}.md
+
+Required images (place before publishing):
+  - public/images/blog/{slug}/hero.webp (1360×800)
 
 {count} review findings applied ({accepted} accepted, {rejected} rejected).
+```
+
+**Fallback:**
+
+```
+Blog post generated: output/blog-{slug}-{date}.md
+Critique log: learnings/blog-posts/{slug}-{date}.md
+
+{count} review findings applied ({accepted} accepted, {rejected} rejected).
+
+For MDX output with HTML preview, set up a Next.js blog with src/content/blog/.
 ```

@@ -16,7 +16,7 @@
 
 ---
 
-### Task 1: Update Step 2 output format from markdown to MDX
+### ✅ Task 1: Update Step 2 output format from markdown to MDX
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### Output format` section under Step 2)
@@ -101,7 +101,7 @@ git commit -m "feat(generate-blog-post): update Step 2 output format from markdo
 
 ---
 
-### Task 2: Update quality gates — modify gate 1, add gates 15 and 16
+### ✅ Task 2: Update quality gates — modify gate 1, add gates 15 and 16
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### Quality gates` section under Step 2)
@@ -158,7 +158,7 @@ git commit -m "feat(generate-blog-post): update gate 1 for Callout, add gates 15
 
 ---
 
-### Task 3: Add context detection logic to Step 4
+### ✅ Task 3: Add context detection logic to Step 4
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (add new section at the start of Step 4, before `### 4a`)
@@ -201,7 +201,7 @@ git commit -m "feat(generate-blog-post): add 2-tier context detection to Step 4"
 
 ---
 
-### Task 4: Add unregistered component handling section
+### ✅ Task 4: Add unregistered component handling section
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (add section after context detection, before `### 4a`)
@@ -238,7 +238,7 @@ git commit -m "feat(generate-blog-post): add unregistered component handling"
 
 ---
 
-### Task 5: Rewrite Step 4b for context-aware output
+### ✅ Task 5: Rewrite Step 4b for context-aware output
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### 4b. Save output` section)
@@ -279,7 +279,7 @@ git commit -m "feat(generate-blog-post): rewrite Step 4b for context-aware outpu
 
 ---
 
-### Task 6: Add HTML preview generation section
+### ✅ Task 6: Add HTML preview generation section
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (add new section after 4b, before 4c)
@@ -341,7 +341,7 @@ git commit -m "feat(generate-blog-post): add HTML preview generation section"
 
 ---
 
-### Task 7: Add asset manifest to delivery
+### ✅ Task 7: Add asset manifest to delivery
 
 **Prerequisite:** Task 6 must be complete — this task's insertion anchor ("after the HTML preview generation section") only exists after Task 6 runs.
 
@@ -378,7 +378,7 @@ git commit -m "feat(generate-blog-post): add asset manifest to delivery"
 
 ---
 
-### Task 8: Rewrite Step 4d for context-aware delivery output
+### ✅ Task 8: Rewrite Step 4d for context-aware delivery output
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### 4d. Present final output` section)
@@ -433,7 +433,7 @@ git commit -m "feat(generate-blog-post): rewrite Step 4d for context-aware deliv
 
 ---
 
-### Task 9: Create ewp-site setup reference guide
+### ✅ Task 9: Create ewp-site setup reference guide
 
 **Files:**
 - Create: `skills/generate-blog-post/references/ewp-site-setup.md`
