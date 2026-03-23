@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog HTML Rendering &amp; MDX Output — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            button: { DEFAULT: '#32373c', hover: '#1a1f23', text: '#ffffff' }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Mermaid hover on clickable nodes */
+    .node:hover { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Blog HTML Rendering &amp; MDX Output</h1>
+  <p class="subtitle">Upgrading generate-blog-post from markdown-only to MDX + HTML preview</p>
+  <p class="context">Design for context-aware output detection, MDX formatting with minimal components, HTML preview rendering via Tailwind CDN, new quality gates, and ewp-site integration prerequisites.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('workflow')">Workflow</button>
+    <button class="tab-btn" onclick="switchTab('mdx-format')">MDX Format</button>
+    <button class="tab-btn" onclick="switchTab('html-preview')">HTML Preview</button>
+    <button class="tab-btn" onclick="switchTab('quality-gates')">Quality Gates</button>
+    <button class="tab-btn" onclick="switchTab('ewp-integration')">ewp-site Integration</button>
+  </div>
+
+  <!-- ==================== OVERVIEW PANEL ==================== -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  W["Workflow Changes"]
+  M["MDX Format"]
+  H["HTML Preview"]
+  Q["Quality Gates"]
+  E["ewp-site Integration"]
+
+  W --> M
+  M --> H
+  M --> Q
+  H --> E
+  Q --> E
+
+  click W "javascript:switchTab('workflow')"
+  click M "javascript:switchTab('mdx-format')"
+  click H "javascript:switchTab('html-preview')"
+  click Q "javascript:switchTab('quality-gates')"
+  click E "javascript:switchTab('ewp-integration')"
+
+  style W fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style M fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style H fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Q fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style E fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #ff6900;"></div>
+        Primary deliverable
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #fff7ed; border: 1px solid #ff6900;"></div>
+        New gates
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #f0eeeb; border: 1px solid #1a1a1a;"></div>
+        Consuming project
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #ffffff; border: 1px solid #e5e7eb;"></div>
+        Process step
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== WORKFLOW PANEL ==================== -->
+  <div class="tab-panel" id="panel-workflow">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Workflow Changes <span class="badge">flowchart</span></h2>
+      <p class="description">The existing 4-step workflow (Input, Generate, Review, Deliver) is preserved. Step 2 gains richer content generation with enhanced frontmatter and two MDX components. Step 4 gains context-aware output detection that routes to three possible delivery paths.</p>
+      <ul class="bullet-list">
+        <li><strong>Step 1 (Input)</strong> and <strong>Step 3 (Review)</strong> are unchanged</li>
+        <li><strong>Step 2 (Generate)</strong> produces enhanced frontmatter (<code>heroImage</code>, <code>readingTime</code>) and two MDX components (<code>&lt;Callout&gt;</code>, <code>&lt;CTA&gt;</code>)</li>
+        <li><strong>Step 4 (Deliver)</strong> detects project context and routes to MDX, standalone HTML, or markdown output</li>
+        <li><strong>Two new quality gates</strong> enforce hook/problem differentiation and meta description isolation</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  Input["1. Input"]
+  Generate["2. Generate"]
+  Review["3. Review"]
+  Deliver["4. Deliver"]
+  Detect{"Context<br>Detection"}
+  MDX["MDX + Preview"]
+  HTML["Standalone HTML"]
+  MD["Markdown"]
+
+  Input --> Generate
+  Generate --> Review
+  Review --> Deliver
+  Deliver --> Detect
+  Detect -->|"Next.js/MDX"| MDX
+  Detect -->|"Static HTML"| HTML
+  Detect -->|"Fallback"| MD
+
+  style Input fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Generate fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Review fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Deliver fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Detect fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style MDX fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style HTML fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style MD fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <!-- Context detection detail -->
+    <div class="section">
+      <h2>Context Detection Logic <span class="badge">detail</span></h2>
+      <p class="description">The skill scans the project to determine which output format to produce. Detection is ordered from most specific to least specific.</p>
+      <table style="width:100%; font-size:0.85rem; border-collapse:collapse; margin-top:12px;">
+        <thead>
+          <tr style="border-bottom:2px solid #e5e7eb; text-align:left;">
+            <th style="padding:8px 12px; color:#1a1a1a; font-weight:600;">Context</th>
+            <th style="padding:8px 12px; color:#1a1a1a; font-weight:600;">Detection Signal</th>
+            <th style="padding:8px 12px; color:#1a1a1a; font-weight:600;">Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f0eeeb;">
+            <td style="padding:8px 12px; color:#555555;">A: Next.js/MDX</td>
+            <td style="padding:8px 12px; font-family:Menlo,monospace; font-size:0.8rem; color:#1a1a1a;">src/content/blog/*.mdx exists</td>
+            <td style="padding:8px 12px; color:#1a1a1a;">MDX to <code>src/content/blog/</code> + HTML preview</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0eeeb;">
+            <td style="padding:8px 12px; color:#555555;">B: Static HTML</td>
+            <td style="padding:8px 12px; font-family:Menlo,monospace; font-size:0.8rem; color:#1a1a1a;">blog/ or posts/ with .html files</td>
+            <td style="padding:8px 12px; color:#1a1a1a;">Standalone HTML to <code>output/</code></td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px; color:#555555;">C: Fallback</td>
+            <td style="padding:8px 12px; font-family:Menlo,monospace; font-size:0.8rem; color:#1a1a1a;">No blog infrastructure</td>
+            <td style="padding:8px 12px; color:#1a1a1a;">Markdown to <code>output/</code> (current behavior)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== MDX FORMAT PANEL ==================== -->
+  <div class="tab-panel" id="panel-mdx-format">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>MDX Output Structure <span class="badge">architecture</span></h2>
+      <p class="description">The MDX file is the primary deliverable. It stays as close to pure markdown as possible. Page layout (hero, title, byline, metadata) is driven by frontmatter and owned by the consuming site's page template. Only two MDX components are used.</p>
+      <ul class="bullet-list">
+        <li><strong>Frontmatter</strong> carries title, date, description, category, featured, heroImage, and readingTime</li>
+        <li><strong>Body</strong> starts with a hook paragraph, followed by PIEI sections (Problem, Insight, Evidence, Implication)</li>
+        <li><strong>Pull quotes</strong> use standard <code>&gt;</code> blockquote syntax, already styled by mdxComponents</li>
+        <li><strong>description</strong> stays in frontmatter only (SEO/social cards) and is not rendered visually</li>
+        <li><strong>author</strong> field omitted (single-author site, YAGNI)</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  FM["Frontmatter<br>title, date, description<br>category, heroImage, readingTime"]
+  Hook["Hook<br>Opening paragraph"]
+  PIEI["PIEI Sections<br>Problem, Insight<br>Evidence, Implication"]
+  Callout["Callout Component<br>Key takeaway"]
+  CTA["CTA Component<br>Action + link"]
+
+  FM --> Hook
+  Hook --> PIEI
+  PIEI --> Callout
+  Callout --> CTA
+
+  style FM fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style Hook fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style PIEI fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Callout fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CTA fill:#ff6900,stroke:#e55d00,color:#ffffff
+        </pre>
+      </div>
+    </div>
+
+    <!-- MDX Principles -->
+    <div class="section">
+      <h2>Key Principles <span class="badge">rules</span></h2>
+      <ul class="bullet-list">
+        <li><strong>No title/header/meta/byline markup in MDX body</strong> &mdash; all driven by frontmatter, rendered by the page template</li>
+        <li><strong>Body starts with hook paragraph</strong> &mdash; matches the existing ewp-site blog post pattern</li>
+        <li><strong>Only 2 MDX components</strong> &mdash; <code>&lt;Callout&gt;</code> and <code>&lt;CTA&gt;</code>, registered in the consuming project's <code>mdx-components.tsx</code></li>
+        <li><strong>Asset manifest</strong> &mdash; each post lists required images with paths following <code>/images/blog/{slug}/</code> convention and recommended dimensions</li>
+        <li><strong>Placeholder boxes</strong> &mdash; HTML preview shows placeholder boxes with alt text for images not yet placed</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== HTML PREVIEW PANEL ==================== -->
+  <div class="tab-panel" id="panel-html-preview">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>HTML Preview Pipeline <span class="badge">flowchart</span></h2>
+      <p class="description">The HTML preview is a secondary artifact for review and sharing before publishing. It reads the project's CSS, extracts design tokens, and produces a standalone Tailwind CDN-powered HTML file that approximates the site's rendering.</p>
+      <ul class="bullet-list">
+        <li><strong>Token extraction</strong> scans the <code>@theme inline { }</code> block from <code>globals.css</code></li>
+        <li><strong>Fallback chain</strong>: <code>globals.css</code> &rarr; <code>brand/guidelines/visual-identity.md</code> &rarr; aligned plugin standard palette</li>
+        <li><strong>Renders</strong> full page layout: hero image area, title, category badge, reading time, date, article body, callout, CTA</li>
+        <li><strong>Does NOT render</strong> site navigation, header, footer, or functional interactive elements</li>
+        <li><strong>Output path</strong>: <code>output/blog-{slug}-preview.html</code></li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  CSS["globals.css<br>@theme inline block"]
+  Brand["brand/ guidelines<br>visual-identity.md"]
+  Default["Aligned palette<br>#faf9f7 #1a1a1a #ff6900"]
+  Extract["Token<br>Extraction"]
+  Render["HTML Preview<br>Tailwind CDN"]
+  Output["output/<br>blog-slug-preview.html"]
+
+  CSS -->|"primary"| Extract
+  Brand -->|"fallback 1"| Extract
+  Default -->|"fallback 2"| Extract
+  Extract --> Render
+  Render --> Output
+
+  style CSS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Brand fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Default fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Extract fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Render fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Output fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <!-- Preview contents -->
+    <div class="section">
+      <h2>Preview Content Scope <span class="badge">detail</span></h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
+        <div style="background:#f5f3ef; border-radius:12px; padding:16px;">
+          <h3 style="font-size:0.9rem; font-weight:600; color:#1a1a1a; margin-bottom:8px;">Rendered</h3>
+          <ul class="bullet-list" style="font-size:0.82rem;">
+            <li>Hero image area (placeholder if not placed)</li>
+            <li>Title, category badge, reading time, date</li>
+            <li>Hook paragraph</li>
+            <li>PIEI sections with blockquotes</li>
+            <li>Callout component</li>
+            <li>CTA component</li>
+            <li>Footer note: "Preview &mdash; approximate rendering"</li>
+          </ul>
+        </div>
+        <div style="background:#fef2f2; border-radius:12px; padding:16px;">
+          <h3 style="font-size:0.9rem; font-weight:600; color:#b91c1c; margin-bottom:8px;">Not Rendered</h3>
+          <ul class="bullet-list" style="font-size:0.82rem; color:#555555;">
+            <li>Site navigation / header / footer</li>
+            <li>Interactive elements (social share is visual-only)</li>
+            <li>Responsive breakpoints beyond basic viewport</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUALITY GATES PANEL ==================== -->
+  <div class="tab-panel" id="panel-quality-gates">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Quality Gate Updates <span class="badge">3 changes</span></h2>
+      <p class="description">Two new quality gates are added to the existing 14, plus one modification. These address the observed problems of hook/problem repetition and meta description bleeding into visible content.</p>
+      <ul class="bullet-list">
+        <li><strong>Gate 15 &mdash; Hook/Problem differentiation:</strong> the hook and the problem section's first paragraph must not share sentence openers, character introductions, or scene descriptions. Fails if &gt;50% significant word overlap.</li>
+        <li><strong>Gate 16 &mdash; Meta description isolation:</strong> the <code>description</code> frontmatter field must be a standalone summary, not an excerpt from the hook or problem section. Must not appear verbatim anywhere in the article body.</li>
+        <li><strong>Gate 1 modification:</strong> updated structural elements to include Callout (the <code>&lt;Callout&gt;</code> component surfaces the post's key takeaway as a scannable element).</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  Content["Generated<br>Content"]
+  G15{"Gate 15<br>Hook vs Problem<br>differentiation"}
+  G16{"Gate 16<br>Meta description<br>isolation"}
+  G1{"Gate 1<br>Structure check<br>+ Callout"}
+  Pass["All Gates<br>Passed"]
+  Fail["Revise<br>Content"]
+
+  Content --> G15
+  G15 -->|"pass"| G16
+  G15 -->|"fail"| Fail
+  G16 -->|"pass"| G1
+  G16 -->|"fail"| Fail
+  G1 -->|"pass"| Pass
+  G1 -->|"fail"| Fail
+  Fail --> Content
+
+  style Content fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style G15 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style G16 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style G1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Pass fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Fail fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== EWP-SITE INTEGRATION PANEL ==================== -->
+  <div class="tab-panel" id="panel-ewp-integration">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>ewp-site Integration Prerequisites <span class="badge">7 steps</span></h2>
+      <p class="description">Coordinated changes required in the consuming project before the full feature set works. The skill generates valid MDX regardless &mdash; new frontmatter fields sit harmlessly until the site catches up.</p>
+
+      <!-- Sub-tab bar for integration steps -->
+      <div class="sub-tab-bar">
+        <button class="sub-tab-btn" onclick="switchSubTab('ewp-integration', 'ewp-code')">Code Changes</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('ewp-integration', 'ewp-tests')">Test Updates</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('ewp-integration', 'ewp-detection')">Setup Detection</button>
+      </div>
+
+      <!-- Sub-panel: Code Changes -->
+      <div class="sub-panel" id="sub-ewp-code">
+        <div class="description" style="margin-top:8px;">Four code changes and one directory addition span the blog data layer, page renderer, MDX components, and public assets.</div>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  BlogTS["1. blog.ts<br>Add heroImage<br>readingTime fields"]
+  Page["2. slug/page.tsx<br>Render hero image<br>+ reading time"]
+  Components["3. mdx-components.tsx<br>Register Callout<br>and CTA"]
+  Assets["4. public/images/blog/<br>Create directory"]
+  Cards["5. BlogPostCard<br>No changes in v1"]
+
+  BlogTS --> Page
+  Page --> Components
+  Components --> Assets
+  Assets --> Cards
+
+  style BlogTS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Page fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Components fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Assets fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Cards fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+        <ul class="bullet-list" style="margin-top:12px;">
+          <li><strong>blog.ts</strong> &mdash; extend BlogPost interface with optional <code>heroImage?: string</code> and <code>readingTime?: string</code>; add to parseBlogPost return</li>
+          <li><strong>[slug]/page.tsx</strong> &mdash; render hero image via <code>next/image</code> when present; show reading time in metadata row</li>
+          <li><strong>mdx-components.tsx</strong> &mdash; register <code>Callout</code> (accent left border, subtle background) and <code>CTA</code> (bottom section, centered text, prominent link)</li>
+          <li><strong>public/images/blog/</strong> &mdash; create directory following existing <code>public/images/{subdirectory}</code> convention</li>
+          <li><strong>BlogPostCard</strong> &mdash; hero images do NOT appear on listing cards in v1; no changes needed</li>
+        </ul>
+      </div>
+
+      <!-- Sub-panel: Test Updates -->
+      <div class="sub-panel" id="sub-ewp-tests">
+        <div class="description" style="margin-top:8px;">Test coverage for the new fields and rendering behavior. BlogPostCard tests are explicitly unchanged in v1.</div>
+        <ul class="bullet-list">
+          <li><strong>conversion.test.ts</strong> &mdash; validate new frontmatter fields (<code>heroImage</code>, <code>readingTime</code>) are well-formed when present</li>
+          <li><strong>[slug]/page.tsx tests</strong> &mdash; new test for hero image rendering and reading time display</li>
+          <li><strong>BlogPostCard.test.tsx</strong> &mdash; no changes needed in v1 (hero images excluded from listing cards)</li>
+        </ul>
+      </div>
+
+      <!-- Sub-panel: Setup Detection -->
+      <div class="sub-panel" id="sub-ewp-detection">
+        <div class="description" style="margin-top:8px;">The skill verifies the consuming project has the required components registered before generating MDX output.</div>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Grep["Grep for Callout<br>in mdx-components.tsx"]
+  Found{"Found?"}
+  Proceed["Generate MDX<br>normally"]
+  Notice["Emit setup notice<br>+ link to setup docs"]
+
+  Grep --> Found
+  Found -->|"yes"| Proceed
+  Found -->|"no"| Notice
+
+  style Grep fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Found fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Proceed fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Notice fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+          </pre>
+        </div>
+        <ul class="bullet-list" style="margin-top:12px;">
+          <li><strong>Detection method</strong> &mdash; grep for <code>Callout</code> in <code>src/lib/mdx-components.tsx</code></li>
+          <li><strong>If not found</strong> &mdash; emits setup notice with link to <code>skills/generate-blog-post/references/ewp-site-setup.md</code></li>
+          <li><strong>MDX still valid</strong> &mdash; unknown components render as plain HTML elements until registered</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      // Activate selected
+      var btn = document.querySelector('[onclick*="switchTab(\'' + tabId + '\')"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
