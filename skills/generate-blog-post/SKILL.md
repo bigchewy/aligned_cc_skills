@@ -259,6 +259,19 @@ Use Glob to check for `src/content/blog/*.mdx` and `next.config.*`. If either is
 
 Store the detected context (A or Fallback) for use in steps 4b and 4d.
 
+### Unregistered component handling
+
+When Context A is detected, check whether `Callout` appears in `src/lib/mdx-components.tsx` using Grep. If not found, strip `<Callout>` and `<CTA>` from the MDX output to prevent `next-mdx-remote` from throwing on unrecognized capitalized components:
+
+- `<Callout>` content becomes a standard `> blockquote`
+- `<CTA>` content becomes a standard `## heading` + paragraph + link
+
+Emit a setup notice:
+> "Callout and CTA components not found in mdx-components.tsx. Using markdown equivalents. For richer rendering, see the setup guide at `skills/generate-blog-post/references/ewp-site-setup.md`."
+
+Also check whether `heroImage` appears in `src/lib/blog.ts`. If not found, still include `heroImage` and `readingTime` in frontmatter (they're harmlessly ignored by the MDX parser) and emit:
+> "Your site's blog infrastructure doesn't yet support heroImage or readingTime fields. The MDX includes them in frontmatter, but they won't render until you update `blog.ts` and `[slug]/page.tsx`. See the setup guide."
+
 ### 4a. Apply findings
 
 Apply all accepted findings (by number from Step 3 triage) to the markdown draft. Re-run the Step 2 quality gates on the revised post. **Maximum 2 revision attempts.** If the quality gates still fail after 2 attempts, present the current draft to the requestor with the failing gates noted — do not loop indefinitely.

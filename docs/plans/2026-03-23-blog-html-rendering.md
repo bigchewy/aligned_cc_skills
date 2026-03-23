@@ -201,7 +201,7 @@ git commit -m "feat(generate-blog-post): add 2-tier context detection to Step 4"
 
 ---
 
-### Task 4: Add unregistered component handling section
+### ✅ Task 4: Add unregistered component handling section
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (add section after context detection, before `### 4a`)
