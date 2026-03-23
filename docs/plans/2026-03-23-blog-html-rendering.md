@@ -16,7 +16,7 @@
 
 ---
 
-### Task 1: Update Step 2 output format from markdown to MDX
+### ✅ Task 1: Update Step 2 output format from markdown to MDX
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### Output format` section under Step 2)

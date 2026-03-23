@@ -68,15 +68,25 @@ For each framework element, the skill:
 
 ### Output format
 
-```markdown
-# {Title}
+When generating content, produce it in this MDX structure. The frontmatter drives page layout in the consuming site's template — no title, header, meta, or byline markup appears in the MDX body.
 
-*{Meta description — under 160 characters}*
+```mdx
+---
+title: "{Title — under 70 chars, no brand name}"
+date: "{YYYY-MM-DD}"
+description: "{Meta description — under 160 chars, standalone summary of core insight}"
+category: "{topic category}"
+featured: {true or false}
+heroImage: "/images/blog/{slug}/hero.webp"
+readingTime: "{N} min"
+---
 
 {Hook — 2-3 sentences, ends with tension or question}
 
 ## {Problem section heading}
 {2-3 paragraphs — names the shift, describes failing status quo}
+
+> {Pull quote — uses standard blockquote syntax}
 
 ## {Insight section heading}
 {2-3 paragraphs — names root cause, offers new lens}
@@ -87,11 +97,31 @@ For each framework element, the skill:
 ## {Implication section heading}
 {2-3 paragraphs — New Reality + 80/20 brand mention}
 
-## {Conclusion heading}
-{1 paragraph — restate insight, New Reality, single CTA}
+<Callout>
+{Key takeaway or insight summary — 1-2 sentences}
+</Callout>
+
+<CTA>
+
+### {CTA heading}
+
+{1 paragraph — single call to action}
+
+[{Link text}]({link path})
+
+</CTA>
 ```
 
 Target length: 1,000–1,500 words.
+
+**Key principles:**
+- Body starts with hook paragraph — no title or meta in body
+- Pull quotes use standard `>` blockquote syntax
+- Only 2 MDX components: `<Callout>` (key takeaway) and `<CTA>` (call to action)
+- `description` stays in frontmatter only (SEO/social cards) — not rendered visually
+- `author` field omitted (single-author site, YAGNI)
+- `heroImage` uses `/images/blog/{slug}/` path convention
+- `readingTime` is calculated from word count (roughly 250 words/minute)
 
 ### Generation status
 
