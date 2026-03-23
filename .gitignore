@@ -6,3 +6,4 @@ node_modules/
 .ralph-log
 .autopilot-log
 .vscode/
+.obsidian/
