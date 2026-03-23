@@ -433,7 +433,7 @@ git commit -m "feat(generate-blog-post): rewrite Step 4d for context-aware deliv
 
 ---
 
-### Task 9: Create ewp-site setup reference guide
+### ✅ Task 9: Create ewp-site setup reference guide
 
 **Files:**
 - Create: `skills/generate-blog-post/references/ewp-site-setup.md`
