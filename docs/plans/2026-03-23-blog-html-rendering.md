@@ -341,7 +341,7 @@ git commit -m "feat(generate-blog-post): add HTML preview generation section"
 
 ---
 
-### Task 7: Add asset manifest to delivery
+### ✅ Task 7: Add asset manifest to delivery
 
 **Prerequisite:** Task 6 must be complete — this task's insertion anchor ("after the HTML preview generation section") only exists after Task 6 runs.
 

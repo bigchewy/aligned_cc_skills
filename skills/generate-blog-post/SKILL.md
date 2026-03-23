@@ -325,6 +325,17 @@ Generate a standalone HTML file with:
 - Tailwind CDN script tag present
 - Token extraction produced valid CSS custom property declarations in the `<style>` block
 
+### Asset manifest
+
+When Context A is detected, include a manifest of required images in the delivery output. The user places actual image files before publishing. The HTML preview shows placeholder boxes for images that don't exist yet.
+
+```
+Required images:
+- public/images/blog/{slug}/hero.webp — Hero image (recommended 1360×800)
+```
+
+Note: The `heroImage` frontmatter field uses `/images/blog/{slug}/hero.webp` (web path), while the asset manifest uses `public/images/blog/{slug}/hero.webp` (filesystem path). Both refer to the same file.
+
 ### 4c. Write critique log
 
 Save to `learnings/blog-posts/{slug}-{date}.md`:
