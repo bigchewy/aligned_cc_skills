@@ -258,7 +258,7 @@ git commit -m "feat: add fragment mode to mockup-generator agent"
 
 ---
 
-### Task 5: Create the session-document-generator agent
+### ✅ Task 5: Create the session-document-generator agent
 
 **Files:**
 - Create: `agents/session-document-generator.md`
@@ -670,7 +670,7 @@ git commit -m "feat: add session-document-generator orchestrator agent"
 
 ---
 
-### Task 6: Update brainstorming skill's Visualization section
+### ✅ Task 6: Update brainstorming skill's Visualization section
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (the "Visualization (mandatory)" section, starting at the `**Visualization (mandatory):**` line)

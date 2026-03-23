@@ -143,35 +143,20 @@ The user has delegated technical decision authority to The Architect. The brains
 
 **Documentation:**
 - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- After visualization artifacts are generated, add a `**Mockups:**` field to the design document header listing the mockup directory path (e.g., `**Mockups:** docs/mockups/{session-name}/`). This field is consumed by writing-plans and finishing-a-development-branch to locate mockups without guessing. If no visual artifacts were generated, omit the field.
+- After visualization artifacts are generated, add a `**Mockups:**` field to the design document header listing the mockup directory path (e.g., `**Mockups:** docs/mockups/{session-name}.html`). This field is consumed by writing-plans and finishing-a-development-branch to locate mockups without guessing. If no visual artifacts were generated, omit the field.
 
 **Visualization (mandatory):**
 
-Every brainstorm produces at least one visual artifact. After writing the design document and BEFORE the critique round, determine which visualization type(s) the design needs and dispatch the appropriate agent(s).
+Every brainstorm produces at least one visual artifact. After writing the design document and BEFORE the critique round, dispatch the session-document-generator to produce a consolidated visualization document.
 
-**Classification rules — apply in order, select ALL that match:**
+**Dispatch template** — replace placeholders with actual values. Uses `subagent_type=general-purpose`:
 
-| Design involves... | Agent to dispatch | Output |
-|---|---|---|
-| UI/frontend changes (pages, components, layouts) | mockup-generator | `docs/mockups/{session}/` HTML mockups |
-| Data flows, process flows, pipelines, or decision logic | flowchart-generator | `docs/mockups/{session}/` HTML flowchart |
-| New modules, services, routes, or system structure changes | architecture-diagram-generator | `docs/mockups/{session}/architecture.html` + updates `docs/architecture.md` |
-
-If multiple types apply, dispatch all matching agents **in parallel** (single message, multiple Task tool calls). If none of the above clearly fits (rare — e.g., pure config changes), generate a flowchart showing the before/after system behavior.
-
-**Dispatch templates** — replace placeholders with actual values. All agents use `subagent_type=general-purpose`.
-
-*For UI mockups:*
-
-   "Read `agents/mockup-generator.md` for your full workflow. Generate mockups for the design at `{design-file-path}`. Project root: `{project-root}`. Brainstorming session topic: `{topic}`. Focus on these UI elements: {list specific views, pages, or components from the design that need visualization}. Include a descriptive header in each HTML file that names the brainstorming session and describes what the mockup shows."
-
-*For flowcharts (data flow, process flow, decision trees):*
-
-   "Read `agents/flowchart-generator.md` for your full workflow. Generate flowcharts for the design at `{design-file-path}`. Project root: `{project-root}`. Brainstorming session: `{topic}`. Save to `docs/mockups/{session-name}/`. Focus on these flows: {list specific data flows, process steps, or decision logic from the design that need visualization}. Include a descriptive header and subtitle in each HTML file that names the brainstorming session and explains what the diagram shows. Open each file in the browser after generating."
-
-*For architecture diagrams:*
-
-   "Read `agents/architecture-diagram-generator.md` for your full workflow. Generate architecture visualization and update `docs/architecture.md` based on the design at `{design-file-path}`. Project root: `{project-root}`. Brainstorming session: `{topic}`. Save HTML to `docs/mockups/{session-name}/architecture.html`. Architectural changes to capture: {list new modules, services, data flows, or structural changes from the design}. Open the file in the browser after generating."
+"Read `agents/session-document-generator.md` for your full workflow.
+Generate a consolidated visualization document for the design at `{design-file-path}`.
+Session name: `{session-name}`. Project root: `{project-root}`.
+Output to `docs/mockups/{session-name}.html`.
+Verify all Mermaid diagrams render without errors before opening.
+Open the file in the browser after verification passes."
 
 Do not pause for user review — the critique panel will evaluate the visuals alongside the design.
 
@@ -218,7 +203,7 @@ Do not pause for user review — the critique panel will evaluate the visuals al
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec. Your job has two phases:
+   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}.html` — open the HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec. Your job has two phases:
    **Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
    **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
    Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
@@ -227,7 +212,7 @@ Do not pause for user review — the critique panel will evaluate the visuals al
 
    "[Full contents of the critic's prompt file]
 
-   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}/` — open each HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec.
+   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}.html` — open the HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec.
    **IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of file paths, line numbers, and code claims in parallel. Do not extract and verify every claim — that work is covered.
    Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
    Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
@@ -256,7 +241,7 @@ Only run if Round 1 found medium or high severity issues. Use the same critics a
 
 Apply any remaining fixes. Present final results to the user.
 
-- Commit the design document, visual artifacts (`docs/mockups/{session-name}/`), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
+- Commit the design document, visual artifacts (`docs/mockups/{session-name}.html`), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
 
 **Next step prompt (mandatory):**
 
