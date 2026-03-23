@@ -4,3 +4,5 @@ node_modules/
 .worktrees/
 .ralph-done
 .ralph-log
+.autopilot-log
+.vscode/

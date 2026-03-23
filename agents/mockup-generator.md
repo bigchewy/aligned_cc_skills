@@ -18,9 +18,9 @@ Generate self-contained HTML mockup files for visualizing UI designs during brai
 
 ## Setup
 
-**Step 1: Read the project's design principles**
+**Step 1: Read design principles**
 
-Read `docs/design/design-principles.md` from the project root. Extract:
+Read `docs/design/design-principles.md` from the project root. If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`. Extract:
 - Color tokens (hex values and names)
 - Typography (font families, weights, sizes)
 - Spacing scale
@@ -28,7 +28,7 @@ Read `docs/design/design-principles.md` from the project root. Extract:
 - Shadow/depth approach
 - Component patterns (buttons, cards, inputs, etc.)
 
-If the file doesn't exist, ask the user for design direction before proceeding.
+If neither file exists, ask the user for design direction before proceeding.
 
 ## Output Structure
 

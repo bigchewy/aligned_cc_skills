@@ -17,6 +17,12 @@ Uses **Mermaid.js** for diagram rendering. You declare the graph structure; Merm
 - When a design document describes decision logic that would benefit from a decision tree
 - When there are multiple interconnected processes or services
 
+## Step 0: Read Design Principles (REQUIRED)
+
+Before generating any flowchart, read `docs/design/design-principles.md` in the project root. If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`. Extract color tokens and semantic diagram colors. All colors in the template below are examples from the global design system — replace with actual values from whichever design-principles file you load.
+
+**Do not proceed without design tokens.**
+
 ## Output Structure
 
 Organize flowcharts alongside mockups in the brainstorm session folder:
@@ -44,34 +50,35 @@ Every flowchart uses Mermaid.js loaded via CDN:
   <title>[Flowchart Title]</title>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
   <style>
+    /* --- Apply tokens from design-principles.md --- */
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #fafafa;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7; /* --color-background */
       margin: 0;
       padding: 40px;
     }
     h1 {
       font-size: 1.5rem;
       font-weight: 500;
-      color: #1a1a1a;
+      color: #1a1a1a; /* --color-foreground */
       margin-bottom: 4px;
     }
     .subtitle {
       font-size: 0.95rem;
-      color: #666;
+      color: #555555; /* --color-secondary */
       margin-bottom: 4px;
     }
     .context {
       font-size: 0.88rem;
-      color: #888;
+      color: #6b7280; /* --color-dimmed */
       margin-bottom: 24px;
       padding-bottom: 16px;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e7eb; /* --color-border */
     }
     .flowchart-container {
       background: white;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
+      border: 1px solid #e5e7eb; /* --color-border */
+      border-radius: 12px; /* --radius-md */
       padding: 32px;
       overflow-x: auto;
     }
@@ -87,7 +94,7 @@ Every flowchart uses Mermaid.js loaded via CDN:
       align-items: center;
       gap: 8px;
       font-size: 0.85rem;
-      color: #666;
+      color: #555555; /* --color-secondary */
     }
     .legend-dot {
       width: 12px;
@@ -111,20 +118,20 @@ Every flowchart uses Mermaid.js loaded via CDN:
         D --> F([End])
         E --> F
 
-        style A fill:#48bb78,stroke:#38a169,color:#fff
-        style F fill:#48bb78,stroke:#38a169,color:#fff
-        style B fill:#4299e1,stroke:#3182ce,color:#fff
-        style D fill:#4299e1,stroke:#3182ce,color:#fff
-        style E fill:#4299e1,stroke:#3182ce,color:#fff
-        style C fill:#f59e0b,stroke:#d97706,color:#fff
+        style A fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        style F fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        style B fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        style D fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        style E fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        style C fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
     </pre>
   </div>
 
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#48bb78"></div>Start / End</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#4299e1"></div>Process</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Decision</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#9f7aea"></div>Data / I/O</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Start / End</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Data / I/O</div>
   </div>
 
   <script>
@@ -134,10 +141,16 @@ Every flowchart uses Mermaid.js loaded via CDN:
       themeVariables: {
         fontFamily: 'system-ui, -apple-system, sans-serif',
         fontSize: '14px',
-        lineColor: '#666',
-        primaryColor: '#4299e1',
-        primaryTextColor: '#fff',
-        primaryBorderColor: '#3182ce'
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
       },
       flowchart: {
         curve: 'basis',
@@ -199,22 +212,26 @@ G>Flag — async/event]
 
 ### Styling nodes by type
 ```
-style A fill:#48bb78,stroke:#38a169,color:#fff   %% Start/End — green
-style B fill:#4299e1,stroke:#3182ce,color:#fff   %% Process — blue
-style C fill:#f59e0b,stroke:#d97706,color:#fff   %% Decision — orange
-style D fill:#9f7aea,stroke:#805ad5,color:#fff   %% Data/IO — purple
-style E fill:#e53e3e,stroke:#c53030,color:#fff   %% Error — red
+style A fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a   %% Start/End
+style B fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a   %% Process
+style C fill:#fff7ed,stroke:#ff6900,color:#1a1a1a   %% Decision
+style D fill:#f5f3ef,stroke:#555555,color:#1a1a1a   %% Data/IO
+style E fill:#fef2f2,stroke:#b91c1c,color:#b91c1c   %% Error
+style F fill:#ff6900,stroke:#e55d00,color:#fff       %% Highlight/Key step
 ```
 
 ## Semantic Color System
 
-| Type | Color | Hex | Mermaid fill |
-|------|-------|-----|-------------|
-| Start/End | Green | #48bb78 | `fill:#48bb78,stroke:#38a169,color:#fff` |
-| Process | Blue | #4299e1 | `fill:#4299e1,stroke:#3182ce,color:#fff` |
-| Decision | Orange | #f59e0b | `fill:#f59e0b,stroke:#d97706,color:#fff` |
-| Data/IO | Purple | #9f7aea | `fill:#9f7aea,stroke:#805ad5,color:#fff` |
-| External/Error | Red | #e53e3e | `fill:#e53e3e,stroke:#c53030,color:#fff` |
+Colors come from design-principles.md. The table below shows the global defaults — replace with project-specific tokens when available.
+
+| Type | Fill | Stroke | Text | Mermaid fill |
+|------|------|--------|------|-------------|
+| Start/End | `#f0eeeb` | `#1a1a1a` | `#1a1a1a` | `fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a` |
+| Process | `#ffffff` | `#e5e7eb` | `#1a1a1a` | `fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a` |
+| Decision | `#fff7ed` | `#ff6900` | `#1a1a1a` | `fill:#fff7ed,stroke:#ff6900,color:#1a1a1a` |
+| Data/IO | `#f5f3ef` | `#555555` | `#1a1a1a` | `fill:#f5f3ef,stroke:#555555,color:#1a1a1a` |
+| Highlight | `#ff6900` | `#e55d00` | `#ffffff` | `fill:#ff6900,stroke:#e55d00,color:#fff` |
+| Error | `#fef2f2` | `#b91c1c` | `#b91c1c` | `fill:#fef2f2,stroke:#b91c1c,color:#b91c1c` |
 
 Apply `style` directives to every node. Without them, Mermaid uses its default blue for everything, which defeats the purpose of semantic color coding.
 

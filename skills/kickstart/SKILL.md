@@ -43,10 +43,8 @@ project/
 │   │   ├── did_not_complete/
 │   │   └── .counter                    # Auto-incrementing KB number
 │   ├── mockups/
-│   ├── lessons-learned/
-│   │   └── completed/
-│   └── ralph_loops/
-│       └── BEST-PRACTICES.md
+│   └── lessons-learned/
+│       └── completed/
 ├── e2e/
 │   ├── scenarios/
 │   ├── fixtures/
@@ -112,9 +110,6 @@ Also ensure `.claude/settings.local.json` and `.claude/CLAUDE.local.md` are in t
 eval-log.jsonl
 .eval-audit-last-run
 ```
-
-**ralph_loops/BEST-PRACTICES.md:**
-Copy content from the plugin's `docs/ralph_loops/BEST-PRACTICES.md`. (Note: `EXECUTE-PLAN.md` and `run-ralph.sh` are sourced from the plugin at runtime — do not copy them into projects.)
 
 ## Phase 3: Seed CLAUDE.md
 

@@ -9,11 +9,11 @@ Hand-coded SVG diagrams matching a project's design tokens from the local repo's
 
 ## Step 1: Read Design Principles (REQUIRED)
 
-**Read `docs/design/design-principles.md` in the current repo before creating any SVG.**
+**Read `docs/design/design-principles.md` in the current repo before creating any SVG.** If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`.
 
 Extract: background, foreground, secondary, accent, border, muted colors + font stack + border radii.
 
-**If not found:** STOP. Ask the user for a design-principles file or at minimum: background, accent, text colors, and font. Never generate without design tokens.
+**If neither file exists:** STOP. Ask the user for a design-principles file or at minimum: background, accent, text colors, and font. Never generate without design tokens.
 
 ## Step 2: Read Existing Diagrams
 

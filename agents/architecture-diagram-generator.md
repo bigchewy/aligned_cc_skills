@@ -23,9 +23,10 @@ This agent produces up to two artifacts:
 
 ## Step 1: Read Context
 
-1. Read the design document at the provided path
-2. Read `docs/architecture.md` if it exists — note which diagrams exist and their current state
-3. Identify what architectural changes the design introduces (new modules, changed data flows, new services, restructured boundaries)
+1. **Read design principles** — check `docs/design/design-principles.md` in the project root first. If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`. Extract color tokens, typography, spacing, and semantic diagram colors. **Do not proceed without design tokens.**
+2. Read the design document at the provided path
+3. Read `docs/architecture.md` if it exists — note which diagrams exist and their current state
+4. Identify what architectural changes the design introduces (new modules, changed data flows, new services, restructured boundaries)
 
 ## Step 2: Generate HTML Visualization
 
@@ -44,9 +45,10 @@ Save to `docs/mockups/{session-name}/architecture.html`.
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>[Project] Architecture — [Session Topic]</title>
   <style>
+    /* --- Apply tokens from design-principles.md --- */
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #fafafa;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7; /* --color-background */
       margin: 0;
       padding: 40px;
       max-width: 1200px;
@@ -55,42 +57,42 @@ Save to `docs/mockups/{session-name}/architecture.html`.
     h1 {
       font-size: 1.5rem;
       font-weight: 500;
-      color: #1a1a1a;
+      color: #1a1a1a; /* --color-foreground */
       margin-bottom: 4px;
     }
     .subtitle {
       font-size: 0.95rem;
-      color: #666;
+      color: #555555; /* --color-secondary */
       margin-bottom: 4px;
     }
     .context {
       font-size: 0.88rem;
-      color: #888;
+      color: #6b7280; /* --color-dimmed */
       margin-bottom: 24px;
       padding-bottom: 16px;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e7eb; /* --color-border */
     }
     .section {
       background: white;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
+      border: 1px solid #e5e7eb; /* --color-border */
+      border-radius: 12px; /* --radius-md */
       padding: 24px;
       margin: 24px 0;
     }
     .section h2 {
       font-size: 1.1rem;
       font-weight: 500;
-      color: #333;
+      color: #1a1a1a; /* --color-foreground */
       margin-bottom: 16px;
     }
-    /* Semantic layer colors */
-    .layer-data { fill: #4299e1; }
-    .layer-processing { fill: #ed8936; }
-    .layer-service { fill: #9f7aea; }
-    .layer-output { fill: #48bb78; }
-    .layer-external { fill: #e53e3e; }
+    /* Architecture layer colors — warm tonal progression from design-principles.md */
+    .layer-1 { fill: #f5f3f0; } /* Presentation / UI */
+    .layer-2 { fill: #f2efec; } /* Application / Services */
+    .layer-3 { fill: #eeeae6; } /* Domain / Business Logic */
+    .layer-4 { fill: #eae6e1; } /* Infrastructure / Data */
+    .layer-5 { fill: #e5e1dc; } /* External / Platform */
     .component-label {
-      fill: white;
+      fill: #1a1a1a; /* --color-foreground */
       font-family: system-ui;
       font-size: 12px;
       font-weight: 500;
@@ -98,25 +100,25 @@ Save to `docs/mockups/{session-name}/architecture.html`.
       dominant-baseline: central;
     }
     .connector {
-      stroke: #999;
+      stroke: #ff6900; /* --color-accent */
       stroke-width: 1.5;
       fill: none;
       marker-end: url(#arrow);
     }
     .connector-label {
-      fill: #666;
+      fill: #555555; /* --color-secondary */
       font-family: system-ui;
       font-size: 11px;
       text-anchor: middle;
     }
     /* New/changed indicators */
     .new-component {
-      stroke: #48bb78;
+      stroke: #ff6900; /* --color-accent */
       stroke-width: 2;
       stroke-dasharray: 6 3;
     }
     .changed-component {
-      stroke: #f59e0b;
+      stroke: #1a1a1a; /* --color-foreground */
       stroke-width: 2;
     }
     /* Legend */
@@ -131,7 +133,7 @@ Save to `docs/mockups/{session-name}/architecture.html`.
       align-items: center;
       gap: 8px;
       font-size: 0.85rem;
-      color: #666;
+      color: #555555; /* --color-secondary */
     }
     .legend-dot {
       width: 12px;
@@ -147,8 +149,8 @@ Save to `docs/mockups/{session-name}/architecture.html`.
     .ref-table th {
       text-align: left;
       padding: 8px 12px;
-      border-bottom: 2px solid #e5e5e5;
-      color: #666;
+      border-bottom: 2px solid #e5e7eb; /* --color-border */
+      color: #555555; /* --color-secondary */
       font-weight: 500;
       font-size: 0.78rem;
       text-transform: uppercase;
@@ -156,30 +158,30 @@ Save to `docs/mockups/{session-name}/architecture.html`.
     }
     .ref-table td {
       padding: 8px 12px;
-      border-bottom: 1px solid #f0f0f0;
-      color: #333;
+      border-bottom: 1px solid #f0eeeb; /* --color-muted */
+      color: #1a1a1a; /* --color-foreground */
     }
     .ref-table td code {
-      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-family: Menlo, Consolas, Monaco, "Courier New", monospace;
       font-size: 0.82rem;
-      background: #f5f5f5;
+      background: #f0eeeb; /* --color-muted */
       padding: 1px 6px;
-      border-radius: 3px;
+      border-radius: 6px; /* --radius-sm */
     }
     .badge-new {
       font-size: 0.7rem;
       padding: 1px 6px;
-      border-radius: 4px;
-      background: rgba(72, 187, 120, 0.12);
-      color: #2f855a;
+      border-radius: 9999px; /* --radius-full */
+      background: #fff7ed; /* --color-accent-subtle */
+      color: #ff6900; /* --color-accent */
       font-weight: 500;
     }
     .badge-changed {
       font-size: 0.7rem;
       padding: 1px 6px;
-      border-radius: 4px;
-      background: rgba(245, 158, 11, 0.12);
-      color: #b45309;
+      border-radius: 9999px; /* --radius-full */
+      background: #f0eeeb; /* --color-muted */
+      color: #1a1a1a; /* --color-foreground */
       font-weight: 500;
     }
   </style>
@@ -196,7 +198,7 @@ Save to `docs/mockups/{session-name}/architecture.html`.
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
           markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="#999"/>
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6900"/> <!-- --color-accent -->
         </marker>
       </defs>
       <!-- Sources → Processing → Outputs -->
@@ -226,13 +228,13 @@ Save to `docs/mockups/{session-name}/architecture.html`.
   </div>
 
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#4299e1"></div>Data Layer</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ed8936"></div>Processing</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#9f7aea"></div>Services</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#48bb78"></div>Output</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div>External</div>
-    <div class="legend-item" style="gap:4px"><span style="border:2px dashed #48bb78;width:12px;height:12px;border-radius:3px;display:inline-block"></span>New</div>
-    <div class="legend-item" style="gap:4px"><span style="border:2px solid #f59e0b;width:12px;height:12px;border-radius:3px;display:inline-block"></span>Changed</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f5f3f0"></div>Layer 1 (UI)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f2efec"></div>Layer 2 (Services)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#eeeae6"></div>Layer 3 (Domain)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#eae6e1"></div>Layer 4 (Infra)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e5e1dc"></div>Layer 5 (External)</div>
+    <div class="legend-item" style="gap:4px"><span style="border:2px dashed #ff6900;width:12px;height:12px;border-radius:3px;display:inline-block"></span>New</div>
+    <div class="legend-item" style="gap:4px"><span style="border:2px solid #1a1a1a;width:12px;height:12px;border-radius:3px;display:inline-block"></span>Changed</div>
   </div>
 </body>
 </html>
@@ -253,8 +255,8 @@ Save to `docs/mockups/{session-name}/architecture.html`.
 ## Guidelines
 
 - **Self-contained HTML:** Every visualization works when opened in a browser. No external dependencies.
-- **Semantic colors:** Blue=data, orange=processing, purple=services, green=outputs, red=external.
-- **Highlight changes:** Use dashed green borders for new components, solid orange borders for changed components.
+- **Design-token driven:** All colors come from design-principles.md. Use architecture layer colors for tonal depth. Use `--color-accent` for connectors and new-component highlights.
+- **Highlight changes:** Use dashed `--color-accent` borders for new components, solid `--color-foreground` borders for changed components.
 - **Component reference:** Always include a table mapping components to actual file paths.
 - **Descriptive header:** The `<h1>`, subtitle, and context paragraph must orient the reader — they should know what they're looking at without additional context.
 - **Responsive:** Use `viewBox` on SVG so it scales to any container width.
