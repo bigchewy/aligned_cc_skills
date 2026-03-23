@@ -1,6 +1,6 @@
 # Aligned
 
-Opinionated development stack for Claude Code. 25 skills, 11 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
+Opinionated development stack for Claude Code. 28 skills, 11 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
 
 ## Installation
 
@@ -58,7 +58,10 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:business-diagnosis)",
       "Skill(aligned:business-executing)",
       "Skill(aligned:business-write-plan)",
-      "Skill(aligned:create-design-principles)"
+      "Skill(aligned:create-design-principles)",
+      "Skill(aligned:generate-deck)",
+      "Skill(aligned:generate-blog-post)",
+      "Skill(aligned:generate-one-pager)"
     ]
   }
 }
@@ -82,6 +85,9 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 | business-diagnosis | Business | `/aligned:business-diagnosis` | Diagnose why business deliverables aren't landing |
 | business-executing | Business | `/aligned:business-executing` | Execute business plans with deliverables |
 | business-write-plan | Business | `/aligned:business-write-plan` | Write business plans with critique panel |
+| generate-deck | Content | `/aligned:generate-deck` | Generate branded sales decks with April Dunford framework and expert review panel |
+| generate-blog-post | Content | `/aligned:generate-blog-post` | Generate thought leadership blog posts with PIEI narrative arc and 3-reviewer panel |
+| generate-one-pager | Content | `/aligned:generate-one-pager` | Generate branded one-pagers and battle cards (placeholder) |
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier) |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |

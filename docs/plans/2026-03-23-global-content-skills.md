@@ -341,7 +341,7 @@ git commit -m "feat: add generalized generate-one-pager skill (placeholder)"
 
 ---
 
-### Task 4: Update README.md skill reference table
+### ✅ Task 4: Update README.md skill reference table
 
 **Files:**
 - Modify: `README.md` (the skill reference table starting at line 75)
