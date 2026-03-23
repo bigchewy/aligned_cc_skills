@@ -288,7 +288,7 @@ git commit -m "feat: add generalized generate-blog-post skill"
 
 ---
 
-### Task 3: Create generalized generate-one-pager SKILL.md
+### ✅ Task 3: Create generalized generate-one-pager SKILL.md
 
 > **Note:** The design doc states "One-pager is being completed in parallel; plan assumes it's done before execution." However, the source at dispatch-tracker is currently a 16-line placeholder with a STOP guard. This task migrates the placeholder as-is. The skill will not be usable until the source skill is built in dispatch-tracker and this file is updated with the full implementation. This is acceptable — the skill's own STOP guard prevents accidental invocation.
 
