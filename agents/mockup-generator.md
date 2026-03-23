@@ -165,4 +165,44 @@ If `docs/design/design-principles.md` exists in the project, load `agents/steve-
 
 If design-principles.md does not exist, skip the persona critique.
 
+## Fragment Mode
+
+When dispatched by the session-document-generator with the phrase "Return fragments, do not write HTML files" in the prompt, return structured content instead of writing a standalone HTML file.
+
+**Fragment output format** (return as a fenced code block with language `fragment-json`):
+
+```fragment-json
+{
+  "title": "Component Mockup Title",
+  "description": "1-2 sentence description of what this mockup shows.",
+  "bullets": [
+    "**Key term 1:** explanation",
+    "**Key term 2:** explanation"
+  ],
+  "diagram_type": "html",
+  "diagram_markup": "<div class=\"mockup-fragment\">...</div>",
+  "suggested_badge": "Mockup",
+  "sub_tabs": null
+}
+```
+
+**Fields:**
+- `title`: Short descriptive title for the tab heading
+- `description`: 1-2 sentences for the text layer below the heading
+- `bullets`: Array of markdown bullet points with bolded key terms (for the "rich text" layer per Principle 5)
+- `diagram_type`: Always `"html"` for this agent
+- `diagram_markup`: Self-contained HTML fragment. Include inline styles or Tailwind classes. Do NOT include `<html>`, `<head>`, `<body>`, or `<script src="tailwind">` tags — the orchestrator's document already loads Tailwind. The fragment should work when inserted into a `<div>` container.
+- `suggested_badge`: Short label for a badge next to the tab heading (e.g., "Mockup", "UI", "Layout")
+- `sub_tabs`: If the UI has distinct views or states (e.g., different pages, empty state vs. populated), return an array of fragment objects (same schema minus `sub_tabs`). Otherwise `null`.
+
+**Rules in fragment mode:**
+- Do NOT write any HTML files
+- Do NOT open anything in the browser
+- Do NOT include full HTML document structure — return only the content fragment
+- Still read design-principles.md for design tokens
+- Still follow all mockup guidelines from this agent
+- Read the "Diagram Documentation Principles" section in design-principles.md and follow all 8 rules
+
+**Standalone mode** (default, current behavior) is unchanged — when not dispatched in fragment mode, produce full self-contained HTML files as before.
+
 **Do NOT commit.** The brainstorming skill commits all visual artifacts together with the design document after the critique round completes. Committing here would capture a pre-critique draft.

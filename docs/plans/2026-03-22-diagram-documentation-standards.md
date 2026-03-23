@@ -194,7 +194,7 @@ git commit -m "feat: add fragment mode to architecture-diagram-generator agent"
 
 ---
 
-### Task 4: Add fragment mode to mockup-generator agent
+### ✅ Task 4: Add fragment mode to mockup-generator agent
 
 **Files:**
 - Modify: `agents/mockup-generator.md` (insert "Fragment Mode" section between the "Design Critique" section and the final "Do NOT commit" note)
