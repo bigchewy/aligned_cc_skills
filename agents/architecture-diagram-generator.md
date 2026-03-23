@@ -268,3 +268,44 @@ open docs/mockups/[session-name]/architecture.html
 ```
 
 **Do NOT commit.** The brainstorming skill commits all visual artifacts and the architecture.md update together with the design document after the critique round completes. Committing here would capture a pre-critique draft.
+
+## Fragment Mode
+
+When dispatched by the session-document-generator with the phrase "Return fragments, do not write HTML files" in the prompt, return structured content instead of writing a standalone HTML file.
+
+**Fragment output format** (return as a fenced code block with language `fragment-json`):
+
+```fragment-json
+{
+  "title": "System Architecture Title",
+  "description": "1-2 sentence description of what this diagram shows.",
+  "bullets": [
+    "**Key term 1:** explanation",
+    "**Key term 2:** explanation"
+  ],
+  "diagram_type": "svg",
+  "diagram_markup": "<svg viewBox=\"0 0 800 400\">...</svg>",
+  "suggested_badge": "Architecture",
+  "sub_tabs": null
+}
+```
+
+**Fields:**
+- `title`: Short descriptive title for the tab heading
+- `description`: 1-2 sentences for the text layer below the heading
+- `bullets`: Array of markdown bullet points with bolded key terms (for the "rich text" layer per Principle 5)
+- `diagram_type`: Always `"svg"` for this agent
+- `diagram_markup`: Raw SVG markup (the `<svg>` element with all children). Use design-principles.md tokens for all colors, strokes, and text styles. Use `viewBox` for responsive scaling.
+- `suggested_badge`: Short label for a badge next to the tab heading (e.g., "Architecture", "Layers", "Components")
+- `sub_tabs`: If the architecture has distinct sections that each need focused diagrams (e.g., separate layers), return an array of fragment objects (same schema minus `sub_tabs`) — one per section. Otherwise `null`.
+
+**Rules in fragment mode:**
+- Do NOT write any HTML files
+- Do NOT open anything in the browser
+- Do NOT update `docs/architecture.md` — that is standalone mode's responsibility
+- Still read design-principles.md for color tokens and apply them in SVG styles
+- Still follow all SVG diagram conventions from this agent
+- Use architecture layer colors for tonal depth in layered diagrams
+- Read the "Diagram Documentation Principles" section in design-principles.md and follow all 8 rules
+
+**Standalone mode** (default, current behavior) is unchanged — when not dispatched in fragment mode, produce full self-contained HTML files and update `docs/architecture.md` as before.

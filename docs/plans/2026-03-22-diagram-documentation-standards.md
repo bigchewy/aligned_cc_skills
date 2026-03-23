@@ -129,7 +129,7 @@ git commit -m "feat: add fragment mode to flowchart-generator agent"
 
 ---
 
-### Task 3: Add fragment mode to architecture-diagram-generator agent
+### ✅ Task 3: Add fragment mode to architecture-diagram-generator agent
 
 **Files:**
 - Modify: `agents/architecture-diagram-generator.md` (add "Fragment Mode" section after "After Generating")
