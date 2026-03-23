@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Add "Diagram Documentation Principles" section to global design-principles.md
+### ✅ Task 1: Add "Diagram Documentation Principles" section to global design-principles.md
 
 **Files:**
 - Modify: `~/.claude/docs/design/design-principles.md` (append new section before "Anti-Patterns")
