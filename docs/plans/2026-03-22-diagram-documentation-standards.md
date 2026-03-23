@@ -42,7 +42,7 @@ All Mermaid diagrams use `graph LR` unless the content has parallel branches tha
 Each detail tab has three layers: (1) a heading with badge, (2) a description paragraph + bullet points with bolded key terms, (3) a focused Mermaid or SVG diagram with 4-6 nodes. The text carries the detail; the diagram carries the shape. Tables may follow for structured data.
 
 ### 6. Accent color for emphasis, not decoration
-Most nodes are neutral (white/muted fills). One or two key nodes per diagram use the orange accent (#ff6900) to draw the eye. Never color every node differently.
+Most nodes are neutral (white/muted fills). One or two key nodes per diagram use the orange accent (#e8762b) to draw the eye. Never color every node differently.
 
 ### 7. Lazy rendering for hidden tabs
 Only the overview Mermaid diagram renders on page load. Detail tab diagrams use `mermaid-deferred` class and render on first tab click. `startOnLoad: false` + `securityLevel: 'loose'`. No `call` keyword in click directives (breaks Mermaid v11.13). Deferred rendering includes try/catch with visible error display on failure.
@@ -360,7 +360,7 @@ The full document structure follows. Replace `{tokens}` with actual values from 
         extend: {
           colors: {
             // Populate from design-principles.md color tokens at assembly time
-            // e.g.: accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' }
+            // e.g.: accent: { DEFAULT: '#e8762b', hover: '#cc6725', subtle: '#fff7ed' }
           },
           fontFamily: {
             sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
@@ -407,7 +407,7 @@ The full document structure follows. Replace `{tokens}` with actual values from 
       font-family: inherit;
     }
     .tab-btn:hover { color: #1a1a1a; }
-    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
 
     /* Sub-tab bar */
     .sub-tab-bar {
@@ -431,7 +431,7 @@ The full document structure follows. Replace `{tokens}` with actual values from 
       font-family: inherit;
     }
     .sub-tab-btn:hover { color: #1a1a1a; }
-    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .sub-tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
 
     /* Tab panels */
     .tab-panel { display: none; }
@@ -458,7 +458,7 @@ The full document structure follows. Replace `{tokens}` with actual values from 
       padding: 1px 6px;
       border-radius: 9999px;
       background: #fff7ed;
-      color: #ff6900;
+      color: #e8762b;
       font-weight: 500;
       margin-left: 8px;
       vertical-align: middle;
@@ -469,7 +469,7 @@ The full document structure follows. Replace `{tokens}` with actual values from 
     .diagram-container { overflow-x: auto; }
     .back-link {
       font-size: 0.82rem;
-      color: #ff6900;
+      color: #e8762b;
       text-decoration: none;
       cursor: pointer;
       margin-bottom: 16px;
@@ -527,7 +527,7 @@ The full document structure follows. Replace `{tokens}` with actual values from 
         primaryBorderColor: '#e5e7eb',
         secondaryColor: '#fff7ed',
         secondaryTextColor: '#1a1a1a',
-        secondaryBorderColor: '#ff6900',
+        secondaryBorderColor: '#e8762b',
         tertiaryColor: '#f5f3ef',
         tertiaryTextColor: '#1a1a1a',
         tertiaryBorderColor: '#555555'
