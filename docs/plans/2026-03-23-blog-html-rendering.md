@@ -279,7 +279,7 @@ git commit -m "feat(generate-blog-post): rewrite Step 4b for context-aware outpu
 
 ---
 
-### Task 6: Add HTML preview generation section
+### ✅ Task 6: Add HTML preview generation section
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (add new section after 4b, before 4c)

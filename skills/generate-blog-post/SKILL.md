@@ -287,6 +287,44 @@ Apply all accepted findings (by number from Step 3 triage) to the markdown draft
 
 Save the finalized blog post as markdown to `output/blog-{slug}-{date}.md` (current behavior — no MDX frontmatter, no components, plain markdown format).
 
+### HTML preview generation
+
+**Purpose:** The skill user reviews the preview to verify visual hierarchy, content flow, and brand alignment before publishing. The preview can also be shared with stakeholders for approval. It is generated automatically alongside the MDX when Context A is detected.
+
+**Token extraction from `globals.css`:**
+
+Use Glob to locate `globals.css` (try `src/app/globals.css`, then `app/globals.css`). Once found, perform a simple string scan of the `@theme inline { }` block. Extract CSS custom properties for use in the preview's inline styles.
+
+Minimum required tokens: `--color-background`, `--color-foreground`, `--color-accent`, `--font-sans`.
+
+**Fallback chain (use first tier that succeeds — no partial extraction):**
+1. `globals.css` `@theme inline` block — primary source
+2. `brand/guidelines/visual-identity.md` tokens — fallback if globals.css missing or malformed
+3. Neutral palette (`#faf9f7` background, `#1a1a1a` foreground, `#ff6900` accent) — final fallback
+
+If the `@theme inline` block is missing, malformed, or contains fewer than the 4 minimum tokens, log a warning: "Could not extract sufficient tokens from globals.css. Falling back to visual-identity.md." Then try the next tier.
+
+**HTML preview structure:**
+
+Generate a standalone HTML file with:
+- Tailwind CDN script tag (`<script src="https://cdn.tailwindcss.com"></script>`)
+- Extracted CSS custom properties as inline `<style>` block
+- Full page layout: hero image area (placeholder box if image not placed), title, category badge, reading time, date
+- Article body: hook, PIEI sections, blockquotes
+- `<Callout>` rendered as a `<div>` with accent-colored left border, subtle background, and padding
+- `<CTA>` rendered as a `<div>` with background color, centered text, and prominent link styling
+- Placeholder boxes for images not yet placed (gray box with alt text and recommended dimensions)
+- Footer note: *"Preview — approximate rendering. Final output uses your site's Tailwind build and MDX pipeline."*
+
+**What the preview does NOT render:** site navigation, header, footer, or functional interactive elements.
+
+**Output path:** `output/blog-{slug}-preview.html`
+
+**Preview validation:** After generating the HTML preview, verify:
+- Required HTML elements present (title, article body, callout div, CTA div)
+- Tailwind CDN script tag present
+- Token extraction produced valid CSS custom property declarations in the `<style>` block
+
 ### 4c. Write critique log
 
 Save to `learnings/blog-posts/{slug}-{date}.md`:
