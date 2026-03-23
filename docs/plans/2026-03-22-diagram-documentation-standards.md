@@ -722,7 +722,7 @@ git commit -m "feat: brainstorming dispatches session-document-generator instead
 
 ---
 
-### Task 7: Update README with new agent entry
+### ✅ Task 7: Update README with new agent entry
 
 **Files:**
 - Modify: `README.md` (the Agents table, and the agent count in the header)

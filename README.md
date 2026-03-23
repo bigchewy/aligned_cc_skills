@@ -1,6 +1,6 @@
 # Aligned
 
-Opinionated development stack for Claude Code. 25 skills, 8 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
+Opinionated development stack for Claude Code. 25 skills, 11 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
 
 ## Installation
 
@@ -104,14 +104,17 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 
 | Agent | Description |
 |-------|-------------|
-| steve-jobs | Design critique persona for brainstorming reviews |
+| architecture-diagram-generator | Architecture diagrams with SVG and architecture.md updates |
+| artifact-verifier | 98% accuracy gate for document fact-checking |
 | code-reviewer | Post-implementation review against plan and coding standards |
 | code-simplifier | Scans branch changes for simplification opportunities |
-| mockup-generator | Self-contained HTML mockups for design-phase visualization |
-| kanban-triage | Validates Kanban items through 5-phase root cause analysis |
-| worktree-setup | Isolated git worktree creation with safety checks |
 | error-diagnosis | Classify error patterns from error-tracker hook data |
-| artifact-verifier | 98% accuracy gate for document fact-checking |
+| flowchart-generator | Mermaid.js flowcharts for data flows, processes, and decision trees |
+| kanban-triage | Validates Kanban items through 5-phase root cause analysis |
+| mockup-generator | Self-contained HTML mockups for design-phase visualization |
+| session-document-generator | Orchestrates diagram agents to produce consolidated tabbed HTML documents |
+| steve-jobs | Design critique persona for brainstorming reviews |
+| worktree-setup | Isolated git worktree creation with safety checks |
 
 ## Hooks
 
