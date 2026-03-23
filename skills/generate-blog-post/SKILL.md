@@ -133,9 +133,9 @@ Generating blog post on "{topic}" using {vertical or 'cross-vertical'} positioni
 
 The requestor does not interact during generation.
 
-### Quality gates (all 14 must pass before presenting draft)
+### Quality gates (all 16 must pass before presenting draft)
 
-1. All 8 structural elements present: Title, Meta Description, Hook, Problem, Insight, Evidence, Implication, Conclusion/CTA
+1. All 9 structural elements present: Title (frontmatter), Meta Description (frontmatter `description`), Hook, Problem, Insight, Evidence, Implication, Callout (`<Callout>` component), CTA (`<CTA>` component)
 2. Title under 70 characters, no brand name in title
 3. Uses correct terminology per terminology.md (if loaded)
 4. All statistics match proof-points.md exactly — no invented numbers (if proof-points.md loaded)
@@ -149,6 +149,8 @@ The requestor does not interact during generation.
 12. No generic enterprise jargon (per terminology.md)
 13. Reference example used as style guide (if available)
 14. Meta description under 160 characters, contains core insight
+15. Hook/Problem differentiation: The Hook and the Problem section's first paragraph must not share sentence openers, character introductions, or scene descriptions. If the Hook opens with a character ("A CEO I work with..."), the Problem section must open with a different angle — a statistic, a trend, a contrasting scene. Test: could a reader mistake the Hook and Problem opening for the same paragraph? If yes, fail. (Note: the mockup suggests a ">50% significant word overlap" threshold; the design doc uses this qualitative judgment test instead — follow the design doc.)
+16. Meta description isolation: The `description` frontmatter field must be a standalone summary of the post's core insight — not an excerpt from the Hook or Problem section. It must not appear verbatim anywhere in the article body.
 
 ## Step 3: Review
 

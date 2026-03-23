@@ -101,7 +101,7 @@ git commit -m "feat(generate-blog-post): update Step 2 output format from markdo
 
 ---
 
-### Task 2: Update quality gates — modify gate 1, add gates 15 and 16
+### ✅ Task 2: Update quality gates — modify gate 1, add gates 15 and 16
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### Quality gates` section under Step 2)
