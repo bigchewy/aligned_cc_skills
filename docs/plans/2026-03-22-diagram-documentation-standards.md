@@ -64,7 +64,7 @@ git -C ~/.claude commit -m "docs: add Diagram Documentation Principles to global
 
 ---
 
-### Task 2: Add fragment mode to flowchart-generator agent
+### ✅ Task 2: Add fragment mode to flowchart-generator agent
 
 **Files:**
 - Modify: `agents/flowchart-generator.md` (add "Fragment Mode" section after "After Generating")

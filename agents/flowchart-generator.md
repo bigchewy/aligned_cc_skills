@@ -238,3 +238,44 @@ open docs/mockups/[session-name]/[file].html
 ```
 
 **Do NOT commit.** The brainstorming skill commits all visual artifacts together with the design document after the critique round completes. Committing here would capture a pre-critique draft.
+
+## Fragment Mode
+
+When dispatched by the session-document-generator with the phrase "Return fragments, do not write HTML files" in the prompt, return structured content instead of writing a standalone HTML file.
+
+**Fragment output format** (return as a fenced code block with language `fragment-json`):
+
+````fragment-json
+{
+  "title": "Process Flow Title",
+  "description": "1-2 sentence description of what this diagram shows.",
+  "bullets": [
+    "**Key term 1:** explanation",
+    "**Key term 2:** explanation"
+  ],
+  "diagram_type": "mermaid",
+  "diagram_markup": "graph LR\n    A([Start]) --> B[Step 1]\n    B --> C{Decision?}\n    ...\n    style A fill:#f0eeeb,...",
+  "suggested_badge": "Flow",
+  "sub_tabs": null
+}
+````
+
+**Fields:**
+- `title`: Short descriptive title for the tab heading
+- `description`: 1-2 sentences for the text layer below the heading
+- `bullets`: Array of markdown bullet points with bolded key terms (for the "rich text" layer per Principle 5)
+- `diagram_type`: Always `"mermaid"` for this agent
+- `diagram_markup`: Raw Mermaid code (no `<pre>` wrapper). Use `graph LR` per Principle 4 unless parallel branches require `graph TD`. Apply semantic color styles to every node.
+- `suggested_badge`: Short label for a badge next to the tab heading (e.g., "Flow", "Pipeline", "Decision Tree")
+- `sub_tabs`: If the flow has distinct phases (>6 nodes total), return an array of fragment objects (same schema minus `sub_tabs`) — one per phase. The orchestrator renders these as nested sub-tabs. Otherwise `null`.
+
+**Rules in fragment mode:**
+- Do NOT write any HTML files
+- Do NOT open anything in the browser
+- Do NOT include `<pre>`, `<script>`, or any HTML wrapper — just the raw diagram code
+- Still read design-principles.md for color tokens and apply them in Mermaid style directives
+- Still follow all Mermaid diagram patterns and semantic color rules from this agent
+- Keep diagrams to 4-6 nodes per fragment (split into sub_tabs if more)
+- Read the "Diagram Documentation Principles" section in design-principles.md and follow all 8 rules
+
+**Standalone mode** (default, current behavior) is unchanged — when not dispatched in fragment mode, produce full self-contained HTML files as before.
