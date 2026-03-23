@@ -365,9 +365,27 @@ author: "{requestor name if known}"
 
 ### 4d. Present final output
 
+**Context A (Next.js/MDX detected):**
+
 ```
-Blog post generated: output/blog-{topic-slug}-{date}.md
-Critique log: learnings/blog-posts/{topic-slug}-{date}.md
+Blog post generated:
+  MDX: src/content/blog/{slug}.mdx
+  Preview: output/blog-{slug}-preview.html
+  Critique log: learnings/blog-posts/{slug}-{date}.md
+
+Required images (place before publishing):
+  - public/images/blog/{slug}/hero.webp (1360×800)
 
 {count} review findings applied ({accepted} accepted, {rejected} rejected).
+```
+
+**Fallback:**
+
+```
+Blog post generated: output/blog-{slug}-{date}.md
+Critique log: learnings/blog-posts/{slug}-{date}.md
+
+{count} review findings applied ({accepted} accepted, {rejected} rejected).
+
+For MDX output with HTML preview, set up a Next.js blog with src/content/blog/.
 ```

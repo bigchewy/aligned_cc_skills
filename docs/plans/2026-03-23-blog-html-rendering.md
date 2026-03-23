@@ -378,7 +378,7 @@ git commit -m "feat(generate-blog-post): add asset manifest to delivery"
 
 ---
 
-### Task 8: Rewrite Step 4d for context-aware delivery output
+### ✅ Task 8: Rewrite Step 4d for context-aware delivery output
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### 4d. Present final output` section)
