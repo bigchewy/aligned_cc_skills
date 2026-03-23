@@ -27,7 +27,7 @@
 
 ---
 
-### Task 1: Create generalized generate-deck SKILL.md
+### ✅ Task 1: Create generalized generate-deck SKILL.md
 
 **Files:**
 - Create: `skills/generate-deck/SKILL.md`
