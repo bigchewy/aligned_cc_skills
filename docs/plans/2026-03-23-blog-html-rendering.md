@@ -6,11 +6,13 @@
 
 **Source Design Doc:** `docs/plans/2026-03-23-blog-html-rendering-design.md`
 
-**Mockups:** `docs/mockups/blog-html-rendering.html`
+**Mockups:** `docs/mockups/blog-html-rendering.html` (note: the mockup's "Workflow" tab shows a superseded 3-tier detection design; this plan's 2-tier detection is authoritative per design doc Decision 6)
 
 **Architecture:** The skill's 4-step workflow (Input → Generate → Review → Deliver) is preserved. Step 2 gains MDX output format with enhanced frontmatter and two MDX components (`<Callout>`, `<CTA>`). Step 4 gains 2-tier context detection (Next.js/MDX vs fallback), HTML preview generation via Tailwind CDN with token extraction from `globals.css`, setup detection, and asset manifests. Steps 1 and 3 are unchanged.
 
 **Tech Stack:** MDX, Tailwind CDN (HTML preview), CSS custom properties extraction, Glob/Grep for project detection
+
+**Task ordering:** Tasks 1–8 all modify `skills/generate-blog-post/SKILL.md` and MUST be executed sequentially in order. Do not parallelize. Each task's insertion anchors depend on prior tasks having completed.
 
 ---
 
@@ -139,7 +141,7 @@ to:
 Append after line `14. Meta description under 160 characters, contains core insight`:
 
 ```
-15. Hook/Problem differentiation: The Hook and the Problem section's first paragraph must not share sentence openers, character introductions, or scene descriptions. If the Hook opens with a character ("A CEO I work with..."), the Problem section must open with a different angle — a statistic, a trend, a contrasting scene. Test: could a reader mistake the Hook and Problem opening for the same paragraph? If yes, fail.
+15. Hook/Problem differentiation: The Hook and the Problem section's first paragraph must not share sentence openers, character introductions, or scene descriptions. If the Hook opens with a character ("A CEO I work with..."), the Problem section must open with a different angle — a statistic, a trend, a contrasting scene. Test: could a reader mistake the Hook and Problem opening for the same paragraph? If yes, fail. (Note: the mockup suggests a ">50% significant word overlap" threshold; the design doc uses this qualitative judgment test instead — follow the design doc.)
 16. Meta description isolation: The `description` frontmatter field must be a standalone summary of the post's core insight — not an excerpt from the Hook or Problem section. It must not appear verbatim anywhere in the article body.
 ```
 
@@ -245,7 +247,9 @@ git commit -m "feat(generate-blog-post): add unregistered component handling"
 
 Read `skills/generate-blog-post/SKILL.md` and confirm 4b currently says `Save the finalized blog post to output/blog-{topic-slug}-{date}.md`.
 
-**Step 2: Replace 4b with context-aware output**
+**Step 2: Replace 4b with context-aware output and standardize path variable**
+
+> **Behavioral change:** The path variable changes from `{topic-slug}` to `{slug}` throughout Step 4. This is intentional — the MDX filename convention uses `{slug}` (matching the `[slug]` route parameter in Next.js). Apply the same rename to section 4c's critique log path (`learnings/blog-posts/{slug}-{date}.md`) for consistency.
 
 Replace the `### 4b. Save output` section with:
 
@@ -291,7 +295,7 @@ Insert after `### 4b. Save output` and before `### 4c. Write critique log`:
 
 **Token extraction from `globals.css`:**
 
-Simple string scan of the `@theme inline { }` block from the project's `globals.css` (typically `src/app/globals.css`). Extract CSS custom properties for use in the preview's inline styles.
+Use Glob to locate `globals.css` (try `src/app/globals.css`, then `app/globals.css`). Once found, perform a simple string scan of the `@theme inline { }` block. Extract CSS custom properties for use in the preview's inline styles.
 
 Minimum required tokens: `--color-background`, `--color-foreground`, `--color-accent`, `--font-sans`.
 
@@ -317,11 +321,16 @@ Generate a standalone HTML file with:
 **What the preview does NOT render:** site navigation, header, footer, or functional interactive elements.
 
 **Output path:** `output/blog-{slug}-preview.html`
+
+**Preview validation:** After generating the HTML preview, verify:
+- Required HTML elements present (title, article body, callout div, CTA div)
+- Tailwind CDN script tag present
+- Token extraction produced valid CSS custom property declarations in the `<style>` block
 ```
 
 **Step 2: Verify the change**
 
-Read back and confirm the HTML preview generation section appears between 4b and 4c with token extraction, fallback chain, and preview structure details.
+Read back and confirm the HTML preview generation section appears between 4b and 4c with token extraction, fallback chain, preview structure details, and validation checks.
 
 **Step 3: Commit**
 
@@ -333,6 +342,8 @@ git commit -m "feat(generate-blog-post): add HTML preview generation section"
 ---
 
 ### Task 7: Add asset manifest to delivery
+
+**Prerequisite:** Task 6 must be complete — this task's insertion anchor ("after the HTML preview generation section") only exists after Task 6 runs.
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (add section after HTML preview generation, before 4c)
@@ -348,8 +359,10 @@ When Context A is detected, include a manifest of required images in the deliver
 
 ```
 Required images:
-- /images/blog/{slug}/hero.webp — Hero image (recommended 1360×800)
+- public/images/blog/{slug}/hero.webp — Hero image (recommended 1360×800)
 ```
+
+Note: The `heroImage` frontmatter field uses `/images/blog/{slug}/hero.webp` (web path), while the asset manifest uses `public/images/blog/{slug}/hero.webp` (filesystem path). Both refer to the same file.
 ```
 
 **Step 2: Verify the change**
@@ -526,8 +539,8 @@ git commit -m "docs: add ewp-site setup guide for blog MDX output"
 - Per-line tasks: Excessive overhead for related edits within a cohesive section
 
 #### Decision 2: No TDD test steps for skill doc edits
-**Chose:** Read-back verification (read the file, confirm the edit landed correctly) instead of automated tests
-**Why:** This repo (`aligned_cc_skills`) is a Claude Code skills plugin — it contains markdown skill documents, not application code. There is no test framework, no test runner, and no existing tests. The "tests" for skill correctness are the critique panel (which reviews the plan) and the skill's own quality gates (which run at generation time). Writing automated tests for markdown content would be over-engineering.
+**Chose:** Read-back verification confirms edits landed; critique panel gates behavioral correctness of the specification before execution
+**Why:** This repo (`aligned_cc_skills`) is a Claude Code skills plugin — it contains markdown skill documents, not application code. There is no test framework, no test runner, and no existing tests. All 9 tasks specify behavioral changes to the skill (output format, quality gates, detection logic, delivery paths). Read-back verification after each edit confirms the change landed as written. The plan critique panel (2-round process with independent sub-agents) gates whether the behavioral specification is correct before any execution begins. The HTML preview artifact has its own validation checks specified inline in Task 6 (structural elements, CDN tag, token extraction). Writing automated tests for markdown content would be over-engineering.
 **Alternatives rejected:**
 - Automated tests for skill content: No test infrastructure exists; would require setting up a test framework for markdown linting, which is out of scope
 
