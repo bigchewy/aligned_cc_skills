@@ -238,7 +238,7 @@ git commit -m "feat(generate-blog-post): add unregistered component handling"
 
 ---
 
-### Task 5: Rewrite Step 4b for context-aware output
+### ✅ Task 5: Rewrite Step 4b for context-aware output
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (the `### 4b. Save output` section)

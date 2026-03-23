@@ -278,11 +278,18 @@ Apply all accepted findings (by number from Step 3 triage) to the markdown draft
 
 ### 4b. Save output
 
-Save the finalized blog post to `output/blog-{topic-slug}-{date}.md`.
+**Context A (Next.js/MDX detected):**
+
+1. Save the MDX file to `src/content/blog/{slug}.mdx`
+2. Generate the HTML preview (see "HTML preview generation" below) and save to `output/blog-{slug}-preview.html`
+
+**Fallback (no MDX infrastructure):**
+
+Save the finalized blog post as markdown to `output/blog-{slug}-{date}.md` (current behavior — no MDX frontmatter, no components, plain markdown format).
 
 ### 4c. Write critique log
 
-Save to `learnings/blog-posts/{topic-slug}-{date}.md`:
+Save to `learnings/blog-posts/{slug}-{date}.md`:
 
 ```markdown
 ---
