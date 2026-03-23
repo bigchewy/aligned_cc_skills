@@ -159,7 +159,7 @@ git commit -m "feat: add generalized generate-deck skill"
 
 ---
 
-### Task 2: Create generalized generate-blog-post SKILL.md
+### ✅ Task 2: Create generalized generate-blog-post SKILL.md
 
 **Files:**
 - Create: `skills/generate-blog-post/SKILL.md`
