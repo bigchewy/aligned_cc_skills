@@ -158,7 +158,7 @@ git commit -m "feat(generate-blog-post): update gate 1 for Callout, add gates 15
 
 ---
 
-### Task 3: Add context detection logic to Step 4
+### ✅ Task 3: Add context detection logic to Step 4
 
 **Files:**
 - Modify: `skills/generate-blog-post/SKILL.md` (add new section at the start of Step 4, before `### 4a`)

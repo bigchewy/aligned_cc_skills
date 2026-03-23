@@ -244,6 +244,21 @@ The accepted finding numbers are passed as the explicit input to the revision st
 
 ## Step 4: Deliver
 
+### Context detection
+
+Before delivering, detect the project's blog infrastructure to determine output format.
+
+**Detection logic (ordered, stop at first match):**
+
+| Context | Detection Signal | Output |
+|---------|-----------------|--------|
+| A: Next.js/MDX | `src/content/blog/*.mdx` exists AND (`next.config.ts` or `next.config.js` exists) | MDX to `src/content/blog/` + HTML preview to `output/` |
+| Fallback | Neither condition met | Markdown to `output/` (current behavior) |
+
+Use Glob to check for `src/content/blog/*.mdx` and `next.config.*`. If either is absent, use the fallback. Do not probe further — a wrong detection is worse than a conservative fallback.
+
+Store the detected context (A or Fallback) for use in steps 4b and 4d.
+
 ### 4a. Apply findings
 
 Apply all accepted findings (by number from Step 3 triage) to the markdown draft. Re-run the Step 2 quality gates on the revised post. **Maximum 2 revision attempts.** If the quality gates still fail after 2 attempts, present the current draft to the requestor with the failing gates noted — do not loop indefinitely.
