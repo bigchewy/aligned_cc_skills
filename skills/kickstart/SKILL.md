@@ -1,6 +1,6 @@
 ---
 name: kickstart
-description: "Scaffold a new project with Aligned conventions: CLAUDE.md, docs structure, eval infrastructure, quality gates, and design principles placeholder."
+description: "Scaffold a new project with Aligned conventions. Supports software, business, personal, and general project types with appropriate structure and CLAUDE.md templates."
 ---
 
 # Kickstart
@@ -11,7 +11,19 @@ Scaffold a new or existing project with the Aligned development stack convention
 
 **Invocation:** `/aligned:kickstart`
 
-## Phase 1: Gather Context
+## Phase 1: Project Type Selection
+
+Before gathering any other context, ask the user (use AskUserQuestion):
+
+> **What type of project is this?**
+> A. Software (code, tests, builds)
+> B. Business (consulting, clients, deliverables)
+> C. Personal (knowledge management, life domains)
+> D. General (anything else that needs structure)
+
+The answer determines which scaffold path and CLAUDE.md template to use. Store the selection as `project_type`.
+
+## Phase 2: Gather Context
 
 Ask the user for (use AskUserQuestion, multiple choice where possible):
 
@@ -21,7 +33,7 @@ Ask the user for (use AskUserQuestion, multiple choice where possible):
 4. **Target deployment platform** (default: Vercel)
 5. **Testing framework** (default: Jest for Node/TS, Vitest for Vite-based, pytest for Python)
 
-## Phase 2: Scaffold Structure
+## Phase 3: Scaffold Structure
 
 Create the following directory structure (skip directories that already exist):
 
@@ -111,7 +123,7 @@ eval-log.jsonl
 .eval-audit-last-run
 ```
 
-## Phase 3: Seed CLAUDE.md
+## Phase 4: Seed CLAUDE.md
 
 Generate a project-specific CLAUDE.md including:
 
@@ -139,7 +151,7 @@ Generate a project-specific CLAUDE.md including:
 - Plans location: `docs/plans/`
 - Lessons-learned location: `docs/lessons-learned/`
 
-## Phase 4: Next Steps
+## Phase 6: Next Steps
 
 Output: "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
 

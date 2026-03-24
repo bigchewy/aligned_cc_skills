@@ -28,7 +28,7 @@ Key files:
 
 ---
 
-### Task 1: Update Frontmatter and Insert Phase 1 (Type Selection)
+### ✅ Task 1: Update Frontmatter and Insert Phase 1 (Type Selection)
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the frontmatter and Phase 1 section)
