@@ -129,7 +129,7 @@ git commit -m "feat(kickstart): make context gathering type-conditional"
 
 ---
 
-### Task 3: Restructure Phase 3 (Scaffold) Into Base + Software-Only
+### ✅ Task 3: Restructure Phase 3 (Scaffold) Into Base + Software-Only
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the Phase 3 section, formerly Phase 2)
