@@ -467,7 +467,7 @@ git commit -m "feat(kickstart): add personal CLAUDE.md template"
 
 ---
 
-### Task 7: Add General CLAUDE.md Template
+### ✅ Task 7: Add General CLAUDE.md Template
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (append to Phase 4, after the Personal Template section)

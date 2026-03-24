@@ -292,6 +292,38 @@ Define privacy constraints here. Consider: health data, financial data, personal
 Define triggers here. Examples: periodic reviews, check-ins.
 ```
 
+### General Template
+
+**Section 1 — Project Identity:**
+```markdown
+This is a workspace for [project name]. [one-sentence description].
+```
+
+**Section 2 — Folder Map:**
+```markdown
+## Folder Map
+
+- `docs/` — reference material
+- `docs/lessons-learned/` — retrospectives
+```
+
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+```
+
+**Section 4 — Communication Preferences:**
+Empty placeholder.
+
+**Section 5 — Guardrails:**
+Empty placeholder.
+
+**Section 6 — Workflows:**
+Empty placeholder.
+
 ## Phase 6: Next Steps
 
 Output: "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
