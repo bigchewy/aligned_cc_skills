@@ -246,6 +246,52 @@ Define confidentiality rules and client sensitivity constraints here.
 - `/aligned:generate-blog-post` — for thought leadership
 ```
 
+### Personal Template
+
+**Section 1 — Project Identity:**
+```markdown
+This is a personal knowledge workspace for [project name]. [one-sentence description].
+```
+
+**Section 2 — Folder Map:**
+```markdown
+## Folder Map
+
+- `docs/` — deliverables and reference material
+- `docs/lessons-learned/` — retrospectives
+- Project folders live at root
+```
+
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+3. Relevant project folders
+```
+
+**Section 4 — Communication Preferences:**
+```markdown
+## Communication Preferences
+
+Direct, informal. Skip formalities.
+```
+
+**Section 5 — Guardrails:**
+```markdown
+## Guardrails
+
+Define privacy constraints here. Consider: health data, financial data, personal relationships.
+```
+
+**Section 6 — Workflows:**
+```markdown
+## Workflows
+
+Define triggers here. Examples: periodic reviews, check-ins.
+```
+
 ## Phase 6: Next Steps
 
 Output: "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
