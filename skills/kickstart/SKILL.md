@@ -38,13 +38,23 @@ Ask the user for (use AskUserQuestion, multiple choice where possible):
 
 ## Phase 3: Scaffold Structure
 
-Create the following directory structure (skip directories that already exist):
+Create the following directory structure (skip directories that already exist).
+
+### Base Structure (ALL types)
 
 ```
 project/
 ├── .claude/
-│   └── settings.json                    # Team settings: auto-enable aligned plugin
+│   └── settings.json          # Enable aligned plugin
+├── .gitignore                 # .claude personal overrides (settings.local.json, CLAUDE.local.md)
 ├── CLAUDE.md
+└── docs/
+    └── lessons-learned/
+```
+
+### Software Additionally Creates (software type only)
+
+```
 ├── docs/
 │   ├── design/
 │   │   └── design-principles.md        # Placeholder with instructions
@@ -52,11 +62,11 @@ project/
 │   ├── plans/
 │   │   └── completed/
 │   ├── kanban/
-│   │   ├── todo/                       # Individual KB-NNN-slug.md files
+│   │   ├── todo/
 │   │   ├── in-progress/
-│   │   ├── completed/
+│   │   ├── done/
 │   │   ├── did_not_complete/
-│   │   └── .counter                    # Auto-incrementing KB number
+│   │   └── .counter
 │   ├── mockups/
 │   └── lessons-learned/
 │       └── completed/
@@ -69,8 +79,12 @@ project/
 │   └── .gitignore                      # eval-log.jsonl, .eval-audit-last-run
 ├── scripts/
 ├── eslint-rules/
-└── .gitignore                          # Append eval + .claude local patterns if not present
+└── .gitignore                          # Append eval patterns to the base .gitignore
 ```
+
+**Business, Personal, General** get no additional folders beyond the base. Structure is flat — the user creates project-level folders at root as needed.
+
+### File Templates (Software only)
 
 For each file, generate appropriate starter content:
 
@@ -105,6 +119,14 @@ mkdir -p docs/kanban/todo docs/kanban/in-progress docs/kanban/done docs/kanban/d
 echo "1" > docs/kanban/.counter
 ```
 
+**e2e/.gitignore:**
+```
+eval-log.jsonl
+.eval-audit-last-run
+```
+
+### Settings (ALL types)
+
 **.claude/settings.json (create or merge):**
 
 If `.claude/settings.json` does not exist, create it:
@@ -119,12 +141,6 @@ If `.claude/settings.json` does not exist, create it:
 If `.claude/settings.json` already exists, read it and add the `enabledPlugins` key (preserving all existing settings). If `enabledPlugins` already exists, merge `"aligned": true` into it.
 
 Also ensure `.claude/settings.local.json` and `.claude/CLAUDE.local.md` are in the project's `.gitignore` (these are per-developer personal overrides that should never be committed).
-
-**e2e/.gitignore:**
-```
-eval-log.jsonl
-.eval-audit-last-run
-```
 
 ## Phase 4: Seed CLAUDE.md
 
