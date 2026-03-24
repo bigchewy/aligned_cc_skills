@@ -144,31 +144,56 @@ Also ensure `.claude/settings.local.json` and `.claude/CLAUDE.local.md` are in t
 
 ## Phase 4: Seed CLAUDE.md
 
-Generate a project-specific CLAUDE.md including:
+Generate a project-specific CLAUDE.md using the template for the selected `project_type`. All templates use a consistent 6-section structure:
 
-- Project overview (from Phase 1 answers)
-- Tech stack
-- Commands section (test, build, lint, dev — based on detected/specified stack)
-- The Iron Rules:
-  - Tests first, always (TDD)
-  - Error path tests for every mock
-  - Verify before claiming done
-  - Root cause first, never symptom-fix
-- Skill invocation points:
-  - `/aligned:brainstorming` — before any creative work
-  - `/aligned:writing-plans` — before implementation
-  - `/aligned:executing-plans` — to implement a plan
-  - `/aligned:finishing-a-development-branch` — to complete work
-  - `/aligned:systematic-debugging` — for any bug
-  - `/aligned:design-principles` — to define design direction
-  - `/aligned:eval-failure-triage` — when evals fail
-  - `/aligned:eval-audit` — to check eval coverage
-- Architecture doc location: `docs/architecture.md`
-- Design principles location: `docs/design/design-principles.md`
-- Eval conventions: `e2e/` directory structure
-- Kanban board location: `docs/kanban/` (folder-based with individual `KB-NNN-slug.md` files)
-- Plans location: `docs/plans/`
-- Lessons-learned location: `docs/lessons-learned/`
+1. **Project Identity** — what this is, who it's for
+2. **Folder Map** — where files go, naming conventions
+3. **Reading Priority** — what Claude should front-load
+4. **Communication Preferences** — output style, tone, format
+5. **Guardrails** — sensitivity, privacy, constraints
+6. **Workflows** — skill/agent triggers
+
+### Software Template
+
+**Section 1 — Project Identity:**
+- Project name and one-sentence description (from Phase 2)
+- Tech stack (from Phase 2)
+
+**Section 2 — Folder Map:**
+- Full directory structure: docs/ (architecture, design principles, kanban, plans, mockups, lessons-learned), e2e/, scripts/, eslint-rules/
+- File locations: `docs/architecture.md`, `docs/design/design-principles.md`, `docs/kanban/`, `docs/plans/`, `docs/lessons-learned/`
+
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+3. `docs/architecture.md` — system structure
+```
+
+**Section 4 — Communication Preferences:**
+- Commands section (test, build, lint, dev — based on detected/specified stack from Phase 2)
+
+**Section 5 — Guardrails (Iron Rules):**
+- Tests first, always (TDD)
+- Error path tests for every mock
+- Verify before claiming done
+- Root cause first, never symptom-fix
+
+**Section 6 — Workflows:**
+```markdown
+## Workflows
+
+- `/aligned:brainstorming` — before any creative work
+- `/aligned:writing-plans` — before implementation
+- `/aligned:executing-plans` — to implement a plan
+- `/aligned:finishing-a-development-branch` — to complete work
+- `/aligned:systematic-debugging` — for any bug
+- `/aligned:design-principles` — to define design direction
+- `/aligned:eval-failure-triage` — when evals fail
+- `/aligned:eval-audit` — to check eval coverage
+```
 
 ## Phase 6: Next Steps
 
