@@ -357,7 +357,15 @@ If `~/.claude/` does not exist, create it first. If directory creation fails (pe
 
 ## Phase 6: Next Steps
 
-Output: "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
+Output the appropriate message based on `project_type`, then commit all scaffolded files:
+
+**Software:** "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
+
+**Business:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."
+
+**Personal:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.)."
+
+**General:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
 
 Commit all scaffolded files:
 ```bash
