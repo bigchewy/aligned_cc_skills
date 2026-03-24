@@ -363,9 +363,9 @@ Output the appropriate message based on `project_type`, then commit all scaffold
 
 **Business:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."
 
-**Personal:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.)."
+**Personal:** "Project scaffolded. Fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.), then start working."
 
-**General:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
+**General:** "Project scaffolded. Fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
 
 Commit all scaffolded files:
 ```bash
