@@ -521,7 +521,7 @@ git commit -m "feat(kickstart): add general CLAUDE.md template"
 
 ---
 
-### Task 8: Add Phase 5 (Global About-Me Check)
+### ✅ Task 8: Add Phase 5 (Global About-Me Check)
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (insert Phase 5 between Phase 4 and Phase 6)

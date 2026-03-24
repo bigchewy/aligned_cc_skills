@@ -324,6 +324,37 @@ Empty placeholder.
 **Section 6 — Workflows:**
 Empty placeholder.
 
+## Phase 5: Global About-Me Check
+
+After scaffolding, check whether `~/.claude/about-me.md` exists.
+
+**If missing:** Ask the user (use AskUserQuestion):
+
+> No global about-me found at `~/.claude/about-me.md`. Want to create one now?
+
+If yes, create `~/.claude/about-me.md` with this template:
+```markdown
+# About Me
+
+## Role & Identity
+<!-- Who you are, what you do -->
+
+## Expertise
+<!-- Your domain knowledge and experience -->
+
+## Methodology
+<!-- How you approach work, key frameworks -->
+
+## Communication Style
+<!-- How you prefer Claude to communicate -->
+```
+
+If `~/.claude/CLAUDE.md` exists, read it to understand its current structure, then suggest adding a reading priority reference to it at an appropriate insertion point (do not modify without user confirmation).
+
+If `~/.claude/` does not exist, create it first. If directory creation fails (permission error), skip with a note and continue.
+
+**If exists:** Do nothing. CLAUDE.md templates already reference it.
+
 ## Phase 6: Next Steps
 
 Output: "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
