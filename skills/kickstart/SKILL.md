@@ -195,6 +195,57 @@ Generate a project-specific CLAUDE.md using the template for the selected `proje
 - `/aligned:eval-audit` — to check eval coverage
 ```
 
+### Business Template
+
+**Section 1 — Project Identity:**
+```markdown
+This is a business/consulting workspace for [project name]. [one-sentence description].
+```
+
+**Section 2 — Folder Map:**
+```markdown
+## Folder Map
+
+- `docs/` — deliverables and reference material
+- `docs/lessons-learned/` — retrospectives
+- Project folders live at root
+```
+
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+3. Relevant project folders
+```
+
+**Section 4 — Communication Preferences:**
+```markdown
+## Communication Preferences
+
+Define tone, format, and output style preferences here.
+```
+
+**Section 5 — Guardrails:**
+```markdown
+## Guardrails
+
+Define confidentiality rules and client sensitivity constraints here.
+```
+
+**Section 6 — Workflows:**
+```markdown
+## Workflows
+
+- `/aligned:business-brainstorming` — before any business work
+- `/aligned:business-write-plan` — for planning deliverables
+- `/aligned:business-executing` — for execution
+- `/aligned:business-diagnosis` — when something isn't working
+- `/aligned:generate-one-pager` — for prospect materials
+- `/aligned:generate-blog-post` — for thought leadership
+```
+
 ## Phase 6: Next Steps
 
 Output: "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
