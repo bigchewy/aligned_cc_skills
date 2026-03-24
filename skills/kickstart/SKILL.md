@@ -27,8 +27,11 @@ The answer determines which scaffold path and CLAUDE.md template to use. Store t
 
 Ask the user for (use AskUserQuestion, multiple choice where possible):
 
+**All types ask:**
 1. **Project name and one-sentence description**
 2. **Any additional context** (linked via `@` symbol — brand guidelines, wireframes, prior art)
+
+**Software additionally asks** (skip for Business, Personal, General):
 3. **Tech stack** (defaults: Next.js + TypeScript + Tailwind)
 4. **Target deployment platform** (default: Vercel)
 5. **Testing framework** (default: Jest for Node/TS, Vitest for Vite-based, pytest for Python)
