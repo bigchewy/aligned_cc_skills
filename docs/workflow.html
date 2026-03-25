@@ -644,7 +644,7 @@
       .phase-detail-inner { padding-left: 24px; }
       .utilities-grid { grid-template-columns: 1fr; }
       .rules-list { grid-template-columns: 1fr; }
-      .parallel-grid { grid-template-columns: 1fr; }
+      .parallel-grid { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>
@@ -652,7 +652,7 @@
   <div class="container">
     <header class="header">
       <h1>How I Build Software with Claude Code</h1>
-      <p class="subtitle">A skill-driven workflow powered by <code>aligned</code> plugin v0.3</p>
+      <p class="subtitle">A skill-driven workflow powered by <code>aligned</code> plugin v0.11</p>
     </header>
 
     <div class="pipeline">
@@ -826,7 +826,7 @@
         <h2>Parallel Tracks</h2>
         <p>Separate pipelines for business work and advisory &mdash; used alongside or independently of the dev pipeline</p>
       </div>
-      <div class="parallel-grid">
+      <div class="parallel-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
         <div class="parallel-card">
           <div class="card-label">Business Pipeline</div>
           <h3>Strategy & Planning</h3>
@@ -839,13 +839,25 @@
           </div>
         </div>
         <div class="parallel-card">
+          <div class="card-label">Content Generation</div>
+          <h3>Branded Deliverables</h3>
+          <p>Generate sales decks, blog posts, one-pagers, and battle cards using brand context and expert review panels. Test content against simulated buyer personas before shipping.</p>
+          <div class="card-skills">
+            <span class="tag" style="border-color: rgba(168, 100, 80, 0.3); color: #8A5D3B;">generate-deck</span>
+            <span class="tag" style="border-color: rgba(168, 100, 80, 0.3); color: #8A5D3B;">generate-blog-post</span>
+            <span class="tag" style="border-color: rgba(168, 100, 80, 0.3); color: #8A5D3B;">generate-one-pager</span>
+            <span class="tag" style="border-color: rgba(168, 100, 80, 0.3); color: #8A5D3B;">persona-panel</span>
+          </div>
+        </div>
+        <div class="parallel-card">
           <div class="card-label">Virtual Board of Advisors</div>
-          <h3>62 Personas &middot; 130 Frameworks</h3>
+          <h3>62 Personas &middot; 134 Frameworks</h3>
           <p>Domain experts for brainstorming critique, strategic thinking, and specialized guidance. Auto-selected by skills or invoked directly. Add your own advisors and frameworks.</p>
           <div class="card-skills">
             <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">use-advisor</span>
             <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">use-framework</span>
             <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">add-advisor</span>
+            <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">add-framework</span>
             <span class="tag" style="border-color: rgba(107, 94, 124, 0.3); color: #6B5E7C;">find-potential-advisors</span>
           </div>
         </div>
@@ -963,6 +975,66 @@
             <span class="phase-badge e">Execute</span>
           </div>
         </div>
+        <div class="utility-card">
+          <h3>codebase-audit</h3>
+          <p>Multi-dimensional audit: code quality, test coverage, security, dead code, and architecture. 5 parallel workers with confidence-scored findings.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>create-design-principles</h3>
+          <p>Enforce a precise, minimal design system inspired by Linear, Notion, and Stripe. Clean, modern, minimalist with taste.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>create-svg-diagram</h3>
+          <p>Generate diagrams, charts, flowcharts, org charts, matrices, and visual frameworks for presentations and documentation.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+            <span class="phase-badge e">Execute</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>create-new-skill</h3>
+          <p>TDD-based skill creation with pressure testing. Meta skill for extending the plugin itself.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>session-document-generator</h3>
+          <p>Orchestrates diagram agents to produce consolidated tabbed HTML documents with multiple visualizations.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>kanban-triage agent</h3>
+          <p>Validates Kanban items through 5-phase root cause analysis before code changes. Quality gate between flagged and fixed.</p>
+          <div class="phase-badges">
+            <span class="phase-badge e">Execute</span>
+            <span class="phase-badge f">Finish</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>worktree-setup agent</h3>
+          <p>Isolated git worktree creation with safety checks, smart directory selection, and env file handling.</p>
+          <div class="phase-badges">
+            <span class="phase-badge b">Brainstorm</span>
+            <span class="phase-badge e">Execute</span>
+          </div>
+        </div>
+        <div class="utility-card">
+          <h3>claude-profile</h3>
+          <p>Switch Claude Code accounts, check active account, toggle profiles, or configure directory-specific overrides.</p>
+          <div class="phase-badges">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -989,7 +1061,7 @@
     </div>
 
     <footer class="footer">
-      Built with Claude Code &middot; <code>aligned</code> plugin &middot; 25 skills &middot; 8 agents &middot; 62 advisors
+      Built with Claude Code &middot; <code>aligned</code> plugin &middot; 31 skills &middot; 11 agents &middot; 62 advisors
     </footer>
   </div>
 </body>

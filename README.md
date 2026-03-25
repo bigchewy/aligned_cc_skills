@@ -1,6 +1,8 @@
 # Aligned
 
-Opinionated development stack for Claude Code. 28 skills, 11 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
+Opinionated development stack for Claude Code. 31 skills, 11 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
+
+**[Interactive workflow overview →](docs/workflow.html)** — visual pipeline from brainstorm to merge
 
 ## Installation
 
@@ -23,8 +25,6 @@ claude --plugin-dir /path/to/aligned_cc_skills
 1. `/aligned:kickstart` — scaffold a new project with standard conventions (also auto-enables the plugin in the project's `.claude/settings.json`)
 2. `/aligned:design-principles` — define the design direction through an interactive session
 3. `/aligned:brainstorming` → `/aligned:writing-plans` → auto-launch pipeline (brainstorm, plan, then confirm to execute + merge in background)
-
-See [docs/workflow.html](docs/workflow.html) for an interactive visual overview of the full pipeline.
 
 ## Permissions
 
@@ -88,6 +88,7 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 | generate-deck | Content | `/aligned:generate-deck` | Generate branded sales decks with April Dunford framework and expert review panel |
 | generate-blog-post | Content | `/aligned:generate-blog-post` | Generate thought leadership blog posts with PIEI narrative arc and 3-reviewer panel |
 | generate-one-pager | Content | `/aligned:generate-one-pager` | Generate branded one-pagers and battle cards (placeholder) |
+| persona-panel | Content | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier) |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
@@ -105,6 +106,8 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
+| create-svg-diagram | Content | `/aligned:create-svg-diagram` | Generate diagrams, charts, and visual frameworks for presentations and docs |
+| claude-profile | Infrastructure | `/aligned:claude-profile` | Switch Claude Code accounts and configure directory-specific overrides |
 
 ## Agents
 
