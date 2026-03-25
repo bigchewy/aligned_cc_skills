@@ -28,7 +28,7 @@ Key files:
 
 ---
 
-### Task 1: Update Frontmatter and Insert Phase 1 (Type Selection)
+### ✅ Task 1: Update Frontmatter and Insert Phase 1 (Type Selection)
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the frontmatter and Phase 1 section)
@@ -92,7 +92,7 @@ git commit -m "feat(kickstart): add project type selection phase and renumber ph
 
 ---
 
-### Task 2: Modify Phase 2 (Context Gathering) for Type-Conditional Questions
+### ✅ Task 2: Modify Phase 2 (Context Gathering) for Type-Conditional Questions
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the Phase 2 section, formerly Phase 1)
@@ -129,7 +129,7 @@ git commit -m "feat(kickstart): make context gathering type-conditional"
 
 ---
 
-### Task 3: Restructure Phase 3 (Scaffold) Into Base + Software-Only
+### ✅ Task 3: Restructure Phase 3 (Scaffold) Into Base + Software-Only
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the Phase 3 section, formerly Phase 2)
@@ -259,7 +259,7 @@ git commit -m "feat(kickstart): split scaffold into base structure and software-
 
 ---
 
-### Task 4: Restructure Phase 4 With 6-Section Template System and Software Template
+### ✅ Task 4: Restructure Phase 4 With 6-Section Template System and Software Template
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the Phase 4 section, formerly Phase 3)
@@ -336,7 +336,7 @@ git commit -m "feat(kickstart): add 6-section CLAUDE.md template system with sof
 
 ---
 
-### Task 5: Add Business CLAUDE.md Template
+### ✅ Task 5: Add Business CLAUDE.md Template
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (append to Phase 4, after the Software Template section)
@@ -411,7 +411,7 @@ git commit -m "feat(kickstart): add business CLAUDE.md template"
 
 ---
 
-### Task 6: Add Personal CLAUDE.md Template
+### ✅ Task 6: Add Personal CLAUDE.md Template
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (append to Phase 4, after the Business Template section)
@@ -467,7 +467,7 @@ git commit -m "feat(kickstart): add personal CLAUDE.md template"
 
 ---
 
-### Task 7: Add General CLAUDE.md Template
+### ✅ Task 7: Add General CLAUDE.md Template
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (append to Phase 4, after the Personal Template section)
@@ -521,7 +521,7 @@ git commit -m "feat(kickstart): add general CLAUDE.md template"
 
 ---
 
-### Task 8: Add Phase 5 (Global About-Me Check)
+### ✅ Task 8: Add Phase 5 (Global About-Me Check)
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (insert Phase 5 between Phase 4 and Phase 6)
@@ -576,7 +576,7 @@ git commit -m "feat(kickstart): add global about-me identity check phase"
 
 ---
 
-### Task 9: Modify Phase 6 (Next Steps) Per Type
+### ✅ Task 9: Modify Phase 6 (Next Steps) Per Type
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the Phase 6 section, formerly Phase 4)
@@ -599,9 +599,9 @@ Output the appropriate message based on `project_type`, then commit all scaffold
 
 **Business:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."
 
-**Personal:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.)."
+**Personal:** "Project scaffolded. Fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.), then start working."
 
-**General:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
+**General:** "Project scaffolded. Fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
 
 Commit all scaffolded files (note: this `git add -A` is content written into SKILL.md for the user's scaffolded project — not a command to run in the skills repo):
 ```bash
@@ -619,7 +619,7 @@ git commit -m "feat(kickstart): add type-specific next steps messages"
 
 ---
 
-### Task 10: Bump Plugin Version
+### ✅ Task 10: Bump Plugin Version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)
@@ -641,7 +641,7 @@ git commit -m "chore: bump plugin version to 0.11.0 for kickstart expansion"
 
 ---
 
-### Task 11: Create E2E Test Scenario Specifications
+### ✅ Task 11: Create E2E Test Scenario Specifications
 
 **Files:**
 - Create: `e2e/scenarios/kickstart-expansion.test.ts`
@@ -741,7 +741,7 @@ git commit -m "test: add eval scenario specifications for kickstart expansion"
 
 ---
 
-### Task 12: Final Verification
+### ✅ Task 12: Final Verification
 
 **Files:**
 - Read: `skills/kickstart/SKILL.md` (full file)

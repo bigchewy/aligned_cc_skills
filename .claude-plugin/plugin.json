@@ -1,6 +1,6 @@
 {
   "name": "aligned",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Opinionated dev stack: TDD pipeline, eval-driven development, design system, multi-agent debugging, 61 advisor personas, 134 frameworks, 3 content generation skills, automated quality gates",
   "author": {
     "name": "Eric Page"

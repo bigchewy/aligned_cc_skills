@@ -1,6 +1,6 @@
 ---
 name: kickstart
-description: "Scaffold a new project with Aligned conventions: CLAUDE.md, docs structure, eval infrastructure, quality gates, and design principles placeholder."
+description: "Scaffold a new project with Aligned conventions. Supports software, business, personal, and general project types with appropriate structure and CLAUDE.md templates."
 ---
 
 # Kickstart
@@ -11,25 +11,50 @@ Scaffold a new or existing project with the Aligned development stack convention
 
 **Invocation:** `/aligned:kickstart`
 
-## Phase 1: Gather Context
+## Phase 1: Project Type Selection
+
+Before gathering any other context, ask the user (use AskUserQuestion):
+
+> **What type of project is this?**
+> A. Software (code, tests, builds)
+> B. Business (consulting, clients, deliverables)
+> C. Personal (knowledge management, life domains)
+> D. General (anything else that needs structure)
+
+The answer determines which scaffold path and CLAUDE.md template to use. Store the selection as `project_type`.
+
+## Phase 2: Gather Context
 
 Ask the user for (use AskUserQuestion, multiple choice where possible):
 
+**All types ask:**
 1. **Project name and one-sentence description**
 2. **Any additional context** (linked via `@` symbol — brand guidelines, wireframes, prior art)
+
+**Software additionally asks** (skip for Business, Personal, General):
 3. **Tech stack** (defaults: Next.js + TypeScript + Tailwind)
 4. **Target deployment platform** (default: Vercel)
 5. **Testing framework** (default: Jest for Node/TS, Vitest for Vite-based, pytest for Python)
 
-## Phase 2: Scaffold Structure
+## Phase 3: Scaffold Structure
 
-Create the following directory structure (skip directories that already exist):
+Create the following directory structure (skip directories that already exist).
+
+### Base Structure (ALL types)
 
 ```
 project/
 ├── .claude/
-│   └── settings.json                    # Team settings: auto-enable aligned plugin
+│   └── settings.json          # Enable aligned plugin
+├── .gitignore                 # .claude personal overrides (settings.local.json, CLAUDE.local.md)
 ├── CLAUDE.md
+└── docs/
+    └── lessons-learned/
+```
+
+### Software Additionally Creates (software type only)
+
+```
 ├── docs/
 │   ├── design/
 │   │   └── design-principles.md        # Placeholder with instructions
@@ -37,11 +62,11 @@ project/
 │   ├── plans/
 │   │   └── completed/
 │   ├── kanban/
-│   │   ├── todo/                       # Individual KB-NNN-slug.md files
+│   │   ├── todo/
 │   │   ├── in-progress/
-│   │   ├── completed/
+│   │   ├── done/
 │   │   ├── did_not_complete/
-│   │   └── .counter                    # Auto-incrementing KB number
+│   │   └── .counter
 │   ├── mockups/
 │   └── lessons-learned/
 │       └── completed/
@@ -54,8 +79,12 @@ project/
 │   └── .gitignore                      # eval-log.jsonl, .eval-audit-last-run
 ├── scripts/
 ├── eslint-rules/
-└── .gitignore                          # Append eval + .claude local patterns if not present
+└── .gitignore                          # Append eval patterns to the base .gitignore
 ```
+
+**Business, Personal, General** get no additional folders beyond the base. Structure is flat — the user creates project-level folders at root as needed.
+
+### File Templates (Software only)
 
 For each file, generate appropriate starter content:
 
@@ -90,6 +119,14 @@ mkdir -p docs/kanban/todo docs/kanban/in-progress docs/kanban/done docs/kanban/d
 echo "1" > docs/kanban/.counter
 ```
 
+**e2e/.gitignore:**
+```
+eval-log.jsonl
+.eval-audit-last-run
+```
+
+### Settings (ALL types)
+
 **.claude/settings.json (create or merge):**
 
 If `.claude/settings.json` does not exist, create it:
@@ -105,43 +142,230 @@ If `.claude/settings.json` already exists, read it and add the `enabledPlugins` 
 
 Also ensure `.claude/settings.local.json` and `.claude/CLAUDE.local.md` are in the project's `.gitignore` (these are per-developer personal overrides that should never be committed).
 
-**e2e/.gitignore:**
+## Phase 4: Seed CLAUDE.md
+
+Generate a project-specific CLAUDE.md using the template for the selected `project_type`. All templates use a consistent 6-section structure:
+
+1. **Project Identity** — what this is, who it's for
+2. **Folder Map** — where files go, naming conventions
+3. **Reading Priority** — what Claude should front-load
+4. **Communication Preferences** — output style, tone, format
+5. **Guardrails** — sensitivity, privacy, constraints
+6. **Workflows** — skill/agent triggers
+
+### Software Template
+
+**Section 1 — Project Identity:**
+- Project name and one-sentence description (from Phase 2)
+- Tech stack (from Phase 2)
+
+**Section 2 — Folder Map:**
+- Full directory structure: docs/ (architecture, design principles, kanban, plans, mockups, lessons-learned), e2e/, scripts/, eslint-rules/
+- File locations: `docs/architecture.md`, `docs/design/design-principles.md`, `docs/kanban/`, `docs/plans/`, `docs/lessons-learned/`
+
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+3. `docs/architecture.md` — system structure
 ```
-eval-log.jsonl
-.eval-audit-last-run
+
+**Section 4 — Communication Preferences:**
+- Commands section (test, build, lint, dev — based on detected/specified stack from Phase 2)
+
+**Section 5 — Guardrails (Iron Rules):**
+- Tests first, always (TDD)
+- Error path tests for every mock
+- Verify before claiming done
+- Root cause first, never symptom-fix
+
+**Section 6 — Workflows:**
+```markdown
+## Workflows
+
+- `/aligned:brainstorming` — before any creative work
+- `/aligned:writing-plans` — before implementation
+- `/aligned:executing-plans` — to implement a plan
+- `/aligned:finishing-a-development-branch` — to complete work
+- `/aligned:systematic-debugging` — for any bug
+- `/aligned:design-principles` — to define design direction
+- `/aligned:eval-failure-triage` — when evals fail
+- `/aligned:eval-audit` — to check eval coverage
 ```
 
-## Phase 3: Seed CLAUDE.md
+### Business Template
 
-Generate a project-specific CLAUDE.md including:
+**Section 1 — Project Identity:**
+```markdown
+This is a business/consulting workspace for [project name]. [one-sentence description].
+```
 
-- Project overview (from Phase 1 answers)
-- Tech stack
-- Commands section (test, build, lint, dev — based on detected/specified stack)
-- The Iron Rules:
-  - Tests first, always (TDD)
-  - Error path tests for every mock
-  - Verify before claiming done
-  - Root cause first, never symptom-fix
-- Skill invocation points:
-  - `/aligned:brainstorming` — before any creative work
-  - `/aligned:writing-plans` — before implementation
-  - `/aligned:executing-plans` — to implement a plan
-  - `/aligned:finishing-a-development-branch` — to complete work
-  - `/aligned:systematic-debugging` — for any bug
-  - `/aligned:design-principles` — to define design direction
-  - `/aligned:eval-failure-triage` — when evals fail
-  - `/aligned:eval-audit` — to check eval coverage
-- Architecture doc location: `docs/architecture.md`
-- Design principles location: `docs/design/design-principles.md`
-- Eval conventions: `e2e/` directory structure
-- Kanban board location: `docs/kanban/` (folder-based with individual `KB-NNN-slug.md` files)
-- Plans location: `docs/plans/`
-- Lessons-learned location: `docs/lessons-learned/`
+**Section 2 — Folder Map:**
+```markdown
+## Folder Map
 
-## Phase 4: Next Steps
+- `docs/` — deliverables and reference material
+- `docs/lessons-learned/` — retrospectives
+- Project folders live at root
+```
 
-Output: "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+3. Relevant project folders
+```
+
+**Section 4 — Communication Preferences:**
+```markdown
+## Communication Preferences
+
+Define tone, format, and output style preferences here.
+```
+
+**Section 5 — Guardrails:**
+```markdown
+## Guardrails
+
+Define confidentiality rules and client sensitivity constraints here.
+```
+
+**Section 6 — Workflows:**
+```markdown
+## Workflows
+
+- `/aligned:business-brainstorming` — before any business work
+- `/aligned:business-write-plan` — for planning deliverables
+- `/aligned:business-executing` — for execution
+- `/aligned:business-diagnosis` — when something isn't working
+- `/aligned:generate-one-pager` — for prospect materials
+- `/aligned:generate-blog-post` — for thought leadership
+```
+
+### Personal Template
+
+**Section 1 — Project Identity:**
+```markdown
+This is a personal knowledge workspace for [project name]. [one-sentence description].
+```
+
+**Section 2 — Folder Map:**
+```markdown
+## Folder Map
+
+- `docs/` — deliverables and reference material
+- `docs/lessons-learned/` — retrospectives
+- Project folders live at root
+```
+
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+3. Relevant project folders
+```
+
+**Section 4 — Communication Preferences:**
+```markdown
+## Communication Preferences
+
+Direct, informal. Skip formalities.
+```
+
+**Section 5 — Guardrails:**
+```markdown
+## Guardrails
+
+Define privacy constraints here. Consider: health data, financial data, personal relationships.
+```
+
+**Section 6 — Workflows:**
+```markdown
+## Workflows
+
+Define triggers here. Examples: periodic reviews, check-ins.
+```
+
+### General Template
+
+**Section 1 — Project Identity:**
+```markdown
+This is a workspace for [project name]. [one-sentence description].
+```
+
+**Section 2 — Folder Map:**
+```markdown
+## Folder Map
+
+- `docs/` — reference material
+- `docs/lessons-learned/` — retrospectives
+```
+
+**Section 3 — Reading Priority:**
+```markdown
+## Reading Priority
+
+1. This file (CLAUDE.md)
+2. `~/.claude/about-me.md` — global identity and preferences
+```
+
+**Section 4 — Communication Preferences:**
+Empty placeholder.
+
+**Section 5 — Guardrails:**
+Empty placeholder.
+
+**Section 6 — Workflows:**
+Empty placeholder.
+
+## Phase 5: Global About-Me Check
+
+After scaffolding, check whether `~/.claude/about-me.md` exists.
+
+**If missing:** Ask the user (use AskUserQuestion):
+
+> No global about-me found at `~/.claude/about-me.md`. Want to create one now?
+
+If yes, create `~/.claude/about-me.md` with this template:
+```markdown
+# About Me
+
+## Role & Identity
+<!-- Who you are, what you do -->
+
+## Expertise
+<!-- Your domain knowledge and experience -->
+
+## Methodology
+<!-- How you approach work, key frameworks -->
+
+## Communication Style
+<!-- How you prefer Claude to communicate -->
+```
+
+If `~/.claude/CLAUDE.md` exists, read it to understand its current structure, then suggest adding a reading priority reference to it at an appropriate insertion point (do not modify without user confirmation).
+
+If `~/.claude/` does not exist, create it first. If directory creation fails (permission error), skip with a note and continue.
+
+**If exists:** Do nothing. CLAUDE.md templates already reference it.
+
+## Phase 6: Next Steps
+
+Output the appropriate message based on `project_type`, then commit all scaffolded files:
+
+**Software:** "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
+
+**Business:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."
+
+**Personal:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.)."
+
+**General:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
 
 Commit all scaffolded files:
 ```bash
