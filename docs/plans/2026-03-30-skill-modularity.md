@@ -571,7 +571,7 @@ git commit -m "feat: business-brainstorming adds visualization refresh and updat
 
 ---
 
-### Task 9: Structural verification
+### ✅ Task 9: Structural verification
 
 **Files:**
 - Read: `skills/brainstorming/SKILL.md`
