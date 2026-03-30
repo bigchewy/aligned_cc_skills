@@ -341,7 +341,7 @@ git commit -m "refactor: brainstorming critique panel uses shared orchestration"
 
 ---
 
-### Task 5: Refactor business-brainstorming/SKILL.md — add project scan dispatch
+### ✅ Task 5: Refactor business-brainstorming/SKILL.md — add project scan dispatch
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (add project scan at start of Phase 1)
