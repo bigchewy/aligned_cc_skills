@@ -210,7 +210,7 @@ git commit -m "feat: add shared critique-panel-orchestration for brainstorming s
 
 ---
 
-### Task 3: Refactor brainstorming/SKILL.md — replace project scan dispatch
+### ✅ Task 3: Refactor brainstorming/SKILL.md — replace project scan dispatch
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (the inline project scan template starting at `First, dispatch a project scan sub-agent`)
@@ -249,7 +249,7 @@ git commit -m "refactor: brainstorming uses project-scanner agent instead of inl
 
 ---
 
-### Task 4: Refactor brainstorming/SKILL.md — replace critique panel with shared orchestration
+### ✅ Task 4: Refactor brainstorming/SKILL.md — replace critique panel with shared orchestration
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (the critique panel section starting at the `**Fact-Check + Critique Panel**` heading)
