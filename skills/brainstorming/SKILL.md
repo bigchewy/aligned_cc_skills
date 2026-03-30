@@ -15,21 +15,10 @@ Start by understanding the current project context, then ask questions one at a 
 
 **Understanding the idea:**
 
-First, dispatch a project scan sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) to survey the project and build context. Use this dispatch template — replace `{topic}` with a short slug for the brainstorm topic and `{project-root}` with the project root:
+First, dispatch a project scan agent via Task tool (subagent_type=general-purpose):
 
-   "Survey the project at `{project-root}` to build context for a brainstorming session. You have access to Bash, Glob, Grep, Read, and Write tools. Use Bash only for system commands (e.g., npm, git) — never for content search. Use the Grep tool for searching file contents.
-
-   Investigate:
-   - Project structure (key directories, entry points, config files)
-   - Recent git activity (last 10-15 commits — run `git log --oneline -15` via Bash)
-   - Existing docs (README, CLAUDE.md, any docs/ directory)
-   - Architecture docs (`docs/architecture.md` if it exists — read in full; note data flows, module dependencies, system diagrams, and anything that looks stale)
-   - Architecture patterns (how modules are organized, key abstractions, data flow conventions)
-   - Tech stack and dependencies (package.json, requirements.txt, go.mod, etc.)
-
-   Write your full detailed findings to `/tmp/brainstorm-context-{topic}/project-scan.md` using the Write tool. Include file paths, code patterns, and specific details you discovered.
-
-   Then return ONLY a concise summary (under 300 words) covering: what this project is, tech stack, key architectural patterns, and anything notable about recent activity. Do not return the full scan — just the summary."
+"Read `agents/project-scanner.md` for your full workflow.
+Scan the project at `{project-root}` for brainstorm topic `{topic}`."
 
 Wait for the scan to complete, then proceed with the Q&A using the summary as your working context. If a question during the brainstorm requires deeper detail about the project (e.g., how a specific module works, what pattern an existing feature follows), read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring the codebase in the main thread.
 
