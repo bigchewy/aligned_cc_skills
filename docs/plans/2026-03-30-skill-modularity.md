@@ -12,6 +12,13 @@
 
 **Tech Stack:** Claude Code skills (Markdown instruction files), Claude Code agents (Markdown with YAML frontmatter), Task tool sub-agent dispatch pattern.
 
+**Task ordering dependencies:**
+- Tasks 1-2 (new files) must complete before Tasks 3-8 (SKILL.md modifications)
+- Tasks 3→4 must be sequential (both modify `skills/brainstorming/SKILL.md`)
+- Tasks 5→6→7→8 must be sequential (all modify `skills/business-brainstorming/SKILL.md`)
+- Task 9 (verification) must run after all prior tasks
+- Task 10 (version bump) can run after Task 9
+
 ---
 
 ### Task 1: Create the project-scanner agent
@@ -169,7 +176,7 @@ Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/hi
 
 ## Round 2 (conditional)
 
-Only run if Round 1 found medium or high severity issues. Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Write to `{critique-temp-directory}/round-2/`.
+Only run if Round 1 found medium or high severity issues AND fixes were applied (at least one correction applied to the design document). Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Write to `{critique-temp-directory}/round-2/`.
 
 Prepare a brief summary of what changed since Round 1 and pass it to each agent. Scope to changes only:
 - If division-of-labor: the fact-checker re-verifies only changed claims. Other critics re-evaluate only changed sections against their assigned criteria.
@@ -191,7 +198,7 @@ Read `skills/_shared/critique-panel-orchestration.md` and verify:
 - Both `fact-check-mode` branches are present (division-of-labor and all-critics)
 - Both `aggregation` branches are present (sub-agent and inline)
 - Checklist resolution logic is inlined (no reference to another `_shared/` file)
-- Round 2 is conditional on medium/high severity issues
+- Round 2 is conditional on medium/high severity issues AND fixes were applied
 - Escalation section is present
 
 **Step 3: Commit**
@@ -206,15 +213,15 @@ git commit -m "feat: add shared critique-panel-orchestration for brainstorming s
 ### Task 3: Refactor brainstorming/SKILL.md — replace project scan dispatch
 
 **Files:**
-- Modify: `skills/brainstorming/SKILL.md` (the inline project scan template at lines 18-33)
+- Modify: `skills/brainstorming/SKILL.md` (the inline project scan template starting at `First, dispatch a project scan sub-agent`)
 
 **Step 1: Read the current file**
 
-Read `skills/brainstorming/SKILL.md` lines 16-36 to confirm the exact text of the inline dispatch template.
+Read `skills/brainstorming/SKILL.md` from `**Understanding the idea:**` through `**Sequencing rule:**` to confirm the exact text of the inline dispatch template.
 
 **Step 2: Replace the inline dispatch with agent reference**
 
-Replace lines 18-33 (the full inline dispatch template starting with `First, dispatch a project scan sub-agent via Task tool...` through the closing quote and summary constraint) with:
+Replace the inline dispatch template (starting at `First, dispatch a project scan sub-agent via Task tool...` through `Do not return the full scan — just the summary."`) with:
 
 ```markdown
 First, dispatch a project scan agent via Task tool (subagent_type=general-purpose):
@@ -303,13 +310,16 @@ You have access to Glob, Grep, Read, and Write tools. Do not use Bash for search
 Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
 Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and follow its process using the configuration and prompt templates above.
+**Shared orchestration file resolution:**
+1. Primary: Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+Follow its process using the configuration and prompt templates above.
 ```
 
 **Step 3: Verify the edit**
 
 Read the modified section in `skills/brainstorming/SKILL.md`. Verify:
-- Configuration block has all 9 parameters
+- Configuration block has 8 explicit parameters; both prompt templates follow separately
 - Architect independence note is preserved
 - Criteria mapping table is present with 8 rows
 - Both prompt templates are present (fact-checker and regular)
@@ -320,7 +330,7 @@ Read the modified section in `skills/brainstorming/SKILL.md`. Verify:
 **Step 4: Count lines**
 
 Run: `wc -l skills/brainstorming/SKILL.md`
-Expected: Approximately 250 lines (down from 310)
+Expected: Approximately 250 lines (down from ~310)
 
 **Step 5: Commit**
 
@@ -389,11 +399,15 @@ Read `skills/business-brainstorming/SKILL.md` from `## After the Design` through
 
 **Step 2: Add visualization dispatch and Mockups field instruction**
 
-Insert the following after the documentation section (after `- Use elements-of-style:writing-clearly-and-concisely skill if available`) and before the `**Fact-Check + Critique Panel**` heading:
+First, add a Mockups field instruction to the **Documentation** section (after `- Use elements-of-style:writing-clearly-and-concisely skill if available`), keeping it consistent with brainstorming/SKILL.md which places it under Documentation:
 
 ```markdown
-
 - After visualization artifacts are generated, add a `**Mockups:**` field to the design document header listing the mockup path (e.g., `**Mockups:** docs/mockups/{session-name}.html`). This field is consumed by writing-plans and finishing-a-development-branch to locate mockups without guessing. If no visual artifacts were generated, omit the field.
+```
+
+Then insert the following visualization section after the Documentation section and before the `**Fact-Check + Critique Panel**` heading:
+
+```markdown
 
 **Visualization (conditional):**
 
@@ -466,21 +480,24 @@ You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying
 **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
 Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and follow its process using the configuration and prompt template above.
+**Shared orchestration file resolution:**
+1. Primary: Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+Follow its process using the configuration and prompt template above.
 ```
 
 **Step 3: Verify the edit**
 
 Read the modified section. Verify:
-- Configuration block has all 9 parameters
+- Configuration block has 8 explicit parameters; both prompt templates follow separately
 - `fact-check-mode` is "all-critics" (not "division-of-labor")
 - `fact-check-tools` includes WebSearch and WebFetch
 - `criteria-assignment` is "no"
 - `aggregation` is "sub-agent" (upgraded from inline)
 - Universal prompt template includes WebSearch/WebFetch
 - Universal prompt template writes report to `{report-path}` and returns one-line confirmation
-- Final line reads the shared orchestration file
-- No orphaned inline orchestration instructions remain
+- Final line reads the shared orchestration file (with Glob fallback)
+- No orphaned inline orchestration instructions remain — confirm these specific phrases are gone: "Aggregate the reports:", "Merge all critic reports in the main thread", "Each critic's prompt:" (this is an intentional behavioral upgrade from inline to sub-agent aggregation, design doc D5)
 
 **Step 4: Commit**
 
@@ -603,12 +620,22 @@ Read `agents/project-scanner.md` lines 1-3. Verify frontmatter has `model: opus`
 Run: `wc -l skills/brainstorming/SKILL.md skills/business-brainstorming/SKILL.md skills/_shared/critique-panel-orchestration.md agents/project-scanner.md`
 
 Expected approximate counts:
-- brainstorming/SKILL.md: ~250 lines (down from 310)
+- brainstorming/SKILL.md: ~250 lines (down from ~310)
 - business-brainstorming/SKILL.md: ~160 lines (similar to 165, gained features but lost inline critique)
 - _shared/critique-panel-orchestration.md: ~70 lines
 - agents/project-scanner.md: ~40 lines
 
-**Step 7: Commit verification results**
+**Step 7: Regression checks**
+
+Verify that untouched sections survived the edits:
+
+1. Run Grep for `Option A: Hands-on` in `skills/brainstorming/SKILL.md` — must match (next-step prompt still offers both options).
+2. Run Grep for `Option B: Autopilot` in `skills/brainstorming/SKILL.md` — must match.
+3. Run Grep for `/aligned:business-write-plan` in `skills/business-brainstorming/SKILL.md` — must match (next-step prompt still points to business-write-plan).
+4. Run Grep for `## Design Critique` in both SKILL.md files — must match in each (standalone critique mode intact).
+5. Run Grep for `## Key Principles` in both SKILL.md files — must match in each.
+
+**Step 8: Commit verification results**
 
 No commit needed — this is a verification-only task. If any check fails, fix the issue and commit the fix before proceeding.
 
