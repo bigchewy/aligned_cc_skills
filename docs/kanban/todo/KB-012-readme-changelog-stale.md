@@ -1,13 +1,15 @@
-# KB-012: README.md changelog is stale
+# KB-012: README.md is stale
 
 - **Type:** doc-staleness
 - **Discovered during:** doc-staleness-detector
 - **Location:** `README.md`
-- **Observed:** The Changelog section (lines 186-212) stops at version 0.3.0. The plugin is now at version 0.3.2 (per `.claude-plugin/plugin.json`). Two version bumps are unlogged:
-  - **0.3.1** (commit c29378a): Finishing-skill regression fixes — restored deploy+smoke test option, worktree cleanup, core principle archive step, KB commit worktree guidance, red flags section, quick reference tables, common mistakes entries, CRITICAL always-run-from-main-repo section.
-  - **0.3.2** (commit 742ccf1): Token optimization — trimmed verbosity in create-new-skill and finishing-a-development-branch, condensed rationalizations tables to top 4 entries, extracted shared Kanban entry format to `skills/_shared/kanban-entry-format.md`.
-  - **Post-0.3.2 (unreleased):** Business skills sync (major enhancements to all 4 business skills: autonomous mode, dual-critic architecture, issue discovery protocol, Phase 0 multi-agent investigation, etc.), kanban HTML dashboard feature added then partially removed, model frontmatter added to agents, plan-file status marking in executing-plans, dashboard note in writing-plans.
-- **Expected:** Changelog should include 0.3.1 and 0.3.2 entries summarizing the above changes. A version bump to 0.3.3 (or 0.4.0 given the scope of business-skills-sync) with its own changelog entry may also be warranted for the unreleased work.
-- **Source commits:** 54 commits since doc was last updated (Feb 17 - Feb 23)
-- **Severity:** MEDIUM
+- **Observed:** Multiple sections of README.md are out of sync with the current codebase (plugin version 0.10.0):
+  1. **Headline count (line 3):** Says "28 skills" but there are 31 SKILL.md files. Missing from count: `persona-panel`, `create-svg-diagram`, `claude-profile`.
+  2. **Skill Reference table (lines 78-108):** Missing 3 skills: `persona-panel` (content testing against buyer personas), `create-svg-diagram` (hand-coded SVG diagrams with design tokens), `claude-profile` (purpose unknown — needs investigation).
+  3. **Permissions section (lines 36-65):** Missing `Skill(aligned:persona-panel)`, `Skill(aligned:create-svg-diagram)`, `Skill(aligned:claude-profile)`.
+  4. **Changelog (lines 197-235):** Stops at version 0.6.0. The plugin is now at 0.10.0. Missing changelog entries for 0.7.0 through 0.10.0, which include: advisor/framework directory flattening, persona-panel skill, create-svg-diagram skill, autopilot pipeline, session-document-generator agent, fragment mode for diagram agents, content generation skills (generate-deck, generate-blog-post, generate-one-pager), global design-principles fallback, brainstorming visualization refresh, and extensive generate-blog-post enhancements (MDX output, context-aware delivery, HTML preview, asset manifest).
+- **Expected:** Update headline to "31 skills", add 3 missing skills to reference table and permissions section, add changelog entries for versions 0.7.0 through 0.10.0 summarizing the major features listed above.
+- **Source commits:** 10 source commits since README was last updated (Mar 23-24), but the changelog gap spans months of accumulated drift from versions 0.6.0 to 0.10.0.
+- **Severity:** HIGH
 - **Created:** 2026-02-23
+- **Updated:** 2026-03-24 (re-scanned by doc-staleness-detector — drift has grown significantly since original filing)

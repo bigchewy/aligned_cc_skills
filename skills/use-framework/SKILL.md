@@ -16,11 +16,16 @@ Guide the user through a framework's phases interactively.
 
 Discover all frameworks from the plugin's flat directory.
 
-**Step 1a: Glob plugin frameworks**
+**Step 1a: Glob frameworks from all locations**
 
-Glob `frameworks/*/prompt.md`. Each `prompt.md` represents one framework. The slug is the parent directory name (e.g., for `frameworks/clearing-model/prompt.md`, the slug is `clearing-model`).
+Search for frameworks in two locations and merge results (deduplicate by slug, project-local wins):
 
-If no results, report: "No framework files found. Check your plugin installation."
+1. **Plugin directory:** Glob `frameworks/*/prompt.md` (relative to the plugin root)
+2. **Project directory:** Glob `frameworks/*/prompt.md` (relative to the current working directory)
+
+Each `prompt.md` represents one framework. The slug is the parent directory name (e.g., for `frameworks/clearing-model/prompt.md`, the slug is `clearing-model`).
+
+If no results from either location, report: "No framework files found. Add a `frameworks/` directory to your project or check your plugin installation."
 
 **Context management:** When listing all frameworks, glob first to get folder names, then read only the first line of each `prompt.md`. Do not read full file contents during discovery — full reads happen only after matching.
 

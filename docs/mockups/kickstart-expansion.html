@@ -598,8 +598,8 @@ graph LR
       <ul class="bullet-list">
         <li><strong>Software:</strong> "Project scaffolded. Run <code>/aligned:design-principles</code> to define the design direction."</li>
         <li><strong>Business:</strong> "Project scaffolded. Start with <code>/aligned:business-brainstorming</code> to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."</li>
-        <li><strong>Personal:</strong> "Project scaffolded. Fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.), then start working."</li>
-        <li><strong>General:</strong> "Project scaffolded. Fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."</li>
+        <li><strong>Personal:</strong> "Project scaffolded. Start with <code>/aligned:business-brainstorming</code> to define your first initiative, or fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.)."</li>
+        <li><strong>General:</strong> "Project scaffolded. Start with <code>/aligned:business-brainstorming</code> to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."</li>
         <li><strong>All types:</strong> Commit all scaffolded files</li>
       </ul>
       <div class="diagram-container">
@@ -608,8 +608,8 @@ graph LR
     BRANCH{"Project Type?"}
     SW_MSG["Run\ndesign-principles"]
     BIZ_MSG["Start\nbusiness-brainstorming\nor fill guardrails"]
-    PER_MSG["Fill guardrails\nwith privacy\nconstraints"]
-    GEN_MSG["Fill CLAUDE.md\nas you discover\nconventions"]
+    PER_MSG["Start\nbusiness-brainstorming\nor fill guardrails"]
+    GEN_MSG["Start\nbusiness-brainstorming\nor fill CLAUDE.md"]
     COMMIT["Commit\nScaffolded Files"]
 
     BRANCH -->|Software| SW_MSG --> COMMIT

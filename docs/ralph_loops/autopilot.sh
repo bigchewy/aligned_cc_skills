@@ -60,7 +60,12 @@ for f in "$WRITE_PLAN_PROMPT" "$RALPH_SCRIPT" "$MOCKUP_PROMPT" "$VERIFY_PROMPT" 
 done
 
 PROJECT="$(cd "$PROJECT" && pwd)"
-DESIGN_DOC="$(cd "$(dirname "$DESIGN_DOC")" && pwd)/$(basename "$DESIGN_DOC")"
+# Resolve DESIGN_DOC: relative paths are relative to PROJECT, not caller's cwd
+if [[ "$DESIGN_DOC" != /* ]]; then
+  DESIGN_DOC="$(cd "$PROJECT/$(dirname "$DESIGN_DOC")" && pwd)/$(basename "$DESIGN_DOC")"
+else
+  DESIGN_DOC="$(cd "$(dirname "$DESIGN_DOC")" && pwd)/$(basename "$DESIGN_DOC")"
+fi
 
 if [ ! -d "$PROJECT" ]; then
   echo "ERROR: Project directory does not exist: $PROJECT" >&2
