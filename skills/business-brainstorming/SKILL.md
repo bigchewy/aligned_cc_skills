@@ -17,12 +17,14 @@ You MUST complete each phase before proceeding to the next.
 
 ### Phase 1: Establish the Goal
 
-First, dispatch a project scan agent via Task tool (subagent_type=general-purpose):
+Dispatch a project scan agent via Task tool (subagent_type=general-purpose), running in the background:
 
 "Read `agents/project-scanner.md` for your full workflow.
 Scan the project at `{project-root}` for brainstorm topic `{topic}`."
 
-Wait for the scan to complete, then proceed with Phase 1 goal questions using the summary as working context. If a question during the brainstorm requires deeper detail about the project, read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring in the main thread.
+**Overlap with first goal question:** Do not wait for the scan to complete before starting Phase 1. Immediately ask your first goal question. The scan runs in parallel while the user responds. If the user responds before the scan finishes, ask another goal question — do not idle. Once the scan completes, incorporate the summary as working context for all subsequent questions.
+
+If a question during the brainstorm requires deeper detail about the project, read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring in the main thread.
 
 **Nothing happens without a clear goal.**
 

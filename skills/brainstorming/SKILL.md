@@ -9,22 +9,28 @@ description: "You MUST use this before any creative work - creating features, bu
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
+Start by dispatching a project scan sub-agent to survey the codebase, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
 
 ## The Process
 
 **Understanding the idea:**
 
-First, dispatch a project scan agent via Task tool (subagent_type=general-purpose):
+**MANDATORY: You MUST dispatch the project scan before proposing any design.** Do not skip the scan because the user's message seems clear — the scan reveals codebase context that shapes which questions to ask. Skipping the scan is a skill violation.
+
+First, dispatch a project scan agent via Task tool (subagent_type=general-purpose), running in the background:
 
 "Read `agents/project-scanner.md` for your full workflow.
 Scan the project at `{project-root}` for brainstorm topic `{topic}`."
 
-Wait for the scan to complete, then proceed with the Q&A using the summary as your working context. If a question during the brainstorm requires deeper detail about the project (e.g., how a specific module works, what pattern an existing feature follows), read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring the codebase in the main thread.
+**Overlap with first business question:** Do not wait for the scan to complete before starting Q&A. Immediately ask your first business question (about intent, scope, or priorities — see business question criteria below). The scan runs in parallel while the user responds. This eliminates dead wait time without skipping context gathering.
 
-**Sequencing rule:** Do not dispatch an Architect auto-consult (see below) until the project scan has completed and you've reviewed the summary. For early technical questions, check whether the scan findings already answer the question before dispatching a separate sub-agent.
+**Scan gate:** Before asking any **technical** question or dispatching an Architect auto-consult, the scan MUST have completed and you MUST have reviewed the summary. If the user responds to the first business question before the scan finishes, ask another business question — do not idle. Once the scan completes, incorporate the summary as working context for all subsequent questions.
 
-Then ask questions one at a time to refine the idea. Before asking each question, classify it:
+If a question during the brainstorm requires deeper detail about the project (e.g., how a specific module works, what pattern an existing feature follows), read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring the codebase in the main thread.
+
+**MANDATORY: Ask a minimum of 3 business questions before proposing any approaches or design sections.** Even when the user's request seems fully specified, there are always unstated assumptions about scope, priorities, and constraints. Do not shortcut the Q&A because the problem seems obvious.
+
+Ask questions one at a time to refine the idea. Before asking each question, classify it:
 
 - **Business questions** (ask the user): See "What stays user-facing" under Architect auto-consult below.
 - **Technical questions** (auto-resolve via Architect): See "What counts as technical" under Architect auto-consult below.
