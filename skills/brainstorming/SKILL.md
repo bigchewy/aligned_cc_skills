@@ -15,21 +15,10 @@ Start by understanding the current project context, then ask questions one at a 
 
 **Understanding the idea:**
 
-First, dispatch a project scan sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) to survey the project and build context. Use this dispatch template — replace `{topic}` with a short slug for the brainstorm topic and `{project-root}` with the project root:
+First, dispatch a project scan agent via Task tool (subagent_type=general-purpose):
 
-   "Survey the project at `{project-root}` to build context for a brainstorming session. You have access to Bash, Glob, Grep, Read, and Write tools. Use Bash only for system commands (e.g., npm, git) — never for content search. Use the Grep tool for searching file contents.
-
-   Investigate:
-   - Project structure (key directories, entry points, config files)
-   - Recent git activity (last 10-15 commits — run `git log --oneline -15` via Bash)
-   - Existing docs (README, CLAUDE.md, any docs/ directory)
-   - Architecture docs (`docs/architecture.md` if it exists — read in full; note data flows, module dependencies, system diagrams, and anything that looks stale)
-   - Architecture patterns (how modules are organized, key abstractions, data flow conventions)
-   - Tech stack and dependencies (package.json, requirements.txt, go.mod, etc.)
-
-   Write your full detailed findings to `/tmp/brainstorm-context-{topic}/project-scan.md` using the Write tool. Include file paths, code patterns, and specific details you discovered.
-
-   Then return ONLY a concise summary (under 300 words) covering: what this project is, tech stack, key architectural patterns, and anything notable about recent activity. Do not return the full scan — just the summary."
+"Read `agents/project-scanner.md` for your full workflow.
+Scan the project at `{project-root}` for brainstorm topic `{topic}`."
 
 Wait for the scan to complete, then proceed with the Q&A using the summary as your working context. If a question during the brainstorm requires deeper detail about the project (e.g., how a specific module works, what pattern an existing feature follows), read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring the codebase in the main thread.
 
@@ -171,84 +160,55 @@ The check: if a tab contains multiple diagrams, subgraphs, or sections that each
 
 **Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
 
-**MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
-
-**Division of labor:** One critic owns exhaustive fact-checking. The others do NOT duplicate this work — they read key files to understand context, then focus purely on their domain-specific checklist criteria. This prevents the ~50% token waste that occurs when every critic independently fact-checks the same claims and evaluates the same criteria.
+**Critique panel configuration:**
+- Skill name: brainstorming
+- Checklist filename: design-critique-checklist.md
+- Fact-check mode: division-of-labor
+- Fact-check tools: Glob, Grep, Read, Write
+- Aggregation: sub-agent
+- Criteria assignment: yes
+- Visual artifacts: docs/mockups/{session-name}.html
+- Critique temp directory: /tmp/brainstorm-critique-{topic}
 
 **Architect independence note:** If The Architect was consulted during the auto-consult phase and is also selected as a critique panel critic, add this to The Architect's critique prompt: "This design followed an earlier Architect recommendation during brainstorming. Challenge the design with fresh eyes — do not assume the earlier recommendation was correct. Look for integration risks or pattern violations that a quick options evaluation might have missed."
 
-**Round 1:**
-1. Read `advisors/registry.md`.
-2. Based on the design document's content, select 1-4 critics following the registry's selection guidelines. Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
-3. **Assign roles before launching agents:**
+**Criteria mapping table:**
 
-   **Fact-checker designation:** Exactly one critic owns Phase 1 (exhaustive fact-checking). Priority: The QA Engineer > The Architect > first selected critic. The fact-checker also gets domain critique work (Phase 2) — they do both jobs.
+| Criterion | Best-fit domains |
+|-----------|-----------------|
+| 1. Requirements completeness | product, prioritization, scope control, user problems |
+| 2. Architecture feasibility | codebase alignment, patterns, module boundaries |
+| 3. YAGNI violations | simplicity, focus, first principles, scope control |
+| 4. Edge cases / error handling | edge cases, failure modes, testing, reliability |
+| 5. Data flow clarity | codebase alignment, patterns, integration risk |
+| 6. Integration points | integration risk, security, authentication, blast radius |
+| 7. Testing strategy | testing, reliability, edge cases, failure modes |
+| 8. Scope creep | focus, simplicity, scope control, prioritization |
 
-   **Criteria assignment:** Assign each checklist criterion (1-8) to the one critic whose domain best matches it. Use this mapping:
+Criterion 9 (Decision quality) goes to **all** critics. Each criterion 1-8 goes to exactly one critic. If no selected critic's domain matches a criterion, assign it to the fact-checker as catch-all. Target 2-4 criteria per critic.
 
-   | Criterion | Best-fit domains |
-   |-----------|-----------------|
-   | 1. Requirements completeness | product, prioritization, scope control, user problems |
-   | 2. Architecture feasibility | codebase alignment, patterns, module boundaries |
-   | 3. YAGNI violations | simplicity, focus, first principles, scope control |
-   | 4. Edge cases / error handling | edge cases, failure modes, testing, reliability |
-   | 5. Data flow clarity | codebase alignment, patterns, integration risk |
-   | 6. Integration points | integration risk, security, authentication, blast radius |
-   | 7. Testing strategy | testing, reliability, edge cases, failure modes |
-   | 8. Scope creep | focus, simplicity, scope control, prioritization |
+**Fact-checker prompt template:**
 
-   Criterion 9 (Decision quality) goes to **all** critics — it's lightweight and each lens adds value. Each criterion 1-8 goes to exactly one critic. If no selected critic's domain matches a criterion, assign it to the fact-checker as catch-all. Target 2-4 criteria per critic.
+"[Full contents of the critic's prompt file]
 
-   State the full assignment table before launching agents (e.g., "Steve Jobs: criteria 1, 3, 8. The QA Engineer [fact-checker]: criteria 4, 5, 7 + fact-checking.").
+You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `{visual-artifacts-path}` — open the HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec. Your job has two phases:
+**Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
+**Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
+Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-4. Read each selected critic's full prompt file (the path listed in the registry entry).
-5. **Resolve the checklist (MANDATORY):** The checklist is a sibling file in this skill's directory. Resolve its absolute path:
-   - Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/design-critique-checklist.md`.
-   - **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/brainstorming/design-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-   Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
-6. Create a temporary directory for this critique round: `/tmp/brainstorm-critique-{topic}/round-1/`. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` with the absolute path of the design document, `{criteria-list}` with the assigned criteria numbers, and `{report-path}` with `/tmp/brainstorm-critique-{topic}/round-1/{critic-slug}-report.md`.
+**Regular critic prompt template:**
 
-   **For the designated fact-checker, use this prompt:**
+"[Full contents of the critic's prompt file]
 
-   "[Full contents of the critic's prompt file]
+You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `{visual-artifacts-path}` — open the HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec.
+**IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of file paths, line numbers, and code claims in parallel. Do not extract and verify every claim — that work is covered.
+Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
+Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}.html` — open the HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec. Your job has two phases:
-   **Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
-   **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-   Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
-
-   **For all other critics, use this prompt:**
-
-   "[Full contents of the critic's prompt file]
-
-   You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `docs/mockups/{session-name}.html` — open the HTML file with Read and evaluate the visuals (mockups, flowcharts, architecture diagrams) alongside the written spec.
-   **IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of file paths, line numbers, and code claims in parallel. Do not extract and verify every claim — that work is covered.
-   Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-   Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
-
-7. **Aggregate via sub-agent (do NOT aggregate in the main thread):**
-
-   After all critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
-
-   "You are a critique aggregator. You have access to Glob and Read tools. Do not use Bash for searching. Read all report files in `/tmp/brainstorm-critique-{topic}/round-1/`. Also read the design document at `{design-file-path}` for context.
-
-   Produce a unified report:
-   - **Fact-checks:** The report from {fact-checker-slug} is the authoritative fact-check source. Summarize: total claims checked, accuracy percentage, list every INCORRECT claim with the correction. If another critic flagged a factual issue incidentally, include it.
-   - **Critique findings:** Merge all critic findings, preserving persona tags. De-duplicate — when two or more critics flag the same issue, keep the highest-severity version and note all sources. Group by severity (high → medium → low).
-   - **Action items:** List concrete changes needed, ordered by severity. For each, note which critic(s) raised it.
-
-   Be concise — the goal is to give the design author a clear, actionable summary without needing to read the raw reports. Keep the unified report under 1500 words."
-
-   Present the aggregation agent's unified report to the user.
-
-8. Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/high critique issues the user approves. If you need to review a specific critic's raw findings in detail, read the report file directly — do not ask the user to summarize it.
-
-**Round 2 (conditional):**
-Only run if Round 1 found medium or high severity issues. Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Write to `/tmp/brainstorm-critique-{topic}/round-2/`. Scope Round 2 to changes only — prepare a brief summary of what changed since Round 1 and pass it to each agent. The fact-checker re-verifies only changed claims. Other critics re-evaluate only changed sections against their assigned criteria. Aggregate Round 2 the same way — dispatch an aggregation agent, do not aggregate inline.
-
-**Escalation:** If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. For example, if The Architect flagged a security concern but The Security Reviewer was not in Round 1, add them for Round 2. State the escalation reason. Maximum one additional critic per round.
-
-Apply any remaining fixes. Present final results to the user.
+**Shared orchestration file resolution:**
+1. Primary: Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+Follow its process using the configuration and prompt templates above.
 
 **Visualization refresh (conditional):**
 

@@ -21,7 +21,7 @@
 
 ---
 
-### Task 1: Create the project-scanner agent
+### ✅ Task 1: Create the project-scanner agent
 
 **Files:**
 - Create: `agents/project-scanner.md`
@@ -86,7 +86,7 @@ git commit -m "feat: add project-scanner agent for brainstorming context gatheri
 
 ---
 
-### Task 2: Create the shared critique-panel-orchestration file
+### ✅ Task 2: Create the shared critique-panel-orchestration file
 
 **Files:**
 - Create: `skills/_shared/critique-panel-orchestration.md`
@@ -210,7 +210,7 @@ git commit -m "feat: add shared critique-panel-orchestration for brainstorming s
 
 ---
 
-### Task 3: Refactor brainstorming/SKILL.md — replace project scan dispatch
+### ✅ Task 3: Refactor brainstorming/SKILL.md — replace project scan dispatch
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (the inline project scan template starting at `First, dispatch a project scan sub-agent`)
@@ -249,7 +249,7 @@ git commit -m "refactor: brainstorming uses project-scanner agent instead of inl
 
 ---
 
-### Task 4: Refactor brainstorming/SKILL.md — replace critique panel with shared orchestration
+### ✅ Task 4: Refactor brainstorming/SKILL.md — replace critique panel with shared orchestration
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (the critique panel section starting at the `**Fact-Check + Critique Panel**` heading)
@@ -341,7 +341,7 @@ git commit -m "refactor: brainstorming critique panel uses shared orchestration"
 
 ---
 
-### Task 5: Refactor business-brainstorming/SKILL.md — add project scan dispatch
+### ✅ Task 5: Refactor business-brainstorming/SKILL.md — add project scan dispatch
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (add project scan at start of Phase 1)
@@ -388,7 +388,7 @@ git commit -m "feat: business-brainstorming adds project scan via shared agent"
 
 ---
 
-### Task 6: Refactor business-brainstorming/SKILL.md — add visualization dispatch
+### ✅ Task 6: Refactor business-brainstorming/SKILL.md — add visualization dispatch
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (add visualization after documentation, before critique panel)
@@ -445,7 +445,7 @@ git commit -m "feat: business-brainstorming adds conditional visualization dispa
 
 ---
 
-### Task 7: Refactor business-brainstorming/SKILL.md — replace critique panel with shared orchestration
+### ✅ Task 7: Refactor business-brainstorming/SKILL.md — replace critique panel with shared orchestration
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (the critique panel section)
@@ -508,7 +508,7 @@ git commit -m "refactor: business-brainstorming critique panel uses shared orche
 
 ---
 
-### Task 8: Add visualization refresh to business-brainstorming/SKILL.md
+### ✅ Task 8: Add visualization refresh to business-brainstorming/SKILL.md
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (add visualization refresh after critique panel, before post-design steps)
@@ -571,7 +571,7 @@ git commit -m "feat: business-brainstorming adds visualization refresh and updat
 
 ---
 
-### Task 9: Structural verification
+### ✅ Task 9: Structural verification
 
 **Files:**
 - Read: `skills/brainstorming/SKILL.md`
@@ -641,7 +641,7 @@ No commit needed — this is a verification-only task. If any check fails, fix t
 
 ---
 
-### Task 10: Bump plugin version
+### ✅ Task 10: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)
