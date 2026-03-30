@@ -641,7 +641,7 @@ No commit needed — this is a verification-only task. If any check fails, fix t
 
 ---
 
-### Task 10: Bump plugin version
+### ✅ Task 10: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)
