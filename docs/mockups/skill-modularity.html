@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Modularity — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            button: { DEFAULT: '#32373c', hover: '#1a1f23', text: '#ffffff' }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin: 0 0 8px 0;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #e8762b;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .bullet-list strong { font-weight: 600; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #e8762b;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Data table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 16px;
+    }
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: #1a1a1a;
+      padding: 8px 12px;
+      border-bottom: 2px solid #f0eeeb;
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #1a1a1a;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table .mono { font-family: Menlo, Consolas, Monaco, monospace; font-size: 0.8rem; }
+    .data-table .dimmed { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>Skill Modularity: Shared Modules for Brainstorming Pair</h1>
+  <p class="subtitle">Design session: extracting shared orchestration from brainstorming + business-brainstorming</p>
+  <p class="context">Extract shared structural patterns into reusable files and agents so orchestration improvements are "edit once, both get it." Business-brainstorming gains project scanning, visualization, and sub-agent aggregation. Domain-specific content stays in each skill's own SKILL.md.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="switchTab('project-scanner')">Project Scanner</button>
+    <button class="tab-btn" onclick="switchTab('critique-panel')">Critique Panel</button>
+    <button class="tab-btn" onclick="switchTab('skill-changes')">Skill Changes</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+    <button class="tab-btn" onclick="switchTab('testing')">Testing</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- OVERVIEW PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>Refactoring Flow<span class="badge">overview</span></h2>
+      <p class="description">The skill modularity refactor extracts shared patterns from two skills into common files, then updates each skill to reference the shared modules. Business-brainstorming gains three new capabilities: project scanning, visualization dispatch, and sub-agent aggregation.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  A["Architecture<br/>Before vs After"] --> B["Project Scanner<br/>New Agent"]
+  B --> C["Critique Panel<br/>Shared Orchestration"]
+  C --> D["Skill Changes<br/>Both SKILLs Updated"]
+  D --> E["Decisions<br/>7 Key Choices"]
+  E --> F["Testing<br/>Verification Strategy"]
+
+  click A "javascript:switchTab('architecture')"
+  click B "javascript:switchTab('project-scanner')"
+  click C "javascript:switchTab('critique-panel')"
+  click D "javascript:switchTab('skill-changes')"
+  click E "javascript:switchTab('decisions')"
+  click F "javascript:switchTab('testing')"
+
+  style A fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style B fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style C fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style D fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style E fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style F fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900;"></div>New shared files</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffffff; border: 1px solid #e5e7eb;"></div>Modified files</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef; border: 1px solid #555555;"></div>Design artifacts</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- ARCHITECTURE PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-architecture">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Before: Duplicated Orchestration<span class="badge">architecture</span></h2>
+      <p class="description">Both skills contain their own inline copies of project scanning logic and critique panel orchestration. Changes to one require manual duplication to the other. Business-brainstorming lacks project scanning and visualization entirely.</p>
+      <ul class="bullet-list">
+        <li><strong>brainstorming/SKILL.md</strong> has 15-line inline project scan dispatch template and ~80-line critique panel</li>
+        <li><strong>business-brainstorming/SKILL.md</strong> has no project scan, no visualization, and a ~36-line critique panel with inline aggregation</li>
+        <li><strong>Drift risk:</strong> orchestration improvements in one skill never reach the other (already 2x diverged in line count after ~2 months)</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  BS["brainstorming<br/>SKILL.md<br/>309 lines"] --- PS1["Inline<br/>Project Scan<br/>15 lines"]
+  BS --- CP1["Inline<br/>Critique Panel<br/>80 lines"]
+  BBS["business-brainstorming<br/>SKILL.md<br/>165 lines"] --- CP2["Inline<br/>Critique Panel<br/>36 lines"]
+  BBS -.- NPS["No Project<br/>Scan"]
+  BBS -.- NVZ["No<br/>Visualization"]
+
+  style BS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style BBS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style PS1 fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style CP1 fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style CP2 fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style NPS fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style NVZ fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>After: Shared Modules<span class="badge">target</span></h2>
+      <p class="description">Shared orchestration extracted into common files. Both skills reference the same agent and shared instruction file. Business-brainstorming gains project scanning, visualization, and sub-agent aggregation. Domain-specific content stays in each SKILL.md.</p>
+      <ul class="bullet-list">
+        <li><strong>agents/project-scanner.md</strong> is dispatched identically by both skills (~40 lines, new)</li>
+        <li><strong>skills/_shared/critique-panel-orchestration.md</strong> is parameterized and read by both (~70 lines, new, includes config validation preamble)</li>
+        <li><strong>Edit once, both get it:</strong> orchestration improvements propagate automatically</li>
+        <li><strong>Business gains:</strong> project scanning, visualization dispatch via session-document-generator, sub-agent aggregation</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  BS2["brainstorming<br/>SKILL.md<br/>~250 lines"] --> PSA["agents/<br/>project-scanner.md"]
+  BS2 --> CPO["_shared/<br/>critique-panel-<br/>orchestration.md"]
+  BS2 --> VIZ["session-document-<br/>generator"]
+  BBS2["business-brainstorming<br/>SKILL.md<br/>~160 lines"] --> PSA
+  BBS2 --> CPO
+  BBS2 --> VIZ
+
+  style BS2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style BBS2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style PSA fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style CPO fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style VIZ fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PROJECT SCANNER PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-project-scanner">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Project Scanner Agent<span class="badge">new agent</span></h2>
+      <p class="description">A self-contained sub-agent dispatched via the Task tool. Receives a project root and topic slug, scans the project structure, and writes findings to /tmp/. Both skills use the identical dispatch pattern. The scanner adapts its investigation based on what it finds: code-heavy projects get tech stack analysis, document-heavy projects get domain material emphasis.</p>
+      <ul class="bullet-list">
+        <li><strong>Input:</strong> project root path + topic slug</li>
+        <li><strong>Output:</strong> writes to /tmp/brainstorm-context-{topic}/project-scan.md, returns summary under 300 words</li>
+        <li><strong>Tools:</strong> Bash (git only), Glob, Grep, Read, Write</li>
+        <li><strong>Model:</strong> opus (frontmatter setting)</li>
+        <li><strong>New for business:</strong> scan findings help Claude ask better questions during goal clarification and problem diagnosis</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  SKILL["Calling<br/>SKILL.md"] -->|"dispatch via<br/>Task tool"| SCAN["project-scanner.md"]
+  SCAN --> S1["Project<br/>Structure"]
+  SCAN --> S2["Git<br/>History"]
+  SCAN --> S3["Existing<br/>Docs"]
+  SCAN --> S4["Plans and<br/>Designs"]
+  SCAN --> S5["Domain<br/>Materials"]
+  SCAN --> S6["Architecture<br/>Patterns"]
+  SCAN --> S7["Tech Stack"]
+  S1 --> OUT["/tmp/brainstorm-<br/>context-topic/<br/>project-scan.md"]
+  S2 --> OUT
+  S3 --> OUT
+  S4 --> OUT
+  S5 --> OUT
+  S6 --> OUT
+  S7 --> OUT
+
+  style SKILL fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style SCAN fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style S1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S5 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S6 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style S7 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style OUT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Investigation Checklist<span class="badge">detail</span></h2>
+      <p class="description">The scanner follows a fixed checklist to gather project context. It checks for both code artifacts and domain materials, adapting emphasis based on project type. Results feed into the brainstorming session as working context.</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Check</th><th>What It Looks For</th><th>How</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Project structure</td><td>Key directories, entry points, config files</td><td class="mono">Glob, Read</td></tr>
+          <tr><td>Git activity</td><td>Last 10-15 commits</td><td class="mono">git log --oneline -15</td></tr>
+          <tr><td>Existing docs</td><td>README, CLAUDE.md, docs/ directory</td><td class="mono">Read</td></tr>
+          <tr><td>Architecture docs</td><td>docs/architecture.md: data flows, module deps, diagrams, staleness</td><td class="mono">Read (full)</td></tr>
+          <tr><td>Plans and designs</td><td>docs/plans/: prior design docs, active plans</td><td class="mono">Glob, Read</td></tr>
+          <tr><td>Domain materials</td><td>Meeting notes, strategy docs, analyses, deliverables</td><td class="mono">Glob, Read</td></tr>
+          <tr><td>Architecture patterns</td><td class="dimmed">Module organization, key abstractions, data flow conventions (if applicable)</td><td class="mono">Grep, Read</td></tr>
+          <tr><td>Tech stack</td><td class="dimmed">package.json, requirements.txt, go.mod, etc. (if applicable)</td><td class="mono">Glob, Read</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CRITIQUE PANEL PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-critique-panel">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Shared Critique Panel Orchestration<span class="badge">new shared file</span></h2>
+      <p class="description">The shared file at skills/_shared/critique-panel-orchestration.md contains the full critique workflow. Each calling SKILL.md sets configuration parameters before reading it, making the same orchestration logic serve both fact-check modes and aggregation strategies. A configuration validation preamble catches misconfigured parameters before execution.</p>
+      <ul class="bullet-list">
+        <li><strong>Config validation preamble:</strong> verifies all required parameters are present before proceeding; STOPs with a clear error if any are missing from the SKILL.md configuration block</li>
+        <li><strong>Mandatory sub-agent rule:</strong> all critique rounds run as fresh sub-agents via Task tool, never in main context</li>
+        <li><strong>Checklist resolution:</strong> inlined (not a separate shared file) to keep reference depth at one hop from SKILL.md</li>
+        <li><strong>Two fact-check modes:</strong> division-of-labor (technical) and all-critics (business)</li>
+        <li><strong>Apply-fixes-before-Round-2:</strong> incorrect facts are corrected and user-approved critique fixes are applied before Round 2 critics see the document</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  CFG["SKILL.md sets<br/>configuration<br/>parameters"] --> VAL["Config<br/>Validation<br/>Preamble"]
+  VAL --> READ["Read shared<br/>critique-panel-<br/>orchestration.md"]
+  READ --> R1["Round 1<br/>Select 1-4 critics<br/>from registry"]
+  R1 --> LAUNCH["Launch critics<br/>in parallel<br/>via Task tool"]
+  LAUNCH --> AGG["Aggregation<br/>sub-agent"]
+  AGG --> FIX["Apply Fixes<br/>fact-check corrections<br/>+ approved changes"]
+  FIX --> R2{"Round 2<br/>needed?"}
+  R2 -->|"medium/high<br/>issues fixed"| R2GO["Round 2<br/>same critics<br/>scoped to changes"]
+  R2 -->|"clean"| DONE["Present<br/>unified report"]
+  R2GO --> DONE
+
+  style CFG fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style VAL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style READ fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style R1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style LAUNCH fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style AGG fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style FIX fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style R2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style R2GO fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style DONE fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Configuration Parameters<span class="badge">parameterization</span></h2>
+      <p class="description">Each SKILL.md sets these parameters before reading the shared file. The shared orchestration logic branches on these values. The validation preamble checks all required parameters are present.</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Parameter</th><th>brainstorming</th><th>business-brainstorming</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">fact-check-mode</td><td>division-of-labor</td><td>all-critics</td></tr>
+          <tr><td class="mono">fact-check-tools</td><td class="mono">Glob, Grep, Read, Write</td><td class="mono">Glob, Grep, Read, WebSearch, WebFetch</td></tr>
+          <tr><td class="mono">aggregation</td><td>sub-agent</td><td>sub-agent</td></tr>
+          <tr><td class="mono">criteria-assignment</td><td>yes (with mapping table)</td><td>no</td></tr>
+          <tr><td class="mono">visual-artifacts</td><td class="mono">docs/mockups/{session}.html</td><td class="mono">docs/mockups/{session}.html</td></tr>
+          <tr><td class="mono">critique-temp-directory</td><td class="mono" colspan="2">/tmp/brainstorm-critique-{topic}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Why All-Critics for Business<span class="badge">D4 rationale</span></h2>
+      <p class="description">The business skill uses all-critics fact-checking instead of division-of-labor. This is not a preference toggle but reflects fundamentally different checklist semantics.</p>
+      <ul class="bullet-list">
+        <li><strong>Different search strategies:</strong> business fact-checking uses WebSearch/WebFetch where different critics bring different search strategies for the same claim</li>
+        <li><strong>Token waste argument doesn't apply:</strong> in technical, codebase fact-checking is deterministic (duplicate work is wasted); in business, multiple perspectives on the same claim have value</li>
+        <li><strong>Criteria don't map:</strong> <code>criteria-assignment: no</code> is structurally required because the business checklist has entirely different criteria (goal precision, root cause depth, stakeholder mapping) that don't map to the same domain buckets</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SKILL CHANGES PANEL (with sub-tabs) -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-skill-changes">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Skill File Modifications<span class="badge">modified files</span></h2>
+      <p class="description">Both SKILL.md files are updated to reference shared modules. Business-brainstorming gains three new capabilities. Domain-specific sections remain untouched.</p>
+    </div>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('skill-changes','bs-changes')">brainstorming</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('skill-changes','bbs-changes')">business-brainstorming</button>
+    </div>
+
+    <!-- Sub-panel: brainstorming changes -->
+    <div class="sub-panel" id="sub-bs-changes">
+      <div class="section">
+        <h2>brainstorming/SKILL.md<span class="badge">-59 lines</span></h2>
+        <p class="description">Two changes: project scan dispatch simplified to 3-line agent reference, and ~80-line critique panel replaced with ~28-line configuration block + shared file read.</p>
+        <ul class="bullet-list">
+          <li><strong>Change 1 (lines 18-33):</strong> Replace 16-line inline project scan dispatch with 3-line agent reference to project-scanner.md. Sequencing rule with Architect stays.</li>
+          <li><strong>Change 2 (lines 172-251):</strong> Replace ~80-line critique panel with config block + prompt templates + shared file read (~28 lines). Includes Architect independence note, criteria mapping table, fact-checker and regular critic prompt templates.</li>
+          <li><strong>Untouched:</strong> Architect auto-consult, mockup generation, visualization dispatch + nested sub-tabs, visualization refresh, next-step prompt with autopilot, design critique standalone mode, key principles</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  BS["brainstorming<br/>SKILL.md"] --> CH1["Change 1<br/>Project Scan<br/>16 lines to 3"]
+  BS --> CH2["Change 2<br/>Critique Panel<br/>80 lines to 28"]
+  BS --> KEEP["Untouched<br/>Architect consult<br/>Visualization<br/>Next-step prompt"]
+
+  style BS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style CH1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CH2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style KEEP fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-panel: business-brainstorming changes -->
+    <div class="sub-panel" id="sub-bbs-changes">
+      <div class="section">
+        <h2>business-brainstorming/SKILL.md<span class="badge">-5 lines, +3 capabilities</span></h2>
+        <p class="description">Three changes: project scan added (new), visualization dispatch added (new), and critique panel replaced with config block + shared file read. Critics now write reports to files with sub-agent aggregation.</p>
+        <ul class="bullet-list">
+          <li><strong>Change 1 (new, Phase 1 start):</strong> Add 3-line project scan dispatch before goal Q&amp;A. Scan findings provide working context for better goal clarification questions.</li>
+          <li><strong>Change 2 (new, after design doc):</strong> Add visualization dispatch (~10 lines) via session-document-generator for process flows, decision flows, and data flow diagrams. Includes conditional refresh after critique if design was modified. Uses global fallback for design-principles.</li>
+          <li><strong>Change 3 (lines 104-139):</strong> Replace ~36-line critique panel with config block + universal prompt template + shared file read (~17 lines). Critics now review visual artifacts alongside the written spec.</li>
+          <li><strong>Behavioral changes:</strong> Critics write reports to /tmp/ files; aggregation sub-agent reads them. Visual artifacts reviewed during critique.</li>
+          <li><strong>Untouched:</strong> 4-phase process (goal &gt; problems &gt; root causes &gt; solutions), documentation conventions, next-step prompt, design critique standalone mode, key principles</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  BBS["business-brainstorming<br/>SKILL.md"] --> CH3["Change 1<br/>Project Scan<br/>New capability"]
+  BBS --> CHV["Change 2<br/>Visualization<br/>New capability"]
+  BBS --> CH4["Change 3<br/>Critique Panel<br/>36 lines to 17"]
+  BBS --> BKEEP["Untouched<br/>4-phase process<br/>Next-step prompt<br/>Key principles"]
+
+  style BBS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style CH3 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style CHV fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style CH4 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style BKEEP fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DECISIONS PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-decisions">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Decision Log<span class="badge">7 decisions</span></h2>
+      <p class="description">Key architectural decisions that shaped this refactor. Each decision balances pragmatism (existing patterns, one-hop references) against the "edit once" goal. D1 acknowledges that the shared critique panel is a new category of shared file: a parameterized orchestration protocol, not a simple reference document.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  D1["D1: Shared files<br/>read-this-file pattern"] --> D3["D3: Inline checklist<br/>one-hop max"]
+  D1 --> D2["D2: Project scanner<br/>as agent"]
+  D4["D4: Business keeps<br/>all-critics mode"] --> D7["D7: Selective sync<br/>not everything crosses"]
+  D5["D5: Sub-agent<br/>aggregation for business"] --> D7
+  D6["D6: Add visualization<br/>to business"] --> D7
+
+  style D1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style D2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style D3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style D4 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style D5 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style D6 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style D7 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Decision Details<span class="badge">rationale</span></h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Decision</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>D1</strong></td><td>Use _shared/*.md "read this file" pattern</td><td>Already established by 6+ skills. No build step, no preprocessing. Note: the shared critique panel is a new category (parameterized orchestration protocol, ~60 lines, 7 parameters) vs. simple reference docs. Config validation preamble mitigates misconfiguration risk.</td></tr>
+          <tr><td><strong>D2</strong></td><td>Extract project scan to agents/project-scanner.md</td><td>Self-contained unit of work matching the agent pattern. Receives project root + topic, writes findings to /tmp/, returns summary.</td></tr>
+          <tr><td><strong>D3</strong></td><td>Inline checklist resolution into critique panel file</td><td>One-hop max from SKILL.md. Shared file referencing another shared file creates two hops. The kanban-entry-format precedent is always a leaf node.</td></tr>
+          <tr><td><strong>D4</strong></td><td>Keep business brainstorming on all-critics fact-check</td><td>Business uses WebSearch where different critics bring different search strategies. criteria-assignment: no is structurally required — different checklist semantics, not a preference toggle.</td></tr>
+          <tr><td><strong>D5</strong></td><td>Upgrade business to sub-agent aggregation</td><td>Inline aggregation consumes main-thread context with raw reports. Sub-agent keeps reports in /tmp/ and returns concise summary. Acknowledged as a new capability, not pure extraction.</td></tr>
+          <tr><td><strong>D6</strong></td><td>Add visualization to business brainstorming</td><td>session-document-generator has a global fallback for design-principles at ~/.claude/docs/design/design-principles.md, so it will not hard-fail on business projects. Business benefits from process flow, decision flow, and data flow diagrams. Conditional dispatch: only if design warrants visuals.</td></tr>
+          <tr><td><strong>D7</strong></td><td>Selective sync model</td><td>Some improvements cross over (orchestration, project scan, visualization), others don't. Architect consult is technical-only; 4-phase is business-only.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- TESTING PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-testing">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Testing Strategy<span class="badge">verification</span></h2>
+      <p class="description">Four layers of verification ensure the refactor preserves behavior while achieving the structural goal and new capabilities. Structural checks run first (automatable), followed by validation, manual smoke tests, and regression checks.</p>
+      <ul class="bullet-list">
+        <li><strong>Structural verification:</strong> both SKILL.md files reference shared modules, no orphaned inline critique panels remain, no two-hop references, project-scanner.md has model: opus frontmatter</li>
+        <li><strong>Structural validation:</strong> grep both SKILL.md files for shared file references, verify business-brainstorming references session-document-generator, verify config blocks contain all required parameters</li>
+        <li><strong>Manual smoke tests:</strong> run each skill with a small topic, verify agent dispatch, critique mode, shared file reading, and new business visualization</li>
+        <li><strong>Regression checks:</strong> next-step prompts, standalone design critique mode, untouched sections all still functional</li>
+        <li><strong>Shared file regression rule:</strong> changes to _shared/critique-panel-orchestration.md MUST be smoke-tested against both skills (only 2 consumers, so testing both is feasible and required)</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  SV["Structural<br/>Verification"] --> SVL["Structural<br/>Validation"]
+  SVL --> SM["Smoke Tests<br/>brainstorming"]
+  SVL --> SMB["Smoke Tests<br/>business-brainstorming"]
+  SM --> RC["Regression<br/>Checks"]
+  SMB --> RC
+
+  style SV fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style SVL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SM fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SMB fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style RC fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Structural Verification Checklist<span class="badge">automated</span></h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>Check</th><th>Expected</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Both SKILL.md reference _shared/critique-panel-orchestration.md</td><td>Present</td></tr>
+          <tr><td>Both SKILL.md reference agents/project-scanner.md</td><td>Present</td></tr>
+          <tr><td>business-brainstorming SKILL.md references session-document-generator</td><td>Present (new)</td></tr>
+          <tr><td>Shared critique panel contains checklist resolution logic</td><td>Inlined</td></tr>
+          <tr><td>Shared critique panel contains config validation preamble</td><td>Present</td></tr>
+          <tr><td>No orphaned inline critique panel in either SKILL.md</td><td>Removed</td></tr>
+          <tr><td>No two-hop shared references</td><td>None</td></tr>
+          <tr><td>agents/project-scanner.md has model: opus frontmatter</td><td>Present</td></tr>
+          <tr><td>Both config blocks contain all required parameters</td><td>Complete</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Summary Table<span class="badge">line counts</span></h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>File</th><th>Before</th><th>After</th><th>Delta</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">brainstorming/SKILL.md</td><td>309 lines</td><td>~250 lines</td><td>-59</td></tr>
+          <tr><td class="mono">business-brainstorming/SKILL.md</td><td>165 lines</td><td>~160 lines</td><td>-5, +scan, +viz, +sub-agent agg</td></tr>
+          <tr><td class="mono">_shared/critique-panel-orchestration.md</td><td class="dimmed">n/a</td><td>~70 lines</td><td>new (includes config validation)</td></tr>
+          <tr><td class="mono">agents/project-scanner.md</td><td class="dimmed">n/a</td><td>~40 lines</td><td>new</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>474 lines</strong></td><td><strong>~520 lines</strong></td><td><strong>+46 lines (shared is single-source)</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="description" style="margin-top: 12px;">The total line count increases because the shared files add structure and business-brainstorming gains new capabilities. The value is not line reduction — it is the "edit once" property for orchestration improvements plus feature parity where appropriate.</p>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      // Activate selected
+      var btn = document.querySelector('[onclick*="switchTab(\'' + tabId + '\')"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
