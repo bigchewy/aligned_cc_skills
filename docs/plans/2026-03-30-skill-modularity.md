@@ -21,7 +21,7 @@
 
 ---
 
-### Task 1: Create the project-scanner agent
+### ✅ Task 1: Create the project-scanner agent
 
 **Files:**
 - Create: `agents/project-scanner.md`
