@@ -508,7 +508,7 @@ git commit -m "refactor: business-brainstorming critique panel uses shared orche
 
 ---
 
-### Task 8: Add visualization refresh to business-brainstorming/SKILL.md
+### ✅ Task 8: Add visualization refresh to business-brainstorming/SKILL.md
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (add visualization refresh after critique panel, before post-design steps)

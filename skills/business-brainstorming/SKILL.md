@@ -151,9 +151,26 @@ Write your complete report to `{report-path}` using the Write tool — fact-chec
 2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
 Follow its process using the configuration and prompt template above.
 
+**Visualization refresh (conditional):**
+
+If the design document was modified after the initial visualization was generated — whether by fact-check corrections, user-approved critique fixes of any severity, or structural revisions — re-dispatch the session-document-generator to regenerate the visualization from the final design.
+
+Only skip this step if the design document is unchanged from when the initial visualization was generated (i.e., all critique verdicts were APPROVE with no corrections applied). Also skip if no visualization was generated (design did not warrant visual artifacts).
+
+Dispatch via Task tool (`subagent_type=general-purpose`). The output path is the same as the initial visualization — the Mockups header field in the design document remains valid without modification.
+
+"Read `agents/session-document-generator.md` for your full workflow.
+Regenerate the consolidated visualization document to reflect post-critique design changes at `{design-file-path}`.
+Session name: `{session-name}`. Project root: `{project-root}`.
+Output to `docs/mockups/{session-name}.html` (overwrite the pre-critique version).
+Verify all Mermaid diagrams render without errors before opening.
+Open the file in the browser after verification passes."
+
+Do not pause for user review — the critique has already validated the design content.
+
 **Post-design steps:**
 
-- Commit the design document to git after critique rounds are complete
+- Commit the design document, visual artifacts (`docs/mockups/{session-name}.html` if generated), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
 
 **Next step prompt (mandatory):**
 
