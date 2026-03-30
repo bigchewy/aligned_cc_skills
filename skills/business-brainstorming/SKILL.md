@@ -127,40 +127,29 @@ Do not pause for user review — the critique panel will evaluate the visuals al
 
 **Fact-Check + Critique Panel (mandatory, dynamic selection):**
 
-**MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the brainstorming conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
+**Critique panel configuration:**
+- Skill name: business-brainstorming
+- Checklist filename: design-critique-checklist.md
+- Fact-check mode: all-critics
+- Fact-check tools: Glob, Grep, Read, WebSearch, WebFetch
+- Aggregation: sub-agent
+- Criteria assignment: no
+- Visual artifacts: docs/mockups/{session-name}.html
+- Critique temp directory: /tmp/brainstorm-critique-{topic}
 
-**Round 1:**
-1. Read `advisors/registry.md`.
-2. Based on the design document's content, select 1-4 critics following the registry's selection guidelines. Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
-3. Read each selected critic's full prompt file (the path listed in the registry entry).
-4. **Resolve the checklist (MANDATORY):** The checklist is a sibling file in this skill's directory. Resolve its absolute path:
-   - Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/design-critique-checklist.md`.
-   - **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/business-brainstorming/design-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-   Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
-5. Launch all selected critics **in parallel** (single message, multiple Task tool calls). Each uses `subagent_type=general-purpose`, `model=opus`. Replace `{design-file-path}` below with the absolute path of the design document you wrote in the previous step.
+**Universal critic prompt template:**
 
-   Each critic's prompt:
+"[Full contents of the critic's prompt file]
 
-   "[Full contents of the critic's prompt file]
+You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `{visual-artifacts-path}` — open the HTML file with Read and evaluate the visuals alongside the written spec. Your job has two phases:
+**Phase 1 (Fact-check):** Extract every factual claim (market data, competitor assertions, financial assumptions, stakeholder claims, timeline assertions). Verify against evidence provided in the document and referenced domain materials. Use WebSearch/WebFetch to check external claims where possible. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage. Include source URLs for verified external claims.
+**Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
+Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-   You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Your job has two phases:
-   **Phase 1 (Fact-check):** Extract every factual claim (market data, competitor assertions, financial assumptions, stakeholder claims, timeline assertions). Verify against evidence provided in the document and referenced domain materials. Use WebSearch/WebFetch to check external claims where possible. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage. Include source URLs for verified external claims.
-   **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name (e.g., [Dalio], [The PM]).
-   Output a single combined report: fact-check summary at the top, then critique in the checklist output format."
-
-6. **Aggregate the reports:**
-   - **Fact-checks:** Merge all. De-duplicate — if multiple critics verified the same claim, report it once with all confirming sources. If critics disagree on a claim, note both findings.
-   - **Critique findings:** Merge all, preserving persona tags. De-duplicate — when two or more critics flag the same issue, keep the highest-severity version and note all sources.
-   - Present the unified report to the user.
-
-7. Incorporate approved fixes into the design.
-
-**Round 2 (conditional):**
-Only run if Round 1 found medium or high severity issues. Same critics (not re-selected), fresh sub-agents (do NOT resume Round 1 agents), against the updated document.
-
-**Escalation:** If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. For example, if a financial critic flagged a legal compliance concern but no legal advisor was in Round 1, add one for Round 2. State the escalation reason. Maximum one additional critic per round.
-
-Apply any remaining fixes. Present final results to the user.
+**Shared orchestration file resolution:**
+1. Primary: Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+Follow its process using the configuration and prompt template above.
 
 **Post-design steps:**
 

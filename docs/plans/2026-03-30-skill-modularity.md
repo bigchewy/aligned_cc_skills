@@ -445,7 +445,7 @@ git commit -m "feat: business-brainstorming adds conditional visualization dispa
 
 ---
 
-### Task 7: Refactor business-brainstorming/SKILL.md — replace critique panel with shared orchestration
+### ✅ Task 7: Refactor business-brainstorming/SKILL.md — replace critique panel with shared orchestration
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (the critique panel section)
