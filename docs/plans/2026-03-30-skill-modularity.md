@@ -388,7 +388,7 @@ git commit -m "feat: business-brainstorming adds project scan via shared agent"
 
 ---
 
-### Task 6: Refactor business-brainstorming/SKILL.md — add visualization dispatch
+### ✅ Task 6: Refactor business-brainstorming/SKILL.md — add visualization dispatch
 
 **Files:**
 - Modify: `skills/business-brainstorming/SKILL.md` (add visualization after documentation, before critique panel)
