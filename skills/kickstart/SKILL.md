@@ -238,7 +238,7 @@ Define confidentiality rules and client sensitivity constraints here.
 ```markdown
 ## Workflows
 
-- `/aligned:business-brainstorming` — before any business work
+- `/aligned:brainstorming` — before any creative or strategic work
 - `/aligned:business-write-plan` — for planning deliverables
 - `/aligned:business-executing` — for execution
 - `/aligned:business-diagnosis` — when something isn't working
@@ -361,11 +361,11 @@ Output the appropriate message based on `project_type`, then commit all scaffold
 
 **Software:** "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
 
-**Business:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."
+**Business:** "Project scaffolded. Start with `/aligned:brainstorming` to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."
 
-**Personal:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.)."
+**Personal:** "Project scaffolded. Start with `/aligned:brainstorming` to define your first initiative, or fill in the guardrails section of CLAUDE.md with any privacy constraints (health data, finances, etc.)."
 
-**General:** "Project scaffolded. Start with `/aligned:business-brainstorming` to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
+**General:** "Project scaffolded. Start with `/aligned:brainstorming` to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
 
 Commit all scaffolded files:
 ```bash
