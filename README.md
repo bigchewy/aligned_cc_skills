@@ -1,12 +1,12 @@
 # Aligned
 
-Opinionated development stack for Claude Code. 31 skills, 11 agents, 62 advisor personas, and automated quality gates — connected into a pipeline from idea to working code.
+Opinionated skill stack for Claude Code. 30 skills, 13 agents, 62 advisor personas, 135 frameworks, and automated quality gates — from brainstorm to working code.
 
 **[Interactive workflow overview →](docs/workflow.html)** — visual pipeline from brainstorm to merge
 
 ## Installation
 
-Run these inside Claude Code (the repo is private — you'll need collaborator access):
+Run these inside Claude Code:
 
 ```
 /plugin marketplace add bigchewy/aligned_cc_skills
@@ -22,9 +22,12 @@ claude --plugin-dir /path/to/aligned_cc_skills
 
 ## Quick Start
 
-1. `/aligned:kickstart` — scaffold a new project with standard conventions (also auto-enables the plugin in the project's `.claude/settings.json`)
-2. `/aligned:design-principles` — define the design direction through an interactive session
-3. `/aligned:brainstorming` → `/aligned:writing-plans` → auto-launch pipeline (brainstorm, plan, then confirm to execute + merge in background)
+1. `/aligned:kickstart` — scaffold a new project with standard conventions
+2. `/aligned:brainstorming` — explore ideas and strategies (auto-detects software vs business mode)
+3. `/aligned:use-advisor` — adopt an expert persona (62 advisors across business, technology, and creative domains)
+4. `/aligned:use-framework` — guided walkthroughs of 135 structured decision frameworks
+
+For software projects, the full pipeline: `/aligned:brainstorming` → `/aligned:writing-plans` → auto-launch execution pipeline
 
 ## Permissions
 
@@ -75,17 +78,23 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 
 | Skill | Layer | Invocation | Description |
 |-------|-------|------------|-------------|
-| kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
-| design-principles | Foundation | `/aligned:design-principles` | Interactive design discovery with Steve Jobs persona |
-| create-design-principles | Foundation | `/aligned:create-design-principles` | Enforce precise, minimal design system (Linear/Notion/Stripe aesthetic) |
-| brainstorming | Pipeline | `/aligned:brainstorming` | Explore ideas and strategies — auto-detects software vs business mode |
-| business-diagnosis | Business | `/aligned:business-diagnosis` | Diagnose why business deliverables aren't landing |
-| business-executing | Business | `/aligned:business-executing` | Execute business plans with deliverables |
-| business-write-plan | Business | `/aligned:business-write-plan` | Write business plans with critique panel |
+| brainstorming | Brainstorming | `/aligned:brainstorming` | Explore ideas and strategies — auto-detects software vs business mode |
+| use-advisor | Advisor | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
+| use-framework | Framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
+| add-advisor | Advisor | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |
+| add-framework | Framework | `/aligned:add-framework` | Add a new framework to an existing advisor |
+| find-potential-advisors | Advisor | `/aligned:find-potential-advisors` | Research and evaluate potential advisors |
+| persona-panel | Content | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
 | generate-deck | Content | `/aligned:generate-deck` | Generate branded sales decks with April Dunford framework and expert review panel |
 | generate-blog-post | Content | `/aligned:generate-blog-post` | Generate thought leadership blog posts with PIEI narrative arc and 3-reviewer panel |
 | generate-one-pager | Content | `/aligned:generate-one-pager` | Generate branded one-pagers and battle cards (placeholder) |
-| persona-panel | Content | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
+| create-svg-diagram | Content | `/aligned:create-svg-diagram` | Generate diagrams, charts, and visual frameworks for presentations and docs |
+| kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
+| design-principles | Foundation | `/aligned:design-principles` | Interactive design discovery with Steve Jobs persona |
+| create-design-principles | Foundation | `/aligned:create-design-principles` | Enforce precise, minimal design system (Linear/Notion/Stripe aesthetic) |
+| business-diagnosis | Business | `/aligned:business-diagnosis` | Diagnose why business deliverables aren't landing |
+| business-executing | Business | `/aligned:business-executing` | Execute business plans with deliverables |
+| business-write-plan | Business | `/aligned:business-write-plan` | Write business plans with critique panel |
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier) |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
@@ -95,16 +104,10 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | eval-failure-triage | Problem-solving | `/aligned:eval-failure-triage` | Classify LLM eval failures before fixing |
 | eval-audit | Problem-solving | `/aligned:eval-audit` | Eval coverage auditor with hook trigger |
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
-| use-advisor | Advisor | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
-| use-framework | Framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
-| add-advisor | Advisor | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |
-| add-framework | Framework | `/aligned:add-framework` | Add a new framework to an existing advisor |
-| find-potential-advisors | Advisor | `/aligned:find-potential-advisors` | Research and evaluate potential advisors |
+| claude-profile | Infrastructure | `/aligned:claude-profile` | Switch Claude Code accounts and configure directory-specific overrides |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
-| create-svg-diagram | Content | `/aligned:create-svg-diagram` | Generate diagrams, charts, and visual frameworks for presentations and docs |
-| claude-profile | Infrastructure | `/aligned:claude-profile` | Switch Claude Code accounts and configure directory-specific overrides |
 
 ## Agents
 
@@ -120,6 +123,8 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | mockup-generator | Self-contained HTML mockups for design-phase visualization |
 | session-document-generator | Orchestrates diagram agents to produce consolidated tabbed HTML documents |
 | steve-jobs | Design critique persona for brainstorming reviews |
+| doc-staleness-detector | Detect stale docs by comparing git history — logs to Kanban, never edits directly |
+| project-scanner | Fast codebase scan for brainstorming context (languages, structure, dependencies) |
 | worktree-setup | Isolated git worktree creation with safety checks |
 
 ## Hooks
@@ -163,12 +168,10 @@ Kickstart scaffolds this structure in each project:
 - `docs/design/design-principles.md` — Design tokens and craft rules
 - `docs/lessons-learned/` — Post-mortems (individual files)
 - `docs/architecture.md` — Mermaid diagrams for system architecture
-- `docs/ralph_loops/` — Ralph loop prompts for autonomous execution
-- `e2e/` — Eval infrastructure (scenarios, config, runner)
 
-## Iron Rules
+## Iron Rules (Software Development)
 
-These are enforced across all skills:
+These rules are enforced by pipeline skills during software development:
 
 1. **Tests first, always.** No production code without a failing test (TDD).
 2. **Error path tests for every mock.** Both `mockResolvedValue` and `mockRejectedValue`.
@@ -210,32 +213,7 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 - Confidence-scored findings with deduplication and severity filtering
 - Project-agnostic source discovery (auto-detects language and source roots)
 
-#### 0.3.0
-- **25 skills** (+8: add-advisor, add-framework, find-potential-advisors, business-brainstorming, business-diagnosis, business-executing, business-write-plan, create-design-principles)
-- **8 agents** (+3: worktree-setup, error-diagnosis, artifact-verifier)
-- Enhanced eval-failure-triage with infrastructure pre-check and trend analysis
-- Error-diagnosis agent wired in CLAUDE.md for hook-triggered dispatch
-
-#### 0.2.0 (Breaking)
-- **17 skills** (added: kanban-resolve, create-new-skill, use-advisor, use-framework)
-- **5 agents** (added: code-reviewer, code-simplifier, mockup-generator, kanban-triage)
-- **62 advisor prompts** shipped with plugin (va-web-app, epch-projects, .claude)
-- **132 frameworks** shipped with plugin
-- **5 hook scripts** with 4 event types configured
-- Multi-critic brainstorming (opus, domain-selected from advisor pool)
-- Dual-critic writing-plans (Architect + Verifier, parallel)
-- Code simplification scan in finishing-a-development-branch (Step 1d)
-- Plan archival in finishing-a-development-branch (Step 6)
-- Eval-audit hook with threshold comparison
-- Behavioral guardrails in CLAUDE.md (TDD, verification discipline, auto-critique)
-- **Breaking:** Kanban format changed from single-file `docs/Kanban-board.md` to folder-based `docs/kanban/` with individual `KB-NNN-slug.md` files. Existing projects using v0.1.0 must migrate: create `docs/kanban/{todo,in-progress,done,did_not_complete}/` directories and a `.counter` file.
-
-#### 0.1.0
-- Initial release: 14 skills
-- Steve Jobs persona for design review
-- Multi-agent debugging (high severity mode)
-- Eval-audit daily cron hook
-- Kickstart auto-enables plugin in project settings
+Earlier changelog history is available in git (`git log --oneline`).
 
 ## License
 
