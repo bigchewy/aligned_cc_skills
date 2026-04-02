@@ -358,7 +358,7 @@ If no changes were needed, skip the commit.
 
 ---
 
-### Task 8: Update plugin.json and marketplace.json
+### ✅ Task 8: Update plugin.json and marketplace.json
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`

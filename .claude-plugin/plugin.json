@@ -1,11 +1,11 @@
 {
   "name": "aligned",
   "version": "0.13.0",
-  "description": "Opinionated dev stack: TDD pipeline, eval-driven development, design system, multi-agent debugging, 61 advisor personas, 134 frameworks, 3 content generation skills, automated quality gates",
+  "description": "Skill stack for Claude Code: brainstorming, structured thinking, 62 advisor personas, 135 frameworks, content generation, TDD pipeline, automated quality gates",
   "author": {
     "name": "Eric Page"
   },
   "repository": "https://github.com/bigchewy/aligned_cc_skills",
   "license": "MIT",
-  "keywords": ["tdd", "eval-driven", "pipeline", "design-system"]
+  "keywords": ["brainstorming", "advisors", "frameworks", "tdd", "pipeline", "design-system"]
 }
