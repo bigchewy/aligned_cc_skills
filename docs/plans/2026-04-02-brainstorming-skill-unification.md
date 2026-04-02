@@ -39,7 +39,7 @@ git commit -m "chore: copy business critique checklist to brainstorming director
 
 ---
 
-### Task 2: Create the software mode file
+### ✅ Task 2: Create the software mode file
 
 **Files:**
 - Create: `skills/brainstorming/modes/software.md`
