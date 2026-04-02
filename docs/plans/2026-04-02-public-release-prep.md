@@ -308,7 +308,7 @@ subdirectories. Kanban .counter preserved at 26."
 
 ---
 
-### Task 7: Fix cross-references to deleted paths
+### ✅ Task 7: Fix cross-references to deleted paths
 
 > **Ordering dependency:** Must run after Tasks 3 and 4 (file deletions). Running earlier would produce false positives from files about to be deleted.
 
