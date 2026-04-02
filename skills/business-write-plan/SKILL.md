@@ -15,7 +15,7 @@ Assume the executor is capable but knows nothing about this client, project, or 
 
 **Announce at start:** "I'm using the business-write-plan skill to create the work plan."
 
-**Context:** This should follow a design created by /aligned:business-brainstorming, or a clear objective from the user.
+**Context:** This should follow a design created by /aligned:brainstorming, or a clear objective from the user.
 
 **Autonomous execution:** Run to completion without pausing for user feedback.
 Pre-approved actions (do not ask):

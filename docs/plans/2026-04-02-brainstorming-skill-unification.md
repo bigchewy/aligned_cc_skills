@@ -342,7 +342,7 @@ git commit -m "feat: remove business-brainstorming directory (merged into brains
 
 ---
 
-### Task 6: Update cross-reference in business-write-plan
+### ✅ Task 6: Update cross-reference in business-write-plan
 
 **Files:**
 - Modify: `skills/business-write-plan/SKILL.md` (the predecessor reference on line 18)
