@@ -588,7 +588,7 @@ git commit -m "chore: close KB-023, KB-024, KB-025 as resolved-by-unification"
 
 ---
 
-### Task 12: Add eval scenario for brainstorming mode routing
+### ✅ Task 12: Add eval scenario for brainstorming mode routing
 
 **Files:**
 - Modify: `e2e/scenarios/kickstart-expansion.test.ts` (add scenario documenting the unification)

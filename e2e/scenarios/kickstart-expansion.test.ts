@@ -73,3 +73,10 @@
 // Expected: Existing files are not overwritten
 // Expected: Missing directories are created
 // Expected: .claude/settings.json is merged (aligned: true added, existing keys preserved)
+
+// Scenario 9: Brainstorming unification (v0.13.0)
+// Context: /aligned:business-brainstorming was merged into /aligned:brainstorming
+// Expected (business template): Workflows section references /aligned:brainstorming, not /aligned:business-brainstorming
+// Expected (personal template): Next-step message references /aligned:brainstorming
+// Expected (general template): Next-step message references /aligned:brainstorming
+// Expected (software template): No change — already used /aligned:brainstorming
