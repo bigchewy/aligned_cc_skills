@@ -215,7 +215,7 @@ doc-staleness flag, and ewp-site setup guide."
 
 ---
 
-### Task 5: Delete untracked files
+### ✅ Task 5: Delete untracked files
 
 **Files:**
 - Delete: `erics-advisory-skills.plugin`
