@@ -254,7 +254,7 @@ No commit needed — these were untracked files, so git has nothing to record.
 
 ---
 
-### Task 6: Preserve directory structure with .gitkeep files
+### ✅ Task 6: Preserve directory structure with .gitkeep files
 
 **Files:**
 - Create: `docs/plans/.gitkeep` (if not already present)
