@@ -47,7 +47,7 @@ No commit needed — branch creation doesn't require a commit.
 
 ---
 
-### Task 2: Port doc-staleness-detector agent into plugin
+### ✅ Task 2: Port doc-staleness-detector agent into plugin
 
 **Files:**
 - Create: `agents/doc-staleness-detector.md`
