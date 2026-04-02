@@ -129,7 +129,7 @@ git commit -m "feat: create software mode file for unified brainstorming skill"
 
 ---
 
-### Task 3: Create the business mode file
+### ✅ Task 3: Create the business mode file
 
 **Files:**
 - Create: `skills/brainstorming/modes/business.md`
