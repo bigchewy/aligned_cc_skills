@@ -203,7 +203,7 @@ git commit -m "feat: create business mode file for unified brainstorming skill"
 
 ---
 
-### Task 4: Rewrite the brainstorming router SKILL.md
+### ✅ Task 4: Rewrite the brainstorming router SKILL.md
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (complete rewrite)
@@ -316,7 +316,7 @@ git commit -m "feat: rewrite brainstorming SKILL.md as unified router"
 
 ---
 
-### Task 5: Delete the business-brainstorming directory
+### ✅ Task 5: Delete the business-brainstorming directory
 
 **Files:**
 - Delete: `skills/business-brainstorming/SKILL.md`
