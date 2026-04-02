@@ -54,7 +54,6 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:add-advisor)",
       "Skill(aligned:add-framework)",
       "Skill(aligned:find-potential-advisors)",
-      "Skill(aligned:business-brainstorming)",
       "Skill(aligned:business-diagnosis)",
       "Skill(aligned:business-executing)",
       "Skill(aligned:business-write-plan)",
@@ -80,8 +79,7 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 | kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
 | design-principles | Foundation | `/aligned:design-principles` | Interactive design discovery with Steve Jobs persona |
 | create-design-principles | Foundation | `/aligned:create-design-principles` | Enforce precise, minimal design system (Linear/Notion/Stripe aesthetic) |
-| brainstorming | Pipeline | `/aligned:brainstorming` | Explore ideas, generate designs with multi-critic review |
-| business-brainstorming | Business | `/aligned:business-brainstorming` | Explore business problems, strategies, decisions |
+| brainstorming | Pipeline | `/aligned:brainstorming` | Explore ideas and strategies — auto-detects software vs business mode |
 | business-diagnosis | Business | `/aligned:business-diagnosis` | Diagnose why business deliverables aren't landing |
 | business-executing | Business | `/aligned:business-executing` | Execute business plans with deliverables |
 | business-write-plan | Business | `/aligned:business-write-plan` | Write business plans with critique panel |
@@ -196,6 +194,9 @@ Semver, pre-1.0:
 Version bumps happen in `.claude-plugin/plugin.json`.
 
 ### Changelog
+
+#### 0.13.0 — Unified Brainstorming Skill
+- **BREAKING:** `/aligned:business-brainstorming` merged into `/aligned:brainstorming`. The unified skill auto-detects whether your topic is software/technical or business/strategy and adapts accordingly. Update any project CLAUDE.md files that reference `/aligned:business-brainstorming`.
 
 #### 0.6.0
 - **25 skills** (-1: removed autopilot, replaced by automated post-plan pipeline)
