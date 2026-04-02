@@ -560,7 +560,7 @@ git commit -m "chore: bump version to 0.13.0"
 
 ---
 
-### Task 11: Close kanban items KB-023, KB-024, KB-025
+### ✅ Task 11: Close kanban items KB-023, KB-024, KB-025
 
 **Files:**
 - Move: `docs/kanban/todo/KB-023-extract-visualization-refresh-block.md` → `docs/kanban/done/`
