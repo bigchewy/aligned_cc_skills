@@ -546,7 +546,7 @@ to lead with universal skills. Scope Iron Rules to software dev."
 
 ---
 
-### Task 10: Create CONTRIBUTING.md
+### ✅ Task 10: Create CONTRIBUTING.md
 
 **Files:**
 - Create: `CONTRIBUTING.md`
