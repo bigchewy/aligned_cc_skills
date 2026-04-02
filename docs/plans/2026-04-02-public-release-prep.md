@@ -151,7 +151,7 @@ prompts, and stray design doc. Preparing for public release."
 
 ---
 
-### Task 4: Remove tracked internal artifacts — top-level directories and files
+### ✅ Task 4: Remove tracked internal artifacts — top-level directories and files
 
 **Files:**
 - Delete: `e2e/` (entire directory)

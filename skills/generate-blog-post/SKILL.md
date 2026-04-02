@@ -267,7 +267,7 @@ When Context A is detected, check whether `Callout` appears in `src/lib/mdx-comp
 - `<CTA>` content becomes a standard `## heading` + paragraph + link
 
 Emit a setup notice:
-> "Callout and CTA components not found in mdx-components.tsx. Using markdown equivalents. For richer rendering, see the setup guide at `skills/generate-blog-post/references/ewp-site-setup.md`."
+> "Callout and CTA components not found in mdx-components.tsx. Using markdown equivalents. For richer rendering, add Callout and CTA components to your mdx-components.tsx."
 
 Also check whether `heroImage` appears in `src/lib/blog.ts`. If not found, still include `heroImage` and `readingTime` in frontmatter (they're harmlessly ignored by the MDX parser) and emit:
 > "Your site's blog infrastructure doesn't yet support heroImage or readingTime fields. The MDX includes them in frontmatter, but they won't render until you update `blog.ts` and `[slug]/page.tsx`. See the setup guide."
