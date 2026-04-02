@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Move the business critique checklist
+### ✅ Task 1: Move the business critique checklist
 
 **Files:**
 - Move: `skills/business-brainstorming/design-critique-checklist.md` → `skills/brainstorming/business-critique-checklist.md`
