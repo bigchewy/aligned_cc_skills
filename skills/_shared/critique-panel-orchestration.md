@@ -6,7 +6,7 @@ Shared orchestration protocol for brainstorming critique panels. Read this file 
 
 Before proceeding, verify all required parameters are present in the SKILL.md context above:
 
-- `skill-name` must be set (e.g., "brainstorming", "business-brainstorming")
+- `skill-name` must be set (e.g., "brainstorming")
 - `checklist-filename` must be set (e.g., "design-critique-checklist.md")
 - `fact-check-mode` must be either "division-of-labor" or "all-critics"
 - `fact-check-tools` must be a non-empty tool list
