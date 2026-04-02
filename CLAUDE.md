@@ -33,11 +33,12 @@ Skills reference each other by path and by `/aligned:<name>` invocation. Before 
 1. Create `skills/<name>/SKILL.md` with frontmatter (`name` must match directory)
 2. Test: `claude --plugin-dir /path/to/aligned_cc_skills`
 3. Add entry to the skill reference table in `README.md`
-4. Bump version in `.claude-plugin/plugin.json`
+4. Add `Skill(aligned:<name>)` to the permissions list in both `README.md` and `skills/kickstart/SKILL.md` Phase 5
+5. Bump version in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
 
 ## Version
 
-`.claude-plugin/plugin.json` — semver, pre-1.0.
+`.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` — both must match. Semver, pre-1.0.
 
 ## What NOT to Duplicate
 

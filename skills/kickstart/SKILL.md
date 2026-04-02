@@ -168,8 +168,7 @@ Generate a project-specific CLAUDE.md using the template for the selected `proje
 ## Reading Priority
 
 1. This file (CLAUDE.md)
-2. `~/.claude/about-me.md` — global identity and preferences
-3. `docs/architecture.md` — system structure
+2. `docs/architecture.md` — system structure
 ```
 
 **Section 4 — Communication Preferences:**
@@ -216,8 +215,7 @@ This is a business/consulting workspace for [project name]. [one-sentence descri
 ## Reading Priority
 
 1. This file (CLAUDE.md)
-2. `~/.claude/about-me.md` — global identity and preferences
-3. Relevant project folders
+2. Relevant project folders
 ```
 
 **Section 4 — Communication Preferences:**
@@ -267,8 +265,7 @@ This is a personal knowledge workspace for [project name]. [one-sentence descrip
 ## Reading Priority
 
 1. This file (CLAUDE.md)
-2. `~/.claude/about-me.md` — global identity and preferences
-3. Relevant project folders
+2. Relevant project folders
 ```
 
 **Section 4 — Communication Preferences:**
@@ -312,7 +309,6 @@ This is a workspace for [project name]. [one-sentence description].
 ## Reading Priority
 
 1. This file (CLAUDE.md)
-2. `~/.claude/about-me.md` — global identity and preferences
 ```
 
 **Section 4 — Communication Preferences:**
@@ -324,36 +320,55 @@ Empty placeholder.
 **Section 6 — Workflows:**
 Empty placeholder.
 
-## Phase 5: Global About-Me Check
+## Phase 5: Global Permission Setup (one-time)
 
-After scaffolding, check whether `~/.claude/about-me.md` exists.
+Check whether `~/.claude/settings.json` already contains aligned skill permissions by looking for `Skill(aligned:brainstorming)` in the `permissions.allow` array.
 
-**If missing:** Ask the user (use AskUserQuestion):
+**If already present:** Skip this phase silently — permissions have already been configured.
 
-> No global about-me found at `~/.claude/about-me.md`. Want to create one now?
+**If missing:** Read the current `~/.claude/settings.json` (create the file if it doesn't exist). Append the following skill entries to the existing `permissions.allow` array, skipping any that are already present. Preserve all other keys in the file (`permissions.deny`, `enabledPlugins`, etc.):
 
-If yes, create `~/.claude/about-me.md` with this template:
-```markdown
-# About Me
-
-## Role & Identity
-<!-- Who you are, what you do -->
-
-## Expertise
-<!-- Your domain knowledge and experience -->
-
-## Methodology
-<!-- How you approach work, key frameworks -->
-
-## Communication Style
-<!-- How you prefer Claude to communicate -->
+```json
+{
+  "permissions": {
+    "allow": [
+      "Skill(aligned:brainstorming)",
+      "Skill(aligned:writing-plans)",
+      "Skill(aligned:executing-plans)",
+      "Skill(aligned:finishing-a-development-branch)",
+      "Skill(aligned:systematic-debugging)",
+      "Skill(aligned:using-git-worktrees)",
+      "Skill(aligned:eval-failure-triage)",
+      "Skill(aligned:eval-audit)",
+      "Skill(aligned:kickstart)",
+      "Skill(aligned:design-principles)",
+      "Skill(aligned:test-driven-development)",
+      "Skill(aligned:verification-before-completion)",
+      "Skill(aligned:use-advisor)",
+      "Skill(aligned:use-framework)",
+      "Skill(aligned:kanban-resolve)",
+      "Skill(aligned:codebase-audit)",
+      "Skill(aligned:create-new-skill)",
+      "Skill(aligned:add-advisor)",
+      "Skill(aligned:add-framework)",
+      "Skill(aligned:find-potential-advisors)",
+      "Skill(aligned:business-brainstorming)",
+      "Skill(aligned:business-diagnosis)",
+      "Skill(aligned:business-executing)",
+      "Skill(aligned:business-write-plan)",
+      "Skill(aligned:create-design-principles)",
+      "Skill(aligned:generate-deck)",
+      "Skill(aligned:generate-blog-post)",
+      "Skill(aligned:generate-one-pager)",
+      "Skill(aligned:persona-panel)",
+      "Skill(aligned:create-svg-diagram)",
+      "Skill(aligned:claude-profile)"
+    ]
+  }
+}
 ```
 
-If `~/.claude/CLAUDE.md` exists, read it to understand its current structure, then suggest adding a reading priority reference to it at an appropriate insertion point (do not modify without user confirmation).
-
-If `~/.claude/` does not exist, create it first. If directory creation fails (permission error), skip with a note and continue.
-
-**If exists:** Do nothing. CLAUDE.md templates already reference it.
+Tell the user: "Set up skill permissions in `~/.claude/settings.json` — you won't get permission prompts for aligned skills."
 
 ## Phase 6: Next Steps
 

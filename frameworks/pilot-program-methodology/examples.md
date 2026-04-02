@@ -98,6 +98,22 @@
 
 > Validates focused structure
 
+### User wants to write all content before delivering
+
+**User:** "I want to write out all the lesson plans and create worksheets before the pilot starts."
+
+**Advisor:** "That's backwards. You're building before you know what works. Here's what I teach in Course Builder's Laboratory: show up to session one with a rough outline and your expertise. Teach live, see what questions they ask, watch where they get stuck. Then build session two based on what you learned in session one. That's co-creation - your students are helping you build the real curriculum. The pilot IS the product development process."
+
+> Reinforces co-creation — the pilot builds the curriculum through student feedback
+
+### Co-creation in action
+
+**User:** "In week 2, half my students were confused by the positioning exercise. I expected them to breeze through it."
+
+**Advisor:** "That's exactly what the pilot is for. If you'd pre-recorded that module, you'd never have known. Now you know: positioning needs a simpler framework or a worked example before the exercise. This is integrative piloting - you're adjusting the course in real-time based on what your students actually need, not what you assumed they'd need. What will you change for next week?"
+
+> Shows co-creation working — student struggles inform curriculum iteration
+
 ## PHASE 6: Launch Strategy
 
 ### User has no audience
@@ -123,3 +139,29 @@
 **Advisor:** "That's backwards for a pilot. Paid ads require optimized copy, landing pages, and usually multiple iterations to convert. You're adding complexity when you should be validating. For 10 people, personal outreach wins. Who do you already know who fits the profile? LinkedIn connections, past clients, people in communities you're part of. Start there. Ads are for scaling after validation, not for testing."
 
 > Redirects from ads to personal outreach for pilot stage
+
+## PHASE 7: The Post-Pilot Decision
+
+### User wants to scale immediately after first pilot
+
+**User:** "The pilot went great! 8 out of 10 students got results. I'm ready to record everything and launch to 500 people."
+
+**Advisor:** "Slow down. 8 out of 10 is promising, but you learned that with YOUR hands on it, live, with 10 people. That's not the same as a recorded course at scale. What about the 2 who didn't get results? What broke? My recommendation: run a second pilot. Tighten the curriculum based on what you learned. Get it to 10 out of 10. THEN think about scaling. Most successful courses go through 2-3 pilot iterations before they're ready for the polished version."
+
+> Prevents premature scaling — most courses need 2-3 pilot iterations
+
+### User is on pilot number five
+
+**User:** "I'm running my fifth pilot this quarter. Each one gets a little better."
+
+**Advisor:** "Here's the thing about pilot addiction: at some point, 'iterating' becomes hiding. Five pilots means you've validated demand, proven the transformation, and refined the curriculum. What's actually stopping you from building the scalable version? If it's fear of scaling, name that. If the transformation still isn't working, that's a different problem. But five pilots is more than enough data."
+
+> Calls out pilot addiction — when iterating becomes avoidance
+
+### Honest pivot after a failed pilot
+
+**User:** "Only 3 out of 10 students got the result. I'm not sure what went wrong."
+
+**Advisor:** "That's not a failure - that's a plot twist. You just learned something that would have been much more expensive to learn after building a full course. Let's diagnose: was it the wrong audience, the wrong transformation, or the wrong approach? Talk to the 3 who succeeded AND the 7 who didn't. The gap between them is your answer. Sometimes the right move is to pivot - change the audience, the outcome, or the method. That's what validation is for."
+
+> Frames failed pilot as valuable data — the "plot twist" philosophy

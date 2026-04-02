@@ -60,17 +60,16 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:create-design-principles)",
       "Skill(aligned:generate-deck)",
       "Skill(aligned:generate-blog-post)",
-      "Skill(aligned:generate-one-pager)"
+      "Skill(aligned:generate-one-pager)",
+      "Skill(aligned:persona-panel)",
+      "Skill(aligned:create-svg-diagram)",
+      "Skill(aligned:claude-profile)"
     ]
   }
 }
 ```
 
-Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlugins: { "aligned": true }` in new projects, but skill-level permissions must be added to the user's `~/.claude/settings.json`.
-
-### Recommended: Bash path auto-approve hook
-
-Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` paths. See [docs/recommended-hooks.md](docs/recommended-hooks.md) for setup.
+Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlugins: { "aligned": true }` in new projects and sets up skill-level permissions in `~/.claude/settings.json` on first run.
 
 ## Skill Reference
 
@@ -129,7 +128,7 @@ Reduces permission prompt noise from skills that use `/tmp/` and `~/.claude/` pa
 |-------|--------|-------------|
 | UserPromptSubmit | `check-eval-audit.sh` | Triggers `[EVAL AUDIT]` when eval audit is overdue |
 | PreToolUse | `auto-approve-worktrees.js` | Auto-approves Edit/Write in worktree directories |
-| PreToolUse | `auto-approve-safe-bash-paths.js` | Auto-approves Bash commands targeting `/tmp/` and `~/.claude/` only (recommended, see Permissions) |
+| PreToolUse | `auto-approve-safe-bash-paths.js` | Auto-approves Bash commands targeting `/tmp/` and `~/.claude/` only |
 | PostToolUseFailure | `error-tracker.js` | Tracks error patterns for diagnosis |
 | PostToolUse | `error-tracker.js` | Tracks Bash errors for diagnosis |
 | PostToolUse | `usage-tracker.js` | Tracks Skill/Task usage patterns |

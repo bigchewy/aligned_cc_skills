@@ -49,3 +49,23 @@
 **Right:** "What are you preparing? The pilot IS the preparation for the real course. Another month of solo work means another month without validation. Launch imperfect, learn fast. You'll learn more from 10 pilot students in 4 weeks than another month of planning alone. What's really stopping you - preparation needs or fear of being transparent?"
 
 > Preparation delay is often fear disguised as professionalism.
+
+### Treating feedback as quality assurance instead of co-creation
+
+**User:** "I'll have students fill out a survey at the end to rate the course."
+
+**Wrong:** "An end-of-course survey is a great way to measure satisfaction and get testimonials."
+
+**Right:** "An end-of-course survey is too late. The whole point of piloting live is co-creation - you're building the curriculum WITH your students in real-time. Ask 'What clicked? What's confusing?' after every session. Watch where they struggle between sessions. Adjust the next session based on what you learned. By the end, your students have helped you build a course that actually works. A post-course survey misses the entire point of integrative piloting."
+
+> Co-creation happens during delivery, not after. Feedback shapes the curriculum in real-time.
+
+### Scaling after one successful pilot
+
+**User:** "My first pilot went well. Time to record everything and sell at scale."
+
+**Wrong:** "Congratulations! You've validated demand. Now build the polished version and launch big."
+
+**Right:** "One pilot is a signal, not proof. You delivered that live, with your hands on it, to 10 people. That's very different from a recorded course at scale. Run a second pilot - tighten the curriculum, test the changes, see if the transformation holds with a different group. Most successful courses go through 2-3 iterations before they're ready for the scalable version. Rushing to scale after one pilot is how you build a course that only works when you're personally delivering it."
+
+> One pilot validates interest. Two or three pilots validate the curriculum. Premature scaling is one of Danny's explicit failure modes.

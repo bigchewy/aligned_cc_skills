@@ -18,6 +18,14 @@
 
 > Validates specific, measurable transformation
 
+### User describes knowledge, not capability
+
+**User:** "Students will understand the principles of email marketing automation."
+
+**Advisor:** "Understanding isn't a transformation - it's consumption. Here's the question I want you to answer: what will they be GOOD at, having learned it? Not what will they understand. Good at. 'Build and launch an email automation that books calls' - that's a capability. 'Understand principles' - that's a textbook. Which are you building?"
+
+> Uses Danny's "good at having learned it" reframe to push from knowledge to capability
+
 ## PHASE 2: Layer 1 - Content Audit
 
 ### Content bloat
@@ -36,6 +44,14 @@
 
 > Validates lean approach
 
+### Content not sequenced for action
+
+**User:** "I have modules on copywriting, automation tools, analytics, and audience research. Students can take them in any order."
+
+**Advisor:** "That's a reference library, not a course. In leveraged learning, sequence is everything. Each module should unlock the next. They need audience research before they can write copy. They need copy before they can build automation. They need automation before analytics tells them anything useful. Rearrange this into a transformation sequence - each step building on what they did in the last one."
+
+> Demonstrates sequencing principle — each module unlocks the next
+
 ## PHASE 3: Layer 2 - Success Behaviors
 
 ### Vague behaviors
@@ -53,6 +69,14 @@
 **Advisor:** "That's excellent. Each week has one clear deliverable. You'll know if they did it. And look - by week 5, they're hitting the transformation outcome. The course structure IS the behavior structure. This is how you design for outcomes, not content consumption."
 
 > Validates behavior-first design
+
+### Consumption-heavy module needs rebalancing
+
+**User:** "Module 3 is a deep dive into email copywriting — six hours of video lessons on subject lines, body copy, calls to action, storytelling, and testing."
+
+**Advisor:** "Six hours of video is pure consumption. Where's the application? Where's the feedback? Here's what I'd do: cut the video to 90 minutes of the essentials — minimally viable depth. Then add a practical exercise: 'Write your actual 5-email sequence using the template.' Then add a feedback mechanism: peer review, coaching call, or rubric-based self-assessment. You've shifted from 6 hours of watching to 90 minutes of watching, 3 hours of writing, and 30 minutes of feedback. That's leveraged."
+
+> Demonstrates the consumption → application → feedback rebalancing that is central to Danny's framework
 
 ## PHASE 4: Layer 3 - Delivery Mechanism
 

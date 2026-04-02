@@ -41,7 +41,6 @@
 // Input: Each project type with name "test-project", description "A test"
 // Expected (all types): Has 6 sections (Identity, Folder Map, Reading Priority,
 //   Communication, Guardrails, Workflows)
-// Expected (all types): Reading Priority references ~/.claude/about-me.md
 // Expected (software): Workflows lists 8 aligned skills (brainstorming through eval-audit)
 // Expected (software): Guardrails contains Iron Rules (TDD, error paths, verify, root cause)
 // Expected (software): Communication has Commands section
@@ -51,24 +50,18 @@
 // Expected (personal): Guardrails mentions privacy (health, financial, relationships)
 // Expected (general): Workflows is empty placeholder
 
-// Scenario 5: About-me check — missing
-// Input: ~/.claude/about-me.md does not exist
-// Expected: User is prompted to create about-me.md
-// Expected: If user says yes, file is created with 4-section template
-//   (Role & Identity, Expertise, Methodology, Communication Style)
-// Expected: User is asked about adding reference to ~/.claude/CLAUDE.md
+// Scenario 5: Global permission setup — first run
+// Input: ~/.claude/settings.json has no aligned skill permissions
+// Expected: permissions.allow array is created with all aligned skill entries
+// Expected: Existing keys in settings.json are preserved
+// Expected: User is told permissions were set up
 
-// Scenario 6: About-me check — exists
-// Input: ~/.claude/about-me.md already exists
-// Expected: No prompt about about-me.md
-// Expected: Scaffolding continues without interruption
+// Scenario 6: Global permission setup — already configured
+// Input: ~/.claude/settings.json already contains Skill(aligned:brainstorming)
+// Expected: Phase is skipped silently
+// Expected: No modifications to ~/.claude/settings.json
 
-// Scenario 7: About-me check — permission failure
-// Input: ~/.claude/ cannot be created (simulated permission error)
-// Expected: Graceful skip with informational note
-// Expected: Scaffolding continues without error
-
-// Scenario 8: Idempotency
+// Scenario 7: Idempotency
 // Input: Run kickstart in directory with existing CLAUDE.md and .claude/settings.json
 // Expected: Existing files are not overwritten
 // Expected: Missing directories are created
