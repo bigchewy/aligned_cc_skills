@@ -8,3 +8,5 @@ node_modules/
 .vscode/
 .obsidian/
 aligned-cowork.zip
+.env*
+*.plugin
