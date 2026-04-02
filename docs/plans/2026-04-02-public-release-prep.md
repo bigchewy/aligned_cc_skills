@@ -88,7 +88,7 @@ Agent is general-purpose — works on any project with docs/ and kanban board."
 
 ---
 
-### Task 3: Remove tracked internal artifacts — docs/ directories
+### ✅ Task 3: Remove tracked internal artifacts — docs/ directories
 
 **Files:**
 - Delete: all files in `docs/plans/completed/`
