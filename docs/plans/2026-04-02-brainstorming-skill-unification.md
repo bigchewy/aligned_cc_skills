@@ -621,7 +621,7 @@ git commit -m "test: add eval scenario for brainstorming unification (v0.13.0)"
 
 ---
 
-### Task 13: Final verification sweep
+### ✅ Task 13: Final verification sweep
 
 **Files:**
 - No changes — verification only
