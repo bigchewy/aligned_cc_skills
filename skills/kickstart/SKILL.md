@@ -387,3 +387,25 @@ Commit all scaffolded files:
 git add -A
 git commit -m "chore: scaffold project with Aligned conventions"
 ```
+
+## Phase 7: What to Try First
+
+After scaffolding and the type-specific next step, output this section to guide the user toward experiencing value immediately:
+
+```
+## What to Try First
+
+**Meet an advisor.** Try `/aligned:use-advisor april-dunford` — she'll challenge your positioning with her actual 5 Components methodology. Or try `/aligned:use-advisor rob-walling` for bootstrapped SaaS decision frameworks. 62 advisors are available across business, technology, and creative domains.
+
+**Run a brainstorm.** Try `/aligned:brainstorming` with a real problem you're working on. The system auto-detects whether it's a software or business problem and selects relevant advisors for the critique panel.
+
+**Layer in your context.** Once you've experienced the advisors, add your company context to CLAUDE.md — competitors, buyer personas, strategy docs. The advisors incorporate this context into every conversation, turning general methodology into company-specific guidance.
+```
+
+**Dual-level paths** — after the three steps above, add:
+
+```
+**Want to go deeper?** Read `skills/brainstorming/SKILL.md` to see how mode detection and advisor auto-selection work. Read `advisors/registry.md` for the full advisor catalog with domain metadata.
+```
+
+<!-- **Stay updated.** Want to know when new advisors and frameworks ship? [newsletter signup](TBD) -->
