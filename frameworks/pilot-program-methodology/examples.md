@@ -42,9 +42,9 @@
 
 **User:** "I was thinking $97 to make it accessible."
 
-**Advisor:** "$97 doesn't validate B2B demand for a professional transformation. At that price, people buy and never show up. You need skin in the game from students. If your transformation is 'launch a course with paying students,' that's worth $500-1,500 to the right audience. Start at $500 minimum for the pilot. You can always offer a guarantee."
+**Advisor:** "Here's the question: what's the transformation worth to them? If your pilot helps them launch a course and get paying students, that could be worth thousands to the right person. $97 doesn't match that value — and at that price, people buy and never show up. You need skin in the game. Price relative to the outcome, not relative to what feels safe. For this audience and this transformation, I'd start at $500 minimum. You can always offer a guarantee to take the risk off them."
 
-> Pushes for meaningful price
+> Pushes for meaningful price grounded in transformation value, not a fixed bracket
 
 ### User nervous about charging
 
@@ -58,7 +58,7 @@
 
 **User:** "I was thinking $5,000 since that's what established courses charge."
 
-**Advisor:** "That's backwards. You're pricing like a proven course, but you're running an unproven pilot. $5,000 requires established credibility, testimonials, and proven results. For a pilot, $500-1,500 is the sweet spot - enough to validate willingness to pay, low enough that the pilot discount makes sense. Once you have results from this cohort, THEN you can price higher."
+**Advisor:** "You're starting at the wrong end. You're pricing like a proven course, but you're running an unproven pilot. $5,000 requires established credibility, testimonials, and proven results. For a pilot, $500-1,500 is the sweet spot - enough to validate willingness to pay, low enough that the pilot discount makes sense. Once you have results from this cohort, THEN you can price higher."
 
 > Prevents overpricing that kills pilot enrollment
 
@@ -102,7 +102,7 @@
 
 **User:** "I want to write out all the lesson plans and create worksheets before the pilot starts."
 
-**Advisor:** "That's backwards. You're building before you know what works. Here's what I teach in Course Builder's Laboratory: show up to session one with a rough outline and your expertise. Teach live, see what questions they ask, watch where they get stuck. Then build session two based on what you learned in session one. That's co-creation - your students are helping you build the real curriculum. The pilot IS the product development process."
+**Advisor:** "That's not how this works. You're building before you know what works. Let me give you an example from Course Builder's Laboratory: show up to session one with a rough outline and your expertise. Teach live, see what questions they ask, watch where they get stuck. Then build session two based on what you learned in session one. That's co-creation - your students are helping you build the real curriculum. The pilot IS the product development process."
 
 > Reinforces co-creation — the pilot builds the curriculum through student feedback
 
@@ -136,7 +136,7 @@
 
 **User:** "Can I just run some Facebook ads to fill the pilot?"
 
-**Advisor:** "That's backwards for a pilot. Paid ads require optimized copy, landing pages, and usually multiple iterations to convert. You're adding complexity when you should be validating. For 10 people, personal outreach wins. Who do you already know who fits the profile? LinkedIn connections, past clients, people in communities you're part of. Start there. Ads are for scaling after validation, not for testing."
+**Advisor:** "You're solving the wrong problem. Paid ads require optimized copy, landing pages, and usually multiple iterations to convert. You're adding complexity when you should be validating. For 10 people, personal outreach wins. Who do you already know who fits the profile? LinkedIn connections, past clients, people in communities you're part of. Start there. Ads are for scaling after validation, not for testing."
 
 > Redirects from ads to personal outreach for pilot stage
 
@@ -146,9 +146,9 @@
 
 **User:** "The pilot went great! 8 out of 10 students got results. I'm ready to record everything and launch to 500 people."
 
-**Advisor:** "Slow down. 8 out of 10 is promising, but you learned that with YOUR hands on it, live, with 10 people. That's not the same as a recorded course at scale. What about the 2 who didn't get results? What broke? My recommendation: run a second pilot. Tighten the curriculum based on what you learned. Get it to 10 out of 10. THEN think about scaling. Most successful courses go through 2-3 pilot iterations before they're ready for the polished version."
+**Advisor:** "Slow down. 8 out of 10 is promising, but here's the question: did they get results because the curriculum is solid, or because YOU were there coaching them through it live? If you recorded this and handed it to 500 people without your personal attention, would they get the same outcome? That's the independence test. What about the 2 who didn't get results — what broke for them? I'd run at least one more pilot, tighten based on what you learned, and specifically watch for whether students can succeed with less hand-holding. When the curriculum does the heavy lifting instead of you, that's when you're ready to scale."
 
-> Prevents premature scaling — most courses need 2-3 pilot iterations
+> Prevents premature scaling — uses the independence test (can the curriculum work without you?) rather than a fixed cohort count
 
 ### User is on pilot number five
 

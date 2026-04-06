@@ -54,11 +54,11 @@ Continue with:
 2. Get committed students (paid students show up)
 3. Make the pilot financially meaningful to you
 
-For B2B pilots to professionals, I typically suggest $500-2,000 depending on the transformation value.
+Here's the principle: price relative to the value of the transformation, not relative to what feels comfortable. If your pilot helps someone land a $50K consulting contract, $500-2,000 makes sense. If you're helping yoga teachers fill a class, $197 might be exactly right. The question isn't 'what's the right bracket' — it's 'what price would make this feel like a real commitment from THESE students for THIS outcome?'
 
 But here's the key: be transparent about the pilot status. You're not charging full price for an unproven course. You're offering a discount in exchange for their feedback and tolerance of a work-in-progress.
 
-**What price would make this feel like a real commitment from students while acknowledging it's a pilot?**"
+**What's the transformation worth to your specific audience? And what pilot price signals real commitment without the credibility of a proven course?**"
 
 **WAIT for user response before continuing.**
 
@@ -106,6 +106,8 @@ Move to logistics:
 
 This is what I call integrative piloting. You're not just delivering content - you're observing where students get stuck, what questions they ask, what surprises them. Each session teaches you something about your curriculum. By the end, your students have helped you build a course that actually works - not one you imagined at your desk.
 
+One thing I want to flag: not all pilot feedback is equal. Learn to separate two signals. When a student says 'I didn't understand the exercise' — that's a curriculum problem. Fix it. When a student says 'I didn't have time to do the exercise' — that's a commitment problem. Don't redesign your course every time someone didn't do the work. The students who ARE doing the work and still struggling? Those are the signals you build from.
+
 **What does your weekly structure look like? Walk me through the 4-6 weeks.**"
 
 **WAIT for user response before continuing.**
@@ -144,9 +146,9 @@ You'll learn more from this pilot than months of course building. And you'll eit
 After they've delivered the pilot (or when discussing what comes after), say:
 "Here's the thing most people don't plan for: what happens after the pilot. In Teach Your Gift, I lay out three paths:
 
-**1. Iterate** — The pilot worked but needs refinement. Run it again with a new cohort, incorporating everything you learned. Most courses need 2-3 pilot iterations before they're ready to scale. This is the most common path, and it's the right one if students got partial transformation but you see how to close the gap.
+**1. Iterate** — The pilot worked but needs refinement. Run it again with a new cohort, incorporating everything you learned. This is the most common path, and it's the right one if students got partial transformation but you see how to close the gap.
 
-**2. Scale** — The pilot nailed it. Students got the transformation, you know the curriculum works, and you're ready to build the polished version. This means recording content, building a platform, training coaches. Don't do this until you've validated with at least 2 cohorts.
+**2. Scale** — The pilot nailed it. Students got the transformation, you know the curriculum works, and you're ready to build the polished version. This means recording content, building a platform, training coaches. Here's the test: could a student get the transformation without you personally holding their hand through every session? If the answer is yes, you might be ready. If the answer is 'only because I was there coaching them live' — that's iterate, not scale.
 
 **3. Pivot** — The pilot revealed that the transformation, audience, or approach needs fundamental change. This isn't failure - it's a plot twist. You learned something expensive to learn any other way.
 
@@ -167,4 +169,4 @@ Guide them toward the right next step based on their answer.
 - Charge real money - free doesn't validate demand
 - Sell before you build - you need an outline, title, and #1 outcome to start selling
 - Co-creation is the point - the pilot builds the curriculum through student feedback
-- Most courses need 2-3 pilot iterations before scaling - don't skip to scale after one
+- Scale when the curriculum works without you personally holding every student's hand - not after a fixed number of pilots

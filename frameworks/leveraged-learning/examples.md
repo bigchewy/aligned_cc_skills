@@ -150,6 +150,14 @@
 
 > Validates community with identity and structure
 
+### Community enabling co-creation
+
+**User:** "I noticed different cohorts have very different needs. My last group was all B2B consultants, but this group is mostly therapists going online."
+
+**Advisor:** "That's co-creation in action. Your students bring real contexts, real problems, real industries. The curriculum should adapt to what the cohort actually needs - not what you imagined when you built it. A rigid curriculum serves you. A responsive one serves them. What would you change for this therapist cohort? And how are you capturing what you learn to make the next cohort even better?"
+
+> Shows co-creation — the curriculum adapts to what the cohort actually needs
+
 ## PHASE 8: Score and Prioritize
 
 ### Identifying the weakest layer

@@ -152,8 +152,12 @@ Here's what's powerful about a well-designed community: it enables co-creation. 
 
 ### PHASE 8: Score and Prioritize
 
-Wrap up with:
-"Now let's score your course across all six layers. Rate each 1-10:
+Before scoring, say:
+"Before we score, here's something important: these layers aren't independent. They're interconnected. A weak community score might actually BE your accountability problem — students with no peer connection have no one to be accountable to. A delivery mechanism problem might be causing your behavior gap — if you deliver asynchronously with no deadlines, of course students aren't doing the work. When you score low on one layer, ask: is this the root cause, or is it a symptom of another layer's failure?
+
+Also — and this one catches people off guard — think about the economics. What does it cost you to deliver transformation per student? If your support model requires 2 hours of personal coaching per student per week, that's not just a support layer question. That's a business model question. A course that works pedagogically but bankrupts you at 50 students isn't leveraged. The layers need to work economically, not just educationally.
+
+Now let's score your course across all six layers. Rate each 1-10:
 
 1. **Content**: Quality and necessity of information
 2. **Success Behaviors**: Clarity and enforceability of actions
