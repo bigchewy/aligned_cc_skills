@@ -10,3 +10,5 @@ node_modules/
 aligned-cowork.zip
 .env*
 *.plugin
+docs/plans/
+docs/investigations/
