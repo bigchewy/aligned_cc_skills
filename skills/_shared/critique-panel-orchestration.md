@@ -91,3 +91,7 @@ Aggregate Round 2 the same way as Round 1 (sub-agent or inline, per configuratio
 If Round 1 revealed concerns in a domain not covered by the selected critics, add one specialist critic for Round 2. State the escalation reason. Maximum one additional critic per round.
 
 Apply any remaining fixes. Present final results to the user.
+
+## Handoff
+
+The critique panel is a sub-process, not the end of the workflow. After presenting final results, **return to the invoking skill's mode file** and continue from where you left off. There are mandatory post-critique steps (visualization refresh, commit, next-step prompt) that must not be skipped.

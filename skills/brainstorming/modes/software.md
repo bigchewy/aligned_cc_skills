@@ -208,6 +208,10 @@ Write your complete report to `{report-path}` using the Write tool — use the c
 2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
 Follow its process using the configuration and prompt templates above.
 
+---
+
+**POST-CRITIQUE CHECKLIST — all steps below are mandatory. Do not skip any.**
+
 **Visualization refresh (conditional):**
 
 If the design document was modified after the initial visualization was generated — whether by fact-check corrections, user-approved critique fixes of any severity, or structural revisions — re-dispatch the session-document-generator to regenerate the visualization from the final design. This ensures the committed HTML matches the post-critique design exactly.
