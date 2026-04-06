@@ -215,6 +215,19 @@ Where:
 - **domains:** Comma-separated expertise areas
 - **summary:** One-line description
 
+### 8c. Update Advisor and Framework Counts
+
+Count the actual advisors and frameworks in the plugin directory and update all references so metadata stays in sync:
+
+1. Count advisor prompt files in `advisors/prompts/` (`.md` files only)
+2. Count framework directories in `frameworks/` (directories containing `prompt.md`)
+3. Update every occurrence of the old counts in:
+   - `README.md` — opening description, "How It Works" bullets, and Advisors section
+   - `.claude-plugin/plugin.json` — `description` field
+   - `.claude-plugin/marketplace.json` — `description` field
+
+The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
+
 ### 9. Commit
 
 Commit all changes with message: `feat: add {advisor-name} advisor`

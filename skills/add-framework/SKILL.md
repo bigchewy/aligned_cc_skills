@@ -185,6 +185,19 @@ Add the framework folder to `frameworks/` in the plugin directory. This makes th
 
 Place the framework at `frameworks/{framework-slug}/` containing `prompt.md` (required), `examples.md` (optional), and `anti-examples.md` (optional).
 
+### 7b. Update Advisor and Framework Counts
+
+Count the actual advisors and frameworks in the plugin directory and update all references so metadata stays in sync:
+
+1. Count advisor prompt files in `advisors/prompts/` (`.md` files only)
+2. Count framework directories in `frameworks/` (directories containing `prompt.md`)
+3. Update every occurrence of the old counts in:
+   - `README.md` — opening description, "How It Works" bullets, and Advisors section
+   - `.claude-plugin/plugin.json` — `description` field
+   - `.claude-plugin/marketplace.json` — `description` field
+
+The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
+
 ### 8. Verify
 
 > **Conditional:** Only run build verification if a `build` script was detected in Step 0. If not found, print: "Skipping build verification — no build script found."

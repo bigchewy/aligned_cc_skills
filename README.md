@@ -1,6 +1,6 @@
 # Aligned
 
-62 expert advisors with real methodologies, auto-selected by context, available 24/7 in Claude Code. 135 structured frameworks with quality gates that enforce the process — not generic AI advice.
+65 expert advisors with real methodologies, auto-selected by context, available 24/7 in Claude Code. 138 structured frameworks with quality gates that enforce the process — not generic AI advice.
 
 Leaders of growing companies get world-class strategic thinking for their entire team without hiring consultants for every function.
 
@@ -34,8 +34,8 @@ Already installed? Try these to see what aligned does before diving into configu
 
 The system encodes expert methodology into executable workflows:
 
-- **62 advisor personas** with real voices, signature questions, failure modes, and calibration data. April Dunford doesn't just "give positioning advice" — she runs her actual 5 Components framework and pushes back on vague differentiation.
-- **135 structured frameworks** made interactive and sequential with quality gates. The system enforces the process order and challenges weak answers at each phase.
+- **65 advisor personas** with real voices, signature questions, failure modes, and calibration data. April Dunford doesn't just "give positioning advice" — she runs her actual 5 Components framework and pushes back on vague differentiation.
+- **138 structured frameworks** made interactive and sequential with quality gates. The system enforces the process order and challenges weak answers at each phase.
 - **30 skills** that auto-select relevant advisors based on context. A brainstorming session about pricing pulls in different experts than one about product design.
 - **Company context incorporation.** When you layer in your competitors, buyer personas, and strategy docs, the advisors operate with your company's specific context — not generic advice.
 
@@ -63,8 +63,8 @@ claude --plugin-dir /path/to/aligned_cc_skills
 
 1. `/aligned:kickstart` — scaffold a new project with standard conventions
 2. `/aligned:brainstorming` — explore ideas and strategies (auto-detects software vs business mode)
-3. `/aligned:use-advisor` — adopt an expert persona (62 advisors across business, technology, and creative domains)
-4. `/aligned:use-framework` — guided walkthroughs of 135 structured decision frameworks
+3. `/aligned:use-advisor` — adopt an expert persona (65 advisors across business, technology, and creative domains)
+4. `/aligned:use-framework` — guided walkthroughs of 138 structured decision frameworks
 
 For software projects, the full pipeline: `/aligned:brainstorming` → `/aligned:writing-plans` → auto-launch execution pipeline
 
@@ -181,7 +181,7 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 
 ### Advisors
 
-62 advisor prompts ship with the plugin in `advisors/prompts/`.
+65 advisor prompts ship with the plugin in `advisors/prompts/`.
 
 Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.md` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 
