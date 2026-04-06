@@ -32,14 +32,34 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): project is docs-only, Obsidian vault, or
   non-code directory
 
-**If signals are clear:** Auto-route and briefly tell the user which mode
-was selected (e.g., "This looks like a software design problem — I'll use
-the technical brainstorming process."). Add: "If this isn't right, just
-say so and I'll switch." Proceed to Step 2.
+**If signals are clear:** Auto-route and present the mode explanation
+block (see below). Proceed to Step 2.
 
 **If signals are mixed or absent:** Ask one question: "Is this a
-software/technical design or a business/strategy problem?" Then proceed
-to Step 2 based on the answer.
+software/technical design or a business/strategy problem?" Once answered,
+present the mode explanation block and proceed to Step 2.
+
+### Mode Explanation Block (mandatory on every invocation)
+
+After mode selection, present this block before starting any phase work:
+
+> **Brainstorming** structures creative and strategic work through guided
+> dialogue — from loose idea to validated design with expert critique.
+>
+> **Selected: {Mode Name}** — {one-sentence description of the process}
+> *Why:* {brief reason this mode was selected based on topic/environment signals}
+>
+> **Other available modes:**
+> - {Other mode name} — {one-sentence description}
+>
+> *To switch modes or skip phases, just say so.*
+
+**Software mode description:** "Fluid Q&A with automatic Architect
+consultation on technical decisions. Produces a validated design doc."
+
+**Business mode description:** "Structured phases (Goal, Problems, Root
+Causes, Solutions) with gates. Adapts depth to task complexity — tactical
+tasks move faster, strategic challenges get full diagnostic treatment."
 
 ## Step 2: Project Scan
 Dispatch a project scan agent via Task tool (subagent_type=general-purpose),

@@ -34,6 +34,35 @@ If a question during the brainstorm requires deeper detail about the project, re
 
 **Gate:** Do NOT proceed until you can state the goal in one clear sentence and the user confirms it.
 
+### Complexity Assessment (after Phase 1 gate)
+
+After the goal is confirmed, assess whether this task is **diagnostic** or **operational**:
+
+**Operational signals** (most of these are true):
+- The user can already list the obstacles or action items
+- The problems are concrete and enumerable (a checklist, a cleanup, a migration)
+- There is no mystery about *why* the problems exist
+- The goal is execution, not understanding
+
+**Diagnostic signals** (any of these are true):
+- The user says something like "I don't know why this isn't working"
+- Problems are symptoms of something deeper (declining sales, team friction, repeated failures)
+- Prior attempts to fix the problem have failed
+- Multiple stakeholders with conflicting needs are involved
+- Success criteria are unclear or contested
+
+**If operational:** Tell the user: "This looks like a tactical task — I'll streamline the process. We'll identify the action items and move straight to organizing them." Then:
+- **Phase 2:** List obstacles/action items. Confirm the list. Skip probing for hidden obstacles.
+- **Phase 3:** Skip entirely.
+- **Phase 4:** Organize actions into a sequenced plan.
+- **Critique panel:** Skip unless the design has strategic implications. A cleanup checklist doesn't need advisor critique.
+
+**If diagnostic:** Proceed with the full Phase 2 → 3 → 4 sequence with all gates.
+
+**If unclear:** Default to diagnostic. It's cheaper to discover a task is simple mid-process than to skip depth on a task that needed it.
+
+The user can always override: "skip root cause analysis" or "let's go deeper on this" adjusts the process at any point.
+
 ### Phase 2: Diagnose Problems and Obstacles
 
 **What stands between the current state and the goal?**
