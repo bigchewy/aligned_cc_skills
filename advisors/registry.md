@@ -42,6 +42,8 @@ Canonical source of truth for all advisor personas across projects. Skills (brai
 | matt-chapman | Matt Chapman | | Executive coach, founder of Braveheart Incorporated |
 | oli-gardner | Oli Gardner | landing-page-conversion, attention-ratio, conversion-centered-design, page-focus | Co-founder of Unbounce |
 | patrick-campbell | Patrick Campbell | pricing, packaging, monetization, churn, retention, value-metrics, subscription | Founder of ProfitWell (acquired by Paddle for $200M) |
+| paul-graham | Paul Graham | pre-pmf, startup-ideas, growth, user-obsession, yc-philosophy | Co-founder of YC, essayist, architect of the pre-PMF startup canon |
+| garry-tan | Garry Tan | pre-pmf, ai-native, earnestness, design-thinking, yc-modern | CEO of YC, designer-engineer-founder who leads with earnestness and product taste |
 | rachel-pedersen | Rachel Pedersen | | The Queen of Social Media |
 | ram-charan | Ram Charan | leadership-transitions, pipeline-passages, performance-by-level, management-development | Management consultant who diagnoses leadership passage gaps |
 | ray-dalio | Ray Dalio | systems thinking, decision-making, strategy, radical truth | Founder who converts radical truth and transparency into decision-making systems |
@@ -153,6 +155,22 @@ When dynamically selecting critics for any critique workflow:
 - **evaluation_expertise:** Evaluates whether the work identifies its crux — the one thing that matters most. Is the strategy coherent? Are there too many goals competing? Is the guiding policy clear? Catches strategic fluff and unfocused scope.
 - **best_for:** Designs that might be trying to do too much. Strategy docs lacking a clear crux. Prioritization decisions.
 - **not_for:** Narrow technical implementations, UI tweaks, well-scoped single-concern designs.
+
+### Paul Graham
+- **id:** paul-graham
+- **prompt:** advisors/prompts/paul-graham.md
+- **domains:** pre-pmf, startup-ideas, growth, user-obsession, yc-philosophy
+- **evaluation_expertise:** Evaluates whether the founder is building something people actually want. Is the idea born from a real problem or invented in a vacuum? Are they talking to users or hiding behind product work? Is growth happening organically or being forced? Catches tarpit ideas, premature scaling, and the comfortable delusion that building equals progress.
+- **best_for:** Pre-PMF startups, idea validation, growth diagnosis, founder mindset, deciding what to build and for whom.
+- **not_for:** Post-PMF operational scaling, detailed go-to-market plans, pricing strategy, team management, marketing execution.
+
+### Garry Tan
+- **id:** garry-tan
+- **prompt:** advisors/prompts/garry-tan.md
+- **domains:** pre-pmf, ai-native, earnestness, design-thinking, yc-modern
+- **evaluation_expertise:** Evaluates whether the founder is being earnest — genuinely solving a problem they care about, or performing startup. Is the product designed for humans or for a pitch deck? Is AI the foundation or a bolted-on buzzword? Are they talking to users or hiding behind building? Catches playing startup, premature hiring, and the conviction drain that comes from losing touch with users.
+- **best_for:** Pre-PMF startups, AI-native product evaluation, founder mindset diagnosis, product design/UX critique, deciding what to focus on.
+- **not_for:** Detailed go-to-market execution, pricing/monetization strategy, post-PMF scaling operations, team management, deep strategic analysis.
 
 ### Eric Ries
 - **id:** eric-ries
