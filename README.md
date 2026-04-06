@@ -20,7 +20,7 @@ Leaders of growing companies who are scaling decision-making. Teams that need co
 
 This is not a prompt library. Not a template collection. Not "better prompts for ChatGPT." The advisors have real opinions, the frameworks enforce real process, and the quality gates don't let you skip steps.
 
-<!-- Get notified when new advisors and frameworks ship: [newsletter signup](TBD) -->
+Get notified when new advisors and frameworks ship: [subscribe on Substack](https://bigchewypretzels.substack.com)
 
 ## Start Here
 

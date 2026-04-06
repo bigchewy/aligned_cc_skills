@@ -408,4 +408,4 @@ After scaffolding and the type-specific next step, output this section to guide 
 **Want to go deeper?** Read `skills/brainstorming/SKILL.md` to see how mode detection and advisor auto-selection work. Read `advisors/registry.md` for the full advisor catalog with domain metadata.
 ```
 
-<!-- **Stay updated.** Want to know when new advisors and frameworks ship? [newsletter signup](TBD) -->
+**Stay updated.** Want to know when new advisors and frameworks ship? [Subscribe on Substack](https://bigchewypretzels.substack.com)
