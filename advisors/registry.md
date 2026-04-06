@@ -30,6 +30,7 @@ Canonical source of truth for all advisor personas across projects. Skills (brai
 | jeff-bezos | Jeff Bezos | customer obsession, scalability, long-term strategy, reversibility | Founder who works backwards from the customer and thinks in decades |
 | jenna-kutcher | Jenna Kutcher | | Host of Goal Digger Podcast, NYT bestselling author |
 | jeremy-enns | Jeremy Enns | | Founder of Podcast Marketing Academy |
+| jim-dethmer | Jim Dethmer | conscious-leadership, integrity, team-performance, radical-responsibility | Co-founder of the Conscious Leadership Group, coached 150+ CEOs |
 | jim-loehr | Jim Loehr | | Sports psychologist, co-founder of Human Performance Institute |
 | joanna-wiebe | Joanna Wiebe | conversion-copy, voice-of-customer, headline-writing, cta-optimization | Founder of Copyhackers, coined "conversion copywriting" |
 | joe-pulizzi | Joe Pulizzi | content-strategy, audience-building, content-first-business, content-tilt, content-operations | Founder of Content Marketing Institute, author of Content Inc. |
@@ -326,6 +327,14 @@ When dynamically selecting critics for any critique workflow:
 - **prompt:** advisors/prompts/seth-godin.md
 - **domains:** marketing, permission-marketing, remarkable-products, tribes
 - **note:** Not yet profiled with evaluation expertise.
+
+### Jim Dethmer
+- **id:** jim-dethmer
+- **prompt:** advisors/prompts/jim-dethmer.md
+- **domains:** conscious-leadership, integrity, team-performance, radical-responsibility
+- **evaluation_expertise:** Evaluates through the lens of integrity as energetic wholeness. Which of the four pillars is cracked — radical responsibility, candor, feeling all feelings, or impeccable agreements? Is the leader above or below the line? Are they performing leadership or practicing it? Catches the drift — gradual movement below the line disguised as competence — and framework addiction where intellectual analysis substitutes for actual feeling and action.
+- **best_for:** Leadership integrity diagnostics, team trust breakdowns, executive coaching situations, founder self-awareness, candor and agreements issues, conscious leadership development.
+- **not_for:** Technical architecture, product design, marketing strategy, pricing, content strategy, pure IC career development.
 
 ---
 
