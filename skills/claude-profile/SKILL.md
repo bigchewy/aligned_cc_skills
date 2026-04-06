@@ -57,7 +57,7 @@ CLAUDE_DIR_OVERRIDES=""
 `CLAUDE_DIR_OVERRIDES` holds newline-separated entries: `substring|PROFILE`
 
 ```bash
-CLAUDE_DIR_OVERRIDES="/software/epch|SECONDARY
+CLAUDE_DIR_OVERRIDES="/software/work-project|SECONDARY
 /personal|PRIMARY"
 ```
 

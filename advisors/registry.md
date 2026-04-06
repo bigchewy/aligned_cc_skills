@@ -1,6 +1,6 @@
 # Advisor Registry
 
-Canonical source of truth for all advisor personas across projects. Skills (brainstorming, writing-plans) and project runtimes (EPCH, VBOA) derive their local formats from this registry.
+Canonical source of truth for all advisor personas across projects. Skills (brainstorming, writing-plans) and project runtimes derive their local formats from this registry.
 
 ## Quick Reference
 
