@@ -1,17 +1,17 @@
 ---
-name: systematic-debugging
-description: "Use when encountering any bug, test failure, or unexpected behavior. Supports low (default) and high severity with multi-agent investigation."
+name: root-cause-analysis
+description: "Use when encountering any bug, test failure, unexpected behavior, or business problem that isn't resolving. Supports low (default) and high severity with multi-agent investigation."
 ---
 
-# Systematic Debugging
+# Root Cause Analysis
 
 ## Overview
 
-Random fixes waste time and create new bugs. Quick patches mask underlying issues.
+Random fixes waste time and create new problems. Quick patches mask underlying issues — in code and in business.
 
-**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
+**Core principle:** ALWAYS find root cause before attempting fixes or solutions. Symptom treatment is failure.
 
-**Violating the letter of this process is violating the spirit of debugging.**
+**Violating the letter of this process is violating the spirit of diagnosis.**
 
 ## The Iron Law
 
@@ -19,17 +19,27 @@ Random fixes waste time and create new bugs. Quick patches mask underlying issue
 NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 ```
 
-If you haven't completed Phase 1, you cannot propose fixes.
+If you haven't completed Phase 1, you cannot propose fixes or solutions.
 
 ## When to Use
 
-Use for ANY technical issue:
+Use for ANY issue that isn't resolving:
+
+**Software:**
 - Test failures
 - Bugs in production
 - Unexpected behavior
 - Performance problems
 - Build failures
 - Integration issues
+
+**Business:**
+- Deliverable isn't landing with the audience
+- Strategy not producing results
+- Process inefficiency or breakdown
+- Client relationship friction
+- Revenue/pipeline problems
+- A document or proposal that keeps getting rejected
 
 **Use this ESPECIALLY when:**
 - Under time pressure (emergencies make guessing tempting)
@@ -39,16 +49,16 @@ Use for ANY technical issue:
 - You don't fully understand the issue
 
 **Don't skip when:**
-- Issue seems simple (simple bugs have root causes too)
+- Issue seems simple (simple problems have root causes too)
 - You're in a hurry (rushing guarantees rework)
-- Manager wants it fixed NOW (systematic is faster than thrashing)
+- Someone wants it fixed NOW (systematic is faster than thrashing)
 
 ## Severity Levels
 
 Default severity is **low** (current single-agent behavior). Pass `high` as an argument for multi-agent fan-out investigation.
 
-- `/aligned:systematic-debugging` — low severity (default)
-- `/aligned:systematic-debugging high` — high severity, multi-agent
+- `/aligned:root-cause-analysis` — low severity (default)
+- `/aligned:root-cause-analysis high` — high severity, multi-agent
 
 ### High Severity — Phase 0: Multi-Agent Investigation
 
@@ -56,30 +66,34 @@ Added before the existing four phases. Use when low-severity investigation is in
 
 **Step 1:** Read `docs/architecture.md` (if it exists) so all agents have structural context.
 
-**Step 2:** Fan out 4-5 subagents via Task tool, each with a different analytical method:
+**Step 2:** Fan out 5-6 subagents via Task tool, each with a different analytical method:
 
-| Agent | Method | Prompt Directive |
-|-------|--------|-----------------|
-| Backward Tracer | Trace from symptom upstream | "Start at the error. Follow the call stack backward. Find where the bad value originates." |
-| Forward Tracer | Trace from recent changes forward | "Read the git diff. For each change, trace its effects forward through the system." |
-| Data Flow Analyst | Follow data across boundaries | "Map what enters and exits each component boundary. Identify where data transforms incorrectly." |
-| Pattern Matcher | Compare against working code | "Find similar working code in this codebase. List every difference from the broken code." |
-| JudgeAgent | Challenge all conclusions | "Read the other agents' reports. For each proposed root cause, try to disprove it." |
+| Agent | Domain | Method | Prompt Directive |
+|-------|--------|--------|-----------------|
+| Backward Tracer | Both | Trace from symptom upstream | "Start at the problem. Follow the chain backward. Find where the bad value or breakdown originates." |
+| Forward Tracer | Software | Trace from recent changes forward | "Read the git diff. For each change, trace its effects forward through the system." |
+| Stakeholder Mapper | Business | Map the human system | "Map the human system around this problem. Who benefits from the status quo? Who has veto power? Identify all affected parties, their incentives, and blind spots." |
+| Data Flow Analyst | Both | Follow data across boundaries | "Map what enters and exits each component boundary. Identify where data transforms incorrectly or information is lost." |
+| Pattern Matcher | Both | Compare against working examples | "Find similar working code or successful past efforts. List every difference from the broken case." |
+| JudgeAgent | Both | Challenge all conclusions | "Read the other agents' reports. For each proposed root cause, try to disprove it." |
 
-**Step 3:** First 4 agents run in parallel. Each returns: hypothesis, evidence, confidence level.
+**Domain selection:** Software problems: use Forward Tracer. Business problems: use Stakeholder Mapper. Ambiguous: use both.
 
-**Step 4:** JudgeAgent runs second, receiving all 4 reports. Challenges each hypothesis, identifies agreements and contradictions.
+**Step 3:** First 4-5 agents run in parallel. Each returns: hypothesis, evidence, confidence level.
+
+**Step 4:** JudgeAgent runs second, receiving all reports. Challenges each hypothesis, identifies agreements and contradictions.
 
 **Step 5:** Main thread synthesizes. If consensus → proceed to Phase 1 with strong starting hypothesis. If no consensus → present competing theories to user.
 
 ### When to Use High Severity
 
 - Previous low-severity investigation didn't find root cause (clearest signal)
-- Bug involves 3+ modules from different layers (e.g., React component + API route + database query + external service)
-- Same symptom appears in multiple unrelated features (suggests shared infrastructure issue)
-- Issue affects architecture, not just a single file
+- Bug involves 3+ modules from different layers or crosses organizational boundaries
+- Same symptom appears in multiple unrelated areas (suggests shared root cause)
+- Issue affects architecture or strategy, not just a single component
+- Recurring problems that have resisted 2+ prior fix attempts
 
-**Examples:** A data corruption bug that surfaces in both the chat UI and session summaries → high (shared data layer). A CSS styling issue on one page → low. An API route returning 500 that you've already tried two fixes for → escalate to high.
+**Examples:** A data corruption bug that surfaces in both the chat UI and session summaries → high (shared data layer). A CSS styling issue on one page → low. An API route returning 500 that you've already tried two fixes for → escalate to high. A proposal that keeps getting rejected across different clients → high (systemic messaging problem).
 
 ## The Four Phases
 
@@ -87,44 +101,41 @@ You MUST complete each phase before proceeding to the next.
 
 ### Phase 1: Root Cause Investigation
 
-**BEFORE attempting ANY fix:**
+**BEFORE attempting ANY fix or solution:**
 
-1. **Read Error Messages Carefully**
-   - Don't skip past errors or warnings
-   - They often contain the exact solution
-   - Read stack traces completely
-   - Note line numbers, file paths, error codes
+1. **Read the Signals Carefully**
+   - Don't skip past errors, warnings, or feedback
+   - They often contain the exact answer
+   - (Software) Read stack traces completely — note line numbers, file paths, error codes
+   - (Business) Collect concrete examples, not vague impressions
 
-2. **Reproduce Consistently**
+2. **Define the Gap**
+   - What was expected to happen?
+   - What is actually happening?
+   - How big is the gap?
+   - Is this a gap in correctness, performance, reliability, direction, scope, or understanding?
+
+3. **Reproduce Consistently**
    - Can you trigger it reliably?
-   - What are the exact steps?
-   - Does it happen every time?
+   - What are the exact conditions?
    - If not reproducible → gather more data, don't guess
 
-3. **Check Recent Changes**
+4. **Check What Changed**
    - What changed that could cause this?
-   - Git diff, recent commits
-   - New dependencies, config changes
-   - Environmental differences
+   - (Software) Git diff, recent commits, new dependencies, config changes
+   - (Business) New information, changed requirements, shifted context, market changes
+   - Assumptions that turned out to be wrong?
 
-4. **Gather Evidence in Multi-Component Systems**
+5. **Gather Evidence in Multi-Layer Systems**
 
-   **WHEN system has multiple components (CI → build → signing, API → service → database):**
+   **WHEN the problem spans multiple layers:**
 
-   **BEFORE proposing fixes, add diagnostic instrumentation:**
-   ```
-   For EACH component boundary:
-     - Log what data enters component
-     - Log what data exits component
-     - Verify environment/config propagation
-     - Check state at each layer
+   For EACH layer boundary:
+   - What enters this layer?
+   - What exits this layer?
+   - Is this layer doing its job correctly?
 
-   Run once to gather evidence showing WHERE it breaks
-   THEN analyze evidence to identify failing component
-   THEN investigate that specific component
-   ```
-
-   **Example (multi-layer system):**
+   **(Software)** CI → build → signing, API → service → database:
    ```bash
    # Layer 1: Workflow
    echo "=== Secrets available in workflow: ==="
@@ -143,23 +154,31 @@ You MUST complete each phase before proceeding to the next.
    codesign --sign "$IDENTITY" --verbose=4 "$APP"
    ```
 
-   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)
+   **(Business)** Strategy → Messaging → Deliverables → Execution:
+   ```
+   Layer 1: Strategy - Is the overall approach right?
+   Layer 2: Messaging - Are we communicating the right value?
+   Layer 3: Deliverables - Do the documents support the message?
+   Layer 4: Execution - Are deliverables reaching the right people at the right time?
+   ```
 
-5. **Consult Architecture Docs (multi-component bugs only)**
-   - **When:** The bug crosses layer boundaries (e.g., client → API → lib → external service) or involves multiple modules. Skip for single-file or single-layer bugs.
-   - If the project has architecture documentation (e.g., `docs/architecture.md`), read it before tracing — dependency maps and data flow diagrams reveal which components interact, letting you target instrumentation at the right boundaries instead of guessing
-   - **Architecture docs may be stale.** Always verify claims against actual source files. If a diagram says module A depends on B but the code shows otherwise, trust the code.
-   - If you find a discrepancy, file a bug (see "Bug Board Entry Format" below) before continuing your investigation
+   **This reveals:** Which layer is actually failing.
 
-6. **Trace Data Flow**
+6. **Consult Architecture Docs (multi-component bugs only)**
+   - **When:** The bug crosses layer boundaries or involves multiple modules. Skip for single-layer issues.
+   - If the project has architecture documentation (e.g., `docs/architecture.md`), read it before tracing
+   - **Architecture docs may be stale.** Always verify claims against actual source files. Trust the code.
+   - If you find a discrepancy, file a bug (see "Kanban Entry Format" below)
 
-   **WHEN error is deep in call stack:**
+7. **Trace to the Source**
 
-   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.
+   **WHEN the problem is deep in the chain:**
+
+   See `root-cause-tracing.md` in this directory for the complete backward tracing technique (software).
 
    **Quick version:**
-   - Where does bad value originate?
-   - What called this with bad value?
+   - Where does the bad value or wrong outcome originate?
+   - What called this / fed this with bad input?
    - Keep tracing up until you find the source
    - Fix at source, not at symptom
 
@@ -168,12 +187,12 @@ You MUST complete each phase before proceeding to the next.
 **Find the pattern before fixing:**
 
 1. **Find Working Examples**
-   - Locate similar working code in same codebase
+   - Locate similar working code or successful past efforts
    - What works that's similar to what's broken?
 
 2. **Compare Against References**
-   - If implementing pattern, read reference implementation COMPLETELY
-   - Don't skim - read every line
+   - If implementing a known pattern, read the reference implementation COMPLETELY
+   - Don't skim — read every line, analyze thoroughly
    - Understand the pattern fully before applying
 
 3. **Identify Differences**
@@ -182,8 +201,8 @@ You MUST complete each phase before proceeding to the next.
    - Don't assume "that can't matter"
 
 4. **Understand Dependencies**
-   - What other components does this need?
-   - What settings, config, environment?
+   - What other components or conditions does this need?
+   - What settings, config, environment, or context?
    - What assumptions does it make?
 
 ### Phase 3: Hypothesis and Testing
@@ -216,77 +235,76 @@ You MUST complete each phase before proceeding to the next.
 **Fix the root cause, not the symptom:**
 
 1. **Create Failing Test Case**
-   - Simplest possible reproduction
-   - Automated test if possible
-   - One-off test script if no framework
+   - (Software) Simplest possible reproduction — use the `test-driven-development` skill for writing proper failing tests
+   - (Business) Define measurable success criteria — what specifically needs to be true for this to be resolved?
    - MUST have before fixing
-   - Use the `test-driven-development` skill for writing proper failing tests
 
 2. **Implement Single Fix**
    - Address the root cause identified
    - ONE change at a time
    - No "while I'm here" improvements
-   - No bundled refactoring
+   - No bundled refactoring or scope expansion
 
 3. **Verify Fix**
-   - Test passes now?
-   - No other tests broken?
-   - Issue actually resolved?
+   - (Software) Test passes? No other tests broken? Issue resolved?
+   - (Business) Success criteria met? Any unintended consequences?
 
 4. **If Fix Doesn't Work**
    - STOP
    - Count: How many fixes have you tried?
    - If < 3: Return to Phase 1, re-analyze with new information
-   - **If ≥ 3: STOP and question the architecture (step 5 below)**
-   - DON'T attempt Fix #4 without architectural discussion
+   - **If ≥ 3: STOP and question the architecture/strategy (step 5 below)**
+   - DON'T attempt Fix #4 without fundamental discussion
 
-5. **If 3+ Fixes Failed: Question Architecture**
+5. **If 3+ Fixes Failed: Question Fundamentals**
 
-   **Pattern indicating architectural problem:**
-   - Each fix reveals new shared state/coupling/problem in different place
-   - Fixes require "massive refactoring" to implement
-   - Each fix creates new symptoms elsewhere
+   **Pattern indicating architectural or strategic problem:**
+   - Each fix reveals new issues in different areas
+   - Fixes require massive restructuring to implement
+   - Each fix creates new problems elsewhere
 
    **STOP and question fundamentals:**
-   - Is this pattern fundamentally sound?
+   - Is this pattern/strategy fundamentally sound?
    - Are we "sticking with it through sheer inertia"?
-   - Should we refactor architecture vs. continue fixing symptoms?
+   - Should we refactor the architecture or reframe the approach?
 
-   **Discuss with your human partner before attempting more fixes**
+   **Discuss with your human partner before attempting more fixes.**
 
-   This is NOT a failed hypothesis - this is a wrong architecture.
+   This is NOT a failed hypothesis — this is a wrong foundation.
 
 ## Lessons-Learned Gate
 
 BEFORE completing this skill's process:
-  IF 3+ fixes failed and architectural questioning was triggered:
+  IF 3+ fixes failed and fundamental questioning was triggered:
     Write a lesson to docs/lessons-learned/YYYY-MM-DD-short-description.md
     using the lesson template (see kickstart scaffold docs).
 
-## Red Flags - STOP and Follow Process
+## Red Flags — STOP and Follow Process
 
 If you catch yourself thinking:
 - "Quick fix for now, investigate later"
 - "Just try changing X and see if it works"
 - "Add multiple changes, run tests"
-- "Skip the test, I'll manually verify"
-- "Pattern says X but I'll adapt it differently"
+- "Skip the evidence, I know what's wrong"
 - "Here are the main problems: [lists fixes without investigation]"
-- Proposing solutions before tracing data flow
+- Proposing solutions before tracing the cause
 - **Each fix reveals new problem in different place**
+- **"One more attempt" (when already tried 2+)**
 
 **ALL of these mean: STOP. Return to Phase 1.**
 
-**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+**If 3+ fixes failed:** Question the fundamentals (see Phase 4.5)
 
-## your human partner's Signals You're Doing It Wrong
+## Your Human Partner's Signals You're Doing It Wrong
 
 **Watch for these redirections:**
-- "Is that not happening?" - You assumed without verifying
-- "Will it show us...?" - You should have added evidence gathering
-- "Stop guessing" - You're proposing fixes without understanding
-- "Ultrathink this" - Question fundamentals, not just symptoms
-- "We're stuck?" (frustrated) - Your approach isn't working
+- "Is that not happening?" — You assumed without verifying
+- "Will it show us...?" — You should have added evidence gathering
+- "Stop guessing" — You're proposing fixes without understanding
+- "Ultrathink this" — Question fundamentals, not just symptoms
+- "We're stuck?" (frustrated) — Your approach isn't working
+- They keep saying "but why?" — You haven't gone deep enough
+- "We tried that already" — You didn't check history
 
 **When you see these:** STOP. Return to Phase 1.
 
@@ -294,53 +312,55 @@ If you catch yourself thinking:
 
 | Excuse | Reality |
 |--------|---------|
-| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple bugs. |
-| "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check thrashing. |
+| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple problems. |
+| "Emergency, no time for process" | Systematic diagnosis is FASTER than guess-and-check thrashing. |
 | "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
-| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+| "One more fix attempt" (after 2+ failures) | 3+ failures = fundamental problem. Question the approach, don't fix again. |
 
 ## Quick Reference
 
 | Phase | Key Activities | Success Criteria |
 |-------|---------------|------------------|
 | **0. Multi-Agent** (high only) | Fan out subagents, synthesize | Consensus hypothesis or competing theories |
-| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
+| **1. Root Cause** | Read signals, define gap, check changes, gather evidence | Understand WHAT and WHY |
 | **2. Pattern** | Find working examples, compare | Identify differences |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
-| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
+| **4. Implementation** | Create test/criteria, fix, verify | Problem resolved, verified |
 
-## When Process Reveals "No Root Cause"
+## When Process Reveals No Root Cause
 
-If systematic investigation reveals issue is truly environmental, timing-dependent, or external:
+If systematic investigation reveals the issue is truly environmental, timing-dependent, or external:
 
 1. You've completed the process
-2. Document what you investigated
-3. Implement appropriate handling (retry, timeout, error message)
+2. Document what you investigated and what was ruled out
+3. Implement appropriate handling (retry, timeout, monitoring, or recommendation)
 4. Add monitoring/logging for future investigation
 
 **But:** 95% of "no root cause" cases are incomplete investigation.
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `systematic-debugging` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `root-cause-analysis` as the "Discovered during" value.
 
 ## Supporting Techniques
 
-These techniques are part of systematic debugging and available in this directory:
+These technique files are part of root-cause analysis and available in this directory:
 
-- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger
-- **`fix-the-right-layer.md`** - Fix producers/callers, never weaken guards or patch consumers
-- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
-- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
+- **`root-cause-tracing.md`** — Trace bugs backward through call stack to find original trigger
+- **`fix-the-right-layer.md`** — Fix producers/callers, never weaken guards or patch consumers
+- **`defense-in-depth.md`** — Add validation at multiple layers after finding root cause
+- **`condition-based-waiting.md`** — Replace arbitrary timeouts with condition polling
+
+Business diagnosis uses the same phases but does not require these technique files.
 
 **Related skills:**
-- **test-driven-development** - For creating failing test case (Phase 4, Step 1)
-- **verification-before-completion** - Verify fix worked before claiming success
+- **test-driven-development** — For creating failing test case (Phase 4, Step 1)
+- **verification-before-completion** — Verify fix worked before claiming success
 
 ## Real-World Impact
 
-From debugging sessions:
-- Systematic approach: 15-30 minutes to fix
+From diagnosis sessions:
+- Systematic approach: 15-30 minutes to resolution
 - Random fixes approach: 2-3 hours of thrashing
 - First-time fix rate: 95% vs 40%
-- New bugs introduced: Near zero vs common
+- New problems introduced: Near zero vs common

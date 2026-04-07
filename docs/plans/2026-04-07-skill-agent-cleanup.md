@@ -164,7 +164,7 @@ git commit -m "merge: fold design-principles discovery into create-design-princi
 
 ---
 
-### Task 5: Rename systematic-debugging directory to root-cause-analysis
+### ✅ Task 5: Rename systematic-debugging directory to root-cause-analysis
 
 **Files:**
 - Rename: `skills/systematic-debugging/` → `skills/root-cause-analysis/`
@@ -188,7 +188,7 @@ git commit -m "rename: systematic-debugging → root-cause-analysis"
 
 ---
 
-### Task 6: Rewrite root-cause-analysis SKILL.md as domain-neutral unified skill
+### ✅ Task 6: Rewrite root-cause-analysis SKILL.md as domain-neutral unified skill
 
 > **Prerequisite:** Task 5 must be committed. The file at `skills/root-cause-analysis/SKILL.md` does not exist until Task 5's `git mv` completes.
 
