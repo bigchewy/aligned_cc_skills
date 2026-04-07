@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Delete removed skill directories
+### ✅ Task 1: Delete removed skill directories
 
 **Files:**
 - Delete: `skills/claude-profile/` (entire directory)
