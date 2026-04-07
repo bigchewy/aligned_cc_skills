@@ -562,7 +562,7 @@ git commit -m "docs: update README tables for skill/agent cleanup refactor"
 
 ---
 
-### Task 14: Bump plugin version
+### ✅ Task 14: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`
