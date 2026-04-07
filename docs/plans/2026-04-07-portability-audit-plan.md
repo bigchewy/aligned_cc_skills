@@ -354,7 +354,7 @@ git commit -m "feat(kickstart): add portability-audit to Phase 5 permissions"
 
 ---
 
-### Task 5: Bump plugin version
+### ✅ Task 5: Bump plugin version
 
 > **Ordering dependency:** Complete Task 3 first — both tasks modify `README.md`.
 

@@ -188,6 +188,12 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
 
+##### 0.15.0: Portability Audit
+- New `/aligned:portability-audit` skill scans the plugin repo for environment-specific hardcoding
+- Detects: absolute user paths (CRITICAL), non-plugin external file dependencies (HIGH), platform-specific assumptions (MEDIUM)
+- Reference catalog at `skills/portability-audit/references/portability-pitfall-catalog.md`
+- **26 skills** (+1)
+
 ##### 0.14.0: Skill/Agent Cleanup Refactor
 - **BREAKING:** `/aligned:systematic-debugging` renamed to `/aligned:root-cause-analysis` (now handles both software and business problems). `/aligned:business-diagnosis` merged into it. `/aligned:design-principles` merged into `/aligned:create-design-principles`. Removed: `/aligned:business-executing`, `/aligned:business-write-plan`, `/aligned:claude-profile`. Removed agents: `steve-jobs`, `worktree-setup`.
 - **25 skills** (-5), **11 agents** (-2)
