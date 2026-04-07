@@ -81,7 +81,7 @@ Added before the existing four phases. Use when low-severity investigation is in
 
 **Examples:** A data corruption bug that surfaces in both the chat UI and session summaries → high (shared data layer). A CSS styling issue on one page → low. An API route returning 500 that you've already tried two fixes for → escalate to high.
 
-## The Four Phases
+## The Five Phases
 
 You MUST complete each phase before proceeding to the next.
 
@@ -232,6 +232,7 @@ You MUST complete each phase before proceeding to the next.
    - Test passes now?
    - No other tests broken?
    - Issue actually resolved?
+   - If yes → proceed to Phase 5 (Post-Fix Review)
 
 4. **If Fix Doesn't Work**
    - STOP
@@ -256,6 +257,51 @@ You MUST complete each phase before proceeding to the next.
 
    This is NOT a failed hypothesis - this is a wrong architecture.
 
+### Phase 5: Post-Fix Review
+
+**Mandatory after Phase 4 confirms the fix works.** Dispatch a review sub-agent to catch issues that tunnel vision during debugging misses — blast radius, symptom fixes masquerading as root cause fixes, and missing defense-in-depth.
+
+**Before dispatching, gather three inputs:**
+
+1. **Root cause statement:** The hypothesis confirmed in Phase 3 (e.g., "The root cause is X because Y"). If you didn't write this down explicitly, reconstruct it now — the reviewer needs it.
+2. **Diff of all changes:** Run `git diff` (or `git diff HEAD~N` if commits were made) to capture everything changed during the debugging session.
+3. **Resolve `{base-directory}`:** The sub-agent cannot access the "Base directory for this skill:" line from skill load. Resolve it to an absolute path now and substitute it into the prompt before dispatching.
+
+**Dispatch** a sub-agent via Task tool (`subagent_type=general-purpose`, `model=sonnet`):
+
+"You are a post-fix reviewer for a debugging session. Your job is to verify the fix is correct, complete, and safe — not just that it works.
+
+You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead.
+
+**Context:**
+- Root cause identified during investigation: {root-cause-statement}
+- Changes made (git diff): {diff}
+
+Read the supporting technique docs (the dispatching agent MUST resolve these to absolute paths before sending this prompt):
+- `{base-directory}/fix-the-right-layer.md`
+- `{base-directory}/defense-in-depth.md`
+
+Then evaluate the fix against these five criteria:
+
+| # | Criterion | What to check |
+|---|-----------|---------------|
+| 1 | Root cause consistency | Does the fix address the stated root cause, or does it patch a symptom? A symptom fix is one that suppresses the error without removing the condition that caused it. |
+| 2 | Right layer | Per fix-the-right-layer.md: does the fix modify the producer of bad state, or does it patch the consumer/guard that detected it? Patching the detector is almost always wrong. |
+| 3 | Defense in depth | Per defense-in-depth.md: does the fix add validation at multiple layers the data passes through, or does it only patch one layer? A single-layer fix leaves other code paths vulnerable to the same bug. |
+| 4 | Blast radius | Grep for all files that import/reference/depend on the changed files. Are there ripple effects the fix didn't account for? Flag any dependent that may behave differently due to the change. |
+| 5 | Completeness | Grep the codebase for similar patterns to the bug. If the same mistake exists elsewhere, flag every occurrence. |
+
+For each criterion, report: PASS, FLAG (non-blocking concern), or FAIL (must fix before proceeding). Include specific file paths, line numbers, and evidence for every finding.
+
+Output format:
+- **Summary:** One sentence overall verdict
+- **Criteria results:** Table with criterion, verdict, and evidence
+- **Action items:** List of concrete changes needed (if any), ordered by severity"
+
+**Gate:**
+- If any criterion is FAIL → address the findings, then re-run Phase 5
+- If all PASS or FLAG → note any FLAGs, then proceed to the Lessons-Learned Gate
+
 ## Lessons-Learned Gate
 
 BEFORE completing this skill's process:
@@ -277,7 +323,7 @@ If you catch yourself thinking:
 
 **ALL of these mean: STOP. Return to Phase 1.**
 
-**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+**If 3+ fixes failed:** Question the architecture (see Phase 4, step 5)
 
 ## your human partner's Signals You're Doing It Wrong
 
@@ -308,6 +354,7 @@ If you catch yourself thinking:
 | **2. Pattern** | Find working examples, compare | Identify differences |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
 | **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
+| **5. Post-Fix Review** | Sub-agent reviews diff for blast radius, root cause consistency, completeness | All criteria PASS or FLAG |
 
 ## When Process Reveals "No Root Cause"
 
