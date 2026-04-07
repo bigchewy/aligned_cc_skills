@@ -4,7 +4,7 @@
 
 Leaders of growing companies get world-class strategic thinking for their entire team without hiring consultants for every function.
 
-**[Interactive workflow overview →](docs/workflow.html)** — visual pipeline from brainstorm to merge
+**[Interactive workflow overview →](https://ericwpage.com/aligned-skills-workflow)** — visual pipeline from brainstorm to merge
 
 ## What This Looks Like
 
