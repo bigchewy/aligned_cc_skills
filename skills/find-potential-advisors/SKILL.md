@@ -56,7 +56,7 @@ If no brief path provided, conduct an interview to create one. Ask questions one
 Research what approaches are most effective for the domain.
 
 **Process:**
-1. Conduct 3-5 web searches per research question
+1. Conduct 3-5 web searches per research question using `WebSearch` and `WebFetch` tools (never `Bash(curl)` — it creates stale permission entries)
 2. Prioritize systematic reviews and meta-analyses
 3. Stop when findings start repeating
 4. Include any specialized angles from the brief
@@ -88,7 +88,7 @@ Based on research, identify candidates (per brief, default 10) who:
 
 Phases 2-4 involve significant research. Use sub-agents to parallelize:
 
-**Phase 2 (Research):** Spawn one sub-agent per research question. Each agent conducts 3-5 web searches and returns findings. Consolidate results into the brief.
+**Phase 2 (Research):** Spawn one sub-agent per research question. Each agent conducts 3-5 web searches using `WebSearch` and `WebFetch` tools (never `Bash(curl)`) and returns findings. Consolidate results into the brief.
 
 **Phase 3 (Candidates):** After research identifies key modalities, spawn sub-agents to research 2-3 candidates each in parallel. Each agent returns a candidate profile.
 
