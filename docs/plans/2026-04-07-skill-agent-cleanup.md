@@ -293,7 +293,7 @@ git commit -m "feat: add explicit TDD and verification skill references to execu
 
 ---
 
-### Task 9: Wire code-reviewer into finishing-a-development-branch
+### ✅ Task 9: Wire code-reviewer into finishing-a-development-branch
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
