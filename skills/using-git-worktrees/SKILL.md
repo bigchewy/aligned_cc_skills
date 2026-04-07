@@ -89,7 +89,7 @@ esac
 
 # Create worktree with new branch
 git worktree add "$path" -b "$BRANCH_NAME"
-cd "$path"
+# Use $path for all subsequent operations (cd does not persist between Bash calls)
 ```
 
 ### 3. Run Project Setup

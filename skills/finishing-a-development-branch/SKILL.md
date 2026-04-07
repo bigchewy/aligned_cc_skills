@@ -586,7 +586,7 @@ No Vercel API available. Wait `deployWaitSeconds` (default 120s) for auto-deploy
 
 Read `e2e/smoke-test-flows.md` for the flow definitions. The production URL comes from `productionUrl` in `.claude/deployment.json` (Path B) or the Vercel deployment URL (Path A).
 
-Before each Playwright session, kill stale Chrome: `pgrep -f "mcp-chrome" | xargs kill 2>/dev/null || true`, wait 2s, verify clean.
+Before each Playwright session, kill stale Chrome: run `pkill -f mcp-chrome` (ignore if no matching processes), wait 2s, verify clean with `pgrep -f mcp-chrome`.
 
 **If `smokeTestProfiles` is empty** (or no `e2e/auth/` directory): Run flows directly using `playwright-headless`. QUICK = flows tagged `[QUICK]`, FULL = all flows.
 
