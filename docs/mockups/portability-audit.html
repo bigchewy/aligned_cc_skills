@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portability Audit — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    tailwind = undefined; // prevent flash
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            btn: { DEFAULT: '#32373c', hover: '#1a1f23', text: '#ffffff' }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-critical {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+    .badge-high {
+      background: #fff7ed;
+      color: #ff6900;
+    }
+    .badge-medium {
+      background: #f5f3ef;
+      color: #555555;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Decision table */
+    .decision-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+    .decision-table th {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 2px solid #f0eeeb;
+      color: #555555;
+      font-weight: 500;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .decision-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #1a1a1a;
+      vertical-align: top;
+    }
+    .decision-table tr:last-child td { border-bottom: none; }
+
+    /* Validation table */
+    .validation-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+    .validation-table th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 2px solid #f0eeeb;
+      color: #555555;
+      font-weight: 500;
+      font-size: 0.78rem;
+    }
+    .validation-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #1a1a1a;
+      vertical-align: top;
+    }
+    .validation-table tr:last-child td { border-bottom: none; }
+    .check-pass { color: #16a34a; font-weight: 500; }
+
+    /* Mermaid clickable node hover */
+    .mermaid .clickable > rect,
+    .mermaid .clickable > polygon,
+    .mermaid .clickable > circle {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Portability Audit</h1>
+  <p class="subtitle">Skill design for <code>/aligned:portability-audit</code></p>
+  <p class="context">Scans the Aligned plugin repo for environment-specific hardcoding (absolute user paths, external file dependencies, platform assumptions) that would break the plugin for other users. Single-pass skill with reference catalog, 3 detection categories, and severity-grouped reporting.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="switchTab('detection')">Detection Categories</button>
+    <button class="tab-btn" onclick="switchTab('false-positives')">False Positives</button>
+    <button class="tab-btn" onclick="switchTab('pipeline')">Scanning Pipeline</button>
+    <button class="tab-btn" onclick="switchTab('output')">Output</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- OVERVIEW PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>End-to-End Flow</h2>
+      <p class="description">The portability audit runs as a single-pass skill: gather context, discover files, scan patterns, filter false positives, and generate a severity-grouped report. Three detection categories across three severity levels.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  A["Architecture<br/>Skill structure &amp; decisions"]
+  B["Detection<br/>P1-P3 categories"]
+  C["False Positives<br/>5 cross-cutting rules"]
+  D["Pipeline<br/>5-phase scanning process"]
+  E["Output<br/>Severity-grouped report"]
+
+  A --> B --> C --> D --> E
+
+  style A fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style B fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style C fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style D fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style E fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+
+  click A "javascript:switchTab('architecture')"
+  click B "javascript:switchTab('detection')"
+  click C "javascript:switchTab('false-positives')"
+  click D "javascript:switchTab('pipeline')"
+  click E "javascript:switchTab('output')"
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #f0eeeb; border: 1px solid #e5e7eb;"></div>
+        Structure / Config
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #fff7ed; border: 1px solid #ff6900;"></div>
+        Detection Logic
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #ff6900;"></div>
+        Core Process
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #ffffff; border: 1px solid #e5e7eb;"></div>
+        Filtering
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- ARCHITECTURE PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-architecture">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <!-- Sub-tab bar -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','arch-decisions')">Decisions</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','arch-structure')">Skill Structure</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','arch-validation')">Codebase Validation</button>
+    </div>
+
+    <!-- Sub: Decisions -->
+    <div class="sub-panel" id="sub-arch-decisions">
+      <div class="section">
+        <h2>Architecture Decisions <span class="badge">5 decisions</span></h2>
+        <p class="description">Key design choices and their rationale. The skill follows the single-pass pattern from <code>finishing-a-development-branch</code> Step 0 and the reference catalog pattern from <code>deployment-pitfall-catalog.md</code>.</p>
+        <table class="decision-table">
+          <thead>
+            <tr><th>Decision</th><th>Choice</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Execution model</strong></td>
+              <td>Single-pass SKILL.md with reference catalog</td>
+              <td>All 3 categories use the same method (Grep + filter). No analytical diversity that benefits from parallel sub-agents.</td>
+            </tr>
+            <tr>
+              <td><strong>False-positive handling</strong></td>
+              <td>Inline rules in reference catalog</td>
+              <td>Only 6 stable categories of safe patterns. An external allowlist would be scanner logic with extra steps.</td>
+            </tr>
+            <tr>
+              <td><strong>File discovery</strong></td>
+              <td><code>git ls-files</code> via Bash</td>
+              <td>Git-aware filtering is a git concept. Glob cannot respect <code>.gitignore</code> rules.</td>
+            </tr>
+            <tr>
+              <td><strong>Output format</strong></td>
+              <td>Severity-grouped findings</td>
+              <td>Matches deployment audit report format. No confidence scores, no dimension tables.</td>
+            </tr>
+            <tr>
+              <td><strong>Scope</strong></td>
+              <td>This plugin repo only</td>
+              <td>Not designed as a general-purpose portability scanner for arbitrary repos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sub: Skill Structure -->
+    <div class="sub-panel" id="sub-arch-structure">
+      <div class="section">
+        <h2>Skill Structure <span class="badge">2 files</span></h2>
+        <p class="description">Self-contained skill with no agents, no workers, no sub-agent dispatching. Detection knowledge lives in the reference catalog; the SKILL.md orchestrates scanning.</p>
+        <ul class="bullet-list">
+          <li><strong>SKILL.md</strong> &mdash; Entry point with frontmatter, scanning process orchestration</li>
+          <li><strong>references/portability-pitfall-catalog.md</strong> &mdash; Detection categories, regexes, and false-positive rules</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  SKILL["SKILL.md<br/>Orchestrator"]
+  CAT["portability-pitfall-catalog.md<br/>Reference catalog"]
+  CLAUDEMD["CLAUDE.md<br/>Convention context"]
+
+  SKILL -->|reads| CAT
+  SKILL -->|reads| CLAUDEMD
+  SKILL -->|uses| GREP["Grep tool"]
+  SKILL -->|uses| BASH["Bash: git ls-files"]
+  SKILL -->|uses| READ["Read tool"]
+
+  style SKILL fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style CAT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CLAUDEMD fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style GREP fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style BASH fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style READ fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Codebase Validation -->
+    <div class="sub-panel" id="sub-arch-validation">
+      <div class="section">
+        <h2>Codebase Validation <span class="badge">7 checks</span></h2>
+        <p class="description">The Architect validated this design against the actual repo. All checks passed, confirming the detection rules and false-positive filtering work correctly on real data.</p>
+        <table class="validation-table">
+          <thead>
+            <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>P1 violations in tracked files</td>
+              <td><span class="check-pass">0</span></td>
+              <td>No <code>/Users/&lt;name&gt;/</code> matches in tracked files</td>
+            </tr>
+            <tr>
+              <td>P2 edge case</td>
+              <td><span class="check-pass">1 inline example</span></td>
+              <td><code>skills/writing-plans/SKILL.md:45</code> &mdash; <code>~/software/project-a</code> (false positive, handled by documentation rules)</td>
+            </tr>
+            <tr>
+              <td>P3 near-miss</td>
+              <td><span class="check-pass">1, correctly handled</span></td>
+              <td><code>hooks/check-eval-audit.sh:23</code> &mdash; <code>date -j</code> with <code>||</code> fallback</td>
+            </tr>
+            <tr>
+              <td><code>{base-directory}</code> uses</td>
+              <td><span class="check-pass">30+ across 12 skills</span></td>
+              <td>Runtime-resolved &mdash; correctly excluded</td>
+            </tr>
+            <tr>
+              <td><code>~/.claude/</code> uses</td>
+              <td><span class="check-pass">16 across 12 files</span></td>
+              <td>Tilde-expansion &mdash; correctly excluded</td>
+            </tr>
+            <tr>
+              <td><code>${CLAUDE_PLUGIN_ROOT}</code> uses</td>
+              <td><span class="check-pass">4 in hooks.json</span></td>
+              <td>Runtime variable &mdash; correctly excluded</td>
+            </tr>
+            <tr>
+              <td>Skill anatomy compatibility</td>
+              <td><span class="check-pass">Clean</span></td>
+              <td><code>references/</code> dir used by 3 existing skills identically</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DETECTION CATEGORIES PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-detection">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <!-- Sub-tab bar -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('detection','det-overview')">All Categories</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('detection','det-p1')">P1: Absolute Paths</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('detection','det-p2')">P2: External Deps</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('detection','det-p3')">P3: Platform-Specific</button>
+    </div>
+
+    <!-- Sub: All Categories Overview -->
+    <div class="sub-panel" id="sub-det-overview">
+      <div class="section">
+        <h2>Detection Categories <span class="badge">3 categories</span></h2>
+        <p class="description">Three detection categories spanning three severity levels. P2 (Hardcoded Home Directory) has been merged into P1 since the same regex catches both. P5 (Identity Leakage) has been dropped.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P1["P1: Absolute User Paths<br/>incl. hardcoded home dir"]
+  P2["P2: Non-Plugin<br/>External File Deps"]
+  P3["P3: Platform-Specific<br/>Assumptions"]
+
+  CRIT["CRITICAL"]
+  HIGH["HIGH"]
+  MED["MEDIUM"]
+
+  CRIT --> P1
+  HIGH --> P2
+  MED --> P3
+
+  style CRIT fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style HIGH fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style MED fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style P1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: P1 -->
+    <div class="sub-panel" id="sub-det-p1">
+      <div class="section">
+        <h2>P1: Absolute User Paths <span class="badge badge-critical">CRITICAL</span></h2>
+        <p class="description">Paths containing a literal username directory. Always breaks on another machine, no ambiguity. This category subsumes hardcoded home directory values (e.g., <code>/Users/ericpage/.config/...</code> instead of <code>$HOME/.config/...</code>) since the same regex catches both patterns.</p>
+        <ul class="bullet-list">
+          <li><strong>Detection:</strong> Grep for patterns matching <code>/Users/&lt;name&gt;/</code>, <code>/home/&lt;name&gt;/</code>, <code>C:\Users\&lt;name&gt;\</code></li>
+          <li><strong>Regex:</strong> <code>/Users/[a-zA-Z][a-zA-Z0-9._-]+/</code> and equivalents for Linux/Windows</li>
+          <li><strong>Severity:</strong> CRITICAL &mdash; always breaks on another machine</li>
+          <li><strong>Fix:</strong> Replace with <code>~/.claude/</code>, <code>$HOME</code>, or <code>{base-directory}</code></li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  MATCH["Grep matches<br/>absolute path pattern"]
+  CHECK["Check against<br/>false-positive rules"]
+  REPORT["Report as<br/>CRITICAL finding"]
+  SAFE["Exclude as<br/>safe pattern"]
+
+  MATCH --> CHECK
+  CHECK -->|violation| REPORT
+  CHECK -->|safe| SAFE
+
+  style MATCH fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style CHECK fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style REPORT fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style SAFE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: P2 -->
+    <div class="sub-panel" id="sub-det-p2">
+      <div class="section">
+        <h2>P2: Non-Plugin External File Dependencies <span class="badge badge-high">HIGH</span></h2>
+        <p class="description">References to files outside the plugin tree that are not standard Claude Code paths. The skill will fail for other users if the file does not exist and there is no fallback. Paths containing template variables (<code>{base-directory}</code>, <code>{project-root}</code>, etc.) are skipped.</p>
+        <ul class="bullet-list">
+          <li><strong>Detection:</strong> Paths containing <code>~/</code> followed by directories that are not <code>.claude/</code> or <code>.config/</code>, AND the referenced file does not exist in the plugin repo</li>
+          <li><strong>Severity:</strong> HIGH &mdash; skill fails for other users if no fallback</li>
+          <li><strong>Note:</strong> References with fallback chains (local &rarr; global &rarr; plugin default) are handled by false-positive rules</li>
+          <li><strong>Fix:</strong> Add fallback chain: check local repo first, then <code>~/.claude/</code>, then plugin-bundled default</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  REF["External path<br/>reference found"]
+  STD{"Standard<br/>Claude Code path?"}
+  TMPL{"Contains template<br/>variable?"}
+  FALL{"Has mechanical<br/>fallback chain?"}
+  SAFE["Exclude"]
+  REPORT["Report as<br/>HIGH finding"]
+
+  REF --> STD
+  STD -->|yes| SAFE
+  STD -->|no| TMPL
+  TMPL -->|yes| SAFE
+  TMPL -->|no| FALL
+  FALL -->|yes| SAFE
+  FALL -->|no| REPORT
+
+  style REF fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style STD fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style TMPL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style FALL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SAFE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style REPORT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: P3 -->
+    <div class="sub-panel" id="sub-det-p3">
+      <div class="section">
+        <h2>P3: Platform-Specific Assumptions <span class="badge badge-medium">MEDIUM</span></h2>
+        <p class="description">macOS-only commands or paths that break on Linux but not on other macOS machines. Only flagged in executable files, not documentation.</p>
+        <ul class="bullet-list">
+          <li><strong>Detection:</strong> macOS-only commands like <code>date -j</code>, <code>pbcopy</code>, <code>open</code> (without fallback), or <code>/usr/local/bin/</code></li>
+          <li><strong>Scope:</strong> Only in executable files (<code>.sh</code>, <code>.js</code>) &mdash; not in documentation describing macOS usage</li>
+          <li><strong>Severity:</strong> MEDIUM &mdash; breaks on Linux but not on other macOS machines</li>
+          <li><strong>Fix:</strong> Add cross-platform fallback using <code>||</code> or <code>command -v</code> feature detection</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  CMD["macOS-only<br/>command found"]
+  EXEC{"In executable<br/>file?"}
+  FALL{"Has shell fallback<br/>on same line?"}
+  SKIP["Skip:<br/>documentation only"]
+  SAFE["Exclude:<br/>has fallback"]
+  REPORT["Report as<br/>MEDIUM finding"]
+
+  CMD --> EXEC
+  EXEC -->|no| SKIP
+  EXEC -->|yes| FALL
+  FALL -->|yes| SAFE
+  FALL -->|no| REPORT
+
+  style CMD fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style EXEC fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style FALL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SKIP fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style SAFE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style REPORT fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FALSE POSITIVES PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-false-positives">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <!-- Sub-tab bar -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('false-positives','fp-paths')">Path Rules</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('false-positives','fp-context')">Context Rules</button>
+    </div>
+
+    <!-- Sub: Path Rules -->
+    <div class="sub-panel" id="sub-fp-paths">
+      <div class="section">
+        <h2>Portable Home Directory References <span class="badge">P1, P2</span></h2>
+        <p class="description">These path patterns expand per-user at runtime and are standard conventions. They are always safe.</p>
+        <ul class="bullet-list">
+          <li><strong><code>~/.claude/</code> paths</strong> &mdash; Tilde expands per-user, standard Claude Code convention</li>
+          <li><strong><code>~/.config/</code> paths</strong> &mdash; XDG base directory convention</li>
+          <li><strong><code>$HOME</code>, <code>${HOME}</code>, <code>process.env.HOME</code>, <code>os.homedir()</code></strong> &mdash; Programmatic home directory resolution</li>
+        </ul>
+      </div>
+      <div class="section">
+        <h2>Runtime-Resolved Placeholders <span class="badge">P1, P2</span></h2>
+        <p class="description">Template variables resolved by Claude Code at skill load time. They never contain a literal user path.</p>
+        <ul class="bullet-list">
+          <li><strong><code>{base-directory}</code>, <code>{project-root}</code>, <code>{plugin-root}</code>, <code>{design-file-path}</code></strong> &mdash; Template variables</li>
+          <li><strong><code>${CLAUDE_PLUGIN_ROOT}</code></strong> &mdash; Plugin runtime environment variable</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  MATCH["Pattern match<br/>found in file"]
+  TILDE{"Starts with<br/>~/.claude/ or ~/.config/?"}
+  VAR{"Uses $HOME or<br/>env variable?"}
+  TMPL{"Template<br/>placeholder?"}
+  SAFE["SAFE:<br/>exclude from report"]
+  NEXT["Continue to<br/>context rules"]
+
+  MATCH --> TILDE
+  TILDE -->|yes| SAFE
+  TILDE -->|no| VAR
+  VAR -->|yes| SAFE
+  VAR -->|no| TMPL
+  TMPL -->|yes| SAFE
+  TMPL -->|no| NEXT
+
+  style MATCH fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style TILDE fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style VAR fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style TMPL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SAFE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style NEXT fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Context Rules -->
+    <div class="sub-panel" id="sub-fp-context">
+      <div class="section">
+        <h2>Graceful Fallback Chains <span class="badge">P2, P3</span></h2>
+        <p class="description">Mechanically detectable patterns only. No natural-language heuristics. Fallback chains expressed only in natural language (e.g., "If not found, read ~/.claude/Y") are NOT auto-suppressed &mdash; they are reported as findings for human review.</p>
+        <ul class="bullet-list">
+          <li><strong>Shell <code>||</code> chaining</strong> on the same line (e.g., <code>date -j ... || date -d ...</code>) &rarr; SAFE</li>
+          <li><strong><code>command -v</code> feature detection</strong> (e.g., <code>command -v gstdbuf || stdbuf</code>) &rarr; SAFE</li>
+          <li><strong>Shell conditionals</strong> (<code>if [ -f ... ]; then ... else ...</code>) &rarr; SAFE</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  REF["External file or<br/>platform command"]
+  SH1{"Shell || on<br/>same line?"}
+  SH2{"command -v<br/>detection?"}
+  SH3{"Shell conditional<br/>if/then/else?"}
+  SAFE["SAFE:<br/>exclude"]
+  FLAG["Not safe:<br/>report for review"]
+
+  REF --> SH1
+  SH1 -->|yes| SAFE
+  SH1 -->|no| SH2
+  SH2 -->|yes| SAFE
+  SH2 -->|no| SH3
+  SH3 -->|yes| SAFE
+  SH3 -->|no| FLAG
+
+  style REF fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SH1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SH2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SH3 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SAFE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style FLAG fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Documentation References <span class="badge">all categories</span></h2>
+        <p class="description">Paths used as examples in documentation are not real dependencies. Narrowed to two mechanically detectable patterns.</p>
+        <ul class="bullet-list">
+          <li><strong>Fenced code blocks</strong> with generic placeholders &rarr; SAFE</li>
+          <li><strong>Same-line <code>e.g.</code> marker</strong> &mdash; paths on the same line as an <code>e.g.</code> marker &rarr; SAFE (covers inline examples like <code>~/software/project-a</code>)</li>
+        </ul>
+      </div>
+      <div class="section">
+        <h2>CLAUDE.md Documented Conventions <span class="badge">all categories</span></h2>
+        <p class="description">Phase 0 reads the repo's CLAUDE.md files. Any path pattern explicitly documented there as intentional is safe.</p>
+        <ul class="bullet-list">
+          <li><strong>Scope:</strong> Main CLAUDE.md and any nested CLAUDE.md files in subdirectories</li>
+          <li><strong>Application:</strong> Any path pattern called out as an intentional convention gets excluded from findings</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCANNING PIPELINE PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-pipeline">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <!-- Sub-tab bar -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('pipeline','pip-overview')">Pipeline Overview</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('pipeline','pip-phase0')">Phase 0: Context</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('pipeline','pip-phase1')">Phase 1: Discovery</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('pipeline','pip-phase2')">Phase 2: Scanning</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('pipeline','pip-phase3')">Phase 3: Filtering</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('pipeline','pip-phase4')">Phase 4: Report</button>
+    </div>
+
+    <!-- Sub: Pipeline Overview -->
+    <div class="sub-panel" id="sub-pip-overview">
+      <div class="section">
+        <h2>Scanning Pipeline <span class="badge">5 phases</span></h2>
+        <p class="description">Linear single-pass pipeline. Each phase feeds the next. No branching, no parallelism. Phase 0 includes a repo identity guard that stops execution if not in the plugin repo.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P0["Phase 0<br/>Context &amp; Validation"]
+  P1["Phase 1<br/>File Discovery"]
+  P2["Phase 2<br/>Pattern Scanning"]
+  P3["Phase 3<br/>FP Filtering"]
+  P4["Phase 4<br/>Report Generation"]
+
+  P0 --> P1 --> P2 --> P3 --> P4
+
+  style P0 fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style P1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P3 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style P4 fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Phase 0 -->
+    <div class="sub-panel" id="sub-pip-phase0">
+      <div class="section">
+        <h2>Phase 0: Context Gathering &amp; Validation <span class="badge">setup</span></h2>
+        <p class="description">Verify repo identity, then read project conventions and detection rules before scanning. This context is used in Phase 3 for false-positive filtering.</p>
+        <ul class="bullet-list">
+          <li><strong>Repo identity guard:</strong> Check for <code>.claude-plugin/plugin.json</code> at repo root. If absent, report error and stop: "This skill is designed for the Aligned plugin repo. Run it from the plugin root directory."</li>
+          <li><strong>Read CLAUDE.md</strong> &mdash; Main and nested subdirectory CLAUDE.md files for documented conventions and intentional path patterns</li>
+          <li><strong>Read reference catalog</strong> &mdash; <code>references/portability-pitfall-catalog.md</code> for detection categories and false-positive rules</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  START["Phase 0<br/>Start"]
+  GUARD{"plugin.json<br/>exists?"}
+  STOP["STOP:<br/>wrong repo"]
+  CM["Read CLAUDE.md<br/>files"]
+  CAT["Read pitfall<br/>catalog"]
+  CTX["Convention context<br/>assembled"]
+
+  START --> GUARD
+  GUARD -->|no| STOP
+  GUARD -->|yes| CM
+  GUARD -->|yes| CAT
+  CM --> CTX
+  CAT --> CTX
+
+  style START fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style GUARD fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style STOP fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style CM fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style CAT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CTX fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Phase 1 -->
+    <div class="sub-panel" id="sub-pip-phase1">
+      <div class="section">
+        <h2>Phase 1: File Discovery <span class="badge">Bash only</span></h2>
+        <p class="description">The only Bash commands in the skill. Combines tracked and untracked non-ignored files, filtered to scannable text extensions. If either git command fails, the skill stops &mdash; do not proceed with an incomplete file set.</p>
+        <ul class="bullet-list">
+          <li><strong><code>git ls-files</code></strong> &mdash; All tracked files</li>
+          <li><strong><code>git ls-files --others --exclude-standard</code></strong> &mdash; Untracked non-ignored files</li>
+          <li><strong>Extension filter:</strong> <code>.md</code>, <code>.json</code>, <code>.yaml</code>, <code>.yml</code>, <code>.sh</code>, <code>.js</code>, <code>.ts</code>, <code>.toml</code>, <code>.txt</code>, <code>.html</code></li>
+          <li><strong>Error handling:</strong> If either git command fails (e.g., not a git repo), report the error and stop</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  T["git ls-files<br/>tracked"]
+  U["git ls-files --others<br/>untracked non-ignored"]
+  TFAIL{"git<br/>failed?"}
+  UFAIL{"git<br/>failed?"}
+  STOP["STOP:<br/>report error"]
+  MERGE["Combine<br/>file lists"]
+  FILTER["Filter by<br/>text extensions"]
+  OUT["Scannable<br/>file set"]
+
+  T --> TFAIL
+  U --> UFAIL
+  TFAIL -->|yes| STOP
+  UFAIL -->|yes| STOP
+  TFAIL -->|no| MERGE
+  UFAIL -->|no| MERGE
+  MERGE --> FILTER --> OUT
+
+  style T fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style U fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style TFAIL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style UFAIL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style STOP fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style MERGE fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style FILTER fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style OUT fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Phase 2 -->
+    <div class="sub-panel" id="sub-pip-phase2">
+      <div class="section">
+        <h2>Phase 2: Pattern Scanning <span class="badge">core detection</span></h2>
+        <p class="description">For each detection category (P1-P3), run Grep across the file set with the category's detection regex. Collect matches with file path, line number, and 2 lines of surrounding context. If a Grep command fails for a category, report it as a scan error rather than silently skipping.</p>
+        <ul class="bullet-list">
+          <li><strong>Tool:</strong> Grep with category-specific regex patterns</li>
+          <li><strong>Context:</strong> 2 lines of surrounding context per match for false-positive evaluation</li>
+          <li><strong>Scope:</strong> All 3 categories run sequentially against the same file set</li>
+          <li><strong>Error handling:</strong> Per-category scan errors reported as "SCAN ERROR: [category] &mdash; [error]"</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  FILES["File set<br/>from Phase 1"]
+  P1["Grep P1<br/>Absolute paths"]
+  P2["Grep P2<br/>External deps"]
+  P3["Grep P3<br/>Platform-specific"]
+  ERR["SCAN ERROR:<br/>report per category"]
+  MATCHES["Raw matches<br/>with context"]
+
+  FILES --> P1
+  FILES --> P2
+  FILES --> P3
+  P1 -->|success| MATCHES
+  P2 -->|success| MATCHES
+  P3 -->|success| MATCHES
+  P1 -->|failure| ERR
+  P2 -->|failure| ERR
+  P3 -->|failure| ERR
+
+  style FILES fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style P1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style P3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style ERR fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style MATCHES fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Phase 3 -->
+    <div class="sub-panel" id="sub-pip-phase3">
+      <div class="section">
+        <h2>Phase 3: False-Positive Filtering <span class="badge">5 rules</span></h2>
+        <p class="description">Each match runs through cross-cutting rules first, then category-specific rules. Any rule marking a match as SAFE excludes it from the report.</p>
+        <ul class="bullet-list">
+          <li><strong>Cross-cutting rules first:</strong> Portable home dir, runtime placeholders, fallback chains (mechanical only), documentation references, CLAUDE.md conventions</li>
+          <li><strong>Then category-specific rules:</strong> Per-category exceptions defined in the reference catalog</li>
+          <li><strong>Multi-line context:</strong> Use Read for rules needing more context (e.g., shell conditional fallback detection)</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  RAW["Raw match"]
+  XC["Cross-cutting<br/>rules"]
+  CS["Category-specific<br/>rules"]
+  SAFE["Excluded<br/>as SAFE"]
+  FINDING["Confirmed<br/>finding"]
+
+  RAW --> XC
+  XC -->|safe| SAFE
+  XC -->|not safe| CS
+  CS -->|safe| SAFE
+  CS -->|not safe| FINDING
+
+  style RAW fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style XC fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CS fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SAFE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style FINDING fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Phase 4 -->
+    <div class="sub-panel" id="sub-pip-phase4">
+      <div class="section">
+        <h2>Phase 4: Report Generation <span class="badge">output</span></h2>
+        <p class="description">Group surviving findings by severity (CRITICAL, HIGH, MEDIUM), then by category within each severity. Include a "Clean Categories" section for categories with zero findings.</p>
+        <ul class="bullet-list">
+          <li><strong>Severity ordering:</strong> CRITICAL &rarr; HIGH &rarr; MEDIUM</li>
+          <li><strong>Per finding:</strong> File path with line number, matched text, risk explanation, suggested fix</li>
+          <li><strong>All-clean shortcut:</strong> "No portability violations found. The plugin is portable." &mdash; no verbose empty report</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  FINDINGS["Confirmed<br/>findings"]
+  GROUP["Group by<br/>severity"]
+  CRIT["CRITICAL<br/>section"]
+  HIGH["HIGH<br/>section"]
+  MED["MEDIUM<br/>section"]
+  CLEAN["Clean<br/>categories"]
+  REPORT["Final<br/>report"]
+
+  FINDINGS --> GROUP
+  GROUP --> CRIT --> REPORT
+  GROUP --> HIGH --> REPORT
+  GROUP --> MED --> REPORT
+  GROUP --> CLEAN --> REPORT
+
+  style FINDINGS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style GROUP fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CRIT fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style HIGH fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style MED fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style CLEAN fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style REPORT fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- OUTPUT PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-output">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <!-- Sub-tab bar -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('output','out-findings')">With Findings</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('output','out-clean')">All Clean</button>
+    </div>
+
+    <!-- Sub: With Findings -->
+    <div class="sub-panel" id="sub-out-findings">
+      <div class="section">
+        <h2>Report Format: With Findings <span class="badge">example</span></h2>
+        <p class="description">When violations are found, the report groups them by severity with per-finding detail: file path, matched text, risk explanation, and suggested fix.</p>
+        <div class="diagram-container" style="background: #f5f3ef; border-radius: 6px; padding: 20px; font-family: Menlo, Consolas, Monaco, 'Courier New', monospace; font-size: 0.82rem; line-height: 1.7; color: #1a1a1a; white-space: pre-wrap;">## Portability Audit Report
+
+<strong>Scanned:</strong> 87 files (85 tracked, 2 untracked)
+<strong>Findings:</strong> 2 total (1 critical, 1 high, 0 medium)
+
+<span style="color: #b91c1c; font-weight: 600;">### CRITICAL</span>
+
+<strong>#### P1: Absolute User Path</strong>
+- <strong>File:</strong> skills/some-skill/SKILL.md:42
+- <strong>Match:</strong> <code>/Users/ericpage/.claude/skills/</code>
+- <strong>Risk:</strong> Path contains literal username — fails on any other machine
+- <strong>Suggested fix:</strong> Replace with <code>~/.claude/skills/</code> or <code>{base-directory}</code>
+
+<span style="color: #ff6900; font-weight: 600;">### HIGH</span>
+
+<strong>#### P2: Non-Plugin External File Dependency</strong>
+- <strong>File:</strong> agents/some-agent.md:28
+- <strong>Match:</strong> <code>~/.claude/docs/design/design-principles.md</code>
+- <strong>Risk:</strong> References file outside plugin tree with no fallback
+- <strong>Suggested fix:</strong> Add fallback chain
+
+<span style="color: #555555; font-weight: 600;">### MEDIUM</span>
+<em>(no findings)</em>
+
+<strong>### Clean Categories</strong>
+- P3: Platform-Specific Assumptions — no findings</div>
+      </div>
+    </div>
+
+    <!-- Sub: All Clean -->
+    <div class="sub-panel" id="sub-out-clean">
+      <div class="section">
+        <h2>Report Format: All Clean <span class="badge">example</span></h2>
+        <p class="description">When no violations are found, the report is minimal. No verbose empty sections.</p>
+        <div class="diagram-container" style="background: #f5f3ef; border-radius: 6px; padding: 20px; font-family: Menlo, Consolas, Monaco, 'Courier New', monospace; font-size: 0.82rem; line-height: 1.7; color: #1a1a1a; white-space: pre-wrap;">## Portability Audit Report
+
+<strong>Scanned:</strong> 87 files (85 tracked, 2 untracked)
+
+No portability violations found. The plugin is portable.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCRIPTS -->
+  <!-- ============================================================ -->
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render only overview diagram on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected tab button
+      var btns = document.querySelectorAll('#main-tabs .tab-btn');
+      btns.forEach(function(b) {
+        if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf(tabId) !== -1) {
+          b.classList.add('active');
+        }
+      });
+
+      // Activate panel
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one if none active
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate the clicked sub-tab button
+      var btns = parent.querySelectorAll('.sub-tab-btn');
+      btns.forEach(function(b) {
+        if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf(subId) !== -1) {
+          b.classList.add('active');
+        }
+      });
+
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
