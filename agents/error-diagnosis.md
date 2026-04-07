@@ -143,7 +143,7 @@ This starts fresh tracking so the next diagnosis only sees new errors.
 ## Integration
 
 - **Capture layer:** `hooks/error-tracker.js` (PostToolUse + PostToolUseFailure hooks)
-- **Deep debugging:** When diagnosis points to a specific bug, use `/aligned:systematic-debugging` skill
+- **Deep debugging:** When diagnosis points to a specific bug, use `/aligned:root-cause-analysis` skill
 - **Codebase audit:** For broader code health assessment, use **productivity-skills:code-auditor**
 - **Environment fixes:** For project setup improvements, use **productivity-skills:project-bootstrapper**
 

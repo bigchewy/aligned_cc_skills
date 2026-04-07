@@ -139,7 +139,7 @@ Write the incremented number back to `docs/kanban/.counter`.
 **At the end of execution (Step 6),** if any bugs were logged during this session, add to the completion report:
 
 ```
-N bug(s) were discovered and logged to `docs/kanban/todo/`. Review them and pick up in a fresh session with `/aligned:systematic-debugging`.
+N bug(s) were discovered and logged to `docs/kanban/todo/`. Review them and pick up in a fresh session with `/aligned:root-cause-analysis`.
 ```
 
 **What qualifies as a bug to log:**

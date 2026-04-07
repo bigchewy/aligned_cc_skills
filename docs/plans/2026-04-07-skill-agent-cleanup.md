@@ -438,7 +438,7 @@ git commit -m "fix: update brainstorming business mode to use writing-plans inst
 
 ---
 
-### Task 11: Update kickstart/SKILL.md
+### ✅ Task 11: Update kickstart/SKILL.md
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md`
@@ -482,7 +482,7 @@ git commit -m "fix: update kickstart skill references for cleanup refactor"
 
 ---
 
-### Task 12: Update remaining cross-references
+### ✅ Task 12: Update remaining cross-references
 
 > **Prerequisite:** Complete Task 8 first — both Task 8 and this task modify `skills/executing-plans/SKILL.md`.
 

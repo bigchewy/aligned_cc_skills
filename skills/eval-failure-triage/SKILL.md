@@ -13,7 +13,7 @@ LLM eval failures have multiple possible causes. The most common mistake is trea
 
 **Core principle:** Classify before fixing. A miscalibrated eval wastes time if you fix the prompt instead.
 
-**Complements:** `systematic-debugging` (deterministic bugs). This skill fills the gap for probabilistic failures where reproducibility is variable and root causes span prompt quality, eval calibration, and model variance.
+**Complements:** `root-cause-analysis` (deterministic bugs). This skill fills the gap for probabilistic failures where reproducibility is variable and root causes span prompt quality, eval calibration, and model variance.
 
 ## When to Use
 
@@ -137,7 +137,7 @@ BEFORE completing this skill's process:
 
 ## Integration
 
-- **systematic-debugging** — For deterministic bugs. This skill handles probabilistic failures.
+- **root-cause-analysis** — For deterministic bugs. This skill handles probabilistic failures.
 - **writing-plans** — When triage reveals substantive prompt work needed, write a plan before implementing.
 - **executing-plans** — For multi-fix implementation.
 
