@@ -147,7 +147,7 @@ git commit -m "feat(portability-audit): add portability pitfall catalog"
 
 ---
 
-### Task 2: Create the SKILL.md entry point
+### ✅ Task 2: Create the SKILL.md entry point
 
 **Files:**
 - Create: `skills/portability-audit/SKILL.md`
