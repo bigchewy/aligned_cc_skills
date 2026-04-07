@@ -409,7 +409,7 @@ git commit -m "feat: wire code-reviewer into finishing workflow as Step 1d, add 
 
 ---
 
-### Task 10: Update brainstorming/modes/business.md
+### ✅ Task 10: Update brainstorming/modes/business.md
 
 **Files:**
 - Modify: `skills/brainstorming/modes/business.md`
