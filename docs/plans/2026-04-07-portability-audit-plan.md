@@ -396,7 +396,7 @@ git commit -m "chore: bump version to 0.15.0 for portability-audit skill"
 
 ---
 
-### Task 6: Verify the complete skill works end-to-end
+### ✅ Task 6: Verify the complete skill works end-to-end
 
 **Files:**
 - Read: `skills/portability-audit/SKILL.md`

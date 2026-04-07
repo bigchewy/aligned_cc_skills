@@ -39,7 +39,7 @@ For each detection category (P1–P3), run Grep across the repo with the categor
 **P1 scans (CRITICAL):**
 - Grep pattern: `/Users/[a-zA-Z][a-zA-Z0-9._-]+/`
 - Grep pattern: `/home/[a-zA-Z][a-zA-Z0-9._-]+/`
-- Grep pattern: `C:\\\\Users\\\\[a-zA-Z][a-zA-Z0-9._-]+\\\\`
+- Grep pattern: `C:\\Users\\[a-zA-Z][a-zA-Z0-9._-]+\\`
 
 **P2 scans (HIGH):**
 - Grep pattern: `~/(?!\.claude/|\.config/)[a-zA-Z0-9._-]+/`
