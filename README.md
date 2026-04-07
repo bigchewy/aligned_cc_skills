@@ -99,6 +99,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
+| portability-audit | Maintenance | `/aligned:portability-audit` | Scan plugin repo for environment-specific hardcoding that breaks portability |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
 
 ### Agents
@@ -186,6 +187,12 @@ Semver, pre-1.0:
 Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
+
+##### 0.15.0: Portability Audit
+- New `/aligned:portability-audit` skill scans the plugin repo for environment-specific hardcoding
+- Detects: absolute user paths (CRITICAL), non-plugin external file dependencies (HIGH), platform-specific assumptions (MEDIUM)
+- Reference catalog at `skills/portability-audit/references/portability-pitfall-catalog.md`
+- **26 skills** (+1)
 
 ##### 0.14.0: Skill/Agent Cleanup Refactor
 - **BREAKING:** `/aligned:systematic-debugging` renamed to `/aligned:root-cause-analysis` (now handles both software and business problems). `/aligned:business-diagnosis` merged into it. `/aligned:design-principles` merged into `/aligned:create-design-principles`. Removed: `/aligned:business-executing`, `/aligned:business-write-plan`, `/aligned:claude-profile`. Removed agents: `steve-jobs`, `worktree-setup`.

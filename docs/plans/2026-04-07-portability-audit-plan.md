@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Create the portability pitfall catalog
+### ✅ Task 1: Create the portability pitfall catalog
 
 **Files:**
 - Create: `skills/portability-audit/references/portability-pitfall-catalog.md`
@@ -147,7 +147,7 @@ git commit -m "feat(portability-audit): add portability pitfall catalog"
 
 ---
 
-### Task 2: Create the SKILL.md entry point
+### ✅ Task 2: Create the SKILL.md entry point
 
 **Files:**
 - Create: `skills/portability-audit/SKILL.md`
@@ -298,7 +298,7 @@ git commit -m "feat(portability-audit): add SKILL.md entry point"
 
 ---
 
-### Task 3: Add skill to README reference table
+### ✅ Task 3: Add skill to README reference table
 
 **Files:**
 - Modify: `README.md` (the Skill Reference table, after the `kanban-resolve` row)
@@ -326,7 +326,7 @@ git commit -m "docs: add portability-audit to skill reference table"
 
 ---
 
-### Task 4: Add skill permission to kickstart Phase 5
+### ✅ Task 4: Add skill permission to kickstart Phase 5
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the Phase 5 permissions `allow` array)
@@ -354,7 +354,7 @@ git commit -m "feat(kickstart): add portability-audit to Phase 5 permissions"
 
 ---
 
-### Task 5: Bump plugin version
+### ✅ Task 5: Bump plugin version
 
 > **Ordering dependency:** Complete Task 3 first — both tasks modify `README.md`.
 
@@ -396,7 +396,7 @@ git commit -m "chore: bump version to 0.15.0 for portability-audit skill"
 
 ---
 
-### Task 6: Verify the complete skill works end-to-end
+### ✅ Task 6: Verify the complete skill works end-to-end
 
 **Files:**
 - Read: `skills/portability-audit/SKILL.md`
