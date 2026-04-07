@@ -69,7 +69,7 @@ git commit -m "remove: worktree-setup and steve-jobs agents (advisor persona ret
 
 ---
 
-### Task 3: Update mockup-generator agent to reference advisor instead of agent
+### ✅ Task 3: Update mockup-generator agent to reference advisor instead of agent
 
 **Files:**
 - Modify: `agents/mockup-generator.md` (the `agents/steve-jobs.md` reference)

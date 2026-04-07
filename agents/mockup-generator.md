@@ -161,7 +161,7 @@ open docs/mockups/[session-name]/[file].html
 
 ## Design Critique (Steve Jobs persona, conditional)
 
-If `docs/design/design-principles.md` exists in the project, load `agents/steve-jobs.md` and adopt the Steve Jobs persona. For each generated mockup, deliver a 2-3 sentence critique in Jobs's voice before presenting to the user: what's insanely great, what's not good enough, what needs to change. This happens per-mockup, not as a summary at the end.
+If `docs/design/design-principles.md` exists in the project, load `advisors/prompts/steve-jobs.md` and adopt the Steve Jobs persona. For each generated mockup, deliver a 2-3 sentence critique in Jobs's voice before presenting to the user: what's insanely great, what's not good enough, what needs to change. This happens per-mockup, not as a summary at the end.
 
 If design-principles.md does not exist, skip the persona critique.
 
