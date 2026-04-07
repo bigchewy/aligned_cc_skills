@@ -12,13 +12,13 @@ Leaders of growing companies get world-class strategic thinking for their entire
 
 **Sales deck for tomorrow's meeting.** Invoke `/aligned:generate-deck` with your prospect context. The system structures a 9-slide deck using April Dunford's 8-step sales pitch framework, personalized with your prospect's stakeholders, competitive context, and buying trigger. It applies your brand voice, messaging framework, and visual identity. Before delivery, three reviewers evaluate in parallel: a positioning expert checks framework adherence, a behavioral scientist checks cognitive load and decision architecture, and simulated buyer personas flag what resonates and what triggers skepticism. You triage the findings and get a final deck.
 
-**New hire's first strategic decision.** They invoke `/aligned:use-advisor rob-walling` and get Rob Walling's actual decision frameworks — the Stair Step Method, 5 Stages of Product-Market Fit with specific MRR and churn benchmarks, Market-First evaluation. The advisor speaks in his real voice, pushes back on building without evidence, and asks his signature questions. When your project includes company context — competitors, personas, strategy docs — the advisor incorporates that context into the conversation. The quality of strategic thinking doesn't depend on who's in the room.
+**New hire's first strategic decision.** They invoke `/aligned:use-advisor find an advisor to help me decide if we should include this feature in the roadmap or not` and get Rob Walling's actual decision frameworks — the Stair Step Method, 5 Stages of Product-Market Fit with specific MRR and churn benchmarks, Market-First evaluation. The advisor speaks in his real voice, pushes back on building without evidence, and asks his signature questions. When your project includes company context — competitors, personas, strategy docs — the advisor incorporates that context into the conversation. The quality of strategic thinking doesn't depend on who's in the room.
 
 ## Who This Is For
 
 Leaders of growing companies who are scaling decision-making. Teams that need consistent, high-quality thinking without a consultant in every room. Technical and semi-technical founders comfortable with Claude Code.
 
-This is not a prompt library. Not a template collection. Not "better prompts for ChatGPT." The advisors have real opinions, the frameworks enforce real process, and the quality gates don't let you skip steps.
+This is not a prompt library nor a template collection. The advisors have real opinions, the frameworks enforce real process, and the quality gates don't let you skip steps.
 
 Get notified when new advisors and frameworks ship: [subscribe on Substack](https://bigchewypretzels.substack.com)
 
