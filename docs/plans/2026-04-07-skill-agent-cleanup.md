@@ -6,7 +6,7 @@
 
 **Source Design Doc:** N/A (design emerged from conversation analysis)
 
-**Architecture:** Delete 6 skill directories and 2 agent files. Merge design-principles into create-design-principles. Merge business-diagnosis into a renamed root-cause-analysis skill. Add code-reviewer step to finishing-a-development-branch. Update ~15 files with cross-reference changes.
+**Architecture:** Delete 5 skill directories, rename 1 (systematic-debugging → root-cause-analysis), and delete 2 agent files. Merge design-principles into create-design-principles. Merge business-diagnosis into a renamed root-cause-analysis skill. Add code-reviewer step to finishing-a-development-branch. Update ~15 files with cross-reference changes.
 
 **Tech Stack:** Markdown, SVG, JSON (plugin config)
 
@@ -17,7 +17,7 @@
 **Files:**
 - Delete: `skills/claude-profile/` (entire directory)
 - Delete: `skills/business-executing/` (entire directory)
-- Delete: `skills/business-write-plan/` (entire directory — includes `plan-critique-checklist.md`)
+- Delete: `skills/business-write-plan/` (entire directory — includes a business-specific `plan-critique-checklist.md`; the main checklist at `skills/writing-plans/plan-critique-checklist.md` is unaffected)
 
 **Step 1: Delete the directories**
 
@@ -60,6 +60,8 @@ Read `advisors/prompts/steve-jobs.md` — must exist (this is the canonical Stev
 
 **Step 3: Commit**
 
+> **Ordering note:** Tasks 2 and 3 must execute without interruption. Task 2 breaks `mockup-generator` (deletes the agent file it references). Task 3 patches the reference. Do not stop between these tasks.
+
 ```bash
 git add -u agents/worktree-setup.md agents/steve-jobs.md
 git commit -m "remove: worktree-setup and steve-jobs agents (advisor persona retained)"
@@ -100,18 +102,18 @@ git commit -m "fix: update mockup-generator to reference steve-jobs advisor inst
 
 **Step 1: Read both files**
 
-Read `skills/design-principles/SKILL.md` — extract the Phase 1 discovery questions (lines 26-37):
+Read `skills/design-principles/SKILL.md` — extract the Phase 1 discovery questions (the 5 numbered questions in the "Step 2: Ask discovery questions" section):
 1. **The feeling** — "When someone opens this app, what do they feel?"
 2. **The anti-feeling** — "What's the opposite? What should this never feel like?"
 3. **The reference** — "Show me something that gets it right."
 4. **Color direction** — "Warm or cool? Bold or quiet?"
 5. **Density** — "Is this a journal or a cockpit?"
 
-Read `skills/create-design-principles/SKILL.md` — this already has the Steve Jobs persona (lines 10-18) and "Design Direction" section (line 28). The discovery questions should be inserted into the Design Direction section as a required interactive step before the prescriptive guidance.
+Read `skills/create-design-principles/SKILL.md` — this already has the Steve Jobs persona (find `## Persona: Steve Jobs (REQUIRED)`) and "Design Direction" section (find `## Design Direction (REQUIRED)`). The discovery questions should be inserted between the persona section and the Design Direction section as a required interactive step before the prescriptive guidance.
 
 **Step 2: Add discovery phase to create-design-principles**
 
-In `skills/create-design-principles/SKILL.md`, after the Steve Jobs persona section (after line 18, before the `---` separator at line 20), insert a new section:
+In `skills/create-design-principles/SKILL.md`, after the Steve Jobs persona section (after the closing of the persona instructions, before the `---` separator that precedes the "Design Direction" section), insert a new section:
 
 ```markdown
 ## Phase 1: Discovery (Interactive)
@@ -188,6 +190,8 @@ git commit -m "rename: systematic-debugging → root-cause-analysis"
 
 ### Task 6: Rewrite root-cause-analysis SKILL.md as domain-neutral unified skill
 
+> **Prerequisite:** Task 5 must be committed. The file at `skills/root-cause-analysis/SKILL.md` does not exist until Task 5's `git mv` completes.
+
 **Files:**
 - Modify: `skills/root-cause-analysis/SKILL.md`
 
@@ -262,11 +266,11 @@ git commit -m "remove: business-diagnosis (merged into root-cause-analysis)"
 
 **Step 1: Read the file and find the right insertion point**
 
-The file's Step 2 describes task execution. After line 42 ("Follow each step exactly"), add a TDD discipline note.
+Read the file. Find the "### Step 2: Execute Build Tasks" section. After the per-task instruction list (the numbered 1-4 steps ending with "Mark as completed"), add a TDD discipline note.
 
 **Step 2: Add TDD reference**
 
-After the Step 2 task execution instructions (around line 42-44), add:
+After the Step 2 task execution instructions (the "Mark as completed" line), add:
 
 ```markdown
 **TDD discipline:** Every task follows RED-GREEN-REFACTOR. Write the failing test first, verify it fails, write minimal implementation, verify it passes. Reference: `test-driven-development` skill. If a task skips TDD steps, STOP and follow the TDD process before continuing.
@@ -439,26 +443,35 @@ git commit -m "fix: update brainstorming business mode to use writing-plans inst
 **Files:**
 - Modify: `skills/kickstart/SKILL.md`
 
+**Step 0: Read the file first**
+
+Read `skills/kickstart/SKILL.md` in full to confirm current line positions before editing. Line numbers below are approximate — use content anchors to locate the actual positions.
+
 **Step 1: Update the permissions list**
 
-Remove these entries from the `permissions.allow` array:
+Find the `permissions.allow` array (inside the Phase 5 settings.json block). Remove these entries:
 - `"Skill(aligned:claude-profile)"`
+- `"Skill(aligned:business-brainstorming)"` (stale — no such skill exists)
 - `"Skill(aligned:business-diagnosis)"`
 - `"Skill(aligned:business-executing)"`
 - `"Skill(aligned:business-write-plan)"`
 - `"Skill(aligned:design-principles)"`
 - `"Skill(aligned:systematic-debugging)"`
 
-Add this entry:
+Replace `"Skill(aligned:systematic-debugging)"` with:
 - `"Skill(aligned:root-cause-analysis)"`
+
+(Net effect: remove 7 entries, add 1.)
 
 **Step 2: Update documentation references**
 
-- Line 191: Change `/aligned:systematic-debugging` → `/aligned:root-cause-analysis` and update description to "for root cause investigation"
-- Line 192: Change `/aligned:design-principles` → `/aligned:create-design-principles` and update description to "to define design direction"
-- Line 240-242: Remove `/aligned:business-write-plan`, `/aligned:business-executing`, `/aligned:business-diagnosis` lines. Replace with `/aligned:root-cause-analysis` — "when something isn't working"
-- Line 377: Change `/aligned:design-principles` → `/aligned:create-design-principles`
-- Line 95: Change `/aligned:design-principles` → `/aligned:create-design-principles`
+Find each reference by content anchor (not line number — positions may have shifted):
+
+- Find `/aligned:systematic-debugging` in the Software Workflows list → change to `/aligned:root-cause-analysis` with description "for root cause investigation"
+- Find `/aligned:design-principles` in the Software Workflows list → change to `/aligned:create-design-principles` with description "to define design direction"
+- Find the Business Workflows list containing `/aligned:business-write-plan`, `/aligned:business-executing`, `/aligned:business-diagnosis` → remove all three. Add `/aligned:root-cause-analysis` — "when something isn't working"
+- Find the Software scaffold output message containing `/aligned:design-principles` → change to `/aligned:create-design-principles`
+- Find the design-principles.md placeholder template containing `/aligned:design-principles` → change to `/aligned:create-design-principles`
 
 **Step 3: Commit**
 
@@ -471,28 +484,34 @@ git commit -m "fix: update kickstart skill references for cleanup refactor"
 
 ### Task 12: Update remaining cross-references
 
+> **Prerequisite:** Complete Task 8 first — both Task 8 and this task modify `skills/executing-plans/SKILL.md`.
+
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (systematic-debugging reference)
 - Modify: `skills/eval-failure-triage/SKILL.md` (systematic-debugging references)
 - Modify: `agents/error-diagnosis.md` (systematic-debugging reference)
 - Modify: `skills/create-new-skill/SKILL.md` (systematic-debugging reference)
 
+**Step 0: Read each file to confirm reference locations before editing**
+
+Read all 4 files. Use Grep to find `systematic-debugging` in each. Confirm the exact lines before making edits.
+
 **Step 1: Update executing-plans**
 
-Line 136: Change `/aligned:systematic-debugging` → `/aligned:root-cause-analysis`
+Find the `/aligned:systematic-debugging` reference in the Kanban/bug discovery section (near "pick up in a fresh session") → change to `/aligned:root-cause-analysis`
 
 **Step 2: Update eval-failure-triage**
 
-Line 16: Change `systematic-debugging` → `root-cause-analysis`
-Line 140: Change `systematic-debugging` → `root-cause-analysis`
+Find `systematic-debugging` in the "Complements" line near the top → change to `root-cause-analysis`
+Find `systematic-debugging` in the "Related skills" section near the bottom → change to `root-cause-analysis`
 
 **Step 3: Update error-diagnosis agent**
 
-Line 146: Change `/aligned:systematic-debugging` → `/aligned:root-cause-analysis`
+Find `/aligned:systematic-debugging` in the "Deep debugging" recommendation → change to `/aligned:root-cause-analysis`
 
 **Step 4: Update create-new-skill**
 
-Line 284: Change `systematic-debugging` → `root-cause-analysis` in the example
+Find `systematic-debugging` in the REQUIRED BACKGROUND example → change to `root-cause-analysis`
 
 **Step 5: Commit**
 
@@ -608,7 +627,7 @@ Read `advisors/prompts/steve-jobs.md` — must still exist.
 **Step 5: If stale references found, fix them and commit**
 
 ```bash
-git add -A
+git add -u
 git commit -m "fix: resolve remaining stale cross-references from cleanup"
 ```
 
