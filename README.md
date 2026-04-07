@@ -3,7 +3,7 @@
 A virtual board of advisors for Claude Code. 65 expert personas, 138 structured frameworks, auto-selected by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.13.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.14.0-green.svg)](.claude-plugin/plugin.json)
 
 ```
 /plugin marketplace add bigchewy/aligned_cc_skills
@@ -87,21 +87,16 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | generate-one-pager | Content | `/aligned:generate-one-pager` | Generate branded one-pagers and battle cards (placeholder) |
 | create-svg-diagram | Content | `/aligned:create-svg-diagram` | Generate diagrams, charts, and visual frameworks for presentations and docs |
 | kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
-| design-principles | Foundation | `/aligned:design-principles` | Interactive design discovery with Steve Jobs persona |
-| create-design-principles | Foundation | `/aligned:create-design-principles` | Enforce precise, minimal design system (Linear/Notion/Stripe aesthetic) |
-| business-diagnosis | Business | `/aligned:business-diagnosis` | Diagnose why business deliverables aren't landing |
-| business-executing | Business | `/aligned:business-executing` | Execute business plans with deliverables |
-| business-write-plan | Business | `/aligned:business-write-plan` | Write business plans with critique panel |
+| create-design-principles | Foundation | `/aligned:create-design-principles` | Interactive design discovery + enforce precise, minimal design system |
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier) |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
 | test-driven-development | Methodology | (invoked by pipeline) | TDD enforcement with error path tests |
 | verification-before-completion | Methodology | (invoked by pipeline) | Evidence before assertions |
-| systematic-debugging | Problem-solving | `/aligned:systematic-debugging` | Root cause investigation with optional multi-agent mode |
+| root-cause-analysis | Problem-solving | `/aligned:root-cause-analysis` | Root cause investigation for software and business problems with optional multi-agent mode |
 | eval-failure-triage | Problem-solving | `/aligned:eval-failure-triage` | Classify LLM eval failures before fixing |
 | eval-audit | Problem-solving | `/aligned:eval-audit` | Eval coverage auditor with hook trigger |
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
-| claude-profile | Infrastructure | `/aligned:claude-profile` | Switch Claude Code accounts and configure directory-specific overrides |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
@@ -119,10 +114,8 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | kanban-triage | Validates Kanban items through 5-phase root cause analysis |
 | mockup-generator | Self-contained HTML mockups for design-phase visualization |
 | session-document-generator | Orchestrates diagram agents to produce consolidated tabbed HTML documents |
-| steve-jobs | Design critique persona for brainstorming reviews |
 | doc-staleness-detector | Detect stale docs by comparing git history. Logs to Kanban, never edits directly |
 | project-scanner | Fast codebase scan for brainstorming context (languages, structure, dependencies) |
-| worktree-setup | Isolated git worktree creation with safety checks |
 
 ### Hooks
 
@@ -194,17 +187,21 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
 
+##### 0.14.0: Skill/Agent Cleanup Refactor
+- **BREAKING:** `/aligned:systematic-debugging` renamed to `/aligned:root-cause-analysis` (now handles both software and business problems). `/aligned:business-diagnosis` merged into it. `/aligned:design-principles` merged into `/aligned:create-design-principles`. Removed: `/aligned:business-executing`, `/aligned:business-write-plan`, `/aligned:claude-profile`. Removed agents: `steve-jobs`, `worktree-setup`.
+- **25 skills** (-5), **11 agents** (-2)
+
 ##### 0.13.0: Unified Brainstorming Skill
 - **BREAKING:** `/aligned:business-brainstorming` merged into `/aligned:brainstorming`. The unified skill auto-detects whether your topic is software/technical or business/strategy and adapts accordingly. Update any project CLAUDE.md files that reference `/aligned:business-brainstorming`.
 
-##### 0.5.0
+##### 0.6.0
 - **25 skills** (-1: removed autopilot, replaced by automated post-plan pipeline)
 - New `FINISH-BRANCH.md` Ralph loop prompt for non-interactive merge-to-main
 - Writing-plans handoff restructured: 3 options (Interactive / Automated background / Manual command)
 - Option B auto-launches Ralph loop + finish as a single background pipeline
 - `.finish-status` sentinel file for background pipeline observability
 
-##### 0.6.0
+##### 0.5.0
 - **26 skills** (+1: codebase-audit)
 - Multi-dimensional codebase audit with 5 parallel workers (code quality, test quality, security, dead code, architecture)
 - Confidence-scored findings with deduplication and severity filtering
