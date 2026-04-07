@@ -36,7 +36,7 @@ The system encodes expert methodology into executable workflows:
 
 - **65 advisor personas** with real voices, signature questions, failure modes, and calibration data. April Dunford doesn't just "give positioning advice" — she runs her actual 5 Components framework and pushes back on vague differentiation.
 - **138 structured frameworks** made interactive and sequential with quality gates. The system enforces the process order and challenges weak answers at each phase.
-- **30 skills** that auto-select relevant advisors based on context. A brainstorming session about pricing pulls in different experts than one about product design.
+- **25 skills** that auto-select relevant advisors based on context. A brainstorming session about pricing pulls in different experts than one about product design.
 - **Company context incorporation.** When you layer in your competitors, buyer personas, and strategy docs, the advisors operate with your company's specific context — not generic advice.
 
 Think of it as a virtual board of advisors — world-class experts with real methodologies, available 24/7, that incorporate your company's institutional knowledge. The quality of decisions doesn't degrade as the company grows.
@@ -80,12 +80,11 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:writing-plans)",
       "Skill(aligned:executing-plans)",
       "Skill(aligned:finishing-a-development-branch)",
-      "Skill(aligned:systematic-debugging)",
+      "Skill(aligned:root-cause-analysis)",
       "Skill(aligned:using-git-worktrees)",
       "Skill(aligned:eval-failure-triage)",
       "Skill(aligned:eval-audit)",
       "Skill(aligned:kickstart)",
-      "Skill(aligned:design-principles)",
       "Skill(aligned:test-driven-development)",
       "Skill(aligned:verification-before-completion)",
       "Skill(aligned:use-advisor)",
@@ -96,16 +95,12 @@ To use aligned skills without permission prompts, add these to your `~/.claude/s
       "Skill(aligned:add-advisor)",
       "Skill(aligned:add-framework)",
       "Skill(aligned:find-potential-advisors)",
-      "Skill(aligned:business-diagnosis)",
-      "Skill(aligned:business-executing)",
-      "Skill(aligned:business-write-plan)",
       "Skill(aligned:create-design-principles)",
       "Skill(aligned:generate-deck)",
       "Skill(aligned:generate-blog-post)",
       "Skill(aligned:generate-one-pager)",
       "Skill(aligned:persona-panel)",
-      "Skill(aligned:create-svg-diagram)",
-      "Skill(aligned:claude-profile)"
+      "Skill(aligned:create-svg-diagram)"
     ]
   }
 }
@@ -131,21 +126,16 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | generate-one-pager | Content | `/aligned:generate-one-pager` | Generate branded one-pagers and battle cards (placeholder) |
 | create-svg-diagram | Content | `/aligned:create-svg-diagram` | Generate diagrams, charts, and visual frameworks for presentations and docs |
 | kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
-| design-principles | Foundation | `/aligned:design-principles` | Interactive design discovery with Steve Jobs persona |
-| create-design-principles | Foundation | `/aligned:create-design-principles` | Enforce precise, minimal design system (Linear/Notion/Stripe aesthetic) |
-| business-diagnosis | Business | `/aligned:business-diagnosis` | Diagnose why business deliverables aren't landing |
-| business-executing | Business | `/aligned:business-executing` | Execute business plans with deliverables |
-| business-write-plan | Business | `/aligned:business-write-plan` | Write business plans with critique panel |
+| create-design-principles | Foundation | `/aligned:create-design-principles` | Interactive design discovery and precise, minimal design system (Linear/Notion/Stripe aesthetic) |
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier) |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
 | test-driven-development | Methodology | (invoked by pipeline) | TDD enforcement with error path tests |
 | verification-before-completion | Methodology | (invoked by pipeline) | Evidence before assertions |
-| systematic-debugging | Problem-solving | `/aligned:systematic-debugging` | Root cause investigation with optional multi-agent mode |
+| root-cause-analysis | Problem-solving | `/aligned:root-cause-analysis` | Root cause investigation for software bugs and business problems |
 | eval-failure-triage | Problem-solving | `/aligned:eval-failure-triage` | Classify LLM eval failures before fixing |
 | eval-audit | Problem-solving | `/aligned:eval-audit` | Eval coverage auditor with hook trigger |
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
-| claude-profile | Infrastructure | `/aligned:claude-profile` | Switch Claude Code accounts and configure directory-specific overrides |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
@@ -163,10 +153,8 @@ Note: `/aligned:kickstart` auto-creates `.claude/settings.json` with `enabledPlu
 | kanban-triage | Validates Kanban items through 5-phase root cause analysis |
 | mockup-generator | Self-contained HTML mockups for design-phase visualization |
 | session-document-generator | Orchestrates diagram agents to produce consolidated tabbed HTML documents |
-| steve-jobs | Design critique persona for brainstorming reviews |
 | doc-staleness-detector | Detect stale docs by comparing git history — logs to Kanban, never edits directly |
 | project-scanner | Fast codebase scan for brainstorming context (languages, structure, dependencies) |
-| worktree-setup | Isolated git worktree creation with safety checks |
 
 ### Hooks
 

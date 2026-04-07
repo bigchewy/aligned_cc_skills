@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Delete removed skill directories
+### ✅ Task 1: Delete removed skill directories
 
 **Files:**
 - Delete: `skills/claude-profile/` (entire directory)
@@ -41,7 +41,7 @@ git commit -m "remove: claude-profile, business-executing, business-write-plan s
 
 ---
 
-### Task 2: Delete removed agent files
+### ✅ Task 2: Delete removed agent files
 
 **Files:**
 - Delete: `agents/worktree-setup.md`
@@ -69,7 +69,7 @@ git commit -m "remove: worktree-setup and steve-jobs agents (advisor persona ret
 
 ---
 
-### Task 3: Update mockup-generator agent to reference advisor instead of agent
+### ✅ Task 3: Update mockup-generator agent to reference advisor instead of agent
 
 **Files:**
 - Modify: `agents/mockup-generator.md` (the `agents/steve-jobs.md` reference)
@@ -94,7 +94,7 @@ git commit -m "fix: update mockup-generator to reference steve-jobs advisor inst
 
 ---
 
-### Task 4: Merge design-principles discovery into create-design-principles
+### ✅ Task 4: Merge design-principles discovery into create-design-principles
 
 **Files:**
 - Modify: `skills/create-design-principles/SKILL.md` (add discovery questions)
@@ -164,7 +164,7 @@ git commit -m "merge: fold design-principles discovery into create-design-princi
 
 ---
 
-### Task 5: Rename systematic-debugging directory to root-cause-analysis
+### ✅ Task 5: Rename systematic-debugging directory to root-cause-analysis
 
 **Files:**
 - Rename: `skills/systematic-debugging/` → `skills/root-cause-analysis/`
@@ -188,7 +188,7 @@ git commit -m "rename: systematic-debugging → root-cause-analysis"
 
 ---
 
-### Task 6: Rewrite root-cause-analysis SKILL.md as domain-neutral unified skill
+### ✅ Task 6: Rewrite root-cause-analysis SKILL.md as domain-neutral unified skill
 
 > **Prerequisite:** Task 5 must be committed. The file at `skills/root-cause-analysis/SKILL.md` does not exist until Task 5's `git mv` completes.
 
@@ -239,7 +239,7 @@ git commit -m "feat: merge business-diagnosis into root-cause-analysis as domain
 
 ---
 
-### Task 7: Delete business-diagnosis skill directory
+### ✅ Task 7: Delete business-diagnosis skill directory
 
 **Files:**
 - Delete: `skills/business-diagnosis/` (entire directory)
@@ -259,7 +259,7 @@ git commit -m "remove: business-diagnosis (merged into root-cause-analysis)"
 
 ---
 
-### Task 8: Add TDD skill reference to executing-plans
+### ✅ Task 8: Add TDD skill reference to executing-plans
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (add explicit TDD reference)
@@ -293,7 +293,7 @@ git commit -m "feat: add explicit TDD and verification skill references to execu
 
 ---
 
-### Task 9: Wire code-reviewer into finishing-a-development-branch
+### ✅ Task 9: Wire code-reviewer into finishing-a-development-branch
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
@@ -409,7 +409,7 @@ git commit -m "feat: wire code-reviewer into finishing workflow as Step 1d, add 
 
 ---
 
-### Task 10: Update brainstorming/modes/business.md
+### ✅ Task 10: Update brainstorming/modes/business.md
 
 **Files:**
 - Modify: `skills/brainstorming/modes/business.md`
@@ -438,7 +438,7 @@ git commit -m "fix: update brainstorming business mode to use writing-plans inst
 
 ---
 
-### Task 11: Update kickstart/SKILL.md
+### ✅ Task 11: Update kickstart/SKILL.md
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md`
@@ -482,7 +482,7 @@ git commit -m "fix: update kickstart skill references for cleanup refactor"
 
 ---
 
-### Task 12: Update remaining cross-references
+### ✅ Task 12: Update remaining cross-references
 
 > **Prerequisite:** Complete Task 8 first — both Task 8 and this task modify `skills/executing-plans/SKILL.md`.
 
@@ -522,7 +522,7 @@ git commit -m "fix: update systematic-debugging → root-cause-analysis cross-re
 
 ---
 
-### Task 13: Update README.md
+### ✅ Task 13: Update README.md
 
 **Files:**
 - Modify: `README.md`
@@ -562,7 +562,7 @@ git commit -m "docs: update README tables for skill/agent cleanup refactor"
 
 ---
 
-### Task 14: Bump plugin version
+### ✅ Task 14: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`

@@ -1,0 +1,268 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 610" width="1800" height="610">
+  <defs>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    </style>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ff6900"/>
+    </marker>
+    <marker id="arr-g" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#b0ada8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1800" height="610" fill="#faf9f7"/>
+
+  <!-- Title -->
+  <text x="600" y="30" font-size="20" font-weight="600" fill="#1a1a1a">Aligned Plugin — Skill &amp; Agent Mind Map</text>
+  <text x="600" y="48" font-size="12" fill="#555555">30 skills · 13 agents · arrows show invocation and dispatch relationships</text>
+
+  <!-- Legend -->
+  <rect x="1240" y="6" width="548" height="56" rx="6" fill="#f5f3ef" stroke="#e5e7eb" opacity="0.7"/>
+  <rect x="1254" y="16" width="32" height="12" rx="3" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="1295" y="26" font-size="10" fill="#555555">Core pipeline</text>
+  <rect x="1254" y="34" width="32" height="12" rx="3" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="1295" y="44" font-size="10" fill="#555555">Connected skill</text>
+  <rect x="1460" y="16" width="32" height="12" rx="3" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="3 1.5"/>
+  <text x="1501" y="26" font-size="10" fill="#555555">User entry only</text>
+  <rect x="1460" y="34" width="32" height="12" rx="3" fill="#fef2f2" stroke="#b91c1c"/>
+  <text x="1501" y="44" font-size="10" fill="#555555">Orphaned</text>
+  <rect x="1630" y="16" width="32" height="12" rx="3" fill="white" stroke="#555555" stroke-dasharray="3 1.5"/>
+  <text x="1671" y="26" font-size="10" fill="#555555">Agent</text>
+  <line x1="1630" y1="40" x2="1656" y2="40" stroke="#ff6900" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="1671" y="44" font-size="10" fill="#555555">Invokes</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CONNECTION LINES (drawn first = behind boxes) -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Pipeline arrows (orange) -->
+  <line x1="262" y1="99" x2="342" y2="99" stroke="#ff6900" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="498" y1="99" x2="578" y2="99" stroke="#ff6900" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="746" y1="99" x2="826" y2="99" stroke="#ff6900" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Pipeline → Support (gray, invoking downward) -->
+  <line x1="420" y1="116" x2="189" y2="152" stroke="#d4d0cc" stroke-width="0.8"/>
+  <line x1="662" y1="116" x2="189" y2="152" stroke="#d4d0cc" stroke-width="0.8"/>
+  <line x1="181" y1="116" x2="390" y2="152" stroke="#d4d0cc" stroke-width="0.8"/>
+  <line x1="662" y1="116" x2="390" y2="152" stroke="#d4d0cc" stroke-width="0.8"/>
+  <line x1="662" y1="116" x2="590" y2="152" stroke="#d4d0cc" stroke-width="0.8"/>
+  <line x1="924" y1="116" x2="590" y2="152" stroke="#d4d0cc" stroke-width="0.8"/>
+  <line x1="662" y1="116" x2="793" y2="152" stroke="#d4d0cc" stroke-width="0.8"/>
+
+  <!-- Pipeline → Business (brainstorming → business-write-plan) -->
+  <line x1="181" y1="116" x2="187" y2="258" stroke="#d4d0cc" stroke-width="0.8"/>
+
+  <!-- Business within-cluster -->
+  <line x1="275" y1="271" x2="300" y2="271" stroke="#b0ada8" stroke-width="1.2" marker-end="url(#arr-g)"/>
+  <line x1="384" y1="296" x2="384" y2="284" stroke="#b0ada8" stroke-width="1.2" marker-end="url(#arr-g)"/>
+
+  <!-- Content: one-pager references deck -->
+  <line x1="715" y1="309" x2="742" y2="271" stroke="#d4d0cc" stroke-width="0.8"/>
+
+  <!-- Advisor within-cluster -->
+  <line x1="1158" y1="271" x2="1183" y2="271" stroke="#b0ada8" stroke-width="1.2" marker-end="url(#arr-g)"/>
+  <line x1="1321" y1="271" x2="1346" y2="271" stroke="#b0ada8" stroke-width="1.2" marker-end="url(#arr-g)"/>
+  <line x1="1321" y1="309" x2="1346" y2="309" stroke="#b0ada8" stroke-width="1"/>
+  <line x1="1346" y1="312" x2="1321" y2="312" stroke="#b0ada8" stroke-width="1"/>
+
+  <!-- Pipeline/Support → Agents (dispatch lines, thin) -->
+  <line x1="181" y1="116" x2="177" y2="368" stroke="#e8c9a0" stroke-width="0.8" stroke-dasharray="4 3"/>
+  <line x1="181" y1="116" x2="371" y2="368" stroke="#e8c9a0" stroke-width="0.8" stroke-dasharray="4 3"/>
+  <line x1="924" y1="116" x2="752" y2="368" stroke="#e8c9a0" stroke-width="0.8" stroke-dasharray="4 3"/>
+  <line x1="1131" y1="178" x2="927" y2="368" stroke="#e8c9a0" stroke-width="0.8" stroke-dasharray="4 3"/>
+
+  <!-- Agent → Agent connections -->
+  <line x1="371" y1="394" x2="372" y2="406" stroke="#b0ada8" stroke-width="1"/>
+  <line x1="463" y1="394" x2="571" y2="406" stroke="#b0ada8" stroke-width="1"/>
+  <line x1="569" y1="394" x2="737" y2="406" stroke="#b0ada8" stroke-width="1"/>
+  <line x1="830" y1="381" x2="855" y2="381" stroke="#b0ada8" stroke-width="1"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECTION LABELS                              -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <text x="100" y="75" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#8A847E">CORE SOFTWARE PIPELINE</text>
+  <text x="100" y="143" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#8A847E">PIPELINE SUPPORT</text>
+  <text x="100" y="248" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#8A847E">BUSINESS PIPELINE</text>
+  <text x="545" y="248" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#8A847E">CONTENT GENERATION</text>
+  <text x="970" y="248" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#8A847E">ADVISOR SYSTEM</text>
+  <text x="100" y="358" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#8A847E">CONNECTED AGENTS</text>
+  <text x="100" y="468" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#b91c1c">ORPHANED AGENTS — no skill or agent dispatches these</text>
+  <text x="1080" y="468" font-size="10" font-weight="500" letter-spacing="0.06em" fill="#ff6900">USER ENTRY POINTS — no other skill invokes these</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CORE PIPELINE (emphasized boxes)            -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <rect x="100" y="82" width="162" height="34" rx="6" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="181" y="103" font-size="11" fill="#1a1a1a" text-anchor="middle">brainstorming</text>
+
+  <rect x="342" y="82" width="156" height="34" rx="6" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="420" y="103" font-size="11" fill="#1a1a1a" text-anchor="middle">writing-plans</text>
+
+  <rect x="578" y="82" width="168" height="34" rx="6" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="662" y="103" font-size="11" fill="#1a1a1a" text-anchor="middle">executing-plans</text>
+
+  <rect x="826" y="82" width="196" height="34" rx="6" fill="white" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="924" y="103" font-size="11" fill="#1a1a1a" text-anchor="middle">finishing-dev-branch</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- PIPELINE SUPPORT (standard skill boxes)     -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <rect x="100" y="152" width="178" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="189" y="169" font-size="11" fill="#1a1a1a" text-anchor="middle">test-driven-dev</text>
+
+  <rect x="303" y="152" width="175" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="390" y="169" font-size="11" fill="#1a1a1a" text-anchor="middle">using-git-worktrees</text>
+
+  <rect x="503" y="152" width="175" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="590" y="169" font-size="11" fill="#1a1a1a" text-anchor="middle">eval-failure-triage</text>
+
+  <rect x="703" y="152" width="180" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="793" y="169" font-size="11" fill="#1a1a1a" text-anchor="middle">systematic-debugging</text>
+
+  <rect x="908" y="152" width="122" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="969" y="169" font-size="11" fill="#1a1a1a" text-anchor="middle">eval-audit</text>
+  <text x="969" y="144" font-size="8" fill="#8A847E" text-anchor="middle" font-style="italic">(hook-triggered)</text>
+
+  <rect x="1055" y="152" width="152" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="1131" y="169" font-size="11" fill="#1a1a1a" text-anchor="middle">kanban-resolve</text>
+
+  <rect x="100" y="190" width="190" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="195" y="207" font-size="11" fill="#1a1a1a" text-anchor="middle">verify-before-complete</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- BUSINESS PIPELINE                           -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <rect x="100" y="258" width="175" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="187" y="275" font-size="11" fill="#1a1a1a" text-anchor="middle">business-write-plan</text>
+
+  <rect x="300" y="258" width="168" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="384" y="275" font-size="11" fill="#1a1a1a" text-anchor="middle">business-executing</text>
+
+  <rect x="300" y="296" width="168" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="384" y="313" font-size="11" fill="#1a1a1a" text-anchor="middle">business-diagnosis</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CONTENT GENERATION                          -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <rect x="545" y="258" width="172" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="631" y="275" font-size="11" fill="#1a1a1a" text-anchor="middle">generate-blog-post</text>
+
+  <rect x="742" y="258" width="148" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="816" y="275" font-size="11" fill="#1a1a1a" text-anchor="middle">generate-deck</text>
+
+  <rect x="545" y="296" width="170" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="630" y="313" font-size="11" fill="#1a1a1a" text-anchor="middle">generate-one-pager</text>
+
+  <rect x="742" y="296" width="145" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="814" y="313" font-size="11" fill="#1a1a1a" text-anchor="middle">persona-panel</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ADVISOR SYSTEM                              -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <rect x="970" y="258" width="188" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1064" y="275" font-size="11" fill="#1a1a1a" text-anchor="middle">find-potential-advisors</text>
+
+  <rect x="1183" y="258" width="138" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="1252" y="275" font-size="11" fill="#1a1a1a" text-anchor="middle">add-advisor</text>
+
+  <rect x="1346" y="258" width="152" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="1422" y="275" font-size="11" fill="#1a1a1a" text-anchor="middle">add-framework</text>
+
+  <rect x="1183" y="296" width="138" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="1252" y="313" font-size="11" fill="#1a1a1a" text-anchor="middle">use-advisor</text>
+
+  <rect x="1346" y="296" width="152" height="26" rx="6" fill="#f0eeeb" stroke="#e5e7eb"/>
+  <text x="1422" y="313" font-size="11" fill="#1a1a1a" text-anchor="middle">use-framework</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CONNECTED AGENTS (dashed border)            -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Row 1 -->
+  <rect x="100" y="368" width="155" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="177" y="385" font-size="11" fill="#1a1a1a" text-anchor="middle">project-scanner</text>
+
+  <rect x="280" y="368" width="183" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="371" y="385" font-size="11" fill="#1a1a1a" text-anchor="middle">session-doc-generator</text>
+
+  <rect x="488" y="368" width="162" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="569" y="385" font-size="11" fill="#1a1a1a" text-anchor="middle">mockup-generator</text>
+
+  <rect x="675" y="368" width="155" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="752" y="385" font-size="11" fill="#1a1a1a" text-anchor="middle">code-simplifier</text>
+
+  <rect x="855" y="368" width="145" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="927" y="385" font-size="11" fill="#1a1a1a" text-anchor="middle">kanban-triage</text>
+
+  <!-- Row 2 -->
+  <rect x="280" y="406" width="185" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="372" y="423" font-size="11" fill="#1a1a1a" text-anchor="middle">arch-diagram-generator</text>
+
+  <rect x="490" y="406" width="162" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="571" y="423" font-size="11" fill="#1a1a1a" text-anchor="middle">flowchart-generator</text>
+
+  <rect x="677" y="406" width="120" height="26" rx="6" fill="white" stroke="#555555" stroke-dasharray="4 2"/>
+  <text x="737" y="423" font-size="11" fill="#1a1a1a" text-anchor="middle">steve-jobs</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ORPHANED AGENTS (red border)                -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <rect x="100" y="478" width="155" height="26" rx="6" fill="#fef2f2" stroke="#b91c1c"/>
+  <text x="177" y="495" font-size="11" fill="#b91c1c" text-anchor="middle">artifact-verifier</text>
+
+  <rect x="280" y="478" width="148" height="26" rx="6" fill="#fef2f2" stroke="#b91c1c"/>
+  <text x="354" y="495" font-size="11" fill="#b91c1c" text-anchor="middle">code-reviewer</text>
+
+  <rect x="453" y="478" width="190" height="26" rx="6" fill="#fef2f2" stroke="#b91c1c"/>
+  <text x="548" y="495" font-size="11" fill="#b91c1c" text-anchor="middle">doc-staleness-detector</text>
+  <text x="548" y="512" font-size="8" fill="#8A847E" font-style="italic" text-anchor="middle">(CLAUDE.md hook only)</text>
+
+  <rect x="668" y="478" width="152" height="26" rx="6" fill="#fef2f2" stroke="#b91c1c"/>
+  <text x="744" y="495" font-size="11" fill="#b91c1c" text-anchor="middle">error-diagnosis</text>
+  <text x="744" y="512" font-size="8" fill="#8A847E" font-style="italic" text-anchor="middle">(CLAUDE.md hook only)</text>
+
+  <rect x="845" y="478" width="148" height="26" rx="6" fill="#fef2f2" stroke="#b91c1c"/>
+  <text x="919" y="495" font-size="11" fill="#b91c1c" text-anchor="middle">worktree-setup</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- USER ENTRY POINTS (orange dashed border)    -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Row 1 -->
+  <rect x="1080" y="478" width="115" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1137" y="495" font-size="11" fill="#1a1a1a" text-anchor="middle">kickstart</text>
+
+  <rect x="1220" y="478" width="145" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1292" y="495" font-size="11" fill="#1a1a1a" text-anchor="middle">claude-profile</text>
+
+  <rect x="1390" y="478" width="148" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1464" y="495" font-size="11" fill="#1a1a1a" text-anchor="middle">codebase-audit</text>
+  <text x="1464" y="512" font-size="8" fill="#8A847E" font-style="italic" text-anchor="middle">→ kanban-resolve</text>
+
+  <!-- Row 2 -->
+  <rect x="1080" y="522" width="188" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1174" y="539" font-size="11" fill="#1a1a1a" text-anchor="middle">create-design-principles</text>
+  <text x="1174" y="556" font-size="8" fill="#8A847E" font-style="italic" text-anchor="middle">→ steve-jobs</text>
+
+  <rect x="1293" y="522" width="155" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1370" y="539" font-size="11" fill="#1a1a1a" text-anchor="middle">create-new-skill</text>
+  <text x="1370" y="556" font-size="8" fill="#8A847E" font-style="italic" text-anchor="middle">→ TDD, verify</text>
+
+  <!-- Row 3 -->
+  <rect x="1080" y="566" width="168" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1164" y="583" font-size="11" fill="#1a1a1a" text-anchor="middle">create-svg-diagram</text>
+
+  <rect x="1273" y="566" width="160" height="26" rx="6" fill="#fff7ed" stroke="#ff6900" stroke-dasharray="4 2"/>
+  <text x="1353" y="583" font-size="11" fill="#1a1a1a" text-anchor="middle">design-principles</text>
+  <text x="1353" y="600" font-size="8" fill="#8A847E" font-style="italic" text-anchor="middle">→ steve-jobs, mockup-gen</text>
+
+</svg>

@@ -11,6 +11,8 @@ Guide completion of development work by presenting clear options and handling ch
 
 **Core principle:** Deployment audit → Verify tests → Verify build → Present options → Execute choice → Clean up → Archive plans → Completion summary.
 
+**Required sub-skill:** verification-before-completion — every success claim requires fresh evidence in the current message.
+
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
 ## CRITICAL: Always Run From the Main Repo
@@ -185,7 +187,47 @@ If changed files include any of: architecture-relevant paths as defined in the p
 
 **If no architecture-relevant changes:** Skip silently, continue to Step 1d.
 
-### Step 1d: Code Simplification Scan
+### Step 1d: Code Review
+
+**After all verification passes, dispatch a comprehensive code review against the plan.**
+
+This step catches plan drift, missing error paths, and quality issues that tests and builds don't cover. The reviewer is a fresh sub-agent that hasn't seen the implementation conversation — it provides independent evaluation.
+
+**Spawn the `aligned:code-reviewer` agent** via the Task tool:
+
+```
+subagent_type: "aligned:code-reviewer"
+prompt: "Review the branch changes for this feature against the implementation plan.
+
+  Branch: <branch-name>
+  Base branch: <base-branch>
+  Working directory: <worktree-path>
+  Plan file: <plan-file-path>
+
+  Run `git diff <base-branch>...HEAD` to see all changes on this branch.
+  Read the plan file for context on what was intended.
+  Follow all 7 review sections in your agent prompt.
+  Pay special attention to Section 5 (Mock Error Path Coverage).
+
+  Write your report as structured output to stdout.
+  Use Read for files, Grep/Glob for searching. Do not use Bash for searching."
+```
+
+**If CRITICAL issues found:**
+```
+Code review found CRITICAL issues. Must fix before proceeding:
+
+[Show CRITICAL findings]
+
+Cannot proceed until critical issues are resolved.
+```
+Stop. Fix the issues in the worktree, commit, re-run tests (Step 1) and build (Step 1a), then re-dispatch the code reviewer.
+
+**If only Important or Suggestions:** Show findings as context, continue to Step 1e. File Important findings to Kanban board using the standard entry format.
+
+**If clean review:** Report clean, continue to Step 1e.
+
+### Step 1e: Code Simplification Scan
 
 **After all verification and doc updates, scan branch changes for simplification opportunities.**
 
@@ -227,9 +269,9 @@ Code simplification scan: N opportunities filed to Kanban board.
 Code simplification scan: clean.
 ```
 
-Continue to Step 1e.
+Continue to Step 1f.
 
-### Step 1e: Mockup Fidelity Check
+### Step 1f: Mockup Fidelity Check
 
 **After all verification and scans, check if the branch's design has associated mockups.**
 
@@ -301,15 +343,15 @@ Mockups checked: N
 - [mockup file]: [element] — [missing|changed|added]
 ```
 
-**If no unannounced deviations:** Report clean, continue to Step 1f.
+**If no unannounced deviations:** Report clean, continue to Step 1g.
 
-**If unannounced deviations exist:** Show them, continue to Step 1f.
+**If unannounced deviations exist:** Show them, continue to Step 1g.
 
-**If no mockups found:** Skip silently, continue to Step 1f.
+**If no mockups found:** Skip silently, continue to Step 1g.
 
-### Step 1f: Fix Mockup Deviations (user-directed)
+### Step 1g: Fix Mockup Deviations (user-directed)
 
-**If Step 1e found no unannounced deviations (or was skipped):** Skip silently, continue to Step 2.
+**If Step 1f found no unannounced deviations (or was skipped):** Skip silently, continue to Step 2.
 
 **If unannounced deviations exist**, present:
 
@@ -329,7 +371,7 @@ Which option?
 
 **If fix all or fix specific:**
 
-**Step 1f-i: Root-cause diagnosis.** For each selected deviation, spawn a sub-agent in parallel (`subagent_type=general-purpose`, `model=sonnet`). Each agent receives:
+**Step 1g-i: Root-cause diagnosis.** For each selected deviation, spawn a sub-agent in parallel (`subagent_type=general-purpose`, `model=sonnet`). Each agent receives:
 
 ```
 You are a mockup deviation analyst. Determine the root cause of this deviation
@@ -339,7 +381,7 @@ Deviation: {deviation summary}
 Mockup file: {mockup file path}
 Element: {element description}
 Type: {missing|changed|added}
-Implementation file(s): {source file paths from Step 1e agent report}
+Implementation file(s): {source file paths from Step 1f agent report}
 
 You are READ-ONLY. Do not use Edit, Write, NotebookEdit, or any file-modifying
 Bash commands. Use Read for files, Grep/Glob for searching.
@@ -373,7 +415,7 @@ Return a JSON object:
 
 If any sub-agent fails or returns unparseable output, report which deviations could not be analyzed and ask the user whether to attempt those fixes without root-cause analysis or skip them.
 
-**Step 1f-ii: Synthesize and fix.** Collect all successful agent reports. Present:
+**Step 1g-ii: Synthesize and fix.** Collect all successful agent reports. Present:
 
 ```
 ## Deviation Root Causes
@@ -396,10 +438,10 @@ After presenting, apply fixes to files in the worktree using absolute paths (do 
 
 Commit fixes to the feature branch before re-verifying: `git -C <worktree-path> add <files> && git -C <worktree-path> commit -m "fix: resolve mockup deviations"`. This gives each fix cycle a clean rollback point.
 
-**Step 1f-iii: Re-verify.** After committing fixes:
+**Step 1g-iii: Re-verify.** After committing fixes:
 1. Re-run tests (Step 1) and build (Step 1a)
 2. If any fixed files match LLM behavior surface patterns, also re-run Step 1b (LLM eval)
-3. Re-run the mockup fidelity check (Step 1e) to confirm deviations are resolved
+3. Re-run the mockup fidelity check (Step 1f) to confirm deviations are resolved
 
 **Cycle limit:** Track the number of completed fix-then-verify cycles. Keep iterating until all unannounced deviations are resolved or the user chooses to skip.
 
@@ -644,6 +686,7 @@ Then present:
 | Build | <Passed / Failed> |
 | LLM eval | <Passed / Warned / Skipped — reason> |
 | Architecture doc | <Updated / Skipped> |
+| Code review | <Clean / N CRITICAL, N Important, N Suggestions> |
 | Code simplification | <N findings filed / Clean> |
 | Mockup fidelity | <N matches, N deviations / No mockups / Skipped> |
 | Deviation fixes | <N fixed (root causes) / Skipped / Accepted as-is> |
@@ -663,9 +706,10 @@ Then present:
 | 1a. Verify build | Run build command | Yes |
 | 1b. LLM eval | Run eval command if surface changed | Yes (fail), No (warn/pass) |
 | 1c. Architecture doc | Update `docs/architecture.md` if structure changed | No |
-| 1d. Simplification scan | Spawn code-simplifier agent, file Kanban entries | No |
-| 1e. Mockup fidelity | Compare implementation against brainstorming mockups | No |
-| 1f. Fix deviations | Root-cause diagnose and fix unannounced mockup deviations (user-directed) | No |
+| 1d. Code review | Spawn code-reviewer agent, fix CRITICAL issues | Yes (CRITICAL) |
+| 1e. Simplification scan | Spawn code-simplifier agent, file Kanban entries | No |
+| 1f. Mockup fidelity | Compare implementation against brainstorming mockups | No |
+| 1g. Fix deviations | Root-cause diagnose and fix unannounced mockup deviations (user-directed) | No |
 | 2. Base branch | Determine merge target | No |
 | 3. Present options | Show 4 choices | No |
 | 4. Execute | Run chosen workflow | N/A |
@@ -694,7 +738,7 @@ Then present:
 
 **Never:** Proceed with CRITICAL deployment findings or failing tests/build. Never merge without verifying tests on result. Never delete work without confirmation or force-push without explicit request.
 
-**Always:** Follow the step order (audit → tests → build → eval → mockup fidelity → fix deviations → options). Present exactly 4 options. Run from main repo. Only remove the specific worktree being finished. Read `.claude/deployment.json` before deploy. Kill stale Chrome before Playwright. Archive plans after merge.
+**Always:** Follow the step order (audit → tests → build → eval → code review → simplification scan → mockup fidelity → fix deviations → options). Present exactly 4 options. Run from main repo. Only remove the specific worktree being finished. Read `.claude/deployment.json` before deploy. Kill stale Chrome before Playwright. Archive plans after merge.
 
 ## Lessons-Learned Gate
 

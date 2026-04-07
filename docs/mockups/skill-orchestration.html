@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Orchestration — Aligned Plugin</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .cross-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .cross-link:hover { text-decoration: underline; }
+
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Skill Orchestration</h1>
+  <p class="subtitle">How Aligned Claude Code skills orchestrate and delegate</p>
+  <p class="context">Every node is a human entry point — a skill or script you invoke. The pipeline is user-driven, not automated end-to-end (except autopilot, where you walk away).</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('brainstorming')">Brainstorming</button>
+    <button class="tab-btn" onclick="switchTab('autopilot')">Autopilot</button>
+    <button class="tab-btn" onclick="switchTab('handon')">Hands-On Path</button>
+    <button class="tab-btn" onclick="switchTab('finishing')">Finishing</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Overview panel (merged from old Overview + Pipeline Overview) -->
+  <!-- ============================================================ -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <p class="description">Click any node to see its internal orchestration.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+    Brain["brainstorming"] --> Fork{Path?}
+    Fork -->|"Walk away"| Auto["autopilot.sh"]
+    Fork -->|"You drive"| WP["writing-plans"]
+    WP --> EP["executing-plans"]
+    Auto --> Finish["finishing-dev-branch"]
+    EP --> Finish
+
+    click Brain callback "switchTab('brainstorming')"
+    click Auto callback "switchTab('autopilot')"
+    click WP callback "switchTab('handon','ho-plan')"
+    click EP callback "switchTab('handon','ho-exec')"
+    click Finish callback "switchTab('finishing')"
+
+    style Brain fill:#ffffff,stroke:#1a1a1a,color:#1a1a1a
+    style Fork fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Auto fill:#ff6900,stroke:#e55d00,color:#fff
+    style WP fill:#ffffff,stroke:#1a1a1a,color:#1a1a1a
+    style EP fill:#ffffff,stroke:#1a1a1a,color:#1a1a1a
+    style Finish fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #1a1a1a"></div>Skill (click to navigate)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Autopilot (you walk away)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Terminal</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Brainstorming panel -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-brainstorming">
+    <a class="back-link" onclick="switchTab('overview')">← Overview</a>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('brainstorming', 'brain-router')">Router</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('brainstorming', 'brain-software')">Software Mode</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('brainstorming', 'brain-business')">Business Mode</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('brainstorming', 'brain-after')">After Design</button>
+    </div>
+
+    <!-- Sub-panel: Router -->
+    <div class="sub-panel" id="sub-brain-router">
+      <div class="section">
+        <h2>Mode Detection and Routing<span class="badge">Router</span></h2>
+        <p class="description">Every brainstorming session starts here. The router classifies the topic, dispatches a background project scan, presents a mode explanation block, then hands off to the appropriate mode file.</p>
+        <ul class="bullet-list">
+          <li><strong>Software mode signals:</strong> features, APIs, architecture, code, testing, data models</li>
+          <li><strong>Business mode signals:</strong> strategy, sales, positioning, pricing, decisions, stakeholders</li>
+          <li><strong>Tiebreaker:</strong> environment — code repo suggests software, docs-only repo suggests business</li>
+          <li><strong>Project Scanner:</strong> dispatched immediately via Task tool in the background — does not block Q&A</li>
+          <li><strong>Mode explanation block:</strong> always shown before phase work begins, names the mode and why it was selected</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Start(["User invokes\nbrainstorming"]) --> Classify{Classify\ntopic}
+    Classify -->|"Software\nsignals"| SWMode["Software\nmode"]
+    Classify -->|"Business\nsignals"| BizMode["Business\nmode"]
+    Classify -->|"Mixed /\nunclear"| Ask["Ask one\nclarifying Q"]
+    Ask --> Classify
+    Start --> Scan["Project Scanner\n(background Task)"]
+
+    style Start fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+    style Classify fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style SWMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style BizMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Ask fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Scan fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Start/End</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Sub-agent</div>
+      </div>
+    </div>
+
+    <!-- Sub-panel: Software Mode -->
+    <div class="sub-panel" id="sub-brain-software">
+      <div class="section">
+        <h2>Software Mode Orchestration<span class="badge">Software</span></h2>
+        <p class="description">Software mode runs a fluid Q&A with automatic Architect consultation on technical decisions. Business questions go to the user; technical questions are auto-resolved via a fresh Architect sub-agent each time.</p>
+        <ul class="bullet-list">
+          <li><strong>Business questions:</strong> asked directly to the user — product direction, scope, UX preferences, priorities</li>
+          <li><strong>Technical questions:</strong> routed to The Architect via Task tool (model=opus) — data models, module boundaries, state, API shape</li>
+          <li><strong>Architect as proxy:</strong> in Q&A phase, Architect makes decisions; in review mode (presenting options/design sections), it critiques only</li>
+          <li><strong>UI options:</strong> Steve Krug may also be consulted for UX/usability decisions; mockup-generator dispatched for comparison mockups</li>
+          <li><strong>Scan gate:</strong> Architect is not dispatched until project-scanner has completed and its output has been reviewed</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    BizQs["Business Qs\nto user\n(min 3)"] --> Gate{Scan\ncomplete?}
+    Gate -->|"No, keep\nasking biz Qs"| BizQs
+    Gate -->|"Yes"| QA["Interleaved Q&A\nTech → Architect (opus)\nUI → Krug + mockup-gen"]
+    QA --> Approaches["Present 2-3\napproaches\n(Architect reviews)"]
+    Approaches --> Sections["Present design\nin sections\n(200-300 words each)"]
+    Sections --> Next(["→ After Design"])
+
+    style BizQs fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Gate fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style QA fill:#ff6900,stroke:#e55d00,color:#fff
+    style Approaches fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Sections fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Next fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Gate</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Core Q&A (dispatches sub-agents)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Handoff</div>
+      </div>
+    </div>
+
+    <!-- Sub-panel: Business Mode -->
+    <div class="sub-panel" id="sub-brain-business">
+      <div class="section">
+        <h2>Business Mode Orchestration<span class="badge">Business</span></h2>
+        <p class="description">Business mode is strictly sequential with phase gates. A complexity assessment after goal confirmation determines whether to run the full diagnostic sequence or streamline for tactical tasks.</p>
+        <ul class="bullet-list">
+          <li><strong>Phase 1 — Goal:</strong> confirm a single clear goal sentence before proceeding</li>
+          <li><strong>Complexity gate:</strong> operational (concrete checklist) streamlines Phase 2 and skips root causes; diagnostic (unclear why) runs full 4-phase sequence</li>
+          <li><strong>Phase 2 — Problems:</strong> identify obstacles categorized as knowledge gaps, resource constraints, misalignment, complexity, execution gaps</li>
+          <li><strong>Phase 3 — Root causes:</strong> 3-5 levels of "why" per obstacle; skipped for operational tasks</li>
+          <li><strong>Phase 4 — Solutions:</strong> 2-3 approaches addressing root causes; proposal is locked until Phase 3 gate is confirmed</li>
+          <li><strong>After design:</strong> hands off to <a class="cross-link" onclick="switchTab('brainstorming','brain-after')">After Design</a>, then to <code>business-write-plan</code></li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Ph1["Phase 1:\nGoal"] --> CG{Complexity\ngate}
+    CG -->|"Diagnostic"| Ph2["Phase 2:\nProblems"]
+    CG -->|"Operational"| Ph2s["Phase 2 (lite):\nList obstacles"]
+    Ph2 --> Ph3["Phase 3:\nRoot Causes"]
+    Ph3 --> Ph4["Phase 4:\nSolutions"]
+    Ph2s --> Ph4
+    Ph4 --> Next(["→ After Design"])
+
+    style Ph1 fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+    style CG fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Ph2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Ph2s fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    style Ph3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Ph4 fill:#ff6900,stroke:#e55d00,color:#fff
+    style Next fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Start</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision gate</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Full diagnostic phase</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Streamlined / sub-agent</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Key output</div>
+      </div>
+    </div>
+
+    <!-- Sub-panel: After Design -->
+    <div class="sub-panel" id="sub-brain-after">
+      <div class="section">
+        <h2>Post-Design Dispatch (Both Modes)<span class="badge">After Design</span></h2>
+        <p class="description">After the design is written, both modes follow the same pattern: write design doc, dispatch session-document-generator for visualization, run the critique panel, then commit everything.</p>
+        <ul class="bullet-list">
+          <li><strong>Design doc:</strong> written to <code>docs/plans/YYYY-MM-DD-topic-design.md</code></li>
+          <li><strong>session-document-generator:</strong> dispatched via Task tool — reads design doc, dispatches flowchart/architecture/mockup sub-agents in fragment mode, assembles tabbed HTML, runs Mermaid verification</li>
+          <li><strong>Critic panel:</strong> dispatched in parallel (software: division-of-labor with one fact-checker; business: all critics fact-check independently)</li>
+          <li><strong>Visualization refresh:</strong> re-dispatched if the design doc changed after critique corrections</li>
+          <li><strong>Software next steps:</strong> <a class="cross-link" onclick="switchTab('autopilot')">Autopilot</a> or <a class="cross-link" onclick="switchTab('handon','ho-plan')">Hands-on path</a></li>
+          <li><strong>Business next steps:</strong> <code>business-write-plan</code> → <code>business-executing</code></li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Design["Write design\ndoc"] --> Viz["session-doc-gen\n(flowcharts +\nmockups + arch)"]
+    Viz --> Critics["Critique panel\n(parallel sub-agents)"]
+    Critics --> Agg["Aggregate\nfindings"]
+    Agg --> Refresh{Design\nchanged?}
+    Refresh -->|"Yes, re-render"| Viz
+    Refresh -->|"No"| Commit["Commit all\nartifacts"]
+    Commit --> Next(["→ Choose path\n(autopilot or\nhands-on)"])
+
+    style Design fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+    style Viz fill:#ff6900,stroke:#e55d00,color:#fff
+    style Critics fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    style Agg fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Refresh fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Commit fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Next fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Start / Handoff</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Key dispatch</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Sub-agents</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Autopilot panel -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-autopilot">
+    <a class="back-link" onclick="switchTab('overview')">← Overview</a>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('autopilot', 'auto-phases')">Phases</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('autopilot', 'auto-ralph')">Ralph Loop</button>
+    </div>
+
+    <!-- Sub-panel: Phases -->
+    <div class="sub-panel" id="sub-auto-phases">
+      <div class="section">
+        <h2>Autopilot Phases<span class="badge">Pipeline</span></h2>
+        <p class="description"><code>autopilot.sh</code> orchestrates five sequential phases from design doc to verified branch. You walk away after launching it. Each phase writes a sentinel file so the script can resume after interruption.</p>
+        <ul class="bullet-list">
+          <li><strong>Phase 1 — Plan writing:</strong> invokes <code>claude -p</code> with <code>WRITE-PLAN.md</code> prompt (runs the full writing-plans workflow including 2-critic panel); writes plan path to sentinel file</li>
+          <li><strong>Phase 2 — Worktree:</strong> creates feature branch + worktree, installs deps, links .env files, merges main so the plan is accessible</li>
+          <li><strong>Phase 3 — Ralph loop:</strong> delegates to <code>run-ralph.sh</code>; each iteration is a separate <code>claude -p</code> instance executing one task. See <a class="cross-link" onclick="switchSubTab('autopilot','auto-ralph')">Ralph Loop</a> for details.</li>
+          <li><strong>Phase 3.5 — Mockup fidelity:</strong> iterative loop (up to 5x) comparing implementation against HTML mockups; writes <code>.mockup-clean</code> when clean</li>
+          <li><strong>Phase 4 — Verify:</strong> runs <code>VERIFY-BRANCH.md</code> prompt (tests, build, eval); writes <code>.finish-status</code> with SUCCESS or FAILED</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Ph1["Phase 1\nWrite Plan\nclaude -p"] --> Ph2["Phase 2\nWorktree\nSetup"]
+    Ph2 --> Ph3["Phase 3\nRalph Loop\nrun-ralph.sh"]
+    Ph3 --> Ph35["Phase 3.5\nMockup\nFidelity"]
+    Ph35 --> Ph4["Phase 4\nVerify\nBranch"]
+    Ph4 --> Done(["Branch ready\nfor review"])
+
+    style Ph1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Ph2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Ph3 fill:#ff6900,stroke:#e55d00,color:#fff
+    style Ph35 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Ph4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Done fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Phase</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Core loop (Ralph)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Terminal</div>
+      </div>
+
+      <!-- Resumability section (folded in from old Resume Logic sub-tab) -->
+      <div class="section" style="margin-top: 24px;">
+        <h2>Resumability<span class="badge">Resilience</span></h2>
+        <p class="description">Safe to re-run after interruption. Each phase checks for its completion artifact before executing; completed phases are skipped automatically.</p>
+        <ul class="bullet-list">
+          <li><strong>.autopilot-plan-path:</strong> two-line sentinel (design doc path + plan path) — Phase 1 skipped if present and plan file exists</li>
+          <li><strong>Worktree directory:</strong> Phase 2 checks existence; if found, creation is skipped but merge-main still runs</li>
+          <li><strong>✅ markers in plan:</strong> the Ralph loop picks up from the first unchecked task — completed tasks are never re-run</li>
+          <li><strong>.mockup-clean:</strong> Phase 3.5 skipped if this file exists in the worktree</li>
+          <li><strong>.finish-status:</strong> Phase 4 skipped if <code>status: SUCCESS</code>; cleared and re-run if <code>status: FAILED</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Sub-panel: Ralph Loop -->
+    <div class="sub-panel" id="sub-auto-ralph">
+      <div class="section">
+        <h2>Ralph Loop — One Task Per Claude Instance<span class="badge">Loop</span></h2>
+        <p class="description"><code>run-ralph.sh</code> spawns a fresh <code>claude -p</code> process per iteration, each executing exactly one plan task. Progress is preserved via ✅ markers in the plan file; the loop exits when <code>.ralph-done</code> is written. Also available standalone outside autopilot — <a class="cross-link" onclick="switchTab('handon','ho-exec')">see Hands-On Path</a>.</p>
+        <ul class="bullet-list">
+          <li><strong>One task per instance:</strong> each Claude invocation reads the next unchecked task heading, executes it, marks it ✅, commits, then exits</li>
+          <li><strong>Sentinel file:</strong> when all tasks are ✅, the instance writes <code>.ralph-done</code> and exits; the shell loop detects this and breaks</li>
+          <li><strong>Timeout watchdog:</strong> each iteration has a 15-minute SIGKILL watchdog; 5 consecutive timeouts abort the loop</li>
+          <li><strong>Consecutive failure cap:</strong> 3 consecutive non-zero exit codes abort the loop</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Start(["run-ralph.sh\nstarts"]) --> FindTask["Read plan,\nfind next\nunchecked task"]
+    FindTask --> AllDone{All tasks\nchecked?}
+    AllDone -->|"Yes"| Sentinel["Write\n.ralph-done\nEXIT"]
+    AllDone -->|"No"| Execute["Execute one\ntask via\nclaude -p"]
+    Execute --> Mark["Mark ✅\nCommit"]
+    Mark --> ExitClaude["Claude exits,\nshell loops"]
+    ExitClaude --> FindTask
+
+    style Start fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+    style FindTask fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style AllDone fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Sentinel fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+    style Execute fill:#ff6900,stroke:#e55d00,color:#fff
+    style Mark fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style ExitClaude fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Start/End</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Task execution</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Loop boundary</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Hands-On Path panel -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-handon">
+    <a class="back-link" onclick="switchTab('overview')">← Overview</a>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('handon', 'ho-plan')">Plan Writing</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('handon', 'ho-exec')">Execution</button>
+    </div>
+
+    <!-- Sub-panel: Plan Writing -->
+    <div class="sub-panel" id="sub-ho-plan">
+      <div class="section">
+        <h2>Writing Plans — Research and Critique<span class="badge">Plan</span></h2>
+        <p class="description">The writing-plans skill explores the codebase, writes a detailed plan with verified file paths, then runs a 2-critic panel in parallel before committing the plan to main.</p>
+        <ul class="bullet-list">
+          <li><strong>Codebase research:</strong> reads architecture.md, uses Glob/Grep/Read (or Explore sub-agent for heavy research) to verify every file path before writing</li>
+          <li><strong>Plan location:</strong> always written to the main worktree's <code>docs/plans/</code> and committed to main — survives branch discard</li>
+          <li><strong>Round 1 critics (parallel):</strong> The Architect (codebase alignment, module boundaries, gap analysis) and The Verifier (every claim verified against source, design fidelity, mockup coverage)</li>
+          <li><strong>Aggregation sub-agent:</strong> merges both reports into a single actionable summary under 1500 words</li>
+          <li><strong>Round 2 (conditional):</strong> only if medium/high issues found; scoped to changed sections only; uses haiku model</li>
+          <li><strong>After plan:</strong> presents execution options — <a class="cross-link" onclick="switchSubTab('handon','ho-exec')">interactive or Ralph loop</a>, or <a class="cross-link" onclick="switchTab('autopilot')">autopilot</a> (skips Phase 1 since plan already exists)</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Read["Read design doc\n+ architecture.md"] --> Research["Codebase\nresearch\n(Explore sub-agent)"]
+    Research --> Write["Write plan\nwith verified\nfile paths"]
+    Write --> Critics["Architect + Verifier\n(parallel Tasks,\nsonnet)"]
+    Critics --> Agg["Aggregation\nsub-agent"]
+    Agg --> Fixes["Apply\ncorrections"]
+    Fixes --> Round2{Medium/high\nissues?}
+    Round2 -->|"Yes"| R2["Round 2\n(haiku, scoped)"]
+    Round2 -->|"No"| Commit["Commit plan\nto main"]
+    R2 --> Commit
+
+    style Read fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+    style Research fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    style Write fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Critics fill:#ff6900,stroke:#e55d00,color:#fff
+    style Agg fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Fixes fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Round2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style R2 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    style Commit fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Start/End</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Sub-agent</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Parallel critics</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+      </div>
+    </div>
+
+    <!-- Sub-panel: Execution -->
+    <div class="sub-panel" id="sub-ho-exec">
+      <div class="section">
+        <h2>Executing Plans — Autonomous Batch Cycle<span class="badge">Execute</span></h2>
+        <p class="description">executing-plans loads the plan from main, verifies it's on a feature branch, and executes all tasks autonomously without pausing. It only stops on blockers or verification failures. Alternatively, use <a class="cross-link" onclick="switchSubTab('autopilot','auto-ralph')">run-ralph.sh</a> for fresh context per task.</p>
+        <ul class="bullet-list">
+          <li><strong>Branch guard:</strong> refuses to run on main/master — requires a feature worktree</li>
+          <li><strong>Plan from main:</strong> reads plan via <code>git worktree list</code> to find the main worktree path</li>
+          <li><strong>Autonomous mode:</strong> executes all tasks without pausing for review — only stops on blockers or failed verification</li>
+          <li><strong>LLM surface check:</strong> if a task touched advisor prompts or prompt builders, runs evals immediately</li>
+          <li><strong>Bug board:</strong> out-of-scope bugs discovered during execution are logged to <code>docs/kanban/todo/</code></li>
+          <li><strong>Archive:</strong> on completion, plan + design doc moved to <code>docs/plans/completed/</code> on main</li>
+          <li><strong>After execution:</strong> run <a class="cross-link" onclick="switchTab('finishing')">finishing-a-development-branch</a> in a new session from the main repo</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Load["Load plan\nfrom main\nworktree"] --> Branch{On feature\nbranch?}
+    Branch -->|"No (main)"| Stop["STOP\nNeed worktree"]
+    Branch -->|"Yes"| Tasks["Execute tasks\nautonomously\n(TDD per task)"]
+    Tasks --> LLM{Touched LLM\nsurface?}
+    LLM -->|"Yes"| Eval["Run evals"]
+    LLM -->|"No"| Next{More\ntasks?}
+    Eval --> Next
+    Next -->|"Yes"| Tasks
+    Next -->|"Done"| Archive["Archive plan\nto completed/"]
+    Archive --> Done(["→ Finishing"])
+
+    style Load fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+    style Branch fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Stop fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+    style Tasks fill:#ff6900,stroke:#e55d00,color:#fff
+    style LLM fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Eval fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    style Next fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Archive fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Done fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Start / Handoff</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Core execution</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fef2f2;border:1px solid #b91c1c"></div>Blocker</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Sub-agent</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Finishing panel (promoted to top-level — applies to all paths) -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-finishing">
+    <a class="back-link" onclick="switchTab('overview')">← Overview</a>
+    <div class="section">
+      <h2>Finishing a Development Branch<span class="badge">Finish</span></h2>
+      <p class="description">Always runs from the main repo, never inside a worktree. Applies after both <a class="cross-link" onclick="switchTab('autopilot')">autopilot</a> and <a class="cross-link" onclick="switchTab('handon')">hands-on</a> paths. Runs a sequential checklist before presenting options.</p>
+      <ul class="bullet-list">
+        <li><strong>Deployment audit:</strong> scans for Vercel pitfalls (file system access, dynamic requires, module-level mutable state, native deps) — CRITICAL findings block merge</li>
+        <li><strong>Test + build gate:</strong> both must pass before proceeding</li>
+        <li><strong>LLM eval:</strong> auto-runs if any files matching LLM behavior surface patterns were changed on the branch</li>
+        <li><strong>Architecture doc:</strong> updates <code>docs/architecture.md</code> if structure-relevant files changed</li>
+        <li><strong>Code simplifier:</strong> read-only sub-agent scans branch diff for simplification opportunities; filed to Kanban board (non-blocking)</li>
+        <li><strong>Mockup fidelity:</strong> compares implementation against HTML mockups; unannounced deviations trigger root-cause diagnosis loop (up to 5 cycles)</li>
+        <li><strong>4 options:</strong> merge locally, deploy + smoke test (Vercel MCP or wait + check), keep as-is, discard (with confirmation)</li>
+        <li><strong>Cleanup:</strong> removes worktree, archives plan docs to <code>docs/plans/completed/</code></li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+    Audit["Deployment\naudit"] --> Tests["Tests +\nBuild"]
+    Tests --> Eval["LLM eval\n(if surface changed)"]
+    Eval --> Scans["Simplifier +\nMockup fidelity"]
+    Scans --> Options{Choose\noption}
+    Options -->|"Merge"| Merge["Merge to\nmain"]
+    Options -->|"Deploy"| Deploy["Push + Smoke\ntest"]
+    Options -->|"Keep"| Keep["Keep branch\nas-is"]
+    Options -->|"Discard"| Discard["Confirm +\ndelete branch"]
+    Merge --> Cleanup["Cleanup worktree\n+ archive plans"]
+    Deploy --> Cleanup
+    Discard --> Cleanup
+
+    style Audit fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+    style Tests fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Eval fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Scans fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    style Options fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    style Merge fill:#ff6900,stroke:#e55d00,color:#fff
+    style Deploy fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Keep fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style Discard fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+    style Cleanup fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fef2f2;border:1px solid #b91c1c"></div>Blocking check / destructive</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div>Sub-agent scans (non-blocking)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div>Decision</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900;border:1px solid #e55d00"></div>Key action</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb"></div>Process</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a"></div>Terminal</div>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview diagram on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId, subTabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected tab button
+      var btn = document.querySelector('.tab-btn[onclick*="switchTab(\'' + tabId + '\')"]');
+      if (!btn) {
+        btn = document.querySelector('.tab-btn[onclick*="switchTab(\'' + tabId + '\'"]');
+      }
+      if (btn) btn.classList.add('active');
+
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Only render deferred diagrams that are NOT inside sub-panels.
+        // Sub-panel diagrams are rendered by switchSubTab when visible.
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          if (!el.closest('.sub-panel')) {
+            el.classList.remove('mermaid-deferred');
+            el.classList.add('mermaid');
+            try { mermaid.run({ nodes: [el] }); } catch (e) {
+              el.textContent = 'Diagram render failed: ' + e.message;
+              el.style.color = '#b91c1c';
+            }
+          }
+        });
+
+        // Activate sub-tab (deep-link or first)
+        if (subTabId) {
+          switchSubTab(tabId, subTabId);
+        } else {
+          var firstSubBtn = panel.querySelector('.sub-tab-btn');
+          if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+            firstSubBtn.click();
+          }
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+
+      // Ensure parent tab is active
+      if (!parent.classList.contains('active')) {
+        switchTab(parentId);
+      }
+
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('.sub-tab-btn[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

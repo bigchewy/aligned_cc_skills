@@ -205,7 +205,7 @@ Do not pause for user review — the critique has already validated the design c
 
 After committing the design document, output a ready-to-paste prompt for the next session:
 
-> Use `/aligned:business-write-plan` to write an execution plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
+> Use `/aligned:writing-plans` to write an execution plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
 
 <!-- Note: {base-directory} refers to the router's directory (skills/brainstorming/), not this file's directory. -->
 
