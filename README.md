@@ -73,22 +73,26 @@ claude --plugin-dir /path/to/aligned_cc_skills
 
 ### Skill Reference
 
-| Skill | Layer | Invocation | Description |
-|-------|-------|------------|-------------|
-| brainstorming | Brainstorming | `/aligned:brainstorming` | Explore ideas and strategies. Auto-detects software vs business mode |
-| use-advisor | Advisor | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
-| use-framework | Framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
-| add-advisor | Advisor | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |
-| add-framework | Framework | `/aligned:add-framework` | Add a new framework to an existing advisor |
-| find-potential-advisors | Advisor | `/aligned:find-potential-advisors` | Research and evaluate potential advisors |
-| persona-panel | Content | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
-| generate-deck | Content | `/aligned:generate-deck` | Generate branded sales decks with April Dunford framework and expert review panel |
-| generate-blog-post | Content | `/aligned:generate-blog-post` | Generate thought leadership blog posts with PIEI narrative arc and 3-reviewer panel |
-| generate-one-pager | Content | `/aligned:generate-one-pager` | Generate branded one-pagers and battle cards (placeholder) |
-| create-svg-diagram | Content | `/aligned:create-svg-diagram` | Generate diagrams, charts, and visual frameworks for presentations and docs |
-| kickstart | Foundation | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
-| create-design-principles | Foundation | `/aligned:create-design-principles` | Interactive design discovery + enforce precise, minimal design system |
-| writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier) |
+Entry points are skills you invoke directly. Pipeline skills are downstream steps in a workflow. Support skills are typically invoked by other skills.
+
+| Skill | Type | Invocation | Description |
+|-------|------|------------|-------------|
+| brainstorming | Entry Point | `/aligned:brainstorming` | Explore ideas and strategies. Auto-detects software vs business mode |
+| use-advisor | Entry Point | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
+| use-framework | Entry Point | `/aligned:use-framework` | Guide through a framework's phases interactively |
+| add-advisor | Entry Point | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |
+| add-framework | Entry Point | `/aligned:add-framework` | Add a new framework to an existing advisor |
+| find-potential-advisors | Entry Point | `/aligned:find-potential-advisors` | Research and evaluate potential advisors |
+| persona-panel | Entry Point | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
+| kickstart | Entry Point | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
+| create-design-principles | Entry Point | `/aligned:create-design-principles` | Interactive design discovery + enforce precise, minimal design system |
+| create-svg-diagram | Entry Point | `/aligned:create-svg-diagram` | Generate diagrams, charts, and visual frameworks for presentations and docs |
+| create-new-skill | Entry Point | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
+| codebase-audit | Entry Point | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
+| root-cause-analysis | Entry Point | `/aligned:root-cause-analysis` | Root cause investigation for software and business problems with optional multi-agent mode |
+| eval-audit | Entry Point | `/aligned:eval-audit` | Eval coverage auditor (hook-prompted) |
+| kanban-resolve | Entry Point | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
+| writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier). Secondary entry point for users with existing specs |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
 | test-driven-development | Methodology | (invoked by pipeline) | TDD enforcement with error path tests |
@@ -110,7 +114,6 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | artifact-verifier | 98% accuracy gate for document fact-checking |
 | code-reviewer | Post-implementation review against plan and coding standards |
 | code-simplifier | Scans branch changes for simplification opportunities |
-| error-diagnosis | Classify error patterns from error-tracker hook data |
 | flowchart-generator | Mermaid.js flowcharts for data flows, processes, and decision trees |
 | kanban-triage | Validates Kanban items through 5-phase root cause analysis |
 | mockup-generator | Self-contained HTML mockups for design-phase visualization |
@@ -125,8 +128,6 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | UserPromptSubmit | `check-eval-audit.sh` | Triggers `[EVAL AUDIT]` when eval audit is overdue |
 | PreToolUse | `auto-approve-worktrees.js` | Auto-approves Edit/Write in worktree directories |
 | PreToolUse | `auto-approve-safe-bash-paths.js` | Auto-approves Bash commands targeting `/tmp/` and `~/.claude/` only |
-| PostToolUseFailure | `error-tracker.js` | Tracks error patterns for diagnosis |
-| PostToolUse | `error-tracker.js` | Tracks Bash errors for diagnosis |
 | PostToolUse | `usage-tracker.js` | Tracks Skill/Task usage patterns |
 
 ### Advisors
