@@ -92,7 +92,7 @@ For each file, generate appropriate starter content:
 ```markdown
 # Design Principles
 
-> This file is a placeholder. Run `/aligned:design-principles` to define the design direction through an interactive discovery session.
+> This file is a placeholder. Run `/aligned:create-design-principles` to define the design direction through an interactive discovery session.
 ```
 
 **architecture.md (template):**
@@ -188,8 +188,8 @@ Generate a project-specific CLAUDE.md using the template for the selected `proje
 - `/aligned:writing-plans` — before implementation
 - `/aligned:executing-plans` — to implement a plan
 - `/aligned:finishing-a-development-branch` — to complete work
-- `/aligned:systematic-debugging` — for any bug
-- `/aligned:design-principles` — to define design direction
+- `/aligned:root-cause-analysis` — for root cause investigation
+- `/aligned:create-design-principles` — to define design direction
 - `/aligned:eval-failure-triage` — when evals fail
 - `/aligned:eval-audit` — to check eval coverage
 ```
@@ -237,9 +237,7 @@ Define confidentiality rules and client sensitivity constraints here.
 ## Workflows
 
 - `/aligned:brainstorming` — before any creative or strategic work
-- `/aligned:business-write-plan` — for planning deliverables
-- `/aligned:business-executing` — for execution
-- `/aligned:business-diagnosis` — when something isn't working
+- `/aligned:root-cause-analysis` — when something isn't working
 - `/aligned:generate-one-pager` — for prospect materials
 - `/aligned:generate-blog-post` — for thought leadership
 ```
@@ -336,12 +334,11 @@ Check whether `~/.claude/settings.json` already contains aligned skill permissio
       "Skill(aligned:writing-plans)",
       "Skill(aligned:executing-plans)",
       "Skill(aligned:finishing-a-development-branch)",
-      "Skill(aligned:systematic-debugging)",
+      "Skill(aligned:root-cause-analysis)",
       "Skill(aligned:using-git-worktrees)",
       "Skill(aligned:eval-failure-triage)",
       "Skill(aligned:eval-audit)",
       "Skill(aligned:kickstart)",
-      "Skill(aligned:design-principles)",
       "Skill(aligned:test-driven-development)",
       "Skill(aligned:verification-before-completion)",
       "Skill(aligned:use-advisor)",
@@ -352,17 +349,12 @@ Check whether `~/.claude/settings.json` already contains aligned skill permissio
       "Skill(aligned:add-advisor)",
       "Skill(aligned:add-framework)",
       "Skill(aligned:find-potential-advisors)",
-      "Skill(aligned:business-brainstorming)",
-      "Skill(aligned:business-diagnosis)",
-      "Skill(aligned:business-executing)",
-      "Skill(aligned:business-write-plan)",
       "Skill(aligned:create-design-principles)",
       "Skill(aligned:generate-deck)",
       "Skill(aligned:generate-blog-post)",
       "Skill(aligned:generate-one-pager)",
       "Skill(aligned:persona-panel)",
-      "Skill(aligned:create-svg-diagram)",
-      "Skill(aligned:claude-profile)"
+      "Skill(aligned:create-svg-diagram)"
     ]
   }
 }
@@ -374,7 +366,7 @@ Tell the user: "Set up skill permissions in `~/.claude/settings.json` — you wo
 
 Output the appropriate message based on `project_type`, then commit all scaffolded files:
 
-**Software:** "Project scaffolded. Run `/aligned:design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
+**Software:** "Project scaffolded. Run `/aligned:create-design-principles` to define the design direction. The placeholder at `docs/design/design-principles.md` needs to be fleshed out."
 
 **Business:** "Project scaffolded. Start with `/aligned:brainstorming` to define your first initiative, or fill in the CLAUDE.md guardrails section with confidentiality rules for this workspace."
 
