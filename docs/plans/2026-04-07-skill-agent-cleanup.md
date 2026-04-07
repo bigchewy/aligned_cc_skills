@@ -94,7 +94,7 @@ git commit -m "fix: update mockup-generator to reference steve-jobs advisor inst
 
 ---
 
-### Task 4: Merge design-principles discovery into create-design-principles
+### ✅ Task 4: Merge design-principles discovery into create-design-principles
 
 **Files:**
 - Modify: `skills/create-design-principles/SKILL.md` (add discovery questions)
