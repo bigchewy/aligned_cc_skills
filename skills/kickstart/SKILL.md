@@ -345,6 +345,7 @@ Check whether `~/.claude/settings.json` already contains aligned skill permissio
       "Skill(aligned:use-framework)",
       "Skill(aligned:kanban-resolve)",
       "Skill(aligned:codebase-audit)",
+      "Skill(aligned:portability-audit)",
       "Skill(aligned:create-new-skill)",
       "Skill(aligned:add-advisor)",
       "Skill(aligned:add-framework)",

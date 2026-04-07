@@ -326,7 +326,7 @@ git commit -m "docs: add portability-audit to skill reference table"
 
 ---
 
-### Task 4: Add skill permission to kickstart Phase 5
+### ✅ Task 4: Add skill permission to kickstart Phase 5
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the Phase 5 permissions `allow` array)
