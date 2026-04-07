@@ -436,7 +436,17 @@ If multiple diagnoses target the same file, review them together before applying
 
 After presenting, apply fixes to files in the worktree using absolute paths (do not `cd` into the worktree — see CRITICAL section). Address the identified root causes, not just the surface symptoms.
 
-Commit fixes to the feature branch before re-verifying: `git -C <worktree-path> add <files> && git -C <worktree-path> commit -m "fix: resolve mockup deviations"`. This gives each fix cycle a clean rollback point.
+Commit fixes to the feature branch before re-verifying. Run each command separately (do NOT chain with `&&`):
+
+```bash
+git -C <worktree-path> add <files>
+```
+
+```bash
+git -C <worktree-path> commit -m "fix: resolve mockup deviations"
+```
+
+This gives each fix cycle a clean rollback point.
 
 **Step 1g-iii: Re-verify.** After committing fixes:
 1. Re-run tests (Step 1) and build (Step 1a)

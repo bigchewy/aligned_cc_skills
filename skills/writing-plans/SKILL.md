@@ -568,8 +568,13 @@ Copy into a new Claude Code session:
 ### Option B: Ralph loop execution (larger plans)
 First create the worktree:
 ```bash
-cd /path/to/your/project && git worktree add .worktrees/{feature-name} -b feature/{feature-name}
-cd .worktrees/{feature-name} && npm install && ln -sf ../../.env.local .env.local && git merge main --no-edit
+git -C /path/to/your/project worktree add .worktrees/{feature-name} -b feature/{feature-name}
+```
+```bash
+cd .worktrees/{feature-name}
+npm install
+ln -sf ../../.env.local .env.local
+git merge main --no-edit
 ```
 Then run:
 ```bash

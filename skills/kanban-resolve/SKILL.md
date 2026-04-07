@@ -147,10 +147,12 @@ After approval and triage commit:
    If the `git worktree add` command fails because the worktree already exists:
    1. Check for uncommitted changes: `git -C .worktrees/kanban-resolve-YYYY-MM-DD status --porcelain`
    2. If changes exist, warn the user: "Existing worktree has uncommitted changes from a previous run. Stash, commit, or discard?" Wait for decision.
-   3. Once clean: `git worktree remove .worktrees/kanban-resolve-YYYY-MM-DD --force && git branch -D kanban-resolve-YYYY-MM-DD`
+   3. Once clean, run each command separately (do NOT chain with `&&`):
+      - `git worktree remove .worktrees/kanban-resolve-YYYY-MM-DD --force`
+      - `git branch -D kanban-resolve-YYYY-MM-DD`
    4. Retry the `git worktree add` command.
 
-4. Set working directory to the worktree: run `cd <worktree-path> && pwd` via Bash to verify. Then invoke `/aligned:executing-plans` via the Skill tool.
+4. Verify the worktree exists: run `ls <worktree-path>` via Bash. Then invoke `/aligned:executing-plans` via the Skill tool.
 
 5. **After executing-plans completes:** It will report completion and instruct you to tell the user to run `/aligned:finishing-a-development-branch` manually. Disregard that instruction — this skill orchestrates the full lifecycle and handles finishing in Phase 6. Note: executing-plans will also archive the plan file to `docs/plans/completed/` in its Step 5. This is expected; Phase 6's finishing skill will detect the plan was already archived and skip re-archiving.
 
