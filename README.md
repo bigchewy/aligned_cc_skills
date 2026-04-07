@@ -99,6 +99,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
+| portability-audit | Maintenance | `/aligned:portability-audit` | Scan plugin repo for environment-specific hardcoding that breaks portability |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
 
 ### Agents

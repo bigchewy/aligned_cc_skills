@@ -298,7 +298,7 @@ git commit -m "feat(portability-audit): add SKILL.md entry point"
 
 ---
 
-### Task 3: Add skill to README reference table
+### ✅ Task 3: Add skill to README reference table
 
 **Files:**
 - Modify: `README.md` (the Skill Reference table, after the `kanban-resolve` row)
