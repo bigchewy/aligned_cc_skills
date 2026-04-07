@@ -259,7 +259,7 @@ git commit -m "remove: business-diagnosis (merged into root-cause-analysis)"
 
 ---
 
-### Task 8: Add TDD skill reference to executing-plans
+### ✅ Task 8: Add TDD skill reference to executing-plans
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (add explicit TDD reference)

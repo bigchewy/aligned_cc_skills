@@ -44,6 +44,8 @@ For each task:
 3. Run verifications as specified
 4. Mark as completed
 
+**TDD discipline:** Every task follows RED-GREEN-REFACTOR. Write the failing test first, verify it fails, write minimal implementation, verify it passes. Reference: `test-driven-development` skill. If a task skips TDD steps, STOP and follow the TDD process before continuing.
+
 **LLM surface check:** If the task involved changes to advisor prompts, framework prompts, prompt builders, or personalization logic, run the project's eval command (as defined in `CLAUDE.md` or `e2e/eval-config.ts`) to verify quality. Don't wait until all tasks are done — catching regressions early is cheaper than debugging across multiple steps. If evals fail, run the `/aligned:eval-failure-triage` skill to classify and fix before continuing.
 
 ### Step 3: Report
@@ -91,6 +93,10 @@ If either move fails (file already moved or doesn't exist), skip it and continue
 Report what was implemented and instruct the user to run `/aligned:finishing-a-development-branch` in a new session. Do NOT invoke it directly.
 
 > **For large plans:** Consider using the Ralph loop instead. Each task runs in a fresh context, avoiding quality degradation from context window bloat. The writing-plans skill generates the correct `run-ralph.sh` command with resolved paths. After the loop completes, run `/aligned:finishing-a-development-branch` manually.
+
+**Required sub-skills:**
+- **test-driven-development** — RED-GREEN-REFACTOR cycle for every task
+- **verification-before-completion** — verify claims with fresh evidence before marking tasks complete
 
 ## When to Stop and Ask for Help
 
