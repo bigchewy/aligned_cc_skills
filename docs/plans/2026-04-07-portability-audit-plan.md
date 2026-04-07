@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Create the portability pitfall catalog
+### ✅ Task 1: Create the portability pitfall catalog
 
 **Files:**
 - Create: `skills/portability-audit/references/portability-pitfall-catalog.md`
