@@ -535,7 +535,6 @@ Then output two execution options (with `{plan-file-path}`, `{feature-name}`, an
 
 - **Option A (Interactive)** when: plan has ≤10 tasks, tasks require judgment calls or creative decisions, the feature touches shared/sensitive code where you'd want human review at checkpoints, or the plan has ambiguities that may need mid-execution clarification.
 - **Option B (Ralph loop)** when: plan has >10 well-specified tasks, every task has unambiguous acceptance criteria and verification commands, the work is mechanical (rote file edits, repetitive patterns), or context window bloat would degrade quality in a single session.
-- **Option C (Autopilot)** when: the user has a design doc AND wants fully unattended execution from plan through verification. Subsumes Option B — also handles worktree setup, mockup fidelity checks, and branch verification. Best for hands-off workflows where the user doesn't want to babysit transitions.
 
 State the recommendation as a single sentence, e.g.: "**Recommendation:** Option B (Ralph loop) — this plan has 23 mechanical tasks with clear verification steps; fresh context per task will prevent quality drift."
 
@@ -553,11 +552,6 @@ cd {worktree-path}
 bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
 ```
 
-### Option C: Autopilot (fully unattended — plan through verification)
-Run from any terminal. Creates the worktree, runs the Ralph loop, checks mockup fidelity, and verifies the branch — but does NOT merge:
-```bash
-bash {plugin-root}/docs/ralph_loops/autopilot.sh "{project-path}" "{design-doc-path}" "feature/{feature-name}"
-```
 ````
 
 **After execution completes** (any option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
@@ -584,11 +578,6 @@ bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYY
 ```
 **IMPORTANT:** If the worktree setup above failed, do NOT run the script — it would execute against your main repo.
 
-### Option C: Autopilot (fully unattended — plan through verification)
-No worktree setup needed — autopilot creates it automatically:
-```bash
-bash {plugin-root}/docs/ralph_loops/autopilot.sh "{project-path}" "{plan-file-path}"
-```
 ````
 
 **After execution completes** (any option), run `/aligned:finishing-a-development-branch` in a new session from the main repo to merge, clean up the worktree, and archive the plan.
