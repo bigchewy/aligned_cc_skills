@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Framework Design — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            button: { DEFAULT: '#32373c', hover: '#1a1f23', text: '#ffffff' }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-mve {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #f0eeeb;
+      color: #1a1a1a;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-post {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #f5f3ef;
+      color: #555555;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Data table */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 16px; }
+    .data-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid #f0eeeb; color: #6b7280; font-weight: 500; }
+    .data-table td { padding: 8px 12px; border-bottom: 1px solid #f0eeeb; color: #1a1a1a; }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* Tier label */
+    .tier-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; margin-top: 20px; }
+    .tier-mve { color: #ff6900; }
+    .tier-post { color: #555555; }
+  </style>
+</head>
+<body>
+  <h1>Eval Framework Design</h1>
+  <p class="subtitle">Proving Aligned skills produce measurably better output than vanilla LLM calls</p>
+  <p class="context">A generalized eval framework using Promptfoo for three-provider comparison (full-stack vs. vanilla vs. aware-but-unaided), LLM-as-judge scoring with pinned judge config, and CI/CD regression detection. System prompts use advisor prompts and framework prompt.md — never SKILL.md. Post-critique revision.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="switchTab('scoring')">Scoring</button>
+    <button class="tab-btn" onclick="switchTab('errors')">Error Handling</button>
+    <button class="tab-btn" onclick="switchTab('cicd')">CI/CD</button>
+    <button class="tab-btn" onclick="switchTab('taxonomy')">Taxonomy</button>
+  </div>
+
+  <!-- ========== OVERVIEW PANEL ========== -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>Eval Framework at a Glance</h2>
+      <p class="description">Click any node to navigate to its detail tab. Post-critique design: e2e/ directory, pinned judge LLM, tiered success criteria, error handling for judge and embedding failures.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+    A["Architecture"]:::clickable --> B["Scoring"]:::clickable
+    B --> E["Error Handling"]:::clickable
+    B --> C["CI/CD"]:::clickable
+    A --> D["Taxonomy"]:::clickable
+    D --> B
+
+    click A "javascript:switchTab('architecture')"
+    click B "javascript:switchTab('scoring')"
+    click C "javascript:switchTab('cicd')"
+    click D "javascript:switchTab('taxonomy')"
+    click E "javascript:switchTab('errors')"
+
+    classDef clickable fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a,stroke-width:1.5px
+    classDef default fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+    style A fill:#ffffff,stroke:#ff6900,stroke-width:2px
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900;"></div>Entry point</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffffff; border: 1px solid #e5e7eb;"></div>Detail section</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e5e7eb;"></div>Flow direction</div>
+    </div>
+  </div>
+
+  <!-- ========== ARCHITECTURE PANEL ========== -->
+  <div class="tab-panel" id="panel-architecture">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Architecture<span class="badge">Core</span></h2>
+    <p class="description">The eval architecture centers on Promptfoo as the eval runner, a three-provider comparison model, and a structured pipeline from scenario YAML through to scored reports. System prompts are composed from advisor prompts and framework prompt.md files — the behavioral content that shapes LLM output. SKILL.md files are never used as system prompts; they contain Claude Code orchestration instructions meaningless in direct API calls.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','arch-providers')">Three-Provider Comparison</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','arch-pipeline')">Eval Pipeline</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','arch-repo')">Repo Structure</button>
+    </div>
+
+    <!-- Sub-tab: Three-Provider Comparison -->
+    <div class="sub-panel" id="sub-arch-providers">
+      <div class="section">
+        <h2>Three-Provider Comparison Flow<span class="badge">Flowchart</span></h2>
+        <p class="description">Every scenario runs the same input through three providers to isolate the value of structured skill definitions. The comparison answers: does having the full framework definition produce meaningfully better output than vanilla or knowing the framework name?</p>
+        <ul class="bullet-list">
+          <li><strong>Provider A (Full Stack)</strong> &mdash; System prompt contains the advisor prompt and/or framework prompt.md — the behavioral content that shapes LLM output. SKILL.md files are NOT used; they contain Claude Code orchestration instructions meaningless in direct API calls.</li>
+          <li><strong>Provider B (Vanilla)</strong> &mdash; Minimal system prompt: "You are a helpful assistant." Same user prompt, no methodology. Represents most LLM users.</li>
+          <li><strong>Provider C (Aware But Unaided)</strong> &mdash; No system context, but the user prompt names the framework explicitly. Represents a competent ChatGPT user who knows what to ask for but lacks the structured definition.</li>
+          <li><strong>Key insight</strong> &mdash; A vs. C is the defensible claim. If Provider C scores nearly as well as A, the skill isn't earning its place.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Input["Scenario Input<br/>YAML + Fixtures"]:::data --> A["Provider A<br/>Full Stack"]:::highlight
+    Input --> B["Provider B<br/>Vanilla"]:::process
+    Input --> C["Provider C<br/>Aware But Unaided"]:::process
+    A --> Judge["LLM Judge<br/>Pinned, temp 0"]:::decision
+    B --> Judge
+    C --> Judge
+    Judge --> Report["Comparison<br/>Report"]:::data
+
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Comparison</th><th>What It Proves</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A vs. B</td><td>Structured beats generic (obvious, table stakes)</td></tr>
+            <tr><td>A vs. C</td><td>Framework definitions add value beyond model knowledge (the harder, defensible claim)</td></tr>
+            <tr><td>B vs. C</td><td>Whether knowing to ask for a framework even helps without the definition</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Eval Pipeline -->
+    <div class="sub-panel" id="sub-arch-pipeline">
+      <div class="section">
+        <h2>Eval Pipeline<span class="badge">Flowchart</span></h2>
+        <p class="description">The end-to-end pipeline from scenario definition through API execution to scored reports. Promptfoo orchestrates the middle steps; we own the scenario configs and scoring rubrics. The distinctness scorer runs as a post-processing step on the results JSON, not as an inline assertion — Promptfoo assertions receive single outputs, but pairwise comparison requires all persona outputs simultaneously.</p>
+        <ul class="bullet-list">
+          <li><strong>Scenario YAML</strong> &mdash; Declares providers, fixtures, rubrics, and metadata. Adding a new skill to eval means writing one YAML file.</li>
+          <li><strong>Promptfoo Runner</strong> &mdash; Handles API calls, parallel execution, and result collection. No custom harness code needed.</li>
+          <li><strong>LLM-as-Judge</strong> &mdash; Pinned judge LLM (specific model + temperature 0) scores each output against weighted rubrics (1-5 scale). Pinning prevents judge variance from exceeding the 0.5-point regression threshold.</li>
+          <li><strong>Post-Processing</strong> &mdash; distinctness.py runs AFTER eval completes, against the results JSON. Parses persona sections, computes pairwise cosine similarity via embeddings.</li>
+          <li><strong>Reports</strong> &mdash; JSON/CSV export plus shareable web UI. Summary reports committed; raw logs gitignored.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    YAML["Scenario<br/>YAML"]:::data --> PF["Promptfoo<br/>Runner"]:::process
+    Fixtures["Fixture<br/>Content"]:::data --> PF
+    PF --> API["Anthropic<br/>API Calls"]:::external
+    API --> Outputs["Provider<br/>Outputs"]:::process
+    Outputs --> Judge["LLM-as-Judge<br/>Pinned + temp 0"]:::decision
+    Judge --> Results["Results<br/>JSON"]:::data
+    Results --> Custom["distinctness.py<br/>Post-Processing"]:::decision
+    Results --> Report["Scored<br/>Report"]:::highlight
+    Custom --> Report
+
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef external fill:#ffffff,stroke:#1a1a1a,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Repo Structure -->
+    <div class="sub-panel" id="sub-arch-repo">
+      <div class="section">
+        <h2>Repo Structure<span class="badge">Reference</span></h2>
+        <p class="description">The eval suite lives inside the main repo under e2e/. Scenario configs are co-located with the skills they evaluate for transparency and discoverability. Post-critique additions: baselines/ for regression tracking, tests/ for scorer unit tests, and trigger-map.yaml for CI/CD path mapping.</p>
+        <ul class="bullet-list">
+          <li><strong>scenarios/</strong> &mdash; One subdirectory per skill type, one YAML file per scenario</li>
+          <li><strong>fixtures/</strong> &mdash; Synthetic but realistic content (200-400 words each) used as evaluation inputs</li>
+          <li><strong>scorers/</strong> &mdash; Custom Python scorers (only distinctness.py for V1)</li>
+          <li><strong>tests/</strong> &mdash; pytest unit tests for scorer code (test_distinctness.py covers success, error, and edge cases)</li>
+          <li><strong>baselines/</strong> &mdash; JSON baseline scores from last passing run on main; populated by first passing run</li>
+          <li><strong>trigger-map.yaml</strong> &mdash; Static mapping of changed paths to affected scenario files for CI/CD</li>
+          <li><strong>reports/</strong> &mdash; Committed summary reports; raw logs gitignored</li>
+          <li><strong>README.md</strong> &mdash; MVE: setup instructions. Post-MVE: full methodology documentation</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Root["e2e/"]:::highlight --> Scenarios["scenarios/"]:::process
+    Root --> Fixtures["fixtures/"]:::process
+    Root --> Scorers["scorers/"]:::data
+    Root --> Tests["tests/"]:::data
+    Root --> Baselines["baselines/"]:::data
+    Root --> Config["promptfooconfig.yaml"]:::data
+    Root --> TrigMap["trigger-map.yaml"]:::decision
+    Root --> Reports["reports/"]:::process
+    Scenarios --> PP["persona-panel/"]:::process
+    Scenarios --> UA["use-advisor/"]:::process
+    Scenarios --> UF["use-framework/"]:::process
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SCORING PANEL ========== -->
+  <div class="tab-panel" id="panel-scoring">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Scoring<span class="badge">Rubrics</span></h2>
+    <p class="description">LLM-as-judge rubrics provide the primary scoring mechanism. The judge LLM is pinned to a specific model with temperature 0 to ensure reproducible scoring. Success criteria are split into MVE (must prove before expanding) and post-MVE tiers.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','score-rubrics')">Rubric Dimensions</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','score-judge')">Judge Config</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','score-distinctness')">Distinctness Scorer</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','score-thresholds')">Pass/Fail Thresholds</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','score-criteria')">Success Criteria</button>
+    </div>
+
+    <!-- Sub-tab: Rubric Dimensions -->
+    <div class="sub-panel" id="sub-score-rubrics">
+      <div class="section">
+        <h2>Rubric Dimensions<span class="badge">Scoring</span></h2>
+        <p class="description">Six common rubrics are available to all scenarios. Each scenario selects relevant rubrics and assigns weights based on which quality dimensions matter most for that skill type.</p>
+        <ul class="bullet-list">
+          <li><strong>Specificity</strong> &mdash; Concrete references to the input content vs. generic advice</li>
+          <li><strong>Actionability</strong> &mdash; Executable recommendations vs. vague direction</li>
+          <li><strong>Methodology Accuracy</strong> &mdash; Correct framework execution vs. hallucinated steps (Provider C's weakness)</li>
+          <li><strong>Perspective Diversity</strong> &mdash; Distinct viewpoints vs. collapsed consensus</li>
+          <li><strong>Completeness</strong> &mdash; All framework phases addressed vs. gaps</li>
+          <li><strong>Voice Consistency</strong> &mdash; Advisor-specific voice and patterns vs. generic LLM tone</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Output["Provider<br/>Output"]:::process --> S["Specificity"]:::process
+    Output --> A["Actionability"]:::process
+    Output --> M["Methodology<br/>Accuracy"]:::decision
+    Output --> P["Perspective<br/>Diversity"]:::process
+    Output --> Co["Completeness"]:::process
+    Output --> V["Voice<br/>Consistency"]:::process
+    S --> Score["Weighted<br/>Score"]:::highlight
+    A --> Score
+    M --> Score
+    P --> Score
+    Co --> Score
+    V --> Score
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Judge Config -->
+    <div class="sub-panel" id="sub-score-judge">
+      <div class="section">
+        <h2>Judge LLM Configuration<span class="badge">Pinned</span></h2>
+        <p class="description">The judge LLM must be pinned to a specific model and temperature to prevent judge variance from exceeding the 0.5-point regression threshold. If Anthropic deprecates the pinned model, update the config explicitly — do not allow auto-migration.</p>
+        <ul class="bullet-list">
+          <li><strong>Model</strong> &mdash; Pinned to a specific Claude version (e.g., claude-sonnet-4-20250514) in promptfooconfig.yaml</li>
+          <li><strong>Temperature</strong> &mdash; Set to 0 for deterministic scoring across runs</li>
+          <li><strong>Configuration</strong> &mdash; Set via defaultTest.options.provider in the master config, applies to all llm-rubric assertions</li>
+          <li><strong>Rationale</strong> &mdash; Without pinning, model updates or temperature drift could cause score fluctuations that mask real quality changes or trigger false regressions</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Config["promptfooconfig.yaml<br/>defaultTest.options"]:::data --> Judge["Judge LLM<br/>Pinned Model"]:::highlight
+    Judge --> Temp["Temperature: 0<br/>Deterministic"]:::decision
+    Temp --> Stable["Reproducible<br/>Scores"]:::process
+    Stable --> Threshold["0.5-Point<br/>Regression Gate"]:::decision
+
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Distinctness Scorer -->
+    <div class="sub-panel" id="sub-score-distinctness">
+      <div class="section">
+        <h2>Distinctness Scorer<span class="badge">Post-Processing</span></h2>
+        <p class="description">Inter-persona distinctness is not handled by Promptfoo natively. A custom Python scorer computes pairwise cosine distance across persona outputs using embeddings. This runs as a post-processing step, not an inline assertion — Promptfoo custom assertions receive a single output per invocation, not all provider outputs simultaneously.</p>
+        <ul class="bullet-list">
+          <li><strong>Timing</strong> &mdash; Runs AFTER promptfoo eval completes, against the results JSON</li>
+          <li><strong>Parsing</strong> &mdash; Extracts per-persona sections from full-stack provider output (persona-panel outputs are structured with persona headers)</li>
+          <li><strong>Embeddings</strong> &mdash; Pairwise cosine similarity using OpenAI text-embedding-3-small (chosen for cost — distinctness measurement doesn't need large embeddings)</li>
+          <li><strong>Threshold</strong> &mdash; Cosine similarity &gt; 0.92 between any two personas = fail</li>
+          <li><strong>Output</strong> &mdash; Returns pass/fail plus similarity matrix, appends to eval report</li>
+          <li><strong>Size</strong> &mdash; ~80-100 lines including JSON parsing and error handling. The only custom code in the eval suite.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Eval["promptfoo eval<br/>completes"]:::process --> JSON["Results<br/>JSON"]:::data
+    JSON --> Parse["Parse Persona<br/>Sections"]:::process
+    Parse --> Embed["text-embedding-<br/>3-small"]:::external
+    Embed --> Cosine["Pairwise<br/>Cosine Similarity"]:::decision
+    Cosine --> Check["Threshold<br/>Check: 0.92"]:::decision
+    Check --> Result["Pass/Fail +<br/>Similarity Matrix"]:::highlight
+
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef external fill:#ffffff,stroke:#1a1a1a,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Pass/Fail Thresholds -->
+    <div class="sub-panel" id="sub-score-thresholds">
+      <div class="section">
+        <h2>Pass/Fail Thresholds<span class="badge">Calibration</span></h2>
+        <p class="description">Starting thresholds for ship/kill decisions. These are initial values to be calibrated after the first few runs.</p>
+        <ul class="bullet-list">
+          <li><strong>Full-stack vs. vanilla delta</strong> &mdash; Must be +1.0 or higher average across rubrics</li>
+          <li><strong>Full-stack vs. aware-but-unaided delta</strong> &mdash; Must be +0.5 or higher (the harder bar)</li>
+          <li><strong>Absolute full-stack score</strong> &mdash; Must be 3.5/5.0 or higher average</li>
+          <li><strong>Inter-persona distinctness</strong> &mdash; Cosine similarity must be below 0.92 for all pairs</li>
+        </ul>
+        <table class="data-table">
+          <thead>
+            <tr><th>Metric</th><th>Threshold</th><th>Interpretation</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Full-stack vs. vanilla delta</td><td>&ge; +1.0 avg</td><td>Skill must meaningfully outscore vanilla</td></tr>
+            <tr><td>Full-stack vs. aware delta</td><td>&ge; +0.5 avg</td><td>Framework definition must add value beyond model knowledge</td></tr>
+            <tr><td>Absolute full-stack score</td><td>&ge; 3.5 / 5.0</td><td>Skill output must be good in absolute terms</td></tr>
+            <tr><td>Inter-persona distinctness</td><td>cosine sim &lt; 0.92</td><td>Personas must produce distinguishable output</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Success Criteria -->
+    <div class="sub-panel" id="sub-score-criteria">
+      <div class="section">
+        <h2>Success Criteria<span class="badge">Tiered</span></h2>
+        <p class="description">Success criteria are split into two tiers. MVE criteria must be proven before expanding scope. Post-MVE criteria are valuable but depend on the ship/kill signal working first.</p>
+
+        <p class="tier-label tier-mve">MVE — Must prove before expanding</p>
+        <ul class="bullet-list">
+          <li><strong>Ship/kill signal</strong> &mdash; For any skill, the eval produces a quantitative score comparing skill-aided output vs. vanilla output across defined rubrics. A skill that doesn't meaningfully outscore vanilla on at least one dimension fails.</li>
+        </ul>
+
+        <p class="tier-label tier-post">Post-MVE — Prove after ship/kill signal works</p>
+        <ul class="bullet-list">
+          <li><strong>Regression detection</strong> &mdash; When skill markdown changes, CI runs catch quality degradation before merge.</li>
+          <li><strong>Methodology as marketing</strong> &mdash; The eval repo structure, scenario definitions, and README are publishable. A technical evaluator can read the methodology and conclude the tools are validated rigorously.</li>
+          <li><strong>Generalization</strong> &mdash; Adding a new skill to the eval suite means writing a scenario YAML file and fixture content, not modifying harness code.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    MVE["MVE Tier<br/>Ship/Kill Signal"]:::highlight --> PostR["Post-MVE<br/>Regression Detection"]:::process
+    MVE --> PostM["Post-MVE<br/>Methodology as Marketing"]:::process
+    MVE --> PostG["Post-MVE<br/>Generalization"]:::process
+    PostR --> CI["CI/CD<br/>Pipeline"]:::decision
+    PostM --> Readme["Publishable<br/>README"]:::data
+    PostG --> YAML["New Skill =<br/>New YAML Only"]:::data
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ERROR HANDLING PANEL ========== -->
+  <div class="tab-panel" id="panel-errors">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Error Handling<span class="badge">Resilience</span></h2>
+    <p class="description">Failure modes for the judge LLM and embedding API, with explicit policies for each. The core principle: fail-closed for judge errors (no ambiguous pass), graceful degradation for embedding errors (fallback to LLM-as-judge perspective-diversity rubric).</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('errors','err-judge')">Judge LLM Failures</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('errors','err-embedding')">Embedding API Failures</button>
+    </div>
+
+    <!-- Sub-tab: Judge LLM Failures -->
+    <div class="sub-panel" id="sub-err-judge">
+      <div class="section">
+        <h2>Judge LLM Failure Modes<span class="badge">Fail-Closed</span></h2>
+        <p class="description">Judge failures are handled with a fail-closed policy. An eval run with any errored scenarios cannot produce a passing result — ambiguity never counts as success.</p>
+        <ul class="bullet-list">
+          <li><strong>API errors (rate limit, timeout, 500)</strong> &mdash; Promptfoo retries automatically. Set to 2 retries with exponential backoff via defaultTest.options.retry.</li>
+          <li><strong>Unparseable response (no score extractable)</strong> &mdash; Assertion fails with JUDGE_ERROR. Scenario is marked errored, not failed. Errored scenarios do not count toward pass/fail thresholds but are flagged in the report.</li>
+          <li><strong>Policy: fail-closed</strong> &mdash; An eval run with any errored scenarios cannot produce a passing result. This prevents ambiguous passes from slipping through.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Judge["Judge LLM<br/>Call"]:::process --> Success["Score<br/>Extracted"]:::process
+    Judge --> APIErr["API Error<br/>429/500/Timeout"]:::error
+    Judge --> ParseErr["Unparseable<br/>Response"]:::error
+    APIErr --> Retry["Retry x2<br/>Exp. Backoff"]:::decision
+    Retry --> Success
+    Retry --> FinalErr["JUDGE_ERROR<br/>Scenario Errored"]:::error
+    ParseErr --> FinalErr
+    FinalErr --> FailClosed["Eval Run<br/>Cannot Pass"]:::highlight
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef error fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Embedding API Failures -->
+    <div class="sub-panel" id="sub-err-embedding">
+      <div class="section">
+        <h2>Embedding API Failure Modes<span class="badge">Graceful Degradation</span></h2>
+        <p class="description">Embedding failures in the distinctness scorer degrade gracefully — the perspective-diversity rubric (LLM-as-judge) provides a fallback signal. The scorer logs which persona pairs were not compared so the gap is visible.</p>
+        <ul class="bullet-list">
+          <li><strong>API unreachable</strong> &mdash; Distinctness check is skipped with a warning. The perspective-diversity rubric provides fallback coverage.</li>
+          <li><strong>Logging</strong> &mdash; Scorer logs which persona pairs were not compared so the gap is visible in the report.</li>
+          <li><strong>Unparseable persona sections</strong> &mdash; Scorer reports "unparseable" and skips. Does not fail the run.</li>
+          <li><strong>All personas identical</strong> &mdash; Scorer fails with similarity matrix showing 1.0 across all pairs (this is a real failure, not an error).</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Scorer["distinctness.py<br/>Post-Processing"]:::process --> EmbedOK["Embeddings<br/>Computed"]:::process
+    Scorer --> EmbedFail["Embedding API<br/>Unreachable"]:::error
+    Scorer --> ParseFail["Persona Sections<br/>Unparseable"]:::error
+    EmbedOK --> Compare["Pairwise<br/>Comparison"]:::decision
+    EmbedFail --> Skip["Skip + Warn<br/>Log Gaps"]:::data
+    ParseFail --> Skip
+    Skip --> Fallback["Fallback:<br/>perspective-diversity<br/>rubric"]:::decision
+    Compare --> Pass["Pass"]:::process
+    Compare --> Fail["Fail: Similarity<br/>Matrix 1.0"]:::error
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef error fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CI/CD PANEL ========== -->
+  <div class="tab-panel" id="panel-cicd">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>CI/CD<span class="badge">Post-MVE</span></h2>
+    <p class="description">GitHub Actions triggers scoped evals when skill files change in PRs, and runs full-suite evaluations weekly to catch model-level regressions. Path-to-scenario mapping uses a static trigger-map.yaml file. Baseline scores are stored as JSON in e2e/baselines/ and committed to git.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('cicd','cicd-pr')">PR Workflow</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cicd','cicd-triggermap')">Trigger Map</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cicd','cicd-baselines')">Baselines</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cicd','cicd-mve')">MVE Scope</button>
+    </div>
+
+    <!-- Sub-tab: PR Workflow -->
+    <div class="sub-panel" id="sub-cicd-pr">
+      <div class="section">
+        <h2>PR Change Detection Flow<span class="badge">CI/CD</span></h2>
+        <p class="description">When files in skills/, advisors/prompts/, or frameworks/ change in a PR, GitHub Actions reads trigger-map.yaml to map changed paths to affected scenarios, runs scoped evals, and gates the merge on threshold checks against baselines.</p>
+        <ul class="bullet-list">
+          <li><strong>Path mapping</strong> &mdash; trigger-map.yaml defines static mappings from changed paths to scenario files. No runtime YAML parsing or dynamic file-reference resolution needed.</li>
+          <li><strong>Scoped execution</strong> &mdash; Only affected scenarios run, typically 2-6 API calls per PR</li>
+          <li><strong>Threshold comparison</strong> &mdash; Scores compared against baseline JSON in e2e/baselines/; any metric dropping &gt;0.5 points fails the check with a diff report</li>
+          <li><strong>Weekly full run</strong> &mdash; Full suite against latest Claude model version, catches model-level regressions. Updates baselines only if all scenarios pass.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    PR["PR with Skill<br/>Changes"]:::data --> TMap["trigger-map.yaml<br/>Path Lookup"]:::decision
+    TMap --> Run["Scoped Eval<br/>Run"]:::process
+    Run --> Base["Compare vs.<br/>Baseline JSON"]:::decision
+    Base --> Pass["Pass"]:::highlight
+    Base --> Fail["Fail + Diff<br/>Report"]:::error
+
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+    classDef error fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+          </pre>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Trigger</th><th>Cost</th><th>Frequency</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>PR (scoped)</td><td>6-18 API calls, negligible</td><td>Per PR with skill changes</td></tr>
+            <tr><td>Weekly (full suite)</td><td>~1,224 calls at full scale, ~$15-25/mo</td><td>Weekly on latest model</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Trigger Map -->
+    <div class="sub-panel" id="sub-cicd-triggermap">
+      <div class="section">
+        <h2>Trigger Map<span class="badge">Post-MVE</span></h2>
+        <p class="description">A static YAML mapping file (e2e/trigger-map.yaml) defines which changed paths trigger which scenario files. The GitHub Actions workflow reads this map, computes the intersection with the PR's changed files, and runs only the matched scenarios. This avoids runtime YAML parsing or dynamic file-reference resolution.</p>
+        <ul class="bullet-list">
+          <li><strong>Format</strong> &mdash; List of triggers, each with paths (glob patterns) and scenarios (file paths)</li>
+          <li><strong>Example</strong> &mdash; Changes to advisors/prompts/april-dunford.md trigger both the use-framework and use-advisor scenarios that reference her</li>
+          <li><strong>Maintenance</strong> &mdash; When adding a new scenario, add a corresponding entry in trigger-map.yaml</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Changed["Changed Files<br/>in PR"]:::data --> TMap["trigger-map.yaml"]:::highlight
+    TMap --> Match["Intersection<br/>Computation"]:::process
+    Match --> Scenarios["Matched<br/>Scenarios"]:::decision
+    Scenarios --> Run["npx promptfoo eval<br/>-c matched files"]:::process
+
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Baselines -->
+    <div class="sub-panel" id="sub-cicd-baselines">
+      <div class="section">
+        <h2>Baseline Storage<span class="badge">Regression</span></h2>
+        <p class="description">Baseline scores are stored as JSON in e2e/baselines/ and committed to git. PR workflows compare against these files. Bootstrap: the first eval run for a new scenario has no baseline — it passes unconditionally and writes the initial baseline on merge.</p>
+        <ul class="bullet-list">
+          <li><strong>Location</strong> &mdash; e2e/baselines/&lt;scenario-name&gt;.json, committed to git</li>
+          <li><strong>Bootstrap</strong> &mdash; First run for a new scenario has no baseline, passes unconditionally, writes initial baseline on merge</li>
+          <li><strong>Updates</strong> &mdash; After a passing eval on main, CI writes current scores to baselines. Weekly runs update baselines only if all scenarios pass.</li>
+          <li><strong>Regression gate</strong> &mdash; Any metric dropping &gt;0.5 points vs. baseline fails the PR check</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Eval["Eval Run<br/>on main"]:::process --> Pass["All Scenarios<br/>Pass"]:::decision
+    Pass --> Write["Write Scores to<br/>baselines/*.json"]:::highlight
+    PR["PR Eval<br/>Run"]:::process --> Compare["Compare vs.<br/>baselines/*.json"]:::decision
+    Compare --> OK["Delta within<br/>0.5 tolerance"]:::process
+    Compare --> Fail["Regression<br/>Detected"]:::error
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+    classDef error fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: MVE Scope -->
+    <div class="sub-panel" id="sub-cicd-mve">
+      <div class="section">
+        <h2>Minimum Viable Eval<span class="badge">MVE</span></h2>
+        <p class="description">Three scenarios across two skills, covering the two primary skill shapes. This exercises the full pipeline including the custom distinctness scorer and proves the harness works before expanding coverage.</p>
+        <ul class="bullet-list">
+          <li><strong>SaaS pricing page critique</strong> (persona-panel) &mdash; Multi-persona pattern. Proves personas produce distinct, specific feedback vs. vanilla's generic review.</li>
+          <li><strong>B2B startup positioning doc</strong> (use-framework / 5-Components) &mdash; Framework document pattern. Proves framework definition produces complete, accurate methodology vs. Claude's hallucinated version.</li>
+          <li><strong>Blog post critique</strong> (use-advisor / April Dunford) &mdash; Single advisor pattern. Proves advisor voice + domain expertise produces sharper feedback than generic review.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    MVE["MVE<br/>3 Scenarios"]:::highlight --> S1["Pricing Page<br/>Critique"]:::decision
+    MVE --> S2["Positioning<br/>Doc"]:::decision
+    MVE --> S3["Blog Post<br/>Critique"]:::process
+    S1 --> P1["Multi-Persona<br/>Pattern"]:::process
+    S2 --> P2["Framework Doc<br/>Pattern"]:::process
+    S3 --> P3["Single Advisor<br/>Pattern"]:::process
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Scenario</th><th>Skill</th><th>Pattern</th><th>What It Proves</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SaaS pricing page critique</td><td>persona-panel</td><td>Multi-persona</td><td>Distinct, specific persona feedback vs. generic review</td></tr>
+            <tr><td>B2B startup positioning doc</td><td>use-framework (5-Components)</td><td>Framework document</td><td>Complete methodology vs. hallucinated framework</td></tr>
+            <tr><td>Blog post critique</td><td>use-advisor (April Dunford)</td><td>Single advisor</td><td>Domain expertise + voice vs. generic review</td></tr>
+          </tbody>
+        </table>
+        <table class="data-table" style="margin-top: 24px;">
+          <thead>
+            <tr><th>MVE Artifact</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>3 scenario YAML files</td><td>Promptfoo-native schema</td></tr>
+            <tr><td>3 fixture files</td><td>200-400 words each, synthetic but realistic</td></tr>
+            <tr><td>distinctness.py</td><td>~80-100 lines, custom post-processing scorer</td></tr>
+            <tr><td>test_distinctness.py</td><td>pytest unit tests: success, error, edge cases</td></tr>
+            <tr><td>promptfooconfig.yaml</td><td>Master config with pinned judge</td></tr>
+            <tr><td>e2e/baselines/</td><td>.gitkeep, populated by first passing run</td></tr>
+            <tr><td>README.md</td><td>Minimal setup: prereqs, env vars, run command</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TAXONOMY PANEL ========== -->
+  <div class="tab-panel" id="panel-taxonomy">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Skill Type Taxonomy<span class="badge">4 Patterns</span></h2>
+    <p class="description">Every skill maps to one of four eval patterns. Patterns 1-3 cover the bulk of the plugin's value surface (65 advisors, 138 frameworks, persona-panel). Pattern 4 is deferred to V2. These are descriptive framing for organizing scenarios, not a prescriptive schema — revise if the first three MVE scenarios reveal a pattern doesn't hold.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn" onclick="switchSubTab('taxonomy','tax-overview')">Pattern Overview</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('taxonomy','tax-mapping')">Skill Mapping</button>
+    </div>
+
+    <!-- Sub-tab: Pattern Overview -->
+    <div class="sub-panel" id="sub-tax-overview">
+      <div class="section">
+        <h2>Four Eval Patterns<span class="badge">Taxonomy</span></h2>
+        <p class="description">Each pattern defines the provider configuration, fixture type, key rubrics, and any custom scorers needed. Adding a new skill to eval means identifying its pattern and writing a scenario YAML.</p>
+        <ul class="bullet-list">
+          <li><strong>Pattern 1: Single Advisor Critique</strong> &mdash; use-advisor with any of 65 advisors. System prompt: advisor prompt file. Key rubrics: domain specificity, voice consistency, insight quality.</li>
+          <li><strong>Pattern 2: Multi-Persona Evaluation</strong> &mdash; persona-panel. Key rubrics: perspective diversity, specificity, actionability. Uses distinctness.py as post-processing scorer.</li>
+          <li><strong>Pattern 3: Framework Document Generation</strong> &mdash; use-framework with any of 138 frameworks. System prompt: framework prompt.md + advisor prompt. Key rubrics: completeness, methodology accuracy. Provider C is strongest differentiator here.</li>
+          <li><strong>Pattern 4: Orchestrated Workflow (V2)</strong> &mdash; brainstorming, writing-plans, codebase-audit. Multi-agent orchestrations that need multi-turn eval. Deferred.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+    Tax["Eval<br/>Patterns"]:::process --> P1["P1: Single<br/>Advisor Critique"]:::process
+    Tax --> P2["P2: Multi-Persona<br/>Evaluation"]:::decision
+    Tax --> P3["P3: Framework<br/>Doc Generation"]:::decision
+    Tax --> P4["P4: Orchestrated<br/>Workflow"]:::data
+    P1 --> V1["V1 Scope"]:::highlight
+    P2 --> V1
+    P3 --> V1
+    P4 --> V2["V2 Scope"]:::process
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+    classDef highlight fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Skill Mapping -->
+    <div class="sub-panel" id="sub-tax-mapping">
+      <div class="section">
+        <h2>Skills to Patterns<span class="badge">Coverage</span></h2>
+        <p class="description">Mapping of specific skills and skill types to their eval patterns. Patterns 1-3 cover the primary value surface; Pattern 4 captures orchestration workflows that require multi-turn eval capabilities.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Pattern</th><th>Skills</th><th>Catalog Size</th><th>System Prompt Source</th><th>Key Differentiator</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>P1: Single Advisor</td><td>use-advisor</td><td>65 advisors</td><td>Advisor prompt file</td><td>Voice consistency, domain-specific insight</td></tr>
+            <tr><td>P2: Multi-Persona</td><td>persona-panel</td><td>1 skill</td><td>Advisor prompts + persona config</td><td>Inter-persona distinctness (post-processing scorer)</td></tr>
+            <tr><td>P3: Framework Doc</td><td>use-framework</td><td>138 frameworks</td><td>Framework prompt.md + advisor prompt</td><td>Methodology accuracy vs. hallucinated steps</td></tr>
+            <tr><td>P4: Orchestrated (V2)</td><td>brainstorming, writing-plans, codebase-audit</td><td>3+ skills</td><td>N/A (multi-turn)</td><td>Multi-turn process value</td></tr>
+          </tbody>
+        </table>
+        <div class="diagram-container" style="margin-top: 16px;">
+          <pre class="mermaid-deferred">
+graph LR
+    UA["use-advisor<br/>65 advisors"]:::process --> P1["P1: Single<br/>Advisor"]:::process
+    PP["persona-panel"]:::decision --> P2["P2: Multi-<br/>Persona"]:::decision
+    UF["use-framework<br/>138 frameworks"]:::process --> P3["P3: Framework<br/>Doc"]:::process
+    BS["brainstorming"]:::data --> P4["P4: Orchestrated"]:::data
+    WP["writing-plans"]:::data --> P4
+    CA["codebase-audit"]:::data --> P4
+
+    classDef process fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    classDef decision fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+    classDef data fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview diagram on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
