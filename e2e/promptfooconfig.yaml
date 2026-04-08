@@ -1,0 +1,20 @@
+# e2e/promptfooconfig.yaml
+# Master config — aggregates all MVE scenarios
+# Run: npx promptfoo eval (from e2e/ directory)
+# Run single: npx promptfoo eval -c scenarios/persona-panel/pricing-page.yaml
+
+# Judge LLM configuration — pinned for reproducibility
+# Judge variance must not exceed the 0.5-point regression threshold
+defaultTest:
+  options:
+    provider:
+      id: anthropic:messages:claude-sonnet-4-20250514
+      config:
+        temperature: 0
+    retry: 2
+
+# Import all MVE scenarios
+scenarios:
+  - file://scenarios/persona-panel/pricing-page.yaml
+  - file://scenarios/use-framework/5-components-positioning.yaml
+  - file://scenarios/use-advisor/april-dunford-blog-critique.yaml

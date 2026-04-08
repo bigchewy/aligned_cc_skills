@@ -553,7 +553,7 @@ git commit -m "feat(eval): add April Dunford blog critique advisor scenario"
 
 ---
 
-### Task 6: Write promptfooconfig.yaml master config and validate scenarios
+### ✅ Task 6: Write promptfooconfig.yaml master config and validate scenarios
 
 **Files:**
 - Create: `e2e/promptfooconfig.yaml`
