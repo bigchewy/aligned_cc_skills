@@ -18,7 +18,7 @@
 
 ---
 
-### Task 1: Create the persona creation flow document
+### ✅ Task 1: Create the persona creation flow document
 
 **Files:**
 - Create: `skills/persona-panel/modes/persona-creation-flow.md`
