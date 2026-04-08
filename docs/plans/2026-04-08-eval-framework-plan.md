@@ -452,7 +452,7 @@ git commit -m "feat(eval): add 5-components positioning framework scenario"
 
 ---
 
-### Task 5: Write use-advisor April Dunford blog critique scenario
+### ✅ Task 5: Write use-advisor April Dunford blog critique scenario
 
 **Files:**
 - Create: `e2e/scenarios/use-advisor/april-dunford-blog-critique.yaml`

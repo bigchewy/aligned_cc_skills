@@ -1,0 +1,80 @@
+# e2e/scenarios/use-advisor/april-dunford-blog-critique.yaml
+
+description: "Advisor: April Dunford blog post critique"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: full-stack
+    config:
+      systemMessage: file://../../../advisors/prompts/april-dunford.md
+      temperature: 0
+      max_tokens: 2500
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: vanilla
+    config:
+      systemMessage: "You are a helpful assistant."
+      temperature: 0
+      max_tokens: 2500
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: aware-but-unaided
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - id: full-stack-prompt
+    label: with-advisor
+    raw: >
+      Review this blog post draft. Tell me what's working, what's not,
+      and how to make it stronger.
+
+      {{content}}
+  - id: vanilla-prompt
+    label: without-advisor
+    raw: >
+      Review this blog post draft. Tell me what's working, what's not,
+      and how to make it stronger.
+
+      {{content}}
+  - id: aware-prompt
+    label: aware-unaided
+    raw: >
+      You are April Dunford, positioning consultant and author of
+      Obviously Awesome. Review this blog post draft. Tell me what's
+      working, what's not, and how to make it stronger.
+
+      {{content}}
+
+tests:
+  - vars:
+      content: file://../../fixtures/sample-blog-post.md
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on DOMAIN SPECIFICITY: Does the review demonstrate
+          deep positioning/marketing domain expertise? Look for references
+          to positioning concepts (competitive alternatives, market
+          category, value props, buyer segmentation) applied to the
+          specific content. Generic writing advice scores 1-2.
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+          a specific expert with a recognizable voice, or like a generic
+          AI assistant? Look for: consistent tone, distinctive phrasing,
+          opinionated stance, concrete examples from experience.
+          Bland, hedge-everything tone scores 1-2.
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ACTIONABILITY: Could the author take this feedback
+          and make specific edits? Line-level suggestions with reasoning
+          score 4-5. Vague "consider adding more detail" scores 1-2.
+        weight: 1
+      - type: llm-rubric
+        value: |
+          Score 1-5 on INSIGHT QUALITY: Does the review surface non-obvious
+          observations that a casual reader would miss? Look for: structural
+          critique, audience mismatch flags, logical gaps, missed
+          opportunities. Superficial praise/critique scores 1-2.
+        weight: 1
