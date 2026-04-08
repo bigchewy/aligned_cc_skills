@@ -18,7 +18,7 @@
 
 ---
 
-### Task 1: Create the persona creation flow document
+### ✅ Task 1: Create the persona creation flow document
 
 **Files:**
 - Create: `skills/persona-panel/modes/persona-creation-flow.md`
@@ -162,7 +162,7 @@ git commit -m "feat(persona-panel): add persona creation flow document"
 
 ---
 
-### Task 2: Update SKILL.md to delegate to the creation flow
+### ✅ Task 2: Update SKILL.md to delegate to the creation flow
 
 **Files:**
 - Modify: `skills/persona-panel/SKILL.md` (the "If no personas found" block in Stage 1)
@@ -203,7 +203,7 @@ git commit -m "feat(persona-panel): replace dead-end with creation flow delegati
 
 ---
 
-### Task 3: Bump plugin version
+### ✅ Task 3: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)
@@ -232,7 +232,7 @@ git commit -m "chore: bump version to 0.17.0"
 
 ---
 
-### Task 4: Update README.md changelog
+### ✅ Task 4: Update README.md changelog
 
 **Files:**
 - Modify: `README.md` (the changelog section)

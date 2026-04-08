@@ -187,6 +187,9 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
 
+##### 0.17.0: Persona Creation Flow
+- **persona-panel:** Add guided persona creation flow for cold-start path — four-phase Q&A replaces dead-end when no personas exist
+
 ##### 0.16.0: Personal Skill Extraction
 - Extracted generate-deck, generate-blog-post, generate-one-pager, portability-audit to `~/.claude/skills/` as personal global skills (not plugin-distributed)
 - **22 skills** (-4)
