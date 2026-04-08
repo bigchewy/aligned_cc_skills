@@ -600,7 +600,7 @@ git commit -m "feat(eval): add master promptfoo config with judge LLM pinning"
 
 ---
 
-### Task 7: Write distinctness scorer with TDD — parsing logic
+### ✅ Task 7: Write distinctness scorer with TDD — parsing logic
 
 **Files:**
 - Create: `e2e/tests/test_distinctness.py`
