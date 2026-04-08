@@ -1,0 +1,76 @@
+# e2e/scenarios/use-framework/5-components-positioning.yaml
+
+description: "Framework: 5-Components Positioning document generation"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: full-stack
+    config:
+      systemMessage: file://../../../frameworks/5-components-positioning/prompt.md
+      temperature: 0
+      max_tokens: 4000
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: vanilla
+    config:
+      systemMessage: "You are a helpful assistant."
+      temperature: 0
+      max_tokens: 4000
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: aware-but-unaided
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - id: full-stack-prompt
+    label: with-framework
+    raw: >
+      Walk me through positioning for this company. Complete all phases
+      and produce the full positioning document.
+
+      {{company_brief}}
+  - id: vanilla-prompt
+    label: without-framework
+    raw: "Help me position this company:\n\n{{company_brief}}"
+  - id: aware-prompt
+    label: aware-unaided
+    raw: >
+      Use April Dunford's 5 Components of Positioning framework to
+      position this company. Work through all 5 components in order
+      and produce the full positioning document.
+
+      {{company_brief}}
+
+tests:
+  - vars:
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on COMPLETENESS: Does the document address all 5
+          components: (1) Competitive alternatives (2) Unique attributes
+          (3) Value (4) Best-fit customers (5) Market category?
+          Score 1 if fewer than 3, score 5 if all 5 with depth.
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on METHODOLOGY ACCURACY: Does the document follow
+          April Dunford's actual methodology correctly? Deductions for:
+          hallucinated steps not in her framework, wrong sequencing
+          (e.g., starting with market category instead of competitive
+          alternatives), misattributed concepts, or generic strategy
+          advice labeled as Dunford's method.
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on SPECIFICITY: Are recommendations grounded in
+          the specific company's situation (DataForge, mid-market data
+          engineering teams, Airflow alternatives)? Generic advice
+          applicable to any B2B SaaS scores 1-2.
+        weight: 1
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ACTIONABILITY: Could someone take this document
+          and execute on it? Concrete next steps with named deliverables
+          score 4-5. Vague direction scores 1-2.
+        weight: 1
