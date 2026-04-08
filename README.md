@@ -187,10 +187,14 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
 
+##### 0.16.0: Personal Skill Extraction
+- Extracted generate-deck, generate-blog-post, generate-one-pager, portability-audit to `~/.claude/skills/` as personal global skills (not plugin-distributed)
+- **22 skills** (-4)
+
 ##### 0.15.0: Portability Audit
-- New `/aligned:portability-audit` skill scans the plugin repo for environment-specific hardcoding
+- New `/aligned:portability-audit` skill scans the plugin repo for environment-specific hardcoding (now at `~/.claude/skills/portability-audit/`)
 - Detects: absolute user paths (CRITICAL), non-plugin external file dependencies (HIGH), platform-specific assumptions (MEDIUM)
-- Reference catalog at `skills/portability-audit/references/portability-pitfall-catalog.md`
+- Reference catalog at `~/.claude/skills/portability-audit/references/portability-pitfall-catalog.md`
 - **26 skills** (+1)
 
 ##### 0.14.0: Skill/Agent Cleanup Refactor
