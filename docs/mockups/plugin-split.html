@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plugin Split: aligned-advisors + aligned-works</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Data table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+    .data-table th {
+      text-align: left;
+      font-weight: 500;
+      color: #555555;
+      padding: 8px 12px;
+      border-bottom: 2px solid #f0eeeb;
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #1a1a1a;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .pill {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    .pill-advisors { background: #fff7ed; color: #ff6900; }
+    .pill-works { background: #f0eeeb; color: #1a1a1a; }
+    .pill-removed { background: #fef2f2; color: #b91c1c; }
+    .pill-resolved { background: #f0eeeb; color: #555555; text-decoration: line-through; }
+  </style>
+</head>
+<body>
+  <h1>Plugin Split: aligned-advisors + aligned-works</h1>
+  <p class="subtitle">Mono-repo architecture splitting one plugin into two (post-critique revision)</p>
+  <p class="context">Separates the advisor layer (personas + frameworks) from the creation workflow stack (17 skills, agents, hooks, CLI-optimized). Three of five advisor skills use CLI features, so full Desktop compatibility is a future goal, not a launch guarantee. Both plugins coexist in the same repo with symlinks for cross-references. Migration happens on a feature branch.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('structure')">Structure</button>
+    <button class="tab-btn" onclick="switchTab('skills')">Skills</button>
+    <button class="tab-btn" onclick="switchTab('dependencies')">Dependencies</button>
+    <button class="tab-btn" onclick="switchTab('migration')">Migration</button>
+    <button class="tab-btn" onclick="switchTab('testing')">Testing</button>
+    <button class="tab-btn" onclick="switchTab('risks')">Risks</button>
+  </div>
+
+  <!-- ==================== OVERVIEW ==================== -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>Plugin Split Overview<span class="badge">architecture</span></h2>
+      <p class="description">Click any node to jump to the corresponding detail tab.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  Structure["Directory Structure"]
+  Skills["Skill Allocation"]
+  Deps["Dependencies"]
+  Migration["Migration Phases"]
+  Testing["Testing Strategy"]
+  Risks["Risk Matrix"]
+
+  Structure --> Skills
+  Skills --> Deps
+  Deps --> Migration
+  Migration --> Testing
+  Testing --> Risks
+
+  click Structure "javascript:switchTab('structure')"
+  click Skills "javascript:switchTab('skills')"
+  click Deps "javascript:switchTab('dependencies')"
+  click Migration "javascript:switchTab('migration')"
+  click Testing "javascript:switchTab('testing')"
+  click Risks "javascript:switchTab('risks')"
+
+  style Structure fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Skills fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Deps fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Migration fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Testing fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Risks fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900;"></div> Entry point</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb;"></div> Detail section</div>
+    </div>
+  </div>
+
+  <!-- ==================== STRUCTURE ==================== -->
+  <div class="tab-panel" id="panel-structure">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('structure','structure-sidebyside')">Side-by-Side Layout</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('structure','structure-tree')">Full Directory Tree</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('structure','structure-marketplace')">Marketplace Config</button>
+    </div>
+
+    <!-- Sub-tab: Side by Side -->
+    <div class="sub-panel active" id="sub-structure-sidebyside">
+      <div class="section">
+        <h2>Side-by-Side Plugin Layout<span class="badge">directory</span></h2>
+        <p class="description">Both plugins live as peer directories in the mono-repo. Shared development files remain at the repo root. The flat split preserves the <strong>../../ plugin-root resolution</strong> convention.</p>
+        <ul class="bullet-list">
+          <li><strong>aligned-advisors</strong> &mdash; 5 skills, zero agents, zero hooks</li>
+          <li><strong>aligned-works</strong> &mdash; 17 skills, 10 agents, 3 hooks. CLI-optimized.</li>
+          <li><strong>Repo root</strong> &mdash; CLAUDE.md, LICENSE, CONTRIBUTING.md, SECURITY.md, .github/, .gitignore, scripts/</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Root["aligned_cc_skills/"]
+
+  Advisors["aligned-advisors/"]
+  Works["aligned-works/"]
+  Shared["Shared Files"]
+
+  Root --> Advisors
+  Root --> Works
+  Root --> Shared
+
+  APlugin[".claude-plugin/"]
+  AAdvisors["advisors/"]
+  AFrameworks["frameworks/"]
+  ASkills["skills/ 5 skills"]
+
+  Advisors --> APlugin
+  Advisors --> AAdvisors
+  Advisors --> AFrameworks
+  Advisors --> ASkills
+
+  WPlugin[".claude-plugin/"]
+  WSkills["skills/ 17 skills"]
+  WAgents["agents/ 10"]
+  WHooks["hooks/ 3"]
+  WDocs["docs/"]
+  WSymlinks["symlinks"]
+
+  Works --> WPlugin
+  Works --> WSkills
+  Works --> WAgents
+  Works --> WHooks
+  Works --> WDocs
+  Works --> WSymlinks
+
+  style Root fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Advisors fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Works fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Shared fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style WSymlinks fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a;"></div> Repo root</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900;"></div> Advisors / Symlinks</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb;"></div> Works</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555;"></div> Shared</div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Full Tree -->
+    <div class="sub-panel" id="sub-structure-tree">
+      <div class="section">
+        <h2>Full Directory Tree<span class="badge">detail</span></h2>
+        <p class="description">Complete directory structure after the split, showing every skill directory and the symlink targets.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <!-- Advisors column -->
+          <div style="background:#faf9f7;border:1px solid #e5e7eb;border-radius:12px;padding:16px;">
+            <div style="font-weight:500;color:#ff6900;margin-bottom:8px;font-size:0.9rem;">aligned-advisors/</div>
+            <pre style="font-family:Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.7;color:#1a1a1a;margin:0;white-space:pre-wrap;">.claude-plugin/
+  plugin.json
+  marketplace.json
+advisors/
+  registry.md
+  prompts/          (65 files)
+frameworks/         (138 files)
+skills/
+  use-advisor/
+  use-framework/
+  add-advisor/
+  add-framework/
+  find-potential-advisors/
+README.md</pre>
+          </div>
+          <!-- Works column -->
+          <div style="background:#faf9f7;border:1px solid #e5e7eb;border-radius:12px;padding:16px;">
+            <div style="font-weight:500;color:#1a1a1a;margin-bottom:8px;font-size:0.9rem;">aligned-works/</div>
+            <pre style="font-family:Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.7;color:#1a1a1a;margin:0;white-space:pre-wrap;">.claude-plugin/
+  plugin.json
+  marketplace.json
+advisors -> ../aligned-advisors/advisors
+frameworks -> ../aligned-advisors/frameworks
+skills/
+  _shared/
+  brainstorming/
+  writing-plans/
+  executing-plans/
+  finishing-a-development-branch/
+  test-driven-development/
+  verification-before-completion/
+  using-git-worktrees/
+  root-cause-analysis/
+  codebase-audit/
+  eval-audit/
+  eval-failure-triage/
+  kanban-resolve/
+  kickstart/
+  create-new-skill/
+  create-svg-diagram/
+  create-design-principles/
+  persona-panel/
+agents/             (10 files)
+hooks/              (3 + hooks.json)
+docs/
+README.md</pre>
+          </div>
+        </div>
+        <!-- Repo root -->
+        <div style="margin-top:24px;background:#faf9f7;border:1px solid #e5e7eb;border-radius:12px;padding:16px;">
+          <div style="font-weight:500;color:#555555;margin-bottom:8px;font-size:0.9rem;">Repo root (shared)</div>
+          <pre style="font-family:Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.7;color:#1a1a1a;margin:0;white-space:pre-wrap;">.github/               (workflows)
+.gitignore
+CLAUDE.md
+README.md
+CONTRIBUTING.md
+LICENSE
+SECURITY.md
+scripts/               (autocommit infrastructure)</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Marketplace Config -->
+    <div class="sub-panel" id="sub-structure-marketplace">
+      <div class="section">
+        <h2>Marketplace Configuration<span class="badge">independent install</span></h2>
+        <p class="description">Each plugin gets its own <code>marketplace.json</code> with a <code>path</code> field that tells the marketplace to treat the subdirectory as the plugin root. Both plugins are installable independently from the same repo.</p>
+        <ul class="bullet-list">
+          <li><strong>Source path offsets</strong> &mdash; <code>"path": "aligned-advisors"</code> and <code>"path": "aligned-works"</code> point the marketplace to the correct subdirectory</li>
+          <li><strong>Independent versioning</strong> &mdash; both start at 1.0.0, then version independently</li>
+          <li><strong>Snapshot caveat</strong> &mdash; symlinked content is snapshot at install time; updating advisors requires reinstalling works</li>
+        </ul>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px;">
+          <div style="background:#faf9f7;border:1px solid #e5e7eb;border-radius:12px;padding:16px;">
+            <div style="font-weight:500;color:#ff6900;margin-bottom:8px;font-size:0.85rem;">aligned-advisors/marketplace.json</div>
+            <pre style="font-family:Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.7;color:#1a1a1a;margin:0;white-space:pre-wrap;">{
+  "source": {
+    "source": "github",
+    "repo": "bigchewy/aligned_cc_skills",
+    "path": "aligned-advisors"
+  }
+}</pre>
+          </div>
+          <div style="background:#faf9f7;border:1px solid #e5e7eb;border-radius:12px;padding:16px;">
+            <div style="font-weight:500;color:#1a1a1a;margin-bottom:8px;font-size:0.85rem;">aligned-works/marketplace.json</div>
+            <pre style="font-family:Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.7;color:#1a1a1a;margin:0;white-space:pre-wrap;">{
+  "source": {
+    "source": "github",
+    "repo": "bigchewy/aligned_cc_skills",
+    "path": "aligned-works"
+  }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SKILLS ==================== -->
+  <div class="tab-panel" id="panel-skills">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('skills','skills-map')">Allocation Map</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('skills','skills-table')">Full Skill Table</button>
+    </div>
+
+    <!-- Sub-tab: Allocation Map -->
+    <div class="sub-panel active" id="sub-skills-map">
+      <div class="section">
+        <h2>Skill Allocation Map<span class="badge">22 skills</span></h2>
+        <p class="description">Color-coded allocation of all skills across the two plugins. <strong>Advisors</strong> gets persona and framework management. <strong>Works</strong> gets the creation and engineering stack. Four personal/brand skills are removed from the plugin entirely.</p>
+        <ul class="bullet-list">
+          <li><strong>5 skills</strong> move to aligned-advisors (orange nodes)</li>
+          <li><strong>17 skills</strong> stay in aligned-works (neutral nodes)</li>
+          <li><strong>4 skills</strong> removed to personal global (red, dashed border)</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  subgraph Advisors["aligned-advisors"]
+    UA["use-advisor"]
+    UF["use-framework"]
+    AA["add-advisor"]
+    AF["add-framework"]
+    FPA["find-potential-advisors"]
+  end
+
+  subgraph Works["aligned-works"]
+    BS["brainstorming"]
+    WP["writing-plans"]
+    EP["executing-plans"]
+    FDB["finishing-branch"]
+    TDD["test-driven-dev"]
+    VBC["verification"]
+    UGW["git-worktrees"]
+    RCA["root-cause"]
+    CA["codebase-audit"]
+    EA["eval-audit"]
+    EFT["eval-failure-triage"]
+    KR["kanban-resolve"]
+    KS["kickstart"]
+    CNS["create-new-skill"]
+    CSD["create-svg-diagram"]
+    CDP["create-design-principles"]
+    PP["persona-panel"]
+  end
+
+  subgraph Removed["personal global"]
+    GD["generate-deck"]
+    GBP["generate-blog-post"]
+    GOP["generate-one-pager"]
+    PA["portability-audit"]
+  end
+
+  style UA fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style UF fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style AA fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style AF fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style FPA fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+
+  style GD fill:#fef2f2,stroke:#b91c1c,color:#b91c1c,stroke-dasharray:5 5
+  style GBP fill:#fef2f2,stroke:#b91c1c,color:#b91c1c,stroke-dasharray:5 5
+  style GOP fill:#fef2f2,stroke:#b91c1c,color:#b91c1c,stroke-dasharray:5 5
+  style PA fill:#fef2f2,stroke:#b91c1c,color:#b91c1c,stroke-dasharray:5 5
+          </pre>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900;"></div> aligned-advisors</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb;"></div> aligned-works</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fef2f2;border:1px dashed #b91c1c;"></div> Removed (personal)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Full Table -->
+    <div class="sub-panel" id="sub-skills-table">
+      <div class="section">
+        <h2>Complete Skill Table<span class="badge">26 total</span></h2>
+        <p class="description">Every skill with its destination plugin and purpose. Note: 3 of the 5 advisor skills (add-advisor, add-framework, find-potential-advisors) use CLI-only features. Full Desktop compatibility is a future goal.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Skill</th><th>Plugin</th><th>Purpose</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>use-advisor</td><td><span class="pill pill-advisors">advisors</span></td><td>Adopt advisor persona for conversation</td><td>Desktop-safe</td></tr>
+            <tr><td>use-framework</td><td><span class="pill pill-advisors">advisors</span></td><td>Guide user through framework phases</td><td>Desktop-safe</td></tr>
+            <tr><td>add-advisor</td><td><span class="pill pill-advisors">advisors</span></td><td>Create new advisor prompt + examples</td><td>CLI-only (Task tool)</td></tr>
+            <tr><td>add-framework</td><td><span class="pill pill-advisors">advisors</span></td><td>Add framework to existing advisor</td><td>CLI-only (Task tool)</td></tr>
+            <tr><td>find-potential-advisors</td><td><span class="pill pill-advisors">advisors</span></td><td>Research and evaluate potential advisors</td><td>CLI-only (WebSearch)</td></tr>
+            <tr><td>brainstorming</td><td><span class="pill pill-works">works</span></td><td>Idea to validated design with expert critique</td><td></td></tr>
+            <tr><td>writing-plans</td><td><span class="pill pill-works">works</span></td><td>Design to implementation plan</td><td></td></tr>
+            <tr><td>executing-plans</td><td><span class="pill pill-works">works</span></td><td>Plan to task-by-task execution</td><td></td></tr>
+            <tr><td>finishing-a-development-branch</td><td><span class="pill pill-works">works</span></td><td>Merge/deploy workflow</td><td></td></tr>
+            <tr><td>test-driven-development</td><td><span class="pill pill-works">works</span></td><td>TDD methodology</td><td></td></tr>
+            <tr><td>verification-before-completion</td><td><span class="pill pill-works">works</span></td><td>Evidence-before-assertions gates</td><td></td></tr>
+            <tr><td>using-git-worktrees</td><td><span class="pill pill-works">works</span></td><td>Worktree management</td><td></td></tr>
+            <tr><td>root-cause-analysis</td><td><span class="pill pill-works">works</span></td><td>Problem investigation</td><td></td></tr>
+            <tr><td>codebase-audit</td><td><span class="pill pill-works">works</span></td><td>Multi-dimensional code analysis</td><td></td></tr>
+            <tr><td>eval-audit</td><td><span class="pill pill-works">works</span></td><td>Eval coverage checker</td><td></td></tr>
+            <tr><td>eval-failure-triage</td><td><span class="pill pill-works">works</span></td><td>Eval failure classification</td><td></td></tr>
+            <tr><td>kanban-resolve</td><td><span class="pill pill-works">works</span></td><td>Kanban triage and resolution</td><td></td></tr>
+            <tr><td>kickstart</td><td><span class="pill pill-works">works</span></td><td>Project scaffolding</td><td></td></tr>
+            <tr><td>create-new-skill</td><td><span class="pill pill-works">works</span></td><td>Skill authoring</td><td></td></tr>
+            <tr><td>create-svg-diagram</td><td><span class="pill pill-works">works</span></td><td>Visual diagram generation</td><td></td></tr>
+            <tr><td>create-design-principles</td><td><span class="pill pill-works">works</span></td><td>Design system discovery</td><td></td></tr>
+            <tr><td>persona-panel</td><td><span class="pill pill-works">works</span></td><td>Content testing against buyer personas</td><td></td></tr>
+            <tr><td>generate-deck</td><td><span class="pill pill-removed">removed</span></td><td>Brand-specific sales deck generation</td><td></td></tr>
+            <tr><td>generate-blog-post</td><td><span class="pill pill-removed">removed</span></td><td>Brand-specific blog posts</td><td></td></tr>
+            <tr><td>generate-one-pager</td><td><span class="pill pill-removed">removed</span></td><td>Brand-specific one-pagers</td><td></td></tr>
+            <tr><td>portability-audit</td><td><span class="pill pill-removed">removed</span></td><td>Environment-specific hardcoding scan</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DEPENDENCIES ==================== -->
+  <div class="tab-panel" id="panel-dependencies">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('dependencies','deps-graph')">Dependency Graph</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('dependencies','deps-symlinks')">Symlink Resolution</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('dependencies','deps-invocations')">Cross-Plugin Invocations</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('dependencies','deps-errorux')">Error UX</button>
+    </div>
+
+    <!-- Sub-tab: Dependency Graph -->
+    <div class="sub-panel active" id="sub-deps-graph">
+      <div class="section">
+        <h2>Cross-Plugin Dependency Graph<span class="badge">symlinks</span></h2>
+        <p class="description">Works skills that read advisor content use symlinks to resolve paths without code changes. Arrows show which works skills depend on advisors content. The <strong>critique-panel-orchestration</strong> shared doc is the heaviest consumer.</p>
+        <ul class="bullet-list">
+          <li><strong>brainstorming</strong> &mdash; reads advisors/registry.md to select critique panel members</li>
+          <li><strong>create-design-principles</strong> &mdash; loads Steve Jobs advisor prompt from advisors/prompts/</li>
+          <li><strong>critique-panel-orchestration</strong> &mdash; shared doc that resolves advisor personas for all critique workflows</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  subgraph AW["aligned-works"]
+    BS["brainstorming"]
+    CDP["create-design-principles"]
+    CPO["critique-panel-orchestration"]
+    PP["persona-panel"]
+    SL_A["advisors/ symlink"]
+    SL_F["frameworks/ symlink"]
+  end
+
+  subgraph AA["aligned-advisors"]
+    REG["advisors/registry.md"]
+    PROMPTS["advisors/prompts/"]
+    FWORKS["frameworks/"]
+  end
+
+  BS --> CPO
+  CDP --> CPO
+  PP --> CPO
+  CPO --> SL_A
+  CPO --> SL_F
+  SL_A --> REG
+  SL_A --> PROMPTS
+  SL_F --> FWORKS
+
+  style SL_A fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SL_F fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style REG fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style PROMPTS fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style FWORKS fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900;"></div> Advisors content / symlinks</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb;"></div> Works skills</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Symlink Resolution -->
+    <div class="sub-panel" id="sub-deps-symlinks">
+      <div class="section">
+        <h2>Symlink Resolution Mechanism<span class="badge">confirmed working</span></h2>
+        <p class="description">How symlinks bridge the two plugins at the filesystem level. During plugin cache copy, symlinks resolve to real paths, so skill files continue to reference <code>advisors/</code> and <code>frameworks/</code> as if they were local directories. <strong>Empirically confirmed 2026-04-08</strong> &mdash; both in-place (<code>--plugin-dir</code>) and via marketplace cache copy.</p>
+        <ul class="bullet-list">
+          <li><strong>Symlink creation</strong> happens in Phase 1 of migration</li>
+          <li><strong>Path resolution</strong> is transparent to skill files &mdash; no code changes needed</li>
+          <li><strong>Fallback plan</strong> if symlinks break at runtime: explicit Glob-based advisor plugin root resolution in ~12 skill and agent files</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Skill["Works skill reads advisors/registry.md"]
+  Symlink["aligned-works/advisors/"]
+  Target["aligned-advisors/advisors/"]
+  File["registry.md"]
+
+  Skill -->|"path reference"| Symlink
+  Symlink -->|"symlink resolves"| Target
+  Target -->|"contains"| File
+
+  style Skill fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Symlink fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Target fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style File fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+
+        <h2 style="margin-top:24px;">Glob Disambiguation<span class="badge">7 instances</span></h2>
+        <p class="description">7 skill files across 5 locations use fallback Glob patterns to re-find the plugin root. With two plugins, the old filter (<code>parent contains .claude-plugin/plugin.json</code>) matches twice. The fix: two-step find-and-verify &mdash; Glob to find candidates, then Read <code>plugin.json</code> and check the <code>name</code> field matches the expected plugin.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Glob["Glob fallback pattern"]
+  Filter["Read plugin.json, check name field"]
+  Match["Single plugin root"]
+
+  Glob -->|"finds 2 .claude-plugin/"| Filter
+  Filter -->|"exact name match"| Match
+
+  style Glob fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Filter fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Match fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Cross-Plugin Invocations -->
+    <div class="sub-panel" id="sub-deps-invocations">
+      <div class="section">
+        <h2>Cross-Plugin Skill Invocations<span class="badge">~135 changes</span></h2>
+        <p class="description">Skill name prefixes change from <code>aligned:</code> to plugin-specific prefixes. ~135 instances across 26+ files including skill files, kickstart permissions (22 entries), READMEs, agent files, .github/, and CONTRIBUTING.md.</p>
+        <ul class="bullet-list">
+          <li><strong>Cross-plugin</strong>: <code>aligned:use-advisor</code> becomes <code>aligned-advisors:use-advisor</code></li>
+          <li><strong>Intra-plugin</strong>: <code>aligned:brainstorming</code> becomes <code>aligned-works:brainstorming</code></li>
+          <li><strong>Kickstart entries</strong>: 22 entries split across advisors, works, and removed categories</li>
+          <li><strong>Bundle requirement</strong>: Works recommends co-installing Advisors. No graceful degradation at launch.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  WSkill["aligned-works skill"]
+  ASkill["aligned-advisors skill"]
+  Prefix["aligned-works:brainstorming"]
+  CrossPrefix["aligned-advisors:use-advisor"]
+
+  WSkill -->|"intra-plugin call"| Prefix
+  WSkill -->|"cross-plugin call"| CrossPrefix
+  CrossPrefix --> ASkill
+
+  style WSkill fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style ASkill fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Prefix fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style CrossPrefix fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Error UX -->
+    <div class="sub-panel" id="sub-deps-errorux">
+      <div class="section">
+        <h2>Error UX for Missing Co-install<span class="badge">bundle-at-launch</span></h2>
+        <p class="description">When a works skill needs advisor content and the advisors plugin is not installed, the user gets a clear, actionable error instead of a cryptic file-not-found.</p>
+        <ul class="bullet-list">
+          <li><strong>README prerequisite</strong> &mdash; aligned-works README includes a Prerequisites section listing aligned-advisors as a recommended co-install</li>
+          <li><strong>Runtime message</strong> &mdash; skills that depend on advisor files (brainstorming critique panels, create-design-principles) print: <code>"Install aligned-advisors for full functionality: /install aligned-advisors"</code></li>
+          <li><strong>No graceful degradation</strong> &mdash; fallback paths deferred until there is a real user who wants only one plugin</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Invoke["Works skill invokes advisor"]
+  Check["Check advisors/ reachable"]
+  OK["Proceed normally"]
+  Fail["Print install message"]
+
+  Invoke --> Check
+  Check -->|"found"| OK
+  Check -->|"missing"| Fail
+
+  style Invoke fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Check fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style OK fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Fail fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MIGRATION ==================== -->
+  <div class="tab-panel" id="panel-migration">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('migration','migration-overview')">Phase Overview</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-phase0')">Phase 0: Validate</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-phase1')">Phase 1: Move Files</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-phase2')">Phase 2: Update Refs</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-phase3')">Phase 3: Validate</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-phase4')">Phase 4: Merge</button>
+    </div>
+
+    <!-- Sub-tab: Phase Overview -->
+    <div class="sub-panel active" id="sub-migration-overview">
+      <div class="section">
+        <h2>Migration Phases<span class="badge">5 phases</span></h2>
+        <p class="description">Five sequential phases on a <strong>feature branch</strong> (<code>feature/plugin-split</code>). Phase 0 validates assumptions before any file moves. Phases 1-3 execute the migration. Phase 4 merges to main. The intermediate state between phases will be broken &mdash; the feature branch isolates this from main.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P0["Phase 0: Validate Assumptions"]
+  P1["Phase 1: Move Files"]
+  P2["Phase 2: Update References"]
+  P3["Phase 3: Validate"]
+  P4["Phase 4: Merge"]
+
+  P0 -->|"assumptions hold"| P1
+  P1 -->|"atomic commit"| P2
+  P2 -->|"~135 updates"| P3
+  P3 -->|"tests pass"| P4
+
+  style P0 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P4 fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#ff6900;"></div> Current starting phase</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb;"></div> Subsequent phases</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #1a1a1a;"></div> Completion</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Phase 0 -->
+    <div class="sub-panel" id="sub-migration-phase0">
+      <div class="section">
+        <h2>Phase 0: Validate Assumptions<span class="badge">before any file moves</span></h2>
+        <p class="description">Test critical assumptions before committing to the migration. These are the highest-risk unknowns that could invalidate the entire approach.</p>
+        <ul class="bullet-list">
+          <li><strong>Symlink resolution</strong> &mdash; create minimal plugin structure in /tmp with symlinks, load via <code>claude --plugin-dir</code>, invoke a skill that reads through the symlink. <strong>Result (2026-04-08):</strong> confirmed working both in-place and via marketplace cache copy.</li>
+          <li><strong>CLAUDE_PLUGIN_ROOT resolution</strong> &mdash; verify <code>${CLAUDE_PLUGIN_ROOT}</code> resolves to the plugin subdirectory (not repo root) when loading via <code>--plugin-dir aligned-works/</code>. If it resolves to repo root, hooks.json paths need adjustment.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  T1["Test symlinks in /tmp"]
+  T2["Test PLUGIN_ROOT resolution"]
+  Go["Proceed to Phase 1"]
+  Stop["Redesign approach"]
+
+  T1 -->|"pass"| T2
+  T1 -->|"fail"| Stop
+  T2 -->|"pass"| Go
+  T2 -->|"fail"| Stop
+
+  style T1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style T2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Go fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style Stop fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Phase 1 -->
+    <div class="sub-panel" id="sub-migration-phase1">
+      <div class="section">
+        <h2>Phase 1: Move Files<span class="badge">atomic commit</span></h2>
+        <p class="description">All file moves happen in a single atomic commit using <code>git mv</code> to preserve history tracking. Symlinks are created after the moves. All work on <code>feature/plugin-split</code> branch.</p>
+        <ul class="bullet-list">
+          <li><strong>Step 1</strong> &mdash; Create aligned-advisors/ and aligned-works/ directories</li>
+          <li><strong>Step 2</strong> &mdash; <code>git mv</code> advisors/, frameworks/ into aligned-advisors/</li>
+          <li><strong>Step 3</strong> &mdash; <code>git mv</code> skills/ into aligned-works/ (excluding 5 advisor skills + 4 personal)</li>
+          <li><strong>Step 4</strong> &mdash; <code>git mv</code> 5 advisor skills into aligned-advisors/skills/</li>
+          <li><strong>Step 5</strong> &mdash; <code>git mv</code> agents/, hooks/, docs/ into aligned-works/</li>
+          <li><strong>Step 6</strong> &mdash; Create symlinks for advisors/ and frameworks/ in aligned-works/</li>
+          <li><strong>Step 7</strong> &mdash; Create .claude-plugin/ in each plugin directory with independent plugin.json and marketplace.json</li>
+          <li><strong>Step 8</strong> &mdash; Remove old .claude-plugin/ from repo root</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  S1["Create dirs"]
+  S2["Move advisors content"]
+  S3["Move works skills"]
+  S4["Move advisor skills"]
+  S5["Move agents, hooks, docs"]
+  S6["Create symlinks"]
+
+  S1 --> S2
+  S2 --> S3
+  S3 --> S4
+  S4 --> S5
+  S5 --> S6
+
+  style S1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style S3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S4 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style S5 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S6 fill:#ff6900,stroke:#e55d00,color:#ffffff
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Phase 2 -->
+    <div class="sub-panel" id="sub-migration-phase2">
+      <div class="section">
+        <h2>Phase 2: Update References<span class="badge">~135 instances</span></h2>
+        <p class="description">Systematic reference updates across skill files, agent files, documentation, and configuration. The bulk of the work is prefix renaming (~135 instances across 26+ files).</p>
+        <ul class="bullet-list">
+          <li><strong>Glob patterns</strong> (7 instances across 5 files) &mdash; two-step find-and-verify with plugin name check</li>
+          <li><strong>Skill prefixes</strong> (~135 instances) &mdash; classify intra vs cross-plugin, apply correct prefix</li>
+          <li><strong>Kickstart permissions</strong> (22 entries) &mdash; split across advisors, works, and removed</li>
+          <li><strong>Documentation</strong> &mdash; CONTRIBUTING.md, both READMEs, repo-level CLAUDE.md and README.md</li>
+          <li><strong>Configuration</strong> &mdash; .gitignore paths, .github/ workflows</li>
+          <li><strong>Agent files</strong> &mdash; document symlink dependency for mockup-generator.md and others</li>
+          <li><strong>Ralph loops</strong> &mdash; audit docs/ralph_loops/*.sh for hardcoded paths</li>
+          <li><strong>Count-update instructions</strong> &mdash; update add-advisor and add-framework SKILL.md for two-plugin structure</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Glob["Glob patterns 7"]
+  Prefix["Skill prefixes ~135"]
+  Kickstart["Kickstart perms 22"]
+  Docs["Documentation"]
+  Config["Config + agents"]
+
+  Glob --> Prefix
+  Prefix --> Kickstart
+  Kickstart --> Docs
+  Docs --> Config
+
+  style Prefix fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Glob fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Kickstart fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Docs fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Config fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Phase 3 -->
+    <div class="sub-panel" id="sub-migration-phase3">
+      <div class="section">
+        <h2>Phase 3: Validate<span class="badge">empirical</span></h2>
+        <p class="description">Empirical validation that both plugins load and function independently. Cross-references the testing strategy tab for detailed test descriptions.</p>
+        <ul class="bullet-list">
+          <li><strong>Symlink test</strong> &mdash; <code>claude --plugin-dir aligned-works/</code>, invoke skill that reads advisors/registry.md</li>
+          <li><strong>Hook discovery</strong> &mdash; verify hooks load from aligned-works/hooks/hooks.json</li>
+          <li><strong>Independent load</strong> &mdash; each plugin loads on its own without errors</li>
+          <li><strong>Prefix completeness</strong> &mdash; grep for remaining <code>aligned:</code> references that should have been updated</li>
+          <li><strong>Skill counts</strong> &mdash; verify plugin.json lists correct skills (5 for advisors, 17 for works)</li>
+          <li><strong>Cross-plugin invocation</strong> &mdash; works skill dispatches advisor skill successfully</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  T1["Test symlinks"]
+  T2["Test hooks"]
+  T3["Load independently"]
+  T4["Check prefixes"]
+  T5["Verify counts"]
+  Done["All pass"]
+
+  T1 -->|"pass"| T2
+  T2 -->|"pass"| T3
+  T3 -->|"pass"| T4
+  T4 -->|"pass"| T5
+  T5 -->|"pass"| Done
+
+  style T1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style T2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style T3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style T4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style T5 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Done fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tab: Phase 4 -->
+    <div class="sub-panel" id="sub-migration-phase4">
+      <div class="section">
+        <h2>Phase 4: Merge<span class="badge">feature branch to main</span></h2>
+        <p class="description">After all validation passes on the feature branch, merge to main and tag both plugins at their starting versions.</p>
+        <ul class="bullet-list">
+          <li><strong>Squash or merge</strong> <code>feature/plugin-split</code> to main</li>
+          <li><strong>Tag both plugins</strong> at v1.0.0 to mark the split as a major release</li>
+          <li><strong>Independent versioning</strong> from this point forward</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Branch["feature/plugin-split"]
+  Merge["Merge to main"]
+  TagA["Tag advisors v1.0.0"]
+  TagW["Tag works v1.0.0"]
+
+  Branch --> Merge
+  Merge --> TagA
+  Merge --> TagW
+
+  style Branch fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Merge fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style TagA fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style TagW fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TESTING ==================== -->
+  <div class="tab-panel" id="panel-testing">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <div class="section">
+      <h2>Testing Strategy<span class="badge">6 validation tests</span></h2>
+      <p class="description">The migration is a structural change, not a code change &mdash; traditional unit tests do not apply. Validation is script-driven. Each test targets a specific assumption that could silently break after the split.</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Test</th><th>What it verifies</th><th>How</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Symlink resolution</strong></td>
+            <td>Advisor content reachable from works plugin</td>
+            <td>Load works plugin, invoke skill that reads <code>advisors/registry.md</code></td>
+          </tr>
+          <tr>
+            <td><strong>Hook discovery</strong></td>
+            <td>Hooks load from <code>aligned-works/hooks/</code></td>
+            <td>Load works plugin, trigger a hook, verify it fires</td>
+          </tr>
+          <tr>
+            <td><strong>Prefix completeness</strong></td>
+            <td>No stale <code>aligned:</code> references remain</td>
+            <td><code>grep -r 'aligned:' --include='*.md'</code> across both plugin dirs, filter known exceptions</td>
+          </tr>
+          <tr>
+            <td><strong>Skill count</strong></td>
+            <td>Each plugin.json lists correct skills</td>
+            <td>Count entries in <code>skills</code> array, compare to directory listing</td>
+          </tr>
+          <tr>
+            <td><strong>Independent loading</strong></td>
+            <td>Each plugin loads without the other</td>
+            <td>Load each via <code>--plugin-dir</code> in isolation, verify skill list</td>
+          </tr>
+          <tr>
+            <td><strong>Cross-plugin invocation</strong></td>
+            <td>Works skill can invoke advisor skill</td>
+            <td>Load both plugins, invoke a works skill that dispatches an advisor skill</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Test Flow<span class="badge">sequence</span></h2>
+      <p class="description">Tests run in dependency order. Symlink resolution must pass before cross-plugin invocation can be meaningful.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  T1["Symlink resolution"]
+  T2["Hook discovery"]
+  T3["Prefix completeness"]
+  T4["Skill count"]
+  T5["Independent loading"]
+  T6["Cross-plugin invocation"]
+
+  T1 --> T5
+  T2 --> T5
+  T3 --> T5
+  T4 --> T5
+  T5 --> T6
+
+  style T1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style T6 fill:#ff6900,stroke:#e55d00,color:#ffffff
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== RISKS ==================== -->
+  <div class="tab-panel" id="panel-risks">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+
+    <div class="section">
+      <h2>Risk Matrix<span class="badge">6 risks</span></h2>
+      <p class="description">All identified risks with severity and mitigation. The highest-severity risk (symlinks) has been empirically resolved.</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Symlinks not followed during cache copy</td>
+            <td><span class="pill pill-resolved">Resolved</span></td>
+            <td>Confirmed working per plugins-reference docs + empirical test (2026-04-08)</td>
+          </tr>
+          <tr>
+            <td>Large git diff from mass file moves</td>
+            <td><span class="pill pill-works">Low</span></td>
+            <td>Feature branch + <code>git mv</code> preserves history tracking</td>
+          </tr>
+          <tr>
+            <td>Skill name prefix breaks muscle memory</td>
+            <td><span class="pill pill-works">Low</span></td>
+            <td>Clear migration docs; old prefix fails with helpful error</td>
+          </tr>
+          <tr>
+            <td>Hook discovery path change</td>
+            <td><span class="pill pill-advisors">Medium</span></td>
+            <td>Phase 0 step 2 tests CLAUDE_PLUGIN_ROOT resolution before any moves</td>
+          </tr>
+          <tr>
+            <td>Windows symlink portability</td>
+            <td><span class="pill pill-works">Low</span></td>
+            <td>Symlinks require Developer Mode on Windows; documented in both READMEs</td>
+          </tr>
+          <tr>
+            <td>Marketplace snapshot staleness</td>
+            <td><span class="pill pill-works">Low</span></td>
+            <td>Both plugins version together; updating advisors requires reinstalling works</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Decision Log<span class="badge">11 decisions</span></h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Decision</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>This repo becomes aligned-works, extract advisors</td><td>Advisors is the cleaner extraction (self-contained, no agent/hook deps)</td></tr>
+          <tr><td>2</td><td>Bundle at launch, defer graceful degradation</td><td>Avoid premature abstraction on a boundary that might shift</td></tr>
+          <tr><td>3</td><td>Mono-repo, flat split</td><td>Preserves ../../ plugin-root pattern; atomic cross-plugin changes</td></tr>
+          <tr><td>4</td><td>Symlinks for cross-references</td><td>Zero changes to existing advisor path references</td></tr>
+          <tr><td>5</td><td>Content gen + portability-audit to personal global</td><td>Brand-specific / single-use, not plugin material</td></tr>
+          <tr><td>6</td><td>verification-before-completion, create-svg-diagram to works</td><td>Advisors is purely personas and frameworks</td></tr>
+          <tr><td>7</td><td>persona-panel to works</td><td>Uses project-local personas, not advisor files</td></tr>
+          <tr><td>8</td><td>Glob disambiguation via two-step find-and-verify</td><td>Behavior change from single-step filter; 7 instances across 5 files</td></tr>
+          <tr><td>9</td><td>Naming: aligned-advisors + aligned-works</td><td>Validated by advisor panel (2026-04-07). Zero ambiguity.</td></tr>
+          <tr><td>10</td><td>Keep all 5 advisor skills in advisors, drop Desktop claim</td><td>3 of 5 use CLI features; Desktop compat is a future goal</td></tr>
+          <tr><td>11</td><td>Feature branch for migration</td><td>Isolates broken intermediate state from main</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
