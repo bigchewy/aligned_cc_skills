@@ -203,7 +203,7 @@ git commit -m "feat(persona-panel): replace dead-end with creation flow delegati
 
 ---
 
-### Task 3: Bump plugin version
+### ✅ Task 3: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)
