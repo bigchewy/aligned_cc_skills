@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Persona Creation Flow — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            button: { DEFAULT: '#32373c', hover: '#1a1f23', text: '#ffffff' }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Decision table */
+    .decision-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+    .decision-table th {
+      text-align: left;
+      font-weight: 500;
+      color: #1a1a1a;
+      padding: 8px 12px;
+      border-bottom: 2px solid #f0eeeb;
+      background: #faf9f7;
+    }
+    .decision-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #555555;
+      line-height: 1.5;
+    }
+    .decision-table tr:last-child td { border-bottom: none; }
+
+    /* Criteria list */
+    .criteria-list { list-style: none; padding-left: 0; }
+    .criteria-list li {
+      padding: 8px 12px;
+      border-left: 3px solid #ff6900;
+      margin-bottom: 8px;
+      background: #fff7ed;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.85rem;
+      color: #1a1a1a;
+      line-height: 1.5;
+    }
+    .criteria-list li strong { color: #1a1a1a; }
+  </style>
+</head>
+<body>
+  <h1>Persona Creation Flow</h1>
+  <p class="subtitle">Guided cold-start path for the persona-panel skill</p>
+  <p class="context">Adds automatic persona creation when docs/personas/ is empty, replacing the current dead-end with a four-phase guided flow. Scans existing docs (with false-positive handling), asks adaptive questions, confirms the persona set, generates complete 20-field files, prompts for content, and hands off to Stage 2.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('context-detection')">Context Detection</button>
+    <button class="tab-btn" onclick="switchTab('qa')">Q&amp;A</button>
+    <button class="tab-btn" onclick="switchTab('summary-approval')">Summary Approval</button>
+    <button class="tab-btn" onclick="switchTab('file-generation')">File Generation</button>
+    <button class="tab-btn" onclick="switchTab('integration')">Integration</button>
+    <button class="tab-btn" onclick="switchTab('success')">Success Criteria</button>
+  </div>
+
+  <!-- ==================== OVERVIEW ==================== -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>End-to-End Flow</h2>
+      <p class="description">The flow triggers when persona-panel finds no persona files. An opt-out prompt gives the user an escape hatch to manual creation before entering the four phases. After file generation, a content prompt bridges to the first panel run.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  OPT["Opt-out<br>Prompt"]
+  CTX["Phase 1<br>Context Detection"]
+  QA["Phase 2<br>Q&amp;A"]
+  SUM["Phase 3<br>Summary Approval"]
+  GEN["Phase 4<br>File Generation"]
+  CONTENT["Content<br>Prompt"]
+  INT["Back to<br>Stage 1"]
+
+  OPT --> CTX --> QA --> SUM --> GEN --> CONTENT --> INT
+
+  click OPT callback "switchTab('integration')"
+  click CTX callback "switchTab('context-detection')"
+  click QA callback "switchTab('qa')"
+  click SUM callback "switchTab('summary-approval')"
+  click GEN callback "switchTab('file-generation')"
+  click CONTENT callback "switchTab('file-generation')"
+  click INT callback "switchTab('integration')"
+
+  style OPT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CTX fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style QA fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SUM fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style GEN fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style CONTENT fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style INT fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900;"></div> Decision point</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #e5e7eb;"></div> Passive scan</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffffff;border:1px solid #e5e7eb;"></div> Interactive</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900;"></div> Generation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555;"></div> Handoff</div>
+    </div>
+
+    <div class="section" style="margin-top:24px;">
+      <h2>Key Decisions<span class="badge">5 decisions</span></h2>
+      <table class="decision-table">
+        <thead>
+          <tr><th>#</th><th>Decision</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Flow document in <code>modes/</code>, not separate skill</td><td>Avoids bloating SKILL.md; <code>modes/</code> holds flow-control docs, <code>references/</code> holds data files</td></tr>
+          <tr><td>2</td><td>Auto-detect docs, no mode menu</td><td>Users likely have buyer knowledge documented already</td></tr>
+          <tr><td>3</td><td>Full set in one session</td><td>Gets users to a working panel quickly; refine later via calibration</td></tr>
+          <tr><td>4</td><td>Summary approval, then batch generate</td><td>Approve the set, not each persona. The panel itself is for refinement</td></tr>
+          <tr><td>5</td><td>Return control to Stage 1 after content prompt</td><td>Content prompt bridges creation to first panel run seamlessly</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== CONTEXT DETECTION ==================== -->
+  <div class="tab-panel" id="panel-context-detection">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Phase 1: Context Detection<span class="badge">passive</span></h2>
+      <p class="description">Scans for existing buyer/persona documentation before asking questions. False-positive handling caps presented files at 5 and frames them as opt-in. If the user declines found docs, the flow falls back to full Q&amp;A.</p>
+
+      <!-- Sub-tabs for scan sources vs. branching logic -->
+      <div class="sub-tab-bar">
+        <button class="sub-tab-btn active" onclick="switchSubTab('context-detection','ctx-sources')">Scan Sources</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('context-detection','ctx-branching')">Branching Logic</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('context-detection','ctx-false-pos')">False-Positive Handling</button>
+      </div>
+
+      <!-- Sub-panel: Scan Sources -->
+      <div class="sub-panel active" id="sub-ctx-sources">
+        <p class="description">Sources scanned in order of specificity. Earlier sources take priority.</p>
+        <ul class="bullet-list">
+          <li><strong>docs/ directory</strong> &mdash; files with buyer, persona, ICP, audience, or customer keywords in filename or content</li>
+          <li><strong>content/ and marketing/</strong> &mdash; marketing briefs, sales collateral, positioning docs</li>
+          <li><strong>CLAUDE.md / project instructions</strong> &mdash; target audience, product description, market context</li>
+          <li><strong>README.md</strong> &mdash; product description, value prop, who it's for</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  START["Trigger:<br>No personas found"]
+  DOCS["Scan docs/"]
+  CONTENT["Scan content/<br>marketing/"]
+  PROJ["Read CLAUDE.md<br>project instructions"]
+  README["Read README.md"]
+  RESULT["Aggregate<br>findings"]
+
+  START --> DOCS --> CONTENT --> PROJ --> README --> RESULT
+
+  style START fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style DOCS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style CONTENT fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style PROJ fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style README fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style RESULT fill:#ff6900,stroke:#e55d00,color:#ffffff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Branching Logic -->
+      <div class="sub-panel" id="sub-ctx-branching">
+        <p class="description">After scanning, the flow branches based on what was found. A doc-decline path now explicitly falls back to full Q&amp;A, ensuring the user is never stuck.</p>
+        <ul class="bullet-list">
+          <li><strong>Docs found, user accepts</strong> &mdash; extract buyer types, proceed to abbreviated Q&amp;A</li>
+          <li><strong>Docs found, user declines</strong> &mdash; fall back to full Q&amp;A (same as nothing-found path)</li>
+          <li><strong>Nothing found</strong> &mdash; skip straight to full Q&amp;A with no preamble</li>
+          <li><strong>Directories missing</strong> &mdash; silently skip; only report what was found</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  AGG["Aggregate<br>findings"]
+  CHECK{"Relevant<br>docs found?"}
+  PRESENT["Present docs<br>opt-in framing"]
+  ACCEPT{"User<br>accepts?"}
+  BRIEF["Abbreviated<br>Q&amp;A"]
+  FULL["Full Q&amp;A<br>sequence"]
+
+  AGG --> CHECK
+  CHECK -- "Yes" --> PRESENT --> ACCEPT
+  ACCEPT -- "Yes" --> BRIEF
+  ACCEPT -- "No" --> FULL
+  CHECK -- "No" --> FULL
+
+  style AGG fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style CHECK fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style PRESENT fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style ACCEPT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style BRIEF fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style FULL fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:2px
+  linkStyle 5 stroke:#e5e7eb,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: False-Positive Handling -->
+      <div class="sub-panel" id="sub-ctx-false-pos">
+        <p class="description">Keyword matches on filenames alone are low-confidence. The design addresses this with caps and opt-in framing to prevent false positives from derailing the flow.</p>
+        <ul class="bullet-list">
+          <li><strong>5-doc cap</strong> &mdash; show at most 5 files regardless of how many match; prevents overwhelming the user</li>
+          <li><strong>Opt-in framing</strong> &mdash; "I found these docs that might describe your buyers: [list]. Should I use any of these as a starting point, or skip straight to questions?"</li>
+          <li><strong>Filename-only matches are low-confidence</strong> &mdash; e.g., <code>api-customers.md</code> may be an API doc, not buyer research</li>
+          <li><strong>Decline fallback</strong> &mdash; user says no to all docs, flow proceeds to full Q&amp;A as if nothing was found</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Q&A ==================== -->
+  <div class="tab-panel" id="panel-qa">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Phase 2: Q&amp;A<span class="badge">interactive</span></h2>
+      <p class="description">Adapts depth based on how much context Phase 1 found. Rich context yields confirmation plus 1-2 gap-filling questions. Minimal context triggers the full five-question sequence. Concrete heuristics determine when to probe deeper and when to move on. Hard cap at 7 total questions.</p>
+
+      <div class="sub-tab-bar">
+        <button class="sub-tab-btn active" onclick="switchSubTab('qa','qa-rich')">Rich Context Path</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('qa','qa-minimal')">Minimal Context Path</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('qa','qa-adaptive')">Adaptive Depth</button>
+      </div>
+
+      <!-- Sub-panel: Rich Context Path -->
+      <div class="sub-panel active" id="sub-qa-rich">
+        <p class="description">When Phase 1 found relevant documentation and the user accepted it, the Q&amp;A confirms extracted buyer types and fills gaps with targeted questions.</p>
+        <ul class="bullet-list">
+          <li><strong>Extract buyer types</strong> from scanned docs and present for confirmation</li>
+          <li><strong>1-2 targeted questions</strong> to fill gaps: psychology, objections, communication style</li>
+          <li><strong>Group naming</strong> inferred from buyer set (e.g., b2b-buyers/, enterprise/)</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  EXTRACT["Extract buyers<br>from docs"]
+  CONFIRM["Confirm:<br>Are these right?"]
+  GAPS["1-2 targeted<br>gap questions"]
+  GROUP["Infer group<br>directory name"]
+
+  EXTRACT --> CONFIRM --> GAPS --> GROUP
+
+  style EXTRACT fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style CONFIRM fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style GAPS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style GROUP fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Minimal Context Path -->
+      <div class="sub-panel" id="sub-qa-minimal">
+        <p class="description">When no relevant docs were found (or user declined them), the full question sequence runs. Questions are asked sequentially, one at a time. Q2 accommodates single-buyer products.</p>
+        <ul class="bullet-list">
+          <li><strong>Q1:</strong> "What does your product/service do?" (skip if obvious from CLAUDE.md/README)</li>
+          <li><strong>Q2:</strong> "Who are the distinct buyer types you sell to? Could be one, could be several &mdash; just roles or titles."</li>
+          <li><strong>Q3:</strong> "What's the main problem each buyer is trying to solve?"</li>
+          <li><strong>Q4:</strong> "What makes each buyer type skeptical?"</li>
+          <li><strong>Q5:</strong> "How do these buyers talk?" (formal/casual, data/story, technical/non-technical)</li>
+        </ul>
+        <p class="description"><strong>Single-buyer case:</strong> If the user names only one buyer type, proceed normally. A single-persona panel has reduced diagnostic value (no cross-persona contrast) but is still useful.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Q1["Q1: Product<br>description"]
+  Q2["Q2: Buyer types<br>one or several"]
+  Q3["Q3: Problems<br>they solve"]
+  Q4["Q4: Skepticism<br>triggers"]
+  Q5["Q5: Communication<br>style"]
+  GROUP2["Infer group<br>directory name"]
+
+  Q1 --> Q2 --> Q3 --> Q4 --> Q5 --> GROUP2
+
+  style Q1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Q2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Q3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Q4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Q5 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style GROUP2 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Adaptive Depth -->
+      <div class="sub-panel" id="sub-qa-adaptive">
+        <p class="description">The Q&amp;A adapts dynamically to answer quality using concrete heuristics. Hard cap at 7 questions total regardless of path.</p>
+        <ul class="bullet-list">
+          <li><strong>Rich answer (2+ sentences per buyer)</strong> &mdash; covers motivations or objections without prompting; skip follow-up on that topic</li>
+          <li><strong>Thin answer (single phrase, role title only)</strong> &mdash; no detail on motivations; ask a follow-up to deepen (e.g., "What keeps [role] up at night about this problem?")</li>
+          <li><strong>7-question hard cap</strong> &mdash; after 7 questions, proceed to Summary with what you have regardless</li>
+          <li><strong>Group naming</strong> &mdash; inferred from buyer set; if unclear, becomes one of the questions</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  ASK["Ask<br>question"]
+  EVAL{"Answer<br>quality?"}
+  RICH["2+ sentences:<br>skip follow-up"]
+  THIN["Single phrase:<br>add follow-up"]
+  CAP{"Hit 7<br>questions?"}
+  DONE["Proceed to<br>Summary"]
+
+  ASK --> EVAL
+  EVAL -- "Rich" --> RICH --> CAP
+  EVAL -- "Thin" --> THIN --> CAP
+  CAP -- "No" --> ASK
+  CAP -- "Yes" --> DONE
+
+  style ASK fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style EVAL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style RICH fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style THIN fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style CAP fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style DONE fill:#ff6900,stroke:#e55d00,color:#ffffff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:2px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+  linkStyle 6 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUMMARY APPROVAL ==================== -->
+  <div class="tab-panel" id="panel-summary-approval">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Phase 3: Summary Approval<span class="badge">decision</span></h2>
+      <p class="description">All proposed personas are displayed in a table for user approval before any files are written. The user can adjust names, add or remove personas, or change archetypes. This is the single gate between planning and generation. Aborting here writes no files.</p>
+      <ul class="bullet-list">
+        <li><strong>Table format</strong> &mdash; file name, display name, archetype, and key differentiator for each persona</li>
+        <li><strong>Batch approval</strong> &mdash; approve the entire set, not individual personas (Decision #4)</li>
+        <li><strong>Adjustment loop</strong> &mdash; user can request changes and see the updated table before proceeding</li>
+        <li><strong>No partial generation</strong> &mdash; if user aborts, no files are written; next invocation restarts from Phase 1</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  BUILD["Build persona<br>summary table"]
+  SHOW["Display table<br>to user"]
+  DECIDE{"User<br>approves?"}
+  ADJUST["Apply<br>adjustments"]
+  ABORT["Clean exit<br>no files written"]
+  GEN["Proceed to<br>File Generation"]
+
+  BUILD --> SHOW --> DECIDE
+  DECIDE -- "Adjust" --> ADJUST --> SHOW
+  DECIDE -- "Proceed" --> GEN
+  DECIDE -- "Abort" --> ABORT
+
+  style BUILD fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style SHOW fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style DECIDE fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style ADJUST fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style ABORT fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style GEN fill:#ff6900,stroke:#e55d00,color:#ffffff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:2px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#b91c1c,stroke-width:2px
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Example Summary Table</h2>
+      <p class="description">What the user sees before approving. All four columns are present for every persona.</p>
+      <table class="decision-table">
+        <thead>
+          <tr><th>File</th><th>Name</th><th>Archetype</th><th>Key Differentiator</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-family:Menlo,Consolas,monospace;font-size:0.8rem;">vp-engineering.md</td><td>Dana Chen</td><td>The Build-vs-Buy Evaluator</td><td>Technical depth, allergic to vendor lock-in</td></tr>
+          <tr><td style="font-family:Menlo,Consolas,monospace;font-size:0.8rem;">head-of-sales.md</td><td>Marcus Rivera</td><td>The Revenue Operator</td><td>ROI-first, wants proof not promises</td></tr>
+          <tr><td style="font-family:Menlo,Consolas,monospace;font-size:0.8rem;">founder-ceo.md</td><td>Sarah Kim</td><td>The Scaling Founder</td><td>Speed over polish, pattern-matches against past burns</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== FILE GENERATION ==================== -->
+  <div class="tab-panel" id="panel-file-generation">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Phase 4: File Generation<span class="badge">generation</span></h2>
+      <p class="description">On approval, all persona files are generated in a single batch using the template at references/persona-template.md. Every field is populated with no TODOs or placeholders. After generation, a content prompt bridges to the first panel run.</p>
+
+      <div class="sub-tab-bar">
+        <button class="sub-tab-btn active" onclick="switchSubTab('file-generation','gen-process')">Generation Process</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('file-generation','gen-rules')">File Rules</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('file-generation','gen-content-prompt')">Content Prompt</button>
+      </div>
+
+      <!-- Sub-panel: Generation Process -->
+      <div class="sub-panel active" id="sub-gen-process">
+        <ul class="bullet-list">
+          <li><strong>Template source</strong> &mdash; references/persona-template.md defines all 20 fields</li>
+          <li><strong>Data sources</strong> &mdash; Q&amp;A answers + extracted doc context fill the fields</li>
+          <li><strong>Inference</strong> &mdash; fields not explicitly addressed get reasonable defaults (e.g., "Years in role" estimated from archetype)</li>
+          <li><strong>Batch write</strong> &mdash; all files written at once after approval, no incremental saves</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  APPROVED["User<br>approved"]
+  TEMPLATE["Load persona<br>template"]
+  MERGE["Merge Q&amp;A +<br>doc context"]
+  INFER["Infer missing<br>field defaults"]
+  WRITE["Write all<br>persona files"]
+  PROMPT["Content<br>prompt"]
+
+  APPROVED --> TEMPLATE --> MERGE --> INFER --> WRITE --> PROMPT
+
+  style APPROVED fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style TEMPLATE fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style MERGE fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style INFER fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style WRITE fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style PROMPT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: File Rules -->
+      <div class="sub-panel" id="sub-gen-rules">
+        <p class="description">Constraints on file generation to ensure consistency and usability.</p>
+        <ul class="bullet-list">
+          <li><strong>File naming</strong> &mdash; slugified from role/title, lowercase, hyphenated (e.g., vp-engineering.md)</li>
+          <li><strong>Group directory</strong> &mdash; created if it does not exist (e.g., docs/personas/b2b-buyers/)</li>
+          <li><strong>No placeholders</strong> &mdash; every field populated; no TODOs left behind</li>
+          <li><strong>All 20 fields</strong> &mdash; template structure followed exactly; Review Lens fields specific enough to differentiate persona reactions</li>
+          <li><strong>No partial writes</strong> &mdash; if generation is interrupted, no incomplete files remain</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  NAME["Slugify<br>role/title"]
+  DIR["Create group<br>directory"]
+  FILL["Populate all<br>20 fields"]
+  VALIDATE["No TODOs<br>no placeholders"]
+  SAVE["Write<br>to disk"]
+
+  NAME --> DIR --> FILL --> VALIDATE --> SAVE
+
+  style NAME fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style DIR fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style FILL fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style VALIDATE fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SAVE fill:#ff6900,stroke:#e55d00,color:#ffffff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Content Prompt -->
+      <div class="sub-panel" id="sub-gen-content-prompt">
+        <p class="description">After file generation, the flow does not immediately hand off to Stage 1. A content prompt asks the user what they want to evaluate, bridging creation into the first panel run.</p>
+        <ul class="bullet-list">
+          <li><strong>Prompt text</strong> &mdash; "Personas created. To run your first panel, paste or reference the content you'd like to test."</li>
+          <li><strong>Purpose</strong> &mdash; Stage 2 requires content; prompting here prevents the user from hitting another dead-end after creation</li>
+          <li><strong>After content provided</strong> &mdash; return control to Stage 1, re-glob docs/personas/, continue to Stage 2</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  WRITE2["Files<br>written"]
+  ASK["Prompt for<br>content"]
+  REGLOB["Re-glob<br>docs/personas/"]
+  STAGE2["Continue to<br>Stage 2"]
+
+  WRITE2 --> ASK --> REGLOB --> STAGE2
+
+  style WRITE2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style ASK fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style REGLOB fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style STAGE2 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INTEGRATION ==================== -->
+  <div class="tab-panel" id="panel-integration">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>SKILL.md Integration<span class="badge">implementation</span></h2>
+      <p class="description">The creation flow is a modes/ document delegated from Stage 1 of persona-panel. The SKILL.md change is minimal: replace the dead-end block with an opt-out prompt and delegation to modes/persona-creation-flow.md.</p>
+
+      <div class="sub-tab-bar">
+        <button class="sub-tab-btn active" onclick="switchSubTab('integration','int-flow')">Stage 1 Handoff</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('integration','int-optout')">Opt-out Prompt</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('integration','int-abort')">Abort UX</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('integration','int-edges')">Edge Cases</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('integration','int-boundaries')">Boundaries</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('integration','int-testing')">Testing</button>
+      </div>
+
+      <!-- Sub-panel: Stage 1 Handoff -->
+      <div class="sub-panel active" id="sub-int-flow">
+        <p class="description">After persona files are generated and the user provides content, control returns to Stage 1. Stage 1 re-globs docs/personas/, finds the new group, and continues to Stage 2 for the first panel run.</p>
+        <ul class="bullet-list">
+          <li><strong>SKILL.md change</strong> &mdash; replace the "If no personas found" block with opt-out prompt + delegation to <code>modes/persona-creation-flow.md</code></li>
+          <li><strong>No other changes</strong> to SKILL.md required</li>
+          <li><strong>Seamless transition</strong> &mdash; user flows from creation through content prompt directly into their first panel evaluation</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  TRIGGER["Stage 1:<br>No personas found"]
+  OPTOUT["Opt-out<br>prompt"]
+  DELEGATE["Read modes/<br>creation flow"]
+  RUN["Run 4-phase<br>creation flow"]
+  CONTENT2["Prompt for<br>content"]
+  REGLOB2["Re-glob<br>docs/personas/"]
+  CONTINUE["Continue to<br>Stage 2"]
+
+  TRIGGER --> OPTOUT --> DELEGATE --> RUN --> CONTENT2 --> REGLOB2 --> CONTINUE
+
+  style TRIGGER fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style OPTOUT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style DELEGATE fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style RUN fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style CONTENT2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style REGLOB2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style CONTINUE fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Opt-out Prompt -->
+      <div class="sub-panel" id="sub-int-optout">
+        <p class="description">Before entering the creation flow, a one-line opt-out gives the user an escape hatch to manual creation.</p>
+        <ul class="bullet-list">
+          <li><strong>Prompt text</strong> &mdash; "No persona files found. I can create them now through a short Q&amp;A, or you can add them manually using the template at <code>{base-directory}/references/persona-template.md</code>."</li>
+          <li><strong>If user chooses manual</strong> &mdash; show the template path and stop; no further flow</li>
+          <li><strong>If user chooses guided</strong> &mdash; enter Phase 1 (Context Detection)</li>
+          <li><strong>Placement</strong> &mdash; this is in SKILL.md, not in the modes/ document; it fires before delegation</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  NOPERSONA["No personas<br>found"]
+  PROMPT2{"Guided or<br>manual?"}
+  MANUAL["Show template<br>path and stop"]
+  GUIDED["Enter<br>creation flow"]
+
+  NOPERSONA --> PROMPT2
+  PROMPT2 -- "Manual" --> MANUAL
+  PROMPT2 -- "Guided" --> GUIDED
+
+  style NOPERSONA fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style PROMPT2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style MANUAL fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style GUIDED fill:#ff6900,stroke:#e55d00,color:#ffffff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#e5e7eb,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Abort UX -->
+      <div class="sub-panel" id="sub-int-abort">
+        <p class="description">Abort behavior is fully specified: restart-not-resume, clean exit confirmation, no partial file writes.</p>
+        <ul class="bullet-list">
+          <li><strong>Trigger words</strong> &mdash; "stop", "nevermind", "I'll do this later", or other exit signals</li>
+          <li><strong>Clean exit</strong> &mdash; no files written, confirmation message: "No files written. Next time you invoke the persona panel, it'll offer this flow again."</li>
+          <li><strong>Restart, not resume</strong> &mdash; re-invocation always starts from Phase 1; Q&amp;A is short enough that restart cost is low</li>
+          <li><strong>Two natural exit points</strong> &mdash; opt-out prompt at flow start and approval gate in Phase 3; no mid-Q&amp;A abort prompts (avoids friction in the common case)</li>
+          <li><strong>No partial files</strong> &mdash; files are only written after Phase 3 approval; abort at any prior point has zero side effects</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  RUNNING["Flow<br>in progress"]
+  SIGNAL{"User signals<br>abort?"}
+  CONFIRM2["Confirm:<br>no files written"]
+  REINVOKE["Next invocation<br>restarts Phase 1"]
+  CONTINUE2["Continue<br>flow"]
+
+  RUNNING --> SIGNAL
+  SIGNAL -- "Yes" --> CONFIRM2 --> REINVOKE
+  SIGNAL -- "No" --> CONTINUE2
+
+  style RUNNING fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SIGNAL fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CONFIRM2 fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style REINVOKE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style CONTINUE2 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#b91c1c,stroke-width:2px
+  linkStyle 2 stroke:#b91c1c,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Edge Cases -->
+      <div class="sub-panel" id="sub-int-edges">
+        <p class="description">Edge cases explicitly handled in the design.</p>
+        <ul class="bullet-list">
+          <li><strong>User aborts mid-flow</strong> &mdash; stop cleanly, no partial files written. Next invocation restarts from Phase 1 (no resume).</li>
+          <li><strong>Very thin Q&amp;A answers</strong> &mdash; generate complete personas anyway using reasonable inference. The calibration system flags generic personas over time (5+ runs of monotone verdicts).</li>
+          <li><strong>Personas exist elsewhere</strong> &mdash; creation flow only triggers when docs/personas/ has no persona files at all. Existing groups are handled by Stage 1's normal group selection logic.</li>
+          <li><strong>Template file missing</strong> &mdash; error clearly, do not generate malformed files.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  CHECK{"Personas<br>exist?"}
+  YES["Normal Stage 1<br>group selection"]
+  NO["Trigger<br>creation flow"]
+  ABORT2{"User<br>aborts?"}
+  CLEAN2["Stop cleanly<br>restart next time"]
+  PROCEED["Continue<br>to Phase 3+"]
+
+  CHECK -- "Yes" --> YES
+  CHECK -- "No" --> NO --> ABORT2
+  ABORT2 -- "Yes" --> CLEAN2
+  ABORT2 -- "No" --> PROCEED
+
+  style CHECK fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style YES fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style NO fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style ABORT2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CLEAN2 fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style PROCEED fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#e5e7eb,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#b91c1c,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Boundaries -->
+      <div class="sub-panel" id="sub-int-boundaries">
+        <p class="description">Explicit boundaries define what the creation flow does NOT do. These prevent scope creep and keep the flow focused.</p>
+        <ul class="bullet-list">
+          <li><strong>No editing</strong> &mdash; does not edit or update existing personas</li>
+          <li><strong>No multi-group</strong> &mdash; does not create personas for a second group in the same invocation</li>
+          <li><strong>No validation</strong> &mdash; does not validate personas against real content (that is the panel's job)</li>
+          <li><strong>7 question cap</strong> &mdash; does not run more than 7 Q&amp;A questions</li>
+        </ul>
+      </div>
+
+      <!-- Sub-panel: Testing -->
+      <div class="sub-panel" id="sub-int-testing">
+        <p class="description">13 test scenarios covering happy paths, edge cases, and error conditions.</p>
+        <table class="decision-table">
+          <thead>
+            <tr><th>#</th><th>Scenario</th><th>Expected Behavior</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>No docs/personas/ directory</td><td>Trigger creation flow</td></tr>
+            <tr><td>2</td><td>Existing personas present</td><td>Skip creation flow entirely</td></tr>
+            <tr><td>3</td><td>User selects manual at opt-out</td><td>Show template path and stop</td></tr>
+            <tr><td>4</td><td>Rich docs present in context scan</td><td>Present docs (max 5), opt-in framing, accept user selection</td></tr>
+            <tr><td>5</td><td>No relevant docs found</td><td>Skip to full Q&amp;A</td></tr>
+            <tr><td>6</td><td>User declines found docs</td><td>Fall back to full Q&amp;A path</td></tr>
+            <tr><td>7</td><td>Single buyer type named</td><td>Proceed normally with reduced-contrast note</td></tr>
+            <tr><td>8</td><td>7-question cap hit</td><td>Stop asking, proceed to summary</td></tr>
+            <tr><td>9</td><td>User adjusts at summary approval</td><td>Update and re-present table</td></tr>
+            <tr><td>10</td><td>User aborts at any point</td><td>Write no files, confirm clean exit</td></tr>
+            <tr><td>11</td><td>Generated persona files</td><td>All 20 fields populated, no TODOs</td></tr>
+            <tr><td>12</td><td>Template file missing</td><td>Error clearly, no malformed files</td></tr>
+            <tr><td>13</td><td>After generation, content prompt</td><td>Re-glob and transition to Stage 2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUCCESS CRITERIA ==================== -->
+  <div class="tab-panel" id="panel-success">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Success Criteria<span class="badge">3 criteria</span></h2>
+      <p class="description">Three measurable criteria define whether the creation flow is working as designed. These are verifiable in practice, not aspirational.</p>
+      <ul class="criteria-list">
+        <li><strong>Cold-start elimination:</strong> A user invoking /aligned:persona-panel in a repo with no personas reaches their first panel evaluation without leaving the skill or manually creating files.</li>
+        <li><strong>Structural validity:</strong> Every generated persona file passes template validation &mdash; all 20 bullet fields populated, no TODOs, no placeholders. Review Lens fields are specific enough to differentiate persona reactions (not generic "wants value" statements).</li>
+        <li><strong>Time to first panel:</strong> The creation flow completes in under 10 conversational turns (context detection + Q&amp;A + approval), getting users to their first evaluation quickly.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Files Changed<span class="badge">2 files</span></h2>
+      <table class="decision-table">
+        <thead>
+          <tr><th>File</th><th>Change</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-family:Menlo,Consolas,monospace;font-size:0.8rem;">skills/persona-panel/SKILL.md</td><td>Replace "If no personas found" block with opt-out prompt + delegation to modes/</td></tr>
+          <tr><td style="font-family:Menlo,Consolas,monospace;font-size:0.8rem;">skills/persona-panel/modes/persona-creation-flow.md</td><td>New file &mdash; the entire creation flow</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected
+      var btn = document.querySelector('[onclick*="switchTab(\'' + tabId + '\')"]');
+      if (btn && btn.classList.contains('tab-btn')) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one if none active
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
