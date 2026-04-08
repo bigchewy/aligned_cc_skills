@@ -1119,7 +1119,7 @@ git commit -m "feat(eval): add distinctness scorer with embedding similarity and
 
 ---
 
-### Task 9: Write README.md with setup instructions
+### ✅ Task 9: Write README.md with setup instructions
 
 **Files:**
 - Create: `e2e/README.md`
