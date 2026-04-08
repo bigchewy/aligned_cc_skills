@@ -162,7 +162,7 @@ git commit -m "feat(persona-panel): add persona creation flow document"
 
 ---
 
-### Task 2: Update SKILL.md to delegate to the creation flow
+### ✅ Task 2: Update SKILL.md to delegate to the creation flow
 
 **Files:**
 - Modify: `skills/persona-panel/SKILL.md` (the "If no personas found" block in Stage 1)

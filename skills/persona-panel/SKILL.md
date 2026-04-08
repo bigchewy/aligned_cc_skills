@@ -16,7 +16,11 @@ description: "Test content against simulated buyer/user personas. Use when: 'tes
 
 Glob `docs/personas/` in the current repo working directory.
 
-**If no personas found:** Stop and tell the user: "No persona files found in `docs/personas/`. Create persona files using the template at `{base-directory}/references/persona-template.md`." (Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load.)
+**If no personas found:** Present the opt-out prompt:
+
+> "No persona files found. I can create them now through a short Q&A, or you can add them manually using the template at `{base-directory}/references/persona-template.md`."
+
+If the user chooses manual creation, stop. Otherwise, read `{base-directory}/modes/persona-creation-flow.md` and follow its process. If the mode file cannot be Read, STOP and tell the user the plugin installation may be incomplete. After the creation flow completes (user has been prompted for content), re-glob `docs/personas/` and continue from the group selection logic below (multiple groups → ask, one group → proceed).
 
 **If multiple subdirectories (groups) exist:** Ask the user which group to run. Example: "Found persona groups: `ceos/`, `cmos/`. Which group should I run?"
 
