@@ -273,7 +273,11 @@ You MUST complete each phase before proceeding to the next.
 
    This is NOT a failed hypothesis — this is a wrong foundation.
 
-### Phase 5: Post-Fix Review
+### ⛔ STOP — Phase 5 Gate
+
+**Before writing ANY summary or claiming work is done, you MUST complete Phase 5 below.** Phase 5 requires dispatching a sub-agent — a manual summary is NOT a substitute. If you are about to write a completion summary without having dispatched the Phase 5 sub-agent, you are skipping the process. Stop and read the instructions below.
+
+### Phase 5: Post-Fix Review (Sub-Agent Required)
 
 **Mandatory after Phase 4 confirms the fix works.** Dispatch a review sub-agent to catch issues that tunnel vision during debugging misses — blast radius, symptom fixes masquerading as root cause fixes, and missing defense-in-depth.
 
