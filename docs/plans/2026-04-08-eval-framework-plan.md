@@ -88,7 +88,7 @@ git commit -m "feat(eval): initialize e2e directory scaffolding with promptfoo"
 
 ---
 
-### Task 2: Write fixture files
+### ✅ Task 2: Write fixture files
 
 **Files:**
 - Create: `e2e/fixtures/sample-pricing-page.md`
