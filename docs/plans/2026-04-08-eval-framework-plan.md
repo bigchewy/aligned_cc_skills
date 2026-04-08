@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Initialize e2e/ directory scaffolding
+### ✅ Task 1: Initialize e2e/ directory scaffolding
 
 **Files:**
 - Create: `e2e/package.json`
