@@ -805,7 +805,7 @@ git commit -m "feat(eval): add persona section parser with tests"
 
 ---
 
-### Task 8: Add embedding computation, CLI entry point, and error path tests
+### ✅ Task 8: Add embedding computation, CLI entry point, and error path tests
 
 **Files:**
 - Modify: `e2e/scorers/distinctness.py` (add `compute_similarity`, `score_results`, `main`)
