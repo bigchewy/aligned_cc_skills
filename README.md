@@ -192,9 +192,8 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 - **22 skills** (-4)
 
 ##### 0.15.0: Portability Audit
-- New `/aligned:portability-audit` skill scans the plugin repo for environment-specific hardcoding (now at `~/.claude/skills/portability-audit/`)
+- New portability-audit skill scans the plugin repo for environment-specific hardcoding
 - Detects: absolute user paths (CRITICAL), non-plugin external file dependencies (HIGH), platform-specific assumptions (MEDIUM)
-- Reference catalog at `~/.claude/skills/portability-audit/references/portability-pitfall-catalog.md`
 - **26 skills** (+1)
 
 ##### 0.14.0: Skill/Agent Cleanup Refactor
