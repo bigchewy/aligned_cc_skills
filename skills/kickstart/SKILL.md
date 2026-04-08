@@ -238,8 +238,6 @@ Define confidentiality rules and client sensitivity constraints here.
 
 - `/aligned:brainstorming` — before any creative or strategic work
 - `/aligned:root-cause-analysis` — when something isn't working
-- `/aligned:generate-one-pager` — for prospect materials
-- `/aligned:generate-blog-post` — for thought leadership
 ```
 
 ### Personal Template
@@ -345,15 +343,11 @@ Check whether `~/.claude/settings.json` already contains aligned skill permissio
       "Skill(aligned:use-framework)",
       "Skill(aligned:kanban-resolve)",
       "Skill(aligned:codebase-audit)",
-      "Skill(aligned:portability-audit)",
       "Skill(aligned:create-new-skill)",
       "Skill(aligned:add-advisor)",
       "Skill(aligned:add-framework)",
       "Skill(aligned:find-potential-advisors)",
       "Skill(aligned:create-design-principles)",
-      "Skill(aligned:generate-deck)",
-      "Skill(aligned:generate-blog-post)",
-      "Skill(aligned:generate-one-pager)",
       "Skill(aligned:persona-panel)",
       "Skill(aligned:create-svg-diagram)"
     ]

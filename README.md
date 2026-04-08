@@ -103,7 +103,6 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
-| portability-audit | Maintenance | `/aligned:portability-audit` | Scan plugin repo for environment-specific hardcoding that breaks portability |
 | create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
 
 ### Agents
@@ -125,7 +124,6 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 
 | Event | Script | What It Does |
 |-------|--------|-------------|
-| UserPromptSubmit | `check-eval-audit.sh` | Triggers `[EVAL AUDIT]` when eval audit is overdue |
 | PreToolUse | `auto-approve-worktrees.js` | Auto-approves Edit/Write in worktree directories |
 | PreToolUse | `auto-approve-safe-bash-paths.js` | Auto-approves Bash commands targeting `/tmp/` and `~/.claude/` only |
 | PostToolUse | `usage-tracker.js` | Tracks Skill/Task usage patterns |
