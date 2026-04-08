@@ -242,7 +242,7 @@ git commit -m "feat(eval): add fixture content for MVE scenarios"
 
 ---
 
-### Task 3: Write persona-panel pricing page scenario
+### ✅ Task 3: Write persona-panel pricing page scenario
 
 **Files:**
 - Create: `e2e/scenarios/persona-panel/pricing-page.yaml`
