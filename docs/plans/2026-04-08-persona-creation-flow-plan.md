@@ -232,7 +232,7 @@ git commit -m "chore: bump version to 0.17.0"
 
 ---
 
-### Task 4: Update README.md changelog
+### ✅ Task 4: Update README.md changelog
 
 **Files:**
 - Modify: `README.md` (the changelog section)
