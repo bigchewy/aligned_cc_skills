@@ -30,7 +30,7 @@ Gather two sources of change:
    ```bash
    git log --since="<last-run>" --name-only --pretty=format:""
    ```
-   Filter for files matching the LLM surface patterns defined in the project's eval config (typically `e2e/eval-config.ts` under `llmSurfacePatterns`). If no config exists, use these default patterns:
+   Filter for files matching the LLM surface patterns. Read `e2e/eval-surface.yaml` for the pattern list. If the file doesn't exist, use these default patterns:
    - `**/prompts/**` — advisor/system prompts
    - `**/prompt-builders/**` — prompt construction logic
    - `**/frameworks/**` — framework definitions
@@ -59,9 +59,11 @@ For each changed LLM surface file:
 
 **If gaps found and substantial** (new scenarios needed):
 - Report what's missing with specifics (e.g., "New advisor added in commit abc123, no eval scenario exists")
-- Create a Kanban board entry for each gap in `docs/kanban/todo/` (see Kanban Entry Format below)
+- Create a Kanban board entry for each gap in `docs/kanban/todo/` (see Kanban Entry Format below). If `e2e/trigger-map.yaml` exists in the project, include in the Expected field: "Create eval scenario AND add corresponding entry to `e2e/trigger-map.yaml`."
 - Ask: "Should I trigger the pipeline to create these eval scenarios now?"
 - If yes, kick off `/aligned:brainstorming` → `/aligned:writing-plans` → `/aligned:executing-plans` → `/aligned:finishing-a-development-branch` for the eval scenario creation work
+
+**Cross-validation (always runs, even if no gaps):** Read `e2e/trigger-map.yaml`. Verify every path in the trigger-map matches at least one `e2e/eval-surface.yaml` pattern. If any trigger-map path is not covered by a surface pattern, report: "Trigger-map path `<path>` does not match any eval-surface pattern — add a matching pattern to `e2e/eval-surface.yaml`."
 
 ### Phase 4: Classification Pattern Maintenance
 

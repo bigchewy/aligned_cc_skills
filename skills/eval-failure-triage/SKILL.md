@@ -5,7 +5,7 @@ description: Use when LLM eval scenarios fail and the cause is unclear. Guides s
 
 # Eval Failure Triage
 
-> This skill assumes the `e2e/` directory convention: `e2e/scenarios/` for scenario files, `e2e/eval-config.ts` for configuration, `e2e/eval-runner.ts` for the runner, `e2e/eval-log.jsonl` for output. If the project uses different paths, check `CLAUDE.md` for overrides.
+> This skill assumes the `e2e/` directory convention: `e2e/scenarios/` for scenario files, `e2e/eval-surface.yaml` for surface patterns, `e2e/trigger-map.yaml` for file-to-scenario mapping, `e2e/promptfooconfig.yaml` for the master config, `e2e/eval-log.jsonl` for output. If the project uses different paths, check `CLAUDE.md` for overrides.
 
 ## Overview
 

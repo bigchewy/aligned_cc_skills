@@ -74,13 +74,15 @@ project/
 │   ├── scenarios/
 │   ├── fixtures/
 │   │   └── profiles/
-│   ├── eval-config.ts                  # Starter eval configuration
-│   ├── eval-runner.ts                  # Starter eval runner
+│   ├── eval-config.ts                  # Starter eval configuration (TS-based projects)
+│   ├── eval-runner.ts                  # Starter eval runner (TS-based projects)
 │   └── .gitignore                      # eval-log.jsonl, .eval-audit-last-run
 ├── scripts/
 ├── eslint-rules/
 └── .gitignore                          # Append eval patterns to the base .gitignore
 ```
+
+> **Note:** YAML-based eval projects (like this plugin) use `eval-surface.yaml` + `trigger-map.yaml` instead of the `.ts` files. The TS scaffold is for general-purpose projects with TypeScript eval runners.
 
 **Business, Personal, General** get no additional folders beyond the base. Structure is flat — the user creates project-level folders at root as needed.
 

@@ -166,7 +166,7 @@ Add the framework to the project's registry file (the path and format vary by pr
 
 > **Conditional:** Only run this step if the project has an eval infrastructure (e.g., `e2e/` directory, detected in Step 0). If not found, print: "Skipping eval scenario — no eval infrastructure found."
 
-If the project has eval infrastructure, create an eval scenario to establish a quality baseline. Check the project's CLAUDE.md or existing scenarios for the schema format.
+If the project has eval infrastructure, create an eval scenario to establish a quality baseline. Check the project's CLAUDE.md or existing scenarios for the schema format. If `e2e/trigger-map.yaml` exists, add an entry mapping the new framework file paths (prompt.md, examples.md, anti-examples.md) to the new scenario path. If `e2e/promptfooconfig.yaml` exists, add `file://<scenario-path>` to its `scenarios` list.
 
 **Important:** Check which advisor the framework path actually loads. The framework's primary advisor may not be the advisor the user selected. The voice fingerprint and anti-patterns must match the **actual responding advisor**.
 

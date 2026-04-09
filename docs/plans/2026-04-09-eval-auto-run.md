@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Create `e2e/eval-surface.yaml`
+### ✅ Task 1: Create `e2e/eval-surface.yaml`
 
 **Files:**
 - Create: `e2e/eval-surface.yaml`
@@ -55,7 +55,7 @@ git commit -m "feat(eval): add eval-surface.yaml defining LLM behavior surface p
 
 ---
 
-### Task 2: Create `e2e/trigger-map.yaml`
+### ✅ Task 2: Create `e2e/trigger-map.yaml`
 
 **Files:**
 - Create: `e2e/trigger-map.yaml`
@@ -110,7 +110,7 @@ git commit -m "feat(eval): add trigger-map.yaml mapping files to eval scenarios"
 
 ---
 
-### Task 3: Add PyYAML to e2e requirements
+### ✅ Task 3: Add PyYAML to e2e requirements
 
 **Files:**
 - Modify: `e2e/requirements.txt`
@@ -146,7 +146,7 @@ git commit -m "chore(eval): add pyyaml dependency for config validation tests"
 
 ---
 
-### Task 4: Write test for eval-surface patterns
+### ✅ Task 4: Write test for eval-surface patterns
 
 **Files:**
 - Create: `e2e/tests/test_eval_surface_patterns.py`
@@ -220,7 +220,7 @@ git commit -m "test(eval): add validation tests for eval-surface.yaml patterns"
 
 ---
 
-### Task 5: Write test for trigger-map paths and cross-validation
+### ✅ Task 5: Write test for trigger-map paths and cross-validation
 
 **Files:**
 - Create: `e2e/tests/test_trigger_map_paths.py`
@@ -347,7 +347,7 @@ git commit -m "test(eval): add validation tests for trigger-map.yaml paths and c
 
 ---
 
-### Task 6: Write test for trigger-map scenario registration
+### ✅ Task 6: Write test for trigger-map scenario registration
 
 > **Ordering dependency:** Complete Tasks 1–5 before this task. Step 3 runs the full suite which includes tests from Tasks 4 and 5.
 
@@ -421,7 +421,7 @@ git commit -m "test(eval): add validation test for trigger-map scenario registra
 
 ---
 
-### Task 7: Update `finishing-a-development-branch` Step 1b with canonical inline logic
+### ✅ Task 7: Update `finishing-a-development-branch` Step 1b with canonical inline logic
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (Step 1b section, lines 146-167)
@@ -507,7 +507,7 @@ git commit -m "feat(eval): replace Step 1b placeholder with canonical inline eva
 
 ---
 
-### Task 8: Update `VERIFY-BRANCH.md` Step 3 with reduced variant
+### ✅ Task 8: Update `VERIFY-BRANCH.md` Step 3 with reduced variant
 
 **Files:**
 - Modify: `docs/ralph_loops/VERIFY-BRANCH.md` (Step 3 section, lines 38-55)
@@ -562,7 +562,7 @@ git commit -m "feat(eval): update VERIFY-BRANCH Step 3 with reduced eval variant
 
 ---
 
-### Task 9: Update `FINISH-BRANCH.md` Step 3 with reduced variant
+### ✅ Task 9: Update `FINISH-BRANCH.md` Step 3 with reduced variant
 
 **Files:**
 - Modify: `docs/ralph_loops/FINISH-BRANCH.md` (Step 3 section, lines 40-55)
@@ -617,7 +617,7 @@ git commit -m "feat(eval): update FINISH-BRANCH Step 3 with reduced eval variant
 
 ---
 
-### Task 10: Update `eval-audit` Phase 1 and Phase 3
+### ✅ Task 10: Update `eval-audit` Phase 1 and Phase 3
 
 **Files:**
 - Modify: `skills/eval-audit/SKILL.md` (Phase 1 at lines 23-39, Phase 3 at lines 52-64)
@@ -676,7 +676,7 @@ git commit -m "feat(eval): update eval-audit to read eval-surface.yaml and cross
 
 ---
 
-### Task 11: Update `eval-failure-triage` header note
+### ✅ Task 11: Update `eval-failure-triage` header note
 
 **Files:**
 - Modify: `skills/eval-failure-triage/SKILL.md` (line 8)
@@ -704,7 +704,7 @@ git commit -m "fix(eval): update eval-failure-triage header to reference YAML co
 
 ---
 
-### Task 12: Update `executing-plans` eval reference
+### ✅ Task 12: Update `executing-plans` eval reference
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (line 49, the `LLM surface check` paragraph)
@@ -732,7 +732,7 @@ git commit -m "fix(eval): update executing-plans to reference trigger-map.yaml"
 
 ---
 
-### Task 13: Update `kickstart` scaffold
+### ✅ Task 13: Update `kickstart` scaffold
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (lines 73-82, the Software scaffold `e2e/` section)
@@ -778,7 +778,7 @@ git commit -m "docs(eval): annotate kickstart scaffold with YAML-based eval note
 
 ---
 
-### Task 14: Update `add-advisor` Step 7 conditional eval block
+### ✅ Task 14: Update `add-advisor` Step 7 conditional eval block
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (Step 7 section, around line 184)
@@ -806,7 +806,7 @@ git commit -m "feat(eval): add trigger-map update to add-advisor eval block"
 
 ---
 
-### Task 15: Update `add-framework` Step 6 conditional eval block
+### ✅ Task 15: Update `add-framework` Step 6 conditional eval block
 
 **Files:**
 - Modify: `skills/add-framework/SKILL.md` (Step 6 section, around line 165)
@@ -834,7 +834,7 @@ git commit -m "feat(eval): add trigger-map update to add-framework eval block"
 
 ---
 
-### Task 16: Add `.eval-audit-last-run` to e2e `.gitignore`
+### ✅ Task 16: Add `.eval-audit-last-run` to e2e `.gitignore`
 
 **Files:**
 - Modify: `e2e/.gitignore`
@@ -866,7 +866,7 @@ git commit -m "chore(eval): gitignore .eval-audit-last-run timestamp file"
 
 ---
 
-### Task 17: Run full test suite and verify
+### ✅ Task 17: Run full test suite and verify
 
 **Files:** None (verification only)
 
