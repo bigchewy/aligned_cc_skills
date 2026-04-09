@@ -834,7 +834,7 @@ git commit -m "feat(eval): add trigger-map update to add-framework eval block"
 
 ---
 
-### Task 16: Add `.eval-audit-last-run` to e2e `.gitignore`
+### ✅ Task 16: Add `.eval-audit-last-run` to e2e `.gitignore`
 
 **Files:**
 - Modify: `e2e/.gitignore`
