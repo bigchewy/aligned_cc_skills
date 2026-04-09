@@ -146,7 +146,7 @@ git commit -m "chore(eval): add pyyaml dependency for config validation tests"
 
 ---
 
-### Task 4: Write test for eval-surface patterns
+### ✅ Task 4: Write test for eval-surface patterns
 
 **Files:**
 - Create: `e2e/tests/test_eval_surface_patterns.py`
