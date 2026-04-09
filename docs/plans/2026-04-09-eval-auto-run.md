@@ -110,7 +110,7 @@ git commit -m "feat(eval): add trigger-map.yaml mapping files to eval scenarios"
 
 ---
 
-### Task 3: Add PyYAML to e2e requirements
+### ✅ Task 3: Add PyYAML to e2e requirements
 
 **Files:**
 - Modify: `e2e/requirements.txt`
