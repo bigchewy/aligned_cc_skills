@@ -1,0 +1,84 @@
+# e2e/scenarios/persona-panel/pricing-page.yaml
+# Promptfoo scenario format: config (vars) + tests (assertions) cross-product
+
+description: "Persona-panel: SaaS pricing page critique"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: full-stack
+    config:
+      systemMessage: |
+        {{persona_context}}
+
+        Evaluate the content below from multiple distinct buyer perspectives.
+        For each persona, be concrete -- reference specific elements in the content.
+        Provide each persona's unique viewpoint based on their role, psychology,
+        and priorities. Structure your output with clear persona headers.
+      temperature: 0
+      max_tokens: 3000
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: vanilla
+    config:
+      systemMessage: "You are a helpful assistant."
+      temperature: 0
+      max_tokens: 3000
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    label: aware-but-unaided
+    config:
+      temperature: 0
+      max_tokens: 3000
+
+prompts:
+  - id: full-stack-prompt
+    label: with-skill
+    raw: "Evaluate this pricing page for effectiveness:\n\n{{content}}"
+  - id: vanilla-prompt
+    label: without-skill
+    raw: "Review this pricing page and provide detailed feedback:\n\n{{content}}"
+  - id: aware-prompt
+    label: aware-unaided
+    raw: >
+      Act as a panel of 5 distinct buyer personas and evaluate this
+      pricing page from each perspective separately. Provide specific,
+      differentiated feedback from each persona:
+
+      {{content}}
+
+# config: variable configurations (resolved relative to CWD = e2e/)
+config:
+  - vars:
+      content: file://fixtures/sample-pricing-page.md
+      persona_context: file://../advisors/prompts/april-dunford.md
+
+# tests: assertion rubrics (cross-producted with each config entry)
+tests:
+  - assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on SPECIFICITY: Does the response reference concrete
+          elements from the pricing page (specific plan names, price points,
+          feature limits, FAQ answers) rather than giving generic advice?
+          Generic advice ("add social proof", "clarify pricing") scores 1-2.
+          Insights tied to specific content elements with reasoning score 4-5.
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on PERSPECTIVE DIVERSITY: Does the response surface
+          multiple distinct viewpoints (e.g., budget-conscious startup vs.
+          enterprise buyer vs. technical evaluator), or does it collapse
+          to one generic perspective?
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ACTIONABILITY: Could someone take these
+          observations and make specific changes to the pricing page?
+          Vague suggestions score 1-2. Concrete recommended changes
+          with rationale score 4-5.
+        weight: 1
+      - type: llm-rubric
+        value: |
+          Score 1-5 on METHODOLOGY ACCURACY: If the response claims to
+          follow a framework or methodology, does it follow it correctly?
+          Deduct for hallucinated steps, wrong sequencing, or
+          misattributed concepts. Score 5 if no methodology is claimed.
+        weight: 1

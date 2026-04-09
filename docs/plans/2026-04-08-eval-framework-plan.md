@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Initialize e2e/ directory scaffolding
+### ✅ Task 1: Initialize e2e/ directory scaffolding
 
 **Files:**
 - Create: `e2e/package.json`
@@ -88,7 +88,7 @@ git commit -m "feat(eval): initialize e2e directory scaffolding with promptfoo"
 
 ---
 
-### Task 2: Write fixture files
+### ✅ Task 2: Write fixture files
 
 **Files:**
 - Create: `e2e/fixtures/sample-pricing-page.md`
@@ -242,7 +242,7 @@ git commit -m "feat(eval): add fixture content for MVE scenarios"
 
 ---
 
-### Task 3: Write persona-panel pricing page scenario
+### ✅ Task 3: Write persona-panel pricing page scenario
 
 **Files:**
 - Create: `e2e/scenarios/persona-panel/pricing-page.yaml`
@@ -345,7 +345,7 @@ git commit -m "feat(eval): add persona-panel pricing page scenario"
 
 ---
 
-### Task 4: Write use-framework 5-Components Positioning scenario
+### ✅ Task 4: Write use-framework 5-Components Positioning scenario
 
 **Files:**
 - Create: `e2e/scenarios/use-framework/5-components-positioning.yaml`
@@ -452,7 +452,7 @@ git commit -m "feat(eval): add 5-components positioning framework scenario"
 
 ---
 
-### Task 5: Write use-advisor April Dunford blog critique scenario
+### ✅ Task 5: Write use-advisor April Dunford blog critique scenario
 
 **Files:**
 - Create: `e2e/scenarios/use-advisor/april-dunford-blog-critique.yaml`
@@ -553,7 +553,7 @@ git commit -m "feat(eval): add April Dunford blog critique advisor scenario"
 
 ---
 
-### Task 6: Write promptfooconfig.yaml master config and validate scenarios
+### ✅ Task 6: Write promptfooconfig.yaml master config and validate scenarios
 
 **Files:**
 - Create: `e2e/promptfooconfig.yaml`
@@ -600,7 +600,7 @@ git commit -m "feat(eval): add master promptfoo config with judge LLM pinning"
 
 ---
 
-### Task 7: Write distinctness scorer with TDD — parsing logic
+### ✅ Task 7: Write distinctness scorer with TDD — parsing logic
 
 **Files:**
 - Create: `e2e/tests/test_distinctness.py`
@@ -805,7 +805,7 @@ git commit -m "feat(eval): add persona section parser with tests"
 
 ---
 
-### Task 8: Add embedding computation, CLI entry point, and error path tests
+### ✅ Task 8: Add embedding computation, CLI entry point, and error path tests
 
 **Files:**
 - Modify: `e2e/scorers/distinctness.py` (add `compute_similarity`, `score_results`, `main`)
@@ -1119,7 +1119,7 @@ git commit -m "feat(eval): add distinctness scorer with embedding similarity and
 
 ---
 
-### Task 9: Write README.md with setup instructions
+### ✅ Task 9: Write README.md with setup instructions
 
 **Files:**
 - Create: `e2e/README.md`
