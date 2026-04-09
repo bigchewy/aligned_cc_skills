@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Create `e2e/eval-surface.yaml`
+### ✅ Task 1: Create `e2e/eval-surface.yaml`
 
 **Files:**
 - Create: `e2e/eval-surface.yaml`

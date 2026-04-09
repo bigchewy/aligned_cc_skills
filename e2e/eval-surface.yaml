@@ -1,0 +1,15 @@
+# e2e/eval-surface.yaml
+# Glob patterns identifying the LLM behavior surface.
+# Consumers: finishing-a-development-branch Step 1b, eval-audit Phase 1
+# Update when: new categories of LLM surface files are added
+
+patterns:
+  - advisors/prompts/**
+  - frameworks/*/prompt.md
+  - frameworks/*/examples.md
+  - frameworks/*/anti-examples.md
+  - skills/persona-panel/SKILL.md
+  - skills/use-advisor/SKILL.md
+  - skills/use-framework/SKILL.md
+  - skills/brainstorming/modes/software.md
+  - skills/brainstorming/modes/business.md
