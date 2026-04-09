@@ -220,7 +220,8 @@ git commit -m "test(eval): add validation tests for eval-surface.yaml patterns"
 
 ---
 
-### Task 5: Write test for trigger-map paths and cross-validation
+### 🔄 Task 5: Write test for trigger-map paths and cross-validation
+> BLOCKED: Unable to run `python -m pytest` — command requires approval that is not being granted. Test file has been written but not verified.
 
 **Files:**
 - Create: `e2e/tests/test_trigger_map_paths.py`
