@@ -32,7 +32,7 @@ PATTERNS = load_surface_patterns()
 @pytest.mark.parametrize("pattern", PATTERNS)
 def test_pattern_matches_at_least_one_file(pattern):
     """Each surface pattern must match at least one file on disk."""
-    matches = expand_pattern(pattern)
+    matches = [m for m in expand_pattern(pattern) if m.is_file()]
     assert len(matches) > 0, f"Orphan pattern — no files match: {pattern}"
 
 

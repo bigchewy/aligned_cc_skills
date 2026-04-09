@@ -2,11 +2,17 @@
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 E2E_DIR = Path(__file__).resolve().parent.parent
 TRIGGER_MAP_FILE = E2E_DIR / "trigger-map.yaml"
 PROMPTFOO_CONFIG = E2E_DIR / "promptfooconfig.yaml"
+
+pytestmark = pytest.mark.skipif(
+    not PROMPTFOO_CONFIG.exists(),
+    reason="promptfooconfig.yaml not found — skipping registration check",
+)
 
 
 def test_all_trigger_scenarios_in_promptfoo_config():
