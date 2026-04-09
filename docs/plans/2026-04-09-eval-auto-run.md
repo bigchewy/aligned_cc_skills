@@ -507,7 +507,7 @@ git commit -m "feat(eval): replace Step 1b placeholder with canonical inline eva
 
 ---
 
-### Task 8: Update `VERIFY-BRANCH.md` Step 3 with reduced variant
+### ✅ Task 8: Update `VERIFY-BRANCH.md` Step 3 with reduced variant
 
 **Files:**
 - Modify: `docs/ralph_loops/VERIFY-BRANCH.md` (Step 3 section, lines 38-55)
@@ -562,7 +562,7 @@ git commit -m "feat(eval): update VERIFY-BRANCH Step 3 with reduced eval variant
 
 ---
 
-### Task 9: Update `FINISH-BRANCH.md` Step 3 with reduced variant
+### ✅ Task 9: Update `FINISH-BRANCH.md` Step 3 with reduced variant
 
 **Files:**
 - Modify: `docs/ralph_loops/FINISH-BRANCH.md` (Step 3 section, lines 40-55)
