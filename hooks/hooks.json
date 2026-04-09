@@ -22,17 +22,6 @@
         ]
       }
     ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-eval-audit.sh",
-            "statusMessage": "Checking eval audit status..."
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Skill|Task",
