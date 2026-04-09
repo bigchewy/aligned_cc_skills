@@ -55,7 +55,7 @@ git commit -m "feat(eval): add eval-surface.yaml defining LLM behavior surface p
 
 ---
 
-### Task 2: Create `e2e/trigger-map.yaml`
+### ✅ Task 2: Create `e2e/trigger-map.yaml`
 
 **Files:**
 - Create: `e2e/trigger-map.yaml`
