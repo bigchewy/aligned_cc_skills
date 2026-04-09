@@ -778,7 +778,7 @@ git commit -m "docs(eval): annotate kickstart scaffold with YAML-based eval note
 
 ---
 
-### Task 14: Update `add-advisor` Step 7 conditional eval block
+### ✅ Task 14: Update `add-advisor` Step 7 conditional eval block
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (Step 7 section, around line 184)
@@ -806,7 +806,7 @@ git commit -m "feat(eval): add trigger-map update to add-advisor eval block"
 
 ---
 
-### Task 15: Update `add-framework` Step 6 conditional eval block
+### ✅ Task 15: Update `add-framework` Step 6 conditional eval block
 
 **Files:**
 - Modify: `skills/add-framework/SKILL.md` (Step 6 section, around line 165)
