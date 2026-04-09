@@ -37,20 +37,30 @@ Detect and run the project's build command.
 
 ## Step 3: LLM Eval (if surface changed)
 
+> Reduced non-interactive variant. Canonical logic is in `skills/finishing-a-development-branch/SKILL.md` Step 1b.
+
 Determine the base branch (try `main`, then `master`).
 
+**1. Config guard.** Check `ANTHROPIC_API_KEY` is set (`printenv ANTHROPIC_API_KEY`). If not set, skip with note "ANTHROPIC_API_KEY not set." Read `e2e/eval-surface.yaml` and `e2e/trigger-map.yaml`. If either is missing, skip with note "Eval config missing."
+
+**2. Surface gate.** Get changed files via `git diff --name-only <base-branch>...HEAD`. Match against patterns in `e2e/eval-surface.yaml`:
+- Directory globs (`advisors/prompts/**`): match paths starting with the directory prefix
+- Wildcard patterns (`frameworks/*/prompt.md`): match paths like `frameworks/X/prompt.md`
+- Specific files: exact string match
+
+If no surface files changed, skip silently. Continue.
+
+**3. Scenario scoping.** Look up changed surface files in `e2e/trigger-map.yaml`. Collect deduplicated scenarios.
+
+**4. Run scoped evals.** For each scenario, run sequentially from the `e2e/` directory:
+
 ```bash
-git diff --name-only <base-branch>...HEAD
+npx promptfoo eval -c <scenario-path> --no-progress-bar
 ```
 
-Check if any changed files match LLM behavior surface patterns (advisor prompts, framework prompts, prompt builders, personalization logic). Look for eval configuration in `e2e/eval-config.ts` or similar.
-
-**If surface files changed:** Run the project's eval command.
-- **fail** (exit code 1) — Write status file with `status: FAILED` and `failed_at: LLM eval`. Exit.
-- **warn** (exit 0 with warnings) — Note warning. Continue.
-- **pass** (clean exit 0) — Continue.
-
-**If no surface files changed:** Skip silently. Continue.
+**5. Interpret:**
+- All exit 0 → Continue.
+- Any exit 1 → Write status file with `status: FAILED` and `failed_at: LLM eval`. Exit.
 
 **If no eval command exists:** Skip, report "No eval configured — skipped." Continue.
 
