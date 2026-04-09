@@ -1,5 +1,5 @@
 # e2e/scenarios/persona-panel/pricing-page.yaml
-# Promptfoo-native schema -- no translation layer needed
+# Promptfoo scenario format: config (vars) + tests (assertions) cross-product
 
 description: "Persona-panel: SaaS pricing page critique"
 
@@ -44,11 +44,15 @@ prompts:
 
       {{content}}
 
-tests:
+# config: variable configurations (resolved relative to CWD = e2e/)
+config:
   - vars:
-      content: file://../../fixtures/sample-pricing-page.md
-      persona_context: file://../../../advisors/prompts/april-dunford.md
-    assert:
+      content: file://fixtures/sample-pricing-page.md
+      persona_context: file://../advisors/prompts/april-dunford.md
+
+# tests: assertion rubrics (cross-producted with each config entry)
+tests:
+  - assert:
       - type: llm-rubric
         value: |
           Score 1-5 on SPECIFICITY: Does the response reference concrete

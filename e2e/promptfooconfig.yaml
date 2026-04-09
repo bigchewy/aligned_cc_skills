@@ -13,6 +13,14 @@ defaultTest:
         temperature: 0
     retry: 2
 
+# Top-level provider required by promptfoo schema validation.
+# Each scenario overrides with its own provider + system prompt configuration.
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 3000
+
 # Import all MVE scenarios
 scenarios:
   - file://scenarios/persona-panel/pricing-page.yaml

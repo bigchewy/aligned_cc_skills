@@ -34,16 +34,10 @@ Run a single scenario:
 npx promptfoo eval -c scenarios/persona-panel/pricing-page.yaml
 ```
 
-Validate scenario YAML syntax:
+Validate config loads correctly (runs 1 test):
 
 ```bash
-npx promptfoo validate
-```
-
-Dry run (validates wiring without API calls):
-
-```bash
-npx promptfoo eval --dry-run
+npx promptfoo eval --filter-first-n 1 --no-write
 ```
 
 View results in browser:

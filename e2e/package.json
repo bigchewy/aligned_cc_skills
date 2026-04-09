@@ -5,8 +5,7 @@
   "description": "Eval framework for Aligned plugin skills",
   "scripts": {
     "eval": "promptfoo eval",
-    "eval:dry-run": "promptfoo eval --dry-run",
-    "validate": "promptfoo validate",
+    "eval:smoke": "promptfoo eval --filter-first-n 1 --no-write",
     "view": "promptfoo view",
     "test": "pytest tests/ -v",
     "test:scorer": "pytest tests/test_distinctness.py -v"
