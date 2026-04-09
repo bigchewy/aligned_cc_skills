@@ -185,7 +185,7 @@ Use the `/aligned:add-framework` skill to implement the top-ranked framework.
 
 > **Conditional:** Only run this step if the project has an eval infrastructure (e.g., `e2e/` directory, detected in Step 0). If not found, print: "Skipping eval scenario — no eval infrastructure found."
 
-If the project has eval infrastructure, create a quick-consult eval scenario to establish a quality baseline. Check the project's CLAUDE.md or existing scenarios for the schema format.
+If the project has eval infrastructure, create a quick-consult eval scenario to establish a quality baseline. Check the project's CLAUDE.md or existing scenarios for the schema format. If `e2e/trigger-map.yaml` exists, add an entry mapping the new advisor prompt path to the new scenario path. If `e2e/promptfooconfig.yaml` exists, add `file://<scenario-path>` to its `scenarios` list.
 
 Minimum scenario should include:
 - Advisor ID and mode
