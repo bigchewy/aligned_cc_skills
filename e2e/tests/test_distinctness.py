@@ -1,5 +1,9 @@
 # e2e/tests/test_distinctness.py
 
+import subprocess
+import sys
+from pathlib import Path
+
 import pytest
 from unittest.mock import patch
 
@@ -189,3 +193,44 @@ class TestErrorPaths:
         assert result["pass"] is False
         assert result["max_similarity"] == pytest.approx(1.0, abs=0.01)
         assert all(p["similarity"] == pytest.approx(1.0, abs=0.01) for p in result["pairs"])
+
+    def test_no_full_stack_outputs_reports_skip(self):
+        """Results with no full-stack provider should skip."""
+        results_data = {
+            "results": {
+                "results": [
+                    {
+                        "provider": {"label": "vanilla"},
+                        "description": "Persona-panel: SaaS pricing page critique",
+                        "response": {"output": "Some output"},
+                    }
+                ]
+            }
+        }
+        result = score_results(results_data, scenario_filter="persona-panel")
+        assert result["skipped"] is True
+        assert "no full-stack" in result["reason"].lower()
+
+
+class TestCLIErrorPaths:
+    """Tests for CLI argument validation in main()."""
+
+    def test_threshold_flag_without_value_exits(self):
+        """--threshold with no following value should exit with error."""
+        scorer_path = str(Path(__file__).resolve().parent.parent / "scorers" / "distinctness.py")
+        result = subprocess.run(
+            [sys.executable, scorer_path, "dummy.json", "--threshold"],
+            capture_output=True, text=True,
+        )
+        assert result.returncode == 1
+        assert "requires a numeric value" in result.stdout
+
+    def test_nonexistent_results_file_exits(self):
+        """A missing results file should exit with error."""
+        scorer_path = str(Path(__file__).resolve().parent.parent / "scorers" / "distinctness.py")
+        result = subprocess.run(
+            [sys.executable, scorer_path, "/nonexistent/path.json"],
+            capture_output=True, text=True,
+        )
+        assert result.returncode == 1
+        assert "not found" in result.stdout

@@ -15,6 +15,7 @@ import json
 import re
 import sys
 from itertools import combinations
+from pathlib import Path
 
 DEFAULT_THRESHOLD = 0.92
 
@@ -160,6 +161,9 @@ def score_results(
 
     Filters for full-stack provider results from persona-panel scenarios,
     parses persona sections, and computes similarity.
+
+    Note: Only processes the first matching full-stack output. Multiple
+    test cases in a single scenario will only score the first result.
     """
     results_list = results_data.get("results", {}).get("results", [])
 
@@ -194,7 +198,14 @@ def main():
 
     if "--threshold" in sys.argv:
         idx = sys.argv.index("--threshold")
+        if idx + 1 >= len(sys.argv):
+            print("Error: --threshold requires a numeric value")
+            sys.exit(1)
         threshold = float(sys.argv[idx + 1])
+
+    if not Path(results_path).exists():
+        print(f"Error: results file not found: {results_path}")
+        sys.exit(1)
 
     with open(results_path) as f:
         results_data = json.load(f)
