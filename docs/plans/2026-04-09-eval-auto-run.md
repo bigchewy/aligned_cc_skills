@@ -732,7 +732,7 @@ git commit -m "fix(eval): update executing-plans to reference trigger-map.yaml"
 
 ---
 
-### Task 13: Update `kickstart` scaffold
+### ✅ Task 13: Update `kickstart` scaffold
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (lines 73-82, the Software scaffold `e2e/` section)
