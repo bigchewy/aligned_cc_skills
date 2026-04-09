@@ -704,7 +704,7 @@ git commit -m "fix(eval): update eval-failure-triage header to reference YAML co
 
 ---
 
-### Task 12: Update `executing-plans` eval reference
+### ✅ Task 12: Update `executing-plans` eval reference
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (line 49, the `LLM surface check` paragraph)
