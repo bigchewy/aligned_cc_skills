@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Auto-Run Integration — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb'
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Table styles */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f5f3ef;
+      color: #1a1a1a;
+      font-weight: 500;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #1a1a1a;
+      line-height: 1.5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table code {
+      font-family: Menlo, Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.82rem;
+      background: #f5f3ef;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* Mermaid clickable node hover */
+    .mermaid .node:hover { cursor: pointer; }
+    .mermaid .node:hover rect,
+    .mermaid .node:hover polygon { filter: brightness(0.95); }
+  </style>
+</head>
+<body>
+  <h1>Eval Auto-Run Integration</h1>
+  <p class="subtitle">Wiring the Promptfoo eval framework into the finishing-a-development-branch workflow</p>
+  <p class="context">Auto-run scoped evals when LLM behavior surface files change on a branch. No changes to the eval framework itself. Scope runs to affected scenarios only. Handle missing API keys and config gracefully.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('config-files')">Config Files</button>
+    <button class="tab-btn" onclick="switchTab('step1b-flow')">Step 1b Flow</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+    <button class="tab-btn" onclick="switchTab('cross-refs')">Cross-References</button>
+    <button class="tab-btn" onclick="switchTab('maintenance')">Maintenance</button>
+    <button class="tab-btn" onclick="switchTab('testing')">Testing</button>
+  </div>
+
+  <!-- Overview panel -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>System Overview</h2>
+      <p class="description">The eval auto-run system consists of two config files that gate and scope eval execution, an 8-step inline logic flow in the finishing skill, updates to seven cross-referenced files, maintenance hooks to keep the trigger map current, and validation tests for the YAML configs.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  CFG["Config Files<br/>surface + trigger-map"]
+  FLOW["Step 1b Flow<br/>8-step gate/scope/run"]
+  DEC["Decisions<br/>5 design choices"]
+  XREF["Cross-References<br/>7 file updates"]
+  MAINT["Maintenance<br/>keep trigger-map current"]
+  TEST["Testing<br/>3 validation suites"]
+
+  CFG --> FLOW
+  DEC -.-> CFG
+  DEC -.-> FLOW
+  FLOW --> XREF
+  FLOW --> MAINT
+  TEST -.-> CFG
+
+  click CFG "javascript:switchTab('config-files')"
+  click FLOW "javascript:switchTab('step1b-flow')"
+  click DEC "javascript:switchTab('decisions')"
+  click XREF "javascript:switchTab('cross-refs')"
+  click MAINT "javascript:switchTab('maintenance')"
+  click TEST "javascript:switchTab('testing')"
+
+  style CFG fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style FLOW fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style DEC fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style XREF fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style MAINT fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style TEST fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900;"></div>Core process</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff7ed; border: 1px solid #ff6900;"></div>Config inputs</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb; border: 1px solid #e5e7eb;"></div>Design rationale</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffffff; border: 1px solid #e5e7eb;"></div>Implementation artifacts</div>
+    </div>
+  </div>
+
+  <!-- Config Files panel -->
+  <div class="tab-panel" id="panel-config-files">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Config Files<span class="badge">YAML</span></h2>
+      <p class="description">Two separate YAML files serve different consumers with different requirements. The surface config is the broad gate (~476 files matching glob patterns); the trigger map is the narrow scope (only files with existing scenarios). Merging them would blind Step 1b to ~99% of the surface and break eval-audit's gap detection.</p>
+      <ul class="bullet-list">
+        <li><strong>eval-surface.yaml</strong> defines the full LLM behavior surface via glob patterns. Used as the gate check ("did anything relevant change?") and by eval-audit for coverage gap detection.</li>
+        <li><strong>trigger-map.yaml</strong> maps specific changed files to specific eval scenarios. Paths in <code>paths</code> arrays are repo-root-relative; paths in <code>scenarios</code> arrays are <code>e2e/</code>-relative. Used for scoping after the gate passes.</li>
+        <li><strong>Invariant:</strong> every path in trigger-map must match at least one eval-surface pattern. eval-audit cross-validates this.</li>
+        <li><strong>YAML structure constraint:</strong> both files must remain flat structures (simple arrays of strings or simple arrays of objects with string arrays). No YAML anchors, aliases, or nested structures. Keeps Claude-as-parser reliable.</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  GIT["git diff<br/>changed files"] --> GATE{"Match<br/>eval-surface.yaml?"}
+  GATE -- "No match" --> SKIP["Skip silently"]
+  GATE -- "Match" --> SCOPE["Lookup in<br/>trigger-map.yaml"]
+  SCOPE --> MAPPED["Mapped scenarios"]
+  SCOPE --> UNMAPPED["Unmapped files<br/>warning summary"]
+  MAPPED --> RUN["npx promptfoo eval"]
+
+  style GATE fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style RUN fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style SKIP fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style GIT fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SCOPE fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style MAPPED fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style UNMAPPED fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>File Contents</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Location</th>
+            <th>Consumer</th>
+            <th>Content</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>eval-surface.yaml</code></td>
+            <td><code>e2e/eval-surface.yaml</code></td>
+            <td>Step 1b gate, eval-audit Phase 1</td>
+            <td>Glob patterns covering all LLM behavior surface files (~476 files across advisors, frameworks, skills)</td>
+          </tr>
+          <tr>
+            <td><code>trigger-map.yaml</code></td>
+            <td><code>e2e/trigger-map.yaml</code></td>
+            <td>Step 1b scoping</td>
+            <td>Explicit file-to-scenario mappings with repo-root paths and e2e-relative scenario paths</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Step 1b Flow panel -->
+  <div class="tab-panel" id="panel-step1b-flow">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Step 1b Inline Logic<span class="badge">Core Flow</span></h2>
+      <p class="description">The eight-step process that replaces the placeholder in the finishing-a-development-branch skill. Each step has a clear gate/action/outcome pattern. The flow is non-blocking by default, only hard-stopping on actual eval failures.</p>
+    </div>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('step1b-flow', 'step1b-full')">Full Flow</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('step1b-flow', 'step1b-gates')">Gates and Guards</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('step1b-flow', 'step1b-outcomes')">Outcome Matrix</button>
+    </div>
+
+    <!-- Sub-panel: Full Flow -->
+    <div class="sub-panel active" id="sub-step1b-full">
+      <div class="section">
+        <h2>End-to-End Flow</h2>
+        <p class="description">Eight steps from API key check through completion summary. Four early exits (API key missing, config missing, no surface changes, no trigger entries) keep the common case fast. Evals run sequentially to avoid API rate limit collisions.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  KEY{"1. API Key<br/>set?"} -- "No" --> SKIPKEY["Skip<br/>non-blocking"]
+  KEY -- "Yes" --> CFG{"2. Config<br/>files exist?"}
+  CFG -- "No" --> SKIPCFG["Skip<br/>non-blocking"]
+  CFG -- "Yes" --> SURFACE{"3. Surface<br/>files changed?"}
+  SURFACE -- "No" --> SKIPSURF["Skip silently"]
+  SURFACE -- "Yes" --> SCOPE["4. Scope<br/>scenarios"]
+  SCOPE --> SUMMARY["5. Coverage<br/>summary"]
+  SUMMARY --> RUN["6. Run evals<br/>sequential"]
+  RUN --> RESULT{"7. Interpret<br/>results"}
+  RESULT -- "Pass" --> DONE["8. Summary<br/>entry"]
+  RESULT -- "Fail" --> TRIAGE["Hard stop<br/>eval-failure-triage"]
+
+  style KEY fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CFG fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SURFACE fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style RESULT fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style RUN fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style TRIAGE fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+  style SKIPKEY fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style SKIPCFG fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style SKIPSURF fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style SCOPE fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SUMMARY fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style DONE fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-panel: Gates and Guards -->
+    <div class="sub-panel" id="sub-step1b-gates">
+      <div class="section">
+        <h2>Gates and Guards<span class="badge">Non-blocking</span></h2>
+        <p class="description">The design follows the codebase's three-tier pattern: hard blockers for known breakage, non-blocking reporters for gaps, and silent skips when no precondition is met. Most gates are non-blocking.</p>
+        <ul class="bullet-list">
+          <li><strong>API key guard (Step 1):</strong> Checks <code>ANTHROPIC_API_KEY</code> via <code>printenv</code>. OPENAI_API_KEY is not checked because the distinctness scorer is a standalone post-hoc tool, not wired into promptfoo assertions. Non-blocking skip with message.</li>
+          <li><strong>Config guard (Step 2):</strong> Reads <code>e2e/eval-surface.yaml</code> and <code>e2e/trigger-map.yaml</code>. If either is missing or empty, reports the specific missing file and skips. Non-blocking.</li>
+          <li><strong>Surface gate (Step 3):</strong> Matches <code>git diff --name-only</code> against eval-surface.yaml patterns using prefix matching for globs and exact match for specific-file patterns. Silent skip if nothing matches.</li>
+          <li><strong>Coverage summary (Step 5):</strong> Counts mapped vs. unmapped surface files. Summary count avoids noise at ~99% unmapped. Suggests running <code>/aligned:eval-audit</code>.</li>
+          <li><strong>Hard stop (Step 7):</strong> Only triggered on exit code 1 from promptfoo. Shows scorecard and dispatches eval-failure-triage skill.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  G1["API Key Guard"] --> T1["Non-blocking<br/>skip + message"]
+  G2["Config Guard"] --> T2["Non-blocking<br/>skip + message"]
+  G3["Surface Gate"] --> T3["Silent skip"]
+  G4["Coverage Gap"] --> T4["Non-blocking<br/>summary warning"]
+  G5["Eval Failure"] --> T5["Hard stop<br/>triage dispatch"]
+
+  style G1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style G2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style G3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style G4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style G5 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style T1 fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style T2 fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style T3 fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style T4 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style T5 fill:#fef2f2,stroke:#b91c1c,color:#b91c1c
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-panel: Outcome Matrix -->
+    <div class="sub-panel" id="sub-step1b-outcomes">
+      <div class="section">
+        <h2>Completion Summary Matrix<span class="badge">Step 8</span></h2>
+        <p class="description">Every path through Step 1b produces a standardized summary entry for the branch completion report. Five possible states, each with a clear label.</p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Branch State</th>
+              <th>Summary Text</th>
+              <th>Blocking?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>No surface changes</td>
+              <td><code>Skipped -- no surface changes</code></td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>All mapped, pass</td>
+              <td><code>Passed -- N scenarios</code></td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>Partial mapping</td>
+              <td><code>Partial -- ran N scenarios, M surface files unmapped</code></td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>Failure</td>
+              <td><code>Failed -- [scenario name]</code></td>
+              <td style="color: #b91c1c; font-weight: 500;">Yes</td>
+            </tr>
+            <tr>
+              <td>Config/API key missing</td>
+              <td><code>Skipped -- [reason]</code></td>
+              <td>No</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decisions panel -->
+  <div class="tab-panel" id="panel-decisions">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Decision Log<span class="badge">5 decisions</span></h2>
+      <p class="description">Key design decisions that shaped this integration. Each decision has a clear rationale grounded in the existing codebase patterns and data model.</p>
+      <ul class="bullet-list">
+        <li><strong>D1 - Strict file mapping:</strong> Scenario YAML files use explicit <code>file://</code> references. The data model is per-file, not per-category. Category-based scoping produces noise (e.g., Dunford rubrics on Walling changes measure nothing). eval-audit handles "no scenario exists" gaps.</li>
+        <li><strong>D2 - Separate config files:</strong> Different consumers, different requirements. Surface config is the superset (~476 files); trigger-map is the subset. Merging would make Step 1b blind to ~99% of the surface and break eval-audit's gap detection. Invariant: every trigger-map path must match at least one surface pattern.</li>
+        <li><strong>D3 - Skip with summary warning:</strong> Follows the codebase's three-tier pattern: hard blockers (known breakage), non-blocking reporters (gaps), silent skips (no precondition). Missing coverage is tier 2. Summary count avoids noise at ~99% unmapped.</li>
+        <li><strong>D4 - No script, inline logic:</strong> Claude Code is the runtime with native Read/Bash/Grep. No root package.json, no yq installed. Existing skill pattern (test/build/deploy detection) uses prose instructions. CI script is a separate future deliverable.</li>
+        <li><strong>D5 - Strict mapping is forward-looking:</strong> At current scale (3 scenarios), "run all" would be simpler with negligible cost. Strict mapping pays off at ~15-20 scenarios. Investing now avoids a refactor when scenario count grows.</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  D1["D1: Strict<br/>file mapping"] --> CFG["trigger-map.yaml<br/>per-file entries"]
+  D2["D2: Separate<br/>config files"] --> SURF["eval-surface.yaml"]
+  D2 --> TRIG["trigger-map.yaml"]
+  D3["D3: Skip with<br/>summary warning"] --> TIER["Three-tier<br/>pattern"]
+  D4["D4: Inline logic<br/>no script"] --> SKILL["Skill prose<br/>instructions"]
+  D5["D5: Forward-looking<br/>at 3 scenarios"] --> SCALE["Pays off at<br/>~15-20 scenarios"]
+
+  style D1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style D2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style D3 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style D4 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style D5 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CFG fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SURF fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style TRIG fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style TIER fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style SKILL fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style SCALE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cross-References panel -->
+  <div class="tab-panel" id="panel-cross-refs">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Cross-Reference Updates<span class="badge">7 files</span></h2>
+      <p class="description">Seven files need updating to replace references to the phantom <code>e2e/eval-config.ts</code> with the new YAML-based configuration. The finishing skill gets the full canonical inline logic; VERIFY-BRANCH and FINISH-BRANCH get a reduced non-interactive variant (surface gate + run + pass/fail only).</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  NEW["New YAML Config<br/>surface + trigger-map"] --> FINISH["finishing-a-dev-branch<br/>SKILL.md"]
+  NEW --> VERIFY["VERIFY-BRANCH.md"]
+  NEW --> FINISHB["FINISH-BRANCH.md"]
+  NEW --> AUDIT["eval-audit<br/>SKILL.md"]
+  NEW --> TRIAGE["eval-failure-triage<br/>SKILL.md"]
+  NEW --> EXEC["executing-plans<br/>SKILL.md"]
+  NEW --> KICK["kickstart<br/>SKILL.md"]
+
+  style NEW fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style FINISH fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style VERIFY fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style FINISHB fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style AUDIT fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style TRIAGE fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style EXEC fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style KICK fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Update Details</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>skills/finishing-a-development-branch/SKILL.md</code></td>
+            <td>Step 1b: replace placeholder with full canonical inline logic (8-step flow from Component 3)</td>
+          </tr>
+          <tr>
+            <td><code>docs/ralph_loops/VERIFY-BRANCH.md</code></td>
+            <td>Step 3: reduced non-interactive variant -- surface gate + run + pass/fail exit code only. No coverage summary, no eval-failure-triage dispatch. Reference SKILL.md as canonical.</td>
+          </tr>
+          <tr>
+            <td><code>docs/ralph_loops/FINISH-BRANCH.md</code></td>
+            <td>Step 3: same reduced variant as VERIFY-BRANCH (updated in tandem by convention)</td>
+          </tr>
+          <tr>
+            <td><code>skills/eval-audit/SKILL.md</code></td>
+            <td>Phase 1: read <code>eval-surface.yaml</code> instead of <code>eval-config.ts</code>. Phase 3: add trigger-map cross-validation (verify all trigger-map paths match at least one surface pattern). Fallback defaults remain for other projects.</td>
+          </tr>
+          <tr>
+            <td><code>skills/eval-failure-triage/SKILL.md</code></td>
+            <td>Reference <code>eval-surface.yaml</code> and <code>trigger-map.yaml</code> instead of <code>eval-config.ts</code> and <code>eval-runner.ts</code></td>
+          </tr>
+          <tr>
+            <td><code>skills/executing-plans/SKILL.md</code></td>
+            <td>Update eval configuration references</td>
+          </tr>
+          <tr>
+            <td><code>skills/kickstart/SKILL.md</code></td>
+            <td>Keep <code>.ts</code> scaffold for general-purpose projects, add comment noting YAML-based projects use <code>eval-surface.yaml</code> + <code>trigger-map.yaml</code> instead</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Maintenance panel -->
+  <div class="tab-panel" id="panel-maintenance">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Skill Maintenance Hooks<span class="badge">Keep current</span></h2>
+      <p class="description">When new eval scenarios are added, the trigger-map must be updated. Three existing skills get concrete instructions added to their workflows to keep the mapping in sync.</p>
+      <ul class="bullet-list">
+        <li><strong>add-advisor (Step 7):</strong> After creating the eval scenario, add a trigger entry mapping the new advisor prompt path to the new scenario path.</li>
+        <li><strong>add-framework (Step 6):</strong> Same pattern. Map the new framework prompt path (and examples/anti-examples) to the new scenario path.</li>
+        <li><strong>eval-audit (Phase 3):</strong> When filing coverage gaps as Kanban entries, include trigger-map update in the remediation checklist (add "AND add corresponding entry to <code>e2e/trigger-map.yaml</code>" to the Expected field).</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  ADD_ADV["add-advisor<br/>Step 7"] --> TMAP["Update<br/>trigger-map.yaml"]
+  ADD_FW["add-framework<br/>Step 6"] --> TMAP
+  EVAL_AUD["eval-audit<br/>Phase 3"] --> KB["Kanban entry<br/>with trigger-map task"]
+  KB -.-> TMAP
+
+  style TMAP fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style ADD_ADV fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style ADD_FW fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style EVAL_AUD fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style KB fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>What This Design Does NOT Change</h2>
+      <p class="description">Explicit boundaries to prevent scope creep during implementation.</p>
+      <ul class="bullet-list">
+        <li><strong>Eval framework itself:</strong> Promptfoo config, scenarios, scorers, fixtures remain untouched.</li>
+        <li><strong>eval-audit core logic:</strong> Reads from explicit config instead of fallback heuristics.</li>
+        <li><strong>Hook system:</strong> No new entries in <code>hooks/hooks.json</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Testing panel -->
+  <div class="tab-panel" id="panel-testing">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Validation Tests<span class="badge">3 suites</span></h2>
+      <p class="description">Validation tests for the YAML config files, using the existing <code>e2e/tests/</code> pytest infrastructure. These ensure config files stay in sync with the filesystem and with each other.</p>
+      <ul class="bullet-list">
+        <li><strong>No orphan patterns:</strong> every glob in eval-surface.yaml matches at least one file on disk.</li>
+        <li><strong>No broken paths:</strong> every path in trigger-map.yaml exists on disk, and every scenario path resolves relative to <code>e2e/</code>.</li>
+        <li><strong>Cross-validation invariant:</strong> every trigger-map path matches at least one eval-surface.yaml pattern.</li>
+        <li><strong>No orphan trigger entries:</strong> every scenario in trigger-map.yaml also appears in <code>e2e/promptfooconfig.yaml</code>'s scenario imports.</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  T1["test_eval_surface<br/>_patterns.py"] --> SURF["eval-surface.yaml<br/>patterns match disk"]
+  T2["test_trigger_map<br/>_paths.py"] --> PATHS["trigger-map paths<br/>exist on disk"]
+  T2 --> XVAL["Cross-validates<br/>against surface"]
+  T3["test_trigger_map<br/>_scenarios.py"] --> SCEN["Scenarios listed<br/>in promptfooconfig"]
+
+  style T1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style T2 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style T3 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style SURF fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style PATHS fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style XVAL fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style SCEN fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Test File Details</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Test File</th>
+            <th>What It Validates</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>test_eval_surface_patterns.py</code></td>
+            <td>Every pattern in <code>eval-surface.yaml</code> matches at least one file on disk. No orphan patterns.</td>
+          </tr>
+          <tr>
+            <td><code>test_trigger_map_paths.py</code></td>
+            <td>Every path in <code>trigger-map.yaml</code> exists on disk. Every scenario path resolves relative to <code>e2e/</code>. Every trigger-map path matches at least one <code>eval-surface.yaml</code> pattern (cross-validation invariant).</td>
+          </tr>
+          <tr>
+            <td><code>test_trigger_map_scenarios.py</code></td>
+            <td>Every scenario referenced in <code>trigger-map.yaml</code> also appears in <code>e2e/promptfooconfig.yaml</code>'s scenario imports. No orphan trigger-map entries pointing to unlisted scenarios.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      // Activate selected
+      var btn = document.querySelector('.tab-btn[onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+
+      var btn = parent.querySelector('.sub-tab-btn[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

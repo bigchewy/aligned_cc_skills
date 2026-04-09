@@ -40,13 +40,16 @@ Skills reference each other by path and by `/aligned:<name>` invocation. Before 
 
 `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` — both must match. Semver, pre-1.0.
 
+## Portability Rule
+
+This is a distributed plugin — never hard-code to the author's personal environment. Every feature, skill, config reference, and workflow must work for any user who installs the plugin. When building or modifying anything:
+
+- **Guard on file existence**, not assumed paths. If a feature depends on `e2e/trigger-map.yaml`, check that it exists before referencing it.
+- **User-facing skills must not assume internal infrastructure.** Skills like `add-advisor` and `add-framework` are invoked by all users. Don't embed instructions that only make sense for the plugin author (eval configs, Kanban boards, internal QA workflows).
+- **Conditional blocks for author-only features.** If a skill step only applies when author-specific infrastructure exists (e.g., `e2e/` eval directory), gate it behind an existence check and skip silently for other users.
+- **Test the mental model:** "If someone installs this plugin fresh and runs this skill, does every step make sense to them?" If not, the step needs a guard or shouldn't be there.
+
 ## What NOT to Duplicate
 
 The `README.md` already contains the skill reference table, iron rules, installation instructions, team setup, and changelog. Do not duplicate that content here.
 
-## Hook-Triggered Audits
-
-Hooks inject `[TAG]` messages when audits find issues. Handle them before the user's request.
-
-**UserPromptSubmit hooks** (fire on every message, BLOCKING):
-- `[EVAL AUDIT]` → suggest running `/aligned:eval-audit` to the user
