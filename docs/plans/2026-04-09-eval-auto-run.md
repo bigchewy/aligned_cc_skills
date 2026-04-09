@@ -421,7 +421,7 @@ git commit -m "test(eval): add validation test for trigger-map scenario registra
 
 ---
 
-### Task 7: Update `finishing-a-development-branch` Step 1b with canonical inline logic
+### ✅ Task 7: Update `finishing-a-development-branch` Step 1b with canonical inline logic
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (Step 1b section, lines 146-167)
