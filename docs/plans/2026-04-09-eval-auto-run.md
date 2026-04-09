@@ -676,7 +676,7 @@ git commit -m "feat(eval): update eval-audit to read eval-surface.yaml and cross
 
 ---
 
-### Task 11: Update `eval-failure-triage` header note
+### ✅ Task 11: Update `eval-failure-triage` header note
 
 **Files:**
 - Modify: `skills/eval-failure-triage/SKILL.md` (line 8)
