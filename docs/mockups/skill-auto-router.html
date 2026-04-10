@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Auto-Router — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            button: { DEFAULT: '#32373c', hover: '#1a1f23', text: '#ffffff' }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Mermaid clickable nodes */
+    .mermaid .node { cursor: pointer; }
+    .mermaid .node:hover rect, .mermaid .node:hover polygon { stroke: #ff6900 !important; stroke-width: 2px !important; }
+
+    /* Code block styling */
+    .code-block {
+      background: #f5f3ef;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 16px;
+      font-family: Menlo, Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.8rem;
+      color: #1a1a1a;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    /* Table styling */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 2px solid #e5e7eb;
+      color: #555555;
+      font-weight: 500;
+      font-size: 0.78rem;
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #1a1a1a;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table code {
+      background: #f5f3ef;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 0.78rem;
+    }
+
+    /* Metric cards */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .metric-card {
+      background: #faf9f7;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ff6900;
+      margin-bottom: 4px;
+    }
+    .metric-label {
+      font-size: 0.78rem;
+      color: #555555;
+      font-weight: 500;
+    }
+    .metric-detail {
+      font-size: 0.72rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    /* Gate styling */
+    .gate-marker {
+      display: inline-block;
+      background: #fff7ed;
+      border: 1px solid #ff6900;
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #ff6900;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <h1>Skill Auto-Router</h1>
+  <p class="subtitle">Problem-first routing with framework cascade for the Aligned plugin</p>
+  <p class="context">Automatic skill and framework routing so non-technical users never need to learn slash commands. Install the plugin, and Claude Code is just better. Post-critique revision reflecting precision gates, exclusion patterns, error recovery, and telemetry.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('criteria')">Success Criteria</button>
+    <button class="tab-btn" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="switchTab('cascade')">Routing Cascade</button>
+    <button class="tab-btn" onclick="switchTab('directives')">Directive Format</button>
+    <button class="tab-btn" onclick="switchTab('index')">Routing Index</button>
+    <button class="tab-btn" onclick="switchTab('ux')">UX Examples</button>
+    <button class="tab-btn" onclick="switchTab('sequencing')">Sequencing</button>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- OVERVIEW PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>End-to-End Routing Flow</h2>
+      <p class="description">User prompt enters the hook, passes through a cascade of matchers, and either routes to a skill/framework or passes through to Claude natively. Default fallback is pass-through (no intervention), not brainstorming. All skill routes require min_signals: 2.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  A["User Prompt"] --> B{"Hook Intercept"}
+  B --> C["Explicit Skill?"]
+  C --> D["Framework Match"]
+  D --> E["Skill Match"]
+  E --> F["Pass Through"]
+
+  style A fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style B fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style C fill:#ffffff,stroke:#e5e7eb
+  style D fill:#ffffff,stroke:#e5e7eb
+  style E fill:#ffffff,stroke:#e5e7eb
+  style F fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+
+  click B "javascript:switchTab('architecture')"
+  click C "javascript:switchTab('cascade')"
+  click D "javascript:switchTab('cascade')"
+  click E "javascript:switchTab('cascade')"
+  click F "javascript:switchTab('cascade')"
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #fff7ed; border: 1px solid #ff6900;"></div>
+        Decision point
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #f0eeeb; border: 1px solid #1a1a1a;"></div>
+        Terminal (entry/exit)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #ffffff; border: 1px solid #e5e7eb;"></div>
+        Process step
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SUCCESS CRITERIA PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel" id="panel-criteria">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Success Criteria<span class="badge">Measurable</span></h2>
+      <p class="description">Quantitative targets that gate progression from prototype to production. Measured against a labeled test corpus of real user prompts.</p>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-value">&ge;90%</div>
+          <div class="metric-label">Match Precision</div>
+          <div class="metric-detail">Right framework or skill 9/10 times when router fires</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">&le;5%</div>
+          <div class="metric-label">False Positive Rate</div>
+          <div class="metric-detail">Router intervenes on pass-through prompts &lt;1 in 20</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">&le;15%</div>
+          <div class="metric-label">Override Rate</div>
+          <div class="metric-detail">User says "skip" or redirects &lt;15% of routed prompts</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">50+</div>
+          <div class="metric-label">Test Corpus</div>
+          <div class="metric-detail">Real user prompts, human-labeled with correct route</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Measurement Method</h2>
+      <ul class="bullet-list">
+        <li><strong>Test corpus</strong> &mdash; 50+ prompts sourced from actual user sessions and the plugin creator's own usage, each labeled with the correct route (specific framework, specific skill, or pass-through)</li>
+        <li><strong>Precision</strong> &mdash; of prompts where the router fires, how often it picks the correct route. Measured by running the corpus through the router and comparing against labels</li>
+        <li><strong>False positive rate</strong> &mdash; of prompts labeled "pass-through," how many trigger routing intervention</li>
+        <li><strong>Override rate</strong> &mdash; tracked via telemetry in production. "Skip" events and redirects divided by total router activations</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  Corpus["50+ Labeled<br>Prompts"] --> Router["Run Through<br>Router"]
+  Router --> Compare["Compare vs<br>Labels"]
+  Compare --> Precision["Precision<br>Score"]
+  Compare --> FP["False Positive<br>Rate"]
+
+  style Corpus fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Router fill:#ffffff,stroke:#e5e7eb
+  style Compare fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style Precision fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style FP fill:#ff6900,stroke:#e55d00,color:#ffffff
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ARCHITECTURE PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel" id="panel-architecture">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Hook Architecture<span class="badge">UserPromptSubmit</span></h2>
+      <p class="description">A <code>UserPromptSubmit</code> hook intercepts every user message and runs lightweight, rule-based classification. No external API calls at runtime. The hook reads a precomputed routing index and appends directives that Claude sees but the user does not.</p>
+      <ul class="bullet-list">
+        <li><strong>Hook entry point</strong> &mdash; <code>hooks/skill-router.sh</code> or <code>.js</code> fires on every user prompt submission</li>
+        <li><strong>Routing index</strong> &mdash; <code>skill-router.json</code> contains precomputed framework triggers, skill signal patterns, and exclusion patterns</li>
+        <li><strong>Build-time generation</strong> &mdash; <code>scripts/build-router-index.js</code> uses LLM to extract intent phrases from framework content</li>
+        <li><strong>Zero runtime dependencies</strong> &mdash; no embedding calls, no API calls, just string matching against the index</li>
+        <li><strong>Invisible intervention</strong> &mdash; directives are appended to the prompt; the user sees framework suggestions, not routing machinery</li>
+        <li><strong>Telemetry logging</strong> &mdash; routing decisions, overrides, and fall-throughs logged to a local file for threshold iteration</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  UP["User Prompt"] --> Hook["UserPromptSubmit Hook"]
+  Hook --> Index["skill-router.json"]
+  Index --> Match{"Match Found?"}
+  Match -->|Yes| Dir["Append Directive"]
+  Match -->|No| Pass["Pass Through"]
+  Dir --> Log["Log Decision"]
+  Pass --> Log
+  Log --> Claude["Claude Receives<br>Prompt"]
+
+  style UP fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Hook fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Index fill:#f5f3ef,stroke:#555555
+  style Match fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style Dir fill:#ffffff,stroke:#e5e7eb
+  style Pass fill:#ffffff,stroke:#e5e7eb
+  style Log fill:#f5f3ef,stroke:#555555
+  style Claude fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Build Pipeline<span class="badge">Developer-Only</span></h2>
+      <p class="description">The routing index is generated at build time by a developer script, not at runtime by end users. Framework content is processed through an LLM to extract high-quality intent phrases.</p>
+      <ul class="bullet-list">
+        <li><strong>Input</strong> &mdash; walks framework directories, reads each framework's metadata and content</li>
+        <li><strong>LLM extraction</strong> &mdash; generates intent phrases and trigger terms from framework descriptions</li>
+        <li><strong>Output</strong> &mdash; <code>skill-router.json</code> with framework entries, skill signal patterns, and exclusion patterns</li>
+        <li><strong>Trigger</strong> &mdash; run manually when frameworks are added or modified</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  FW["Framework<br>Directories"] --> Script["build-router-index.js"]
+  Script --> LLM["LLM Extraction"]
+  LLM --> JSON["skill-router.json"]
+  JSON --> Plugin["Ships with Plugin"]
+
+  style FW fill:#f5f3ef,stroke:#555555
+  style Script fill:#ffffff,stroke:#e5e7eb
+  style LLM fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style JSON fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Plugin fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ROUTING CASCADE PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel" id="panel-cascade">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Routing Cascade<span class="badge">4 Steps</span></h2>
+      <p class="description">The cascade processes prompts through increasingly general matchers. Each step either routes the prompt or passes it to the next step. Precision over recall &mdash; false positives erode trust faster than missed routes. Default fallback is pass-through, not brainstorming.</p>
+    </div>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('cascade', 'step0')">Step 0: Bypass</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cascade', 'step1')">Step 1: Framework</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cascade', 'step2')">Step 2: Skill</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cascade', 'step3')">Step 3: Pass Through</button>
+    </div>
+
+    <!-- Step 0 -->
+    <div class="sub-panel active" id="sub-step0">
+      <div class="section">
+        <h2>Step 0 &mdash; Skill Invocation Bypass<span class="badge">Highest Priority</span></h2>
+        <p class="description">If the prompt contains an explicit skill invocation (<code>/aligned:...</code> or clear intent to use a specific skill), pass through without routing. The user already knows what they want.</p>
+        <ul class="bullet-list">
+          <li><strong>Detection</strong> &mdash; regex match on <code>/aligned:</code> prefix or explicit skill names</li>
+          <li><strong>Action</strong> &mdash; no directive appended, prompt passes through unchanged</li>
+          <li><strong>Rationale</strong> &mdash; never interfere with intentional invocations</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P["User Prompt"] --> Check{"/aligned: prefix?"}
+  Check -->|Yes| Bypass["Pass Through<br>Unchanged"]
+  Check -->|No| Next["Step 1:<br>Framework Match"]
+
+  style P fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Check fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style Bypass fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Next fill:#ffffff,stroke:#e5e7eb
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="sub-panel" id="sub-step1">
+      <div class="section">
+        <h2>Step 1 &mdash; Framework Match<span class="badge">Highest Confidence</span></h2>
+        <p class="description">Check the prompt against a precomputed index of framework metadata &mdash; names, aliases, trigger phrases, intent phrases. Frameworks are high-specificity: anchor terms like "five forces" or "positioning canvas" are unambiguous.</p>
+        <ul class="bullet-list">
+          <li><strong>Single high-confidence match</strong> &mdash; present the framework and proceed immediately with a one-line opt-out</li>
+          <li><strong>Multiple plausible matches (2-3)</strong> &mdash; present options with the recommended one first, plus a freeform fallback</li>
+          <li><strong>No match</strong> &mdash; proceed to Step 2 (skill classification)</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P["Prompt Text"] --> Scan["Scan Framework<br>Index"]
+  Scan --> Count{"Matches?"}
+  Count -->|"1 match"| Single["Present Framework<br>+ Proceed"]
+  Count -->|"2-3 matches"| Multi["Present Options<br>+ Let User Choose"]
+  Count -->|"0 matches"| Next["Step 2:<br>Skill Match"]
+
+  style P fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Scan fill:#ffffff,stroke:#e5e7eb
+  style Count fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style Single fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Multi fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Next fill:#ffffff,stroke:#e5e7eb
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="sub-panel" id="sub-step2">
+      <div class="section">
+        <h2>Step 2 &mdash; Skill Classification<span class="badge">Medium Confidence</span></h2>
+        <p class="description">Keyword/phrase pattern matching against four skill buckets. All skills require <code>min_signals: 2</code> &mdash; at least two signal phrases must match, or one signal plus domain context (prompt &gt;20 words with problem-domain vocabulary). Each skill also defines exclusion patterns that suppress routing even when positive signals match.</p>
+        <ul class="bullet-list">
+          <li><strong>Diagnose/fix</strong> &mdash; routes to <code>root-cause-analysis</code> on signals like "why is," "what's causing," "not working." Excludes: "why is the sky," "why is it called"</li>
+          <li><strong>Test content</strong> &mdash; routes to <code>persona-panel</code> on signals like "test this with," "audience reaction"</li>
+          <li><strong>New project</strong> &mdash; routes to <code>kickstart</code> on signals like "new project," "scaffold," "from scratch"</li>
+          <li><strong>Build/create</strong> &mdash; routes to <code>brainstorming</code> on signals like "figure out," "think through," "strategy for." Excludes: "help me plan my," "figure out what to eat"</li>
+          <li><strong>Error recovery</strong> &mdash; all skill routes include a one-line acknowledgment with opt-out, e.g., "This sounds like a diagnostic problem. I'll help you trace the root cause. Say 'skip' if you'd rather just discuss it."</li>
+        </ul>
+        <table class="data-table">
+          <thead>
+            <tr><th>Intent</th><th>Skill</th><th>Key Signals</th><th>Exclusions</th><th>min_signals</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Diagnose/fix</td><td><code>root-cause-analysis</code></td><td>"why is," "what's causing," "keeps happening," "declining"</td><td>"why is the sky," "why is it called," "why is there"</td><td>2</td></tr>
+            <tr><td>Test content</td><td><code>persona-panel</code></td><td>"test this with," "how would buyers," "audience reaction"</td><td>&mdash;</td><td>2</td></tr>
+            <tr><td>New project</td><td><code>kickstart</code></td><td>"new project," "scaffold," "from scratch"</td><td>&mdash;</td><td>2</td></tr>
+            <tr><td>Build/create</td><td><code>brainstorming</code></td><td>"figure out," "think through," "how should I"</td><td>"help me plan my," "figure out what to eat," "think through my schedule"</td><td>2</td></tr>
+          </tbody>
+        </table>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P["Prompt Text"] --> Signals["Match Signal<br>Patterns"]
+  Signals --> Excl{"Exclusion<br>Match?"}
+  Excl -->|Yes| Next["Step 3:<br>Pass Through"]
+  Excl -->|No| Count{"min_signals<br>met?"}
+  Count -->|Yes| Route["Route to Skill<br>+ Opt-Out"]
+  Count -->|No| Next
+
+  style P fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Signals fill:#ffffff,stroke:#e5e7eb
+  style Excl fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style Count fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style Route fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Next fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="sub-panel" id="sub-step3">
+      <div class="section">
+        <h2>Step 3 &mdash; Below Confidence Threshold<span class="badge">Default: Pass Through</span></h2>
+        <p class="description">When no step produces a confident match, the prompt passes through untouched. Claude handles it natively. This is the correct default &mdash; routing should only fire with high confidence. When in doubt, do nothing. Brainstorming is not a fallback; it requires min_signals: 2 like every other skill.</p>
+        <ul class="bullet-list">
+          <li><strong>No directive appended</strong> &mdash; Claude sees the original prompt only</li>
+          <li><strong>No user-visible change</strong> &mdash; behaves exactly as if the plugin weren't installed</li>
+          <li><strong>Precision over recall</strong> &mdash; silence is better than a wrong suggestion for this audience</li>
+          <li><strong>Telemetry logged</strong> &mdash; fall-through prompts are logged to identify framework gaps over time</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P["No Match"] --> Log["Log Fall-Through"]
+  Log --> Pass["Pass Through<br>Untouched"]
+  Pass --> Claude["Claude Native<br>Response"]
+
+  style P fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Log fill:#f5f3ef,stroke:#555555
+  style Pass fill:#ffffff,stroke:#e5e7eb
+  style Claude fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- DIRECTIVE FORMAT PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel" id="panel-directives">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Routing Directive Format<span class="badge">Invisible to User</span></h2>
+      <p class="description">The hook appends a structured directive to the prompt that Claude sees but the user does not. The directive tells Claude which skill or framework to invoke, what to say, and how to proceed. All directives include a one-line acknowledgment with opt-out.</p>
+      <ul class="bullet-list">
+        <li><strong>Single framework match</strong> &mdash; present the framework, offer an opt-out, then invoke <code>use-framework</code></li>
+        <li><strong>Multiple framework matches</strong> &mdash; present numbered options with a freeform fallback</li>
+        <li><strong>Skill match (no framework)</strong> &mdash; acknowledge the intent, offer opt-out, then invoke the skill</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Single Framework Directive</h2>
+      <div class="code-block">[ALIGNED-ROUTER] A framework matches this request. Present it to the user and proceed:
+- Framework: "Porter's Five Forces" (advisor: michael-porter)
+- Say: "This looks like a competitive analysis problem. I'll walk you
+  through Porter's Five Forces to structure your thinking. Just say
+  'skip' if you'd rather go freeform."
+- Then: Use Skill(aligned:use-framework) with framework "porters-five-forces"</div>
+    </div>
+
+    <div class="section">
+      <h2>Multiple Framework Directive</h2>
+      <div class="code-block">[ALIGNED-ROUTER] Multiple frameworks may apply. Present options and let the user choose:
+- Option 1: "Positioning Canvas" — clarifies differentiation (advisor: april-dunford)
+- Option 2: "Porter's Five Forces" — maps competitive dynamics (advisor: michael-porter)
+- Option 3: "Value Metric" — examines pricing alignment (advisor: madhavan-ramanujam)
+- Fallback: "Or just talk it through freeform"
+- Then: Use Skill(aligned:use-framework) with their choice,
+        or Use Skill(aligned:brainstorming) for freeform</div>
+    </div>
+
+    <div class="section">
+      <h2>Skill-Only Directive<span class="badge">Updated: Opt-Out Added</span></h2>
+      <div class="code-block">[ALIGNED-ROUTER] No framework match, but intent is clear.
+- Intent: diagnose/fix
+- Say: "This sounds like a diagnostic problem. I'll help you trace
+  the root cause. Say 'skip' if you'd rather just discuss it."
+- Then: Use Skill(aligned:root-cause-analysis)</div>
+    </div>
+
+    <div class="section">
+      <h2>Directive Flow<span class="badge">Diagram</span></h2>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  Hook["Hook Output"] --> Type{"Directive Type"}
+  Type -->|Single| SF["Present Framework<br>+ Opt-Out"]
+  Type -->|Multiple| MF["Present Options<br>+ Freeform"]
+  Type -->|Skill Only| SK["Acknowledge Intent<br>+ Opt-Out"]
+
+  SF --> UF["use-framework"]
+  MF --> UF
+  SK --> Skill["Target Skill"]
+
+  style Hook fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style Type fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style SF fill:#ffffff,stroke:#e5e7eb
+  style MF fill:#ffffff,stroke:#e5e7eb
+  style SK fill:#ffffff,stroke:#e5e7eb
+  style UF fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Skill fill:#ffffff,stroke:#e5e7eb
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ROUTING INDEX PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel" id="panel-index">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Routing Index Structure<span class="badge">skill-router.json</span></h2>
+      <p class="description">A static JSON file that ships with the plugin. Two sections: <strong>frameworks</strong> (array of framework entries with triggers and intent phrases) and <strong>skills</strong> (object with signal patterns, exclusion patterns, and thresholds). Generated by the build script, not hand-edited.</p>
+      <ul class="bullet-list">
+        <li><strong>Framework entries</strong> &mdash; id, name, advisor, trigger terms (exact matches), and intent phrases (semantic phrases)</li>
+        <li><strong>Skill entries</strong> &mdash; signal patterns, exclusion patterns, min_signals: 2 for all skills</li>
+        <li><strong>138 frameworks</strong> indexed with high-specificity anchor terms (easier to match than 6 overlapping skills)</li>
+        <li><strong>Coverage gap</strong> &mdash; current ~50% of common business tasks; deep in positioning/marketing, gaps in finance/HR/ops</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Framework Entry Schema</h2>
+      <div class="code-block">{
+  "id": "porters-five-forces",
+  "name": "Porter's Five Forces",
+  "advisor": "michael-porter",
+  "triggers": ["porter", "five forces", "competitive forces"],
+  "intent_phrases": [
+    "competitive landscape",
+    "industry analysis",
+    "competitive threats",
+    "market competition"
+  ]
+}</div>
+    </div>
+
+    <div class="section">
+      <h2>Skill Entry Schema<span class="badge">Updated: Exclusions + min_signals: 2</span></h2>
+      <div class="code-block">{
+  "root-cause-analysis": {
+    "signals": ["why is", "why are", "what's causing", "root cause",
+                "keeps happening", "not working", "failing", "broken", "declining"],
+    "exclude": ["why is the sky", "why is it called", "why is there"],
+    "min_signals": 2
+  },
+  "brainstorming": {
+    "signals": ["figure out", "think through", "strategy for",
+                "how should I", "help me plan", "design a",
+                "what's the best way to"],
+    "exclude": ["help me plan my", "figure out what to eat",
+                "think through my schedule"],
+    "min_signals": 2
+  }
+}</div>
+    </div>
+
+    <div class="section">
+      <h2>Index Composition<span class="badge">Diagram</span></h2>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  JSON["skill-router.json"] --> FW["frameworks[]"]
+  JSON --> SK["skills{}"]
+  FW --> Entry["Per Framework:<br>id, name, advisor,<br>triggers, intent_phrases"]
+  SK --> Skill["Per Skill:<br>signals, exclude,<br>min_signals: 2"]
+
+  style JSON fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style FW fill:#ffffff,stroke:#e5e7eb
+  style SK fill:#ffffff,stroke:#e5e7eb
+  style Entry fill:#f5f3ef,stroke:#555555
+  style Skill fill:#f5f3ef,stroke:#555555
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- UX EXAMPLES PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel" id="panel-ux">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>User Experience Examples<span class="badge">5 Scenarios</span></h2>
+      <p class="description">Real-world prompt examples showing how the router responds across the confidence spectrum. The north star: install the plugin, and Claude Code is just better. No training required. All skill routes now include a one-line opt-out, matching the framework interaction pattern.</p>
+    </div>
+
+    <div class="section">
+      <h2>Example 1: Single Framework Match</h2>
+      <p class="description"><strong>User types:</strong> "I need to figure out how to position our product against cheaper competitors."</p>
+      <ul class="bullet-list">
+        <li><strong>Router matches</strong> &mdash; Positioning Canvas (high confidence via "position" trigger)</li>
+        <li><strong>User sees</strong> &mdash; "This looks like a positioning problem. I'll walk you through the Positioning Canvas to clarify your differentiation. Just say 'skip' if you'd rather go freeform."</li>
+        <li><strong>Result</strong> &mdash; proceeds into Positioning Canvas framework with April Dunford advisor</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Example 2: Multiple Framework Match</h2>
+      <p class="description"><strong>User types:</strong> "We're losing enterprise deals to a competitor who's undercutting us on price."</p>
+      <ul class="bullet-list">
+        <li><strong>Router matches</strong> &mdash; Positioning Canvas, Porter's Five Forces, Value Metric</li>
+        <li><strong>User sees</strong> &mdash; numbered options with the most relevant first, plus freeform fallback</li>
+        <li><strong>Result</strong> &mdash; user picks one, enters that framework</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Example 3: Skill Match (No Framework)<span class="badge">Updated: Opt-Out</span></h2>
+      <p class="description"><strong>User types:</strong> "Our onboarding process is a mess and new hires keep quitting in the first 90 days."</p>
+      <ul class="bullet-list">
+        <li><strong>Router matches</strong> &mdash; no framework (HR coverage gap), but intent is "diagnose/fix" (signals: "mess" + "keep quitting" meet min_signals: 2)</li>
+        <li><strong>User sees</strong> &mdash; "This sounds like a diagnostic problem. I'll help you trace the root cause. Say 'skip' if you'd rather just discuss it."</li>
+        <li><strong>Gap identified</strong> &mdash; HR frameworks needed; tracked via telemetry for future framework gap-fill initiative</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Example 4: No Match (Pass Through)</h2>
+      <p class="description"><strong>User types:</strong> "Summarize this document for me."</p>
+      <ul class="bullet-list">
+        <li><strong>Router matches</strong> &mdash; nothing above threshold (zero signals matched)</li>
+        <li><strong>User sees</strong> &mdash; Claude handles it natively, no intervention</li>
+        <li><strong>Result</strong> &mdash; behaves exactly as if the plugin weren't installed. Fall-through logged to telemetry</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Example 5: Explicit Invocation (Bypass)</h2>
+      <p class="description"><strong>User types:</strong> "/aligned:brainstorming I want to redesign our pricing page."</p>
+      <ul class="bullet-list">
+        <li><strong>Router detects</strong> &mdash; explicit <code>/aligned:</code> prefix</li>
+        <li><strong>User sees</strong> &mdash; brainstorming skill activates normally, zero router interference</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Confidence Spectrum<span class="badge">Diagram</span></h2>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  Explicit["Explicit Invocation<br>(bypass)"] --> FW1["Single Framework<br>(present + proceed)"]
+  FW1 --> FWN["Multiple Frameworks<br>(present options)"]
+  FWN --> Skill["Skill Match<br>(acknowledge + opt-out)"]
+  Skill --> None["No Match<br>(pass through)"]
+
+  style Explicit fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+  style FW1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style FWN fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style Skill fill:#ffffff,stroke:#e5e7eb
+  style None fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SEQUENCING PANEL -->
+  <!-- ============================================ -->
+  <div class="tab-panel" id="panel-sequencing">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Deliverables<span class="badge">5 Items</span></h2>
+      <p class="description">Five concrete deliverables to ship the auto-router. Framework gap-fill is a separate initiative, triggered by telemetry data.</p>
+      <ul class="bullet-list">
+        <li><strong>Hook script</strong> &mdash; <code>hooks/skill-router.sh</code> or <code>.js</code>, the UserPromptSubmit hook with matching logic</li>
+        <li><strong>Routing index</strong> &mdash; <code>skill-router.json</code>, precomputed framework and skill matching rules including exclusion patterns</li>
+        <li><strong>Build script</strong> &mdash; <code>scripts/build-router-index.js</code>, generates the index from framework content via LLM</li>
+        <li><strong>Test corpus</strong> &mdash; 50+ real user prompts, each labeled with the correct route (framework, skill, or pass-through)</li>
+        <li><strong>Telemetry logging</strong> &mdash; local file logging of routing decisions, confidence levels, user overrides, and fall-throughs</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Separate Initiatives<span class="badge">Out of Scope</span></h2>
+      <ul class="bullet-list">
+        <li><strong>Business task taxonomy</strong> &mdash; 15-20 common business task categories for the primary persona. Used to measure coverage and prioritize gap-fill</li>
+        <li><strong>Framework gap-fill</strong> &mdash; new frameworks for underserved categories. Triggered by router telemetry showing which prompts fall through most often, not by upfront estimation</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Implementation Sequence<span class="badge">7 Phases + 2 Gates</span></h2>
+      <p class="description">Start with current catalog to prove the architecture works. Phase gates prevent shipping before quality thresholds are met. Telemetry drives all post-launch iteration.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  P1["1. Hook +<br>Matching Logic"] --> P2["2. Build Index<br>Generator"]
+  P2 --> P3["3. Test Corpus<br>+ Measure"]
+  P3 --> G1{"Gate: Precision<br>at 80%?"}
+  G1 -->|Yes| P4["4. Ship with<br>Telemetry"]
+  G1 -->|No| P3
+  P4 --> G2{"Gate: 2-Week<br>Telemetry"}
+  G2 -->|Override &gt;15%| P5["5. Adjust<br>Thresholds"]
+  G2 -->|Gaps found| P6["6. Framework<br>Gap-Fill"]
+  G2 -->|Healthy| P5
+  P5 --> P7["7. Iterate<br>Continuously"]
+
+  style P1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P2 fill:#ffffff,stroke:#e5e7eb
+  style P3 fill:#ffffff,stroke:#e5e7eb
+  style G1 fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style P4 fill:#ffffff,stroke:#e5e7eb
+  style G2 fill:#fff7ed,stroke:#ff6900,stroke-width:1.5px
+  style P5 fill:#ffffff,stroke:#e5e7eb
+  style P6 fill:#f5f3ef,stroke:#555555
+  style P7 fill:#f0eeeb,stroke:#1a1a1a,stroke-width:1.5px
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Phase Gates</h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>Gate</th><th>Trigger</th><th>Criteria</th><th>Action if Failed</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="gate-marker">GATE 1</span></td><td>After test corpus evaluation</td><td>Precision &ge; 80% on 50+ labeled prompts</td><td>Diagnose signal quality, exclusion patterns, or threshold tuning before proceeding</td></tr>
+          <tr><td><span class="gate-marker">GATE 2</span></td><td>2 weeks after shipping with telemetry</td><td>Override rate &le; 15%</td><td>Review telemetry logs and adjust. If consistent gaps, initiate framework gap-fill</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Key Decisions<span class="badge">Decision Log</span></h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>Decision</th><th>Chosen</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Routing approach</td><td>Problem-first with framework cascade</td><td>Skills overlap from user perspective; CLAUDE.md only ~50% activation</td></tr>
+          <tr><td>Framework visibility</td><td>Surface choice to user</td><td>Users need ability to redirect if wrong match</td></tr>
+          <tr><td>Runtime classification</td><td>Rule-based (no API calls)</td><td>No external dependencies; adequate for precision-first system</td></tr>
+          <tr><td>Build-time indexing</td><td>LLM-assisted extraction</td><td>Frameworks have rich content; LLM generates better intent phrases</td></tr>
+          <tr><td>Default fallback</td><td>Pass-through (no intervention)</td><td>Precision-first: when confidence is low, do nothing rather than route wrong</td></tr>
+          <tr><td>Skill error recovery</td><td>One-line acknowledgment + opt-out</td><td>Matches framework interaction pattern; user can redirect if wrong</td></tr>
+          <tr><td>Framework gap-fill</td><td>Separate initiative</td><td>Triggered by telemetry data, not upfront estimation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview diagram on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      // Activate selected
+      var btn = document.querySelector('[onclick*="switchTab(\'' + tabId + '\')"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
