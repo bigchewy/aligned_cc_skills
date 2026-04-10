@@ -570,20 +570,17 @@ fi
 # Report
 # ============================================================
 
-echo "========================================"
-echo "  Autopilot Complete"
-echo "========================================"
-
 if [ -f "$STATUS" ]; then
   RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"
   if [ "$RESULT" = "FAILED" ]; then
     echo ""
-    echo "VERIFICATION FAILED:"
+    echo "Autopilot finished, but verification failed."
+    echo ""
     cat "$STATUS"
     echo ""
-    echo "Fix the issues in the worktree, then either:"
-    echo "  1. Re-run this script (it will skip completed phases)"
-    echo "  2. Fix manually in the worktree at: $WORKTREE"
+    echo "To fix this, either:"
+    echo "  1. Re-run this script (completed phases will be skipped)"
+    echo "  2. Fix manually in: $WORKTREE"
     echo ""
     echo "If mockup fixes caused the failure, also run:"
     echo "  rm $WORKTREE/.mockup-clean"
@@ -595,16 +592,18 @@ if [ -f "$STATUS" ]; then
 fi
 
 echo ""
-echo "Branch:    $BRANCH"
-echo "Worktree:  $WORKTREE"
-echo "Plan:      $PLAN_IN_WORKTREE"
+echo "Done. All phases passed."
 echo ""
-echo "The branch is verified but NOT merged."
-echo "Next step — finish the development branch:"
+echo "  Branch:   $BRANCH"
+echo "  Worktree: $WORKTREE"
+echo "  Plan:     $PLAN_IN_WORKTREE"
+echo ""
+echo "The branch is ready for review but hasn't been merged yet."
+echo "To review and merge, open Claude in the project root and run the finishing skill:"
 echo ""
 echo "  cd $PROJECT"
 echo "  claude"
-echo "  > /aligned:finishing-a-development-branch for $BRANCH at $WORKTREE"
+echo "  /aligned:finishing-a-development-branch for $BRANCH at $WORKTREE"
 
 # Clean up sentinel and status
 rm -f "$SENTINEL"
