@@ -1,0 +1,78 @@
+# e2e/scenarios/use-skill/brainstorming-positioning.yaml
+# Two paired comparisons: with-skill vs. without-skill
+# Tests whether the brainstorming skill's structured process produces
+# better output than prompting Claude directly.
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Skill: brainstorming business positioning strategy"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STRUCTURAL COMPLETENESS: Does the response follow
+        a recognizable structured process with distinct phases or steps?
+        Look for: explicit goal definition, problem identification,
+        analysis/diagnosis, and solution design as separate recognizable
+        sections. A wall of undifferentiated advice scores 1-2.
+        Clear phases with logical progression scores 4-5.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC DEPTH: Does the response identify
+        root causes and non-obvious problems, or stay surface-level?
+        Look for: "why" analysis beyond first-order observations,
+        identification of hidden obstacles, pattern recognition across
+        problems, distinction between symptoms and causes.
+        Listing obvious problems without analysis scores 1-2.
+        Multi-level causal analysis scores 4-5.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SOLUTION SPECIFICITY: Are recommendations grounded
+        in this specific company's situation (DataForge, mid-market data
+        engineering, Airflow alternative)? Does each solution trace back
+        to a specific diagnosed problem or root cause? Generic B2B SaaS
+        advice scores 1-2. Solutions that reference specific company
+        details and map to identified problems score 4-5.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ACTIONABILITY: Could someone execute on the output
+        immediately? Look for: concrete next steps, named deliverables,
+        clear sequencing. Vague strategic direction scores 1-2.
+        Specific actions with owners/timelines scores 4-5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FRAMEWORK APPLICATION: Does the response correctly
+        apply relevant business frameworks or analytical methods? Look for:
+        proper use of competitive analysis, market segmentation, value
+        proposition design, or positioning methodology — applied to the
+        specific situation, not just name-dropped. No frameworks or
+        hallucinated frameworks score 1-2. Correctly applied, relevant
+        frameworks score 4-5.
+      weight: 1
+
+tests:
+  - description: "with-skill (structured brainstorming process)"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-business.md
+      task_prompt: "\n\n---\n\nHelp me develop a positioning strategy for this company:"
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "without-skill (vanilla baseline)"
+    vars:
+      system_context: ""
+      task_prompt: "Help me develop a positioning strategy for this company:"
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md

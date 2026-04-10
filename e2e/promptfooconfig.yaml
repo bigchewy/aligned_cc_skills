@@ -26,3 +26,4 @@ scenarios:
   - file://scenarios/persona-panel/pricing-page.yaml
   - file://scenarios/use-framework/5-components-positioning.yaml
   - file://scenarios/use-advisor/april-dunford-blog-critique.yaml
+  - file://scenarios/use-skill/brainstorming-positioning.yaml

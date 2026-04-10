@@ -32,3 +32,9 @@ triggers:
       - skills/use-framework/SKILL.md
     scenarios:
       - scenarios/use-framework/5-components-positioning.yaml
+
+  - paths:
+      - skills/brainstorming/SKILL.md
+      - skills/brainstorming/modes/business.md
+    scenarios:
+      - scenarios/use-skill/brainstorming-positioning.yaml
