@@ -7,7 +7,7 @@ providers:
   - id: anthropic:messages:claude-sonnet-4-20250514
     label: full-stack
     config:
-      systemMessage: file://../advisors/prompts/april-dunford.md
+      systemMessage: file://../../../advisors/prompts/april-dunford.md
       temperature: 0
       max_tokens: 2500
   - id: anthropic:messages:claude-sonnet-4-20250514
@@ -46,14 +46,11 @@ prompts:
 
       {{content}}
 
-# config: variable configurations (resolved relative to CWD = e2e/)
-config:
-  - vars:
-      content: file://fixtures/sample-blog-post.md
-
-# tests: assertion rubrics (cross-producted with each config entry)
+# tests: assertion rubrics
 tests:
-  - assert:
+  - vars:
+      content: file://../../fixtures/sample-blog-post.md
+    assert:
       - type: llm-rubric
         value: |
           Score 1-5 on DOMAIN SPECIFICITY: Does the review demonstrate

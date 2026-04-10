@@ -44,15 +44,12 @@ prompts:
 
       {{content}}
 
-# config: variable configurations (resolved relative to CWD = e2e/)
-config:
-  - vars:
-      content: file://fixtures/sample-pricing-page.md
-      persona_context: file://../advisors/prompts/april-dunford.md
-
-# tests: assertion rubrics (cross-producted with each config entry)
+# tests: assertion rubrics
 tests:
-  - assert:
+  - vars:
+      content: file://../../fixtures/sample-pricing-page.md
+      persona_context: file://../../../advisors/prompts/april-dunford.md
+    assert:
       - type: llm-rubric
         value: |
           Score 1-5 on SPECIFICITY: Does the response reference concrete

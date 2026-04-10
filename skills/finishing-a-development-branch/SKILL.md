@@ -546,6 +546,32 @@ git pull
 git merge <feature-branch>
 ```
 
+**If merge fails with "untracked working tree files would be overwritten by merge":**
+
+This happens when the target branch has untracked files that also exist on the feature branch. Recovery is non-interactive — no user prompt needed.
+
+1. Extract the indented file paths from git's error output (they follow the "error: The following untracked working tree files would be overwritten by merge:" line)
+2. Commit those specific files to the target branch:
+   ```bash
+   git add <file1> <file2> ...
+   ```
+   ```bash
+   git commit -m "chore: commit untracked files before merge"
+   ```
+3. Retry the merge:
+   ```bash
+   git merge <feature-branch>
+   ```
+4. The retry will likely produce add/add conflicts on the files extracted in step 1 (same file added on both branches). For those files, resolve by combining both versions — keep content from both sides. If conflicts appear on *other* files not in the step 1 list, those are genuine merge conflicts — run `git merge --abort` then `git reset HEAD~1` to remove the step-2 commit, and ask the user. Then complete the merge:
+   ```bash
+   git add <resolved-files>
+   ```
+   ```bash
+   git commit -m "Merge <feature-branch> into <base-branch>"
+   ```
+
+**If recovery fails:** If step 2 or 3 fails, undo the step-2 commit with `git reset HEAD~1` (mixed reset — files return to untracked, which is their original state), report the error, and ask the user. If step 4 fails during conflict resolution, run `git merge --abort` then `git reset HEAD~1` to also remove the step-2 commit. Report the error and ask the user. Do not leave a phantom commit on the target branch.
+
 Verify tests on merged result:
 
 ```bash
@@ -558,7 +584,7 @@ Then: Cleanup worktree (Step 5), then archive plan docs (Step 6).
 
 **Parse scope:** If the user said "full smoke tests" or similar, set scope to FULL. Otherwise default to QUICK.
 
-**Step 4a: Merge to main** — Same as Option 1's merge logic (checkout, pull, merge).
+**Step 4a: Merge to main** — Same as Option 1's full merge logic (checkout, pull, merge, including untracked-file error recovery).
 
 **Step 4b: Push to remote** — `git push origin <base-branch>`. Record push timestamp for deployment matching.
 
@@ -776,6 +802,7 @@ Then present:
 | Running from inside a worktree | Cascading failures: wrong git index, CWD destroyed on cleanup, duplicate tests | Run from main repo (see CRITICAL section) |
 | Removing other worktrees during cleanup | Kills active processes, destroys uncommitted work | Only remove the worktree being finished |
 | `git mv` on untracked plan files | Write tool files never committed cause `git mv` to fail | Check `git ls-files` first; use plain `mv` for untracked |
+| Prompting user on untracked-file merge conflict | Always the same answer: commit untracked files, retry merge, combine both versions | Auto-recover (see Option 1 merge logic) |
 | Assuming Vercel MCP access | Wastes time iterating projects without access | Read `.claude/deployment.json` first |
 | No confirmation for discard | Accidentally delete work | Require typed "discard" confirmation |
 
