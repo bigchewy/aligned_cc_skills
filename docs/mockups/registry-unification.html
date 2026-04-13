@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registry Unification — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            background: '#faf9f7'
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-deferred {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #f5f3ef;
+      color: #555555;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 12px;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f5f3ef;
+      color: #1a1a1a;
+      font-weight: 600;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #1a1a1a;
+      vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table code {
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 0.78rem;
+      background: #f5f3ef;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* Deferred callout */
+    .deferred-callout {
+      background: #f5f3ef;
+      border: 1px dashed #555555;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .deferred-callout h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #555555;
+      margin-bottom: 8px;
+    }
+    .deferred-callout .description { color: #6b7280; }
+    .deferred-callout .bullet-list { color: #555555; }
+  </style>
+</head>
+<body>
+  <h1>Registry Unification</h1>
+  <p class="subtitle">Unify advisor and framework metadata into machine-readable YAML registries</p>
+  <p class="context">Single source of truth for discovery, skill routing, and reference. Migrate advisors from markdown to YAML, create a new framework registry for 138 frameworks, and generate derived artifacts (READMEs, searchable HTML catalogs). Post-critique revision: contextual recommendation deferred, error handling and validation added, README generation decoupled.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('schemas')">Schemas</button>
+    <button class="tab-btn" onclick="switchTab('migration')">Migration</button>
+    <button class="tab-btn" onclick="switchTab('population')">Population</button>
+    <button class="tab-btn" onclick="switchTab('readmes')">READMEs</button>
+    <button class="tab-btn" onclick="switchTab('deferred')">Deferred</button>
+    <button class="tab-btn" onclick="switchTab('catalogs')">Catalogs</button>
+    <button class="tab-btn" onclick="switchTab('implementation')">Implementation</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- OVERVIEW PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>End-to-End Flow</h2>
+      <p class="description">Click any node to navigate to its detail tab. Contextual recommendation is deferred to a follow-up design (dashed node).</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  Schemas["Registry<br/>Schemas"]
+  Migration["Migration<br/>Strategy"]
+  Population["Framework<br/>Population"]
+  READMEs["Auto-generated<br/>READMEs"]
+  Deferred["Contextual<br/>Recommendation"]
+  Catalogs["HTML<br/>Catalogs"]
+  Implementation["Implementation<br/>Order"]
+
+  Schemas --> Migration
+  Migration --> Population
+  Population --> READMEs
+  READMEs -.-> Deferred
+  READMEs --> Catalogs
+  Catalogs --> Implementation
+
+  click Schemas callback "switchTab('schemas')"
+  click Migration callback "switchTab('migration')"
+  click Population callback "switchTab('population')"
+  click READMEs callback "switchTab('readmes')"
+  click Deferred callback "switchTab('deferred')"
+  click Catalogs callback "switchTab('catalogs')"
+  click Implementation callback "switchTab('implementation')"
+
+  style Schemas fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Migration fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Population fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style READMEs fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Deferred fill:#f5f3ef,stroke:#555555,color:#555555,stroke-dasharray:5 5
+  style Catalogs fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Implementation fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#555555,stroke-width:1px,stroke-dasharray:5 5
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900"></div> Key innovation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #e5e7eb"></div> Supporting structure</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px dashed #555555"></div> Deferred</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCHEMAS PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-schemas">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Registry Schemas <span class="badge">architecture</span></h2>
+    <p class="description">Two YAML registries serve as the single source of truth. Both use flat lists (no nesting by category) for easy append, sort, and query. Grouping happens at query time by consumers.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('schemas','schemas-advisor')">Advisor Schema</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('schemas','schemas-framework')">Framework Schema</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('schemas','schemas-decisions')">Key Decisions</button>
+    </div>
+
+    <!-- Advisor Schema sub-panel -->
+    <div class="sub-panel active" id="sub-schemas-advisor">
+      <div class="section">
+        <h2>Advisor Registry <span class="badge">advisors/registry.yaml</span></h2>
+        <p class="description">Replaces the existing <code>advisors/registry.md</code> markdown format. Serves both LLM context windows and programmatic consumers (auto-router build script).</p>
+        <ul class="bullet-list">
+          <li><strong>Required fields:</strong> <code>id</code>, <code>name</code>, <code>summary</code>, <code>prompt</code>, <code>domains</code></li>
+          <li><strong>Optional fields:</strong> <code>evaluation_expertise</code>, <code>best_for</code>, <code>not_for</code>, <code>note</code></li>
+          <li><strong>Selection guidelines:</strong> Embedded in YAML with scope rules, hard-exclude logic, and calibration examples</li>
+          <li><strong>Unprofiled advisors:</strong> Minimum viable entries with empty optional fields and a <code>note</code> field</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Registry["advisors/<br/>registry.yaml"]
+  SG["selection_guidelines"]
+  Advisors["advisors list"]
+  Profiled["Profiled Entry<br/>all fields"]
+  Unprofiled["Unprofiled Entry<br/>required only"]
+
+  Registry --> SG
+  Registry --> Advisors
+  Advisors --> Profiled
+  Advisors --> Unprofiled
+
+  style Registry fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style SG fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Advisors fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Profiled fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Unprofiled fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Framework Schema sub-panel -->
+    <div class="sub-panel" id="sub-schemas-framework">
+      <div class="section">
+        <h2>Framework Registry <span class="badge">frameworks/registry.yaml</span></h2>
+        <p class="description">New file covering all 138 frameworks. Token budget: ~50 tokens per entry, ~7,000 total. Fits comfortably in LLM context windows.</p>
+        <ul class="bullet-list">
+          <li><strong>Required fields:</strong> <code>id</code>, <code>name</code>, <code>advisor</code>, <code>purpose</code>, <code>category</code>, <code>domains</code>, <code>use_when</code></li>
+          <li><strong>Optional fields:</strong> <code>required_documents</code>, <code>helpful_documents</code></li>
+          <li><strong>Category:</strong> Free-form string (not enum) from a starter set of 16 categories</li>
+          <li><strong>Advisor field:</strong> Singular, because every <code>prompt.md</code> opens with one advisor voice</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Registry["frameworks/<br/>registry.yaml"]
+  Entries["138 framework<br/>entries"]
+  Required["Required Fields<br/>id, name, advisor,<br/>purpose, category,<br/>domains, use_when"]
+  Optional["Optional Fields<br/>required_documents,<br/>helpful_documents"]
+
+  Registry --> Entries
+  Entries --> Required
+  Entries --> Optional
+
+  style Registry fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Entries fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Required fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Optional fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Decisions sub-panel -->
+    <div class="sub-panel" id="sub-schemas-decisions">
+      <div class="section">
+        <h2>Schema Decisions <span class="badge">D1-D10</span></h2>
+        <p class="description">Architect-validated decisions shaping the registry format.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>#</th><th>Decision</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>D1</td><td>YAML over JSON or markdown</td><td>Serves LLM + programmatic consumers. ~3x more token-efficient than prose markdown.</td></tr>
+            <tr><td>D2</td><td>Centralized single file per registry</td><td>Discovery requires reading one file, not 138.</td></tr>
+            <tr><td>D3</td><td>Flat list, no nesting by category</td><td>Easier to append, sort, query. Grouping at query time.</td></tr>
+            <tr><td>D4</td><td><code>advisor</code> field stays singular</td><td>Every prompt.md opens with one voice.</td></tr>
+            <tr><td>D5</td><td><code>triggers</code> not in registry</td><td>Auto-router generates these from registry data + LLM.</td></tr>
+            <tr><td>D6</td><td>Selection guidelines stay in YAML</td><td>Only consumer is critique-panel-orchestration.</td></tr>
+            <tr><td>D7</td><td>READMEs via LLM skill steps, not scripts</td><td>No yq dependency. Trade-off: non-deterministic. Acceptable for reference docs.</td></tr>
+            <tr><td>D8</td><td>Derived artifacts on-demand only</td><td>Not coupled to add-advisor/add-framework. Avoids latency and failure modes.</td></tr>
+            <tr><td>D9</td><td><code>category</code> is free-form</td><td>No consumer filters by category today. Controlled vocabulary adds maintenance with no payoff.</td></tr>
+            <tr><td>D10</td><td>Don't consolidate add-advisor Steps 3 and 8b</td><td>Different targets (project-local vs plugin registry), different audiences.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MIGRATION PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-migration">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Migration Strategy <span class="badge">4 phases</span></h2>
+    <p class="description">Additive-first migration: new files coexist safely before consumers switch, then old files are removed in a separate commit for revert safety.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('migration','migration-overview')">Phase Overview</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-p1')">Phase 1: Create</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-errors')">Error Handling</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-p2')">Phase 2: Update</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('migration','migration-p3p4')">Phase 3-4: Remove + Derive</button>
+    </div>
+
+    <!-- Phase Overview sub-panel -->
+    <div class="sub-panel active" id="sub-migration-overview">
+      <div class="section">
+        <h2>Four-Phase Migration <span class="badge">process</span></h2>
+        <p class="description">Each phase is a separate commit. Phase 1 is additive (nothing breaks). Phase 2 switches consumers with YAML parse fallbacks. Phase 3 removes the old file. Phase 4 generates derived artifacts on-demand.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P1["Phase 1<br/>Create YAML<br/>registries"]
+  P2["Phase 2<br/>Update 12<br/>consumers"]
+  P3["Phase 3<br/>Delete old<br/>registry.md"]
+  P4["Phase 4<br/>Generate derived<br/>artifacts"]
+
+  P1 --> P2
+  P2 --> P3
+  P3 --> P4
+
+  style P1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P3 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style P4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 1 sub-panel -->
+    <div class="sub-panel" id="sub-migration-p1">
+      <div class="section">
+        <h2>Phase 1: Create New Files <span class="badge">additive</span></h2>
+        <p class="description">Generate both YAML registries. Both files coexist safely with existing markdown because no consumer globs for <code>registry.*</code> &mdash; all hardcode <code>registry.md</code>.</p>
+        <ul class="bullet-list">
+          <li><strong>Advisor registry:</strong> Deterministic conversion from <code>advisors/registry.md</code></li>
+          <li><strong>Framework registry:</strong> Three-pass batch processing (see Population tab)</li>
+          <li><strong>Disambiguation:</strong> Comment in YAML files noting they replace the .md version</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  MD["advisors/<br/>registry.md"]
+  Parse["Parse Quick<br/>Reference +<br/>Detailed Entries"]
+  YAML1["advisors/<br/>registry.yaml"]
+  Prompts["138 prompt.md<br/>files"]
+  ThreePass["Three-Pass<br/>Batch Process"]
+  YAML2["frameworks/<br/>registry.yaml"]
+
+  MD --> Parse
+  Parse --> YAML1
+  Prompts --> ThreePass
+  ThreePass --> YAML2
+
+  style MD fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style Parse fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style YAML1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Prompts fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style ThreePass fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style YAML2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Handling sub-panel -->
+    <div class="sub-panel" id="sub-migration-errors">
+      <div class="section">
+        <h2>Consumer Error Handling <span class="badge">post-critique addition</span></h2>
+        <p class="description">YAML introduces a new failure mode: file exists but fails to parse (bad indent, corrupted append). Current markdown parsing is forgiving; YAML is strict. One corrupted registry file breaks all 8 consuming skills simultaneously.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Read["Consumer reads<br/>registry.yaml"]
+  ParseOK{"YAML<br/>parses?"}
+  UseYAML["Use registry<br/>data"]
+  Fallback["Glob-based<br/>discovery"]
+  Warn["Log parse<br/>failure warning"]
+
+  Read --> ParseOK
+  ParseOK -->|Yes| UseYAML
+  ParseOK -->|No| Fallback
+  ParseOK -->|No| Warn
+
+  style Read fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style ParseOK fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style UseYAML fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Fallback fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Warn fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+        <ul class="bullet-list">
+          <li><strong>Required behavior:</strong> When YAML parsing fails, fall back to glob-based discovery (<code>advisors/prompts/*.md</code> or <code>frameworks/*/prompt.md</code>)</li>
+          <li><strong>Matches existing pattern:</strong> <code>use-advisor</code> and <code>use-framework</code> already have glob fallbacks</li>
+          <li><strong>Scope:</strong> All 8 consuming skills must implement this fallback</li>
+        </ul>
+      </div>
+      <div class="section">
+        <h2>Post-Append Validation <span class="badge">add-advisor / add-framework</span></h2>
+        <p class="description">One bad append must not corrupt the registry for all consumers. After appending a new entry, the skill re-parses the full YAML file.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Append["Append new<br/>YAML entry"]
+  Reparse{"Full file<br/>parses?"}
+  Success["Entry<br/>committed"]
+  Revert["Revert<br/>append"]
+  Report["Report<br/>error"]
+
+  Append --> Reparse
+  Reparse -->|Yes| Success
+  Reparse -->|No| Revert
+  Revert --> Report
+
+  style Append fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Reparse fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Success fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Revert fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Report fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+        <ul class="bullet-list">
+          <li><strong>Applies to:</strong> <code>add-advisor</code> Step 8b and <code>add-framework</code> Step 5</li>
+          <li><strong>On failure:</strong> Revert the append, report the YAML parse error to the user</li>
+          <li><strong>Rationale:</strong> Prevents cascading failures across all 8 consumer skills</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Phase 2 sub-panel -->
+    <div class="sub-panel" id="sub-migration-p2">
+      <div class="section">
+        <h2>Phase 2: Update Consumers <span class="badge">12 files</span></h2>
+        <p class="description">Two batches: Batch A is sequential (dependency-ordered), Batch B is parallel (no dependencies). Historical plan docs are not modified &mdash; path references in dated artifacts are preserved as-is.</p>
+
+        <div class="sub-tab-bar">
+          <button class="sub-tab-btn active" onclick="switchSubTab('migration-p2','p2-batcha')">Batch A (sequential)</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('migration-p2','p2-batchb')">Batch B (parallel)</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('migration-p2','p2-unchanged')">Not Changed</button>
+        </div>
+
+        <!-- Batch A sub-panel -->
+        <div class="sub-panel active" id="sub-p2-batcha">
+          <table class="data-table">
+            <thead>
+              <tr><th>Order</th><th>File</th><th>Change</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><code>critique-panel-orchestration.md</code></td><td>Read path + YAML parsing instructions + glob fallback on parse failure</td></tr>
+              <tr><td>2</td><td><code>use-advisor/SKILL.md</code></td><td>Read path + YAML parsing + glob fallback (also covers parse failures)</td></tr>
+              <tr><td>3</td><td><code>add-advisor/SKILL.md</code></td><td>Step 8b YAML append + post-append validation (revert on parse failure)</td></tr>
+              <tr><td>4</td><td><code>add-framework/SKILL.md</code></td><td>Step 5 YAML append + post-append validation (revert on parse failure)</td></tr>
+              <tr><td>5</td><td><code>use-framework/SKILL.md</code></td><td>Read path + YAML parsing + glob fallback (also covers parse failures)</td></tr>
+            </tbody>
+          </table>
+          <div class="diagram-container" style="margin-top: 16px;">
+            <pre class="mermaid-deferred">
+graph LR
+  CPO["critique-panel<br/>orchestration"]
+  UA["use-advisor"]
+  AA["add-advisor"]
+  AF["add-framework"]
+  UF["use-framework"]
+
+  CPO --> UA
+  UA --> AA
+  AA --> AF
+  AF --> UF
+
+  style CPO fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style UA fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style AA fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style AF fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style UF fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+            </pre>
+          </div>
+        </div>
+
+        <!-- Batch B sub-panel -->
+        <div class="sub-panel" id="sub-p2-batchb">
+          <table class="data-table">
+            <thead>
+              <tr><th>File</th><th>Change</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>critic-registry.md</code></td><td>Path update</td></tr>
+              <tr><td><code>find-potential-advisors/SKILL.md</code></td><td>Add YAML as resolution target (keep generic wording)</td></tr>
+              <tr><td><code>README.md</code> + <code>kickstart/SKILL.md</code></td><td>Documentation references</td></tr>
+              <tr><td><code>plugin-split.html</code></td><td>Architecture diagram node references (5 occurrences)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Not Changed sub-panel -->
+        <div class="sub-panel" id="sub-p2-unchanged">
+          <table class="data-table">
+            <thead>
+              <tr><th>File</th><th>Reason for exclusion</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>e2e/eval-surface.yaml</code></td><td>References <code>frameworks/*/prompt.md</code> glob which still matches real files. No change needed.</td></tr>
+              <tr><td><code>docs/plans/2026-04-08-plugin-split-design.md</code></td><td>Historical plan document. Path references are dated artifacts, not runtime consumers.</td></tr>
+              <tr><td><code>docs/plans/2026-04-08-plugin-split-plan.md</code></td><td>Historical plan document. Left as-is to preserve historical accuracy.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3-4 sub-panel -->
+    <div class="sub-panel" id="sub-migration-p3p4">
+      <div class="section">
+        <h2>Phase 3: Remove Old File <span class="badge">cleanup</span></h2>
+        <p class="description">Delete <code>advisors/registry.md</code> after all consumers verified. Separate commit for revert safety and worktree compatibility.</p>
+        <ul class="bullet-list">
+          <li><strong>Verification gate:</strong> Grep for <code>registry.md</code> across all skill files returns zero matches</li>
+          <li><strong>Entry count match:</strong> YAML advisor count matches original markdown count</li>
+        </ul>
+      </div>
+      <div class="section">
+        <h2>Phase 4: Generate Derived Artifacts <span class="badge">on-demand</span></h2>
+        <p class="description">Auto-generate READMEs from YAML registries and build searchable HTML catalog pages. All generation is on-demand &mdash; not coupled to add-advisor/add-framework (D8).</p>
+        <ul class="bullet-list">
+          <li><strong><code>advisors/README.md</code></strong> &mdash; counts, quick reference table, grouped sections, selection guidelines</li>
+          <li><strong><code>frameworks/README.md</code></strong> &mdash; counts per category, quick reference table, grouped by category</li>
+          <li><strong><code>docs/advisor-catalog.html</code></strong> &mdash; searchable, expandable HTML catalog</li>
+          <li><strong><code>docs/framework-catalog.html</code></strong> &mdash; searchable, expandable HTML catalog</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- POPULATION PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-population">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Framework Registry Population <span class="badge">138 frameworks</span></h2>
+    <p class="description">Three-pass approach: deterministic extraction for structured fields, LLM classification for semantic fields, merge and write for human review. Modeled on existing <code>build-router-index.js</code> pattern.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('population','pop-process')">Three-Pass Process</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('population','pop-extraction')">Pass 1: Extraction</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('population','pop-classification')">Pass 2: Classification</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('population','pop-merge')">Pass 3: Merge</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('population','pop-categories')">Categories</button>
+    </div>
+
+    <!-- Three-Pass Process sub-panel -->
+    <div class="sub-panel active" id="sub-pop-process">
+      <div class="section">
+        <h2>Three-Pass Pipeline <span class="badge">flowchart</span></h2>
+        <p class="description">Pass 1 extracts deterministic fields via regex + frontmatter. Pass 2 classifies semantic fields via batched LLM calls. Pass 3 merges results and writes a draft YAML for human review before committing.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Prompts["138 prompt.md<br/>files"]
+  Pass1["Pass 1<br/>Regex + YAML<br/>frontmatter"]
+  Structured["Structured<br/>fields extracted"]
+  Pass2["Pass 2<br/>Haiku LLM<br/>14 API calls"]
+  Classified["category +<br/>domains +<br/>use_when"]
+  Pass3["Pass 3<br/>Merge + Write"]
+  Draft["registry<br/>.draft.yaml"]
+
+  Prompts --> Pass1
+  Pass1 --> Structured
+  Structured --> Pass2
+  Pass2 --> Classified
+  Classified --> Pass3
+  Pass3 --> Draft
+
+  style Prompts fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style Pass1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Structured fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Pass2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Classified fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Pass3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Draft fill:#ff6900,stroke:#e55d00,color:#ffffff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deterministic Extraction sub-panel -->
+    <div class="sub-panel" id="sub-pop-extraction">
+      <div class="section">
+        <h2>Pass 1: Deterministic Extraction <span class="badge">no LLM</span></h2>
+        <p class="description">Six fields extracted without LLM involvement. The regex pattern handles 92% of frameworks; 11 outliers use a hardcoded fallback map (closed set &mdash; <code>add-framework</code> enforces the standard format for new entries).</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Field</th><th>Method</th><th>Coverage</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>Directory name</td><td>138/138 (100%)</td></tr>
+            <tr><td><code>name</code></td><td>Regex on prompt.md first line</td><td>127/138 (92%)</td></tr>
+            <tr><td><code>advisor</code></td><td>Same regex, group 1</td><td>127/138 (92%)</td></tr>
+            <tr><td><code>purpose</code></td><td>Text after dash in first line</td><td>127/138 (92%)</td></tr>
+            <tr><td><code>required_documents</code></td><td>YAML frontmatter</td><td>136/138 (98.5%)</td></tr>
+            <tr><td><code>helpful_documents</code></td><td>YAML frontmatter</td><td>136/138 (98.5%)</td></tr>
+          </tbody>
+        </table>
+        <p class="description" style="margin-top: 12px;"><strong>Regex:</strong> <code>/^You are (.+?),\s*guiding someone through (.+?)\s*[-&#8211;&#8212;.]/</code></p>
+        <p class="description"><strong>11 outliers:</strong> <code>landing-page-assembly</code>, <code>design-principles</code>, <code>do-things-that-dont-scale</code>, <code>earnestness-filter</code>, <code>enneagram-typing</code>, <code>focus-through-saying-no</code>, <code>personal-context-intake</code>, <code>professional-context-intake</code>, <code>quadrinity</code>, <code>the-story-so-far</code>, <code>6-step-process</code></p>
+      </div>
+    </div>
+
+    <!-- LLM Classification sub-panel -->
+    <div class="sub-panel" id="sub-pop-classification">
+      <div class="section">
+        <h2>Pass 2: LLM Classification <span class="badge">3 fields only</span></h2>
+        <p class="description">Only <code>category</code>, <code>domains</code>, and <code>use_when</code> need LLM classification. Batches of 10 frameworks sent to Claude Haiku with extracted metadata.</p>
+        <ul class="bullet-list">
+          <li><strong>Input per framework:</strong> name, advisor, purpose, first 300 chars of content</li>
+          <li><strong>category:</strong> Constrained to starter set of 16 categories</li>
+          <li><strong>domains:</strong> 2-5 freeform tags per framework</li>
+          <li><strong>use_when:</strong> Natural language trigger phrase</li>
+          <li><strong>Total API calls:</strong> ~14 (138 frameworks / 10 per batch)</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Batch["Batch of 10<br/>frameworks"]
+  Metadata["Extracted<br/>metadata"]
+  Haiku["Claude Haiku<br/>classify"]
+  Cat["category"]
+  Dom["domains"]
+  UW["use_when"]
+
+  Batch --> Metadata
+  Metadata --> Haiku
+  Haiku --> Cat
+  Haiku --> Dom
+  Haiku --> UW
+
+  style Batch fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style Metadata fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Haiku fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Cat fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Dom fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style UW fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+
+  linkStyle 0 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pass 3: Merge sub-panel -->
+    <div class="sub-panel" id="sub-pop-merge">
+      <div class="section">
+        <h2>Pass 3: Merge + Write <span class="badge">output</span></h2>
+        <p class="description">Combine deterministic extractions (Pass 1) with LLM classifications (Pass 2) into <code>frameworks/registry.draft.yaml</code> for human review before committing as the final <code>registry.yaml</code>.</p>
+        <ul class="bullet-list">
+          <li><strong>Input:</strong> Pass 1 structured fields + Pass 2 semantic fields for all 138 frameworks</li>
+          <li><strong>Output:</strong> <code>frameworks/registry.draft.yaml</code></li>
+          <li><strong>Human review gate:</strong> Draft is reviewed and approved before committing as <code>registry.yaml</code></li>
+          <li><strong>Advisor registry:</strong> Separate path &mdash; pure deterministic conversion from <code>advisors/registry.md</code>, no LLM needed</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Categories sub-panel -->
+    <div class="sub-panel" id="sub-pop-categories">
+      <div class="section">
+        <h2>Starter Categories <span class="badge">16 categories</span></h2>
+        <p class="description">Free-form strings guiding LLM classification. Not enforced as an enum. Frameworks may straddle categories; the <code>domains</code> field handles cross-cutting concerns.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Category</th><th>Description</th><th>Examples</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>positioning</code></td><td>Positioning, messaging, differentiation</td><td>5-components-positioning</td></tr>
+            <tr><td><code>startup</code></td><td>Validation, lean methodology, PMF</td><td>build-measure-learn</td></tr>
+            <tr><td><code>content-strategy</code></td><td>Content creation, audience building</td><td>content-inc-model</td></tr>
+            <tr><td><code>social-media</code></td><td>Platform-specific tactics</td><td>the-algorithm</td></tr>
+            <tr><td><code>pricing</code></td><td>Monetization, packaging</td><td>value-metric</td></tr>
+            <tr><td><code>growth</code></td><td>Growth marketing, experimentation</td><td>growth-hacking-process</td></tr>
+            <tr><td><code>podcasting</code></td><td>Podcast strategy and marketing</td><td>podcast-brand-strategy</td></tr>
+            <tr><td><code>negotiation</code></td><td>Communication, negotiation</td><td>calibrated-questions</td></tr>
+            <tr><td><code>leadership</code></td><td>Management, leadership transitions</td><td>leadership-pipeline-passages</td></tr>
+            <tr><td><code>strategy</code></td><td>Decision-making, strategic thinking</td><td>first-principles-thinking</td></tr>
+            <tr><td><code>psychology</code></td><td>Self-development, inner work</td><td>fear-setting, ifs-parts-work</td></tr>
+            <tr><td><code>health-autonomic</code></td><td>Dysautonomia, POTS</td><td>multi-system-approach-pots</td></tr>
+            <tr><td><code>health-movement</code></td><td>Spine, movement, physical therapy</td><td>mcgill-big-3</td></tr>
+            <tr><td><code>health-fitness</code></td><td>Exercise, recovery, training</td><td>heart-rate-reserve-training-zones</td></tr>
+            <tr><td><code>conversion</code></td><td>Landing pages, UX, conversion</td><td>landing-page-assembly</td></tr>
+            <tr><td><code>onboarding</code></td><td>Intake, context-setting</td><td>personal-context-intake</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- READMES PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-readmes">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Auto-generated READMEs <span class="badge">on-demand</span></h2>
+    <p class="description">Both READMEs are generated as LLM skill steps (no shell scripts, no <code>yq</code> dependency). Generation is on-demand only &mdash; not coupled to add-advisor/add-framework (D8). Matches existing pattern of "LLM reads structured data, writes derived artifact."</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('readmes','readmes-advisor')">Advisor README</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('readmes','readmes-framework')">Framework README</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('readmes','readmes-generation')">Generation Model</button>
+    </div>
+
+    <!-- Advisor README sub-panel -->
+    <div class="sub-panel active" id="sub-readmes-advisor">
+      <div class="section">
+        <h2>advisors/README.md <span class="badge">new file</span></h2>
+        <p class="description">Generated from <code>advisors/registry.yaml</code>. Neither README exists today &mdash; clean slate.</p>
+        <ul class="bullet-list">
+          <li><strong>Count:</strong> Total advisors, profiled count, unprofiled count</li>
+          <li><strong>Quick reference table:</strong> id, name, domains, summary</li>
+          <li><strong>Grouped sections:</strong> Profiled advisors (with evaluation_expertise summary), unprofiled advisors</li>
+          <li><strong>Selection guidelines:</strong> Summary of scope rules and calibration examples</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Framework README sub-panel -->
+    <div class="sub-panel" id="sub-readmes-framework">
+      <div class="section">
+        <h2>frameworks/README.md <span class="badge">new file</span></h2>
+        <p class="description">Generated from <code>frameworks/registry.yaml</code>.</p>
+        <ul class="bullet-list">
+          <li><strong>Count:</strong> Total frameworks, count per category</li>
+          <li><strong>Quick reference table:</strong> id, name, advisor, category, use_when</li>
+          <li><strong>Grouped sections:</strong> Organized by category</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Generation Model sub-panel -->
+    <div class="sub-panel" id="sub-readmes-generation">
+      <div class="section">
+        <h2>Generation Model <span class="badge">D7, D8</span></h2>
+        <p class="description">READMEs and HTML catalogs are all generated on-demand. Not coupled to add-advisor/add-framework to avoid adding latency and failure modes to every invocation.</p>
+        <ul class="bullet-list">
+          <li><strong>D7:</strong> LLM skill steps, not shell scripts &mdash; no <code>yq</code> dependency. Trade-off: non-deterministic. Acceptable since READMEs are reference docs, not build artifacts.</li>
+          <li><strong>D8:</strong> On-demand only. Generate manually or as a standalone invocation when registry changes warrant it.</li>
+          <li><strong>Neither README exists today</strong> &mdash; no migration concerns, clean slate.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  AdvYAML["advisors/<br/>registry.yaml"]
+  FwYAML["frameworks/<br/>registry.yaml"]
+  LLM["LLM reads<br/>structured data"]
+  AdvREADME["advisors/<br/>README.md"]
+  FwREADME["frameworks/<br/>README.md"]
+
+  AdvYAML --> LLM
+  FwYAML --> LLM
+  LLM --> AdvREADME
+  LLM --> FwREADME
+
+  style AdvYAML fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style FwYAML fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style LLM fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style AdvREADME fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style FwREADME fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DEFERRED PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-deferred">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Deferred: Contextual Recommendation <span class="badge-deferred">follow-up design</span></h2>
+    <p class="description">Contextual recommendation for <code>use-advisor</code> and <code>use-framework</code> is deferred to a separate design. The registry migration enables this feature by providing the metadata (<code>domains</code>, <code>use_when</code>, <code>best_for</code>) needed for scoring, but the recommendation behavior has its own edge cases, interaction design, and testing surface.</p>
+
+    <div class="deferred-callout">
+      <h2>Follow-up Design Scope</h2>
+      <p class="description">The follow-up design should address:</p>
+      <ul class="bullet-list">
+        <li><strong>Three-path behavior:</strong> Named (fuzzy match), contextual (intent scoring), bare (listing)</li>
+        <li><strong>Scoring heuristic:</strong> Which fields to weight and how</li>
+        <li><strong>Context detection:</strong> How to distinguish contextual from bare invocations</li>
+        <li><strong>Unprofiled advisors:</strong> ~55% of catalog lack <code>best_for</code> / <code>evaluation_expertise</code></li>
+        <li><strong>Fallback:</strong> Handling zero or weak matches from scoring</li>
+        <li><strong>Acceptance criteria:</strong> Recommendation quality thresholds</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Relationship to This Design</h2>
+      <p class="description">The registry migration creates the prerequisite data layer. Contextual recommendation consumes it.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  Registry["YAML Registries<br/>domains, use_when,<br/>best_for"]
+  Deferred["Contextual<br/>Recommendation<br/>follow-up"]
+  UseAdvisor["use-advisor<br/>three-path"]
+  UseFramework["use-framework<br/>three-path"]
+
+  Registry -.-> Deferred
+  Deferred -.-> UseAdvisor
+  Deferred -.-> UseFramework
+
+  style Registry fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Deferred fill:#f5f3ef,stroke:#555555,color:#555555,stroke-dasharray:5 5
+  style UseAdvisor fill:#f5f3ef,stroke:#555555,color:#555555,stroke-dasharray:5 5
+  style UseFramework fill:#f5f3ef,stroke:#555555,color:#555555,stroke-dasharray:5 5
+
+  linkStyle 0 stroke:#555555,stroke-width:1px,stroke-dasharray:5 5
+  linkStyle 1 stroke:#555555,stroke-width:1px,stroke-dasharray:5 5
+  linkStyle 2 stroke:#555555,stroke-width:1px,stroke-dasharray:5 5
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CATALOGS PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-catalogs">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Searchable HTML Catalogs <span class="badge">on-demand</span></h2>
+    <p class="description">Two standalone HTML files for browsing advisors and frameworks. Self-contained, Tailwind-based, generated from YAML registries on-demand (not coupled to add skills &mdash; D8).</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('catalogs','cat-features')">Features</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalogs','cat-layout')">Layout Mockup</button>
+    </div>
+
+    <!-- Features sub-panel -->
+    <div class="sub-panel active" id="sub-cat-features">
+      <div class="section">
+        <h2>Catalog Features <span class="badge">both catalogs</span></h2>
+        <ul class="bullet-list">
+          <li><strong>Search box:</strong> Filters by name, domain, category, advisor</li>
+          <li><strong>Card or table layout:</strong> Key metadata visible per entry</li>
+          <li><strong>Expandable details:</strong> Click to reveal full fields (evaluation_expertise, best_for, not_for for advisors; use_when, required/helpful documents for frameworks)</li>
+          <li><strong>Category grouping:</strong> With counts</li>
+          <li><strong>Cross-links:</strong> Advisor cards link to frameworks, framework cards link to advisors</li>
+          <li><strong>Responsive:</strong> Usable on mobile</li>
+        </ul>
+        <table class="data-table">
+          <thead>
+            <tr><th>File</th><th>Location</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>advisor-catalog.html</code></td><td><code>docs/</code></td><td><code>advisors/registry.yaml</code></td></tr>
+            <tr><td><code>framework-catalog.html</code></td><td><code>docs/</code></td><td><code>frameworks/registry.yaml</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Layout Mockup sub-panel -->
+    <div class="sub-panel" id="sub-cat-layout">
+      <div class="section">
+        <h2>Catalog Layout <span class="badge">mockup</span></h2>
+        <p class="description">Wireframe showing the card-based layout with search, grouping, and expandable details.</p>
+        <div class="diagram-container">
+          <!-- HTML mockup of catalog layout -->
+          <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; background: #faf9f7; max-width: 600px;">
+            <!-- Search bar mockup -->
+            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+              <div style="flex: 1; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; background: white; color: #6b7280; font-size: 0.85rem;">Search advisors by name, domain...</div>
+              <div style="padding: 8px 16px; background: #32373c; color: white; border-radius: 9999px; font-size: 0.82rem; display: flex; align-items: center;">Search</div>
+            </div>
+            <!-- Category pills -->
+            <div style="display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap;">
+              <span style="padding: 2px 10px; background: #ff6900; color: white; border-radius: 9999px; font-size: 0.75rem;">All (65)</span>
+              <span style="padding: 2px 10px; background: #fff7ed; color: #ff6900; border-radius: 9999px; font-size: 0.75rem;">Product (8)</span>
+              <span style="padding: 2px 10px; background: #fff7ed; color: #ff6900; border-radius: 9999px; font-size: 0.75rem;">Marketing (12)</span>
+              <span style="padding: 2px 10px; background: #fff7ed; color: #ff6900; border-radius: 9999px; font-size: 0.75rem;">Strategy (7)</span>
+            </div>
+            <!-- Card mockups -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 600; color: #1a1a1a; font-size: 0.88rem;">Steve Jobs</span>
+                    <span style="font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: #fff7ed; color: #ff6900; margin-left: 6px;">profiled</span>
+                  </div>
+                  <span style="color: #6b7280; font-size: 0.75rem;">product, UX, simplicity</span>
+                </div>
+                <div style="color: #555555; font-size: 0.8rem; margin-top: 4px;">Co-founder of Apple who demanded insanely great products</div>
+              </div>
+              <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 600; color: #1a1a1a; font-size: 0.88rem;">April Dunford</span>
+                    <span style="font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: #fff7ed; color: #ff6900; margin-left: 6px;">profiled</span>
+                  </div>
+                  <span style="color: #6b7280; font-size: 0.75rem;">positioning, GTM</span>
+                </div>
+                <div style="color: #555555; font-size: 0.8rem; margin-top: 4px;">Author of Obviously Awesome, positioning expert</div>
+              </div>
+              <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 600; color: #1a1a1a; font-size: 0.88rem;">Seth Godin</span>
+                    <span style="font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: #f5f3ef; color: #555555; margin-left: 6px;">unprofiled</span>
+                  </div>
+                  <span style="color: #6b7280; font-size: 0.75rem;">marketing, tribes</span>
+                </div>
+                <div style="color: #555555; font-size: 0.8rem; margin-top: 4px;">Author of Purple Cow, The Dip, and This Is Marketing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- IMPLEMENTATION PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-implementation">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Implementation Order <span class="badge">execution</span></h2>
+    <p class="description">Dependency-ordered phases. Some steps can run in parallel (1a/1b, Batch B files). Each phase is a separate commit. Follow-up: contextual recommendation (separate design).</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('implementation','impl-deps')">Dependency Graph</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('implementation','impl-impact')">Impact Summary</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('implementation','impl-testing')">Testing</button>
+    </div>
+
+    <!-- Dependency Graph sub-panel -->
+    <div class="sub-panel active" id="sub-impl-deps">
+      <div class="section">
+        <h2>Phase Dependencies <span class="badge">graph</span></h2>
+        <p class="description">Parallel tracks for advisor (1a) and framework (1b) registries converge at Batch B updates and final cleanup.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P1a["1a: Generate<br/>advisor YAML"]
+  P1b["1b: Generate<br/>framework YAML"]
+  P2a["2a: critique-panel"]
+  P2b["2b: use-advisor"]
+  P2c["2c: add-advisor"]
+  P2d["2d: add-framework"]
+  P2e["2e: use-framework"]
+  P2f["2f: Batch B<br/>4 files"]
+  P3["3: Delete<br/>registry.md"]
+  P4["4: READMEs +<br/>HTML catalogs"]
+  P5["5: e2e tests"]
+
+  P1a --> P2a
+  P1a --> P2b
+  P1a --> P2c
+  P1a --> P2f
+  P1b --> P2d
+  P1b --> P2e
+  P2a --> P3
+  P2b --> P3
+  P2c --> P3
+  P2d --> P3
+  P2e --> P3
+  P2f --> P3
+  P3 --> P4
+  P1a --> P5
+  P1b --> P5
+
+  style P1a fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P1b fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P2a fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P2b fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P2c fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style P2d fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style P2e fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P2f fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P3 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style P4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P5 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+  linkStyle 6 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 7 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 8 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 9 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 10 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 11 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 12 stroke:#ff6900,stroke-width:2px
+  linkStyle 13 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 14 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact Summary sub-panel -->
+    <div class="sub-panel" id="sub-impl-impact">
+      <div class="section">
+        <h2>Files Created <span class="badge">6 new</span></h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>File</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>advisors/registry.yaml</code></td><td>Advisor registry (source of truth)</td></tr>
+            <tr><td><code>frameworks/registry.yaml</code></td><td>Framework registry (source of truth)</td></tr>
+            <tr><td><code>advisors/README.md</code></td><td>Auto-generated advisor reference (on-demand)</td></tr>
+            <tr><td><code>frameworks/README.md</code></td><td>Auto-generated framework reference (on-demand)</td></tr>
+            <tr><td><code>docs/advisor-catalog.html</code></td><td>Searchable advisor catalog (on-demand)</td></tr>
+            <tr><td><code>docs/framework-catalog.html</code></td><td>Searchable framework catalog (on-demand)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section">
+        <h2>Files Modified <span class="badge">10 changed</span></h2>
+        <p class="description">Historical plan documents (<code>plugin-split-design.md</code>, <code>plugin-split-plan.md</code>) are excluded &mdash; their path references are dated artifacts, not runtime consumers.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>File</th><th>Change</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>critique-panel-orchestration.md</code></td><td>Read path + YAML parsing + glob fallback on parse failure</td></tr>
+            <tr><td><code>use-advisor/SKILL.md</code></td><td>Read path + YAML parsing + glob fallback</td></tr>
+            <tr><td><code>add-advisor/SKILL.md</code></td><td>Step 8b YAML append + post-append validation</td></tr>
+            <tr><td><code>add-framework/SKILL.md</code></td><td>Step 5 YAML append + post-append validation</td></tr>
+            <tr><td><code>use-framework/SKILL.md</code></td><td>Read path + YAML parsing + glob fallback</td></tr>
+            <tr><td><code>critic-registry.md</code></td><td>Path reference</td></tr>
+            <tr><td><code>find-potential-advisors/SKILL.md</code></td><td>Add YAML as resolution target</td></tr>
+            <tr><td><code>README.md</code></td><td>Documentation reference</td></tr>
+            <tr><td><code>kickstart/SKILL.md</code></td><td>Documentation reference</td></tr>
+            <tr><td><code>plugin-split.html</code></td><td>Architecture diagram nodes (5 occurrences)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section">
+        <h2>Files Deleted <span class="badge">1 removed</span></h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>File</th><th>Reason</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>advisors/registry.md</code></td><td>Replaced by <code>advisors/registry.yaml</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Testing sub-panel -->
+    <div class="sub-panel" id="sub-impl-testing">
+      <div class="section">
+        <h2>Automated Tests <span class="badge">new</span></h2>
+        <ul class="bullet-list">
+          <li><strong>YAML schema validation:</strong> Both registries parse as valid YAML with all required fields populated</li>
+          <li><strong>Trigger map update:</strong> Registry files added as trigger paths in <code>e2e/trigger-map.yaml</code></li>
+        </ul>
+      </div>
+      <div class="section">
+        <h2>Happy Path Scenarios <span class="badge">7 scenarios</span></h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>Skill</th><th>Scenario</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Critique panel</td><td>Run brainstorming, verify YAML read + <code>not_for</code> exclusion</td></tr>
+            <tr><td>use-advisor (named)</td><td><code>/aligned:use-advisor steve-jobs</code> &mdash; fuzzy match from YAML</td></tr>
+            <tr><td>use-advisor (bare)</td><td>No context &mdash; listing from YAML</td></tr>
+            <tr><td>use-framework (named)</td><td><code>/aligned:use-framework fear-setting</code> &mdash; match from YAML</td></tr>
+            <tr><td>use-framework (bare)</td><td>No context &mdash; listing from YAML</td></tr>
+            <tr><td>add-advisor</td><td>Add test advisor &mdash; YAML entry appended correctly</td></tr>
+            <tr><td>add-framework</td><td>Add test framework &mdash; YAML entry appended correctly</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section">
+        <h2>Error Path Scenarios <span class="badge">5 scenarios</span></h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>Scenario</th><th>Expected Behavior</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Malformed <code>registry.yaml</code> (bad indent)</td><td>Consumer skills fall back to glob-based discovery, log warning</td></tr>
+            <tr><td><code>add-advisor</code> appends bad YAML</td><td>Post-append validation catches parse failure, reverts append, reports error</td></tr>
+            <tr><td><code>add-framework</code> appends bad YAML</td><td>Same as above</td></tr>
+            <tr><td><code>registry.yaml</code> missing entirely</td><td>Fallback to glob-based discovery (existing behavior preserved)</td></tr>
+            <tr><td>Grep for <code>registry.md</code> after Phase 3</td><td>Zero matches in skill files (regression check)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section">
+        <h2>Migration Verification <span class="badge">gates</span></h2>
+        <ul class="bullet-list">
+          <li><strong>Grep check:</strong> <code>registry.md</code> across all skill files returns zero matches (except migration docs)</li>
+          <li><strong>Advisor count:</strong> YAML entry count matches original markdown count</li>
+          <li><strong>Framework count:</strong> YAML has 138 entries</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one if none active
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      // Support both top-level panels (panel-X) and nested sub-panels (sub-X)
+      var parent = document.getElementById('panel-' + parentId) || document.getElementById('sub-' + parentId);
+      if (!parent) return;
+
+      // Find the closest sub-tab-bar that contains our target button
+      var targetBtn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (!targetBtn) return;
+      var tabBar = targetBtn.parentElement;
+
+      // Deactivate all buttons in the same tab bar
+      tabBar.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+
+      // Deactivate sibling sub-panels (those at the same level as the tab bar)
+      var container = tabBar.parentElement;
+      container.querySelectorAll(':scope > .sub-panel').forEach(function(p) {
+        p.classList.remove('active');
+      });
+
+      targetBtn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
