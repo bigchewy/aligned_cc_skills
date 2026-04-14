@@ -44,6 +44,7 @@
         class="flex-1 px-3 py-2 border border-border rounded-md bg-white text-sm text-foreground placeholder:text-dimmed focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
         oninput="filterAdvisors()"
       />
+      <button type="button" onclick="filterAdvisors()" class="px-4 py-2 bg-[#32373c] text-white rounded-full text-sm hover:bg-[#3d4349] transition-colors">Search</button>
     </div>
 
     <!-- Filter pills -->
@@ -54,24 +55,6 @@
 
     <!-- Cards -->
     <div id="cards" class="flex flex-col gap-2"></div>
-
-    <!-- Selection Guidelines -->
-    <div class="mt-10 bg-white border border-border rounded-xl p-6">
-      <h2 class="text-base font-medium mb-3">Selection Guidelines</h2>
-      <div class="text-sm text-secondary space-y-2">
-        <p><strong>Narrow scope</strong> (single utility, no integrations): 1–2 critics</p>
-        <p><strong>Typical scope</strong> (API route with DB writes): 2–3 critics</p>
-        <p><strong>Complex scope</strong> (user-facing feature with backend + UI + auth): 3–4 critics</p>
-      </div>
-      <div class="mt-4 text-sm text-secondary">
-        <p class="font-medium mb-1">Rules</p>
-        <ul class="list-disc pl-5 space-y-1 text-xs">
-          <li>Hard-exclude any critic whose <code>not_for</code> matches the work's primary domain</li>
-          <li>Prefer diversity of lens — avoid overlapping domains</li>
-          <li>When in doubt, prefer fewer focused critics over more redundant ones</li>
-        </ul>
-      </div>
-    </div>
 
     <p class="text-xs text-dimmed mt-8 text-center">Generated from <code>advisors/registry.yaml</code> · <a href="framework-catalog.html" class="text-accent hover:underline">Framework Catalog →</a></p>
   </div>
@@ -162,7 +145,7 @@ const advisorFrameworks = {
   "roy-freeman": ["Autonomic Testing Interpretation", "Composite Autonomic Severity Score (CASS)"],
   "jasmine-star": ["Batched Content Creation System", "DM Relationship Cultivation"],
   "sue-b-zimmerman": ["Bio-Promise Alignment", "CEC Method", "Four Neighborhoods"],
-  "brene-brown": ["BRAVING Trust Inventory"],
+  "brene-brown": ["BRAVING Trust Inventory", "Living Into Values", "Vulnerability Check"],
   "eric-ries": ["Build-Measure-Learn", "Earlyvangelists", "Four Market Types"],
   "andreo-spina": ["CARs (Controlled Articular Rotations)"],
   "shirin-oreizy": ["Cognitive Friction Audit", "Homer vs Spock"],
@@ -221,12 +204,18 @@ function el(tag, attrs, children) {
 function renderFilterPills() {
   const container = document.getElementById('filter-pills');
   container.replaceChildren();
-  const profiled = advisors.filter(a => a.profiled).length;
-  const unprofiled = advisors.length - profiled;
+  // Build domain counts
+  const domainCounts = {};
+  advisors.forEach(a => {
+    a.domains.forEach(d => { domainCounts[d] = (domainCounts[d] || 0) + 1; });
+  });
+  // Sort by count descending, take top 8
+  const topDomains = Object.entries(domainCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
   const filters = [
     { key: 'all', label: 'All (' + advisors.length + ')' },
-    { key: 'profiled', label: 'Profiled (' + profiled + ')' },
-    { key: 'unprofiled', label: 'Unprofiled (' + unprofiled + ')' }
+    ...topDomains.map(([domain, count]) => ({ key: domain, label: domain + ' (' + count + ')' }))
   ];
   filters.forEach(f => {
     const active = activeFilter === f.key;
@@ -242,8 +231,7 @@ function renderFilterPills() {
 function filterAdvisors() {
   const query = document.getElementById('search').value.toLowerCase().trim();
   const filtered = advisors.filter(a => {
-    if (activeFilter === 'profiled' && !a.profiled) return false;
-    if (activeFilter === 'unprofiled' && a.profiled) return false;
+    if (activeFilter !== 'all' && !a.domains.includes(activeFilter)) return false;
     if (!query) return true;
     const searchable = [a.name, a.summary, ...a.domains].join(' ').toLowerCase();
     return searchable.includes(query);
@@ -286,6 +274,7 @@ function renderCards(list) {
 
     // Card container
     const card = el('div', {
+      id: a.id,
       className: 'bg-white border border-border rounded-md p-3 hover:border-accent/30 transition-colors' + (hasDetails ? ' cursor-pointer' : '')
     });
     if (hasDetails) card.addEventListener('click', () => toggleDetails(a.id));
@@ -352,6 +341,16 @@ function renderCards(list) {
 // Initial render
 renderFilterPills();
 filterAdvisors();
+
+// Deep-link scroll: handle #advisor-id fragments from framework-catalog
+if (window.location.hash) {
+  const target = document.getElementById(window.location.hash.slice(1));
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.style.outline = '2px solid #ff6900';
+    setTimeout(() => { target.style.outline = ''; }, 2000);
+  }
+}
 </script>
 
 </body>

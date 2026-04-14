@@ -140,7 +140,7 @@ frameworks:
 
   - id: braving-trust-inventory
     name: "BRAVING Trust Inventory"
-    advisor: bren-brown
+    advisor: brene-brown
     purpose: "assessing and building trust using the seven BRAVING elements"
     category: leadership
     domains: [trust, relationships, vulnerability, team-culture]
@@ -619,7 +619,7 @@ frameworks:
 
   - id: living-into-values
     name: "Living Into Values"
-    advisor: bren-brown
+    advisor: brene-brown
     purpose: "identifying two core values and operationalizing them into daily behavior"
     category: psychology
     domains: [values, self-awareness, behavior-change, authenticity]
@@ -1142,7 +1142,7 @@ frameworks:
 
   - id: vulnerability-check
     name: "Vulnerability Check"
-    advisor: bren-brown
+    advisor: brene-brown
     purpose: "exploring shame, vulnerability, and courage in your current situation"
     category: psychology
     domains: [vulnerability, shame, courage, emotional-exploration]

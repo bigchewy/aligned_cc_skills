@@ -41,7 +41,7 @@
 | batched-content-system | Batched Content Creation System | jasmine-star | content-strategy | someone struggles with consistent content creation and needs a system for batching production efficiently |
 | believability-weighted-decision-making | Believability-Weighted Decision Making | ray-dalio | strategy | a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise |
 | bio-promise-alignment | Bio-Promise Alignment | sue-b-zimmerman | social-media | someone's Instagram bio promises one thing but their content delivers another, causing follower drop-off |
-| braving-trust-inventory | BRAVING Trust Inventory | bren-brown | leadership | someone needs to assess the state of trust in a relationship or team using a structured framework |
+| braving-trust-inventory | BRAVING Trust Inventory | brene-brown | leadership | someone needs to assess the state of trust in a relationship or team using a structured framework |
 | build-measure-learn | Build-Measure-Learn | eric-ries | startup | a team needs to design a rapid learning cycle for a product initiative to validate assumptions quickly |
 | calibrated-questions | Calibrated Questions | chris-voss | negotiation | someone needs to steer a negotiation or conversation by asking how/what questions that shift the problem to the other party |
 | cardiac-deconditioning-model | Cardiac Deconditioning Model | benjamin-levine | health-autonomic | someone with POTS needs to understand the cardiac deconditioning hypothesis and exercise as a primary treatment pathway |
@@ -97,7 +97,7 @@
 | leopard-movement-hierarchy | Leopard Movement Hierarchy | kelly-starrett | health-movement | someone is adding speed or load to movement without proper position foundations and needs to reset their progression |
 | leveraged-learning | Leveraged Learning | danny-iny | onboarding | someone is designing a course and needs to ensure it drives real transformation rather than passive content consumption |
 | levine-protocol | Levine Protocol | benjamin-levine | health-autonomic | someone with POTS or autonomic dysfunction needs a structured exercise reconditioning program |
-| living-into-values | Living Into Values | bren-brown | psychology | someone knows their values abstractly but struggles to live them consistently in daily decisions and behavior |
+| living-into-values | Living Into Values | brene-brown | psychology | someone knows their values abstractly but struggles to live them consistently in daily decisions and behavior |
 | load-velocity-relationship | Load-Velocity Relationship | stuart-mcgill | health-movement | someone is lifting or moving in ways that combine high load with high velocity and needs to understand the spine safety tradeoff |
 | management-level-progression | Management Level Progression | lara-hogan | leadership | an engineering manager needs to understand what's expected at their current level or prepare for the next one |
 | mcgill-big-3 | McGill Big 3 | stuart-mcgill | health-fitness | someone needs a spine-safe core stability program that builds endurance without compromising spinal health |
@@ -160,7 +160,7 @@
 | value-metric | Value Metric | patrick-campbell | pricing | someone needs to identify the right value metric for their pricing model — the unit of value customers pay for |
 | values-clarification | Values Clarification | steven-hayes | psychology | someone is unclear on their core values and needs a structured exercise to identify what matters most across life domains |
 | virtual-surgery-protocol | Virtual Surgery Protocol | stuart-mcgill | health-movement | someone has acute severe back pain and needs a conservative protocol that treats it with the same seriousness as post-surgical recovery |
-| vulnerability-check | Vulnerability Check | bren-brown | psychology | someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs |
+| vulnerability-check | Vulnerability Check | brene-brown | psychology | someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs |
 | working-backwards | Working Backwards | jeff-bezos | strategy | a team needs to define a new product or feature by writing the press release first and working backwards to what must be built |
 | zone-of-genius | Zone of Genius | wise-eric | psychology | someone wants to identify their zone of genius to align their work with their unique abilities and passions |
 
@@ -235,7 +235,7 @@
 
 - **100-percent-responsibility** — 100% Responsibility (diana-chapman)
 - **above-below-the-line** — Above/Below the Line (diana-chapman)
-- **braving-trust-inventory** — BRAVING Trust Inventory (bren-brown)
+- **braving-trust-inventory** — BRAVING Trust Inventory (brene-brown)
 - **clearing-model** — Clearing Model (diana-chapman)
 - **leadership-pipeline-passages** — Leadership Pipeline Passages (ram-charan)
 - **management-level-progression** — Management Level Progression (lara-hogan)
@@ -289,7 +289,7 @@
 - **enneagram-typing** — Enneagram Typing (richard-schwartz)
 - **fear-setting** — Fear-Setting (tim-ferriss)
 - **ifs-parts-work** — IFS Parts Work (richard-schwartz)
-- **living-into-values** — Living Into Values (bren-brown)
+- **living-into-values** — Living Into Values (brene-brown)
 - **opposite-action** — Opposite Action (marsha-linehan)
 - **pain-plus-reflection** — Pain + Reflection = Progress (ray-dalio)
 - **perma-wellbeing** — PERMA Wellbeing (martin-seligman)
@@ -304,7 +304,7 @@
 - **the-story-so-far** — The Story So Far (wise-eric)
 - **the-work** — The Work (byron-katie)
 - **values-clarification** — Values Clarification (steven-hayes)
-- **vulnerability-check** — Vulnerability Check (bren-brown)
+- **vulnerability-check** — Vulnerability Check (brene-brown)
 - **zone-of-genius** — Zone of Genius (wise-eric)
 
 ### Social Media (9)
