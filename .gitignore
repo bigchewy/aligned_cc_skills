@@ -12,3 +12,5 @@ aligned-cowork.zip
 *.plugin
 docs/plans/
 docs/investigations/
+*.draft.yaml
+*.draft.pass1.yaml
