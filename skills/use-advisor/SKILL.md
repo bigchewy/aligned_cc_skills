@@ -16,11 +16,11 @@ Adopt an advisor's persona for the current conversation.
 
 Discover all advisors from the plugin's flat directory.
 
-**Step 1a: Read the Quick Reference table (`advisors/registry.md`)**
+**Step 1a: Read the advisor registry (`advisors/registry.yaml`)**
 
-Read the file `advisors/registry.md` (plugin-relative). Parse the Quick Reference table — rows give slug, name, domains, and summary. Use this as the primary listing source.
+Read the file `advisors/registry.yaml` (plugin-relative). Parse the `advisors` list — each entry has `id`, `name`, `domains` (list), and `summary`. Use this as the primary listing source.
 
-If `advisors/registry.md` does not exist, fall back to Step 1b.
+If `advisors/registry.yaml` does not exist or fails to parse, fall back to Step 1b.
 
 **Step 1b: Plugin glob fallback (`advisors/prompts/`)**
 

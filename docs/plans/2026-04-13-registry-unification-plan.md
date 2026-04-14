@@ -663,7 +663,7 @@ git commit -m "feat: generate frameworks/registry.yaml via three-pass batch proc
 
 ---
 
-### Task 5: Update Advisor-Facing Consumer Skills
+### ✅ Task 5: Update Advisor-Facing Consumer Skills
 
 **Files:**
 - Modify: `skills/_shared/critique-panel-orchestration.md` (the `Read advisors/registry.md` line in the Round 1 section)
