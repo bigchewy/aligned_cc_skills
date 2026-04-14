@@ -11,7 +11,7 @@ providers:
       max_tokens: 2500
 
 prompts:
-  - "{{system_context}}\n\n{{task_prompt}}"
+  - "{{skill_prompt}}\n\n---\n\n{{recommendation_logic}}\n\n---\n\nRegistry contents:\n{{registry}}\n\n{{task_prompt}}"
 
 defaultTest:
   assert:
@@ -49,20 +49,14 @@ defaultTest:
 tests:
   - description: "full-stack (skill + recommendation file + registry)"
     vars:
-      system_context: |
-        file://../../../skills/use-framework/SKILL.md
-
-        ---
-
-        file://../../../skills/_shared/contextual-recommendation.md
-
-        ---
-
-        Registry contents:
-        file://../../../frameworks/registry.yaml
+      skill_prompt: file://../../../skills/use-framework/SKILL.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
+      registry: file://../../../frameworks/registry.yaml
       task_prompt: "I'm paralyzed by a big career decision and can't stop overthinking it."
 
   - description: "vanilla baseline"
     vars:
-      system_context: ""
+      skill_prompt: ""
+      recommendation_logic: ""
+      registry: ""
       task_prompt: "I'm paralyzed by a big career decision and can't stop overthinking it. Can you recommend a decision-making framework?"

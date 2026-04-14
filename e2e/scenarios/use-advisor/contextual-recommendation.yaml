@@ -11,7 +11,7 @@ providers:
       max_tokens: 2500
 
 prompts:
-  - "{{system_context}}\n\n{{task_prompt}}"
+  - "{{skill_prompt}}\n\n---\n\n{{recommendation_logic}}\n\n---\n\nRegistry contents:\n{{registry}}\n\n{{task_prompt}}"
 
 defaultTest:
   assert:
@@ -49,20 +49,14 @@ defaultTest:
 tests:
   - description: "full-stack (skill + recommendation file + registry)"
     vars:
-      system_context: |
-        file://../../../skills/use-advisor/SKILL.md
-
-        ---
-
-        file://../../../skills/_shared/contextual-recommendation.md
-
-        ---
-
-        Registry contents:
-        file://../../../advisors/registry.yaml
+      skill_prompt: file://../../../skills/use-advisor/SKILL.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
+      registry: file://../../../advisors/registry.yaml
       task_prompt: "I need help positioning my B2B SaaS product against established competitors."
 
   - description: "vanilla baseline"
     vars:
-      system_context: ""
+      skill_prompt: ""
+      recommendation_logic: ""
+      registry: ""
       task_prompt: "I need help positioning my B2B SaaS product against established competitors. Can you recommend an advisor or expert who could help?"
