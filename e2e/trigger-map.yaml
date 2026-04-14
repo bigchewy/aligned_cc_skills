@@ -49,3 +49,19 @@ triggers:
       - skills/brainstorming/modes/business.md
     scenarios:
       - scenarios/use-skill/brainstorming-positioning.yaml
+
+  - paths:
+      - skills/_shared/contextual-recommendation.md
+    scenarios:
+      - scenarios/use-advisor/contextual-recommendation.yaml
+      - scenarios/use-framework/contextual-recommendation.yaml
+
+  - paths:
+      - skills/use-advisor/SKILL.md
+    scenarios:
+      - scenarios/use-advisor/contextual-recommendation.yaml
+
+  - paths:
+      - skills/use-framework/SKILL.md
+    scenarios:
+      - scenarios/use-framework/contextual-recommendation.yaml
