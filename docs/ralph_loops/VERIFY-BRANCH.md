@@ -69,7 +69,7 @@ npx promptfoo eval -c <scenario-path> --no-progress-bar
 Write the status file:
 
 ```bash
-cat > <main-repo-path>/.finish-status <<'STATUS'
+cat > <worktree-path>/.finish-status <<'STATUS'
 status: SUCCESS
 branch: <feature-branch>
 tests: passed
@@ -96,14 +96,14 @@ Then exit.
 
 ## Status File
 
-**Every exit path MUST write `<main-repo-path>/.finish-status`** before exiting.
+**Every exit path MUST write `<worktree-path>/.finish-status`** before exiting.
 
 On success, write the file in Step 4 above.
 
 On failure, write:
 
 ```bash
-cat > <main-repo-path>/.finish-status <<'STATUS'
+cat > <worktree-path>/.finish-status <<'STATUS'
 status: FAILED
 branch: <feature-branch>
 failed_at: <step name>

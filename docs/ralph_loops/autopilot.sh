@@ -86,7 +86,9 @@ fi
 
 LOG="$PROJECT/.autopilot-log"
 SENTINEL="$PROJECT/.autopilot-plan-path"
-STATUS="$PROJECT/.finish-status"
+# STATUS is set after WORKTREE is known (Phase 2) so it lands inside the
+# sandbox boundary.  Initialised empty here to satisfy set -u.
+STATUS=""
 
 # Log all output
 if command -v stdbuf &>/dev/null; then
@@ -228,13 +230,21 @@ if [ -f "$SENTINEL" ]; then
   SENTINEL_DESIGN_DOC="$(head -1 "$SENTINEL")"
   SENTINEL_PLAN_PATH="$(tail -1 "$SENTINEL")"
 
-  if [ "$SENTINEL_DESIGN_DOC" = "$DESIGN_DOC" ] && [ -f "$SENTINEL_PLAN_PATH" ]; then
+  # Normalize sentinel design doc path to absolute for comparison
+  # (sentinel may store relative or absolute paths depending on how it was written)
+  if [[ "$SENTINEL_DESIGN_DOC" != /* ]]; then
+    SENTINEL_DESIGN_DOC_ABS="$(cd "$PROJECT/$(dirname "$SENTINEL_DESIGN_DOC")" 2>/dev/null && pwd)/$(basename "$SENTINEL_DESIGN_DOC")"
+  else
+    SENTINEL_DESIGN_DOC_ABS="$SENTINEL_DESIGN_DOC"
+  fi
+
+  if [ "$SENTINEL_DESIGN_DOC_ABS" = "$DESIGN_DOC" ] && [ -f "$SENTINEL_PLAN_PATH" ]; then
     PLAN_FILE="$SENTINEL_PLAN_PATH"
     echo "=== Phase 1: SKIPPED (plan already exists) ==="
     echo "Plan file: $PLAN_FILE"
     echo ""
   else
-    if [ "$SENTINEL_DESIGN_DOC" != "$DESIGN_DOC" ]; then
+    if [ "$SENTINEL_DESIGN_DOC_ABS" != "$DESIGN_DOC" ]; then
       echo "NOTE: Sentinel is for a different design doc. Starting fresh."
     else
       echo "WARNING: Sentinel points to missing file: $SENTINEL_PLAN_PATH"
@@ -335,6 +345,7 @@ else
 fi
 
 WORKTREE="$WORKTREE_DIR"
+STATUS="$WORKTREE/.finish-status"
 
 # Setup: install deps, link env files, merge main
 cd "$WORKTREE"
