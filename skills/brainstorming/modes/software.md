@@ -210,9 +210,9 @@ Follow its process using the configuration and prompt templates above.
 
 ---
 
-**POST-CRITIQUE CHECKLIST — all steps below are mandatory. Do not skip any.**
+**POST-CRITIQUE CHECKLIST — 3 mandatory steps. Do not skip any. Do not stop after step 2.**
 
-**Visualization refresh (conditional):**
+**Step 1 of 3 — Visualization refresh (conditional):**
 
 If the design document was modified after the initial visualization was generated — whether by fact-check corrections, user-approved critique fixes of any severity, or structural revisions — re-dispatch the session-document-generator to regenerate the visualization from the final design. This ensures the committed HTML matches the post-critique design exactly.
 
@@ -229,9 +229,11 @@ Open the file in the browser after verification passes."
 
 Do not pause for user review — the critique has already validated the design content. The refresh ensures visual fidelity only.
 
-- Commit the design document, visual artifacts (`docs/mockups/{session-name}.html`), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
+**Step 2 of 3 — Commit:**
 
-**Next step prompt (mandatory):**
+Commit the design document, visual artifacts (`docs/mockups/{session-name}.html`), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit. **The session is NOT complete after this step — continue to step 3.**
+
+**Step 3 of 3 — Next step prompt (mandatory):**
 
 After committing the design document, present two options. **Resolve the plugin root path first:** the plugin root is two levels up from the base directory for this skill (`{base-directory}/../..`). If the base-directory line was compressed out of context, use Glob to search `$HOME` for `**/docs/ralph_loops/autopilot.sh` and use the match whose parent directory contains `.claude-plugin/plugin.json`. Store as `{plugin-root}`.
 

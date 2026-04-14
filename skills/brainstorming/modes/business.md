@@ -178,9 +178,9 @@ Follow its process using the configuration and prompt template above.
 
 ---
 
-**POST-CRITIQUE CHECKLIST — all steps below are mandatory. Do not skip any.**
+**POST-CRITIQUE CHECKLIST — 3 mandatory steps. Do not skip any. Do not stop after step 2.**
 
-**Visualization refresh (conditional):**
+**Step 1 of 3 — Visualization refresh (conditional):**
 
 If the design document was modified after the initial visualization was generated — whether by fact-check corrections, user-approved critique fixes of any severity, or structural revisions — re-dispatch the session-document-generator to regenerate the visualization from the final design.
 
@@ -197,11 +197,11 @@ Open the file in the browser after verification passes."
 
 Do not pause for user review — the critique has already validated the design content.
 
-**Post-design steps:**
+**Step 2 of 3 — Commit:**
 
-- Commit the design document, visual artifacts (`docs/mockups/{session-name}.html` if generated), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit.
+Commit the design document, visual artifacts (`docs/mockups/{session-name}.html` if generated), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit. **The session is NOT complete after this step — continue to step 3.**
 
-**Next step prompt (mandatory):**
+**Step 3 of 3 — Next step prompt (mandatory):**
 
 After committing the design document, output a ready-to-paste prompt for the next session:
 

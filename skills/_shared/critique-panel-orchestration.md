@@ -94,4 +94,9 @@ Apply any remaining fixes. Present final results to the user.
 
 ## Handoff
 
-The critique panel is a sub-process, not the end of the workflow. After presenting final results, **return to the invoking skill's mode file** and continue from where you left off. There are mandatory post-critique steps (visualization refresh, commit, next-step prompt) that must not be skipped.
+The critique panel is a sub-process, not the end of the workflow. After presenting final results:
+
+1. **Re-read the invoking skill's mode file** — the file you were handed off from (e.g., `software.md` or `business.md`). The original content has likely been compressed out of context by now. Use the Read tool to load it again. If the mode file path is not in context, use Glob to search `$HOME` for `**/brainstorming/modes/{software,business}.md` and use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+2. **Find the "POST-CRITIQUE CHECKLIST" section** and execute every numbered step in order. Announce each step before executing it (e.g., "Executing Step 1 of 3 — Visualization refresh"). Do not stop after the commit — the checklist continues after it.
+
+The checklist includes steps that feel "post-completion" (like presenting next-step options) but are mandatory parts of the brainstorming workflow. The session is not complete until the final step of the checklist has been presented to the user.
