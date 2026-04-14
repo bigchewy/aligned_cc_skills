@@ -588,7 +588,7 @@ git commit -m "chore(e2e): register contextual recommendation scenarios in promp
 
 ---
 
-### Task 8: Run existing tests to verify no regressions
+### ✅ Task 8: Run existing tests to verify no regressions
 
 **Files:**
 - None modified — verification only
@@ -614,7 +614,7 @@ git commit -m "fix(e2e): correct paths in contextual recommendation eval config"
 
 ---
 
-### Task 9: Update plugin version
+### ✅ Task 9: Update plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (version field)
