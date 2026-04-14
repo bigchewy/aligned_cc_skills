@@ -1,8 +1,3 @@
----
-name: verification-before-completion
-description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
----
-
 # Verification Before Completion
 
 ## Overview
@@ -65,11 +60,11 @@ Skip any step = lying, not verifying
 | Excuse | Reality |
 |--------|---------|
 | "Should work now" | RUN the verification |
-| "I'm confident" | Confidence ≠ evidence |
+| "I'm confident" | Confidence is not evidence |
 | "Just this once" | No exceptions |
-| "Linter passed" | Linter ≠ compiler |
+| "Linter passed" | Linter is not compiler |
 | "Agent said success" | Verify independently |
-| "I'm tired" | Exhaustion ≠ excuse |
+| "I'm tired" | Exhaustion is not excuse |
 | "Partial check is enough" | Partial proves nothing |
 | "Different words so rule doesn't apply" | Spirit over letter |
 
@@ -77,42 +72,33 @@ Skip any step = lying, not verifying
 
 **Tests:**
 ```
-✅ [Run test command] [See: 34/34 pass] "All tests pass"
-❌ "Should pass now" / "Looks correct"
+CORRECT: [Run test command] [See: 34/34 pass] "All tests pass"
+WRONG:   "Should pass now" / "Looks correct"
 ```
 
 **Regression tests (TDD Red-Green):**
 ```
-✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
-❌ "I've written a regression test" (without red-green verification)
+CORRECT: Write > Run (pass) > Revert fix > Run (MUST FAIL) > Restore > Run (pass)
+WRONG:   "I've written a regression test" (without red-green verification)
 ```
 
 **Build:**
 ```
-✅ [Run build] [See: exit 0] "Build passes"
-❌ "Linter passed" (linter doesn't check compilation)
+CORRECT: [Run build] [See: exit 0] "Build passes"
+WRONG:   "Linter passed" (linter doesn't check compilation)
 ```
 
 **Requirements:**
 ```
-✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
-❌ "Tests pass, phase complete"
+CORRECT: Re-read plan > Create checklist > Verify each > Report gaps or completion
+WRONG:   "Tests pass, phase complete"
 ```
 
 **Agent delegation:**
 ```
-✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
-❌ Trust agent report
+CORRECT: Agent reports success > Check VCS diff > Verify changes > Report actual state
+WRONG:   Trust agent report
 ```
-
-## Why This Matters
-
-From 24 failure memories:
-- your human partner said "I don't believe you" - trust broken
-- Undefined functions shipped - would crash
-- Missing requirements shipped - incomplete features
-- Time wasted on false completion → redirect → rework
-- Violates: "Honesty is a core value. If you lie, you'll be replaced."
 
 ## When To Apply
 
@@ -123,17 +109,3 @@ From 24 failure memories:
 - Committing, PR creation, task completion
 - Moving to next task
 - Delegating to agents
-
-**Rule applies to:**
-- Exact phrases
-- Paraphrases and synonyms
-- Implications of success
-- ANY communication suggesting completion/correctness
-
-## The Bottom Line
-
-**No shortcuts for verification.**
-
-Run the command. Read the output. THEN claim the result.
-
-This is non-negotiable.

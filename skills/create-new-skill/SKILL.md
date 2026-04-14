@@ -15,7 +15,7 @@ You write test cases (pressure scenarios with subagents), watch them fail (basel
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
 
-**REQUIRED BACKGROUND:** You MUST understand test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
+**REQUIRED BACKGROUND:** This skill adapts TDD's RED-GREEN-REFACTOR cycle to documentation — run baseline without the skill, write the skill, verify it closes gaps.
 
 **Official guidance:** For Anthropic's official skill authoring best practices, see anthropic-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
 
@@ -280,10 +280,10 @@ wc -w skills/path/SKILL.md
 **When writing documentation that references other skills:**
 
 Use skill name only, with explicit requirement markers:
-- ✅ Good: `**REQUIRED SUB-SKILL:** Use test-driven-development`
-- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand root-cause-analysis`
-- ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
-- ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
+- ✅ Good: `**REQUIRED SUB-SKILL:** Use root-cause-analysis`
+- ✅ Good: `**REQUIRED REFERENCE:** Read skills/_shared/verification-checklist.md`
+- ❌ Bad: `See skills/debugging/root-cause-analysis` (unclear if required)
+- ❌ Bad: `@skills/root-cause-analysis/SKILL.md` (force-loads, burns context)
 
 **Why no @ links:** `@` syntax force-loads files immediately, consuming 200k+ context before you need them.
 
@@ -399,7 +399,7 @@ Edit skill without testing? Same violation.
 - Don't "adapt" while running tests
 - Delete means delete
 
-**REQUIRED BACKGROUND:** The test-driven-development skill explains why this matters. Same principles apply to documentation.
+**Why this matters:** TDD's RED-GREEN-REFACTOR prevents rationalization. Same principles apply to documentation.
 
 ## Testing All Skill Types
 
@@ -407,7 +407,7 @@ Different skill types need different test approaches:
 
 ### Discipline-Enforcing Skills (rules/requirements)
 
-**Examples:** TDD, verification-before-completion, designing-before-coding
+**Examples:** verification checklist (`skills/_shared/verification-checklist.md`), designing-before-coding
 
 **Test with:**
 - Academic questions: Do they understand the rules?

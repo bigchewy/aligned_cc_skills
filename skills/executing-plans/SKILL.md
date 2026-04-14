@@ -44,9 +44,9 @@ For each task:
 3. Run verifications as specified
 4. Mark as completed
 
-**TDD discipline:** Every task follows RED-GREEN-REFACTOR. Write the failing test first, verify it fails, write minimal implementation, verify it passes. Reference: `test-driven-development` skill. If a task skips TDD steps, STOP and follow the TDD process before continuing.
+**TDD discipline:** Every task follows RED-GREEN-REFACTOR. Write the failing test first, verify it fails, write minimal implementation, verify it passes. If a task skips TDD steps, STOP and follow the TDD process before continuing.
 
-**LLM surface check:** If the task involved changes to advisor prompts, framework prompts, prompt builders, or personalization logic, run the project's eval command. Check `e2e/trigger-map.yaml` for file-to-scenario mappings. If a mapping exists, run `npx promptfoo eval -c <scenario-path> --no-progress-bar` from the `e2e/` directory. Don't wait until all tasks are done — catching regressions early is cheaper than debugging across multiple steps. If evals fail, run the `/aligned:eval-failure-triage` skill to classify and fix before continuing.
+**LLM surface check:** If the task involved changes to advisor prompts, framework prompts, prompt builders, or personalization logic, run the project's eval command. Check `e2e/trigger-map.yaml` for file-to-scenario mappings. If a mapping exists, run `npx promptfoo eval -c <scenario-path> --no-progress-bar` from the `e2e/` directory. Don't wait until all tasks are done — catching regressions early is cheaper than debugging across multiple steps. If evals fail, classify the failure (prompt issue, eval calibration, or model variance) and fix before continuing.
 
 ### Step 3: Report
 When Build Tasks are complete:
@@ -94,9 +94,9 @@ Report what was implemented and instruct the user to run `/aligned:finishing-a-d
 
 > **For large plans:** Consider using the Ralph loop instead. Each task runs in a fresh context, avoiding quality degradation from context window bloat. The writing-plans skill generates the correct `run-ralph.sh` command with resolved paths. After the loop completes, run `/aligned:finishing-a-development-branch` manually.
 
-**Required sub-skills:**
-- **test-driven-development** — RED-GREEN-REFACTOR cycle for every task
-- **verification-before-completion** — verify claims with fresh evidence before marking tasks complete
+**Required references — Read these before starting:**
+- Read **`skills/_shared/testing-anti-patterns.md`** — error path test requirements for mocked code
+- Read **`skills/_shared/verification-checklist.md`** — verify claims with fresh evidence before marking tasks complete
 
 ## When to Stop and Ask for Help
 

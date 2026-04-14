@@ -196,7 +196,7 @@ Minimum scenario should include:
 - Voice fingerprint with signature phrases and anti-patterns
 - Framework-specific terminology
 
-Run the scenario to verify baseline quality. If it fails, dispatch the `eval-failure-triage` agent via Task tool to classify and fix. First-run failures are common — usually eval calibration.
+Run the scenario to verify baseline quality. If it fails, classify the failure (prompt issue, eval calibration, or model variance) and fix. First-run failures are common — usually eval calibration.
 
 ### 7. Register Framework for Discovery
 

@@ -235,7 +235,7 @@ You MUST complete each phase before proceeding to the next.
 **Fix the root cause, not the symptom:**
 
 1. **Create Failing Test Case**
-   - (Software) Simplest possible reproduction — use the `test-driven-development` skill for writing proper failing tests
+   - (Software) Simplest possible reproduction — write a failing test that captures the bug
    - (Business) Define measurable success criteria — what specifically needs to be true for this to be resolved?
    - MUST have before fixing
 
@@ -404,9 +404,9 @@ These technique files are part of root-cause analysis and available in this dire
 
 Business diagnosis uses the same phases but does not require these technique files.
 
-**Related skills:**
-- **test-driven-development** — For creating failing test case (Phase 4, Step 1)
-- **verification-before-completion** — Verify fix worked before claiming success
+**Related references — Read when relevant:**
+- Read **`skills/_shared/testing-anti-patterns.md`** — Error path test requirements for mocked code
+- Read **`skills/_shared/verification-checklist.md`** — Verify fix worked before claiming success
 
 ## Real-World Impact
 

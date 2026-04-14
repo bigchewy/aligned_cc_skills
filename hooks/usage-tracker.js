@@ -40,7 +40,7 @@ function processEvent(data) {
     };
   }
 
-  if (tool === 'Task') {
+  if (tool === 'Task' || tool === 'Agent') {
     return {
       ts: new Date().toISOString(),
       sid: data.session_id,

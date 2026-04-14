@@ -55,7 +55,7 @@ For each changed LLM surface file:
 
 **If gaps found but minor** (existing scenarios need keyword/threshold updates):
 - Report the gaps as a checklist
-- Offer to auto-fix calibration issues inline (category (c) fixes from `/aligned:eval-failure-triage`)
+- Offer to auto-fix calibration issues inline (keyword/threshold adjustments)
 
 **If gaps found and substantial** (new scenarios needed):
 - Report what's missing with specifics (e.g., "New advisor added in commit abc123, no eval scenario exists")
@@ -71,7 +71,7 @@ After the coverage check, if new LLM surface patterns were added (new advisor ty
 
 1. **Generate real examples immediately.** Read the new prompt/framework, run a single eval scenario against it (or make a direct API call), and use the actual output to write a concrete classification example.
 
-2. **Classify the example.** Apply the decision tree from `{base-directory}/../eval-failure-triage/references/classification-patterns.md` (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load).
+2. **Classify the example.** Determine if the failure is (a) a prompt issue, (b) model variance, or (c) eval calibration (wrong keywords/thresholds).
 
 3. **Write the pattern entry** to the project's classification patterns file (if it exists, typically at `e2e/references/classification-patterns.md`).
 
@@ -83,6 +83,5 @@ When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-forma
 
 ## Integration
 
-- **eval-failure-triage** — Diagnoses failures this skill discovers
 - **kickstart** — Scaffolds the `e2e/` infrastructure this skill audits
 - **executing-plans** — Implements eval scenarios when gaps are substantial

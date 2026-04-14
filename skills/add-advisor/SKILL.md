@@ -193,7 +193,7 @@ Minimum scenario should include:
 - Evaluation dimensions (flow, personalization, voice)
 - Voice fingerprint with signature phrases and anti-patterns
 
-Run the scenario to verify baseline quality. If it fails, dispatch the `eval-failure-triage` agent via Task tool to classify and fix before continuing. First-run failures are common and usually eval calibration — adjust keywords and fingerprints before changing the voice prompt.
+Run the scenario to verify baseline quality. If it fails, classify the failure (prompt issue, eval calibration, or model variance) and fix before continuing. First-run failures are common and usually eval calibration — adjust keywords and fingerprints before changing the voice prompt.
 
 ### 8. Register Advisor for Discovery
 

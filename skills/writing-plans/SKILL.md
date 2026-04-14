@@ -293,7 +293,7 @@ BEFORE completing any test spec that uses mocks:
   IF error path test is missing:
     STOP - Add it to the plan before proceeding
 
-  Reference: skills/test-driven-development/testing-anti-patterns.md
+  Reference: skills/_shared/testing-anti-patterns.md
              See Anti-Pattern 6: Mocking Away Error Paths
 ```
 

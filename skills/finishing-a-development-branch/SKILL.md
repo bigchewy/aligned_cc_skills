@@ -11,7 +11,7 @@ Guide completion of development work by presenting clear options and handling ch
 
 **Core principle:** Deployment audit → Verify tests → Verify build → Present options → Execute choice → Clean up → Archive plans → Completion summary.
 
-**Required sub-skill:** verification-before-completion — every success claim requires fresh evidence in the current message.
+**Required reference:** Read `skills/_shared/verification-checklist.md` — every success claim requires fresh evidence in the current message.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
@@ -187,7 +187,7 @@ Run from the `e2e/` directory (use the Bash tool's working directory, not `cd e2
 **7. Interpret results:**
 - All exit 0, no warnings → pass, continue silently
 - Exit 0 with warnings → continue with warning shown
-- Any exit 1 → hard stop, show scorecard, invoke `/aligned:eval-failure-triage`
+- Any exit 1 → hard stop, show scorecard, classify failure (prompt issue, eval calibration, or model variance) and fix before continuing
 
 **8. Completion summary entry:**
 

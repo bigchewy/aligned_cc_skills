@@ -192,7 +192,6 @@ Generate a project-specific CLAUDE.md using the template for the selected `proje
 - `/aligned:finishing-a-development-branch` — to complete work
 - `/aligned:root-cause-analysis` — for root cause investigation
 - `/aligned:create-design-principles` — to define design direction
-- `/aligned:eval-failure-triage` — when evals fail
 - `/aligned:eval-audit` — to check eval coverage
 ```
 
@@ -336,11 +335,8 @@ Check whether `~/.claude/settings.json` already contains aligned skill permissio
       "Skill(aligned:finishing-a-development-branch)",
       "Skill(aligned:root-cause-analysis)",
       "Skill(aligned:using-git-worktrees)",
-      "Skill(aligned:eval-failure-triage)",
       "Skill(aligned:eval-audit)",
       "Skill(aligned:kickstart)",
-      "Skill(aligned:test-driven-development)",
-      "Skill(aligned:verification-before-completion)",
       "Skill(aligned:use-advisor)",
       "Skill(aligned:use-framework)",
       "Skill(aligned:kanban-resolve)",

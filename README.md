@@ -95,10 +95,7 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier). Secondary entry point for users with existing specs |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
-| test-driven-development | Methodology | (invoked by pipeline) | TDD enforcement with error path tests |
-| verification-before-completion | Methodology | (invoked by pipeline) | Evidence before assertions |
 | root-cause-analysis | Problem-solving | `/aligned:root-cause-analysis` | Root cause investigation for software and business problems with optional multi-agent mode |
-| eval-failure-triage | Problem-solving | `/aligned:eval-failure-triage` | Classify LLM eval failures before fixing |
 | eval-audit | Problem-solving | `/aligned:eval-audit` | Eval coverage auditor with hook trigger |
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
