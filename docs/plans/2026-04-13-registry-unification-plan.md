@@ -295,7 +295,8 @@ git commit -m "feat: generate advisors/registry.yaml from registry.md"
 
 ---
 
-### Task 3: Write Framework Registry Generation Script
+### ✅ Task 3: Write Framework Registry Generation Script
+> NOTE: Fixed regex bug in plan's script — original `[-–—.]` character class matched hyphens inside framework names (e.g., "5-Step" split at the hyphen). Replaced with two-pass approach: first try separator match (`\s+[-–—]\s+`), then fall back to period-terminated. 21 framework names are longer than ideal due to varied prompt formats — Task 4 LLM pass will clean these up.
 
 **Files:**
 - Create: `scripts/generate-framework-registry.mjs`
@@ -615,7 +616,7 @@ git commit -m "feat: add framework registry generation script (Pass 1 determinis
 
 ---
 
-### Task 4: Run LLM Classification and Finalize Framework Registry
+### ✅ Task 4: Run LLM Classification and Finalize Framework Registry
 
 **Files:**
 - Create: `frameworks/registry.yaml` (renamed from draft)
