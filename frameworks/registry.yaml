@@ -993,6 +993,15 @@ frameworks:
     domains: [orthostatic-hypotension, treatment-algorithm, pharmacotherapy, mechanism-based]
     use_when: "someone with orthostatic hypotension needs a stepwise treatment approach matched to their residual autonomic function"
 
+  - id: storybrand-homepage
+    name: "StoryBrand Homepage Wireframe"
+    advisor: donald-miller
+    purpose: "building a homepage that passes the grunt test using story structure"
+    category: marketing
+    domains: [homepage, conversion, storytelling, copywriting]
+    use_when: "someone needs to build or rewrite a homepage that turns visitors into customers by following story structure"
+    helpful_documents: ["positioning statement", "brand voice guide", "strategic narrative"]
+
   - id: strategic-narrative
     name: "your Five-Element Strategic Narrative framework. This is the methodology behind \"The Greatest Sales Deck I've Ever Seen\""
     advisor: andy-raskin
