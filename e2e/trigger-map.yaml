@@ -19,6 +19,17 @@ triggers:
       - scenarios/use-framework/5-components-positioning.yaml
 
   - paths:
+      - advisors/registry.yaml
+    scenarios:
+      - scenarios/persona-panel/pricing-page.yaml
+      - scenarios/use-advisor/april-dunford-blog-critique.yaml
+
+  - paths:
+      - frameworks/registry.yaml
+    scenarios:
+      - scenarios/use-framework/5-components-positioning.yaml
+
+  - paths:
       - skills/persona-panel/SKILL.md
     scenarios:
       - scenarios/persona-panel/pricing-page.yaml

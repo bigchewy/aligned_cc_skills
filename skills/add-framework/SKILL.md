@@ -155,12 +155,31 @@ When writing prompt.md, examples.md, and anti-examples.md, follow these craft gu
 
 ### 5. Add Registry Entry
 
-> **Conditional:** Only run this step if a framework registry file was detected in Step 0. If not found, print: "Skipping registry entry — no registry found (lightweight mode)."
+> **Conditional:** Only run this step if `frameworks/registry.yaml` exists in the plugin directory. If not found, print: "Skipping registry entry — no framework registry found (lightweight mode)."
 
-Add the framework to the project's registry file (the path and format vary by project — check CLAUDE.md for the registry location and entry format).
+Append one entry to the `frameworks` list in `frameworks/registry.yaml`:
 
-**If no registry format is documented**, create a simple entry with:
-- id, displayName, advisors, checkIn flag, description
+```yaml
+  - id: {framework-slug}
+    name: "{framework-display-name}"
+    advisor: {advisor-slug}
+    purpose: "{purpose from first line of prompt.md}"
+    category: {category}
+    domains: [{domains}]
+    use_when: "{trigger phrase}"
+    required_documents: [{list from frontmatter, or omit if empty}]
+    helpful_documents: [{list from frontmatter, or omit if empty}]
+```
+
+Derive field values:
+- **id:** The framework's directory name (kebab-case slug)
+- **name, advisor, purpose:** Parsed from the first line of `prompt.md` (`You are {Advisor}, guiding someone through {Name} - {purpose}.`)
+- **category:** Ask the user, suggesting from: positioning, startup, content-strategy, social-media, pricing, growth, podcasting, negotiation, leadership, strategy, psychology, health-autonomic, health-movement, health-fitness, conversion, onboarding
+- **domains:** 2-5 expertise tags, derived from the framework's content
+- **use_when:** Natural language trigger phrase for when to use this framework
+- **required_documents, helpful_documents:** From `prompt.md` YAML frontmatter; omit keys if lists are empty
+
+**Post-append validation:** After appending, parse the full `frameworks/registry.yaml` file. If YAML parsing fails, revert the append (restore the file from git) and report the error. One bad entry must not corrupt the registry for all consumers.
 
 ### 6. Create Eval Scenario
 

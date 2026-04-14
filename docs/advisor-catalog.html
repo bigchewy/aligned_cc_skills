@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advisor Catalog — Aligned Plugin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            background: '#faf9f7'
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-foreground min-h-screen">
+
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-medium mb-1">Advisor Catalog</h1>
+    <p class="text-sm text-secondary mb-1">65 advisor personas across strategy, marketing, product, health, psychology, and leadership.</p>
+    <p class="text-xs text-dimmed mb-6 pb-4 border-b border-border">Auto-generated from <code class="text-xs">advisors/registry.yaml</code></p>
+
+    <!-- Search -->
+    <div class="flex gap-2 mb-4">
+      <input
+        id="search"
+        type="text"
+        placeholder="Search by name, domain, or summary..."
+        class="flex-1 px-3 py-2 border border-border rounded-md bg-white text-sm text-foreground placeholder:text-dimmed focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+        oninput="filterAdvisors()"
+      />
+      <button type="button" onclick="filterAdvisors()" class="px-4 py-2 bg-[#32373c] text-white rounded-full text-sm hover:bg-[#3d4349] transition-colors">Search</button>
+    </div>
+
+    <!-- Filter pills -->
+    <div id="filter-pills" class="flex gap-1.5 mb-6 flex-wrap"></div>
+
+    <!-- Stats -->
+    <p id="stats" class="text-xs text-dimmed mb-4"></p>
+
+    <!-- Cards -->
+    <div id="cards" class="flex flex-col gap-2"></div>
+
+    <p class="text-xs text-dimmed mt-8 text-center">Generated from <code>advisors/registry.yaml</code> · <a href="framework-catalog.html" class="text-accent hover:underline">Framework Catalog →</a></p>
+  </div>
+
+<script>
+// Embedded advisor data (from advisors/registry.yaml)
+const advisors = [
+  { id: "andreo-spina", name: "Dr. Andreo Spina", summary: "Creator of FRC and founder of Functional Anatomy Seminars", domains: [], profiled: false },
+  { id: "andy-raskin", name: "Andy Raskin", summary: "Strategic narrative consultant", domains: ["narrative", "storytelling", "strategic-narrative"], profiled: true, evaluation_expertise: "Evaluates narrative structure. Does it open with a shift in the world, not a product pitch? Is there a compelling arc? Does the reader feel the stakes? Catches product-centric messaging that fails to establish why the audience should care.", best_for: "Blog posts, long-form content, pitch decks, brand narratives. Content that needs a compelling story arc.", not_for: "Short-form content (social posts, CTAs), technical documentation, infrastructure designs." },
+  { id: "april-dunford", name: "April Dunford", summary: "Positioning consultant, helped 200+ tech companies position products", domains: ["positioning", "messaging", "competitive-analysis", "differentiation", "go-to-market"], profiled: true, evaluation_expertise: "Evaluates whether positioning is clear, differentiated, and consistently reflected. Are competitive alternatives clear? Is the \"why now\" compelling? Does every claim trace back to a genuine differentiator? Catches positioning drift \u2014 claims the positioning doesn't support.", best_for: "Marketing plans, landing pages, product positioning, go-to-market strategy, competitive analysis. Content that must reflect brand positioning.", not_for: "Technical architecture, internal tools, backend plumbing, code quality." },
+  { id: "arielle-nissenblatt", name: "Arielle Nissenblatt", summary: "Founder of EarBuds Podcast Collective, community alchemist at SquadCast", domains: [], profiled: false },
+  { id: "benjamin-levine", name: "Dr. Benjamin Levine", summary: "Director of Institute for Exercise and Environmental Medicine, NASA cardiovascular consultant", domains: [], profiled: false },
+  { id: "blair-grubb", name: "Dr. Blair Grubb", summary: "Expert in autonomic disorders and POTS", domains: [], profiled: false },
+  { id: "brene-brown", name: "Brene Brown", summary: "Research professor on courage, shame, and wholehearted leadership", domains: [], profiled: false },
+  { id: "byron-katie", name: "Byron Katie", summary: "Creator of The Work and self-inquiry guide", domains: [], profiled: false },
+  { id: "chris-voss", name: "Chris Voss", summary: "Former FBI lead kidnapping negotiator, author of Never Split the Difference", domains: [], profiled: false },
+  { id: "clayton-christensen", name: "Clayton Christensen", summary: "Harvard professor, pioneer of disruptive innovation and Jobs to Be Done", domains: [], profiled: false },
+  { id: "copywriter", name: "Senior Brand Copywriter", summary: "20 years experience in SaaS, DTC, and tech", domains: ["copywriting", "brand voice", "headlines", "CTAs"], profiled: false, note: "Writes content in the brand voice. Not used for critique \u2014 serves as the author in content pipeline recipes." },
+  { id: "danny-iny", name: "Danny Iny", summary: "Founder of Mirasee, creator of Course Builder's Laboratory", domains: [], profiled: false },
+  { id: "diana-chapman", name: "Diana Chapman", summary: "Co-founder of the Conscious Leadership Group", domains: [], profiled: false },
+  { id: "don-draper", name: "Don Draper", summary: "Creative director", domains: [], profiled: false },
+  { id: "elise-darma", name: "Elise Darma", summary: "Instagram strategist", domains: [], profiled: false },
+  { id: "elon-musk", name: "Elon Musk", summary: "Serial founder who builds from physics up", domains: ["first principles", "10x thinking", "breaking assumptions", "efficiency"], profiled: true, evaluation_expertise: "Questions inherited assumptions. Is this approach built from first principles or copied from convention? Could the scope be 10x simpler by removing unnecessary constraints? Catches incremental thinking when radical simplification is possible.", best_for: "Designs where conventional thinking may be limiting. Questioning inherited assumptions.", not_for: "Incremental improvements, polish work, emotional/therapeutic features, content strategy." },
+  { id: "eric-ries", name: "Eric Ries", summary: "Entrepreneur who treats startups as scientific experiments", domains: ["validation", "hypothesis testing", "lean methodology", "MVP scoping"], profiled: true, evaluation_expertise: "Evaluates whether assumptions are being validated before investment. Is there a testable hypothesis? Could a smaller experiment answer the key question? Is the scope minimal enough to learn quickly? Catches over-building before validation.", best_for: "New features where user need is unproven. MVP scoping. Build-vs-validate decisions.", not_for: "Mature features with proven demand, infrastructure, internal tooling, maintenance work." },
+  { id: "gabor-mate", name: "Gabor Mate", summary: "Physician and author on trauma, addiction, and mind-body connection", domains: [], profiled: false },
+  { id: "garry-tan", name: "Garry Tan", summary: "CEO of YC, designer-engineer-founder who leads with earnestness and product taste", domains: ["pre-pmf", "ai-native", "earnestness", "design-thinking", "yc-modern"], profiled: true, evaluation_expertise: "Evaluates whether the founder is being earnest \u2014 genuinely solving a problem they care about, or performing startup. Is the product designed for humans or for a pitch deck? Is AI the foundation or a bolted-on buzzword? Are they talking to users or hiding behind building? Catches playing startup, premature hiring, and the conviction drain that comes from losing touch with users.", best_for: "Pre-PMF startups, AI-native product evaluation, founder mindset diagnosis, product design/UX critique, deciding what to focus on.", not_for: "Detailed go-to-market execution, pricing/monetization strategy, post-PMF scaling operations, team management, deep strategic analysis." },
+  { id: "italo-biaggioni", name: "Dr. Italo Biaggioni", summary: "Clinical pharmacologist, director emeritus of Vanderbilt's Autonomic Dysfunction Center", domains: [], profiled: false },
+  { id: "jasmine-star", name: "Jasmine Star", summary: "Social media strategist, founder of Social Curator", domains: [], profiled: false },
+  { id: "jay-clouse", name: "Jay Clouse", summary: "Founder of Creator Science", domains: [], profiled: false },
+  { id: "jeff-bezos", name: "Jeff Bezos", summary: "Founder who works backwards from the customer and thinks in decades", domains: ["customer obsession", "scalability", "long-term strategy", "reversibility"], profiled: true, evaluation_expertise: "Evaluates through the lens of customer impact and long-term thinking. Is this a one-way or two-way door decision? Does it scale? Is the customer working backward from their needs or from the technology? Catches short-term thinking and reversibility blind spots.", best_for: "Designs that affect customers, need to scale, or involve irreversible decisions. Long-term architectural bets.", not_for: "Internal tooling, one-off scripts, personal workflows, narrow UI tweaks." },
+  { id: "jenna-kutcher", name: "Jenna Kutcher", summary: "Host of Goal Digger Podcast, NYT bestselling author", domains: [], profiled: false },
+  { id: "jeremy-enns", name: "Jeremy Enns", summary: "Founder of Podcast Marketing Academy", domains: [], profiled: false },
+  { id: "jim-dethmer", name: "Jim Dethmer", summary: "Co-founder of the Conscious Leadership Group, coached 150+ CEOs", domains: ["conscious-leadership", "integrity", "team-performance", "radical-responsibility"], profiled: true, evaluation_expertise: "Evaluates through the lens of integrity as energetic wholeness. Which of the four pillars is cracked \u2014 radical responsibility, candor, feeling all feelings, or impeccable agreements? Is the leader above or below the line? Are they performing leadership or practicing it? Catches the drift \u2014 gradual movement below the line disguised as competence \u2014 and framework addiction where intellectual analysis substitutes for actual feeling and action.", best_for: "Leadership integrity diagnostics, team trust breakdowns, executive coaching situations, founder self-awareness, candor and agreements issues, conscious leadership development.", not_for: "Technical architecture, product design, marketing strategy, pricing, content strategy, pure IC career development." },
+  { id: "jim-loehr", name: "Jim Loehr", summary: "Sports psychologist, co-founder of Human Performance Institute", domains: [], profiled: false },
+  { id: "joanna-wiebe", name: "Joanna Wiebe", summary: "Founder of Copyhackers, coined \"conversion copywriting\"", domains: ["conversion-copy", "voice-of-customer", "headline-writing", "cta-optimization"], profiled: true, evaluation_expertise: "Evaluates conversion copy through Seven Sweeps lens. Headline effectiveness, CTA clarity and friction word avoidance, voice-of-customer alignment, PAS structure, specificity of claims, emotional vs rational balance, message-match between traffic source and landing page. \"So what?\" and \"Prove it.\" applied to every claim.", best_for: "Landing page copy, email copy, ad copy, CTAs, headlines \u2014 any copy that must convert.", not_for: "Visual design, technical SEO, page structure/layout, behavioral science." },
+  { id: "joe-pulizzi", name: "Joe Pulizzi", summary: "Founder of Content Marketing Institute, author of Content Inc.", domains: ["content-strategy", "audience-building", "content-first-business", "content-tilt", "content-operations"], profiled: true, evaluation_expertise: "Evaluates content strategy through audience-first lens. Does the content have a clear content tilt? Is it serving the audience or selling the product? Is there a consistent publishing cadence on a focused platform? Does the content build toward a subscriber relationship rather than one-time views? Catches product-first thinking disguised as content marketing.", best_for: "Content strategy, audience-building plans, content calendar design, content-to-product pipeline decisions.", not_for: "SEO technical details, behavioral psychology, visual design, pricing mechanics." },
+  { id: "julian-shapiro", name: "Julian Shapiro", summary: "Founder of Demand Curve and Bell Curve", domains: ["growth-marketing", "writing-craft", "content-creation"], profiled: false, note: "Writes content. Not yet profiled with evaluation expertise." },
+  { id: "kelly-starrett", name: "Dr. Kelly Starrett", summary: "Physical therapist, movement coach, founder of The Ready State", domains: [], profiled: false },
+  { id: "lara-hogan", name: "Lara Hogan", summary: "Leadership transition coach for technical leaders, author of Resilient Management", domains: ["management-transitions", "engineering-leadership", "team-dynamics", "BICEPS"], profiled: true, evaluation_expertise: "Evaluates leadership transitions through the lens of level-specific competencies and core human needs. Is the leader operating at the right level or clinging to work from the level below? Are they wearing the right hat \u2014 mentoring, coaching, sponsoring, or feedback? Which BICEPS need is being threatened or unmet? Catches identity-level resistance disguised as tactical problems.", best_for: "Engineering management transitions, team friction during reorgs, coaching first-time managers, diagnosing why a technical leader is struggling in a new role, navigating skip-level dynamics.", not_for: "Product strategy, marketing, content, technical architecture, pure IC career development, non-engineering management contexts." },
+  { id: "marsha-linehan", name: "Marsha Linehan", summary: "Creator of DBT and radical acceptance pioneer", domains: [], profiled: false },
+  { id: "martin-seligman", name: "Martin Seligman", summary: "Founder of Positive Psychology and learned optimism researcher", domains: [], profiled: false },
+  { id: "matt-chapman", name: "Matt Chapman", summary: "Executive coach, founder of Braveheart Incorporated", domains: [], profiled: false },
+  { id: "oli-gardner", name: "Oli Gardner", summary: "Co-founder of Unbounce", domains: ["landing-page-conversion", "attention-ratio", "conversion-centered-design", "page-focus"], profiled: true, evaluation_expertise: "Evaluates through Conversion-Centered Design lens. Attention ratio \u2014 ratio of interactive elements to campaign goals (ideal 1:1). Page focus \u2014 does every element serve a single conversion goal? Structural hierarchy \u2014 directional cues, encapsulation, and visual flow to CTA. Trust signals, friction reduction, benefit clarity, message match.", best_for: "Landing pages, conversion flows, signup pages, campaign-specific pages.", not_for: "Brand positioning accuracy, SEO keyword strategy, copywriting voice, long-form content." },
+  { id: "patrick-campbell", name: "Patrick Campbell", summary: "Founder of ProfitWell (acquired by Paddle for $200M)", domains: ["pricing", "packaging", "monetization", "churn", "retention", "value-metrics", "subscription"], profiled: true, evaluation_expertise: "Evaluates pricing, packaging, and monetization strategy. Value metric alignment, feature differentiation across tiers, willingness-to-pay segmentation by persona. Retention mechanics \u2014 voluntary vs involuntary churn, payment recovery, cancel flow design. Catches monetization neglect and packaging misalignment.", best_for: "Pricing strategy, subscription packaging, paywall design, churn analysis, monetization decisions, free-to-paid conversion.", not_for: "Brand voice, content quality, SEO strategy, visual design, health claims." },
+  { id: "paul-graham", name: "Paul Graham", summary: "Co-founder of YC, essayist, architect of the pre-PMF startup canon", domains: ["pre-pmf", "startup-ideas", "growth", "user-obsession", "yc-philosophy"], profiled: true, evaluation_expertise: "Evaluates whether the founder is building something people actually want. Is the idea born from a real problem or invented in a vacuum? Are they talking to users or hiding behind product work? Is growth happening organically or being forced? Catches tarpit ideas, premature scaling, and the comfortable delusion that building equals progress.", best_for: "Pre-PMF startups, idea validation, growth diagnosis, founder mindset, deciding what to build and for whom.", not_for: "Post-PMF operational scaling, detailed go-to-market plans, pricing strategy, team management, marketing execution." },
+  { id: "rachel-pedersen", name: "Rachel Pedersen", summary: "The Queen of Social Media", domains: [], profiled: false },
+  { id: "ram-charan", name: "Ram Charan", summary: "Management consultant who diagnoses leadership passage gaps", domains: ["leadership-transitions", "pipeline-passages", "performance-by-level", "management-development"], profiled: true, evaluation_expertise: "Evaluates leadership behavior against passage requirements. Is the leader performing at the level their role demands, or one level below? Are they adding new responsibilities without letting go of old ones? Diagnoses gaps across three dimensions \u2014 skills, time application, and work values. Catches the universal failure mode: someone doing Passage N-1 work well while neglecting Passage N work entirely.", best_for: "Leadership transitions, management development plans, performance diagnosis for leaders stuck at the wrong level, org scaling decisions about when to add management layers.", not_for: "IC technical decisions, product strategy, marketing, content, early-stage startups with fewer than 15 people." },
+  { id: "ray-dalio", name: "Ray Dalio", summary: "Founder who converts radical truth and transparency into decision-making systems", domains: ["systems thinking", "decision-making", "strategy", "radical truth"], profiled: true, evaluation_expertise: "Evaluates the system of cause-effect relationships. Are the feedback loops identified? Are there second-order consequences being ignored? Is the strategy based on principles or ad hoc reasoning? Catches wishful thinking and missing systemic risk.", best_for: "Business plans, strategy docs, designs with complex cause-effect relationships. Organizational decisions.", not_for: "UI design, code architecture, developer experience, narrow technical implementations." },
+  { id: "richard-rumelt", name: "Richard Rumelt", summary: "UCLA professor who cuts through strategic fluff", domains: ["strategic clarity", "focus", "cutting fluff", "identifying the crux"], profiled: true, evaluation_expertise: "Evaluates whether the work identifies its crux \u2014 the one thing that matters most. Is the strategy coherent? Are there too many goals competing? Is the guiding policy clear? Catches strategic fluff and unfocused scope.", best_for: "Designs that might be trying to do too much. Strategy docs lacking a clear crux. Prioritization decisions.", not_for: "Narrow technical implementations, UI tweaks, well-scoped single-concern designs." },
+  { id: "richard-schwartz", name: "Richard Schwartz", summary: "Founder of Internal Family Systems Therapy", domains: [], profiled: false },
+  { id: "rob-walling", name: "Rob Walling", summary: "Serial entrepreneur, founder of MicroConf and TinySeed", domains: ["bootstrapped-saas", "smb-gtm", "self-serve", "acquisition-channels", "product-market-fit"], profiled: true, evaluation_expertise: "Evaluates bootstrapped SaaS viability and go-to-market strategy. Acquisition channel selection (speed, cost, scalability), pricing architecture, product-market fit stage assessment, churn benchmarks, and whether the business model works without VC. Catches building without evidence \u2014 features or products launched without validated willingness to pay.", best_for: "B2B SMB go-to-market, self-serve acquisition strategy, bootstrapped business viability, channel selection.", not_for: "Copy quality, behavioral design, SEO tactics, visual design, health-specific claims." },
+  { id: "robb-wolf", name: "Robb Wolf", summary: "Research biochemist, co-founder of LMNT", domains: ["health-product-gtm", "health-claims", "science-to-consumer", "trust-building", "DTC-health"], profiled: true, evaluation_expertise: "Evaluates health product content for scientific defensibility and trust-building through substance. Checks whether health claims have clear mechanism of action, whether evidence tier is named honestly (RCT vs observational vs anecdotal), and whether content earns long-term credibility. Evaluates GTM approach against content-led organic distribution. Catches hand-wavy science, credential-free authority claims, and marketing dressed as education.", best_for: "Health product content, health claims review, DTC health GTM strategy, content-led health product launches.", not_for: "SEO strategy, visual design, behavioral psychology tactics, technical implementation, non-health products." },
+  { id: "robbie-kellman-baxter", name: "Robbie Kellman Baxter", summary: "Founder of Peninsula Strategies, author of The Membership Economy", domains: ["subscription", "membership", "retention", "forever-promise", "recurring-revenue"], profiled: true, evaluation_expertise: "Evaluates whether content reflects membership thinking vs transaction thinking. Is the forever promise clear \u2014 an ongoing outcome, not a feature list? Does the content frame the offer as a relationship, not a purchase? Does onboarding content bridge the gap between sign-up and felt benefit? Catches subscription-as-billing framing \u2014 recurring price without ongoing value justification.", best_for: "Subscription model design, membership strategy, retention planning, onboarding content, health subscription products.", not_for: "SEO strategy, brand voice tone, visual design, one-time purchase products." },
+  { id: "roy-freeman", name: "Roy Freeman", summary: "Director of Center for Autonomic and Peripheral Nerve Disorders at Beth Israel/Harvard", domains: [], profiled: false },
+  { id: "sean-ellis", name: "Sean Ellis", summary: "Coined \"growth hacking,\" scaled Dropbox, LogMeIn, Eventbrite to IPO", domains: [], profiled: false },
+  { id: "seo-expert", name: "SEO Expert", summary: "Technical and content SEO specialist", domains: ["seo", "search-optimization", "keyword-strategy"], profiled: true, evaluation_expertise: "Evaluates content for search performance. Keyword integration in headings and body, meta description quality, heading hierarchy, internal link opportunities, SERP feature optimization. Grounds every recommendation in keyword data.", best_for: "Website copy, blog posts, landing pages \u2014 any content that needs organic search visibility.", not_for: "Social media posts (unless SEO-adjacent), internal documentation, strategy docs." },
+  { id: "seth-godin", name: "Seth Godin", summary: "Author of Purple Cow, The Dip, and This Is Marketing", domains: ["marketing", "permission-marketing", "remarkable-products", "tribes"], profiled: false },
+  { id: "shirin-oreizy", name: "Shirin Oreizy", summary: "Founder of Next Step, a behavioral design agency", domains: ["behavioral-science", "conversion", "ux-psychology", "cognitive-load", "friction"], profiled: true, evaluation_expertise: "Evaluates through behavioral science lens. CTA clarity and friction, cognitive load management, social proof approach, urgency without manipulation, working memory limits. Homer vs Spock \u2014 does the work activate both emotional and rational decision paths?", best_for: "Landing pages, CTAs, conversion flows, content that must drive action. UX decisions where cognitive load matters.", not_for: "Pure infrastructure, backend architecture, strategy docs, early-stage ideation." },
+  { id: "shirley-sahrmann", name: "Dr. Shirley Sahrmann", summary: "Physical therapist and researcher on movement dysfunction", domains: [], profiled: false },
+  { id: "steve-jobs", name: "Steve Jobs", summary: "Co-founder of Apple who demanded insanely great products", domains: ["product design", "simplicity", "UX", "focus", "user experience"], profiled: true, evaluation_expertise: "Evaluates whether the work achieves simplicity and focus. Does every element earn its place? Is the experience intuitive without explanation? Catches complexity creep, feature bloat, and loss of focus.", best_for: "Designs with user-facing components where simplicity and focus matter. Product vision decisions. Feature prioritization.", not_for: "Pure infrastructure, backend plumbing, CI/CD pipelines, developer tooling, data migrations, test architecture." },
+  { id: "steve-krug", name: "Steve Krug", summary: "Usability expert, author of Don't Make Me Think", domains: ["usability", "scanning", "conventions", "question-marks", "trunk-test", "clarity", "happy-talk"], profiled: true, evaluation_expertise: "Evaluates whether the user has to think. Runs the Trunk Test (can you orient yourself instantly?), counts question marks (moments of confusion), checks scanning hierarchy, identifies happy talk, tests convention compliance, and applies the \"mindless, unambiguous choice\" test. Catches clever-over-clear design, label mismatches, convention violations, and question mark accumulation.", best_for: "UI layout comparisons, navigation design, page clarity, label and icon evaluation, user flow simplicity.", not_for: "Visual polish (spacing, typography, color), backend architecture, business strategy, data models, quantitative optimization." },
+  { id: "steven-hayes", name: "Steven Hayes", summary: "Founder of ACT and psychological flexibility researcher", domains: [], profiled: false },
+  { id: "stuart-mcgill", name: "Dr. Stuart McGill", summary: "Spine biomechanist, 32 years of research at University of Waterloo", domains: [], profiled: false },
+  { id: "sue-b-zimmerman", name: "Sue B. Zimmerman", summary: "#TheInstagramExpert", domains: [], profiled: false },
+  { id: "the-architect", name: "The Architect", summary: "Senior systems thinker who evaluates designs against the codebase", domains: ["codebase alignment", "patterns", "module boundaries", "integration risk", "blast radius"], profiled: true, evaluation_expertise: "Evaluates whether the work aligns with existing codebase patterns and respects module boundaries. Are architectural assumptions verified against actual code? Is the blast radius understood? Catches pattern violations, hidden dependencies, and integration risks.", best_for: "Technical designs that must integrate with existing code. Architecture decisions. Designs touching multiple modules.", not_for: "Business strategy, marketing, content, positioning. Designs with no code changes." },
+  { id: "the-designer", name: "The Designer", summary: "Senior visual and interaction designer who evaluates UI craft quality", domains: ["visual hierarchy", "spacing", "typography", "color contrast", "responsiveness", "design tokens", "component consistency", "accessibility"], profiled: true, evaluation_expertise: "Evaluates visual craft and design system compliance. Is the hierarchy clear? Are spacing and typography consistent with the design system? Is color contrast accessible? Are components reused correctly? Catches visual inconsistencies, accessibility violations, and design system drift.", best_for: "Designs with UI changes, mockup review, design system compliance, layout decisions, responsive behavior.", not_for: "Backend architecture, business strategy, data models, API design, content strategy." },
+  { id: "the-devex-engineer", name: "The DevEx Engineer", summary: "Developer experience obsessive who evaluates tools by how they feel", domains: ["developer ergonomics", "maintainability", "onboarding", "tooling", "CI/CD", "DX"], profiled: true, evaluation_expertise: "Evaluates developer experience impact. Is the code maintainable by someone who didn't write it? Are the APIs ergonomic? Is the tooling intuitive? Catches poor DX, undocumented conventions, and maintenance burden.", best_for: "Tooling designs, skill/agent architecture, CI/CD pipelines, developer workflows, SDK design.", not_for: "User-facing product features, business strategy, marketing, content." },
+  { id: "the-pm", name: "The PM", summary: "Product leader who evaluates features through user value lens", domains: ["product value", "prioritization", "user problems", "scope control", "success criteria"], profiled: true, evaluation_expertise: "Evaluates whether the work solves a real user problem and has clear success criteria. Are must-haves separated from nice-to-haves? Is scope controlled? Are there features that don't connect to user needs? Catches scope creep and missing success metrics.", best_for: "Any design with user-facing changes. Scope control. Ensuring clear success criteria. Separating must-haves from nice-to-haves.", not_for: "Pure infrastructure with no user impact. Designs where the user need is already well-established and validated." },
+  { id: "the-qa-engineer", name: "The QA Engineer", summary: "Edge-case hunter who assumes everything will break", domains: ["edge cases", "failure modes", "testing", "reliability", "error handling"], profiled: true, evaluation_expertise: "Evaluates failure modes and edge cases. What happens when things go wrong? Are error paths tested? Is the happy path the only path considered? Catches missing error handling, untested boundaries, and reliability gaps.", best_for: "Designs where reliability matters. Anything touching auth, data, payments. Designs that need clear test strategies.", not_for: "Early ideation, positioning, strategy, brainstorms where the concept is still forming." },
+  { id: "the-security-reviewer", name: "The Security Reviewer", summary: "Security engineer who sees every input as hostile", domains: ["authentication", "data exposure", "injection", "OWASP", "API security", "access control"], profiled: true, evaluation_expertise: "Evaluates security surface. Is authentication handled correctly? Are there injection vectors? Is user data exposed? Are API endpoints properly authorized? Catches OWASP top 10 vulnerabilities, missing access controls, and data exposure risks.", best_for: "Designs touching authentication, user data, APIs, external integrations, RLS policies, secrets management.", not_for: "UI-only changes, content strategy, marketing, internal tools with no auth surface." },
+  { id: "tim-ferriss", name: "Tim Ferriss", summary: "Author of The 4-Hour Workweek, host of The Tim Ferriss Show", domains: [], profiled: false },
+  { id: "wise-eric", name: "Wise Eric", summary: "The app creator's highest self as conscious leader and systems architect", domains: [], profiled: false }
+];
+
+// Framework cross-references (advisor-id -> framework names)
+const advisorFrameworks = {
+  "diana-chapman": ["100% Responsibility", "Above/Below the Line", "The Clearing Model"],
+  "april-dunford": ["5 Components of Positioning"],
+  "ray-dalio": ["5-Step Process", "Believability-Weighted Decision Making"],
+  "gabor-mate": ["6-Step Process", "Compassionate Inquiry"],
+  "richard-schwartz": ["8 C's of Self-Leadership", "Enneagram Typing", "IFS Parts Work"],
+  "tim-ferriss": ["80/20 Audit", "Fear-Setting"],
+  "martin-seligman": ["ABCDE Reframe"],
+  "chris-voss": ["Accusation Audit", "Calibrated Questions"],
+  "steven-hayes": ["ACT Flexibility", "Choice Point"],
+  "danny-iny": ["Audience-First Business Model", "Integrative Piloting Process"],
+  "benjamin-levine": ["Autonomic Fatigue vs Training Fatigue", "Cardiac Deconditioning Model", "Heart Rate Reserve Training Zones"],
+  "roy-freeman": ["Autonomic Testing Interpretation", "Composite Autonomic Severity Score (CASS)"],
+  "jasmine-star": ["Batched Content Creation System", "DM Relationship Cultivation"],
+  "sue-b-zimmerman": ["Bio-Promise Alignment", "CEC Method", "Four Neighborhoods"],
+  "brene-brown": ["BRAVING Trust Inventory", "Living Into Values", "Vulnerability Check"],
+  "eric-ries": ["Build-Measure-Learn", "Earlyvangelists", "Four Market Types"],
+  "andreo-spina": ["CARs (Controlled Articular Rotations)"],
+  "shirin-oreizy": ["Cognitive Friction Audit", "Homer vs Spock"],
+  "arielle-nissenblatt": ["Community Amplification", "EarBuds Recommendation Model", "Engagement Pyramid"],
+  "joe-pulizzi": ["Content Inc Model"],
+  "jay-clouse": ["Creator Experimentation Protocol", "Creator Flywheel", "Depth Over Breadth Strategy"],
+  "marsha-linehan": ["DBT Wise Mind", "DEAR MAN"],
+  "steve-jobs": ["Design Principles", "Focus Through Saying No", "Four-Quadrant Focus"],
+  "shirley-sahrmann": ["Directional Susceptibility to Movement (DSM)"],
+  "paul-graham": ["Do Things That Don't Scale", "Earnestness Filter"],
+  "elise-darma": ["Your First 7 Reels"],
+  "stuart-mcgill": ["Flexion Intolerance Assessment"],
+  "robbie-kellman-baxter": ["Forever Promise"],
+  "sean-ellis": ["Growth Hacking Process", "ICE Prioritization"],
+  "elon-musk": ["First Principles Thinking", "Idiot Index"],
+  "jeremy-enns": ["EARS Framework"],
+  "jim-loehr": ["Energy Audit"],
+  "richard-rumelt": ["Finding the Crux"],
+  "jim-dethmer": ["Integrity Assessment"],
+  "joanna-wiebe": ["Seven Sweeps"],
+  "jeff-bezos": ["Working Backwards"],
+  "garry-tan": ["Earnestness Filter (YC Modern)"],
+  "lara-hogan": ["BICEPS Core Needs", "Manager Voltron"],
+  "ram-charan": ["Leadership Pipeline Passages"],
+  "oli-gardner": ["Conversion-Centered Design"],
+  "patrick-campbell": ["Value Metric Analysis", "Pricing Page Teardown"],
+  "rob-walling": ["SaaS Staircase", "Channel Evaluation"],
+  "robb-wolf": ["Health Claims Evidence Tier"],
+  "steve-krug": ["Trunk Test", "Don't Make Me Think Audit"],
+  "seo-expert": ["SEO Content Audit"],
+  "seth-godin": ["Purple Cow Test", "Permission Marketing"],
+  "julian-shapiro": ["Writing Quality Ladder"],
+  "byron-katie": ["The Work (Four Questions)"],
+  "clayton-christensen": ["Jobs to Be Done", "Disruptive Innovation"],
+};
+
+let activeFilter = 'all';
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    Object.entries(attrs).forEach(([k, v]) => {
+      if (k === 'className') node.className = v;
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2).toLowerCase(), v);
+      else node.setAttribute(k, v);
+    });
+  }
+  if (children !== undefined) {
+    if (typeof children === 'string') node.textContent = children;
+    else if (Array.isArray(children)) children.forEach(c => { if (c) node.appendChild(c); });
+    else if (children instanceof Node) node.appendChild(children);
+  }
+  return node;
+}
+
+function renderFilterPills() {
+  const container = document.getElementById('filter-pills');
+  container.replaceChildren();
+  // Build domain counts
+  const domainCounts = {};
+  advisors.forEach(a => {
+    a.domains.forEach(d => { domainCounts[d] = (domainCounts[d] || 0) + 1; });
+  });
+  // Sort by count descending, take top 8
+  const topDomains = Object.entries(domainCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+  const filters = [
+    { key: 'all', label: 'All (' + advisors.length + ')' },
+    ...topDomains.map(([domain, count]) => ({ key: domain, label: domain + ' (' + count + ')' }))
+  ];
+  filters.forEach(f => {
+    const active = activeFilter === f.key;
+    const btn = el('button', {
+      className: 'px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ' +
+        (active ? 'bg-accent text-white' : 'bg-accent-subtle text-accent hover:bg-accent hover:text-white'),
+      onClick: () => { activeFilter = f.key; renderFilterPills(); filterAdvisors(); }
+    }, f.label);
+    container.appendChild(btn);
+  });
+}
+
+function filterAdvisors() {
+  const query = document.getElementById('search').value.toLowerCase().trim();
+  const filtered = advisors.filter(a => {
+    if (activeFilter !== 'all' && !a.domains.includes(activeFilter)) return false;
+    if (!query) return true;
+    const searchable = [a.name, a.summary, ...a.domains].join(' ').toLowerCase();
+    return searchable.includes(query);
+  });
+  renderCards(filtered);
+  const stats = document.getElementById('stats');
+  stats.textContent = 'Showing ' + filtered.length + ' of ' + advisors.length + ' advisors';
+}
+
+function toggleDetails(id) {
+  const details = document.getElementById('details-' + id);
+  const arrow = document.getElementById('arrow-' + id);
+  if (details.classList.contains('hidden')) {
+    details.classList.remove('hidden');
+    arrow.textContent = '\u25BE';
+  } else {
+    details.classList.add('hidden');
+    arrow.textContent = '\u25B8';
+  }
+}
+
+function buildDetailSection(label, text) {
+  const wrapper = el('div', { className: 'mb-3' });
+  wrapper.appendChild(el('p', { className: 'text-xs font-medium text-foreground mb-0.5' }, label));
+  wrapper.appendChild(el('p', { className: 'text-xs text-secondary leading-relaxed' }, text));
+  return wrapper;
+}
+
+function renderCards(list) {
+  const container = document.getElementById('cards');
+  container.replaceChildren();
+
+  if (list.length === 0) {
+    container.appendChild(el('p', { className: 'text-sm text-dimmed py-8 text-center' }, 'No advisors match your search.'));
+    return;
+  }
+
+  list.forEach(a => {
+    const hasDetails = a.profiled || (advisorFrameworks[a.id] && advisorFrameworks[a.id].length > 0) || a.note;
+
+    // Card container
+    const card = el('div', {
+      id: a.id,
+      className: 'bg-white border border-border rounded-md p-3 hover:border-accent/30 transition-colors' + (hasDetails ? ' cursor-pointer' : '')
+    });
+    if (hasDetails) card.addEventListener('click', () => toggleDetails(a.id));
+
+    // Header row
+    const header = el('div', { className: 'flex justify-between items-start' });
+    const nameRow = el('div', { className: 'flex items-center' });
+
+    // Arrow
+    const arrow = el('span', { id: 'arrow-' + a.id, className: 'text-dimmed text-xs mr-1.5' }, hasDetails ? '\u25B8' : '');
+    if (!hasDetails) arrow.style.width = '0.875rem';
+    nameRow.appendChild(arrow);
+
+    // Name
+    nameRow.appendChild(el('span', { className: 'font-semibold text-sm text-foreground' }, a.name));
+
+    // Badge
+    if (a.profiled) {
+      nameRow.appendChild(el('span', { className: 'text-[0.7rem] px-1.5 py-px rounded-full bg-accent-subtle text-accent font-medium ml-1.5' }, 'profiled'));
+    } else {
+      nameRow.appendChild(el('span', { className: 'text-[0.7rem] px-1.5 py-px rounded-full bg-surface text-secondary font-medium ml-1.5' }, 'unprofiled'));
+    }
+    header.appendChild(nameRow);
+
+    // Domains
+    if (a.domains.length > 0) {
+      const domainText = a.domains.slice(0, 4).join(', ') + (a.domains.length > 4 ? '...' : '');
+      header.appendChild(el('span', { className: 'text-xs text-dimmed hidden sm:inline' }, domainText));
+    }
+    card.appendChild(header);
+
+    // Summary
+    card.appendChild(el('p', { className: 'text-xs text-secondary mt-1 ml-5' }, a.summary));
+
+    // Details (hidden)
+    if (hasDetails) {
+      const details = el('div', { id: 'details-' + a.id, className: 'hidden mt-3 pt-3 border-t border-border' });
+      if (a.evaluation_expertise) details.appendChild(buildDetailSection('Evaluation expertise', a.evaluation_expertise));
+      if (a.best_for) details.appendChild(buildDetailSection('Best for', a.best_for));
+      if (a.not_for) details.appendChild(buildDetailSection('Not for', a.not_for));
+      if (a.note) {
+        details.appendChild(el('div', { className: 'mb-3' }, [
+          el('p', { className: 'text-xs text-dimmed italic' }, a.note)
+        ]));
+      }
+      const frameworks = advisorFrameworks[a.id];
+      if (frameworks && frameworks.length > 0) {
+        const fwSection = el('div');
+        fwSection.appendChild(el('p', { className: 'text-xs font-medium text-foreground mb-0.5' }, 'Frameworks'));
+        const fwPills = el('div', { className: 'flex flex-wrap gap-1' });
+        frameworks.forEach(f => {
+          fwPills.appendChild(el('span', { className: 'text-[0.7rem] px-1.5 py-px rounded-full bg-muted text-secondary' }, f));
+        });
+        fwSection.appendChild(fwPills);
+        details.appendChild(fwSection);
+      }
+      card.appendChild(details);
+    }
+
+    container.appendChild(card);
+  });
+}
+
+// Initial render
+renderFilterPills();
+filterAdvisors();
+
+// Deep-link scroll: handle #advisor-id fragments from framework-catalog
+if (window.location.hash) {
+  const target = document.getElementById(window.location.hash.slice(1));
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.style.outline = '2px solid #ff6900';
+    setTimeout(() => { target.style.outline = ''; }, 2000);
+  }
+}
+</script>
+
+</body>
+</html>

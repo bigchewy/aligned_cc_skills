@@ -203,17 +203,26 @@ Place the file at `advisors/prompts/{advisor-id}.md`.
 
 ### 8b. Update the Registry
 
-Append one row to the Quick Reference table in `advisors/registry.md`:
+Append one entry to the `advisors` list in `advisors/registry.yaml`:
 
-```
-| {slug} | {display-name} | {domains} | {summary} |
+```yaml
+  - id: {slug}
+    name: "{display-name}"
+    summary: "{summary}"
+    prompt: advisors/prompts/{slug}.md
+    domains: [{domains}]
+    note: "Not yet profiled with evaluation expertise."
 ```
 
 Where:
 - **slug:** The advisor's kebab-case filename (without `.md`)
 - **display-name:** The advisor's full name
-- **domains:** Comma-separated expertise areas
 - **summary:** One-line description
+- **domains:** Comma-separated expertise areas as a YAML list (e.g., `[marketing, growth, content-strategy]`); use `[]` if unknown
+
+**Post-append validation:** After appending, parse the full `advisors/registry.yaml` file. If YAML parsing fails, revert the append (restore the file from git) and report the error. One bad entry must not corrupt the registry for all consumers.
+
+If `advisors/registry.yaml` does not exist, skip this step silently (lightweight mode — the add-advisor skill works without a registry).
 
 ### 8c. Update Advisor and Framework Counts
 

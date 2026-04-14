@@ -4,7 +4,9 @@
 # Update when: new categories of LLM surface files are added
 
 patterns:
+  - advisors/registry.yaml
   - advisors/prompts/**
+  - frameworks/registry.yaml
   - frameworks/*/prompt.md
   - frameworks/*/examples.md
   - frameworks/*/anti-examples.md

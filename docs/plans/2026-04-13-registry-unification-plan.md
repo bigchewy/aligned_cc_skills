@@ -24,7 +24,7 @@
 
 ---
 
-### Task 1: Write YAML Schema Validation Tests
+### ✅ Task 1: Write YAML Schema Validation Tests
 
 **Files:**
 - Create: `e2e/tests/test_registry_schemas.py`
@@ -192,7 +192,7 @@ git commit -m "test: add YAML schema validation tests for advisor and framework 
 
 ---
 
-### Task 2: Generate Advisor Registry YAML
+### ✅ Task 2: Generate Advisor Registry YAML
 
 **Files:**
 - Create: `advisors/registry.yaml`
@@ -295,7 +295,8 @@ git commit -m "feat: generate advisors/registry.yaml from registry.md"
 
 ---
 
-### Task 3: Write Framework Registry Generation Script
+### ✅ Task 3: Write Framework Registry Generation Script
+> NOTE: Fixed regex bug in plan's script — original `[-–—.]` character class matched hyphens inside framework names (e.g., "5-Step" split at the hyphen). Replaced with two-pass approach: first try separator match (`\s+[-–—]\s+`), then fall back to period-terminated. 21 framework names are longer than ideal due to varied prompt formats — Task 4 LLM pass will clean these up.
 
 **Files:**
 - Create: `scripts/generate-framework-registry.mjs`
@@ -615,7 +616,7 @@ git commit -m "feat: add framework registry generation script (Pass 1 determinis
 
 ---
 
-### Task 4: Run LLM Classification and Finalize Framework Registry
+### ✅ Task 4: Run LLM Classification and Finalize Framework Registry
 
 **Files:**
 - Create: `frameworks/registry.yaml` (renamed from draft)
@@ -662,7 +663,7 @@ git commit -m "feat: generate frameworks/registry.yaml via three-pass batch proc
 
 ---
 
-### Task 5: Update Advisor-Facing Consumer Skills
+### ✅ Task 5: Update Advisor-Facing Consumer Skills
 
 **Files:**
 - Modify: `skills/_shared/critique-panel-orchestration.md` (the `Read advisors/registry.md` line in the Round 1 section)
@@ -735,7 +736,7 @@ git commit -m "feat: update advisor-facing consumers to read YAML registry"
 
 ---
 
-### Task 6: Update Framework-Facing Consumer Skills
+### ✅ Task 6: Update Framework-Facing Consumer Skills
 
 **Files:**
 - Modify: `skills/use-framework/SKILL.md` (Step 1a section)
@@ -802,7 +803,7 @@ git commit -m "feat: update framework-facing consumers to read YAML registry"
 
 ---
 
-### Task 7: Update Batch B Consumer Files
+### ✅ Task 7: Update Batch B Consumer Files
 
 **Files:**
 - Modify: `skills/brainstorming/critic-registry.md` (entire content)
@@ -858,7 +859,7 @@ git commit -m "feat: update Batch B consumer files to reference YAML registries"
 
 ---
 
-### Task 8: Verify Migration Completeness and Delete Old Registry
+### ✅ Task 8: Verify Migration Completeness and Delete Old Registry
 
 **Files:**
 - Delete: `advisors/registry.md`
@@ -901,7 +902,7 @@ This is a separate commit for revert safety — if something breaks, this single
 
 ---
 
-### Task 9: Generate Advisors README
+### ✅ Task 9: Generate Advisors README
 
 **Files:**
 - Create: `advisors/README.md`
@@ -930,7 +931,7 @@ git commit -m "docs: generate advisors/README.md from YAML registry"
 
 ---
 
-### Task 10: Generate Frameworks README
+### ✅ Task 10: Generate Frameworks README
 
 **Files:**
 - Create: `frameworks/README.md`
@@ -957,7 +958,7 @@ git commit -m "docs: generate frameworks/README.md from YAML registry"
 
 ---
 
-### Task 11: Generate Advisor Catalog HTML
+### ✅ Task 11: Generate Advisor Catalog HTML
 
 **Files:**
 - Create: `docs/advisor-catalog.html`
@@ -1001,7 +1002,7 @@ git commit -m "feat: generate searchable advisor catalog HTML"
 
 ---
 
-### Task 12: Generate Framework Catalog HTML
+### ✅ Task 12: Generate Framework Catalog HTML
 
 **Files:**
 - Create: `docs/framework-catalog.html`
@@ -1040,7 +1041,7 @@ git commit -m "feat: generate searchable framework catalog HTML"
 
 ---
 
-### Task 13: Update E2E Trigger Map
+### ✅ Task 13: Update E2E Trigger Map
 
 **Files:**
 - Modify: `e2e/trigger-map.yaml` (add registry file trigger entries)
@@ -1078,7 +1079,7 @@ git commit -m "test: add registry YAML files to e2e trigger map"
 
 ---
 
-### Task 14: Bump Plugin Version
+### ✅ Task 14: Bump Plugin Version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)

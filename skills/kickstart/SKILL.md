@@ -384,7 +384,7 @@ After scaffolding and the type-specific next step, output this section to guide 
 ```
 ## What to Try First
 
-**Meet an advisor.** Try `/aligned:use-advisor april-dunford` — she'll challenge your positioning with her actual 5 Components methodology. Or try `/aligned:use-advisor rob-walling` for bootstrapped SaaS decision frameworks. 62 advisors are available across business, technology, and creative domains.
+**Meet an advisor.** Try `/aligned:use-advisor april-dunford` — she'll challenge your positioning with her actual 5 Components methodology. Or try `/aligned:use-advisor rob-walling` for bootstrapped SaaS decision frameworks. 65 advisors are available across business, technology, and creative domains.
 
 **Run a brainstorm.** Try `/aligned:brainstorming` with a real problem you're working on. The system auto-detects whether it's a software or business problem and selects relevant advisors for the critique panel.
 
@@ -394,7 +394,7 @@ After scaffolding and the type-specific next step, output this section to guide 
 **Dual-level paths** — after the three steps above, add:
 
 ```
-**Want to go deeper?** Read `skills/brainstorming/SKILL.md` to see how mode detection and advisor auto-selection work. Read `advisors/registry.md` for the full advisor catalog with domain metadata.
+**Want to go deeper?** Read `skills/brainstorming/SKILL.md` to see how mode detection and advisor auto-selection work. Read `advisors/registry.yaml` for the full advisor catalog with domain metadata.
 ```
 
 **Stay updated.** Want to know when new advisors and frameworks ship? [Subscribe on Substack](https://bigchewypretzels.substack.com)
