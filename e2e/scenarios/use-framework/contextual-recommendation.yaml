@@ -1,0 +1,68 @@
+# e2e/scenarios/use-framework/contextual-recommendation.yaml
+# Tests contextual recommendation: task context → relevant framework selection
+# Paired comparison: full-stack vs vanilla
+
+description: "Framework: contextual recommendation from task context"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}\n\n{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on RECOMMENDATION RELEVANCE: Does the response recommend
+        a framework whose use_when/purpose matches the user's stated task?
+        Look for: the recommended framework's domain aligns with the task,
+        the rationale references specific framework capabilities, alternatives
+        are plausible but less relevant. Random or generic scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PRESENTATION FORMAT: Does the response follow the
+        expected UX format? For high-confidence matches: "Selected: {Name}"
+        with reasoning and alternatives. For low-confidence: numbered
+        shortlist with rationales. Raw alphabetical dump scores 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ESCAPE HATCH: Does the response provide a way for the
+        user to see the full catalog or switch? Look for "list all" or
+        equivalent escape. Missing escape hatch scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CORRECT PATH: Did the system use contextual scoring
+        (analyzing the task context against framework profiles) rather than
+        name-matching or dumping a raw list? Look for evidence of semantic
+        evaluation: rationale tied to the framework's use_when/purpose,
+        domain-based filtering, or confidence-based mode selection. A raw
+        alphabetical list or name-based match scores 1.
+      weight: 1
+
+tests:
+  - description: "full-stack (skill + recommendation file + registry)"
+    vars:
+      system_context: |
+        file://../../../skills/use-framework/SKILL.md
+
+        ---
+
+        file://../../../skills/_shared/contextual-recommendation.md
+
+        ---
+
+        Registry contents:
+        file://../../../frameworks/registry.yaml
+      task_prompt: "I'm paralyzed by a big career decision and can't stop overthinking it."
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm paralyzed by a big career decision and can't stop overthinking it. Can you recommend a decision-making framework?"
