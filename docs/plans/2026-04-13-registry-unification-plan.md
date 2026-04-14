@@ -931,7 +931,7 @@ git commit -m "docs: generate advisors/README.md from YAML registry"
 
 ---
 
-### Task 10: Generate Frameworks README
+### ✅ Task 10: Generate Frameworks README
 
 **Files:**
 - Create: `frameworks/README.md`
