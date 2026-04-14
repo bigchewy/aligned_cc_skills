@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Create the shared contextual recommendation file
+### ✅ Task 1: Create the shared contextual recommendation file
 
 **Files:**
 - Create: `skills/_shared/contextual-recommendation.md`
