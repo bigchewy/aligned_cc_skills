@@ -558,7 +558,7 @@ git commit -m "test(e2e): add contextual recommendation eval scenario for use-fr
 
 ---
 
-### Task 7: Add eval scenarios to promptfoo master config
+### ✅ Task 7: Add eval scenarios to promptfoo master config
 
 **Files:**
 - Modify: `e2e/promptfooconfig.yaml` (the `scenarios:` list, after line 29)
