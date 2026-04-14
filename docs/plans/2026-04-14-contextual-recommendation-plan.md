@@ -250,7 +250,7 @@ git commit -m "feat(use-advisor): add contextual recommendation path for unnamed
 
 ---
 
-### Task 3: Update use-framework SKILL.md — add contextual path
+### ✅ Task 3: Update use-framework SKILL.md — add contextual path
 
 **Files:**
 - Modify: `skills/use-framework/SKILL.md` (Step 3: Match User Input section, lines 41-51)
