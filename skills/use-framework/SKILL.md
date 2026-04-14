@@ -46,9 +46,11 @@ If the user provided a framework name argument:
 2. Use case-insensitive substring matching
 3. **Single match:** Use it
 4. **Multiple matches:** Ask the user which one they meant
-5. **No match:** List all available frameworks with their display names
+5. **No match → contextual recommendation:** The args didn't match any entry name, so treat them as task context. Read `skills/_shared/contextual-recommendation.md` (plugin-relative path) and follow its process. Pass entity type: `framework`, registry path: `frameworks/registry.yaml`, task context: the user's original args.
 
-If no argument was provided, list all available frameworks alphabetically. Show each framework with its display name, advisor, and purpose.
+If no argument was provided, read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `framework`, registry path: `frameworks/registry.yaml`, task context: empty (the shared file will check conversation context and decide whether to score or prompt — see its Path 3/4 boundary logic).
+
+If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to listing all available frameworks alphabetically.
 
 ## Step 4: Load Framework Content
 

@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Create the shared contextual recommendation file
+### ✅ Task 1: Create the shared contextual recommendation file
 
 **Files:**
 - Create: `skills/_shared/contextual-recommendation.md`
@@ -184,7 +184,7 @@ git commit -m "feat: add shared contextual recommendation scoring logic"
 
 ---
 
-### Task 2: Update use-advisor SKILL.md — add contextual path
+### ✅ Task 2: Update use-advisor SKILL.md — add contextual path
 
 **Files:**
 - Modify: `skills/use-advisor/SKILL.md` (Step 3: Match User Input section, lines 37-49)
@@ -250,7 +250,7 @@ git commit -m "feat(use-advisor): add contextual recommendation path for unnamed
 
 ---
 
-### Task 3: Update use-framework SKILL.md — add contextual path
+### ✅ Task 3: Update use-framework SKILL.md — add contextual path
 
 **Files:**
 - Modify: `skills/use-framework/SKILL.md` (Step 3: Match User Input section, lines 41-51)
@@ -310,7 +310,7 @@ git commit -m "feat(use-framework): add contextual recommendation path for unnam
 
 ---
 
-### Task 4: Update eval surface and trigger map
+### ✅ Task 4: Update eval surface and trigger map
 
 **Files:**
 - Modify: `e2e/eval-surface.yaml` (add new shared file pattern)
@@ -364,7 +364,7 @@ git commit -m "chore(e2e): add contextual recommendation to eval surface and tri
 
 ---
 
-### Task 5: Create use-advisor contextual recommendation eval scenario
+### ✅ Task 5: Create use-advisor contextual recommendation eval scenario
 
 **Files:**
 - Create: `e2e/scenarios/use-advisor/contextual-recommendation.yaml`
@@ -465,7 +465,7 @@ git commit -m "test(e2e): add contextual recommendation eval scenario for use-ad
 
 ---
 
-### Task 6: Create use-framework contextual recommendation eval scenario
+### ✅ Task 6: Create use-framework contextual recommendation eval scenario
 
 **Files:**
 - Create: `e2e/scenarios/use-framework/contextual-recommendation.yaml`
@@ -558,7 +558,7 @@ git commit -m "test(e2e): add contextual recommendation eval scenario for use-fr
 
 ---
 
-### Task 7: Add eval scenarios to promptfoo master config
+### ✅ Task 7: Add eval scenarios to promptfoo master config
 
 **Files:**
 - Modify: `e2e/promptfooconfig.yaml` (the `scenarios:` list, after line 29)
@@ -588,7 +588,7 @@ git commit -m "chore(e2e): register contextual recommendation scenarios in promp
 
 ---
 
-### Task 8: Run existing tests to verify no regressions
+### ✅ Task 8: Run existing tests to verify no regressions
 
 **Files:**
 - None modified — verification only
@@ -614,7 +614,7 @@ git commit -m "fix(e2e): correct paths in contextual recommendation eval config"
 
 ---
 
-### Task 9: Update plugin version
+### ✅ Task 9: Update plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (version field)

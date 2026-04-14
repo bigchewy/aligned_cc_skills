@@ -1,0 +1,62 @@
+# e2e/scenarios/use-advisor/contextual-recommendation.yaml
+# Tests contextual recommendation: task context → relevant advisor selection
+# Paired comparison: full-stack vs vanilla
+
+description: "Advisor: contextual recommendation from task context"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{skill_prompt}}\n\n---\n\n{{recommendation_logic}}\n\n---\n\nRegistry contents:\n{{registry}}\n\n{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on RECOMMENDATION RELEVANCE: Does the response recommend
+        an advisor whose expertise matches the user's stated task? Look for:
+        the recommended advisor's domain aligns with the task, the rationale
+        references specific advisor capabilities, alternatives are plausible
+        but less relevant. Random or generic recommendations score 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PRESENTATION FORMAT: Does the response follow the
+        expected UX format? For high-confidence matches: "Selected: {Name}"
+        with reasoning and alternatives. For low-confidence: numbered
+        shortlist with rationales. Raw alphabetical dump scores 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ESCAPE HATCH: Does the response provide a way for the
+        user to see the full catalog or switch? Look for "list all" or
+        equivalent escape. Missing escape hatch scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CORRECT PATH: Did the system use contextual scoring
+        (analyzing the task context against advisor profiles) rather than
+        name-matching or dumping a raw list? Look for evidence of semantic
+        evaluation: rationale tied to the advisor's expertise, domain-based
+        filtering, or confidence-based mode selection. A raw alphabetical
+        list or name-based match scores 1.
+      weight: 1
+
+tests:
+  - description: "full-stack (skill + recommendation file + registry)"
+    vars:
+      skill_prompt: file://../../../skills/use-advisor/SKILL.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
+      registry: file://../../../advisors/registry.yaml
+      task_prompt: "I need help positioning my B2B SaaS product against established competitors."
+
+  - description: "vanilla baseline"
+    vars:
+      skill_prompt: ""
+      recommendation_logic: ""
+      registry: ""
+      task_prompt: "I need help positioning my B2B SaaS product against established competitors. Can you recommend an advisor or expert who could help?"
