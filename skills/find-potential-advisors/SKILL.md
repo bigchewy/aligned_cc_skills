@@ -40,7 +40,7 @@ If no brief path provided, conduct an interview to create one. Ask questions one
    - "Any other requirements? (e.g., cultural context, safety concerns, specific outcomes)"
 
 6. **Differentiation Check** (automatic)
-   - Read the project's CLAUDE.md or advisor registry to check for existing advisors in this domain. Resolve the registry by checking for `registry.yaml` first, then `registry.md`, then globbing `advisors/prompts/*.md`.
+   - Read the project's CLAUDE.md or advisor registry to check for existing advisors in this domain. Resolve the registry by checking for `registry.yaml` first, then globbing `advisors/prompts/*.md`.
    - Present: "Current advisors in related areas: [list]. The new advisor should be distinct."
    - Ask: "Any specific overlaps to avoid?"
 
