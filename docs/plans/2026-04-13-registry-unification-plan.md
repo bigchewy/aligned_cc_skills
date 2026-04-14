@@ -902,7 +902,7 @@ This is a separate commit for revert safety — if something breaks, this single
 
 ---
 
-### Task 9: Generate Advisors README
+### ✅ Task 9: Generate Advisors README
 
 **Files:**
 - Create: `advisors/README.md`
