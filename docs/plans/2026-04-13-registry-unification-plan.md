@@ -192,7 +192,7 @@ git commit -m "test: add YAML schema validation tests for advisor and framework 
 
 ---
 
-### Task 2: Generate Advisor Registry YAML
+### ✅ Task 2: Generate Advisor Registry YAML
 
 **Files:**
 - Create: `advisors/registry.yaml`
