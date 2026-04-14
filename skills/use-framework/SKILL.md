@@ -16,18 +16,15 @@ Guide the user through a framework's phases interactively.
 
 Discover all frameworks from the plugin's flat directory.
 
-**Step 1a: Glob frameworks from all locations**
+**Step 1a: Discover frameworks from registry and filesystem**
 
-Search for frameworks in two locations and merge results (deduplicate by slug, project-local wins):
+**Primary source:** Read `frameworks/registry.yaml` (plugin-relative). Parse the `frameworks` list — each entry has `id`, `name`, `advisor`, `purpose`, `category`, `domains` (list), and `use_when`. Use this as the primary listing source.
 
-1. **Plugin directory:** Glob `frameworks/*/prompt.md` (relative to the plugin root)
-2. **Project directory:** Glob `frameworks/*/prompt.md` (relative to the current working directory)
+**Fallback:** If `frameworks/registry.yaml` does not exist or fails to parse, glob `frameworks/*/prompt.md` from both plugin and project directories (deduplicate by slug, project-local wins). This also discovers project-local frameworks not in the plugin registry.
 
-Each `prompt.md` represents one framework. The slug is the parent directory name (e.g., for `frameworks/clearing-model/prompt.md`, the slug is `clearing-model`).
+**Merge:** If both the registry and project-local glob return results, merge them. Registry entries are the canonical source for plugin frameworks. Project-local frameworks (found via glob but not in registry) are appended to the list.
 
-If no results from either location, report: "No framework files found. Add a `frameworks/` directory to your project or check your plugin installation."
-
-**Context management:** When listing all frameworks, glob first to get folder names, then read only the first line of each `prompt.md`. Do not read full file contents during discovery — full reads happen only after matching.
+**Context management:** When listing all frameworks, use registry metadata (name, advisor, purpose) directly. Do not read full `prompt.md` contents during discovery — full reads happen only after matching.
 
 ## Step 2: Extract Framework Names
 
