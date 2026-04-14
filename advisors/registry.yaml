@@ -305,9 +305,9 @@ advisors:
       creation, chasing follower counts, and copying influencer tactics that
       don't work for small accounts.
     best_for: >
-      Instagram content plans, Reels strategy, DM automation flows,
-      social media time audits. Small business owners turning Instagram
-      into a revenue channel with minimal time.
+      Time-constrained Instagram strategy, DM automation flows, Reels-first
+      content plans, sub-1K-follower monetization. Small business owners who
+      need Instagram revenue in 30 minutes a week, not 30 hours.
     not_for: >
       Multi-channel marketing strategy, brand building, B2B marketing,
       long-form content, platforms other than Instagram.
@@ -316,7 +316,7 @@ advisors:
     name: "Elon Musk"
     summary: "Serial founder who builds from physics up"
     prompt: advisors/prompts/elon-musk.md
-    domains: [first principles, 10x thinking, breaking assumptions, efficiency]
+    domains: [first-principles, 10x-thinking, breaking-assumptions, efficiency]
     evaluation_expertise: >
       Questions inherited assumptions. Is this approach built from first
       principles or copied from convention? Could the scope be 10x simpler by
@@ -371,15 +371,16 @@ advisors:
     prompt: advisors/prompts/garry-tan.md
     domains: [pre-pmf, ai-native, earnestness, design-thinking, yc-modern]
     evaluation_expertise: >
-      Evaluates whether the founder is being earnest — genuinely solving a
-      problem they care about, or performing startup. Is the product designed
-      for humans or for a pitch deck? Is AI the foundation or a bolted-on
-      buzzword? Are they talking to users or hiding behind building? Catches
-      playing startup, premature hiring, and the conviction drain that comes
-      from losing touch with users.
+      Evaluates through the lens of earnestness and product taste. Is this
+      founder genuinely solving a problem they care about, or performing
+      startup? Does the product feel designed for humans or for a pitch deck?
+      Is AI the foundation of the architecture or a bolted-on buzzword?
+      Catches playing startup, premature hiring, and products that lack
+      design conviction.
     best_for: >
-      Pre-PMF startups, AI-native product evaluation, founder mindset diagnosis,
-      product design/UX critique, deciding what to focus on.
+      AI-native product evaluation, product design/UX critique for startups,
+      earnestness diagnosis, founder conviction checks, deciding what to
+      focus on when everything feels urgent.
     not_for: >
       Detailed go-to-market execution, pricing/monetization strategy, post-PMF
       scaling operations, team management, deep strategic analysis.
@@ -416,9 +417,9 @@ advisors:
       Catches feature-first messaging, posting-and-ghosting, and content
       that talks about you instead of them.
     best_for: >
-      Service business Instagram strategy, content calendars, DM
-      engagement systems, social media for photographers, coaches, and
-      consultants. Content that must convert through relationship.
+      Service businesses converting through relationship — photographers,
+      coaches, consultants. DM engagement systems, content calendars that
+      solve audience problems, Instagram strategy built on showing up.
     not_for: >
       Product businesses, B2B enterprise marketing, multi-channel strategy,
       technical documentation, platforms outside Instagram.
@@ -446,7 +447,7 @@ advisors:
     name: "Jeff Bezos"
     summary: "Founder who works backwards from the customer and thinks in decades"
     prompt: advisors/prompts/jeff-bezos.md
-    domains: [customer obsession, scalability, long-term strategy, reversibility]
+    domains: [customer-obsession, scalability, long-term-strategy, reversibility]
     evaluation_expertise: >
       Evaluates through the lens of customer impact and long-term thinking. Is
       this a one-way or two-way door decision? Does it scale? Is the customer
@@ -734,14 +735,15 @@ advisors:
     prompt: advisors/prompts/paul-graham.md
     domains: [pre-pmf, startup-ideas, growth, user-obsession, yc-philosophy]
     evaluation_expertise: >
-      Evaluates whether the founder is building something people actually want.
-      Is the idea born from a real problem or invented in a vacuum? Are they
-      talking to users or hiding behind product work? Is growth happening
-      organically or being forced? Catches tarpit ideas, premature scaling, and
-      the comfortable delusion that building equals progress.
+      Evaluates idea quality with intellectual rigor. Is this a real problem
+      or a tarpit idea that sounds good but traps founders? Is growth organic
+      or forced? Are comfortable stories hiding the truth about traction?
+      Strips away narrative comfort to expose whether the idea deserves the
+      founder's time. Catches ideas born from analogy instead of observation,
+      premature scaling, and building-as-avoidance.
     best_for: >
-      Pre-PMF startups, idea validation, growth diagnosis, founder mindset,
-      deciding what to build and for whom.
+      Idea validation, "should I build this?" decisions, growth diagnosis,
+      identifying tarpit ideas, intellectual honesty about traction.
     not_for: >
       Post-PMF operational scaling, detailed go-to-market plans, pricing
       strategy, team management, marketing execution.
@@ -790,7 +792,7 @@ advisors:
     name: "Ray Dalio"
     summary: "Founder who converts radical truth and transparency into decision-making systems"
     prompt: advisors/prompts/ray-dalio.md
-    domains: [systems thinking, decision-making, strategy, radical truth]
+    domains: [systems-thinking, decision-making, strategy, radical-truth]
     evaluation_expertise: >
       Evaluates the system of cause-effect relationships. Are the feedback loops
       identified? Are there second-order consequences being ignored? Is the
@@ -807,7 +809,7 @@ advisors:
     name: "Richard Rumelt"
     summary: "UCLA professor who cuts through strategic fluff"
     prompt: advisors/prompts/richard-rumelt.md
-    domains: [strategic clarity, focus, cutting fluff, identifying the crux]
+    domains: [strategic-clarity, focus, cutting-fluff, identifying-the-crux]
     evaluation_expertise: >
       Evaluates whether the work identifies its crux — the one thing that
       matters most. Is the strategy coherent? Are there too many goals
@@ -1013,7 +1015,7 @@ advisors:
     name: "Steve Jobs"
     summary: "Co-founder of Apple who demanded insanely great products"
     prompt: advisors/prompts/steve-jobs.md
-    domains: [product design, simplicity, UX, focus, user experience]
+    domains: [product-design, simplicity, UX, focus, user-experience]
     evaluation_expertise: >
       Evaluates whether the work achieves simplicity and focus. Does every
       element earn its place? Is the experience intuitive without explanation?
@@ -1097,8 +1099,9 @@ advisors:
       without strategy, hiding behind a logo instead of showing up personally,
       and broadcasting content without creating conversations.
     best_for: >
-      Instagram strategy, social media content plans, engagement system design,
-      profile optimization for service-based entrepreneurs.
+      Comprehensive Instagram presence across all four content formats,
+      bio-promise alignment audits, profile optimization, engagement system
+      design for service-based entrepreneurs.
     not_for: >
       Technical architecture, product design, pricing strategy, non-Instagram
       platforms, paid advertising strategy.
@@ -1107,7 +1110,7 @@ advisors:
     name: "The Architect"
     summary: "Senior systems thinker who evaluates designs against the codebase"
     prompt: advisors/prompts/the-architect.md
-    domains: [codebase alignment, patterns, module boundaries, integration risk, blast radius]
+    domains: [codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius]
     evaluation_expertise: >
       Evaluates whether the work aligns with existing codebase patterns and
       respects module boundaries. Are architectural assumptions verified against
@@ -1124,7 +1127,7 @@ advisors:
     name: "The Designer"
     summary: "Senior visual and interaction designer who evaluates UI craft quality"
     prompt: advisors/prompts/the-designer.md
-    domains: [visual hierarchy, spacing, typography, color contrast, responsiveness, design tokens, component consistency, accessibility]
+    domains: [visual-hierarchy, spacing, typography, color-contrast, responsiveness, design-tokens, component-consistency, accessibility]
     evaluation_expertise: >
       Evaluates visual craft and design system compliance. Is the hierarchy
       clear? Are spacing and typography consistent with the design system? Is
@@ -1142,7 +1145,7 @@ advisors:
     name: "The DevEx Engineer"
     summary: "Developer experience obsessive who evaluates tools by how they feel"
     prompt: advisors/prompts/the-devex-engineer.md
-    domains: [developer ergonomics, maintainability, onboarding, tooling, CI/CD, DX]
+    domains: [developer-ergonomics, maintainability, onboarding, tooling, CI-CD, DX]
     evaluation_expertise: >
       Evaluates developer experience impact. Is the code maintainable by someone
       who didn't write it? Are the APIs ergonomic? Is the tooling intuitive?
@@ -1157,7 +1160,7 @@ advisors:
     name: "The PM"
     summary: "Product leader who evaluates features through user value lens"
     prompt: advisors/prompts/the-pm.md
-    domains: [product value, prioritization, user problems, scope control, success criteria]
+    domains: [product-value, prioritization, user-problems, scope-control, success-criteria]
     evaluation_expertise: >
       Evaluates whether the work solves a real user problem and has clear
       success criteria. Are must-haves separated from nice-to-haves? Is scope
@@ -1174,7 +1177,7 @@ advisors:
     name: "The QA Engineer"
     summary: "Edge-case hunter who assumes everything will break"
     prompt: advisors/prompts/the-qa-engineer.md
-    domains: [edge cases, failure modes, testing, reliability, error handling]
+    domains: [edge-cases, failure-modes, testing, reliability, error-handling]
     evaluation_expertise: >
       Evaluates failure modes and edge cases. What happens when things go wrong?
       Are error paths tested? Is the happy path the only path considered?
@@ -1190,7 +1193,7 @@ advisors:
     name: "The Security Reviewer"
     summary: "Security engineer who sees every input as hostile"
     prompt: advisors/prompts/the-security-reviewer.md
-    domains: [authentication, data exposure, injection, OWASP, API security, access control]
+    domains: [authentication, data-exposure, injection, OWASP, API-security, access-control]
     evaluation_expertise: >
       Evaluates security surface. Is authentication handled correctly? Are there
       injection vectors? Is user data exposed? Are API endpoints properly

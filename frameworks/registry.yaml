@@ -31,11 +31,11 @@ frameworks:
 
   - id: 6-step-process
     name: "6-Step Process"
-    advisor: gabor-mate
+    advisor: wise-eric
     purpose: "a structured approach to solving operational problems that starts with a mindset check before goal-setting, diagnosis, and planning"
-    category: psychology
-    domains: [self-inquiry, emotional-healing, trauma-awareness]
-    use_when: "someone needs a structured therapeutic process for exploring emotional patterns and their origins"
+    category: strategy
+    domains: [goal-setting, problem-solving, operational-planning, mindset]
+    use_when: "someone wants a systematic process for setting goals, diagnosing problems, designing solutions, and executing with mindset alignment"
     helpful_documents: ["company strategy", "business goals"]
 
   - id: 8-cs-self-leadership
@@ -224,7 +224,7 @@ frameworks:
 
   - id: compassionate-inquiry
     name: "Compassionate Inquiry"
-    advisor: gabor-mat
+    advisor: gabor-mate
     purpose: "a process of exploring what's underneath surface-level distress with curiosity rather than judgment"
     category: psychology
     domains: [trauma, self-inquiry, emotional-healing, curiosity]
@@ -1029,7 +1029,7 @@ frameworks:
 
   - id: survivor-guilt-exploration
     name: "an exploration of survivor guilt"
-    advisor: gabor-mat
+    advisor: gabor-mate
     purpose: "the burden of being safe while others suffer"
     category: psychology
     domains: [trauma, guilt, emotional-processing, healing]
@@ -1085,7 +1085,7 @@ frameworks:
 
   - id: thirty-minute-daily-instagram
     name: "the 30-Minute Daily Instagram System"
-    advisor: sue-b-zimmerman-theinstagramexpert
+    advisor: sue-b-zimmerman
     purpose: "a structured protocol to make Instagram manageable and effective without taking over your life"
     category: social-media
     domains: [instagram, time-management, daily-practice, efficiency]

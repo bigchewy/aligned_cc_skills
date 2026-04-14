@@ -124,7 +124,7 @@ class TestFrameworkRegistrySchema:
         ("design-principles", "Design Principles", "steve-jobs"),
         ("do-things-that-dont-scale", "Do Things That Don't Scale", "paul-graham"),
         ("personal-context-intake", "Personal Context Intake", "wise-eric"),
-        ("6-step-process", "6-Step Process", "gabor-mate"),
+        ("6-step-process", "6-Step Process", "wise-eric"),
         ("earnestness-filter", "Earnestness Filter", "paul-graham"),
         ("enneagram-typing", "Enneagram Typing", "richard-schwartz"),
         ("focus-through-saying-no", "Focus Through Saying No", "steve-jobs"),
