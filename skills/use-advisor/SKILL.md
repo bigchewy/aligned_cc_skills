@@ -42,11 +42,13 @@ If the user provided an advisor name argument:
 2. Use case-insensitive substring matching
 3. **Single match:** Use it
 4. **Multiple matches:** Ask the user which one they meant
-5. **No match:** List all available advisors with their display names
+5. **No match → contextual recommendation:** The args didn't match any entry name, so treat them as task context. Read `skills/_shared/contextual-recommendation.md` (plugin-relative path) and follow its process. Pass entity type: `advisor`, registry path: `advisors/registry.yaml`, task context: the user's original args.
 
 **Important:** Match ONLY against the slug (filename) and display name (extracted from first line). Do not match against descriptions, framework names, or other content in the file.
 
-If no argument was provided, list all available advisors alphabetically by display name. List each advisor's display name and a one-line summary from the opening sentence.
+If no argument was provided, read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `advisor`, registry path: `advisors/registry.yaml`, task context: empty (the shared file will check conversation context and decide whether to score or prompt — see its Path 3/4 boundary logic).
+
+If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to listing all available advisors alphabetically.
 
 ## Step 4: Adopt the Persona
 

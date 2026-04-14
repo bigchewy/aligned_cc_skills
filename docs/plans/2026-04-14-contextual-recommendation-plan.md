@@ -184,7 +184,7 @@ git commit -m "feat: add shared contextual recommendation scoring logic"
 
 ---
 
-### Task 2: Update use-advisor SKILL.md — add contextual path
+### ✅ Task 2: Update use-advisor SKILL.md — add contextual path
 
 **Files:**
 - Modify: `skills/use-advisor/SKILL.md` (Step 3: Match User Input section, lines 37-49)
