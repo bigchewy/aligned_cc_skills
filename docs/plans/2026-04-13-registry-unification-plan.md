@@ -24,7 +24,7 @@
 
 ---
 
-### Task 1: Write YAML Schema Validation Tests
+### ✅ Task 1: Write YAML Schema Validation Tests
 
 **Files:**
 - Create: `e2e/tests/test_registry_schemas.py`
