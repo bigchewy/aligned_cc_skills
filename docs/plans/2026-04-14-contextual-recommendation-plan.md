@@ -364,7 +364,7 @@ git commit -m "chore(e2e): add contextual recommendation to eval surface and tri
 
 ---
 
-### Task 5: Create use-advisor contextual recommendation eval scenario
+### ✅ Task 5: Create use-advisor contextual recommendation eval scenario
 
 **Files:**
 - Create: `e2e/scenarios/use-advisor/contextual-recommendation.yaml`
