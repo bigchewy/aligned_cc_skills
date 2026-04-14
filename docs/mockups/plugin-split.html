@@ -292,7 +292,7 @@ graph LR
   plugin.json
   marketplace.json
 advisors/
-  registry.md
+  registry.yaml
   prompts/          (65 files)
 frameworks/         (138 files)
 skills/
@@ -523,7 +523,7 @@ graph LR
         <h2>Cross-Plugin Dependency Graph<span class="badge">symlinks</span></h2>
         <p class="description">Works skills that read advisor content use symlinks to resolve paths without code changes. Arrows show which works skills depend on advisors content. The <strong>critique-panel-orchestration</strong> shared doc is the heaviest consumer.</p>
         <ul class="bullet-list">
-          <li><strong>brainstorming</strong> &mdash; reads advisors/registry.md to select critique panel members</li>
+          <li><strong>brainstorming</strong> &mdash; reads advisors/registry.yaml to select critique panel members</li>
           <li><strong>create-design-principles</strong> &mdash; loads Steve Jobs advisor prompt from advisors/prompts/</li>
           <li><strong>critique-panel-orchestration</strong> &mdash; shared doc that resolves advisor personas for all critique workflows</li>
         </ul>
@@ -540,7 +540,7 @@ graph LR
   end
 
   subgraph AA["aligned-advisors"]
-    REG["advisors/registry.md"]
+    REG["advisors/registry.yaml"]
     PROMPTS["advisors/prompts/"]
     FWORKS["frameworks/"]
   end
@@ -581,10 +581,10 @@ graph LR
         <div class="diagram-container">
           <pre class="mermaid-deferred">
 graph LR
-  Skill["Works skill reads advisors/registry.md"]
+  Skill["Works skill reads advisors/registry.yaml"]
   Symlink["aligned-works/advisors/"]
   Target["aligned-advisors/advisors/"]
-  File["registry.md"]
+  File["registry.yaml"]
 
   Skill -->|"path reference"| Symlink
   Symlink -->|"symlink resolves"| Target
@@ -846,7 +846,7 @@ graph LR
         <h2>Phase 3: Validate<span class="badge">empirical</span></h2>
         <p class="description">Empirical validation that both plugins load and function independently. Cross-references the testing strategy tab for detailed test descriptions.</p>
         <ul class="bullet-list">
-          <li><strong>Symlink test</strong> &mdash; <code>claude --plugin-dir aligned-works/</code>, invoke skill that reads advisors/registry.md</li>
+          <li><strong>Symlink test</strong> &mdash; <code>claude --plugin-dir aligned-works/</code>, invoke skill that reads advisors/registry.yaml</li>
           <li><strong>Hook discovery</strong> &mdash; verify hooks load from aligned-works/hooks/hooks.json</li>
           <li><strong>Independent load</strong> &mdash; each plugin loads on its own without errors</li>
           <li><strong>Prefix completeness</strong> &mdash; grep for remaining <code>aligned:</code> references that should have been updated</li>
@@ -927,7 +927,7 @@ graph LR
           <tr>
             <td><strong>Symlink resolution</strong></td>
             <td>Advisor content reachable from works plugin</td>
-            <td>Load works plugin, invoke skill that reads <code>advisors/registry.md</code></td>
+            <td>Load works plugin, invoke skill that reads <code>advisors/registry.yaml</code></td>
           </tr>
           <tr>
             <td><strong>Hook discovery</strong></td>

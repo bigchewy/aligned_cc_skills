@@ -132,7 +132,7 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 
 65 advisor prompts ship with the plugin in `advisors/prompts/`.
 
-Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.md` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
+Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.yaml` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 
 To add a new advisor, use `/aligned:add-advisor` which guides you through creation and registration in `advisors/prompts/`.
 

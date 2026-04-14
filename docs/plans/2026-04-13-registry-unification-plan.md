@@ -736,7 +736,7 @@ git commit -m "feat: update advisor-facing consumers to read YAML registry"
 
 ---
 
-### Task 6: Update Framework-Facing Consumer Skills
+### ✅ Task 6: Update Framework-Facing Consumer Skills
 
 **Files:**
 - Modify: `skills/use-framework/SKILL.md` (Step 1a section)
@@ -803,7 +803,7 @@ git commit -m "feat: update framework-facing consumers to read YAML registry"
 
 ---
 
-### Task 7: Update Batch B Consumer Files
+### ✅ Task 7: Update Batch B Consumer Files
 
 **Files:**
 - Modify: `skills/brainstorming/critic-registry.md` (entire content)
