@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contextual Recommendation — Brainstorming Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb',
+            background: '#faf9f7'
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-low {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #f5f3ef;
+      color: #555555;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 12px;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f5f3ef;
+      color: #1a1a1a;
+      font-weight: 600;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #1a1a1a;
+      vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table code {
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 0.78rem;
+      background: #f5f3ef;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* UX mockup styles */
+    .mockup-container {
+      background: #f5f3ef;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #1a1a1a;
+    }
+    .mockup-container strong { color: #1a1a1a; }
+    .mockup-container em { color: #6b7280; font-style: italic; }
+    .mockup-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #ff6900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .mockup-selected {
+      background: #fff7ed;
+      border-left: 3px solid #ff6900;
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 8px;
+    }
+    .mockup-alt {
+      padding: 4px 0 4px 16px;
+      color: #555555;
+    }
+    .mockup-escape {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    /* Callout box */
+    .callout {
+      background: #fff7ed;
+      border: 1px solid #ff6900;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #1a1a1a;
+    }
+    .callout strong { color: #ff6900; }
+  </style>
+</head>
+<body>
+  <h1>Contextual Recommendation</h1>
+  <p class="subtitle">Intent-based advisor and framework selection from YAML registries</p>
+  <p class="context">When use-advisor or use-framework is invoked without a specific name, recommend the best match from the registry based on task context. Two-stage scoring (LLM-assisted domain filter, then semantic ranking) with confidence-gated presentation: auto-select when unambiguous, shortlist when signals are mixed. Unprofiled advisors are excluded from scoring. Shared scoring logic in a single file consumed by both skills.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('cascade')">Invocation Cascade</button>
+    <button class="tab-btn" onclick="switchTab('scoring')">Two-Stage Scoring</button>
+    <button class="tab-btn" onclick="switchTab('fieldmap')">Field Mapping</button>
+    <button class="tab-btn" onclick="switchTab('infra')">Shared Infrastructure</button>
+    <button class="tab-btn" onclick="switchTab('ux')">UX Modes</button>
+    <button class="tab-btn" onclick="switchTab('impl')">Implementation</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- OVERVIEW PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>End-to-End Flow</h2>
+      <p class="description">Click any node to navigate to its detail tab. The flow moves from how invocations are classified, through scoring, to how results are presented and implemented.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  Cascade["Invocation<br/>Cascade"]
+  Scoring["Two-Stage<br/>Scoring"]
+  FieldMap["Field<br/>Mapping"]
+  Infra["Shared<br/>Infrastructure"]
+  UX["UX<br/>Modes"]
+  Impl["Implementation<br/>Order"]
+
+  Cascade --> Scoring
+  Scoring --> FieldMap
+  FieldMap --> Infra
+  Infra --> UX
+  UX --> Impl
+
+  click Cascade callback "switchTab('cascade')"
+  click Scoring callback "switchTab('scoring')"
+  click FieldMap callback "switchTab('fieldmap')"
+  click Infra callback "switchTab('infra')"
+  click UX callback "switchTab('ux')"
+  click Impl callback "switchTab('impl')"
+
+  style Cascade fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Scoring fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style FieldMap fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Infra fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style UX fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Impl fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:1.5px
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900"></div> Core innovation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0eeeb;border:1px solid #e5e7eb"></div> Supporting structure</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:1px solid #ff6900"></div> User-facing output</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef;border:1px solid #555555"></div> Planning</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- INVOCATION CASCADE PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-cascade">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Four-Path Invocation Cascade <span class="badge">decision flow</span></h2>
+    <p class="description">Every invocation enters a four-step cascade evaluated in order. The first match wins. Named matches short-circuit before scoring runs. Contextual paths extract task signals from args or conversation. Bare invocations with no signal prompt the user.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('cascade','cascade-flow')">Full Flow</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cascade','cascade-paths')">Path Details</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cascade','cascade-boundary')">Path 3/4 Boundary</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('cascade','cascade-decisions')">Key Decisions</button>
+    </div>
+
+    <!-- Full Flow sub-panel -->
+    <div class="sub-panel active" id="sub-cascade-flow">
+      <div class="section">
+        <h2>Cascade Decision Flow <span class="badge">4 paths</span></h2>
+        <p class="description">Invocation enters at the top. Each diamond is an evaluated condition. First match wins and routes to the corresponding action.</p>
+        <ul class="bullet-list">
+          <li><strong>Path 1 (Named):</strong> Args match a slug or display name &mdash; existing behavior, no scoring</li>
+          <li><strong>Path 2 (Args context):</strong> Args present but no name match &mdash; treat as task context, run scoring</li>
+          <li><strong>Path 3 (Conversation context):</strong> No args, but conversation has task signals &mdash; extract and score</li>
+          <li><strong>Path 4 (Prompt):</strong> No args, no conversation context &mdash; ask the user what they need</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph TD
+  Start(["Skill invoked"])
+  HasArgs{"Args<br/>provided?"}
+  NameMatch{"Name<br/>match?"}
+  Path1["Path 1: Named Match<br/>Adopt / Run"]
+  Multi{"Multiple<br/>matches?"}
+  Disambig["Disambiguate"]
+  Path2["Path 2: Args as Context<br/>Run Two-Stage Scoring"]
+  HasConvo{"Conversation<br/>has context?"}
+  Path3["Path 3: Conversation Context<br/>Run Two-Stage Scoring"]
+  Path4["Path 4: Prompt User<br/>What are you working on?"]
+
+  Start --> HasArgs
+  HasArgs -- Yes --> NameMatch
+  HasArgs -- No --> HasConvo
+  NameMatch -- Single --> Path1
+  NameMatch -- Multiple --> Multi
+  Multi --> Disambig
+  NameMatch -- None --> Path2
+  HasConvo -- Yes --> Path3
+  HasConvo -- No --> Path4
+
+  style Start fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+  style HasArgs fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style NameMatch fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style HasConvo fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Multi fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Path1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Path2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Path3 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Path4 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style Disambig fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 5 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 6 stroke:#ff6900,stroke-width:2px
+  linkStyle 7 stroke:#ff6900,stroke-width:2px
+  linkStyle 8 stroke:#555555,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Path Details sub-panel -->
+    <div class="sub-panel" id="sub-cascade-paths">
+      <div class="section">
+        <h2>Path-by-Path Breakdown <span class="badge">behavior</span></h2>
+        <p class="description">Each path has distinct input conditions and output behavior. Named matches preserve existing behavior. Contextual paths are the new capability.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Path</th><th>Input Condition</th><th>Action</th><th>Output</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1 &mdash; Named</strong></td>
+              <td>Args match a slug or display name (case-insensitive substring)</td>
+              <td>Short-circuit, no scoring</td>
+              <td>Adopt advisor / run framework</td>
+            </tr>
+            <tr>
+              <td><strong>2 &mdash; Args context</strong></td>
+              <td>Args present, no name match</td>
+              <td>Treat args as task context, run two-stage scoring</td>
+              <td>Auto-select or shortlist</td>
+            </tr>
+            <tr>
+              <td><strong>3 &mdash; Conversation</strong></td>
+              <td>No args, conversation describes a task/project/domain</td>
+              <td>Extract context from conversation, run scoring</td>
+              <td>Auto-select or shortlist</td>
+            </tr>
+            <tr>
+              <td><strong>4 &mdash; Prompt</strong></td>
+              <td>No args, conversation is empty/generic/unrelated</td>
+              <td>Ask user what they are working on</td>
+              <td>User input or "list all" escape</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Path 3/4 Boundary sub-panel -->
+    <div class="sub-panel" id="sub-cascade-boundary">
+      <div class="section">
+        <h2>Path 3/4 Boundary Examples <span class="badge">calibration</span></h2>
+        <p class="description">The LLM judges whether the conversation contains "useful context." These examples calibrate that judgment. If recent messages describe a task, project, or problem domain, use Path 3. If the conversation is empty, generic, or unrelated to advisory/framework work, use Path 4.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Conversation State</th><th>Path</th><th>Reasoning</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>User has been discussing their landing page copy for 5 messages</td>
+              <td><span class="badge">Path 3</span></td>
+              <td>Clear task context: landing page, copywriting</td>
+            </tr>
+            <tr>
+              <td>User asked about git commands, then invoked use-advisor</td>
+              <td><span class="badge-low">Path 4</span></td>
+              <td>Conversation is about tooling, not an advisory-relevant task</td>
+            </tr>
+            <tr>
+              <td>User said "I'm preparing for a sales call next week" 3 messages ago</td>
+              <td><span class="badge">Path 3</span></td>
+              <td>Task context: sales preparation</td>
+            </tr>
+            <tr>
+              <td>Fresh conversation, first message is <code>/aligned:use-advisor</code></td>
+              <td><span class="badge-low">Path 4</span></td>
+              <td>No conversation history at all</td>
+            </tr>
+            <tr>
+              <td>User discussed multiple unrelated topics across a long session</td>
+              <td><span class="badge-low">Path 4</span></td>
+              <td>Ambiguous &mdash; multiple topics, no clear dominant task</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Key Decisions sub-panel -->
+    <div class="sub-panel" id="sub-cascade-decisions">
+      <div class="section">
+        <h2>Cascade Decisions <span class="badge">D2, D3, D4</span></h2>
+        <p class="description">Architect-validated decisions that shaped the invocation cascade design.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>#</th><th>Decision</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>D2</td>
+              <td>Name-first cascade, no detection heuristic</td>
+              <td>Try name matching first (deterministic). If no match, args are task context by elimination. Avoids impossible classification of ambiguous inputs like "marketing."</td>
+            </tr>
+            <tr>
+              <td>D3</td>
+              <td>Use conversation context when no args provided</td>
+              <td>The LLM already has the full conversation when the skill fires. Instruction-only change, no infrastructure.</td>
+            </tr>
+            <tr>
+              <td>D4</td>
+              <td>Prompt for context on true bare invocations</td>
+              <td>Better than dumping a raw list. "What problem are you working on?" with "list all" escape hatch.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- TWO-STAGE SCORING PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-scoring">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Two-Stage Scoring Flow <span class="badge">core algorithm</span></h2>
+    <p class="description">LLM-assisted domain pre-filter narrows the candidate set, then semantic ranking applies natural language priority rules. Unprofiled advisors are excluded before scoring. Candidates are shuffled to mitigate position bias. A structural confidence test determines whether to auto-select or show a shortlist.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('scoring','scoring-pipeline')">Scoring Pipeline</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','scoring-stage1')">Stage 1: Domain Filter</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','scoring-stage2')">Stage 2: Semantic Ranking</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','scoring-confidence')">Confidence Check</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('scoring','scoring-debug')">Debuggability</button>
+    </div>
+
+    <!-- Scoring Pipeline sub-panel -->
+    <div class="sub-panel active" id="sub-scoring-pipeline">
+      <div class="section">
+        <h2>End-to-End Scoring Pipeline <span class="badge">flow</span></h2>
+        <p class="description">Task context enters from the left. Unprofiled entries are excluded first. LLM-assisted domain filter reduces 65 advisors / 139 frameworks to ~5-20 candidates. Candidates are shuffled before semantic ranking to mitigate position bias. Confidence test gates the output mode.</p>
+        <ul class="bullet-list">
+          <li><strong>Eligibility filter</strong> excludes unprofiled advisors (no <code>best_for</code>/<code>not_for</code>) &mdash; they remain accessible via named invocation</li>
+          <li><strong>Domain filter</strong> uses LLM-assisted keyword extraction: the LLM maps natural language to domain tags, then matches against registry tag lists</li>
+          <li><strong>Candidate shuffling</strong> presents filtered candidates in random order, not registry order, to eliminate position bias</li>
+          <li><strong>Semantic ranking</strong> runs LLM natural language priority rules on the shuffled candidate set only</li>
+          <li><strong>Confidence test</strong> is structural: can the LLM articulate why the top pick wins and the runner-up doesn't?</li>
+          <li><strong>Zero-candidates fallback:</strong> If Stage 1 produces no matches, skip it and run full-registry Stage 2</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Context["Task<br/>Context"]
+  Registry["Full<br/>Registry"]
+  Eligible["Eligibility<br/>Filter"]
+  S1["Stage 1<br/>Domain Filter<br/>LLM-assisted"]
+  Shuffle["Shuffle<br/>Candidates"]
+  S2["Stage 2<br/>Semantic Ranking"]
+  Ranked["Ranked<br/>Results"]
+  Conf{"Confidence<br/>check"}
+  Auto["Auto-select"]
+  Short["Shortlist"]
+
+  Context --> Eligible
+  Registry --> Eligible
+  Eligible --> S1
+  S1 --> Shuffle
+  Shuffle --> S2
+  S2 --> Ranked
+  Ranked --> Conf
+  Conf -- High --> Auto
+  Conf -- Low --> Short
+
+  style Context fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style Registry fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Eligible fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Shuffle fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Ranked fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Conf fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Auto fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Short fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+  linkStyle 6 stroke:#ff6900,stroke-width:2px
+  linkStyle 7 stroke:#ff6900,stroke-width:2px
+  linkStyle 8 stroke:#555555,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage 1 sub-panel -->
+    <div class="sub-panel" id="sub-scoring-stage1">
+      <div class="section">
+        <h2>Stage 1: Domain Filter <span class="badge">LLM-assisted keyword extraction</span></h2>
+        <p class="description">Extract domain signals from the user's task context &mdash; the LLM maps natural language input (e.g., "I need a landing page") to domain tags (e.g., <code>[landing-pages, conversion-optimization]</code>). Then match extracted tags against each registry entry's <code>domains</code> tag list. Any entry sharing at least one domain tag passes to Stage 2.</p>
+        <ul class="bullet-list">
+          <li><strong>Extraction step:</strong> LLM-assisted &mdash; maps prose to domain tags constrained to the vocabulary of existing <code>domains</code> tags in the registry</li>
+          <li><strong>Matching step:</strong> Straightforward tag overlap, not full semantic inference</li>
+          <li><strong>Scoring eligibility:</strong> Entries with <code>domains: []</code> (empty tag list) are invisible to Stage 1 &mdash; unprofiled advisors with empty domains are naturally excluded</li>
+          <li><strong>Expected reduction:</strong> ~30 profiled advisors to ~5-10 candidates, 139 frameworks to ~10-20</li>
+          <li><strong>Position bias mitigation:</strong> Candidates are shuffled before passing to Stage 2</li>
+          <li><strong>Zero overlap:</strong> Entry excluded from Stage 2</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Input["User task context"]
+  LLM["LLM extracts<br/>domain tags"]
+  Tags["Registry entry<br/>domains tags"]
+  Match{"At least 1<br/>tag overlap?"}
+  Pass["Pass to<br/>Stage 2"]
+  Exclude["Excluded"]
+
+  Input --> LLM
+  LLM --> Match
+  Tags --> Match
+  Match -- Yes --> Pass
+  Match -- No --> Exclude
+
+  style Input fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style LLM fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Tags fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Match fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Pass fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Exclude fill:#ffffff,stroke:#e5e7eb,color:#6b7280
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage 2 sub-panel -->
+    <div class="sub-panel" id="sub-scoring-stage2">
+      <div class="section">
+        <h2>Stage 2: Semantic Ranking <span class="badge">LLM, 4 priority rules</span></h2>
+        <p class="description">Applied to the shuffled, filtered candidate set only. Four priority rules evaluated in order. Natural language matching plays to LLM strengths &mdash; no numeric weights on prose fields.</p>
+        <ul class="bullet-list">
+          <li><strong>Rule 1 &mdash; Hard exclusion:</strong> Remove entries whose exclusion field matches the task's primary domain</li>
+          <li><strong>Rule 2 &mdash; Primary match:</strong> Semantic comparison of task against each entry's inclusion field (strongest signal)</li>
+          <li><strong>Rule 3 &mdash; Domain depth:</strong> More domain tag overlap ranks higher (tiebreaker only)</li>
+          <li><strong>Rule 4 &mdash; Disambiguation:</strong> Finer-grained fields for remaining ties</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Cands["Shuffled<br/>Candidates"]
+  R1["Rule 1<br/>Hard Exclusion"]
+  R2["Rule 2<br/>Primary Match"]
+  R3["Rule 3<br/>Domain Depth"]
+  R4["Rule 4<br/>Disambiguation"]
+  Out["Ranked<br/>Output"]
+
+  Cands --> R1
+  R1 --> R2
+  R2 --> R3
+  R3 --> R4
+  R4 --> Out
+
+  style Cands fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style R1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style R2 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style R3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style R4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Out fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confidence Check sub-panel -->
+    <div class="sub-panel" id="sub-scoring-confidence">
+      <div class="section">
+        <h2>Structural Confidence Test <span class="badge">D7</span></h2>
+        <p class="description">Not a numeric score. The LLM must be able to articulate why the top pick matches and why the runner-up doesn't match as well. If it can't articulate the gap, it's not confident &mdash; shortlist instead.</p>
+        <ul class="bullet-list">
+          <li><strong>High confidence:</strong> Top entry's primary match field clearly describes the user's task, runner-up is noticeably less relevant</li>
+          <li><strong>Low confidence:</strong> Two or more entries are plausibly relevant, or best match is only tangential</li>
+          <li><strong>Bias:</strong> Explicitly toward shortlisting &mdash; auto-select is reserved for unambiguous matches</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  Ranked["Ranked<br/>Results"]
+  Test{"Can LLM<br/>articulate gap?"}
+  High["High Confidence<br/>Auto-select top pick"]
+  Low["Low Confidence<br/>Show shortlist"]
+
+  Ranked --> Test
+  Test -- "Clear gap" --> High
+  Test -- "Ambiguous" --> Low
+
+  style Ranked fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Test fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style High fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Low fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#555555,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debuggability sub-panel -->
+    <div class="sub-panel" id="sub-scoring-debug">
+      <div class="section">
+        <h2>Debuggability and Upgrade Path <span class="badge">D6</span></h2>
+        <p class="description">Natural language scoring is not auditable the way numeric scoring is. Recommendations may vary across invocations for the same input. This section documents the trade-off and the upgrade path.</p>
+        <ul class="bullet-list">
+          <li><strong>v1 trade-off:</strong> The LLM's semantic matching strength outweighs the consistency loss at this scale. Acceptable for launch.</li>
+          <li><strong>Variability:</strong> Same input may produce different recommendations across invocations. The shuffling step adds further non-determinism (by design &mdash; it prevents systematic position bias).</li>
+          <li><strong>Upgrade path:</strong> If recommendation stability becomes a user-reported issue, a precomputed index approach (matching the auto-router's <code>skill-router.json</code> pattern) is the next step. This would replace LLM-time scoring with pre-indexed embeddings or keyword maps.</li>
+          <li><strong>What doesn't change:</strong> The two-stage architecture (filter then rank) and the structural confidence test remain valid under either approach.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  V1["v1: LLM-time<br/>Scoring"]
+  Issue{"Stability<br/>issues<br/>reported?"}
+  Keep["Keep v1"]
+  V2["v2: Precomputed<br/>Index"]
+  Router["Matches<br/>skill-router.json<br/>pattern"]
+
+  V1 --> Issue
+  Issue -- No --> Keep
+  Issue -- Yes --> V2
+  V2 --> Router
+
+  style V1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style Issue fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style Keep fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style V2 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style Router fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FIELD MAPPING PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-fieldmap">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Field Mapping Between Registries <span class="badge">D1</span></h2>
+    <p class="description">The same scoring heuristic works for both entity types because their metadata is structurally parallel. Each scoring role maps to a specific field in each registry. The shared scoring file uses these mappings at runtime based on the entity type passed by the calling skill.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('fieldmap','fieldmap-table')">Mapping Table</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('fieldmap','fieldmap-diagram')">Visual Mapping</button>
+    </div>
+
+    <!-- Mapping Table sub-panel -->
+    <div class="sub-panel active" id="sub-fieldmap-table">
+      <div class="section">
+        <h2>Scoring Role to Registry Field <span class="badge">parallel structure</span></h2>
+        <p class="description">Each row in the scoring algorithm maps to a concrete field in the advisor or framework registry. The scoring file reads the appropriate column based on the <code>entity_type</code> parameter.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Scoring Role</th><th>Advisor Field</th><th>Framework Field</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hard exclusion</strong></td>
+              <td><code>not_for</code></td>
+              <td><em>(none today)</em></td>
+              <td>Eliminate entries that explicitly say they are not for this kind of work</td>
+            </tr>
+            <tr>
+              <td><strong>Primary match</strong></td>
+              <td><code>best_for</code></td>
+              <td><code>use_when</code></td>
+              <td>Strongest signal &mdash; what is this entry designed for?</td>
+            </tr>
+            <tr>
+              <td><strong>Domain overlap</strong></td>
+              <td><code>domains</code></td>
+              <td><code>domains</code></td>
+              <td>Tag-based pre-filter and tiebreaker (shared field)</td>
+            </tr>
+            <tr>
+              <td><strong>Disambiguation</strong></td>
+              <td><code>evaluation_expertise</code>, <code>summary</code></td>
+              <td><code>purpose</code>, <code>category</code></td>
+              <td>Finer-grained detail for resolving ties</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Visual Mapping sub-panel -->
+    <div class="sub-panel" id="sub-fieldmap-diagram">
+      <div class="section">
+        <h2>Parallel Field Structure <span class="badge">diagram</span></h2>
+        <p class="description">Both registries expose the same four scoring roles through structurally parallel fields. The shared scoring logic consumes them identically.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  subgraph Advisors["Advisor Registry"]
+    direction TB
+    A_NF["not_for"]
+    A_BF["best_for"]
+    A_D["domains"]
+    A_EE["evaluation_expertise<br/>summary"]
+  end
+  subgraph Scoring["Scoring Roles"]
+    direction TB
+    S_Excl["Hard Exclusion"]
+    S_Pri["Primary Match"]
+    S_Dom["Domain Overlap"]
+    S_Dis["Disambiguation"]
+  end
+  subgraph Frameworks["Framework Registry"]
+    direction TB
+    F_NF["(none today)"]
+    F_UW["use_when"]
+    F_D["domains"]
+    F_PC["purpose<br/>category"]
+  end
+
+  A_NF --> S_Excl
+  A_BF --> S_Pri
+  A_D --> S_Dom
+  A_EE --> S_Dis
+
+  S_Excl --> F_NF
+  S_Pri --> F_UW
+  S_Dom --> F_D
+  S_Dis --> F_PC
+
+  style S_Excl fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S_Pri fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style S_Dom fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style S_Dis fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+
+  style A_NF fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style A_BF fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style A_D fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style A_EE fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+
+  style F_NF fill:#f5f3ef,stroke:#555555,color:#6b7280
+  style F_UW fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style F_D fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style F_PC fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#555555,stroke-width:1.5px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 4 stroke:#555555,stroke-width:1.5px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+  linkStyle 6 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 7 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SHARED INFRASTRUCTURE PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-infra">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Shared Infrastructure Architecture <span class="badge">D9</span></h2>
+    <p class="description">A single file <code>skills/_shared/contextual-recommendation.md</code> defines all scoring logic, referenced by both SKILL.md files via a Read instruction. Single source of truth prevents drift between advisor and framework recommendation paths.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('infra','infra-arch')">Architecture</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('infra','infra-blocks')">File Blocks</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('infra','infra-changes')">Skill Changes</button>
+    </div>
+
+    <!-- Architecture sub-panel -->
+    <div class="sub-panel active" id="sub-infra-arch">
+      <div class="section">
+        <h2>Reference Architecture <span class="badge">shared file</span></h2>
+        <p class="description">Both skill files read the same shared scoring file. Each passes its entity type, which selects the correct field mapping. The shared file produces the recommendation output directly.</p>
+        <ul class="bullet-list">
+          <li><strong>Pattern:</strong> Same as critique-panel-orchestration.md &mdash; already lives in <code>skills/_shared/</code></li>
+          <li><strong>Self-contained:</strong> The shared file produces output directly, no callback to the calling skill</li>
+          <li><strong>Fallback:</strong> If file is missing, degrade to existing "list all" behavior</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  UA["use-advisor<br/>SKILL.md"]
+  UF["use-framework<br/>SKILL.md"]
+  Shared["_shared/<br/>contextual-<br/>recommendation.md"]
+  AR["advisors/<br/>registry.yaml"]
+  FR["frameworks/<br/>registry.yaml"]
+  Output["Recommendation<br/>or Shortlist"]
+
+  UA -- "Read, pass<br/>entity: advisor" --> Shared
+  UF -- "Read, pass<br/>entity: framework" --> Shared
+  Shared -- "Read<br/>advisor fields" --> AR
+  Shared -- "Read<br/>framework fields" --> FR
+  Shared --> Output
+
+  style UA fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style UF fill:#f0eeeb,stroke:#e5e7eb,color:#1a1a1a
+  style Shared fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style AR fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style FR fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Output fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1.5px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Blocks sub-panel -->
+    <div class="sub-panel" id="sub-infra-blocks">
+      <div class="section">
+        <h2>Shared File Structure <span class="badge">3 blocks</span></h2>
+        <p class="description">The shared file contains three instruction blocks, each serving a distinct phase of the recommendation process.</p>
+        <ul class="bullet-list">
+          <li><strong>Block 1 &mdash; Context extraction:</strong> Instructions for extracting task context from args or conversation. Routes to Path 4 (prompt) if neither yields signal.</li>
+          <li><strong>Block 2 &mdash; Two-stage scoring:</strong> Eligibility filter, LLM-assisted domain keyword extraction, tag matching, candidate shuffling, semantic ranking priority rules, field mapping table, and zero-candidates fallback. Parameterized by entity type.</li>
+          <li><strong>Block 3 &mdash; Confidence and presentation:</strong> Structural confidence test and both UX templates (auto-select and shortlist). Includes "bias toward shortlisting" instruction and "list all" escape hatch.</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  File["contextual-<br/>recommendation.md"]
+  B1["Block 1<br/>Context Extraction"]
+  B2["Block 2<br/>Two-Stage Scoring"]
+  B3["Block 3<br/>Confidence + UX"]
+
+  File --> B1
+  B1 --> B2
+  B2 --> B3
+
+  style File fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style B1 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style B2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style B3 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Changes sub-panel -->
+    <div class="sub-panel" id="sub-infra-changes">
+      <div class="section">
+        <h2>Skill File Changes <span class="badge">~10-15 lines each</span></h2>
+        <p class="description">Both skills get the same structural change: insert the contextual path between the existing name-match step and the bare-listing step. Net change is small.</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>Current Step</th><th>New Step</th><th>Change Type</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>No name match &rarr; list all</td>
+              <td>No name match &rarr; read shared file, pass args as context</td>
+              <td>Replace single line</td>
+            </tr>
+            <tr>
+              <td>No args &rarr; list all</td>
+              <td>No args &rarr; check conversation for context &rarr; shared file or prompt</td>
+              <td>Replace single line</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 16px;">
+          <h2 style="font-size: 0.95rem;">Unaffected Components</h2>
+          <ul class="bullet-list">
+            <li><strong>Named matching logic</strong> &mdash; match-found path unchanged</li>
+            <li><strong>Framework execution / advisor adoption</strong> &mdash; post-selection behavior unchanged</li>
+            <li><strong>Critique panel</strong> &mdash; separate selection logic for design review, not affected</li>
+            <li><strong>Voice handling</strong> and "Avoid These Mistakes" sections &mdash; unchanged</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- UX MODES PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-ux">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>UX Modes <span class="badge">D8</span></h2>
+    <p class="description">Two presentation modes determined by the structural confidence test. Auto-select proceeds immediately for fast workflows. Shortlist preserves user agency when signals are mixed. Both include a "list all" escape hatch.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('ux','ux-autoselect')">Auto-Select</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('ux','ux-shortlist')">Shortlist</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('ux','ux-prompt')">Prompt for Context</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('ux','ux-calibration')">Calibration Examples</button>
+    </div>
+
+    <!-- Auto-select sub-panel -->
+    <div class="sub-panel active" id="sub-ux-autoselect">
+      <div class="section">
+        <h2>Auto-Select Mode <span class="badge">high confidence</span></h2>
+        <p class="description">One entry clearly matches. The skill proceeds immediately with the selection &mdash; no confirmation gate. To switch, the user re-invokes the skill with a different name. Mirrors brainstorming mode selection pattern.</p>
+        <ul class="bullet-list">
+          <li><strong>Trigger:</strong> Top entry's primary match field clearly describes the task, runner-up is noticeably less relevant</li>
+          <li><strong>Behavior:</strong> Skill immediately adopts advisor persona or begins framework Phase 1</li>
+          <li><strong>Override:</strong> Re-invoke the skill with a different name (e.g., <code>/aligned:use-advisor april-dunford</code>), or say "list all"</li>
+        </ul>
+        <div class="mockup-container">
+          <div class="mockup-label">Auto-select presentation</div>
+          <div class="mockup-selected">
+            <strong>Selected: Oli Gardner</strong> &mdash; Landing page optimization is his primary expertise, and your task is specifically about building a landing page.
+          </div>
+          <div style="color: #6b7280; font-size: 0.82rem; margin-bottom: 4px; font-style: italic;">Alternatives:</div>
+          <div class="mockup-alt">&bull; <strong>Seth Godin</strong> &mdash; Broader marketing strategy, less focused on landing pages specifically</div>
+          <div class="mockup-alt">&bull; <strong>Donald Miller</strong> &mdash; StoryBrand messaging could apply, but not landing-page-specific</div>
+          <div class="mockup-escape">To switch, re-invoke the skill with a different name. Or say "list all" to browse the full catalog.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shortlist sub-panel -->
+    <div class="sub-panel" id="sub-ux-shortlist">
+      <div class="section">
+        <h2>Shortlist Mode <span class="badge">low confidence</span></h2>
+        <p class="description">Multiple entries are plausibly relevant, or the best match is only tangential. No auto-selection &mdash; the user chooses.</p>
+        <ul class="bullet-list">
+          <li><strong>Trigger:</strong> Two or more entries are plausibly relevant, or the LLM can't articulate a clear gap</li>
+          <li><strong>Behavior:</strong> Show 2-3 entries with rationale, wait for user choice</li>
+          <li><strong>Escape:</strong> "list all" to browse the full catalog</li>
+        </ul>
+        <div class="mockup-container">
+          <div class="mockup-label">Shortlist presentation</div>
+          <div style="margin-bottom: 12px;"><strong>Based on your context, these look relevant:</strong></div>
+          <div class="mockup-alt">1. <strong>Robbie Baxter</strong> &mdash; Membership and subscription pricing models</div>
+          <div class="mockup-alt">2. <strong>April Dunford</strong> &mdash; Positioning-driven pricing strategy</div>
+          <div class="mockup-alt">3. <strong>Patrick Campbell</strong> &mdash; Data-driven SaaS pricing optimization</div>
+          <div class="mockup-escape">Which would you like to use? Or say "list all" to browse the full catalog.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt for Context sub-panel -->
+    <div class="sub-panel" id="sub-ux-prompt">
+      <div class="section">
+        <h2>Prompt for Context <span class="badge">Path 4</span></h2>
+        <p class="description">True bare invocation with no args and no useful conversation context. Better than dumping a raw list of 65+ entries.</p>
+        <ul class="bullet-list">
+          <li><strong>Trigger:</strong> No args, conversation is empty, generic, or unrelated</li>
+          <li><strong>Behavior:</strong> Ask the user what they are working on</li>
+          <li><strong>Escape:</strong> User can say "list all" to browse the full catalog</li>
+        </ul>
+        <div class="mockup-container">
+          <div class="mockup-label">Prompt presentation</div>
+          <div style="margin-bottom: 8px;">What problem are you working on, or what are you trying to accomplish? I'll recommend the best fit.</div>
+          <div class="mockup-escape">Or say "list all" to browse the full catalog.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calibration Examples sub-panel -->
+    <div class="sub-panel" id="sub-ux-calibration">
+      <div class="section">
+        <h2>Calibration Examples <span class="badge">acceptance criteria</span></h2>
+        <p class="description">Embedded in the shared scoring file. These anchor the LLM's scoring behavior at runtime and define the acceptance criteria for manual testing.</p>
+
+        <h2 style="font-size: 0.95rem; margin-top: 20px;">Single-Signal Examples</h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>User Context</th><th>Entity</th><th>Expected Result</th><th>Mode</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>"I need to build a landing page"</td>
+              <td>advisor</td>
+              <td>Oli Gardner (auto-select)</td>
+              <td><span class="badge">high</span></td>
+            </tr>
+            <tr>
+              <td>"I need to build a landing page"</td>
+              <td>framework</td>
+              <td>Landing Page Assembly (auto-select)</td>
+              <td><span class="badge">high</span></td>
+            </tr>
+            <tr>
+              <td>"help me with pricing"</td>
+              <td>advisor</td>
+              <td>Shortlist: Robbie Baxter, April Dunford, Patrick Campbell</td>
+              <td><span class="badge-low">low</span></td>
+            </tr>
+            <tr>
+              <td>"I'm paralyzed by a big decision"</td>
+              <td>framework</td>
+              <td>Fear Setting (auto-select)</td>
+              <td><span class="badge">high</span></td>
+            </tr>
+            <tr>
+              <td>"my back hurts"</td>
+              <td>framework</td>
+              <td>Shortlist: health-movement frameworks</td>
+              <td><span class="badge-low">low</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 style="font-size: 0.95rem; margin-top: 20px;">Multi-Domain and Boundary Examples</h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>User Context</th><th>Entity</th><th>Expected Result</th><th>Mode</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>"I need to position my product and build the landing page for it"</td>
+              <td>advisor</td>
+              <td>Shortlist: April Dunford (positioning), Oli Gardner (landing pages)</td>
+              <td><span class="badge-low">low</span></td>
+            </tr>
+            <tr>
+              <td>"negotiation"</td>
+              <td>advisor</td>
+              <td>Chris Voss (auto-select if profiled; shortlist if multiple)</td>
+              <td><span class="badge">depends</span></td>
+            </tr>
+            <tr>
+              <td>"I want to grow my podcast audience on social media"</td>
+              <td>framework</td>
+              <td>Shortlist: podcasting + social-media category frameworks</td>
+              <td><span class="badge-low">low</span></td>
+            </tr>
+            <tr>
+              <td>"help me be a better manager"</td>
+              <td>advisor</td>
+              <td>Shortlist: leadership-domain advisors (Lara Hogan, Ram Charan)</td>
+              <td><span class="badge-low">low</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 style="font-size: 0.95rem; margin-top: 20px;">Near-Miss Naming (Path 1 vs Path 2 Boundary)</h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>Args</th><th>Expected Path</th><th>Reasoning</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>fear setting</code></td>
+              <td><span class="badge">Path 1 (named)</span></td>
+              <td>Matches framework slug <code>fear-setting</code></td>
+            </tr>
+            <tr>
+              <td>"I'm afraid to make this decision"</td>
+              <td><span class="badge">Path 2 (contextual)</span></td>
+              <td>No name match; scored against <code>use_when</code> fields</td>
+            </tr>
+            <tr>
+              <td><code>the work</code></td>
+              <td><span class="badge">Path 1 (named)</span></td>
+              <td>Matches framework slug <code>the-work</code></td>
+            </tr>
+            <tr>
+              <td>"I need to do the work on my beliefs"</td>
+              <td><span class="badge">Path 2 (contextual)</span></td>
+              <td>No exact name match; task context about belief work</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- IMPLEMENTATION PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-impl">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <h2>Implementation Order <span class="badge">4 phases</span></h2>
+    <p class="description">Simplified phasing with no Phase 0. Advisor profiling runs as a parallel workstream that does not block any phase. As advisors are profiled, they automatically become eligible for contextual scoring.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('impl','impl-phases')">Phase Plan</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('impl','impl-impact')">Impact Summary</button>
+    </div>
+
+    <!-- Phase Plan sub-panel -->
+    <div class="sub-panel active" id="sub-impl-phases">
+      <div class="section">
+        <h2>Phase Dependencies <span class="badge">flow</span></h2>
+        <p class="description">Phase 1 creates the shared scoring file. Phases 2a and 2b update both skills in parallel. Phase 3 verifies. Phase 4 adds eval coverage. Advisor profiling runs independently.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P1["Phase 1<br/>Create shared<br/>scoring file"]
+  P2a["Phase 2a<br/>Update<br/>use-advisor"]
+  P2b["Phase 2b<br/>Update<br/>use-framework"]
+  P3["Phase 3<br/>Manual<br/>verification"]
+  P4["Phase 4<br/>Add eval<br/>scenarios"]
+  Prof["Parallel<br/>Profiling<br/>35 advisors"]
+
+  P1 --> P2a
+  P1 --> P2b
+  P2a --> P3
+  P2b --> P3
+  P3 --> P4
+
+  style P1 fill:#ff6900,stroke:#e55d00,color:#ffffff
+  style P2a fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style P2b fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style P3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style P4 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+  style Prof fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:1.5px
+          </pre>
+        </div>
+        <table class="data-table" style="margin-top: 16px;">
+          <thead>
+            <tr><th>Phase</th><th>What</th><th>Depends On</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td>Create <code>skills/_shared/contextual-recommendation.md</code> with scoring logic and calibration examples</td>
+              <td>&mdash;</td>
+            </tr>
+            <tr>
+              <td><strong>2a</strong></td>
+              <td>Update <code>skills/use-advisor/SKILL.md</code> &mdash; add contextual path, scoring eligibility filter</td>
+              <td>Phase 1</td>
+            </tr>
+            <tr>
+              <td><strong>2b</strong></td>
+              <td>Update <code>skills/use-framework/SKILL.md</code> &mdash; add contextual path</td>
+              <td>Phase 1</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td>Manual verification against scenario table</td>
+              <td>Phases 2a, 2b</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td>Add eval scenarios to <code>e2e/eval-surface.yaml</code> and promptfoo test cases (if <code>e2e/</code> exists)</td>
+              <td>Phases 2a, 2b</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top: 16px;">
+          <strong>Parallel workstream (not blocking):</strong> Profile 35 unprofiled advisors (<code>best_for</code>, <code>not_for</code>, <code>evaluation_expertise</code>). As each advisor is profiled, they automatically become eligible for contextual scoring &mdash; no code changes needed.
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact Summary sub-panel -->
+    <div class="sub-panel" id="sub-impl-impact">
+      <div class="section">
+        <h2>Impact Summary <span class="badge">files</span></h2>
+        <p class="description">Minimal file footprint. One new file, two modified files, everything else untouched.</p>
+
+        <h2 style="font-size: 0.95rem; margin-top: 16px;">Files Created</h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>File</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>skills/_shared/contextual-recommendation.md</code></td>
+              <td>Shared two-stage scoring logic and UX templates</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 style="font-size: 0.95rem; margin-top: 16px;">Files Modified</h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>File</th><th>Change</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>skills/use-advisor/SKILL.md</code></td>
+              <td>Insert contextual path between name-match and bare-listing steps</td>
+            </tr>
+            <tr>
+              <td><code>skills/use-framework/SKILL.md</code></td>
+              <td>Insert contextual path between name-match and bare-listing steps</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 style="font-size: 0.95rem; margin-top: 16px;">Files Unaffected</h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>File</th><th>Reason</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>advisors/registry.yaml</code></td>
+              <td>Consumed as-is, no schema changes</td>
+            </tr>
+            <tr>
+              <td><code>frameworks/registry.yaml</code></td>
+              <td>Consumed as-is, no schema changes</td>
+            </tr>
+            <tr>
+              <td><code>skills/_shared/critique-panel-orchestration.md</code></td>
+              <td>Separate selection logic for different purpose</td>
+            </tr>
+            <tr>
+              <td><code>skills/add-advisor/SKILL.md</code></td>
+              <td>No interaction with contextual recommendation</td>
+            </tr>
+            <tr>
+              <td><code>skills/add-framework/SKILL.md</code></td>
+              <td>No interaction with contextual recommendation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      // Activate selected
+      var btn = document.querySelector('[onclick*="switchTab(\'' + tabId + '\')"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
