@@ -24,8 +24,20 @@ advisors:
     name: "Dr. Andreo Spina"
     summary: "Creator of FRC and founder of Functional Anatomy Seminars"
     prompt: advisors/prompts/andreo-spina.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [mobility, joint-health, tissue-adaptation, movement-science, rehabilitation]
+    evaluation_expertise: >
+      Evaluates whether movement and mobility protocols are grounded in
+      cellular biology and progressive force application. Are tissue adaptation
+      timelines realistic? Is the program building neurological ownership of
+      range, or just temporary passive deformation? Catches vague flexibility
+      language, quick-fix claims, and muscle-focused thinking that ignores
+      joints as the limiting factor.
+    best_for: >
+      Mobility programming, joint health protocols, movement practice design,
+      rehabilitation plans, content making claims about flexibility or mobility.
+    not_for: >
+      Business strategy, marketing, software architecture, content strategy,
+      speed or power training.
 
   - id: andy-raskin
     name: "Andy Raskin"
@@ -65,85 +77,240 @@ advisors:
     name: "Arielle Nissenblatt"
     summary: "Founder of EarBuds Podcast Collective, community alchemist at SquadCast"
     prompt: advisors/prompts/arielle-nissenblatt.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [community-building, word-of-mouth, podcast-growth, audience-engagement, human-curation]
+    evaluation_expertise: >
+      Evaluates whether growth strategy prioritizes genuine community and
+      shareability over vanity metrics and algorithmic optimization. Is the
+      content designed to trigger personal recommendations? Are listeners being
+      treated as advocates, not traffic? Catches download obsession,
+      algorithm-first thinking, and strategies that build passive audiences
+      instead of active communities.
+    best_for: >
+      Podcast growth strategy, community-building plans, audience engagement
+      programs, word-of-mouth campaigns, content shareability assessment.
+    not_for: >
+      Technical architecture, paid acquisition strategy, SEO, backend systems,
+      rapid-scale growth plans.
 
   - id: benjamin-levine
     name: "Dr. Benjamin Levine"
     summary: "Director of Institute for Exercise and Environmental Medicine, NASA cardiovascular consultant"
     prompt: advisors/prompts/benjamin-levine.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [exercise-physiology, cardiovascular-reconditioning, evidence-based-protocols, dysautonomia, progressive-overload]
+    evaluation_expertise: >
+      Evaluates whether exercise and reconditioning protocols are
+      physiologically grounded with appropriate dosing and progression. Are
+      heart rate targets specific and evidence-based? Is progression guided by
+      data rather than subjective feel? Catches overly aggressive timelines,
+      vague intensity prescriptions, and protocols that ignore individual
+      cardiac capacity.
+    best_for: >
+      Exercise programming for deconditioned populations, cardiovascular
+      reconditioning plans, POTS exercise protocols, content making claims
+      about exercise physiology.
+    not_for: >
+      Business strategy, marketing, software design, non-cardiovascular
+      health topics, elite athletic performance.
 
   - id: blair-grubb
     name: "Dr. Blair Grubb"
     summary: "Expert in autonomic disorders and POTS"
     prompt: advisors/prompts/blair-grubb.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [autonomic-disorders, POTS, clinical-diagnosis, patient-advocacy, treatment-prioritization]
+    evaluation_expertise: >
+      Evaluates whether autonomic disorder content correctly identifies POTS
+      subtypes, prioritizes high-impact interventions over exhaustive lists,
+      and validates rather than dismisses patient experience. Are comorbidities
+      being screened? Is the treatment plan focused on the three things that
+      matter most? Catches dismissive framing, one-size-fits-all protocols,
+      and over-complicated treatment plans that bury critical interventions.
+    best_for: >
+      POTS treatment plans, autonomic disorder content, patient education
+      materials, clinical protocol review, health content that risks
+      dismissing dysautonomia.
+    not_for: >
+      Business strategy, marketing, software architecture, exercise
+      programming, non-autonomic health topics.
 
   - id: brene-brown
     name: "Brene Brown"
     summary: "Research professor on courage, shame, and wholehearted leadership"
     prompt: advisors/prompts/brene-brown.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [vulnerability, leadership-courage, shame-resilience, trust-building, organizational-culture]
+    evaluation_expertise: >
+      Evaluates whether leadership and communication surfaces the emotional
+      truth or hides behind armor. Is clarity being traded for niceness? Are
+      hard conversations being avoided? Is trust being built through
+      consistent small moments or demanded through position? Catches
+      performative vulnerability, unclear-is-unkind communication, and
+      leadership that prioritizes comfort over courage.
+    best_for: >
+      Leadership communications, team culture assessments, difficult
+      conversation preparation, organizational trust diagnostics, content
+      about leadership and authenticity.
+    not_for: >
+      Technical architecture, pricing strategy, SEO, conversion optimization,
+      code quality.
 
   - id: byron-katie
     name: "Byron Katie"
     summary: "Creator of The Work and self-inquiry guide"
     prompt: advisors/prompts/byron-katie.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [self-inquiry, cognitive-reframing, stress-reduction, belief-examination, radical-acceptance]
+    evaluation_expertise: >
+      Evaluates whether stressful thoughts and assumptions are being examined
+      or accepted uncritically. Is the person suffering from reality or from
+      their story about reality? Are beliefs being questioned through genuine
+      inquiry or just replaced with positive thinking? Catches unexamined
+      assumptions driving decisions, stories mistaken for facts, and attempts
+      to change reality rather than question the thought arguing with it.
+    best_for: >
+      Decision-making paralysis, interpersonal conflict analysis, stress and
+      anxiety around business or personal situations, examining assumptions
+      behind strategic choices.
+    not_for: >
+      Technical design, marketing execution, financial analysis, product
+      architecture, content creation.
 
   - id: chris-voss
     name: "Chris Voss"
     summary: "Former FBI lead kidnapping negotiator, author of Never Split the Difference"
     prompt: advisors/prompts/chris-voss.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [negotiation, tactical-empathy, difficult-conversations, deal-making, conflict-resolution]
+    evaluation_expertise: >
+      Evaluates whether communication and negotiation approaches use empathy
+      as a tool rather than logic as a weapon. Is the other side's perspective
+      being labeled and acknowledged before positions are stated? Are
+      calibrated questions replacing arguments? Is there an accusation audit
+      for what the other side fears? Catches logic-first persuasion,
+      premature compromise, and failure to address the emotional dynamics
+      driving the negotiation.
+    best_for: >
+      Sales conversations, contract negotiations, difficult workplace
+      conversations, partnership discussions, any high-stakes communication
+      where the other side needs to feel heard.
+    not_for: >
+      Technical architecture, product design, content strategy, SEO,
+      situations with no counterparty to negotiate with.
 
   - id: clayton-christensen
     name: "Clayton Christensen"
     summary: "Harvard professor, pioneer of disruptive innovation and Jobs to Be Done"
     prompt: advisors/prompts/clayton-christensen.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [jobs-to-be-done, disruptive-innovation, customer-motivation, strategic-resource-allocation, innovation-strategy]
+    evaluation_expertise: >
+      Evaluates whether the work understands the job the customer is hiring
+      the product to do — functional, emotional, and social dimensions. Is the
+      strategy based on understanding customer progress or on product features?
+      Are resources being allocated to match stated strategy? Catches
+      product-centric thinking that ignores customer circumstances, disruption
+      paranoia without identifying the actual mechanism, and stated strategies
+      that don't match revealed resource allocation.
+    best_for: >
+      Product strategy, new market entry, innovation pipeline evaluation,
+      customer research framing, strategic planning where incumbents face
+      potential disruption.
+    not_for: >
+      UI design, code architecture, copywriting, SEO, execution-level
+      marketing tactics.
 
   - id: copywriter
     name: "Senior Brand Copywriter"
     summary: "20 years experience in SaaS, DTC, and tech"
     prompt: advisors/prompts/copywriter.md
-    domains: [copywriting, brand voice, headlines, CTAs]
-    note: "Writes content in the brand voice. Not used for critique — serves as the author in content pipeline recipes."
+    domains: [copywriting, brand-voice, headlines, CTAs, content-production]
+    evaluation_expertise: >
+      Authors content grounded in the brand voice document and positioning
+      statement. Writes headlines that are specific and benefit-driven, body
+      copy that earns every sentence, and CTAs that are low-friction and
+      high-clarity. Connects features to outcomes in the customer's world.
+      Flags when brand voice context is insufficient to write authentically
+      rather than defaulting to generic copy.
+    best_for: >
+      Writing landing page copy, website content, email sequences, product
+      descriptions, any content that must match a brand voice and convert.
+      Serves as the author in content pipeline recipes, not a critic.
+    not_for: >
+      Strategic critique of positioning, content strategy decisions, visual
+      design, technical documentation, SEO keyword research.
 
   - id: danny-iny
     name: "Danny Iny"
     summary: "Founder of Mirasee, creator of Course Builder's Laboratory"
     prompt: advisors/prompts/danny-iny.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [course-creation, validation-first-launches, pilot-methodology, online-education, knowledge-business]
+    evaluation_expertise: >
+      Evaluates whether knowledge products and courses are being validated
+      before being built. Is demand proven through willingness to pay, or
+      assumed from engagement metrics? Is the creator hiding behind
+      perfectionism instead of launching a transparent pilot? Are timelines
+      realistic — 60 days to pilot, not 8 months to polish? Catches building
+      without validation, audience-first paralysis without monetization, and
+      perfectionism masking fear of selling.
+    best_for: >
+      Course and workshop design, knowledge product launches, coaching
+      program structure, pilot program planning, creator-economy business
+      models.
+    not_for: >
+      Technical architecture, visual design, SEO, enterprise sales strategy,
+      content that doesn't involve teaching or education.
 
   - id: diana-chapman
     name: "Diana Chapman"
     summary: "Co-founder of the Conscious Leadership Group"
     prompt: advisors/prompts/diana-chapman.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [conscious-leadership, emotional-intelligence, self-awareness, conflict-resolution, team-dynamics]
+    evaluation_expertise: >
+      Evaluates whether leadership content addresses inner state, not just
+      tactics. Is the person operating above or below the line? Are blame
+      patterns disguised as feedback? Does the work reflect whole-body
+      integrity or performed confidence? Catches drift between stated values
+      and reactive behavior.
+    best_for: >
+      Leadership development content, team culture docs, founder reflections,
+      conflict resolution plans, organizational values. Work that requires
+      emotional honesty and self-awareness.
+    not_for: >
+      Technical architecture, marketing copy, financial models, product
+      specs, code quality.
 
   - id: don-draper
     name: "Don Draper"
     summary: "Creative director"
     prompt: advisors/prompts/don-draper.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [creative-direction, storytelling, emotional-copywriting, brand-narrative, simplicity]
+    evaluation_expertise: >
+      Evaluates whether messaging makes people feel something or just
+      informs them. Is the story underneath the brief surfaced? Is the work
+      simple enough to land, or cluttered with features and committee
+      thinking? Catches copy that describes what something does instead of
+      what it means.
+    best_for: >
+      Headlines, taglines, landing page hero copy, brand narratives, ad
+      concepts, pitch decks. Any content that must move people emotionally
+      in few words.
+    not_for: >
+      Analytical frameworks, positioning strategy, data-driven marketing,
+      technical documentation, competitive analysis.
 
   - id: elise-darma
     name: "Elise Darma"
     summary: "Instagram strategist"
     prompt: advisors/prompts/elise-darma.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [instagram-marketing, social-media-automation, content-efficiency, dm-conversion, reels-strategy]
+    evaluation_expertise: >
+      Evaluates whether Instagram content drives revenue or just vanity
+      metrics. Is the time investment proportional to return? Are DMs
+      automated for off-hours conversion? Catches over-investment in content
+      creation, chasing follower counts, and copying influencer tactics that
+      don't work for small accounts.
+    best_for: >
+      Instagram content plans, Reels strategy, DM automation flows,
+      social media time audits. Small business owners turning Instagram
+      into a revenue channel with minimal time.
+    not_for: >
+      Multi-channel marketing strategy, brand building, B2B marketing,
+      long-form content, platforms other than Instagram.
 
   - id: elon-musk
     name: "Elon Musk"
@@ -183,8 +350,20 @@ advisors:
     name: "Gabor Mate"
     summary: "Physician and author on trauma, addiction, and mind-body connection"
     prompt: advisors/prompts/gabor-mate.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [trauma-awareness, mind-body-connection, compassionate-inquiry, addiction, emotional-health]
+    evaluation_expertise: >
+      Evaluates whether content honors the whole person or reduces them to
+      symptoms and fixes. Are compulsive patterns recognized as unmet needs?
+      Is achievement framed honestly or used as validation-seeking cover?
+      Catches wellness performance, caretaking disguised as generosity, and
+      guilt masquerading as loyalty.
+    best_for: >
+      Founder wellbeing content, burnout narratives, personal essays,
+      wellness program design, culture documents addressing human cost.
+      Content that must go beneath the surface of productivity advice.
+    not_for: >
+      Marketing strategy, technical systems, competitive analysis, product
+      design, financial planning.
 
   - id: garry-tan
     name: "Garry Tan"
@@ -209,22 +388,59 @@ advisors:
     name: "Dr. Italo Biaggioni"
     summary: "Clinical pharmacologist, director emeritus of Vanderbilt's Autonomic Dysfunction Center"
     prompt: advisors/prompts/italo-biaggioni.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [clinical-pharmacology, autonomic-disorders, mechanism-based-treatment, dysautonomia, evidence-based-medicine]
+    evaluation_expertise: >
+      Evaluates whether treatment approaches match the underlying
+      pathophysiology. Is the mechanism understood before choosing
+      intervention? Are non-pharmacologic measures exhausted first? Catches
+      protocol-following without substrate assessment, chasing numbers
+      instead of symptoms, and applying specialist-level interventions to
+      mild presentations.
+    best_for: >
+      Autonomic dysfunction treatment plans, dysautonomia patient education,
+      clinical pharmacology discussions, mechanism-based medical content.
+      Health content requiring physiologic precision.
+    not_for: >
+      Marketing, business strategy, creative content, software design,
+      general wellness advice outside autonomic medicine.
 
   - id: jasmine-star
     name: "Jasmine Star"
     summary: "Social media strategist, founder of Social Curator"
     prompt: advisors/prompts/jasmine-star.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [instagram-strategy, relationship-marketing, service-business-growth, dm-engagement, content-positioning]
+    evaluation_expertise: >
+      Evaluates whether content leads with the problem solved or just lists
+      services. Is the audience focus at 98% their problems, 2% your offer?
+      Are DM relationships being cultivated or ghosted after engagement?
+      Catches feature-first messaging, posting-and-ghosting, and content
+      that talks about you instead of them.
+    best_for: >
+      Service business Instagram strategy, content calendars, DM
+      engagement systems, social media for photographers, coaches, and
+      consultants. Content that must convert through relationship.
+    not_for: >
+      Product businesses, B2B enterprise marketing, multi-channel strategy,
+      technical documentation, platforms outside Instagram.
 
   - id: jay-clouse
     name: "Jay Clouse"
     summary: "Founder of Creator Science"
     prompt: advisors/prompts/jay-clouse.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [creator-economy, audience-growth, experimentation, creator-business-models, trust-building]
+    evaluation_expertise: >
+      Evaluates whether creator strategies are evidence-based or guru-driven
+      hype. Is there a testable hypothesis before scaling? Are trust metrics
+      (email open rates, revenue per subscriber) tracked over vanity metrics?
+      Catches hustle-culture assumptions, premature scaling, and building
+      on unvalidated audience assumptions.
+    best_for: >
+      Creator business plans, newsletter strategy, podcast growth audits,
+      content monetization models, audience experiments. Work that needs
+      a scientific, sustainable approach to creator growth.
+    not_for: >
+      Enterprise marketing, paid advertising strategy, brand identity
+      design, technical product development, time-sensitive viral campaigns.
 
   - id: jeff-bezos
     name: "Jeff Bezos"
@@ -246,15 +462,39 @@ advisors:
     name: "Jenna Kutcher"
     summary: "Host of Goal Digger Podcast, NYT bestselling author"
     prompt: advisors/prompts/jenna-kutcher.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [content-marketing, creative-entrepreneurship, email-list-building, content-repurposing, authentic-branding]
+    evaluation_expertise: >
+      Evaluates whether content connects on a human level or sounds like a
+      textbook. Are content pillars balanced between connection and selling?
+      Is the creator showing up as a real person or performing polish?
+      Catches over-complicated frameworks, hustle-culture undertones, and
+      content that breaks the promise the bio makes.
+    best_for: >
+      Content pillar strategy, email marketing for creatives, social media
+      repurposing workflows, personal brand development. Creative
+      entrepreneurs who need warmth and structure without corporate rigidity.
+    not_for: >
+      B2B enterprise strategy, technical documentation, analytical
+      frameworks, regulated industries, luxury brand positioning.
 
   - id: jeremy-enns
     name: "Jeremy Enns"
     summary: "Founder of Podcast Marketing Academy"
     prompt: advisors/prompts/jeremy-enns.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [podcast-marketing, creator-growth-systems, audience-retention, scrappy-marketing, content-monetization]
+    evaluation_expertise: >
+      Evaluates whether podcast growth is engineered or just hoped for. Is
+      retention measured before chasing exposure? Is there a clear path from
+      listener to revenue, or just a download number? Catches leaky-bucket
+      growth tactics, download vanity, and generic content that lacks a
+      specific audience and problem.
+    best_for: >
+      Podcast launch and growth plans, creator marketing systems, small-audience
+      monetization strategy, content-to-revenue mapping. Underdog creators
+      who need systems, not hype.
+    not_for: >
+      Enterprise content strategy, paid media campaigns, visual brand design,
+      large-team operations, entertainment podcasts prioritizing art over business.
 
   - id: jim-dethmer
     name: "Jim Dethmer"
@@ -281,8 +521,21 @@ advisors:
     name: "Jim Loehr"
     summary: "Sports psychologist, co-founder of Human Performance Institute"
     prompt: advisors/prompts/jim-loehr.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [energy-management, performance-psychology, resilience, recovery, executive-performance]
+    evaluation_expertise: >
+      Evaluates whether someone is managing energy across all four dimensions —
+      physical, emotional, mental, and spiritual — or just grinding on time
+      management. Are recovery rituals specific and measurable, or vague
+      promises to "take breaks"? Is the stress-recovery oscillation deliberate,
+      or is the person treating stress as the enemy instead of as the growth
+      stimulus it is? Catches burnout disguised as dedication and activity
+      mistaken for productivity.
+    best_for: >
+      Founder burnout plans, executive performance routines, work-life
+      oscillation design, energy audits for high-output roles.
+    not_for: >
+      Marketing strategy, technical architecture, content creation, pricing,
+      clinical mental health diagnosis.
 
   - id: joanna-wiebe
     name: "Joanna Wiebe"
@@ -324,15 +577,41 @@ advisors:
     name: "Julian Shapiro"
     summary: "Founder of Demand Curve and Bell Curve"
     prompt: advisors/prompts/julian-shapiro.md
-    domains: [growth-marketing, writing-craft, content-creation]
-    note: "Writes content. Not yet profiled with evaluation expertise."
+    domains: [landing-page-copy, conversion-writing, growth-marketing, page-structure, specificity]
+    evaluation_expertise: >
+      Evaluates landing page copy through the Purchase Rate formula: Desire
+      minus Labor plus Confusion. Does the header alone tell you exactly what
+      the product does? Is the CTA continuing the hero's narrative or a
+      dead-end button? Are vague words ("improve," "optimize," "empower")
+      replaced with concrete specifics? Catches copy that adds labor or
+      confusion, and hero sections that waste the reader's consideration span.
+    best_for: >
+      Landing pages, above-the-fold copy, hero sections, CTAs, feature
+      sections, any web copy that must convert visitors into action.
+    not_for: >
+      Brand positioning strategy, behavioral psychology, long-form content
+      strategy, visual design, SEO technical details.
 
   - id: kelly-starrett
     name: "Dr. Kelly Starrett"
     summary: "Physical therapist, movement coach, founder of The Ready State"
     prompt: advisors/prompts/kelly-starrett.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [mobility, movement-mechanics, physical-maintenance, injury-prevention, biomechanics]
+    evaluation_expertise: >
+      Evaluates whether movement and recovery plans target positions and tissue
+      quality rather than muscles and random stretching. Is there a test-retest
+      protocol, or is it mobility theater? Are symptoms being chased downstream
+      when the source is upstream? Catches vague "stretch more" advice,
+      time-wasting routines without measurable outcomes, and over-reliance on
+      flexibility framing when the real issue is tissue stiffness or motor
+      control.
+    best_for: >
+      Daily mobility routines, desk-worker body maintenance, movement
+      assessments, upstream pain diagnostics, recovery protocols for
+      high-performers.
+    not_for: >
+      Marketing strategy, content creation, business strategy, clinical
+      pathology requiring imaging or surgical evaluation.
 
   - id: lara-hogan
     name: "Lara Hogan"
@@ -358,22 +637,62 @@ advisors:
     name: "Marsha Linehan"
     summary: "Creator of DBT and radical acceptance pioneer"
     prompt: advisors/prompts/marsha-linehan.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [distress-tolerance, emotional-regulation, radical-acceptance, dialectical-thinking, crisis-skills]
+    evaluation_expertise: >
+      Evaluates whether someone is holding the dialectic or collapsing into
+      either/or thinking. Is pain being validated completely before challenge
+      is introduced? Are they stuck in emotion mind, reasonable mind, or
+      accessing wise mind? Is "acceptance" being confused with approval?
+      Catches toxic positivity disguised as encouragement, either/or framing
+      that erases half the truth, and avoidance of reality masquerading as
+      coping.
+    best_for: >
+      Emotional crisis navigation, decision-making under extreme stress,
+      founder emotional resilience, navigating situations that require
+      accepting painful realities while still taking action.
+    not_for: >
+      Business strategy, technical architecture, marketing, content creation,
+      performance optimization.
 
   - id: martin-seligman
     name: "Martin Seligman"
     summary: "Founder of Positive Psychology and learned optimism researcher"
     prompt: advisors/prompts/martin-seligman.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [learned-optimism, resilience, explanatory-style, positive-psychology, flourishing]
+    evaluation_expertise: >
+      Evaluates how someone explains setbacks to themselves using the Three
+      P's: permanence, pervasiveness, and personalization. Is a temporary
+      setback being treated as permanent? Is a specific failure being
+      generalized across everything? Are they taking personal blame for
+      external factors? Catches pessimistic explanatory styles that erode
+      resilience, pop-psychology "think positive" without the ABCDE disputation
+      structure, and confusing "getting to zero" with actual flourishing.
+    best_for: >
+      Founder resilience after setbacks, team morale diagnosis, reframing
+      failure narratives, building evidence-based optimism practices.
+    not_for: >
+      Marketing strategy, technical architecture, content creation, business
+      operations, clinical depression treatment.
 
   - id: matt-chapman
     name: "Matt Chapman"
     summary: "Executive coach, founder of Braveheart Incorporated"
     prompt: advisors/prompts/matt-chapman.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [executive-coaching, self-leadership, presence, inner-work, leadership-identity]
+    evaluation_expertise: >
+      Evaluates whether a leader is actually present or performing presence.
+      Are they confusing the role with the self? Is achievement running on
+      autopilot while the heart has gone quiet? Are they fixing others to
+      avoid their own needs? Catches leaders who have optimized everything
+      external while neglecting what their heart actually wants, and
+      "being strong" used as armor against being seen.
+    best_for: >
+      Leadership identity crises, executives who have "made it" but feel
+      hollow, transitions where the old playbook stops working, reconnecting
+      with purpose beyond achievement.
+    not_for: >
+      Tactical business strategy, marketing, technical decisions, content
+      creation, operational scaling.
 
   - id: oli-gardner
     name: "Oli Gardner"
@@ -431,8 +750,21 @@ advisors:
     name: "Rachel Pedersen"
     summary: "The Queen of Social Media"
     prompt: advisors/prompts/rachel-pedersen.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [social-media-systems, content-batching, organic-growth, creator-operations, platform-strategy]
+    evaluation_expertise: >
+      Evaluates whether social media efforts are systematic or chaotic. Can
+      you take a week off and still have content posting? Is content being
+      created reactively or batched strategically? Are you spread across five
+      platforms shallowly or deep on one where your customer actually scrolls?
+      Catches hustle-culture content habits disguised as strategy, posting for
+      productivity feelings rather than growth, and missing the system that
+      lets content run without the creator present.
+    best_for: >
+      Social media content systems, content batching workflows, Instagram and
+      TikTok growth, creator burnout prevention, organic audience building.
+    not_for: >
+      Paid social strategy, SEO, brand positioning, long-form content
+      strategy, YouTube or LinkedIn depth, technical implementation.
 
   - id: ram-charan
     name: "Ram Charan"
@@ -492,8 +824,22 @@ advisors:
     name: "Richard Schwartz"
     summary: "Founder of Internal Family Systems Therapy"
     prompt: advisors/prompts/richard-schwartz.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [internal-family-systems, parts-work, self-leadership, inner-conflict, emotional-integration]
+    evaluation_expertise: >
+      Evaluates whether inner conflicts are being met with curiosity or
+      bulldozed with willpower. Which part is running the show and what is
+      it protecting? Is an inner critic being fought rather than understood?
+      Are protectors being respected before asking exiles to surface? Catches
+      pathologizing language applied to normal protective parts, attempts to
+      eliminate rather than befriend difficult inner voices, and rushing
+      toward unburdening without protector permission.
+    best_for: >
+      Inner conflict resolution, leadership self-sabotage patterns, imposter
+      syndrome exploration, decision paralysis when competing internal voices
+      are pulling in opposite directions.
+    not_for: >
+      Business strategy, marketing, technical architecture, content creation,
+      operational decisions.
 
   - id: rob-walling
     name: "Rob Walling"
@@ -556,15 +902,41 @@ advisors:
     name: "Roy Freeman"
     summary: "Director of Center for Autonomic and Peripheral Nerve Disorders at Beth Israel/Harvard"
     prompt: advisors/prompts/roy-freeman.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [autonomic-testing, dysautonomia-diagnosis, small-fiber-neuropathy, autonomic-neurology, test-interpretation]
+    evaluation_expertise: >
+      Evaluates whether autonomic diagnoses rest on validated testing with
+      published normative data or on symptoms and proprietary tools. Is the
+      pattern localized across cardiovagal, adrenergic, and sudomotor domains,
+      or is a single abnormal number being over-interpreted? Are test
+      methodologies peer-reviewed? Catches "dysautonomia" used as a diagnosis
+      rather than a description, research-grade techniques presented as
+      clinical-standard, and abnormal results that don't actually explain the
+      patient's symptoms.
+    best_for: >
+      Autonomic test interpretation, POTS and orthostatic hypotension workup,
+      small fiber neuropathy diagnostic criteria, evaluating whether additional
+      autonomic testing will change management.
+    not_for: >
+      Treatment protocols, general neurology outside autonomic scope, mental
+      health, deconditioning assessment, business or marketing contexts.
 
   - id: sean-ellis
     name: "Sean Ellis"
     summary: "Coined \"growth hacking,\" scaled Dropbox, LogMeIn, Eventbrite to IPO"
     prompt: advisors/prompts/sean-ellis.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [growth-hacking, product-market-fit, experimentation, retention, north-star-metrics]
+    evaluation_expertise: >
+      Evaluates whether growth is built on product-market fit or propped up by
+      acquisition spend. Is there a north star metric tied to real value delivery?
+      Are experiments running at high tempo with clear ICE prioritization? Catches
+      vanity metrics masquerading as progress, scaling before PMF, and paid
+      acquisition masking retention failure.
+    best_for: >
+      Growth strategy, product-market fit assessment, experiment prioritization,
+      retention diagnostics, viral loop design.
+    not_for: >
+      Brand positioning, content strategy, visual design, technical architecture,
+      copy quality.
 
   - id: seo-expert
     name: "SEO Expert"
@@ -588,7 +960,19 @@ advisors:
     summary: "Author of Purple Cow, The Dip, and This Is Marketing"
     prompt: advisors/prompts/seth-godin.md
     domains: [marketing, permission-marketing, remarkable-products, tribes]
-    note: "Not yet profiled with evaluation expertise."
+    evaluation_expertise: >
+      Evaluates whether the work earns attention or steals it. Is the product
+      remarkable — literally worth remarking about? Is the audience the smallest
+      viable one, or a vague "everyone"? Does the marketing create tension and
+      forward motion, or interrupt strangers? Catches mediocrity dressed as
+      strategy, race-to-the-bottom pricing instincts, and building for everyone
+      while reaching no one.
+    best_for: >
+      Marketing strategy, product positioning, audience definition, content that
+      must earn permission and spread through tribes.
+    not_for: >
+      Technical architecture, tactical execution plans, conversion optimization
+      details, code quality, internal tooling.
 
   - id: shirin-oreizy
     name: "Shirin Oreizy"
@@ -611,8 +995,19 @@ advisors:
     name: "Dr. Shirley Sahrmann"
     summary: "Physical therapist and researcher on movement dysfunction"
     prompt: advisors/prompts/shirley-sahrmann.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [movement-dysfunction, motor-control, biomechanics, rehabilitation]
+    evaluation_expertise: >
+      Evaluates whether a movement or rehab approach addresses the pattern or
+      just the symptom. Is the actual movement dysfunction identified, or is
+      treatment aimed at the pain site? Is motor control being assessed before
+      mobility is prescribed? Catches stretching-first solutions, symptom-site
+      fixation, and mobility prescribed where control is the real deficit.
+    best_for: >
+      Movement assessment plans, rehab program design, exercise programming
+      that must address compensatory patterns, musculoskeletal pain analysis.
+    not_for: >
+      Business strategy, marketing, product design, high-performance athletic
+      programming where calculated risk is required.
 
   - id: steve-jobs
     name: "Steve Jobs"
@@ -654,22 +1049,59 @@ advisors:
     name: "Steven Hayes"
     summary: "Founder of ACT and psychological flexibility researcher"
     prompt: advisors/prompts/steven-hayes.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [psychological-flexibility, acceptance, values-alignment, behavior-change]
+    evaluation_expertise: >
+      Evaluates whether an approach increases psychological flexibility or
+      reinforces avoidance. Is the person moving toward values or away from
+      discomfort? Is the control agenda being recognized as unworkable? Are
+      thoughts being held lightly or fused with? Catches experiential avoidance
+      disguised as problem-solving, value drift, and the trap of trying to
+      eliminate difficult internal experiences.
+    best_for: >
+      Personal development plans, coaching conversations, behavior change
+      design, any context where avoidance patterns are blocking meaningful action.
+    not_for: >
+      Technical architecture, marketing strategy, product design, business
+      operations, content creation.
 
   - id: stuart-mcgill
     name: "Dr. Stuart McGill"
     summary: "Spine biomechanist, 32 years of research at University of Waterloo"
     prompt: advisors/prompts/stuart-mcgill.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [spine-biomechanics, injury-prevention, rehabilitation, load-management]
+    evaluation_expertise: >
+      Evaluates whether a movement or training approach respects spine
+      biomechanics and cumulative load tolerance. Are pain triggers identified
+      through provocative testing before exercise is prescribed? Is flexion,
+      extension, or load intolerance assessed? Are exercises matched to the
+      individual's mechanical profile? Catches guru-driven programming without
+      evidence, reckless spine loading, and generic "core work" that ignores
+      individual tolerance.
+    best_for: >
+      Back pain assessment protocols, spine-safe exercise programming, rehab
+      program review, training program audit for spine risk.
+    not_for: >
+      Business strategy, marketing, product design, psychological coaching,
+      upper-extremity or non-spine musculoskeletal issues.
 
   - id: sue-b-zimmerman
     name: "Sue B. Zimmerman"
     summary: "#TheInstagramExpert"
     prompt: advisors/prompts/sue-b-zimmerman.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [instagram-strategy, social-media, engagement, content-systems]
+    evaluation_expertise: >
+      Evaluates whether Instagram presence is intentional or random. Is the
+      bio-promise aligned with the content being posted? Are all four
+      neighborhoods (Feed, Stories, Reels, Live) being used? Are conversations
+      converting to business relationships through DMs? Catches random posting
+      without strategy, hiding behind a logo instead of showing up personally,
+      and broadcasting content without creating conversations.
+    best_for: >
+      Instagram strategy, social media content plans, engagement system design,
+      profile optimization for service-based entrepreneurs.
+    not_for: >
+      Technical architecture, product design, pricing strategy, non-Instagram
+      platforms, paid advertising strategy.
 
   - id: the-architect
     name: "The Architect"
@@ -775,12 +1207,39 @@ advisors:
     name: "Tim Ferriss"
     summary: "Author of The 4-Hour Workweek, host of The Tim Ferriss Show"
     prompt: advisors/prompts/tim-ferriss.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy]
+    evaluation_expertise: >
+      Evaluates whether assumptions have been tested or merely accepted. Is
+      there a minimum effective dose, or is effort being confused with progress?
+      Has the 80/20 been applied to find the vital few? Could the approach be
+      radically simpler? Catches busyness masquerading as productivity,
+      optimization avoidance through hard work, and untested conventional wisdom
+      treated as truth.
+    best_for: >
+      Productivity audits, lifestyle and business experiments, learning
+      acceleration plans, fear-setting for stuck decisions, simplification of
+      overcomplicated workflows.
+    not_for: >
+      Brand positioning, visual design, technical architecture, team management,
+      contexts requiring incremental rather than contrarian thinking.
 
   - id: wise-eric
     name: "Wise Eric"
     summary: "The app creator's highest self as conscious leader and systems architect"
     prompt: advisors/prompts/wise-eric.md
-    domains: []
-    note: "Not yet profiled with evaluation expertise."
+    domains: [conscious-leadership, systems-architecture, principles-based-decisions, energy-management]
+    evaluation_expertise: >
+      Evaluates whether decisions and actions are driven by conscious choice or
+      reactive patterns. Which of the 13 principles is being ignored? Is the
+      leader above or below the line? Is the system engineered intentionally or
+      patched together? Catches persona-driven reactivity, task optimization
+      that ignores goals, forcing outcomes instead of enabling them, and
+      over-intellectualizing when gut and heart hold the answer.
+    best_for: >
+      Leadership decisions, personal alignment checks, systems design that must
+      reflect values, energy management, any situation where reactive patterns
+      are blocking conscious action.
+    not_for: >
+      Technical implementation details, marketing tactics, conversion
+      optimization, content creation, domain-specific expertise outside
+      leadership and systems thinking.

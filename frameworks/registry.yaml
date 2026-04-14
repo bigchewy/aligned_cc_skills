@@ -23,7 +23,7 @@ frameworks:
   - id: 5-step-process
     name: "the 5-Step Process to help them achieve what they want in life by systematically addressing problems and evolving"
     advisor: ray-dalio
-    purpose: ""
+    purpose: "a five-step loop for achieving goals by identifying problems, diagnosing root causes, designing plans, and pushing through to results"
     category: strategy
     domains: [goal-setting, problem-solving, personal-development, decision-making]
     use_when: "someone wants a systematic process for setting goals, identifying problems, diagnosing root causes, designing solutions, and executing"
@@ -32,7 +32,7 @@ frameworks:
   - id: 6-step-process
     name: "6-Step Process"
     advisor: gabor-mate
-    purpose: "# Wise Eric's 6-Step Process"
+    purpose: "a structured approach to solving operational problems that starts with a mindset check before goal-setting, diagnosis, and planning"
     category: psychology
     domains: [self-inquiry, emotional-healing, trauma-awareness]
     use_when: "someone needs a structured therapeutic process for exploring emotional patterns and their origins"
@@ -124,7 +124,7 @@ frameworks:
   - id: believability-weighted-decision-making
     name: "Believability-Weighted Decision Making to improve their decision quality by weighting opinions based on track record and expertise"
     advisor: ray-dalio
-    purpose: ""
+    purpose: "weighting opinions by track record and explanatory logic to improve decision quality"
     category: strategy
     domains: [decision-making, team-dynamics, meritocracy, collective-intelligence]
     use_when: "a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise"
@@ -149,7 +149,7 @@ frameworks:
   - id: build-measure-learn
     name: "the Build-Measure-Learn loop to design a learning cycle for their product initiative"
     advisor: eric-ries
-    purpose: ""
+    purpose: "designing a learning cycle that starts with what you need to learn, then works backward to what to measure and build"
     category: startup
     domains: [lean-startup, experimentation, product-development, validated-learning]
     use_when: "a team needs to design a rapid learning cycle for a product initiative to validate assumptions quickly"
@@ -199,7 +199,7 @@ frameworks:
   - id: clearing-model
     name: "The Clearing Model to resolve relationship tensions"
     advisor: diana-chapman
-    purpose: ""
+    purpose: "a structured process for clearing withholds and resentments using unarguable statements to restore connection"
     category: leadership
     domains: [conflict-resolution, communication, conscious-leadership, relationships]
     use_when: "two people have unresolved tension and need a structured process to clear it without blame"
@@ -241,7 +241,7 @@ frameworks:
   - id: content-inc-model
     name: "the Content Inc"
     advisor: joe-pulizzi
-    purpose: ""
+    purpose: "a six-step audience-first model for building a content-driven business before monetizing"
     category: content-strategy
     domains: [content-marketing, audience-building, business-model, content-first]
     use_when: "someone wants to build a business by establishing a content platform and audience before creating products"
@@ -292,7 +292,7 @@ frameworks:
   - id: design-principles
     name: "Design Principles"
     advisor: steve-jobs
-    purpose: "# Design Principles Framework"
+    purpose: "generating a design-principles document with implementation-ready tokens for colors, typography, and theme"
     category: strategy
     domains: [product-design, simplicity, user-experience, aesthetics]
     use_when: "someone needs guiding design principles for a product that prioritize simplicity, elegance, and user experience"
@@ -317,7 +317,7 @@ frameworks:
   - id: do-things-that-dont-scale
     name: "Do Things That Don't Scale"
     advisor: paul-graham
-    purpose: "You are Paul Graham, helping a founder figure out what unscalable things they should be doing right now to get their startup off the ground."
+    purpose: "identifying the unscalable work a founder should be doing right now to learn and recruit users by hand"
     category: startup
     domains: [early-stage, customer-acquisition, founder-hustle, validation]
     use_when: "a founder is in the earliest stage and needs to identify the unscalable manual things they should be doing to get traction"
@@ -344,7 +344,7 @@ frameworks:
   - id: earnestness-filter
     name: "Earnestness Filter"
     advisor: paul-graham
-    purpose: "You are Garry Tan, helping a founder pressure-test whether they're being genuinely earnest about their startup — or just playing startup."
+    purpose: "pressure-testing whether a founder is genuinely earnest about their startup or just performing"
     category: startup
     domains: [founder-mindset, authenticity, self-assessment, motivation]
     use_when: "a founder needs to honestly assess whether they are genuinely committed to their startup or just performing the role"
@@ -379,7 +379,7 @@ frameworks:
   - id: enneagram-typing
     name: "Enneagram Typing"
     advisor: richard-schwartz
-    purpose: "You are conducting a guided Enneagram typing conversation. Your voice is neutral, warm, and direct — no advisor persona, no specific methodology branding. Your job is to surface motivational patterns "
+    purpose: "a guided conversation that surfaces motivational patterns for Enneagram typing without using type labels or jargon"
     category: psychology
     domains: [personality-typing, self-awareness, motivational-patterns, enneagram]
     use_when: "someone wants to discover their Enneagram type through a guided conversation exploring their core motivations"
@@ -404,7 +404,7 @@ frameworks:
   - id: first-principles-thinking
     name: "first principles thinking to break down a problem to its fundamental truths"
     advisor: elon-musk
-    purpose: ""
+    purpose: "breaking a problem down to fundamental truths and reasoning up from there instead of by analogy"
     category: strategy
     domains: [problem-solving, innovation, reasoning, mental-models]
     use_when: "someone is stuck in conventional thinking and needs to decompose a problem to its fundamental truths to find novel solutions"
@@ -429,7 +429,7 @@ frameworks:
   - id: focus-through-saying-no
     name: "Focus Through Saying No"
     advisor: steve-jobs
-    purpose: "You are Steve Jobs, guiding a ruthless focus exercise through the discipline of saying no."
+    purpose: "a ruthless focus exercise that forces a not-doing list by cutting everything that isn't the single top priority"
     category: strategy
     domains: [focus, prioritization, elimination, discipline]
     use_when: "someone has too many projects or commitments and needs to ruthlessly cut to focus on what truly matters"
@@ -447,7 +447,7 @@ frameworks:
   - id: four-market-types
     name: "the Four Market Types framework to help them identify and test their assumptions about which market they're entering"
     advisor: eric-ries
-    purpose: ""
+    purpose: "diagnosing which market type you're entering and aligning your tactics to match"
     category: startup
     domains: [market-analysis, startup-strategy, competitive-positioning, market-entry]
     use_when: "a startup needs to identify whether they are entering an existing, resegmented, new, or clone market to set the right strategy"
@@ -509,7 +509,7 @@ frameworks:
   - id: idiot-index
     name: "the Idiot Index to identify cost reduction opportunities"
     advisor: elon-musk
-    purpose: ""
+    purpose: "comparing finished cost to raw material cost to expose hidden inefficiency and cost reduction opportunities"
     category: strategy
     domains: [cost-optimization, manufacturing, first-principles, efficiency]
     use_when: "someone needs to identify cost reduction opportunities by comparing current costs to theoretical minimums"
@@ -544,7 +544,7 @@ frameworks:
   - id: jobs-to-be-done
     name: "a Jobs to Be Done analysis to understand what progress their customer (or they themselves) are trying to make"
     advisor: clayton-christensen
-    purpose: ""
+    purpose: "uncovering the functional, emotional, and social progress a customer is hiring a product to make"
     category: strategy
     domains: [customer-research, product-strategy, innovation, demand-analysis]
     use_when: "someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features"
@@ -570,7 +570,7 @@ frameworks:
   - id: landing-page-assembly
     name: "Landing Page Assembly"
     advisor: oli-gardner
-    purpose: "# Landing Page Assembly Framework (6 Stages)"
+    purpose: "building a high-converting landing page through structured advisor collaboration across six stages"
     category: conversion
     domains: [landing-pages, conversion-optimization, copywriting, web-design]
     use_when: "someone needs to build or improve a landing page using a structured stage-by-stage assembly process"
@@ -586,7 +586,7 @@ frameworks:
   - id: leap-of-faith-assumptions
     name: "the Leap of Faith Assumptions framework to identify and test the critical assumptions underlying their business"
     advisor: eric-ries
-    purpose: ""
+    purpose: "identifying and testing the riskiest assumptions underlying a business before building anything"
     category: startup
     domains: [assumption-testing, validation, risk-reduction, lean-startup]
     use_when: "a startup needs to identify which untested assumptions are most critical to their business and design experiments to test them"
@@ -669,7 +669,7 @@ frameworks:
   - id: multi-system-approach-pots
     name: "a multi-system assessment of their POTS. This framework acknowledges that POTS is not just a heart rate problem"
     advisor: blair-grubb
-    purpose: "it involves the cardiovascular, gastrointestinal, neurological, and immune systems"
+    purpose: "a multi-system assessment of POTS that screens cardiovascular, GI, neurological, and immune involvement to build a targeted management plan"
     category: health-autonomic
     domains: [POTS, multi-system, diagnostic-assessment, treatment-planning]
     use_when: "someone with POTS needs a comprehensive assessment that goes beyond heart rate to address GI, neurological, and immune involvement"
@@ -710,7 +710,7 @@ frameworks:
   - id: pain-plus-reflection
     name: "the Pain + Reflection = Progress framework to transform failure and pain into catalysts for growth"
     advisor: ray-dalio
-    purpose: ""
+    purpose: "transforming failure and pain into progress by pausing, diagnosing the lesson, and designing a new approach"
     category: psychology
     domains: [resilience, learning-from-failure, reflection, personal-growth]
     use_when: "someone has experienced a painful failure and needs a structured way to extract lessons and turn it into growth"
@@ -742,7 +742,7 @@ frameworks:
   - id: personal-context-intake
     name: "Personal Context Intake"
     advisor: wise-eric
-    purpose: "You are Wise Eric, conducting a Personal Context Intake — the equivalent of a first session with a therapist-coach hybrid. Your goal is purely informational: listen and understand, not coach or refram"
+    purpose: "a structured intake that maps health, emotional patterns, growth background, relationships, and values to build a personal client file"
     category: psychology
     domains: [intake-assessment, personal-history, context-gathering, coaching]
     use_when: "a new user needs an initial session to share their personal context, history, and goals before working with advisors"
@@ -758,7 +758,7 @@ frameworks:
   - id: personal-resource-allocation
     name: "a Personal Resource Allocation assessment to examine where their time, energy, and attention actually flow versus where they say they want it to go"
     advisor: clayton-christensen
-    purpose: ""
+    purpose: "exposing the gap between where you say your priorities are and where your time and energy actually go"
     category: strategy
     domains: [resource-allocation, priorities, life-strategy, time-management]
     use_when: "someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions"
@@ -783,7 +783,7 @@ frameworks:
   - id: pivot-or-persevere
     name: "the Pivot or Persevere decision framework to make a structured strategic direction decision"
     advisor: eric-ries
-    purpose: ""
+    purpose: "a structured decision process for determining whether to change strategy, stay the course, or stop entirely"
     category: startup
     domains: [pivot-decision, strategic-direction, validated-learning, lean-startup]
     use_when: "a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one"
@@ -869,7 +869,7 @@ frameworks:
   - id: professional-context-intake
     name: "Professional Context Intake"
     advisor: wise-eric
-    purpose: "You are Wise Eric, conducting a Professional Context Intake — a first meeting with a strategic business advisor. Your goal is purely informational: map the professional landscape so business advisors "
+    purpose: "a structured intake that maps business context, expertise, challenges, and decision style to build a professional brief"
     category: strategy
     domains: [intake-assessment, business-context, professional-history, coaching]
     use_when: "a new user needs an initial session to share their professional and business context before working with business advisors"
@@ -886,7 +886,7 @@ frameworks:
   - id: quadrinity
     name: "Quadrinity Process"
     advisor: jim-dethmer
-    purpose: "You are Diana Chapman, guiding a Hoffman Quadrinity Check-In."
+    purpose: "a check-in practice that visits the physical, emotional, intellectual, and spiritual selves in turn"
     category: psychology
     domains: [body-mind-integration, emotional-processing, inner-child, wholeness]
     use_when: "someone needs to check in with all four aspects of self — physical, emotional, intellectual, and spiritual"
@@ -919,7 +919,7 @@ frameworks:
   - id: regret-minimization
     name: "the Regret Minimization Framework to help them make a major life decision by projecting forward and looking back"
     advisor: jeff-bezos
-    purpose: ""
+    purpose: "making major life decisions by projecting to age 80 and asking which choice you would regret not taking"
     category: strategy
     domains: [decision-making, life-decisions, long-term-thinking, regret-avoidance]
     use_when: "someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret"
@@ -962,7 +962,7 @@ frameworks:
   - id: smallest-viable-audience
     name: "the Smallest Viable Audience framework to find the people who would miss them if they were gone"
     advisor: seth-godin
-    purpose: ""
+    purpose: "defining the smallest group you could serve so well that they would actively recruit others"
     category: growth
     domains: [audience-strategy, niche-focus, marketing-philosophy, minimum-viable-audience]
     use_when: "someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve"
@@ -1054,7 +1054,7 @@ frameworks:
   - id: the-algorithm
     name: "the 5-step algorithm to dramatically improve any process or product"
     advisor: elon-musk
-    purpose: ""
+    purpose: "a strict five-step sequence for improving any process: question requirements, delete, simplify, accelerate, then automate"
     category: strategy
     domains: [process-improvement, efficiency, first-principles, optimization]
     use_when: "someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach"
@@ -1070,7 +1070,7 @@ frameworks:
   - id: the-story-so-far
     name: "The Story So Far"
     advisor: wise-eric
-    purpose: "You are Wise Eric, guiding the user through \"The Story So Far\" - a reflective journey through their history with the Virtual Board."
+    purpose: "a reflective tour through a user's session history that surfaces breakthrough moments, patterns, and growth"
     category: psychology
     domains: [reflection, journey-review, progress-tracking, narrative]
     use_when: "a user wants to reflect on their journey and progress with the Virtual Board over time"
@@ -1104,7 +1104,7 @@ frameworks:
   - id: tissue-state-system
     name: "the Tissue State System to select the right mobilization technique for their specific tissue condition"
     advisor: kelly-starrett
-    purpose: ""
+    purpose: "diagnosing whether tissue is stiff, tight, or adhered and matching the right mobilization technique to the condition"
     category: health-movement
     domains: [tissue-mobilization, soft-tissue, recovery, treatment-selection]
     use_when: "someone needs to select the right mobilization technique based on their specific tissue condition"
@@ -1112,7 +1112,7 @@ frameworks:
   - id: type-1-type-2-decisions
     name: "the Type 1 vs Type 2 decision framework to determine the appropriate speed and rigor for their decision"
     advisor: jeff-bezos
-    purpose: ""
+    purpose: "classifying decisions as irreversible or reversible and matching the appropriate speed and rigor to each"
     category: strategy
     domains: [decision-making, speed-vs-rigor, reversibility, organizational-agility]
     use_when: "someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices"
@@ -1120,7 +1120,7 @@ frameworks:
   - id: upstream-downstream-diagnostic
     name: "the Upstream/Downstream Diagnostic to find the true source of their pain or movement limitation"
     advisor: kelly-starrett
-    purpose: ""
+    purpose: "tracing pain or movement limitation upstream through the kinetic chain to find the true source of dysfunction"
     category: health-movement
     domains: [pain-source, movement-chain, diagnostic, root-cause]
     use_when: "someone has pain or limitation in one area but the actual source may be upstream or downstream in the movement chain"
@@ -1160,7 +1160,7 @@ frameworks:
   - id: working-backwards
     name: "the Working Backwards process by starting with the customer experience and working backwards to what needs to be built"
     advisor: jeff-bezos
-    purpose: ""
+    purpose: "starting from the customer experience and writing the press release before building anything"
     category: strategy
     domains: [product-development, customer-centric, press-release, backwards-planning]
     use_when: "a team needs to define a new product or feature by writing the press release first and working backwards to what must be built"
@@ -1169,7 +1169,7 @@ frameworks:
   - id: zone-of-genius
     name: "the Zone of Genius discovery process"
     advisor: wise-eric
-    purpose: "based on Gay Hendricks' \"The Big Leap\" framework"
+    purpose: "identifying your unique genius and distinguishing it from the Zone of Excellence trap where most high achievers get stuck"
     category: psychology
     domains: [self-discovery, strengths, purpose, career-alignment]
     use_when: "someone wants to identify their zone of genius to align their work with their unique abilities and passions"
