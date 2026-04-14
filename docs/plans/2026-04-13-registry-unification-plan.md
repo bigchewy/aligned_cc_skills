@@ -958,7 +958,7 @@ git commit -m "docs: generate frameworks/README.md from YAML registry"
 
 ---
 
-### Task 11: Generate Advisor Catalog HTML
+### ✅ Task 11: Generate Advisor Catalog HTML
 
 **Files:**
 - Create: `docs/advisor-catalog.html`
