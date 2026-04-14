@@ -1002,7 +1002,7 @@ git commit -m "feat: generate searchable advisor catalog HTML"
 
 ---
 
-### Task 12: Generate Framework Catalog HTML
+### ✅ Task 12: Generate Framework Catalog HTML
 
 **Files:**
 - Create: `docs/framework-catalog.html`
