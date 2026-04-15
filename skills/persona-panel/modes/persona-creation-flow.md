@@ -90,7 +90,7 @@ User can adjust names, add/remove personas, or change archetypes before proceedi
 
 > "Personas created. To run your first panel, paste or reference the content you'd like to test."
 
-Then return control to Stage 1. Stage 1 re-globs `docs/personas/`, finds the new group, continues to Stage 2.
+Then return control to Stage 1. Stage 1 re-globs both `docs/personas/` and `brand/personas/`, finds the new group, continues to Stage 2.
 
 ## Edge Cases
 
@@ -98,7 +98,7 @@ Then return control to Stage 1. Stage 1 re-globs `docs/personas/`, finds the new
 
 **Very thin answers:** Generate complete personas anyway — lean on reasonable inference. The calibration system flags generic personas over time (5+ runs of monotone verdicts).
 
-**Personas already exist elsewhere:** The creation flow only triggers when `docs/personas/` has no persona files at all. Existing groups are handled by Stage 1's normal group selection logic.
+**Personas already exist elsewhere:** The creation flow only triggers when neither `docs/personas/` nor `brand/personas/` has persona files. Existing groups in either location are handled by Stage 1's normal group selection logic.
 
 ## Boundaries
 

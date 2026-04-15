@@ -14,17 +14,19 @@ description: "Test content against simulated buyer/user personas. Use when: 'tes
 
 ## Stage 1: Discovery
 
-Glob `docs/personas/` in the current repo working directory.
+Search for persona files in the current repo working directory. Glob both `docs/personas/` and `brand/personas/`, collecting results from whichever locations exist. Track the **persona root** (e.g., `docs/personas` or `brand/personas`) for each set of results — downstream steps (scorecard writes, calibration) use this root rather than a hardcoded path.
 
-**If no personas found:** Present the opt-out prompt:
+**If no personas found in either location:** Present the opt-out prompt:
 
 > "No persona files found. I can create them now through a short Q&A, or you can add them manually using the template at `{base-directory}/references/persona-template.md`."
 
-If the user chooses manual creation, stop. Otherwise, read `{base-directory}/modes/persona-creation-flow.md` and follow its process. If the mode file cannot be Read, STOP and tell the user the plugin installation may be incomplete. After the creation flow completes (user has been prompted for content), re-glob `docs/personas/` and continue from the group selection logic below (multiple groups → ask, one group → proceed).
+If the user chooses manual creation, stop. Otherwise, read `{base-directory}/modes/persona-creation-flow.md` and follow its process. If the mode file cannot be Read, STOP and tell the user the plugin installation may be incomplete. After the creation flow completes (user has been prompted for content), re-glob both `docs/personas/` and `brand/personas/` and continue from the group selection logic below (multiple groups → ask, one group → proceed).
 
-**If multiple subdirectories (groups) exist:** Ask the user which group to run. Example: "Found persona groups: `ceos/`, `cmos/`. Which group should I run?"
+**If personas found in both locations:** Treat each location's subdirectories as separate groups. Present all groups with their location prefix for clarity (e.g., "`brand/personas/` (3 personas)", "`docs/personas/buyers/` (2 personas)").
 
-**If one group:** Proceed automatically. Read all `.md` files in the group directory (excluding `scorecard.md`).
+**If multiple subdirectories (groups) exist across either or both locations:** Ask the user which group to run. Example: "Found persona groups: `brand/personas/` (3 files), `docs/personas/enterprise/` (2 files). Which group should I run?"
+
+**If one group (in either location):** Proceed automatically. Read all `.md` files in the group directory (excluding `scorecard.md`).
 
 **If no content in conversation context and multiple groups exist:** Ask for clarification on both group and content.
 
@@ -93,7 +95,8 @@ After all persona sub-agents complete (or fail):
    **If the SCORECARD block is missing or malformed** (no SCORECARD: header, invalid verdict values, wrong number of pipe-delimited fields), warn the user: "Could not parse scorecard data from aggregation. Skipping scorecard write. Check aggregation.md for raw results." Do not write partial or corrupted rows — the scorecard is longitudinal data and silent corruption is harmful.
 
 4. **Write scorecard rows** (orchestrator responsibility — NOT the aggregation agent):
-   - File: `docs/personas/<group>/scorecard.md`
+   - File: `<persona-root>/<group>/scorecard.md` (where `<persona-root>` is the location established in Stage 1, e.g., `brand/personas` or `docs/personas`)
+   - If personas live at the root of the persona directory (no group subdirectory), use `<persona-root>/scorecard.md`
    - If file doesn't exist, create it with the header:
      ```markdown
      # Scorecard: <group>
