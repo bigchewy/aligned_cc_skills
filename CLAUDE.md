@@ -24,6 +24,13 @@ description: "Use when you have a spec or requirements for a multi-step task"
 ---
 ```
 
+## Registries — Sources of Truth
+
+Two YAML registries track all advisors and frameworks. Skills use these for discovery, routing, and selection. Any skill that creates or removes an advisor or framework MUST update the corresponding registry.
+
+- **`advisors/registry.yaml`** — All advisor personas. Used by use-advisor, code-reviewer, persona-panel, and contextual recommendation.
+- **`frameworks/registry.yaml`** — All decision frameworks. Used by use-framework and contextual recommendation.
+
 ## Cross-References
 
 Skills reference each other by path and by `/aligned:<name>` invocation. Before renaming or moving any `.md` file, grep all `skills/**/*.md` for the old path — breakage is silent.

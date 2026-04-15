@@ -34,17 +34,19 @@ Before any advisor work, detect what infrastructure exists in the current repo.
 
 | Marker | Check | Enables |
 |--------|-------|---------|
-| Advisor registry file | Check CLAUDE.md or Grep for registry | Registry entry (Step 3) |
+| Advisor registry file | Check CLAUDE.md or Grep for `advisors/registry.yaml` | Registry entry (Step 3) |
+| Framework registry file | Check for `frameworks/registry.yaml` | Framework registry entry (Step 6) |
 | Avatar generation | Check for avatar directory + generation script in package.json | Avatar generation (Step 5) |
 | Eval infrastructure | Check for eval scenarios directory + eval script in package.json | Eval scenario (Step 7) |
 
 **Print summary:**
 ```
 Environment Detection:
-  Prompt path: {detected path}           → {found / will create}
-  Registry:    {registry path}           → {found (full mode) / not found (lightweight mode)}
-  Avatars:     {avatar dir}              → {found / not found (skipping)}
-  Evals:       {eval dir}               → {found / not found (skipping)}
+  Prompt path:       {detected path}           → {found / will create}
+  Advisor registry:  {registry path}           → {found (full mode) / not found (lightweight mode)}
+  Framework registry: frameworks/registry.yaml → {found / not found (skipping)}
+  Avatars:           {avatar dir}              → {found / not found (skipping)}
+  Evals:             {eval dir}               → {found / not found (skipping)}
 ```
 
 > **Editor note:** A parallel environment detection section exists in `skills/add-framework/SKILL.md` (Step 0). If you change the path-detection priority order here, apply the equivalent change there.
@@ -180,6 +182,8 @@ If the project has an avatar generation script, run it per the project's convent
 ### 6. Add First Framework
 
 Use the `/aligned:add-framework` skill to implement the top-ranked framework.
+
+> **Critical:** The add-framework skill updates `frameworks/registry.yaml` (Step 5 in that skill). If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to `frameworks/registry.yaml` with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
 
 ### 7. Create Eval Scenario
 
