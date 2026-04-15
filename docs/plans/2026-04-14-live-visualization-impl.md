@@ -345,7 +345,7 @@ git commit -m "feat: replace post-critique session-document-generator re-dispatc
 
 ---
 
-### Task 6: Replace session-document-generator dispatch in business.md — initial visualization
+### ✅ Task 6: Replace session-document-generator dispatch in business.md — initial visualization
 
 **Files:**
 - Modify: `skills/brainstorming/modes/business.md` (the `**Visualization (conditional):**` section, lines 136-149)

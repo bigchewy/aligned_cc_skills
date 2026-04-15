@@ -135,18 +135,16 @@ For each major obstacle identified in Phase 2:
 
 **Visualization (conditional):**
 
-If the design document warrants visual artifacts (process flow diagrams, decision flows, data flow visualizations — most business designs will), dispatch the session-document-generator to produce a consolidated visualization document.
+If the design document warrants visual artifacts (process flow diagrams, decision flows, data flow visualizations — most business designs will), start the live visualization:
 
-**Dispatch template** — replace placeholders with actual values. Uses `subagent_type=general-purpose`:
+1. Read `skills/brainstorming/references/brainstorm-components.md` for the HTML template and component reference.
+2. Write the initial HTML to `/tmp/brainstorm-{topic}-{timestamp}/live.html` using the template. Replace `{title}`, `{subtitle}`, and `{context}` with session-specific values. Use a timestamp to prevent collision.
+3. Open the file in the default browser using a platform-aware pattern (separate Bash call — no `&&` chaining):
+   `open /tmp/brainstorm-{topic}-{timestamp}/live.html || xdg-open /tmp/brainstorm-{topic}-{timestamp}/live.html`
+   If both commands fail (headless environment), log a warning and continue.
+4. As each subsequent design section is validated, update the HTML file to add the new section's content. The browser picks up changes within 3 seconds.
 
-"Read `agents/session-document-generator.md` for your full workflow.
-Generate a consolidated visualization document for the design at `{design-file-path}`.
-Session name: `{session-name}`. Project root: `{project-root}`.
-Output to `docs/mockups/{session-name}.html`.
-Verify all Mermaid diagrams render without errors before opening.
-Open the file in the browser after verification passes."
-
-Do not pause for user review — the critique panel will evaluate the visuals alongside the design.
+If the design does not warrant visual artifacts, skip this section entirely and omit the `**Mockups:**` field from the design document header.
 
 **Nested sub-tabs rule:** When a tabbed HTML document is generated, use nested sub-tabs (progressive disclosure) whenever a single tab contains more detail than can be scanned in one view. Top-level tabs for major conceptual sections, sub-tabs within each for natural subdivisions. Each sub-tab holds one focused diagram or content block.
 
