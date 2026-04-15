@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Create the references directory
+### ✅ Task 1: Create the references directory
 
 **Files:**
 - Create: `skills/brainstorming/references/` (directory)
@@ -44,7 +44,7 @@ Note: Create a `.gitkeep` file since git doesn't track empty directories. Write 
 
 ---
 
-### Task 2: Create the brainstorm-components.md — HTML template skeleton
+### ✅ Task 2: Create the brainstorm-components.md — HTML template skeleton
 
 **Files:**
 - Create: `skills/brainstorming/references/brainstorm-components.md`
@@ -163,7 +163,7 @@ git commit -m "feat: add brainstorm component reference with HTML template"
 
 ---
 
-### Task 3: Add v1 component classes to brainstorm-components.md
+### ✅ Task 3: Add v1 component classes to brainstorm-components.md
 
 **Files:**
 - Modify: `skills/brainstorming/references/brainstorm-components.md` (append component documentation sections after the HTML template)
@@ -224,7 +224,7 @@ git commit -m "feat: add v1 component classes and documentation to brainstorm-co
 
 ---
 
-### Task 4: Replace session-document-generator dispatch in software.md — initial visualization
+### ✅ Task 4: Replace session-document-generator dispatch in software.md — initial visualization
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md` (the `**Visualization (mandatory):**` section, lines 135-148)
@@ -277,7 +277,7 @@ git commit -m "feat: replace session-document-generator dispatch with live visua
 
 ---
 
-### Task 5: Replace post-critique visualization refresh in software.md
+### ✅ Task 5: Replace post-critique visualization refresh in software.md
 
 > **Depends on:** Task 4 (Task 4 introduces the `/tmp/` live file path that this task's pre-critique snapshot references)
 
@@ -345,7 +345,7 @@ git commit -m "feat: replace post-critique session-document-generator re-dispatc
 
 ---
 
-### Task 6: Replace session-document-generator dispatch in business.md — initial visualization
+### ✅ Task 6: Replace session-document-generator dispatch in business.md — initial visualization
 
 **Files:**
 - Modify: `skills/brainstorming/modes/business.md` (the `**Visualization (conditional):**` section, lines 136-149)
@@ -392,7 +392,7 @@ git commit -m "feat: replace session-document-generator dispatch with live visua
 
 ---
 
-### Task 7: Replace post-critique visualization refresh in business.md
+### ✅ Task 7: Replace post-critique visualization refresh in business.md
 
 > **Depends on:** Task 6 (Task 6 introduces the `/tmp/` live file path that this task's pre-critique snapshot references)
 
@@ -434,7 +434,7 @@ git commit -m "feat: replace post-critique session-document-generator re-dispatc
 
 ---
 
-### Task 8: Update the critique panel visual-artifacts config
+### ✅ Task 8: Update the critique panel visual-artifacts config
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md` (the critique panel configuration block, around line 168)
@@ -466,7 +466,7 @@ git commit -m "fix: remove stale session-document-generator references from crit
 
 ---
 
-### Task 9: Update nested sub-tabs rule and verify cross-references
+### ✅ Task 9: Update nested sub-tabs rule and verify cross-references
 
 > **Depends on:** Tasks 4-8 (verifies and cleans up references introduced by earlier tasks; both mode files were last modified in Task 8)
 
