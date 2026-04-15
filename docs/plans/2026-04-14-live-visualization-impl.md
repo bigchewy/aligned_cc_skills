@@ -44,7 +44,7 @@ Note: Create a `.gitkeep` file since git doesn't track empty directories. Write 
 
 ---
 
-### Task 2: Create the brainstorm-components.md — HTML template skeleton
+### ✅ Task 2: Create the brainstorm-components.md — HTML template skeleton
 
 **Files:**
 - Create: `skills/brainstorming/references/brainstorm-components.md`
