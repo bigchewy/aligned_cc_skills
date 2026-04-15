@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Visualization for Brainstorming — Design Visualizations</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb'
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid #f0eeeb;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #f0eeeb;
+      padding-left: 16px;
+      background: #faf9f7;
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #fff7ed;
+      color: #ff6900;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-deferred {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #f5f3ef;
+      color: #6b7280;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #ff6900;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Component showcase styles */
+    .component-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .component-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .component-card .use-case {
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+    .component-card code {
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 0.78rem;
+      background: #f5f3ef;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #1a1a1a;
+    }
+    .component-preview {
+      background: #faf9f7;
+      border: 1px solid #f0eeeb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    /* Mini phase tracker for preview */
+    .mini-phase-tracker {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+    .mini-phase-item {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: #f5f3ef;
+      border: 1px solid #e5e7eb;
+      border-right: none;
+    }
+    .mini-phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .mini-phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid #e5e7eb; }
+    .mini-phase-item.current {
+      background: #ff6900;
+      color: white;
+      border-color: #ff6900;
+    }
+
+    /* Mini card grid preview */
+    .mini-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .mini-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.75rem;
+      color: #1a1a1a;
+    }
+    .mini-card strong { font-weight: 600; display: block; margin-bottom: 2px; }
+    .mini-card span { color: #6b7280; font-size: 0.7rem; }
+
+    /* Mini compare grid preview */
+    .mini-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .mini-compare-col {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.72rem;
+    }
+    .mini-compare-col h4 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+    .mini-compare-col .pro { color: #047857; }
+    .mini-compare-col .con { color: #b91c1c; }
+
+    /* Mini callout preview */
+    .mini-callout {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      border-left: 3px solid;
+      margin-bottom: 6px;
+    }
+    .mini-callout.decision { background: #fff7ed; border-color: #ff6900; color: #1a1a1a; }
+    .mini-callout.constraint { background: #f5f3ef; border-color: #555555; color: #1a1a1a; }
+    .mini-callout.risk { background: #fef2f2; border-color: #b91c1c; color: #b91c1c; }
+
+    /* Change table */
+    .change-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .change-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+      background: #f5f3ef;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .change-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0eeeb;
+      color: #1a1a1a;
+      vertical-align: top;
+    }
+    .change-table .file-path {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: #555555;
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    .status-modified { background: #fff7ed; color: #ff6900; }
+    .status-unchanged { background: #f5f3ef; color: #6b7280; }
+    .status-new { background: #ecfdf5; color: #047857; }
+
+    /* Success criteria */
+    .criteria-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .criteria-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0eeeb;
+      align-items: flex-start;
+    }
+    .criteria-item:last-child { border-bottom: none; }
+    .criteria-num {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: #ff6900;
+      font-weight: 600;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+    .criteria-text {
+      font-size: 0.85rem;
+      color: #1a1a1a;
+      line-height: 1.5;
+    }
+    .criteria-text strong { font-weight: 600; }
+
+    /* Test strategy */
+    .test-category {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .test-category h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .test-items {
+      font-size: 0.85rem;
+      color: #1a1a1a;
+      padding-left: 20px;
+      margin: 0;
+    }
+    .test-items li {
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Live Visualization for Brainstorming</h1>
+  <p class="subtitle">Design: Real-time browser visualization during brainstorming sessions</p>
+  <p class="context">Agent writes a self-refreshing HTML file during brainstorming. Browser auto-reloads every 3 seconds. At session end, the refresh script is stripped and the file becomes the permanent artifact. No web server, no process management.</p>
+
+  <!-- Top-level tab bar -->
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('dataflow')">Data Flow</button>
+    <button class="tab-btn" onclick="switchTab('lifecycle')">Session Lifecycle</button>
+    <button class="tab-btn" onclick="switchTab('components')">Component Library</button>
+    <button class="tab-btn" onclick="switchTab('integration')">Integration Points</button>
+    <button class="tab-btn" onclick="switchTab('criteria')">Success Criteria</button>
+    <button class="tab-btn" onclick="switchTab('testing')">Testing Strategy</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- OVERVIEW PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="section">
+      <h2>System Overview<span class="badge">architecture</span></h2>
+      <p class="description">The live visualization system has four components: a component reference file the agent reads once, the agent's write operations, the self-refreshing HTML in /tmp (session-isolated via timestamp), and the finalized artifact in docs/mockups/. Click any node to explore that topic.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  COMP["Component<br/>Reference"]
+  AGENT["Agent<br/>Write Cycle"]
+  LIVE["Live HTML<br/>in /tmp"]
+  PRECOPY["Pre-critique<br/>Copy"]
+  FINAL["Finalized<br/>Artifact"]
+  INTEGRATE["Integration<br/>Points"]
+
+  COMP -->|reads once| AGENT
+  AGENT -->|writes + updates| LIVE
+  LIVE -->|copy before critique| PRECOPY
+  PRECOPY -->|strip refresh| FINAL
+  FINAL --- INTEGRATE
+
+  click COMP "javascript:switchTab('components')"
+  click AGENT "javascript:switchTab('dataflow')"
+  click LIVE "javascript:switchTab('lifecycle')"
+  click PRECOPY "javascript:switchTab('lifecycle')"
+  click FINAL "javascript:switchTab('integration')"
+  click INTEGRATE "javascript:switchTab('integration')"
+
+  style COMP fill:#f5f3ef,stroke:#e5e7eb,color:#1a1a1a
+  style AGENT fill:#ff6900,stroke:#e55d00,color:#fff
+  style LIVE fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style PRECOPY fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style FINAL fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style INTEGRATE fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#e5e7eb,stroke-width:1px
+        </pre>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6900;"></div> Active process</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff7ed; border: 1px solid #ff6900;"></div> Live artifact</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5f3ef; border: 1px solid #e5e7eb;"></div> Reference</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff; border: 1px solid #e5e7eb;"></div> Static output</div>
+    </div>
+
+    <!-- Rollback notice -->
+    <div class="section" style="margin-top:24px; border-left: 3px solid #ff6900;">
+      <h2>Rollback<span class="badge">safety net</span></h2>
+      <p class="description">If live visualization fails during a session: revert the mode file changes and restore the session-document-generator dispatch. This is a single git revert. The session-document-generator agent and all diagram sub-agents remain unchanged and functional throughout.</p>
+    </div>
+
+    <!-- Future expansion (trimmed to one paragraph) -->
+    <div class="section">
+      <h2>Future Expansion</h2>
+      <p class="description">If the file-based approach proves out, natural next steps include extending to other skills (framework walkthroughs, critique panels) and adding interaction capture. A persistent web server becomes justified only if users hit concrete UX problems with file-based refresh.</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DATA FLOW PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-dataflow">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Data Flow<span class="badge">flowchart</span></h2>
+      <p class="description">The data flow is linear and file-based. The agent writes HTML using the Write tool, the browser reloads on a 3-second timer, and the cycle repeats until the session ends. A pre-critique copy step ensures the critique panel reads from docs/mockups/ at its configured path. No server, no sockets, no IPC.</p>
+      <ul class="bullet-list">
+        <li><strong>Read once:</strong> Agent reads skills/brainstorming/references/brainstorm-components.md at visualization start</li>
+        <li><strong>Write to /tmp:</strong> Initial HTML written to /tmp/brainstorm-{topic}-{timestamp}/live.html (timestamp provides session isolation)</li>
+        <li><strong>Auto-reload:</strong> Self-refresh script triggers location.reload() every 3 seconds (30-minute timeout)</li>
+        <li><strong>Incremental updates:</strong> Agent overwrites the same file as each design section is validated</li>
+        <li><strong>Pre-critique copy:</strong> Copy live file to docs/mockups/{session-name}.html so critique panel can access it</li>
+        <li><strong>Post-critique:</strong> If design changed, fully regenerate at docs/mockups/; strip refresh script from final copy</li>
+      </ul>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  READ["Read<br/>components.md"]
+  WRITE["Write initial<br/>HTML to /tmp"]
+  OPEN["open in<br/>browser"]
+  RELOAD["Browser<br/>auto-reloads<br/>every 3s"]
+  UPDATE["Agent updates<br/>HTML file"]
+  PRECOPY["Pre-critique:<br/>copy to<br/>docs/mockups/"]
+  CRITIQUE["Critique<br/>panel runs"]
+  REGEN["Post-critique:<br/>regenerate +<br/>strip refresh"]
+
+  READ --> WRITE
+  WRITE --> OPEN
+  OPEN --> RELOAD
+  RELOAD -->|design evolves| UPDATE
+  UPDATE -->|next reload cycle| RELOAD
+  RELOAD -->|session ends| PRECOPY
+  PRECOPY --> CRITIQUE
+  CRITIQUE -->|if changed| REGEN
+
+  style READ fill:#f5f3ef,stroke:#e5e7eb,color:#1a1a1a
+  style WRITE fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style OPEN fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style RELOAD fill:#ff6900,stroke:#e55d00,color:#fff
+  style UPDATE fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style PRECOPY fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CRITIQUE fill:#f5f3ef,stroke:#e5e7eb,color:#1a1a1a
+  style REGEN fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+  linkStyle 6 stroke:#ff6900,stroke-width:2px
+  linkStyle 7 stroke:#ff6900,stroke-width:2px
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SESSION LIFECYCLE PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-lifecycle">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Session Lifecycle<span class="badge">3 phases</span></h2>
+      <p class="description">The lifecycle is fully automatic. The brainstorming skill triggers visualization at the design presentation phase. Updates happen during presentation. Finalization includes a pre-critique copy step and post-critique conditional regeneration. No user management required.</p>
+    </div>
+
+    <!-- Sub-tabs for the 3 phases -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('lifecycle','lifecycle-start')">Phase 1: Start</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('lifecycle','lifecycle-update')">Phase 2: Update</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('lifecycle','lifecycle-finalize')">Phase 3: Finalize</button>
+    </div>
+
+    <!-- Phase 1: Start -->
+    <div class="sub-panel active" id="sub-lifecycle-start">
+      <div class="section">
+        <h2>Phase 1 &mdash; Start<span class="badge">automatic</span></h2>
+        <p class="description">Triggered automatically at the design presentation phase. The agent reads the component reference, writes the initial HTML to a session-isolated /tmp path, and opens the browser. The self-refresh script starts a 3-second reload cycle with a 30-minute timeout.</p>
+        <ul class="bullet-list">
+          <li><strong>Step 1:</strong> Agent reads skills/brainstorming/references/brainstorm-components.md (template + CSS component classes)</li>
+          <li><strong>Step 2:</strong> Agent writes initial HTML to /tmp/brainstorm-{topic}-{timestamp}/live.html (timestamp prevents collision if the same topic is brainstormed twice)</li>
+          <li><strong>Step 3:</strong> Agent opens the file using a platform-aware command: <code style="font-family:Menlo,monospace;font-size:0.82rem;background:#f5f3ef;padding:1px 4px;border-radius:3px;">open /path</code> on macOS, <code style="font-family:Menlo,monospace;font-size:0.82rem;background:#f5f3ef;padding:1px 4px;border-radius:3px;">xdg-open /path</code> on Linux (separate Bash calls &mdash; must not chain with &amp;&amp;). If the open command fails (headless environment), log a warning and continue.</li>
+          <li><strong>Step 4:</strong> Browser opens, self-refresh script begins 3-second polling (with 30-minute timeout to prevent indefinite reload)</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  S1["Read<br/>components.md"]
+  S2["Write initial<br/>HTML to /tmp"]
+  S3["open / xdg-open<br/>in browser"]
+  S4["Refresh loop<br/>begins"]
+
+  S1 --> S2
+  S2 --> S3
+  S3 --> S4
+
+  style S1 fill:#f5f3ef,stroke:#e5e7eb,color:#1a1a1a
+  style S2 fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style S3 fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style S4 fill:#ff6900,stroke:#e55d00,color:#fff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2: Update -->
+    <div class="sub-panel" id="sub-lifecycle-update">
+      <div class="section">
+        <h2>Phase 2 &mdash; Update<span class="badge">iterative</span></h2>
+        <p class="description">During design presentation, the agent presents each section in chat. After the user validates, the agent updates the HTML file. The browser picks up the change within 3 seconds on the next reload cycle.</p>
+        <ul class="bullet-list">
+          <li><strong>Step 5:</strong> Agent presents a design section in chat, user validates</li>
+          <li><strong>Step 6:</strong> Agent updates the HTML file to reflect the validated section</li>
+          <li><strong>Step 7:</strong> Browser picks up the change within 3 seconds</li>
+          <li><strong>Repeat:</strong> Steps 5-7 cycle for each design section</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  P["Present<br/>section in chat"]
+  V["User<br/>validates"]
+  U["Update<br/>HTML file"]
+  R["Browser<br/>reloads"]
+
+  P --> V
+  V --> U
+  U -->|3s| R
+  R -->|next section| P
+
+  style P fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style V fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style U fill:#ff6900,stroke:#e55d00,color:#fff
+  style R fill:#f5f3ef,stroke:#e5e7eb,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3: Finalize -->
+    <div class="sub-panel" id="sub-lifecycle-finalize">
+      <div class="section">
+        <h2>Phase 3 &mdash; Finalize<span class="badge">pre-critique through post-critique</span></h2>
+        <p class="description">Before critique dispatch, the agent copies the live file to docs/mockups/ so the critique panel can access it at its configured path. After critique, if the design changed, the agent fully regenerates the HTML from the corrected design. Then it strips the refresh script, updates the design document header, and commits.</p>
+        <ul class="bullet-list">
+          <li><strong>Step 8:</strong> Pre-critique: copy live file from /tmp to docs/mockups/{session-name}.html</li>
+          <li><strong>Step 9:</strong> Critique panel runs (reads from docs/mockups/ &mdash; unchanged process)</li>
+          <li><strong>Step 10:</strong> If critique modified the design: fully regenerate HTML at docs/mockups/{session-name}.html from the corrected design using the component reference (not surgical edit &mdash; full rewrite)</li>
+          <li><strong>Step 11:</strong> Strip the LIVE-REFRESH-START / LIVE-REFRESH-END block from the docs/mockups/ copy</li>
+          <li><strong>Step 12:</strong> Add <code style="font-family:Menlo,monospace;font-size:0.82rem;background:#f5f3ef;padding:1px 4px;border-radius:3px;">**Mockups:** docs/mockups/{session-name}.html</code> to the design document header (written AFTER copy)</li>
+          <li><strong>Step 13:</strong> Commit design doc + mockup together</li>
+        </ul>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  PRECOPY["Pre-critique:<br/>copy to<br/>docs/mockups/"]
+  CRIT["Critique<br/>panel runs"]
+  C["Critique<br/>modifies design?"]
+  REGEN["Full regenerate<br/>at docs/mockups/"]
+  STRIP["Strip<br/>refresh script"]
+  HDR["Update<br/>design doc header"]
+  COMMIT["Commit<br/>both files"]
+
+  PRECOPY --> CRIT
+  CRIT --> C
+  C -->|yes| REGEN
+  C -->|no| STRIP
+  REGEN --> STRIP
+  STRIP --> HDR
+  HDR --> COMMIT
+
+  style PRECOPY fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style CRIT fill:#f5f3ef,stroke:#e5e7eb,color:#1a1a1a
+  style C fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style REGEN fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style STRIP fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style HDR fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style COMMIT fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#e5e7eb,stroke-width:1px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+  linkStyle 5 stroke:#ff6900,stroke-width:2px
+  linkStyle 6 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- COMPONENT LIBRARY PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-components">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>CSS Component Library<span class="badge">v1-essential</span></h2>
+      <p class="description">Pre-built CSS classes documented in skills/brainstorming/references/brainstorm-components.md. The agent generates content using these classes &mdash; no freeform styling needed. All components inherit the design token palette. Components are split into v1-essential (ship now) and v1-deferred (add when a workflow step needs them).</p>
+    </div>
+
+    <!-- Sub-tabs for component groups -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('components','comp-layout')">Layout</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('components','comp-data')">Data Display</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('components','comp-feedback')">Feedback</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('components','comp-deferred')">Deferred</button>
+    </div>
+
+    <!-- Layout components (v1-essential) -->
+    <div class="sub-panel active" id="sub-comp-layout">
+      <!-- Phase Tracker -->
+      <div class="component-card">
+        <h3>Phase Tracker<span class="badge">v1-essential</span></h3>
+        <p class="use-case">Horizontal progress showing brainstorm phases with current highlight</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="phase-tracker"&gt;</code> with <code>.phase-item</code> and <code>.phase-current</code></p>
+        <div class="component-preview">
+          <div class="mini-phase-tracker">
+            <div class="mini-phase-item">Discovery</div>
+            <div class="mini-phase-item current">Design</div>
+            <div class="mini-phase-item">Critique</div>
+            <div class="mini-phase-item">Finalize</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabbed Navigation -->
+      <div class="component-card">
+        <h3>Tabbed Navigation<span class="badge">v1-essential</span></h3>
+        <p class="use-case">Content sections with tab switching (matches session-document-generator pattern)</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>.tab-bar</code> + <code>.tab-btn</code> / <code>.sub-tab-bar</code> + <code>.sub-tab-btn</code></p>
+        <div class="component-preview">
+          <div style="display:flex;gap:2px;border-bottom:1px solid #f0eeeb;margin-bottom:8px;">
+            <span style="padding:6px 12px;font-size:0.75rem;font-weight:500;color:#ff6900;border-bottom:2px solid #ff6900;">Overview</span>
+            <span style="padding:6px 12px;font-size:0.75rem;font-weight:500;color:#6b7280;">Architecture</span>
+            <span style="padding:6px 12px;font-size:0.75rem;font-weight:500;color:#6b7280;">Data Model</span>
+          </div>
+          <div style="font-size:0.75rem;color:#6b7280;">Tab content renders here</div>
+        </div>
+      </div>
+
+      <!-- Section Containers -->
+      <div class="component-card">
+        <h3>Section Container<span class="badge">v1-essential</span></h3>
+        <p class="use-case">White cards with border for content grouping (inherited from session-document-generator)</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="section"&gt;</code></p>
+        <div class="component-preview">
+          <div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;">
+            <div style="font-size:0.82rem;font-weight:500;color:#1a1a1a;margin-bottom:4px;">Section Heading <span style="font-size:0.65rem;padding:1px 5px;border-radius:999px;background:#fff7ed;color:#ff6900;font-weight:500;">badge</span></div>
+            <div style="font-size:0.75rem;color:#555555;">Description paragraph with key details.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data display components (v1-essential) -->
+    <div class="sub-panel" id="sub-comp-data">
+      <!-- Card Grid -->
+      <div class="component-card">
+        <h3>Card Grid<span class="badge">v1-essential</span></h3>
+        <p class="use-case">Problems, root causes, solutions, architectural components</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="card-grid"&gt;</code> with <code>.card</code> items</p>
+        <div class="component-preview">
+          <div class="mini-card-grid">
+            <div class="mini-card"><strong>Auth Layer</strong><span>JWT + refresh tokens</span></div>
+            <div class="mini-card"><strong>API Gateway</strong><span>Rate limiting, routing</span></div>
+            <div class="mini-card"><strong>Data Store</strong><span>PostgreSQL + Redis</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison Grid -->
+      <div class="component-card">
+        <h3>Comparison Grid<span class="badge">v1-essential</span></h3>
+        <p class="use-case">2-3 column approach trade-offs with pros/cons</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="compare-grid compare-2col"&gt;</code></p>
+        <div class="component-preview">
+          <div class="mini-compare-grid">
+            <div class="mini-compare-col">
+              <h4>Approach A</h4>
+              <div class="pro">+ Simple to implement</div>
+              <div class="pro">+ No new dependencies</div>
+              <div class="con">- Limited scalability</div>
+            </div>
+            <div class="mini-compare-col">
+              <h4>Approach B</h4>
+              <div class="pro">+ Scales horizontally</div>
+              <div class="con">- Complex setup</div>
+              <div class="con">- New infrastructure</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mermaid Containers -->
+      <div class="component-card">
+        <h3>Mermaid Containers<span class="badge">v1-essential</span></h3>
+        <p class="use-case">Architecture diagrams, flows, state machines (software mode)</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="diagram-container"&gt;&lt;pre class="mermaid"&gt;</code></p>
+        <div class="component-preview">
+          <div style="font-size:0.75rem;color:#6b7280;text-align:center;padding:16px;">
+            <div style="font-style:italic;">Mermaid diagrams render here with lazy loading (mermaid-deferred class)</div>
+            <div style="margin-top:6px;font-size:0.7rem;">startOnLoad: false | securityLevel: 'loose' | theme: 'base'</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback components (v1-essential) -->
+    <div class="sub-panel" id="sub-comp-feedback">
+      <!-- Callout Boxes -->
+      <div class="component-card">
+        <h3>Callout Boxes<span class="badge">v1-essential</span></h3>
+        <p class="use-case">Decisions, constraints, risks, Architect notes</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="callout callout-{type}"&gt;</code> (decision, constraint, risk, note)</p>
+        <div class="component-preview">
+          <div class="mini-callout decision"><strong>Decision:</strong> File-based with self-refresh, no web server.</div>
+          <div class="mini-callout constraint"><strong>Constraint:</strong> Must work over file:// protocol.</div>
+          <div class="mini-callout risk"><strong>Risk:</strong> Page flashes white on each 3s reload cycle.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deferred components -->
+    <div class="sub-panel" id="sub-comp-deferred">
+      <div class="section" style="border-left: 3px solid #6b7280;">
+        <h2>v1-Deferred Components</h2>
+        <p class="description">These components are defined but not required by any current workflow step. They will be added when a framework or workflow explicitly needs them.</p>
+      </div>
+
+      <!-- Quadrant Map -->
+      <div class="component-card" style="opacity: 0.75;">
+        <h3>Quadrant Map<span class="badge-deferred">deferred</span></h3>
+        <p class="use-case">2x2 matrix for positioning, prioritization, risk assessment. No current workflow step maps to this; add when a framework (e.g., Eisenhower matrix) needs it.</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="quadrant-map"&gt;</code> with 4 <code>.quadrant</code> cells</p>
+      </div>
+
+      <!-- Decision Log -->
+      <div class="component-card" style="opacity: 0.75;">
+        <h3>Decision Log<span class="badge-deferred">deferred</span></h3>
+        <p class="use-case">Timestamped choices made during the session. Could enhance design presentation but not required by current flow.</p>
+        <p style="font-size:0.82rem;color:#1a1a1a;margin-bottom:4px;">HTML: <code>&lt;div class="decision-log"&gt;</code> with <code>.decision-entry</code> items</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- INTEGRATION POINTS PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-integration">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Integration Points<span class="badge">impact map</span></h2>
+      <p class="description">The live visualization design touches two mode files and introduces one new reference file. The rest of the brainstorming infrastructure &mdash; session-document-generator, mockup-generator, critique panel, and commit flow &mdash; remains unchanged.</p>
+    </div>
+
+    <!-- Sub-tabs -->
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('integration','int-changes')">What Changes</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('integration','int-unchanged')">What Stays</button>
+    </div>
+
+    <!-- Changes sub-tab -->
+    <div class="sub-panel active" id="sub-int-changes">
+      <div class="section">
+        <h2>Files Modified or Created</h2>
+        <table class="change-table">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Status</th>
+              <th>Change Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="file-path">skills/brainstorming/references/brainstorm-components.md</td>
+              <td><span class="status-badge status-new">new</span></td>
+              <td>HTML template + CSS component reference. Single source of truth for the agent.</td>
+            </tr>
+            <tr>
+              <td class="file-path">skills/brainstorming/modes/software.md</td>
+              <td><span class="status-badge status-modified">modified</span></td>
+              <td>Replace session-document-generator dispatch (~lines 137-148) with live visualization instructions. Update post-critique step 1 mechanism. Update critique panel's visual-artifacts config to reference the pre-critique copy.</td>
+            </tr>
+            <tr>
+              <td class="file-path">skills/brainstorming/modes/business.md</td>
+              <td><span class="status-badge status-modified">modified</span></td>
+              <td>Same replacement as software.md, preserving the conditional gate (~line 136). Not all business brainstorms produce visuals.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section">
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph LR
+  NEW["skills/brainstorming/<br/>references/<br/>brainstorm-<br/>components.md"]
+  SW["modes/<br/>software.md"]
+  BIZ["modes/<br/>business.md"]
+  LIVE["Live HTML<br/>in /tmp"]
+  FINAL["docs/mockups/<br/>session.html"]
+
+  NEW -->|agent reads| SW
+  NEW -->|agent reads| BIZ
+  SW -->|writes| LIVE
+  BIZ -->|writes| LIVE
+  LIVE -->|finalize| FINAL
+
+  style NEW fill:#ff6900,stroke:#e55d00,color:#fff
+  style SW fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style BIZ fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style LIVE fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style FINAL fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+  linkStyle 3 stroke:#ff6900,stroke-width:2px
+  linkStyle 4 stroke:#ff6900,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unchanged sub-tab -->
+    <div class="sub-panel" id="sub-int-unchanged">
+      <div class="section">
+        <h2>Files That Stay Unchanged</h2>
+        <table class="change-table">
+          <thead>
+            <tr>
+              <th>File / System</th>
+              <th>Status</th>
+              <th>Why Unchanged</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="file-path">agents/session-document-generator.md</td>
+              <td><span class="status-badge status-unchanged">unchanged</span></td>
+              <td>Still used by other skills that dispatch it. Only replaced for brainstorming.</td>
+            </tr>
+            <tr>
+              <td class="file-path">agents/mockup-generator.md</td>
+              <td><span class="status-badge status-unchanged">unchanged</span></td>
+              <td>Still used for approach comparison mockups during brainstorming Q&amp;A phase.</td>
+            </tr>
+            <tr>
+              <td>Critique panel process</td>
+              <td><span class="status-badge status-unchanged">unchanged</span></td>
+              <td>Evaluates docs/mockups/{session-name}.html as before. Pre-critique copy ensures the file exists at its configured path.</td>
+            </tr>
+            <tr>
+              <td>Post-critique commit step</td>
+              <td><span class="status-badge status-unchanged">unchanged</span></td>
+              <td>Commits design doc + mockup together. The artifact path is identical.</td>
+            </tr>
+            <tr>
+              <td class="file-path">agents/flowchart-generator.md</td>
+              <td><span class="status-badge status-unchanged">unchanged</span></td>
+              <td>Live HTML embeds Mermaid directly rather than dispatching these agents.</td>
+            </tr>
+            <tr>
+              <td class="file-path">agents/architecture-diagram-generator.md</td>
+              <td><span class="status-badge status-unchanged">unchanged</span></td>
+              <td>Same as above. Available for other skills.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SUCCESS CRITERIA PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-criteria">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Success Criteria<span class="badge">3 measures</span></h2>
+      <p class="description">Concrete, measurable criteria for validating that the live visualization system delivers on its promise. Each criterion maps to a specific observable behavior during a brainstorming session.</p>
+      <ul class="criteria-list">
+        <li class="criteria-item">
+          <span class="criteria-num">1</span>
+          <span class="criteria-text"><strong>Timing:</strong> The browser shows a meaningful visual artifact within 30 seconds of the agent beginning the design presentation phase &mdash; before the user provides feedback on the first section.</span>
+        </li>
+        <li class="criteria-item">
+          <span class="criteria-num">2</span>
+          <span class="criteria-text"><strong>Continuity:</strong> The artifact updates at least once per validated design section, with no manual browser refresh required.</span>
+        </li>
+        <li class="criteria-item">
+          <span class="criteria-num">3</span>
+          <span class="criteria-text"><strong>Parity:</strong> The final snapshotted artifact at docs/mockups/{session-name}.html is at least as informative as artifacts currently produced by the session-document-generator (tabbed layout, Mermaid diagrams, section breakdowns).</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Criteria Flow<span class="badge">timeline</span></h2>
+      <p class="description">How each criterion maps to the session timeline.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  START["Design phase<br/>begins"]
+  T30["Artifact visible<br/>within 30s"]
+  SECT["Each section<br/>validated"]
+  UPD["Artifact updates<br/>automatically"]
+  END["Session ends"]
+  SNAP["Final snapshot<br/>at docs/mockups/"]
+
+  START -->|timing| T30
+  SECT -->|continuity| UPD
+  END -->|parity| SNAP
+
+  style START fill:#f5f3ef,stroke:#e5e7eb,color:#1a1a1a
+  style T30 fill:#ff6900,stroke:#e55d00,color:#fff
+  style SECT fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style UPD fill:#ff6900,stroke:#e55d00,color:#fff
+  style END fill:#fff,stroke:#e5e7eb,color:#1a1a1a
+  style SNAP fill:#ff6900,stroke:#e55d00,color:#fff
+
+  linkStyle 0 stroke:#ff6900,stroke-width:2px
+  linkStyle 1 stroke:#ff6900,stroke-width:2px
+  linkStyle 2 stroke:#ff6900,stroke-width:2px
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- TESTING STRATEGY PANEL -->
+  <!-- ============================================================ -->
+  <div class="tab-panel" id="panel-testing">
+    <a class="back-link" onclick="switchTab('overview')">&#8592; Overview</a>
+    <div class="section">
+      <h2>Testing Strategy<span class="badge">5 categories</span></h2>
+      <p class="description">Verification areas for the live visualization system. Each category targets a specific layer of the architecture to ensure end-to-end correctness.</p>
+    </div>
+
+    <div class="test-category">
+      <h3>Refresh Script Stripping</h3>
+      <ul class="test-items">
+        <li>Verify the <code>&lt;!-- LIVE-REFRESH-START --&gt;</code> / <code>&lt;!-- LIVE-REFRESH-END --&gt;</code> delimiters survive HTML generation and are cleanly removable</li>
+        <li>Test with edge cases: nested HTML comments within the block, minified HTML, multiline script tags</li>
+        <li>Verify the stripped file is valid HTML (no orphaned tags from the removal)</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>Mermaid Rendering</h3>
+      <ul class="test-items">
+        <li>Verify Mermaid diagrams render correctly in the self-refreshing file over file:// protocol</li>
+        <li>Test lazy rendering on tab switch (existing pattern from session-document-generator)</li>
+        <li>Verify Mermaid syntax is valid before writing to file (reuse the verification step from session-document-generator)</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>Finalization Integrity</h3>
+      <ul class="test-items">
+        <li>Verify the copy from /tmp/ to docs/mockups/ produces a valid standalone HTML file</li>
+        <li>Verify the <code>**Mockups:**</code> field in the design doc points to a file that exists</li>
+        <li>Verify the committed artifact renders correctly when opened after the session</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>Component Class Correctness</h3>
+      <ul class="test-items">
+        <li>Each CSS class referenced in the component documentation must exist in the HTML template's &lt;style&gt; block</li>
+        <li>The reference doc and template are in the same file, but verify no class is documented that isn't defined (and vice versa)</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>Platform Behavior</h3>
+      <ul class="test-items">
+        <li>Verify <code>open</code> / <code>xdg-open</code> fallback works on macOS and Linux (separate Bash calls, no chaining)</li>
+        <li>Verify graceful degradation when no browser is available (headless environment &mdash; warning, not error)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Known Limitations (v1)</h2>
+      <ul class="bullet-list">
+        <li><strong>Reload flash:</strong> Page goes white for a frame on each 3-second reload. Tolerable for a brainstorming artifact on a second monitor. If reported as a problem, a persistent web server with SSE becomes the justified upgrade.</li>
+        <li><strong>Tailwind CDN over file://:</strong> All 8 existing mockup files already accept this risk. The 3-second reload makes CDN failures more visible but the root cause is unchanged.</li>
+        <li><strong>No interaction capture:</strong> v1 is view-only. User feedback flows through conversation. If click/annotation capture is needed, HTTP POST to a lightweight server is the path.</li>
+        <li><strong>Write atomicity assumption:</strong> The Write tool is atomic on macOS (write + rename), so the browser should not see truncated HTML mid-write.</li>
+        <li><strong>macOS-primary:</strong> The <code>open</code> command is macOS-native. Linux fallback (<code>xdg-open</code>) is included but untested. Headless environments get a warning, not an error.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render overview diagram on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one if none active
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
