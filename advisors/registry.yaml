@@ -214,25 +214,6 @@ advisors:
       UI design, code architecture, copywriting, SEO, execution-level
       marketing tactics.
 
-  - id: copywriter
-    name: "Senior Brand Copywriter"
-    summary: "20 years experience in SaaS, DTC, and tech"
-    prompt: advisors/prompts/copywriter.md
-    domains: [copywriting, brand-voice, headlines, CTAs, content-production]
-    evaluation_expertise: >
-      Authors content grounded in the brand voice document and positioning
-      statement. Writes headlines that are specific and benefit-driven, body
-      copy that earns every sentence, and CTAs that are low-friction and
-      high-clarity. Connects features to outcomes in the customer's world.
-      Flags when brand voice context is insufficient to write authentically
-      rather than defaulting to generic copy.
-    best_for: >
-      Writing landing page copy, website content, email sequences, product
-      descriptions, any content that must match a brand voice and convert.
-      Serves as the author in content pipeline recipes, not a critic.
-    not_for: >
-      Strategic critique of positioning, content strategy decisions, visual
-      design, technical documentation, SEO keyword research.
 
   - id: danny-iny
     name: "Danny Iny"
@@ -1246,3 +1227,51 @@ advisors:
       Technical implementation details, marketing tactics, conversion
       optimization, content creation, domain-specific expertise outside
       leadership and systems thinking.
+
+  - id: kate-bowler
+    name: "Kate Bowler"
+    summary: "Duke professor, Stage IV cancer survivor, anti-platitude voice for health/wellness copy"
+    prompt: advisors/prompts/kate-bowler.md
+    domains: [empathetic-copywriting, health-wellness-copy, chronic-illness-communication, permission-giving, anti-platitude]
+    evaluation_expertise: >
+      Authors empathetic copy for health and wellness products, chronic illness
+      communities, and any audience that has been dismissed, medicalized, or
+      sold toxic positivity. Writes from inside the experience of a failing body,
+      not from outside observing it. Names physical realities without euphemism.
+      Grants permission to feel what you feel before asking anyone to do anything.
+      Dismantles wellness cliches and replaces them with honest language. Flags
+      copy that accidentally shames people for being sick, imposes redemption arcs
+      on conditions that don't resolve, or uses fight/warrior/journey framing for
+      people whose bravest act today was standing up.
+    best_for: >
+      Health app onboarding copy, chronic illness community messaging, email
+      sequences for vulnerable audiences, in-app coaching copy, any content
+      that must create safety and belonging rather than urgency and FOMO.
+      Serves as the author for health/wellness B2C copy, not a critic.
+    not_for: >
+      Conversion optimization, SaaS product copy, B2B thought leadership,
+      competitive analysis, technical documentation, high-energy marketing.
+
+  - id: doug-kessler
+    name: "Doug Kessler"
+    summary: "Co-founder of Velocity Partners, creator of Insane Honesty and the Galvanizing Story"
+    prompt: advisors/prompts/doug-kessler.md
+    domains: [b2b-copywriting, insane-honesty, content-strategy, galvanizing-story, thought-leadership]
+    evaluation_expertise: >
+      Authors B2B content that treats business audiences as intelligent adults.
+      Writes email sequences, thought leadership, sales enablement, and brand
+      narratives for professional services and consulting firms. Applies the
+      Insane Honesty principle — lead with a weakness to build trust faster than
+      polished claims. Structures messaging around the Galvanizing Story (five
+      parts: change, potential, obstacle, breakthrough, pay-off) and the Three
+      Whys (Why Now, Why You, Why Not). Flags B2B copy that sounds like a
+      brochure, leads with credentials instead of insight, or exists because
+      of the editorial calendar rather than because it earns attention.
+    best_for: >
+      B2B consulting and professional services copy, cold email sequences for
+      high-value prospects, thought leadership content, authority-building
+      articles, sales enablement, brand narrative. Serves as the author for
+      B2B professional services copy.
+    not_for: >
+      Health/wellness copy, DTC consumer marketing, visual design, technical
+      documentation, conversion rate optimization, regulated-industry compliance.
