@@ -224,7 +224,7 @@ git commit -m "feat: add v1 component classes and documentation to brainstorm-co
 
 ---
 
-### Task 4: Replace session-document-generator dispatch in software.md — initial visualization
+### ✅ Task 4: Replace session-document-generator dispatch in software.md — initial visualization
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md` (the `**Visualization (mandatory):**` section, lines 135-148)
