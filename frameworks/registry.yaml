@@ -1173,3 +1173,21 @@ frameworks:
     category: psychology
     domains: [self-discovery, strengths, purpose, career-alignment]
     use_when: "someone wants to identify their zone of genius to align their work with their unique abilities and passions"
+
+  - id: permission-blessing
+    name: "the Permission Blessing process for writing copy that grants permission before asking anything"
+    advisor: kate-bowler
+    purpose: "creating empathetic copy for health/wellness and chronic illness audiences by naming physical realities, validating emotions, and dismantling platitudes"
+    category: copywriting
+    domains: [empathetic-copywriting, health-wellness, chronic-illness, onboarding-copy, permission-giving]
+    use_when: "writing copy for vulnerable audiences — health apps, chronic illness communities, onboarding flows — where the reader needs to feel seen before being asked to do anything"
+    helpful_documents: ["brand-voice", "positioning"]
+
+  - id: insane-honesty
+    name: "the Insane Honesty process for writing B2B content that builds trust by leading with what most companies hide"
+    advisor: doug-kessler
+    purpose: "creating B2B copy that earns trust through radical honesty, structured around the Galvanizing Story and Three Whys frameworks"
+    category: copywriting
+    domains: [b2b-copywriting, content-strategy, email-sequences, thought-leadership, sales-enablement]
+    use_when: "writing B2B professional services copy — cold emails, thought leadership, landing pages, sales enablement — that needs to stand out from corporate noise"
+    helpful_documents: ["positioning", "brand-voice"]
