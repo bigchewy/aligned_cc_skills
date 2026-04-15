@@ -277,7 +277,7 @@ git commit -m "feat: replace session-document-generator dispatch with live visua
 
 ---
 
-### Task 5: Replace post-critique visualization refresh in software.md
+### ✅ Task 5: Replace post-critique visualization refresh in software.md
 
 > **Depends on:** Task 4 (Task 4 introduces the `/tmp/` live file path that this task's pre-critique snapshot references)
 

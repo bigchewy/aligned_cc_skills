@@ -152,6 +152,13 @@ When a tabbed HTML document is generated, use nested sub-tabs (progressive discl
 
 The check: if a tab contains multiple diagrams, subgraphs, or sections that each deserve their own view, break them into nested sub-tabs rather than stacking vertically.
 
+**Pre-critique snapshot:**
+
+Before dispatching the critique panel, copy the live visualization to its permanent location so critics can access it:
+1. Copy `/tmp/brainstorm-{topic}-{timestamp}/live.html` to `docs/mockups/{session-name}.html`
+2. Add `**Mockups:** docs/mockups/{session-name}.html` to the design document header (write AFTER the copy so the file exists at commit time)
+3. The critique panel's `visual-artifacts` config references `docs/mockups/{session-name}.html` — this copy ensures it exists at that path.
+
 **Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
 
 **Critique panel configuration:**
@@ -208,22 +215,13 @@ Follow its process using the configuration and prompt templates above.
 
 **POST-CRITIQUE CHECKLIST — 3 mandatory steps. Do not skip any. Do not stop after step 2.**
 
-**Step 1 of 3 — Visualization refresh (conditional):**
+**Step 1 of 3 — Visualization finalization:**
 
-If the design document was modified after the initial visualization was generated — whether by fact-check corrections, user-approved critique fixes of any severity, or structural revisions — re-dispatch the session-document-generator to regenerate the visualization from the final design. This ensures the committed HTML matches the post-critique design exactly.
+**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes, fully regenerate the HTML at `docs/mockups/{session-name}.html` from the corrected design using `skills/brainstorming/references/brainstorm-components.md`. Do not surgically edit — do a full rewrite from the corrected design to avoid drift.
 
-Only skip this step if the design document is unchanged from when the initial visualization was generated (i.e., all critique verdicts were APPROVE with no corrections applied).
+Only skip regeneration if the design document is unchanged (all critique verdicts were APPROVE with no corrections applied).
 
-Dispatch via Task tool (`subagent_type=general-purpose`). The output path is the same as the initial visualization — the Mockups header field in the design document remains valid without modification.
-
-"Read `agents/session-document-generator.md` for your full workflow.
-Regenerate the consolidated visualization document to reflect post-critique design changes at `{design-file-path}`.
-Session name: `{session-name}`. Project root: `{project-root}`.
-Output to `docs/mockups/{session-name}.html` (overwrite the pre-critique version).
-Verify all Mermaid diagrams render without errors before opening.
-Open the file in the browser after verification passes."
-
-Do not pause for user review — the critique has already validated the design content. The refresh ensures visual fidelity only.
+**Strip the refresh script:** Verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in `docs/mockups/{session-name}.html` before stripping. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh.
 
 **Step 2 of 3 — Commit:**
 
