@@ -434,7 +434,7 @@ git commit -m "feat: replace post-critique session-document-generator re-dispatc
 
 ---
 
-### Task 8: Update the critique panel visual-artifacts config
+### ✅ Task 8: Update the critique panel visual-artifacts config
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md` (the critique panel configuration block, around line 168)
@@ -466,7 +466,7 @@ git commit -m "fix: remove stale session-document-generator references from crit
 
 ---
 
-### Task 9: Update nested sub-tabs rule and verify cross-references
+### ✅ Task 9: Update nested sub-tabs rule and verify cross-references
 
 > **Depends on:** Tasks 4-8 (verifies and cleans up references introduced by earlier tasks; both mode files were last modified in Task 8)
 

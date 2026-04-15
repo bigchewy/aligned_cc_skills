@@ -143,7 +143,7 @@ Every brainstorm produces a live visual artifact. After writing the design docum
    If both commands fail (headless environment), log a warning and continue — the artifact still gets written.
 4. As each subsequent design section is validated in conversation, update the HTML file (Write tool) to add the new section's content. The browser picks up changes within 3 seconds via the self-refresh script.
 
-**Nested sub-tabs rule (applies to session-document-generator AND mockup-generator dispatches):**
+**Nested sub-tabs rule (applies to mockup-generator dispatches and live visualization updates):**
 
 When a tabbed HTML document is generated, use nested sub-tabs (progressive disclosure) whenever a single tab contains more detail than can be scanned in one view. Do not flatten into many top-level tabs or cram everything into one scrollable panel. The pattern is:
 - **Top-level tabs** for major conceptual sections
