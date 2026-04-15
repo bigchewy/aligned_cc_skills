@@ -163,7 +163,7 @@ git commit -m "feat: add brainstorm component reference with HTML template"
 
 ---
 
-### Task 3: Add v1 component classes to brainstorm-components.md
+### ✅ Task 3: Add v1 component classes to brainstorm-components.md
 
 **Files:**
 - Modify: `skills/brainstorming/references/brainstorm-components.md` (append component documentation sections after the HTML template)
