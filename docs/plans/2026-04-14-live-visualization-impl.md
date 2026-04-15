@@ -14,7 +14,7 @@
 
 ---
 
-### Task 1: Create the references directory
+### ✅ Task 1: Create the references directory
 
 **Files:**
 - Create: `skills/brainstorming/references/` (directory)
