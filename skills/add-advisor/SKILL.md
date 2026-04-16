@@ -190,13 +190,7 @@ Minimum scenario should include:
 
 Run the scenario to verify baseline quality. If it fails, classify the failure (prompt issue, eval calibration, or model variance) and fix before continuing. First-run failures are common and usually eval calibration — adjust keywords and fingerprints before changing the voice prompt.
 
-### 8. Register Advisor for Discovery
-
-Add the advisor prompt file to `advisors/prompts/` in the plugin directory. This makes the advisor available in all plugin-enabled sessions.
-
-Place the file at `advisors/prompts/{advisor-id}.md`.
-
-### 8b. Update the Registry
+### 8. Update the Registry
 
 Append one entry to the `advisors` list in `advisors/registry.yaml`:
 
@@ -219,7 +213,7 @@ Where:
 
 If `advisors/registry.yaml` does not exist, skip this step silently (lightweight mode — the add-advisor skill works without a registry).
 
-### 8c. Update Advisor and Framework Counts
+### 9. Update Advisor and Framework Counts
 
 Count the actual advisors and frameworks in the plugin directory and update all references so metadata stays in sync:
 
@@ -232,7 +226,7 @@ Count the actual advisors and frameworks in the plugin directory and update all 
 
 The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
 
-### 9. Commit
+### 10. Commit
 
 Commit all changes with message: `feat: add {advisor-name} advisor`
 

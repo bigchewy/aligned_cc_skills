@@ -410,7 +410,7 @@ git commit -m "docs(add-framework): remove duplicate Step 7, renumber 7b to 7"
 
 ---
 
-### Task 12: Resolve Step 8 duplication in add-advisor + renumber
+### ✅ Task 12: Resolve Step 8 duplication in add-advisor + renumber
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (lines ~193-234)
