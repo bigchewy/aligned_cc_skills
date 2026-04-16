@@ -318,7 +318,7 @@ git commit -m "chore: update kickstart permissions for create-image rename"
 
 ---
 
-### Task 6: Bump plugin version
+### ✅ Task 6: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)
