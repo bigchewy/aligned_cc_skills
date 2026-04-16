@@ -376,7 +376,7 @@ git commit -m "fix(eval-audit): gate cross-validation on trigger-map.yaml existe
 
 ## Phase 4: Step-Numbering and Duplication Fixes
 
-### Task 11: Resolve Step 7 duplication in add-framework + renumber 7b
+### ✅ Task 11: Resolve Step 7 duplication in add-framework + renumber 7b
 
 **Files:**
 - Modify: `skills/add-framework/SKILL.md` (lines ~199-220)

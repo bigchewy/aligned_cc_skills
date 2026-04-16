@@ -196,13 +196,7 @@ Minimum scenario should include:
 
 Run the scenario to verify baseline quality. If it fails, classify the failure (prompt issue, eval calibration, or model variance) and fix. First-run failures are common — usually eval calibration.
 
-### 7. Register Framework for Discovery
-
-Add the framework folder to `frameworks/` in the plugin directory. This makes the framework available in all plugin-enabled sessions.
-
-Place the framework at `frameworks/{framework-slug}/` containing `prompt.md` (required), `examples.md` (optional), and `anti-examples.md` (optional).
-
-### 7b. Update Advisor and Framework Counts
+### 7. Update Advisor and Framework Counts
 
 Count the actual advisors and frameworks in the plugin directory and update all references so metadata stays in sync:
 
