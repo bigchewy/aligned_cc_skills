@@ -85,7 +85,7 @@ git commit -m "docs(kanban-resolve): tighten description to noun-led form"
 
 ---
 
-### Task 3: Rewrite persona-panel description
+### ✅ Task 3: Rewrite persona-panel description
 
 **Files:**
 - Modify: `skills/persona-panel/SKILL.md` (`description:` field)

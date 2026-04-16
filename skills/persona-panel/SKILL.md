@@ -1,6 +1,6 @@
 ---
 name: persona-panel
-description: "Test content against simulated buyer/user personas. Use when: 'test this with personas', 'run the persona panel', 'how would buyers react to this', 'which copy variant is better'"
+description: "Tests content against simulated buyer/user personas, producing an aggregation report and appending results to a longitudinal scorecard. Use when testing copy with personas, running the persona panel, or comparing how buyers would react to content variants."
 ---
 
 # Persona Panel
