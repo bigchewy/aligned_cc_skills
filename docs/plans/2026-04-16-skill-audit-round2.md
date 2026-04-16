@@ -218,7 +218,7 @@ git commit -m "docs(kickstart): replace hardcoded advisor count with registry re
 
 ---
 
-### Task 7: Remove Substack CTA from kickstart
+### ✅ Task 7: Remove Substack CTA from kickstart
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (last line, currently line ~197)
