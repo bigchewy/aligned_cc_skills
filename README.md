@@ -87,7 +87,6 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | kickstart | Entry Point | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
 | create-design-principles | Entry Point | `/aligned:create-design-principles` | Interactive design discovery + enforce precise, minimal design system |
 | create-image | Entry Point | `/aligned:create-image` | Generate diagrams, charts, icons, and brand visuals — routes to diagram or icon mode |
-| create-new-skill | Entry Point | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
 | codebase-audit | Entry Point | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | root-cause-analysis | Entry Point | `/aligned:root-cause-analysis` | Root cause investigation for software and business problems with optional multi-agent mode |
 | eval-audit | Entry Point | `/aligned:eval-audit` | Eval coverage auditor (hook-prompted) |
@@ -100,7 +99,6 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
-| create-new-skill | Meta | `/aligned:create-new-skill` | TDD-based skill creation with pressure testing |
 
 ### Agents
 
@@ -183,6 +181,10 @@ Semver, pre-1.0:
 Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
+
+##### 0.22.0: Remove create-new-skill
+- Removed `create-new-skill` skill — no longer used
+- Removed from README skill tables and kickstart permissions
 
 ##### 0.17.0: Persona Creation Flow
 - **persona-panel:** Add guided persona creation flow for cold-start path — four-phase Q&A replaces dead-end when no personas exist
