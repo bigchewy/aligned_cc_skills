@@ -771,7 +771,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(_shared): add 
 
 ---
 
-### Task 15: Remove inline Kanban entry template from executing-plans
+### ✅ Task 15: Remove inline Kanban entry template from executing-plans
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (remove the inline template; keep the `_shared/` reference)

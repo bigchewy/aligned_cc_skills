@@ -115,25 +115,7 @@ When you encounter a problem that is **outside the current task's scope** during
 
 1. **Don't fix it** — stay focused on the current task
 2. **Don't stop** — this isn't a blocker for the current work
-3. **Log it** to the Kanban board:
-
-Read `docs/kanban/.counter` for the next KB number (pad to 3 digits). Derive a kebab-case slug from the description (max 50 chars). Write `docs/kanban/todo/KB-NNN-slug.md`:
-
-```markdown
-# KB-NNN: [Short description]
-
-- **Type:** bug
-- **Discovered during:** [plan filename / Task N]
-- **Location:** `src/path/to/file.ts:NN`
-- **Observed:** [What you saw — be specific enough for a fresh session to reproduce]
-- **Expected:** [What should happen instead]
-- **Why out of scope:** [Why this isn't part of the current task]
-- **Severity:** CRITICAL | HIGH | MEDIUM | LOW
-- **Created:** [today's date]
-```
-
-Write the incremented number back to `docs/kanban/.counter`.
-
+3. **Log it** to the Kanban board (see the Kanban Entry Format section below for the template and counter instructions — use `[plan filename / Task N]` as the "Discovered during" value)
 4. **Continue** with the current task
 
 **At the end of execution (Step 6),** if any bugs were logged during this session, add to the completion report:
