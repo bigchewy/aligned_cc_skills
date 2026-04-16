@@ -863,7 +863,7 @@ git commit -m "refactor(create-design-principles): migrate to shared base-direct
 
 ---
 
-### Task 20: Migrate create-image
+### ✅ Task 20: Migrate create-image
 
 **Files:**
 - Modify: `skills/create-image/SKILL.md` (3 refs for router-to-modes delegation)

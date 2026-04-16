@@ -8,6 +8,8 @@ description: "Generates hand-coded SVG diagrams, charts, flowcharts, and brand i
 Router for visual artifact creation. Detects the request type and delegates
 to the appropriate mode.
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/create-image/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Step 1: Detect Mode
 
 Classify the user's request into one of three modes using keyword matching:
