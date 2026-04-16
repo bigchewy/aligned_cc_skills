@@ -153,7 +153,7 @@ git commit -m "docs(create-image): add TOC to illustration mode file"
 
 ---
 
-### Task 5: Add TOC to persona-prompt.md
+### ✅ Task 5: Add TOC to persona-prompt.md
 
 **Files:**
 - Modify: `skills/persona-panel/references/persona-prompt.md` (102 lines, no TOC — sibling `aggregation-prompt.md` has one)
