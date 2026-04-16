@@ -144,7 +144,7 @@ git commit -m "feat: migrate diagram mode from create-svg-diagram"
 
 ---
 
-### Task 3: Create the icon mode
+### ✅ Task 3: Create the icon mode
 
 **Files:**
 - Create: `skills/create-image/modes/icon.md`
@@ -258,7 +258,7 @@ git commit -m "feat: add icon generation mode for create-image skill"
 
 ---
 
-### Task 4: Update README.md skill reference entry
+### ✅ Task 4: Update README.md skill reference entry
 
 **Files:**
 - Modify: `README.md` (the skill reference table, the `create-svg-diagram` row)
