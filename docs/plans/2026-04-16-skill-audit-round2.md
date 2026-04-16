@@ -962,7 +962,7 @@ git commit -m "docs(eval-audit): add Path Resolution note for base-directory"
 
 ---
 
-### Task 27: Migrate kickstart
+### ✅ Task 27: Migrate kickstart
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (2 refs — audit flagged both as abstract phrasing that Claude could guess wrong)

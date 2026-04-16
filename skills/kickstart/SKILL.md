@@ -5,6 +5,8 @@ description: "Scaffolds a new project with Aligned conventions, directory struct
 
 # Kickstart
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/kickstart/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Overview
 
 Scaffold a new or existing project with the Aligned development stack conventions. Creates the directory structure, seeds CLAUDE.md with skill invocation points, and sets up eval infrastructure.
@@ -38,7 +40,7 @@ Ask the user for (multiple choice where possible):
 
 ## Phase 3: Scaffold Structure
 
-Create the directory structure for the selected `project_type`. See `templates/scaffold-structures.md` for the directory trees (Base Structure + Software Additional Structure). Resolve `{base-directory}` using the "Base directory for this skill:" line printed when the skill loads, then read the template file. Create each directory listed, skipping any that already exist.
+Create the directory structure for the selected `project_type`. Read `{base-directory}/templates/scaffold-structures.md` for the directory trees (Base Structure + Software Additional Structure). Create each directory listed, skipping any that already exist.
 
 ### File Templates (Software only)
 
@@ -109,7 +111,7 @@ Generate a project-specific CLAUDE.md using the template for the selected `proje
 5. **Guardrails** — sensitivity, privacy, constraints
 6. **Workflows** — skill/agent triggers
 
-Read the template for the selected `project_type` from `templates/<project_type>.md` (resolve `{base-directory}` using the "Base directory for this skill:" line printed at skill load). Available templates:
+Read the template for the selected `project_type` from `{base-directory}/templates/<project_type>.md`. Available templates:
 
 - `templates/software.md` — for software projects
 - `templates/business.md` — for business/consulting workspaces
