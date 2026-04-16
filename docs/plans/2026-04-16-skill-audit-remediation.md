@@ -882,7 +882,9 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 17: Verify root-cause-analysis Kanban reference is consistent
+### ✅ Task 17: Verify root-cause-analysis Kanban reference is consistent
+
+> Already consistent with writing-plans and eval-audit (same template, `root-cause-analysis` as "Discovered during" value). No edit made.
 
 **Files:**
 - Inspect (no modification expected): `skills/root-cause-analysis/SKILL.md`
