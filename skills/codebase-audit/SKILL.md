@@ -7,6 +7,8 @@ description: "Comprehensive multi-dimensional codebase audit covering code quali
 
 Orchestrates 5 parallel dimension-specific workers, aggregates their findings with confidence scoring, deduplicates, and presents a unified report. Read-only — diagnosis only, never edits source code.
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/codebase-audit/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Phase 0: Discovery
 
 1. Read `CLAUDE.md` (if it exists) for project conventions, iron rules, and intentional patterns. Save the content — workers need it to avoid false positives on intentional decisions.
@@ -52,7 +54,7 @@ Launch all applicable workers simultaneously via Task tool. Each worker uses `su
 
 **CRITICAL: Launch all workers in a single message with multiple Task tool calls.** Do not dispatch sequentially.
 
-For each worker, use this base dispatch template — replace placeholders with actual values. **Then apply the per-worker customizations below** before dispatching. Replace `{worker-instructions-path}` with the absolute path `{base-directory}/workers/{dimension}.md` (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load).
+For each worker, use this base dispatch template — replace placeholders with actual values. **Then apply the per-worker customizations below** before dispatching. Replace `{worker-instructions-path}` with the absolute path `{base-directory}/workers/{dimension}.md`.
 
 ```
 "You are a codebase audit worker specialized in {dimension}.
@@ -168,7 +170,7 @@ Otherwise, ask the user:
 
 If the user declines, the skill is done.
 
-If the user agrees, file each finding using the `{base-directory}/../_shared/kanban-entry-format.md` template (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load) with these field mappings:
+If the user agrees, file each finding using the `{base-directory}/../_shared/kanban-entry-format.md` template with these field mappings:
 
 | Finding field | KB field |
 |---------------|----------|

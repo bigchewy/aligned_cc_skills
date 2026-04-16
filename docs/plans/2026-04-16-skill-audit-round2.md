@@ -923,7 +923,7 @@ git commit -m "refactor(finishing-a-development-branch): migrate to shared base-
 
 ---
 
-### Task 24: Migrate codebase-audit
+### ✅ Task 24: Migrate codebase-audit
 
 **Files:**
 - Modify: `skills/codebase-audit/SKILL.md` (2 refs — audit flagged lack of fallback)
