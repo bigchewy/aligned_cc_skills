@@ -15,6 +15,8 @@ Guide completion of development work by presenting clear options and handling ch
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/finishing-a-development-branch/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## CRITICAL: Always Run From the Main Repo
 
 **This skill MUST be run from the main repository directory, NOT from inside a worktree.**
@@ -145,7 +147,7 @@ Stop. Don't proceed to Step 1b.
 
 ### Step 1b: LLM Eval (auto-run if surface changed)
 
-See `references/llm-eval-gate.md` for the full workflow. Resolve `{base-directory}` using the "Base directory for this skill:" line printed when the skill loads, then read the referenced file. Summary:
+See `{base-directory}/references/llm-eval-gate.md` for the full workflow. Summary:
 
 - Check `ANTHROPIC_API_KEY` and `e2e/eval-surface.yaml` / `e2e/trigger-map.yaml` configs — skip non-blocking if missing
 - Match changed files against surface patterns (directory prefix, wildcard-in-path, exact match)
@@ -175,7 +177,7 @@ If changed files include any of: architecture-relevant paths as defined in the p
 
 ### Step 1d: Code Review
 
-See `references/code-review-scan.md` for the full workflow (covers Step 1d and Step 1e). Resolve `{base-directory}` using the "Base directory for this skill:" line printed when the skill loads, then read the referenced file. Summary:
+See `{base-directory}/references/code-review-scan.md` for the full workflow (covers Step 1d and Step 1e). Summary:
 
 - Dispatch the `aligned:code-reviewer` sub-agent with branch, base, worktree, and plan file
 - CRITICAL findings block the merge — fix, re-run tests/build, re-dispatch
@@ -183,7 +185,7 @@ See `references/code-review-scan.md` for the full workflow (covers Step 1d and S
 
 ### Step 1e: Code Simplification Scan
 
-See `references/code-review-scan.md` for the full workflow. Summary:
+See `{base-directory}/references/code-review-scan.md` for the full workflow. Summary:
 
 - Dispatch the `aligned:code-simplifier` sub-agent in READ-ONLY mode
 - File any returned findings to the Kanban board as `simplification` entries
@@ -191,7 +193,7 @@ See `references/code-review-scan.md` for the full workflow. Summary:
 
 ### Step 1f: Mockup Fidelity Check
 
-See `references/mockup-fidelity-check.md` for the full workflow (covers Step 1f and Step 1g). Resolve `{base-directory}` using the "Base directory for this skill:" line printed when the skill loads, then read the referenced file. Summary:
+See `{base-directory}/references/mockup-fidelity-check.md` for the full workflow (covers Step 1f and Step 1g). Summary:
 
 - Locate the plan's `**Mockups:**` directory; skip silently if the branch has no mockups
 - Dispatch a general-purpose sub-agent to compare mockup HTML against implementation source files
@@ -199,7 +201,7 @@ See `references/mockup-fidelity-check.md` for the full workflow (covers Step 1f 
 
 ### Step 1g: Fix Mockup Deviations (user-directed)
 
-See `references/mockup-fidelity-check.md` for the full workflow. Summary:
+See `{base-directory}/references/mockup-fidelity-check.md` for the full workflow. Summary:
 
 - Present deviations and ask the user: fix all, fix specific, or skip
 - For selected deviations, spawn parallel root-cause diagnosis sub-agents (COSMETIC/STRUCTURAL/DATA/LOGIC)
@@ -295,7 +297,7 @@ Then: Cleanup worktree (Step 5), then archive plan docs (Step 6).
 
 #### Option 2: Deploy to Production + Smoke Test
 
-See `references/deploy-smoke-test.md` for the full workflow. Resolve `{base-directory}` using the "Base directory for this skill:" line printed when the skill loads, then read the referenced file. Summary:
+See `{base-directory}/references/deploy-smoke-test.md` for the full workflow. Summary:
 
 - Parse scope (QUICK default, FULL on explicit request), then merge + push to remote like Option 1
 - Run worktree cleanup (Step 5) before waiting for the deployment

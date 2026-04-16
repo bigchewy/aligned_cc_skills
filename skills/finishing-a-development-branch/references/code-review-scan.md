@@ -71,7 +71,7 @@ prompt: "Analyze the branch changes for simplification opportunities.
 
 **If the agent returns findings** (non-empty JSON array):
 
-1. Read `{base-directory}/../_shared/kanban-entry-format.md` for the KB template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load)
+1. Read `{base-directory}/../_shared/kanban-entry-format.md` for the KB template and counter instructions (see Path Resolution note in SKILL.md)
 2. For each finding, file a KB entry with:
    - **Type:** `simplification`
    - **Discovered during:** `finishing-a-development-branch (code-simplifier)`

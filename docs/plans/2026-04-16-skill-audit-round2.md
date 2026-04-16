@@ -907,7 +907,7 @@ git commit -m "refactor(persona-panel): migrate to shared base-directory resolut
 
 ---
 
-### Task 23: Migrate finishing-a-development-branch
+### ✅ Task 23: Migrate finishing-a-development-branch
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (4 refs — audit flagged repeated fallback instructions at lines 148/178/194/298)
