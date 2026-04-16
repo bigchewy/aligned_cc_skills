@@ -311,7 +311,7 @@ git commit -m "fix(kanban-resolve): parameterize build/test commands per portabi
 
 ---
 
-### Task 9: Gate e2e/trigger-map.yaml check in executing-plans
+### ✅ Task 9: Gate e2e/trigger-map.yaml check in executing-plans
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (LLM surface check — line ~49)

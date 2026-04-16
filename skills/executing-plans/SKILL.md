@@ -46,7 +46,7 @@ For each task:
 
 **TDD discipline:** Every task follows RED-GREEN-REFACTOR. Write the failing test first, verify it fails, write minimal implementation, verify it passes. If a task skips TDD steps, STOP and follow the TDD process before continuing.
 
-**LLM surface check:** If the task involved changes to advisor prompts, framework prompts, prompt builders, or personalization logic, run the project's eval command. Check `e2e/trigger-map.yaml` for file-to-scenario mappings. If a mapping exists, run `npx promptfoo eval -c <scenario-path> --no-progress-bar` from the `e2e/` directory. Don't wait until all tasks are done — catching regressions early is cheaper than debugging across multiple steps. If evals fail, classify the failure (prompt issue, eval calibration, or model variance) and fix before continuing.
+**LLM surface check:** If the task involved changes to advisor prompts, framework prompts, prompt builders, or personalization logic, check whether the project has eval infrastructure. If `e2e/trigger-map.yaml` exists, read it for file-to-scenario mappings; if a mapping matches the changed files, run `npx promptfoo eval -c <scenario-path> --no-progress-bar` from the `e2e/` directory. If no `e2e/trigger-map.yaml` exists, skip this check silently. Don't wait until all tasks are done — catching regressions early is cheaper than debugging across multiple steps. If evals fail, classify the failure (prompt issue, eval calibration, or model variance) and fix before continuing.
 
 ### Step 3: Report
 When Build Tasks are complete:
