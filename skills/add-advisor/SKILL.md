@@ -174,7 +174,7 @@ If the project has an avatar generation script, run it per the project's convent
 
 Use the `/aligned:add-framework` skill to implement the top-ranked framework.
 
-> **Critical:** The add-framework skill updates `frameworks/registry.yaml` (Step 5 in that skill). If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to `frameworks/registry.yaml` with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
+> **Critical:** The add-framework skill updates `frameworks/registry.yaml` as part of its registry-entry step. If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to `frameworks/registry.yaml` with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
 
 ### 7. Create Eval Scenario
 
