@@ -581,7 +581,7 @@ git commit -m "docs(executing-plans): resolve three competing default modes to o
 
 ---
 
-### Task 15: Extract Phase 5 sub-agent dispatch prompt from root-cause-analysis
+### ✅ Task 15: Extract Phase 5 sub-agent dispatch prompt from root-cause-analysis
 
 **Files:**
 - Modify: `skills/root-cause-analysis/SKILL.md` (lines ~290-319 — the ~30-line inline dispatch prompt)

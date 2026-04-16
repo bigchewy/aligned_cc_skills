@@ -287,36 +287,7 @@ You MUST complete each phase before proceeding to the next.
 2. **Diff of all changes:** Run `git diff` (or `git diff HEAD~N` if commits were made) to capture everything changed during the debugging session.
 3. **Resolve `{base-directory}`:** The sub-agent cannot access the "Base directory for this skill:" line from skill load. Resolve it to an absolute path now and substitute it into the prompt before dispatching.
 
-**Dispatch** a sub-agent via Task tool (`subagent_type=general-purpose`, `model=sonnet`):
-
-"You are a post-fix reviewer for a debugging session. Your job is to verify the fix is correct, complete, and safe — not just that it works.
-
-You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead.
-
-**Context:**
-- Root cause identified during investigation: {root-cause-statement}
-- Changes made (git diff): {diff}
-
-Read the supporting technique docs (the dispatching agent MUST resolve these to absolute paths before sending this prompt):
-- `{base-directory}/fix-the-right-layer.md`
-- `{base-directory}/defense-in-depth.md`
-
-Then evaluate the fix against these five criteria:
-
-| # | Criterion | What to check |
-|---|-----------|---------------|
-| 1 | Root cause consistency | Does the fix address the stated root cause, or does it patch a symptom? A symptom fix is one that suppresses the error without removing the condition that caused it. |
-| 2 | Right layer | Per fix-the-right-layer.md: does the fix modify the producer of bad state, or does it patch the consumer/guard that detected it? Patching the detector is almost always wrong. |
-| 3 | Defense in depth | Per defense-in-depth.md: does the fix add validation at multiple layers the data passes through, or does it only patch one layer? A single-layer fix leaves other code paths vulnerable to the same bug. |
-| 4 | Blast radius | Grep for all files that import/reference/depend on the changed files. Are there ripple effects the fix didn't account for? Flag any dependent that may behave differently due to the change. |
-| 5 | Completeness | Grep the codebase for similar patterns to the bug. If the same mistake exists elsewhere, flag every occurrence. |
-
-For each criterion, report: PASS, FLAG (non-blocking concern), or FAIL (must fix before proceeding). Include specific file paths, line numbers, and evidence for every finding.
-
-Output format:
-- **Summary:** One sentence overall verdict
-- **Criteria results:** Table with criterion, verdict, and evidence
-- **Action items:** List of concrete changes needed (if any), ordered by severity"
+**Dispatch** a sub-agent via Task tool (`subagent_type=general-purpose`, `model=sonnet`) using the prompt template in `{base-directory}/post-fix-review-prompt.md`. Read the template, substitute `{root-cause-statement}`, `{diff}`, and the resolved `{base-directory}`, and pass the result as the sub-agent's prompt.
 
 **Gate:**
 - If any criterion is FAIL → address the findings, then re-run Phase 5
