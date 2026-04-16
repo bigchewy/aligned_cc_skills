@@ -22,7 +22,7 @@ None.
 
 ## Phase 1: Description Rewrites
 
-### Task 1: Rewrite use-framework description
+### ✅ Task 1: Rewrite use-framework description
 
 **Files:**
 - Modify: `skills/use-framework/SKILL.md` (the YAML frontmatter `description:` field)

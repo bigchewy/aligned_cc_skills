@@ -1,6 +1,6 @@
 ---
 name: use-framework
-description: "Guides a user through a decision framework's interactive phases, respecting WAIT points. Use with a framework name for fuzzy match, or alone to list available frameworks. Triggers when a user mentions a framework by name in any request."
+description: "Runs a user through a named decision framework interactively. Use with a framework name for fuzzy match, or alone to list available frameworks."
 ---
 
 # Use Framework
