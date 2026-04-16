@@ -2,6 +2,11 @@
 
 # Illustration Mode
 
+## Contents
+- Step 1: Read Existing Artifacts (mandatory)
+- Step 2: Generate
+- Step 3: Output
+
 Generate decorative illustrations (botanical, organic, atmospheric) that
 match a project's existing illustration style, using construction patterns
 from `design-principles.md` and reference implementation analysis.

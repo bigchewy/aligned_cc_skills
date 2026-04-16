@@ -119,7 +119,7 @@ git commit -m "docs(persona-panel): name deliverables in description"
 
 ## Phase 2: TOC Additions
 
-### Task 4: Add TOC to illustration.md
+### ✅ Task 4: Add TOC to illustration.md
 
 **Files:**
 - Modify: `skills/create-image/modes/illustration.md` (137 lines, no TOC)
