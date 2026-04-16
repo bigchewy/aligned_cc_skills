@@ -22,7 +22,7 @@ Follow this priority order:
 Use the Grep tool to search for a worktree directory override:
 
 ```
-Grep("worktree.*director", path="CLAUDE.md", "-i": true)
+Grep pattern="worktree.*director" path="CLAUDE.md" -i=true
 ```
 
 **If override specified:** Use that directory instead of the default.
@@ -77,13 +77,17 @@ project=$(basename "$(git rev-parse --show-toplevel)")
 ### 2. Create Worktree
 
 ```bash
+# Set these first, based on the Directory Selection Process above:
+LOCATION=".worktrees"             # one of: .worktrees, worktrees, or $HOME/.config/aligned/worktrees
+BRANCH_NAME="feature/my-feature"  # the new branch name
+
 # Determine full path
-case $LOCATION in
+case "$LOCATION" in
   .worktrees|worktrees)
     path="$LOCATION/$BRANCH_NAME"
     ;;
-  ~/.config/aligned/worktrees/*)
-    path="~/.config/aligned/worktrees/$project/$BRANCH_NAME"
+  "$HOME"/.config/aligned/worktrees*)
+    path="$HOME/.config/aligned/worktrees/$project/$BRANCH_NAME"
     ;;
 esac
 

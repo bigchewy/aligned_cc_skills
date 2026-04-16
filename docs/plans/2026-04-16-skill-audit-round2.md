@@ -659,7 +659,7 @@ git commit -m "refactor(root-cause-analysis): extract Phase 5 review prompt to r
 
 ---
 
-### Task 15b: Fix shell-variable and Grep-syntax bugs in using-git-worktrees
+### ✅ Task 15b: Fix shell-variable and Grep-syntax bugs in using-git-worktrees
 
 **Files:**
 - Modify: `skills/using-git-worktrees/SKILL.md`
