@@ -44,8 +44,6 @@ Environment Detection:
   Build:          package.json build script    → {found / not found (skipping)}
 ```
 
-> **Editor note:** A parallel environment detection section exists in `skills/add-advisor/SKILL.md` (Step 0). If you change the path-detection priority order here, apply the equivalent change there.
-
 ### 1. Create Framework Folder
 
 Create the folder structure:

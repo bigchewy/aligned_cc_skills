@@ -2,6 +2,11 @@
 
 > **For the agent:** Read this file once at the start of the visualization phase. Use the HTML template and component classes below to build the live artifact. Do not invent custom classes — use only what's documented here.
 
+## Contents
+
+- HTML Template
+- Components
+
 ## HTML Template
 
 Copy this template as the starting point for every live visualization. Replace `{title}`, `{subtitle}`, and `{context}` with session-specific values.

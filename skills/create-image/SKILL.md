@@ -1,10 +1,6 @@
 ---
 name: create-image
-description: "Use when a diagram, chart, flowchart, icon, illustration, or
-  brand visual is needed. Routes to diagram mode (charts, flowcharts,
-  matrices, org charts), icon mode (brand icons, custom SVG icons), or
-  illustration mode (decorative botanical/organic art) based on the
-  request."
+description: "Generates hand-coded SVG diagrams, charts, flowcharts, and brand icons matching the project's design tokens. Use when a visual artifact is needed — charts, flowcharts, matrices, icons, or brand graphics."
 ---
 
 # Create Image

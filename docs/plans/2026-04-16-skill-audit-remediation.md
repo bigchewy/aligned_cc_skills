@@ -49,7 +49,7 @@ Several tasks modify the same SKILL.md file. They MUST run in the order listed. 
 
 ## Wave 1 — Metadata, Navigation, and Missing Files
 
-### Task 1: Rewrite descriptions — core workflow skills (5 skills)
+### ✅ Task 1: Rewrite descriptions — core workflow skills (5 skills)
 
 **Files:**
 - Modify: `skills/use-advisor/SKILL.md` (frontmatter `description:` field)
@@ -92,7 +92,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(skills): rewri
 
 ---
 
-### Task 2: Rewrite descriptions — advisor/design skills and clean up add-advisor
+### ✅ Task 2: Rewrite descriptions — advisor/design skills and clean up add-advisor
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (frontmatter `description:` field + remove Invocation section + remove editor note)
@@ -168,7 +168,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(skills): rewri
 
 ---
 
-### Task 3: Rewrite descriptions — utility skills (6 skills)
+### ✅ Task 3: Rewrite descriptions — utility skills (6 skills)
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (frontmatter `description:` field)
@@ -211,13 +211,13 @@ intentionally per audit remediation design doc."
 
 ---
 
-### Task 4: (merged into Task 2 — no separate commit needed)
+### ✅ Task 4: (merged into Task 2 — no separate commit needed)
 
 Skipped. The add-advisor cleanup was bundled into Task 2 for atomic commit semantics. Proceed to Task 5.
 
 ---
 
-### Task 5: Remove editor note from add-framework SKILL.md
+### ✅ Task 5: Remove editor note from add-framework SKILL.md
 
 **Files:**
 - Modify: `skills/add-framework/SKILL.md` (the editor-note blockquote near the environment detection summary)
@@ -253,7 +253,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(add-framework)
 
 ---
 
-### Task 6: Fix stale elements-of-style reference in brainstorming business mode
+### ✅ Task 6: Fix stale elements-of-style reference in brainstorming business mode
 
 **Files:**
 - Modify: `skills/brainstorming/modes/business.md` (the "Documentation:" bullet list under Phase 4)
@@ -292,7 +292,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(brainstorming)
 
 ---
 
-### Task 7: Add TOCs to brainstorming reference files (3 files)
+### ✅ Task 7: Add TOCs to brainstorming reference files (3 files)
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md` (add `## Contents` after first H1)
@@ -345,7 +345,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(brainstorming)
 
 ---
 
-### Task 8: Add TOCs to persona-panel reference files (2 files)
+### ✅ Task 8: Add TOCs to persona-panel reference files (2 files)
 
 **Files:**
 - Modify: `skills/persona-panel/references/aggregation-prompt.md`
@@ -394,7 +394,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(persona-panel)
 
 ---
 
-### Task 9: Add TOC to writing-plans critique checklist
+### ✅ Task 9: Add TOC to writing-plans critique checklist
 
 **Files:**
 - Modify: `skills/writing-plans/plan-critique-checklist.md`
@@ -438,7 +438,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(writing-plans)
 
 ---
 
-### Task 10: Add TOC to create-design-principles checklist
+### ✅ Task 10: Add TOC to create-design-principles checklist
 
 **Files:**
 - Modify: `skills/create-design-principles/design-critique-checklist.md`
@@ -464,7 +464,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(create-design-
 
 ---
 
-### Task 11: Add TOC to deployment pitfall catalog
+### ✅ Task 11: Add TOC to deployment pitfall catalog
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/references/deployment-pitfall-catalog.md`
@@ -490,7 +490,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 12: Create find-polluter.sh
+### ✅ Task 12: Create find-polluter.sh
 
 **Files:**
 - Create: `skills/root-cause-analysis/find-polluter.sh`
@@ -605,7 +605,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(root-cause-ana
 
 ---
 
-### Task 13: Create condition-based-waiting-example.ts
+### ✅ Task 13: Create condition-based-waiting-example.ts
 
 **Files:**
 - Create: `skills/root-cause-analysis/condition-based-waiting-example.ts`
@@ -733,7 +733,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(root-cause-ana
 
 Wave 1 must be fully committed to main before starting Wave 2.
 
-### Task 14: Add CRITICAL severity option to shared Kanban entry format
+### ✅ Task 14: Add CRITICAL severity option to shared Kanban entry format
 
 **Files:**
 - Modify: `skills/_shared/kanban-entry-format.md`
@@ -771,7 +771,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(_shared): add 
 
 ---
 
-### Task 15: Remove inline Kanban entry template from executing-plans
+### ✅ Task 15: Remove inline Kanban entry template from executing-plans
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (remove the inline template; keep the `_shared/` reference)
@@ -830,7 +830,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(executing-plan
 
 ---
 
-### Task 16: Remove duplicate Kanban Entry Format section from finishing-a-development-branch
+### ✅ Task 16: Remove duplicate Kanban Entry Format section from finishing-a-development-branch
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (remove the duplicate `## Kanban Entry Format` H2 section near end of file; keep the Step 1e reference in the body)
@@ -882,7 +882,9 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 17: Verify root-cause-analysis Kanban reference is consistent
+### ✅ Task 17: Verify root-cause-analysis Kanban reference is consistent
+
+> Already consistent with writing-plans and eval-audit (same template, `root-cause-analysis` as "Discovered during" value). No edit made.
 
 **Files:**
 - Inspect (no modification expected): `skills/root-cause-analysis/SKILL.md`
@@ -915,7 +917,7 @@ If no change was made, skip the commit step.
 
 Wave 2 must be fully committed to main before starting Wave 3.
 
-### Task 18: Extract writing-plans critique panel prompts
+### ✅ Task 18: Extract writing-plans critique panel prompts
 
 **Files:**
 - Create: `skills/writing-plans/references/critique-panel-prompts.md`
@@ -993,7 +995,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(writing-plans)
 
 ---
 
-### Task 19: Extract writing-plans execution handoff templates
+### ✅ Task 19: Extract writing-plans execution handoff templates
 
 **Files:**
 - Create: `skills/writing-plans/references/execution-handoff-templates.md`
@@ -1042,7 +1044,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(writing-plans)
 
 ---
 
-### Task 20: Update writing-plans SKILL.md to reference extracted files
+### ✅ Task 20: Update writing-plans SKILL.md to reference extracted files
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (replace extracted sections with references)
@@ -1080,7 +1082,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "refactor(writing-pl
 
 ---
 
-### Task 21: Extract mockup fidelity check workflow
+### ✅ Task 21: Extract mockup fidelity check workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/mockup-fidelity-check.md`
@@ -1126,7 +1128,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 22: Extract deploy smoke test workflow
+### ✅ Task 22: Extract deploy smoke test workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/deploy-smoke-test.md`
@@ -1175,7 +1177,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 23: Extract code review + simplification scan workflow
+### ✅ Task 23: Extract code review + simplification scan workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/code-review-scan.md`
@@ -1216,7 +1218,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 24: Extract LLM eval gate workflow
+### ✅ Task 24: Extract LLM eval gate workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/llm-eval-gate.md`
@@ -1260,7 +1262,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 25: Update finishing-a-development-branch SKILL.md — reference extracted files and clean up
+### ✅ Task 25: Update finishing-a-development-branch SKILL.md — reference extracted files and clean up
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`
@@ -1330,7 +1332,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "refactor(finishing-
 
 ---
 
-### Task 26: Extract kickstart software CLAUDE.md template
+### ✅ Task 26: Extract kickstart software CLAUDE.md template
 
 **Files:**
 - Create: `skills/kickstart/templates/software.md`
@@ -1403,7 +1405,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(kickstart): ex
 
 ---
 
-### Task 27: Extract kickstart business CLAUDE.md template
+### ✅ Task 27: Extract kickstart business CLAUDE.md template
 
 **Files:**
 - Create: `skills/kickstart/templates/business.md`
@@ -1448,7 +1450,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(kickstart): ex
 
 ---
 
-### Task 28: Extract kickstart personal CLAUDE.md template
+### ✅ Task 28: Extract kickstart personal CLAUDE.md template
 
 **Files:**
 - Create: `skills/kickstart/templates/personal.md`
@@ -1491,7 +1493,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(kickstart): ex
 
 ---
 
-### Task 29: Extract kickstart general CLAUDE.md template
+### ✅ Task 29: Extract kickstart general CLAUDE.md template
 
 **Files:**
 - Create: `skills/kickstart/templates/general.md`
@@ -1534,7 +1536,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(kickstart): ex
 
 ---
 
-### Task 30: Extract kickstart scaffold structures
+### ✅ Task 30: Extract kickstart scaffold structures
 
 **Files:**
 - Create: `skills/kickstart/templates/scaffold-structures.md`
@@ -1589,7 +1591,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(kickstart): ex
 
 ---
 
-### Task 31: Update kickstart SKILL.md — reference templates, fix git add, remove AskUserQuestion mentions
+### ✅ Task 31: Update kickstart SKILL.md — reference templates, fix git add, remove AskUserQuestion mentions
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md`
@@ -1705,7 +1707,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "refactor(kickstart)
 
 ---
 
-### Task 32: Bump plugin version
+### ✅ Task 32: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`

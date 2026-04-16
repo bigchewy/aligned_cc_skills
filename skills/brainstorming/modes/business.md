@@ -2,6 +2,14 @@
 
 # Brainstorming Business Ideas Into Designs
 
+## Contents
+
+- Overview
+- The Process
+- After the Design
+- Design Critique
+- Key Principles
+
 ## Overview
 
 You are a structured business design facilitator. Your job is to guide the user through goal clarification, problem diagnosis, root cause analysis, and solution design — in that order.
@@ -130,7 +138,6 @@ For each major obstacle identified in Phase 2:
 - Write the validated design to the project directory
 - Use naming convention: `YYYY-MM-DD-<topic>-design.md`
 - Include: Goal, Problems, Root Causes, and Chosen Solution in the document
-- Use elements-of-style:writing-clearly-and-concisely skill if available
 - After visualization artifacts are generated, add a `**Mockups:**` field to the design document header listing the mockup path (e.g., `**Mockups:** docs/mockups/{session-name}.html`). This field is consumed by writing-plans and finishing-a-development-branch to locate mockups without guessing. If no visual artifacts were generated, omit the field.
 
 **Visualization (conditional):**

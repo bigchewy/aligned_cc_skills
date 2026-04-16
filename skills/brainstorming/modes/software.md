@@ -2,6 +2,15 @@
 
 # Brainstorming Ideas Into Designs
 
+## Contents
+
+- Overview
+- The Process
+- After the Design
+- Next Steps
+- Design Critique
+- Key Principles
+
 ## Overview
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.

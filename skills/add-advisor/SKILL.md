@@ -1,18 +1,11 @@
 ---
 name: add-advisor
-description: Add a new advisor to the Virtual Board. Use this skill when the user wants to add a new advisor persona, including framework research, advisor entry creation, system prompt, and initial framework implementation.
+description: Adds a new advisor persona to the Virtual Board with system prompt, registry entry, and initial framework. Use when the user wants to add a new expert voice — either by naming a person or pointing to research in docs/advisors/.
 ---
 
 # Add Advisor
 
 This skill guides adding a new advisor to the Virtual Board of Advisors.
-
-## Invocation
-
-```
-/aligned:add-advisor
-"I want to add a new advisor based on Brene Brown"
-```
 
 ## Input
 
@@ -48,8 +41,6 @@ Environment Detection:
   Avatars:           {avatar dir}              → {found / not found (skipping)}
   Evals:             {eval dir}               → {found / not found (skipping)}
 ```
-
-> **Editor note:** A parallel environment detection section exists in `skills/add-framework/SKILL.md` (Step 0). If you change the path-detection priority order here, apply the equivalent change there.
 
 ### 1. Load or Create Research
 

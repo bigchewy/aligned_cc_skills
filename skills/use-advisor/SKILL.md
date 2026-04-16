@@ -1,6 +1,6 @@
 ---
 name: use-advisor
-description: "Adopt an advisor's persona for the conversation. Use with an advisor name for fuzzy match, or alone to list available advisors. TRIGGER when a user mentions an advisor by name — including 'use Andy Raskin to help with my pitch,' 'I want Byron Katie's perspective,' 'channel April Dunford for positioning.' When a user says 'use [advisor] and [framework] to build/write/create [thing],' invoke BOTH this skill and /aligned:use-framework — the advisor sets the voice, the framework sets the interactive process. Never skip the interactive skill invocation to work from advisor/framework content directly."
+description: "Adopts an advisor's persona for the conversation. Use with an advisor name for fuzzy match, or alone to list available advisors. Triggers when a user mentions an advisor by name or asks to channel a specific expert's perspective."
 ---
 
 # Use Advisor

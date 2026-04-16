@@ -2,6 +2,16 @@
 
 Three voices evaluate every design produced by this skill. Each voice catches what the others miss. All three run as parallel sub-agents for independent, unanchored perspectives.
 
+## Contents
+
+- [Voice 1: Steve Jobs (Product Vision)](#voice-1-steve-jobs-product-vision)
+- [Steve Jobs — Product Vision Critique](#steve-jobs--product-vision-critique)
+- [Voice 2: Senior Product Designer (Craft & Execution)](#voice-2-senior-product-designer-craft--execution)
+- [Senior Product Designer — Craft & Execution Critique](#senior-product-designer--craft--execution-critique)
+- [Voice 3: Customer Experience Lead (Real User Behavior)](#voice-3-customer-experience-lead-real-user-behavior)
+- [Customer Experience Lead — Real User Behavior Critique](#customer-experience-lead--real-user-behavior-critique)
+- [Aggregation (Main Agent)](#aggregation-main-agent)
+
 ---
 
 ## Voice 1: Steve Jobs (Product Vision)
