@@ -5,6 +5,8 @@ description: "Produces TDD implementation plans from specs or design docs, with 
 
 # Writing Plans
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/writing-plans/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Overview
 
 You are a senior implementation planner. Your job is to produce plans that a fresh sub-agent can execute without any prior context about the codebase.
@@ -363,15 +365,12 @@ The summary table should fit on one page. Supporting detail goes in the appendix
 **Division of labor:** The Verifier owns exhaustive fact-checking. The Architect does NOT duplicate this work — it reads key files to understand patterns, then focuses purely on architectural critique. This prevents the ~80% overlap in verification work that occurs when both agents fact-check independently.
 
 **Before dispatching critics — resolve the checklist (MANDATORY):**
-The checklist is a sibling file in this skill's directory. Resolve its absolute path:
-1. Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/plan-critique-checklist.md`.
-2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/writing-plans/plan-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
+The checklist is at `{base-directory}/plan-critique-checklist.md`. Verify it exists with Read. **If the checklist cannot be found, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
 
 **Round 1:**
 1. Create a temporary directory for this critique round: `/tmp/plan-critique-{feature}/round-1/`. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` with the absolute path of the plan document, `{checklist-path}` with the resolved checklist path, and `{report-path}` with `/tmp/plan-critique-{feature}/round-1/{critic-slug}-report.md`.
 
-   The prompt templates for both critics and the aggregator live in `references/critique-panel-prompts.md`. Resolve `{base-directory}` from the "Base directory for this skill:" line printed when this skill loaded, then read `{base-directory}/references/critique-panel-prompts.md`. Substitute `{plan-file-path}`, `{checklist-path}`, and `{report-path}` into each prompt before launching the sub-agent.
+   The prompt templates for both critics and the aggregator live at `{base-directory}/references/critique-panel-prompts.md`. Read that file and substitute `{plan-file-path}`, `{checklist-path}`, and `{report-path}` into each prompt before launching the sub-agent.
 
    **Critic 1 — The Architect (Codebase Alignment lens):** Use the section "Round 1: Architect prompt" from `references/critique-panel-prompts.md`.
 
@@ -402,7 +401,7 @@ If the plan changes system architecture (new routes, module restructuring, datab
 
 ## Plan Critique
 
-When critiquing an existing plan (instead of writing one), resolve the checklist path using the same MANDATORY resolution steps described above (base directory → Glob fallback → STOP if not found). Use the checklist at `{base-directory}/plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source code — don't trust line numbers, file paths, code snippets, or test counts without checking.
+When critiquing an existing plan (instead of writing one), use the checklist at `{base-directory}/plan-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against actual source code — don't trust line numbers, file paths, code snippets, or test counts without checking.
 
 ## Verification Gate
 
@@ -427,16 +426,11 @@ If a referenced file cannot be found, flag it as `[NOT FOUND]` in the plan rathe
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `writing-plans` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions. Use `writing-plans` as the "Discovered during" value.
 
 ## Execution Handoff
 
-**Resolve the plugin root path (MANDATORY):** The Ralph loop script lives in this plugin's `docs/ralph_loops/` directory.
-1. Find the "Base directory for this skill:" line printed when this skill loaded. The plugin root is two levels up: `{base-directory}/../..` (i.e., strip `skills/writing-plans/`).
-2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/docs/ralph_loops/run-ralph.sh`. Use the match whose parent directory contains `.claude-plugin/plugin.json`.
-3. Verify the resolved path exists by reading `{plugin-root}/docs/ralph_loops/run-ralph.sh`. **If it cannot be found after both strategies, STOP and tell the user.**
-
-Store as `{plugin-root}`.
+**Resolve the plugin root path:** The Ralph loop script lives in this plugin's `docs/ralph_loops/` directory. Derive the plugin root as two levels up from `{base-directory}`: `{base-directory}/../..` (i.e., strip `skills/writing-plans/`). Verify the resolved path exists by reading `{plugin-root}/docs/ralph_loops/run-ralph.sh`. **If it cannot be found, STOP and tell the user.** Store as `{plugin-root}`.
 
 After saving the plan (to the main worktree and committed to main), present execution options.
 
@@ -453,7 +447,7 @@ Then output two execution options (with `{plan-file-path}`, `{feature-name}`, an
 
 State the recommendation as a single sentence, e.g.: "**Recommendation:** Option B (Ralph loop) — this plan has 23 mechanical tasks with clear verification steps; fresh context per task will prevent quality drift."
 
-The user-facing output templates for both options live in `references/execution-handoff-templates.md`. Read `{base-directory}/references/execution-handoff-templates.md` and pick the section that matches:
+The user-facing output templates for both options live at `{base-directory}/references/execution-handoff-templates.md`. Read that file and pick the section that matches:
 
 - **Standard handoff (worktree path known):** Use when the worktree was created by a prior brainstorming session or is otherwise available. Substitute `{worktree-path}`, `{plan-file-path}`, `{feature-name}`, and `{plugin-root}`.
 - **Worktree-not-created handoff (worktree path unknown):** Use when writing-plans was invoked without a prior worktree. Substitute `{feature-name}` and `{plugin-root}`.

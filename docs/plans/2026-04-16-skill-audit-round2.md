@@ -835,7 +835,7 @@ git commit -m "refactor(brainstorming): migrate to shared base-directory resolut
 
 ---
 
-### Task 18: Migrate writing-plans
+### ✅ Task 18: Migrate writing-plans
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (6 refs across plan-critique-checklist, templates, ralph_loops, and kanban resolution)
