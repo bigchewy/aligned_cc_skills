@@ -62,6 +62,11 @@ Causes, Solutions) with gates. Adapts depth to task complexity — tactical
 tasks move faster, strategic challenges get full diagnostic treatment."
 
 ## Step 2: Project Scan
+
+**Resolve placeholders before dispatching:**
+- `{topic}` — a 1–3 word kebab-case slug derived from the user's request (e.g., "pricing-strategy", "auth-refactor"). Ask the user if the request is ambiguous.
+- `{project-root}` — the current working directory unless the user specified a different path.
+
 Dispatch a project scan agent via Task tool (subagent_type=general-purpose),
 running in the background. Now that mode is known, pass it to the scanner:
 
