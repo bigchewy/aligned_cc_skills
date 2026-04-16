@@ -7,6 +7,8 @@ description: "Tests content against simulated buyer/user personas, producing an 
 
 **Announce:** "I'm using the persona-panel skill to test this content against buyer personas."
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/persona-panel/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Constants
 
 - `CALIBRATION_WINDOW` = 5 — minimum scorecard rows per persona before running calibration checks
@@ -53,7 +55,7 @@ Extract content from conversation context:
 
 1. **Derive session slug:** Infer `<topic>` from the content — use the first heading, source filename, or conversation topic. Only ask the user if inference completely fails.
 2. **Create session directory:** `docs/interviews/YYYY-MM-DD-<topic>/` — use the Write tool to create a placeholder file if the directory doesn't exist.
-3. **Read the prompt template:** Read `{base-directory}/references/persona-prompt.md` in full (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load).
+3. **Read the prompt template:** Read `{base-directory}/references/persona-prompt.md` in full.
 
 ### Dispatch
 
@@ -80,7 +82,7 @@ If some sub-agents fail, proceed with available results. Track which personas co
 
 After all persona sub-agents complete (or fail):
 
-1. **Read the aggregation template:** Read `{base-directory}/references/aggregation-prompt.md` in full (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load).
+1. **Read the aggregation template:** Read `{base-directory}/references/aggregation-prompt.md` in full.
 2. **Dispatch aggregation agent** via Agent tool: `subagent_type=general-purpose`, `model=sonnet`
    - Fill template with session directory path, list of available persona slugs, list of missing persona slugs, and mode
    - The agent reads all persona reports from the session directory

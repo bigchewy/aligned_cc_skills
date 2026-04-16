@@ -79,7 +79,7 @@ User can adjust names, add/remove personas, or change archetypes before proceedi
 
 ## Phase 4: File Generation
 
-**Resolve the template path:** Read the persona template at `{base-directory}/references/persona-template.md` (resolve `{base-directory}` from the "Base directory for this skill:" line printed when persona-panel loaded). **Fallback** (if the base-directory line was compressed out of context): Use Glob to search for `**/persona-panel/references/persona-template.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`. If the template cannot be found after both strategies, STOP and tell the user — do not generate persona files without the template.
+**Resolve the template path:** Read the persona template at `{base-directory}/references/persona-template.md` (see the Path Resolution note in `skills/persona-panel/SKILL.md`). If the template cannot be found, STOP and tell the user — do not generate persona files without the template.
 
 **On approval:**
 

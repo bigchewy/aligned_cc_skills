@@ -893,7 +893,7 @@ git commit -m "refactor(root-cause-analysis): migrate SKILL.md to shared base-di
 
 ---
 
-### Task 22: Migrate persona-panel
+### ✅ Task 22: Migrate persona-panel
 
 **Files:**
 - Modify: `skills/persona-panel/SKILL.md` (4 refs)
