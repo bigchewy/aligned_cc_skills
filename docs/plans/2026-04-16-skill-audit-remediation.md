@@ -217,7 +217,7 @@ Skipped. The add-advisor cleanup was bundled into Task 2 for atomic commit seman
 
 ---
 
-### Task 5: Remove editor note from add-framework SKILL.md
+### ✅ Task 5: Remove editor note from add-framework SKILL.md
 
 **Files:**
 - Modify: `skills/add-framework/SKILL.md` (the editor-note blockquote near the environment detection summary)
