@@ -167,7 +167,7 @@ If changed files include any of: architecture-relevant paths as defined in the p
 **If architecture-relevant changes detected:**
 
 1. Read `docs/architecture.md` (or the project's equivalent)
-2. **Verify diagrams affected by this branch** — architecture docs may be stale. For the specific diagrams you're updating, check if they accurately reflect the current code (not just your changes). The actual source files are always the source of truth. If you find discrepancies in the diagrams you're editing, file bugs (see "Bug Board Entry Format" below) with category `architecture-discrepancy`. Do NOT audit unrelated diagrams.
+2. **Verify diagrams affected by this branch** — architecture docs may be stale. For the specific diagrams you're updating, check if they accurately reflect the current code (not just your changes). The actual source files are always the source of truth. If you find discrepancies in the diagrams you're editing, file bugs (see `skills/_shared/kanban-entry-format.md`) with category `architecture-discrepancy`. Do NOT audit unrelated diagrams.
 3. Update the affected diagrams to reflect the new state
 4. Commit the update (including any bug board entries) to the feature branch before proceeding
 

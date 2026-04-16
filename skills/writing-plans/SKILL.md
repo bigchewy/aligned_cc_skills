@@ -85,7 +85,7 @@ If you hit a Write tool size error, do not retry the same content. Split it in h
 
 Explore the codebase before writing any plan:
 1. Read the spec/requirements document or design
-2. **Read architecture docs:** If the project has `docs/architecture.md` (or equivalent), read it to understand data flows, module dependencies, and existing patterns before exploring code. This orients the plan around the actual system structure. **Caveat:** Architecture docs may be stale — always verify against actual source files in subsequent steps. If you find a discrepancy, file a bug (see "Bug Board Entry Format" below).
+2. **Read architecture docs:** If the project has `docs/architecture.md` (or equivalent), read it to understand data flows, module dependencies, and existing patterns before exploring code. This orients the plan around the actual system structure. **Caveat:** Architecture docs may be stale — always verify against actual source files in subsequent steps. If you find a discrepancy, file a bug (see the Kanban Entry Format section below).
 3. Use Glob/Grep to find files relevant to the feature
 4. Read key files to understand current patterns and conventions
 5. **Sub-agent research:** When exploring the codebase (reading multiple files, searching for patterns across the project), prefer launching a sub-agent (`subagent_type=Explore`) to keep the main context window lean. Reserve direct Glob/Grep/Read for targeted lookups where you know the exact file or pattern.

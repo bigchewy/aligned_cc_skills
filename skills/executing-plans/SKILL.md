@@ -30,7 +30,7 @@ Check the output. If it shows `main` or `master`, STOP. Tell the user and offer 
    git worktree list
    ```
    Parse the output to extract the path from the first line (text before the first space). Store this as `main_worktree`. Do NOT use piped commands. Read plan from: `$main_worktree/docs/plans/<plan-file>.md`
-2. **Verify plan against architecture:** If the project has `docs/architecture.md`, read it and cross-check the plan's assumptions (module dependencies, data flows, file paths). Plans may have been written days or weeks ago and the codebase may have changed. Architecture docs may also be stale — trust actual source files over both the plan and the diagrams. If you find discrepancies between the architecture doc and actual code, file them (see "Bug Board Entry Format" below).
+2. **Verify plan against architecture:** If the project has `docs/architecture.md`, read it and cross-check the plan's assumptions (module dependencies, data flows, file paths). Plans may have been written days or weeks ago and the codebase may have changed. Architecture docs may also be stale — trust actual source files over both the plan and the diagrams. If you find discrepancies between the architecture doc and actual code, file them (see the Kanban Entry Format section below).
 3. Review critically - identify any questions or concerns about the plan
 4. If concerns: Raise them with your human partner before starting
 5. If no concerns: Create a task list with TaskCreate and proceed
