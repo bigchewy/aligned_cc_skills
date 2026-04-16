@@ -211,7 +211,7 @@ intentionally per audit remediation design doc."
 
 ---
 
-### Task 4: (merged into Task 2 — no separate commit needed)
+### ✅ Task 4: (merged into Task 2 — no separate commit needed)
 
 Skipped. The add-advisor cleanup was bundled into Task 2 for atomic commit semantics. Proceed to Task 5.
 
