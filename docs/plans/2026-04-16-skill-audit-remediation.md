@@ -438,7 +438,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(writing-plans)
 
 ---
 
-### Task 10: Add TOC to create-design-principles checklist
+### ✅ Task 10: Add TOC to create-design-principles checklist
 
 **Files:**
 - Modify: `skills/create-design-principles/design-critique-checklist.md`
