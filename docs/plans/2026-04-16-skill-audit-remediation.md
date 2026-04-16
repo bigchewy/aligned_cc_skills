@@ -605,7 +605,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(root-cause-ana
 
 ---
 
-### Task 13: Create condition-based-waiting-example.ts
+### ✅ Task 13: Create condition-based-waiting-example.ts
 
 **Files:**
 - Create: `skills/root-cause-analysis/condition-based-waiting-example.ts`
