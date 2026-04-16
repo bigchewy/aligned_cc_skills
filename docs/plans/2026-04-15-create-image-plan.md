@@ -294,7 +294,7 @@ git commit -m "docs: update skill reference table for create-image rename"
 
 ---
 
-### Task 5: Update kickstart permissions
+### ✅ Task 5: Update kickstart permissions
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the permissions `allow` array)

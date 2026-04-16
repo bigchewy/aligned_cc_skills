@@ -347,7 +347,7 @@ Check whether `~/.claude/settings.json` already contains aligned skill permissio
       "Skill(aligned:find-potential-advisors)",
       "Skill(aligned:create-design-principles)",
       "Skill(aligned:persona-panel)",
-      "Skill(aligned:create-svg-diagram)"
+      "Skill(aligned:create-image)"
     ]
   }
 }
