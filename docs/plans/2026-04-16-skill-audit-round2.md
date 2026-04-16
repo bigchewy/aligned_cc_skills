@@ -183,7 +183,7 @@ git commit -m "docs(persona-panel): add TOC to persona-prompt reference"
 
 ## Phase 3: Portability Fixes
 
-### Task 6: Remove hardcoded "65 advisors" from kickstart
+### ✅ Task 6: Remove hardcoded "65 advisors" from kickstart
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the "What to Try First" block — currently at line ~184)
