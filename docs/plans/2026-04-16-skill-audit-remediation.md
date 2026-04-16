@@ -394,7 +394,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(persona-panel)
 
 ---
 
-### Task 9: Add TOC to writing-plans critique checklist
+### ✅ Task 9: Add TOC to writing-plans critique checklist
 
 **Files:**
 - Modify: `skills/writing-plans/plan-critique-checklist.md`
