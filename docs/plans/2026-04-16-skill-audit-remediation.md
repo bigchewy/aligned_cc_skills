@@ -830,7 +830,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(executing-plan
 
 ---
 
-### Task 16: Remove duplicate Kanban Entry Format section from finishing-a-development-branch
+### ✅ Task 16: Remove duplicate Kanban Entry Format section from finishing-a-development-branch
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (remove the duplicate `## Kanban Entry Format` H2 section near end of file; keep the Step 1e reference in the body)

@@ -819,10 +819,6 @@ BEFORE completing this skill's process:
     Write a lesson to docs/lessons-learned/YYYY-MM-DD-short-description.md
     using the lesson template (see kickstart scaffold docs).
 
-## Kanban Entry Format
-
-When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `finishing-a-development-branch` as the "Discovered during" value.
-
 ## Integration
 
 **Called by:**
