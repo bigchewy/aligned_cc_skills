@@ -36,7 +36,10 @@ Check the output. If it shows `main` or `master`, STOP. Tell the user and offer 
 5. If no concerns: Create a task list with TaskCreate and proceed
 
 ### Step 2: Execute Build Tasks
-**Default: First 5 tasks**
+
+**Default mode: autonomous.** Execute all tasks without stopping for review. Only stop on task failure or a blocker.
+
+**Batched mode (opt-in):** If the user explicitly requests checkpoints, or the plan is marked for batched execution, process tasks in groups of 3–7 and report between batches.
 
 For each task:
 1. Mark as in_progress
@@ -49,10 +52,10 @@ For each task:
 **LLM surface check:** If the task involved changes to advisor prompts, framework prompts, prompt builders, or personalization logic, check whether the project has eval infrastructure. If `e2e/trigger-map.yaml` exists, read it for file-to-scenario mappings; if a mapping matches the changed files, run `npx promptfoo eval -c <scenario-path> --no-progress-bar` from the `e2e/` directory. If no `e2e/trigger-map.yaml` exists, skip this check silently. Don't wait until all tasks are done — catching regressions early is cheaper than debugging across multiple steps. If evals fail, classify the failure (prompt issue, eval calibration, or model variance) and fix before continuing.
 
 ### Step 3: Report
-When Build Tasks are complete:
-- Show what was implemented
-- Show verification output
-- Say: "Build is complete. Ready for testing".  give the user instructions on what to test and how to test it.  Include the bash command that the user should run to go to the worktree and start the dev server
+
+**Autonomous mode:** When all tasks pass verification, stop. Summarize what was implemented and show verification output. Do not hand off to `finishing-a-development-branch` — the user runs that manually.
+
+**Batched mode only:** Between batches, show what was implemented, show verification output, say "Build is complete. Ready for testing", give the user instructions on what to test, and include the bash command to enter the worktree and start the dev server.
 
 ### Step 4: Continue
 Based on feedback:
