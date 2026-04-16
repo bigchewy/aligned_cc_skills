@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Create the create-image router SKILL.md
+### ✅ Task 1: Create the create-image router SKILL.md
 
 **Files:**
 - Create: `skills/create-image/SKILL.md`
@@ -95,7 +95,7 @@ git commit -m "feat: create create-image router skill"
 
 ---
 
-### Task 2: Migrate diagram mode from create-svg-diagram
+### ✅ Task 2: Migrate diagram mode from create-svg-diagram
 
 **Files:**
 - Create: `skills/create-image/modes/diagram.md`
@@ -144,7 +144,7 @@ git commit -m "feat: migrate diagram mode from create-svg-diagram"
 
 ---
 
-### Task 3: Create the icon mode
+### ✅ Task 3: Create the icon mode
 
 **Files:**
 - Create: `skills/create-image/modes/icon.md`
@@ -258,7 +258,7 @@ git commit -m "feat: add icon generation mode for create-image skill"
 
 ---
 
-### Task 4: Update README.md skill reference entry
+### ✅ Task 4: Update README.md skill reference entry
 
 **Files:**
 - Modify: `README.md` (the skill reference table, the `create-svg-diagram` row)
@@ -294,7 +294,7 @@ git commit -m "docs: update skill reference table for create-image rename"
 
 ---
 
-### Task 5: Update kickstart permissions
+### ✅ Task 5: Update kickstart permissions
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (the permissions `allow` array)
@@ -318,7 +318,7 @@ git commit -m "chore: update kickstart permissions for create-image rename"
 
 ---
 
-### Task 6: Bump plugin version
+### ✅ Task 6: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (the `version` field)
@@ -343,7 +343,7 @@ git commit -m "chore: bump version to 0.21.0"
 
 ---
 
-### Task 7: Delete the old create-svg-diagram directory
+### ✅ Task 7: Delete the old create-svg-diagram directory
 
 **Files:**
 - Delete: `skills/create-svg-diagram/SKILL.md`
@@ -374,7 +374,7 @@ git commit -m "chore: remove old create-svg-diagram skill directory"
 
 ---
 
-### Task 8: Verify no dangling cross-references
+### ✅ Task 8: Verify no dangling cross-references
 
 **Step 1: Search for remaining references**
 
@@ -406,7 +406,8 @@ git commit -m "fix: remove dangling create-svg-diagram references"
 
 ---
 
-### Task 9: Post-implementation validation
+### ✅ Task 9: Post-implementation validation
+> NOTE: Structural validation passed (all files exist, routing logic correct, mode files have proper content). Interactive skill invocation testing requires a manual session.
 
 **Step 1: Validate routing — icon mode**
 

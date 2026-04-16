@@ -1,7 +1,4 @@
----
-name: create-svg-diagram
-description: "Use when a diagram, chart, flowchart, org chart, matrix, or visual framework is needed for presentations, documentation, or slide decks in a repo with a design-principles file."
----
+<!-- Mode file: Read into context by the create-image router. Do not add YAML frontmatter. -->
 
 # Create SVG Diagram
 
@@ -9,11 +6,9 @@ Hand-coded SVG diagrams matching a project's design tokens from the local repo's
 
 ## Step 1: Read Design Principles (REQUIRED)
 
-**Read `docs/design/design-principles.md` in the current repo before creating any SVG.** If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`.
+The router has already located the project's `design-principles.md` and passed its path. **Read that file now.**
 
 Extract: background, foreground, secondary, accent, border, muted colors + font stack + border radii.
-
-**If neither file exists:** STOP. Ask the user for a design-principles file or at minimum: background, accent, text colors, and font. Never generate without design tokens.
 
 ## Step 2: Read Existing Diagrams
 
