@@ -4,6 +4,15 @@
 
 Guided creation of buyer personas when `docs/personas/` is empty. Four phases: Context Detection, Q&A, Summary Approval, File Generation.
 
+## Contents
+
+- Phase 1: Context Detection
+- Phase 2: Q&A
+- Phase 3: Summary Approval
+- Phase 4: File Generation
+- Edge Cases
+- Boundaries
+
 ## Phase 1: Context Detection
 
 Scan for existing buyer/persona documentation before asking questions. Sources in order of specificity:

@@ -345,7 +345,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(brainstorming)
 
 ---
 
-### Task 8: Add TOCs to persona-panel reference files (2 files)
+### ✅ Task 8: Add TOCs to persona-panel reference files (2 files)
 
 **Files:**
 - Modify: `skills/persona-panel/references/aggregation-prompt.md`
