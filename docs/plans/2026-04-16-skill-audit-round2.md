@@ -454,9 +454,15 @@ git commit -m "docs(add-advisor): remove duplicate Step 8, renumber to sequentia
 - Modify: `skills/writing-plans/SKILL.md` (line 88)
 - Modify: `skills/executing-plans/SKILL.md` (line 33)
 
-**Problem:** All three files contain the phrase `see "Bug Board Entry Format" below` — but none of them actually has a "Bug Board Entry Format" section. The Kanban entry format lives in `_shared/kanban-entry-format.md`. This is a shared broken reference pattern, not a single-file issue. Each file does have a `## Kanban Entry Format` section that correctly delegates to `_shared/`, so the in-body reference should point to that section.
+**Problem:** All three files contain the phrase `see "Bug Board Entry Format" below` — but none has a "Bug Board Entry Format" section. The Kanban entry format lives in `_shared/kanban-entry-format.md`. `writing-plans/SKILL.md` and `executing-plans/SKILL.md` each have a `## Kanban Entry Format` section that delegates to `_shared/`, so the in-body reference in those two files can point to that section. `finishing-a-development-branch/SKILL.md` has NO such section — it references `_shared/kanban-entry-format.md` only transitively via `references/code-review-scan.md` — so the reference in that file must point to the shared file directly.
 
-**Pattern for all three edits:** Replace the anchor text `see "Bug Board Entry Format" below` with `see the Kanban Entry Format section below` (the text inside the existing `## Kanban Entry Format` heading already delegates to `_shared/kanban-entry-format.md`, so the in-body reference just needs to name the right section).
+**Per-file replacements:**
+
+| File | Replace | With |
+|------|---------|------|
+| `writing-plans/SKILL.md` (line ~88) | `file a bug (see "Bug Board Entry Format" below)` | `file a bug (see the Kanban Entry Format section below)` |
+| `executing-plans/SKILL.md` (line ~33) | `file them (see "Bug Board Entry Format" below)` | `file them (see the Kanban Entry Format section below)` |
+| `finishing-a-development-branch/SKILL.md` (line ~170) | `file bugs (see "Bug Board Entry Format" below) with category \`architecture-discrepancy\`` | `file bugs (see \`skills/_shared/kanban-entry-format.md\`) with category \`architecture-discrepancy\`` |
 
 **Step 1:** Confirm the shared broken pattern exists across all three files:
 ```
@@ -465,24 +471,34 @@ path: skills/
 ```
 Expected: 3 matches — one each in the three files named above.
 
-**Step 2:** Edit `skills/finishing-a-development-branch/SKILL.md` — on line ~170, replace `file bugs (see "Bug Board Entry Format" below) with category \`architecture-discrepancy\`` with `file bugs (see the Kanban Entry Format section below) with category \`architecture-discrepancy\``.
+**Step 2:** Confirm the `## Kanban Entry Format` section exists in writing-plans and executing-plans but NOT in finishing-a-development-branch:
+```
+Grep pattern: "^## Kanban Entry Format" (output_mode content, -n)
+path: skills/writing-plans/SKILL.md skills/executing-plans/SKILL.md skills/finishing-a-development-branch/SKILL.md
+```
+Expected: 2 matches (writing-plans and executing-plans only). If finishing-a-development-branch unexpectedly matches, adjust its replacement to also use the section-pointer form.
 
-**Step 3:** Edit `skills/writing-plans/SKILL.md` — on line ~88, replace `file a bug (see "Bug Board Entry Format" below)` with `file a bug (see the Kanban Entry Format section below)`.
+**Step 3:** Apply the three per-file replacements from the table above. Each is a single-line edit.
 
-**Step 4:** Edit `skills/executing-plans/SKILL.md` — on line ~33, replace `file them (see "Bug Board Entry Format" below)` with `file them (see the Kanban Entry Format section below)`.
-
-**Step 5:** Verify all three references are gone:
+**Step 4:** Verify all three references are gone:
 ```
 Grep pattern: "Bug Board Entry Format" (output_mode count)
 path: skills/
 ```
 Expected: `0`.
 
-**Step 6:** Confirm each file still has a `## Kanban Entry Format` section so the new reference resolves:
+**Step 5:** Verify the new references in writing-plans and executing-plans resolve to an existing section:
 ```
-Grep pattern: "^## Kanban Entry Format" (output_mode count) per file
+Grep pattern: "see the Kanban Entry Format section below" (output_mode content, -n)
+path: skills/writing-plans/SKILL.md skills/executing-plans/SKILL.md
 ```
-Expected: `1` in each of the three files.
+For each match, confirm a `## Kanban Entry Format` heading exists LATER in the same file.
+
+**Step 6:** Confirm the new reference in finishing-a-development-branch points to a real file:
+```
+ls skills/_shared/kanban-entry-format.md
+```
+Expected: file exists.
 
 **Step 7:** Commit all three together (single semantic fix).
 ```bash
@@ -983,19 +999,21 @@ git commit -m "docs(_shared): clarify base-directory semantics in critique-panel
 
 **Why:** Closes the loop on whether the remediation actually improved measurable audit scores. Writes fresh per-skill audits to `/tmp/skill-audit-v3/` so the next iteration (if any) has a clean comparison point.
 
-**Step 1:** Prepare the audit-v3 workspace. First ensure the v2 rubric is available — if `/tmp` has been cleared since the v2 audit ran (reboot, etc.), copy the rubric from the source of truth:
+**Step 1:** Prepare the audit-v3 workspace. The rubric at `/tmp/skill-audit-v2/rubrics.md` is the source; it is NOT committed to the repo, so if `/tmp` has been cleared since the v2 audit ran (reboot, restart, tmp cleanup), the rubric is gone.
 ```bash
 mkdir -p /tmp/skill-audit-v3
 if [ -f /tmp/skill-audit-v2/rubrics.md ]; then
   cp /tmp/skill-audit-v2/rubrics.md /tmp/skill-audit-v3/rubrics.md
+  echo "Rubric copied from /tmp/skill-audit-v2/rubrics.md"
 else
-  # v2 workspace is gone — retrieve rubric from git history or fall back to documented rubric in-skill
-  # The rubric was committed at docs/skill-audit-rubric-backup.md if that exists; otherwise ask the user.
-  echo "v2 rubric missing — need to recreate it from git history or source." >&2
+  echo "ERROR: /tmp/skill-audit-v2/rubrics.md is missing." >&2
+  echo "The rubric is not stored in git; STOP this task and ask the user to provide it (or regenerate the v2 audit workspace before retrying)." >&2
   exit 1
 fi
 ```
-If recovery fails, the task STOPs and asks the user for the rubric source.
+If the rubric is missing, STOP and tell the user the Task 29 re-audit cannot run without the rubric. This is an acceptable fail-loud behavior — the v2→v3 comparison is only valid when both use the same rubric.
+
+**Note (follow-up):** After Task 29 completes, file a deferred item to commit the rubric to the repo (e.g., at `docs/skill-audit-rubric.md`) so future audit rounds survive `/tmp` cleanup. That commit is out of scope for this plan but belongs in the next audit-tooling pass.
 
 **Step 2:** For each skill touched by this plan, dispatch a sub-agent (via Task tool, `subagent_type=general-purpose`) to re-audit it against `/tmp/skill-audit-v3/rubrics.md` and write the result to `/tmp/skill-audit-v3/<skill-name>.md`. The skills to re-audit are:
 
