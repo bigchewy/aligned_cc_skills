@@ -917,7 +917,7 @@ If no change was made, skip the commit step.
 
 Wave 2 must be fully committed to main before starting Wave 3.
 
-### Task 18: Extract writing-plans critique panel prompts
+### ✅ Task 18: Extract writing-plans critique panel prompts
 
 **Files:**
 - Create: `skills/writing-plans/references/critique-panel-prompts.md`
