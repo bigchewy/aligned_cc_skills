@@ -1,6 +1,6 @@
 ---
 name: eval-audit
-description: "Eval coverage auditor. Detects LLM behavior surface changes without eval coverage. Manual invocation only."
+description: "Detects LLM behavior surface changes without eval coverage. Use when adding advisors, frameworks, or prompt logic to verify eval scenarios exist. Manual invocation only."
 ---
 
 # Eval Coverage Audit

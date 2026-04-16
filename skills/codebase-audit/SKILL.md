@@ -1,6 +1,6 @@
 ---
 name: codebase-audit
-description: "Comprehensive multi-dimensional codebase audit covering code quality, test quality, security, dead code, and architecture. Report-only — never edits source code."
+description: "Comprehensive multi-dimensional codebase audit covering code quality, test quality, security, dead code, and architecture. Use when reviewing an unfamiliar codebase, before a major refactor, or as a periodic health check. Report-only — never edits source code."
 ---
 
 # Codebase Audit

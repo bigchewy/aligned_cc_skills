@@ -168,7 +168,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(skills): rewri
 
 ---
 
-### Task 3: Rewrite descriptions — utility skills (6 skills)
+### ✅ Task 3: Rewrite descriptions — utility skills (6 skills)
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (frontmatter `description:` field)

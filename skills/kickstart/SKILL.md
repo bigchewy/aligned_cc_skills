@@ -1,6 +1,6 @@
 ---
 name: kickstart
-description: "Scaffold a new project with Aligned conventions. Supports software, business, personal, and general project types with appropriate structure and CLAUDE.md templates."
+description: "Scaffolds a new project with Aligned conventions, directory structure, and CLAUDE.md. Use when starting a new repo or adding Aligned structure to an existing codebase."
 ---
 
 # Kickstart
