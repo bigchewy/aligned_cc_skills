@@ -292,7 +292,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(brainstorming)
 
 ---
 
-### Task 7: Add TOCs to brainstorming reference files (3 files)
+### ✅ Task 7: Add TOCs to brainstorming reference files (3 files)
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md` (add `## Contents` after first H1)
