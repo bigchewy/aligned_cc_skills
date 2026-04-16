@@ -1,8 +1,10 @@
 ---
 name: create-image
-description: "Use when a diagram, chart, flowchart, icon, or brand visual is
-  needed. Routes to diagram mode (charts, flowcharts, matrices, org charts) or
-  icon mode (brand icons, custom SVG icons) based on the request."
+description: "Use when a diagram, chart, flowchart, icon, illustration, or
+  brand visual is needed. Routes to diagram mode (charts, flowcharts,
+  matrices, org charts), icon mode (brand icons, custom SVG icons), or
+  illustration mode (decorative botanical/organic art) based on the
+  request."
 ---
 
 # Create Image
@@ -12,7 +14,7 @@ to the appropriate mode.
 
 ## Step 1: Detect Mode
 
-Classify the user's request into one of two modes using keyword matching:
+Classify the user's request into one of three modes using keyword matching:
 
 **Icon mode** — creating brand icons or custom SVG icons:
 - Keywords: icon, glyph, symbol, brand icon, custom icon
@@ -21,10 +23,23 @@ Classify the user's request into one of two modes using keyword matching:
 - Keywords: diagram, chart, flowchart, org chart, matrix, visual framework,
   bell curve, radial, timeline
 
+**Illustration mode** — creating decorative organic/botanical art:
+- Keywords: illustration, botanical, decorative, nature art, watermark,
+  background art
+
 **If signals are clear:** Auto-route and proceed to Step 2.
 
-**If ambiguous:** Ask one question: "Are you looking for a brand icon/symbol
-or a diagram/chart?"
+**If ambiguous between icon and diagram:** Ask one question: "Are you
+looking for a brand icon/symbol or a diagram/chart?"
+
+**If ambiguous between illustration and diagram:** Ask one question: "Are
+you looking for a decorative botanical illustration or a data
+diagram/chart?"
+
+**If ambiguous between illustration and icon** (e.g., "decorative leaf
+symbol," "small botanical glyph"): Ask one question: "Is this a small
+functional glyph (UI icon, typically 32x32, gets a React wrapper) or a
+larger decorative illustration (atmosphere, background art, no wrapper)?"
 
 ## Step 2: Locate Design Principles (REQUIRED)
 
@@ -47,6 +62,10 @@ Pass the resolved design-principles.md path.
 
 **If diagram mode:**
 Read `{base-directory}/modes/diagram.md` and follow its process.
+Pass the resolved design-principles.md path.
+
+**If illustration mode:**
+Read `{base-directory}/modes/illustration.md` and follow its process.
 Pass the resolved design-principles.md path.
 
 **If the mode file cannot be Read, STOP and tell the user the plugin
