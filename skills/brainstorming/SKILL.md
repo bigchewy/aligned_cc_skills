@@ -1,8 +1,6 @@
 ---
 name: brainstorming
-description: "Use before any creative or strategic work — software features,
-  business strategy, analysis, or decision-making. Detects whether the topic
-  is software design or business strategy and adapts the process accordingly."
+description: "Structures creative and strategic work through guided dialogue — software design or business strategy. Use before any creative, architectural, or strategic work that benefits from structured exploration and expert critique."
 ---
 
 # Brainstorming

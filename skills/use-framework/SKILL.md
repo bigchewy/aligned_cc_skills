@@ -1,6 +1,6 @@
 ---
 name: use-framework
-description: "Guide the user through a framework's phases interactively. Use with a framework name for fuzzy match, or alone to list available frameworks. TRIGGER when a user mentions a framework by name in any request — including 'use the strategic narrative framework to build my homepage,' 'apply The Work to this situation,' 'run me through the 5-element narrative for my pitch.' When a user says 'use [framework] to build/write/create [thing],' the framework IS the process. Invoke this skill to run the framework interactively first. Build the artifact from the collaborative output afterward. Never read framework prompts as reference material — they are interactive conversation scripts with WAIT points."
+description: "Guides a user through a decision framework's interactive phases, respecting WAIT points. Use with a framework name for fuzzy match, or alone to list available frameworks. Triggers when a user mentions a framework by name in any request."
 ---
 
 # Use Framework

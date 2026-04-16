@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: "Produces TDD implementation plans from specs or design docs, with parallel sub-agent critique and architectural review. Use when requirements are defined and the next step is a concrete, task-by-task build plan."
 ---
 
 # Writing Plans

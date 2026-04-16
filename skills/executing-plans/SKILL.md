@@ -1,6 +1,6 @@
 ---
 name: executing-plans
-description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
+description: "Executes written implementation plans with TDD discipline, batched task execution, and architecture verification. Use when a plan file exists in docs/plans/ and is ready for implementation."
 ---
 
 # Executing Plans

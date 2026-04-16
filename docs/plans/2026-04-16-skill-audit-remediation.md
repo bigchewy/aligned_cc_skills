@@ -49,7 +49,7 @@ Several tasks modify the same SKILL.md file. They MUST run in the order listed. 
 
 ## Wave 1 — Metadata, Navigation, and Missing Files
 
-### Task 1: Rewrite descriptions — core workflow skills (5 skills)
+### ✅ Task 1: Rewrite descriptions — core workflow skills (5 skills)
 
 **Files:**
 - Modify: `skills/use-advisor/SKILL.md` (frontmatter `description:` field)
