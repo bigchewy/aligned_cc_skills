@@ -992,7 +992,7 @@ git commit -m "docs(_shared): clarify base-directory semantics in critique-panel
 
 ## Phase 6: Verification and Release
 
-### Task 29: Re-audit affected skills and confirm score improvements
+### ✅ Task 29: Re-audit affected skills and confirm score improvements
 
 **Files:**
 - No file modifications — this is a verification-only task.
