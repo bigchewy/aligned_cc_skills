@@ -253,7 +253,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(add-framework)
 
 ---
 
-### Task 6: Fix stale elements-of-style reference in brainstorming business mode
+### ✅ Task 6: Fix stale elements-of-style reference in brainstorming business mode
 
 **Files:**
 - Modify: `skills/brainstorming/modes/business.md` (the "Documentation:" bullet list under Phase 4)
