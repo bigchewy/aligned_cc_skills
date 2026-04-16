@@ -698,7 +698,7 @@ git commit -m "fix(using-git-worktrees): resolve undefined shell vars and malfor
 
 **Design decision (see Decision Log entry #2):** Keep `{base-directory}` as the placeholder, but (a) switch the fallback from skill-filename Glob to `.claude-plugin/plugin.json`-anchored Glob (one match, unique anchor, fast), and (b) compress the multi-line fallback block to a single "Path Resolution" line near the top of each affected SKILL.md, with a shared reference doc (`skills/_shared/resolve-skill-path.md`) documenting the rationale and edge cases. Skills do NOT depend on reading the shared doc at runtime — the one-line summary is operationally sufficient. The shared doc is reference material for skill authors.
 
-### Task 16: Write `skills/_shared/resolve-skill-path.md`
+### ✅ Task 16: Write `skills/_shared/resolve-skill-path.md`
 
 **Files:**
 - Create: `skills/_shared/resolve-skill-path.md`
