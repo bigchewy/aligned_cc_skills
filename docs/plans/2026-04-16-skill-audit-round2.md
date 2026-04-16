@@ -850,7 +850,7 @@ git commit -m "refactor(writing-plans): migrate to shared base-directory resolut
 
 ---
 
-### Task 19: Migrate create-design-principles
+### ✅ Task 19: Migrate create-design-principles
 
 **Files:**
 - Modify: `skills/create-design-principles/SKILL.md` (3 refs)

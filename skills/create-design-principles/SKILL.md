@@ -5,6 +5,8 @@ description: Interactive design system creation with Steve Jobs persona, produci
 
 # Design Principles
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/create-design-principles/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Persona: Steve Jobs (REQUIRED)
 
 **Before doing anything else, load and adopt the Steve Jobs advisor persona.**
@@ -209,11 +211,7 @@ Give standalone icons presence with subtle background containers.
 
 When Phase 1 Q6 confirmed the project needs decorative illustrations, read the sibling file `illustrations-spec.md` and generate the Illustrations section per its schema. Place the generated section in `design-principles.md` between Iconography and Questions to Ask.
 
-**Resolve the spec file:** The spec is a sibling file in this skill's directory.
-1. Find the "Base directory for this skill:" line printed when this skill loaded. The spec is at `{base-directory}/illustrations-spec.md`.
-2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/create-design-principles/illustrations-spec.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-
-Verify the resolved path exists with Read before generating. If the spec file cannot be found after both strategies, STOP and tell the user — do not improvise an Illustrations section from memory.
+**Resolve the spec file:** The spec is at `{base-directory}/illustrations-spec.md`. Verify the resolved path exists with Read before generating. If the spec file cannot be found, STOP and tell the user — do not improvise an Illustrations section from memory.
 
 ### Animation
 - 150ms for micro-interactions, 200-250ms for larger transitions
@@ -292,14 +290,11 @@ The goal: intricate minimalism with appropriate personality. Same quality bar, c
 
 Three voices evaluate every design in parallel. Each catches what the others miss.
 
-**Resolve the checklist (MANDATORY):** The checklist is a sibling file in this skill's directory. Resolve its absolute path:
-1. Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/design-critique-checklist.md`.
-2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/create-design-principles/design-critique-checklist.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
+**Resolve the checklist (MANDATORY):** The checklist is at `{base-directory}/design-critique-checklist.md`. Verify it exists with Read. **If the checklist cannot be found, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
 
 **Round 1 — Launch all three sub-agents simultaneously** (Task tool, `subagent_type=general-purpose`, `model=sonnet`):
 
-Replace `{design-description}` below with either the file path of the design/mockup document, or a description of what was just built and where to find it in the codebase. Also resolve the Steve Jobs advisor prompt path: the plugin root is the parent of the parent of `{base-directory}` (i.e., `{base-directory}/../../`). The advisor file is at `{plugin-root}/advisors/prompts/steve-jobs.md`. Verify it exists with Read. Use the absolute path as `{advisor-path}` in the sub-agent prompt below.
+Replace `{design-description}` below with either the file path of the design/mockup document, or a description of what was just built and where to find it in the codebase. Also resolve the Steve Jobs advisor prompt path: derive the plugin root as two levels up from `{base-directory}` (i.e., `{base-directory}/../../`). The advisor file is at `{plugin-root}/advisors/prompts/steve-jobs.md`. Verify it exists with Read. Use the absolute path as `{advisor-path}` in the sub-agent prompt below.
 
 **Sub-agent 1 — Steve Jobs (Product Vision):**
 > "Read `{checklist-path}` in full. Find the 'Voice 1: Steve Jobs' section. Follow ALL instructions there — load the full advisor prompt from `{advisor-path}`, adopt his voice completely, then critique {design-description} using the criteria and output format specified. Be binary. Be brutal. Be Steve."
