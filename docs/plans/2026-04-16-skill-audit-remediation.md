@@ -490,7 +490,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 12: Create find-polluter.sh
+### ✅ Task 12: Create find-polluter.sh
 
 **Files:**
 - Create: `skills/root-cause-analysis/find-polluter.sh`
