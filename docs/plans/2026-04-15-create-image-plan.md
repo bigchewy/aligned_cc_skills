@@ -343,7 +343,7 @@ git commit -m "chore: bump version to 0.21.0"
 
 ---
 
-### Task 7: Delete the old create-svg-diagram directory
+### ✅ Task 7: Delete the old create-svg-diagram directory
 
 **Files:**
 - Delete: `skills/create-svg-diagram/SKILL.md`
