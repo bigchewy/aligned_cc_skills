@@ -5,6 +5,8 @@ description: "Executes written implementation plans with TDD discipline, batched
 
 # Executing Plans
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/executing-plans/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Overview
 
 Load plan, review critically, execute tasks in batches, report for review between batches.
@@ -151,7 +153,7 @@ N bug(s) were discovered and logged to `docs/kanban/todo/`. Review them and pick
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `[plan filename / Task N]` as the "Discovered during" value (more specific than just the skill name).
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions. Use `[plan filename / Task N]` as the "Discovered during" value (more specific than just the skill name).
 
 ## Remember
 - Review plan critically first

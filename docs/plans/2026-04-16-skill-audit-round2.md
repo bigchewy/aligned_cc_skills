@@ -936,7 +936,7 @@ git commit -m "docs(codebase-audit): add Path Resolution note for base-directory
 
 ---
 
-### Task 25: Migrate executing-plans
+### ✅ Task 25: Migrate executing-plans
 
 **Files:**
 - Modify: `skills/executing-plans/SKILL.md` (1 ref, in Kanban Entry Format section)
