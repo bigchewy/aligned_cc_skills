@@ -1218,7 +1218,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 24: Extract LLM eval gate workflow
+### ✅ Task 24: Extract LLM eval gate workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/llm-eval-gate.md`
