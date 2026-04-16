@@ -92,7 +92,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(skills): rewri
 
 ---
 
-### Task 2: Rewrite descriptions — advisor/design skills and clean up add-advisor
+### ✅ Task 2: Rewrite descriptions — advisor/design skills and clean up add-advisor
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (frontmatter `description:` field + remove Invocation section + remove editor note)

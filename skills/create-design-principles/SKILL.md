@@ -1,6 +1,6 @@
 ---
 name: create-design-principles
-description: Interactive design system discovery and enforcement with Steve Jobs persona. Explores the project's design direction through conversation, then generates design-principles.md with tokens, patterns, and anti-patterns. Use when building dashboards, admin interfaces, or any UI that needs precision.
+description: Interactive design system creation with Steve Jobs persona, producing design-principles.md with tokens, patterns, and anti-patterns. Use when building dashboards, admin interfaces, or any UI that needs a precise design direction.
 ---
 
 # Design Principles

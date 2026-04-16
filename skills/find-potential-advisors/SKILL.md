@@ -1,6 +1,6 @@
 ---
 name: find-potential-advisors
-description: Research and evaluate potential advisors for the Virtual Board. Use this skill when you need to identify experts in a domain, evaluate their voice mimicry potential, and narrow to top candidates. Predecessor to add-advisor skill.
+description: Researches and evaluates potential advisor candidates for the Virtual Board. Use when exploring a new domain or identifying experts before running add-advisor.
 ---
 
 # Find Potential Advisors
