@@ -1493,7 +1493,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(kickstart): ex
 
 ---
 
-### Task 29: Extract kickstart general CLAUDE.md template
+### ✅ Task 29: Extract kickstart general CLAUDE.md template
 
 **Files:**
 - Create: `skills/kickstart/templates/general.md`
