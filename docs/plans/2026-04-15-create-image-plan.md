@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Create the create-image router SKILL.md
+### ✅ Task 1: Create the create-image router SKILL.md
 
 **Files:**
 - Create: `skills/create-image/SKILL.md`
