@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Audit Remediation</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- LIVE-REFRESH-START -->
+  <script>
+    (function() {
+      const interval = setInterval(() => location.reload(), 3000);
+      setTimeout(() => clearInterval(interval), 1800000);
+    })();
+  </script>
+  <!-- LIVE-REFRESH-END -->
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #faf9f7; margin: 0; padding: 40px; }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; }
+    .tab-btn { padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .sub-tab-bar { display: flex; gap: 2px; border-bottom: 1px solid #f0eeeb; padding-left: 16px; background: #faf9f7; margin-bottom: 16px; }
+    .sub-tab-btn { padding: 8px 14px; font-size: 0.78rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+    .section { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px; }
+    .badge { font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: #fff7ed; color: #ff6900; font-weight: 500; margin-left: 8px; vertical-align: middle; }
+    .badge-green { font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: #ecfdf5; color: #047857; font-weight: 500; margin-left: 8px; vertical-align: middle; }
+    .badge-gray { font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: #f5f3ef; color: #6b7280; font-weight: 500; margin-left: 8px; vertical-align: middle; }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .phase-tracker { display: flex; gap: 0; align-items: center; margin-bottom: 24px; }
+    .phase-item { padding: 8px 18px; font-size: 0.82rem; font-weight: 500; color: #6b7280; background: #f5f3ef; border: 1px solid #e5e7eb; border-right: none; }
+    .phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid #e5e7eb; }
+    .phase-current { background: #ff6900; color: white; border-color: #ff6900; }
+    .callout { padding: 16px 20px; border-radius: 8px; font-size: 0.85rem; border-left: 4px solid; margin-bottom: 16px; line-height: 1.5; }
+    .callout-decision { background: #fff7ed; border-color: #ff6900; color: #1a1a1a; }
+    .callout-constraint { background: #f5f3ef; border-color: #555555; color: #1a1a1a; }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: #1a1a1a; }
+    .callout strong { display: block; font-weight: 600; margin-bottom: 4px; }
+    .change-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .change-table th { text-align: left; padding: 10px 12px; font-weight: 600; color: #1a1a1a; background: #f5f3ef; border-bottom: 1px solid #e5e7eb; }
+    .change-table td { padding: 10px 12px; border-bottom: 1px solid #f0eeeb; color: #1a1a1a; vertical-align: top; }
+    .change-table .file-path { font-family: Menlo, Consolas, monospace; font-size: 0.78rem; color: #555555; }
+    .status-badge { display: inline-block; font-size: 0.7rem; padding: 1px 8px; border-radius: 9999px; font-weight: 500; }
+    .status-modified { background: #fff7ed; color: #ff6900; }
+    .status-new { background: #ecfdf5; color: #047857; }
+    .status-removed { background: #fef2f2; color: #b91c1c; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .card h3 { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    .card p { font-size: 0.85rem; color: #555555; line-height: 1.5; margin: 0; }
+    .score-bar { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .score-fill { height: 6px; border-radius: 3px; background: #e5e7eb; flex: 1; position: relative; overflow: hidden; }
+    .score-fill-inner { height: 100%; border-radius: 3px; }
+    .score-label { font-size: 0.78rem; font-weight: 600; color: #1a1a1a; min-width: 36px; }
+  </style>
+</head>
+<body>
+  <h1>Skill Audit Remediation</h1>
+  <p class="subtitle">Three-wave plan to raise the quality floor across 18 aligned plugin skills</p>
+  <p class="context">Priority skills: brainstorming, use-advisor, use-framework, writing-plans, executing-plans</p>
+
+  <div class="phase-tracker">
+    <div class="phase-item phase-current">Wave 1: Metadata</div>
+    <div class="phase-item">Wave 2: Dedup</div>
+    <div class="phase-item">Wave 3: Extraction</div>
+  </div>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('wave1')">Wave 1</button>
+    <button class="tab-btn" onclick="switchTab('wave2')">Wave 2</button>
+    <button class="tab-btn" onclick="switchTab('wave3')">Wave 3</button>
+    <button class="tab-btn" onclick="switchTab('impact')">Impact</button>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div id="panel-overview" class="tab-panel active">
+    <div class="section">
+      <h2>Audit Summary</h2>
+      <p class="description">18 skills audited against Anthropic's official best practices. Mean score: 7.15/10. Seven skills scored C-grade (below 7.0). Zero skills below 5.0.</p>
+      <div class="callout callout-decision">
+        <strong>Strategy</strong>
+        Maximize the quality floor: fix the worst issues everywhere, prioritize the 5 most-used skills, and sweep low-hanging fruit.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Wave Dependency Flow</h2>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  W1["Wave 1\nMetadata + Navigation\n14 skills touched"]
+  W2["Wave 2\nKanban Dedup\n3 skills touched"]
+  W3["Wave 3\nFile Extractions\n3 skills touched"]
+  W1 -->|merge first| W2 -->|merge first| W3
+  style W1 fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style W2 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  style W3 fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Top 5 Issues Addressed</h2>
+      <table class="change-table">
+        <thead><tr><th>Issue</th><th>Skills affected</th><th>Wave</th></tr></thead>
+        <tbody>
+          <tr><td>Description anti-pattern #1 (workflow summary)</td><td>9</td><td><span class="status-badge status-modified">Wave 1</span></td></tr>
+          <tr><td>Reference files missing TOC (100+ lines)</td><td>5 (8 files)</td><td><span class="status-badge status-modified">Wave 1</span></td></tr>
+          <tr><td>Description wrong voice (second-person)</td><td>5</td><td><span class="status-badge status-modified">Wave 1</span></td></tr>
+          <tr><td>Kanban format duplicated inline</td><td>3</td><td><span class="status-badge status-modified">Wave 2</span></td></tr>
+          <tr><td>SKILL.md over 500 lines</td><td>2</td><td><span class="status-badge status-modified">Wave 3</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WAVE 1 TAB -->
+  <div id="panel-wave1" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('wave1','descriptions')">Descriptions</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('wave1','tocs')">TOCs</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('wave1','other')">Other Fixes</button>
+    </div>
+
+    <div id="sub-descriptions" class="sub-panel active">
+      <div class="section">
+        <h2>Description Rewrites <span class="badge">14 skills</span></h2>
+        <p class="description">All rewrites follow: third-person voice, what it does + "Use when..." trigger, no workflow summary.</p>
+        <table class="change-table">
+          <thead><tr><th>Skill</th><th>Problem</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>use-advisor</strong></td><td>Behavioral instructions in description</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td><strong>use-framework</strong></td><td>Behavioral instructions in description</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td><strong>writing-plans</strong></td><td>Too vague for discovery</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td><strong>executing-plans</strong></td><td>Workflow summary + second person</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td><strong>brainstorming</strong></td><td>Could name modes for better discovery</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td>add-advisor</td><td>Lists workflow steps</td><td><span class="status-badge status-modified">Rewrite</span></td></tr>
+            <tr><td>create-design-principles</td><td>Summarizes process</td><td><span class="status-badge status-modified">Rewrite</span></td></tr>
+            <tr><td>find-potential-advisors</td><td>Lists workflow + second person</td><td><span class="status-badge status-modified">Rewrite</span></td></tr>
+            <tr><td>kickstart</td><td>Lists project types and outputs</td><td><span class="status-badge status-modified">Rewrite</span></td></tr>
+            <tr><td>using-git-worktrees</td><td>Leaks implementation details</td><td><span class="status-badge status-modified">Rewrite</span></td></tr>
+            <tr><td>create-image</td><td>Leaks routing logic</td><td><span class="status-badge status-modified">Rewrite</span></td></tr>
+            <tr><td>codebase-audit</td><td>Missing "use when" trigger</td><td><span class="status-badge status-modified">Add trigger</span></td></tr>
+            <tr><td>eval-audit</td><td>Has constraint instead of trigger</td><td><span class="status-badge status-modified">Add trigger</span></td></tr>
+            <tr><td>kanban-resolve</td><td>Second-person voice</td><td><span class="status-badge status-modified">Voice fix</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="sub-tocs" class="sub-panel">
+      <div class="section">
+        <h2>TOC Additions <span class="badge">8 files</span></h2>
+        <p class="description">Reference files over 100 lines need a table of contents so Claude can see scope even with partial reads.</p>
+        <table class="change-table">
+          <thead><tr><th>File</th><th>Lines</th><th>Skill</th></tr></thead>
+          <tbody>
+            <tr><td class="file-path">brainstorming/references/brainstorm-components.md</td><td>749</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td class="file-path">brainstorming/modes/software.md</td><td>271</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td class="file-path">brainstorming/modes/business.md</td><td>226</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td class="file-path">writing-plans/plan-critique-checklist.md</td><td>204</td><td><span class="status-badge status-modified">Priority</span></td></tr>
+            <tr><td class="file-path">finishing-a-dev-branch/references/deployment-pitfall-catalog.md</td><td>284</td><td><span class="status-badge status-modified">Non-priority</span></td></tr>
+            <tr><td class="file-path">create-design-principles/design-critique-checklist.md</td><td>205</td><td><span class="status-badge status-modified">Non-priority</span></td></tr>
+            <tr><td class="file-path">persona-panel/references/aggregation-prompt.md</td><td>109</td><td><span class="status-badge status-modified">Non-priority</span></td></tr>
+            <tr><td class="file-path">persona-panel/modes/persona-creation-flow.md</td><td>111</td><td><span class="status-badge status-modified">Non-priority</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="sub-other" class="sub-panel">
+      <div class="section">
+        <h2>Other Wave 1 Fixes</h2>
+        <table class="change-table">
+          <thead><tr><th>Fix</th><th>Skill</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td>Create <span class="file-path">find-polluter.sh</span> and <span class="file-path">condition-based-waiting-example.ts</span></td><td>root-cause-analysis</td><td><span class="status-badge status-new">New files</span></td></tr>
+            <tr><td>Remove "Invocation" section (lines 12-16)</td><td>add-advisor</td><td><span class="status-badge status-removed">Remove</span></td></tr>
+            <tr><td>Remove editor notes</td><td>add-advisor, add-framework</td><td><span class="status-badge status-removed">Remove</span></td></tr>
+            <tr><td>Fix stale <span class="file-path">elements-of-style</span> reference</td><td>brainstorming (business mode)</td><td><span class="status-badge status-modified">Fix ref</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- WAVE 2 TAB -->
+  <div id="panel-wave2" class="tab-panel">
+    <div class="section">
+      <h2>Kanban Format Deduplication <span class="badge">3 skills</span></h2>
+      <p class="description">Remove inline copies of the Kanban entry format. Keep <code style="font-family:Menlo,monospace;font-size:0.82rem;background:#f5f3ef;padding:2px 6px;border-radius:4px;">_shared/kanban-entry-format.md</code> as the single source of truth.</p>
+      <div class="callout callout-note">
+        <strong>Decision needed during implementation</strong>
+        If CRITICAL severity (found only in executing-plans inline copy) is intentional, add it to the shared file. Otherwise, drop it.
+      </div>
+      <table class="change-table">
+        <thead><tr><th>Skill</th><th>Action</th><th>Lines affected</th></tr></thead>
+        <tbody>
+          <tr><td><strong>executing-plans</strong></td><td>Remove inline template, keep _shared/ reference</td><td>~15 lines removed</td></tr>
+          <tr><td>finishing-a-dev-branch</td><td>Remove duplicate kanban section</td><td>~3 lines removed</td></tr>
+          <tr><td>root-cause-analysis</td><td>Normalize path reference</td><td>Style-only change</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WAVE 3 TAB -->
+  <div id="panel-wave3" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('wave3','wp')">writing-plans</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('wave3','fab')">finishing-a-dev-branch</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('wave3','ks')">kickstart</button>
+    </div>
+
+    <div id="sub-wp" class="sub-panel active">
+      <div class="section">
+        <h2>writing-plans <span class="badge">Priority</span></h2>
+        <p class="description">596 lines → ~330 lines. Extract stable reference material into separate files.</p>
+        <table class="change-table">
+          <thead><tr><th>New file</th><th>Lines</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td class="file-path">references/critique-panel-prompts.md</td><td>~130</td><td>Fact-checker and regular critic prompt templates</td></tr>
+            <tr><td class="file-path">references/execution-handoff-templates.md</td><td>~78</td><td>Option A and Option B worktree templates</td></tr>
+            <tr><td class="file-path">references/error-path-testing.md</td><td>~67</td><td>Condensed to summary + reference to _shared/testing-anti-patterns.md</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="sub-fab" class="sub-panel">
+      <div class="section">
+        <h2>finishing-a-development-branch</h2>
+        <p class="description">834 lines → ~430 lines. The most oversized skill — four sections extracted.</p>
+        <table class="change-table">
+          <thead><tr><th>New file</th><th>Lines</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td class="file-path">references/mockup-fidelity-check.md</td><td>~186</td><td>Mockup deviation detection and fix workflow</td></tr>
+            <tr><td class="file-path">references/deploy-smoke-test.md</td><td>~74</td><td>Vercel deployment and smoke test workflow</td></tr>
+            <tr><td class="file-path">references/code-review-scan.md</td><td>~80</td><td>Code review + simplification orchestration</td></tr>
+            <tr><td class="file-path">references/llm-eval-gate.md</td><td>~56</td><td>LLM eval surface check workflow</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-constraint" style="margin-top:16px;">
+          <strong>Additional fixes</strong>
+          Remove meta-commentary (line 172-173). Replace <code style="font-family:Menlo,monospace;font-size:0.82rem;">cat</code> with Read tool (line 626).
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-ks" class="sub-panel">
+      <div class="section">
+        <h2>kickstart</h2>
+        <p class="description">396 lines → ~150 lines. CLAUDE.md templates and scaffold structures extracted to templates/ directory.</p>
+        <table class="change-table">
+          <thead><tr><th>New file</th><th>Lines</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td class="file-path">templates/software.md</td><td>~60</td><td>Software project CLAUDE.md template</td></tr>
+            <tr><td class="file-path">templates/business.md</td><td>~50</td><td>Business project CLAUDE.md template</td></tr>
+            <tr><td class="file-path">templates/personal.md</td><td>~40</td><td>Personal project CLAUDE.md template</td></tr>
+            <tr><td class="file-path">templates/general.md</td><td>~40</td><td>General project CLAUDE.md template</td></tr>
+            <tr><td class="file-path">templates/scaffold-structures.md</td><td>~60</td><td>Directory trees for each project type</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-constraint" style="margin-top:16px;">
+          <strong>Additional fixes</strong>
+          Replace <code style="font-family:Menlo,monospace;font-size:0.82rem;">git add -A</code> with explicit file staging. Remove <code style="font-family:Menlo,monospace;font-size:0.82rem;">AskUserQuestion</code> references.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPACT TAB -->
+  <div id="panel-impact" class="tab-panel">
+    <div class="section">
+      <h2>Expected Impact</h2>
+      <table class="change-table">
+        <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
+        <tbody>
+          <tr><td>Skills at B-grade or above</td><td>11/18 (61%)</td><td>16-18/18 (89-100%)</td></tr>
+          <tr><td>Skills with anti-pattern #1 description</td><td>9</td><td>0</td></tr>
+          <tr><td>Reference files missing TOCs</td><td>8</td><td>0</td></tr>
+          <tr><td>Inline Kanban format duplicates</td><td>3</td><td>0</td></tr>
+          <tr><td>SKILL.md files over 500 lines</td><td>2</td><td>0</td></tr>
+          <tr><td>Phantom file references</td><td>2</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Out of Scope</h2>
+      <ul class="bullet-list">
+        <li><strong>{base-directory} resolution fragility</strong> (7 skills) — systemic issue requiring separate design work</li>
+        <li><strong>Existing Kanban items</strong> (KB-028 through KB-039) — no overlap per Architect analysis</li>
+        <li><strong>Testing and eval gaps</strong> — separate initiative</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false, securityLevel: 'loose', theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px',
+        lineColor: '#e5e7eb', primaryColor: '#f0eeeb', primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb', secondaryColor: '#fff7ed', secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900', tertiaryColor: '#f5f3ef', tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(el => { el.classList.remove('mermaid-deferred'); el.classList.add('mermaid'); try { mermaid.run({ nodes: [el] }); } catch(e) {} });
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) firstSubBtn.click();
+      }
+    }
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) { sub.classList.add('active'); var deferred = sub.querySelectorAll('.mermaid-deferred'); deferred.forEach(el => { el.classList.remove('mermaid-deferred'); el.classList.add('mermaid'); try { mermaid.run({ nodes: [el] }); } catch(e) {} }); }
+    }
+  </script>
+</body>
+</html>
