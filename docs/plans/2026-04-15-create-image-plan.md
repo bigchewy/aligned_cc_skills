@@ -374,7 +374,7 @@ git commit -m "chore: remove old create-svg-diagram skill directory"
 
 ---
 
-### Task 8: Verify no dangling cross-references
+### ✅ Task 8: Verify no dangling cross-references
 
 **Step 1: Search for remaining references**
 
@@ -406,7 +406,8 @@ git commit -m "fix: remove dangling create-svg-diagram references"
 
 ---
 
-### Task 9: Post-implementation validation
+### ✅ Task 9: Post-implementation validation
+> NOTE: Structural validation passed (all files exist, routing logic correct, mode files have proper content). Interactive skill invocation testing requires a manual session.
 
 **Step 1: Validate routing — icon mode**
 
