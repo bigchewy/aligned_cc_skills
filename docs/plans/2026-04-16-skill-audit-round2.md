@@ -124,7 +124,7 @@ git commit -m "docs(persona-panel): name deliverables in description"
 **Files:**
 - Modify: `skills/create-image/modes/illustration.md` (137 lines, no TOC)
 
-**Why:** Rubric requires a Contents TOC on reference files over 100 lines. Sibling `icon.md` and `diagram.md` have TOCs; this mode file is the outlier.
+**Why:** Rubric requires a Contents TOC on reference files over 100 lines. `illustration.md` is the only mode file that crosses the 100-line threshold (sibling `icon.md` and `diagram.md` are each 81 lines and below the threshold — they don't need TOCs).
 
 **Step 1:** Read `skills/create-image/modes/illustration.md` end-to-end. Note every `##` section heading in order.
 
@@ -285,6 +285,18 @@ with
 Every task MUST end with build verification, test verification (both using the project's build/test commands from CLAUDE.md Tech Stack), and a commit step.
 ```
 
+**Step 3b:** Edit the Common Mistakes table row (currently line ~184). Replace:
+
+```
+| Skipping build+test verification per task | Every task ends with `npm run build` and `npm test` |
+```
+
+with:
+
+```
+| Skipping build+test verification per task | Every task ends with the project's build and test commands (see CLAUDE.md Tech Stack) |
+```
+
 **Step 4:** Verify:
 ```bash
 grep -c "npm " skills/kanban-resolve/SKILL.md
@@ -413,7 +425,7 @@ git commit -m "docs(add-framework): remove duplicate Step 7, renumber 7b to 7"
 - Delete the `### 8. Register Advisor for Discovery` heading and its two-line body.
 - Renumber `### 8b. Update the Registry` → `### 8. Update the Registry`.
 - Renumber `### 8c. Update Advisor and Framework Counts` → `### 9. Update Advisor and Framework Counts`.
-- Renumber `### 9. Verify` (or whatever the current Verify step is) → `### 10. Verify`.
+- Renumber `### 9. Commit` → `### 10. Commit`. (Note: add-advisor's current step 9 is "Commit", not "Verify" — confirmed by Read of the file.)
 
 **Step 3:** Grep for any internal cross-references to old labels:
 ```bash
@@ -435,41 +447,47 @@ git commit -m "docs(add-advisor): remove duplicate Step 8, renumber to sequentia
 
 ---
 
-### Task 13: Fix broken "Bug Board Entry Format below" reference in finishing-a-development-branch
+### Task 13: Fix broken "Bug Board Entry Format" references (3 files)
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (line 170)
+- Modify: `skills/writing-plans/SKILL.md` (line 88)
+- Modify: `skills/executing-plans/SKILL.md` (line 33)
 
-**Current text:**
-```
-If you find discrepancies in the diagrams you're editing, file bugs (see "Bug Board Entry Format below") with category `architecture-discrepancy`.
-```
+**Problem:** All three files contain the phrase `see "Bug Board Entry Format" below` — but none of them actually has a "Bug Board Entry Format" section. The Kanban entry format lives in `_shared/kanban-entry-format.md`. This is a shared broken reference pattern, not a single-file issue. Each file does have a `## Kanban Entry Format` section that correctly delegates to `_shared/`, so the in-body reference should point to that section.
 
-**Problem:** There is no "Bug Board Entry Format" section in this SKILL.md. The Kanban format lives in `_shared/kanban-entry-format.md`.
+**Pattern for all three edits:** Replace the anchor text `see "Bug Board Entry Format" below` with `see the Kanban Entry Format section below` (the text inside the existing `## Kanban Entry Format` heading already delegates to `_shared/kanban-entry-format.md`, so the in-body reference just needs to name the right section).
 
-**New text:**
+**Step 1:** Confirm the shared broken pattern exists across all three files:
 ```
-If you find discrepancies in the diagrams you're editing, file bugs (see `skills/_shared/kanban-entry-format.md`) with category `architecture-discrepancy`.
+Grep pattern: "Bug Board Entry Format" (output_mode content, -n)
+path: skills/
 ```
+Expected: 3 matches — one each in the three files named above.
 
-**Step 1:** Read `skills/finishing-a-development-branch/SKILL.md` lines 165-175 to confirm the anchor text.
-**Step 2:** Edit the line.
-**Step 3:** Verify:
-```bash
-grep -c 'Bug Board Entry Format below' skills/finishing-a-development-branch/SKILL.md
+**Step 2:** Edit `skills/finishing-a-development-branch/SKILL.md` — on line ~170, replace `file bugs (see "Bug Board Entry Format" below) with category \`architecture-discrepancy\`` with `file bugs (see the Kanban Entry Format section below) with category \`architecture-discrepancy\``.
+
+**Step 3:** Edit `skills/writing-plans/SKILL.md` — on line ~88, replace `file a bug (see "Bug Board Entry Format" below)` with `file a bug (see the Kanban Entry Format section below)`.
+
+**Step 4:** Edit `skills/executing-plans/SKILL.md` — on line ~33, replace `file them (see "Bug Board Entry Format" below)` with `file them (see the Kanban Entry Format section below)`.
+
+**Step 5:** Verify all three references are gone:
+```
+Grep pattern: "Bug Board Entry Format" (output_mode count)
+path: skills/
 ```
 Expected: `0`.
 
-**Step 4:** Confirm the new reference points to a real file:
-```bash
-ls skills/_shared/kanban-entry-format.md
+**Step 6:** Confirm each file still has a `## Kanban Entry Format` section so the new reference resolves:
 ```
-Expected: file exists.
+Grep pattern: "^## Kanban Entry Format" (output_mode count) per file
+```
+Expected: `1` in each of the three files.
 
-**Step 5:** Commit.
+**Step 7:** Commit all three together (single semantic fix).
 ```bash
-git add skills/finishing-a-development-branch/SKILL.md
-git commit -m "fix(finishing-a-development-branch): repair broken cross-reference at L170"
+git add skills/finishing-a-development-branch/SKILL.md skills/writing-plans/SKILL.md skills/executing-plans/SKILL.md
+git commit -m "fix: repair broken 'Bug Board Entry Format' references across 3 skills"
 ```
 
 ---
@@ -487,6 +505,13 @@ git commit -m "fix(finishing-a-development-branch): repair broken cross-referenc
 A reader cannot tell which default applies. Recent usage (visible in git log — see task-by-task commits for kickstart extraction on Apr 16) has been autonomous, and the skill header already presents Autonomous Mode as the default. Decision: **autonomous is the default; batched-with-checkpoint is an opt-in escape hatch.** (See Decision Log entry #3.)
 
 **Fix approach:** Rewrite Step 2 to state the autonomous default, document batched mode as an opt-in variation, and scope Step 3's "instructions on what to test" guidance to batched mode only.
+
+**Step 0:** Check for callers that may depend on the current batched-5 behavior. Grep the plugin:
+```
+Grep pattern: "executing-plans" (output_mode content, -n)
+path: skills/ docs/ralph_loops/ README.md
+```
+For each caller, read the relevant lines to determine whether the caller relies on batched-5 semantics. If a caller does, flag in the commit message and note that caller may need a follow-up. (Expected finding: most callers invoke `/aligned:executing-plans` as an instruction to the user, not as a programmatic dependency on its batching; no blocker expected.)
 
 **Step 1:** Read `skills/executing-plans/SKILL.md` lines 10-65 to see the full pattern.
 
@@ -528,9 +553,9 @@ with:
 **Step 4:** Verify the three conflicting phrasings are gone or resolved:
 ```bash
 grep -n "Default: First 5 tasks" skills/executing-plans/SKILL.md
-grep -n "execute all tasks without pausing" skills/executing-plans/SKILL.md
+grep -in "execute all tasks without pausing" skills/executing-plans/SKILL.md
 ```
-The first must return 0 matches. The second may still match (it remains in the autonomous-mode preamble).
+The first must return 0 matches. The second (case-insensitive) may still match — it remains in the autonomous-mode preamble, which is correct.
 
 **Step 5:** Commit.
 ```bash
@@ -618,6 +643,39 @@ git commit -m "refactor(root-cause-analysis): extract Phase 5 review prompt to r
 
 ---
 
+### Task 15b: Fix shell-variable and Grep-syntax bugs in using-git-worktrees
+
+**Files:**
+- Modify: `skills/using-git-worktrees/SKILL.md`
+
+**Why:** The round-2 audit (8.3/10) flagged instruction-accuracy issues: undefined shell variables (`$LOCATION`, `$BRANCH_NAME`), tilde-in-quotes that won't expand, and malformed Grep tool syntax in the example blocks. These are stealth bugs — the skill reads as polished but the example commands would fail if copy-pasted or followed literally.
+
+**Step 1:** Read `skills/using-git-worktrees/SKILL.md` in full. Identify every occurrence of:
+- `$LOCATION` — used without being defined anywhere in the skill's flow
+- `$BRANCH_NAME` — same pattern
+- `"~/..."` — tildes inside double quotes do NOT expand in bash; use `$HOME/...` or remove quotes
+- Malformed Grep tool invocations (non-standard parameter names or missing required fields)
+
+**Step 2:** For each occurrence, choose the appropriate fix:
+- For `$LOCATION`: either define it earlier in the same code block (e.g., `LOCATION=...` before first use) or inline a concrete example path.
+- For `$BRANCH_NAME`: same — define earlier or inline a literal.
+- For tilde-in-quotes: replace with `$HOME` or unquote so the tilde expands.
+- For malformed Grep blocks: match the canonical Grep invocation style used in other skills (`Grep pattern: "…", output_mode: …`).
+
+**Step 3:** Verify no undefined vars remain:
+```bash
+grep -nE '\$(LOCATION|BRANCH_NAME)' skills/using-git-worktrees/SKILL.md
+```
+Every match must be preceded by a definition in the same code block, or must be a deliberately-templated placeholder with an explicit `# Set this first:` comment.
+
+**Step 4:** Commit.
+```bash
+git add skills/using-git-worktrees/SKILL.md
+git commit -m "fix(using-git-worktrees): resolve undefined shell vars and malformed Grep syntax"
+```
+
+---
+
 ## Phase 5: `{base-directory}` Resolution Design and Migration
 
 **Design context.** The audit flagged `{base-directory}` resolution fragility as the biggest remaining systemic issue — 49 occurrences across 16 skill files. Each affected skill currently carries a multi-line inline fallback block that tells Claude how to resolve the placeholder when the harness-printed "Base directory for this skill:" line has been compressed out of context. The fallbacks duplicate the same logic and use a slow `$HOME`-wide Glob on skill filenames.
@@ -641,6 +699,8 @@ Skills in the aligned plugin reference their own bundled files using a `{base-di
 - Fallback
 - Plugin root
 - Usage pattern
+- Shared library files (`skills/_shared/`)
+- Edge case: multiple plugin installs
 
 ## Primary source
 
@@ -673,6 +733,14 @@ Each skill that references its own bundled files includes one "Path Resolution" 
 > **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/<this-skill-name>/`. See `skills/_shared/resolve-skill-path.md` for rationale.
 
 All later references to `{base-directory}` in the same file use the placeholder without restating the resolution procedure.
+
+## Shared library files (`skills/_shared/`)
+
+Files inside `skills/_shared/` (e.g., `critique-panel-orchestration.md`, `kanban-entry-format.md`) are read by multiple skills. When they reference `{base-directory}`, it means **the calling skill's base directory**, not `_shared/` itself. The caller is responsible for resolving `{base-directory}` (using the procedure above) BEFORE reading or quoting content from a `_shared/` file. Shared files do NOT perform their own resolution — do not add the Path Resolution note to `_shared/` files.
+
+## Edge case: multiple plugin installs
+
+If the Glob for `**/.claude-plugin/plugin.json` returns more than one match (e.g., a user has both a development clone and an installed marketplace copy of the aligned plugin), prefer the match whose `plugin.json` contains `"name": "aligned"` AND has a `skills/<this-skill-name>/SKILL.md` under its parent directory. If still ambiguous, prefer the match whose parent is under the current working directory or its ancestors. If still ambiguous, STOP and ask the user which install to use.
 ```
 
 **Step 2:** Verify:
@@ -731,7 +799,10 @@ Reference files and mode files under a skill's subdirectories (e.g., `modes/*.md
 - Modify: `skills/brainstorming/modes/software.md` (4 refs incl. the plugin-root variant — preserve the "plugin root is two levels up" derivation but drop the inline $HOME Glob fallback)
 - Modify: `skills/brainstorming/modes/business.md` (3 refs)
 
-**File-specific note:** `modes/software.md` currently includes a separate plugin-root fallback that globs for `docs/ralph_loops/autopilot.sh`. Replace with the plugin.json-anchored approach from `_shared/resolve-skill-path.md`. Add a short inline pointer "see SKILL.md Path Resolution note" in each mode file rather than restating the full note.
+**File-specific notes:**
+- `modes/software.md` currently includes a separate plugin-root fallback that globs for `docs/ralph_loops/autopilot.sh`. Replace with the plugin.json-anchored approach from `_shared/resolve-skill-path.md`. Add a short inline pointer "see SKILL.md Path Resolution note" in the mode file rather than restating the full note.
+- `modes/software.md` also has a semantic-override comment noting that `{base-directory}` inside the mode file means "the router's (brainstorming) base directory, not this mode file's parent." Preserve this semantic explicitly — when the mode file is read via `Read {base-directory}/modes/software.md`, `{base-directory}` still resolves to `skills/brainstorming/`, not `skills/brainstorming/modes/`. Add a one-line clarifying sentence to the mode file: "Within this mode file, `{base-directory}` resolves to the brainstorming skill directory (the router), not `modes/`." The SKILL.md's Path Resolution note covers the resolution procedure itself.
+- Apply the same one-line clarification to `modes/business.md` (same relationship to its router).
 
 **Step 1:** Apply the per-file shape from Task 17–28's shared pattern to each of the three files.
 **Step 2:** Verify:
@@ -796,10 +867,12 @@ git commit -m "refactor(create-image): migrate to shared base-directory resoluti
 **Files:**
 - Modify: `skills/root-cause-analysis/SKILL.md` (4 refs; note Task 15 already added `post-fix-review-prompt.md` which uses `{base-directory}` — that reference resolves via the same procedure)
 
-**Steps:** per-file shape.
+**File-specific note:** Do NOT add a Path Resolution note to `post-fix-review-prompt.md`. That file is a prompt template read by a sub-agent at dispatch time; the dispatching code (root-cause-analysis Phase 5) resolves `{base-directory}` to an absolute path before substituting and passing the prompt. The file therefore does its own resolution — leave its `{base-directory}` placeholders as pre-resolved substitution slots, per Phase 5's existing dispatch contract.
+
+**Steps:** per-file shape on SKILL.md only.
 ```bash
 git add skills/root-cause-analysis/SKILL.md
-git commit -m "refactor(root-cause-analysis): migrate to shared base-directory resolution"
+git commit -m "refactor(root-cause-analysis): migrate SKILL.md to shared base-directory resolution"
 ```
 
 ---
@@ -910,11 +983,19 @@ git commit -m "docs(_shared): clarify base-directory semantics in critique-panel
 
 **Why:** Closes the loop on whether the remediation actually improved measurable audit scores. Writes fresh per-skill audits to `/tmp/skill-audit-v3/` so the next iteration (if any) has a clean comparison point.
 
-**Step 1:** Prepare the audit-v3 workspace:
+**Step 1:** Prepare the audit-v3 workspace. First ensure the v2 rubric is available — if `/tmp` has been cleared since the v2 audit ran (reboot, etc.), copy the rubric from the source of truth:
 ```bash
 mkdir -p /tmp/skill-audit-v3
-cp /tmp/skill-audit-v2/rubrics.md /tmp/skill-audit-v3/rubrics.md
+if [ -f /tmp/skill-audit-v2/rubrics.md ]; then
+  cp /tmp/skill-audit-v2/rubrics.md /tmp/skill-audit-v3/rubrics.md
+else
+  # v2 workspace is gone — retrieve rubric from git history or fall back to documented rubric in-skill
+  # The rubric was committed at docs/skill-audit-rubric-backup.md if that exists; otherwise ask the user.
+  echo "v2 rubric missing — need to recreate it from git history or source." >&2
+  exit 1
+fi
 ```
+If recovery fails, the task STOPs and asks the user for the rubric source.
 
 **Step 2:** For each skill touched by this plan, dispatch a sub-agent (via Task tool, `subagent_type=general-purpose`) to re-audit it against `/tmp/skill-audit-v3/rubrics.md` and write the result to `/tmp/skill-audit-v3/<skill-name>.md`. The skills to re-audit are:
 
@@ -930,9 +1011,10 @@ cp /tmp/skill-audit-v2/rubrics.md /tmp/skill-audit-v3/rubrics.md
 - finishing-a-development-branch (Tasks 13, 23)
 - root-cause-analysis (Tasks 15, 21)
 - brainstorming (Task 17)
-- writing-plans (Task 18)
+- writing-plans (Tasks 13, 18)
 - create-design-principles (Task 19)
 - codebase-audit (Task 24)
+- using-git-worktrees (Task 15b)
 
 **Sub-agent prompt template:** Reuse the exact prompt used in `/tmp/skill-audit-v2/` generation — point the agent at `/tmp/skill-audit-v3/rubrics.md` as the rubric, the skill directory as the subject, and `/tmp/skill-audit-v3/<skill-name>.md` as the output path. Instruct: "Do NOT read /tmp/skill-audit-v2/ — score independently."
 
@@ -985,6 +1067,7 @@ git commit -m "chore: bump plugin version to 0.24.0 (skill audit round 2 remedia
 | 3 | executing-plans default execution mode | Autonomous (all tasks, no checkpoint) as default; batched-with-checkpoint as opt-in escape hatch | (a) batched-5 as default (contradicts top-of-file "Autonomous mode" preamble and recent usage); (b) leave the three-way ambiguity (no) |
 | 4 | Step renumbering for add-advisor/add-framework | Close gaps (Step 8, 8b, 8c, 9 → 8, 9, 10; Step 7, 7b → 7) after removing duplicated steps | (a) keep legacy 8b/8c labels to minimize diff (preserves the smell); (b) renumber without removing duplicates (doesn't fix the duplication) |
 | 5 | Sub-agent prompt extraction in root-cause-analysis | Extract to sibling file `post-fix-review-prompt.md`, reference from SKILL.md | (a) leave inline (audit flagged 8.1 partly for this); (b) extract to `references/` subdirectory (inconsistent with this skill's current layout — other technique docs are siblings, not nested) |
+| 6 | Out-of-scope audit findings (documented, not fixed) | Defer: root-cause-analysis stop-signal section overlap; "65 advisors" drift in non-skill docs (`docs/positioning.md`, `advisors/README.md`); codebase-audit `model="sonnet"` Task-param verification; create-design-principles "write design-principles.md" explicit step; writing-plans 469→395 further extraction; add-framework Writing Quality block extraction; use-advisor Step 2 conditional clarification; find-potential-advisors "Execution Strategy" block reflow. | (a) expand Option 2 to cover everything (scope creep — no); (b) file Kanban entries for each item (valid follow-up — plan-executor to create KB entries using `_shared/kanban-entry-format.md`); (c) silently defer (the path we're taking: these are explicitly listed here so the next audit round knows they were deliberate omissions) |
 
 ### Appendix: Decision Details
 
@@ -1038,5 +1121,24 @@ git commit -m "chore: bump plugin version to 0.24.0 (skill audit round 2 remedia
 **Alternatives rejected:**
 - **Leave inline:** The audit explicitly flagged the 30-line inline prompt block; skipping extraction wastes the fix opportunity.
 - **`references/` subdirectory:** Inconsistent with this skill's existing layout — would create a new pattern for one file.
+
+#### Decision 6: Out-of-scope audit findings
+
+**Chose:** Document deferred items in this entry and do not fix them in this plan. The next audit round (expected to run as Task 29 in this plan + a full-fleet re-audit at some later point) will re-surface anything that still matters.
+
+**Why:** Option 2's scope was "quick wins + `{base-directory}` design," not "resolve every audit finding." Scope creep would delay the biggest lever (the base-directory design work) and dilute reviewer attention. The critique panel surfaced several additional items that are real but not part of this plan's contract:
+
+- **root-cause-analysis stop-signal overlap** (SKILL.md:332-359 — three sections that all say "stop and return to Phase 1"). Scannability, not correctness; defer.
+- **"65 advisors" count drift** in `docs/positioning.md` (three places) and `advisors/README.md:3`. These live outside `skills/` so are not skill-audit findings per se. Addressable via add-advisor's Step 9 count-update logic (now renumbered from 8c) or a separate doc-maintenance pass. Not in scope here.
+- **codebase-audit `model="sonnet"` Task-tool parameter.** Requires verification of current Task tool signature; out-of-scope research.
+- **create-design-principles missing "write `design-principles.md`" step.** Meaningful audit finding (7.8/10); deferred because the fix requires deciding schema for `design-principles.md`, which is design work.
+- **writing-plans 469-line SKILL.md** — already under 500 threshold. Further extraction is polish; defer.
+- **brainstorming shallow TOCs + duplicated visualization/critique blocks.** Real finding, but the fix is non-trivial (requires choosing what to extract and creating a new shared ref). Defer to next round.
+- **add-framework "Writing Quality" block extraction.** Same pattern — low urgency polish.
+- **use-advisor Step 2 conditional, find-potential-advisors "Execution Strategy" block reflow.** Minor workflow-clarity items, under 1.0 score impact each.
+
+**Alternatives rejected:**
+- **Expand scope to fix everything:** would double the plan size and blur the base-directory design work.
+- **File Kanban entries for every deferred item:** considered, but the items are already captured in `/tmp/skill-audit-v2/<skill>.md` per-skill audit files, which are more informative than KB stubs. If any item is actually blocking a user workflow, file a KB entry ad-hoc; otherwise the next audit round will re-surface them.
 
 ---
