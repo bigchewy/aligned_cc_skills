@@ -2,6 +2,8 @@
 
 # Brainstorming Ideas Into Designs
 
+Within this mode file, `{base-directory}` resolves to the brainstorming skill directory (the router), not `modes/`. See the Path Resolution note in SKILL.md for the resolution procedure.
+
 ## Contents
 
 - Overview
@@ -215,10 +217,7 @@ You have access to Glob, Grep, Read, and Write tools. Do not use Bash for search
 Read key codebase files relevant to your domain expertise (enough to understand existing patterns and context), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
 Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-**Shared orchestration file resolution:**
-1. Primary: Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full.
-2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-Follow its process using the configuration and prompt templates above.
+Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and follow its process using the configuration and prompt templates above.
 
 ---
 
@@ -238,7 +237,7 @@ Commit the design document, visual artifacts (`docs/mockups/{session-name}.html`
 
 **Step 3 of 3 — Next step prompt (mandatory):**
 
-After committing the design document, present two options. **Resolve the plugin root path first:** the plugin root is two levels up from the base directory for this skill (`{base-directory}/../..`). If the base-directory line was compressed out of context, use Glob to search `$HOME` for `**/docs/ralph_loops/autopilot.sh` and use the match whose parent directory contains `.claude-plugin/plugin.json`. Store as `{plugin-root}`.
+After committing the design document, present two options. **Resolve the plugin root path first:** compute `{plugin-root}` = `{base-directory}/../..`.
 
 ````
 ## Next Steps
@@ -264,11 +263,9 @@ If the user chooses Option A, invoke `/aligned:using-git-worktrees` to create th
 
 If the user chooses Option B, no further action is needed — the terminal command handles everything.
 
-<!-- Note: {base-directory} refers to the router's directory (skills/brainstorming/), not this file's directory. -->
-
 ## Design Critique
 
-When critiquing an existing design (instead of writing one), resolve the checklist path using the same MANDATORY resolution steps described above (base directory → Glob fallback → STOP if not found). Use the checklist at `{base-directory}/design-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against the actual codebase — don't trust file paths, architecture claims, or integration assumptions without checking.
+When critiquing an existing design (instead of writing one), use the checklist at `{base-directory}/design-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against the actual codebase — don't trust file paths, architecture claims, or integration assumptions without checking.
 
 ## Key Principles
 

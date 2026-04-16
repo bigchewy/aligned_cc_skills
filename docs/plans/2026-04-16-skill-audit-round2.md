@@ -808,7 +808,7 @@ Reference files and mode files under a skill's subdirectories (e.g., `modes/*.md
 
 ---
 
-### Task 17: Migrate brainstorming
+### ✅ Task 17: Migrate brainstorming
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (8 `{base-directory}` refs; carries the heaviest fallback blocks)

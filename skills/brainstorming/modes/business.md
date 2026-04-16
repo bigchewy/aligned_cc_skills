@@ -2,6 +2,8 @@
 
 # Brainstorming Business Ideas Into Designs
 
+Within this mode file, `{base-directory}` resolves to the brainstorming skill directory (the router), not `modes/`. See the Path Resolution note in SKILL.md for the resolution procedure.
+
 ## Contents
 
 - Overview
@@ -183,10 +185,7 @@ You have access to Glob, Grep, Read, WebSearch, and WebFetch tools for verifying
 **Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against each criterion in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
 Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
 
-**Shared orchestration file resolution:**
-1. Primary: Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full.
-2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/_shared/critique-panel-orchestration.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-Follow its process using the configuration and prompt template above.
+Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and follow its process using the configuration and prompt template above.
 
 ---
 
@@ -214,11 +213,9 @@ After committing the design document, output a ready-to-paste prompt for the nex
 
 > Use `/aligned:writing-plans` to write an execution plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
 
-<!-- Note: {base-directory} refers to the router's directory (skills/brainstorming/), not this file's directory. -->
-
 ## Design Critique
 
-When critiquing an existing design (instead of writing one), resolve the checklist path using the same MANDATORY resolution steps described above (base directory → Glob fallback → STOP if not found). Use the checklist at `{base-directory}/business-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against referenced documents and domain folder materials — don't trust stated problems, root causes, or stakeholder positions without checking.
+When critiquing an existing design (instead of writing one), use the checklist at `{base-directory}/business-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against referenced documents and domain folder materials — don't trust stated problems, root causes, or stakeholder positions without checking.
 
 ## Key Principles
 

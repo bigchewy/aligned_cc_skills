@@ -5,6 +5,8 @@ description: "Structures creative and strategic work through guided dialogue —
 
 # Brainstorming
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/brainstorming/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Overview
 A unified brainstorming skill that adapts its process based on what you're
 working on. Software/technical topics get a fluid Q&A with Architect
