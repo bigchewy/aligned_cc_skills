@@ -1262,7 +1262,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 25: Update finishing-a-development-branch SKILL.md — reference extracted files and clean up
+### ✅ Task 25: Update finishing-a-development-branch SKILL.md — reference extracted files and clean up
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md`

@@ -52,11 +52,7 @@ Write the answers to `.claude/deployment.json`, commit it, and continue. This en
 
 **Path A: `vercelMcpAccess` is true (or config missing)**
 
-Read `.vercel/project.json` from the main repo path to get `projectId` and `orgId`:
-
-```bash
-cat <main-repo-path>/.vercel/project.json
-```
+Read `.vercel/project.json` from the main repo path using the Read tool (absolute path: `<main-repo-path>/.vercel/project.json`) to get `projectId` and `orgId`.
 
 If `.vercel/project.json` doesn't exist, fall through to Path B.
 
