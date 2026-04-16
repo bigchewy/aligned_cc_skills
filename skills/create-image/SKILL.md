@@ -1,6 +1,6 @@
 ---
 name: create-image
-description: "Generates hand-coded SVG diagrams, charts, flowcharts, and brand icons matching the project's design tokens. Use when a visual artifact is needed — charts, flowcharts, matrices, icons, or brand graphics."
+description: "Generates hand-coded SVG diagrams, charts, flowcharts, brand icons, and decorative illustrations matching the project's design tokens. Use when a visual artifact is needed — charts, flowcharts, matrices, icons, brand graphics, or botanical/decorative illustrations."
 ---
 
 # Create Image
