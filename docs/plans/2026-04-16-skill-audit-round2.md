@@ -878,7 +878,7 @@ git commit -m "refactor(create-image): migrate to shared base-directory resoluti
 
 ---
 
-### Task 21: Migrate root-cause-analysis
+### ✅ Task 21: Migrate root-cause-analysis
 
 **Files:**
 - Modify: `skills/root-cause-analysis/SKILL.md` (4 refs; note Task 15 already added `post-fix-review-prompt.md` which uses `{base-directory}` — that reference resolves via the same procedure)

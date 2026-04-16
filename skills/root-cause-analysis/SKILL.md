@@ -5,6 +5,8 @@ description: "Use when encountering any bug, test failure, unexpected behavior, 
 
 # Root Cause Analysis
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/root-cause-analysis/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Overview
 
 Random fixes waste time and create new problems. Quick patches mask underlying issues — in code and in business.
@@ -362,7 +364,7 @@ If systematic investigation reveals the issue is truly environmental, timing-dep
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `root-cause-analysis` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions. Use `root-cause-analysis` as the "Discovered during" value.
 
 ## Supporting Techniques
 
