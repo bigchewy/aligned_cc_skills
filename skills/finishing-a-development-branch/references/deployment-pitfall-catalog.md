@@ -2,6 +2,17 @@
 
 Reference document for the Vercel deployment audit step. Contains detection patterns, explanations, false positive guidance, and recommended fixes for each audit category.
 
+## Contents
+
+- [How to Use This Catalog](#how-to-use-this-catalog)
+- [CRITICAL — Silent Production Failures](#critical--silent-production-failures)
+- [HIGH — Data/Performance Issues](#high--dataperformance-issues)
+- [MEDIUM — Potential Issues Under Load](#medium--potential-issues-under-load)
+- [LOW — Best Practice Recommendations](#low--best-practice-recommendations)
+- [Maintenance](#maintenance)
+
+---
+
 ## How to Use This Catalog
 
 For each category:

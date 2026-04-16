@@ -464,7 +464,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(create-design-
 
 ---
 
-### Task 11: Add TOC to deployment pitfall catalog
+### ✅ Task 11: Add TOC to deployment pitfall catalog
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/references/deployment-pitfall-catalog.md`
