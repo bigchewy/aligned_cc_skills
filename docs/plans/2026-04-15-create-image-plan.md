@@ -95,7 +95,7 @@ git commit -m "feat: create create-image router skill"
 
 ---
 
-### Task 2: Migrate diagram mode from create-svg-diagram
+### ✅ Task 2: Migrate diagram mode from create-svg-diagram
 
 **Files:**
 - Create: `skills/create-image/modes/diagram.md`
