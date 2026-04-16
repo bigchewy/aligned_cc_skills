@@ -1177,7 +1177,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 23: Extract code review + simplification scan workflow
+### ✅ Task 23: Extract code review + simplification scan workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/code-review-scan.md`
