@@ -33,7 +33,11 @@ Before prescribing a design direction, discover the project's intent through the
 
 5. **Density** — "Is this a journal or a cockpit? Generous breathing room, or every pixel earns its place?"
 
+6. **Illustrations (optional)** — "Does this product need illustrations? Not icons — atmosphere. Botanical watermarks, abstract empty-state shapes. Most products don't. If yes: watermark, standalone, or both? What subject? Reference?"
+
 Push back on vague answers. "That's not a design direction, that's a mood board. Pick one."
+
+If Q6 comes back as "no illustrations," skip the Illustrations section in the generated output entirely — don't write a placeholder.
 
 Use the answers to guide the Design Direction choices below. If the user's answers clearly point to a direction (e.g., "warmth and approachability" → Warmth & Approachability personality), commit to it rather than presenting all options.
 
@@ -200,6 +204,16 @@ Numbers, IDs, codes, timestamps belong in monospace. Use `tabular-nums` for colu
 Use **Phosphor Icons** (`@phosphor-icons/react`). Icons clarify, not decorate — if removing an icon loses no meaning, remove it.
 
 Give standalone icons presence with subtle background containers.
+
+### Illustrations (conditional)
+
+When Phase 1 Q6 confirmed the project needs decorative illustrations, read the sibling file `illustrations-spec.md` and generate the Illustrations section per its schema. Place the generated section in `design-principles.md` between Iconography and Questions to Ask.
+
+**Resolve the spec file:** The spec is a sibling file in this skill's directory.
+1. Find the "Base directory for this skill:" line printed when this skill loaded. The spec is at `{base-directory}/illustrations-spec.md`.
+2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/create-design-principles/illustrations-spec.md`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+
+Verify the resolved path exists with Read before generating. If the spec file cannot be found after both strategies, STOP and tell the user — do not improvise an Illustrations section from memory.
 
 ### Animation
 - 150ms for micro-interactions, 200-250ms for larger transitions
