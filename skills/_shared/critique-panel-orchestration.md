@@ -2,6 +2,8 @@
 
 Shared orchestration protocol for brainstorming critique panels. Read this file after setting configuration parameters in your SKILL.md.
 
+> **Note:** `{base-directory}` in this file refers to the calling skill's base directory. The calling skill is responsible for resolving it per `skills/_shared/resolve-skill-path.md` before reading this file.
+
 ## Configuration Validation
 
 Before proceeding, verify all required parameters are present in the SKILL.md context above:
@@ -24,10 +26,7 @@ You MUST use the Task tool to launch fresh sub-agents for every critique round. 
 
 ## Checklist Resolution
 
-Resolve the checklist's absolute path:
-1. Find the "Base directory for this skill:" line printed when this skill loaded (near the top of the conversation). The checklist is at `{base-directory}/{checklist-filename}`.
-2. **Fallback** (if the base-directory line was compressed out of context): Use Glob to search `$HOME` for `**/{skill-name}/{checklist-filename}`. Use the match that lives under a directory containing `.claude-plugin/plugin.json`.
-Verify the resolved path exists with Read. **If the checklist cannot be found after both strategies, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
+The checklist is at `{base-directory}/{checklist-filename}`. Verify the path exists with Read. **If the checklist cannot be found, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
 
 ## Round 1
 
@@ -96,7 +95,7 @@ Apply any remaining fixes. Present final results to the user.
 
 The critique panel is a sub-process, not the end of the workflow. After presenting final results:
 
-1. **Re-read the invoking skill's mode file** — the file you were handed off from (e.g., `software.md` or `business.md`). The original content has likely been compressed out of context by now. Use the Read tool to load it again. If the mode file path is not in context, use Glob to search `$HOME` for `**/brainstorming/modes/{software,business}.md` and use the match that lives under a directory containing `.claude-plugin/plugin.json`.
+1. **Re-read the invoking skill's mode file** — the file you were handed off from (e.g., `software.md` or `business.md`) at `{base-directory}/modes/<mode-name>.md`. The original content has likely been compressed out of context by now. Use the Read tool to load it again.
 2. **Find the "POST-CRITIQUE CHECKLIST" section** and execute every numbered step in order. Announce each step before executing it (e.g., "Executing Step 1 of 3 — Visualization refresh"). Do not stop after the commit — the checklist continues after it.
 
 The checklist includes steps that feel "post-completion" (like presenting next-step options) but are mandatory parts of the brainstorming workflow. The session is not complete until the final step of the checklist has been presented to the user.

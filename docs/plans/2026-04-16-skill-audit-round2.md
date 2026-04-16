@@ -975,7 +975,7 @@ git commit -m "docs(kickstart): add Path Resolution note for base-directory"
 
 ---
 
-### Task 28: Migrate `_shared/critique-panel-orchestration.md`
+### ✅ Task 28: Migrate `_shared/critique-panel-orchestration.md`
 
 **Files:**
 - Modify: `skills/_shared/critique-panel-orchestration.md` (1 ref — the one shared utility that also references `{base-directory}`)
