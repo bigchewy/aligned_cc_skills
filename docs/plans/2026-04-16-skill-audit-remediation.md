@@ -1044,7 +1044,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(writing-plans)
 
 ---
 
-### Task 20: Update writing-plans SKILL.md to reference extracted files
+### ✅ Task 20: Update writing-plans SKILL.md to reference extracted files
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (replace extracted sections with references)
@@ -1082,7 +1082,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "refactor(writing-pl
 
 ---
 
-### Task 21: Extract mockup fidelity check workflow
+### ✅ Task 21: Extract mockup fidelity check workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/mockup-fidelity-check.md`
