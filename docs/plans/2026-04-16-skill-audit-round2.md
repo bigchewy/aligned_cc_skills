@@ -346,7 +346,7 @@ git commit -m "fix(executing-plans): gate e2e/trigger-map.yaml on existence"
 
 ---
 
-### Task 10: Clarify cross-validation conditional in eval-audit
+### ✅ Task 10: Clarify cross-validation conditional in eval-audit
 
 **Files:**
 - Modify: `skills/eval-audit/SKILL.md` (line ~66)
