@@ -86,7 +86,7 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | persona-panel | Entry Point | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
 | kickstart | Entry Point | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
 | create-design-principles | Entry Point | `/aligned:create-design-principles` | Interactive design discovery + enforce precise, minimal design system |
-| create-image | Entry Point | `/aligned:create-image` | Generate diagrams, charts, icons, and brand visuals — routes to diagram or icon mode |
+| create-image | Entry Point | `/aligned:create-image` | Generate diagrams, charts, icons, illustrations, and brand visuals — routes to diagram, icon, or illustration mode |
 | codebase-audit | Entry Point | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | root-cause-analysis | Entry Point | `/aligned:root-cause-analysis` | Root cause investigation for software and business problems with optional multi-agent mode |
 | eval-audit | Entry Point | `/aligned:eval-audit` | Eval coverage auditor (hook-prompted) |
