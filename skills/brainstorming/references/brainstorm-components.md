@@ -51,8 +51,72 @@ Copy this template as the starting point for every live visualization. Replace `
   <!-- LIVE-REFRESH-START -->
   <script>
     (function() {
-      const interval = setInterval(() => location.reload(), 3000);
-      setTimeout(() => clearInterval(interval), 1800000); // stop after 30 min
+      var STATE_KEY = 'brainstorm-state:' + location.pathname;
+
+      function saveState() {
+        try {
+          var state = { tab: null, subTabs: {}, scrollY: window.scrollY };
+          var activeTabBtn = document.querySelector('#main-tabs .tab-btn.active');
+          if (activeTabBtn) {
+            var m = (activeTabBtn.getAttribute('onclick') || '').match(/switchTab\('([^']+)'\)/);
+            if (m) state.tab = m[1];
+          }
+          document.querySelectorAll('.tab-panel').forEach(function(panel) {
+            var activeSubBtn = panel.querySelector('.sub-tab-btn.active');
+            if (!activeSubBtn) return;
+            var sm = (activeSubBtn.getAttribute('onclick') || '').match(/switchSubTab\('([^']+)',\s*'([^']+)'\)/);
+            if (sm) state.subTabs[sm[1]] = sm[2];
+          });
+          sessionStorage.setItem(STATE_KEY, JSON.stringify(state));
+        } catch (e) { /* storage unavailable — skip */ }
+      }
+
+      function restoreState() {
+        try {
+          var raw = sessionStorage.getItem(STATE_KEY);
+          if (!raw) return;
+          var state = JSON.parse(raw);
+
+          // Pre-mark the target sub-tab button so switchTab's "default to first
+          // sub-tab" fallback sees an already-active sub-tab and skips. Without
+          // this, switchTab briefly activates the first sub-panel before
+          // switchSubTab swaps it to the target — a visible flash.
+          if (state.tab && state.subTabs && state.subTabs[state.tab]) {
+            var parent = document.getElementById('panel-' + state.tab);
+            var subId = state.subTabs[state.tab];
+            if (parent && document.getElementById('sub-' + subId)) {
+              var btn = parent.querySelector('[onclick*="' + subId + '"]');
+              if (btn) {
+                parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+              }
+            }
+          }
+
+          if (state.tab && typeof switchTab === 'function' && document.getElementById('panel-' + state.tab)) {
+            switchTab(state.tab);
+          }
+          if (state.subTabs && typeof switchSubTab === 'function') {
+            Object.keys(state.subTabs).forEach(function(parentId) {
+              var subId = state.subTabs[parentId];
+              if (document.getElementById('sub-' + subId)) switchSubTab(parentId, subId);
+            });
+          }
+          if (typeof state.scrollY === 'number') window.scrollTo(0, state.scrollY);
+        } catch (e) { /* corrupted state — ignore */ }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', restoreState);
+      } else {
+        restoreState();
+      }
+
+      var interval = setInterval(function() {
+        saveState();
+        location.reload();
+      }, 15000);
+      setTimeout(function() { clearInterval(interval); }, 1800000); // stop after 30 min
     })();
   </script>
   <!-- LIVE-REFRESH-END -->

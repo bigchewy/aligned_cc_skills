@@ -150,7 +150,7 @@ Every brainstorm produces a live visual artifact. After writing the design docum
 3. Open the file in the default browser using a platform-aware pattern (separate Bash call — no `&&` chaining):
    `open /tmp/brainstorm-{topic}-{timestamp}/live.html || xdg-open /tmp/brainstorm-{topic}-{timestamp}/live.html`
    If both commands fail (headless environment), log a warning and continue — the artifact still gets written.
-4. As each subsequent design section is validated in conversation, update the HTML file (Write tool) to add the new section's content. The browser picks up changes within 3 seconds via the self-refresh script.
+4. As each subsequent design section is validated in conversation, update the HTML file (Write tool) to add the new section's content. The browser picks up changes within 15 seconds via the self-refresh script.
 
 **Nested sub-tabs rule (applies to mockup-generator dispatches and live visualization updates):**
 

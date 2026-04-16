@@ -149,7 +149,7 @@ If the design document warrants visual artifacts (process flow diagrams, decisio
 3. Open the file in the default browser using a platform-aware pattern (separate Bash call — no `&&` chaining):
    `open /tmp/brainstorm-{topic}-{timestamp}/live.html || xdg-open /tmp/brainstorm-{topic}-{timestamp}/live.html`
    If both commands fail (headless environment), log a warning and continue.
-4. As each subsequent design section is validated, update the HTML file to add the new section's content. The browser picks up changes within 3 seconds.
+4. As each subsequent design section is validated, update the HTML file to add the new section's content. The browser picks up changes within 15 seconds.
 
 If the design does not warrant visual artifacts, skip this section entirely and omit the `**Mockups:**` field from the design document header.
 

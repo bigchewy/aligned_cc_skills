@@ -352,7 +352,7 @@
 <body>
   <h1>Live Visualization for Brainstorming</h1>
   <p class="subtitle">Design: Real-time browser visualization during brainstorming sessions</p>
-  <p class="context">Agent writes a self-refreshing HTML file during brainstorming. Browser auto-reloads every 3 seconds. At session end, the refresh script is stripped and the file becomes the permanent artifact. No web server, no process management.</p>
+  <p class="context">Agent writes a self-refreshing HTML file during brainstorming. Browser auto-reloads every 15 seconds. At session end, the refresh script is stripped and the file becomes the permanent artifact. No web server, no process management.</p>
 
   <!-- Top-level tab bar -->
   <div class="tab-bar" id="main-tabs">
@@ -441,7 +441,7 @@ graph LR
       <ul class="bullet-list">
         <li><strong>Read once:</strong> Agent reads skills/brainstorming/references/brainstorm-components.md at visualization start</li>
         <li><strong>Write to /tmp:</strong> Initial HTML written to /tmp/brainstorm-{topic}-{timestamp}/live.html (timestamp provides session isolation)</li>
-        <li><strong>Auto-reload:</strong> Self-refresh script triggers location.reload() every 3 seconds (30-minute timeout)</li>
+        <li><strong>Auto-reload:</strong> Self-refresh script triggers location.reload() every 15 seconds (30-minute timeout)</li>
         <li><strong>Incremental updates:</strong> Agent overwrites the same file as each design section is validated</li>
         <li><strong>Pre-critique copy:</strong> Copy live file to docs/mockups/{session-name}.html so critique panel can access it</li>
         <li><strong>Post-critique:</strong> If design changed, fully regenerate at docs/mockups/; strip refresh script from final copy</li>
@@ -546,11 +546,11 @@ graph LR
     <div class="sub-panel" id="sub-lifecycle-update">
       <div class="section">
         <h2>Phase 2 &mdash; Update<span class="badge">iterative</span></h2>
-        <p class="description">During design presentation, the agent presents each section in chat. After the user validates, the agent updates the HTML file. The browser picks up the change within 3 seconds on the next reload cycle.</p>
+        <p class="description">During design presentation, the agent presents each section in chat. After the user validates, the agent updates the HTML file. The browser picks up the change within 15 seconds on the next reload cycle.</p>
         <ul class="bullet-list">
           <li><strong>Step 5:</strong> Agent presents a design section in chat, user validates</li>
           <li><strong>Step 6:</strong> Agent updates the HTML file to reflect the validated section</li>
-          <li><strong>Step 7:</strong> Browser picks up the change within 3 seconds</li>
+          <li><strong>Step 7:</strong> Browser picks up the change within 15 seconds</li>
           <li><strong>Repeat:</strong> Steps 5-7 cycle for each design section</li>
         </ul>
         <div class="diagram-container">
