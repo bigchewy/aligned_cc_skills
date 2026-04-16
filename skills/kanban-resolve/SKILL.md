@@ -81,8 +81,8 @@ Create `docs/plans/YYYY-MM-DD-kanban-resolve.md` (replace `YYYY-MM-DD` with toda
 
 **Step 1:** [From triage's validated fix]
 **Step 2:** ...
-**Step N:** Run `npm run build` to verify compilation
-**Step N+1:** Run `npm test` to verify no regressions
+**Step N:** Run the project's build command (from `CLAUDE.md` Tech Stack) to verify compilation
+**Step N+1:** Run the project's test command (from `CLAUDE.md` Tech Stack) to verify no regressions
 **Step N+2:** Commit changes
 
 ---
@@ -102,7 +102,7 @@ Create `docs/plans/YYYY-MM-DD-kanban-resolve.md` (replace `YYYY-MM-DD` with toda
 [Why items were grouped or kept separate]
 ```
 
-Every task MUST end with build verification (`npm run build`), test verification (`npm test`), and a commit step.
+Every task MUST end with build verification, test verification (both using the project's build/test commands from CLAUDE.md Tech Stack), and a commit step.
 
 **Override writing-plans "Fact-Check + Critique Panel" requirement:** Skip the critique panel. Triage agents already performed 5-phase root cause analysis on each item individually, including fix validation and risk assessment. The plan groups pre-validated mechanical changes — it does not introduce new architectural decisions. If grouping creates tasks that modify the same file, note the dependency in the plan's Decision Log so executing-plans respects ordering.
 
@@ -181,7 +181,7 @@ After executing-plans reports completion, invoke `/aligned:finishing-a-developme
 | Building plan before all triages complete | Wait for every triage to finish |
 | Including CLOSE items as plan tasks | CLOSE items go to `did_not_complete/` only |
 | Not grouping similar items | Combine items with identical mechanical fixes |
-| Skipping build+test verification per task | Every task ends with `npm run build` and `npm test` |
+| Skipping build+test verification per task | Every task ends with the project's build and test commands (see CLAUDE.md Tech Stack) |
 | Proceeding without plan approval | Always pause for user review after Phase 4 |
 | Committing file moves before user approval | Defer `git add`/`git commit` until after Phase 4 |
 | Not scanning `in-progress/` after triage | Orphaned files from failed triages must be recovered |

@@ -250,7 +250,7 @@ git commit -m "docs(kickstart): remove author-specific Substack link for portabi
 
 ---
 
-### Task 8: Parameterize npm commands in kanban-resolve
+### ✅ Task 8: Parameterize npm commands in kanban-resolve
 
 **Files:**
 - Modify: `skills/kanban-resolve/SKILL.md` (lines ~84-86 and ~105 contain hardcoded `npm run build` / `npm test`)
