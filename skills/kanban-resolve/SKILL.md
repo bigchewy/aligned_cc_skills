@@ -1,6 +1,6 @@
 ---
 name: kanban-resolve
-description: "Triages and resolves all accumulated Kanban board items in a single automated pass. Use when the board has multiple pending items in docs/kanban/todo/ to process as a batch."
+description: "Batch resolves accumulated Kanban board items. Use when docs/kanban/todo/ holds multiple pending items ready for processing."
 ---
 
 # Kanban Resolve

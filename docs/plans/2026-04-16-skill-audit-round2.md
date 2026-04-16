@@ -57,7 +57,7 @@ git commit -m "docs(use-framework): tighten description, remove workflow-summary
 
 ---
 
-### Task 2: Rewrite kanban-resolve description
+### ✅ Task 2: Rewrite kanban-resolve description
 
 **Files:**
 - Modify: `skills/kanban-resolve/SKILL.md` (`description:` field)
