@@ -1128,7 +1128,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(finishing-a-de
 
 ---
 
-### Task 22: Extract deploy smoke test workflow
+### ✅ Task 22: Extract deploy smoke test workflow
 
 **Files:**
 - Create: `skills/finishing-a-development-branch/references/deploy-smoke-test.md`
