@@ -733,7 +733,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(root-cause-ana
 
 Wave 1 must be fully committed to main before starting Wave 2.
 
-### Task 14: Add CRITICAL severity option to shared Kanban entry format
+### ✅ Task 14: Add CRITICAL severity option to shared Kanban entry format
 
 **Files:**
 - Modify: `skills/_shared/kanban-entry-format.md`

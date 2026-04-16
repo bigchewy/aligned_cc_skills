@@ -15,7 +15,7 @@ When filing an entry to the Kanban board:
 - **Observed:** [What exists and why it's a problem]
 - **Expected:** [What should change]
 - **Why out of scope:** [Why it wasn't fixed when discovered]
-- **Severity:** LOW | MEDIUM | HIGH
+- **Severity:** CRITICAL | HIGH | MEDIUM | LOW
 - **Created:** YYYY-MM-DD
 ```
 
