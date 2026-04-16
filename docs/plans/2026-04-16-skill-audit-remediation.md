@@ -1591,7 +1591,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(kickstart): ex
 
 ---
 
-### Task 31: Update kickstart SKILL.md — reference templates, fix git add, remove AskUserQuestion mentions
+### ✅ Task 31: Update kickstart SKILL.md — reference templates, fix git add, remove AskUserQuestion mentions
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md`
