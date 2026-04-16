@@ -5,6 +5,8 @@ description: "Detects LLM behavior surface changes without eval coverage. Use wh
 
 # Eval Coverage Audit
 
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/eval-audit/`. See `skills/_shared/resolve-skill-path.md` for rationale.
+
 ## Overview
 
 Ensure every LLM behavior surface change has eval coverage. Catches gaps the pipeline missed and triggers the standard pipeline to fill them.
@@ -79,7 +81,7 @@ After the coverage check, if new LLM surface patterns were added (new advisor ty
 
 ## Kanban Entry Format
 
-When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions (resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load). Use `eval-audit` as the "Discovered during" value.
+When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-format.md` for the template and counter instructions. Use `eval-audit` as the "Discovered during" value.
 
 ## Integration
 

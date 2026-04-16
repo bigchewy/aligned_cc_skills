@@ -949,7 +949,7 @@ git commit -m "docs(executing-plans): add Path Resolution note for base-director
 
 ---
 
-### Task 26: Migrate eval-audit
+### ✅ Task 26: Migrate eval-audit
 
 **Files:**
 - Modify: `skills/eval-audit/SKILL.md` (1 ref — line 82, Kanban Entry Format)
