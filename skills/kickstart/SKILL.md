@@ -126,36 +126,17 @@ Check whether `~/.claude/settings.json` already contains aligned skill permissio
 
 **If already present:** Skip this phase silently — permissions have already been configured.
 
-**If missing:** Read the current `~/.claude/settings.json` (create the file if it doesn't exist). Append the following skill entries to the existing `permissions.allow` array, skipping any that are already present. Preserve all other keys in the file (`permissions.deny`, `enabledPlugins`, etc.):
+**If missing:** Enumerate the aligned plugin's skills at runtime and append one `Skill(aligned:<name>)` entry per skill to `permissions.allow`. Do not hardcode the list — it must derive from the filesystem so new skills are picked up automatically.
 
-```json
-{
-  "permissions": {
-    "allow": [
-      "Skill(aligned:brainstorming)",
-      "Skill(aligned:writing-plans)",
-      "Skill(aligned:executing-plans)",
-      "Skill(aligned:finishing-a-development-branch)",
-      "Skill(aligned:root-cause-analysis)",
-      "Skill(aligned:using-git-worktrees)",
-      "Skill(aligned:eval-audit)",
-      "Skill(aligned:kickstart)",
-      "Skill(aligned:use-advisor)",
-      "Skill(aligned:use-framework)",
-      "Skill(aligned:kanban-resolve)",
-      "Skill(aligned:codebase-audit)",
-      "Skill(aligned:add-advisor)",
-      "Skill(aligned:add-framework)",
-      "Skill(aligned:find-potential-advisors)",
-      "Skill(aligned:create-design-principles)",
-      "Skill(aligned:persona-panel)",
-      "Skill(aligned:create-image)"
-    ]
-  }
-}
-```
+1. Resolve the plugin root per `skills/_shared/resolve-skill-path.md` (the "Plugin root" and "Edge case: multiple plugin installs" sections). In short: Glob `$HOME` for `**/.claude-plugin/plugin.json`; the plugin root is the parent directory of the matched `.claude-plugin/` dir. On multiple matches, follow the canonical tiebreaker sequence from that file (prefer `name: aligned` + sibling `skills/<skill-name>/SKILL.md`; then prefer matches under CWD or ancestors; if still ambiguous, stop and ask).
+2. Glob `<plugin-root>/skills/*/SKILL.md` to discover all skill directories. The skill name is the parent directory name of each matched `SKILL.md`.
+3. Filter out any directory starting with `_` (e.g., `_shared/`) — these are shared reference directories, not skills.
+4. Sort the resulting names alphabetically for deterministic output.
+5. Read `~/.claude/settings.json` (create the file with `{"permissions":{"allow":[],"deny":[]}}` if it doesn't exist). Preserve all existing keys (`permissions.deny`, `enabledPlugins`, etc.) and all existing `allow` entries.
+6. For each enumerated skill, append `Skill(aligned:<name>)` to `permissions.allow` if not already present.
+7. Write the file back as valid JSON (2-space indent, trailing newline).
 
-Tell the user: "Set up skill permissions in `~/.claude/settings.json` — you won't get permission prompts for aligned skills."
+Tell the user: "Set up skill permissions for N aligned skills in `~/.claude/settings.json` — you won't get permission prompts." (where N is the count of skills enumerated).
 
 ## Phase 6: Next Steps
 

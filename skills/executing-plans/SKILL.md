@@ -15,7 +15,7 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-**Autonomous mode:** Execute all tasks without pausing for review between batches. Only stop if a task fails verification or hits a blocker. When all tasks pass, stop. Do NOT invoke `/aligned:finishing-a-development-branch` — the user will run that manually.
+**Default mode is autonomous:** execute all tasks without pausing between batches. Stop only when (a) a task fails verification, (b) you hit a blocker, or (c) all tasks have passed — in that final case, summarize and stop; do NOT invoke `/aligned:finishing-a-development-branch` (the user runs that manually). Batched mode (Step 2) is opt-in for reviews between batches.
 
 ## The Process
 
@@ -39,9 +39,7 @@ Check the output. If it shows `main` or `master`, STOP. Tell the user and offer 
 
 ### Step 2: Execute Build Tasks
 
-**Default mode: autonomous.** Execute all tasks without stopping for review. Only stop on task failure or a blocker.
-
-**Batched mode (opt-in):** If the user explicitly requests checkpoints, or the plan is marked for batched execution, process tasks in groups of 3–7 and report between batches.
+**Execution mode:** autonomous by default (defined in Overview). If the user explicitly requested checkpoints, or the plan is marked for batched execution, switch to batched mode: process tasks in groups of 3–7 and report between batches.
 
 For each task:
 1. Mark as in_progress
@@ -55,9 +53,9 @@ For each task:
 
 ### Step 3: Report
 
-**Autonomous mode:** When all tasks pass verification, stop. Summarize what was implemented and show verification output. Do not hand off to `finishing-a-development-branch` — the user runs that manually.
+**Autonomous mode (default):** on completion, summarize what was implemented and show verification output. Stop — do not hand off to `finishing-a-development-branch`.
 
-**Batched mode only:** Between batches, show what was implemented, show verification output, say "Build is complete. Ready for testing", give the user instructions on what to test, and include the bash command to enter the worktree and start the dev server.
+**Batched mode only:** between batches, show what was implemented, show verification output, say "Build is complete. Ready for testing", give the user instructions on what to test, and include the bash command to enter the worktree and start the dev server.
 
 ### Step 4: Continue
 Based on feedback:
