@@ -48,10 +48,15 @@ defaultTest:
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on ACTIONABILITY: Could someone execute on the output
-        immediately? Look for: concrete next steps, named deliverables,
-        clear sequencing. Vague strategic direction scores 1-2.
-        Specific actions with owners/timelines scores 4-5.
+        Score 1-5 on DECISION READINESS: Does the output give a founder
+        enough to pick a direction and brief their team? Look for:
+        multiple distinct approaches (2-3) rather than a single take,
+        an explicit recommended choice, rationale that ties the choice
+        back to diagnosed problems or root causes, and clear tradeoffs
+        between the alternatives. A single unargued recommendation or
+        a list of options with no pick scores 1-2. Multiple options
+        with an explicit recommendation, tradeoff reasoning, and
+        problem-grounded rationale scores 4-5.
       weight: 1
     - type: llm-rubric
       value: |
