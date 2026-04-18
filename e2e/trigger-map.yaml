@@ -89,3 +89,15 @@ triggers:
       - frameworks/jolt-effect/anti-examples.md
     scenarios:
       - scenarios/use-framework/jolt-effect.yaml
+
+  - paths:
+      - advisors/prompts/trish-bertuzzi.md
+    scenarios:
+      - scenarios/use-advisor/trish-bertuzzi-consult.yaml
+
+  - paths:
+      - frameworks/6-elements-sdr/prompt.md
+      - frameworks/6-elements-sdr/examples.md
+      - frameworks/6-elements-sdr/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/6-elements-sdr.yaml

@@ -1209,3 +1209,12 @@ frameworks:
     domains: [revenue-architecture, gtm-strategy, sales-process, customer-success, saas-metrics]
     use_when: "a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math"
     helpful_documents: ["revenue metrics", "customer segmentation"]
+
+  - id: 6-elements-sdr
+    name: "the 6 Elements of the Sales Development Playbook"
+    advisor: trish-bertuzzi
+    purpose: "a full-function diagnostic and redesign of a B2B sales development organization across six design elements — Strategy, Specialization, Recruiting, Retention, Execution, and Leadership — producing a ranked fix list that stops leaders from hiring more SDRs into a broken design"
+    category: sales
+    domains: [sales-development, sdr-org-design, pipeline-generation, sales-enablement, b2b-sales]
+    use_when: "a revenue leader needs to diagnose why their SDR / pipeline-generation function is underperforming — pipeline shortfall, rep churn, scale transition — and wants a structured walk through the six design elements before hiring more reps"
+    helpful_documents: ["current SDR org chart", "SDR quota and comp plan", "ramp and tenure data", "last 90 days meetings-held and opportunity conversion"]

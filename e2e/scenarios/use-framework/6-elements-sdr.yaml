@@ -1,0 +1,111 @@
+# e2e/scenarios/use-framework/6-elements-sdr.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: 6 Elements of SDR Playbook — pipeline-function diagnostic"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPLETENESS: Does the response walk through all
+        six elements — Strategy, Specialization, Recruiting, Retention,
+        Execution, Leadership — rather than collapsing into a single
+        prescription? A response that names and diagnoses across the
+        six, even briefly, scores 4-5. A response that addresses only
+        one or two elements ("fix your cadence," "hire more SDRs")
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow
+        the actual 6 Elements methodology? Correct identification of
+        the six elements by name; correct use of Bridge Group benchmarks
+        (ramp ~5 months, tenure ~14 months, manager:SDR ratio 1:6-8,
+        specialization transitions around $3-5M and $10M ARR); correct
+        sequencing (fix Strategy first when unclear, then Leadership,
+        then downstream elements); correct cascade logic (Strategy gaps
+        cascade into Specialization, Recruiting, Execution). Deductions
+        for: treating elements as independent, recommending parallel
+        fixes across all six, prescribing "hire more SDRs" without
+        first walking the design.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC OUTCOME: Does the response conclude
+        with a ranked fix list — specific elements in priority order,
+        with specific prescriptions for each — rather than a generic
+        improvement plan? Look for: named weak elements, explicit
+        sequencing (first, second, third), specific fixes (e.g.,
+        "write a one-sentence Strategy and circulate it," "get the
+        manager into coach training," "pause hiring for 60 days").
+        Generic "work on all six" or "improve everything" scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Trish Bertuzzi — plainspoken operator, numerical, warm-but-
+        direct, refusing the hire-more-reps reflex? Look for: Bridge
+        Group benchmark references, direct refusal of "hire more SDRs"
+        when the design is broken, operator vocabulary ("cadence,"
+        "meetings held," "ramp," "tenure," "fully-loaded cost"),
+        specific pushback on classic failure modes (top-rep-to-manager
+        without coaching, premature splits, outsourced SDR). Bland
+        consultant voice or generic sales motivation scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/6-elements-sdr/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through the 6 Elements on my SDR function. I'll answer your questions element by element."
+      org_brief: |
+        Context: I'm the VP of Sales at a B2B SaaS company. We're at $8M ARR
+        with 7 AEs and 4 SDRs reporting to one SDR manager who was our top
+        SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO
+        wants to hire three more SDRs this month to fix it. Ramp time is
+        six months, average SDR tenure is about eleven months. The SDRs
+        run a mix of outbound and inbound — no formal split. Each rep
+        kind of runs their own cadence. Our hiring filter is "1-2 years
+        prior SaaS SDR experience." Of our last ten SDR hires, four washed
+        out inside their first six months.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me figure out how to fix our pipeline shortfall. We have 4 SDRs at $8M ARR and pipeline is at 60% of target."
+      org_brief: |
+        Context: I'm the VP of Sales at a B2B SaaS company. We're at $8M ARR
+        with 7 AEs and 4 SDRs reporting to one SDR manager who was our top
+        SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO
+        wants to hire three more SDRs this month to fix it. Ramp time is
+        six months, average SDR tenure is about eleven months. The SDRs
+        run a mix of outbound and inbound — no formal split. Each rep
+        kind of runs their own cadence. Our hiring filter is "1-2 years
+        prior SaaS SDR experience." Of our last ten SDR hires, four washed
+        out inside their first six months.
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Trish Bertuzzi's 6 Elements of the Sales Development Playbook framework to diagnose my SDR function. Walk through the six elements — Strategy, Specialization, Recruiting, Retention, Execution, Leadership — identify the weak ones, and prescribe a priority-ordered fix list."
+      org_brief: |
+        Context: I'm the VP of Sales at a B2B SaaS company. We're at $8M ARR
+        with 7 AEs and 4 SDRs reporting to one SDR manager who was our top
+        SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO
+        wants to hire three more SDRs this month to fix it. Ramp time is
+        six months, average SDR tenure is about eleven months. The SDRs
+        run a mix of outbound and inbound — no formal split. Each rep
+        kind of runs their own cadence. Our hiring filter is "1-2 years
+        prior SaaS SDR experience." Of our last ten SDR hires, four washed
+        out inside their first six months.

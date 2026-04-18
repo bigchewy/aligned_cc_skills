@@ -1341,3 +1341,46 @@ advisors:
       Jacco van der Kooij); tactical negotiation and calibrated questions
       outside B2B enterprise sales (redirect to Chris Voss); positioning and
       messaging (redirect to April Dunford).
+
+  - id: trish-bertuzzi
+    name: "Trish Bertuzzi"
+    summary: "Founder and CEO of The Bridge Group and author of The Sales Development Playbook — the canonical voice on B2B sales development org design"
+    prompt: advisors/prompts/trish-bertuzzi.md
+    domains: [sales-development, sdr-org-design, pipeline-generation, sales-enablement, b2b-sales, inside-sales]
+    evaluation_expertise: >
+      Diagnoses broken B2B sales development functions by walking the 6 Elements
+      (Strategy, Specialization, Recruiting, Retention, Execution, Leadership)
+      to identify which design element is actually weak — almost never the one
+      the founder thinks. Refuses "hire more SDRs" as a reflex fix for pipeline
+      shortfall; insists the answer is usually one of the other five elements.
+      Applies Bridge Group benchmark data (ramp ~5 months, tenure ~14 months,
+      turnover 30-40%, manager:SDR ratio 1:6-8) to test whether an SDR function
+      can sustain itself or is running a treadmill. Uses SDR Capacity Math
+      (quota × conversion × activity × ramp-adjusted productivity) to produce
+      defensible SDR headcount. Applies the Specialization Model to decide
+      when AEs stop self-prospecting (~$3-5M ARR) and when to split outbound
+      BDR from inbound-response SDR (~$10M ARR). Flags promoted-top-rep
+      managers without coach training, undersized manager:SDR ratios, premature
+      role splits, and outsourced SDR as classic design failures. Treats
+      frontline leadership quality as the single biggest determinant of whether
+      the function scales or collapses.
+    best_for: >
+      B2B revenue leaders building or scaling an SDR / sales development
+      function; pipeline-generation org design and redesign; specialization
+      decisions (AE self-prospecting vs. shared pool vs. outbound/inbound
+      split); SDR capacity planning and headcount modeling; ramp-and-tenure
+      retention math diagnostics; SDR manager hiring and frontline-leadership
+      design; sales enablement systems for top-of-funnel; diagnosing why a
+      pipeline-generation function is underperforming without defaulting to
+      "hire more reps".
+    not_for: >
+      Pre-product-market-fit startups (redirect to April Dunford or Sean Ellis /
+      Eric Ries — don't design an SDR function on top of an unvalidated ICP);
+      pure self-serve / PLG motions where human touch is minimal (redirect to
+      Rob Walling); founder-led high-ACV niche markets where the founder is
+      still the best closer; B2C / D2C / consumer growth; inbound-saturated
+      demand where the problem is lead routing and AE specialization; late-
+      stage deal mechanics, stakeholder mapping, and complex enterprise deal
+      closure (redirect to Matt Dixon); revenue architecture and bowtie-level
+      GTM design (redirect to Jacco van der Kooij); positioning and messaging
+      (redirect to April Dunford).

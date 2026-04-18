@@ -1,0 +1,86 @@
+# e2e/scenarios/use-advisor/trish-bertuzzi-consult.yaml
+# Quick-consult eval for Trish Bertuzzi (B2B sales development org design / 6 Elements)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Trish Bertuzzi B2B sales development consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DOMAIN SPECIFICITY: Does the response demonstrate
+        deep B2B sales development / SDR org-design expertise, specifically
+        around the 6 Elements (Strategy, Specialization, Recruiting,
+        Retention, Execution, Leadership)? Look for: naming specific
+        elements, references to ramp-and-tenure math (typical ramp 5
+        months, tenure 14 months), specialization transitions by ARR
+        stage (AE self-prospecting breaking around $3-5M ARR, outbound/
+        inbound split around $10M ARR), manager:SDR ratio benchmarks
+        (1:6-8 healthy, 1:12+ broken), Bridge Group benchmark vocabulary,
+        or SDR capacity math (meetings-held × conversion × activity).
+        Generic sales-hiring advice ("hire great SDRs", "build a strong
+        culture") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Trish Bertuzzi — plainspoken operator, practitioner-forward,
+        numerical, warm-but-direct? Look for: diagnostic framing
+        ("which of the six is weakest?"), Bridge Group benchmark
+        references ("ramp is 5 months, tenure is 14 months"),
+        refusal to accept "hire more SDRs" as the reflex fix,
+        naming design failures (promoted top-rep manager without
+        coach training, premature outbound/inbound split, outsourced
+        SDR), operator vocabulary ("cadence," "meetings held,"
+        "fully-loaded cost"). McKinsey-style abstraction or motivational
+        fluff scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC DISCIPLINE: Does the response diagnose
+        across multiple elements before prescribing, rather than jumping
+        to a single fix? Look for: walking through multiple of the six
+        elements, refusing "hire more SDRs" as a reflex answer,
+        identifying the element that is actually weak (often Leadership,
+        Strategy, or Retention) before touching Execution / cadence,
+        distinguishing symptom from root cause. A response that
+        immediately prescribes "hire N more SDRs" or "fix your cadence"
+        without first walking the design scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DESIGN-OVER-HIRING CLARITY: Does the response
+        explicitly challenge the "hire more SDRs" reflex and reframe
+        the question as a design problem? Look for: explicit refusal
+        of the hire-more-reps reflex, identification of the upstream
+        element (Strategy, Specialization, Leadership, Retention)
+        that must be fixed before any hiring, warning against hiring
+        into a broken design (churn, wasted ramp spend, confirmation
+        bias that "SDRs don't work here"). Uncritical agreement with
+        the user's plan to hire more SDRs scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — pipeline shortfall w/ pressure to hire"
+    vars:
+      system_context: file://../../../advisors/prompts/trish-bertuzzi.md
+      task_prompt: "\n\n---\n\nI'm a VP of Sales at an $8M ARR B2B SaaS company. We have 7 AEs and 4 SDRs reporting to one SDR manager who was our top SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO has already committed to the board that we'll hit 4x coverage — he wants to hire three more SDRs this month. Our ramp time is about six months and SDRs typically leave or get promoted after ten to twelve months. What should we do?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm a VP of Sales at an $8M ARR B2B SaaS company. We have 7 AEs and 4 SDRs reporting to one SDR manager who was our top SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO has already committed to the board that we'll hit 4x coverage — he wants to hire three more SDRs this month. Our ramp time is about six months and SDRs typically leave or get promoted after ten to twelve months. What should we do?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Trish Bertuzzi, founder of The Bridge Group and author of The Sales Development Playbook. I'm a VP of Sales at an $8M ARR B2B SaaS company. We have 7 AEs and 4 SDRs reporting to one SDR manager who was our top SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO has already committed to the board that we'll hit 4x coverage — he wants to hire three more SDRs this month. Our ramp time is about six months and SDRs typically leave or get promoted after ten to twelve months. What should we do?"
