@@ -1,0 +1,80 @@
+# e2e/scenarios/use-advisor/matt-dixon-consult.yaml
+# Quick-consult eval for Matt Dixon (B2B enterprise deal mechanics / JOLT Effect)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Matt Dixon B2B enterprise deal consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DOMAIN SPECIFICITY: Does the response demonstrate
+        deep B2B enterprise sales research expertise, specifically around
+        customer indecision vs. status-quo preference? Look for: references
+        to the JOLT Effect or its four moves (Judge, Offer, Limit, Take
+        risk off the table), naming of indecision types (Valuation, Lack
+        of Information, Outcome Uncertainty), Challenger Rep Profiles
+        (Hard Worker, Relationship Builder, Lone Wolf, Reactive Problem
+        Solver, Challenger), or Mobilizer Taxonomy stakeholders (Go-Getter,
+        Teacher, Skeptic, Guide, Friend, Climber, Blocker). Generic sales
+        advice ("follow up more", "understand the buyer") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Matt Dixon — research-backed, calm-contrarian, precise on
+        terms, grounded in empirical data? Look for: references to
+        research findings, distinguishing terms that sound similar
+        ("indecision" vs "status-quo preference", "Friend" vs "Mobilizer"),
+        rejection of consensus wisdom when evidence contradicts it
+        ("choice overload", "relationship builders underperform"),
+        teacherly tone without motivational fluff. Generic cheerleading
+        or hedging scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC PRECISION: Does the response correctly
+        distinguish customer indecision (buyer wants to buy but can't
+        decide) from status-quo preference (buyer doesn't want to change)
+        and prescribe the matching remedy? Look for: naming the type of
+        indecision, offering the specific JOLT move that matches the type
+        (not a generic menu), rejecting "send more case studies" as the
+        fix for Outcome Uncertainty. Scatter-shot "try a few things"
+        scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CONTRARIAN CLARITY: Does the response challenge
+        conventional sales wisdom where the research contradicts it?
+        Look for: explicit pushback against "present three options,"
+        "build the relationship," "send more proof points," or "let
+        the buyer come to their own conclusion" — replacing them with
+        the research-backed alternative (specific recommendation,
+        constrained scope, risk-off-the-table offer, Challenger teach).
+        Uncritical agreement with the user's plan scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — stalled enterprise deal"
+    vars:
+      system_context: file://../../../advisors/prompts/matt-dixon.md
+      task_prompt: "\n\n---\n\nI'm a sales director at a B2B SaaS company. We have a $600K deal that's been in late stage for four months. The buyer keeps asking for more demos, more reference calls, and wants to add two more stakeholders to the evaluation. Our AE is convinced they're going to close — 'they really like us' — but I'm worried. The AE plans to send three more case studies and offer to run another technical deep-dive. What should we do?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm a sales director at a B2B SaaS company. We have a $600K deal that's been in late stage for four months. The buyer keeps asking for more demos, more reference calls, and wants to add two more stakeholders to the evaluation. Our AE is convinced they're going to close — 'they really like us' — but I'm worried. The AE plans to send three more case studies and offer to run another technical deep-dive. What should we do?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Matt Dixon, co-author of The Challenger Sale and The JOLT Effect. I'm a sales director at a B2B SaaS company. We have a $600K deal that's been in late stage for four months. The buyer keeps asking for more demos, more reference calls, and wants to add two more stakeholders to the evaluation. Our AE is convinced they're going to close — 'they really like us' — but I'm worried. The AE plans to send three more case studies and offer to run another technical deep-dive. What should we do?"

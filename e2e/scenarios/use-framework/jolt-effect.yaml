@@ -1,0 +1,111 @@
+# e2e/scenarios/use-framework/jolt-effect.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: JOLT Effect stalled-deal diagnosis"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{deal_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPLETENESS: Does the response walk through the
+        full JOLT play — all four moves (Judge the indecision type,
+        Offer a specific recommendation, Limit exploration, Take risk
+        off the table)? A response that addresses only one or two moves,
+        or collapses the four moves into generic "close harder" advice,
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow the
+        actual JOLT methodology from the research? Correct distinction
+        between indecision (buyer wants to buy, can't decide) and
+        status-quo preference (buyer doesn't want to change); correct
+        naming of indecision types (Valuation, Lack of Information,
+        Outcome Uncertainty); correct mapping of tactics to types
+        (e.g., Outcome Uncertainty needs risk reduction, NOT more
+        case studies). Deductions for: conflating indecision with
+        status-quo, generic "send more proof" advice for Outcome
+        Uncertainty, presenting "three good options" as a valid move.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC OUTCOME: Does the response conclude
+        with a specific named indecision type, a specific recommendation
+        (not a menu of options), a named constraint, and a specific
+        risk-reduction move matched to the buyer's actual fear?
+        Generic improvement lists score 1-2. A specific integrated
+        play with a concrete next communication scores 4-5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Matt Dixon — research-backed, calm-contrarian, challenging
+        consensus wisdom when the data contradicts it? Look for:
+        references to research findings, distinguishing similar-
+        sounding terms precisely, pushback against "present three
+        options" or "send more case studies." Bland consultant voice
+        scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/jolt-effect/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through the JOLT play on this deal. I'll answer your questions move by move."
+      deal_brief: |
+        Context: I'm an enterprise AE. I have a $500K ACV deal that's been in
+        late stage for four months. The buyer is a VP of Operations at a
+        mid-market manufacturer. They're actively engaged — responding to
+        emails, taking every call — but they can't commit.
+        Their last email said: "We really believe this would help us, but
+        we've done big platform investments before that didn't deliver the
+        ROI we expected. I need to understand what happens if this doesn't
+        work for us the way it works in your case studies."
+        We've already sent three case studies and done two reference calls.
+        I'm planning to send two more case studies and offer another
+        technical deep-dive.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me figure out how to close this stalled enterprise deal."
+      deal_brief: |
+        Context: I'm an enterprise AE. I have a $500K ACV deal that's been in
+        late stage for four months. The buyer is a VP of Operations at a
+        mid-market manufacturer. They're actively engaged — responding to
+        emails, taking every call — but they can't commit.
+        Their last email said: "We really believe this would help us, but
+        we've done big platform investments before that didn't deliver the
+        ROI we expected. I need to understand what happens if this doesn't
+        work for us the way it works in your case studies."
+        We've already sent three case studies and done two reference calls.
+        I'm planning to send two more case studies and offer another
+        technical deep-dive.
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Matt Dixon's JOLT Effect framework to diagnose this stalled deal. Walk through the four moves — Judge the indecision type (Valuation, Lack of Information, or Outcome Uncertainty), Offer a specific recommendation, Limit exploration, and Take risk off the table — and prescribe a specific integrated play."
+      deal_brief: |
+        Context: I'm an enterprise AE. I have a $500K ACV deal that's been in
+        late stage for four months. The buyer is a VP of Operations at a
+        mid-market manufacturer. They're actively engaged — responding to
+        emails, taking every call — but they can't commit.
+        Their last email said: "We really believe this would help us, but
+        we've done big platform investments before that didn't deliver the
+        ROI we expected. I need to understand what happens if this doesn't
+        work for us the way it works in your case studies."
+        We've already sent three case studies and done two reference calls.
+        I'm planning to send two more case studies and offer another
+        technical deep-dive.

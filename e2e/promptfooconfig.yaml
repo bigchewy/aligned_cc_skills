@@ -31,3 +31,5 @@ scenarios:
   - file://scenarios/use-framework/contextual-recommendation.yaml
   - file://scenarios/use-advisor/jacco-van-der-kooij-consult.yaml
   - file://scenarios/use-framework/bowtie-funnel.yaml
+  - file://scenarios/use-advisor/matt-dixon-consult.yaml
+  - file://scenarios/use-framework/jolt-effect.yaml

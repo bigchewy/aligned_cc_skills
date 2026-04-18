@@ -77,3 +77,15 @@ triggers:
       - frameworks/bowtie-funnel/anti-examples.md
     scenarios:
       - scenarios/use-framework/bowtie-funnel.yaml
+
+  - paths:
+      - advisors/prompts/matt-dixon.md
+    scenarios:
+      - scenarios/use-advisor/matt-dixon-consult.yaml
+
+  - paths:
+      - frameworks/jolt-effect/prompt.md
+      - frameworks/jolt-effect/examples.md
+      - frameworks/jolt-effect/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/jolt-effect.yaml

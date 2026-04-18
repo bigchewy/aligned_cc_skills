@@ -550,6 +550,15 @@ frameworks:
     use_when: "someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features"
     helpful_documents: ["customer research", "product description"]
 
+  - id: jolt-effect
+    name: "the JOLT Effect"
+    advisor: matt-dixon
+    purpose: "a four-move tactical playbook for rescuing late-stage B2B enterprise deals stalled by customer indecision — Judge the indecision type, Offer a specific recommendation, Limit exploration, Take risk off the table"
+    category: sales
+    domains: [b2b-sales, enterprise-deals, deal-strategy, customer-indecision, late-stage-deals]
+    use_when: "a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy"
+    helpful_documents: ["deal notes", "stakeholder map", "discovery call transcripts"]
+
   - id: kernel-of-good-strategy
     name: "building a complete strategy using the kernel"
     advisor: richard-rumelt

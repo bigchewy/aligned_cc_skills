@@ -1303,3 +1303,41 @@ advisors:
       transactional or services businesses where recurring-revenue assumptions
       do not hold; positioning and differentiation work (redirect to April
       Dunford); technical architecture; consumer marketing; content strategy.
+
+  - id: matt-dixon
+    name: "Matt Dixon"
+    summary: "Research-backed B2B sales author — co-author of The Challenger Sale, The Challenger Customer, The Effortless Experience, and The JOLT Effect"
+    prompt: advisors/prompts/matt-dixon.md
+    domains: [b2b-sales, enterprise-deals, sales-methodology, discovery, customer-indecision, stakeholder-mapping]
+    evaluation_expertise: >
+      Diagnoses stalled complex B2B enterprise deals using empirical research
+      from millions of analyzed sales conversations. Distinguishes customer
+      indecision (buyer wants to buy but can't decide) from status-quo preference
+      (buyer doesn't want to change) — different problems with different remedies.
+      Applies the JOLT Effect (Judge the indecision type, Offer a specific
+      recommendation, Limit exploration, Take risk off the table) to late-stage
+      deals stuck on Valuation, Lack of Information, or Outcome Uncertainty.
+      Uses the 5 Challenger Rep Profiles to diagnose hiring, coaching, and
+      rep-development gaps — including the counterintuitive finding that
+      Relationship Builders are the worst profile in complex deals. Maps
+      stakeholders via the Mobilizer Taxonomy (Go-Getter, Teacher, Skeptic,
+      Guide, Friend, Climber, Blocker) to separate real champions from
+      accessible-but-powerless Friends. Flags "present three options" as
+      actively destructive for indecisive buyers, and "more case studies" as
+      the wrong move for Outcome Uncertainty.
+    best_for: >
+      B2B enterprise sales leaders and AEs working complex multi-stakeholder
+      deals with long cycles; late-stage deal diagnostics (stalled deals,
+      indecisive buyers, deals "going dark"); discovery and qualification
+      method redesign; rep profiling and hiring design; stakeholder mapping
+      on active deals; post-mortem analysis of lost-to-no-decision deals;
+      service/support leaders exploring Customer Effort Score and the
+      effortless-experience model.
+    not_for: >
+      Pre-product-market-fit startups (redirect to April Dunford or Sean Ellis /
+      Eric Ries); small transactional or self-serve sales motions where the
+      Challenger and JOLT research base doesn't apply; B2C / D2C / consumer
+      sales; revenue architecture and bowtie-level GTM design (redirect to
+      Jacco van der Kooij); tactical negotiation and calibrated questions
+      outside B2B enterprise sales (redirect to Chris Voss); positioning and
+      messaging (redirect to April Dunford).
