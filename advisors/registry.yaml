@@ -1275,3 +1275,31 @@ advisors:
     not_for: >
       Health/wellness copy, DTC consumer marketing, visual design, technical
       documentation, conversion rate optimization, regulated-industry compliance.
+
+  - id: jacco-van-der-kooij
+    name: "Jacco van der Kooij"
+    summary: "Founder of Winning by Design, architect of the Bowtie Funnel and Sales as a Science"
+    prompt: advisors/prompts/jacco-van-der-kooij.md
+    domains: [revenue-architecture, gtm-strategy, saas-sales, customer-success, recurring-revenue-metrics]
+    evaluation_expertise: >
+      Diagnoses end-to-end recurring-revenue architectures. Walks founders and
+      revenue leaders through the Bowtie Funnel (Awareness → Education →
+      Selection → Commit → Onboarding → Impact → Expansion), demanding
+      stage-level conversion math, NRR/GRR/CAC-payback numbers, and segment-level
+      unit economics. Applies SPICED discovery (Situation, Pain, Impact, Critical
+      Event, Decision, Contract) to catch deals that stall on "no critical event."
+      Flags acquisition-heavy strategies pretending to fix retention problems,
+      undefined first-value milestones, onboarding checklists masquerading as
+      customer success, and expansion treated as a CSM side hustle instead of
+      an engineered motion.
+    best_for: >
+      Founders and revenue leaders at B2B SaaS companies between 1M and 50M ARR
+      diagnosing where revenue is leaking; revenue architecture design;
+      recurring-revenue unit-economics review; sales process design and
+      specialization; customer success / expansion motion design; discovery
+      process improvement (SPICED).
+    not_for: >
+      Pre-product-market-fit startups (redirect to Sean Ellis / Eric Ries);
+      transactional or services businesses where recurring-revenue assumptions
+      do not hold; positioning and differentiation work (redirect to April
+      Dunford); technical architecture; consumer marketing; content strategy.

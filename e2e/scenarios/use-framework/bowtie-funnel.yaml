@@ -1,0 +1,89 @@
+# e2e/scenarios/use-framework/bowtie-funnel.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Bowtie Funnel revenue diagnosis"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPLETENESS: Does the response walk through the
+        full bowtie — both acquisition side (Awareness, Education,
+        Selection) AND impact side (Onboarding, Impact, Expansion) —
+        and demand metrics at each stage? A response that only
+        addresses the acquisition funnel and ignores retention/expansion
+        misses the core insight of the framework and scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow
+        Jacco van der Kooij's actual Bowtie methodology? Correct
+        stage names (Awareness → Education → Selection → Commit →
+        Onboarding → Impact), math-first diagnostic approach, refusal
+        to skip stages, correct framing that closed-won is the MIDDLE
+        of the bowtie. Deductions for: invented stages, missing the
+        post-commit side, treating the framework as a one-sided
+        acquisition funnel.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC OUTCOME: Does the response conclude
+        with ONE named leak (not a catalog of issues), an owner, and
+        a metric? Scatter-shot improvement lists score 1-2. A specific
+        stage-level diagnosis with supporting math scores 4-5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Jacco van der Kooij — engineering vocabulary, demanding numbers,
+        Dutch-direct, rejection of legacy sales clichés? Bland
+        consultant voice scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/bowtie-funnel/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through diagnosing my revenue architecture. I'll answer your questions stage by stage."
+      company_brief: |
+        Context: I'm the founder of a B2B SaaS company. 4M ARR, growing 50% YoY.
+        Product: workflow automation for mid-market services firms.
+        Our sales team is hitting quota but NRR has slipped to 88%.
+        Our awareness-to-trial conversion is ~2%. We close about 30% of qualified opportunities.
+        We don't have a defined first-value milestone; onboarding is a 10-step checklist.
+        Expansion is handled by CSMs on the side — no dedicated motion.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me diagnose where my recurring revenue is leaking."
+      company_brief: |
+        Context: I'm the founder of a B2B SaaS company. 4M ARR, growing 50% YoY.
+        Product: workflow automation for mid-market services firms.
+        Our sales team is hitting quota but NRR has slipped to 88%.
+        Our awareness-to-trial conversion is ~2%. We close about 30% of qualified opportunities.
+        We don't have a defined first-value milestone; onboarding is a 10-step checklist.
+        Expansion is handled by CSMs on the side — no dedicated motion.
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Jacco van der Kooij's Bowtie Funnel framework to diagnose my revenue architecture. Walk through each stage — Awareness, Education, Selection, Commit, Onboarding, Impact, Expansion — and identify where revenue is leaking."
+      company_brief: |
+        Context: I'm the founder of a B2B SaaS company. 4M ARR, growing 50% YoY.
+        Product: workflow automation for mid-market services firms.
+        Our sales team is hitting quota but NRR has slipped to 88%.
+        Our awareness-to-trial conversion is ~2%. We close about 30% of qualified opportunities.
+        We don't have a defined first-value milestone; onboarding is a 10-step checklist.
+        Expansion is handled by CSMs on the side — no dedicated motion.

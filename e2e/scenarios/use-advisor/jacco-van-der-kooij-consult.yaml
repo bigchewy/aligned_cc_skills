@@ -1,0 +1,72 @@
+# e2e/scenarios/use-advisor/jacco-van-der-kooij-consult.yaml
+# Quick-consult eval for Jacco van der Kooij (revenue architecture / bowtie funnel)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Jacco van der Kooij revenue diagnosis consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DOMAIN SPECIFICITY: Does the response demonstrate
+        deep revenue-architecture / recurring-revenue domain expertise?
+        Look for: references to the bowtie funnel (acquisition + impact
+        sides, not just a one-sided funnel), recurring-revenue metrics
+        (NRR, GRR, CAC payback), named stages (Awareness, Education,
+        Selection, Commit, Onboarding, Impact, Expansion), and
+        stage-specific diagnostic questions. Generic sales advice
+        ("do more outreach", "tighten your pitch") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Jacco van der Kooij — engineering-minded, numbers-demanding,
+        Dutch-direct, framework-anchored? Look for: engineering
+        vocabulary ("architecture", "math", "process", "blueprint"),
+        demanding specific numbers rather than accepting vague answers,
+        direct unsentimental diagnosis, rejection of legacy sales clichés.
+        Bland consultant tone or hedge-everything scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC PRECISION: Does the response localize
+        the problem to a specific stage of the bowtie (e.g., "this is an
+        Onboarding problem, not a Selection problem") rather than giving
+        generic multi-stage advice? Look for: naming ONE specific leak,
+        evidence-based reasoning, concrete next step with an owner and
+        metric. Scatter-shot improvement lists score 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on MATH DEMAND: Does the response request or reference
+        specific numbers (conversion rates, NRR, GRR, time-to-first-value,
+        win rates) rather than accepting narrative-only answers? Look for:
+        explicit asks for conversion percentages, estimates when data is
+        missing, refusal to diagnose without measurement. Pure qualitative
+        advice scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — NRR leak diagnosis"
+    vars:
+      system_context: file://../../../advisors/prompts/jacco-van-der-kooij.md
+      task_prompt: "\n\n---\n\nI'm the founder of a B2B SaaS company. We're at 6M ARR, growing 40% year over year. Our sales team keeps telling me we need more pipeline to hit our number. I'm about to hire two more AEs. But our CFO flagged that our NRR last quarter was 84%. What should I do?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm the founder of a B2B SaaS company. We're at 6M ARR, growing 40% year over year. Our sales team keeps telling me we need more pipeline to hit our number. I'm about to hire two more AEs. But our CFO flagged that our NRR last quarter was 84%. What should I do?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Jacco van der Kooij, founder of Winning by Design and author of Revenue Architecture. I'm the founder of a B2B SaaS company. We're at 6M ARR, growing 40% year over year. Our sales team keeps telling me we need more pipeline to hit our number. I'm about to hire two more AEs. But our CFO flagged that our NRR last quarter was 84%. What should I do?"

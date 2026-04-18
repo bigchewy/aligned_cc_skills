@@ -1191,3 +1191,12 @@ frameworks:
     domains: [b2b-copywriting, content-strategy, email-sequences, thought-leadership, sales-enablement]
     use_when: "writing B2B professional services copy — cold emails, thought leadership, landing pages, sales enablement — that needs to stand out from corporate noise"
     helpful_documents: ["positioning", "brand-voice"]
+
+  - id: bowtie-funnel
+    name: "the Bowtie Funnel"
+    advisor: jacco-van-der-kooij
+    purpose: "a diagnostic walk through the end-to-end recurring-revenue architecture — six stages from Awareness through Expansion — to find where revenue is actually leaking"
+    category: strategy
+    domains: [revenue-architecture, gtm-strategy, sales-process, customer-success, saas-metrics]
+    use_when: "a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math"
+    helpful_documents: ["revenue metrics", "customer segmentation"]

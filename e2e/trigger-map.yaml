@@ -65,3 +65,15 @@ triggers:
       - skills/use-framework/SKILL.md
     scenarios:
       - scenarios/use-framework/contextual-recommendation.yaml
+
+  - paths:
+      - advisors/prompts/jacco-van-der-kooij.md
+    scenarios:
+      - scenarios/use-advisor/jacco-van-der-kooij-consult.yaml
+
+  - paths:
+      - frameworks/bowtie-funnel/prompt.md
+      - frameworks/bowtie-funnel/examples.md
+      - frameworks/bowtie-funnel/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/bowtie-funnel.yaml

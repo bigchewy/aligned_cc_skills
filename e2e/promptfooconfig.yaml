@@ -29,3 +29,5 @@ scenarios:
   - file://scenarios/use-skill/brainstorming-positioning.yaml
   - file://scenarios/use-advisor/contextual-recommendation.yaml
   - file://scenarios/use-framework/contextual-recommendation.yaml
+  - file://scenarios/use-advisor/jacco-van-der-kooij-consult.yaml
+  - file://scenarios/use-framework/bowtie-funnel.yaml
