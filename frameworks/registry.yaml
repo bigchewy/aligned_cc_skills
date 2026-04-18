@@ -1218,3 +1218,12 @@ frameworks:
     domains: [sales-development, sdr-org-design, pipeline-generation, sales-enablement, b2b-sales]
     use_when: "a revenue leader needs to diagnose why their SDR / pipeline-generation function is underperforming — pipeline shortfall, rep churn, scale transition — and wants a structured walk through the six design elements before hiring more reps"
     helpful_documents: ["current SDR org chart", "SDR quota and comp plan", "ramp and tenure data", "last 90 days meetings-held and opportunity conversion"]
+
+  - id: 5-gtm-motions-digital-health
+    name: "the 5 GTM Motions for Digital Health"
+    advisor: julie-yoo
+    purpose: "a motion-commitment diagnostic that forces a digital health founder to pick one primary go-to-market motion — B2C2B, B2SMB, Risk-based contracting, Two-sided networks, or Distribution through aggregators — for the next 18 months, and confirms that product, evidence, buyer, and runway all match the chosen motion"
+    category: sales
+    domains: [digital-health, healthcare-gtm, enterprise-sales, healthcare-product-strategy, payer-provider-sales]
+    use_when: "a digital health founder is selecting or refining their go-to-market motion, running multiple motions in parallel with unclear progress, or preparing for a fundraise and needs to commit to a single primary motion backed by matching product, evidence, buyer, and runway assumptions"
+    helpful_documents: ["current pitch deck", "sales pipeline by segment", "clinical evidence inventory (case studies / outcomes data / RCTs)", "runway and fundraising plan", "integration roadmap (EHR / payer / revenue-cycle)"]

@@ -1,0 +1,127 @@
+# e2e/scenarios/use-framework/5-gtm-motions-digital-health.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: 5 GTM Motions for Digital Health — motion-commitment diagnostic"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPLETENESS: Does the response walk through all
+        five motions — B2C2B, B2SMB, Risk-based contracting, Two-sided
+        networks, Distribution through aggregators — rather than
+        collapsing into a single prescription? A response that names
+        and diagnoses across the five, even briefly, scores 4-5. A
+        response that addresses only one or two motions scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow
+        the actual 5 GTM Motions methodology? Correct identification
+        of the five motions by name; correct use of motion-specific
+        sales-cycle benchmarks (B2SMB 3-6 months, B2C2B 12-18 months
+        post-consumer-traction, risk-based 18-36 months, two-sided
+        6-12 months supply-side, distribution 9-24 months); correct
+        comparables (Livongo / Omada for risk-based, Oscar / Headspace /
+        Hims for B2C2B, Weave / Jane App for B2SMB, Zocdoc / Rupa for
+        two-sided, Vizient / Premier / IDN partnerships for distribution);
+        correct user-vs-buyer distinction (patient/member is user; payer/
+        provider/employer/consumer is buyer); correct evidence laddering
+        (case studies for B2SMB, actuarial outcomes for risk-based).
+        Deductions for: treating motions as interchangeable, endorsing
+        "all of the above" motion strategies, using SaaS metrics to
+        evaluate risk-based businesses.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMMITMENT OUTCOME: Does the response conclude
+        with a committed primary motion and a staged second motion —
+        specific motion named, specific product/evidence/buyer/sales-
+        team/runway commitments — rather than a generic "explore all
+        five" plan? Look for: named primary motion with 18-month
+        commitment, named staged second motion for Series B or later,
+        specific evidence and integration priorities for the next
+        90 days, specific things the founder will stop doing in the
+        parked motions. Generic "focus on the right motion for your
+        business" scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Julie Yoo — calm, analytical, operator-investor, specific with
+        comparable companies and real numbers, pragmatic about healthcare
+        complexity? Look for: explicit motion naming, comparable-company
+        references ("this looks like early Livongo, not early Oscar"),
+        refusal of "all of the above" motion strategies, user-vs-buyer
+        language, integration-debt warnings, specific pushback on classic
+        failure modes (case-study evidence for payers, SaaS metrics on
+        risk-based businesses, no-champion IDN sales, national two-sided
+        launch). Bland consultant voice or generic VC platitudes score
+        1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/5-gtm-motions-digital-health/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through the 5 GTM Motions on my digital health company. I'll answer your questions motion by motion."
+      org_brief: |
+        Context: I'm the CEO of a Series A digital health company focused
+        on diabetes management. We have a mobile app plus a connected
+        glucose monitor that patients use daily, with a clinical coach
+        layer. We're at 50K consumer users with 55% three-month
+        retention and 14 months of runway. Today we're pitching self-
+        insured employers on our consumer engagement story AND pitching
+        two national payers on risk-based outcomes contracts. Our
+        investors want us pitching payers as the big revenue prize.
+        We have six employer case studies but no peer-reviewed outcomes
+        data yet. Our VP of Sales came from a benefits broker. We've
+        also had three intro calls with IDN innovation teams but nothing
+        is progressing.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me design a GTM strategy for my digital health company. We're at Series A with 14 months of runway."
+      org_brief: |
+        Context: I'm the CEO of a Series A digital health company focused
+        on diabetes management. We have a mobile app plus a connected
+        glucose monitor that patients use daily, with a clinical coach
+        layer. We're at 50K consumer users with 55% three-month
+        retention and 14 months of runway. Today we're pitching self-
+        insured employers on our consumer engagement story AND pitching
+        two national payers on risk-based outcomes contracts. Our
+        investors want us pitching payers as the big revenue prize.
+        We have six employer case studies but no peer-reviewed outcomes
+        data yet. Our VP of Sales came from a benefits broker. We've
+        also had three intro calls with IDN innovation teams but nothing
+        is progressing.
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Julie Yoo's 5 GTM Motions for Digital Health framework to diagnose my company. Walk through the five motions — B2C2B, B2SMB, Risk-based contracting, Two-sided networks, Distribution through aggregators — identify which one fits best, and tell me what to commit to primarily and what to stage for later."
+      org_brief: |
+        Context: I'm the CEO of a Series A digital health company focused
+        on diabetes management. We have a mobile app plus a connected
+        glucose monitor that patients use daily, with a clinical coach
+        layer. We're at 50K consumer users with 55% three-month
+        retention and 14 months of runway. Today we're pitching self-
+        insured employers on our consumer engagement story AND pitching
+        two national payers on risk-based outcomes contracts. Our
+        investors want us pitching payers as the big revenue prize.
+        We have six employer case studies but no peer-reviewed outcomes
+        data yet. Our VP of Sales came from a benefits broker. We've
+        also had three intro calls with IDN innovation teams but nothing
+        is progressing.

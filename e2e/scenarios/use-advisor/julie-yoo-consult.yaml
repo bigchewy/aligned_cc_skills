@@ -1,0 +1,87 @@
+# e2e/scenarios/use-advisor/julie-yoo-consult.yaml
+# Quick-consult eval for Julie Yoo (digital health enterprise GTM / 5 GTM Motions)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Julie Yoo digital health GTM consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DOMAIN SPECIFICITY: Does the response demonstrate
+        deep digital health GTM expertise, specifically around the 5 GTM
+        Motions (B2C2B, B2SMB, Risk-based contracting, Two-sided networks,
+        Distribution through aggregators)? Look for: naming specific
+        motions, references to motion-specific sales-cycle benchmarks
+        (B2SMB 3-6 months, B2C2B 12-18 months post-consumer-traction,
+        risk-based 18-36 months, two-sided network 6-12 months supply-side,
+        distribution 9-24 months), comparable companies (Livongo, Omada,
+        Oscar, Zocdoc, Headspace, Kyruus), user-vs-buyer distinction
+        (patient/member vs. payer/provider/employer/consumer), clinical
+        evidence laddering by motion, EHR / payer / revenue-cycle integration
+        references, MLR / PMPM / actuarial language where appropriate.
+        Generic SaaS GTM advice ("find product-market fit", "scale the
+        funnel") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Julie Yoo — calm, analytical, operator-investor, specific with
+        comparable companies and real numbers, pragmatic about healthcare
+        complexity without being cynical? Look for: explicit motion
+        naming ("you're running a B2C2B play but selling it like a
+        risk-based contract"), comparable-company references as evidence
+        not flattery ("this looks like early Livongo, not early Oscar"),
+        refusal of "all of the above" motion strategies, direct challenge
+        of motion mismatches (B2C2B positioning with payer-grade evidence
+        demand), pushback on no-champion enterprise pitches, integration
+        debt warnings. Cheerleading or generic VC advice scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on MOTION-COMMITMENT DISCIPLINE: Does the response
+        force motion commitment rather than accepting "all of the above"
+        or motion-mixing? Look for: refusal to endorse running multiple
+        motions simultaneously at early stage, explicit identification
+        of which motion is being described, naming motion mismatches
+        (buyer-evidence mismatch, runway-cycle mismatch, positioning-
+        buyer mismatch), insistence on staging second motions for later
+        rather than running in parallel. Uncritical agreement with a
+        multi-motion GTM plan scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on USER-VS-BUYER CLARITY: Does the response distinguish
+        the user (patient/member) from the buyer (payer/provider/employer/
+        consumer)? Look for: explicit identification of who writes the
+        check, naming the buyer persona, challenging founder statements
+        that conflate "customer" with "user" when the buyer is actually
+        an enterprise procurement process. Responses that treat "our
+        customers are patients" as the buyer definition without probing
+        score 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — motion-mixing B2C2B with payer pitch"
+    vars:
+      system_context: file://../../../advisors/prompts/julie-yoo.md
+      task_prompt: "\n\n---\n\nI'm the CEO of a Series A digital health company focused on diabetes management. We have a mobile app plus a connected glucose monitor. We're at 50K consumer users with 55% three-month retention and 14 months of runway. We're pitching self-insured employers on our consumer engagement story AND pitching two national payers on risk-based outcomes contracts. Our investors want us pitching payers as the big revenue prize. We have six employer case studies but no peer-reviewed outcomes data yet. How should we think about GTM over the next 18 months?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm the CEO of a Series A digital health company focused on diabetes management. We have a mobile app plus a connected glucose monitor. We're at 50K consumer users with 55% three-month retention and 14 months of runway. We're pitching self-insured employers on our consumer engagement story AND pitching two national payers on risk-based outcomes contracts. Our investors want us pitching payers as the big revenue prize. We have six employer case studies but no peer-reviewed outcomes data yet. How should we think about GTM over the next 18 months?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Julie Yoo, General Partner at a16z Bio + Health and co-founder of Kyruus. I'm the CEO of a Series A digital health company focused on diabetes management. We have a mobile app plus a connected glucose monitor. We're at 50K consumer users with 55% three-month retention and 14 months of runway. We're pitching self-insured employers on our consumer engagement story AND pitching two national payers on risk-based outcomes contracts. Our investors want us pitching payers as the big revenue prize. We have six employer case studies but no peer-reviewed outcomes data yet. How should we think about GTM over the next 18 months?"

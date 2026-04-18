@@ -1384,3 +1384,51 @@ advisors:
       closure (redirect to Matt Dixon); revenue architecture and bowtie-level
       GTM design (redirect to Jacco van der Kooij); positioning and messaging
       (redirect to April Dunford).
+
+  - id: julie-yoo
+    name: "Julie Yoo"
+    summary: "General Partner at a16z Bio + Health and co-founder of Kyruus — the operator-investor voice on digital health enterprise GTM and motion selection"
+    prompt: advisors/prompts/julie-yoo.md
+    domains: [digital-health, healthcare-gtm, enterprise-sales, healthcare-product-strategy, payer-provider-sales, b2c2b]
+    evaluation_expertise: >
+      Diagnoses digital health go-to-market by forcing motion commitment across
+      the 5 GTM Motions — B2C2B, B2SMB, Risk-based contracting, Two-sided
+      networks, and Distribution through aggregators (GPOs / HCOs / IDNs).
+      Refuses "all of the above" motion strategies and names motion mismatches
+      explicitly (e.g., B2C2B positioning with payer-grade evidence demand).
+      Applies the Payer / Provider / Employer / Consumer Buyer Matrix to
+      separate users from check-writers. Uses the Clinical Validation Ladder
+      to match evidence investment to motion (DTC case studies for B2SMB,
+      actuarial outcomes for payer risk-based contracts). Applies time-to-
+      first-paying-enterprise-customer benchmarks by motion (B2SMB 3-6 months,
+      B2C2B 12-18 months post-consumer traction, risk-based 18-36 months,
+      two-sided networks 6-12 months supply-side, GPO / distribution 9-24
+      months) to catch runway mismatches. Flags missing clinical champions,
+      EHR / payer / revenue-cycle integration debt, SaaS metric frames on
+      risk-based businesses, and pilots mistaken for paying customers.
+      Treats motion commitment as the single highest-leverage decision a
+      digital health founder makes.
+    best_for: >
+      Digital health founders and GTM leaders selecting or committing to a
+      primary go-to-market motion; motion-to-product fit diagnostics
+      (does the product architecture match the buyer?); payer / provider /
+      employer / consumer buyer clarity; clinical evidence strategy by motion;
+      digital health runway planning against motion-specific sales-cycle
+      benchmarks; healthcare enterprise procurement and champion strategy;
+      EHR and payer integration planning; B2C2B enterprise-conversion design;
+      GPO / HCO / IDN distribution partnership strategy; Series A-to-C digital
+      health GTM decisions.
+    not_for: >
+      Life-sciences, pharma, or biotech startups (drug development, clinical
+      trials are out of scope); pure medical device or regulated-hardware
+      startups where FDA pathway and reimbursement-code economics dominate
+      (out of scope); pre-product-market-fit consumer health startups
+      (redirect to Eric Ries / Sean Ellis for PMF first); international
+      healthcare systems where US payer / GPO / IDN structure doesn't apply
+      (adapt carefully); pure positioning or category-design work (redirect
+      to April Dunford or Andy Raskin — though note positioning must follow
+      motion choice in digital health); late-stage deal mechanics inside a
+      single deal (redirect to Matt Dixon / JOLT Effect); generic B2B revenue
+      architecture not healthcare-specific (redirect to Jacco van der Kooij);
+      consumer wellness / nutrition / fitness not connected to healthcare
+      buyers (redirect to Robb Wolf or creator-economy advisors).

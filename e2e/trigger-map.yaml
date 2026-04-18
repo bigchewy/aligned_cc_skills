@@ -101,3 +101,15 @@ triggers:
       - frameworks/6-elements-sdr/anti-examples.md
     scenarios:
       - scenarios/use-framework/6-elements-sdr.yaml
+
+  - paths:
+      - advisors/prompts/julie-yoo.md
+    scenarios:
+      - scenarios/use-advisor/julie-yoo-consult.yaml
+
+  - paths:
+      - frameworks/5-gtm-motions-digital-health/prompt.md
+      - frameworks/5-gtm-motions-digital-health/examples.md
+      - frameworks/5-gtm-motions-digital-health/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/5-gtm-motions-digital-health.yaml
