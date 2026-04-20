@@ -942,7 +942,7 @@ Note: this task has no file changes. Skip `git commit`. Proceed to Task 13.
 
 ## Phase 4: Fixtures + Integration Test
 
-### Task 13: Scaffold the fixture directory layout
+### ✅ Task 13: Scaffold the fixture directory layout
 
 **Files:**
 - Create: `e2e/fixtures/manual-deploy/plans/active-plan-before-scan.md`
