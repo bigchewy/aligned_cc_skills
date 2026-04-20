@@ -328,7 +328,7 @@ git commit -m "feat: add M1 (Supabase Migration) entry to manual-deploy catalog"
 
 ---
 
-### Task 4: Add M2 (Environment Variable Addition) entry to the catalog
+### ✅ Task 4: Add M2 (Environment Variable Addition) entry to the catalog
 
 **Files:**
 - Modify: `skills/_shared/manual-deploy-artifact-catalog.md` (append M2 under the MEDIUM section)

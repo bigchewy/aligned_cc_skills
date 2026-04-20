@@ -70,4 +70,26 @@ evidence:
 
 ## MEDIUM — Likely Runtime Error or Silent Misconfig
 
-_Entries added in subsequent tasks._
+### M2: Environment Variable Addition
+
+**Why it needs manual deploy:** New `process.env.FOO` references in source code crash at runtime (or read `undefined` silently) unless the variable is set in the hosting provider (Vercel / Netlify / Fly / self-hosted). Code ships green; the first request on production throws.
+
+**Detection:**
+- Grep for `process\.env\.[A-Z_]+` in source and cross-check against `.env.example`. Any name referenced in the diff that is not yet in `.env.example` is a candidate.
+- Also detect when `.env.example` itself is modified to add a variable.
+- Exclude the built-in non-prod patterns.
+
+**Prod step (for the plan entry):** "Set each new variable in the hosting provider's environment settings. Paste the provider dashboard URL showing the variable is set (Vercel format: `https://vercel.com/*/settings/environment-variables`; Netlify and Fly analogous)."
+
+**Plan section populated:** `## Manual Steps (Post-Automation)` — subsection `### M2 env vars`.
+
+**Machine-matchable fields:**
+
+```yaml
+detector_grep: "process\\.env\\.[A-Z_]+"
+detector_glob: ".env.example"
+severity: MEDIUM
+evidence:
+  kind: name-and-url
+  template: "Variable name (literal match of what was added to .env.example) AND a hosting-provider dashboard URL — Vercel: https://vercel\\.com/[^ ]+/settings/environment-variables ; Netlify: https://app\\.netlify\\.com/[^ ]+/settings/env ; Fly: https://fly\\.io/apps/[^ ]+/secrets ."
+```
