@@ -1704,7 +1704,7 @@ git commit -m "docs: note manual-deploy catalog in README and bump plugin versio
 
 ---
 
-### Task 23: Run the full test suite and confirm green
+### ✅ Task 23: Run the full test suite and confirm green
 
 **Files:** (no edits)
 
