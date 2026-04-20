@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual-Deploy Artifact Detection — Design</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #faf9f7; margin: 0; padding: 40px; color: #1a1a1a; }
+    h1 { font-size: 1.5rem; font-weight: 500; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; }
+    .tab-btn { padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-family: inherit; }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .sub-tab-bar { display: flex; gap: 2px; border-bottom: 1px solid #f0eeeb; padding-left: 16px; background: #faf9f7; margin-bottom: 16px; }
+    .sub-tab-btn { padding: 8px 14px; font-size: 0.78rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit; }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .tab-panel, .sub-panel { display: none; }
+    .tab-panel.active, .sub-panel.active { display: block; }
+    .section { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; font-weight: 500; margin-bottom: 8px; }
+    .description { font-size: 0.88rem; color: #555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
+    .card p { font-size: 0.85rem; color: #555; line-height: 1.5; margin: 0; }
+    .callout { padding: 16px 20px; border-radius: 8px; font-size: 0.85rem; border-left: 4px solid; margin-bottom: 16px; line-height: 1.5; }
+    .callout-decision { background: #fff7ed; border-color: #ff6900; }
+    .callout-constraint { background: #f5f3ef; border-color: #555; }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; }
+    .callout strong { display: block; font-weight: 600; margin-bottom: 4px; }
+    .diagram-container { overflow-x: auto; background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 10px 12px; font-weight: 600; background: #f5f3ef; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 10px 12px; border-bottom: 1px solid #f0eeeb; vertical-align: top; }
+    code { font-family: Menlo, Consolas, monospace; font-size: 0.78rem; background: #f5f3ef; padding: 2px 6px; border-radius: 4px; }
+    pre code { display: block; padding: 12px; white-space: pre-wrap; background: #1a1a1a; color: #f5f3ef; border-radius: 6px; font-size: 0.78rem; }
+    .severity { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 9999px; font-weight: 600; }
+    .sev-critical { background: #fef2f2; color: #b91c1c; }
+    .sev-medium { background: #fff7ed; color: #ff6900; }
+  </style>
+</head>
+<body>
+  <h1>Manual-Deploy Artifact Detection</h1>
+  <p class="subtitle">Plugin design — v1: Supabase migrations + env vars</p>
+  <p class="context">RCA + three-layer fix: catalog in <code>_shared/</code>, writing-plans emits Post-Automation entries, finishing-a-development-branch hard-gates on pasted evidence.</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('rca')">Root Cause</button>
+    <button class="tab-btn" onclick="switchTab('design')">Three-Layer Fix</button>
+    <button class="tab-btn" onclick="switchTab('catalog')">Catalog (v1)</button>
+    <button class="tab-btn" onclick="switchTab('flow')">Flow Diagrams</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+    <button class="tab-btn" onclick="switchTab('risks')">Risks</button>
+  </div>
+
+  <!-- RCA TAB -->
+  <div id="panel-rca" class="tab-panel active">
+    <div class="section">
+      <h2>What broke</h2>
+      <p class="description">Autopilot workflow (brainstorming → writing-plans → executing-plans → finishing-a-development-branch) shipped code that depended on 5 Supabase migrations never applied to prod. Tests mocked Supabase, build passed, Vercel deployed. A week later: infinite <code>/login</code> loop because middleware read a column that didn't exist. 30 minutes of debugging.</p>
+    </div>
+    <div class="section">
+      <h2>Root cause</h2>
+      <div class="callout callout-decision">
+        <strong>No typed concept of "manual-deploy artifact"</strong>
+        The plugin has no first-class notion of a file class whose creation in a diff deterministically implies a non-automatable production step. Without the concept: nothing to detect, nothing to emit to plans, nothing to gate at merge. The plan schema has a <code>## Manual Steps (Post-Automation)</code> section but it's author-populated only.
+      </div>
+    </div>
+    <div class="section">
+      <h2>5 Whys</h2>
+      <ol class="bullet-list">
+        <li><strong>Prod broke</strong> — middleware queried a column that didn't exist.</li>
+        <li><strong>Migrations never ran</strong> — migrations 022–025 never applied to Supabase.</li>
+        <li><strong>Manual application is the deploy model</strong> — per project's <code>supabase/CLAUDE.md</code>.</li>
+        <li><strong>No skill surfaced the manual step</strong> — not at plan time, execute time, or finish time.</li>
+        <li><strong>The concept doesn't exist</strong> — "manual-deploy artifact" isn't a type the plugin reasons about.</li>
+      </ol>
+    </div>
+    <div class="section">
+      <h2>Generalization — 10 artifact classes</h2>
+      <p class="description">Not migration-specific. Same failure mode for:</p>
+      <div class="card-grid">
+        <div class="card"><h3>DB migrations</h3><p>Supabase / Prisma / Drizzle — column or table missing at runtime.</p></div>
+        <div class="card"><h3>.env additions</h3><p>Runtime crash or silent <code>undefined</code> value.</p></div>
+        <div class="card"><h3>Cron jobs</h3><p>Silently never runs.</p></div>
+        <div class="card"><h3>Feature flags</h3><p>Feature dead on prod or live too early.</p></div>
+        <div class="card"><h3>Webhooks / OAuth</h3><p>Vendor 4xx/5xx, silent drops.</p></div>
+        <div class="card"><h3>DNS / domains</h3><p>DNS_NOTFOUND, cert failure.</p></div>
+        <div class="card"><h3>Edge functions</h3><p>URL 404s at runtime.</p></div>
+        <div class="card"><h3>RLS policies</h3><p>403 / file-not-found.</p></div>
+        <div class="card"><h3>Queues / topics</h3><p>Messages dropped.</p></div>
+        <div class="card"><h3>Secrets / API keys</h3><p>Runtime crash in prod only.</p></div>
+      </div>
+      <p class="description"><strong>v1 ships 2 of these:</strong> Supabase migrations (the one that bit you) and env vars. Structure supports incremental expansion.</p>
+    </div>
+  </div>
+
+  <!-- DESIGN TAB -->
+  <div id="panel-design" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('design','foundation')">4a · Catalog</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('design','plans')">4b · writing-plans</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('design','finishing')">4c · finishing</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('design','skipped')">Skipped layers</button>
+    </div>
+
+    <div id="sub-foundation" class="sub-panel active">
+      <div class="section">
+        <h2>4a · Foundation: <code>skills/_shared/manual-deploy-artifact-catalog.md</code></h2>
+        <p class="description">Prose markdown per-entry, matching <code>deployment-pitfall-catalog.md</code>. LLM-loaded via Read. Small fenced blocks inside each entry carry the 3 machine-matchable fields so enforcement is literal, not interpreted.</p>
+        <div class="callout callout-note">
+          <strong>Why prose, not YAML</strong>
+          Architect confirmed: zero <code>_shared/</code> files use YAML-structured entries. Every <code>_shared/</code> file is LLM-loaded reference, not parsed data. A YAML schema would break pattern match with maintainers who have internalized the existing two catalogs.
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-plans" class="sub-panel">
+      <div class="section">
+        <h2>4b · writing-plans auto-populates the plan</h2>
+        <ul class="bullet-list">
+          <li>New step before the Critique Panel: <strong>Manual Deploy Artifact Scan</strong>.</li>
+          <li>Walks planned <code>Create:</code> and <code>Modify:</code> paths.</li>
+          <li>For each catalog match not in built-in exempt patterns (<code>**/seed/**</code>, <code>**/fixtures/**</code>, <code>**/__tests__/**</code>, <code>**/*.test.*</code>), injects an entry into <code>## Manual Steps (Post-Automation)</code>.</li>
+          <li>Verifier critic enforces coverage.</li>
+        </ul>
+        <div class="callout callout-decision">
+          <strong>Why writing-plans is root layer</strong>
+          First point where concrete file paths exist. The plan is the durable artifact the user re-reads a week later. Upstream (brainstorming) is too abstract; downstream arrives after "code shipped = done" mental model has set.
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-finishing" class="sub-panel">
+      <div class="section">
+        <h2>4c · finishing-a-development-branch Step 0.5</h2>
+        <div class="callout callout-note">
+          <strong>Round 1 + Round 2 corrections applied</strong>
+          Diff source is Step 0 (line 64), not Step 1c. Plan lookup scans both <code>docs/plans/*.md</code> AND <code>docs/plans/completed/*.md</code> (active wins precedence). Ledger moved to <code>docs/manual-deploy-ledger.md</code> (outside <code>.gitignore: docs/plans/</code>).
+        </div>
+        <ul class="bullet-list">
+          <li>Reuses Step 0's existing diff at <code>finishing-a-development-branch/SKILL.md:64</code>.</li>
+          <li>Scans both <code>docs/plans/*.md</code> and <code>docs/plans/completed/*.md</code> — active wins precedence.</li>
+          <li>Parses Post-Automation by <strong>structural shape</strong> (heading + list), not line numbers — survives executing-plans checkbox mutations.</li>
+          <li>Per-file state tracking: <code>needs-evidence | has-evidence | exempt | already-applied</code>.</li>
+          <li><strong>Writes pasted evidence into the plan file</strong>, stages only the plan (<code>git add &lt;plan-path&gt;</code>), commits with <code>chore: record manual deploy evidence</code>.</li>
+          <li>On re-run after hook failure: detects in-place evidence, skips re-prompting, proceeds to commit.</li>
+        </ul>
+        <div class="callout callout-risk">
+          <strong>Step 0.5 is a writing step — authorship exception</strong>
+          writing-plans/SKILL.md centralizes plan authorship. Step 0.5 is the single documented exception. Cross-reference CI check (task 13) guards against rename breakage.
+        </div>
+        <h2 style="margin-top:24px;">Evidence tiering (v1, hardened per Round 2)</h2>
+        <table>
+          <thead><tr><th>Artifact</th><th>Severity</th><th>Evidence kinds</th><th>Synthesizability</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Supabase migration</td>
+              <td><span class="severity sev-critical">CRITICAL</span></td>
+              <td>
+                <strong>Kind (a) — RECOMMENDED:</strong> SQL Editor URL with project ref + query UUID.<br/>
+                <em>Kind (b) — fallback:</em> SHA-256 hash of migration file.<br/>
+                <em>Kind (c) — fallback:</em> 30-char echoed-SQL substring match.
+              </td>
+              <td>
+                (a) genuinely non-synthesizable (server-generated UUID).<br/>
+                (b), (c) reduce but do not prevent reflexive-yes.
+              </td>
+            </tr>
+            <tr>
+              <td>Env var addition</td>
+              <td><span class="severity sev-medium">MEDIUM</span></td>
+              <td>Variable name(s) + dashboard URL.</td>
+              <td>Partially prevented — provider API readback is v2 candidate.</td>
+            </tr>
+            <tr>
+              <td><em>Third kind: <code>already-applied</code></em></td>
+              <td>—</td>
+              <td><code>already-applied — YYYY-MM-DD by &lt;author&gt;</code></td>
+              <td>For pre-existing branches with migrations applied before the gate existed (Round 1 DevEx #4).</td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 style="margin-top:24px;">Ledger (shared-migration dedup)</h2>
+        <p class="description">At <code>docs/manual-deploy-ledger.md</code>, append-only: <code>{file-hash} {date} {branch} {project-ref}</code>. Lookup matches on <strong>hash + project-ref</strong>, not hash alone — prevents false-skip when two projects coincidentally share a migration hash.</p>
+      </div>
+    </div>
+
+    <div id="sub-skipped" class="sub-panel">
+      <div class="section">
+        <h2>Intentionally skipped</h2>
+        <div class="callout callout-constraint"><strong>brainstorming</strong>Too early. File paths not concrete. Signal arrives before actionable.</div>
+        <div class="callout callout-constraint"><strong>executing-plans runtime warning</strong>Belt-and-suspenders only. Easy to dismiss; doesn't persist to finish time. Not required for correctness.</div>
+        <div class="callout callout-constraint"><strong>Nested CLAUDE.md reading</strong>Would be a new cross-cutting pattern. Zero skills do this today. Plan-based exemption achieves the same outcome. Deferred to v2 behind measured need.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATALOG TAB -->
+  <div id="panel-catalog" class="tab-panel">
+    <div class="section">
+      <h2>M1: Supabase Migration <span class="severity sev-critical">CRITICAL</span></h2>
+      <p class="description"><strong>Why manual deploy:</strong> Supabase projects using the SQL Editor workflow require each migration to be applied by hand in the target environment. Unapplied migrations mean prod code depends on schema that doesn't exist.</p>
+      <p class="description"><strong>Detection:</strong> New files under <code>supabase/migrations/*.sql</code> in branch diff, excluding built-in exempt patterns.</p>
+      <pre><code># Machine-matchable fields (per catalog schema header)
+detector_glob: "supabase/migrations/*.sql"
+severity: CRITICAL
+evidence:
+  recommended: sql-editor-url        # genuinely non-synthesizable
+  fallback_a: sha256-hash             # reduces reflexive-yes
+  fallback_b: echoed-sql-substring    # reduces reflexive-yes
+  url_template: "https://supabase\\.com/dashboard/project/[a-z0-9]+/sql/[0-9a-f-]+"
+  project_ref_capture: "/project/(?P&lt;ref&gt;[a-z0-9]+)/sql/"</code></pre>
+      <p class="description"><strong>Prod step (plan entry):</strong> "Apply each migration below via the Supabase SQL Editor in the production project. Paste the Success output back into this section when done."</p>
+    </div>
+
+    <div class="section">
+      <h2>M2: Environment Variable Addition <span class="severity sev-medium">MEDIUM</span></h2>
+      <p class="description"><strong>Why manual deploy:</strong> New <code>process.env.FOO</code> references require the value to be set in the hosting provider dashboard. Silent <code>undefined</code> or runtime crash if missed.</p>
+      <p class="description"><strong>Detection:</strong> New <code>process.env.X</code> references not in <code>.env.example</code>; diff on <code>.env.example</code>.</p>
+      <pre><code>detector_glob: ".env.example"
+detector_grep: "process\\.env\\.[A-Z_]+"
+severity: MEDIUM
+evidence:
+  kind: typed-confirmation
+  template: "Type each new variable name and confirm
+    the value is set in the production hosting
+    provider dashboard"</code></pre>
+      <p class="description"><strong>Prod step (plan entry):</strong> "Set each variable below in the production hosting provider dashboard. Type the variable names back into this section after confirming."</p>
+    </div>
+
+    <div class="section">
+      <h2>Built-in non-prod exemption patterns</h2>
+      <ul class="bullet-list">
+        <li><code>**/seed/**</code> — seed data, never applied to prod</li>
+        <li><code>**/fixtures/**</code> — test fixtures</li>
+        <li><code>**/__tests__/**</code> — test code</li>
+        <li><code>**/*.test.*</code> — test files</li>
+      </ul>
+      <p class="description">Plans may declare additional exemptions via a <code>### Non-prod artifacts (exempt from gate)</code> subsection under <code>## Manual Steps (Post-Automation)</code>.</p>
+    </div>
+  </div>
+
+  <!-- FLOW TAB -->
+  <div id="panel-flow" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('flow','before')">Before (broken)</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('flow','after')">After (v1)</button>
+    </div>
+
+    <div id="sub-before" class="sub-panel active">
+      <div class="diagram-container">
+        <pre class="mermaid">
+flowchart LR
+  A[brainstorming] --> B[writing-plans]
+  B --> C[executing-plans]
+  C --> D[finishing-a-development-branch]
+  D --> E[merge + Vercel deploy]
+  E --> F[PROD BROKEN]
+  B -.->|migrations as normal tasks| B
+  C -.->|mocked tests pass| C
+  D -.->|scans Vercel runtime only| D
+  style F fill:#fef2f2,stroke:#b91c1c
+  style B fill:#f5f3ef
+  style C fill:#f5f3ef
+  style D fill:#f5f3ef
+        </pre>
+      </div>
+      <p class="description" style="margin-top:16px;">No skill detects manual-deploy artifacts. No nested CLAUDE.md reading. No Post-Automation entries auto-populated. Mocked tests don't catch unapplied schema. Deployment audit is Vercel-runtime only.</p>
+    </div>
+
+    <div id="sub-after" class="sub-panel">
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+flowchart LR
+  SHARED[(_shared/manual-deploy-<br/>artifact-catalog.md)]
+  A[brainstorming] --> B[writing-plans]
+  B -->|scan planned paths| SHARED
+  B -->|inject Post-Automation<br/>entries with evidence<br/>placeholders| PLAN[(docs/plans/<br/>feature.md)]
+  B --> C[executing-plans]
+  C --> D[finishing-a-development-branch]
+  D -->|Step 0.5:<br/>scan diff| SHARED
+  D -->|read evidence| PLAN
+  D -->|if missing,<br/>prompt + WRITE<br/>back to plan| PLAN
+  D -->|hard gate<br/>on mismatch| BLOCK[BLOCK]
+  D --> E[merge + deploy]
+  style SHARED fill:#fff7ed,stroke:#ff6900
+  style PLAN fill:#fff7ed,stroke:#ff6900
+  style BLOCK fill:#fef2f2,stroke:#b91c1c
+  style D fill:#ecfdf5,stroke:#047857
+        </pre>
+      </div>
+      <p class="description" style="margin-top:16px;">Catalog is the single source of truth. writing-plans auto-populates Post-Automation. finishing-a-development-branch hard-gates on pasted evidence and writes it into the plan before archival.</p>
+    </div>
+  </div>
+
+  <!-- DECISIONS TAB -->
+  <div id="panel-decisions" class="tab-panel">
+    <div class="section">
+      <h2>Decision log</h2>
+      <table>
+        <thead><tr><th>#</th><th>Decision</th><th>Choice</th><th>Why / Rejected alternatives</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Catalog location</td><td><code>skills/_shared/</code></td><td>Writing-plans and finishing both consume it. Rejected: skill-local, or extending deployment-pitfall-catalog.md (wrong scope).</td></tr>
+          <tr><td>2</td><td>Catalog format</td><td>Prose markdown per-entry</td><td>Zero <code>_shared/</code> files use YAML. All are LLM-loaded references. Prose matches precedent; YAML would be novel.</td></tr>
+          <tr><td>3</td><td>v1 scope</td><td>Migrations + env only</td><td>Prove end-to-end with minimum surface. Rejected: full 10-type catalog (higher design cost, validates abstraction before generalizing).</td></tr>
+          <tr><td>4</td><td>Primary fix layer</td><td>writing-plans (root) + finishing (enforcement)</td><td>Two layers solve different problems. Rejected: finish-only (reflexive-yes risk, no durable plan record).</td></tr>
+          <tr><td>5</td><td>Gate mechanism</td><td>Hard gate requiring pasted/typed evidence</td><td>Soft y/n checklist is the exact failure mode that caused the original bug.</td></tr>
+          <tr><td>6</td><td>Evidence strictness</td><td>Tiered per-artifact</td><td>Strict for migrations, medium for env. Rejected: uniform strict (unnecessary friction); uniform soft (reflexive-yes).</td></tr>
+          <tr><td>7</td><td>Evidence tiering mechanism</td><td>Per-entry <code>evidence:</code> block</td><td>Two entries — tier taxonomy is premature abstraction.</td></tr>
+          <tr><td>8</td><td>Evidence persistence</td><td>Step 0.5 writes evidence into plan file</td><td>For survival through <code>docs/plans/completed/</code> archival. Rejected: conversation-only (lost on archive).</td></tr>
+          <tr><td>9</td><td>Exemption mechanism</td><td>In-plan subsection + catalog built-in defaults</td><td>Plan-based already works (finishing reads the plan). Rejected: nested CLAUDE.md (new cross-cutting pattern).</td></tr>
+          <tr><td>10</td><td>Nested CLAUDE.md reading</td><td>Not added in v1</td><td>Zero skills do this today. Plan exemption achieves same outcome. Deferred to v2 behind measured need.</td></tr>
+          <tr><td>11</td><td>Skip executing-plans warning</td><td>Skip in v1</td><td>Does not add correctness. Can layer on later as polish.</td></tr>
+          <tr><td>12</td><td>Eval surface coverage</td><td>Added proactively in v1</td><td>Correctness-driven (evals catch silent skipped-step regressions). Rejected: "CI forces it" — pytest forward-validates only; the feature is additive, not required.</td></tr>
+          <tr><td>13</td><td>Evidence ledger</td><td><code>docs/manual-deploy-ledger.md</code>, hash + project-ref lookup</td><td>Path moved from <code>docs/plans/.manual-deploy-ledger.md</code> (gitignored). Hash-only lookup rejected — false-skip risk across projects.</td></tr>
+          <tr><td>14</td><td>Modified existing migrations</td><td>CRITICAL block merge, no evidence accepted</td><td>Supabase does not re-apply edited migrations — silent divergence.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RISKS TAB -->
+  <div id="panel-risks" class="tab-panel">
+    <div class="section">
+      <h2>Cross-cutting integration risks</h2>
+      <div class="callout callout-risk">
+        <strong>Eval surface must be updated together</strong>
+        SKILL.md edits to writing-plans and finishing-a-development-branch change LLM behavior surface. <code>e2e/</code> pytest chain enforces: source → <code>eval-surface.yaml</code> → <code>trigger-map.yaml</code> → scenario YAML. If any hop is missing, CI fails. Task 7 in the plan handles this.
+      </div>
+      <div class="callout callout-risk">
+        <strong>Plan-write idempotency</strong>
+        Step 0.5 writes evidence to the plan file. Re-running the skill must not duplicate evidence entries or corrupt the plan. Needs explicit test coverage.
+      </div>
+      <div class="callout callout-risk">
+        <strong>Plugin split coupling</strong>
+        Feature spans <code>writing-plans</code> + <code>finishing-a-development-branch</code> + <code>_shared/</code>. All destined for <code>aligned-works</code> plugin per the in-flight split. Recommendation: land before the split — one PR scope, fewer coordination costs.
+      </div>
+      <div class="callout callout-note">
+        <strong>False-positive cost vs. false-negative cost</strong>
+        Built-in exemption patterns are conservative (<code>**/seed/**</code>, <code>**/fixtures/**</code>). False positive = friction; false negative = production outage. Err toward friction in doubt.
+      </div>
+      <h2 style="margin-top:24px;">Known v1 gaps (accepted, not blockers)</h2>
+      <ul class="bullet-list">
+        <li>(a) Projects with CI-automated migrations will false-positive per branch — v2 candidate for root CLAUDE.md opt-out.</li>
+        <li>(b) Ledger is per-repo, not shared across clones — two developers on different machines do not share skip-state.</li>
+        <li>(c) Reflexive-yes only partially prevented. Only M1 kind (a) (SQL Editor URL) is genuinely non-synthesizable. Kinds (b) and (c) are computable from the local repo. v2 candidate: Supabase API verification.</li>
+        <li>(d) M2 env vars similarly partial — v2 candidate: hosting provider API readback.</li>
+        <li>(e) Cross-skill authorship exception creates a bidirectional file-reference (Round 2 QA N3). Task 13 adds a grep CI check. Plugin-split (§4f) must update both files atomically.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false, securityLevel: 'loose', theme: 'base',
+      themeVariables: { fontFamily: 'system-ui, sans-serif', fontSize: '14px', lineColor: '#e5e7eb', primaryColor: '#f0eeeb', primaryTextColor: '#1a1a1a', primaryBorderColor: '#e5e7eb', secondaryColor: '#fff7ed', secondaryTextColor: '#1a1a1a', secondaryBorderColor: '#ff6900' },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        panel.querySelectorAll('.mermaid-deferred').forEach(el => {
+          el.classList.remove('mermaid-deferred'); el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); } catch (e) {}
+        });
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) firstSubBtn.click();
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        sub.querySelectorAll('.mermaid-deferred').forEach(el => {
+          el.classList.remove('mermaid-deferred'); el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); } catch (e) {}
+        });
+      }
+    }
+  </script>
+</body>
+</html>
