@@ -1,6 +1,8 @@
 # Vercel Deployment Pitfall Catalog
 
-Reference document for the Vercel deployment audit step. Contains detection patterns, explanations, false positive guidance, and recommended fixes for each audit category.
+Reference document for the Vercel deployment audit step — **scoped to runtime bugs in bundled code** (e.g., `__dirname`/`__filename` resolution, `process.env[...]` bracket access, module-level mutable state). Contains detection patterns, explanations, false positive guidance, and recommended fixes for each audit category.
+
+> For **manual-deploy artifacts** (DB migrations, env-var additions, cron/webhook setup, DNS — anything that requires a non-automatable production step), see the separate catalog at `skills/_shared/manual-deploy-artifact-catalog.md`. That catalog is a superset of this one in shape (severity-section organization, prose per entry) and adds a fenced machine-matchable block per entry for programmatic detection. Different concern; do not conflate.
 
 ## Contents
 

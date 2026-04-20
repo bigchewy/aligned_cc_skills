@@ -880,7 +880,7 @@ git commit -m "feat(finishing): add Step 0.5 Manual Deploy Artifact Gate"
 
 ---
 
-### Task 11: Update deployment-pitfall-catalog.md intro to scope and cross-reference
+### ✅ Task 11: Update deployment-pitfall-catalog.md intro to scope and cross-reference
 
 **Behavior note:** `deployment-pitfall-catalog.md` is loaded by the LLM at `Step 0: Deployment Platform Audit` execution time (per `finishing-a-development-branch/SKILL.md:52`). Narrowing the intro's described scope to "runtime bugs in bundled code" may cause the model to prune audit categories that do not fit that description. The new text retains the CRITICAL/HIGH/MEDIUM/LOW sections verbatim — only the intro paragraph changes — so the per-category Detection patterns still fire. Verify Step 0's findings output format is unchanged by re-reading the catalog after the edit.
 
