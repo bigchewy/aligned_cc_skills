@@ -9,7 +9,7 @@ description: Use when implementation is complete, all tests pass, and you need t
 
 Guide completion of development work by presenting clear options and handling chosen workflow.
 
-**Core principle:** Deployment audit → Verify tests → Verify build → Present options → Execute choice → Clean up → Archive plans → Completion summary.
+**Core principle:** Deployment audit → Manual deploy gate → Verify tests → Verify build → Present options → Execute choice → Clean up → Archive plans → Completion summary.
 
 **Required reference:** Read `skills/_shared/verification-checklist.md` — every success claim requires fresh evidence in the current message.
 
@@ -58,6 +58,7 @@ Load `references/deployment-pitfall-catalog.md` for detection patterns and false
    - Grep for `readFileSync` and `readFile` — check if paths use `__dirname` or dynamic variables
 2. **Environment Variables (CRITICAL)**
    - Grep for `process\.env\[` (bracket access that defeats inlining)
+   - Note: this check detects bracket-access bundling bugs, not missing production env-var declarations — those are handled by Step 0.5 (M2 gate).
 3. **Dynamic Requires (CRITICAL)**
    - Grep for `require(` with template literals or string concatenation
 4. **Module-Level Mutable State (HIGH)** — only in files changed on this branch
@@ -577,6 +578,7 @@ Then present:
 | Step | Result |
 |------|--------|
 | Deployment audit | <Clean / N critical, N high findings> |
+| Manual deploy gate | <Passed / N files gated / No matches> |
 | Tests | <N/N passing> |
 | Build | <Passed / Failed> |
 | LLM eval | <Passed / Warned / Skipped — reason> |
@@ -597,6 +599,7 @@ Then present:
 | Step | Action | Blocks on failure? |
 |------|--------|--------------------|
 | 0. Deployment audit | Scan for deployment pitfalls | CRITICAL: yes, HIGH: no |
+| 0.5. Manual deploy gate | Scan diff against artifact catalog; require evidence | Yes (any needs-evidence file) |
 | 1. Verify tests | Run test suite | Yes |
 | 1a. Verify build | Run build command | Yes |
 | 1b. LLM eval | Run eval command if surface changed | Yes (fail), No (warn/pass) |
