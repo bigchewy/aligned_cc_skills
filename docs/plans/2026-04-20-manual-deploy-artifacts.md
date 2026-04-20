@@ -41,7 +41,7 @@ Phase ordering: Phase 1 (catalog + tests) → Phase 2 (writing-plans edits) → 
 
 ## Phase 1: Catalog Foundation
 
-### Task 1: Create the catalog file with schema header and empty severity sections
+### ✅ Task 1: Create the catalog file with schema header and empty severity sections
 
 **Files:**
 - Create: `skills/_shared/manual-deploy-artifact-catalog.md`
@@ -120,7 +120,7 @@ git commit -m "feat: scaffold manual-deploy artifact catalog with schema"
 
 ---
 
-### Task 2: Write catalog-integrity pytest (failing)
+### ✅ Task 2: Write catalog-integrity pytest (failing)
 
 **Files:**
 - Create: `e2e/tests/test_manual_deploy_catalog.py`
@@ -271,7 +271,7 @@ git commit -m "test: add catalog-integrity pytest for manual-deploy artifacts"
 
 ---
 
-### Task 3: Add M1 (Supabase Migration) entry to the catalog
+### ✅ Task 3: Add M1 (Supabase Migration) entry to the catalog
 
 **Files:**
 - Modify: `skills/_shared/manual-deploy-artifact-catalog.md` (append M1 under the CRITICAL section)
@@ -328,7 +328,7 @@ git commit -m "feat: add M1 (Supabase Migration) entry to manual-deploy catalog"
 
 ---
 
-### Task 4: Add M2 (Environment Variable Addition) entry to the catalog
+### ✅ Task 4: Add M2 (Environment Variable Addition) entry to the catalog
 
 **Files:**
 - Modify: `skills/_shared/manual-deploy-artifact-catalog.md` (append M2 under the MEDIUM section)
@@ -389,7 +389,7 @@ git commit -m "feat: add M2 (env var addition) entry to manual-deploy catalog"
 
 ## Phase 2: writing-plans Integration
 
-### Task 5: Add "Manual Deploy Artifact Scan" step to writing-plans/SKILL.md
+### ✅ Task 5: Add "Manual Deploy Artifact Scan" step to writing-plans/SKILL.md
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (insert a new `## Manual Deploy Artifact Scan` section immediately BEFORE the `## Fact-Check + Critique Panel` section. Note: in the current file, `## Fact-Check + Critique Panel` precedes `## Verification Gate` in document order. Use `## Fact-Check + Critique Panel (mandatory, 2 parallel technical critics)` as the INSERT-BEFORE anchor — it is the only unique literal that survives future edits.)
@@ -478,7 +478,7 @@ git commit -m "feat(writing-plans): add Manual Deploy Artifact Scan step"
 
 ---
 
-### Task 6: Document the authorship exception in writing-plans/SKILL.md
+### ✅ Task 6: Document the authorship exception in writing-plans/SKILL.md
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (add a note inside the "Plan File Location Rule" subsection)
@@ -510,7 +510,7 @@ git commit -m "docs(writing-plans): note Step 0.5 authorship exception"
 
 ---
 
-### Task 7: Update plan-critique-checklist.md §10 to reference the catalog
+### ✅ Task 7: Update plan-critique-checklist.md §10 to reference the catalog
 
 **Files:**
 - Modify: `skills/writing-plans/plan-critique-checklist.md` (the §10 "Gap analysis — unvalidated assumptions" section)
@@ -550,7 +550,7 @@ git commit -m "docs(writing-plans): checklist §10 covers manual-deploy catalog"
 
 ---
 
-### Task 8: Extend the Verifier prompt to enforce Post-Automation coverage
+### ✅ Task 8: Extend the Verifier prompt to enforce Post-Automation coverage
 
 **Files:**
 - Modify: `skills/writing-plans/references/critique-panel-prompts.md` (the Round 1 Verifier prompt, Phase 3 paragraph)
@@ -589,7 +589,7 @@ git commit -m "feat(writing-plans): Verifier enforces Post-Automation coverage"
 
 ## Phase 3: finishing-a-development-branch Integration
 
-### Task 9: Write cross-reference CI check (failing)
+### ✅ Task 9: Write cross-reference CI check (failing)
 
 **Files:**
 - Create: `e2e/tests/test_skill_cross_references.py`
@@ -663,7 +663,7 @@ git commit -m "test: add cross-reference guard for authorship exception"
 
 ---
 
-### Task 10: Add Step 0.5 to finishing-a-development-branch/SKILL.md
+### ✅ Task 10: Add Step 0.5 to finishing-a-development-branch/SKILL.md
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (insert a new `### Step 0.5: Manual Deploy Artifact Gate` subsection between `### Step 0: Deployment Platform Audit` and `### Step 1: Verify Tests`)
@@ -880,7 +880,7 @@ git commit -m "feat(finishing): add Step 0.5 Manual Deploy Artifact Gate"
 
 ---
 
-### Task 11: Update deployment-pitfall-catalog.md intro to scope and cross-reference
+### ✅ Task 11: Update deployment-pitfall-catalog.md intro to scope and cross-reference
 
 **Behavior note:** `deployment-pitfall-catalog.md` is loaded by the LLM at `Step 0: Deployment Platform Audit` execution time (per `finishing-a-development-branch/SKILL.md:52`). Narrowing the intro's described scope to "runtime bugs in bundled code" may cause the model to prune audit categories that do not fit that description. The new text retains the CRITICAL/HIGH/MEDIUM/LOW sections verbatim — only the intro paragraph changes — so the per-category Detection patterns still fire. Verify Step 0's findings output format is unchanged by re-reading the catalog after the edit.
 
@@ -921,7 +921,7 @@ git commit -m "docs(finishing): scope pitfall catalog and cross-ref manual-deplo
 
 ---
 
-### Task 12: Verify cross-reference CI check now passes
+### ✅ Task 12: Verify cross-reference CI check now passes
 
 **Files:**
 - (no edits — this task runs the test suite)
@@ -942,7 +942,7 @@ Note: this task has no file changes. Skip `git commit`. Proceed to Task 13.
 
 ## Phase 4: Fixtures + Integration Test
 
-### Task 13: Scaffold the fixture directory layout
+### ✅ Task 13: Scaffold the fixture directory layout
 
 **Files:**
 - Create: `e2e/fixtures/manual-deploy/plans/active-plan-before-scan.md`
@@ -1139,7 +1139,7 @@ git commit -m "test: scaffold manual-deploy fixture plans, diffs, and expected o
 
 ---
 
-### Task 14: Write structural integration test
+### ✅ Task 14: Write structural integration test
 
 **Note — intentional deviation from design doc §5 task 9:** the design doc names `e2e/tests/test_finish_step_0_5_idempotent.py` as a required deliverable. That filename is NOT created by this plan. The idempotency property is instead covered by (a) the structural fixture test below, which asserts that a post-scan plan has the expected shape (the contract the scan step must satisfy), and (b) eval scenario (a), which runs the actual LLM against a before-scan fixture and asserts the output contains the Post-Automation section exactly once. See Decision 3 for the rationale. Do NOT create `test_finish_step_0_5_idempotent.py` — it would duplicate scan logic in Python and become its own source of truth.
 
@@ -1277,7 +1277,7 @@ git commit -m "test: structural fixture test for manual-deploy plan layout"
 
 ## Phase 5: Eval-Surface Wiring
 
-### Task 15: Extend eval-surface.yaml with the three new surface files
+### ✅ Task 15: Extend eval-surface.yaml with the three new surface files
 
 **Files:**
 - Modify: `e2e/eval-surface.yaml`
@@ -1306,7 +1306,7 @@ git commit -m "test: add manual-deploy skill files to eval surface"
 
 ---
 
-### Task 16: Extend trigger-map.yaml with manual-deploy scenario routing
+### ✅ Task 16: Extend trigger-map.yaml with manual-deploy scenario routing
 
 **Files:**
 - Modify: `e2e/trigger-map.yaml`
@@ -1344,7 +1344,7 @@ git commit -m "test: route manual-deploy triggers to new scenarios"
 
 ---
 
-### Task 17: Create scenario (a) — plan scan emits Post-Automation entry
+### ✅ Task 17: Create scenario (a) — plan scan emits Post-Automation entry
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/plan-scan-emits-post-automation.yaml`
@@ -1410,7 +1410,7 @@ git commit -m "test: add eval scenario (a) plan-scan-emits-post-automation"
 
 ---
 
-### Task 18: Create scenario (b) — finish-time gate blocks when evidence missing
+### ✅ Task 18: Create scenario (b) — finish-time gate blocks when evidence missing
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/finish-gate-blocks-missing-evidence.yaml`
@@ -1479,7 +1479,7 @@ git commit -m "test: add eval scenario (b) finish-gate-blocks-missing-evidence"
 
 ---
 
-### Task 19: Create scenario (c) — exemption declaration exempts matching files
+### ✅ Task 19: Create scenario (c) — exemption declaration exempts matching files
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/exemption-exempts-matching-files.yaml`
@@ -1545,7 +1545,7 @@ git commit -m "test: add eval scenario (c) exemption-exempts-matching-files"
 
 ---
 
-### Task 20: Create scenario (d) — env-var artifact class enforces medium-tier evidence
+### ✅ Task 20: Create scenario (d) — env-var artifact class enforces medium-tier evidence
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/env-var-gate-medium-evidence.yaml`
@@ -1638,7 +1638,8 @@ git commit -m "test: add eval scenario (d) env-var-gate-medium-evidence"
 
 ---
 
-### Task 21: Verify eval wiring — trigger-map test suite + promptfoo smoke-load
+### ✅ Task 21: Verify eval wiring — trigger-map test suite + promptfoo smoke-load
+> NOTE: Verification surfaced that `promptfooconfig.yaml` was missing registrations for the 4 new manual-deploy scenarios (caught by `test_trigger_map_scenarios.py`). Added the four `file://scenarios/manual-deploy/*.yaml` entries to the master config. All 96 trigger-map tests pass; `promptfoo validate` confirms all 4 scenario configs load.
 
 **Files:** (no edits)
 
@@ -1665,7 +1666,7 @@ Expected: promptfoo loads the config and file:// references without error. If `-
 
 ## Phase 6: Documentation, Version Bump, Final Verification
 
-### Task 22: Update README and bump plugin version
+### ✅ Task 22: Update README and bump plugin version
 
 **Files:**
 - Modify: `README.md`
@@ -1703,7 +1704,7 @@ git commit -m "docs: note manual-deploy catalog in README and bump plugin versio
 
 ---
 
-### Task 23: Run the full test suite and confirm green
+### ✅ Task 23: Run the full test suite and confirm green
 
 **Files:** (no edits)
 

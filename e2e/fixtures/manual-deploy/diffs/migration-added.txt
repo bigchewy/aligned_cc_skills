@@ -1,0 +1,1 @@
+A	supabase/migrations/022_add_tos_version.sql
