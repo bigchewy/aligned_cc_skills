@@ -589,7 +589,7 @@ git commit -m "feat(writing-plans): Verifier enforces Post-Automation coverage"
 
 ## Phase 3: finishing-a-development-branch Integration
 
-### Task 9: Write cross-reference CI check (failing)
+### ✅ Task 9: Write cross-reference CI check (failing)
 
 **Files:**
 - Create: `e2e/tests/test_skill_cross_references.py`
