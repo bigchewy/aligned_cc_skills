@@ -1344,7 +1344,7 @@ git commit -m "test: route manual-deploy triggers to new scenarios"
 
 ---
 
-### Task 17: Create scenario (a) — plan scan emits Post-Automation entry
+### ✅ Task 17: Create scenario (a) — plan scan emits Post-Automation entry
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/plan-scan-emits-post-automation.yaml`
