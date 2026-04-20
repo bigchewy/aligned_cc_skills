@@ -271,7 +271,7 @@ git commit -m "test: add catalog-integrity pytest for manual-deploy artifacts"
 
 ---
 
-### Task 3: Add M1 (Supabase Migration) entry to the catalog
+### ✅ Task 3: Add M1 (Supabase Migration) entry to the catalog
 
 **Files:**
 - Modify: `skills/_shared/manual-deploy-artifact-catalog.md` (append M1 under the CRITICAL section)

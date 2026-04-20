@@ -44,7 +44,27 @@ Plan authors may declare additional exemptions inline (see `skills/writing-plans
 
 ## CRITICAL — Production Outage if Skipped
 
-_Entries added in subsequent tasks._
+### M1: Supabase Migration
+
+**Why it needs manual deploy:** Supabase projects that use the SQL Editor workflow require each migration to be applied by hand in the target environment. Unapplied migrations mean production code depends on schema (tables, columns, RPCs, policies) that does not exist — producing 500s, infinite redirects, or silent data-path failures.
+
+**Detection:**
+- Glob new files under `supabase/migrations/*.sql` in the branch diff.
+- Exclude built-in non-prod patterns (`**/seed/**`, `**/fixtures/**`, `**/__tests__/**`, `**/*.test.*`).
+
+**Prod step (for the plan entry):** "Apply each migration below via the Supabase SQL Editor in the production project. Paste the SQL Editor URL (recommended) or the file's SHA-256 hash back into this section when done."
+
+**Plan section populated:** `## Manual Steps (Post-Automation)` — subsection `### M1 migrations`.
+
+**Machine-matchable fields:**
+
+```yaml
+detector_glob: "supabase/migrations/*.sql"
+severity: CRITICAL
+evidence:
+  kind: url-or-hash-or-paste
+  template: "One of: (a) Supabase SQL Editor URL matching https://supabase\\.com/dashboard/project/[a-z0-9]+/sql/[0-9a-f-]+ ; (b) SHA-256 hash (64 hex chars) of the migration file's committed contents; (c) a paste containing a >=30-character substring of the committed migration file."
+```
 
 ---
 
