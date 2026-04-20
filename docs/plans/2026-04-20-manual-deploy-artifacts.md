@@ -921,7 +921,7 @@ git commit -m "docs(finishing): scope pitfall catalog and cross-ref manual-deplo
 
 ---
 
-### Task 12: Verify cross-reference CI check now passes
+### ✅ Task 12: Verify cross-reference CI check now passes
 
 **Files:**
 - (no edits — this task runs the test suite)
