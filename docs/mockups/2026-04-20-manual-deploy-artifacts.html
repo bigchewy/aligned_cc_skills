@@ -144,7 +144,7 @@
         <h2>4c · finishing-a-development-branch Step 0.5</h2>
         <div class="callout callout-note">
           <strong>Round 1 + Round 2 corrections applied</strong>
-          Diff source is Step 0 (line 64), not Step 1c. Plan lookup scans both <code>docs/plans/*.md</code> AND <code>docs/plans/completed/*.md</code> (active wins precedence). Ledger moved to <code>docs/manual-deploy-ledger.md</code> (outside <code>.gitignore: docs/plans/</code>).
+          Diff source is Step 0 (line 64), not Step 1c. Plan lookup scans both <code>docs/plans/*.md</code> AND <code>docs/plans/completed/*.md</code> (active wins precedence). Ledger at <code>docs/plans/.manual-deploy-ledger.md</code>.
         </div>
         <ul class="bullet-list">
           <li>Reuses Step 0's existing diff at <code>finishing-a-development-branch/SKILL.md:64</code>.</li>
@@ -190,7 +190,7 @@
           </tbody>
         </table>
         <h2 style="margin-top:24px;">Ledger (shared-migration dedup)</h2>
-        <p class="description">At <code>docs/manual-deploy-ledger.md</code>, append-only: <code>{file-hash} {date} {branch} {project-ref}</code>. Lookup matches on <strong>hash + project-ref</strong>, not hash alone — prevents false-skip when two projects coincidentally share a migration hash.</p>
+        <p class="description">At <code>docs/plans/.manual-deploy-ledger.md</code>, append-only: <code>{file-hash} {date} {branch} {project-ref}</code>. Lookup matches on <strong>hash + project-ref</strong>, not hash alone — prevents false-skip when two projects coincidentally share a migration hash.</p>
       </div>
     </div>
 
@@ -321,7 +321,7 @@ flowchart LR
           <tr><td>10</td><td>Nested CLAUDE.md reading</td><td>Not added in v1</td><td>Zero skills do this today. Plan exemption achieves same outcome. Deferred to v2 behind measured need.</td></tr>
           <tr><td>11</td><td>Skip executing-plans warning</td><td>Skip in v1</td><td>Does not add correctness. Can layer on later as polish.</td></tr>
           <tr><td>12</td><td>Eval surface coverage</td><td>Added proactively in v1</td><td>Correctness-driven (evals catch silent skipped-step regressions). Rejected: "CI forces it" — pytest forward-validates only; the feature is additive, not required.</td></tr>
-          <tr><td>13</td><td>Evidence ledger</td><td><code>docs/manual-deploy-ledger.md</code>, hash + project-ref lookup</td><td>Path moved from <code>docs/plans/.manual-deploy-ledger.md</code> (gitignored). Hash-only lookup rejected — false-skip risk across projects.</td></tr>
+          <tr><td>13</td><td>Evidence ledger</td><td><code>docs/plans/.manual-deploy-ledger.md</code>, hash + project-ref lookup</td><td>Hash-only lookup rejected — false-skip risk across projects (two Supabase projects could coincidentally share a migration hash).</td></tr>
           <tr><td>14</td><td>Modified existing migrations</td><td>CRITICAL block merge, no evidence accepted</td><td>Supabase does not re-apply edited migrations — silent divergence.</td></tr>
         </tbody>
       </table>

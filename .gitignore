@@ -10,7 +10,6 @@ node_modules/
 aligned-cowork.zip
 .env*
 *.plugin
-docs/plans/
 docs/investigations/
 *.draft.yaml
 *.draft.pass1.yaml
