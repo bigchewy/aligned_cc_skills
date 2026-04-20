@@ -1479,7 +1479,7 @@ git commit -m "test: add eval scenario (b) finish-gate-blocks-missing-evidence"
 
 ---
 
-### Task 19: Create scenario (c) — exemption declaration exempts matching files
+### ✅ Task 19: Create scenario (c) — exemption declaration exempts matching files
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/exemption-exempts-matching-files.yaml`
