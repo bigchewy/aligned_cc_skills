@@ -358,6 +358,63 @@ After completing the plan, append a Decision Log section. Include every choice w
 
 The summary table should fit on one page. Supporting detail goes in the appendix.
 
+## Manual Deploy Artifact Scan
+
+**Purpose:** Detect files in the plan that require a manual production step (e.g., Supabase migrations, env-var additions). Auto-populate `## Manual Steps (Post-Automation)` so the user sees the obligation at plan time.
+
+**Run this step BEFORE the Fact-Check + Critique Panel.** In the current SKILL.md file, the `## Fact-Check + Critique Panel` section precedes `## Verification Gate` in document order; insert the new `## Manual Deploy Artifact Scan` section immediately before `## Fact-Check + Critique Panel` (which is the only reliable anchor). If the plan has no catalog match, the step still runs and emits the "no matches" message below.
+
+**Catalog:** Read `skills/_shared/manual-deploy-artifact-catalog.md` in full. Each entry under `## CRITICAL — ...` and `## MEDIUM — ...` is a class. Each class carries a fenced ```` ```yaml ```` block with `detector_glob` / `detector_grep`, `severity`, and `evidence.template`.
+
+**Scan procedure:**
+
+1. Build a file list from the plan body: every path after `Create:` or `Modify:` inside any task's `**Files:**` block.
+2. For each path, apply the built-in non-prod exemption patterns (`**/seed/**`, `**/fixtures/**`, `**/__tests__/**`, `**/*.test.*`). Matches are exempt — do NOT produce a Post-Automation entry. Surface a single-line comment in the conversation output below: "Exempt (built-in pattern): <path>".
+3. For each non-exempt path, match against every catalog entry's `detector_glob` / `detector_grep`. Bucket matches by artifact class (M1, M2).
+4. If there are matches:
+   - Ensure the plan has a `## Manual Steps (Post-Automation)` section; create one immediately after the final task if missing.
+   - Under that section, for each matched class, inject a subsection `### <class-id> <class-name>` (e.g., `### M1 migrations`) if not already present.
+   - Under the subsection, list each matched file as a bullet: `- \`<path>\` — [evidence pending]`.
+   - Immediately above the `## Manual Steps (Post-Automation)` heading, inject the exemption-syntax HTML comment (see "Exemption syntax" below) if not already present.
+
+**Exemption syntax (HTML comment injected above Post-Automation):**
+
+```markdown
+<!--
+To exempt a file from the manual-deploy gate, add a subsection below:
+  ### Non-prod artifacts (exempt from gate)
+  - `path/to/file.sql` — reason (token: seed|fixtures|test)
+The token must appear literally in the file path, OR match one of the
+catalog's built-in exempt tokens (seed, fixtures, test, __tests__).
+-->
+```
+
+**Visible conversation output:**
+
+After the scan completes, print ONE of the following blocks to the user (never silently inject):
+
+If at least one catalog match was found:
+
+```
+Manual-deploy scan: detected N catalog matches.
+- Added Post-Automation entries for:
+  • M1 migrations (N): <up to 10 file paths, truncate with "+ N more">
+  • M2 env vars (N): <up to 10 file paths, truncate with "+ N more">
+- Declared exemptions (built-in pattern match): <list or "none">
+```
+
+If no catalog matches were found:
+
+```
+Manual-deploy scan: no catalog matches detected.
+```
+
+Cap each class list at 10 entries; for overflow append a "+ N more" line.
+
+**Idempotency:** The injection is structural (find-by-heading, append-list-item). Re-running the scan on a plan that already contains the expected entries MUST NOT duplicate them. Match existing entries by file-path string equality on each list item.
+
+**Known v1 gap:** projects that automate migration application via CI (e.g., `supabase db push` on deploy) must declare per-file exemptions for every migration. A project-level opt-out is deferred to v2.
+
 ## Fact-Check + Critique Panel (mandatory, 2 parallel technical critics)
 
 **MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the planning conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.

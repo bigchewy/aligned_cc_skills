@@ -389,7 +389,7 @@ git commit -m "feat: add M2 (env var addition) entry to manual-deploy catalog"
 
 ## Phase 2: writing-plans Integration
 
-### Task 5: Add "Manual Deploy Artifact Scan" step to writing-plans/SKILL.md
+### ✅ Task 5: Add "Manual Deploy Artifact Scan" step to writing-plans/SKILL.md
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (insert a new `## Manual Deploy Artifact Scan` section immediately BEFORE the `## Fact-Check + Critique Panel` section. Note: in the current file, `## Fact-Check + Critique Panel` precedes `## Verification Gate` in document order. Use `## Fact-Check + Critique Panel (mandatory, 2 parallel technical critics)` as the INSERT-BEFORE anchor — it is the only unique literal that survives future edits.)
