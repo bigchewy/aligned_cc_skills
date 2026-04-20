@@ -550,7 +550,7 @@ git commit -m "docs(writing-plans): checklist §10 covers manual-deploy catalog"
 
 ---
 
-### Task 8: Extend the Verifier prompt to enforce Post-Automation coverage
+### ✅ Task 8: Extend the Verifier prompt to enforce Post-Automation coverage
 
 **Files:**
 - Modify: `skills/writing-plans/references/critique-panel-prompts.md` (the Round 1 Verifier prompt, Phase 3 paragraph)
