@@ -101,6 +101,180 @@ Stop. Don't proceed to Step 1.
 
 **Scope:** The default audit runs CRITICAL + HIGH checks. MEDIUM and LOW categories (timeouts, edge runtime, writable filesystem) are documented in the catalog for manual review but not checked automatically.
 
+### Step 0.5: Manual Deploy Artifact Gate
+
+**Purpose:** Block merge when the branch adds files in a "manual-deploy artifact" class (per `skills/_shared/manual-deploy-artifact-catalog.md`) without documented evidence that the manual production step was performed. This catches the failure mode where code ships but a migration / env var / etc. is never applied.
+
+**Catalog:** Read `skills/_shared/manual-deploy-artifact-catalog.md` in full for the artifact classes, their `detector_glob` / `detector_grep` patterns, and per-class evidence `template:` regex.
+
+**Diff source:** Reuse the diff already computed in Step 0's "Module-Level Mutable State (HIGH)" sub-check:
+
+```bash
+git diff --name-only <base-branch>...HEAD
+```
+
+Also capture each file's status letter (A/D/R/M) via `git diff --name-status <base-branch>...HEAD`. Do NOT re-run Step 1c's diff — that step has not executed yet.
+
+**Find the plan file:** Scan both `docs/plans/*.md` (top-level) AND `docs/plans/completed/*.md`. Match on branch-name pattern or explicit plan name from the user. **If the same branch-name pattern matches both locations, prefer the active (top-level) plan.** Archived plans only load when no active plan matches. If the plan is in `completed/`, edit it in place — do NOT un-archive.
+
+**Authorship-convention exception:** This step is the single allowed out-of-skill plan mutation. See `skills/writing-plans/SKILL.md` "Exception: Step 0.5 evidence writes" for the documented exception.
+
+**The gate, end-to-end:**
+
+1. **Detect.** Match each diff entry against every catalog entry's detector. Bucket matches by artifact class (M1, M2). Exclude files matching catalog built-in exempt patterns (`**/seed/**`, `**/fixtures/**`, `**/__tests__/**`, `**/*.test.*`) and files matching the plan's `### Non-prod artifacts (exempt from gate)` declarations (see "Exemption validation" below).
+2. **Parse plan Post-Automation.** Read the plan's `## Manual Steps (Post-Automation)` section. For each catalog bucket, find the matching `### <class-id>` subsection. Match on structural shape (heading + list items containing the file paths), not line numbers. If `## Manual Steps (Post-Automation)` is missing entirely, STOP with this message:
+
+   ```
+   Plan is missing the Post-Automation section. Either writing-plans did not
+   run the Manual Deploy Artifact Scan, or the section was manually removed.
+   Re-run writing-plans' scan step to regenerate the section, then re-run
+   Step 0.5.
+   ```
+
+3. **Check evidence per file.** For each file in each bucket, inspect its list item in the plan. Classify as:
+   - `has-evidence` — a sub-bullet contains evidence that matches the catalog's `evidence.template:` regex
+   - `already-applied` — a sub-bullet of the form `already-applied — YYYY-MM-DD by <author>` is present
+   - `exempt` — the file appears in the plan's `### Non-prod artifacts (exempt from gate)` subsection AND the declaration passes exemption validation
+   - `needs-evidence` — none of the above
+
+   Also check the ledger at `docs/plans/.manual-deploy-ledger.md` (see "Ledger" below). If a ledger entry matches on BOTH `{file-hash}` AND `{project-ref}`, mark the file `has-evidence` (ledger-hit).
+
+4. **Handle A / D / R / M statuses (per M1 diff-status handling):**
+   - **A (added):** normal gate — requires evidence.
+   - **D (deleted):** deletion of a migration file is itself a manual-deploy artifact. Require evidence using the same template: paste of SQL Editor `DROP` / revert output URL (kind a) or the deleted-file hash (kind b).
+   - **R (renamed):** if `--find-renames` shows the content hash unchanged, treat as no-op; otherwise treat as A + D on the new and old paths respectively.
+   - **M (modified):** for files matching the M1 detector (`supabase/migrations/*.sql`), modification is a severe error — Supabase does not re-apply an edited migration. STOP with:
+
+     ```
+     CRITICAL: Modified an existing migration file (<path>). This will NOT
+     re-apply in Supabase — production will diverge from source. Create a
+     new migration instead. Do not merge until resolved.
+     ```
+
+     Do not accept evidence for this case. Block merge.
+
+5. **Gate.** If any file is `needs-evidence`, emit ONE prompt block per artifact class (not per file — prevents repetition when many migrations are gated). Cap the displayed file list at 10 entries with a truncation note "(+ N more — see plan for full list)".
+
+   **Prompt text template:**
+
+   ```
+   Branch introduces {N} {artifact-class-name} requiring manual production action.
+
+   Files:
+     - <path 1>
+     - <path 2>
+     (up to 10; "+ N more" if exceeded)
+
+   Prod step: <from catalog entry's "Prod step (for the plan entry)">
+
+   For each file, paste ONE of (in order of preference):
+     • RECOMMENDED: The <provider> dashboard URL showing the step was
+       performed (format per catalog evidence.template regex). Only this
+       kind cannot be fabricated locally.
+     • FALLBACK (reduces but does not prevent reflexive-yes): <kind b from
+       catalog>.
+     • FALLBACK (reduces but does not prevent reflexive-yes): <kind c from
+       catalog>.
+
+   Or declare the file exempt by adding to the plan under:
+     ### Non-prod artifacts (exempt from gate)
+     - `<path>` — reason (token: seed|fixtures|test|__tests__)
+
+   Or mark it `already-applied` for pre-existing branches (use sparingly;
+   accepted once per file without re-prompt). Paste exactly:
+     <filename>: already-applied — YYYY-MM-DD by <author>
+
+   Paste below, one entry per line, prefixed by filename:
+   ```
+
+   Per-file paste is required; batched/aggregated evidence is not accepted.
+
+6. **Validate pasted evidence** against the catalog's `evidence.template:` regex. Valid → proceed to Write. Invalid → re-prompt, up to 2 retries (3 total attempts). After the third failed attempt, STOP with a clear error naming the still-failing file(s).
+
+7. **Write.** For each validated paste, edit the plan file in place:
+   - Structural edit: find the `## Manual Steps (Post-Automation)` heading, then the `### <class-id>` subsection, then the list item whose path matches the file. Append a sub-bullet containing the pasted evidence.
+   - Do NOT use line numbers. Anchor on headings and path-string equality.
+   - If the target list item is missing (user manually removed it between writing-plans and finishing), RE-INJECT the list item under the correct class heading, then append the evidence sub-bullet.
+
+8. **Commit.** Stage ONLY the plan file: `git add <plan-path>`. Commit with the message `chore: record manual deploy evidence for <feature-name>` — honor all pre-commit hooks (do NOT use `--no-verify`). If the project's commit-lint configuration requires a scope, use `chore(deploy): record manual deploy evidence for <feature-name>` instead.
+
+9. **Update ledger.** Append one line per committed evidence to `docs/plans/.manual-deploy-ledger.md` (see "Ledger" below).
+
+**Write-path failure handling:**
+
+- **Plan file write fails** (permissions, disk full): STOP. Surface the OS error. Ask the user to resolve and re-run Step 0.5. Do NOT proceed.
+- **`## Manual Steps (Post-Automation)` missing or malformed:** STOP with the message in step 2 above.
+- **Evidence placeholder deleted between writing-plans and finishing:** re-inject the entry (per step 7), then continue.
+- **Commit fails:**
+  - **Related hook failure on the plan file:** surface the error, fix, retry.
+  - **Unrelated hook failure** (e.g., ESLint failing on a staged `.js` file from another commit): instruct the user to resolve or stash the unrelated work, then re-run Step 0.5. Evidence is already on disk; on re-run, the per-file state scan (step 3) will detect `has-evidence` and skip re-prompting, jumping straight to commit.
+- **Later gate fails after evidence commit:** the evidence commit stands — evidence is true regardless of whether the branch ultimately merges. Do not roll back.
+
+**Exemption validation (per-file exemptions declared in the plan):**
+
+Exemption entries under `### Non-prod artifacts (exempt from gate)` MUST use this form:
+
+```markdown
+- `path/to/file.sql` — reason (token: <name>)
+```
+
+The declared `<name>` MUST appear literally in the file path, OR be one of the catalog's built-in exempt tokens (`seed`, `fixtures`, `test`, `__tests__`). If the token is absent from the path and not a built-in token, REJECT the exemption with:
+
+```
+Exemption for `<path>` claims token `<name>` but the path doesn't contain
+that token. Valid built-in tokens: seed, fixtures, test, __tests__.
+Either (a) rename the path to include one of those tokens, (b) change
+the declared token to one that appears in the path, or (c) remove the
+exemption and provide evidence via the normal gate.
+```
+
+**Ledger (`docs/plans/.manual-deploy-ledger.md`):**
+
+Append-only. One line per applied artifact. Format:
+
+```
+{file-hash} {date} {branch} {project-ref}
+```
+
+- `{file-hash}` — SHA-256 of the committed file contents (64 hex chars).
+- `{date}` — YYYY-MM-DD.
+- `{branch}` — the branch name.
+- `{project-ref}` — parsed from evidence kind (a)'s dashboard URL (e.g., Supabase `/project/<ref>/sql/` segment). If the user pasted only kind (b) or (c) evidence, write `project-ref: unknown`.
+
+**Ledger lookup** (step 3, ledger-hit classification): match on BOTH `{file-hash}` AND `{project-ref}`. A hash match with `project-ref: unknown` does NOT skip the gate — the entry is treated as insufficient to confirm production application.
+
+If the ledger file does not exist, create it on first write. Commit the ledger alongside the plan in the same `chore:` commit.
+
+**Gitignore guard (before first ledger write):** Run `git check-ignore -v docs/plans/.manual-deploy-ledger.md` in the target project. If the file is gitignored (command exits 0 with output), surface:
+
+```
+Ledger path `docs/plans/.manual-deploy-ledger.md` is gitignored in this project.
+The ledger must be committed for cross-branch lookup to work. Either:
+  (a) un-ignore it: add `!docs/plans/.manual-deploy-ledger.md` to .gitignore
+  (b) change the ledger path in finishing-a-development-branch/SKILL.md to
+      a location that is not gitignored (e.g., `.manual-deploy-ledger.md` at
+      repo root)
+Not resolving this means every branch re-prompts the same already-applied
+migrations — safe but noisy.
+```
+
+Proceed with the evidence write + plan commit regardless (the ledger is an optimization, not a correctness requirement), but surface the warning ONCE per Step 0.5 invocation.
+
+**Blocking behavior:** If after 3 evidence attempts any file remains `needs-evidence`, stop with:
+
+```
+Manual-deploy gate: <N> file(s) still missing valid evidence after 3 attempts.
+Cannot proceed to Step 1 until resolved.
+
+Files still failing: <list>
+```
+
+Exit. Do not proceed to `### Step 1: Verify Tests`.
+
+**If all files pass:** Report "Manual-deploy gate passed: all N catalog-matched files have evidence." Continue to Step 1.
+
+**If no catalog matches in the diff:** Report "Manual-deploy gate: no catalog matches detected." Continue to Step 1.
+
 ### Step 1: Verify Tests
 
 **Run the project's test suite:**

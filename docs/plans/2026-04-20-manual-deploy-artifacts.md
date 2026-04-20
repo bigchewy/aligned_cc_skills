@@ -663,7 +663,7 @@ git commit -m "test: add cross-reference guard for authorship exception"
 
 ---
 
-### Task 10: Add Step 0.5 to finishing-a-development-branch/SKILL.md
+### ✅ Task 10: Add Step 0.5 to finishing-a-development-branch/SKILL.md
 
 **Files:**
 - Modify: `skills/finishing-a-development-branch/SKILL.md` (insert a new `### Step 0.5: Manual Deploy Artifact Gate` subsection between `### Step 0: Deployment Platform Audit` and `### Step 1: Verify Tests`)
