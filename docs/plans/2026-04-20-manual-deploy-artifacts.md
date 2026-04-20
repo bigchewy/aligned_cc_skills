@@ -1277,7 +1277,7 @@ git commit -m "test: structural fixture test for manual-deploy plan layout"
 
 ## Phase 5: Eval-Surface Wiring
 
-### Task 15: Extend eval-surface.yaml with the three new surface files
+### ✅ Task 15: Extend eval-surface.yaml with the three new surface files
 
 **Files:**
 - Modify: `e2e/eval-surface.yaml`
