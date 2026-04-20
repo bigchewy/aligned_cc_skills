@@ -1638,7 +1638,8 @@ git commit -m "test: add eval scenario (d) env-var-gate-medium-evidence"
 
 ---
 
-### Task 21: Verify eval wiring — trigger-map test suite + promptfoo smoke-load
+### ✅ Task 21: Verify eval wiring — trigger-map test suite + promptfoo smoke-load
+> NOTE: Verification surfaced that `promptfooconfig.yaml` was missing registrations for the 4 new manual-deploy scenarios (caught by `test_trigger_map_scenarios.py`). Added the four `file://scenarios/manual-deploy/*.yaml` entries to the master config. All 96 trigger-map tests pass; `promptfoo validate` confirms all 4 scenario configs load.
 
 **Files:** (no edits)
 
