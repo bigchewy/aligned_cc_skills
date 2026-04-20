@@ -36,6 +36,8 @@ Only stop for: destructive operations on main branch, or unresolvable ambiguity 
 
 **Plans MUST always be written to the main worktree directory and committed to `main`.** This prevents plan files from being lost if a feature branch is discarded, abandoned, or never merged.
 
+**Exception: Step 0.5 evidence writes.** Step 0.5 of `finishing-a-development-branch` is the single allowed out-of-skill plan mutation: when it captures pasted manual-deploy evidence, it edits the plan file in place (wherever the plan is located — `docs/plans/` or `docs/plans/completed/`) and commits it with a `chore:` message. All other plan writes remain centralized in this skill. See `skills/finishing-a-development-branch/SKILL.md` "Step 0.5: Manual Deploy Artifact Gate" for the full protocol.
+
 **Before writing the plan file, determine the main worktree path:**
 
 ```bash

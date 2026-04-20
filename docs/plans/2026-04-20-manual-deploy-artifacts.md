@@ -478,7 +478,7 @@ git commit -m "feat(writing-plans): add Manual Deploy Artifact Scan step"
 
 ---
 
-### Task 6: Document the authorship exception in writing-plans/SKILL.md
+### ✅ Task 6: Document the authorship exception in writing-plans/SKILL.md
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (add a note inside the "Plan File Location Rule" subsection)
