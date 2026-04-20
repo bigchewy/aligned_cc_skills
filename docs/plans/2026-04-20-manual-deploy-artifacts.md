@@ -41,7 +41,7 @@ Phase ordering: Phase 1 (catalog + tests) → Phase 2 (writing-plans edits) → 
 
 ## Phase 1: Catalog Foundation
 
-### Task 1: Create the catalog file with schema header and empty severity sections
+### ✅ Task 1: Create the catalog file with schema header and empty severity sections
 
 **Files:**
 - Create: `skills/_shared/manual-deploy-artifact-catalog.md`
@@ -120,7 +120,7 @@ git commit -m "feat: scaffold manual-deploy artifact catalog with schema"
 
 ---
 
-### Task 2: Write catalog-integrity pytest (failing)
+### ✅ Task 2: Write catalog-integrity pytest (failing)
 
 **Files:**
 - Create: `e2e/tests/test_manual_deploy_catalog.py`
