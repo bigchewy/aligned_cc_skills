@@ -1139,7 +1139,7 @@ git commit -m "test: scaffold manual-deploy fixture plans, diffs, and expected o
 
 ---
 
-### Task 14: Write structural integration test
+### ✅ Task 14: Write structural integration test
 
 **Note — intentional deviation from design doc §5 task 9:** the design doc names `e2e/tests/test_finish_step_0_5_idempotent.py` as a required deliverable. That filename is NOT created by this plan. The idempotency property is instead covered by (a) the structural fixture test below, which asserts that a post-scan plan has the expected shape (the contract the scan step must satisfy), and (b) eval scenario (a), which runs the actual LLM against a before-scan fixture and asserts the output contains the Post-Automation section exactly once. See Decision 3 for the rationale. Do NOT create `test_finish_step_0_5_idempotent.py` — it would duplicate scan logic in Python and become its own source of truth.
 
