@@ -1545,7 +1545,7 @@ git commit -m "test: add eval scenario (c) exemption-exempts-matching-files"
 
 ---
 
-### Task 20: Create scenario (d) — env-var artifact class enforces medium-tier evidence
+### ✅ Task 20: Create scenario (d) — env-var artifact class enforces medium-tier evidence
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/env-var-gate-medium-evidence.yaml`

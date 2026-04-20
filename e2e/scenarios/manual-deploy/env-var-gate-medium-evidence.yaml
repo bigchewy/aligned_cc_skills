@@ -1,0 +1,41 @@
+# e2e/scenarios/manual-deploy/env-var-gate-medium-evidence.yaml
+# Scenario (d) from design doc §4e: the env-var artifact class (M2) requires
+# variable name + hosting-provider dashboard URL — name alone is insufficient.
+
+description: "Manual-deploy: M2 env-var evidence requires variable name AND dashboard URL"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 3000
+
+prompts:
+  - |
+    {{system_context}}
+
+    You are executing Step 0.5 of finishing-a-development-branch. The branch modifies .env.example to add FOO_API_KEY. The plan's M2 section has no pasted evidence. Apply the gate and emit the hard-gate prompt.
+
+    ---DIFF---
+    {{diff}}
+    ---END DIFF---
+
+    ---PLAN---
+    {{plan}}
+    ---END PLAN---
+
+defaultTest:
+  assert:
+    - type: contains
+      value: "FOO_API_KEY"
+    - type: regex
+      value: "vercel\\.com|netlify\\.com|fly\\.io"
+    - type: contains
+      value: "dashboard"
+
+tests:
+  - description: "M2 gate prompt names the variable and includes a dashboard URL"
+    vars:
+      system_context: file://../../../skills/finishing-a-development-branch/SKILL.md
+      diff: file://../../fixtures/manual-deploy/diffs/env-var-added.txt
+      plan: file://../../fixtures/manual-deploy/plans/plan-with-env-var.md
