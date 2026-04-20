@@ -113,3 +113,17 @@ triggers:
       - frameworks/5-gtm-motions-digital-health/anti-examples.md
     scenarios:
       - scenarios/use-framework/5-gtm-motions-digital-health.yaml
+
+  - paths:
+      - skills/writing-plans/SKILL.md
+      - skills/_shared/manual-deploy-artifact-catalog.md
+    scenarios:
+      - scenarios/manual-deploy/plan-scan-emits-post-automation.yaml
+      - scenarios/manual-deploy/env-var-gate-medium-evidence.yaml
+
+  - paths:
+      - skills/finishing-a-development-branch/SKILL.md
+      - skills/_shared/manual-deploy-artifact-catalog.md
+    scenarios:
+      - scenarios/manual-deploy/finish-gate-blocks-missing-evidence.yaml
+      - scenarios/manual-deploy/exemption-exempts-matching-files.yaml

@@ -1306,7 +1306,7 @@ git commit -m "test: add manual-deploy skill files to eval surface"
 
 ---
 
-### Task 16: Extend trigger-map.yaml with manual-deploy scenario routing
+### ✅ Task 16: Extend trigger-map.yaml with manual-deploy scenario routing
 
 **Files:**
 - Modify: `e2e/trigger-map.yaml`
