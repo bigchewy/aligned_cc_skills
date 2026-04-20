@@ -161,12 +161,15 @@ Identify assumptions the plan makes without validation or acknowledgment.
 | Failure modes | Are there plausible failure scenarios that no task handles? (Service unavailable, timeout, permission denied) |
 | Tribal knowledge | Does the plan depend on undocumented conventions or setup steps? |
 | Scale assumptions | Does the plan assume data volumes, request rates, or file sizes without stating them? |
+| Manual-deploy artifacts | Are files matching `skills/_shared/manual-deploy-artifact-catalog.md` (migrations, env vars) covered by entries in the plan's `## Manual Steps (Post-Automation)` section? Missing coverage is a **high** severity issue. |
 
 - BAD: Plan uses Stripe webhook without verifying webhook endpoint is configured in Stripe dashboard
 - BAD: Plan assumes Redis is running locally but doesn't list it in Prerequisites
 - BAD: Task 5 reads a file that Task 3 creates, but no ordering dependency is noted
 - GOOD: Prerequisites section lists "Configure Stripe webhook for /api/webhooks/stripe"
 - GOOD: Plan notes "Assumes < 10K records — if larger, Task 4 needs pagination"
+- BAD: Plan creates `supabase/migrations/022_foo.sql` but has no Post-Automation entry listing that file
+- GOOD: Plan's Post-Automation section has `### M1 migrations` with `supabase/migrations/022_foo.sql` listed as a bullet
 
 ## Critique Output Format
 

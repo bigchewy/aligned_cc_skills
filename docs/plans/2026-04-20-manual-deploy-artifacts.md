@@ -510,7 +510,7 @@ git commit -m "docs(writing-plans): note Step 0.5 authorship exception"
 
 ---
 
-### Task 7: Update plan-critique-checklist.md §10 to reference the catalog
+### ✅ Task 7: Update plan-critique-checklist.md §10 to reference the catalog
 
 **Files:**
 - Modify: `skills/writing-plans/plan-critique-checklist.md` (the §10 "Gap analysis — unvalidated assumptions" section)
