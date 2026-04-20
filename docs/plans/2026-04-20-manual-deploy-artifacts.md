@@ -1410,7 +1410,7 @@ git commit -m "test: add eval scenario (a) plan-scan-emits-post-automation"
 
 ---
 
-### Task 18: Create scenario (b) — finish-time gate blocks when evidence missing
+### ✅ Task 18: Create scenario (b) — finish-time gate blocks when evidence missing
 
 **Files:**
 - Create: `e2e/scenarios/manual-deploy/finish-gate-blocks-missing-evidence.yaml`
