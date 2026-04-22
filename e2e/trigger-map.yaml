@@ -91,6 +91,20 @@ triggers:
       - scenarios/use-framework/jolt-effect.yaml
 
   - paths:
+      - frameworks/mobilizer-taxonomy/prompt.md
+      - frameworks/mobilizer-taxonomy/examples.md
+      - frameworks/mobilizer-taxonomy/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/mobilizer-taxonomy.yaml
+
+  - paths:
+      - frameworks/teach-tailor-take-control/prompt.md
+      - frameworks/teach-tailor-take-control/examples.md
+      - frameworks/teach-tailor-take-control/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/teach-tailor-take-control.yaml
+
+  - paths:
       - advisors/prompts/trish-bertuzzi.md
     scenarios:
       - scenarios/use-advisor/trish-bertuzzi-consult.yaml

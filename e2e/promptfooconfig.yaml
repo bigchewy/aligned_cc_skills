@@ -33,6 +33,8 @@ scenarios:
   - file://scenarios/use-framework/bowtie-funnel.yaml
   - file://scenarios/use-advisor/matt-dixon-consult.yaml
   - file://scenarios/use-framework/jolt-effect.yaml
+  - file://scenarios/use-framework/mobilizer-taxonomy.yaml
+  - file://scenarios/use-framework/teach-tailor-take-control.yaml
   - file://scenarios/use-advisor/trish-bertuzzi-consult.yaml
   - file://scenarios/use-framework/6-elements-sdr.yaml
   - file://scenarios/use-advisor/julie-yoo-consult.yaml

@@ -559,6 +559,15 @@ frameworks:
     use_when: "a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy"
     helpful_documents: ["deal notes", "stakeholder map", "discovery call transcripts"]
 
+  - id: mobilizer-taxonomy
+    name: "the Mobilizer Taxonomy"
+    advisor: matt-dixon
+    purpose: "assigning each person in a B2B buying committee to one of seven Dixon archetypes — separating the three Mobilizers (Go-Getter, Teacher, Skeptic) who drive consensus from the four Talkers (Guide, Friend, Climber, Blocker) who feel accessible but don't move deals"
+    category: sales
+    domains: [b2b-sales, enterprise-deals, stakeholder-mapping, discovery]
+    use_when: "a complex B2B deal has multiple stakeholders and the rep needs to distinguish real consensus-builders from accessible-but-inert stakeholders, especially when a 'champion' feels responsive but the deal isn't advancing"
+    helpful_documents: ["stakeholder map", "deal notes", "discovery call transcripts", "email threads with the buying committee"]
+
   - id: kernel-of-good-strategy
     name: "building a complete strategy using the kernel"
     advisor: richard-rumelt
@@ -1051,6 +1060,15 @@ frameworks:
     category: negotiation
     domains: [negotiation, empathy, emotional-intelligence, influence]
     use_when: "someone needs to build rapport and influence by accurately labeling the other person's emotions in a conversation"
+
+  - id: teach-tailor-take-control
+    name: "Teach-Tailor-Take Control (TTTC)"
+    advisor: matt-dixon
+    purpose: "the three-skill Challenger sales motion — delivering a reframing commercial insight (Teach), adapting it to this specific buyer (Tailor), and assertively guiding commercial dynamics around pricing, timing, and next steps (Take Control)"
+    category: sales
+    domains: [b2b-sales, sales-methodology, discovery, enterprise-pitch]
+    use_when: "a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps"
+    helpful_documents: ["account research", "buyer's recent public statements or writing", "pitch deck or meeting agenda", "deal notes"]
 
   - id: ten-minute-mobility-menu
     name: "the 10-Minute Mobility Menu"

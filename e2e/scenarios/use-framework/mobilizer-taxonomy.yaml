@@ -1,0 +1,167 @@
+# e2e/scenarios/use-framework/mobilizer-taxonomy.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Mobilizer Taxonomy stakeholder mapping"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{committee_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPLETENESS: Does the response profile every
+        stakeholder listed in the committee brief, assigning each to
+        one of the seven Dixon profiles (Go-Getter, Teacher, Skeptic,
+        Guide, Friend, Climber, Blocker), and produce a grouped
+        summary separating Mobilizers from Talkers? A response that
+        skips stakeholders, assigns generic role labels instead of
+        Dixon profiles, or fails to produce a grouped summary scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow the
+        Mobilizer Taxonomy correctly? Specifically: (a) uses ONLY the
+        seven Dixon profiles, never prefixing role labels like "Economic
+        Buyer" or "Legal Reviewer" with "Mobilizer profile:"; (b) marks
+        stakeholders without observed buying behavior as "Inferred" with
+        a specific behavioral test; (c) correctly distinguishes Friends
+        (accessible, inert) from Mobilizers (actually rally peers) —
+        flags the Friend-as-champion misdiagnosis when the user frames
+        a Friend as their champion; (d) correctly distinguishes Skeptics
+        (tough questions, then advocate) from Blockers (objections
+        without resolution). Deductions for: conflating Friend with
+        Mobilizer, tagging tough-question stakeholders as Blockers,
+        using generic labels instead of Dixon profiles.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC OUTCOME: Does the response produce a
+        specific, actionable committee map — a table with Name/Role,
+        Profile, Observed-or-Inferred status, and evidence or
+        behavioral test for each stakeholder, followed by a deal-risk
+        read based on the count of confirmed Mobilizers? A response
+        that produces a vague list of "things to watch for" or a
+        generic summary without a grouped table scores 1-2. A response
+        with a grouped Mobilizers-vs-Talkers table, behavioral tests
+        on every inferred profile, and a forward-looking action list
+        scores 4-5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Matt Dixon — research-backed, calm-contrarian, willing to
+        push back against the rep's emotional read when the evidence
+        contradicts it? Look for: references to research findings
+        (e.g., "most complex deals have one or two Mobilizers"),
+        precise distinctions between similar-sounding profiles
+        (Friend vs. Mobilizer, Skeptic vs. Blocker), explicit
+        naming of the Friend-as-champion misdiagnosis as the #1
+        error in the data. Bland consultant voice or cheerleading
+        scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/mobilizer-taxonomy/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through mapping this buying committee using the Mobilizer Taxonomy. I'll answer your questions stakeholder by stakeholder."
+      committee_brief: |
+        Context: I'm an enterprise AE working a $750K ARR deal with Meridian
+        Health. Four months in. Here's the committee:
+
+        1. Priya Shah, VP of Revenue Operations — runs every call, built the
+           evaluation rubric herself, scheduled vendor demos, sent a 15-min
+           sync with me to debrief her own temperature check of the committee.
+        2. Marcus Chen, Director of IT — asked twelve hard technical questions
+           across the first three calls (integration, data residency, security).
+           Once we answered them substantively, he flipped and started pushing
+           the timeline, told Priya "IT readiness shouldn't be the blocker."
+        3. Lisa Whitmore, Senior Manager Sales Ops — originally sourced us at
+           a conference. Takes every call, forwards internal docs, tells me
+           "I'm rooting for us" and sends friendly check-ins. She's my
+           champion.
+        4. Kevin Park, CFO — copied on every major thread, has never replied.
+           Lisa mentioned "Kevin has to sign off on anything over $500K" and
+           that he's "conservative on non-infrastructure SaaS."
+        5. Diana Reyes, Head of Legal — haven't interacted yet. Lisa told me
+           Legal blocked two prior vendor evaluations (a different CRM and a
+           security tool) on contract language being "too vendor-friendly."
+        6. Tom Brennan, VP of Sales — end-user business owner. On two of
+           seven calls. Engaged and positive when present, defers to Priya
+           on process, hasn't independently driven anything.
+        7. Anjali Kapoor, Chief of Staff to the CEO — added to the thread
+           two weeks ago. Priya said "looping in Anjali so she's aware."
+           Anjali hasn't said anything.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me figure out who the real decision-makers are on this deal."
+      committee_brief: |
+        Context: I'm an enterprise AE working a $750K ARR deal with Meridian
+        Health. Four months in. Here's the committee:
+
+        1. Priya Shah, VP of Revenue Operations — runs every call, built the
+           evaluation rubric herself, scheduled vendor demos, sent a 15-min
+           sync with me to debrief her own temperature check of the committee.
+        2. Marcus Chen, Director of IT — asked twelve hard technical questions
+           across the first three calls (integration, data residency, security).
+           Once we answered them substantively, he flipped and started pushing
+           the timeline, told Priya "IT readiness shouldn't be the blocker."
+        3. Lisa Whitmore, Senior Manager Sales Ops — originally sourced us at
+           a conference. Takes every call, forwards internal docs, tells me
+           "I'm rooting for us" and sends friendly check-ins. She's my
+           champion.
+        4. Kevin Park, CFO — copied on every major thread, has never replied.
+           Lisa mentioned "Kevin has to sign off on anything over $500K" and
+           that he's "conservative on non-infrastructure SaaS."
+        5. Diana Reyes, Head of Legal — haven't interacted yet. Lisa told me
+           Legal blocked two prior vendor evaluations (a different CRM and a
+           security tool) on contract language being "too vendor-friendly."
+        6. Tom Brennan, VP of Sales — end-user business owner. On two of
+           seven calls. Engaged and positive when present, defers to Priya
+           on process, hasn't independently driven anything.
+        7. Anjali Kapoor, Chief of Staff to the CEO — added to the thread
+           two weeks ago. Priya said "looping in Anjali so she's aware."
+           Anjali hasn't said anything.
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Matt Dixon's Mobilizer Taxonomy from The Challenger Customer to profile this buying committee. Assign each stakeholder to one of the seven archetypes (Go-Getter, Teacher, Skeptic — the Mobilizers — and Guide, Friend, Climber, Blocker — the Talkers). For stakeholders with observed buying behavior, give unqualified profiles with rationale. For stakeholders without observed behavior, tag them 'Inferred' with a specific behavioral test that would confirm or falsify. Produce a grouped Mobilizers-vs-Talkers summary table and flag the deal's risk shape based on how many confirmed Mobilizers it has."
+      committee_brief: |
+        Context: I'm an enterprise AE working a $750K ARR deal with Meridian
+        Health. Four months in. Here's the committee:
+
+        1. Priya Shah, VP of Revenue Operations — runs every call, built the
+           evaluation rubric herself, scheduled vendor demos, sent a 15-min
+           sync with me to debrief her own temperature check of the committee.
+        2. Marcus Chen, Director of IT — asked twelve hard technical questions
+           across the first three calls (integration, data residency, security).
+           Once we answered them substantively, he flipped and started pushing
+           the timeline, told Priya "IT readiness shouldn't be the blocker."
+        3. Lisa Whitmore, Senior Manager Sales Ops — originally sourced us at
+           a conference. Takes every call, forwards internal docs, tells me
+           "I'm rooting for us" and sends friendly check-ins. She's my
+           champion.
+        4. Kevin Park, CFO — copied on every major thread, has never replied.
+           Lisa mentioned "Kevin has to sign off on anything over $500K" and
+           that he's "conservative on non-infrastructure SaaS."
+        5. Diana Reyes, Head of Legal — haven't interacted yet. Lisa told me
+           Legal blocked two prior vendor evaluations (a different CRM and a
+           security tool) on contract language being "too vendor-friendly."
+        6. Tom Brennan, VP of Sales — end-user business owner. On two of
+           seven calls. Engaged and positive when present, defers to Priya
+           on process, hasn't independently driven anything.
+        7. Anjali Kapoor, Chief of Staff to the CEO — added to the thread
+           two weeks ago. Priya said "looping in Anjali so she's aware."
+           Anjali hasn't said anything.

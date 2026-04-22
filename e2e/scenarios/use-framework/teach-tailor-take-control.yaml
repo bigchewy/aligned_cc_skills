@@ -1,0 +1,131 @@
+# e2e/scenarios/use-framework/teach-tailor-take-control.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Teach-Tailor-Take Control (TTTC) meeting prep"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{meeting_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPLETENESS: Does the response walk through all
+        three Challenger skills in order — Teach (the commercial insight
+        that reframes the buyer's view of their own business), Tailor
+        (adapting the insight to the specific buyer's industry, role,
+        and current pressure), and Take Control (holding commercial
+        frame around pricing, timing, and next steps)? A response that
+        addresses only one or two skills, or collapses them into generic
+        "prepare well for the meeting" advice, scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response correctly
+        apply TTTC? Specifically: (a) distinguishes Teach from feature
+        descriptions — pushes back when the user labels a capability
+        claim as Teach; (b) distinguishes Tailor from name-drops —
+        requires account-specific context tied to recent moves, role
+        pressure, or the buyer's personal stakes; (c) distinguishes
+        Take Control from aggression — frames it as constructive tension
+        around commercial dynamics, not pressuring the buyer on every
+        objection. Deductions for: accepting features as Teach,
+        accepting company-name-drops as Tailor, framing Take Control
+        as "push harder." Credit for naming the "we'll follow up"
+        meeting close as a failure mode.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC OUTCOME: Does the response produce a
+        specific integrated meeting plan — an opening move that uses
+        the Teach reframe, a middle that connects to Tailor research,
+        and a closing move with a specific time-bound next-step
+        proposal? Does it surface which of the three skills is the
+        DOMINANT gap for this specific conversation and explain why?
+        Generic "work on all three" conclusions score 1-2. A named
+        dominant gap + specific integrated play scores 4-5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Matt Dixon — research-backed, willing to reject the user's
+        comfortable framings (e.g., "I'll wing it," "I don't want to
+        be pushy," "our platform does X is our teach"), grounded in
+        what the research actually shows about average vs. top-
+        performer behavior? Look for: references to research findings,
+        constructive tension framing, explicit rejection of feature-as-
+        Teach and discount-as-relationship-move. Bland consultant
+        voice or cheerleading scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/teach-tailor-take-control/prompt.md
+      task_prompt: "\n\n---\n\nHelp me prep this meeting using Teach-Tailor-Take Control. I'll answer your questions in order."
+      meeting_brief: |
+        Context: I'm a Series B founder prepping a second-meeting executive
+        pitch next Thursday at 10am. 45 minutes. Stakeholders: CFO (Mike, new
+        to the deal) and Head of Claims Operations (Dana, was in the first
+        meeting three weeks ago). Mid-market insurance carrier.
+
+        Goal: walk out with a committed 30-day pilot scoping session on the
+        calendar, specifically with the CFO in the room.
+
+        My current plan: I was going to open with our product story, walk
+        through a demo, and then see if pricing comes up organically. If they
+        want to "follow up internally" at the end, I'd give them space.
+
+        I know the industry generally but I haven't researched this specific
+        carrier's recent announcements. My "Teach" was going to be that our
+        AI engine processes claims 3x faster than legacy systems.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me prep for this pitch meeting."
+      meeting_brief: |
+        Context: I'm a Series B founder prepping a second-meeting executive
+        pitch next Thursday at 10am. 45 minutes. Stakeholders: CFO (Mike, new
+        to the deal) and Head of Claims Operations (Dana, was in the first
+        meeting three weeks ago). Mid-market insurance carrier.
+
+        Goal: walk out with a committed 30-day pilot scoping session on the
+        calendar, specifically with the CFO in the room.
+
+        My current plan: I was going to open with our product story, walk
+        through a demo, and then see if pricing comes up organically. If they
+        want to "follow up internally" at the end, I'd give them space.
+
+        I know the industry generally but I haven't researched this specific
+        carrier's recent announcements. My "Teach" was going to be that our
+        AI engine processes claims 3x faster than legacy systems.
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Matt Dixon's Teach-Tailor-Take Control framework from The Challenger Sale to prep this meeting. Walk through the three skills in order: Teach (is the commercial insight a real reframe or just a feature?), Tailor (is it specific to this buyer's industry, role, and current pressure?), and Take Control (what's the plan for holding commercial ground around pricing and next steps?). Surface the biggest gap across the three and produce an integrated meeting plan with a specific opening move, middle, and closing proposal."
+      meeting_brief: |
+        Context: I'm a Series B founder prepping a second-meeting executive
+        pitch next Thursday at 10am. 45 minutes. Stakeholders: CFO (Mike, new
+        to the deal) and Head of Claims Operations (Dana, was in the first
+        meeting three weeks ago). Mid-market insurance carrier.
+
+        Goal: walk out with a committed 30-day pilot scoping session on the
+        calendar, specifically with the CFO in the room.
+
+        My current plan: I was going to open with our product story, walk
+        through a demo, and then see if pricing comes up organically. If they
+        want to "follow up internally" at the end, I'd give them space.
+
+        I know the industry generally but I haven't researched this specific
+        carrier's recent announcements. My "Teach" was going to be that our
+        AI engine processes claims 3x faster than legacy systems.
