@@ -213,14 +213,14 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "test(e2e): add regr
 
 ## 🔄 Task 5: Add "mode-echo" protocol to CLAUDE.md
 
-> BLOCKED (3rd attempt 2026-04-24): Edit to `/Users/ericpage/.claude/CLAUDE.md` denied again — file is flagged as sensitive by Claude Code and no per-session approval persists into this non-interactive loop. The loop cannot unblock this on its own; it will keep burning iterations on Task 5 until a human acts. Tasks 5–8 all edit this same file and will fail identically.
+> BLOCKED (4th attempt 2026-04-24): Edit to `/Users/ericpage/.claude/CLAUDE.md` denied again. Four consecutive iterations have confirmed the loop cannot self-unblock this. To stop further wasted iterations, this run wrote `.ralph-done` at the worktree root to halt the loop.
 >
-> **User action required — pick one before resuming the loop:**
+> **User action required — pick one, then delete `.ralph-done` and restart the loop:**
 > 1. Run the loop interactively (foreground) so you can approve each `Edit` against `~/.claude/CLAUDE.md` when prompted, OR
 > 2. Temporarily add an `acceptEdits` permission rule for `/Users/ericpage/.claude/CLAUDE.md` in the loop session's settings, OR
-> 3. Apply the four CLAUDE.md edits (Tasks 5–8) by hand in another session, then mark each ✅ in this plan and resume the loop.
+> 3. Apply the four CLAUDE.md edits (Tasks 5–8) by hand in another session, then mark each ✅ in this plan.
 >
-> Once unblocked, change the heading prefix from 🔄 to nothing so the next iteration runs Task 5 fresh.
+> Once unblocked, change the heading prefix from 🔄 to nothing, delete `.ralph-done`, and resume. Tasks 5–8 all edit this same file and will fail identically without one of the actions above.
 
 **Repo:** `~/.claude`
 
