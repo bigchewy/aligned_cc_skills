@@ -1,6 +1,10 @@
 #!/usr/bin/env node
-// usage-tracker.js — Tracks Skill and Task (subagent) invocations
-// Logs to ~/.claude/usage-tracking/usage.jsonl
+// optional-usage-tracker.js — reference copy, NOT wired into the plugin.
+// Identical logic to the canonical ~/.claude/hooks/usage-tracker.js maintained upstream.
+// To enable on your machine: copy to ~/.claude/hooks/usage-tracker.js and add a
+// PostToolUse hook entry for Skill|Task|Agent in ~/.claude/settings.json. See
+// docs/plans/2026-04-23-claude-usage-logging-design.md "Plugin/global duplication"
+// for rationale.
 
 const fs = require('fs');
 const path = require('path');

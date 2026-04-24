@@ -33,7 +33,7 @@
 
 ---
 
-## Task 1: Move plugin's usage-tracker to non-wired reference copy
+## ✅ Task 1: Move plugin's usage-tracker to non-wired reference copy
 
 **Repo:** `~/software/aligned_cc_skills` (plugin repo)
 
