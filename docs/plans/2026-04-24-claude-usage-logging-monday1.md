@@ -150,7 +150,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(readme): docum
 
 ---
 
-## Task 4: Add .gitignore regression test
+## ✅ Task 4: Add .gitignore regression test
 
 **Repo:** `~/software/aligned_cc_skills`
 
