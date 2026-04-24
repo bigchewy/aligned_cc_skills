@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Usage Logging — Outcomes</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef',
+            muted: '#f0eeeb',
+            foreground: '#1a1a1a',
+            secondary: '#555555',
+            dimmed: '#6b7280',
+            border: '#e5e7eb'
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: { sm: '6px', md: '12px', full: '9999px' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #faf9f7; margin: 0; padding: 40px; }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; }
+    .tab-btn { padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .sub-tab-bar { display: flex; gap: 2px; border-bottom: 1px solid #f0eeeb; padding-left: 16px; background: #faf9f7; margin-bottom: 16px; }
+    .sub-tab-btn { padding: 8px 14px; font-size: 0.78rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+    .section { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px; }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .phase-tracker { display: flex; gap: 0; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
+    .phase-item { padding: 8px 18px; font-size: 0.82rem; font-weight: 500; color: #6b7280; background: #f5f3ef; border: 1px solid #e5e7eb; border-right: none; }
+    .phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid #e5e7eb; }
+    .phase-current { background: #ff6900; color: white; border-color: #ff6900; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .card h3 { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    .card p { font-size: 0.85rem; color: #555555; line-height: 1.5; margin: 0 0 8px 0; }
+    .card .tag { display: inline-block; font-size: 0.7rem; padding: 1px 8px; border-radius: 9999px; background: #fff7ed; color: #ff6900; font-weight: 500; }
+    .card .tag-muted { background: #f5f3ef; color: #6b7280; }
+    .card .tag-deferred { background: #e0e7ff; color: #4338ca; }
+    .compare-grid { display: grid; gap: 16px; margin-bottom: 24px; }
+    .compare-2col { grid-template-columns: repeat(2, 1fr); }
+    .compare-grid .col { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .compare-grid .col h3 { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    .compare-grid .pro { color: #047857; font-size: 0.85rem; margin: 4px 0; }
+    .compare-grid .con { color: #b91c1c; font-size: 0.85rem; margin: 4px 0; }
+    .callout { padding: 16px 20px; border-radius: 8px; font-size: 0.9rem; border-left: 4px solid; margin-bottom: 16px; line-height: 1.5; }
+    .callout-decision { background: #fff7ed; border-color: #ff6900; color: #1a1a1a; }
+    .callout-constraint { background: #f5f3ef; border-color: #555555; color: #1a1a1a; }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: #1a1a1a; }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: #1a1a1a; }
+    .callout strong { display: block; font-weight: 600; margin-bottom: 4px; }
+    .change-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .change-table th { text-align: left; padding: 10px 12px; font-weight: 600; color: #1a1a1a; background: #f5f3ef; border-bottom: 1px solid #e5e7eb; }
+    .change-table td { padding: 10px 12px; border-bottom: 1px solid #f0eeeb; color: #1a1a1a; vertical-align: top; }
+    .change-table .file-path { font-family: Menlo, Consolas, monospace; font-size: 0.78rem; color: #555555; }
+    .status-badge { display: inline-block; font-size: 0.7rem; padding: 1px 8px; border-radius: 9999px; font-weight: 500; }
+    .status-primary { background: #fff7ed; color: #ff6900; }
+    .status-secondary { background: #f5f3ef; color: #6b7280; }
+    .status-new { background: #ecfdf5; color: #047857; }
+    .criteria-list { list-style: none; padding: 0; margin: 0; }
+    .criteria-item { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #f0eeeb; align-items: flex-start; }
+    .criteria-item:last-child { border-bottom: none; }
+    .criteria-num { font-family: Menlo, Consolas, monospace; font-size: 0.78rem; color: #ff6900; font-weight: 600; flex-shrink: 0; padding-top: 1px; }
+    .criteria-text { font-size: 0.85rem; color: #1a1a1a; line-height: 1.5; }
+    .criteria-text strong { font-weight: 600; }
+    .kill-list { list-style: none; padding: 0; margin: 0; }
+    .kill-item { padding: 10px 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; font-size: 0.85rem; color: #b91c1c; margin-bottom: 8px; }
+    .why-list { list-style: none; padding: 0; margin: 12px 0 0 0; counter-reset: whyctr; }
+    .why-list li { counter-increment: whyctr; padding: 8px 12px; margin-bottom: 6px; background: #f8fafc; border-left: 3px solid #cbd5e1; font-size: 0.85rem; color: #1a1a1a; }
+    .why-list li.root { background: #fff7ed; border-left-color: #ff6900; font-weight: 500; }
+    .why-list li::before { content: counter(whyctr) ". "; color: #6b7280; font-weight: 600; }
+    .why-list li.root::before { content: "Root: "; color: #ff6900; }
+  </style>
+</head>
+<body>
+  <h1>Claude Code Usage Logging — Outcomes</h1>
+  <p class="subtitle">Business-mode brainstorm output · 2026-04-23 · Architect-consulted · 4-critic panel reviewed (Round 1 + Round 2)</p>
+  <p class="context">Paired with the frozen technical design. Defines what friction the logger catches, what the Monday digest drives, and how infrastructure ships in phases by outcome value rather than technical ease.</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('outcomes')">Outcomes</button>
+    <button class="tab-btn" onclick="switchTab('flow')">Flow</button>
+    <button class="tab-btn" onclick="switchTab('rollout')">Rollout</button>
+    <button class="tab-btn" onclick="switchTab('signals')">Signals &amp; kill criteria</button>
+  </div>
+
+  <!-- OUTCOMES TAB -->
+  <div id="panel-outcomes" class="tab-panel active">
+
+    <div class="callout callout-decision">
+      <strong>Goal</strong>
+      Detect deviations from Eric's stated and implicit expectations of Claude — surface them weekly with enough context to act — so Eric tunes config and rules structurally instead of re-correcting every session.
+    </div>
+
+    <div class="section">
+      <h2>Diagnosis (3-why drill-down)</h2>
+      <p class="description">Why do rule violations, drift, and fabrication keep happening?</p>
+      <ol class="why-list">
+        <li>Claude reads CLAUDE.md at session start but treats rules as advisory prose, not structural constraints.</li>
+        <li>Prose has no per-turn enforcement mechanism — no compilation check, no required tool call, no test.</li>
+        <li>The ephemeral textual medium (chat) has no structural affordance for promoting a violation into a persistent rule that binds the next turn.</li>
+        <li class="root">Asymmetry between correction cost (user-borne, per session) and rule-writing cost (user-borne, per lifetime). Correcting in the moment is the path of least resistance; formalizing into a rule gets deferred indefinitely.</li>
+      </ol>
+
+      <p class="description" style="margin-top: 20px;">Why do skill-invocation misses, abandonment, and context-skipping keep happening?</p>
+      <ol class="why-list">
+        <li>Claude's system prompt has no pre-action checkpoint forcing "what skill/sub-agent/prior-doc applies?" before acting.</li>
+        <li>From Claude's side, pausing to survey has immediate token+latency cost; acting wrong has deferred cost (user absorbs via correction).</li>
+        <li class="root">Asymmetric cost of wrong-action vs pause-and-verify favors action. Correction events don't feed back into Claude's pre-action routines.</li>
+      </ol>
+    </div>
+
+    <div class="compare-grid compare-2col">
+      <div class="col">
+        <h3>Guiding policy</h3>
+        <p style="font-size: 0.85rem; color: #1a1a1a; line-height: 1.55;">Close the cost asymmetry in two places:</p>
+        <p class="pro">+ <strong>At emission time:</strong> behavioral protocols (mode-echo, cite-or-uncertain, <code>&lt;!-- DECISION-LOG --&gt;</code>, survey-first) shift cost to <em>before</em> Claude acts</p>
+        <p class="pro">+ <strong>At promotion time:</strong> deterministic rule-compliance scoreboard + structured copy-paste digest makes rule-writing cheap enough to happen weekly rather than never</p>
+        <p style="font-size: 0.82rem; color: #555555; margin-top: 10px;">Monday 1 tests whether protocols alone are sufficient. If Tier-A violations drop week over week with only protocols, the digest layer becomes optional.</p>
+      </div>
+      <div class="col">
+        <h3>Source of power</h3>
+        <p style="font-size: 0.85rem; color: #1a1a1a; line-height: 1.55;">Deterministic rule-compliance scoring against Eric's CLAUDE.md corpus — articulate, current, hand-written. No off-the-shelf logger knows his rules.</p>
+        <p class="pro">+ Tier A (directly detectable via substring/regex): banned phrases, required tool patterns, commit conventions</p>
+        <p class="pro">+ Tier B (indirect via behavioral proxies): "root cause first" → RCA-invoked before Edit</p>
+        <p class="con">− Tier C (rhetorical quality, architectural taste): out of scope for automated scoring; spot-check only</p>
+        <p style="font-size: 0.78rem; color: #6b7280; margin-top: 8px;">Exact A/B/C distribution measured empirically at Week 0, not claimed up front.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Five friction classes (phased by evidence)</h2>
+      <p class="description">Ranked by evidence strength and detection tractability. Only classes 1 and 3 ship in the first month; classes 2, 4, 5 deferred until the first two produce operational data.</p>
+      <div class="card-grid">
+        <div class="card">
+          <h3>1. Expectation deviation <span class="tag">Action A · Monday 1</span></h3>
+          <p>Rule violations + corrections for expectations not yet written as rules. Mode drift, fabrication, banned-phrase slips.</p>
+          <p><strong>Detect:</strong> Tier-A scoring (Monday 1) + correction-parse + Tier-B phased weekly</p>
+        </div>
+        <div class="card">
+          <h3>2. Scaffolding bypass <span class="tag tag-deferred">Deferred → Monday 8+</span></h3>
+          <p>Skill / sub-agent / prior-context not used when it should have been. Parallel track: <code>skill-auto-router</code> worktree.</p>
+        </div>
+        <div class="card">
+          <h3>3. Config gap <span class="tag">Action C · Monday 4</span></h3>
+          <p>Permission prompts an allow-list could have covered. Config incomplete, not ignored.</p>
+          <p><strong>Detect:</strong> auto-approve-* hook decision log</p>
+        </div>
+        <div class="card">
+          <h3>4. Decision conflict <span class="tag tag-deferred">Deferred → Monday 8+</span></h3>
+          <p>Protocol ships Monday 1; class-4 detection waits for sample quality ≥ 7/10 real across 2-week window.</p>
+        </div>
+        <div class="card">
+          <h3>5. Skill/agent health <span class="tag tag-muted">Separate channel</span></h3>
+          <p>Several skills <strong>exceed</strong> 300 lines (finishing-branch 657, writing-plans 522, RCA 390). Adaptive-interval audit (clean=7d / issues=4d). <code>[SKILL HEALTH]</code> tag, not weekly digest.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-note">
+      <strong>Cross-cutting mechanism: user-correction event detection</strong>
+      Widened phrase list with 3 confidence tiers. High (0.9): "I thought you'd…", "you're supposed to…", "you stopped…". Medium (0.6): "no,", "wait,", "stop", "undo", "that's wrong", "hang on". Low (0.3): "actually", "hmm" — logged but suppressed from digest rows. Weekly 20-correction calibration sample tunes the phrase list.
+    </div>
+
+  </div>
+
+  <!-- FLOW TAB -->
+  <div id="panel-flow" class="tab-panel">
+
+    <div class="section">
+      <h2>The two-layer system</h2>
+      <p class="description">Behavioral protocols force Claude to externalize intentions mid-session. Hooks capture signals. Digest aggregates weekly. Monday actions update config. Config shapes next week's sessions. Loop closes.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+flowchart TD
+  A[CLAUDE.md rules<br/>+ behavioral protocols<br/>mode-echo · survey-first<br/>cite-or-uncertain · DECISION-LOG]
+  B[Claude Code session<br/>Eric's prompts + Claude's work]
+  C1[UserPromptSubmit hook<br/>prompts-sid.jsonl per-session]
+  C2[Stop hook<br/>extracts DECISION-LOG<br/>two-stage parse<br/>→ decision-trails.jsonl]
+  C3[auto-approve-* hooks<br/>config-gap log]
+  C4[session-meta json<br/>facets json<br/>from CC CLI]
+  D[Weekly digest generator<br/>Monday 7am launchd]
+  E[Monday digest<br/>grows: scoreboard → 3 sections → 6]
+  F[Eric's Monday actions<br/>A: rules · C: allow-list · E: conflict→rules]
+  G[git log cross-repo scope<br/>from repos.json + auto-discovery]
+  H[Section 6<br/>what I did last week]
+  I[Cue mechanism<br/>SessionStart tag · osascript<br/>+ sentinel-based drift detector]
+  J[QA STALE tag<br/>out-of-band<br/>labeling backlog > 50]
+
+  A -->|shapes| B
+  B --> C1
+  B --> C2
+  B --> C3
+  B --> C4
+  C1 --> D
+  C2 --> D
+  C3 --> D
+  C4 --> D
+  D --> E
+  E --> I
+  I --> F
+  F -->|commits| G
+  G --> H
+  H --> E
+  F -->|updates| A
+  D -.-> J
+  J --> F
+
+  classDef protocol fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  classDef session fill:#f0f9ff,stroke:#0284c7,color:#1a1a1a
+  classDef store fill:#f5f3ef,stroke:#555555,color:#1a1a1a
+  classDef digest fill:#ecfdf5,stroke:#047857,color:#1a1a1a
+  classDef action fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  classDef guard fill:#fef2f2,stroke:#b91c1c,color:#1a1a1a
+  class A protocol
+  class B session
+  class C1,C2,C3,C4,G store
+  class D,E,H digest
+  class F,I action
+  class J guard
+        </pre>
+      </div>
+    </div>
+
+    <div class="callout callout-risk">
+      <strong>Counter-measurement independence caveat</strong>
+      Three of six kill criteria depend on manual grading; that grading backlog is itself monitored by <code>[QA STALE]</code>. If grading stops AND <code>[QA STALE]</code> is ignored 3+ weeks, the system has gone silent — the last kill criterion catches that. Chain is not fully independent, but each layer extends the guard one step beyond the ritual.
+    </div>
+
+    <div class="section">
+      <h2>Data the digest reads (Monday 1 minimum)</h2>
+      <table class="change-table">
+        <thead>
+          <tr><th>Source</th><th>Owner</th><th>Signal</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="file-path">~/.claude/usage-tracking/prompts-{sid}.jsonl</td>
+            <td><span class="status-badge status-new">New · per-session</span></td>
+            <td>Correction events; Tier-A regex match against CLAUDE.md</td>
+          </tr>
+          <tr>
+            <td class="file-path">~/.claude/usage-data/session-meta/*.json</td>
+            <td><span class="status-badge status-secondary">CC CLI</span></td>
+            <td>Duration, tokens, tool_errors, user_interruptions</td>
+          </tr>
+          <tr>
+            <td class="file-path">~/.claude/usage-data/facets/*.json</td>
+            <td><span class="status-badge status-secondary">CC CLI</span></td>
+            <td>Friction classifications, satisfaction, top features</td>
+          </tr>
+          <tr>
+            <td class="file-path">~/.claude/usage-tracking/usage.jsonl</td>
+            <td><span class="status-badge status-secondary">Already running</span></td>
+            <td>Skill/Task/Agent invocations with cwd</td>
+          </tr>
+          <tr>
+            <td class="file-path">~/.claude/digests/.read-YYYY-WW</td>
+            <td><span class="status-badge status-new">New · sentinel</span></td>
+            <td>Explicit read-confirmation (replaces atime contamination)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ROLLOUT TAB -->
+  <div id="panel-rollout" class="tab-panel">
+
+    <div class="phase-tracker">
+      <div class="phase-item phase-current">Monday 1 — Protocols + scoreboard</div>
+      <div class="phase-item">Monday 4 — Sections 1/2/4</div>
+      <div class="phase-item">Monday 8 — Sections 3/5/6</div>
+      <div class="phase-item">Monday 12+ — Tier-B weekly</div>
+    </div>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('rollout','m1')">Monday 1</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('rollout','m4')">Monday 4</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('rollout','m8')">Monday 8</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('rollout','m12')">Monday 12+</button>
+    </div>
+
+    <!-- MONDAY 1 -->
+    <div id="sub-m1" class="sub-panel active">
+      <div class="section">
+        <h2>Monday 1 — protocols + one-page Tier-A scoreboard</h2>
+        <p class="description">Smallest thing that tests whether protocols alone reduce friction. NO digest sections yet.</p>
+        <table class="change-table">
+          <thead><tr><th>Capability</th><th>Source</th><th>Unlocks</th></tr></thead>
+          <tbody>
+            <tr><td>Plugin-duplicate removal</td><td>Frozen #1</td><td>No double-counting</td></tr>
+            <tr><td>CLAUDE.md protocols: mode-echo, survey-first, cite-or-uncertain</td><td><span class="status-badge status-new">Outcome</span></td><td>Pre-action externalization active</td></tr>
+            <tr><td><code>&lt;!-- DECISION-LOG --&gt;</code> protocol in CLAUDE.md</td><td><span class="status-badge status-new">Outcome</span></td><td>Conflict sample accumulates in background</td></tr>
+            <tr><td><code>UserPromptSubmit</code> → per-session <code>prompts-{sid}.jsonl</code></td><td>Frozen #2 + Tier-1 hardening</td><td>Correction-parse source; no concurrent-write corruption</td></tr>
+            <tr><td>Tier-A rule-violation scorer</td><td><span class="status-badge status-new">Outcome</span></td><td>Hero metric + per-rule grid</td></tr>
+            <tr><td>Drift-detector via <code>.read-YYYY-WW</code> sentinel</td><td><span class="status-badge status-new">Outcome</span></td><td>Digest dormancy detectable (not atime)</td></tr>
+            <tr><td>Week-0 retroactive scorer against last 4 weeks of transcripts</td><td><span class="status-badge status-new">Outcome</span></td><td>Validates Tier-A detection before week 1</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-decision" style="margin-top: 16px;">
+          <strong>Output</strong>
+          <code>~/.claude/digests/YYYY-WW.md</code> — hero metric sentence at top ("Tier-A violations: 17 this week, down 4 from last week"), per-rule grid below. That's it.
+          <br><br>
+          <strong>Validates</strong> the core hypothesis: do protocols reduce Tier-A violations? If yes, continue to Monday 4. If no, reconsider before investing in more layers.
+        </div>
+      </div>
+    </div>
+
+    <!-- MONDAY 4 -->
+    <div id="sub-m4" class="sub-panel">
+      <div class="section">
+        <h2>Monday 4 — Sections 1, 2, 4 (if Monday 1 showed value)</h2>
+        <p class="description">Progressive disclosure continues.</p>
+        <table class="change-table">
+          <thead><tr><th>Capability</th><th>Source</th><th>Unlocks</th></tr></thead>
+          <tbody>
+            <tr><td><code>session-meta</code> + <code>facets</code> read path</td><td><span class="status-badge status-primary">Architect change</span></td><td>Summary section</td></tr>
+            <tr><td>Stop-hook two-stage DECISION-LOG parse → <code>decision-trails.jsonl</code></td><td>Architect + Tier-1 + QA-R2</td><td>Quality sample calibration begins</td></tr>
+            <tr><td><code>auto-approve-*</code> hook extensions → config-gap log</td><td>Frozen #7 variant</td><td>Section 4 data</td></tr>
+            <tr><td><code>SessionStart</code> → <code>sessions.jsonl</code></td><td>Frozen #2</td><td>Cross-repo join keys</td></tr>
+            <tr><td>Structured-block schema for Sections 2 + 4</td><td><span class="status-badge status-new">Outcome</span></td><td>Section 6 diff feasible at Monday 8</td></tr>
+            <tr><td>macOS notification — <em>payload = hero metric, not "digest ready"</em></td><td><span class="status-badge status-new">Outcome</span></td><td>Homer-first nudge</td></tr>
+            <tr><td><code>[QA STALE]</code> out-of-band tag (labeling backlog &gt; 50)</td><td><span class="status-badge status-new">Outcome</span></td><td>Counter-measurement dormancy detectable even when ritual skipped</td></tr>
+            <tr><td>Week-4 threshold recalibration step</td><td><span class="status-badge status-new">Outcome</span></td><td>Kill-criterion thresholds tuned against actual 4-week data, not plucked from air</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-decision" style="margin-top: 16px;"><strong>Output:</strong> hero metric + Sections 1 (Summary), 2 (Corrections → rules), 4 (Permission prompts). Section 3 still calibrating in background.</div>
+      </div>
+    </div>
+
+    <!-- MONDAY 8 -->
+    <div id="sub-m8" class="sub-panel">
+      <div class="section">
+        <h2>Monday 8 — Sections 3, 5, 6</h2>
+        <p class="description">Decision-trail sample has ≥ 7/10 real entries across a 2-week rolling window; Section 3 unlocks.</p>
+        <table class="change-table">
+          <thead><tr><th>Capability</th><th>Source</th><th>Unlocks</th></tr></thead>
+          <tbody>
+            <tr><td>Decision-trail quality sample gating integration</td><td><span class="status-badge status-new">Outcome</span></td><td>Section 3 unblocked if gate passes</td></tr>
+            <tr><td><code>Stop</code>, <code>SubagentStop</code> + token/duration capture</td><td>Frozen #2</td><td>Section 5 enrichment</td></tr>
+            <tr><td>Session linkage (plan → commits → tests → kanban)</td><td>Frozen #4</td><td>Cross-artifact correlation</td></tr>
+            <tr><td>Section 6 cross-repo scope from <code>repos.json</code> + auto-discovery</td><td>Outcome (QA-R2 scoped)</td><td>Anti-ignore guard operational; removal + churn counted</td></tr>
+            <tr><td>Skill/agent health audit via adaptive-interval channel</td><td><span class="status-badge status-new">Outcome</span></td><td>Classes B+D outside digest</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-decision" style="margin-top: 16px;"><strong>Output:</strong> full 6-section digest. Separate <code>[SKILL HEALTH]</code> channel live.</div>
+      </div>
+    </div>
+
+    <!-- MONDAY 12+ -->
+    <div id="sub-m12" class="sub-panel">
+      <div class="section">
+        <h2>Monday 12+ — phased Tier-B rule promotion; Classes 2 + 4 graduate</h2>
+        <p class="description">Steady-state expansion, not a one-shot phase.</p>
+        <table class="change-table">
+          <thead><tr><th>Capability</th><th>Source</th><th>Unlocks</th></tr></thead>
+          <tbody>
+            <tr><td>Tier-B rule detection heuristics — one or two per week</td><td><span class="status-badge status-new">Outcome</span></td><td>More rules on the scoreboard</td></tr>
+            <tr><td>Per-rule calibration gate: precision ≥ 0.7 AND recall ≥ 0.5 on n ≥ 30</td><td>QA-R2</td><td>No noisy heuristics counted prematurely</td></tr>
+            <tr><td>Class 2 (scaffolding bypass) graduates to digest when heuristic precision &gt; 0.7</td><td><span class="status-badge status-new">Outcome</span></td><td>Digest row per missed delegation</td></tr>
+            <tr><td>Class 4 (decision conflicts) graduates if quality gate holds</td><td><span class="status-badge status-new">Outcome</span></td><td>Recurring conflict themes → rules</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout callout-constraint" style="margin-top: 24px;">
+      <strong>Design principle for phasing</strong>
+      Each Monday ships only what the previous Monday's evidence justifies. Monday 1 is a falsification setup: if it fails, Monday 4 doesn't ship. Progressive disclosure keeps cognitive load bounded and avoids over-building against an unvalidated value hypothesis.
+    </div>
+
+  </div>
+
+  <!-- SIGNALS TAB -->
+  <div id="panel-signals" class="tab-panel">
+
+    <div class="section">
+      <h2>Week 4 — adoption + leading indicators</h2>
+      <p class="description">Outcome-oriented. Activity measures labeled as leading indicators only.</p>
+      <p style="font-size: 0.78rem; color: #6b7280; text-transform: uppercase; margin: 16px 0 6px 0;">Outcome-oriented</p>
+      <ul class="criteria-list">
+        <li class="criteria-item"><span class="criteria-num">1</span><div class="criteria-text"><strong>Tier-A rule-violation count trending DOWN</strong> week-over-week</div></li>
+        <li class="criteria-item"><span class="criteria-num">2</span><div class="criteria-text"><strong>Permission-prompt count/week trending DOWN</strong> in the top-3 active repos</div></li>
+        <li class="criteria-item"><span class="criteria-num">3</span><div class="criteria-text">Correction-parse <strong>false-positive rate below 20%</strong> after 2 weeks of calibration</div></li>
+      </ul>
+      <p style="font-size: 0.78rem; color: #6b7280; text-transform: uppercase; margin: 20px 0 6px 0;">Leading indicators (activity, lower weight)</p>
+      <ul class="criteria-list">
+        <li class="criteria-item"><span class="criteria-num">4</span><div class="criteria-text">Digest opened (sentinel exists) on 3 of 4 Mondays</div></li>
+        <li class="criteria-item"><span class="criteria-num">5</span><div class="criteria-text"><code>&lt;!-- DECISION-LOG --&gt;</code> quality sample ≥ <strong>7/10 real</strong> in rolling 2-week window</div></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Week 12 — sustained-value signals</h2>
+      <ul class="criteria-list">
+        <li class="criteria-item"><span class="criteria-num">1</span><div class="criteria-text">Repeat violations of existing Tier-A rules <strong>trending DOWN</strong></div></li>
+        <li class="criteria-item"><span class="criteria-num">2</span><div class="criteria-text">Permission-prompt count/week <strong>down 30% from Week 1 baseline</strong></div></li>
+        <li class="criteria-item"><span class="criteria-num">3</span><div class="criteria-text">Protocol-compliance spot-check ≥ <strong>60% adherence</strong></div></li>
+        <li class="criteria-item"><span class="criteria-num">4</span><div class="criteria-text">At least 5 rules <strong>promoted Tier B → Tier A</strong> (indirect → direct detection)</div></li>
+        <li class="criteria-item"><span class="criteria-num">5</span><div class="criteria-text">Decision-trail entries graded <strong>real ≥ 70%</strong> across rolling sample</div></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Kill criteria — six triggers, any one fires retirement</h2>
+      <p class="description">Each layer extends the guard one step beyond the ritual. The sixth catches the case where all five upstream layers can't fire because their inputs are dormant.</p>
+      <ul class="kill-list">
+        <li class="kill-item">Tier-A violation count flat or rising at Week 8 (core value hypothesis failed)</li>
+        <li class="kill-item">Digest unread 3+ consecutive Mondays (drift detector fires repeatedly)</li>
+        <li class="kill-item">Correction-parse false-positive rate &gt; 40% after 4 weeks of calibration (signal too noisy)</li>
+        <li class="kill-item">Protocol-compliance spot-check &lt; 30% at Week 8 (Claude isn't following protocols; machine has no inputs)</li>
+        <li class="kill-item">Decision-trail <code>real</code> rate &lt; 40% at Week 8 (Claude fabricating markers)</li>
+        <li class="kill-item"><code>[QA STALE]</code> tag fires 3+ consecutive weeks and isn't acted on (measurement itself has gone dormant)</li>
+      </ul>
+      <div class="callout callout-note" style="margin-top: 16px;">
+        <strong>Retirement is explicit, not silent</strong>
+        If a kill criterion fires, the next Monday's artifact is a <strong>one-page learning memo</strong>, not a digest: what hypothesis failed, what we can take into the next system, what was worth the investment regardless. Framing is "we learned X," not "we failed at Y." The system's retirement is itself a data point, not a shame surface.
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '13px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 40, rankSpacing: 50 }
+    });
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); } catch (e) {}
+        });
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); } catch (e) {}
+        });
+      }
+    }
+  </script>
+</body>
+</html>
