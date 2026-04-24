@@ -100,6 +100,14 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
 | kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 
+## What this plugin does NOT include
+
+This plugin is distributed to many users. It intentionally does not ship anything that writes to a user-global path or assumes the plugin author's personal infrastructure.
+
+- **Usage tracking hooks.** A reference copy of the PostToolUse `Skill|Task|Agent` tracker lives at `tools/optional-usage-tracker.js`. It is **not wired** via `hooks/hooks.json`. To enable it on your machine, copy it to `~/.claude/hooks/usage-tracker.js` and add the hook entry shown in that file's header comment. The plugin will never write to `~/.claude/usage-tracking/` on your behalf.
+- **Weekly digest / rule scorer.** Single-user features maintained in the plugin author's global config, not shipped.
+- **Eval infrastructure.** The `e2e/` directory exists for plugin-author QA; skills guard on its existence and skip silently if absent.
+
 ### Agents
 
 | Agent | Description |

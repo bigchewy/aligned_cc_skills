@@ -114,7 +114,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "refactor(hooks): re
 
 ---
 
-## Task 3: Update plugin README with "What this plugin does NOT include" section
+## ✅ Task 3: Update plugin README with "What this plugin does NOT include" section
 
 **Repo:** `~/software/aligned_cc_skills`
 
