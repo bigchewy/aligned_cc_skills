@@ -213,7 +213,14 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "test(e2e): add regr
 
 ## 🔄 Task 5: Add "mode-echo" protocol to CLAUDE.md
 
-> BLOCKED: Edit tool denied permission to modify `/Users/ericpage/.claude/CLAUDE.md` (flagged as sensitive file). User must approve the write, or grant the loop session permission to edit files under `~/.claude/`.
+> BLOCKED (2nd attempt 2026-04-24): Edit to `/Users/ericpage/.claude/CLAUDE.md` denied a second time — file is flagged as sensitive and the loop session does not carry approval for it. Tasks 5–8 all edit this same file and will all fail the same way until resolved.
+>
+> **User action required — pick one:**
+> 1. Approve each `Edit` against `~/.claude/CLAUDE.md` interactively when the loop pauses, OR
+> 2. Add an `acceptEdits` permission rule for `~/.claude/CLAUDE.md` for this loop session, OR
+> 3. Apply the four CLAUDE.md edits (Tasks 5–8) by hand in another session, then mark each ✅ in this plan and resume the loop.
+>
+> Once unblocked, change the heading prefix from 🔄 to nothing so the next iteration runs Task 5 fresh.
 
 **Repo:** `~/.claude`
 
