@@ -7,16 +7,17 @@ drops coverage of usage-tracking/, this test catches it.
 import subprocess
 from pathlib import Path
 
+import pytest
+
 
 def test_usage_tracking_is_git_ignored():
     claude_dir = Path.home() / ".claude"
     if not claude_dir.is_dir():
-        # Skip on CI / fresh installs — this is a regression guard for the author's env.
-        return
+        pytest.skip("~/.claude/ not present — regression guard is author-only")
     candidates = [
         "usage-tracking/prompts-abc123.jsonl",
         "usage-tracking/violations.jsonl",
-        "digests/2026-W17.md",
+        "digests/latest.md",
     ]
     for rel in candidates:
         result = subprocess.run(
