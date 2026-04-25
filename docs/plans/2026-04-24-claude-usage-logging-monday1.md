@@ -211,16 +211,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "test(e2e): add regr
 
 ---
 
-## 🔄 Task 5: Add "mode-echo" protocol to CLAUDE.md
-
-> BLOCKED (4th attempt 2026-04-24): Edit to `/Users/ericpage/.claude/CLAUDE.md` denied again. Four consecutive iterations have confirmed the loop cannot self-unblock this. To stop further wasted iterations, this run wrote `.ralph-done` at the worktree root to halt the loop.
->
-> **User action required — pick one, then delete `.ralph-done` and restart the loop:**
-> 1. Run the loop interactively (foreground) so you can approve each `Edit` against `~/.claude/CLAUDE.md` when prompted, OR
-> 2. Temporarily add an `acceptEdits` permission rule for `/Users/ericpage/.claude/CLAUDE.md` in the loop session's settings, OR
-> 3. Apply the four CLAUDE.md edits (Tasks 5–8) by hand in another session, then mark each ✅ in this plan.
->
-> Once unblocked, change the heading prefix from 🔄 to nothing, delete `.ralph-done`, and resume. Tasks 5–8 all edit this same file and will fail identically without one of the actions above.
+## ✅ Task 5: Add "mode-echo" protocol to CLAUDE.md
 
 **Repo:** `~/.claude`
 
@@ -264,7 +255,7 @@ git -C /Users/ericpage/.claude commit -m "feat(rules): add mode-echo protocol to
 
 ---
 
-## Task 6: Add "cite-or-uncertain" protocol to CLAUDE.md
+## ✅ Task 6: Add "cite-or-uncertain" protocol to CLAUDE.md
 
 **Repo:** `~/.claude`
 
@@ -305,7 +296,7 @@ git -C /Users/ericpage/.claude commit -m "feat(rules): add cite-or-uncertain pro
 
 ---
 
-## Task 7: Add "survey-first" protocol to CLAUDE.md
+## ✅ Task 7: Add "survey-first" protocol to CLAUDE.md
 
 **Repo:** `~/.claude`
 
@@ -341,7 +332,7 @@ git -C /Users/ericpage/.claude commit -m "feat(rules): add survey-first protocol
 
 ---
 
-## Task 8: Add DECISION-LOG protocol to CLAUDE.md
+## ✅ Task 8: Add DECISION-LOG protocol to CLAUDE.md
 
 **Repo:** `~/.claude`
 
@@ -391,7 +382,7 @@ git -C /Users/ericpage/.claude commit -m "feat(rules): add DECISION-LOG protocol
 
 ---
 
-## Task 9: Write prompt-capture hook with failure-semantics tests
+## ✅ Task 9: Write prompt-capture hook with failure-semantics tests
 
 **Repo:** `~/.claude`
 
@@ -618,7 +609,7 @@ git -C /Users/ericpage/.claude commit -m "feat(hooks): add UserPromptSubmit prom
 
 ---
 
-## Task 10: Wire prompt-capture into settings.json
+## ✅ Task 10: Wire prompt-capture into settings.json
 
 **Repo:** `~/.claude`
 
@@ -683,7 +674,7 @@ git -C /Users/ericpage/.claude commit -m "feat(settings): wire UserPromptSubmit 
 
 ---
 
-## Task 11: Write hook-error monitor (SessionStart)
+## ✅ Task 11: Write hook-error monitor (SessionStart)
 
 **Repo:** `~/.claude`
 
@@ -792,7 +783,7 @@ git -C /Users/ericpage/.claude commit -m "feat(hooks): add check-hook-errors Ses
 
 ---
 
-## Task 12: Wire check-hook-errors into settings.json
+## ✅ Task 12: Wire check-hook-errors into settings.json
 
 **Repo:** `~/.claude`
 
@@ -843,7 +834,7 @@ git -C /Users/ericpage/.claude commit -m "feat(settings): wire SessionStart to c
 
 ---
 
-## Task 13: Write Tier-A rule catalog module
+## ✅ Task 13: Write Tier-A rule catalog module
 
 **Repo:** `~/.claude`
 
@@ -1028,7 +1019,7 @@ git -C /Users/ericpage/.claude commit -m "feat(analytics): add Tier-A rule catal
 
 ---
 
-## Task 14: Write user-correction event parser
+## ✅ Task 14: Write user-correction event parser
 
 **Repo:** `~/.claude`
 
@@ -1188,7 +1179,7 @@ git -C /Users/ericpage/.claude commit -m "feat(analytics): add user-correction e
 
 ---
 
-## Task 15: Write DECISION-LOG extractor (two-stage)
+## ✅ Task 15: Write DECISION-LOG extractor (two-stage)
 
 **Repo:** `~/.claude`
 
@@ -1412,7 +1403,7 @@ git -C /Users/ericpage/.claude commit -m "feat(analytics): add two-stage DECISIO
 
 ---
 
-## Task 16: Write transcript-scoring library
+## ✅ Task 16: Write transcript-scoring library
 
 **Repo:** `~/.claude`
 
@@ -1628,7 +1619,7 @@ git -C /Users/ericpage/.claude commit -m "feat(analytics): add transcript scorer
 
 ---
 
-## Task 17: Write weekly-digest generator (scoreboard output)
+## ✅ Task 17: Write weekly-digest generator (scoreboard output)
 
 **Repo:** `~/.claude`
 
@@ -1892,7 +1883,7 @@ git -C /Users/ericpage/.claude commit -m "feat(analytics): add weekly digest sco
 
 ---
 
-## Task 18: Create launchd plist for Monday 7am digest run
+## ✅ Task 18: Create launchd plist for Monday 7am digest run
 
 **Repo:** `~/.claude`
 
@@ -1977,7 +1968,7 @@ git -C /Users/ericpage/.claude commit -m "feat(crons): add Monday 7am launchd pl
 
 ---
 
-## Task 19: Write drift-detector SessionStart hook
+## ✅ Task 19: Write drift-detector SessionStart hook
 
 **Repo:** `~/.claude`
 
@@ -2103,7 +2094,7 @@ git -C /Users/ericpage/.claude commit -m "feat(hooks): add digest drift detector
 
 ---
 
-## Task 20: Wire check-digest-drift into settings.json
+## ✅ Task 20: Wire check-digest-drift into settings.json
 
 **Repo:** `~/.claude`
 
@@ -2163,7 +2154,7 @@ git -C /Users/ericpage/.claude commit -m "feat(settings): wire SessionStart to c
 
 ---
 
-## Task 21: Write QA-stale detector (manual-labeling backlog)
+## ✅ Task 21: Write QA-stale detector (manual-labeling backlog)
 
 **Repo:** `~/.claude`
 
@@ -2231,7 +2222,7 @@ git -C /Users/ericpage/.claude commit -m "feat(hooks): add QA-stale detector for
 
 ---
 
-## Task 22: Wire check-qa-stale into settings.json
+## ✅ Task 22: Wire check-qa-stale into settings.json
 
 **Repo:** `~/.claude`
 
@@ -2295,7 +2286,7 @@ git -C /Users/ericpage/.claude commit -m "feat(settings): wire SessionStart to c
 
 ---
 
-## Task 23: Extend settings-audit knownHookCommands for new hooks
+## ✅ Task 23: Extend settings-audit knownHookCommands for new hooks
 
 **Repo:** `~/.claude`
 
