@@ -23,6 +23,16 @@ Read file_path="<plan-file>" offset=45 limit=35
 
 Do NOT read the entire plan. Large plans bloat context and cause you to process multiple tasks.
 
+## Sentinels
+
+Two sentinels signal `run-ralph.sh` to halt. Both are written into the worktree root (the same directory `run-ralph.sh` cd's into and checks):
+- `.ralph-done` — every task heading contains ✅; work is complete
+- `.ralph-human-blocked` — a task requires human action; agent cannot proceed
+
+Step 2 covers when to write `.ralph-done`. The Rules section covers when to write `.ralph-human-blocked`.
+
+If the loop is interrupted (Ctrl+C, SIGTERM) after a sentinel was written but before `run-ralph.sh` could observe it, the sentinel stays on disk. The next launch's startup cleanup removes both sentinels — this is intentional, not a bug. Re-launching from a clean checkpoint is the correct recovery path.
+
 ## Step 2: If all tasks are complete
 
 If every task heading contains ✅, write the sentinel and stop:
@@ -64,11 +74,19 @@ Your job for this invocation is finished. The loop will start a new invocation f
 - ⚠️ ONE task per invocation — this is the #1 failure mode and is repeated intentionally
 - Read skill files as needed for patterns and conventions
 - Use sub-agents for heavy codebase research to keep context lean
-- If a task fails or is blocked:
+- If a task fails mid-execution and a future iteration could resolve it (transient error, partial state):
   - Mark it 🔄 in the plan file
-  - Add a note below the task heading: `> BLOCKED: [description of issue]`
+  - Add `> BLOCKED: [description of issue]` below the task heading
   - Commit the plan file update
-  - Exit (the next iteration will see the blocker note and attempt to resolve)
+  - Exit. The next iteration will retry.
+
+- If a task requires human action that no agent can perform (paid API calls, manual Dashboard/UI work, OAuth consent, manual paste from an external system):
+  - Do NOT modify the task heading
+  - Do NOT make a marker-only commit
+  - Do NOT report "Task N complete." — the task is not complete
+  - Write the human-blocker sentinel: `touch .ralph-human-blocked`
+  - Output: "Task N requires human action: [one-line reason]. Halting loop."
+  - Exit.
 - Do NOT run /aligned:finishing-a-development-branch — the user will handle finishing after the loop completes
 - Do NOT modify tasks you are not currently executing
 - ⚠️ FINAL REMINDER: After completing one task and committing, output "Task N complete." and EXIT. Do not continue.
