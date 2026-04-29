@@ -25,14 +25,14 @@ set -uo pipefail
 #   MAX_ITERATIONS      — Ralph loop safety cap (default: 50)
 #   ITERATION_TIMEOUT   — Ralph loop seconds per iteration (default: 900)
 #   MAX_TIMEOUTS        — Ralph loop consecutive timeout cap (default: 5)
-#   PHASE_TIMEOUT       — Timeout for plan-writing and verify phases (default: 2700 = 45 min)
+#   PHASE_TIMEOUT       — Timeout for plan-writing and verify phases (default: 3600 = 60 min)
 #   MAX_MOCKUP_ITERATIONS — Mockup fidelity loop cap (default: 5)
 #   MOCKUP_TIMEOUT      — Timeout per mockup fidelity iteration (default: 900 = 15 min)
 
 PROJECT="${1:?Usage: autopilot.sh <project-path> <design-doc-path> [branch-name]}"
 DESIGN_DOC="${2:?Usage: autopilot.sh <project-path> <design-doc-path> [branch-name]}"
 BRANCH="${3:-}"
-PHASE_TIMEOUT="${PHASE_TIMEOUT:-2700}"
+PHASE_TIMEOUT="${PHASE_TIMEOUT:-3600}"
 MAX_MOCKUP_ITERATIONS="${MAX_MOCKUP_ITERATIONS:-5}"
 MOCKUP_TIMEOUT="${MOCKUP_TIMEOUT:-900}"
 
