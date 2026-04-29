@@ -162,6 +162,7 @@ Identify assumptions the plan makes without validation or acknowledgment.
 | Tribal knowledge | Does the plan depend on undocumented conventions or setup steps? |
 | Scale assumptions | Does the plan assume data volumes, request rates, or file sizes without stating them? |
 | Manual-deploy artifacts | Are files matching `skills/_shared/manual-deploy-artifact-catalog.md` (migrations, env vars) covered by entries in the plan's `## Manual Steps (Post-Automation)` section? Missing coverage is a **high** severity issue. |
+| Autonomy violations | Does any task contain steps the Ralph loop cannot execute autonomously (paid API calls, manual Dashboard SQL, OAuth consent flow, manual paste from external UI)? Such steps belong in `## Prerequisites` or `## Manual Steps (Post-Automation)`, never inside a Task. Missing relocation is a **high** severity issue. |
 
 - BAD: Plan uses Stripe webhook without verifying webhook endpoint is configured in Stripe dashboard
 - BAD: Plan assumes Redis is running locally but doesn't list it in Prerequisites
@@ -170,6 +171,20 @@ Identify assumptions the plan makes without validation or acknowledgment.
 - GOOD: Plan notes "Assumes < 10K records — if larger, Task 4 needs pagination"
 - BAD: Plan creates `supabase/migrations/022_foo.sql` but has no Post-Automation entry listing that file
 - GOOD: Plan's Post-Automation section has `### M1 migrations` with `supabase/migrations/022_foo.sql` listed as a bullet
+- BAD: Task 3 mid-plan with "Step 1: Run `npm run eval -- --all` (uses paid API budget)" — `claude -p` cannot authorize spend or interactively confirm.
+- GOOD: Same `npm run eval -- --all` step listed in `## Prerequisites`; Task 3 reduced to the automatable artifact-commit portion that runs after the user completes the prerequisite.
+
+#### Autonomy violations — signal list
+
+For each Task, scan the body text for any of these signals. Any match → flag HIGH severity, cite task number + exact step text:
+
+- "paid API calls" / "real API calls" / "spends API budget" / `npm run eval` against live providers
+- "Supabase Dashboard" / "SQL Editor" / any UI-driven database operation
+- "OAuth consent" / "browser flow" / "click in [vendor] dashboard"
+- "manual confirmation" / "user must verify" / "wait for human"
+- Steps that require pasting from an external UI into a committed file
+
+Per `skills/writing-plans/SKILL.md` "Manual Steps Policy", these MUST live in `## Prerequisites` (before Task 1) or `## Manual Steps (Post-Automation)` (after the last task). Mid-task manual steps cause autonomous Ralph loops to spin or improvise non-deterministically (the iter-3 agent in the originating incident added a 🔄 marker + lying "Task N complete" commit message).
 
 ## Critique Output Format
 
