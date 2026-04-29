@@ -423,13 +423,22 @@ Cap each class list at 10 entries; for overflow append a "+ N more" line.
 
 **MANDATORY: You MUST use the Task tool to launch fresh sub-agents** for every critique round. NEVER run the critique in the main context window. The sub-agents provide independent evaluation — they haven't seen the planning conversation, so they won't anchor on the author's assumptions. Running critique inline defeats the purpose and is a skill violation.
 
+### ⛔ MANDATORY: Parallel dispatch — both critics in ONE assistant message
+
+This applies to Round 1 AND Round 2. When launching the Architect and Verifier:
+
+- **Both Task tool calls MUST appear in the same assistant message** — a single turn containing two `tool_use` blocks side-by-side.
+- **Sequential dispatch is a skill violation.** Dispatching the Architect alone, waiting for it to return, then dispatching the Verifier in a follow-up turn — doubles wall-clock time and is the most common cause of plan-writing timeouts. It defeats the purpose of having two independent critics.
+- **Self-check before sending:** If your next message contains exactly one Task tool call for a critic, STOP. Re-draft to include both critics' Task calls in the same message before sending.
+- **Rationale:** Each critic spends 5–10 minutes reading the plan + design doc + checklist + source files. Running them in parallel costs the wall-clock of the slower one. Running them serially costs the sum.
+
 **Division of labor:** The Verifier owns exhaustive fact-checking. The Architect does NOT duplicate this work — it reads key files to understand patterns, then focuses purely on architectural critique. This prevents the ~80% overlap in verification work that occurs when both agents fact-check independently.
 
 **Before dispatching critics — resolve the checklist (MANDATORY):**
 The checklist is at `{base-directory}/plan-critique-checklist.md`. Verify it exists with Read. **If the checklist cannot be found, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
 
 **Round 1:**
-1. Create a temporary directory for this critique round: `/tmp/plan-critique-{feature}/round-1/`. Launch 2 sub-agents **in parallel** (both in a single message with 2 Task tool calls). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` with the absolute path of the plan document, `{checklist-path}` with the resolved checklist path, and `{report-path}` with `/tmp/plan-critique-{feature}/round-1/{critic-slug}-report.md`.
+1. Create a temporary directory for this critique round: `/tmp/plan-critique-{feature}/round-1/`. Launch the Architect and Verifier sub-agents — **both Task tool calls in the SAME assistant message** (see "Parallel dispatch" contract above; sequential dispatch is a skill violation). Each uses `subagent_type=general-purpose`, `model=sonnet`. Replace `{plan-file-path}` with the absolute path of the plan document, `{checklist-path}` with the resolved checklist path, and `{report-path}` with `/tmp/plan-critique-{feature}/round-1/{critic-slug}-report.md`.
 
    The prompt templates for both critics and the aggregator live at `{base-directory}/references/critique-panel-prompts.md`. Read that file and substitute `{plan-file-path}`, `{checklist-path}`, and `{report-path}` into each prompt before launching the sub-agent.
 
@@ -450,7 +459,7 @@ Only run if Round 1 found medium or high severity issues. Use fresh sub-agents (
 
 Round 2 is **scoped to changes only** — not a full re-review. Before launching agents, prepare a brief summary of what changed since Round 1 (which sections were edited and why). Pass this summary to both agents. Write to `/tmp/plan-critique-{feature}/round-2/`.
 
-Launch 2 sub-agents **in parallel**, both using `subagent_type=general-purpose`, `model=haiku`. Both critics write their reports to `/tmp/plan-critique-{feature}/round-2/{critic-slug}-report.md` and return only a one-line confirmation. Substitute `{plan-file-path}`, `{report-path}`, and `{summary-of-changes}` into each prompt before launching.
+Launch the Architect and Verifier sub-agents — **both Task tool calls in the SAME assistant message** (see "Parallel dispatch" contract above; sequential dispatch is a skill violation). Both use `subagent_type=general-purpose`, `model=haiku`. Both critics write their reports to `/tmp/plan-critique-{feature}/round-2/{critic-slug}-report.md` and return only a one-line confirmation. Substitute `{plan-file-path}`, `{report-path}`, and `{summary-of-changes}` into each prompt before launching.
 
    **Critic 1 — The Architect (Round 2):** Use the section "Round 2: Architect prompt" from `references/critique-panel-prompts.md`.
 
