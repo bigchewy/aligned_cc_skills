@@ -110,6 +110,8 @@ Manual steps fall into two categories:
 - Split the remaining work into tasks that can run after the prerequisite is done
 - If a manual step depends on automated output (e.g., "run this generated SQL"), defer it to Post-Automation with clear instructions on what to run and where
 
+**Enforcement:** The Verifier critic checks for mid-plan autonomy violations during the Fact-Check + Critique Panel. See `plan-critique-checklist.md` Criterion 10's "Autonomy violations" row + the `Autonomy violations — signal list` subsection, and the Round 1 Verifier prompt's Phase 3 in `references/critique-panel-prompts.md`. HIGH severity violations must be resolved (relocate to Prerequisites or Post-Automation) before the plan ships.
+
 ## Standalone Scripts and Environment Variables
 
 When a plan includes a standalone TypeScript/JavaScript script (migration, seed, one-off task) that reads `process.env`, the script **will not** have access to `.env.local` variables unless it loads them explicitly. Next.js loads `.env.local` automatically, but `npx tsx script.ts` does not.
