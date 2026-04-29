@@ -43,7 +43,7 @@ fi
 PLAN="$(cd "$(dirname "$PLAN")" && pwd)/$(basename "$PLAN")"
 
 cd "$WORKTREE"
-rm -f .ralph-done
+rm -f .ralph-done .ralph-human-blocked
 
 # Log all output to file, with line-buffered tee for real-time terminal output
 LOG="$WORKTREE/.ralph-log"
@@ -220,6 +220,16 @@ while :; do
     echo "--- Iteration $ITERATION finished ($(date '+%H:%M:%S')) ---"
   fi
 
+  if [ -f .ralph-human-blocked ]; then
+    rm .ralph-human-blocked
+    echo "=== Ralph Loop Halted — User Action Required ==="
+    echo ""
+    echo "An iteration encountered a task that requires human action."
+    echo "Check the iteration's output above for the specific blocker."
+    echo "After completing the manual step, mark the task ✅ in the plan and re-launch the loop."
+    break
+  fi
+
   if [ -f .ralph-done ]; then
     rm .ralph-done
     echo "=== Ralph Loop Complete ==="
@@ -227,7 +237,7 @@ while :; do
     echo "Next step: run /aligned:finishing-a-development-branch to merge, clean up, and archive."
     break
   fi
-  echo "No .ralph-done found, starting next iteration..."
+  echo "No sentinel found, starting next iteration..."
   echo ""
   ITERATION=$((ITERATION + 1))
 done
