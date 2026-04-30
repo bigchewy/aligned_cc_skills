@@ -362,13 +362,34 @@ elif [ -f pyproject.toml ]; then
   echo "Python project detected — ensure venv is active."
 fi
 
-# Link env files if they exist in main repo but not worktree
+# === ENV-LINK BLOCK START ===
+# Link env files if they exist in main repo but not worktree.
+# Root-level: handles single-package repos and provides the target
+# that per-app symlinks resolve through.
 for envfile in .env.local .env; do
-  if [ -f "$PROJECT/$envfile" ] && [ ! -f "$WORKTREE/$envfile" ]; then
+  if [ -e "$PROJECT/$envfile" ] && [ ! -e "$WORKTREE/$envfile" ]; then
     ln -sf "$PROJECT/$envfile" "$WORKTREE/$envfile"
     echo "Linked $envfile from main repo."
   fi
 done
+
+# Per-app: monorepos symlink env files into app/package dirs (e.g.
+# apps/foo/.env.local -> ../../.env.local). Those symlinks are gitignored
+# and don't propagate to fresh worktrees, so mirror them from main.
+# Only symlinks are mirrored, never regular files — a real per-app env
+# file is user-managed state we shouldn't auto-touch.
+while IFS= read -r -d '' src; do
+  rel="${src#$PROJECT/}"
+  dest="$WORKTREE/$rel"
+  [ -e "$dest" ] && continue
+  [ -d "$(dirname "$dest")" ] || continue
+  ln -s "$(readlink "$src")" "$dest"
+  echo "Mirrored $rel from main repo."
+done < <(find "$PROJECT" -type l -name '.env*' \
+           -not -path "$PROJECT/.git/*" \
+           -not -path "$PROJECT/.worktrees/*" \
+           -not -path "$PROJECT/node_modules/*" -print0 2>/dev/null)
+# === ENV-LINK BLOCK END ===
 
 # Merge main so the plan file is available in the worktree
 echo "Merging main into worktree..."
