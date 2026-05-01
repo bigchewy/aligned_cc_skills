@@ -407,7 +407,7 @@ Run: `grep -rl 'aligned:' aligned-works/agents/ aligned-works/docs/ralph_loops/ 
 
 In `aligned-works/docs/ralph_loops/run-ralph.sh` (line 227): `/aligned:finishing-a-development-branch` → `/aligned-works:finishing-a-development-branch`
 
-In `aligned-works/docs/ralph_loops/FINISH-BRANCH.md`: replace any `/aligned:` references with correct new prefix.
+~~In `aligned-works/docs/ralph_loops/FINISH-BRANCH.md`: replace any `/aligned:` references with correct new prefix.~~ *(Obsoleted: `FINISH-BRANCH.md` deleted in autopilot-orchestration-impl, see `docs/plans/2026-04-30-autopilot-orchestration-impl.md` Task 11.)*
 
 In `aligned-works/docs/ralph_loops/EXECUTE-PLAN.md`: replace any `/aligned:` references with correct new prefix.
 
