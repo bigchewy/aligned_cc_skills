@@ -51,3 +51,27 @@ def test_validate_env_var_present():
         env={"PATH": "/usr/bin:/bin", "FAKE_TEST_VAR": "x"},
     )
     assert "exit=0" in r.stdout, r.stdout + r.stderr
+
+
+def test_preflight_halts_on_missing_env_var():
+    """End-to-end: invoke preflight against a fixture plan with an env var
+    requirement that the test env does not satisfy."""
+    PREFLIGHT = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "preflight.sh"
+    fixture = FIX / "plan_with_manifest.md"
+    import os, tempfile
+    with tempfile.TemporaryDirectory() as d:
+        # Inherit PATH so parse_manifest can locate a python3 with PyYAML;
+        # explicitly omit FAKE_TEST_VAR so env_var_missing is what trips.
+        env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+               "PROJECT": d, "PLAN_FILE": str(fixture),
+               "HALT_PATH": f"{d}/.autopilot-halt", "LOG": f"{d}/.log"}
+        env.pop("FAKE_TEST_VAR", None)
+        r = subprocess.run(
+            ["bash", str(PREFLIGHT)], capture_output=True, text=True,
+            env=env, cwd=d,
+        )
+        # FAKE_TEST_VAR is not set → halt with env_var_missing → exit 2
+        assert r.returncode == 2, f"preflight should halt (exit 2), got {r.returncode}: {r.stderr}"
+        sentinel = Path(d) / ".autopilot-halt"
+        assert sentinel.is_file(), "preflight must write .autopilot-halt"
+        assert "env_var_missing" in sentinel.read_text()

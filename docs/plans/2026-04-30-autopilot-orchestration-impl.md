@@ -2048,7 +2048,7 @@ git commit -m "feat(autopilot): add lib/halt.sh write/read/format protocol"
 
 ---
 
-### Task 19: Add `phases/preflight.sh` (manifest validation)
+### ✅ Task 19: Add `phases/preflight.sh` (manifest validation)
 
 **Files:**
 - Create: `docs/ralph_loops/phases/preflight.sh`

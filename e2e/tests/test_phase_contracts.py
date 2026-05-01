@@ -177,6 +177,18 @@ def test_phase_verify_exists_and_conforms():
     assert ".finish-status" in text
 
 
+def test_phase_preflight_exists_and_conforms():
+    p = PHASES_DIR / "preflight.sh"
+    assert p.is_file()
+    text = _read(p)
+    for f in PHASE_HEADER_FIELDS:
+        assert f in text
+    assert "lib/manifest.sh" in text
+    assert "lib/halt.sh" in text
+    # Must accept the "no plan yet" path (exit 3)
+    assert "exit 3" in text
+
+
 def test_finish_branch_md_is_deleted():
     assert not (RALPH_DIR / "FINISH-BRANCH.md").exists(), \
         "FINISH-BRANCH.md is deleted per design Decision 8"
