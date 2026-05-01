@@ -18,7 +18,17 @@
 
 > Complete these steps manually before starting Task 1.
 
-None. The plan does not require manual environment setup before execution.
+- [ ] Confirm `python3` with the `pyyaml` module is available on the executor host. `lib/manifest.sh` (Task 16) calls `python3 -c 'import sys, yaml; ...'` to parse plan front-matter. On macOS / most Linux distros, install via `pip3 install pyyaml` or `python3 -m pip install pyyaml` if missing. (Aligned-plugin repos already have `pyyaml` via `pytest`'s test-only deps; confirm before relying on that — `python3 -c 'import yaml'` must exit 0.)
+
+---
+
+## Sequencing notes
+
+**Tasks 5, 7, 8, 9, 11, 12, 20 all modify `autopilot.sh`. Apply them in numerical order.** Line-number references in later tasks assume earlier tasks have committed. Use content anchors (function names, banner strings, `=== ENV-LINK BLOCK START ===`) when possible; do not rely on the line numbers in this plan after the first such commit lands.
+
+**Tasks 13, 14, 15 all modify `skills/writing-plans/SKILL.md` or its references; apply in order** — Task 14 inserts a section anchored to a heading defined by the existing skill, and Task 15 modifies the Verifier prompt added by Task 14.
+
+**Task 21 (`verify.sh` halt emission) requires Task 20 (`HALT_PATH` exported by orchestrator) to be applied first** — otherwise Task 21's end-to-end behavior cannot be validated because `HALT_PATH` is unset in the child shell.
 
 ---
 
@@ -30,7 +40,9 @@ None. The plan does not require manual environment setup before execution.
 - Create: `e2e/tests/test_phase_contracts.py`
 - Create: `docs/ralph_loops/lib/process.sh`
 
-**Context:** `autopilot.sh` (lines 109–177) and `run-ralph.sh` (lines 80–143) both define `start_heartbeat`, `stop_heartbeat`, `start_watchdog`, `stop_watchdog`, `cleanup`, plus signal handlers — ~70 lines of duplicate code. Extract them into `lib/process.sh` so both callers source one definition. Standardize on `set -u` only (per Decision 7 in the design doc).
+**Context:** Five process-management functions are defined identically in BOTH `autopilot.sh` (lines 109–168) and `run-ralph.sh` (lines 80–128): `start_heartbeat`, `stop_heartbeat`, `start_watchdog`, `stop_watchdog`, `cleanup` — ~50 lines of true duplication. Two more functions (`kill_claude`, `run_claude_phase`) live only in `autopilot.sh` (lines 116–122 and 179–211); they move to the lib too so future phase scripts can call `run_claude_phase` for `claude -p` invocations with shared timeout handling. The `handle_signal()` trap and signal-trap registration stay inline in each caller because they are caller-specific. Standardize on `set -u` only (per Decision 7 in the design doc).
+
+**Heartbeat signature change:** The shared `start_heartbeat()` from `lib/process.sh` requires two args (`timeout`, `label`); `run-ralph.sh` currently calls `start_heartbeat` with zero args (line 165). Task 2 updates that call site. Defaults are intentionally NOT added to the lib — explicit args force the caller to acknowledge the heartbeat label that appears in user-facing output.
 
 **Step 1: Write the failing test**
 
@@ -82,7 +94,7 @@ Expected: FAIL with `AssertionError: lib/process.sh must exist` (file not yet cr
 
 **Step 3: Create `lib/process.sh` by extracting from `autopilot.sh`**
 
-Create `docs/ralph_loops/lib/process.sh`. Move the function bodies of `start_heartbeat`, `stop_heartbeat`, `start_watchdog`, `stop_watchdog`, `cleanup`, `kill_claude`, `run_claude_phase` verbatim from `autopilot.sh` lines 109–211. Wrap in a guard against double-sourcing:
+Create `docs/ralph_loops/lib/process.sh`. Move the function bodies of `cleanup`, `kill_claude`, `start_heartbeat`, `stop_heartbeat`, `start_watchdog`, `stop_watchdog`, `run_claude_phase` verbatim from `autopilot.sh` lines 109–211. Wrap in a guard against double-sourcing:
 
 ```bash
 #!/usr/bin/env bash
@@ -249,13 +261,23 @@ def test_run_ralph_uses_set_u_only():
 Append to `e2e/tests/test_phase_contracts.py`:
 
 ```python
-def test_run_ralph_does_not_redefine_lib_functions():
+def test_run_ralph_does_not_redefine_shared_functions():
+    """The 5 functions duplicated between autopilot.sh and run-ralph.sh
+    must be defined ONCE — in lib/process.sh — after the refactor. Each
+    must have count=0 in run-ralph.sh (the function definition has been
+    removed; only the call site remains, and that uses bare names like
+    'start_heartbeat ' not 'start_heartbeat()')."""
     text = (RALPH_DIR / "run-ralph.sh").read_text(encoding="utf-8")
-    # These are now defined in lib/process.sh; redefining shadows the lib.
-    for fn in ("start_heartbeat()", "stop_watchdog()", "kill_claude()"):
-        # Allow ONE occurrence (the call site), forbid TWO (definition + call).
-        assert text.count(fn) <= 1, \
-            f"run-ralph.sh should not redefine {fn} — sourced from lib/process.sh"
+    for fn in (
+        "start_heartbeat()",
+        "stop_heartbeat()",
+        "start_watchdog()",
+        "stop_watchdog()",
+        "cleanup()",
+    ):
+        # Function-DEFINITION pattern is `name() {` — count must be 0.
+        assert f"{fn} {{" not in text and f"{fn}\n{{" not in text, \
+            f"run-ralph.sh must not define {fn} — sourced from lib/process.sh"
 ```
 
 **Step 2: Run tests to verify they fail**
@@ -276,6 +298,15 @@ source "$SCRIPT_DIR/lib/process.sh"
 
 - Delete the function definitions for `start_heartbeat`, `stop_heartbeat`, `start_watchdog`, `stop_watchdog`, `cleanup` (lines 80–128 in the original). Keep the variable initialisations (`HEARTBEAT_PID=""`, etc.) — `lib/process.sh` checks for these.
 - Keep `handle_signal()` and the `trap` calls inline (script-specific).
+- **Fix the `start_heartbeat` call site** (currently `start_heartbeat` with no args, ~line 165). Update to:
+
+  ```bash
+  start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
+  ```
+
+  This passes the iteration's timeout and a label. Without these args, `start_heartbeat` runs under `set -u` and aborts on the unbound `$1`/`$2` references.
+
+> **Behavior change:** The heartbeat output format changes from `[heartbeat] iteration N — Xs elapsed` to `[heartbeat] iteration N — Xs elapsed (XmYs remaining)`. The `(remaining)` suffix is the lib's format and is more informative; existing log scrapers parsing the old format must be updated. None are known in this repo (Grep `\[heartbeat\]` returns only `autopilot.sh` and `run-ralph.sh` themselves).
 
 **Step 4: Run tests to verify they pass**
 
@@ -318,9 +349,18 @@ def test_autopilot_uses_set_u_only():
 
 def test_autopilot_does_not_redefine_lib_functions():
     text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
-    for fn in ("start_heartbeat()", "stop_watchdog()", "run_claude_phase()"):
-        assert text.count(fn) <= 1, \
-            f"autopilot.sh should not redefine {fn} — sourced from lib/process.sh"
+    # Definition pattern is `name() {` — count must be 0 for all 7 lib functions.
+    for fn in (
+        "cleanup()",
+        "kill_claude()",
+        "start_heartbeat()",
+        "stop_heartbeat()",
+        "start_watchdog()",
+        "stop_watchdog()",
+        "run_claude_phase()",
+    ):
+        assert f"{fn} {{" not in text and f"{fn}\n{{" not in text, \
+            f"autopilot.sh must not define {fn} — sourced from lib/process.sh"
 ```
 
 **Step 2: Run tests to verify they fail**
@@ -705,6 +745,10 @@ git commit -m "refactor(autopilot): extract Phase 1 (plan) into phases/plan.sh"
 
 **Context:** The Phase 2 block (worktree creation + npm install + env-link mirroring + `git merge main`) becomes `phases/worktree.sh`. The env-link block (lines 365–392, between `=== ENV-LINK BLOCK START ===` and `=== ENV-LINK BLOCK END ===`) moves verbatim.
 
+`worktree.sh` cannot use the orchestrator's stdout-capture pattern that an early draft considered, because diagnostic output (`echo "Linked $envfile..."`, etc.) would corrupt the captured value. Instead: the orchestrator computes `WORKTREE_DIR` deterministically (it already does — `autopilot.sh:317`) and exports it; `worktree.sh` reads `WORKTREE_DIR` from env and creates that directory. No stdout capture is required.
+
+`worktree.sh` also gains a structured halt: when `git merge main` fails because main has uncommitted changes (which would manifest as a merge-conflict-like exit), emit halt-with-reason `uncommitted_main` instead of returning bare exit code 1.
+
 > **Note (per design's deferred LOW item):** The env-link block is moved as-is; do not refactor its `find … -print0` walk. The block is recently shipped (commit 675315d) and any restructuring risks regressing the per-app symlink mirroring case it solves.
 
 **Step 1: Write the failing test**
@@ -722,6 +766,10 @@ def test_phase_worktree_exists_and_conforms():
     assert "=== ENV-LINK BLOCK START ===" in text
     assert "=== ENV-LINK BLOCK END ===" in text
     assert "git worktree add" in text or 'git -C "$PROJECT" worktree add' in text
+    # Reads WORKTREE_DIR from environment (no stdout-capture pattern)
+    assert "WORKTREE_DIR" in text
+    # Emits the structured halt for uncommitted-main case
+    assert "uncommitted_main" in text
 ```
 
 **Step 2: Run test to verify it fails**
@@ -731,25 +779,42 @@ Expected: FAIL.
 
 **Step 3: Create `phases/worktree.sh`**
 
-Extract `autopilot.sh:302–423` to `phases/worktree.sh` with header contract. Inputs: `PROJECT, BRANCH, PLAN_FILE`. Outputs: `WORKTREE` (echoed for capture), worktree directory created, `git merge main` performed. Exit codes: 0 (success), 1 (worktree creation failed or merge conflict). The env-link block (lines 365–392) and merge-conflict handling (lines 395–408) move verbatim.
+Extract `autopilot.sh:302–423` to `phases/worktree.sh` with header contract. Inputs: `PROJECT, BRANCH, PLAN_FILE, WORKTREE_DIR` (env vars). Outputs: worktree directory created at `$WORKTREE_DIR`, `git merge main` performed. Exit codes: 0 = success, 2 = halt-with-reason `uncommitted_main` (merge conflict detected from clean working-tree assumption violated), 1 = other failure (worktree creation failed). The env-link block (lines 365–392) moves verbatim. The merge-conflict handling (lines 395–408) is replaced with a halt-emit:
 
-In `autopilot.sh`, replace the Phase 2 block with:
+```bash
+# In phases/worktree.sh, after the merge attempt:
+if [ "$MERGE_EXIT" -ne 0 ]; then
+  if git -C "$WORKTREE_DIR" rev-parse MERGE_HEAD &>/dev/null 2>&1; then
+    git -C "$WORKTREE_DIR" merge --abort 2>/dev/null || true
+    HALT_PATH="$PROJECT/.autopilot-halt" \
+      write_halt uncommitted_main worktree "git merge main aborted; resolve in $WORKTREE_DIR"
+    exit 2
+  fi
+fi
+```
+
+Source `lib/halt.sh` at the top alongside `lib/process.sh`.
+
+In `autopilot.sh`, replace the Phase 2 block with the `run_phase` invocation pattern (defined in Task 20). Until then, use this transitional shape:
 
 ```bash
 export PROJECT BRANCH PLAN_FILE
+WORKTREE_DIR="$PROJECT/.worktrees/$(echo "$BRANCH" | sed 's|^feature/||')"
+export WORKTREE_DIR
 report_stage 3 6 worktree running
 WORKTREE_PHASE_EXIT=0
-WORKTREE="$(bash "$SCRIPT_DIR/phases/worktree.sh")" || WORKTREE_PHASE_EXIT=$?
+bash "$SCRIPT_DIR/phases/worktree.sh" || WORKTREE_PHASE_EXIT=$?
 if [ "$WORKTREE_PHASE_EXIT" -ne 0 ]; then
   report_stage 3 6 worktree failed
   exit "$WORKTREE_PHASE_EXIT"
 fi
 report_stage 3 6 worktree passed
+WORKTREE="$WORKTREE_DIR"
 STATUS="$WORKTREE/.finish-status"
 PLAN_IN_WORKTREE="$WORKTREE/docs/plans/$(basename "$PLAN_FILE")"
 ```
 
-`phases/worktree.sh` echoes `$WORKTREE_DIR` on its last line so the parent captures it via command substitution.
+The orchestrator now computes `WORKTREE_DIR` deterministically (it already did at autopilot.sh:317; the value is now explicitly exported). `phases/worktree.sh` reads `$WORKTREE_DIR` from env and never touches stdout for value-passing — diagnostic prints stay normal.
 
 **Step 4: Run tests to verify**
 
@@ -1191,7 +1256,9 @@ git commit -m "feat(writing-plans): add plan-manifest schema doc"
 - Modify: `skills/writing-plans/SKILL.md`
 - Modify: `e2e/tests/test_writing_plans_manifest_authoring.py`
 
-**Context:** writing-plans must scan the plan body and prepend the YAML manifest before the critique panel runs. The new section sits between "Verification Gate" and "Manual Deploy Artifact Scan" so the manifest is generated before the critique panel inspects it.
+**Context:** writing-plans must scan the plan body and prepend the YAML manifest before the critique panel runs. The section is inserted IMMEDIATELY BEFORE `## Manual Deploy Artifact Scan` (currently line 365 in `skills/writing-plans/SKILL.md`) so manifest generation happens before both the manual-deploy scan and the Fact-Check + Critique Panel — the Verifier coherence check needs the manifest already authored.
+
+**Rationale for the anchor:** In SKILL.md document order today the sections appear as `## Verification Gate` (line ~290) → `## Manual Deploy Artifact Scan` (line 365) → `## Fact-Check + Critique Panel` (line 422) → ... `## Verification Gate` reappears around line 477 as a separate section. Inserting after either Verification Gate would place the manifest section AFTER the critique panel, defeating the coherence check. Anchoring before Manual Deploy Artifact Scan keeps the order: Verification Gate → Plan Manifest → Manual Deploy Artifact Scan → Fact-Check + Critique Panel.
 
 **Step 1: Write the failing test**
 
@@ -1201,17 +1268,24 @@ Append to `e2e/tests/test_writing_plans_manifest_authoring.py`:
 def test_writing_plans_documents_manifest_authoring():
     skill = WRITING_PLANS / "SKILL.md"
     text = _read(skill)
+    # Match the section heading specifically (`## Plan Manifest`), not a
+    # casual mention earlier in the doc
     assert "## Plan Manifest" in text or "## Manifest Authoring" in text, \
         "writing-plans must document the manifest-authoring step"
     assert "plan-manifest-format.md" in text, \
         "writing-plans must reference _shared/plan-manifest-format.md"
-    # Step must run BEFORE critique panel (so coherence check has manifest to check)
-    text_lower = text.lower()
-    manifest_idx = text_lower.find("plan manifest") if "plan manifest" in text_lower \
-        else text_lower.find("manifest authoring")
-    critique_idx = text_lower.find("fact-check + critique panel")
-    assert 0 <= manifest_idx < critique_idx, \
-        "Manifest-authoring section must precede the Critique Panel section"
+    # Step must run BEFORE the manual-deploy scan AND before the critique
+    # panel — so anchor on the heading positions, not a substring search
+    manifest_idx = text.find("## Plan Manifest")
+    if manifest_idx == -1:
+        manifest_idx = text.find("## Manifest Authoring")
+    deploy_idx = text.find("## Manual Deploy Artifact Scan")
+    critique_idx = text.find("## Fact-Check + Critique Panel")
+    assert manifest_idx >= 0
+    assert deploy_idx > manifest_idx, \
+        "Manifest-authoring section must precede ## Manual Deploy Artifact Scan"
+    assert critique_idx > manifest_idx, \
+        "Manifest-authoring section must precede ## Fact-Check + Critique Panel"
 ```
 
 **Step 2: Run test to verify it fails**
@@ -1221,7 +1295,7 @@ Expected: FAIL.
 
 **Step 3: Edit `skills/writing-plans/SKILL.md`**
 
-Insert a new section immediately AFTER `## Verification Gate` (currently ends around line 486) and BEFORE `## Remember`. The new section anchor:
+Insert a new section IMMEDIATELY BEFORE `## Manual Deploy Artifact Scan` (currently line 365). Use the literal heading `## Manual Deploy Artifact Scan` as the Edit `old_string` anchor; precede it with the new section + a `\n` separator. The new section content:
 
 ```markdown
 ## Plan Manifest (autonomous authoring)
@@ -1534,10 +1608,12 @@ check_mcp_tool() {
   # Server check via python (jq may not be available)
   local found=0
   for f in "${mcp_files[@]+"${mcp_files[@]}"}"; do
-    if python3 -c "
-import json, sys
-d = json.load(open('$f'))
-sys.exit(0 if '$server' in (d.get('mcpServers') or {}) else 1)
+    # Pass $f and $server via env, not string interpolation, to avoid
+    # quoting hazards if a path contains apostrophes.
+    if MCP_FILE="$f" MCP_SERVER="$server" python3 -c "
+import json, os, sys
+d = json.load(open(os.environ['MCP_FILE']))
+sys.exit(0 if os.environ['MCP_SERVER'] in (d.get('mcpServers') or {}) else 1)
 " 2>/dev/null; then
       found=1
       break
@@ -1558,11 +1634,11 @@ sys.exit(0 if '$server' in (d.get('mcpServers') or {}) else 1)
   [ -f "$HOME/.claude/settings.local.json" ] && settings_files+=("$HOME/.claude/settings.local.json")
 
   for f in "${settings_files[@]+"${settings_files[@]}"}"; do
-    if python3 -c "
-import json
-d = json.load(open('$f'))
+    if SETTINGS_FILE="$f" MCP_TOOL="$tool" python3 -c "
+import json, os
+d = json.load(open(os.environ['SETTINGS_FILE']))
 allow = ((d.get('permissions') or {}).get('allow') or [])
-exit(0 if '$tool' in allow else 1)
+exit(0 if os.environ['MCP_TOOL'] in allow else 1)
 " 2>/dev/null; then
       echo "ok"
       return 0
@@ -1676,8 +1752,8 @@ Required fields: `reason`, `phase`, `log`, `next-action`. Optional: `fix-instruc
 
 - Written by phase script on exit-code-2.
 - Read + formatted by orchestrator after each phase.
-- Deleted by user (after fix) OR by next successful run of the same phase.
-- Never auto-deleted on retry — preserving evidence is more valuable than auto-cleanup.
+- **Deleted explicitly by the user after they apply the fix** — the orchestrator never auto-deletes a halt sentinel, even on a successful re-run. Preserving evidence outweighs auto-cleanup convenience.
+- Re-running with a stale `.autopilot-halt` present surfaces the prior sentinel via `cat $HALT_PATH` and exits 0 with re-run guidance ("Resolve the issue per fix-instructions above, delete `.autopilot-halt`, then re-run."). The user must `rm .autopilot-halt` before progress can resume.
 
 ## Reason taxonomy
 
@@ -2116,9 +2192,15 @@ git commit -m "feat(autopilot): add phases/preflight.sh manifest+env validator"
 - Modify: `docs/ralph_loops/autopilot.sh`
 - Modify: `e2e/tests/test_phase_contracts.py`
 
-**Context:** Preflight runs twice (per design's data flow + Open Question 1 resolution). Phase 1: env-only (plan may not exist). Phase 1.5: full manifest validation (plan now exists). The orchestrator routes phase exit codes per the contract: 0 → next, 2 → halt cleanly (exit 0 from autopilot), 3 → skip, anything else → halt with `phase_crashed`.
+**Context:** Preflight runs twice (per design's data flow + Open Question 1 resolution). Phase 1 (pre-plan): env-only. Phase 1.5 (post-plan): full manifest validation. The orchestrator routes phase exit codes per the contract: 0 → next, 2 → halt cleanly (exit 0 from autopilot), 3 → skip, anything else → halt with `phase_crashed`.
 
 > **Behavior change:** When phases halt-with-reason (exit 2), `autopilot.sh` now exits 0 (clean halt) instead of erroring out. The shell-level signal "did the autopilot finish without intervention?" is now `[ ! -f .autopilot-halt ]` after a successful run, not the autopilot's exit code.
+
+> **Display note:** Both preflight invocations display the same banner format `▶ phase 1 of 6: preflight | running`. The duplication is intentional — Phase 1.5 is a re-run of Phase 1 with a now-present plan, not a separate phase in the user's mental model. Resolving the "of 6" with a 7-instance display is deferred to a v2 cleanup; the redundant invocation surfaces clearly enough in the log timeline.
+
+> **HALT_PATH locality:** The orchestrator sets `HALT_PATH="$PROJECT/.autopilot-halt"` for phases 1, 2 (plan), 1.5 (post-plan preflight). Once `WORKTREE` is known (after Task 8's worktree phase), the orchestrator REASSIGNS `HALT_PATH="$WORKTREE/.autopilot-halt"` for phases 4 (ralph), 5 (mockup), 6 (verify). The orchestrator's own `read_halt` calls always use the current `$HALT_PATH`. This means: pre-worktree halts live in the main repo; post-worktree halts live in the worktree; the orchestrator's halt-detection-on-entry check at the top of the script (looking for a stale halt) covers only `$PROJECT/.autopilot-halt` because that's where the next run starts.
+
+> **Ralph phase exemption from `run_phase`:** Phase 4 (ralph) does NOT use the `run_phase` helper because `run-ralph.sh` takes positional args (`$WORKTREE $PLAN_IN_WORKTREE`) and produces `.ralph-human-blocked` / `.ralph-done` sentinels rather than exit codes 0/2/3. Ralph keeps its existing invocation pattern; the orchestrator wraps the call to translate sentinels into the unified halt protocol (see code below).
 
 **Step 1: Write the failing tests**
 
@@ -2153,6 +2235,8 @@ After the `source "$SCRIPT_DIR/lib/stages.sh"` line, add:
 # shellcheck source=lib/halt.sh
 source "$SCRIPT_DIR/lib/halt.sh"
 
+# Pre-worktree halts live in the main repo; post-worktree halts live in the
+# worktree (HALT_PATH is reassigned after Task 8's worktree phase).
 HALT_PATH="$PROJECT/.autopilot-halt"
 export HALT_PATH
 
@@ -2167,7 +2251,9 @@ if [ -f "$HALT_PATH" ]; then
   exit 0
 fi
 
-# A helper to dispatch on phase exit code per the contract
+# Helper to dispatch on phase exit code per the contract.
+# Used for: preflight, plan, worktree, mockup, verify.
+# NOT used for ralph (it has its own positional-arg signature; see below).
 run_phase() {
   local n="$1" total="$2" name="$3" script="$4"
   report_stage "$n" "$total" "$name" running
@@ -2203,33 +2289,43 @@ PLAN_FILE="${PLAN_FILE:-}"  # may be empty pre-Phase-2; preflight handles
 run_phase 1 6 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
 ```
 
-Refactor each existing phase invocation to use `run_phase`:
+Refactor the plan, mockup, and verify invocations to use `run_phase`:
 
 ```bash
 run_phase 2 6 plan "$SCRIPT_DIR/phases/plan.sh" || PLAN_PHASE_EXIT=$?
 # Re-read PLAN_FILE from sentinel after plan phase
 [ -f "$SENTINEL" ] && PLAN_FILE="$(tail -1 "$SENTINEL")"
+export PLAN_FILE
 
-# Phase 1.5 — re-run preflight now that plan exists
-PLAN_FILE="$PLAN_FILE" run_phase 1 6 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
+# Phase 1.5 — re-run preflight now that plan exists. Same banner format
+# as Phase 1 above; the duplication is intentional (see Display note).
+run_phase 1 6 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
 
+# Worktree phase (Task 8 wired the WORKTREE_DIR computation)
 run_phase 3 6 worktree "$SCRIPT_DIR/phases/worktree.sh"
-# (and so on for ralph, mockup, verify)
+WORKTREE="$WORKTREE_DIR"
+STATUS="$WORKTREE/.finish-status"
+PLAN_IN_WORKTREE="$WORKTREE/docs/plans/$(basename "$PLAN_FILE")"
+
+# Reassign HALT_PATH to the worktree for post-worktree phases
+HALT_PATH="$WORKTREE/.autopilot-halt"
+export HALT_PATH
 ```
 
-For the ralph phase (Phase 4), wrap the existing `bash "$RALPH_SCRIPT"` invocation in a way that translates `.ralph-human-blocked` → halt-with-reason `human_action_required`:
+For Phase 4 (ralph), use the inline wrapper below — NOT `run_phase`. Ralph's positional-arg invocation and sentinel-based halt signal don't fit the helper's exit-code contract. The wrapper translates `.ralph-human-blocked` → halt-with-reason `human_action_required`:
 
 ```bash
 report_stage 4 6 ralph running
 RALPH_EXIT=0
 bash "$RALPH_SCRIPT" "$WORKTREE" "$PLAN_IN_WORKTREE" || RALPH_EXIT=$?
 if [ -f "$WORKTREE/.ralph-human-blocked" ]; then
-  HALT_PATH="$WORKTREE/.autopilot-halt" \
-    LOG="$LOG" \
-    write_halt human_action_required ralph "Ralph loop halted; see $WORKTREE/.ralph-log"
+  # write_halt uses $HALT_PATH from env; we just re-assigned it to the
+  # worktree path above, so this writes to $WORKTREE/.autopilot-halt and
+  # the read_halt below targets the same file.
+  write_halt human_action_required ralph "Ralph loop halted; see $WORKTREE/.ralph-log"
   rm "$WORKTREE/.ralph-human-blocked"
   report_stage 4 6 ralph halted
-  read_halt "$WORKTREE/.autopilot-halt"
+  read_halt "$HALT_PATH"
   exit 0
 fi
 if [ "$RALPH_EXIT" -ne 0 ]; then
@@ -2237,6 +2333,10 @@ if [ "$RALPH_EXIT" -ne 0 ]; then
   exit 1
 fi
 report_stage 4 6 ralph passed
+
+# Mockup and verify use run_phase (their phase scripts conform to the contract)
+run_phase 5 6 mockup "$SCRIPT_DIR/phases/mockup.sh" || true  # mockup never halts
+run_phase 6 6 verify "$SCRIPT_DIR/phases/verify.sh"
 ```
 
 **Step 4: Run tests to verify they pass**
