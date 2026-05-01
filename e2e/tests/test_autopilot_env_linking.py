@@ -1,7 +1,8 @@
-"""Tests for autopilot.sh's env-linking block. Verifies that per-app/per-package
-env symlinks in the main repo are mirrored into the worktree, while regular
-files at the root are still linked. Behavioral via subprocess against a
-fixture monorepo; static-parse for regression-guard on key patterns."""
+"""Tests for the env-linking block in phases/worktree.sh. Verifies that
+per-app/per-package env symlinks in the main repo are mirrored into the
+worktree, while regular files at the root are still linked. Behavioral
+via subprocess against a fixture monorepo; static-parse for regression-
+guard on key patterns. (Block was extracted from autopilot.sh in Task 8.)"""
 
 from __future__ import annotations
 
@@ -10,22 +11,22 @@ import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-AUTOPILOT = REPO_ROOT / "docs" / "ralph_loops" / "autopilot.sh"
+WORKTREE_PHASE = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "worktree.sh"
 
 START_MARKER = "# === ENV-LINK BLOCK START ==="
 END_MARKER = "# === ENV-LINK BLOCK END ==="
 
 
 def _read_script() -> str:
-    return AUTOPILOT.read_text(encoding="utf-8")
+    return WORKTREE_PHASE.read_text(encoding="utf-8")
 
 
 def _extract_block() -> str:
     text = _read_script()
     start = text.find(START_MARKER)
     end = text.find(END_MARKER)
-    assert start != -1, f"Missing {START_MARKER} in autopilot.sh"
-    assert end != -1, f"Missing {END_MARKER} in autopilot.sh"
+    assert start != -1, f"Missing {START_MARKER} in phases/worktree.sh"
+    assert end != -1, f"Missing {END_MARKER} in phases/worktree.sh"
     assert start < end, "Markers out of order"
     after_start = text.find("\n", start) + 1
     return text[after_start:end]

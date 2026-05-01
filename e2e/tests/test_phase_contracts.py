@@ -139,3 +139,19 @@ def test_phase_plan_exists_and_conforms():
         assert field in text, f"phases/plan.sh missing header field: {field}"
     assert "lib/process.sh" in text, "phases/plan.sh must source lib/process.sh"
     assert "WRITE-PLAN.md" in text, "phases/plan.sh must reference WRITE-PLAN.md"
+
+
+def test_phase_worktree_exists_and_conforms():
+    wt = PHASES_DIR / "worktree.sh"
+    assert wt.is_file(), "phases/worktree.sh must exist"
+    text = _read(wt)
+    for field in PHASE_HEADER_FIELDS:
+        assert field in text
+    # Env-link block must be preserved verbatim
+    assert "=== ENV-LINK BLOCK START ===" in text
+    assert "=== ENV-LINK BLOCK END ===" in text
+    assert "git worktree add" in text or 'git -C "$PROJECT" worktree add' in text
+    # Reads WORKTREE_DIR from environment (no stdout-capture pattern)
+    assert "WORKTREE_DIR" in text
+    # Emits the structured halt for uncommitted-main case
+    assert "uncommitted_main" in text

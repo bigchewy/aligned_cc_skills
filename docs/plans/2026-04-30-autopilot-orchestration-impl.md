@@ -736,7 +736,7 @@ git commit -m "refactor(autopilot): extract Phase 1 (plan) into phases/plan.sh"
 
 ---
 
-### Task 8: Extract `phases/worktree.sh` from `autopilot.sh`
+### ✅ Task 8: Extract `phases/worktree.sh` from `autopilot.sh`
 
 **Files:**
 - Create: `docs/ralph_loops/phases/worktree.sh`
