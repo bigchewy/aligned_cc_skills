@@ -34,7 +34,7 @@
 
 ## Tasks
 
-### Task 1: Add `lib/process.sh` shared library (test + scaffold)
+### ✅ Task 1: Add `lib/process.sh` shared library (test + scaffold)
 
 **Files:**
 - Create: `e2e/tests/test_phase_contracts.py`
