@@ -1132,7 +1132,7 @@ git commit -m "refactor(autopilot): VERIFY-BRANCH.md becomes thin wrapper around
 
 ---
 
-### Task 13: Create `skills/_shared/plan-manifest-format.md` (manifest schema doc)
+### ✅ Task 13: Create `skills/_shared/plan-manifest-format.md` (manifest schema doc)
 
 **Files:**
 - Create: `skills/_shared/plan-manifest-format.md`
