@@ -189,6 +189,21 @@ def test_phase_preflight_exists_and_conforms():
     assert "exit 3" in text
 
 
+def test_autopilot_invokes_preflight_twice():
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    # Two invocations — once before plan, once after
+    count = text.count('phases/preflight.sh')
+    assert count >= 2, \
+        f"autopilot.sh must invoke preflight twice (pre-plan and post-plan), found {count}"
+
+
+def test_autopilot_halts_cleanly_on_exit_2():
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    # Orchestrator must source halt lib and surface .autopilot-halt sentinel
+    assert "lib/halt.sh" in text, "autopilot.sh must source lib/halt.sh to format halts"
+    assert ".autopilot-halt" in text
+
+
 def test_finish_branch_md_is_deleted():
     assert not (RALPH_DIR / "FINISH-BRANCH.md").exists(), \
         "FINISH-BRANCH.md is deleted per design Decision 8"

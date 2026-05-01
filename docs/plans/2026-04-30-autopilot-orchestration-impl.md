@@ -2186,7 +2186,7 @@ git commit -m "feat(autopilot): add phases/preflight.sh manifest+env validator"
 
 ---
 
-### Task 20: Wire preflight into `autopilot.sh` orchestrator
+### ✅ Task 20: Wire preflight into `autopilot.sh` orchestrator
 
 **Files:**
 - Modify: `docs/ralph_loops/autopilot.sh`

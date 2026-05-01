@@ -43,6 +43,8 @@ PLUGIN_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 source "$SCRIPT_DIR/lib/process.sh"
 # shellcheck source=lib/stages.sh
 source "$SCRIPT_DIR/lib/stages.sh"
+# shellcheck source=lib/halt.sh
+source "$SCRIPT_DIR/lib/halt.sh"
 
 # Prompt files
 WRITE_PLAN_PROMPT="$SCRIPT_DIR/WRITE-PLAN.md"
@@ -104,6 +106,52 @@ else
   exec > >(tee -a "$LOG") 2>&1
 fi
 
+# --- Halt protocol ---
+# Pre-worktree halts live in the main repo; post-worktree halts live in the
+# worktree (HALT_PATH is reassigned after the worktree phase).
+HALT_PATH="$PROJECT/.autopilot-halt"
+export HALT_PATH
+
+# Pre-existing halt: surface and exit cleanly (re-run guidance)
+if [ -f "$HALT_PATH" ]; then
+  echo ""
+  echo "Previous run halted. Sentinel content:"
+  echo ""
+  cat "$HALT_PATH"
+  echo ""
+  echo "Resolve the issue per fix-instructions above, delete .autopilot-halt, then re-run."
+  exit 0
+fi
+
+# Helper to dispatch on phase exit code per the contract.
+# Used for: preflight, plan, worktree, mockup, verify.
+# NOT used for ralph (it has its own positional-arg signature; see below).
+run_phase() {
+  local n="$1" total="$2" name="$3" script="$4"
+  report_stage "$n" "$total" "$name" running
+  local exit_code=0
+  bash "$script" || exit_code=$?
+  case "$exit_code" in
+    0) report_stage "$n" "$total" "$name" passed; return 0 ;;
+    2)
+      report_stage "$n" "$total" "$name" halted
+      echo ""
+      read_halt "$HALT_PATH"
+      echo ""
+      exit 0  # Clean halt — not a failure
+      ;;
+    3) report_stage "$n" "$total" "$name" skipped; return 3 ;;
+    *)
+      report_stage "$n" "$total" "$name" failed
+      # Phase crashed (non-2 non-3 non-zero); write halt if no other halt exists
+      if [ ! -f "$HALT_PATH" ]; then
+        write_halt phase_crashed "$name" "Phase exited with code $exit_code"
+      fi
+      exit 1
+      ;;
+  esac
+}
+
 # --- Process management ---
 # Functions (cleanup, kill_claude, start_heartbeat, stop_heartbeat,
 # start_watchdog, stop_watchdog, run_claude_phase) sourced from lib/process.sh.
@@ -132,22 +180,22 @@ echo "Log:        $LOG"
 echo ""
 
 # ============================================================
-# Phase 1: Write implementation plan
+# Phase 1: Preflight (pre-plan) — env-only checks
 # ============================================================
 
 PLAN_FILE=""
 
 export PROJECT DESIGN_DOC SENTINEL LOG PHASE_TIMEOUT
 export WRITE_PLAN_PROMPT SKILL_FILE CHECKLIST_FILE KANBAN_FORMAT
+export PLAN_FILE  # may be empty pre-Phase-2; preflight handles
 
-report_stage 2 6 plan running
-PLAN_PHASE_EXIT=0
-bash "$SCRIPT_DIR/phases/plan.sh" || PLAN_PHASE_EXIT=$?
-case "$PLAN_PHASE_EXIT" in
-  0) report_stage 2 6 plan passed ;;
-  3) report_stage 2 6 plan skipped ;;
-  *) report_stage 2 6 plan failed; exit "$PLAN_PHASE_EXIT" ;;
-esac
+run_phase 1 6 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
+
+# ============================================================
+# Phase 2: Write implementation plan
+# ============================================================
+
+run_phase 2 6 plan "$SCRIPT_DIR/phases/plan.sh" || true
 
 # Re-read PLAN_FILE from sentinel (phase wrote it)
 if [ -f "$SENTINEL" ]; then
@@ -158,6 +206,16 @@ if [ -z "$PLAN_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
   echo "ERROR: Plan file missing after plan phase." >&2
   exit 1
 fi
+export PLAN_FILE
+echo ""
+
+# ============================================================
+# Phase 1.5: Preflight (post-plan) — full manifest validation
+# Same banner format as Phase 1; the duplication is intentional —
+# this is a re-run with a now-present plan, not a separate phase.
+# ============================================================
+
+run_phase 1 6 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
 echo ""
 
 # ============================================================
@@ -178,17 +236,15 @@ fi
 WORKTREE_DIR="$PROJECT/.worktrees/$(echo "$BRANCH" | sed 's|^feature/||')"
 export PROJECT BRANCH PLAN_FILE WORKTREE_DIR
 
-report_stage 3 6 worktree running
-WORKTREE_PHASE_EXIT=0
-bash "$SCRIPT_DIR/phases/worktree.sh" || WORKTREE_PHASE_EXIT=$?
-case "$WORKTREE_PHASE_EXIT" in
-  0) report_stage 3 6 worktree passed ;;
-  *) report_stage 3 6 worktree failed; exit "$WORKTREE_PHASE_EXIT" ;;
-esac
+run_phase 3 6 worktree "$SCRIPT_DIR/phases/worktree.sh"
 
 WORKTREE="$WORKTREE_DIR"
 STATUS="$WORKTREE/.finish-status"
 PLAN_IN_WORKTREE="$WORKTREE/docs/plans/$(basename "$PLAN_FILE")"
+
+# Reassign HALT_PATH to the worktree for post-worktree phases
+HALT_PATH="$WORKTREE/.autopilot-halt"
+export HALT_PATH
 echo ""
 
 # ============================================================
@@ -219,10 +275,24 @@ else
   fi
   echo ""
 
+  # Ralph uses positional args + sentinels rather than the run_phase exit-code
+  # contract; wrap it inline to translate .ralph-human-blocked into a
+  # human_action_required halt.
   RALPH_EXIT=0
   bash "$RALPH_SCRIPT" "$WORKTREE" "$PLAN_IN_WORKTREE" || RALPH_EXIT=$?
 
+  if [ -f "$WORKTREE/.ralph-human-blocked" ]; then
+    write_halt human_action_required ralph "Ralph loop halted; see $WORKTREE/.ralph-log"
+    rm "$WORKTREE/.ralph-human-blocked"
+    report_stage 4 6 ralph halted
+    echo ""
+    read_halt "$HALT_PATH"
+    echo ""
+    exit 0
+  fi
+
   if [ "$RALPH_EXIT" -ne 0 ]; then
+    report_stage 4 6 ralph failed
     echo ""
     echo "ERROR: Ralph loop failed (exit code $RALPH_EXIT)." >&2
     echo "Progress is preserved — completed tasks are committed." >&2
@@ -241,14 +311,7 @@ fi
 # ============================================================
 
 export WORKTREE PLAN_IN_WORKTREE MOCKUP_PROMPT MAX_MOCKUP_ITERATIONS MOCKUP_TIMEOUT
-report_stage 5 6 mockup running
-MOCKUP_EXIT=0
-bash "$SCRIPT_DIR/phases/mockup.sh" || MOCKUP_EXIT=$?
-case "$MOCKUP_EXIT" in
-  0) report_stage 5 6 mockup passed ;;
-  3) report_stage 5 6 mockup skipped ;;
-  *) report_stage 5 6 mockup failed; exit "$MOCKUP_EXIT" ;;
-esac
+run_phase 5 6 mockup "$SCRIPT_DIR/phases/mockup.sh" || true  # mockup never halts
 echo ""
 
 # ============================================================
@@ -256,13 +319,7 @@ echo ""
 # ============================================================
 
 export BRANCH WORKTREE PLAN_IN_WORKTREE PROJECT VERIFY_PROMPT PHASE_TIMEOUT STATUS
-report_stage 6 6 verify running
-VERIFY_EXIT=0
-bash "$SCRIPT_DIR/phases/verify.sh" || VERIFY_EXIT=$?
-case "$VERIFY_EXIT" in
-  0) report_stage 6 6 verify passed ;;
-  *) report_stage 6 6 verify failed; exit "$VERIFY_EXIT" ;;
-esac
+run_phase 6 6 verify "$SCRIPT_DIR/phases/verify.sh"
 echo ""
 
 # ============================================================
