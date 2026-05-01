@@ -362,6 +362,23 @@ After completing the plan, append a Decision Log section. Include every choice w
 
 The summary table should fit on one page. Supporting detail goes in the appendix.
 
+## Plan Manifest (autonomous authoring)
+
+After the plan body is drafted and verified, generate a YAML front-matter manifest declaring the executor environment requirements. Schema and validation rules: `skills/_shared/plan-manifest-format.md`.
+
+**Procedure:**
+
+1. Scan the plan body for `mcp__*__*` references using a regex that skips fenced code blocks (``` ``` ```) with language tags `text` / `markdown` / `yaml`, blockquotes (`> ...`), and ``inline code`` spans. Collect the unique tool strings.
+2. Scan for env-var references: `process\.env\.[A-Z_][A-Z0-9_]*`, `os\.environ\[['"]([A-Z_][A-Z0-9_]*)['"]\]`, and shell `\$\{?[A-Z_][A-Z0-9_]*\}?` patterns. Same fenced-block exclusions. Collect unique names.
+3. Prepend the manifest as YAML front-matter at the very top of the plan file (before the `# <Title>` heading). Format per `plan-manifest-format.md`.
+4. If both lists are empty, prepend an empty front-matter block (`---\n---\n`) so preflight detects "manifest present, nothing to check" rather than "no manifest, skip preflight." (This signal is intentional — empty manifest = author confirmed no env requirements.)
+
+**Visibility:** The manifest is written autonomously without user confirmation. The user reviews it as part of reading the committed plan. The Verifier critic catches mismatches between manifest and body.
+
+**Idempotency:** Re-running the procedure on a plan with an existing manifest replaces it (do not append). Match the existing front-matter via `^---\n.*?\n---\n` (multiline) and substitute.
+
+This step runs BEFORE the Manual Deploy Artifact Scan so both checks operate on a fully-authored plan.
+
 ## Manual Deploy Artifact Scan
 
 **Purpose:** Detect files in the plan that require a manual production step (e.g., Supabase migrations, env-var additions). Auto-populate `## Manual Steps (Post-Automation)` so the user sees the obligation at plan time.

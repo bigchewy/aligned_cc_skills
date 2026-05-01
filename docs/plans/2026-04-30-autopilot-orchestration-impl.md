@@ -1250,7 +1250,7 @@ git commit -m "feat(writing-plans): add plan-manifest schema doc"
 
 ---
 
-### Task 14: Add manifest-authoring step to `writing-plans/SKILL.md`
+### ✅ Task 14: Add manifest-authoring step to `writing-plans/SKILL.md`
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md`
