@@ -1664,7 +1664,7 @@ git commit -m "feat(autopilot): add lib/manifest.sh for YAML parse + env validat
 
 ---
 
-### Task 17: Create `skills/_shared/autopilot-halt-format.md` (taxonomy doc)
+### ✅ Task 17: Create `skills/_shared/autopilot-halt-format.md` (taxonomy doc)
 
 **Files:**
 - Create: `skills/_shared/autopilot-halt-format.md`
