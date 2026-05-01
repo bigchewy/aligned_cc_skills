@@ -830,7 +830,7 @@ git commit -m "refactor(autopilot): extract Phase 2 (worktree) into phases/workt
 
 ---
 
-### Task 9: Extract `phases/mockup.sh` and `phases/verify.sh` from `autopilot.sh`
+### ✅ Task 9: Extract `phases/mockup.sh` and `phases/verify.sh` from `autopilot.sh`
 
 **Files:**
 - Create: `docs/ralph_loops/phases/mockup.sh`

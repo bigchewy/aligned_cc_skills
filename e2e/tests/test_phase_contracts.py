@@ -155,3 +155,23 @@ def test_phase_worktree_exists_and_conforms():
     assert "WORKTREE_DIR" in text
     # Emits the structured halt for uncommitted-main case
     assert "uncommitted_main" in text
+
+
+def test_phase_mockup_exists_and_conforms():
+    p = PHASES_DIR / "mockup.sh"
+    assert p.is_file()
+    text = _read(p)
+    for f in PHASE_HEADER_FIELDS:
+        assert f in text
+    assert "MOCKUP-FIDELITY.md" in text
+    assert "MAX_MOCKUP_ITERATIONS" in text
+
+
+def test_phase_verify_exists_and_conforms():
+    p = PHASES_DIR / "verify.sh"
+    assert p.is_file()
+    text = _read(p)
+    for f in PHASE_HEADER_FIELDS:
+        assert f in text
+    assert "VERIFY-BRANCH.md" in text
+    assert ".finish-status" in text

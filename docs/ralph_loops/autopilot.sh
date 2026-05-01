@@ -240,134 +240,30 @@ fi
 # Phase 3.5: Mockup fidelity loop
 # ============================================================
 
+export WORKTREE PLAN_IN_WORKTREE MOCKUP_PROMPT MAX_MOCKUP_ITERATIONS MOCKUP_TIMEOUT
 report_stage 5 6 mockup running
-
-# Check if already clean from a previous run
-if [ -f "$WORKTREE/.mockup-clean" ]; then
-  echo "Mockup fidelity already verified — skipping."
-  report_stage 5 6 mockup skipped
-  echo ""
-else
-  # Quick check: does the plan reference mockups at all?
-  HAS_MOCKUPS=false
-  if grep -q '^\*\*Mockups:\*\*' "$PLAN_IN_WORKTREE" 2>/dev/null; then
-    MOCKUPS_VALUE="$(grep '^\*\*Mockups:\*\*' "$PLAN_IN_WORKTREE" | head -1 | sed 's/\*\*Mockups:\*\* *//')"
-    if [ -n "$MOCKUPS_VALUE" ] && [ "$MOCKUPS_VALUE" != "N/A" ] && [ "$MOCKUPS_VALUE" != "none" ]; then
-      HAS_MOCKUPS=true
-    fi
-  fi
-
-  if [ "$HAS_MOCKUPS" = false ]; then
-    echo "No mockups referenced in plan — skipping fidelity check."
-    touch "$WORKTREE/.mockup-clean"
-    report_stage 5 6 mockup skipped
-    echo ""
-  else
-    echo "Mockups referenced in plan. Starting fidelity loop..."
-    echo "Max iterations: $MAX_MOCKUP_ITERATIONS"
-    echo ""
-
-    MOCKUP_ITERATION=1
-
-    while [ ! -f "$WORKTREE/.mockup-clean" ] && [ "$MOCKUP_ITERATION" -le "$MAX_MOCKUP_ITERATIONS" ]; do
-      echo "--- Mockup fidelity iteration $MOCKUP_ITERATION ($(date '+%H:%M:%S')) ---"
-
-      PROMPT_FILE="/tmp/.autopilot-mockup-$$"
-      cat > "$PROMPT_FILE" <<PROMPT_EOF
-$(cat "$MOCKUP_PROMPT")
-
-Plan: $PLAN_IN_WORKTREE
-Worktree: $WORKTREE
-PROMPT_EOF
-
-      cd "$WORKTREE"
-
-      if ! run_claude_phase "Phase 3.5 (mockup fidelity, iteration $MOCKUP_ITERATION)" "$MOCKUP_TIMEOUT"; then
-        echo "WARNING: Mockup fidelity iteration $MOCKUP_ITERATION failed." >&2
-        echo "Continuing to verification phase — mockup deviations may persist." >&2
-        rm -f "$PROMPT_FILE"
-        PROMPT_FILE=""
-        break
-      fi
-      rm -f "$PROMPT_FILE"
-      PROMPT_FILE=""
-
-      if [ -f "$WORKTREE/.mockup-clean" ]; then
-        echo "--- Mockup fidelity: CLEAN ($(date '+%H:%M:%S')) ---"
-      else
-        echo "--- Mockup fidelity iteration $MOCKUP_ITERATION: fixes applied ($(date '+%H:%M:%S')) ---"
-      fi
-      echo ""
-
-      MOCKUP_ITERATION=$((MOCKUP_ITERATION + 1))
-    done
-
-    if [ ! -f "$WORKTREE/.mockup-clean" ]; then
-      echo "WARNING: Mockup fidelity not fully resolved after $MAX_MOCKUP_ITERATIONS iterations." >&2
-      echo "Remaining deviations will be visible during review." >&2
-    fi
-
-    report_stage 5 6 mockup passed
-    echo ""
-  fi
-fi
+MOCKUP_EXIT=0
+bash "$SCRIPT_DIR/phases/mockup.sh" || MOCKUP_EXIT=$?
+case "$MOCKUP_EXIT" in
+  0) report_stage 5 6 mockup passed ;;
+  3) report_stage 5 6 mockup skipped ;;
+  *) report_stage 5 6 mockup failed; exit "$MOCKUP_EXIT" ;;
+esac
+echo ""
 
 # ============================================================
 # Phase 4: Verify branch
 # ============================================================
 
-# Skip if we already have a successful status from a previous run
-if [ -f "$STATUS" ]; then
-  PREV_RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"
-  if [ "$PREV_RESULT" = "SUCCESS" ]; then
-    report_stage 6 6 verify skipped
-    echo ""
-  else
-    # Stale failure status — clear and re-run
-    rm -f "$STATUS"
-  fi
-fi
-
-if [ ! -f "$STATUS" ] || [ "$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')" != "SUCCESS" ]; then
-  report_stage 6 6 verify running
-  echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
-
-  # Clear any stale status file
-  rm -f "$STATUS"
-
-  PROMPT_FILE="/tmp/.autopilot-verify-$$"
-  cat > "$PROMPT_FILE" <<PROMPT_EOF
-$(cat "$VERIFY_PROMPT")
-
-Branch: $BRANCH
-Worktree: $WORKTREE
-Plan: $PLAN_IN_WORKTREE
-Main repo: $PROJECT
-PROMPT_EOF
-
-  cd "$WORKTREE"
-
-  if ! run_claude_phase "Phase 4 (verification)" "$PHASE_TIMEOUT"; then
-    echo "Verification phase failed to complete." >&2
-    echo "The branch may still be in good shape — check manually." >&2
-    exit 1
-  fi
-  rm -f "$PROMPT_FILE"
-  PROMPT_FILE=""
-
-  echo ""
-
-  # Verify that Claude actually wrote a status file
-  if [ ! -f "$STATUS" ]; then
-    echo "WARNING: Verification completed but no status file was written." >&2
-    echo "Claude may not have followed the VERIFY-BRANCH.md instructions." >&2
-    echo "Check the log for verification output. Treating as inconclusive." >&2
-    # Don't exit — fall through to the report with a warning
-  fi
-
-  report_stage 6 6 verify passed
-  echo ""
-fi
+export BRANCH WORKTREE PLAN_IN_WORKTREE PROJECT VERIFY_PROMPT PHASE_TIMEOUT STATUS
+report_stage 6 6 verify running
+VERIFY_EXIT=0
+bash "$SCRIPT_DIR/phases/verify.sh" || VERIFY_EXIT=$?
+case "$VERIFY_EXIT" in
+  0) report_stage 6 6 verify passed ;;
+  *) report_stage 6 6 verify failed; exit "$VERIFY_EXIT" ;;
+esac
+echo ""
 
 # ============================================================
 # Report
