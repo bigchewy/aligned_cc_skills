@@ -5,6 +5,7 @@ node_modules/
 .ralph-done
 .ralph-log
 .autopilot-log
+.mockup-clean
 .vscode/
 .obsidian/
 aligned-cowork.zip

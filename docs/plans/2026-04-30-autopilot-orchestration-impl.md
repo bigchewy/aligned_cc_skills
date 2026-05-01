@@ -2550,7 +2550,7 @@ git commit -m "feat(writing-plans): ban mid-flow human review tasks (Decision 9)
 
 ---
 
-### Task 23: Run full test suite
+### ✅ Task 23: Run full test suite
 
 **Files:**
 - (No file changes; verification task)
