@@ -2,7 +2,10 @@
 testing is allowed at function boundary (per design Decision 5)."""
 
 from __future__ import annotations
+import json
+import os
 import subprocess
+import tempfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -53,12 +56,67 @@ def test_validate_env_var_present():
     assert "exit=0" in r.stdout, r.stdout + r.stderr
 
 
+def _run_check_mcp_tool(home: str, cwd: str, tool: str) -> subprocess.CompletedProcess:
+    # HOME override prevents the function from finding the host's real
+    # ~/.claude/.mcp.json or ~/.claude/settings.local.json, which would leak
+    # into the test result.
+    env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": home}
+    full = f'set -u; source "{LIB}"; check_mcp_tool {tool} "{cwd}"'
+    return subprocess.run(["bash", "-c", full], capture_output=True, text=True, env=env)
+
+
+def test_check_mcp_tool_unreachable():
+    """No .mcp.json defines the requested server → exit 2, 'mcp_unreachable'."""
+    with tempfile.TemporaryDirectory() as d:
+        sub = Path(d) / "sub"
+        sub.mkdir()
+        # Use a pseudo-unique server name to make a stray real-filesystem
+        # .mcp.json hit astronomically unlikely.
+        r = _run_check_mcp_tool(d, str(sub), "mcp__nonexistent_xyz_abc__some_tool")
+        assert r.returncode == 2, f"stdout={r.stdout} stderr={r.stderr}"
+        assert "mcp_unreachable" in r.stdout, r.stdout
+
+
+def test_check_mcp_tool_not_allowlisted():
+    """Server defined in .mcp.json but tool absent from settings.local.json
+    allowlist → exit 2, 'mcp_tool_not_allowlisted'."""
+    with tempfile.TemporaryDirectory() as d:
+        Path(d, ".mcp.json").write_text(json.dumps({
+            "mcpServers": {"playwright": {"command": "npx"}}
+        }))
+        Path(d, ".claude").mkdir()
+        Path(d, ".claude", "settings.local.json").write_text(json.dumps({
+            "permissions": {"allow": []}
+        }))
+        sub = Path(d) / "sub"
+        sub.mkdir()
+        r = _run_check_mcp_tool(d, str(sub), "mcp__playwright__browser_navigate")
+        assert r.returncode == 2, f"stdout={r.stdout} stderr={r.stderr}"
+        assert "mcp_tool_not_allowlisted" in r.stdout, r.stdout
+
+
+def test_check_mcp_tool_ok():
+    """Server defined and tool allowlisted → exit 0, 'ok'."""
+    with tempfile.TemporaryDirectory() as d:
+        Path(d, ".mcp.json").write_text(json.dumps({
+            "mcpServers": {"playwright": {"command": "npx"}}
+        }))
+        Path(d, ".claude").mkdir()
+        Path(d, ".claude", "settings.local.json").write_text(json.dumps({
+            "permissions": {"allow": ["mcp__playwright__browser_navigate"]}
+        }))
+        sub = Path(d) / "sub"
+        sub.mkdir()
+        r = _run_check_mcp_tool(d, str(sub), "mcp__playwright__browser_navigate")
+        assert r.returncode == 0, f"stdout={r.stdout} stderr={r.stderr}"
+        assert "ok" in r.stdout, r.stdout
+
+
 def test_preflight_halts_on_missing_env_var():
     """End-to-end: invoke preflight against a fixture plan with an env var
     requirement that the test env does not satisfy."""
     PREFLIGHT = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "preflight.sh"
     fixture = FIX / "plan_with_manifest.md"
-    import os, tempfile
     with tempfile.TemporaryDirectory() as d:
         # Inherit PATH so parse_manifest can locate a python3 with PyYAML;
         # explicitly omit FAKE_TEST_VAR so env_var_missing is what trips.

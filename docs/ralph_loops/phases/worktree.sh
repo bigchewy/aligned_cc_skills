@@ -22,6 +22,8 @@ RALPH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # shellcheck source=../lib/process.sh
 source "$RALPH_DIR/lib/process.sh"
+# shellcheck source=../lib/halt.sh
+source "$RALPH_DIR/lib/halt.sh"
 
 # Alias so the env-link block (moved verbatim from autopilot.sh) keeps
 # its $WORKTREE references unchanged. WORKTREE_DIR is the canonical input.
@@ -106,14 +108,7 @@ git merge main --no-edit 2>&1 || MERGE_EXIT=$?
 if [ "$MERGE_EXIT" -ne 0 ]; then
   if git -C "$WORKTREE_DIR" rev-parse MERGE_HEAD &>/dev/null 2>&1; then
     git -C "$WORKTREE_DIR" merge --abort 2>/dev/null || true
-    # Halt-with-reason: emitted as structured fields. Task 18 introduces
-    # lib/halt.sh and a write_halt helper; until then, write the file
-    # inline. Format follows the same key:value shape consumers expect.
-    cat > "$PROJECT/.autopilot-halt" <<HALT_EOF
-reason: uncommitted_main
-phase: worktree
-detail: git merge main aborted; resolve in $WORKTREE_DIR
-HALT_EOF
+    write_halt uncommitted_main worktree "git merge main aborted; resolve in $WORKTREE_DIR"
     echo "ERROR: halt — uncommitted_main; resolve in $WORKTREE_DIR" >&2
     exit 2
   fi
