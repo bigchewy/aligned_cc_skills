@@ -1795,7 +1795,7 @@ git commit -m "feat(autopilot): add autopilot-halt-format taxonomy doc"
 
 ---
 
-### Task 18: Add `lib/halt.sh` (write/read/format)
+### ✅ Task 18: Add `lib/halt.sh` (write/read/format)
 
 **Files:**
 - Create: `docs/ralph_loops/lib/halt.sh`
