@@ -45,3 +45,21 @@ def test_writing_plans_documents_manifest_authoring():
         "Manifest-authoring section must precede ## Manual Deploy Artifact Scan"
     assert critique_idx > manifest_idx, \
         "Manifest-authoring section must precede ## Fact-Check + Critique Panel"
+
+
+def test_verifier_prompt_has_manifest_coherence_rule():
+    prompts = WRITING_PLANS / "references" / "critique-panel-prompts.md"
+    text = _read(prompts)
+    # The rule must reference the manifest fields and the structural-diff check
+    assert "mcp-tools-required" in text, \
+        "Verifier prompt must reference mcp-tools-required for coherence check"
+    assert "manifest" in text.lower() and "coherence" in text.lower(), \
+        "Verifier prompt must describe manifest coherence check"
+
+
+def test_checklist_criterion_10_has_manifest_row():
+    checklist = WRITING_PLANS / "plan-critique-checklist.md"
+    text = _read(checklist)
+    # New row in the gap-analysis table
+    assert "Manifest coherence" in text or "Plan manifest" in text, \
+        "Criterion 10 table must add a manifest-coherence row"

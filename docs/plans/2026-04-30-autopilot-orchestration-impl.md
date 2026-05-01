@@ -1330,7 +1330,7 @@ git commit -m "feat(writing-plans): add Plan Manifest authoring section"
 
 ---
 
-### Task 15: Add manifest coherence check to Verifier critic prompt
+### ✅ Task 15: Add manifest coherence check to Verifier critic prompt
 
 **Files:**
 - Modify: `skills/writing-plans/references/critique-panel-prompts.md` (Round 1 Verifier section, lines 38–69)

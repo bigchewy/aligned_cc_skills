@@ -162,6 +162,7 @@ Identify assumptions the plan makes without validation or acknowledgment.
 | Tribal knowledge | Does the plan depend on undocumented conventions or setup steps? |
 | Scale assumptions | Does the plan assume data volumes, request rates, or file sizes without stating them? |
 | Manual-deploy artifacts | Are files matching `skills/_shared/manual-deploy-artifact-catalog.md` (migrations, env vars) covered by entries in the plan's `## Manual Steps (Post-Automation)` section? Missing coverage is a **high** severity issue. |
+| Manifest coherence | Does the plan have YAML front-matter? Does every `mcp__*__*` body reference appear in `mcp-tools-required`? Does every manifest entry appear in the body? Same for env vars. **Mismatch is HIGH severity** — see `skills/_shared/plan-manifest-format.md`. |
 | Autonomy violations | Does any task contain steps the Ralph loop cannot execute autonomously (paid API calls, manual Dashboard SQL, OAuth consent flow, manual paste from external UI)? Such steps belong in `## Prerequisites` or `## Manual Steps (Post-Automation)`, never inside a Task. Missing relocation is a **high** severity issue. |
 
 - BAD: Plan uses Stripe webhook without verifying webhook endpoint is configured in Stripe dashboard
