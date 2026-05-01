@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autopilot Orchestration Redesign</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
+            surface: '#f5f3ef', muted: '#f0eeeb',
+            foreground: '#1a1a1a', secondary: '#555555', dimmed: '#6b7280', border: '#e5e7eb'
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+          },
+          borderRadius: { sm: '6px', md: '12px', full: '9999px' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #faf9f7; margin: 0; padding: 40px; }
+    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn { padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .sub-tab-bar { display: flex; gap: 2px; border-bottom: 1px solid #f0eeeb; padding-left: 16px; background: #faf9f7; margin-bottom: 16px; }
+    .sub-tab-btn { padding: 8px 14px; font-size: 0.78rem; font-weight: 500; color: #6b7280; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .sub-tab-btn:hover { color: #1a1a1a; }
+    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .tab-panel { display: none; } .tab-panel.active { display: block; }
+    .sub-panel { display: none; } .sub-panel.active { display: block; }
+    .section { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px; }
+    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .card h3 { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    .card p { font-size: 0.85rem; color: #555555; line-height: 1.5; margin: 0; }
+    .compare-grid { display: grid; gap: 16px; margin-bottom: 24px; }
+    .compare-3col { grid-template-columns: repeat(3, 1fr); }
+    .compare-grid .col { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .compare-grid .col h3 { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    .compare-grid .pro { color: #047857; font-size: 0.85rem; line-height: 1.6; }
+    .compare-grid .con { color: #b91c1c; font-size: 0.85rem; line-height: 1.6; }
+    .callout { padding: 16px 20px; border-radius: 8px; font-size: 0.85rem; border-left: 4px solid; margin-bottom: 16px; line-height: 1.5; }
+    .callout-decision { background: #fff7ed; border-color: #ff6900; color: #1a1a1a; }
+    .callout-constraint { background: #f5f3ef; border-color: #555555; color: #1a1a1a; }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: #1a1a1a; }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: #1a1a1a; }
+    .callout strong { display: block; font-weight: 600; margin-bottom: 4px; }
+    .change-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .change-table th { text-align: left; padding: 10px 12px; font-weight: 600; color: #1a1a1a; background: #f5f3ef; border-bottom: 1px solid #e5e7eb; }
+    .change-table td { padding: 10px 12px; border-bottom: 1px solid #f0eeeb; color: #1a1a1a; vertical-align: top; }
+    .change-table .file-path { font-family: Menlo, Consolas, monospace; font-size: 0.78rem; color: #555555; }
+    .status-badge { display: inline-block; font-size: 0.7rem; padding: 1px 8px; border-radius: 9999px; font-weight: 500; }
+    .status-modified { background: #fff7ed; color: #ff6900; }
+    .status-new { background: #ecfdf5; color: #047857; }
+    .status-deleted { background: #fef2f2; color: #b91c1c; }
+    .status-unchanged { background: #f5f3ef; color: #6b7280; }
+    pre.code-block { background: #f5f3ef; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; font-family: Menlo, Consolas, monospace; font-size: 0.78rem; color: #1a1a1a; overflow-x: auto; line-height: 1.5; margin-bottom: 16px; }
+    .stages-demo { background: #1a1a1a; color: #e5e7eb; padding: 16px 20px; border-radius: 8px; font-family: Menlo, Consolas, monospace; font-size: 0.82rem; line-height: 1.7; margin-bottom: 16px; }
+    .stages-demo .ok { color: #34d399; }
+    .stages-demo .running { color: #fbbf24; }
+    .stages-demo .halt { color: #f87171; }
+    .stages-demo .skip { color: #6b7280; }
+    .ban-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 16px; }
+    .ban-table th { text-align: left; padding: 10px 12px; font-weight: 600; background: #fef2f2; color: #b91c1c; border-bottom: 1px solid #fecaca; }
+    .ban-table td { padding: 10px 12px; border-bottom: 1px solid #f0eeeb; color: #1a1a1a; vertical-align: top; }
+    .ban-table .pattern { font-family: Menlo, Consolas, monospace; font-size: 0.8rem; color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <h1>Autopilot Orchestration Redesign</h1>
+  <p class="subtitle">Bash decomposition + plan front-matter manifest + halt-with-reason protocol + mid-flow human-review ban</p>
+  <p class="context">Brainstorm session 2026-04-30 — drives a writing-plans run targeting <code>docs/ralph_loops/</code> and <code>skills/writing-plans/</code>. Round 1 critique applied; HIGH-severity items folded in.</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="switchTab('antipattern')">Anti-Pattern</button>
+    <button class="tab-btn" onclick="switchTab('flow')">Data Flow</button>
+    <button class="tab-btn" onclick="switchTab('halts')">Halt Protocol</button>
+    <button class="tab-btn" onclick="switchTab('changes')">File Changes</button>
+    <button class="tab-btn" onclick="switchTab('epics')">Implementation</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+    <button class="tab-btn" onclick="switchTab('critique')">Critique</button>
+  </div>
+
+  <!-- ========== Overview ========== -->
+  <div id="panel-overview" class="tab-panel active">
+    <div class="section">
+      <h2>Goal</h2>
+      <p class="description">Restructure the Ralph autopilot pipeline so plans declare their environment requirements explicitly, the bash orchestrator decomposes into testable phase scripts, the autopilot halts cleanly with structured reasons instead of crashing, and writing-plans is forbidden from inserting mid-flow "human review" tasks that defeat unattended completion.</p>
+    </div>
+
+    <div class="section">
+      <h2>The three signals driving this</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Signal 1 — Recurring class of failure</h3>
+          <p>Plans reach for MCP tool prefixes that don't load in <code>claude -p</code>. Triggering incidents: <code>mcp__playwright-full__*</code> (ghost namespace) and partially-allowlisted <code>mcp__playwright__browser_resize</code>. Headless can't grant interactive permissions.</p>
+        </div>
+        <div class="card">
+          <h3>Signal 2 — autopilot.sh bloat</h3>
+          <p>642 lines, zero tests, ~70 lines of process-management duplicated with run-ralph.sh. 9 commits since creation are all bug fixes / timeout tuning — no architectural changes. <code>FINISH-BRANCH.md</code> is a 224-line orphan. Verify-gate is triplicated.</p>
+        </div>
+        <div class="card">
+          <h3>Signal 3 — Mid-flow human review</h3>
+          <p>Plans keep inserting tasks like "verify the UI looks correct before proceeding" or "review the interface before Task N+1." The existing Manual Steps Policy uses "manual" too narrowly — judgment-based pauses slip past. The user reviews ONCE at the end.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Success criteria (user's words)</h2>
+      <div class="callout callout-decision">
+        <strong>From the brainstorm</strong>
+        "I want to know if it will fail and, if there is work to do in advance or after, it should tell me. So there should be clear stages and, if the autopilot isn't going to finish, it should both tell me that upfront and not appear to be erroring out when it hits the stage where I need to do something."
+      </div>
+      <div class="callout callout-decision">
+        <strong>And, post-critique</strong>
+        "Another core issue is that you keep writing into the plan that a certain task needs 'human review' before continuing but the whole point is to do the whole thing and then I only look at the end. I never want to review interfaces that are built along the way until the autopilot work is complete."
+      </div>
+      <ul class="bullet-list">
+        <li><strong>Clear stages</strong> — every phase boundary visible.</li>
+        <li><strong>Halt-with-reason</strong> — when a stage needs human action, surface it cleanly. Halts are not failures.</li>
+        <li><strong>Pre-flight signal</strong> — if a plan won't finish unattended, tell the user upfront.</li>
+        <li><strong>No mid-flow review</strong> — review happens once at the end. Never in the middle.</li>
+        <li><strong>Both gates with different jobs</strong> — writing-plans validates SHAPE, autopilot validates ENVIRONMENT.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>What this design is NOT</h2>
+      <ul class="bullet-list">
+        <li><strong>Not a skill rewrite.</strong> Subagents share parent CLI state. The 50-iteration ralph loop depends on per-iteration <code>claude -p</code> process boundaries. That boundary is load-bearing.</li>
+        <li><strong>Not a five-field manifest.</strong> Only <code>mcp-tools-required</code> and <code>env-vars-required</code> — the two fields with deterministic machine probes.</li>
+        <li><strong>Not a blocking migration.</strong> Manifest is optional in v1; preflight skips when absent.</li>
+        <li><strong>Not a tolerant runner.</strong> Plans with mid-flow "human review" tasks are REJECTED at writing-plans time, not silently skipped at execution.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== Architecture ========== -->
+  <div id="panel-architecture" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('architecture','layout')">File layout</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','contract')">Phase contract</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','manifest')">Manifest schema</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','stages')">Stages reporter</button>
+    </div>
+
+    <div id="sub-layout" class="sub-panel active">
+      <div class="section">
+        <h2>Component map</h2>
+        <pre class="code-block">docs/ralph_loops/
+  autopilot.sh                  ← orchestrator (~150 lines target, down from 642)
+  run-ralph.sh                  ← sources lib/process.sh; flag set standardized to set -u
+  lib/
+    process.sh                  ← heartbeat, watchdog, cleanup, run_claude_phase
+    halt.sh                     ← write/read/format .autopilot-halt sentinels
+    manifest.sh                 ← parse YAML front-matter, validate vs environment
+    stages.sh                   ← stages reporter
+  phases/
+    preflight.sh                ← validates env vs plan manifest; writes halt or proceeds
+    plan.sh                     ← Phase 1: claude -p with WRITE-PLAN.md
+    worktree.sh                 ← Phase 2: create worktree, env-link, merge main
+    mockup.sh                   ← Phase 3.5: claude -p with MOCKUP-FIDELITY.md
+    verify.sh                   ← Phase 4: claude -p with VERIFY-BRANCH.md
+  EXECUTE-PLAN.md               ← unchanged
+  WRITE-PLAN.md                 ← unchanged
+  MOCKUP-FIDELITY.md            ← unchanged
+  VERIFY-BRANCH.md              ← thin wrapper around canonical gate
+  FINISH-BRANCH.md              ← DELETED (orphan; update plugin-split-plan.md first)
+  BEST-PRACTICES.md             ← unchanged</pre>
+      </div>
+    </div>
+
+    <div id="sub-contract" class="sub-panel">
+      <div class="section">
+        <h2>Each phase script declares a typed contract</h2>
+        <p class="description">Static-parse tests assert the header exists and matches the runtime sentinel set known to <code>lib/halt.sh</code>.</p>
+<pre class="code-block">#!/usr/bin/env bash
+# PHASE: preflight
+# INPUTS:
+#   PROJECT (env var, absolute path) — main repo path
+#   PLAN_FILE (env var, absolute path) — plan path; may not exist for plan.sh
+# OUTPUTS:
+#   .autopilot-halt (sentinel, in $PROJECT) — written if preflight halts
+# EXIT CODES:
+#   0 — phase passed, autopilot may proceed
+#   2 — halt-with-reason; .autopilot-halt has structured details
+#   3 — skip (preflight not applicable)
+
+set -u
+source "$(dirname "$0")/../lib/process.sh"
+source "$(dirname "$0")/../lib/halt.sh"
+source "$(dirname "$0")/../lib/manifest.sh"</pre>
+        <div class="callout callout-note">
+          <strong>set -u everywhere</strong>
+          Decision 7 explicit: <code>autopilot.sh</code>, <code>run-ralph.sh</code>, all phase scripts, and lib all use <code>set -u</code> only. Sourced libs inheriting different flag sets from different callers was a real trap; pinned now.
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-manifest" class="sub-panel">
+      <div class="section">
+        <h2>Plan front-matter manifest</h2>
+        <p class="description">Optional YAML block at the top of any plan in <code>docs/plans/</code>. Two fields, both deterministically probable.</p>
+<pre class="code-block">---
+mcp-tools-required:
+  - mcp__playwright__browser_navigate
+  - mcp__playwright__browser_snapshot
+  - mcp__playwright__browser_click
+env-vars-required:
+  - SUPABASE_URL
+  - OPENAI_API_KEY
+---
+
+# Feature Implementation Plan</pre>
+        <div class="callout callout-decision">
+          <strong>What's NOT in the manifest</strong>
+          Prerequisites and post-automation stay prose (writing-plans/SKILL.md:100-111 already governs them). No plan-version, plan-name, etc. — YAGNI. External services (Supabase, Vercel, Notion) — not directly probable; deferred.
+        </div>
+        <p class="description"><strong>Authoring (writing-plans):</strong> after plan body drafted, scan for <code>mcp__*__*</code> and env var references; generate manifest; prepend. Verifier critic gains a deterministic structural coherence check (every body ref ↔ manifest entry).</p>
+        <p class="description"><strong>Validation (preflight):</strong> walk the <code>.mcp.json</code> chain from worktree CWD upward, confirm server defined, confirm tool string in <code>.claude/settings.local.json</code>'s allowlist. Probe env vars via <code>[ -n "${VAR:-}" ]</code>. YAML parser is Python's <code>yaml</code> module (already a pytest dep).</p>
+        <div class="callout callout-risk">
+          <strong>Open issue (deferred to writing-plans)</strong>
+          The Architect flagged that "merged set walking upward from CWD" is not a documented Claude Code behavior. writing-plans must specify the resolution algorithm with edge-case coverage (symlinks, conflicts, missing fields).
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-stages" class="sub-panel">
+      <div class="section">
+        <h2>Stages reporter</h2>
+        <p class="description">Replaces <code>=== Phase N: ===</code> banners. Single function in <code>lib/stages.sh</code>, single line per status change.</p>
+        <div class="stages-demo">
+<span class="running">▶ phase 1 of 6: preflight    | running</span>
+<span class="ok">✓ phase 1 of 6: preflight    | passed (12s)</span>
+<span class="running">▶ phase 2 of 6: plan         | running</span>
+<span class="ok">✓ phase 2 of 6: plan         | passed (4m 18s)</span>
+<span class="running">▶ phase 3 of 6: worktree     | running</span>
+<span class="ok">✓ phase 3 of 6: worktree     | passed (47s)</span>
+<span class="running">▶ phase 4 of 6: ralph        | running</span>
+<span class="ok">✓ phase 4 of 6: ralph        | passed (38m 12s, 23 iterations)</span>
+<span class="skip">— phase 5 of 6: mockup       | skipped (no **Mockups:** field)</span>
+<span class="running">▶ phase 6 of 6: verify       | running</span>
+<span class="halt">✗ phase 6 of 6: verify       | halted (verify_failed)</span>
+
+  Tests passed but eval scored below threshold (0.71 < 0.80).
+  Re-run autopilot.sh to retry, or fix the eval scenarios.
+        </div>
+        <div class="callout callout-note">
+          <strong>Open issue: phase numbering</strong>
+          Double-preflight introduces phase 1.5 — "of 6" with 7 phases is a viz/code drift seed. writing-plans must resolve: keep double preflight and rename "preflight-plan" / renumber, or drop to single preflight after plan-writing.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Anti-Pattern ========== -->
+  <div id="panel-antipattern" class="tab-panel">
+    <div class="section">
+      <h2>Mid-Flow Human Review (BANNED by writing-plans contract)</h2>
+      <div class="callout callout-risk">
+        <strong>The proposition</strong>
+        The autopilot's whole value is unattended completion from design doc to verified branch. The user reviews ONCE, at the end, after <code>verify.sh</code> halts cleanly or autopilot completes. Any plan task that inserts "human review" mid-pipeline defeats this proposition — even when framed as "verification," "confirmation," or "user check."
+      </div>
+      <p class="description">Distinct from the existing Manual Steps Policy in <code>writing-plans/SKILL.md:100-111</code>:</p>
+      <div class="compare-grid compare-3col">
+        <div class="col">
+          <h3>Manual Steps Policy</h3>
+          <p style="font-size: 0.82rem; color: #555555; line-height: 1.6;">Governs <em>execution</em> the user must perform: env setup, OAuth, prod migrations.</p>
+          <p class="pro">+ Goes in Prerequisites or Post-Automation</p>
+          <p class="pro">+ Already enforced by Verifier critic</p>
+        </div>
+        <div class="col">
+          <h3>Halt-with-reason</h3>
+          <p style="font-size: 0.82rem; color: #555555; line-height: 1.6;">Environment failures the executor genuinely cannot resolve. Halts cleanly, surfaces fix-instructions.</p>
+          <p class="pro">+ Phase exits 2; autopilot.sh exits 0</p>
+          <p class="pro">+ Halts are not failures</p>
+        </div>
+        <div class="col">
+          <h3>Mid-flow human review (BANNED)</h3>
+          <p style="font-size: 0.82rem; color: #555555; line-height: 1.6;">Plan author wanted the user to provide <em>judgment</em> mid-flow. Pure ceremony.</p>
+          <p class="con">— Defeats unattended completion</p>
+          <p class="con">— Slips past existing policy</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Banned task patterns</h2>
+      <p class="description">writing-plans MUST NOT produce plan tasks containing language like:</p>
+      <table class="ban-table">
+        <thead>
+          <tr><th>Pattern</th><th>Why it's banned</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="pattern">"Get user feedback on X before proceeding"</td><td>Pipeline doesn't pause for feedback</td></tr>
+          <tr><td class="pattern">"Have the user verify the UI looks correct"</td><td>Mockup fidelity loop is the machine check; user reviews at end</td></tr>
+          <tr><td class="pattern">"Pause and ask if X is acceptable"</td><td>No human present to ask</td></tr>
+          <tr><td class="pattern">"Review the interface before continuing to Task N+1"</td><td>User reviews when autopilot completes</td></tr>
+          <tr><td class="pattern">"Confirm with user before proceeding"</td><td>No conversational surface; loop will halt or guess</td></tr>
+          <tr><td class="pattern">"Show user the [output/screenshot/result] and wait"</td><td>Headless <code>claude -p</code> cannot wait for human input</td></tr>
+          <tr><td class="pattern">"User signs off on the design before implementation"</td><td>Sign-off happened during brainstorming; not a plan task</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-note">
+        <strong>The pattern</strong>
+        "Task body asks for <em>judgment</em> mid-pipeline." NOT "task body runs a machine check" — those are fine (mockup fidelity, eval scoring, verify gate are all machine-judged).
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>What's allowed</h2>
+      <ul class="bullet-list">
+        <li><strong>Prerequisites (before Task 1)</strong> — work the user does to unblock autopilot.</li>
+        <li><strong>Manual Steps (Post-Automation)</strong> — work the user does after autopilot completes.</li>
+        <li><strong>Halt-with-reason (<code>.autopilot-halt</code>)</strong> — environment failures the executor genuinely cannot resolve.</li>
+        <li><strong>Mockup fidelity loop</strong> — machine check (claude compares implementation to mockup), not human review.</li>
+        <li><strong>Verify gate</strong> — machine check (tests, build, eval), not human review.</li>
+        <li><strong>End-of-autopilot review</strong> — the user reviews everything at the end, when the branch is ready.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Enforcement</h2>
+      <p class="description">The Verifier critic in <code>references/critique-panel-prompts.md</code> Criterion 10 (Autonomy violations) gains an explicit rule:</p>
+      <div class="callout callout-decision">
+        <strong>New Verifier rule</strong>
+        Any task whose body contains "human review," "user verifies," "review the [UI/interface/mockup/output]," "wait for user," "confirm with user," "before proceeding ask," "user signs off," "get user approval," or semantically equivalent language MUST be flagged as HIGH severity. Suggest restructure: move to Manual Steps (Post-Automation) if it's real verification work, or remove if it's a gratuitous gate.
+      </div>
+      <p class="description"><strong>Exemption:</strong> Prerequisites, Manual Steps (Post-Automation), and Decision Log sections — these are explicitly user-facing and not part of the autopilot's task flow. Task bodies are not exempt regardless of where in the plan they sit.</p>
+    </div>
+  </div>
+
+  <!-- ========== Data Flow ========== -->
+  <div id="panel-flow" class="tab-panel">
+    <div class="section">
+      <h2>End-to-end pipeline</h2>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+flowchart TD
+  Start([autopilot.sh DESIGN_DOC])
+  P1[phase 1: preflight.sh<br/>env-only checks]
+  P2[phase 2: plan.sh<br/>claude -p WRITE-PLAN.md]
+  P15[phase 1.5: preflight.sh<br/>manifest validation]
+  P3[phase 3: worktree.sh<br/>create + env-link + merge]
+  P4[phase 4: run-ralph.sh<br/>EXECUTE-PLAN.md loop]
+  P5[phase 5: mockup.sh<br/>MOCKUP-FIDELITY.md]
+  P6[phase 6: verify.sh<br/>VERIFY-BRANCH.md]
+  Halt[/" .autopilot-halt<br/>structured reason "/]
+  Done([Branch ready for review])
+
+  Start --> P1
+  P1 -->|exit 0| P2
+  P1 -->|exit 2| Halt
+  P2 --> P15
+  P15 -->|exit 0| P3
+  P15 -->|exit 2| Halt
+  P3 -->|exit 0| P4
+  P3 -->|exit 2| Halt
+  P4 -->|exit 0| P5
+  P4 -->|exit 2 .ralph-human-blocked| Halt
+  P5 -->|exit 0 or skip| P6
+  P6 -->|exit 0| Done
+  P6 -->|exit 2 verify_failed| Halt
+
+  Halt -.->|exit 0 from autopilot.sh<br/>NOT an error| Done
+
+  style Halt fill:#fef2f2,stroke:#b91c1c,color:#1a1a1a
+  style Done fill:#ecfdf5,stroke:#047857,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Halt Protocol ========== -->
+  <div id="panel-halts" class="tab-panel">
+    <div class="section">
+      <h2>The halt sentinel</h2>
+      <p class="description">A new <code>.autopilot-halt</code> sentinel mirrors the existing <code>.ralph-human-blocked</code> (per <code>docs/plans/completed/2026-04-28-ralph-autonomy-enforcement.md</code> Decision 2). Written by <code>lib/halt.sh</code> from any phase.</p>
+<pre class="code-block">reason: mcp_tool_not_allowlisted
+phase: preflight
+fix-instructions: |
+  The plan declared `mcp__playwright__browser_resize` but it is not in
+  this project's `.claude/settings.local.json` allowlist.
+
+  Fix one of:
+    1. Open a Claude session in this repo and accept the permission prompt
+       once: this writes the tool to the allowlist.
+    2. Remove `mcp__playwright__browser_resize` from the plan's
+       `mcp-tools-required` and from any task body that references it.
+
+  Then re-run autopilot.sh.</pre>
+      <div class="callout callout-note">
+        <strong>Write protocol</strong>
+        Atomic via <code>mv $TMP $PROJECT/.autopilot-halt</code>. First writer wins; subsequent writers append a <code>secondary-halt:</code> block rather than overwriting. Never auto-deleted by the orchestrator on retry — preserving evidence beats auto-cleanup.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Reason taxonomy (v1)</h2>
+      <table class="change-table">
+        <thead>
+          <tr><th>Reason</th><th>Phase</th><th>Trigger</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>mcp_unreachable</code></td><td>preflight</td><td>Plan declares an MCP tool whose server is not defined in any reachable <code>.mcp.json</code></td></tr>
+          <tr><td><code>mcp_tool_not_allowlisted</code></td><td>preflight</td><td>Server defined, but tool string absent from <code>.claude/settings.local.json</code> allowlist</td></tr>
+          <tr><td><code>env_var_missing</code></td><td>preflight</td><td>Plan declares an env var that is unset in worktree env</td></tr>
+          <tr><td><code>manifest_drift</code></td><td>preflight</td><td>Plan body references an MCP tool not in manifest, or vice versa</td></tr>
+          <tr><td><code>manifest_malformed</code></td><td>preflight</td><td>YAML present but unparseable, or required fields missing/wrong type. Parser: Python <code>yaml</code></td></tr>
+          <tr><td><code>uncommitted_main</code></td><td>worktree</td><td>Main has uncommitted changes that would block <code>git merge main</code></td></tr>
+          <tr><td><code>verify_failed</code></td><td>verify</td><td>Tests/build/eval failed (replaces <code>.finish-status</code> failure path)</td></tr>
+          <tr><td><code>human_action_required</code></td><td>ralph (in-loop)</td><td>Existing <code>.ralph-human-blocked</code> aliases here</td></tr>
+          <tr><td><code>phase_crashed</code></td><td>any</td><td>Phase script exited unexpectedly; <code>details:</code> carries last 10 lines of stderr</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== File Changes ========== -->
+  <div id="panel-changes" class="tab-panel">
+    <div class="section">
+      <h2>What gets touched</h2>
+      <table class="change-table">
+        <thead>
+          <tr><th>File</th><th>Change</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="file-path">docs/ralph_loops/autopilot.sh</td><td><span class="status-badge status-modified">rewrite</span></td><td>~150 lines target, sources lib + phase scripts; <code>set -u</code></td></tr>
+          <tr><td class="file-path">docs/ralph_loops/run-ralph.sh</td><td><span class="status-badge status-modified">refactor</span></td><td>Sources lib/process.sh; flag set changes <code>set -euo</code> → <code>set -u</code></td></tr>
+          <tr><td class="file-path">docs/ralph_loops/lib/process.sh</td><td><span class="status-badge status-new">new</span></td><td>heartbeat, watchdog, cleanup, run_claude_phase</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/lib/halt.sh</td><td><span class="status-badge status-new">new</span></td><td>atomic write, first-writer-wins, secondary-halt append</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/lib/manifest.sh</td><td><span class="status-badge status-new">new</span></td><td>YAML parse via Python yaml; validate vs env</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/lib/stages.sh</td><td><span class="status-badge status-new">new</span></td><td>stages reporter</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/phases/preflight.sh</td><td><span class="status-badge status-new">new</span></td><td>env probes + manifest validation</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/phases/plan.sh</td><td><span class="status-badge status-new">new</span></td><td>extracted Phase 1</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/phases/worktree.sh</td><td><span class="status-badge status-new">new</span></td><td>extracted Phase 2 (incl. env-link block — move verbatim)</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/phases/mockup.sh</td><td><span class="status-badge status-new">new</span></td><td>extracted Phase 3.5</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/phases/verify.sh</td><td><span class="status-badge status-new">new</span></td><td>extracted Phase 4</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/VERIFY-BRANCH.md</td><td><span class="status-badge status-modified">slim</span></td><td>Thin wrapper around finishing-a-development-branch canonical gate</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/FINISH-BRANCH.md</td><td><span class="status-badge status-deleted">delete</span></td><td>224-line orphan; update plugin-split-plan.md:410 first</td></tr>
+          <tr><td class="file-path">skills/writing-plans/SKILL.md</td><td><span class="status-badge status-modified">extend</span></td><td>Manifest-authoring step + "Anti-Pattern: Mid-Flow Human Review" section</td></tr>
+          <tr><td class="file-path">skills/writing-plans/references/critique-panel-prompts.md</td><td><span class="status-badge status-modified">extend</span></td><td>Verifier coherence check + mid-flow review banned-pattern rule</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/plan-manifest-format.md</td><td><span class="status-badge status-new">new</span></td><td>Manifest schema spec</td></tr>
+          <tr><td class="file-path">docs/ralph_loops/autopilot-halt-format.md</td><td><span class="status-badge status-new">new</span></td><td>Halt sentinel schema + reason taxonomy</td></tr>
+          <tr><td class="file-path">e2e/tests/test_phase_contracts.py</td><td><span class="status-badge status-new">new</span></td><td>Static-parse on phase script headers + flag-set assertions</td></tr>
+          <tr><td class="file-path">e2e/tests/test_halt_protocol.py</td><td><span class="status-badge status-new">new</span></td><td>Reason taxonomy round-trip + format + atomic write</td></tr>
+          <tr><td class="file-path">e2e/tests/test_manifest_validation.py</td><td><span class="status-badge status-new">new</span></td><td>Parsing + validation + malformed YAML cases</td></tr>
+          <tr><td class="file-path">e2e/tests/test_writing_plans_anti_review.py</td><td><span class="status-badge status-new">new</span></td><td>Mid-flow review ban enforcement</td></tr>
+          <tr><td class="file-path">e2e/tests/test_writing_plans_manifest_authoring.py</td><td><span class="status-badge status-new">new</span></td><td>Static-parse on writing-plans skill</td></tr>
+          <tr><td class="file-path">e2e/tests/test_ralph_sentinels.py</td><td><span class="status-badge status-modified">small add</span></td><td>One assertion: run-ralph.sh sources lib/process.sh</td></tr>
+          <tr><td class="file-path">docs/plans/*.md (~25 files)</td><td><span class="status-badge status-unchanged">unchanged in v1</span></td><td>Manifest optional; bulk migration deferred to v2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== Implementation ========== -->
+  <div id="panel-epics" class="tab-panel">
+    <div class="section">
+      <h2>Four roughly-independent epics</h2>
+      <p class="description">The actual writing-plans run will produce ~25 task-level steps. This is the design-level chunking and dependency map.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+flowchart LR
+  A[Epic A<br/>Decompose &amp; dedupe<br/>━━━━━━━━━━━━━━━━<br/>lib/process.sh<br/>phases/{plan,worktree,mockup,verify}<br/>stages reporter<br/>regex fix<br/>FINISH-BRANCH delete<br/>set -u standardization]
+  B[Epic B<br/>Manifest contract<br/>━━━━━━━━━━━━━━━━<br/>schema doc<br/>writing-plans authoring<br/>Verifier coherence check<br/>lib/manifest.sh<br/>phases/preflight.sh]
+  C[Epic C<br/>Halt protocol<br/>━━━━━━━━━━━━━━━━<br/>schema doc<br/>lib/halt.sh atomic write<br/>all phases halt-with-reason<br/>orchestrator surfaces halts<br/>.ralph-human-blocked alias]
+  D[Epic D<br/>Anti-review enforcement<br/>━━━━━━━━━━━━━━━━<br/>writing-plans/SKILL.md section<br/>Verifier critic rule<br/>banned-pattern test<br/>NEW from user interrupt]
+
+  A --> B
+  A --> C
+  D --> B
+
+  style A fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  style B fill:#f0f9ff,stroke:#0284c7,color:#1a1a1a
+  style C fill:#ecfdf5,stroke:#047857,color:#1a1a1a
+  style D fill:#fef2f2,stroke:#b91c1c,color:#1a1a1a
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Sequencing</h2>
+      <ul class="bullet-list">
+        <li><strong>Epic A ships first.</strong> No dependencies. Smallest delta. Cleans up bloat without changing behavior.</li>
+        <li><strong>Epic D can ship parallel to A.</strong> Pure writing-plans contract change; doesn't touch the autopilot scripts.</li>
+        <li><strong>Epic B depends on Epic A's <code>phases/</code> decomposition</strong> and on Epic D's anti-review check (manifest authoring lives next to anti-review).</li>
+        <li><strong>Epic C depends on Epic A's <code>lib/</code> extraction</strong> but can ship in parallel with B and D.</li>
+        <li><strong>Don't stop at Epic A.</strong> The recurring failure classes resolve only once B (MCP/env) and D (mid-flow review) are live.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== Decisions ========== -->
+  <div id="panel-decisions" class="tab-panel">
+    <div class="section">
+      <h2>Decision Log Summary</h2>
+      <table class="change-table">
+        <thead>
+          <tr><th>#</th><th>Decision</th><th>Choice Made</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Orchestration model</td><td>Bash with <code>claude -p</code> per phase, decomposed</td></tr>
+          <tr><td>2</td><td>Plan contract scope</td><td>YAML front-matter, MCP + env vars only</td></tr>
+          <tr><td>3</td><td>Halt mechanism</td><td>New <code>.autopilot-halt</code> with reason taxonomy</td></tr>
+          <tr><td>4</td><td>Coherence check</td><td>Deterministic structural diff</td></tr>
+          <tr><td>5</td><td>Test pattern</td><td>Static-parse pytest, no subprocess</td></tr>
+          <tr><td>6</td><td>Existing-plan migration</td><td>Optional in v1; preflight skips when absent</td></tr>
+          <tr><td>7</td><td><code>set -e</code> standardization</td><td><code>set -u</code> only across all callers (incl. run-ralph.sh)</td></tr>
+          <tr><td>8</td><td><code>FINISH-BRANCH.md</code> disposition</td><td>Delete (after updating plugin-split-plan.md:410)</td></tr>
+          <tr><td>9</td><td>Mid-flow human review</td><td>Forbidden by writing-plans contract; Verifier flags HIGH</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Open questions for writing-plans</h2>
+      <ul class="bullet-list">
+        <li><strong>Single vs. double preflight?</strong> Double catches earlier; single is simpler.</li>
+        <li><strong>.mcp.json resolution algorithm?</strong> HIGH — flagged by Architect; need explicit edge-case spec.</li>
+        <li><strong>Manifest-authoring visibility?</strong> HIGH — DevEx flagged invisible gate.</li>
+        <li><strong>Manifest migration of existing plans?</strong> Bulk-add now or defer.</li>
+        <li><strong>VERIFY-BRANCH.md collapse target?</strong> Thin wrapper to finishing-a-development-branch, or new shared file?</li>
+        <li><strong>Discoverability gap?</strong> Re-surface autopilot in handoff templates as part of this design, or defer?</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== Critique ========== -->
+  <div id="panel-critique" class="tab-panel">
+    <div class="section">
+      <h2>Round 1 Critique Summary</h2>
+      <p class="description">The Architect, The QA Engineer, The DevEx Engineer reviewed this design. Reports archived at <code>/tmp/brainstorm-critique-autopilot-orchestration-redesign/round-1/</code>.</p>
+      <p class="description"><strong>Fact-check accuracy: ~89%.</strong> One INCORRECT (commit count was 11 → actual 9) and one PARTIAL (postmortem path missing <code>completed/</code>) — both corrected.</p>
+    </div>
+
+    <div class="section">
+      <h2>HIGH-severity items applied to this design</h2>
+      <ul class="bullet-list">
+        <li>Decision 7 expanded — <code>run-ralph.sh</code> flag-set change is now explicit</li>
+        <li>Halt sentinel write protocol added (atomic, first-writer-wins, no auto-cleanup)</li>
+        <li><code>manifest_malformed</code> reason added to taxonomy with parser specified</li>
+        <li>Anti-Pattern: Mid-Flow Human Review section added (user-surfaced HIGH)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>HIGH-severity items deferred to writing-plans</h2>
+      <div class="callout callout-risk">
+        <strong>.mcp.json resolution algorithm</strong>
+        Architect H2 + QA flagged: "merged set walking upward from CWD" is not a documented Claude behavior. writing-plans must specify edge cases (symlinks, conflicts, missing files).
+      </div>
+      <div class="callout callout-risk">
+        <strong>Manifest-authoring visibility</strong>
+        DevEx H3: runs without user override. writing-plans must specify whether the user sees/edits the proposed manifest before commit.
+      </div>
+      <div class="callout callout-risk">
+        <strong>Double-preflight state ambiguity</strong>
+        QA H6: SIGKILL/OOM during plan-write leaves Phase 1.5 reading partial YAML. Need fixture test or drop double-preflight.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>MEDIUM &amp; LOW deferred items</h2>
+      <p class="description">14 MEDIUM items (e.g., per-phase stderr capture, schema location, phase script invocation pattern, fix-instructions library, halt format standardization, test surface for exit-code dispatch, phase registry). 4 LOW items (env-link guardrail, cleanup trap stacking, Decision 1 rationale, plugin-split-plan.md update). Full list in the design document's "Round 1 Critique — Open Issues for writing-plans" section.</p>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: '14px',
+        lineColor: '#e5e7eb',
+        primaryColor: '#f0eeeb',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#e5e7eb',
+        secondaryColor: '#fff7ed',
+        secondaryTextColor: '#1a1a1a',
+        secondaryBorderColor: '#ff6900',
+        tertiaryColor: '#f5f3ef',
+        tertiaryTextColor: '#1a1a1a',
+        tertiaryBorderColor: '#555555'
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); }
+          catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) firstSubBtn.click();
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); }
+          catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
