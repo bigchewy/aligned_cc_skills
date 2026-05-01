@@ -80,3 +80,11 @@ def test_format_halt_echoes_canonical_fix():
     assert r.returncode == 0, r.stderr
     # Each canonical fix instruction must mention the reason name AND the user action
     assert "env_var_missing" in r.stdout or "env var" in r.stdout.lower()
+
+
+def test_phase_verify_emits_halt_on_failure():
+    verify = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "verify.sh"
+    text = verify.read_text(encoding="utf-8")
+    assert "lib/halt.sh" in text, "verify.sh must source lib/halt.sh"
+    assert "write_halt verify_failed" in text, \
+        "verify.sh must emit halt-with-reason verify_failed when .finish-status is FAILED"

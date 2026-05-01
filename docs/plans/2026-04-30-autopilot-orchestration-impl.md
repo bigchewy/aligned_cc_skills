@@ -2353,7 +2353,7 @@ git commit -m "feat(autopilot): wire preflight + halt protocol into orchestrator
 
 ---
 
-### Task 21: Translate `verify.sh` failure into halt-with-reason
+### ✅ Task 21: Translate `verify.sh` failure into halt-with-reason
 
 **Files:**
 - Modify: `docs/ralph_loops/phases/verify.sh`

@@ -22,6 +22,8 @@ RALPH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # shellcheck source=../lib/process.sh
 source "$RALPH_DIR/lib/process.sh"
+# shellcheck source=../lib/halt.sh
+source "$RALPH_DIR/lib/halt.sh"
 
 # Locals required by lib/process.sh — declared here for clarity since
 # this script runs in a child shell.
@@ -73,6 +75,12 @@ if [ ! -f "$STATUS" ]; then
 fi
 
 RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"
+if [ "$RESULT" = "FAILED" ]; then
+  FAILED_AT="$(grep '^failed_at:' "$STATUS" 2>/dev/null | awk '{print $2}')"
+  HALT_PATH="$WORKTREE/.autopilot-halt" \
+    write_halt verify_failed verify "Failed at: ${FAILED_AT:-unknown}; see $STATUS"
+  exit 2
+fi
 if [ "$RESULT" != "SUCCESS" ]; then
   echo "Verification finished with status: ${RESULT:-<empty>}." >&2
   exit 1
