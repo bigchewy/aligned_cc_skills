@@ -2409,7 +2409,7 @@ git commit -m "feat(autopilot): verify.sh emits halt-with-reason verify_failed"
 
 ---
 
-### Task 22: Add Anti-Pattern: Mid-Flow Human Review section to writing-plans
+### ✅ Task 22: Add Anti-Pattern: Mid-Flow Human Review section to writing-plans
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md`

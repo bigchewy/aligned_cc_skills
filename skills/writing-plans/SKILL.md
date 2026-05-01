@@ -112,6 +112,41 @@ Manual steps fall into two categories:
 
 **Enforcement:** The Verifier critic checks for mid-plan autonomy violations during the Fact-Check + Critique Panel. See `plan-critique-checklist.md` Criterion 10's "Autonomy violations" row + the `Autonomy violations — signal list` subsection, and the Round 1 Verifier prompt's Phase 3 in `references/critique-panel-prompts.md`. HIGH severity violations must be resolved (relocate to Prerequisites or Post-Automation) before the plan ships.
 
+## Anti-Pattern: Mid-Flow Human Review (BANNED)
+
+**The autopilot's whole value is unattended completion.** The user reviews ONCE, at the end. Plan tasks that ask for user *judgment* mid-pipeline defeat that proposition — even when framed as "verification," "confirmation," or "review."
+
+This is distinct from the Manual Steps Policy above. That policy governs *execution* the user must perform (Prerequisites, Post-Automation). This ban governs *judgment* the plan author wanted the user to provide between tasks. Different framing — same effect: the loop halts or improvises.
+
+### Banned task body patterns
+
+writing-plans MUST NOT produce plan tasks containing language like:
+
+| Pattern | Why banned |
+|---|---|
+| "Get user feedback on X before proceeding" | Pipeline doesn't pause for feedback |
+| "Have the user verify the UI looks correct" | Mockup fidelity loop is the machine check; user reviews at end |
+| "Pause and ask if X is acceptable" | No human present to ask |
+| "Review the interface before continuing to Task N+1" | User reviews when autopilot completes |
+| "Confirm with user before proceeding" | No conversational surface; loop halts or guesses |
+| "Show user the [output/screenshot/result] and wait" | Headless `claude -p` cannot wait for human input |
+| "User signs off on the design before implementation" | Sign-off happened during brainstorming; not a plan task |
+
+The pattern is "task body asks for *judgment* mid-pipeline." NOT banned: machine checks (mockup fidelity, eval scoring, verify gate are all machine-judged).
+
+### What's allowed
+
+- **Prerequisites (before Task 1)** — execution work the user does to unblock autopilot.
+- **Manual Steps (Post-Automation)** — execution work the user does after autopilot completes.
+- **Halt-with-reason (`.autopilot-halt`)** — environment failures the executor cannot resolve.
+- **End-of-autopilot review** — the user reviews everything at the end.
+
+### Enforcement
+
+The Verifier critic flags any task body containing "human review", "user verifies", "review the [UI/interface/mockup/output]", "wait for user", "confirm with user", "before proceeding ask", "user signs off", "get user approval", or semantically equivalent language as HIGH severity. Suggested fix: relocate to Manual Steps (Post-Automation) if it's real verification work; remove if it's a gratuitous gate.
+
+Exemption: Prerequisites, Manual Steps (Post-Automation), and Decision Log sections — these sections are explicitly user-facing and not part of the autopilot's task flow. Task bodies are not exempt regardless of where in the plan they sit.
+
 ## Standalone Scripts and Environment Variables
 
 When a plan includes a standalone TypeScript/JavaScript script (migration, seed, one-off task) that reads `process.env`, the script **will not** have access to `.env.local` variables unless it loads them explicitly. Next.js loads `.env.local` automatically, but `npx tsx script.ts` does not.
