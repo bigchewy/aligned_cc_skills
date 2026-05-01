@@ -1000,7 +1000,7 @@ git commit -m "refactor(autopilot): delete orphaned FINISH-BRANCH.md"
 
 ---
 
-### Task 12: Collapse `VERIFY-BRANCH.md` to thin wrapper around finishing-a-development-branch
+### ✅ Task 12: Collapse `VERIFY-BRANCH.md` to thin wrapper around finishing-a-development-branch
 
 **Files:**
 - Modify: `docs/ralph_loops/VERIFY-BRANCH.md`
