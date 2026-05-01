@@ -322,7 +322,7 @@ git commit -m "refactor(autopilot): run-ralph.sh sources lib/process.sh; standar
 
 ---
 
-### Task 3: Refactor `autopilot.sh` to source `lib/process.sh`
+### ✅ Task 3: Refactor `autopilot.sh` to source `lib/process.sh`
 
 **Files:**
 - Modify: `docs/ralph_loops/autopilot.sh` (process management block, lines 102–211)

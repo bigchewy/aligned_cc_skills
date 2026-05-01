@@ -53,3 +53,31 @@ def test_run_ralph_does_not_redefine_shared_functions():
         # Function-DEFINITION pattern is `name() {` — count must be 0.
         assert f"{fn} {{" not in text and f"{fn}\n{{" not in text, \
             f"run-ralph.sh must not define {fn} — sourced from lib/process.sh"
+
+
+def test_autopilot_sources_lib_process():
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    assert 'source "$SCRIPT_DIR/lib/process.sh"' in text, \
+        "autopilot.sh must source lib/process.sh"
+
+
+def test_autopilot_uses_set_u_only():
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    assert "set -u" in text and "set -uo pipefail" not in text, \
+        "autopilot.sh must declare 'set -u' (not '-uo pipefail') — Decision 7"
+
+
+def test_autopilot_does_not_redefine_lib_functions():
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    # Definition pattern is `name() {` — count must be 0 for all 7 lib functions.
+    for fn in (
+        "cleanup()",
+        "kill_claude()",
+        "start_heartbeat()",
+        "stop_heartbeat()",
+        "start_watchdog()",
+        "stop_watchdog()",
+        "run_claude_phase()",
+    ):
+        assert f"{fn} {{" not in text and f"{fn}\n{{" not in text, \
+            f"autopilot.sh must not define {fn} — sourced from lib/process.sh"
