@@ -61,3 +61,18 @@ def test_human_blocked_sentinel_is_removed_after_halt():
     # invocation starts clean.
     assert "rm .ralph-human-blocked" in text
     assert "rm .ralph-done" in text
+
+
+def test_run_ralph_sources_lib_process():
+    text = _read()
+    assert 'source "$SCRIPT_DIR/lib/process.sh"' in text or \
+           'source "$(dirname "$0")/lib/process.sh"' in text, \
+        "run-ralph.sh must source lib/process.sh"
+
+
+def test_run_ralph_uses_set_u_only():
+    text = _read()
+    # Decision 7: standardize on set -u across all callers
+    assert "set -u" in text, "run-ralph.sh must declare 'set -u'"
+    assert "set -euo pipefail" not in text, \
+        "run-ralph.sh must not use 'set -euo pipefail' (Decision 7)"

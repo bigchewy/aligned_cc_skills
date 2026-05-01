@@ -227,7 +227,7 @@ git commit -m "feat(autopilot): extract shared process.sh lib for heartbeat/watc
 
 ---
 
-### Task 2: Refactor `run-ralph.sh` to source `lib/process.sh` and switch to `set -u`
+### ✅ Task 2: Refactor `run-ralph.sh` to source `lib/process.sh` and switch to `set -u`
 
 **Files:**
 - Modify: `docs/ralph_loops/run-ralph.sh` (process management block + `set` flag on line 2)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -u
 
 # Usage: run-ralph.sh <worktree-path> <plan-file-path>
 #
@@ -23,6 +23,9 @@ HEARTBEAT_INTERVAL="${HEARTBEAT_INTERVAL:-30}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EXECUTE="$SCRIPT_DIR/EXECUTE-PLAN.md"
+
+# shellcheck source=lib/process.sh
+source "$SCRIPT_DIR/lib/process.sh"
 
 if [ ! -f "$EXECUTE" ]; then
   echo "ERROR: EXECUTE-PLAN.md not found at $EXECUTE" >&2
@@ -77,56 +80,6 @@ HEARTBEAT_PID=""
 WATCHDOG_PID=""
 CLAUDE_PID=""
 
-start_heartbeat() {
-  (
-    elapsed=0
-    while true; do
-      sleep "$HEARTBEAT_INTERVAL"
-      elapsed=$((elapsed + HEARTBEAT_INTERVAL))
-      echo "  [heartbeat] iteration $ITERATION — ${elapsed}s elapsed"
-    done
-  ) &
-  HEARTBEAT_PID=$!
-}
-
-stop_heartbeat() {
-  if [ -n "$HEARTBEAT_PID" ]; then
-    kill "$HEARTBEAT_PID" 2>/dev/null || true
-    wait "$HEARTBEAT_PID" 2>/dev/null || true
-    HEARTBEAT_PID=""
-  fi
-}
-
-start_watchdog() {
-  (
-    sleep "$ITERATION_TIMEOUT"
-    echo ""
-    echo "  [timeout] iteration $ITERATION exceeded ${ITERATION_TIMEOUT}s — killing claude"
-    # Kill the claude process group to include any child processes
-    kill "$CLAUDE_PID" 2>/dev/null || true
-  ) &
-  WATCHDOG_PID=$!
-}
-
-stop_watchdog() {
-  if [ -n "$WATCHDOG_PID" ]; then
-    kill "$WATCHDOG_PID" 2>/dev/null || true
-    wait "$WATCHDOG_PID" 2>/dev/null || true
-    WATCHDOG_PID=""
-  fi
-}
-
-cleanup() {
-  stop_heartbeat
-  stop_watchdog
-  if [ -n "$CLAUDE_PID" ]; then
-    kill "$CLAUDE_PID" 2>/dev/null || true
-    wait "$CLAUDE_PID" 2>/dev/null || true
-    CLAUDE_PID=""
-  fi
-  rm -f "$PROMPT_FILE"
-}
-
 # Ctrl+C and SIGTERM: set flag, kill claude, let the EXIT trap do final cleanup
 INTERRUPTED=false
 handle_signal() {
@@ -162,13 +115,13 @@ while :; do
 
   echo "--- Iteration $ITERATION starting ($(date '+%H:%M:%S')) ---"
 
-  start_heartbeat
+  start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
   # Run claude in background so we can enforce a timeout
   claude -p - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
 
-  start_watchdog
+  start_watchdog "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
   # Wait for claude to finish (or be killed by watchdog)
   TIMED_OUT=false
