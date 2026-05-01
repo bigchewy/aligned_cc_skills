@@ -110,3 +110,22 @@ def test_autopilot_uses_strict_task_regex():
            "^### (\\u2705|\\U0001f504)?\\\\s*Task" in text, \
         "autopilot.sh task counting must use a strict task-heading regex, " \
         "not the coarse '^### ' matcher"
+
+
+PHASES_DIR = RALPH_DIR / "phases"
+
+PHASE_HEADER_FIELDS = ("# PHASE:", "# INPUTS:", "# OUTPUTS:", "# EXIT CODES:")
+
+
+def test_phases_dir_exists():
+    assert PHASES_DIR.is_dir(), "docs/ralph_loops/phases/ must exist"
+
+
+def test_phase_template_declares_contract():
+    template = PHASES_DIR / "_TEMPLATE.sh"
+    assert template.is_file(), "phases/_TEMPLATE.sh must exist"
+    text = _read(template)
+    for field in PHASE_HEADER_FIELDS:
+        assert field in text, f"phases/_TEMPLATE.sh must declare {field}"
+    assert "set -u" in text, "phases/_TEMPLATE.sh must use set -u"
+    assert "lib/process.sh" in text, "phases must source lib/process.sh"

@@ -555,7 +555,7 @@ git commit -m "refactor(autopilot): use report_stage; strict task-heading regex"
 
 ---
 
-### Task 6: Add phase script template and contract assertion
+### ✅ Task 6: Add phase script template and contract assertion
 
 **Files:**
 - Create: `docs/ralph_loops/phases/_TEMPLATE.sh`
