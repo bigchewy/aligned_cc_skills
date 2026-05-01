@@ -175,3 +175,20 @@ def test_phase_verify_exists_and_conforms():
         assert f in text
     assert "VERIFY-BRANCH.md" in text
     assert ".finish-status" in text
+
+
+def test_finish_branch_md_is_deleted():
+    assert not (RALPH_DIR / "FINISH-BRANCH.md").exists(), \
+        "FINISH-BRANCH.md is deleted per design Decision 8"
+
+
+def test_no_active_finish_branch_references():
+    """No skill or active plan should reference FINISH-BRANCH.md after deletion.
+    Allowed: this impl plan and the source design doc (which document the
+    deletion). Allowed if obsoleted (struck-through) in 2026-04-08-plugin-split-plan."""
+    skills_dir = REPO_ROOT / "skills"
+    refs = []
+    for md in skills_dir.rglob("*.md"):
+        if "FINISH-BRANCH.md" in md.read_text(encoding="utf-8"):
+            refs.append(str(md.relative_to(REPO_ROOT)))
+    assert refs == [], f"FINISH-BRANCH.md still referenced in skills: {refs}"
