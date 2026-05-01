@@ -41,6 +41,8 @@ PLUGIN_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # shellcheck source=lib/process.sh
 source "$SCRIPT_DIR/lib/process.sh"
+# shellcheck source=lib/stages.sh
+source "$SCRIPT_DIR/lib/stages.sh"
 
 # Prompt files
 WRITE_PLAN_PROMPT="$SCRIPT_DIR/WRITE-PLAN.md"
@@ -150,7 +152,7 @@ if [ -f "$SENTINEL" ]; then
 
   if [ "$SENTINEL_DESIGN_DOC_ABS" = "$DESIGN_DOC" ] && [ -f "$SENTINEL_PLAN_PATH" ]; then
     PLAN_FILE="$SENTINEL_PLAN_PATH"
-    echo "=== Phase 1: SKIPPED (plan already exists) ==="
+    report_stage 2 6 plan skipped
     echo "Plan file: $PLAN_FILE"
     echo ""
   else
@@ -164,7 +166,7 @@ if [ -f "$SENTINEL" ]; then
 fi
 
 if [ -z "$PLAN_FILE" ]; then
-  echo "=== Phase 1: Writing Implementation Plan ==="
+  report_stage 2 6 plan running
   echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
 
   PROMPT_FILE="/tmp/.autopilot-write-plan-$$"
@@ -205,7 +207,7 @@ PROMPT_EOF
 
   echo ""
   echo "Plan file: $PLAN_FILE"
-  echo "=== Phase 1: Complete ($(date '+%H:%M:%S')) ==="
+  report_stage 2 6 plan passed
   echo ""
 fi
 
@@ -226,7 +228,7 @@ fi
 
 WORKTREE_DIR="$PROJECT/.worktrees/$(echo "$BRANCH" | sed 's|^feature/||')"
 
-echo "=== Phase 2: Worktree Setup ==="
+report_stage 3 6 worktree running
 
 if [ -d "$WORKTREE_DIR" ]; then
   echo "Worktree already exists: $WORKTREE_DIR"
@@ -329,26 +331,28 @@ fi
 
 echo "Worktree ready: $WORKTREE"
 echo "Plan in worktree: $PLAN_IN_WORKTREE"
-echo "=== Phase 2: Complete ==="
+report_stage 3 6 worktree passed
 echo ""
 
 # ============================================================
 # Phase 3: Ralph loop
 # ============================================================
 
-echo "=== Phase 3: Ralph Loop ==="
+report_stage 4 6 ralph running
 
 # Check if all tasks are already complete
 TOTAL_TASKS=0
 DONE_TASKS=0
-if grep -q "^### " "$PLAN_IN_WORKTREE" 2>/dev/null; then
-  TOTAL_TASKS="$(grep -c "^### " "$PLAN_IN_WORKTREE" || true)"
-  DONE_TASKS="$(grep -c "^### ✅" "$PLAN_IN_WORKTREE" || true)"
+TASK_REGEX='^### (✅|🔄)?[[:space:]]*Task[[:space:]]*[0-9]'
+DONE_REGEX='^### ✅[[:space:]]*Task[[:space:]]*[0-9]'
+if grep -qE "$TASK_REGEX" "$PLAN_IN_WORKTREE" 2>/dev/null; then
+  TOTAL_TASKS="$(grep -cE "$TASK_REGEX" "$PLAN_IN_WORKTREE" || true)"
+  DONE_TASKS="$(grep -cE "$DONE_REGEX" "$PLAN_IN_WORKTREE" || true)"
 fi
 
 if [ "$TOTAL_TASKS" -gt 0 ] && [ "$TOTAL_TASKS" -eq "$DONE_TASKS" ]; then
   echo "All $TOTAL_TASKS tasks already complete — skipping Ralph loop."
-  echo "=== Phase 3: SKIPPED ==="
+  report_stage 4 6 ralph skipped
   echo ""
 else
   if [ "$TOTAL_TASKS" -gt 0 ]; then
@@ -371,7 +375,7 @@ else
   fi
 
   echo ""
-  echo "=== Phase 3: Complete ==="
+  report_stage 4 6 ralph passed
   echo ""
 fi
 
@@ -379,12 +383,12 @@ fi
 # Phase 3.5: Mockup fidelity loop
 # ============================================================
 
-echo "=== Phase 3.5: Mockup Fidelity ==="
+report_stage 5 6 mockup running
 
 # Check if already clean from a previous run
 if [ -f "$WORKTREE/.mockup-clean" ]; then
   echo "Mockup fidelity already verified — skipping."
-  echo "=== Phase 3.5: SKIPPED ==="
+  report_stage 5 6 mockup skipped
   echo ""
 else
   # Quick check: does the plan reference mockups at all?
@@ -399,7 +403,7 @@ else
   if [ "$HAS_MOCKUPS" = false ]; then
     echo "No mockups referenced in plan — skipping fidelity check."
     touch "$WORKTREE/.mockup-clean"
-    echo "=== Phase 3.5: SKIPPED (no mockups) ==="
+    report_stage 5 6 mockup skipped
     echo ""
   else
     echo "Mockups referenced in plan. Starting fidelity loop..."
@@ -446,7 +450,7 @@ PROMPT_EOF
       echo "Remaining deviations will be visible during review." >&2
     fi
 
-    echo "=== Phase 3.5: Complete ==="
+    report_stage 5 6 mockup passed
     echo ""
   fi
 fi
@@ -459,7 +463,7 @@ fi
 if [ -f "$STATUS" ]; then
   PREV_RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"
   if [ "$PREV_RESULT" = "SUCCESS" ]; then
-    echo "=== Phase 4: SKIPPED (previous verification passed) ==="
+    report_stage 6 6 verify skipped
     echo ""
   else
     # Stale failure status — clear and re-run
@@ -468,7 +472,7 @@ if [ -f "$STATUS" ]; then
 fi
 
 if [ ! -f "$STATUS" ] || [ "$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')" != "SUCCESS" ]; then
-  echo "=== Phase 4: Verifying Branch ==="
+  report_stage 6 6 verify running
   echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
 
   # Clear any stale status file
@@ -504,7 +508,7 @@ PROMPT_EOF
     # Don't exit — fall through to the report with a warning
   fi
 
-  echo "=== Phase 4: Complete ==="
+  report_stage 6 6 verify passed
   echo ""
 fi
 

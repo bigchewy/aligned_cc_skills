@@ -469,7 +469,7 @@ git commit -m "feat(autopilot): add lib/stages.sh report_stage reporter"
 
 ---
 
-### Task 5: Wire `lib/stages.sh` into `autopilot.sh` and fix `^### ` task-completion regex
+### ✅ Task 5: Wire `lib/stages.sh` into `autopilot.sh` and fix `^### ` task-completion regex
 
 **Files:**
 - Modify: `docs/ralph_loops/autopilot.sh` (banners at lines ~243, 257, 319, 429, 472, 561; matchers at 434–436)

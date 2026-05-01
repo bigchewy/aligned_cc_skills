@@ -91,3 +91,22 @@ def test_lib_stages_exists_with_report_stage():
     # Must accept four positional args (phase, total, name, status)
     assert "$1" in text and "$2" in text and "$3" in text and "$4" in text, \
         "report_stage must accept phase/total/name/status positional args"
+
+
+def test_autopilot_uses_report_stage_not_banner():
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    assert "source \"$SCRIPT_DIR/lib/stages.sh\"" in text, \
+        "autopilot.sh must source lib/stages.sh"
+    assert "report_stage " in text, "autopilot.sh must call report_stage"
+    # Old banners removed
+    assert "=== Phase 1:" not in text and "=== Phase 2:" not in text, \
+        "autopilot.sh must not use legacy === Phase N: === banners"
+
+
+def test_autopilot_uses_strict_task_regex():
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    # The strict regex only matches task headings (### Task N: or ### ✅ Task N:)
+    assert "^### (✅|🔄)?[[:space:]]*Task[[:space:]]*[0-9]" in text or \
+           "^### (\\u2705|\\U0001f504)?\\\\s*Task" in text, \
+        "autopilot.sh task counting must use a strict task-heading regex, " \
+        "not the coarse '^### ' matcher"
