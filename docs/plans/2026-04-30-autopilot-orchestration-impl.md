@@ -1395,7 +1395,7 @@ git commit -m "feat(writing-plans): Verifier critic enforces manifest coherence"
 
 ---
 
-### Task 16: Add `lib/manifest.sh` (parse + validate)
+### ✅ Task 16: Add `lib/manifest.sh` (parse + validate)
 
 **Files:**
 - Create: `docs/ralph_loops/lib/manifest.sh`
