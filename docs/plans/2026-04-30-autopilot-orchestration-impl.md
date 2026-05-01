@@ -394,7 +394,7 @@ git commit -m "refactor(autopilot): autopilot.sh sources lib/process.sh; standar
 
 ---
 
-### Task 4: Add `lib/stages.sh` reporter
+### ✅ Task 4: Add `lib/stages.sh` reporter
 
 **Files:**
 - Create: `docs/ralph_loops/lib/stages.sh`

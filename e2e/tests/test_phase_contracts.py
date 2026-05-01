@@ -81,3 +81,13 @@ def test_autopilot_does_not_redefine_lib_functions():
     ):
         assert f"{fn} {{" not in text and f"{fn}\n{{" not in text, \
             f"autopilot.sh must not define {fn} — sourced from lib/process.sh"
+
+
+def test_lib_stages_exists_with_report_stage():
+    stages = LIB_DIR / "stages.sh"
+    assert stages.is_file(), "lib/stages.sh must exist"
+    text = _read(stages)
+    assert "report_stage()" in text, "lib/stages.sh must define report_stage()"
+    # Must accept four positional args (phase, total, name, status)
+    assert "$1" in text and "$2" in text and "$3" in text and "$4" in text, \
+        "report_stage must accept phase/total/name/status positional args"
