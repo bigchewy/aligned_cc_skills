@@ -638,7 +638,7 @@ git commit -m "feat(autopilot): add phases/_TEMPLATE.sh contract template"
 
 ---
 
-### Task 7: Extract `phases/plan.sh` from `autopilot.sh`
+### ✅ Task 7: Extract `phases/plan.sh` from `autopilot.sh`
 
 **Files:**
 - Create: `docs/ralph_loops/phases/plan.sh`

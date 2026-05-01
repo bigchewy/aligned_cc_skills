@@ -137,79 +137,28 @@ echo ""
 
 PLAN_FILE=""
 
-# Check sentinel — but only if it was created for THIS design doc
+export PROJECT DESIGN_DOC SENTINEL LOG PHASE_TIMEOUT
+export WRITE_PLAN_PROMPT SKILL_FILE CHECKLIST_FILE KANBAN_FORMAT
+
+report_stage 2 6 plan running
+PLAN_PHASE_EXIT=0
+bash "$SCRIPT_DIR/phases/plan.sh" || PLAN_PHASE_EXIT=$?
+case "$PLAN_PHASE_EXIT" in
+  0) report_stage 2 6 plan passed ;;
+  3) report_stage 2 6 plan skipped ;;
+  *) report_stage 2 6 plan failed; exit "$PLAN_PHASE_EXIT" ;;
+esac
+
+# Re-read PLAN_FILE from sentinel (phase wrote it)
 if [ -f "$SENTINEL" ]; then
-  SENTINEL_DESIGN_DOC="$(head -1 "$SENTINEL")"
-  SENTINEL_PLAN_PATH="$(tail -1 "$SENTINEL")"
-
-  # Normalize sentinel design doc path to absolute for comparison
-  # (sentinel may store relative or absolute paths depending on how it was written)
-  if [[ "$SENTINEL_DESIGN_DOC" != /* ]]; then
-    SENTINEL_DESIGN_DOC_ABS="$(cd "$PROJECT/$(dirname "$SENTINEL_DESIGN_DOC")" 2>/dev/null && pwd)/$(basename "$SENTINEL_DESIGN_DOC")"
-  else
-    SENTINEL_DESIGN_DOC_ABS="$SENTINEL_DESIGN_DOC"
-  fi
-
-  if [ "$SENTINEL_DESIGN_DOC_ABS" = "$DESIGN_DOC" ] && [ -f "$SENTINEL_PLAN_PATH" ]; then
-    PLAN_FILE="$SENTINEL_PLAN_PATH"
-    report_stage 2 6 plan skipped
-    echo "Plan file: $PLAN_FILE"
-    echo ""
-  else
-    if [ "$SENTINEL_DESIGN_DOC_ABS" != "$DESIGN_DOC" ]; then
-      echo "NOTE: Sentinel is for a different design doc. Starting fresh."
-    else
-      echo "WARNING: Sentinel points to missing file: $SENTINEL_PLAN_PATH"
-    fi
-    rm -f "$SENTINEL"
-  fi
+  PLAN_FILE="$(tail -1 "$SENTINEL")"
 fi
 
-if [ -z "$PLAN_FILE" ]; then
-  report_stage 2 6 plan running
-  echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
-
-  PROMPT_FILE="/tmp/.autopilot-write-plan-$$"
-  cat > "$PROMPT_FILE" <<PROMPT_EOF
-$(cat "$WRITE_PLAN_PROMPT")
-
-Skill file: $SKILL_FILE
-Checklist: $CHECKLIST_FILE
-Kanban format: $KANBAN_FORMAT
-Design document: $DESIGN_DOC
-Project directory: $PROJECT
-Plan path sentinel: $SENTINEL
-PROMPT_EOF
-
-  cd "$PROJECT"
-
-  start_heartbeat "$PHASE_TIMEOUT" "plan writing"
-
-  if ! run_claude_phase "Phase 1 (plan writing)" "$PHASE_TIMEOUT"; then
-    stop_heartbeat
-    exit 1
-  fi
-  stop_heartbeat
-  rm -f "$PROMPT_FILE"
-  PROMPT_FILE=""
-
-  # Read plan path from sentinel (format: line 1 = design doc, line 2 = plan path)
-  if [ -f "$SENTINEL" ]; then
-    PLAN_FILE="$(tail -1 "$SENTINEL")"
-  fi
-
-  if [ -z "$PLAN_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
-    echo "ERROR: Could not find the plan file after Phase 1." >&2
-    echo "Claude may not have written the sentinel file at $SENTINEL." >&2
-    echo "Check the log at $LOG for details." >&2
-    exit 1
-  fi
-
-  echo ""
-  echo "Plan file: $PLAN_FILE"
-  report_stage 2 6 plan passed
-  echo ""
+if [ -z "$PLAN_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
+  echo "ERROR: Plan file missing after plan phase." >&2
+  exit 1
 fi
+echo ""
 
 # ============================================================
 # Phase 2: Create worktree

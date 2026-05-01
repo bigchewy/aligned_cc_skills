@@ -129,3 +129,13 @@ def test_phase_template_declares_contract():
         assert field in text, f"phases/_TEMPLATE.sh must declare {field}"
     assert "set -u" in text, "phases/_TEMPLATE.sh must use set -u"
     assert "lib/process.sh" in text, "phases must source lib/process.sh"
+
+
+def test_phase_plan_exists_and_conforms():
+    plan = PHASES_DIR / "plan.sh"
+    assert plan.is_file(), "phases/plan.sh must exist"
+    text = _read(plan)
+    for field in PHASE_HEADER_FIELDS:
+        assert field in text, f"phases/plan.sh missing header field: {field}"
+    assert "lib/process.sh" in text, "phases/plan.sh must source lib/process.sh"
+    assert "WRITE-PLAN.md" in text, "phases/plan.sh must reference WRITE-PLAN.md"
