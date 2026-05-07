@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Structures creative and strategic work through guided dialogue — software design or business strategy. Use before any creative, architectural, or strategic work that benefits from structured exploration and expert critique."
+description: "Structures creative and strategic work through guided dialogue across five modes — software design, business strategy, research synthesis, content authoring, and multi-feature planning. Use before any creative, architectural, or strategic work that benefits from structured exploration and expert critique."
 ---
 
 # Brainstorming
@@ -9,12 +9,16 @@ description: "Structures creative and strategic work through guided dialogue —
 
 ## Overview
 A unified brainstorming skill that adapts its process based on what you're
-working on. Software/technical topics get a fluid Q&A with Architect
-auto-consult. Business/strategy topics get a structured 4-phase process
-(Goal → Problems → Root Causes → Solutions).
+working on. Five modes covering distinct shapes of brainstorm work:
+
+- **Software** — fluid Q&A with Architect auto-consult; deliverable is a design doc.
+- **Business** — structured 4-phase process (Goal → Problems → Root Causes → Solutions); deliverable is a strategic plan.
+- **Research** — corpus survey + comparative synthesis with Skeptic Pass; deliverable is a research memo or KB artifact.
+- **Authoring** — content sequencing with domain-advisor panel and optional Research sub-phase; deliverable is a sequenced design doc (curriculum, framework prompts, exercise programs).
+- **Planning** — multi-feature portfolio sequencing with strategy advisors; deliverable is a roadmap + spawn-list portfolio.
 
 ## Step 1: Detect Mode
-Classify the user's topic into one of two modes:
+Classify the user's topic into one of five modes:
 
 **Signal precedence:** Topic keywords take priority over environment signals.
 A user in a code repo asking about "pricing strategy" is business mode, not
@@ -26,40 +30,82 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): project contains code files (package.json,
   Cargo.toml, go.mod, pyproject.toml, etc.)
 
-**Business mode** — strategy, decisions, analysis, or non-code deliverables:
+**Business mode** — strategy, decisions, RCA-shaped diagnosis:
 - Topic signals: strategy, sales, marketing, positioning, meeting prep,
-  decisions, stakeholders, pricing, proposals, planning, analysis
+  decisions, stakeholders, pricing, proposals, RCA, diagnosis,
+  "why isn't this working"
 - Environment (tiebreaker): project is docs-only, Obsidian vault, or
   non-code directory
+
+**Research mode** — evidence synthesis, comparative review, literature audit:
+- Topic signals: literature review, evidence map, comparative review,
+  instrument selection, framework comparison, KB design,
+  "what does the literature say", systematic review,
+  annotated bibliography
+- Environment (tiebreaker): knowledge folders, prior research artifacts,
+  or registries are present
+
+**Authoring mode** — content design, curriculum sequencing, voice migration:
+- Topic signals: curriculum, program design, sequence content,
+  exercise sequencing, content design, "what to teach in what order",
+  rewrite for audience, voice migration, framework prompt authoring,
+  chapter sequencing
+- Environment (tiebreaker): content registries, prior curricula,
+  brand voice files are present
+
+**Planning mode** — multi-feature roadmap, portfolio sequencing:
+- Topic signals: roadmap, prioritization, portfolio, "what to build next",
+  milestone, sequence features, multi-feature build, project plan,
+  "too big for one brainstorm"
+- Environment (tiebreaker): prior roadmaps, open kanban, or customer asks
+  are present
 
 **If signals are clear:** Auto-route and present the mode explanation
 block (see below). Proceed to Step 2.
 
-**If signals are mixed or absent:** Ask one question: "Is this a
-software/technical design or a business/strategy problem?" Once answered,
-present the mode explanation block and proceed to Step 2.
+**If signals are mixed or absent:** Apply the disambiguation rules below before asking. If they resolve to one mode, auto-route. Otherwise ask the 5-way question:
+
+> "Which best describes this work: Software design / Business strategy / Research synthesis / Content authoring / Multi-feature planning?"
+
+Once answered, present the mode explanation block and proceed to Step 2.
+
+### Disambiguation Rules
+
+Apply these in order when topic signals overlap multiple modes:
+
+- **Software vs Authoring:** If the deliverable is *code that runs*, Software. If the deliverable is *content humans consume* (curriculum, prompts, exercises) even when there's a code seam, Authoring. The canonical test: a brainstorm with a runtime adapter (code) but 70% content-sequencing work routes to Authoring.
+- **Authoring vs Research:** If the deliverable is *an arrangement* (sequence, registry, curriculum), Authoring. If the deliverable is *an evidence map / ranked synthesis* with no arrangement output, Research. Authoring includes Research as an optional sub-phase (file-mediated sub-agent fork — see modes/authoring.md).
+- **Business vs Planning:** If the work is *diagnostic* (why isn't X working, what should we do about Y problem), Business. If the work is *generative portfolio sequencing* (which N things should we build, in what order), Planning.
+
+**Disambiguation refusal handling:** If the user picks "Other" or types a free-form answer that doesn't map to any of the 5 modes, ask one follow-up: "Could you describe in one sentence what you want as the deliverable — a design doc, a strategy memo, an evidence map, a sequenced curriculum, or a multi-feature roadmap?" If still ambiguous after the second question, do NOT silent-default. Instead, present an open-text re-prompt: "Describe in your own words what you're trying to produce." Run signal detection on the free-text answer and route to the closest match. If detection still fails, offer a final explicit list (all 5 modes, plus "I'm not sure — let me explore for a few questions first" which routes to Business mode for RCA-shaped exploration since not-knowing-the-shape is itself a diagnostic stance).
 
 ### Mode Explanation Block (mandatory on every invocation)
 
 After mode selection, present this block before starting any phase work:
 
-> **Brainstorming** structures creative and strategic work through guided
-> dialogue — from loose idea to validated design with expert critique.
+> **Brainstorming** — guided dialogue from idea to validated design with expert critique.
 >
 > **Selected: {Mode Name}** — {one-sentence description of the process}
 > *Why:* {brief reason this mode was selected based on topic/environment signals}
 >
-> **Other available modes:**
-> - {Other mode name} — {one-sentence description}
+> **Other modes:**
+> - **Build & ship:** Software, Authoring
+> - **Diagnose & decide:** Business, Research
+> - **Sequence work:** Planning
 >
 > *To switch modes or skip phases, just say so.*
 
-**Software mode description:** "Fluid Q&A with automatic Architect
-consultation on technical decisions. Produces a validated design doc."
+Grouping is editorial display only — no enum in code. "Build & ship" both produce design docs that feed `/aligned:writing-plans`; "Diagnose & decide" both produce decision artifacts; "Sequence work" is the portfolio outlier.
 
-**Business mode description:** "Structured phases (Goal, Problems, Root
-Causes, Solutions) with gates. Adapts depth to task complexity — tactical
-tasks move faster, strategic challenges get full diagnostic treatment."
+**Software mode description:** "Fluid Q&A with automatic Architect consultation on technical decisions. Produces a validated design doc."
+
+**Business mode description:** "Structured phases (Goal, Problems, Root Causes, Solutions) with gates. Adapts depth to task complexity — tactical tasks move faster, strategic challenges get full diagnostic treatment."
+
+**Research mode description:** "Corpus survey, comparative synthesis with Skeptic Pass critique, ranked recommendations with caveats. Produces a research memo or KB artifact."
+
+**Authoring mode description:** "Content sequencing with domain-advisor panel; optional Research sub-phase via file-mediated sub-agent fork. Produces a sequenced design doc (curriculum, framework prompts, exercises)."
+
+**Planning mode description:** "Portfolio sequencing with strategy advisors (Christensen, Rumelt, Eric Ries — plus Cagan when available). Produces a roadmap + spawn-list portfolio whose entries seed future brainstorms."
 
 ## Step 2: Project Scan
 
@@ -72,8 +118,18 @@ running in the background. Now that mode is known, pass it to the scanner:
 
 "Read `agents/project-scanner.md` for your full workflow.
 Scan the project at `{project-root}` for brainstorm topic `{topic}`.
-Mode: {software|business} — emphasize {code artifacts|domain materials}
+Mode: {software|business|research|authoring|planning} — emphasize {emphasis-text}
 accordingly."
+
+**Per-mode emphasis text:**
+
+| Mode | `{emphasis-text}` |
+|---|---|
+| Software | code artifacts (package.json, src/, architecture.md, recent commits) |
+| Business | domain materials (positioning, meeting notes, prior strategy, stakeholders) |
+| Research | literature/KB/registries (`knowledge/`, `frameworks/registry.yaml`, `advisors/registry.yaml`, prior `*-research.md`) |
+| Authoring | content registries + frameworks + prior curricula (`frameworks/`, exercise/lesson registries, `*-design.md` for content work, brand voice files) |
+| Planning | prior roadmaps + open kanban + customer asks (`*-roadmap.md`, `*-portfolio.md`, `docs/kanban/`, `clients/*/`) |
 
 Do not wait for the scan to complete before proceeding to Step 3.
 
@@ -92,6 +148,30 @@ Read `{base-directory}/modes/business.md` and follow its process.
 The base directory for this skill is `{base-directory}`.
 The critique checklist for this session is at
 `{base-directory}/business-critique-checklist.md`.
+The shared orchestration file is at
+`{base-directory}/../_shared/critique-panel-orchestration.md`.
+
+**If research mode:**
+Read `{base-directory}/modes/research.md` and follow its process.
+The base directory for this skill is `{base-directory}`.
+The critique checklist for this session is at
+`{base-directory}/research-critique-checklist.md`.
+The shared orchestration file is at
+`{base-directory}/../_shared/critique-panel-orchestration.md`.
+
+**If authoring mode:**
+Read `{base-directory}/modes/authoring.md` and follow its process.
+The base directory for this skill is `{base-directory}`.
+The critique checklist for this session is at
+`{base-directory}/authoring-critique-checklist.md`.
+The shared orchestration file is at
+`{base-directory}/../_shared/critique-panel-orchestration.md`.
+
+**If planning mode:**
+Read `{base-directory}/modes/planning.md` and follow its process.
+The base directory for this skill is `{base-directory}`.
+The critique checklist for this session is at
+`{base-directory}/planning-critique-checklist.md`.
 The shared orchestration file is at
 `{base-directory}/../_shared/critique-panel-orchestration.md`.
 

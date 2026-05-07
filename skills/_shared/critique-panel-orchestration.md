@@ -15,6 +15,7 @@ Before proceeding, verify all required parameters are present in the SKILL.md co
 - `aggregation` must be either "sub-agent" or "inline"
 - `criteria-assignment` must be "yes" (with mapping table provided) or "no"
 - `visual-artifacts` must be a path or "none"
+- `portfolio-file-path` is OPTIONAL — set only by Planning mode for the spawn-list artifact attached alongside `visual-artifacts`. If present, critic prompt templates may reference `{portfolio-file-path}` and instruct critics to read it for spawn-brief-quality assessment. If absent, ignore.
 - `critique-temp-directory` must be set
 - At least one critic prompt template must be provided
 
@@ -95,7 +96,7 @@ Apply any remaining fixes. Present final results to the user.
 
 The critique panel is a sub-process, not the end of the workflow. After presenting final results:
 
-1. **Re-read the invoking skill's mode file** — the file you were handed off from (e.g., `software.md` or `business.md`) at `{base-directory}/modes/<mode-name>.md`. The original content has likely been compressed out of context by now. Use the Read tool to load it again.
+1. **Re-read the invoking skill's mode file** — the file you were handed off from at `{base-directory}/modes/<mode-name>.md`. The original content has likely been compressed out of context by now. Use the Read tool to load it again.
 2. **Find the "POST-CRITIQUE CHECKLIST" section** and execute every numbered step in order. Announce each step before executing it (e.g., "Executing Step 1 of 3 — Visualization refresh"). Do not stop after the commit — the checklist continues after it.
 
 The checklist includes steps that feel "post-completion" (like presenting next-step options) but are mandatory parts of the brainstorming workflow. The session is not complete until the final step of the checklist has been presented to the user.

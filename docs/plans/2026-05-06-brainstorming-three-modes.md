@@ -23,7 +23,7 @@
 
 ---
 
-### Task 1: Create research-mini-protocol reference
+### ✅ Task 1: Create research-mini-protocol reference
 
 **Files:**
 - Create: `skills/brainstorming/references/research-mini-protocol.md`
@@ -132,7 +132,7 @@ git commit -m "brainstorming: add research-mini-protocol contract for Authoring 
 
 ---
 
-### Task 2: Create spawn-brief template reference
+### ✅ Task 2: Create spawn-brief template reference
 
 **Files:**
 - Create: `skills/brainstorming/references/spawn-brief-template.md`
@@ -228,7 +228,7 @@ git commit -m "brainstorming: add spawn-brief template for Planning portfolio en
 
 ---
 
-### Task 3: Create research-critique-checklist
+### ✅ Task 3: Create research-critique-checklist
 
 **Files:**
 - Create: `skills/brainstorming/research-critique-checklist.md`
@@ -427,7 +427,7 @@ git commit -m "brainstorming: add research-critique-checklist with 9 criteria"
 
 ---
 
-### Task 4: Create authoring-critique-checklist
+### ✅ Task 4: Create authoring-critique-checklist
 
 **Files:**
 - Create: `skills/brainstorming/authoring-critique-checklist.md`
@@ -476,7 +476,7 @@ git commit -m "brainstorming: add authoring-critique-checklist with 9 criteria"
 
 ---
 
-### Task 5: Create planning-critique-checklist
+### ✅ Task 5: Create planning-critique-checklist
 
 **Files:**
 - Create: `skills/brainstorming/planning-critique-checklist.md`
@@ -525,7 +525,7 @@ git commit -m "brainstorming: add planning-critique-checklist with 9 criteria"
 
 ---
 
-### Task 6: Create modes/research.md
+### ✅ Task 6: Create modes/research.md
 
 **Files:**
 - Create: `skills/brainstorming/modes/research.md`
@@ -614,7 +614,7 @@ git commit -m "brainstorming: add Research mode file"
 
 ---
 
-### Task 7: Create modes/authoring.md
+### ✅ Task 7: Create modes/authoring.md
 
 **Files:**
 - Create: `skills/brainstorming/modes/authoring.md`
@@ -721,7 +721,7 @@ git commit -m "brainstorming: add Authoring mode file with Research sub-flow"
 
 ---
 
-### Task 8: Create modes/planning.md
+### ✅ Task 8: Create modes/planning.md
 
 **Files:**
 - Create: `skills/brainstorming/modes/planning.md`
@@ -830,7 +830,7 @@ git commit -m "brainstorming: add Planning mode file with two-artifact output"
 
 > **Ordering note for Tasks 9-15:** All seven tasks modify the same file (`skills/brainstorming/SKILL.md`). Run them strictly in order — each task's Edit anchor depends on prior task edits being present. In particular, Task 11 replaces the Step 1 signal sets but preserves the trailing "If signals are mixed or absent" sentence as the bridge into Task 12's Disambiguation Rules subsection — Task 11's replacement block must end with that sentence intact (it's the Edit anchor for Task 12).
 
-### Task 9: Update SKILL.md frontmatter description
+### ✅ Task 9: Update SKILL.md frontmatter description
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (frontmatter `description:` field on line 3)
@@ -887,7 +887,7 @@ git commit -m "brainstorming: extend SKILL.md description to five modes"
 
 ---
 
-### Task 10: Update SKILL.md Overview to describe 5-mode skill
+### ✅ Task 10: Update SKILL.md Overview to describe 5-mode skill
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Overview section, currently lines 10-14)
@@ -954,7 +954,7 @@ git commit -m "brainstorming: update SKILL.md Overview to describe five modes"
 
 ---
 
-### Task 11: Replace SKILL.md Step 1 signal sets
+### ✅ Task 11: Replace SKILL.md Step 1 signal sets
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Step 1 section — replaces software/business signal lists with 5 sets; "planning" moves from Business to Planning)
@@ -1061,7 +1061,7 @@ git commit -m "brainstorming: replace Step 1 signal sets with five-mode classifi
 
 ---
 
-### Task 12: Add SKILL.md Disambiguation Rules subsection
+### ✅ Task 12: Add SKILL.md Disambiguation Rules subsection
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (insert new subsection between "If signals are mixed or absent" line and "### Mode Explanation Block" heading)
@@ -1139,7 +1139,7 @@ git commit -m "brainstorming: add disambiguation rules and 5-way question"
 
 ---
 
-### Task 13: Update SKILL.md Mode Explanation Block (group-by-deliverable)
+### ✅ Task 13: Update SKILL.md Mode Explanation Block (group-by-deliverable)
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Mode Explanation Block section + the per-mode description lines after it)
@@ -1220,7 +1220,7 @@ git commit -m "brainstorming: regroup mode-explanation block by deliverable"
 
 ---
 
-### Task 14: Add per-mode project-scanner emphasis strings to Step 2
+### ✅ Task 14: Add per-mode project-scanner emphasis strings to Step 2
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Step 2 dispatch prompt — extend mode emphasis text)
@@ -1297,7 +1297,7 @@ git commit -m "brainstorming: add per-mode project-scanner emphasis strings"
 
 ---
 
-### Task 15: Add SKILL.md Step 3 hand-off branches for new modes
+### ✅ Task 15: Add SKILL.md Step 3 hand-off branches for new modes
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Step 3 — append three new branches)
@@ -1382,7 +1382,7 @@ git commit -m "brainstorming: add Step 3 handoff branches for Research, Authorin
 
 ---
 
-### Task 16: Update kickstart marketing copy
+### ✅ Task 16: Update kickstart marketing copy
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (currently line 169 — "software or business" → 5-mode reference)
@@ -1435,7 +1435,7 @@ git commit -m "kickstart: update marketing copy from two-mode to five-mode route
 
 ---
 
-### Task 17: Update critique-panel-orchestration with portfolio-file-path field
+### ✅ Task 17: Update critique-panel-orchestration with portfolio-file-path field
 
 **Files:**
 - Modify: `skills/_shared/critique-panel-orchestration.md` (line 98 example list update + Configuration Validation section: add optional `portfolio-file-path` field)
@@ -1509,7 +1509,7 @@ git commit -m "orchestration: add optional portfolio-file-path config; drop hard
 
 ---
 
-### Task 18: Backward-compat structural test for Software/Business modes
+### ✅ Task 18: Backward-compat structural test for Software/Business modes
 
 **Files:**
 - Modify: `e2e/tests/test_brainstorming_files.py` (append assertions that verify Software and Business modes' contracts remain intact)
@@ -1564,7 +1564,7 @@ git commit -m "brainstorming: add backward-compat structural tests for Software/
 
 ---
 
-### Task 19: Authoring → Research happy-path handoff test
+### ✅ Task 19: Authoring → Research happy-path handoff test
 
 **Files:**
 - Create: `e2e/tests/test_brainstorming_handoff.py`
@@ -1697,7 +1697,7 @@ git commit -m "brainstorming: add Authoring→Research handoff happy-path tests 
 
 ---
 
-### Task 20: Authoring → Research failure-path tests
+### ✅ Task 20: Authoring → Research failure-path tests
 
 **Files:**
 - Modify: `e2e/tests/test_brainstorming_handoff.py` (append three error-path tests)
@@ -1792,7 +1792,7 @@ git commit -m "brainstorming: add Authoring→Research failure-path tests"
 
 ---
 
-### Task 21: Mode-detection eval scenarios fixture
+### ✅ Task 21: Mode-detection eval scenarios fixture
 
 > **Ordering dependency:** This task creates `e2e/fixtures/skill-prompts/brainstorming-five-modes.md` by embedding signal-set prose verbatim from `skills/brainstorming/SKILL.md` Step 1. Tasks 11-12 must be committed FIRST so the embedded prose reflects the new 5-mode signal sets and disambiguation rules. If this task runs before Tasks 11-12 commit, the fixture will embed the stale 2-mode classification block and the eval scenarios will produce false-positive mode classifications.
 
@@ -1970,7 +1970,7 @@ git commit -m "brainstorming: add five-mode classifier eval scenarios fixture"
 
 ---
 
-### Task 22: Bump plugin version
+### ✅ Task 22: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`
@@ -2040,7 +2040,7 @@ git commit -m "chore: bump plugin version to 0.27.0 for brainstorming five-mode 
 
 ---
 
-### Task 23: Cagan-absence runtime test
+### ✅ Task 23: Cagan-absence runtime test
 
 **Files:**
 - Modify: `e2e/tests/test_brainstorming_files.py` (append two assertions)
@@ -2091,7 +2091,7 @@ git commit -m "brainstorming: add Cagan/Sisney absence-handling runtime tests"
 
 ---
 
-### Task 24: Spawn-brief schema runtime test
+### ✅ Task 24: Spawn-brief schema runtime test
 
 **Files:**
 - Create: `e2e/fixtures/brainstorming-handoff/portfolio-fixture.md`
