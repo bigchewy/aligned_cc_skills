@@ -83,23 +83,29 @@ Apply these in order when topic signals overlap multiple modes:
 
 After mode selection, present this block before starting any phase work:
 
-> **Brainstorming** structures creative and strategic work through guided
-> dialogue — from loose idea to validated design with expert critique.
+> **Brainstorming** — guided dialogue from idea to validated design with expert critique.
 >
 > **Selected: {Mode Name}** — {one-sentence description of the process}
 > *Why:* {brief reason this mode was selected based on topic/environment signals}
 >
-> **Other available modes:**
-> - {Other mode name} — {one-sentence description}
+> **Other modes:**
+> - **Build & ship:** Software, Authoring
+> - **Diagnose & decide:** Business, Research
+> - **Sequence work:** Planning
 >
 > *To switch modes or skip phases, just say so.*
 
-**Software mode description:** "Fluid Q&A with automatic Architect
-consultation on technical decisions. Produces a validated design doc."
+Grouping is editorial display only — no enum in code. "Build & ship" both produce design docs that feed `/aligned:writing-plans`; "Diagnose & decide" both produce decision artifacts; "Sequence work" is the portfolio outlier.
 
-**Business mode description:** "Structured phases (Goal, Problems, Root
-Causes, Solutions) with gates. Adapts depth to task complexity — tactical
-tasks move faster, strategic challenges get full diagnostic treatment."
+**Software mode description:** "Fluid Q&A with automatic Architect consultation on technical decisions. Produces a validated design doc."
+
+**Business mode description:** "Structured phases (Goal, Problems, Root Causes, Solutions) with gates. Adapts depth to task complexity — tactical tasks move faster, strategic challenges get full diagnostic treatment."
+
+**Research mode description:** "Corpus survey, comparative synthesis with Skeptic Pass critique, ranked recommendations with caveats. Produces a research memo or KB artifact."
+
+**Authoring mode description:** "Content sequencing with domain-advisor panel; optional Research sub-phase via file-mediated sub-agent fork. Produces a sequenced design doc (curriculum, framework prompts, exercises)."
+
+**Planning mode description:** "Portfolio sequencing with strategy advisors (Christensen, Rumelt, Eric Ries — plus Cagan when available). Produces a roadmap + spawn-list portfolio whose entries seed future brainstorms."
 
 ## Step 2: Project Scan
 

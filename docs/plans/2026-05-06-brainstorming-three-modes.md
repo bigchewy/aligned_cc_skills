@@ -1139,7 +1139,7 @@ git commit -m "brainstorming: add disambiguation rules and 5-way question"
 
 ---
 
-### Task 13: Update SKILL.md Mode Explanation Block (group-by-deliverable)
+### ✅ Task 13: Update SKILL.md Mode Explanation Block (group-by-deliverable)
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Mode Explanation Block section + the per-mode description lines after it)

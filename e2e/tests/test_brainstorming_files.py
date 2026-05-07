@@ -192,6 +192,22 @@ def test_planning_mode_file_structure():
     assert "spawn-brief-template.md" in text
 
 
+def test_skill_md_mode_explanation_block_grouped():
+    text = read("skills/brainstorming/SKILL.md")
+    # New grouped headers must appear
+    for group in ["Build & ship", "Diagnose & decide", "Sequence work"]:
+        assert group in text, f"missing group label: {group}"
+    # Each mode must have a description line in SKILL.md
+    for mode in [
+        "Software mode description",
+        "Business mode description",
+        "Research mode description",
+        "Authoring mode description",
+        "Planning mode description",
+    ]:
+        assert mode in text, f"missing mode description: {mode}"
+
+
 def test_skill_md_has_disambiguation_rules():
     text = read("skills/brainstorming/SKILL.md")
     assert "### Disambiguation Rules" in text, "missing Disambiguation Rules subsection"
