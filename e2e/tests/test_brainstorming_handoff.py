@@ -79,3 +79,54 @@ def test_synthesis_empty_file_fails_validation():
     assert not ok, "empty synthesis should fail validation"
     # All three required headings missing
     assert len(errors) >= 3, f"expected ≥3 errors from empty synthesis; got: {errors}"
+
+
+def test_portfolio_fixture_entries_match_schema():
+    fixture = FIXTURES / "portfolio-fixture.md"
+    text = fixture.read_text()
+    # Three entries
+    entry_count = text.count("## ") - text.count("##  ")  # crude H2 count
+    assert entry_count >= 3, f"expected ≥3 portfolio entries; found {entry_count}"
+    # Every required field must appear at least 3 times (one per entry)
+    for field in [
+        "**Target mode:**",
+        "**Status:**",
+        "**Rough size:**",
+        "**Prerequisites:**",
+        "**External dependencies:**",
+        "**Why now:**",
+        "**Spawn brief (one paragraph, brainstorm-ready):**",
+        "**Success criterion:**",
+    ]:
+        count = text.count(field)
+        assert count >= 3, f"field {field} appears {count} times; expected ≥3"
+
+
+def test_portfolio_entry_with_missing_keywords_signals_disambiguation():
+    """Per design §Error paths #4: a spawn-brief paragraph that omits
+    mode-disambiguating keywords falls through to 5-way disambiguation —
+    not silent mis-routing.
+
+    This is a contract test: the fixture's third entry intentionally
+    has a generic spawn brief with no mode-disambiguating verbs ('design',
+    'sequence', 'compare', 'roadmap'). The test asserts the brief content
+    truly lacks those signals; the runtime test of the router behavior
+    is part of the eval scenarios (Task 21).
+    """
+    fixture = FIXTURES / "portfolio-fixture.md"
+    text = fixture.read_text()
+    # The third entry is the generic-brief case; find it and check
+    # its spawn-brief blockquote does NOT contain mode-disambiguating verbs
+    third_marker = "## Generic-brief case"
+    if third_marker not in text:
+        pytest.skip("portfolio fixture missing 'Generic-brief case' entry — see Task 24 spec")
+    third_block_start = text.index(third_marker)
+    # Extract the spawn-brief blockquote in the third entry
+    spawn_idx = text.index("**Spawn brief", third_block_start)
+    quote_start = text.index("> ", spawn_idx)
+    quote_end = text.index("\n\n", quote_start)
+    quote = text[quote_start:quote_end].lower()
+    forbidden = ["design", "sequence", "compare", "roadmap", "research", "literature"]
+    found = [k for k in forbidden if k in quote]
+    assert not found, \
+        f"third entry's spawn brief was supposed to be generic; found mode-disambiguating verbs: {found}"

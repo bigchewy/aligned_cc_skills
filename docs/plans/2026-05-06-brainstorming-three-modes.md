@@ -2091,7 +2091,7 @@ git commit -m "brainstorming: add Cagan/Sisney absence-handling runtime tests"
 
 ---
 
-### Task 24: Spawn-brief schema runtime test
+### ✅ Task 24: Spawn-brief schema runtime test
 
 **Files:**
 - Create: `e2e/fixtures/brainstorming-handoff/portfolio-fixture.md`
