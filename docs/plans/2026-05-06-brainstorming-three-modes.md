@@ -23,7 +23,7 @@
 
 ---
 
-### Task 1: Create research-mini-protocol reference
+### ✅ Task 1: Create research-mini-protocol reference
 
 **Files:**
 - Create: `skills/brainstorming/references/research-mini-protocol.md`
