@@ -271,3 +271,15 @@ def test_kickstart_marketing_copy_mentions_five_modes():
     assert "software or business" not in text, "kickstart still uses two-mode marketing copy"
     # The new copy must explicitly reference five modes
     assert "five modes" in text or "5 modes" in text, "kickstart marketing copy should call out 5-mode router"
+
+
+def test_orchestration_supports_portfolio_file_path():
+    text = read("skills/_shared/critique-panel-orchestration.md")
+    # The hardcoded "(e.g., software.md or business.md)" example list should be gone
+    # (replaced with mode-agnostic phrasing per design §What changes)
+    assert "(e.g., `software.md` or `business.md`)" not in text, \
+        "hardcoded mode example list still present"
+    # The optional portfolio-file-path field must be documented
+    assert "portfolio-file-path" in text, "missing optional portfolio-file-path config field"
+    # Must clarify it's optional (Planning-mode only)
+    assert "optional" in text.lower(), "portfolio-file-path must be marked optional"

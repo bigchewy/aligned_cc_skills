@@ -1435,7 +1435,7 @@ git commit -m "kickstart: update marketing copy from two-mode to five-mode route
 
 ---
 
-### Task 17: Update critique-panel-orchestration with portfolio-file-path field
+### ✅ Task 17: Update critique-panel-orchestration with portfolio-file-path field
 
 **Files:**
 - Modify: `skills/_shared/critique-panel-orchestration.md` (line 98 example list update + Configuration Validation section: add optional `portfolio-file-path` field)
