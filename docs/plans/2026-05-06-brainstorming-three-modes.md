@@ -1061,7 +1061,7 @@ git commit -m "brainstorming: replace Step 1 signal sets with five-mode classifi
 
 ---
 
-### Task 12: Add SKILL.md Disambiguation Rules subsection
+### ✅ Task 12: Add SKILL.md Disambiguation Rules subsection
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (insert new subsection between "If signals are mixed or absent" line and "### Mode Explanation Block" heading)

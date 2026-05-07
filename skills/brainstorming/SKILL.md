@@ -63,9 +63,21 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 **If signals are clear:** Auto-route and present the mode explanation
 block (see below). Proceed to Step 2.
 
-**If signals are mixed or absent:** Ask one question: "Is this a
-software/technical design or a business/strategy problem?" Once answered,
-present the mode explanation block and proceed to Step 2.
+**If signals are mixed or absent:** Apply the disambiguation rules below before asking. If they resolve to one mode, auto-route. Otherwise ask the 5-way question:
+
+> "Which best describes this work: Software design / Business strategy / Research synthesis / Content authoring / Multi-feature planning?"
+
+Once answered, present the mode explanation block and proceed to Step 2.
+
+### Disambiguation Rules
+
+Apply these in order when topic signals overlap multiple modes:
+
+- **Software vs Authoring:** If the deliverable is *code that runs*, Software. If the deliverable is *content humans consume* (curriculum, prompts, exercises) even when there's a code seam, Authoring. The canonical test: a brainstorm with a runtime adapter (code) but 70% content-sequencing work routes to Authoring.
+- **Authoring vs Research:** If the deliverable is *an arrangement* (sequence, registry, curriculum), Authoring. If the deliverable is *an evidence map / ranked synthesis* with no arrangement output, Research. Authoring includes Research as an optional sub-phase (file-mediated sub-agent fork — see modes/authoring.md).
+- **Business vs Planning:** If the work is *diagnostic* (why isn't X working, what should we do about Y problem), Business. If the work is *generative portfolio sequencing* (which N things should we build, in what order), Planning.
+
+**Disambiguation refusal handling:** If the user picks "Other" or types a free-form answer that doesn't map to any of the 5 modes, ask one follow-up: "Could you describe in one sentence what you want as the deliverable — a design doc, a strategy memo, an evidence map, a sequenced curriculum, or a multi-feature roadmap?" If still ambiguous after the second question, do NOT silent-default. Instead, present an open-text re-prompt: "Describe in your own words what you're trying to produce." Run signal detection on the free-text answer and route to the closest match. If detection still fails, offer a final explicit list (all 5 modes, plus "I'm not sure — let me explore for a few questions first" which routes to Business mode for RCA-shaped exploration since not-knowing-the-shape is itself a diagnostic stance).
 
 ### Mode Explanation Block (mandatory on every invocation)
 

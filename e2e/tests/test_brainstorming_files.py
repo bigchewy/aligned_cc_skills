@@ -190,3 +190,20 @@ def test_planning_mode_file_structure():
         "Cagan absence-handling must check the actual prompt-file path"
     # Spawn-brief reference
     assert "spawn-brief-template.md" in text
+
+
+def test_skill_md_has_disambiguation_rules():
+    text = read("skills/brainstorming/SKILL.md")
+    assert "### Disambiguation Rules" in text, "missing Disambiguation Rules subsection"
+    # All three rule pairs must appear
+    for pair in [
+        "Software vs Authoring",
+        "Authoring vs Research",
+        "Business vs Planning",
+    ]:
+        assert pair in text, f"missing rule: {pair}"
+    # 5-way disambiguation question must appear
+    assert ("Software design" in text and "Business strategy" in text
+            and "Research synthesis" in text and "Content authoring" in text
+            and "Multi-feature planning" in text), \
+        "5-way disambiguation question must list all five modes"
