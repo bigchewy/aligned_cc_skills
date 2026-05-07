@@ -1382,7 +1382,7 @@ git commit -m "brainstorming: add Step 3 handoff branches for Research, Authorin
 
 ---
 
-### Task 16: Update kickstart marketing copy
+### ✅ Task 16: Update kickstart marketing copy
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (currently line 169 — "software or business" → 5-mode reference)

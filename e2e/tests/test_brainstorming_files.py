@@ -263,3 +263,11 @@ def test_skill_md_step3_has_five_handoff_branches():
         "planning-critique-checklist.md",
     ]:
         assert checklist in step3, f"missing checklist reference: {checklist}"
+
+
+def test_kickstart_marketing_copy_mentions_five_modes():
+    text = read("skills/kickstart/SKILL.md")
+    # The "Run a brainstorm" line must reference five modes (or simply not say "software or business" any more)
+    assert "software or business" not in text, "kickstart still uses two-mode marketing copy"
+    # The new copy must explicitly reference five modes
+    assert "five modes" in text or "5 modes" in text, "kickstart marketing copy should call out 5-mode router"
