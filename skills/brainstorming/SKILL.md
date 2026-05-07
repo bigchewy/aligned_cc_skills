@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Structures creative and strategic work through guided dialogue — software design or business strategy. Use before any creative, architectural, or strategic work that benefits from structured exploration and expert critique."
+description: "Structures creative and strategic work through guided dialogue across five modes — software design, business strategy, research synthesis, content authoring, and multi-feature planning. Use before any creative, architectural, or strategic work that benefits from structured exploration and expert critique."
 ---
 
 # Brainstorming

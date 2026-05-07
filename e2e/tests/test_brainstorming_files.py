@@ -115,6 +115,17 @@ def test_authoring_mode_file_structure():
         "missing required synthesis-file headings in validation step"
 
 
+def test_skill_md_description_names_five_modes():
+    text = read("skills/brainstorming/SKILL.md")
+    # Find the frontmatter description line
+    lines = text.splitlines()
+    desc_line = next((l for l in lines[:10] if l.startswith("description:")), None)
+    assert desc_line is not None, "frontmatter description line not found"
+    # Must reference all five modes
+    for mode in ["software", "business", "research", "authoring", "planning"]:
+        assert mode.lower() in desc_line.lower(), f"description missing mode: {mode}"
+
+
 def test_planning_mode_file_structure():
     text = read("skills/brainstorming/modes/planning.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"

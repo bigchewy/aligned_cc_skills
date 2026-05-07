@@ -830,7 +830,7 @@ git commit -m "brainstorming: add Planning mode file with two-artifact output"
 
 > **Ordering note for Tasks 9-15:** All seven tasks modify the same file (`skills/brainstorming/SKILL.md`). Run them strictly in order — each task's Edit anchor depends on prior task edits being present. In particular, Task 11 replaces the Step 1 signal sets but preserves the trailing "If signals are mixed or absent" sentence as the bridge into Task 12's Disambiguation Rules subsection — Task 11's replacement block must end with that sentence intact (it's the Edit anchor for Task 12).
 
-### Task 9: Update SKILL.md frontmatter description
+### ✅ Task 9: Update SKILL.md frontmatter description
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (frontmatter `description:` field on line 3)
