@@ -283,3 +283,29 @@ def test_orchestration_supports_portfolio_file_path():
     assert "portfolio-file-path" in text, "missing optional portfolio-file-path config field"
     # Must clarify it's optional (Planning-mode only)
     assert "optional" in text.lower(), "portfolio-file-path must be marked optional"
+
+
+def test_software_mode_critique_config_unchanged():
+    text = read("skills/brainstorming/modes/software.md")
+    # Contract: division-of-labor + criteria-assignment yes + design-critique-checklist
+    assert "Fact-check mode: division-of-labor" in text
+    assert "Criteria assignment: yes" in text
+    assert "Checklist filename: design-critique-checklist.md" in text
+    # Output path convention preserved
+    assert "docs/plans/YYYY-MM-DD-<topic>-design.md" in text
+    # Temp dir pattern preserved
+    assert "/tmp/brainstorm-context-{topic}" in text
+    assert "/tmp/brainstorm-critique-{topic}" in text
+    # Post-critique checklist still has 3 mandatory steps
+    assert "POST-CRITIQUE CHECKLIST — 3 mandatory steps" in text
+
+
+def test_business_mode_critique_config_unchanged():
+    text = read("skills/brainstorming/modes/business.md")
+    assert "Fact-check mode: all-critics" in text
+    assert "Criteria assignment: no" in text
+    assert "Checklist filename: business-critique-checklist.md" in text
+    assert "docs/plans/YYYY-MM-DD-<topic>-design.md" in text
+    assert "/tmp/brainstorm-context-{topic}" in text
+    assert "/tmp/brainstorm-critique-{topic}" in text
+    assert "POST-CRITIQUE CHECKLIST — 3 mandatory steps" in text

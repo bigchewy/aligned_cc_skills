@@ -1509,7 +1509,7 @@ git commit -m "orchestration: add optional portfolio-file-path config; drop hard
 
 ---
 
-### Task 18: Backward-compat structural test for Software/Business modes
+### ✅ Task 18: Backward-compat structural test for Software/Business modes
 
 **Files:**
 - Modify: `e2e/tests/test_brainstorming_files.py` (append assertions that verify Software and Business modes' contracts remain intact)
