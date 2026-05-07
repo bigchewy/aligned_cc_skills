@@ -954,7 +954,7 @@ git commit -m "brainstorming: update SKILL.md Overview to describe five modes"
 
 ---
 
-### Task 11: Replace SKILL.md Step 1 signal sets
+### ✅ Task 11: Replace SKILL.md Step 1 signal sets
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Step 1 section — replaces software/business signal lists with 5 sets; "planning" moves from Business to Planning)

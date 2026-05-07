@@ -18,7 +18,7 @@ working on. Five modes covering distinct shapes of brainstorm work:
 - **Planning** — multi-feature portfolio sequencing with strategy advisors; deliverable is a roadmap + spawn-list portfolio.
 
 ## Step 1: Detect Mode
-Classify the user's topic into one of two modes:
+Classify the user's topic into one of five modes:
 
 **Signal precedence:** Topic keywords take priority over environment signals.
 A user in a code repo asking about "pricing strategy" is business mode, not
@@ -30,11 +30,35 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): project contains code files (package.json,
   Cargo.toml, go.mod, pyproject.toml, etc.)
 
-**Business mode** — strategy, decisions, analysis, or non-code deliverables:
+**Business mode** — strategy, decisions, RCA-shaped diagnosis:
 - Topic signals: strategy, sales, marketing, positioning, meeting prep,
-  decisions, stakeholders, pricing, proposals, planning, analysis
+  decisions, stakeholders, pricing, proposals, RCA, diagnosis,
+  "why isn't this working"
 - Environment (tiebreaker): project is docs-only, Obsidian vault, or
   non-code directory
+
+**Research mode** — evidence synthesis, comparative review, literature audit:
+- Topic signals: literature review, evidence map, comparative review,
+  instrument selection, framework comparison, KB design,
+  "what does the literature say", systematic review,
+  annotated bibliography
+- Environment (tiebreaker): knowledge folders, prior research artifacts,
+  or registries are present
+
+**Authoring mode** — content design, curriculum sequencing, voice migration:
+- Topic signals: curriculum, program design, sequence content,
+  exercise sequencing, content design, "what to teach in what order",
+  rewrite for audience, voice migration, framework prompt authoring,
+  chapter sequencing
+- Environment (tiebreaker): content registries, prior curricula,
+  brand voice files are present
+
+**Planning mode** — multi-feature roadmap, portfolio sequencing:
+- Topic signals: roadmap, prioritization, portfolio, "what to build next",
+  milestone, sequence features, multi-feature build, project plan,
+  "too big for one brainstorm"
+- Environment (tiebreaker): prior roadmaps, open kanban, or customer asks
+  are present
 
 **If signals are clear:** Auto-route and present the mode explanation
 block (see below). Proceed to Step 2.

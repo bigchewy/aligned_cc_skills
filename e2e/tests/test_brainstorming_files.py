@@ -135,6 +135,33 @@ def test_skill_md_overview_describes_five_modes():
         assert mode in overview, f"Overview missing mode: {mode}"
 
 
+def test_skill_md_step1_has_five_signal_sets():
+    text = read("skills/brainstorming/SKILL.md")
+    step1_start = text.index("## Step 1")
+    step2_start = text.index("## Step 2")
+    step1 = text[step1_start:step2_start]
+    # All 5 mode names appear as bolded headers
+    for header in [
+        "**Software mode**",
+        "**Business mode**",
+        "**Research mode**",
+        "**Authoring mode**",
+        "**Planning mode**",
+    ]:
+        assert header in step1, f"Step 1 missing signal set header: {header}"
+    # 'planning' must NOT appear in Business signal set
+    business_idx = step1.index("**Business mode**")
+    research_idx = step1.index("**Research mode**")
+    business_block = step1[business_idx:research_idx]
+    assert "planning" not in business_block.lower(), \
+        "'planning' should be in Planning mode signals, not Business"
+    # 'planning' MUST appear in Planning signal set
+    planning_idx = step1.index("**Planning mode**")
+    planning_block = step1[planning_idx:]
+    assert "planning" in planning_block.lower() or "roadmap" in planning_block.lower(), \
+        "Planning signal set missing planning/roadmap keywords"
+
+
 def test_planning_mode_file_structure():
     text = read("skills/brainstorming/modes/planning.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
