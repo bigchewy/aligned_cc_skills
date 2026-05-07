@@ -1,0 +1,122 @@
+# e2e/scenarios/use-skill/brainstorming-five-modes.yaml
+# Mode-classification eval for the five-mode brainstorming router.
+# 15 briefs (5 modes × 3 briefs each). Per design §Diagnosis success
+# criterion 3, ≥80% per-brief correctness is the target.
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Skill: brainstorming five-mode classifier"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 1500
+
+prompts:
+  - "{{system_context}}\n\n---\n\nUser brief: {{brief}}\n\nClassify this brief into one of the five brainstorming modes (software, business, research, authoring, planning) OR ask the 5-way disambiguation question if signals are mixed. State which mode you'd auto-route to (or if you'd ask the disambiguation question, list the modes in order from most-likely to least-likely)."
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CLASSIFICATION ACCURACY: Does the response correctly
+        identify the expected mode (given in metadata) as the auto-routed
+        choice OR as the first-listed option in the disambiguation question?
+        Wrong mode = 1. Correct mode mentioned but not first = 3.
+        Correct mode auto-routed or listed first = 5.
+      weight: 3
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DISAMBIGUATION QUALITY: If the response asks the
+        disambiguation question, does it list all five mode names, and is
+        the most-likely mode listed first? Missing modes or wrong order = 1.
+        All five present, correct first = 5. (If response auto-routes
+        instead of asking, score 3 by default — neither penalize nor reward.)
+      weight: 1
+
+tests:
+  # Software (3)
+  - description: "software-1: API endpoint"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Add a new API endpoint for sessions list"
+      expected_mode: software
+  - description: "software-2: refactor auth middleware"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Refactor the auth middleware"
+      expected_mode: software
+  - description: "software-3: migrate from Drive to DB"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Migrate from Drive to DB"
+      expected_mode: software
+
+  # Business (3)
+  - description: "business-1: pilot conversion diagnosis"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Why is our pilot conversion stuck"
+      expected_mode: business
+  - description: "business-2: pricing strategy"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Pricing strategy for tier-2"
+      expected_mode: business
+  - description: "business-3: meeting prep"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Meeting prep for Basis Tuesday"
+      expected_mode: business
+
+  # Research (3)
+  - description: "research-1: framework comparison"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Compare frameworks for change management"
+      expected_mode: research
+  - description: "research-2: clinical evidence map"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "What's the evidence on PEM-safe pacing protocols"
+      expected_mode: research
+  - description: "research-3: instrument ranking"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Rank wellbeing instruments by licensing burden"
+      expected_mode: research
+
+  # Authoring (3) — ambiguity-prone
+  - description: "authoring-1: nervous-system program"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Design a 28-step nervous-system program with capacity tiers"
+      expected_mode: authoring
+  - description: "authoring-2: leadership curriculum"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Sequence the leadership curriculum across the four forces"
+      expected_mode: authoring
+  - description: "authoring-3: micro-practice library"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Author 7 micro-practices per framework registry entry"
+      expected_mode: authoring
+
+  # Planning (3)
+  - description: "planning-1: feature sequencing"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Sequence the next 8 features for the pilot launch"
+      expected_mode: planning
+  - description: "planning-2: multi-team roadmap"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "Roadmap the multi-team quarter ending August"
+      expected_mode: planning
+  - description: "planning-3: portfolio sequencing"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
+      brief: "What should we build before the Basis kickoff"
+      expected_mode: planning

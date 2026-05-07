@@ -309,3 +309,13 @@ def test_business_mode_critique_config_unchanged():
     assert "/tmp/brainstorm-context-{topic}" in text
     assert "/tmp/brainstorm-critique-{topic}" in text
     assert "POST-CRITIQUE CHECKLIST — 3 mandatory steps" in text
+
+
+def test_five_modes_eval_fixture_lists_15_briefs():
+    text = read("e2e/scenarios/use-skill/brainstorming-five-modes.yaml")
+    # Smoke check: 5 modes × 3 briefs each = 15 test entries
+    test_count = text.count("- description:")
+    assert test_count >= 15, f"expected ≥15 test briefs in fixture; found {test_count}"
+    # Each mode appears as a label
+    for mode_label in ["software", "business", "research", "authoring", "planning"]:
+        assert mode_label in text.lower(), f"missing mode label: {mode_label}"
