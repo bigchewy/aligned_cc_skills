@@ -1564,7 +1564,7 @@ git commit -m "brainstorming: add backward-compat structural tests for Software/
 
 ---
 
-### Task 19: Authoring → Research happy-path handoff test
+### ✅ Task 19: Authoring → Research happy-path handoff test
 
 **Files:**
 - Create: `e2e/tests/test_brainstorming_handoff.py`
