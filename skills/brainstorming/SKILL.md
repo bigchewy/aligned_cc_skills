@@ -9,9 +9,13 @@ description: "Structures creative and strategic work through guided dialogue acr
 
 ## Overview
 A unified brainstorming skill that adapts its process based on what you're
-working on. Software/technical topics get a fluid Q&A with Architect
-auto-consult. Business/strategy topics get a structured 4-phase process
-(Goal → Problems → Root Causes → Solutions).
+working on. Five modes covering distinct shapes of brainstorm work:
+
+- **Software** — fluid Q&A with Architect auto-consult; deliverable is a design doc.
+- **Business** — structured 4-phase process (Goal → Problems → Root Causes → Solutions); deliverable is a strategic plan.
+- **Research** — corpus survey + comparative synthesis with Skeptic Pass; deliverable is a research memo or KB artifact.
+- **Authoring** — content sequencing with domain-advisor panel and optional Research sub-phase; deliverable is a sequenced design doc (curriculum, framework prompts, exercise programs).
+- **Planning** — multi-feature portfolio sequencing with strategy advisors; deliverable is a roadmap + spawn-list portfolio.
 
 ## Step 1: Detect Mode
 Classify the user's topic into one of two modes:

@@ -887,7 +887,7 @@ git commit -m "brainstorming: extend SKILL.md description to five modes"
 
 ---
 
-### Task 10: Update SKILL.md Overview to describe 5-mode skill
+### ✅ Task 10: Update SKILL.md Overview to describe 5-mode skill
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Overview section, currently lines 10-14)

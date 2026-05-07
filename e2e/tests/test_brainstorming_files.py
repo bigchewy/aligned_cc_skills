@@ -126,6 +126,15 @@ def test_skill_md_description_names_five_modes():
         assert mode.lower() in desc_line.lower(), f"description missing mode: {mode}"
 
 
+def test_skill_md_overview_describes_five_modes():
+    text = read("skills/brainstorming/SKILL.md")
+    overview_start = text.index("## Overview")
+    overview_end = text.index("## Step 1")
+    overview = text[overview_start:overview_end]
+    for mode in ["Software", "Business", "Research", "Authoring", "Planning"]:
+        assert mode in overview, f"Overview missing mode: {mode}"
+
+
 def test_planning_mode_file_structure():
     text = read("skills/brainstorming/modes/planning.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
