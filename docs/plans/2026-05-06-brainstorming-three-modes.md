@@ -132,7 +132,7 @@ git commit -m "brainstorming: add research-mini-protocol contract for Authoring 
 
 ---
 
-### Task 2: Create spawn-brief template reference
+### ✅ Task 2: Create spawn-brief template reference
 
 **Files:**
 - Create: `skills/brainstorming/references/spawn-brief-template.md`
