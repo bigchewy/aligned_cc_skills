@@ -239,3 +239,27 @@ def test_skill_md_step2_has_per_mode_emphasis():
         "prior roadmaps",
     ]:
         assert hint in step2, f"missing per-mode emphasis hint: {hint}"
+
+
+def test_skill_md_step3_has_five_handoff_branches():
+    text = read("skills/brainstorming/SKILL.md")
+    step3_start = text.index("## Step 3")
+    step3 = text[step3_start:]
+    # Each mode must have a handoff branch
+    for branch in [
+        "**If software mode:**",
+        "**If business mode:**",
+        "**If research mode:**",
+        "**If authoring mode:**",
+        "**If planning mode:**",
+    ]:
+        assert branch in step3, f"missing handoff branch: {branch}"
+    # Each mode points to its checklist file
+    for checklist in [
+        "design-critique-checklist.md",
+        "business-critique-checklist.md",
+        "research-critique-checklist.md",
+        "authoring-critique-checklist.md",
+        "planning-critique-checklist.md",
+    ]:
+        assert checklist in step3, f"missing checklist reference: {checklist}"

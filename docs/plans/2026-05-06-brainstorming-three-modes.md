@@ -1297,7 +1297,7 @@ git commit -m "brainstorming: add per-mode project-scanner emphasis strings"
 
 ---
 
-### Task 15: Add SKILL.md Step 3 hand-off branches for new modes
+### ✅ Task 15: Add SKILL.md Step 3 hand-off branches for new modes
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Step 3 — append three new branches)

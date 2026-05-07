@@ -151,5 +151,29 @@ The critique checklist for this session is at
 The shared orchestration file is at
 `{base-directory}/../_shared/critique-panel-orchestration.md`.
 
+**If research mode:**
+Read `{base-directory}/modes/research.md` and follow its process.
+The base directory for this skill is `{base-directory}`.
+The critique checklist for this session is at
+`{base-directory}/research-critique-checklist.md`.
+The shared orchestration file is at
+`{base-directory}/../_shared/critique-panel-orchestration.md`.
+
+**If authoring mode:**
+Read `{base-directory}/modes/authoring.md` and follow its process.
+The base directory for this skill is `{base-directory}`.
+The critique checklist for this session is at
+`{base-directory}/authoring-critique-checklist.md`.
+The shared orchestration file is at
+`{base-directory}/../_shared/critique-panel-orchestration.md`.
+
+**If planning mode:**
+Read `{base-directory}/modes/planning.md` and follow its process.
+The base directory for this skill is `{base-directory}`.
+The critique checklist for this session is at
+`{base-directory}/planning-critique-checklist.md`.
+The shared orchestration file is at
+`{base-directory}/../_shared/critique-panel-orchestration.md`.
+
 **If the mode file cannot be Read, STOP and tell the user the plugin
 installation may be incomplete.**
