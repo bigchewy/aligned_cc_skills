@@ -43,3 +43,16 @@ def test_research_critique_checklist_structure():
         "Decision quality",
     ]:
         assert criterion in text, f"missing criterion: {criterion}"
+
+
+def test_authoring_critique_checklist_structure():
+    text = read("skills/brainstorming/authoring-critique-checklist.md")
+    assert text.startswith("# Authoring Critique Checklist"), "missing top heading"
+    for section in ["## Critique Criteria", "## Critique Output Format", "## Important"]:
+        assert section in text, f"missing {section}"
+    for criterion in [
+        "Population fit", "Constraint preservation", "Sequencing rigor",
+        "Library coverage", "Voice consistency", "Goal-metric alignment",
+        "v1/v2 scoping", "Code/schema seam", "Decision quality",
+    ]:
+        assert criterion in text, f"missing criterion: {criterion}"
