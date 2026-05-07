@@ -147,12 +147,26 @@ The user has delegated technical decision authority to The Architect. The brains
 
 Every brainstorm produces a live visual artifact. After writing the design document and BEFORE the critique round, start the live visualization:
 
-1. Read `skills/brainstorming/references/brainstorm-components.md` for the HTML template and component reference.
-2. Write the initial HTML to `/tmp/brainstorm-{topic}-{timestamp}/live.html` using the template. Replace `{title}`, `{subtitle}`, and `{context}` with session-specific values. Use a timestamp (e.g., epoch seconds) to prevent collision if the same topic is brainstormed twice. Populate the initial content with the design sections validated so far.
-3. Open the file in the default browser using a platform-aware pattern (separate Bash call — no `&&` chaining):
+1. Read `skills/brainstorming/references/brainstorm-components.md` for the HTML template and component reference. Pay attention to the "Brand Token Injection" section — it specifies the contract for project-aware visuals.
+2. Read the project's design tokens so the artifact matches the project's brand, not the aligned plugin's. Find the right design-principles file using this lookup order (use `{project-root}` as resolved during the project scan):
+
+   a. **Project root:** `{project-root}/docs/design/design-principles.md`
+   b. **Monorepo apps:** if (a) is missing, Glob `{project-root}/apps/*/docs/design/design-principles.md`. Same for `{project-root}/packages/*/docs/design/design-principles.md`.
+      - Exactly one match: use it.
+      - Multiple matches: ask the user which app/package this brainstorm targets, then use that one.
+      - Zero matches: continue to (c).
+   c. **Global fallback:** `~/.claude/docs/design/design-principles.md`.
+
+   **Placeholder check.** If the file found in (a), (b), or (c) is a kickstart-generated placeholder — heuristic: under 500 bytes, or contains "This file is a placeholder", or contains "Run `/aligned:create-design-principles`" — treat it as missing, advance to the next lookup step, and surface this warning to the user: *"Your project's `docs/design/design-principles.md` is still a placeholder. The brainstorm visualization will use the aligned plugin's default tokens. Run `/aligned:create-design-principles` to define the project's brand."*
+
+   If no usable file is found at any step, skip this step entirely — the template's built-in defaults will apply.
+
+   Once a usable file is found, extract values per the "Brand Token Injection" / "Resolving project tokens" rules in `brainstorm-components.md`. If those rules' halt-and-ask trigger fires (genuine token-name ambiguity, unmappable brand-specific tokens), present the proposed mapping to the user before continuing to step 3.
+3. Write the initial HTML to `/tmp/brainstorm-{topic}-{timestamp}/live.html` using the template. Replace `{title}`, `{subtitle}`, and `{context}` with session-specific values. Populate the `:root` block at the top of the inline `<style>` with the project tokens you read in step 2 (or leave the built-in defaults if no design-principles file was found). Do not change any `var(--color-*)` or `var(--font-*)` references elsewhere in the template — they resolve through `:root`. Use a timestamp (e.g., epoch seconds) to prevent collision if the same topic is brainstormed twice. Populate the initial content with the design sections validated so far.
+4. Open the file in the default browser using a platform-aware pattern (separate Bash call — no `&&` chaining):
    `open /tmp/brainstorm-{topic}-{timestamp}/live.html || xdg-open /tmp/brainstorm-{topic}-{timestamp}/live.html`
    If both commands fail (headless environment), log a warning and continue — the artifact still gets written.
-4. As each subsequent design section is validated in conversation, update the HTML file (Write tool) to add the new section's content. The browser picks up changes within 15 seconds via the self-refresh script.
+5. As each subsequent design section is validated in conversation, update the HTML file (Write tool) to add the new section's content. Preserve the `:root` block exactly as written in step 3 — do not regenerate it. The browser picks up changes within 15 seconds via the self-refresh script.
 
 **Nested sub-tabs rule (applies to mockup-generator dispatches and live visualization updates):**
 
@@ -186,16 +200,16 @@ Before dispatching the critique panel, copy the live visualization to its perman
 
 **Criteria mapping table:**
 
-| Criterion | Best-fit domains |
-|-----------|-----------------|
-| 1. Requirements completeness | product, prioritization, scope control, user problems |
-| 2. Architecture feasibility | codebase alignment, patterns, module boundaries |
-| 3. YAGNI violations | simplicity, focus, first principles, scope control |
-| 4. Edge cases / error handling | edge cases, failure modes, testing, reliability |
-| 5. Data flow clarity | codebase alignment, patterns, integration risk |
-| 6. Integration points | integration risk, security, authentication, blast radius |
-| 7. Testing strategy | testing, reliability, edge cases, failure modes |
-| 8. Scope creep | focus, simplicity, scope control, prioritization |
+| Criterion                      | Best-fit domains                                         |
+| ------------------------------ | -------------------------------------------------------- |
+| 1. Requirements completeness   | product, prioritization, scope control, user problems    |
+| 2. Architecture feasibility    | codebase alignment, patterns, module boundaries          |
+| 3. YAGNI violations            | simplicity, focus, first principles, scope control       |
+| 4. Edge cases / error handling | edge cases, failure modes, testing, reliability          |
+| 5. Data flow clarity           | codebase alignment, patterns, integration risk           |
+| 6. Integration points          | integration risk, security, authentication, blast radius |
+| 7. Testing strategy            | testing, reliability, edge cases, failure modes          |
+| 8. Scope creep                 | focus, simplicity, scope control, prioritization         |
 
 Criterion 9 (Decision quality) goes to **all** critics. Each criterion 1-8 goes to exactly one critic. If no selected critic's domain matches a criterion, assign it to the fact-checker as catch-all. Target 2-4 criteria per critic.
 
@@ -225,7 +239,7 @@ Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and f
 
 **Step 1 of 3 — Visualization finalization:**
 
-**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes, fully regenerate the HTML at `docs/mockups/{session-name}.html` from the corrected design using `skills/brainstorming/references/brainstorm-components.md`. Do not surgically edit — do a full rewrite from the corrected design to avoid drift.
+**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes, fully regenerate the HTML at `docs/mockups/{session-name}.html` from the corrected design using `skills/brainstorming/references/brainstorm-components.md`. Do not surgically edit — do a full rewrite from the corrected design to avoid drift. The regeneration MUST preserve the project's design tokens — copy the `:root` block (lines defining `--color-*` and `--font-*`) verbatim from the live visualization at `/tmp/brainstorm-{topic}-{timestamp}/live.html` so the committed artifact stays on-brand.
 
 Only skip regeneration if the design document is unchanged (all critique verdicts were APPROVE with no corrections applied).
 

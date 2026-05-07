@@ -4,12 +4,75 @@
 
 ## Contents
 
+- Brand Token Injection
 - HTML Template
 - Components
 
+## Brand Token Injection
+
+The template's color and font values are defined as CSS variables in a `:root` block at the top of the inline `<style>`. Every other reference in the template — Tailwind config, inline CSS rules, Mermaid theme — reads from those variables. Rebrand the artifact by editing only the `:root` block.
+
+### Token contract
+
+The template uses these CSS-variable names. Default values match the aligned plugin's own brand and apply when no project tokens are found.
+
+| Token (in :root)         | Purpose                                                |
+|--------------------------|--------------------------------------------------------|
+| `--color-background`     | Page/diagram background                                |
+| `--color-surface`        | Container regions, card backgrounds                    |
+| `--color-muted`          | Inset areas, subtle fills                              |
+| `--color-foreground`     | Primary text, headings                                 |
+| `--color-secondary`      | Supporting text, captions                              |
+| `--color-dimmed`         | Tertiary info (timestamps, axis labels)                |
+| `--color-border`         | Dividers, card borders                                 |
+| `--color-accent`         | Signature accent (CTAs, highlights, decisions)         |
+| `--color-accent-hover`   | Accent hover state                                     |
+| `--color-accent-subtle`  | Accent background tint (badges, decision callouts)     |
+| `--font-sans`            | Body and UI text                                       |
+| `--font-mono`            | Code, file paths                                       |
+
+### Resolving project tokens
+
+Project design-principles files don't always use the exact `--color-*` naming above. Use this resolution order:
+
+1. **Direct match.** If the source file defines `--color-accent`, `--color-foreground`, etc. with the contract names verbatim, use them.
+2. **Alias match.** Otherwise, apply this alias table. Project token names appear in many shapes — the table treats `kebab-case`, `camelCase`, and `snake_case` as equivalent (compare case-insensitively after stripping separators).
+
+   | Project token name(s)                                              | Contract token            |
+   |--------------------------------------------------------------------|---------------------------|
+   | `accent`                                                           | `--color-accent`          |
+   | `accent-hover`, `primary-hover`                                    | `--color-accent-hover`    |
+   | `accent-subtle`, `accent-bg`, `primary-subtle`                     | `--color-accent-subtle`   |
+   | `background`, `bg`, `page`                                         | `--color-background`      |
+   | `surface`, `card`, `panel`                                         | `--color-surface`         |
+   | `muted`, `inset`                                                   | `--color-muted`           |
+   | `foreground`, `text`, `fg`                                         | `--color-foreground`      |
+   | `secondary`, `text-secondary`                                      | `--color-secondary`       |
+   | `dimmed`, `text-muted`, `muted-foreground`                         | `--color-dimmed`          |
+   | `border`                                                           | `--color-border`          |
+   | `sans`, `body`, `font-sans`                                        | `--font-sans`             |
+   | `mono`, `code`, `font-mono`                                        | `--font-mono`             |
+
+3. **Ambiguous? Halt and ask.** If the source defines `primary` but does NOT define `accent`, `primary` likely IS the brand accent — map `primary` → `--color-accent` and continue. But if the source defines BOTH `primary` AND `accent` (genuine ambiguity), or contains tokens that don't fit any alias (`heading`, `display`, `serif`, `link`, brand-specific names), STOP. Present the proposed mapping to the user as a table — list each project token and where you'd put it (or "unmapped — leave default") — and ask for confirmation or correction before writing the HTML.
+4. **Missing tokens.** If the source provides only some contract tokens (common: it has `accent` but no `accent-hover` or `accent-subtle`), leave the missing ones at the template defaults. **Do not derive colors by darkening/lightening** — agents are unreliable at color math, and the visible brand is dominated by the main accent and background.
+
+### Placeholder files
+
+Some projects have a `docs/design/design-principles.md` that's a kickstart-generated 4-line placeholder. Heuristic: the file is under 500 bytes, OR contains the literal string "This file is a placeholder", OR contains "Run `/aligned:create-design-principles`". Treat placeholders as if no file exists — fall back to the next lookup location and surface this warning to the user before writing the artifact:
+
+> Your project's `docs/design/design-principles.md` is still a placeholder. The brainstorm visualization will use the aligned plugin's default tokens. Run `/aligned:create-design-principles` to define the project's brand.
+
+### Writing :root
+
+Once tokens are resolved, populate the `:root` block in the inline `<style>` with the values. Leave every other `var(--color-*)` / `var(--font-*)` reference throughout the template untouched — they resolve through `:root` automatically.
+
+### Semantic colors
+
+`#b91c1c` (error), `#047857` (success), `#0284c7` (info), and the `#fef2f2`/`#ecfdf5`/`#f0f9ff` callout fills are intentionally hardcoded. They convey meaning that should be consistent across all brands and are not part of the contract.
+
 ## HTML Template
 
-Copy this template as the starting point for every live visualization. Replace `{title}`, `{subtitle}`, and `{context}` with session-specific values.
+Copy this template as the starting point for every live visualization. Replace `{title}`, `{subtitle}`, and `{context}` with session-specific values. Update the `:root` block per "Brand Token Injection" above.
 
 ```html
 <!DOCTYPE html>
@@ -27,17 +90,17 @@ Copy this template as the starting point for every live visualization. Replace `
       theme: {
         extend: {
           colors: {
-            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
-            surface: '#f5f3ef',
-            muted: '#f0eeeb',
-            foreground: '#1a1a1a',
-            secondary: '#555555',
-            dimmed: '#6b7280',
-            border: '#e5e7eb'
+            accent: { DEFAULT: 'var(--color-accent)', hover: 'var(--color-accent-hover)', subtle: 'var(--color-accent-subtle)' },
+            surface: 'var(--color-surface)',
+            muted: 'var(--color-muted)',
+            foreground: 'var(--color-foreground)',
+            secondary: 'var(--color-secondary)',
+            dimmed: 'var(--color-dimmed)',
+            border: 'var(--color-border)'
           },
           fontFamily: {
-            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+            sans: ['var(--font-sans)'],
+            mono: ['var(--font-mono)']
           },
           borderRadius: {
             sm: '6px',
@@ -121,28 +184,50 @@ Copy this template as the starting point for every live visualization. Replace `
   </script>
   <!-- LIVE-REFRESH-END -->
   <style>
+    /* --- Brand tokens ---
+       Populated by the brainstorming skill from the project's
+       docs/design/design-principles.md (or the global fallback at
+       ~/.claude/docs/design/design-principles.md). Defaults below match
+       the aligned plugin's own brand and apply when no design-principles
+       file is found. The whole inline <style> block, the Tailwind config
+       above, and the Mermaid theme below all read from these vars — so
+       changing values here is the only edit needed to rebrand the artifact. */
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
     body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: #faf9f7;
+      font-family: var(--font-sans);
+      background: var(--color-background);
       margin: 0;
       padding: 40px;
     }
-    h1 { font-size: 1.5rem; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
-    .subtitle { font-size: 0.95rem; color: #555555; margin-bottom: 4px; }
-    .context { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
 
     /* Tab bar */
     .tab-bar {
       display: flex;
       gap: 2px;
-      border-bottom: 2px solid #f0eeeb;
+      border-bottom: 2px solid var(--color-muted);
       margin-bottom: 24px;
     }
     .tab-btn {
       padding: 10px 18px;
       font-size: 0.85rem;
       font-weight: 500;
-      color: #6b7280;
+      color: var(--color-dimmed);
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
@@ -151,23 +236,23 @@ Copy this template as the starting point for every live visualization. Replace `
       transition: color 150ms, border-color 150ms;
       font-family: inherit;
     }
-    .tab-btn:hover { color: #1a1a1a; }
-    .tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
 
     /* Sub-tab bar */
     .sub-tab-bar {
       display: flex;
       gap: 2px;
-      border-bottom: 1px solid #f0eeeb;
+      border-bottom: 1px solid var(--color-muted);
       padding-left: 16px;
-      background: #faf9f7;
+      background: var(--color-background);
       margin-bottom: 16px;
     }
     .sub-tab-btn {
       padding: 8px 14px;
       font-size: 0.78rem;
       font-weight: 500;
-      color: #6b7280;
+      color: var(--color-dimmed);
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
@@ -175,8 +260,8 @@ Copy this template as the starting point for every live visualization. Replace `
       transition: color 150ms, border-color 150ms;
       font-family: inherit;
     }
-    .sub-tab-btn:hover { color: #1a1a1a; }
-    .sub-tab-btn.active { color: #ff6900; border-bottom-color: #ff6900; }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
 
     /* Tab panels */
     .tab-panel { display: none; }
@@ -187,7 +272,7 @@ Copy this template as the starting point for every live visualization. Replace `
     /* Content sections */
     .section {
       background: white;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 24px;
       margin-bottom: 24px;
@@ -195,15 +280,15 @@ Copy this template as the starting point for every live visualization. Replace `
     .section h2 {
       font-size: 1.1rem;
       font-weight: 500;
-      color: #1a1a1a;
+      color: var(--color-foreground);
       margin-bottom: 8px;
     }
     .badge {
       font-size: 0.7rem;
       padding: 1px 6px;
       border-radius: 9999px;
-      background: #fff7ed;
-      color: #ff6900;
+      background: var(--color-accent-subtle);
+      color: var(--color-accent);
       font-weight: 500;
       margin-left: 8px;
       vertical-align: middle;
@@ -212,19 +297,19 @@ Copy this template as the starting point for every live visualization. Replace `
       font-size: 0.7rem;
       padding: 1px 6px;
       border-radius: 9999px;
-      background: #f5f3ef;
-      color: #6b7280;
+      background: var(--color-surface);
+      color: var(--color-dimmed);
       font-weight: 500;
       margin-left: 8px;
       vertical-align: middle;
     }
-    .description { font-size: 0.88rem; color: #555555; margin-bottom: 12px; line-height: 1.6; }
-    .bullet-list { font-size: 0.85rem; color: #1a1a1a; margin-bottom: 16px; padding-left: 20px; }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: var(--color-foreground); margin-bottom: 16px; padding-left: 20px; }
     .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
     .diagram-container { overflow-x: auto; }
     .back-link {
       font-size: 0.82rem;
-      color: #ff6900;
+      color: var(--color-accent);
       text-decoration: none;
       cursor: pointer;
       margin-bottom: 16px;
@@ -234,13 +319,13 @@ Copy this template as the starting point for every live visualization. Replace `
 
     /* Legend */
     .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
-    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555555; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--color-secondary); }
     .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
 
     /* Component cards */
     .component-card {
       background: white;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 16px;
@@ -248,25 +333,25 @@ Copy this template as the starting point for every live visualization. Replace `
     .component-card h3 {
       font-size: 0.95rem;
       font-weight: 600;
-      color: #1a1a1a;
+      color: var(--color-foreground);
       margin-bottom: 4px;
     }
     .component-card .use-case {
       font-size: 0.82rem;
-      color: #6b7280;
+      color: var(--color-dimmed);
       margin-bottom: 12px;
     }
     .component-card code {
       font-family: Menlo, Consolas, Monaco, monospace;
       font-size: 0.78rem;
-      background: #f5f3ef;
+      background: var(--color-surface);
       padding: 2px 6px;
       border-radius: 4px;
-      color: #1a1a1a;
+      color: var(--color-foreground);
     }
     .component-preview {
-      background: #faf9f7;
-      border: 1px solid #f0eeeb;
+      background: var(--color-background);
+      border: 1px solid var(--color-muted);
       border-radius: 8px;
       padding: 16px;
       margin-top: 12px;
@@ -282,17 +367,17 @@ Copy this template as the starting point for every live visualization. Replace `
       padding: 6px 14px;
       font-size: 0.75rem;
       font-weight: 500;
-      color: #6b7280;
-      background: #f5f3ef;
-      border: 1px solid #e5e7eb;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-right: none;
     }
     .mini-phase-item:first-child { border-radius: 6px 0 0 6px; }
-    .mini-phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid #e5e7eb; }
+    .mini-phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
     .mini-phase-item.current {
-      background: #ff6900;
+      background: var(--color-accent);
       color: white;
-      border-color: #ff6900;
+      border-color: var(--color-accent);
     }
 
     /* Card grid */
@@ -303,14 +388,14 @@ Copy this template as the starting point for every live visualization. Replace `
     }
     .mini-card {
       background: white;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       border-radius: 6px;
       padding: 10px;
       font-size: 0.75rem;
-      color: #1a1a1a;
+      color: var(--color-foreground);
     }
     .mini-card strong { font-weight: 600; display: block; margin-bottom: 2px; }
-    .mini-card span { color: #6b7280; font-size: 0.7rem; }
+    .mini-card span { color: var(--color-dimmed); font-size: 0.7rem; }
 
     /* Compare grid */
     .mini-compare-grid {
@@ -320,7 +405,7 @@ Copy this template as the starting point for every live visualization. Replace `
     }
     .mini-compare-col {
       background: white;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       border-radius: 6px;
       padding: 10px;
       font-size: 0.72rem;
@@ -329,7 +414,7 @@ Copy this template as the starting point for every live visualization. Replace `
       font-size: 0.78rem;
       font-weight: 600;
       margin-bottom: 6px;
-      color: #1a1a1a;
+      color: var(--color-foreground);
     }
     .mini-compare-col .pro { color: #047857; }
     .mini-compare-col .con { color: #b91c1c; }
@@ -342,8 +427,8 @@ Copy this template as the starting point for every live visualization. Replace `
       border-left: 3px solid;
       margin-bottom: 6px;
     }
-    .mini-callout.decision { background: #fff7ed; border-color: #ff6900; color: #1a1a1a; }
-    .mini-callout.constraint { background: #f5f3ef; border-color: #555555; color: #1a1a1a; }
+    .mini-callout.decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .mini-callout.constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
     .mini-callout.risk { background: #fef2f2; border-color: #b91c1c; color: #b91c1c; }
 
     /* Change table */
@@ -356,20 +441,20 @@ Copy this template as the starting point for every live visualization. Replace `
       text-align: left;
       padding: 10px 12px;
       font-weight: 600;
-      color: #1a1a1a;
-      background: #f5f3ef;
-      border-bottom: 1px solid #e5e7eb;
+      color: var(--color-foreground);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
     }
     .change-table td {
       padding: 10px 12px;
-      border-bottom: 1px solid #f0eeeb;
-      color: #1a1a1a;
+      border-bottom: 1px solid var(--color-muted);
+      color: var(--color-foreground);
       vertical-align: top;
     }
     .change-table .file-path {
       font-family: Menlo, Consolas, monospace;
       font-size: 0.78rem;
-      color: #555555;
+      color: var(--color-secondary);
     }
     .status-badge {
       display: inline-block;
@@ -378,8 +463,8 @@ Copy this template as the starting point for every live visualization. Replace `
       border-radius: 9999px;
       font-weight: 500;
     }
-    .status-modified { background: #fff7ed; color: #ff6900; }
-    .status-unchanged { background: #f5f3ef; color: #6b7280; }
+    .status-modified { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-unchanged { background: var(--color-surface); color: var(--color-dimmed); }
     .status-new { background: #ecfdf5; color: #047857; }
 
     /* Success criteria */
@@ -392,21 +477,21 @@ Copy this template as the starting point for every live visualization. Replace `
       display: flex;
       gap: 12px;
       padding: 12px 16px;
-      border-bottom: 1px solid #f0eeeb;
+      border-bottom: 1px solid var(--color-muted);
       align-items: flex-start;
     }
     .criteria-item:last-child { border-bottom: none; }
     .criteria-num {
       font-family: Menlo, Consolas, monospace;
       font-size: 0.78rem;
-      color: #ff6900;
+      color: var(--color-accent);
       font-weight: 600;
       flex-shrink: 0;
       padding-top: 1px;
     }
     .criteria-text {
       font-size: 0.85rem;
-      color: #1a1a1a;
+      color: var(--color-foreground);
       line-height: 1.5;
     }
     .criteria-text strong { font-weight: 600; }
@@ -414,7 +499,7 @@ Copy this template as the starting point for every live visualization. Replace `
     /* Test strategy */
     .test-category {
       background: white;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 16px;
@@ -422,12 +507,12 @@ Copy this template as the starting point for every live visualization. Replace `
     .test-category h3 {
       font-size: 0.95rem;
       font-weight: 600;
-      color: #1a1a1a;
+      color: var(--color-foreground);
       margin-bottom: 8px;
     }
     .test-items {
       font-size: 0.85rem;
-      color: #1a1a1a;
+      color: var(--color-foreground);
       padding-left: 20px;
       margin: 0;
     }
@@ -447,17 +532,17 @@ Copy this template as the starting point for every live visualization. Replace `
       padding: 8px 18px;
       font-size: 0.82rem;
       font-weight: 500;
-      color: #6b7280;
-      background: #f5f3ef;
-      border: 1px solid #e5e7eb;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-right: none;
     }
     .phase-item:first-child { border-radius: 6px 0 0 6px; }
-    .phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid #e5e7eb; }
+    .phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
     .phase-current {
-      background: #ff6900;
+      background: var(--color-accent);
       color: white;
-      border-color: #ff6900;
+      border-color: var(--color-accent);
     }
 
     /* Card grid */
@@ -469,19 +554,19 @@ Copy this template as the starting point for every live visualization. Replace `
     }
     .card {
       background: white;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 20px;
     }
     .card h3 {
       font-size: 0.95rem;
       font-weight: 600;
-      color: #1a1a1a;
+      color: var(--color-foreground);
       margin-bottom: 8px;
     }
     .card p {
       font-size: 0.85rem;
-      color: #555555;
+      color: var(--color-secondary);
       line-height: 1.5;
       margin: 0;
     }
@@ -496,14 +581,14 @@ Copy this template as the starting point for every live visualization. Replace `
     .compare-3col { grid-template-columns: repeat(3, 1fr); }
     .compare-grid .col {
       background: white;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 20px;
     }
     .compare-grid .col h3 {
       font-size: 0.95rem;
       font-weight: 600;
-      color: #1a1a1a;
+      color: var(--color-foreground);
       margin-bottom: 8px;
     }
     .compare-grid .pro { color: #047857; font-size: 0.85rem; }
@@ -518,10 +603,10 @@ Copy this template as the starting point for every live visualization. Replace `
       margin-bottom: 16px;
       line-height: 1.5;
     }
-    .callout-decision { background: #fff7ed; border-color: #ff6900; color: #1a1a1a; }
-    .callout-constraint { background: #f5f3ef; border-color: #555555; color: #1a1a1a; }
-    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: #1a1a1a; }
-    .callout-note { background: #f0f9ff; border-color: #0284c7; color: #1a1a1a; }
+    .callout-decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .callout-constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: var(--color-foreground); }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: var(--color-foreground); }
     .callout strong {
       display: block;
       font-weight: 600;
@@ -537,23 +622,28 @@ Copy this template as the starting point for every live visualization. Replace `
   <!-- Tab bar and content panels go here -->
 
   <script>
+    var __rs = getComputedStyle(document.documentElement);
+    function __tok(name, fallback) {
+      var v = __rs.getPropertyValue(name).trim();
+      return v || fallback;
+    }
     mermaid.initialize({
       startOnLoad: false,
       securityLevel: 'loose',
       theme: 'base',
       themeVariables: {
-        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontFamily: __tok('--font-sans', 'system-ui, -apple-system, sans-serif'),
         fontSize: '14px',
-        lineColor: '#e5e7eb',
-        primaryColor: '#f0eeeb',
-        primaryTextColor: '#1a1a1a',
-        primaryBorderColor: '#e5e7eb',
-        secondaryColor: '#fff7ed',
-        secondaryTextColor: '#1a1a1a',
-        secondaryBorderColor: '#ff6900',
-        tertiaryColor: '#f5f3ef',
-        tertiaryTextColor: '#1a1a1a',
-        tertiaryBorderColor: '#555555'
+        lineColor: __tok('--color-border', '#e5e7eb'),
+        primaryColor: __tok('--color-muted', '#f0eeeb'),
+        primaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        primaryBorderColor: __tok('--color-border', '#e5e7eb'),
+        secondaryColor: __tok('--color-accent-subtle', '#fff7ed'),
+        secondaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        secondaryBorderColor: __tok('--color-accent', '#ff6900'),
+        tertiaryColor: __tok('--color-surface', '#f5f3ef'),
+        tertiaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        tertiaryBorderColor: __tok('--color-secondary', '#555555')
       },
       flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
     });
