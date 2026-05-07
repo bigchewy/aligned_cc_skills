@@ -525,7 +525,7 @@ git commit -m "brainstorming: add planning-critique-checklist with 9 criteria"
 
 ---
 
-### Task 6: Create modes/research.md
+### ✅ Task 6: Create modes/research.md
 
 **Files:**
 - Create: `skills/brainstorming/modes/research.md`

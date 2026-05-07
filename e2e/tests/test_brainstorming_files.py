@@ -69,3 +69,18 @@ def test_planning_critique_checklist_structure():
         "Spawn-brief quality", "Strategic coherence", "Decision quality",
     ]:
         assert criterion in text, f"missing criterion: {criterion}"
+
+
+def test_research_mode_file_structure():
+    text = read("skills/brainstorming/modes/research.md")
+    # First line must be the canonical mode-file HTML comment (matches modes/software.md:1)
+    assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
+    assert "Within this mode file, `{base-directory}` resolves to" in text, "missing base-directory note"
+    # Required process phases per design §Research/Process
+    for phase in ["Question scoping", "Corpus scan", "Comparative synthesis", "Skeptic pass", "Ranking"]:
+        assert phase in text, f"missing process phase: {phase}"
+    # Critique panel config must match design §Research/Critique-panel config
+    assert "Fact-check mode: all-critics" in text
+    assert "Criteria assignment: no" in text
+    assert "research-critique-checklist.md" in text
+    assert "POST-CRITIQUE CHECKLIST" in text, "missing post-critique checklist anchor"
