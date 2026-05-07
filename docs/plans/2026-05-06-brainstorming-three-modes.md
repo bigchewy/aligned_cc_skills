@@ -614,7 +614,7 @@ git commit -m "brainstorming: add Research mode file"
 
 ---
 
-### Task 7: Create modes/authoring.md
+### ✅ Task 7: Create modes/authoring.md
 
 **Files:**
 - Create: `skills/brainstorming/modes/authoring.md`

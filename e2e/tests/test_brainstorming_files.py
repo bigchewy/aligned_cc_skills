@@ -84,3 +84,32 @@ def test_research_mode_file_structure():
     assert "Criteria assignment: no" in text
     assert "research-critique-checklist.md" in text
     assert "POST-CRITIQUE CHECKLIST" in text, "missing post-critique checklist anchor"
+
+
+def test_authoring_mode_file_structure():
+    text = read("skills/brainstorming/modes/authoring.md")
+    assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
+    assert "Within this mode file, `{base-directory}` resolves to" in text
+    # Process phases
+    for phase in [
+        "Population & constraints",
+        "Corpus scan",
+        "Optional Research sub-phase",
+        "Arrangement",
+        "Orphan / residual catalog",
+        "Architect audit",
+    ]:
+        assert phase in text, f"missing process phase: {phase}"
+    # Critique panel config (division-of-labor)
+    assert "Fact-check mode: division-of-labor" in text
+    assert "Criteria assignment: yes" in text
+    assert "authoring-critique-checklist.md" in text
+    # Sub-flow contract pointers
+    assert "research-mini-protocol.md" in text
+    assert "/tmp/brainstorm-context-" in text
+    assert "research-{question-slug}-question.md" in text
+    assert "research-{question-slug}-synthesis.md" in text
+    # Error paths for sub-flow
+    assert "5 minutes" in text or "five minutes" in text, "missing sub-agent timeout"
+    assert "## Synthesis" in text and "## Open Questions" in text and "## Confidence" in text, \
+        "missing required synthesis-file headings in validation step"
