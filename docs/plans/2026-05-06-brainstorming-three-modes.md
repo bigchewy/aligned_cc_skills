@@ -1697,7 +1697,7 @@ git commit -m "brainstorming: add Authoring→Research handoff happy-path tests 
 
 ---
 
-### Task 20: Authoring → Research failure-path tests
+### ✅ Task 20: Authoring → Research failure-path tests
 
 **Files:**
 - Modify: `e2e/tests/test_brainstorming_handoff.py` (append three error-path tests)

@@ -52,3 +52,30 @@ def test_question_fixture_has_question_and_constraints():
     text = fixture.read_text()
     assert "## Question" in text or "Question:" in text, "question file must state question"
     assert "## Constraints" in text or "Constraints:" in text, "question file must state constraints"
+
+
+def test_synthesis_missing_confidence_heading_fails_validation():
+    fixture = FIXTURES / "research-instrument-review-synthesis-missing-confidence.md"
+    text = fixture.read_text()
+    ok, errors = validate_synthesis(text)
+    assert not ok, "synthesis missing ## Confidence should fail validation"
+    assert any("Confidence" in e for e in errors), \
+        f"expected error to call out missing Confidence; got: {errors}"
+
+
+def test_synthesis_confidence_without_caveat_fails_validation():
+    fixture = FIXTURES / "research-instrument-review-synthesis-no-caveat.md"
+    text = fixture.read_text()
+    ok, errors = validate_synthesis(text)
+    assert not ok, "synthesis Confidence without caveat should fail validation"
+    assert any("caveat" in e.lower() for e in errors), \
+        f"expected error to call out missing caveat; got: {errors}"
+
+
+def test_synthesis_empty_file_fails_validation():
+    fixture = FIXTURES / "research-instrument-review-synthesis-empty.md"
+    text = fixture.read_text()
+    ok, errors = validate_synthesis(text)
+    assert not ok, "empty synthesis should fail validation"
+    # All three required headings missing
+    assert len(errors) >= 3, f"expected ≥3 errors from empty synthesis; got: {errors}"
