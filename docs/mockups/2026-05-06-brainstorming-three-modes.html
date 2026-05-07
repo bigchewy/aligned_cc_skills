@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainstorming — Three New Modes</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          accent: { DEFAULT: 'var(--color-accent)', hover: 'var(--color-accent-hover)', subtle: 'var(--color-accent-subtle)' },
+          surface: 'var(--color-surface)', muted: 'var(--color-muted)', foreground: 'var(--color-foreground)',
+          secondary: 'var(--color-secondary)', dimmed: 'var(--color-dimmed)', border: 'var(--color-border)'
+        },
+        fontFamily: { sans: ['var(--font-sans)'], mono: ['var(--font-mono)'] },
+        borderRadius: { sm: '6px', md: '12px', full: '9999px' }
+      } }
+    }
+  </script>
+  <style>
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--color-background); margin: 0; padding: 40px; }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid var(--color-muted); margin-bottom: 24px; }
+    .tab-btn { padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: var(--color-dimmed); background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+    .sub-tab-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--color-muted); padding-left: 16px; background: var(--color-background); margin-bottom: 16px; }
+    .sub-tab-btn { padding: 8px 14px; font-size: 0.78rem; font-weight: 500; color: var(--color-dimmed); background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+    .tab-panel { display: none; } .tab-panel.active { display: block; }
+    .sub-panel { display: none; } .sub-panel.active { display: block; }
+    .section { background: white; border: 1px solid var(--color-border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 8px; }
+    .section h3 { font-size: 0.95rem; font-weight: 600; color: var(--color-foreground); margin-top: 16px; margin-bottom: 6px; }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: var(--color-foreground); margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .change-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .change-table th { text-align: left; padding: 10px 12px; font-weight: 600; color: var(--color-foreground); background: var(--color-surface); border-bottom: 1px solid var(--color-border); }
+    .change-table td { padding: 10px 12px; border-bottom: 1px solid var(--color-muted); color: var(--color-foreground); vertical-align: top; }
+    .change-table .file-path { font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-secondary); }
+    .status-badge { display: inline-block; font-size: 0.7rem; padding: 1px 8px; border-radius: 9999px; font-weight: 500; }
+    .status-modified { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-unchanged { background: var(--color-surface); color: var(--color-dimmed); }
+    .status-new { background: #ecfdf5; color: #047857; }
+    .callout { padding: 14px 18px; border-radius: 8px; font-size: 0.88rem; border-left: 4px solid; margin-bottom: 12px; line-height: 1.6; }
+    .callout strong { display: block; margin-bottom: 6px; font-weight: 600; }
+    .callout-decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .callout-constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: var(--color-foreground); }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: var(--color-foreground); }
+    .signal-grid { display: grid; grid-template-columns: 160px 1fr; gap: 8px 16px; margin: 12px 0; font-size: 0.85rem; }
+    .signal-mode { font-weight: 600; color: var(--color-accent); padding-top: 2px; }
+    .signal-keywords { color: var(--color-foreground); line-height: 1.6; }
+    .mode-meta { display: grid; grid-template-columns: 140px 1fr; gap: 6px 16px; font-size: 0.85rem; margin: 8px 0 16px 0; }
+    .mode-meta dt { font-weight: 600; color: var(--color-secondary); }
+    .mode-meta dd { margin: 0; color: var(--color-foreground); line-height: 1.5; }
+    code { font-family: var(--font-mono); font-size: 0.82rem; background: var(--color-surface); padding: 2px 6px; border-radius: 4px; color: var(--color-foreground); }
+    pre { font-family: var(--font-mono); font-size: 0.78rem; background: var(--color-surface); padding: 14px; border-radius: 8px; overflow-x: auto; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; padding: 12px; background: var(--color-background); border-radius: 8px; border: 1px solid var(--color-muted); }
+  </style>
+</head>
+<body>
+  <h1>Brainstorming — Three New Modes</h1>
+  <p class="subtitle">Adding Research, Authoring, and Planning to the brainstorming skill</p>
+  <p class="context">Survey across <code>software/planted/docs/</code>, <code>obsidian/aligned/</code>, <code>obsidian/personal/</code> + Architect blast-radius review. Final design at <code>docs/plans/2026-05-06-brainstorming-three-modes-design.md</code>.</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('modes')">Modes</button>
+    <button class="tab-btn" onclick="switchTab('detection')">Mode Detection</button>
+    <button class="tab-btn" onclick="switchTab('delta')">File Delta</button>
+    <button class="tab-btn" onclick="switchTab('errors')">Error Paths</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="panel-overview" class="tab-panel active">
+    <div class="section">
+      <h2>Why this, why now</h2>
+      <p class="description">A survey of ~60 design and decision docs across three vault locations surfaced three brainstorm shapes that fit neither Software nor Business mode. The <code>personalized-program-variants-design.md</code> doc is the canonical "awkward middle" — 70% of its brainstorm work was instrument review + ACT-theoretical sequencing + curatorial slot-by-slot authoring. Architect-led Software mode would have been wrong; the schema fell out of domain advisors' (Hayes, Loehr, Chapman, Seligman, Oreizy) decisions. There was no fitting mode.</p>
+      <p class="description">Eric also surfaced a Planning shape — multi-feature builds too big for a single brainstorm session. No clean written artifact exists yet; he reports actively struggling without this mode.</p>
+    </div>
+
+    <div class="section">
+      <h2>Diagnosis &amp; goal</h2>
+      <div class="callout callout-decision">
+        <strong>The crux</strong>
+        Content-led brainstorms (curriculum, framework prompts, exercise sequencing, instrument review) currently route to Software mode and recruit the wrong panel. The Architect leads when Hayes / Loehr / Sisney should. The Q&amp;A flow asks "where does the state live?" when it should ask "what does this audience need to learn first?" The deliverable comes out as architecture when it should come out as sequenced curriculum.
+      </div>
+      <p class="description"><strong>Goal:</strong> Match brainstorm work to a panel and process whose lens fits the work — content-led brainstorms recruit domain experts and produce sequenced arrangements; research-led brainstorms recruit evidence-skeptics and produce comparisons; portfolio-planning brainstorms recruit strategy advisors and produce roadmaps + spawn-lists.</p>
+      <p class="description"><strong>Success criteria (outcome, not activity):</strong></p>
+      <ol class="bullet-list">
+        <li><strong>Panel composition test.</strong> In the first 5 content-led brainstorms after launch, count how many recruit Architect as co-lead. Target: 0.</li>
+        <li><strong>Output-shape test.</strong> Count Authoring brainstorms whose final deliverable is a code-shaped design doc rather than a content-shaped sequenced curriculum. Target: 0.</li>
+        <li><strong>Auto-route accuracy.</strong> ≥80% of awkward-middle docs auto-route correctly without disambiguation.</li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2>Hard constraints</h2>
+      <ul class="bullet-list">
+        <li>Software and Business modes unchanged in observable behavior — except the SKILL.md mode-explanation block's "Other modes" line, the one approved cosmetic surface change.</li>
+        <li>No backward-incompatible changes to consumer skills (<code>kickstart</code>, <code>writing-plans</code>, <code>finishing-a-development-branch</code>, etc.).</li>
+        <li>Authoring's optional Research sub-phase runs as a sub-agent fork (NEW pattern, Mode-as-sub-flow) — recursion forbidden; project-scan reuse from parent.</li>
+        <li>Personal-vault relational/check-in artifacts are out of scope (Planted's Garden surface owns those).</li>
+        <li><strong>Two named advisors are referenced but absent from registry</strong> — must add via <code>/aligned:add-advisor</code>: <strong>Cagan</strong> (Planning, preferred-when-available, not blocking — default panel = Christensen + Rumelt + Eric Ries is launch-ready) and <strong>Sisney</strong> (Authoring's PSIU-shaped brainstorms; non-PSIU brainstorms have full coverage without him).</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>The three modes at a glance</h2>
+      <div class="diagram-container">
+        <div class="mermaid">
+flowchart TB
+  subgraph L1["Build and ship"]
+    SW["Software (existing)"]
+    AU["Authoring (NEW)"]
+  end
+  subgraph L2["Diagnose and decide"]
+    BU["Business (existing)"]
+    RE["Research (NEW)"]
+  end
+  subgraph L3["Sequence work"]
+    PL["Planning (NEW)"]
+  end
+  AU -. "optional sub-agent" .-> RE
+  PL == "spawn-brief, target mode" ==> SW
+  PL == "spawn-brief, target mode" ==> AU
+  PL == "spawn-brief, target mode" ==> RE
+  RE -. "apply this research" .-> AU
+  RE -. "apply this research" .-> SW
+  classDef new fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
+  class AU,RE,PL new
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODES -->
+  <div id="panel-modes" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('modes','research')">Research</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('modes','authoring')">Authoring</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('modes','planning')">Planning</button>
+    </div>
+
+    <!-- RESEARCH -->
+    <div id="sub-research" class="sub-panel active">
+      <div class="section">
+        <h2>Research</h2>
+        <p class="description">Survey a corpus, produce a comparative review, ranking, or evidence map.</p>
+        <dl class="mode-meta">
+          <dt>Triggers</dt><dd>literature review, evidence map, comparative review, instrument selection, framework comparison, KB design, "what does the literature say"</dd>
+          <dt>Advisors</dt><dd>Domain experts (topic-routed) + <strong>Rumelt</strong> (cutting-fluff source-quality) + <strong>Architect</strong> (retargeted at literature/KB sources for evidence-trace verification). No new generic Skeptic advisor.</dd>
+          <dt>Output</dt><dd><code>docs/plans/YYYY-MM-DD-&lt;topic&gt;-research.md</code> for plan-shape, or <code>knowledge/&lt;area&gt;/README.md</code> for KB-shape</dd>
+          <dt>Critique config</dt><dd><code>fact-check-mode: all-critics</code>, <code>criteria-assignment: no</code>, <code>aggregation: sub-agent</code></dd>
+          <dt>Next steps</dt><dd>Commit synthesis. No <code>writing-plans</code> follow-on. Optional: open follow-up Authoring/Software brainstorm with research as input.</dd>
+        </dl>
+        <h3>Process</h3>
+        <ol class="bullet-list">
+          <li><strong>Question scoping.</strong> What's the question? What corpus is in scope?</li>
+          <li><strong>Corpus scan.</strong> Surface candidates. Note coverage gaps.</li>
+          <li><strong>Comparative synthesis.</strong> Per candidate: construct fit, evidence quality, licensing/cost, validation status.</li>
+          <li><strong>Skeptic pass.</strong> Mode-internal instruction — selected critics adopt the role. Verify citations, check for missing counter-evidence, flag licensing claims.</li>
+          <li><strong>Ranking + decision memo.</strong> Recommended candidate(s), explicit caveats, open questions queue.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- AUTHORING -->
+    <div id="sub-authoring" class="sub-panel">
+      <div class="section">
+        <h2>Authoring</h2>
+        <p class="description">Select and sequence content into a coherent arc with rationale per element + orphan list. Domain advisors lead; Architect = late audit only when a code/schema seam exists.</p>
+        <dl class="mode-meta">
+          <dt>Triggers</dt><dd>curriculum, program design, sequence content, exercise sequencing, "what to teach in what order", rewrite for audience, voice migration</dd>
+          <dt>Advisors</dt><dd>Domain experts (Hayes, Loehr, Chapman, Seligman, Sisney, Brown, Mate, Linehan, Levine, Grubb — topic-routed). Architect for late audit if code seam exists.</dd>
+          <dt>Output</dt><dd><code>docs/plans/YYYY-MM-DD-&lt;topic&gt;-design.md</code> (existing convention)</dd>
+          <dt>Critique config</dt><dd><code>fact-check-mode: division-of-labor</code>, <code>criteria-assignment: yes</code>, <code>aggregation: sub-agent</code></dd>
+          <dt>Next steps</dt><dd>Same as Software mode — <code>/aligned:using-git-worktrees</code> + <code>/aligned:writing-plans</code>, or autopilot.</dd>
+        </dl>
+        <h3>Process</h3>
+        <ol class="bullet-list">
+          <li><strong>Population & constraints.</strong> Who is this for? What's non-negotiable?</li>
+          <li><strong>Corpus scan.</strong> What existing content is in scope?</li>
+          <li><strong>Optional Research sub-phase.</strong> Sub-agent fork — see callout below.</li>
+          <li><strong>Arrangement.</strong> Sequence/group/tier the corpus with the domain-advisor panel.</li>
+          <li><strong>Orphan / residual catalog.</strong> Content that didn't fit. Open questions deferred.</li>
+          <li><strong>Architect audit (conditional).</strong> Only if code/schema seam exists.</li>
+        </ol>
+        <div class="callout callout-note">
+          <strong>Authoring → Research sub-agent contract</strong>
+          File-mediated handoff. Authoring writes a question file to <code>/tmp/brainstorm-context-{topic}/research-{slug}-question.md</code>; sub-agent reads <code>references/research-mini-protocol.md</code>, writes synthesis to <code>research-{slug}-synthesis.md</code> with shape: <code>## Synthesis</code> / <code>## Open Questions</code> / <code>## Confidence</code>; returns only "Synthesis written to {path}". Main context never sees the transcript. Authoring asks user before dispatching — no silent auto-launch.
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANNING -->
+    <div id="sub-planning" class="sub-panel">
+      <div class="section">
+        <h2>Planning</h2>
+        <p class="description">Identify and prioritize a portfolio of work items, each spawning its own future brainstorm. Two artifacts: roadmap + portfolio spawn-list.</p>
+        <dl class="mode-meta">
+          <dt>Triggers</dt><dd>roadmap, prioritization, portfolio, "what to build next", milestone, sequence features, multi-feature build, "too big for one brainstorm"</dd>
+          <dt>Advisors</dt><dd><strong>Cagan</strong> as named lead (prereq: add via <code>/aligned:add-advisor</code>). Until then: <strong>Christensen + Rumelt + Eric Ries</strong> with one of {Bezos, Graham, Tan} based on topic. Architect for codebase-reality dependency check (late audit).</dd>
+          <dt>Output</dt><dd><code>docs/plans/YYYY-MM-DD-&lt;topic&gt;-roadmap.md</code> (strategic frame) + <code>-portfolio.md</code> (spawn-list, kanban-shaped)</dd>
+          <dt>Critique config</dt><dd><code>fact-check-mode: division-of-labor</code>, <code>criteria-assignment: yes</code>, <code>aggregation: sub-agent</code></dd>
+          <dt>Next steps</dt><dd>Commit roadmap + portfolio. Per item: <code>/aligned:brainstorming</code> against the spawn brief — produces design doc, then <code>/aligned:writing-plans</code>.</dd>
+        </dl>
+        <h3>Process</h3>
+        <ol class="bullet-list">
+          <li><strong>Opportunity space & constraints.</strong> Goal, audience, time horizon, budget, capacity.</li>
+          <li><strong>Candidate inventory.</strong> What work items are on the table?</li>
+          <li><strong>Sizing & dependencies.</strong> Per candidate: rough size, dependencies, prerequisites, risks.</li>
+          <li><strong>Sequencing & rationale.</strong> Strategic order with explicit "why this before that."</li>
+          <li><strong>Spawn briefs per item.</strong> Structured entry (target_mode, status, size, prerequisites, why-now, brief, success criterion).</li>
+        </ol>
+        <h3>Spawn-brief schema (per portfolio entry)</h3>
+        <pre>## {Item title}
+
+**Target mode:** {Software | Authoring | Research}
+**Status:** {pending | brainstorming | planned | in-progress | done}
+**Rough size:** {hours | days | weeks}
+**Prerequisites:** {bulleted list, or "none"}
+**External dependencies:** {bulleted list, or "none"}
+**Why now:** {1-2 sentences}
+**Spawn brief (one paragraph, brainstorm-ready):**
+&gt; {Audience + problem + constraint context}
+**Success criterion:** {one sentence}</pre>
+        <div class="callout callout-constraint">
+          <strong>Out of scope</strong>
+          WIP-limit logic, swimlanes, status-workflow automation. Distinct from <code>docs/kanban/</code> (small auto-found items) — these are larger multi-week threads.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETECTION -->
+  <div id="panel-detection" class="tab-panel">
+    <div class="section">
+      <h2>5-mode classifier flow</h2>
+      <div class="diagram-container">
+        <div class="mermaid-deferred">
+flowchart TD
+  Start(["User invokes /aligned:brainstorming"]) --> Scan["Topic-keyword scan<br/>against 5 signal sets"]
+  Scan --> Match{"How many<br/>match?"}
+  Match -- "Exactly one" --> AutoRoute["Auto-route to that mode"]
+  Match -- "Multiple" --> Disambig["5-way disambiguation question"]
+  Match -- "None" --> OpenQ["Open mode question with all 5"]
+  Disambig --> User1{"User picks"}
+  OpenQ --> User2{"User picks"}
+  AutoRoute --> Block["Present mode-explanation block"]
+  User1 --> Block
+  User2 --> Block
+  Block --> Scan2["Dispatch project scan"]
+  Scan2 --> ModeFile["Read mode file"]
+  ModeFile --> Run["Run mode-specific process"]
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Signal sets</h2>
+      <div class="signal-grid">
+        <div class="signal-mode">Software <span style="color: var(--color-dimmed); font-weight: 400; font-size: 0.78rem;">(unchanged)</span></div>
+        <div class="signal-keywords">features, components, APIs, bugs, refactoring, architecture, implementation, code, testing, data models</div>
+        <div class="signal-mode">Business <span style="color: var(--color-dimmed); font-weight: 400; font-size: 0.78rem;">(revised)</span></div>
+        <div class="signal-keywords">strategy, sales, marketing, positioning, meeting prep, decisions, stakeholders, pricing, proposals, RCA, diagnosis, "why isn't this working" <em style="color: var(--color-dimmed);">(drops "planning" and "analysis")</em></div>
+        <div class="signal-mode">Research <span class="status-badge status-new">new</span></div>
+        <div class="signal-keywords">literature review, evidence map, comparative review, instrument selection, framework comparison, KB design, "what does the literature say", systematic review, annotated bibliography</div>
+        <div class="signal-mode">Authoring <span class="status-badge status-new">new</span></div>
+        <div class="signal-keywords">curriculum, program design, sequence content, exercise sequencing, content design, "what to teach in what order", rewrite for audience, voice migration, framework prompt authoring, chapter sequencing</div>
+        <div class="signal-mode">Planning <span class="status-badge status-new">new</span></div>
+        <div class="signal-keywords">roadmap, prioritization, portfolio, "what to build next", milestone, sequence features, multi-feature build, project plan, "too big for one brainstorm" <em style="color: var(--color-dimmed);">(receives "planning" from Business)</em></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Disambiguation rules</h2>
+      <div class="callout callout-decision">
+        <strong>Software vs Authoring</strong>
+        If the deliverable is <em>code that runs</em>, Software. If the deliverable is <em>content humans consume</em> (curriculum, prompts, exercises) even when there's a code seam, Authoring. The variants-design canonical test: it had a runtime adapter (code) but the brainstorm work was 70% content sequencing → Authoring.
+      </div>
+      <div class="callout callout-decision">
+        <strong>Authoring vs Research</strong>
+        If the deliverable is <em>an arrangement</em> (sequence, registry, curriculum), Authoring. If the deliverable is <em>an evidence map / ranked synthesis</em> with no arrangement output, Research. Authoring includes Research as an optional sub-phase (sub-agent fork).
+      </div>
+      <div class="callout callout-decision">
+        <strong>Business vs Planning</strong>
+        If the work is <em>diagnostic</em> (why isn't X working), Business. If the work is <em>generative portfolio sequencing</em> (which N things should we build), Planning.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Mode-explanation block (5 modes)</h2>
+      <p class="description">Group-by-deliverable layout. Grouping is editorial display only — no enum in code.</p>
+      <pre>&gt; **Brainstorming** — guided dialogue from idea to validated design with expert critique.
+&gt;
+&gt; **Selected: {Mode}** — {one-sentence description}
+&gt; *Why:* {brief reason}
+&gt;
+&gt; **Other modes:**
+&gt; - **Build &amp; ship:** Software, Authoring
+&gt; - **Diagnose &amp; decide:** Business, Research
+&gt; - **Sequence work:** Planning
+&gt;
+&gt; *To switch modes or skip phases, just say so.*</pre>
+    </div>
+  </div>
+
+  <!-- FILE DELTA -->
+  <div id="panel-delta" class="tab-panel">
+    <div class="section">
+      <h2>Blast radius — 7 new files, 2 modified</h2>
+      <p class="description">Architect's verified file delta. Zero changes to shared orchestration, scanner, or downstream skills.</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>File</th><th>Status</th><th>Change</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="file-path">skills/brainstorming/modes/research.md</td><td><span class="status-badge status-new">new</span></td><td>Research mode flow</td></tr>
+          <tr><td class="file-path">skills/brainstorming/modes/authoring.md</td><td><span class="status-badge status-new">new</span></td><td>Authoring mode flow + sub-agent dispatch</td></tr>
+          <tr><td class="file-path">skills/brainstorming/modes/planning.md</td><td><span class="status-badge status-new">new</span></td><td>Planning mode flow + spawn-brief generation</td></tr>
+          <tr><td class="file-path">skills/brainstorming/research-critique-checklist.md</td><td><span class="status-badge status-new">new</span></td><td>9 criteria for Research critique</td></tr>
+          <tr><td class="file-path">skills/brainstorming/authoring-critique-checklist.md</td><td><span class="status-badge status-new">new</span></td><td>9 criteria for Authoring critique</td></tr>
+          <tr><td class="file-path">skills/brainstorming/planning-critique-checklist.md</td><td><span class="status-badge status-new">new</span></td><td>9 criteria for Planning critique</td></tr>
+          <tr><td class="file-path">skills/brainstorming/references/research-mini-protocol.md</td><td><span class="status-badge status-new">new</span></td><td>Sub-agent dispatch protocol (phases 1–3 of Research only)</td></tr>
+          <tr><td class="file-path">skills/brainstorming/references/spawn-brief-template.md</td><td><span class="status-badge status-new">new</span></td><td>Planning portfolio entry schema</td></tr>
+          <tr><td class="file-path">skills/brainstorming/SKILL.md</td><td><span class="status-badge status-modified">modified</span></td><td>5-mode signals, disambiguation rules, mode-explanation block, scanner emphasis × 5</td></tr>
+          <tr><td class="file-path">skills/kickstart/SKILL.md:169</td><td><span class="status-badge status-modified">modified</span></td><td>One-line marketing copy update</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Untouched</h2>
+      <ul class="bullet-list">
+        <li><code>agents/project-scanner.md</code> — generalizes via dispatch prompt; SKILL.md passes per-mode emphasis text.</li>
+        <li><code>skills/writing-plans/</code>, <code>finishing-a-development-branch/</code>, <code>using-git-worktrees/</code>, <code>eval-audit/</code>, <code>_shared/contextual-recommendation.md</code> — no mode-conditioning logic.</li>
+        <li><code>skills/kickstart/templates/{software,business}.md</code> — these are project-init CLAUDE.md templates, unrelated to brainstorming modes.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Prerequisites (not blocking design, but flagged)</h2>
+      <ul class="bullet-list">
+        <li><strong>Add Marty Cagan</strong> via <code>/aligned:add-advisor</code> — preferred when available; default panel (Christensen + Rumelt + Eric Ries) is launch-ready without him.</li>
+        <li><strong>Add Lex Sisney</strong> via <code>/aligned:add-advisor</code> — required for PSIU-shaped Authoring brainstorms; non-PSIU brainstorms have full coverage without him.</li>
+        <li>Skeptic-Pass pilot validation on the change-management KB before Research mode launch.</li>
+        <li>Version bump in <code>.claude-plugin/plugin.json</code> + <code>marketplace.json</code> on ship.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ERROR PATHS / FAILURE MODES -->
+  <div id="panel-errors" class="tab-panel">
+    <div class="section">
+      <h2>Error paths — five failure modes addressed</h2>
+      <p class="description">The QA Engineer's Round 1 critique surfaced five concrete failure modes the happy-path design didn't address. Each new mode file specifies the fallback for these.</p>
+
+      <div class="callout callout-risk">
+        <strong>1. Disambiguation refusal</strong>
+        User picks "Other" or types free-form on the 5-way question. Router asks one follow-up: "Could you describe in one sentence what you want as the deliverable?" If still ambiguous, defaults to Software mode and notes the auto-fallback to the user.
+      </div>
+
+      <div class="callout callout-risk">
+        <strong>2. Authoring → Research sub-agent fail/timeout</strong>
+        Sub-agent crashes, returns no confirmation within 5 min, or returns confirmation but writes corrupt/empty file. Authoring surfaces failure with three options: skip / retry / retarget. No silent retries; no auto-fallback to inline research (would defeat context-window discipline).
+      </div>
+
+      <div class="callout callout-risk">
+        <strong>3. Malformed synthesis file</strong>
+        If any of <code>## Synthesis</code>, <code>## Open Questions</code>, <code>## Confidence</code> is missing, or Confidence lacks a caveat, validation surfaces the issue with the same three options. Required before integration into Authoring's working context.
+      </div>
+
+      <div class="callout callout-risk">
+        <strong>4. Spawn-brief malformed in portfolio.md</strong>
+        Structured fields (<code>target_mode</code>, <code>status</code>, etc.) are documentation-only. If the brief paragraph omits mode-disambiguating keywords, normal signal detection misses and user gets the standard 5-way disambiguation question.
+      </div>
+
+      <div class="callout callout-risk">
+        <strong>5. Cagan absent at runtime</strong>
+        Planning mode checks for <code>advisors/prompts/marty-cagan.md</code> existence. If absent, silently uses default panel (Christensen + Rumelt + Eric Ries). Same convention for Sisney with PSIU-keyword topics in Authoring (one-time notice to user, then proceed).
+      </div>
+    </div>
+  </div>
+
+  <!-- DECISIONS -->
+  <div id="panel-decisions" class="tab-panel">
+    <div class="section">
+      <h2>Decision log</h2>
+      <div class="callout callout-decision">
+        <strong>One mode vs three modes</strong>
+        <p style="margin: 4px 0;">Survey fork recommended one mode (7-vs-3 ratio of curatorial-dominant vs research-only docs). The override rests on an asymmetry the survey could not see: Planning-shape work happens mentally without producing artifacts, so the corpus had no evidence of it.</p>
+        <p style="margin: 4px 0;"><strong>Choice:</strong> Three modes. Designing for an unwritten shape is an explicit bet that artifact-production lag is worse than design-in-the-abstract risk. §Error paths and §Tests required name what "wrong on first use" looks like. Research split rather than folded into Authoring because standalone artifacts (change-mgmt KB, supplement brief) have a distinct deliverable shape that folding would distort. <strong>Confidence: 0.75</strong> <em style="color: var(--color-dimmed);">(downgraded from 0.85 — bet against survey evidence, not aligned with it)</em></p>
+      </div>
+
+      <div class="callout callout-decision">
+        <strong>Name for the content-sequencing mode</strong>
+        <p style="margin: 4px 0;">User: "Curatorial is a wonky word." Considered: Curatorial, Authoring, Composition, Content Design, Curriculum, Editorial.</p>
+        <p style="margin: 4px 0;"><strong>Choice:</strong> Authoring. Plainest verb for "decide what to teach, in what order, voice"; generalizes from program design to book chapters to framework prompts to Mochary re-voicing equally. <strong>Confidence: 0.9</strong></p>
+      </div>
+
+      <div class="callout callout-decision">
+        <strong>Authoring → Research handoff: inline vs sub-agent fork</strong>
+        <p style="margin: 4px 0;">User explicit: "See if it's possible to do this research work as sub-agents when you're inside of Authoring." Goal: prevent context-window pollution.</p>
+        <p style="margin: 4px 0;"><strong>Choice:</strong> File-mediated sub-agent dispatch (Architect refined from "fork" to "file-mediated"). Matches existing pattern at <code>software.md:80-105</code>. Sub-agent transcript never enters Authoring's main thread. <strong>Confidence: 0.9</strong></p>
+      </div>
+
+      <div class="callout callout-decision">
+        <strong>Planning advisor pool</strong>
+        <p style="margin: 4px 0;">User selected only Marty Cagan from the menu (Christensen, Drucker were available; user did not select).</p>
+        <p style="margin: 4px 0;"><strong>Choice:</strong> Cagan as named lead; Cagan is missing from registry — hard prereq. Until then: Christensen + Rumelt + Eric Ries default panel via dynamic critic selection. <strong>Confidence: 0.85</strong></p>
+      </div>
+
+      <div class="callout callout-decision">
+        <strong>Planning output: single doc vs two artifacts vs HTML kanban</strong>
+        <p style="margin: 4px 0;">User: "Two artifacts (roadmap + portfolio spawn-list)." Each portfolio entry independently usable as brainstorm seed.</p>
+        <p style="margin: 4px 0;"><strong>Choice:</strong> Two artifacts. Distinct from existing <code>docs/kanban/</code> (small auto-found items). <strong>Confidence: 0.9</strong></p>
+      </div>
+
+      <div class="callout callout-decision">
+        <strong>Skeptic role for Research mode</strong>
+        <p style="margin: 4px 0;">Considered: add new generic Skeptic advisor vs use existing critic roles.</p>
+        <p style="margin: 4px 0;"><strong>Choice:</strong> Use existing — Rumelt + Architect retargeted, with mode-internal Skeptic Pass instruction. A nameless skeptic doesn't earn registry placement; named experts with grounded prompts (Rumelt's strategic-clarity lens, Architect's evidence-trace lens) cover the role. <strong>Confidence: 0.85</strong></p>
+      </div>
+
+      <div class="callout callout-decision">
+        <strong>Personal vault scope</strong>
+        <p style="margin: 4px 0;"><strong>Choice:</strong> Out of scope. Mode-detection signals must explicitly not claim shirin_and_eric, check_ins, journaling-as-decision artifacts. Brainstorming stays a work-tool; Planted's Garden surface owns reflective work. <strong>Confidence: 0.95</strong></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Out of scope (v1)</h2>
+      <ul class="bullet-list">
+        <li>Personal-vault reflection mode.</li>
+        <li>Migration of existing docs to new modes (taxonomy applies forward, not retroactively).</li>
+        <li>Eval coverage for the new modes' classifier behavior (separate workstream).</li>
+        <li>Cross-mode artifacts (a brainstorm targeting multiple modes — split into sessions instead).</li>
+        <li>Programmatic spawn-brief auto-launch (v2; v1 is human-readable + paste-as-prompt).</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    var __rs = getComputedStyle(document.documentElement);
+    function __tok(name, fallback) { var v = __rs.getPropertyValue(name).trim(); return v || fallback; }
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: __tok('--font-sans', 'system-ui, sans-serif'),
+        fontSize: '14px',
+        lineColor: __tok('--color-border', '#e5e7eb'),
+        primaryColor: __tok('--color-muted', '#f0eeeb'),
+        primaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        primaryBorderColor: __tok('--color-border', '#e5e7eb'),
+        secondaryColor: __tok('--color-accent-subtle', '#fff7ed'),
+        secondaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        secondaryBorderColor: __tok('--color-accent', '#ff6900'),
+        tertiaryColor: __tok('--color-surface', '#f5f3ef'),
+        tertiaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        tertiaryBorderColor: __tok('--color-secondary', '#555555')
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) firstSubBtn.click();
+      }
+    }
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try { mermaid.run({ nodes: [el] }); } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
