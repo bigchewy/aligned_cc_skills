@@ -1220,7 +1220,7 @@ git commit -m "brainstorming: regroup mode-explanation block by deliverable"
 
 ---
 
-### Task 14: Add per-mode project-scanner emphasis strings to Step 2
+### ✅ Task 14: Add per-mode project-scanner emphasis strings to Step 2
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md` (Step 2 dispatch prompt — extend mode emphasis text)

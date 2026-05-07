@@ -118,8 +118,18 @@ running in the background. Now that mode is known, pass it to the scanner:
 
 "Read `agents/project-scanner.md` for your full workflow.
 Scan the project at `{project-root}` for brainstorm topic `{topic}`.
-Mode: {software|business} — emphasize {code artifacts|domain materials}
+Mode: {software|business|research|authoring|planning} — emphasize {emphasis-text}
 accordingly."
+
+**Per-mode emphasis text:**
+
+| Mode | `{emphasis-text}` |
+|---|---|
+| Software | code artifacts (package.json, src/, architecture.md, recent commits) |
+| Business | domain materials (positioning, meeting notes, prior strategy, stakeholders) |
+| Research | literature/KB/registries (`knowledge/`, `frameworks/registry.yaml`, `advisors/registry.yaml`, prior `*-research.md`) |
+| Authoring | content registries + frameworks + prior curricula (`frameworks/`, exercise/lesson registries, `*-design.md` for content work, brand voice files) |
+| Planning | prior roadmaps + open kanban + customer asks (`*-roadmap.md`, `*-portfolio.md`, `docs/kanban/`, `clients/*/`) |
 
 Do not wait for the scan to complete before proceeding to Step 3.
 

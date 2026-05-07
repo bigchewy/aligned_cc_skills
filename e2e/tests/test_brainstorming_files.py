@@ -223,3 +223,19 @@ def test_skill_md_has_disambiguation_rules():
             and "Research synthesis" in text and "Content authoring" in text
             and "Multi-feature planning" in text), \
         "5-way disambiguation question must list all five modes"
+
+
+def test_skill_md_step2_has_per_mode_emphasis():
+    text = read("skills/brainstorming/SKILL.md")
+    step2_start = text.index("## Step 2")
+    step3_start = text.index("## Step 3")
+    step2 = text[step2_start:step3_start]
+    # Each mode's emphasis tag should be present in the dispatch prompt template
+    for hint in [
+        "code artifacts",
+        "domain materials",
+        "literature/KB/registries",
+        "content registries",
+        "prior roadmaps",
+    ]:
+        assert hint in step2, f"missing per-mode emphasis hint: {hint}"
