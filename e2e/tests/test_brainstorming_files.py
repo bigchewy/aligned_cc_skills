@@ -1,4 +1,5 @@
 """Structural assertions for the brainstorming three-modes implementation."""
+import json
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -319,3 +320,18 @@ def test_five_modes_eval_fixture_lists_15_briefs():
     # Each mode appears as a label
     for mode_label in ["software", "business", "research", "authoring", "planning"]:
         assert mode_label in text.lower(), f"missing mode label: {mode_label}"
+
+
+def test_plugin_version_bumped():
+    plugin_json = json.loads(read(".claude-plugin/plugin.json"))
+    marketplace_json = json.loads(read(".claude-plugin/marketplace.json"))
+    # Both manifests must agree on version (per CLAUDE.md §Version)
+    plugin_version = plugin_json["version"]
+    marketplace_version = marketplace_json["plugins"][0]["version"]
+    assert plugin_version == marketplace_version, \
+        f"plugin.json ({plugin_version}) and marketplace.json ({marketplace_version}) disagree"
+    # Must be > 0.26.0 (the version on main when this plan was authored)
+    def parse(v):
+        return tuple(int(x) for x in v.split("."))
+    assert parse(plugin_version) > parse("0.26.0"), \
+        f"version {plugin_version} not bumped above pre-plan baseline 0.26.0"

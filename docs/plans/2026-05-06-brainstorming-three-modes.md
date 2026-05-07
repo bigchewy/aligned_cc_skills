@@ -1792,7 +1792,7 @@ git commit -m "brainstorming: add Authoring→Research failure-path tests"
 
 ---
 
-### Task 21: Mode-detection eval scenarios fixture
+### ✅ Task 21: Mode-detection eval scenarios fixture
 
 > **Ordering dependency:** This task creates `e2e/fixtures/skill-prompts/brainstorming-five-modes.md` by embedding signal-set prose verbatim from `skills/brainstorming/SKILL.md` Step 1. Tasks 11-12 must be committed FIRST so the embedded prose reflects the new 5-mode signal sets and disambiguation rules. If this task runs before Tasks 11-12 commit, the fixture will embed the stale 2-mode classification block and the eval scenarios will produce false-positive mode classifications.
 
@@ -1970,7 +1970,7 @@ git commit -m "brainstorming: add five-mode classifier eval scenarios fixture"
 
 ---
 
-### Task 22: Bump plugin version
+### ✅ Task 22: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`
