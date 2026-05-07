@@ -322,6 +322,30 @@ def test_five_modes_eval_fixture_lists_15_briefs():
         assert mode_label in text.lower(), f"missing mode label: {mode_label}"
 
 
+def test_planning_mode_handles_cagan_absence():
+    text = read("skills/brainstorming/modes/planning.md")
+    # The mode file must do a file-existence check on the Cagan prompt path
+    assert "advisors/prompts/marty-cagan.md" in text, \
+        "missing Cagan prompt-file existence check"
+    # Default panel without Cagan must be explicitly named
+    for advisor in ["Christensen", "Rumelt", "Eric Ries"]:
+        assert advisor in text, f"default-panel advisor missing: {advisor}"
+    # The mode must say absence is handled silently (no surfaced warning)
+    # per design §Error paths #5
+    assert "silently" in text.lower() or "without surfacing" in text.lower(), \
+        "Cagan-absence handling must be silent (no user-facing warning)"
+
+
+def test_authoring_mode_handles_sisney_absence():
+    text = read("skills/brainstorming/modes/authoring.md")
+    # Sisney is referenced as PSIU advisor; absence handling must surface once
+    assert "advisors/prompts/lex-sisney.md" in text, \
+        "missing Sisney prompt-file existence check"
+    # Per design §Error paths #5: Authoring notes Sisney absence ONCE for PSIU work
+    assert "PSIU" in text or "Four-Forces" in text or "Four Forces" in text, \
+        "Authoring must reference PSIU/Four-Forces context for Sisney"
+
+
 def test_plugin_version_bumped():
     plugin_json = json.loads(read(".claude-plugin/plugin.json"))
     marketplace_json = json.loads(read(".claude-plugin/marketplace.json"))
