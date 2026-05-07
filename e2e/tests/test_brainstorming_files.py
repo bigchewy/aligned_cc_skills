@@ -29,3 +29,17 @@ def test_spawn_brief_template_has_eight_fields():
     ]
     missing = [f for f in required_fields if f not in text]
     assert not missing, f"missing fields in spawn-brief template: {missing}"
+
+
+def test_research_critique_checklist_structure():
+    text = read("skills/brainstorming/research-critique-checklist.md")
+    assert text.startswith("# Research Critique Checklist"), "missing top heading"
+    for section in ["## Critique Criteria", "## Critique Output Format", "## Important"]:
+        assert section in text, f"missing {section}"
+    for criterion in [
+        "Scope clarity", "Corpus coverage", "Source quality",
+        "Comparison rigor", "Validation honesty", "Licensing/cost clarity",
+        "Recommendation defensibility", "Open-questions completeness",
+        "Decision quality",
+    ]:
+        assert criterion in text, f"missing criterion: {criterion}"

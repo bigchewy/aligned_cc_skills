@@ -228,7 +228,7 @@ git commit -m "brainstorming: add spawn-brief template for Planning portfolio en
 
 ---
 
-### Task 3: Create research-critique-checklist
+### ✅ Task 3: Create research-critique-checklist
 
 **Files:**
 - Create: `skills/brainstorming/research-critique-checklist.md`
