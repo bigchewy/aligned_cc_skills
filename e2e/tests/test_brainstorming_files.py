@@ -113,3 +113,33 @@ def test_authoring_mode_file_structure():
     assert "5 minutes" in text or "five minutes" in text, "missing sub-agent timeout"
     assert "## Synthesis" in text and "## Open Questions" in text and "## Confidence" in text, \
         "missing required synthesis-file headings in validation step"
+
+
+def test_planning_mode_file_structure():
+    text = read("skills/brainstorming/modes/planning.md")
+    assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
+    assert "Within this mode file, `{base-directory}` resolves to" in text
+    # 5 process phases
+    for phase in [
+        "Opportunity space",
+        "Candidate inventory",
+        "Sizing & dependencies",
+        "Sequencing & rationale",
+        "Spawn briefs per item",
+    ]:
+        assert phase in text, f"missing process phase: {phase}"
+    # Two-artifact output
+    assert "-roadmap.md" in text
+    assert "-portfolio.md" in text
+    # Critique panel
+    assert "Fact-check mode: division-of-labor" in text
+    assert "Criteria assignment: yes" in text
+    assert "planning-critique-checklist.md" in text
+    # Default panel + Cagan-conditional
+    assert "Christensen" in text and "Rumelt" in text and "Eric Ries" in text, \
+        "missing default launch panel"
+    # Cagan absence-handling must reference the actual prompt-file path, not just the name
+    assert "advisors/prompts/marty-cagan.md" in text, \
+        "Cagan absence-handling must check the actual prompt-file path"
+    # Spawn-brief reference
+    assert "spawn-brief-template.md" in text

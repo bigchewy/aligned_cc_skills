@@ -721,7 +721,7 @@ git commit -m "brainstorming: add Authoring mode file with Research sub-flow"
 
 ---
 
-### Task 8: Create modes/planning.md
+### ✅ Task 8: Create modes/planning.md
 
 **Files:**
 - Create: `skills/brainstorming/modes/planning.md`
