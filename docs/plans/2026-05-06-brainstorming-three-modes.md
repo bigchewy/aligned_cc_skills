@@ -476,7 +476,7 @@ git commit -m "brainstorming: add authoring-critique-checklist with 9 criteria"
 
 ---
 
-### Task 5: Create planning-critique-checklist
+### ✅ Task 5: Create planning-critique-checklist
 
 **Files:**
 - Create: `skills/brainstorming/planning-critique-checklist.md`

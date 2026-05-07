@@ -56,3 +56,16 @@ def test_authoring_critique_checklist_structure():
         "v1/v2 scoping", "Code/schema seam", "Decision quality",
     ]:
         assert criterion in text, f"missing criterion: {criterion}"
+
+
+def test_planning_critique_checklist_structure():
+    text = read("skills/brainstorming/planning-critique-checklist.md")
+    assert text.startswith("# Planning Critique Checklist"), "missing top heading"
+    for section in ["## Critique Criteria", "## Critique Output Format", "## Important"]:
+        assert section in text, f"missing {section}"
+    for criterion in [
+        "Opportunity-space clarity", "Inventory completeness", "Sizing realism",
+        "Dependency rigor", "Sequencing logic", "Capacity vs scope",
+        "Spawn-brief quality", "Strategic coherence", "Decision quality",
+    ]:
+        assert criterion in text, f"missing criterion: {criterion}"
