@@ -140,39 +140,11 @@ For each major obstacle identified in Phase 2:
 
 **Visualization (conditional):**
 
-If the design document warrants visual artifacts (process flow diagrams, decision flows, data flow visualizations — most business designs will), start the live visualization:
+If the design document warrants visual artifacts (process flow diagrams, decision flows, data flow visualizations — most business designs will), run the visualization protocol.
 
-1. Read `{base-directory}/references/brainstorm-components.md` for the brand-token contract and component reference. Pay attention to the "Brand Token Injection" section — it specifies how to populate the template's `:root` block — and to the "Templates" section, which names the template file you'll copy in step 3.
-2. Read the project's design tokens so the artifact matches the project's brand, not the aligned plugin's. Find the right design-principles file using this lookup order (use `{project-root}` as resolved during the project scan):
-
-   a. **Project root:** `{project-root}/docs/design/design-principles.md`
-   b. **Monorepo apps:** if (a) is missing, Glob `{project-root}/apps/*/docs/design/design-principles.md`. Same for `{project-root}/packages/*/docs/design/design-principles.md`.
-      - Exactly one match: use it.
-      - Multiple matches: ask the user which app/package this brainstorm targets, then use that one.
-      - Zero matches: continue to (c).
-   c. **Global fallback:** `~/.claude/docs/design/design-principles.md`.
-
-   **Placeholder check.** If the file found in (a), (b), or (c) is a kickstart-generated placeholder — heuristic: under 500 bytes, or contains "This file is a placeholder", or contains "Run `/aligned:create-design-principles`" — treat it as missing, advance to the next lookup step, and surface this warning to the user: *"Your project's `docs/design/design-principles.md` is still a placeholder. The brainstorm visualization will use the aligned plugin's default tokens. Run `/aligned:create-design-principles` to define the project's brand."*
-
-   If no usable file is found at any step, skip this step entirely — the template's built-in defaults will apply.
-
-   Once a usable file is found, extract values per the "Brand Token Injection" / "Resolving project tokens" rules in `brainstorm-components.md`. If those rules' halt-and-ask trigger fires (genuine token-name ambiguity, unmappable brand-specific tokens), present the proposed mapping to the user before continuing to step 3.
-3. **Copy and patch the template.** Read `{base-directory}/references/templates/business-template.html` and Write its contents verbatim to `/tmp/brainstorm-{topic}-{timestamp}/live.html`. Use a timestamp to prevent collision. Then patch: replace `{title}`, `{subtitle}`, and `{context}` with session-specific values; populate the `:root` block at the top of the inline `<style>` with the project tokens you read in step 2 (or leave the built-in defaults if no design-principles file was found); do not change any `var(--color-*)` or `var(--font-*)` references elsewhere in the template — they resolve through `:root`. Append the design sections validated so far. Do not rewrite the template from memory — the file copy is the contract.
-4. Open the file in the default browser using a platform-aware pattern (separate Bash call — no `&&` chaining):
-   `open /tmp/brainstorm-{topic}-{timestamp}/live.html || xdg-open /tmp/brainstorm-{topic}-{timestamp}/live.html`
-   If both commands fail (headless environment), log a warning and continue.
-5. As each subsequent design section is validated, update the HTML file to add the new section's content. Preserve the `:root` block exactly as written in step 3 — do not regenerate it. The browser picks up changes within 15 seconds.
+Read `{base-directory}/references/visualization-protocol.md` and follow it end-to-end (Live phase + Pre-critique snapshot). Use `{base-directory}/references/templates/business-template.html` as the template path.
 
 If the design does not warrant visual artifacts, skip this section entirely and omit the `**Mockups:**` field from the design document header.
-
-**Nested sub-tabs rule:** When a tabbed HTML document is generated, use nested sub-tabs (progressive disclosure) whenever a single tab contains more detail than can be scanned in one view. Top-level tabs for major conceptual sections, sub-tabs within each for natural subdivisions. Each sub-tab holds one focused diagram or content block.
-
-**Pre-critique snapshot:**
-
-If a live visualization was started, copy it to its permanent location before dispatching the critique panel so critics can access it:
-1. Copy `/tmp/brainstorm-{topic}-{timestamp}/live.html` to `docs/mockups/{session-name}.html`
-2. Add `**Mockups:** docs/mockups/{session-name}.html` to the design document header (write AFTER the copy so the file exists at commit time)
-3. The critique panel's `visual-artifacts` config references `docs/mockups/{session-name}.html` — this copy ensures it exists at that path.
 
 **Fact-Check + Critique Panel (mandatory, dynamic selection):**
 
@@ -203,13 +175,7 @@ Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and f
 
 **Step 1 of 3 — Visualization finalization (conditional):**
 
-If a live visualization was started:
-
-**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes, regenerate the HTML at `docs/mockups/{session-name}.html` by re-copying `{base-directory}/references/templates/business-template.html` verbatim, then re-patching from the corrected design. Replace `{title}`, `{subtitle}`, `{context}`. Populate the `:root` block by copying it verbatim from the live visualization at `/tmp/brainstorm-{topic}-{timestamp}/live.html` so the committed artifact stays on-brand. Append the corrected section content using the components reference. Do not rewrite the template from memory — the file copy is the contract.
-
-Only skip regeneration if the design document is unchanged (all critique verdicts were APPROVE with no corrections applied).
-
-**Strip the refresh script:** Apply the strip-script rule from `{base-directory}/references/shared-rules.md` to `docs/mockups/{session-name}.html`.
+If a live visualization was started, apply the Post-critique regeneration section of `{base-directory}/references/visualization-protocol.md`, using `{base-directory}/references/templates/business-template.html` as the template path. The protocol covers regeneration, the skip-if-unchanged condition, and the refresh-script strip in one pass.
 
 If no visualization was generated (design did not warrant visual artifacts), skip this step entirely.
 

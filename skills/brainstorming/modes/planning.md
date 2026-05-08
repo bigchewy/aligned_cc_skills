@@ -177,21 +177,9 @@ After visualization artifacts are generated, add a `**Mockups:**` field to the r
 
 **Visualization (conditional — most planning brainstorms produce dependency-map / sequencing visualizations):**
 
-When the roadmap has structural complexity (multiple waves, dependency map, capacity bar), produce a live visual artifact — typically a dependency map and a wave timeline. For pure-prose roadmaps with two or three items and no meaningful dependency graph, skip visualization.
+When the roadmap has structural complexity (multiple waves, dependency map, capacity bar), run the visualization protocol — typically producing a dependency map and a wave timeline. For pure-prose roadmaps with two or three items and no meaningful dependency graph, skip visualization.
 
-If visualization runs: follow the same procedure as `modes/business.md` After the Design / Visualization, with the planning template substituted at step 3:
-1. Read `{base-directory}/references/brainstorm-components.md` for the brand-token contract and component reference.
-2. Resolve project design tokens via the lookup order in business.md (project root → monorepo apps/packages → global fallback). Apply the placeholder check.
-3. **Copy and patch the template.** Read `{base-directory}/references/templates/planning-template.html` and Write its contents verbatim to `/tmp/brainstorm-{topic}-{timestamp}/live.html`. Then patch `{title}`, `{subtitle}`, `{context}` and the `:root` block per the components reference. Do not rewrite the template from memory — the file copy is the contract.
-4. Open in browser via platform-aware fallback.
-5. Update the file as each phase is validated.
-
-**Pre-critique snapshot:**
-
-Before dispatching the critique panel, copy the live visualization to its permanent location so critics can access it:
-1. Copy `/tmp/brainstorm-{topic}-{timestamp}/live.html` to `docs/mockups/{session-name}.html`
-2. Add `**Mockups:** docs/mockups/{session-name}.html` to the roadmap document header (write AFTER the copy so the file exists at commit time).
-3. The critique panel's `visual-artifacts` config references `docs/mockups/{session-name}.html`.
+If visualization runs: read `{base-directory}/references/visualization-protocol.md` and follow it end-to-end (Live phase + Pre-critique snapshot). Use `{base-directory}/references/templates/planning-template.html` as the template path. The Pre-critique snapshot's `**Mockups:**` field attaches to the roadmap document header (not the portfolio).
 
 **Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
 
@@ -247,13 +235,7 @@ Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and f
 
 **Step 1 of 3 — Visualization finalization (conditional):**
 
-If a live visualization was started:
-
-**Post-critique update** (conditional): If the roadmap or portfolio was modified by fact-check corrections or user-approved critique fixes AND a visualization was produced, regenerate the HTML at `docs/mockups/{session-name}.html` by re-copying `{base-directory}/references/templates/planning-template.html` verbatim, then re-patching from the corrected roadmap. Replace `{title}`, `{subtitle}`, `{context}`. Populate the `:root` block by copying it verbatim from the live visualization at `/tmp/brainstorm-{topic}-{timestamp}/live.html` so the committed artifact stays on-brand. Append the corrected section content using the components reference. Do not rewrite the template from memory — the file copy is the contract.
-
-Only skip regeneration if both files are unchanged (all critique verdicts were APPROVE with no corrections applied) or no visualization was produced.
-
-**Strip the refresh script:** Apply the strip-script rule from `{base-directory}/references/shared-rules.md` to `docs/mockups/{session-name}.html`. Skip if no visualization was produced.
+If a live visualization was started, apply the Post-critique regeneration section of `{base-directory}/references/visualization-protocol.md`, using `{base-directory}/references/templates/planning-template.html` as the template path. The protocol covers regeneration, the skip-if-unchanged condition, and the refresh-script strip in one pass. Skip this step entirely if no visualization was produced.
 
 **Step 2 of 3 — Commit:**
 
