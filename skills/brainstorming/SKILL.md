@@ -135,45 +135,16 @@ Do not wait for the scan to complete before proceeding to Step 3.
 
 ## Step 3: Hand Off to Mode
 
-**If software mode:**
-Read `{base-directory}/modes/software.md` and follow its process.
-The base directory for this skill is `{base-directory}`.
-The critique checklist for this session is at
-`{base-directory}/design-critique-checklist.md`.
-The shared orchestration file is at
-`{base-directory}/../_shared/critique-panel-orchestration.md`.
+Read `{base-directory}/references/shared-rules.md` once now. Its three rules (Path Resolution, Re-reading the project scan, Stripping the live-refresh script) apply to every mode. Mode files do not repeat them.
 
-**If business mode:**
-Read `{base-directory}/modes/business.md` and follow its process.
-The base directory for this skill is `{base-directory}`.
-The critique checklist for this session is at
-`{base-directory}/business-critique-checklist.md`.
-The shared orchestration file is at
-`{base-directory}/../_shared/critique-panel-orchestration.md`.
+Then read the mode file and the critique checklist for the selected mode using the table below. The shared orchestration file is at `{base-directory}/../_shared/critique-panel-orchestration.md` for every mode.
 
-**If research mode:**
-Read `{base-directory}/modes/research.md` and follow its process.
-The base directory for this skill is `{base-directory}`.
-The critique checklist for this session is at
-`{base-directory}/research-critique-checklist.md`.
-The shared orchestration file is at
-`{base-directory}/../_shared/critique-panel-orchestration.md`.
+| Mode      | Mode file                              | Critique checklist                                  |
+| --------- | -------------------------------------- | --------------------------------------------------- |
+| Software  | `{base-directory}/modes/software.md`   | `{base-directory}/design-critique-checklist.md`     |
+| Business  | `{base-directory}/modes/business.md`   | `{base-directory}/business-critique-checklist.md`   |
+| Research  | `{base-directory}/modes/research.md`   | `{base-directory}/research-critique-checklist.md`   |
+| Authoring | `{base-directory}/modes/authoring.md`  | `{base-directory}/authoring-critique-checklist.md`  |
+| Planning  | `{base-directory}/modes/planning.md`   | `{base-directory}/planning-critique-checklist.md`   |
 
-**If authoring mode:**
-Read `{base-directory}/modes/authoring.md` and follow its process.
-The base directory for this skill is `{base-directory}`.
-The critique checklist for this session is at
-`{base-directory}/authoring-critique-checklist.md`.
-The shared orchestration file is at
-`{base-directory}/../_shared/critique-panel-orchestration.md`.
-
-**If planning mode:**
-Read `{base-directory}/modes/planning.md` and follow its process.
-The base directory for this skill is `{base-directory}`.
-The critique checklist for this session is at
-`{base-directory}/planning-critique-checklist.md`.
-The shared orchestration file is at
-`{base-directory}/../_shared/critique-panel-orchestration.md`.
-
-**If the mode file cannot be Read, STOP and tell the user the plugin
-installation may be incomplete.**
+**If the mode file cannot be Read, STOP and tell the user the plugin installation may be incomplete.**

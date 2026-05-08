@@ -2,8 +2,6 @@
 
 # Brainstorming Ideas Into Designs
 
-Within this mode file, `{base-directory}` resolves to the brainstorming skill directory (the router), not `modes/`. See the Path Resolution note in SKILL.md for the resolution procedure.
-
 ## Contents
 
 - Overview
@@ -28,8 +26,6 @@ Start by dispatching a project scan sub-agent to survey the codebase, then ask q
 **Overlap with first business question:** Do not wait for the scan to complete before starting Q&A. Immediately ask your first business question (about intent, scope, or priorities — see business question criteria below). The scan runs in parallel while the user responds. This eliminates dead wait time without skipping context gathering.
 
 **Scan gate:** Before asking any **technical** question or dispatching an Architect auto-consult, the scan MUST have completed and you MUST have reviewed the summary. If the user responds to the first business question before the scan finishes, ask another business question — do not idle. Once the scan completes, incorporate the summary as working context for all subsequent questions.
-
-If a question during the brainstorm requires deeper detail about the project (e.g., how a specific module works, what pattern an existing feature follows), read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring the codebase in the main thread.
 
 **MANDATORY: Ask a minimum of 3 business questions before proposing any approaches or design sections.** Even when the user's request seems fully specified, there are always unstated assumptions about scope, priorities, and constraints. Do not shortcut the Q&A because the problem seems obvious.
 
@@ -147,7 +143,7 @@ The user has delegated technical decision authority to The Architect. The brains
 
 Every brainstorm produces a live visual artifact. After writing the design document and BEFORE the critique round, start the live visualization:
 
-1. Read `skills/brainstorming/references/brainstorm-components.md` for the HTML template and component reference. Pay attention to the "Brand Token Injection" section — it specifies the contract for project-aware visuals.
+1. Read `{base-directory}/references/brainstorm-components.md` for the brand-token contract and component reference. Pay attention to the "Brand Token Injection" section — it specifies how to populate the template's `:root` block — and to the "Templates" section, which names the template file you'll copy in step 3.
 2. Read the project's design tokens so the artifact matches the project's brand, not the aligned plugin's. Find the right design-principles file using this lookup order (use `{project-root}` as resolved during the project scan):
 
    a. **Project root:** `{project-root}/docs/design/design-principles.md`
@@ -162,7 +158,7 @@ Every brainstorm produces a live visual artifact. After writing the design docum
    If no usable file is found at any step, skip this step entirely — the template's built-in defaults will apply.
 
    Once a usable file is found, extract values per the "Brand Token Injection" / "Resolving project tokens" rules in `brainstorm-components.md`. If those rules' halt-and-ask trigger fires (genuine token-name ambiguity, unmappable brand-specific tokens), present the proposed mapping to the user before continuing to step 3.
-3. Write the initial HTML to `/tmp/brainstorm-{topic}-{timestamp}/live.html` using the template. Replace `{title}`, `{subtitle}`, and `{context}` with session-specific values. Populate the `:root` block at the top of the inline `<style>` with the project tokens you read in step 2 (or leave the built-in defaults if no design-principles file was found). Do not change any `var(--color-*)` or `var(--font-*)` references elsewhere in the template — they resolve through `:root`. Use a timestamp (e.g., epoch seconds) to prevent collision if the same topic is brainstormed twice. Populate the initial content with the design sections validated so far.
+3. **Copy and patch the template.** Read `{base-directory}/references/templates/software-template.html` and Write its contents verbatim to `/tmp/brainstorm-{topic}-{timestamp}/live.html`. Use a timestamp (e.g., epoch seconds) to prevent collision if the same topic is brainstormed twice. Then patch: replace `{title}`, `{subtitle}`, and `{context}` with session-specific values; populate the `:root` block at the top of the inline `<style>` with the project tokens you read in step 2 (or leave the built-in defaults if no design-principles file was found); do not change any `var(--color-*)` or `var(--font-*)` references elsewhere in the template — they resolve through `:root`. Append the design sections validated so far. Do not rewrite the template from memory — the file copy is the contract.
 4. Open the file in the default browser using a platform-aware pattern (separate Bash call — no `&&` chaining):
    `open /tmp/brainstorm-{topic}-{timestamp}/live.html || xdg-open /tmp/brainstorm-{topic}-{timestamp}/live.html`
    If both commands fail (headless environment), log a warning and continue — the artifact still gets written.
@@ -239,11 +235,11 @@ Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and f
 
 **Step 1 of 3 — Visualization finalization:**
 
-**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes, fully regenerate the HTML at `docs/mockups/{session-name}.html` from the corrected design using `skills/brainstorming/references/brainstorm-components.md`. Do not surgically edit — do a full rewrite from the corrected design to avoid drift. The regeneration MUST preserve the project's design tokens — copy the `:root` block (lines defining `--color-*` and `--font-*`) verbatim from the live visualization at `/tmp/brainstorm-{topic}-{timestamp}/live.html` so the committed artifact stays on-brand.
+**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes, regenerate the HTML at `docs/mockups/{session-name}.html` by re-copying `{base-directory}/references/templates/software-template.html` verbatim, then re-patching from the corrected design. Replace `{title}`, `{subtitle}`, `{context}`. Populate the `:root` block by copying it verbatim from the live visualization at `/tmp/brainstorm-{topic}-{timestamp}/live.html` so the committed artifact stays on-brand. Append the corrected section content using the components reference. Do not rewrite the template from memory — the file copy is the contract.
 
 Only skip regeneration if the design document is unchanged (all critique verdicts were APPROVE with no corrections applied).
 
-**Strip the refresh script:** Verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in `docs/mockups/{session-name}.html` before stripping. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh.
+**Strip the refresh script:** Apply the strip-script rule from `{base-directory}/references/shared-rules.md` to `docs/mockups/{session-name}.html`.
 
 **Step 2 of 3 — Commit:**
 

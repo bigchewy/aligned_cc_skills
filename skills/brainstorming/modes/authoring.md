@@ -2,8 +2,6 @@
 
 # Brainstorming Content Into Arrangements
 
-Within this mode file, `{base-directory}` resolves to the brainstorming skill directory (the router), not `modes/`. See the Path Resolution note in SKILL.md for the resolution procedure.
-
 ## Contents
 
 - Overview
@@ -237,10 +235,10 @@ Incorporate The Architect's findings into the design's `## Tests required` secti
 
 When the arrangement has structural complexity (sequenced modules, tiered registries, layered curricula, voice transformations across multiple touchpoints), produce a live visual artifact. For pure prose deliverables (a single brand-voice rewrite, a single short knowledge-base entry), skip visualization.
 
-If visualization runs: follow the same procedure as `modes/software.md` After the Design / Visualization, including:
-1. Read `{base-directory}/references/brainstorm-components.md` for the HTML template.
+If visualization runs: follow the same procedure as `modes/software.md` After the Design / Visualization, with the authoring template substituted at step 3:
+1. Read `{base-directory}/references/brainstorm-components.md` for the brand-token contract and component reference.
 2. Resolve project design tokens via the lookup order in software.md (project root → monorepo apps/packages → global fallback). Apply the placeholder check.
-3. Write the initial HTML to `/tmp/brainstorm-{topic}-{timestamp}/live.html`.
+3. **Copy and patch the template.** Read `{base-directory}/references/templates/authoring-template.html` and Write its contents verbatim to `/tmp/brainstorm-{topic}-{timestamp}/live.html`. Then patch `{title}`, `{subtitle}`, `{context}` and the `:root` block per the components reference. Do not rewrite the template from memory — the file copy is the contract.
 4. Open in browser via platform-aware fallback.
 5. Update the file as each design section is validated.
 
@@ -304,11 +302,11 @@ Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and f
 
 **Step 1 of 3 — Visualization finalization:**
 
-**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes AND a visualization was produced, fully regenerate the HTML at `docs/mockups/{session-name}.html` from the corrected design using `{base-directory}/references/brainstorm-components.md`. Do not surgically edit — do a full rewrite from the corrected design to avoid drift. The regeneration MUST preserve the project's design tokens — copy the `:root` block (lines defining `--color-*` and `--font-*`) verbatim from the live visualization at `/tmp/brainstorm-{topic}-{timestamp}/live.html` so the committed artifact stays on-brand.
+**Post-critique update** (conditional): If the design document was modified by fact-check corrections or user-approved critique fixes AND a visualization was produced, regenerate the HTML at `docs/mockups/{session-name}.html` by re-copying `{base-directory}/references/templates/authoring-template.html` verbatim, then re-patching from the corrected design. Replace `{title}`, `{subtitle}`, `{context}`. Populate the `:root` block by copying it verbatim from the live visualization at `/tmp/brainstorm-{topic}-{timestamp}/live.html` so the committed artifact stays on-brand. Append the corrected section content using the components reference. Do not rewrite the template from memory — the file copy is the contract.
 
 Only skip regeneration if the design document is unchanged (all critique verdicts were APPROVE with no corrections applied) or no visualization was produced.
 
-**Strip the refresh script:** Verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in `docs/mockups/{session-name}.html` before stripping. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh. Skip this entire step if no visualization was produced.
+**Strip the refresh script:** Apply the strip-script rule from `{base-directory}/references/shared-rules.md` to `docs/mockups/{session-name}.html`. Skip if no visualization was produced.
 
 **Step 2 of 3 — Commit:**
 

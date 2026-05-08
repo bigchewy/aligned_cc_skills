@@ -2,8 +2,6 @@
 
 # Brainstorming Research Into Synthesis
 
-Within this mode file, `{base-directory}` resolves to the brainstorming skill directory (the router), not `modes/`. See the Path Resolution note in SKILL.md for the resolution procedure.
-
 ## Contents
 
 - Overview
@@ -29,8 +27,6 @@ You MUST complete each phase before proceeding to the next.
 **The router has already dispatched a research-mode project scan.** Results will be available at `/tmp/brainstorm-context-{topic}/project-scan.md` and emphasize knowledge bases, registries, prior research artifacts, and knowledge folders rather than source code. Do not dispatch a second scan.
 
 **Overlap with first scoping question:** Do not wait for the scan to complete before starting Phase 1. Immediately ask your first scoping question. The scan runs in parallel while the user responds. If the user responds before the scan finishes, ask another scoping question — do not idle. Once the scan completes, incorporate the summary as working context for all subsequent questions.
-
-If a question during the brainstorm requires deeper detail about prior research artifacts or knowledge-base contents, read `/tmp/brainstorm-context-{topic}/project-scan.md` for the raw findings rather than re-exploring in the main thread.
 
 **Nothing happens without a clear research question.**
 
