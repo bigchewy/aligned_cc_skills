@@ -62,10 +62,10 @@ format_halt() {
     mcp_unreachable)
       cat <<'EOF'
 The plan declares an MCP tool whose server is not defined in any
-.mcp.json reachable from the worktree.
+.mcp.json reachable from the main repo.
 
 Fix one of:
-  1. Define the server in .mcp.json (worktree, repo root, or ~/.claude/).
+  1. Define the server in .mcp.json (repo root, ~/.claude/, or ~/).
   2. Remove the offending mcp__*__* reference from the plan body and
      regenerate the manifest (writing-plans does this automatically).
 
@@ -88,24 +88,28 @@ EOF
       ;;
     env_var_missing)
       cat <<'EOF'
-The plan declares an env var that is not set in the worktree environment.
+The plan declares an env var that is not exported in your current shell.
+
+Preflight checks the parent shell only — it does not source .env.local.
+Subprocesses (claude -p, build scripts, plain node) inherit your shell's
+exported variables, so the variable must be visible there at the time
+you invoke autopilot.sh.
 
 Fix:
-  Set the variable in your shell, in .env.local (root or per-app), or in
-  the worktree's environment file. The autopilot mirrors per-app env
-  symlinks from the main repo into the worktree.
+  Export the variable in your shell, then re-run:
+    export VAR='value-from-your-.env.local'
+    bash autopilot.sh ...
 
-Then re-run autopilot.sh.
-EOF
-      ;;
-    manifest_drift)
-      cat <<'EOF'
-The plan body references an MCP tool or env var not in the manifest, or
-the manifest declares a tool/var not in the body.
+NOTE: putting the variable only in .env.local without exporting it does
+NOT satisfy this check, even though apps inside the worktree (Next.js,
+Vite) auto-load .env.local at runtime. Preflight verifies the
+shell-inheritance path, which other tools share.
 
-Fix:
-  Re-run writing-plans to regenerate the manifest from the body. Do not
-  hand-edit the front-matter.
+Why we do not suggest `set -a; source .env.local; set +a`: bash's
+`source` treats .env.local as shell syntax, which silently corrupts
+values containing `#` (truncated as comment), unquoted spaces,
+multi-line PEM keys, or shell-special characters — all common in real
+.env.local files. Exporting one value at a time is the safe path.
 EOF
       ;;
     manifest_malformed)
