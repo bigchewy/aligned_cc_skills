@@ -139,7 +139,7 @@ git commit -m "refactor(autopilot): remove check_env_var and env-vars-required p
 
 ---
 
-### Task 3: Remove `env_var_missing` halt reason
+### ✅ Task 3: Remove `env_var_missing` halt reason
 
 **Files:**
 - Modify: `docs/ralph_loops/lib/halt.sh` (the `env_var_missing` case in `format_halt`)

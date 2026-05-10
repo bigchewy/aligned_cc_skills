@@ -14,7 +14,6 @@ HALT_DOC = REPO_ROOT / "skills" / "_shared" / "autopilot-halt-format.md"
 EXPECTED_REASONS = [
     "mcp_unreachable",
     "mcp_tool_not_allowlisted",
-    "env_var_missing",
     "manifest_malformed",
     "uncommitted_main",
     "verify_failed",
@@ -52,14 +51,14 @@ def test_write_halt_creates_sentinel():
         d = Path(d)
         r = _bash(
             f'HALT_PATH="{d}/.autopilot-halt" '
-            f'write_halt env_var_missing preflight "FAKE_VAR is unset"',
+            f'write_halt mcp_unreachable preflight "playwright server undefined"',
             cwd=d,
         )
         assert r.returncode == 0, r.stderr
         sentinel = d / ".autopilot-halt"
         assert sentinel.is_file()
         text = sentinel.read_text()
-        assert "reason: env_var_missing" in text
+        assert "reason: mcp_unreachable" in text
         assert "phase: preflight" in text
 
 
@@ -67,19 +66,12 @@ def test_write_halt_secondary_appends_not_overwrites():
     with tempfile.TemporaryDirectory() as d:
         d = Path(d)
         env = f'HALT_PATH="{d}/.autopilot-halt"'
-        _bash(f'{env} write_halt env_var_missing preflight "first"', cwd=d)
+        _bash(f'{env} write_halt mcp_tool_not_allowlisted preflight "first"', cwd=d)
         _bash(f'{env} write_halt mcp_unreachable preflight "second"', cwd=d)
         text = (d / ".autopilot-halt").read_text()
-        assert "reason: env_var_missing" in text  # first preserved
+        assert "reason: mcp_tool_not_allowlisted" in text  # first preserved
         assert "secondary-halt:" in text  # second appended
         assert "mcp_unreachable" in text
-
-
-def test_format_halt_echoes_canonical_fix():
-    r = _bash('format_halt env_var_missing', cwd=Path("/tmp"))
-    assert r.returncode == 0, r.stderr
-    # Each canonical fix instruction must mention the reason name AND the user action
-    assert "env_var_missing" in r.stdout or "env var" in r.stdout.lower()
 
 
 def test_phase_verify_emits_halt_on_failure():
