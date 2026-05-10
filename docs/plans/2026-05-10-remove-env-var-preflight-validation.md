@@ -192,7 +192,7 @@ git commit -m "refactor(autopilot): remove env_var_missing halt reason"
 
 ---
 
-### Task 4: Drop `env-vars-required` from the manifest schema doc
+### ✅ Task 4: Drop `env-vars-required` from the manifest schema doc
 
 **Files:**
 - Modify: `skills/_shared/plan-manifest-format.md` (schema example, validation section, coherence-check section)

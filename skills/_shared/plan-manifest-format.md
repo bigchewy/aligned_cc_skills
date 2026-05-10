@@ -9,13 +9,10 @@ Plans MAY include an OPTIONAL YAML front-matter block declaring the executor env
 mcp-tools-required:
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_snapshot
-env-vars-required:
-  - SUPABASE_URL
-  - OPENAI_API_KEY
 ---
 ```
 
-Both fields are arrays of strings. Both are optional; an empty list is equivalent to omitting the field. A plan with no front-matter is valid (preflight returns exit 3 = skip).
+The field is an array of strings. It is optional; an empty list is equivalent to omitting the field. A plan with no front-matter is valid (preflight returns exit 3 = skip).
 
 ## Authoring
 
@@ -27,7 +24,7 @@ Preflight applies these probes from the shell that invokes `autopilot.sh`:
 
 **MCP tools.** For each `mcp-tools-required[i]`:
 1. Extract the server prefix (e.g., `mcp__playwright__browser_navigate` → `playwright`).
-2. Walk `.mcp.json` files **upward from `$PROJECT` (the main repo)**: main repo → `$HOME/.claude/` → `$HOME/`. Build the merged server set (later levels do not override earlier). If no `.mcp.json` defines the server prefix, halt with `reason: mcp_unreachable`. The worktree does not yet exist at preflight time; the upward walk starts from the main repo path passed into `check_mcp_tool` (per `phases/preflight.sh:53`).
+2. Walk `.mcp.json` files **upward from `$PROJECT` (the main repo)**: main repo → `$HOME/.claude/` → `$HOME/`. Build the merged server set (later levels do not override earlier). If no `.mcp.json` defines the server prefix, halt with `reason: mcp_unreachable`. The worktree does not yet exist at preflight time; the upward walk starts from the main repo path passed into `check_mcp_tool` (per the check_mcp_tool callsite in phases/preflight.sh).
 3. Read `.claude/settings.local.json` (in the worktree first, then main repo, then `$HOME/.claude/`). Concatenate the `permissions.allow` arrays. If the exact tool string is absent, halt with `reason: mcp_tool_not_allowlisted`.
 
 **Edge cases:**
@@ -36,16 +33,11 @@ Preflight applies these probes from the shell that invokes `autopilot.sh`:
 - Missing `permissions.allow` field: treat as empty array (every tool fails the allowlist check).
 - Missing `settings.local.json`: treat as `{"permissions":{"allow":[]}}`.
 
-**Env vars.** For each `env-vars-required[i]`, probe `[ -n "${VAR:-}" ]` against the shell that invokes `autopilot.sh`. Halt with `reason: env_var_missing` on the first unset variable. Multiple missing variables collapse into one halt sentinel listing all of them in `details:`.
-
-> Authors: a variable that lives only in `.env.local` without being exported will fail this check at preflight; see `lib/halt.sh` `env_var_missing` for the user-facing remediation.
-
 ## Coherence check (Verifier critic)
 
 The writing-plans Verifier runs a deterministic structural diff:
 - Every `mcp__*__*` reference in the plan body MUST appear in `mcp-tools-required`.
 - Every `mcp-tools-required` entry MUST appear at least once in the plan body.
-- Both directions: same rule for `env-vars-required` vs `process.env.*` / `os.environ.*` / shell `${VAR}` references.
 
 **Scope:** the body scan SKIPS:
 - Fenced code blocks (``` ``` `) with language tags `text`, `markdown`, or `yaml` (where examples shouldn't trigger detection)
