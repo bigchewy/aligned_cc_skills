@@ -81,7 +81,7 @@ git commit -m "fix(autopilot): stop preflight from validating env-vars-required"
 
 ---
 
-### Task 2: Remove `check_env_var` and env-var parsing from manifest.sh
+### ✅ Task 2: Remove `check_env_var` and env-var parsing from manifest.sh
 
 > **Ordering:** Task 2 must follow Task 1. Task 1 softens the parse-test assertion so removing env-var parsing here doesn't fail tests for an unrelated reason.
 
