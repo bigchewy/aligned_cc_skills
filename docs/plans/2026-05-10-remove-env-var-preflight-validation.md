@@ -243,7 +243,7 @@ git commit -m "docs(autopilot): drop env-vars-required from plan-manifest schema
 
 ---
 
-### Task 5: Remove env-var scan from writing-plans
+### ✅ Task 5: Remove env-var scan from writing-plans
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (the "Plan Manifest (autonomous authoring)" section, step 2)

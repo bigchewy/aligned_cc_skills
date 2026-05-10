@@ -404,9 +404,8 @@ After the plan body is drafted and verified, generate a YAML front-matter manife
 **Procedure:**
 
 1. Scan the plan body for `mcp__*__*` references using a regex that skips fenced code blocks (``` ``` ```) with language tags `text` / `markdown` / `yaml`, blockquotes (`> ...`), and ``inline code`` spans. Collect the unique tool strings.
-2. Scan for env-var references: `process\.env\.[A-Z_][A-Z0-9_]*`, `os\.environ\[['"]([A-Z_][A-Z0-9_]*)['"]\]`, and shell `\$\{?[A-Z_][A-Z0-9_]*\}?` patterns. Same fenced-block exclusions. Collect unique names.
-3. Prepend the manifest as YAML front-matter at the very top of the plan file (before the `# <Title>` heading). Format per `plan-manifest-format.md`.
-4. If both lists are empty, prepend an empty front-matter block (`---\n---\n`) so preflight detects "manifest present, nothing to check" rather than "no manifest, skip preflight." (This signal is intentional — empty manifest = author confirmed no env requirements.)
+2. Prepend the manifest as YAML front-matter at the very top of the plan file (before the `# <Title>` heading). Format per `plan-manifest-format.md`.
+3. If the MCP list is empty, prepend an empty front-matter block (`---\n---\n`) so preflight detects "manifest present, nothing to check" rather than "no manifest, skip preflight." (This signal is intentional — empty manifest = author confirmed no MCP requirements.)
 
 **Visibility:** The manifest is written autonomously without user confirmation. The user reviews it as part of reading the committed plan. The Verifier critic catches mismatches between manifest and body.
 
