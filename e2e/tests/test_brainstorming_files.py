@@ -76,7 +76,10 @@ def test_research_mode_file_structure():
     text = read("skills/brainstorming/modes/research.md")
     # First line must be the canonical mode-file HTML comment (matches modes/software.md:1)
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
-    assert "Within this mode file, `{base-directory}` resolves to" in text, "missing base-directory note"
+    # Anti-regression: the {base-directory} resolution note was extracted to
+    # references/shared-rules.md; mode files must not re-duplicate it.
+    assert "Within this mode file, `{base-directory}` resolves to" not in text, \
+        "base-directory note should live only in references/shared-rules.md, not be duplicated in mode files"
     # Required process phases per design §Research/Process
     for phase in ["Question scoping", "Corpus scan", "Comparative synthesis", "Skeptic pass", "Ranking"]:
         assert phase in text, f"missing process phase: {phase}"
@@ -90,7 +93,10 @@ def test_research_mode_file_structure():
 def test_authoring_mode_file_structure():
     text = read("skills/brainstorming/modes/authoring.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
-    assert "Within this mode file, `{base-directory}` resolves to" in text
+    # Anti-regression: extracted to references/shared-rules.md by the
+    # visualization-protocol / shared-rules refactor.
+    assert "Within this mode file, `{base-directory}` resolves to" not in text, \
+        "base-directory note should live only in references/shared-rules.md, not be duplicated in mode files"
     # Process phases
     for phase in [
         "Population & constraints",
@@ -166,7 +172,10 @@ def test_skill_md_step1_has_five_signal_sets():
 def test_planning_mode_file_structure():
     text = read("skills/brainstorming/modes/planning.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
-    assert "Within this mode file, `{base-directory}` resolves to" in text
+    # Anti-regression: extracted to references/shared-rules.md by the
+    # visualization-protocol / shared-rules refactor.
+    assert "Within this mode file, `{base-directory}` resolves to" not in text, \
+        "base-directory note should live only in references/shared-rules.md, not be duplicated in mode files"
     # 5 process phases
     for phase in [
         "Opportunity space",
@@ -242,20 +251,45 @@ def test_skill_md_step2_has_per_mode_emphasis():
         assert hint in step2, f"missing per-mode emphasis hint: {hint}"
 
 
-def test_skill_md_step3_has_five_handoff_branches():
+def test_skill_md_step3_uses_table_driven_handoff():
+    """Step 3 was refactored from five literal '**If <mode> mode:**' branches into a
+    single shared-rules read plus a five-row mode/checklist lookup table. Assert the
+    new structure: shared-rules.md is read once, all five modes appear as rows, and
+    each mode's checklist is referenced."""
     text = read("skills/brainstorming/SKILL.md")
     step3_start = text.index("## Step 3")
     step3 = text[step3_start:]
-    # Each mode must have a handoff branch
-    for branch in [
+
+    # Shared-rules.md must be read once (extracted from per-mode duplication)
+    assert "references/shared-rules.md" in step3, \
+        "Step 3 must instruct reading references/shared-rules.md once"
+
+    # Anti-regression: the old per-mode '**If <mode> mode:**' branches must be gone
+    for old_branch in [
         "**If software mode:**",
         "**If business mode:**",
         "**If research mode:**",
         "**If authoring mode:**",
         "**If planning mode:**",
     ]:
-        assert branch in step3, f"missing handoff branch: {branch}"
-    # Each mode points to its checklist file
+        assert old_branch not in step3, \
+            f"Step 3 should be table-driven; stale branch still present: {old_branch}"
+
+    # Each mode appears as a labeled row in the lookup table
+    for mode_label in ["Software", "Business", "Research", "Authoring", "Planning"]:
+        assert mode_label in step3, f"Step 3 table missing mode row: {mode_label}"
+
+    # Each mode's mode file is referenced in the table
+    for mode_file in [
+        "modes/software.md",
+        "modes/business.md",
+        "modes/research.md",
+        "modes/authoring.md",
+        "modes/planning.md",
+    ]:
+        assert mode_file in step3, f"Step 3 table missing mode file: {mode_file}"
+
+    # Each mode's critique checklist is referenced in the table
     for checklist in [
         "design-critique-checklist.md",
         "business-critique-checklist.md",
@@ -264,6 +298,15 @@ def test_skill_md_step3_has_five_handoff_branches():
         "planning-critique-checklist.md",
     ]:
         assert checklist in step3, f"missing checklist reference: {checklist}"
+
+
+def test_shared_rules_owns_base_directory_resolution():
+    """The {base-directory} resolution note was extracted from each mode file into
+    references/shared-rules.md. Assert the canonical home contains the note."""
+    text = read("skills/brainstorming/references/shared-rules.md")
+    assert "{base-directory}" in text, "shared-rules.md must document {base-directory} resolution"
+    assert "brainstorming skill directory" in text or "router" in text, \
+        "shared-rules.md must explain that {base-directory} resolves to the router, not modes/"
 
 
 def test_kickstart_marketing_copy_mentions_five_modes():
