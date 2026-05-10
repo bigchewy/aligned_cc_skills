@@ -9,15 +9,13 @@ set -u
 
 # Globals populated by parse_manifest. Reset on each call.
 MANIFEST_MCP_TOOLS=()
-MANIFEST_ENV_VARS=()
 
 # parse_manifest <plan-file>
 # Exit codes: 0 = manifest parsed, 1 = malformed, 3 = no manifest present.
-# Echoes the parsed entries, one per line, prefixed with "mcp:" or "env:".
+# Echoes the parsed entries, one per line, prefixed with "mcp:".
 parse_manifest() {
   local plan="$1"
   MANIFEST_MCP_TOOLS=()
-  MANIFEST_ENV_VARS=()
 
   [ -f "$plan" ] || { echo "ERROR: plan file not found: $plan" >&2; return 1; }
 
@@ -49,28 +47,14 @@ except yaml.YAMLError as e:
   print("YAML_ERROR", file=sys.stderr); sys.exit(1)
 for t in (d.get("mcp-tools-required") or []):
   print(f"mcp:{t}")
-for v in (d.get("env-vars-required") or []):
-  print(f"env:{v}")
 ' 2>&1)" || { echo "ERROR: malformed YAML" >&2; return 1; }
 
   while IFS= read -r line; do
     case "$line" in
       mcp:*) MANIFEST_MCP_TOOLS+=("${line#mcp:}"); echo "$line" ;;
-      env:*) MANIFEST_ENV_VARS+=("${line#env:}"); echo "$line" ;;
     esac
   done <<< "$parsed"
 
-  return 0
-}
-
-# check_env_var <NAME>
-# Exit 0 if set+nonempty, 2 if unset/empty.
-check_env_var() {
-  local var="$1"
-  local val="${!var:-}"
-  if [ -z "$val" ]; then
-    return 2
-  fi
   return 0
 }
 

@@ -22,7 +22,6 @@ def test_parse_manifest_present():
     r = _bash(f'parse_manifest "{FIX/"plan_with_manifest.md"}"')
     assert r.returncode == 0, r.stderr
     assert "mcp__playwright__browser_navigate" in r.stdout
-    assert "FAKE_TEST_VAR" in r.stdout
 
 
 def test_parse_manifest_absent_returns_skip():
@@ -36,24 +35,6 @@ def test_parse_manifest_malformed_returns_error():
     # Partial/unparseable YAML must NOT silently skip — must error to trigger
     # halt-with-reason: manifest_malformed
     assert "exit=1" in r.stdout, r.stdout + r.stderr
-
-
-def test_validate_env_var_missing():
-    # FAKE_TEST_VAR is not set in the env passed
-    r = _bash(
-        f'parse_manifest "{FIX/"plan_with_manifest.md"}" >/dev/null; '
-        f'check_env_var FAKE_TEST_VAR; echo "exit=$?"',
-        env={"PATH": "/usr/bin:/bin"},
-    )
-    assert "exit=2" in r.stdout, r.stdout + r.stderr
-
-
-def test_validate_env_var_present():
-    r = _bash(
-        'check_env_var FAKE_TEST_VAR; echo "exit=$?"',
-        env={"PATH": "/usr/bin:/bin", "FAKE_TEST_VAR": "x"},
-    )
-    assert "exit=0" in r.stdout, r.stdout + r.stderr
 
 
 def _run_check_mcp_tool(home: str, cwd: str, tool: str) -> subprocess.CompletedProcess:
@@ -112,15 +93,24 @@ def test_check_mcp_tool_ok():
         assert "ok" in r.stdout, r.stdout
 
 
-def test_preflight_halts_on_missing_env_var():
-    """End-to-end: invoke preflight against a fixture plan with an env var
-    requirement that the test env does not satisfy."""
+def test_preflight_passes_when_env_vars_required_unset():
+    """End-to-end: invoke preflight against a fixture plan; verify env-var requirements no longer halt preflight."""
     PREFLIGHT = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "preflight.sh"
     fixture = FIX / "plan_with_manifest.md"
     with tempfile.TemporaryDirectory() as d:
+        # Set up MCP config in HOME so check_mcp_tool finds playwright and treats it as allowlisted.
+        # This isolates the test from the host's real ~/.claude and the fixture's mcp-tools-required entry.
+        Path(d, ".mcp.json").write_text(json.dumps({
+            "mcpServers": {"playwright": {"command": "npx"}}
+        }))
+        Path(d, ".claude").mkdir()
+        Path(d, ".claude", "settings.local.json").write_text(json.dumps({
+            "permissions": {"allow": ["mcp__playwright__browser_navigate"]}
+        }))
         # Inherit PATH so parse_manifest can locate a python3 with PyYAML;
-        # explicitly omit FAKE_TEST_VAR so env_var_missing is what trips.
+        # omit FAKE_TEST_VAR — preflight no longer probes env vars, so this is informational.
         env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+               "HOME": d,
                "PROJECT": d, "PLAN_FILE": str(fixture),
                "HALT_PATH": f"{d}/.autopilot-halt", "LOG": f"{d}/.log"}
         env.pop("FAKE_TEST_VAR", None)
@@ -128,8 +118,7 @@ def test_preflight_halts_on_missing_env_var():
             ["bash", str(PREFLIGHT)], capture_output=True, text=True,
             env=env, cwd=d,
         )
-        # FAKE_TEST_VAR is not set → halt with env_var_missing → exit 2
-        assert r.returncode == 2, f"preflight should halt (exit 2), got {r.returncode}: {r.stderr}"
+        # Preflight no longer validates env vars → returncode 0, no halt sentinel written.
+        assert r.returncode == 0, f"preflight should pass (exit 0), got {r.returncode}: {r.stderr}"
         sentinel = Path(d) / ".autopilot-halt"
-        assert sentinel.is_file(), "preflight must write .autopilot-halt"
-        assert "env_var_missing" in sentinel.read_text()
+        assert not sentinel.exists(), "preflight must NOT write .autopilot-halt when env vars are unset"

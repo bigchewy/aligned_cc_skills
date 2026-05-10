@@ -86,32 +86,6 @@ Fix one of:
 Then re-run autopilot.sh.
 EOF
       ;;
-    env_var_missing)
-      cat <<'EOF'
-The plan declares an env var that is not exported in your current shell.
-
-Preflight checks the parent shell only — it does not source .env.local.
-Subprocesses (claude -p, build scripts, plain node) inherit your shell's
-exported variables, so the variable must be visible there at the time
-you invoke autopilot.sh.
-
-Fix:
-  Export the variable in your shell, then re-run:
-    export VAR='value-from-your-.env.local'
-    bash autopilot.sh ...
-
-NOTE: putting the variable only in .env.local without exporting it does
-NOT satisfy this check, even though apps inside the worktree (Next.js,
-Vite) auto-load .env.local at runtime. Preflight verifies the
-shell-inheritance path, which other tools share.
-
-Why we do not suggest `set -a; source .env.local; set +a`: bash's
-`source` treats .env.local as shell syntax, which silently corrupts
-values containing `#` (truncated as comment), unquoted spaces,
-multi-line PEM keys, or shell-special characters — all common in real
-.env.local files. Exporting one value at a time is the safe path.
-EOF
-      ;;
     manifest_malformed)
       cat <<'EOF'
 The plan's YAML front-matter is present but unparseable.

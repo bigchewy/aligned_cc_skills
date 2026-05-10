@@ -17,7 +17,7 @@ def test_manifest_format_doc_exists():
     p = SHARED_DIR / "plan-manifest-format.md"
     assert p.is_file(), "skills/_shared/plan-manifest-format.md must exist"
     text = _read(p)
-    for field in ("mcp-tools-required", "env-vars-required"):
+    for field in ("mcp-tools-required",):
         assert field in text, f"manifest doc must specify field: {field}"
     # Must explain the .mcp.json resolution and the settings.local.json check
     assert ".mcp.json" in text

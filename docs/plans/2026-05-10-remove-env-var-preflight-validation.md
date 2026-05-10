@@ -26,7 +26,7 @@ None. All work is repo-internal.
 
 ---
 
-### Task 1: Stop preflight from validating env vars
+### ✅ Task 1: Stop preflight from validating env vars
 
 **Files:**
 - Modify: `docs/ralph_loops/phases/preflight.sh` (the env-var validation loop)
@@ -81,7 +81,7 @@ git commit -m "fix(autopilot): stop preflight from validating env-vars-required"
 
 ---
 
-### Task 2: Remove `check_env_var` and env-var parsing from manifest.sh
+### ✅ Task 2: Remove `check_env_var` and env-var parsing from manifest.sh
 
 > **Ordering:** Task 2 must follow Task 1. Task 1 softens the parse-test assertion so removing env-var parsing here doesn't fail tests for an unrelated reason.
 
@@ -139,7 +139,7 @@ git commit -m "refactor(autopilot): remove check_env_var and env-vars-required p
 
 ---
 
-### Task 3: Remove `env_var_missing` halt reason
+### ✅ Task 3: Remove `env_var_missing` halt reason
 
 **Files:**
 - Modify: `docs/ralph_loops/lib/halt.sh` (the `env_var_missing` case in `format_halt`)
@@ -192,7 +192,7 @@ git commit -m "refactor(autopilot): remove env_var_missing halt reason"
 
 ---
 
-### Task 4: Drop `env-vars-required` from the manifest schema doc
+### ✅ Task 4: Drop `env-vars-required` from the manifest schema doc
 
 **Files:**
 - Modify: `skills/_shared/plan-manifest-format.md` (schema example, validation section, coherence-check section)
@@ -243,7 +243,7 @@ git commit -m "docs(autopilot): drop env-vars-required from plan-manifest schema
 
 ---
 
-### Task 5: Remove env-var scan from writing-plans
+### ✅ Task 5: Remove env-var scan from writing-plans
 
 **Files:**
 - Modify: `skills/writing-plans/SKILL.md` (the "Plan Manifest (autonomous authoring)" section, step 2)

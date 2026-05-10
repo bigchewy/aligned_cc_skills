@@ -37,7 +37,6 @@ Required fields: `reason`, `phase`, `log`, `next-action`. Optional: `fix-instruc
 |---|---|---|
 | `mcp_unreachable` | preflight | Plan declares an MCP tool whose server is not defined in any reachable `.mcp.json` |
 | `mcp_tool_not_allowlisted` | preflight | Server defined; tool string not in `permissions.allow` |
-| `env_var_missing` | preflight | Plan declares an env var that is unexported in the shell that invokes `autopilot.sh` |
 | `manifest_malformed` | preflight | Front-matter present but unparseable / missing required fields |
 | `uncommitted_main` | worktree | Main has uncommitted changes that block `git merge main` into the worktree |
 | `verify_failed` | verify | Tests / build / eval failed |
