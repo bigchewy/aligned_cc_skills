@@ -26,7 +26,7 @@ None. All work is repo-internal.
 
 ---
 
-### Task 1: Stop preflight from validating env vars
+### ✅ Task 1: Stop preflight from validating env vars
 
 **Files:**
 - Modify: `docs/ralph_loops/phases/preflight.sh` (the env-var validation loop)

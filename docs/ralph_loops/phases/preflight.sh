@@ -40,14 +40,6 @@ case "$PARSE_EXIT" in
     ;;
 esac
 
-# Validate env vars
-for var in "${MANIFEST_ENV_VARS[@]+"${MANIFEST_ENV_VARS[@]}"}"; do
-  if ! check_env_var "$var"; then
-    write_halt env_var_missing preflight "Variable '$var' is unset or empty"
-    exit 2
-  fi
-done
-
 # Validate MCP tools — walk from worktree CWD upward
 for tool in "${MANIFEST_MCP_TOOLS[@]+"${MANIFEST_MCP_TOOLS[@]}"}"; do
   RESULT="$(check_mcp_tool "$tool" "${PROJECT:-$PWD}")"
