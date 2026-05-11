@@ -178,7 +178,7 @@ If the user agrees, file each finding using the `{base-directory}/../_shared/kan
 | `file:line_range` | Location |
 | `observed` | Observed |
 | _(derive: inverse of observed, one sentence)_ | Expected |
-| `CRITICAL` severity → `HIGH` | Severity (KB has no CRITICAL level) |
+| `severity` (CRITICAL / HIGH / MEDIUM / LOW) | Severity |
 | `dimension` | Type as `audit-{dimension}` |
 | `"codebase-audit"` | Discovered during |
 | `"Audit finding — requires separate assessment before fixing"` | Why out of scope |

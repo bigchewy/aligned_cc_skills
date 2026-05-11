@@ -8,3 +8,4 @@
 - **Why out of scope:** Simplification opportunity — not a bug or part of the current task
 - **Severity:** HIGH
 - **Created:** 2026-04-13
+- **Resolved:** 2026-05-11 — Removed unused `OUTPUT_PATH` const, removed no-op `--dry-run` flag, renamed pass1-only output to `PASS1_DRAFT_PATH`, updated header comment.

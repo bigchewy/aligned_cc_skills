@@ -1,0 +1,16 @@
+{
+  "_comment": "Outlier frameworks whose prompt.md first line doesn't match the standard 'You are X, guiding someone through Y - purpose' format. Shared source of truth for scripts/generate-framework-registry.mjs and e2e/tests/test_registry_schemas.py. add-framework enforces the standard format for new entries, so this is a known closed set.",
+  "outliers": {
+    "landing-page-assembly": { "name": "Landing Page Assembly", "advisor": "oli-gardner" },
+    "design-principles": { "name": "Design Principles", "advisor": "steve-jobs" },
+    "do-things-that-dont-scale": { "name": "Do Things That Don't Scale", "advisor": "paul-graham" },
+    "earnestness-filter": { "name": "Earnestness Filter", "advisor": "paul-graham" },
+    "enneagram-typing": { "name": "Enneagram Typing", "advisor": "richard-schwartz" },
+    "focus-through-saying-no": { "name": "Focus Through Saying No", "advisor": "steve-jobs" },
+    "personal-context-intake": { "name": "Personal Context Intake", "advisor": "wise-eric" },
+    "professional-context-intake": { "name": "Professional Context Intake", "advisor": "wise-eric" },
+    "quadrinity": { "name": "Quadrinity Process", "advisor": "jim-dethmer" },
+    "the-story-so-far": { "name": "The Story So Far", "advisor": "wise-eric" },
+    "6-step-process": { "name": "6-Step Process", "advisor": "wise-eric" }
+  }
+}

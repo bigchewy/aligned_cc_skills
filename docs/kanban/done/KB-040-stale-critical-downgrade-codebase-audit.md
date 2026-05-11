@@ -8,3 +8,4 @@
 - **Why out of scope:** Simplification opportunity surfaced by code-simplifier scan after Wave 2 Kanban deduplication — not part of the current plan's task set.
 - **Severity:** HIGH
 - **Created:** 2026-04-16
+- **Resolved:** 2026-05-11 — Removed the `CRITICAL → HIGH` downgrade in `skills/codebase-audit/SKILL.md` mapping table; severity now passes through unchanged (CRITICAL/HIGH/MEDIUM/LOW), matching `skills/_shared/kanban-entry-format.md`.

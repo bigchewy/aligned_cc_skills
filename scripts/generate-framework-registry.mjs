@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// generate-framework-registry.mjs — Generates frameworks/registry.yaml from prompt.md files.
-// Run: node scripts/generate-framework-registry.mjs [--pass1-only] [--dry-run]
+// generate-framework-registry.mjs — Generates frameworks/registry.draft.yaml from prompt.md files.
+// Run: node scripts/generate-framework-registry.mjs [--pass1-only]
+// Output is always a draft — review, then rename to registry.yaml.
 // Requires: ANTHROPIC_API_KEY environment variable (for Pass 2 LLM classification)
 
 import fs from 'fs';
@@ -10,25 +11,16 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
 const FRAMEWORKS_DIR = path.join(REPO_ROOT, 'frameworks');
-const OUTPUT_PATH = path.join(REPO_ROOT, 'frameworks', 'registry.yaml');
 const DRAFT_PATH = path.join(REPO_ROOT, 'frameworks', 'registry.draft.yaml');
+const PASS1_DRAFT_PATH = path.join(REPO_ROOT, 'frameworks', 'registry.draft.pass1.yaml');
 const BATCH_SIZE = 10;
 
-// 11 outlier frameworks that don't match the standard first-line format.
-// This is a known, closed set — add-framework enforces the standard format for new entries.
-const OUTLIER_MAP = {
-  'landing-page-assembly': { name: 'Landing Page Assembly', advisor: 'oli-gardner' },
-  'design-principles': { name: 'Design Principles', advisor: 'steve-jobs' },
-  'do-things-that-dont-scale': { name: "Do Things That Don't Scale", advisor: 'paul-graham' },
-  'earnestness-filter': { name: 'Earnestness Filter', advisor: 'paul-graham' },
-  'enneagram-typing': { name: 'Enneagram Typing', advisor: 'richard-schwartz' },
-  'focus-through-saying-no': { name: 'Focus Through Saying No', advisor: 'steve-jobs' },
-  'personal-context-intake': { name: 'Personal Context Intake', advisor: 'wise-eric' },
-  'professional-context-intake': { name: 'Professional Context Intake', advisor: 'wise-eric' },
-  'quadrinity': { name: 'Quadrinity Process', advisor: 'jim-dethmer' },
-  'the-story-so-far': { name: 'The Story So Far', advisor: 'wise-eric' },
-  '6-step-process': { name: '6-Step Process', advisor: 'gabor-mate' },
-};
+// Outlier frameworks that don't match the standard first-line format.
+// Shared source of truth: frameworks/_outliers.json (also read by e2e/tests/test_registry_schemas.py).
+// add-framework enforces the standard format for new entries, so this is a known closed set.
+const OUTLIER_MAP = JSON.parse(
+  fs.readFileSync(path.join(REPO_ROOT, 'frameworks', '_outliers.json'), 'utf8')
+).outliers;
 
 // Starter categories to guide LLM classification (free-form, not enforced as enum)
 const STARTER_CATEGORIES = [
@@ -120,6 +112,10 @@ function pass1() {
         .replace(/^dr\.\s*/i, '')
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '');
+
+      if (!purpose) {
+        console.warn(`WARNING: ${slug} — first line uses period-terminated form; purpose will be empty. Use " — purpose" form in prompt.md first line.`);
+      }
     }
 
     const entry = { id: slug, name, advisor, purpose };
@@ -259,21 +255,18 @@ function pass3(frameworks, outputPath) {
 // Main
 const args = process.argv.slice(2);
 const pass1Only = args.includes('--pass1-only');
-const dryRun = args.includes('--dry-run');
 
 const frameworks = pass1();
 
 if (pass1Only) {
   console.log('\n--pass1-only: Skipping Pass 2 (LLM classification)');
-  const outPath = dryRun ? DRAFT_PATH.replace('.yaml', '.pass1.yaml') : DRAFT_PATH;
-  pass3(frameworks, outPath);
+  pass3(frameworks, PASS1_DRAFT_PATH);
   process.exit(0);
 }
 
 pass2(frameworks).then(enriched => {
-  const outPath = dryRun ? DRAFT_PATH : DRAFT_PATH;
-  pass3(enriched, outPath);
-  console.log(`\nDraft written to ${outPath}`);
+  pass3(enriched, DRAFT_PATH);
+  console.log(`\nDraft written to ${DRAFT_PATH}`);
   console.log('Review the draft, then rename to registry.yaml when satisfied.');
 }).catch(e => {
   console.error(`Build failed: ${e.message}`);

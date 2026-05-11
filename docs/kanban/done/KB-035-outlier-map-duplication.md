@@ -8,3 +8,4 @@
 - **Why out of scope:** Simplification opportunity — not a bug or part of the current task
 - **Severity:** HIGH
 - **Created:** 2026-04-13
+- **Resolved:** 2026-05-11 — Extracted to shared `frameworks/_outliers.json`. Script and test both read from it. RCA caught an existing divergence: script's OUTLIER_MAP had `6-step-process → gabor-mate` while registry and test agreed on `wise-eric` — proved the bug. Shared file uses canonical `wise-eric`.

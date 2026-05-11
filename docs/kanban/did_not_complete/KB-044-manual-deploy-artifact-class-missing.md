@@ -11,3 +11,4 @@
 - **Why out of scope:** Fix spans 3 skills + new shared catalog; requires design, task plan, and test-fixture project. See design doc in `docs/plans/2026-04-20-manual-deploy-artifacts-rca-design.md`.
 - **Severity:** HIGH
 - **Created:** 2026-04-20
+- **Closed without action:** 2026-05-11 — Out of scope for kanban-resolve. Fix spans 3 skills + new shared catalog and requires a dedicated implementation plan; tracked separately via the existing design doc at `docs/plans/2026-04-20-manual-deploy-artifacts-rca-design.md`.

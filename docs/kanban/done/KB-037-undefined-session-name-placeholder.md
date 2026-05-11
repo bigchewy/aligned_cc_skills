@@ -8,3 +8,4 @@
 - **Why out of scope:** Simplification opportunity — not a bug or part of the current task
 - **Severity:** HIGH
 - **Created:** 2026-04-15
+- **Resolved:** 2026-05-11 — Defined derivation rule in `skills/brainstorming/references/visualization-protocol.md`: `{session-name}` = `YYYY-MM-DD-{topic}`, matching the design document base name. Added a worked example so agents construct a deterministic path.

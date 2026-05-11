@@ -8,3 +8,4 @@
 - **Why out of scope:** Simplification opportunity — not a bug or part of the current task
 - **Severity:** HIGH
 - **Created:** 2026-04-15
+- **Resolved:** 2026-05-11 — RCA: already resolved by a prior commit. `skills/brainstorming/references/visualization-protocol.md` exists (84 lines); both mode files now contain only short pointers to it via `Read {base-directory}/references/visualization-protocol.md`. No verbatim duplication of the four-step sequence remains.

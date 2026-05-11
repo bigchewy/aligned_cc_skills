@@ -8,3 +8,4 @@
 - **Why out of scope:** Data quality issue requiring manual review or script enhancement — not part of the current merge decision
 - **Severity:** HIGH
 - **Created:** 2026-04-13
+- **Resolved:** 2026-05-11 — Data already backfilled (0 empty purpose fields in current registry). Added `test_purpose_is_non_empty` and `test_use_when_is_non_empty` to `e2e/tests/test_registry_schemas.py` to prevent regression. Added warning in `scripts/generate-framework-registry.mjs` when period-terminated first line produces empty purpose.

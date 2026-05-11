@@ -1,5 +1,6 @@
 # e2e/tests/test_registry_schemas.py
 
+import json
 from pathlib import Path
 
 import pytest
@@ -9,6 +10,18 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 ADVISOR_REQUIRED_FIELDS = {"id", "name", "summary", "prompt", "domains"}
 FRAMEWORK_REQUIRED_FIELDS = {"id", "name", "advisor", "purpose", "category", "domains", "use_when"}
+
+
+def _load_outliers():
+    """Shared source of truth for outlier frameworks, also read by generate-framework-registry.mjs."""
+    with open(REPO_ROOT / "frameworks" / "_outliers.json") as f:
+        return json.load(f)["outliers"]
+
+
+OUTLIER_PARAMS = [
+    (slug, meta["name"], meta["advisor"])
+    for slug, meta in _load_outliers().items()
+]
 
 
 class TestAdvisorRegistrySchema:
@@ -94,6 +107,22 @@ class TestFrameworkRegistrySchema:
                 f"missing required fields: {missing}"
             )
 
+    def test_purpose_is_non_empty(self, registry):
+        for entry in registry["frameworks"]:
+            purpose = entry.get("purpose", "")
+            assert isinstance(purpose, str) and purpose.strip(), (
+                f"Framework {entry['id']}: 'purpose' must be a non-empty string, "
+                f"got {purpose!r}"
+            )
+
+    def test_use_when_is_non_empty(self, registry):
+        for entry in registry["frameworks"]:
+            use_when = entry.get("use_when", "")
+            assert isinstance(use_when, str) and use_when.strip(), (
+                f"Framework {entry['id']}: 'use_when' must be a non-empty string, "
+                f"got {use_when!r}"
+            )
+
     def test_domains_is_list(self, registry):
         for entry in registry["frameworks"]:
             assert isinstance(entry["domains"], list), (
@@ -119,21 +148,9 @@ class TestFrameworkRegistrySchema:
             f"frameworks/ has {dir_count} directories with prompt.md"
         )
 
-    @pytest.mark.parametrize("slug,expected_name,expected_advisor", [
-        ("landing-page-assembly", "Landing Page Assembly", "oli-gardner"),
-        ("design-principles", "Design Principles", "steve-jobs"),
-        ("do-things-that-dont-scale", "Do Things That Don't Scale", "paul-graham"),
-        ("personal-context-intake", "Personal Context Intake", "wise-eric"),
-        ("6-step-process", "6-Step Process", "wise-eric"),
-        ("earnestness-filter", "Earnestness Filter", "paul-graham"),
-        ("enneagram-typing", "Enneagram Typing", "richard-schwartz"),
-        ("focus-through-saying-no", "Focus Through Saying No", "steve-jobs"),
-        ("professional-context-intake", "Professional Context Intake", "wise-eric"),
-        ("quadrinity", "Quadrinity Process", "jim-dethmer"),
-        ("the-story-so-far", "The Story So Far", "wise-eric"),
-    ])
+    @pytest.mark.parametrize("slug,expected_name,expected_advisor", OUTLIER_PARAMS)
     def test_outlier_frameworks_have_correct_metadata(self, registry, slug, expected_name, expected_advisor):
-        """Outlier frameworks (hardcoded in generation script) must have correct name and advisor."""
+        """Outlier frameworks (defined in frameworks/_outliers.json) must have correct name and advisor."""
         entry = next((e for e in registry["frameworks"] if e["id"] == slug), None)
         assert entry is not None, f"Outlier framework {slug} not found in registry"
         assert entry["name"] == expected_name, (

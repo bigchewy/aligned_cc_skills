@@ -9,9 +9,9 @@ This protocol governs the live HTML artifact produced during the visualization p
 The invoking mode supplies these values:
 
 - `{mode-template-path}` — absolute path to the mode's template, e.g. `{base-directory}/references/templates/software-template.html`. Each visualizing mode owns its own template; templates may diverge over time.
-- `{topic}` — the brainstorm topic slug.
+- `{topic}` — the brainstorm topic slug (kebab-case).
 - `{timestamp}` — epoch seconds (or another collision-resistant value).
-- `{session-name}` — the kebab-case session name used for the committed mockup at `docs/mockups/{session-name}.html`.
+- `{session-name}` — derived as `YYYY-MM-DD-{topic}` using today's date and the topic slug, matching the design document base name (`docs/plans/YYYY-MM-DD-<topic>-design.md`). For example, a brainstorm on `mockup-deviations` on 2026-05-11 yields `{session-name}` = `2026-05-11-mockup-deviations` and a committed mockup at `docs/mockups/2026-05-11-mockup-deviations.html`. Modes that don't write a design document (e.g., planning's roadmap) must still derive this value from `YYYY-MM-DD-{topic}` for consistency.
 - The validated design sections so far.
 
 ## Live phase
