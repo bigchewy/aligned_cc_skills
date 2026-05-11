@@ -1,2 +1,0 @@
-M	.env.example
-M	src/lib/config.ts

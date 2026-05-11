@@ -28,8 +28,6 @@ defaultTest:
       value: "### M1 migrations"
     - type: contains
       value: "supabase/migrations/022_add_tos_version.sql"
-    - type: contains
-      value: "To exempt a file from the manual-deploy gate"
     - type: regex
       value: "### M1 migrations[\\s\\S]{0,500}supabase/migrations/022_add_tos_version\\.sql"
 

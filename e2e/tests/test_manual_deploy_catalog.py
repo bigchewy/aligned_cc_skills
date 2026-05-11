@@ -113,13 +113,3 @@ def test_entry_yaml_block_has_allowed_fields(entry_id, body, parent_severity):
         f"Entry {entry_id} severity {data['severity']!r} does not match parent "
         f"section {parent_severity!r}"
     )
-    # evidence
-    assert "evidence" in data and isinstance(data["evidence"], dict), (
-        f"Entry {entry_id} missing 'evidence' map"
-    )
-    assert "kind" in data["evidence"] and data["evidence"]["kind"], (
-        f"Entry {entry_id} evidence.kind must be non-empty"
-    )
-    assert "template" in data["evidence"] and data["evidence"]["template"], (
-        f"Entry {entry_id} evidence.template must be non-empty"
-    )

@@ -19,7 +19,7 @@ Read `skills/finishing-a-development-branch/SKILL.md` and execute exactly:
 - **Step 1a: Run the build command** (if defined; skip with note otherwise).
 - **Step 1b: LLM eval (if surface changed).** Apply the surface gate, scenario scoping, and per-scenario `npx promptfoo eval -c <scenario-path> --no-progress-bar` invocation as documented there.
 
-Skip every other step in the finishing skill (deployment audit, manual-deploy gate, merge, cleanup, archival, simplification, architecture updates).
+Skip every other step in the finishing skill (deployment audit, manual-deploy notice, merge, cleanup, archival, simplification, architecture updates).
 
 ## Status File
 

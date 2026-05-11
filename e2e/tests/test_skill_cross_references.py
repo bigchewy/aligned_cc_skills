@@ -1,6 +1,10 @@
-"""Guards the bidirectional authorship-exception link between writing-plans
-and finishing-a-development-branch SKILL.md files. A silent rename of either
-side breaks the contract; this test catches it in CI."""
+"""Guards cross-skill references between writing-plans and
+finishing-a-development-branch SKILL.md files. Previously enforced a
+bidirectional 'Step 0.5 evidence write' authorship-exception link; that
+exception was removed in 0.27.3 when Step 0.5 was downgraded from a
+gate to a non-blocking notice. The test now guards the inverse: neither
+file should resurrect the evidence-mutation language, since plan writes
+are once again centralized in writing-plans."""
 
 from __future__ import annotations
 
@@ -13,34 +17,29 @@ WRITING_PLANS = REPO_ROOT / "skills" / "writing-plans" / "SKILL.md"
 FINISHING = REPO_ROOT / "skills" / "finishing-a-development-branch" / "SKILL.md"
 
 
-WRITING_PLANS_REQUIRED = (
-    "Step 0.5 of ",
-    "finishing-a-development-branch",
+FORBIDDEN_IN_BOTH = (
     "out-of-skill plan mutation",
-)
-
-FINISHING_REQUIRED = (
-    "writing-plans/SKILL.md",
-    "out-of-skill plan mutation",
-    "Step 0.5: Manual Deploy Artifact Gate",
+    "Manual Deploy Artifact Gate",
+    "manual-deploy-ledger",
+    "[evidence pending]",
 )
 
 
-@pytest.mark.parametrize("needle", WRITING_PLANS_REQUIRED)
-def test_writing_plans_mentions_exception(needle):
+@pytest.mark.parametrize("needle", FORBIDDEN_IN_BOTH)
+def test_writing_plans_does_not_reintroduce_gate_language(needle):
     text = WRITING_PLANS.read_text(encoding="utf-8")
-    assert needle in text, (
-        f"writing-plans/SKILL.md is missing required string: {needle!r}. "
-        f"This guards the bidirectional authorship-exception link with "
-        f"finishing-a-development-branch/SKILL.md."
+    assert needle not in text, (
+        f"writing-plans/SKILL.md must not contain {needle!r}. The Step 0.5 "
+        f"evidence gate was removed in 0.27.3; this guard prevents accidental "
+        f"reintroduction."
     )
 
 
-@pytest.mark.parametrize("needle", FINISHING_REQUIRED)
-def test_finishing_mentions_exception(needle):
+@pytest.mark.parametrize("needle", FORBIDDEN_IN_BOTH)
+def test_finishing_does_not_reintroduce_gate_language(needle):
     text = FINISHING.read_text(encoding="utf-8")
-    assert needle in text, (
-        f"finishing-a-development-branch/SKILL.md is missing required string: "
-        f"{needle!r}. This guards the bidirectional authorship-exception link "
-        f"with writing-plans/SKILL.md."
+    assert needle not in text, (
+        f"finishing-a-development-branch/SKILL.md must not contain {needle!r}. "
+        f"The Step 0.5 evidence gate was removed in 0.27.3; this guard prevents "
+        f"accidental reintroduction."
     )
