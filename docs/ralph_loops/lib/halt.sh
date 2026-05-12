@@ -116,16 +116,6 @@ Fix:
   from the verify phase.
 EOF
       ;;
-    human_action_required)
-      cat <<'EOF'
-The Ralph loop encountered a task that requires human action that the
-loop cannot perform autonomously.
-
-Fix:
-  Read the iteration's last output for the specific blocker. After
-  completing the manual step, mark the task ✅ in the plan and re-launch.
-EOF
-      ;;
     phase_crashed)
       cat <<'EOF'
 A phase script exited unexpectedly. The autopilot wrote this halt because

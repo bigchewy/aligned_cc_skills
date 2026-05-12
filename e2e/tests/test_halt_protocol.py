@@ -7,6 +7,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 HALT_SH = REPO_ROOT / "docs" / "ralph_loops" / "lib" / "halt.sh"
 HALT_DOC = REPO_ROOT / "skills" / "_shared" / "autopilot-halt-format.md"
@@ -17,7 +19,6 @@ EXPECTED_REASONS = [
     "manifest_malformed",
     "uncommitted_main",
     "verify_failed",
-    "human_action_required",
     "phase_crashed",
 ]
 
@@ -72,6 +73,24 @@ def test_write_halt_secondary_appends_not_overwrites():
         assert "reason: mcp_tool_not_allowlisted" in text  # first preserved
         assert "secondary-halt:" in text  # second appended
         assert "mcp_unreachable" in text
+
+
+# Stable user-facing substrings — a typo in the corresponding heredoc would
+# fail this and force the author to look at what users actually read.
+@pytest.mark.parametrize("reason,needle", [
+    ("mcp_unreachable", "Define the server in .mcp.json"),
+    ("mcp_tool_not_allowlisted", ".claude/settings.local.json allowlist"),
+    ("manifest_malformed", "must start with `---`"),
+    ("uncommitted_main", "git merge main"),
+    ("verify_failed", ".finish-status"),
+])
+def test_format_halt_echoes_canonical_fix(reason, needle, tmp_path):
+    r = _bash(f"format_halt {reason}", cwd=tmp_path)
+    assert r.returncode == 0, r.stderr
+    assert needle in r.stdout, (
+        f"format_halt {reason} fix-instructions missing expected text: {needle!r}\n"
+        f"actual stdout:\n{r.stdout}"
+    )
 
 
 def test_phase_verify_emits_halt_on_failure():

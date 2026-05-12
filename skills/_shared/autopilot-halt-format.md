@@ -40,7 +40,6 @@ Required fields: `reason`, `phase`, `log`, `next-action`. Optional: `fix-instruc
 | `manifest_malformed` | preflight | Front-matter present but unparseable / missing required fields |
 | `uncommitted_main` | worktree | Main has uncommitted changes that block `git merge main` into the worktree |
 | `verify_failed` | verify | Tests / build / eval failed |
-| `human_action_required` | ralph (in-loop) | Existing `.ralph-human-blocked` aliases here — same protocol, unified surface |
 | `phase_crashed` | any | Phase script exited unexpectedly; `details:` carries last 10 lines of stderr |
 
 ## Centralized fix-instructions (DevEx M7)

@@ -211,11 +211,11 @@ echo ""
 
 # ============================================================
 # Phase 1.5: Preflight (post-plan) — full manifest validation
-# Same banner format as Phase 1; the duplication is intentional —
-# this is a re-run with a now-present plan, not a separate phase.
+# Re-run preflight now that PLAN_FILE exists; banner labels this as
+# phase 1.5 so it's distinguishable from the pre-plan invocation.
 # ============================================================
 
-run_phase 1 6 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
+run_phase 1.5 6 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
 echo ""
 
 # ============================================================
@@ -256,8 +256,11 @@ report_stage 4 6 ralph running
 # Check if all tasks are already complete
 TOTAL_TASKS=0
 DONE_TASKS=0
-TASK_REGEX='^### (✅|🔄)?[[:space:]]*Task[[:space:]]*[0-9]'
-DONE_REGEX='^### ✅[[:space:]]*Task[[:space:]]*[0-9]'
+TASK_REGEX='^### (✅|🔄|⏭️)?[[:space:]]*Task[[:space:]]*[0-9]'
+# A task is "settled" if it is ✅ (completed) or ⏭️ (auto-skipped by the
+# wrapper after MAX_BLOCKED_ITERATIONS consecutive blocks). Both states
+# mean the ralph loop has nothing more to do for that task.
+DONE_REGEX='^### (✅|⏭️)[[:space:]]*Task[[:space:]]*[0-9]'
 if grep -qE "$TASK_REGEX" "$PLAN_IN_WORKTREE" 2>/dev/null; then
   TOTAL_TASKS="$(grep -cE "$TASK_REGEX" "$PLAN_IN_WORKTREE" || true)"
   DONE_TASKS="$(grep -cE "$DONE_REGEX" "$PLAN_IN_WORKTREE" || true)"
@@ -275,21 +278,12 @@ else
   fi
   echo ""
 
-  # Ralph uses positional args + sentinels rather than the run_phase exit-code
-  # contract; wrap it inline to translate .ralph-human-blocked into a
-  # human_action_required halt.
+  # Ralph uses positional args + sentinels rather than the run_phase
+  # exit-code contract. Under the unattended-autopilot policy the loop
+  # never halts for human action; tasks that can't proceed are routed
+  # through the wrapper's BLOCKED + auto-skip path (run-ralph.sh).
   RALPH_EXIT=0
   bash "$RALPH_SCRIPT" "$WORKTREE" "$PLAN_IN_WORKTREE" || RALPH_EXIT=$?
-
-  if [ -f "$WORKTREE/.ralph-human-blocked" ]; then
-    write_halt human_action_required ralph "Ralph loop halted; see $WORKTREE/.ralph-log"
-    rm "$WORKTREE/.ralph-human-blocked"
-    report_stage 4 6 ralph halted
-    echo ""
-    read_halt "$HALT_PATH"
-    echo ""
-    exit 0
-  fi
 
   if [ "$RALPH_EXIT" -ne 0 ]; then
     report_stage 4 6 ralph failed

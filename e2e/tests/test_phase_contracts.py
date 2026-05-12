@@ -5,6 +5,8 @@ text content of bash files."""
 from __future__ import annotations
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 RALPH_DIR = REPO_ROOT / "docs" / "ralph_loops"
 LIB_DIR = RALPH_DIR / "lib"
@@ -105,11 +107,11 @@ def test_autopilot_uses_report_stage_not_banner():
 
 def test_autopilot_uses_strict_task_regex():
     text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
-    # The strict regex only matches task headings (### Task N: or ### ✅ Task N:)
-    assert "^### (✅|🔄)?[[:space:]]*Task[[:space:]]*[0-9]" in text or \
-           "^### (\\u2705|\\U0001f504)?\\\\s*Task" in text, \
-        "autopilot.sh task counting must use a strict task-heading regex, " \
-        "not the coarse '^### ' matcher"
+    # The strict regex matches task headings only (### Task N:, ### ✅ Task N:,
+    # ### 🔄 Task N:, ### ⏭️ Task N:) — not generic '### ' headers.
+    assert "^### (✅|🔄|⏭️)?[[:space:]]*Task[[:space:]]*[0-9]" in text, \
+        "autopilot.sh task counting must use the strict task-heading regex " \
+        "with all three settle markers (✅, 🔄, ⏭️), not the coarse '^### ' matcher"
 
 
 PHASES_DIR = RALPH_DIR / "phases"
@@ -155,6 +157,19 @@ def test_phase_worktree_exists_and_conforms():
     assert "WORKTREE_DIR" in text
     # Emits the structured halt for uncommitted-main case
     assert "uncommitted_main" in text
+
+
+# Per skills/_shared/autopilot-halt-format.md, every phase mapped to a halt
+# reason (other than `phase_crashed`, which the orchestrator handles) must
+# source lib/halt.sh and emit halts via write_halt — never via an inline
+# heredoc. C1 (worktree.sh emitting malformed halts) regressed without
+# tripping the older "uncommitted_main in text" check.
+@pytest.mark.parametrize("phase_name", ["preflight", "worktree", "verify"])
+def test_halt_emitting_phase_sources_lib_halt(phase_name):
+    p = PHASES_DIR / f"{phase_name}.sh"
+    text = _read(p)
+    assert "lib/halt.sh" in text, f"phases/{phase_name}.sh must source lib/halt.sh"
+    assert "write_halt" in text, f"phases/{phase_name}.sh must emit halts via write_halt"
 
 
 def test_phase_mockup_exists_and_conforms():
@@ -207,6 +222,36 @@ def test_autopilot_halts_cleanly_on_exit_2():
 def test_finish_branch_md_is_deleted():
     assert not (RALPH_DIR / "FINISH-BRANCH.md").exists(), \
         "FINISH-BRANCH.md is deleted per design Decision 8"
+
+
+def test_autopilot_ralph_phase_never_halts_for_human():
+    """Per the unattended-autopilot policy, ralph phase status is one of
+    {running, passed, failed, skipped} — never `halted`. The halt
+    translation block (write_halt human_action_required ralph) was
+    removed; "needs human action" routes through 🔄 BLOCKED + auto-skip."""
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    assert "report_stage 4 6 ralph halted" not in text, (
+        "autopilot.sh must not report ralph as 'halted' — the halt path "
+        "was removed; ralph passes (all tasks settled) or fails."
+    )
+    assert ".ralph-human-blocked" not in text, (
+        "autopilot.sh must not check for .ralph-human-blocked."
+    )
+    assert "write_halt human_action_required" not in text, (
+        "autopilot.sh must not emit human_action_required halts."
+    )
+
+
+def test_autopilot_done_regex_recognizes_auto_skipped_tasks():
+    """After the retry-cap rewrite, a settled task may be `### ✅` OR
+    `### ⏭️`. The DONE_REGEX (used to detect "all tasks complete" and
+    skip the ralph loop on re-run) must recognize both."""
+    text = (RALPH_DIR / "autopilot.sh").read_text(encoding="utf-8")
+    # The settled-task regex must include ⏭️ alongside ✅.
+    assert "✅|⏭️" in text or "⏭️|✅" in text, (
+        "autopilot.sh DONE_REGEX must accept both ✅ and ⏭️ as "
+        "settled task markers so re-runs do not retry auto-skipped tasks."
+    )
 
 
 def test_no_active_finish_branch_references():

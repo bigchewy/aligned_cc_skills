@@ -20,6 +20,10 @@ MAX_ITERATIONS="${MAX_ITERATIONS:-50}"
 ITERATION_TIMEOUT="${ITERATION_TIMEOUT:-900}"
 MAX_TIMEOUTS="${MAX_TIMEOUTS:-5}"
 HEARTBEAT_INTERVAL="${HEARTBEAT_INTERVAL:-30}"
+# After this many consecutive 🔄 BLOCKED marks on the same task, the wrapper
+# auto-skips it (rewrites the heading to ⏭️) so the loop never halts for
+# human intervention — autopilot is unattended by contract.
+MAX_BLOCKED_ITERATIONS="${MAX_BLOCKED_ITERATIONS:-3}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EXECUTE="$SCRIPT_DIR/EXECUTE-PLAN.md"
@@ -46,7 +50,7 @@ fi
 PLAN="$(cd "$(dirname "$PLAN")" && pwd)/$(basename "$PLAN")"
 
 cd "$WORKTREE"
-rm -f .ralph-done .ralph-human-blocked
+rm -f .ralph-done
 
 # Log all output to file, with line-buffered tee for real-time terminal output
 LOG="$WORKTREE/.ralph-log"
@@ -95,6 +99,118 @@ handle_signal() {
 trap handle_signal INT TERM
 trap cleanup EXIT
 
+# --- Worktree-drift breadcrumb (debugs stale-worktree misdiagnoses) ---
+
+print_worktree_drift_breadcrumb() {
+  if ! git rev-parse --verify main >/dev/null 2>&1; then
+    return 0
+  fi
+  local ahead behind
+  ahead="$(git log --oneline main..HEAD 2>/dev/null | wc -l | tr -d ' ')"
+  behind="$(git log --oneline HEAD..main 2>/dev/null | wc -l | tr -d ' ')"
+  echo "  [drift] worktree vs main: ahead $ahead, behind $behind"
+}
+
+# --- Wrapper-side BLOCKED counter + auto-skip ---
+# State in $WORKTREE/.ralph-block-counts: one "task=count" per line.
+# After each iteration we bump counts for tasks currently 🔄, rewrite the
+# heading to ⏭️ at the cap, and drop counts for tasks no longer 🔄.
+# Under the unattended-autopilot contract this is the ONLY response path
+# for "agent cannot proceed"; the loop never halts for human action.
+
+BLOCK_COUNTS_FILE=".ralph-block-counts"
+
+current_blocked_tasks() {
+  grep -E '^### 🔄[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null \
+    | sed -E 's/^### 🔄[[:space:]]*Task[[:space:]]*([0-9]+).*/\1/'
+}
+
+get_block_count() {
+  local task="$1"
+  [ -f "$BLOCK_COUNTS_FILE" ] || { echo 0; return; }
+  local n
+  n="$(grep -E "^${task}=" "$BLOCK_COUNTS_FILE" 2>/dev/null | head -1 | cut -d= -f2)"
+  echo "${n:-0}"
+}
+
+auto_skip_task() {
+  local task_num="$1"
+  local count="$2"
+  local tmp="${PLAN}.autoskip.tmp"
+  awk -v n="$task_num" -v count="$count" '
+    BEGIN { in_task = 0; replaced = 0 }
+    {
+      if ($0 ~ /^### 🔄[[:space:]]*Task[[:space:]]*[0-9]+/) {
+        line = $0
+        sub(/^### 🔄[[:space:]]*Task[[:space:]]*/, "", line)
+        if (match(line, /[0-9]+/) && substr(line, RSTART, RLENGTH) == n) {
+          sub(/🔄/, "⏭️")
+          in_task = 1; replaced = 0
+          print; next
+        } else {
+          in_task = 0
+        }
+      } else if (in_task && $0 ~ /^### /) {
+        in_task = 0
+      }
+      if (in_task && !replaced && $0 ~ /^> BLOCKED:/) {
+        body = $0
+        sub(/^> BLOCKED:[[:space:]]*/, "", body)
+        printf "> AUTO-SKIPPED: %s (after %d consecutive blocks)\n", body, count
+        replaced = 1
+        next
+      }
+      print
+    }
+  ' "$PLAN" > "$tmp" && mv "$tmp" "$PLAN"
+  echo "  [auto-skip] Task $task_num: $count consecutive BLOCKED iterations — heading rewritten to ⏭️"
+  git add "$PLAN" 2>/dev/null || true
+  git commit -m "wrapper: auto-skip Task $task_num after $count consecutive blocks" 2>/dev/null || true
+}
+
+apply_blocked_cap() {
+  local task n
+  local tmp="${BLOCK_COUNTS_FILE}.tmp"
+  : > "$tmp"
+  while IFS= read -r task; do
+    [ -z "$task" ] && continue
+    n=$(( $(get_block_count "$task") + 1 ))
+    if [ "$n" -ge "$MAX_BLOCKED_ITERATIONS" ]; then
+      auto_skip_task "$task" "$n"
+    else
+      echo "${task}=${n}" >> "$tmp"
+    fi
+  done < <(current_blocked_tasks | sort -u)
+  mv "$tmp" "$BLOCK_COUNTS_FILE"
+}
+
+# --- All-settled check: write .ralph-done with AUTO-SKIPPED summary ---
+
+write_done_with_summary() {
+  local skipped_count
+  skipped_count="$(grep -cE '^### ⏭️[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || echo 0)"
+  {
+    echo "All tasks settled."
+    if [ "$skipped_count" -gt 0 ]; then
+      echo ""
+      echo "## AUTO-SKIPPED tasks"
+      echo ""
+      echo "$skipped_count task(s) auto-skipped after hitting MAX_BLOCKED_ITERATIONS=$MAX_BLOCKED_ITERATIONS."
+      echo "Headings and AUTO-SKIPPED reasons are in the plan: $PLAN"
+      echo "Verify-phase surfaces them; rewrite a heading prefix to retry."
+    fi
+  } > .ralph-done
+}
+
+check_all_settled_and_write_done() {
+  local total settled
+  total="$(grep -cE '^### (✅|🔄|⏭️)?[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || echo 0)"
+  settled="$(grep -cE '^### (✅|⏭️)[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || echo 0)"
+  if [ "$total" -gt 0 ] && [ "$total" -eq "$settled" ]; then
+    write_done_with_summary
+  fi
+}
+
 # --- Main loop ---
 
 echo "=== Ralph Loop Started ==="
@@ -114,6 +230,7 @@ while :; do
   fi
 
   echo "--- Iteration $ITERATION starting ($(date '+%H:%M:%S')) ---"
+  print_worktree_drift_breadcrumb
 
   start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
@@ -173,15 +290,11 @@ while :; do
     echo "--- Iteration $ITERATION finished ($(date '+%H:%M:%S')) ---"
   fi
 
-  if [ -f .ralph-human-blocked ]; then
-    rm .ralph-human-blocked
-    echo "=== Ralph Loop Halted — User Action Required ==="
-    echo ""
-    echo "An iteration encountered a task that requires human action."
-    echo "Check the iteration's output above for the specific blocker."
-    echo "After completing the manual step, mark the task ✅ in the plan and re-launch the loop."
-    break
-  fi
+  # Apply wrapper-side BLOCKED cap (rewrites 🔄 → ⏭️ at the cap).
+  apply_blocked_cap
+  # If the cap just settled the last open task, synthesize .ralph-done so
+  # the loop terminates cleanly with the AUTO-SKIPPED summary attached.
+  check_all_settled_and_write_done
 
   if [ -f .ralph-done ]; then
     rm .ralph-done

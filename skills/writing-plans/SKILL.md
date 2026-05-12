@@ -129,6 +129,10 @@ writing-plans MUST NOT produce plan tasks containing language like:
 | "Confirm with user before proceeding" | No conversational surface; loop halts or guesses |
 | "Show user the [output/screenshot/result] and wait" | Headless `claude -p` cannot wait for human input |
 | "User signs off on the design before implementation" | Sign-off happened during brainstorming; not a plan task |
+| "STOP and surface to the user" / "STOP, the cleanup should not proceed" | Mid-task halt sentinel; loop is unattended by contract |
+| "Halt the autopilot" / "Halt the loop" / "Halting loop." | Authors the loop's own halt — the very contract violation |
+| "Write `.ralph-human-blocked`" / "touch `.ralph-human-blocked`" | Halt sentinel deleted in May 2026; reintroducing it is forbidden |
+| "Decision needed from the user" / "User must choose between A/B/C" | Mid-pipeline choice ≡ mid-pipeline halt |
 
 The pattern is "task body asks for *judgment* mid-pipeline." NOT banned: machine checks (mockup fidelity, eval scoring, verify gate are all machine-judged).
 
@@ -136,12 +140,13 @@ The pattern is "task body asks for *judgment* mid-pipeline." NOT banned: machine
 
 - **Prerequisites (before Task 1)** — execution work the user does to unblock autopilot.
 - **Manual Steps (Post-Automation)** — execution work the user does after autopilot completes.
-- **Halt-with-reason (`.autopilot-halt`)** — environment failures the executor cannot resolve.
+- **Halt-with-reason (`.autopilot-halt`)** — environment failures the *non-LLM phase scripts* (preflight, worktree, verify) cannot resolve. Phase scripts emit halts via `write_halt`; plan task bodies must never instruct the LLM to do this.
+- **BLOCKED retry (`🔄`)** — task bodies MAY tell the LLM to mark a task `🔄 BLOCKED` and exit when it can't proceed. The wrapper retries, then auto-skips after `MAX_BLOCKED_ITERATIONS` (default 3) consecutive blocks. This is the correct way to say "this task might not always succeed."
 - **End-of-autopilot review** — the user reviews everything at the end.
 
 ### Enforcement
 
-The Verifier critic flags any task body containing "human review", "user verifies", "review the [UI/interface/mockup/output]", "wait for user", "confirm with user", "before proceeding ask", "user signs off", "get user approval", or semantically equivalent language as HIGH severity. Suggested fix: relocate to Manual Steps (Post-Automation) if it's real verification work; remove if it's a gratuitous gate.
+The Verifier critic flags any task body containing "human review", "user verifies", "review the [UI/interface/mockup/output]", "wait for user", "confirm with user", "before proceeding ask", "user signs off", "get user approval", "STOP and surface", "halt the autopilot", "halt the loop", "halting loop", ".ralph-human-blocked", "decision needed from the user", or semantically equivalent language as HIGH severity. Suggested fix: relocate to Manual Steps (Post-Automation) if it's real verification work; replace with `🔄 BLOCKED` retry if it's a runtime "might not succeed" case; remove if it's a gratuitous gate.
 
 Exemption: Prerequisites, Manual Steps (Post-Automation), and Decision Log sections — these sections are explicitly user-facing and not part of the autopilot's task flow. Task bodies are not exempt regardless of where in the plan they sit.
 

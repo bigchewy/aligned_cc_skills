@@ -2,6 +2,8 @@
 
 ⚠️ SINGLE-TASK RULE: Execute exactly ONE task, then EXIT. No exceptions.
 
+⚠️ UNATTENDED MODE: You are running unattended under autopilot. Never request human action. Never write halt sentinels. If a task cannot complete in this iteration — for ANY reason, including needing human action no agent can perform — mark it 🔄 BLOCKED and exit. The wrapper auto-skips after MAX_BLOCKED_ITERATIONS (default 3) consecutive blocks and surfaces skipped items in the final verify-phase report. There is no mid-run user-action surface.
+
 You are executing an implementation plan one task at a time.
 Each invocation handles ONE task, then stops. The loop handles repetition.
 
@@ -10,10 +12,10 @@ Each invocation handles ONE task, then stops. The loop handles repetition.
 Do NOT read the entire plan file. Instead, use Grep to find task headings:
 
 ```
-Grep pattern="^### (✅|🔄)?\s*\d" path="<plan-file>" output_mode="content" -n=true
+Grep pattern="^### (✅|🔄|⏭️)?\s*\d" path="<plan-file>" output_mode="content" -n=true
 ```
 
-This matches only numbered task headings (e.g., `### 1. Setup auth`, `### ✅ 2. Add routes`) and ignores non-task headings like `### Notes` or `### Dependencies`. Find the first heading that does NOT contain ✅. If a task is marked 🔄, resume it (previous iteration may have failed mid-task).
+This matches only numbered task headings (e.g., `### 1. Setup auth`, `### ✅ 2. Add routes`) and ignores non-task headings like `### Notes` or `### Dependencies`. Find the first heading that does NOT contain ✅ AND does NOT contain ⏭️. If a task is marked 🔄, resume it (previous iteration may have failed mid-task; the wrapper tracks consecutive blocks). Skip over ⏭️ tasks — those were auto-skipped by the wrapper after hitting the BLOCKED cap; only the user can re-enable them by rewriting the heading.
 
 Then use Read with offset and limit to read ONLY that task's section — from its heading line to just before the next `### ` heading. For example, if your task starts at line 45 and the next heading is at line 80:
 
@@ -23,25 +25,24 @@ Read file_path="<plan-file>" offset=45 limit=35
 
 Do NOT read the entire plan. Large plans bloat context and cause you to process multiple tasks.
 
-## Sentinels
+## Sentinel
 
-Two sentinels signal `run-ralph.sh` to halt. Both are written into the worktree root (the same directory `run-ralph.sh` cd's into and checks):
-- `.ralph-done` — every task heading contains ✅; work is complete
-- `.ralph-human-blocked` — a task requires human action; agent cannot proceed
+One sentinel signals `run-ralph.sh` that work is complete:
+- `.ralph-done` — every task heading is ✅ (complete) or ⏭️ (auto-skipped after MAX_BLOCKED_ITERATIONS blocks)
 
-Step 2 covers when to write `.ralph-done`. The Rules section covers when to write `.ralph-human-blocked`.
+Step 2 covers when to write `.ralph-done`.
 
-If the loop is interrupted (Ctrl+C, SIGTERM) after a sentinel was written but before `run-ralph.sh` could observe it, the sentinel stays on disk. The next launch's startup cleanup removes both sentinels — this is intentional, not a bug. Re-launching from a clean checkpoint is the correct recovery path.
+If the loop is interrupted (Ctrl+C, SIGTERM) after the sentinel was written but before `run-ralph.sh` could observe it, the sentinel stays on disk. The next launch's startup cleanup removes it — this is intentional, not a bug. Re-launching from a clean checkpoint is the correct recovery path.
 
-## Step 2: If all tasks are complete
+## Step 2: If all tasks are settled
 
-If every task heading contains ✅, write the sentinel and stop:
+If every task heading contains ✅ or ⏭️, write the sentinel and stop:
 
 ```bash
 touch .ralph-done
 ```
 
-Say "All tasks complete!" and exit.
+Say "All tasks settled!" and exit. (✅ = completed; ⏭️ = auto-skipped by wrapper after BLOCKED cap. Either way, no further iteration is needed.)
 
 ## Step 3: Execute the task
 
@@ -74,19 +75,13 @@ Your job for this invocation is finished. The loop will start a new invocation f
 - ⚠️ ONE task per invocation — this is the #1 failure mode and is repeated intentionally
 - Read skill files as needed for patterns and conventions
 - Use sub-agents for heavy codebase research to keep context lean
-- If a task fails mid-execution and a future iteration could resolve it (transient error, partial state):
-  - Mark it 🔄 in the plan file
-  - Add `> BLOCKED: [description of issue]` below the task heading
+- If a task cannot complete in this iteration — for ANY reason — mark it 🔄 BLOCKED and exit. This covers BOTH transient failures (mid-execution error, partial state) AND needs-human cases (paid API calls, manual Dashboard/UI work, OAuth consent, manual paste from external system):
+  - Mark it 🔄 in the plan file (replace the task heading prefix)
+  - Add `> BLOCKED: [one-line reason]` below the task heading
   - Commit the plan file update
   - Exit. The next iteration will retry.
-
-- If a task requires human action that no agent can perform (paid API calls, manual Dashboard/UI work, OAuth consent, manual paste from an external system):
-  - Do NOT modify the task heading
-  - Do NOT make a marker-only commit
-  - Do NOT report "Task N complete." — the task is not complete
-  - Write the human-blocker sentinel: `touch .ralph-human-blocked`
-  - Output: "Task N requires human action: [one-line reason]. Halting loop."
-  - Exit.
+  - After MAX_BLOCKED_ITERATIONS (default 3) consecutive 🔄 marks on the same task, the wrapper rewrites the heading to `### ⏭️ Task N: <title>` and continues. The user reviews ⏭️ tasks in the final verify-phase report — there is no mid-run halt.
+  - NEVER write halt sentinel files. NEVER print messages claiming the loop is stopping. NEVER request human action. The autopilot contract is unattended; mid-run user action is forbidden by design.
 - Do NOT run /aligned:finishing-a-development-branch — the user will handle finishing after the loop completes
 - Do NOT modify tasks you are not currently executing
 - ⚠️ FINAL REMINDER: After completing one task and committing, output "Task N complete." and EXIT. Do not continue.
