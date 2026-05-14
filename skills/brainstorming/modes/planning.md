@@ -273,6 +273,5 @@ When critiquing an existing roadmap and portfolio (instead of writing one), use 
 - **Cagan is preferred-when-available, not load-bearing** — Default panel (Christensen + Rumelt + Eric Ries) ships without Cagan; Cagan upgrade is silent (no warning when absent)
 - **The Architect joins for codebase-reality only** — Substantive strategy / sizing comes from the strategy panel; The Architect verifies dependency claims against the codebase, not the strategy
 - **Portfolio is brainstorm-spawning** — There is no `/aligned:writing-plans` follow-on against the portfolio itself; each item brainstorms separately when its turn comes
-- **One question at a time** — Don't overwhelm with multiple questions
-- **Multiple choice preferred** — Easier to answer than open-ended when possible
-- **Gates are mandatory** — Confirm completion of each phase before moving on
+
+(Process-wide interaction principles — one question at a time, multiple choice preferred, gates mandatory — live in `references/shared-rules.md` and apply here.)

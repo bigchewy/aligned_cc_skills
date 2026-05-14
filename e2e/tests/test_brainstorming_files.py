@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -32,44 +34,37 @@ def test_spawn_brief_template_has_eight_fields():
     assert not missing, f"missing fields in spawn-brief template: {missing}"
 
 
-def test_research_critique_checklist_structure():
-    text = read("skills/brainstorming/research-critique-checklist.md")
-    assert text.startswith("# Research Critique Checklist"), "missing top heading"
-    for section in ["## Critique Criteria", "## Critique Output Format", "## Important"]:
-        assert section in text, f"missing {section}"
-    for criterion in [
-        "Scope clarity", "Corpus coverage", "Source quality",
-        "Comparison rigor", "Validation honesty", "Licensing/cost clarity",
-        "Recommendation defensibility", "Open-questions completeness",
-        "Decision quality",
-    ]:
-        assert criterion in text, f"missing criterion: {criterion}"
-
-
-def test_authoring_critique_checklist_structure():
-    text = read("skills/brainstorming/authoring-critique-checklist.md")
-    assert text.startswith("# Authoring Critique Checklist"), "missing top heading"
-    for section in ["## Critique Criteria", "## Critique Output Format", "## Important"]:
-        assert section in text, f"missing {section}"
-    for criterion in [
-        "Population fit", "Constraint preservation", "Sequencing rigor",
-        "Library coverage", "Voice consistency", "Goal-metric alignment",
-        "v1/v2 scoping", "Code/schema seam", "Decision quality",
-    ]:
-        assert criterion in text, f"missing criterion: {criterion}"
-
-
-def test_planning_critique_checklist_structure():
-    text = read("skills/brainstorming/planning-critique-checklist.md")
-    assert text.startswith("# Planning Critique Checklist"), "missing top heading"
-    for section in ["## Critique Criteria", "## Critique Output Format", "## Important"]:
-        assert section in text, f"missing {section}"
-    for criterion in [
-        "Opportunity-space clarity", "Inventory completeness", "Sizing realism",
-        "Dependency rigor", "Sequencing logic", "Capacity vs scope",
-        "Spawn-brief quality", "Strategic coherence", "Decision quality",
-    ]:
-        assert criterion in text, f"missing criterion: {criterion}"
+@pytest.mark.parametrize("path,heading,criteria", [
+    (
+        "skills/brainstorming/research-critique-checklist.md",
+        "# Research Critique Checklist",
+        ["Scope clarity", "Corpus coverage", "Source quality",
+         "Comparison rigor", "Validation honesty", "Licensing/cost clarity",
+         "Recommendation defensibility", "Open-questions completeness",
+         "Decision quality"],
+    ),
+    (
+        "skills/brainstorming/authoring-critique-checklist.md",
+        "# Authoring Critique Checklist",
+        ["Population fit", "Constraint preservation", "Sequencing rigor",
+         "Library coverage", "Voice consistency", "Goal-metric alignment",
+         "v1/v2 scoping", "Code/schema seam", "Decision quality"],
+    ),
+    (
+        "skills/brainstorming/planning-critique-checklist.md",
+        "# Planning Critique Checklist",
+        ["Opportunity-space clarity", "Inventory completeness", "Sizing realism",
+         "Dependency rigor", "Sequencing logic", "Capacity vs scope",
+         "Spawn-brief quality", "Strategic coherence", "Decision quality"],
+    ),
+])
+def test_critique_checklist_structure(path, heading, criteria):
+    text = read(path)
+    assert text.startswith(heading), f"{path} missing top heading {heading!r}"
+    for section in ("## Critique Criteria", "## Critique Output Format", "## Important"):
+        assert section in text, f"{path} missing {section}"
+    for criterion in criteria:
+        assert criterion in text, f"{path} missing criterion: {criterion}"
 
 
 def test_research_mode_file_structure():
@@ -387,6 +382,65 @@ def test_authoring_mode_handles_sisney_absence():
     # Per design §Error paths #5: Authoring notes Sisney absence ONCE for PSIU work
     assert "PSIU" in text or "Four-Forces" in text or "Four Forces" in text, \
         "Authoring must reference PSIU/Four-Forces context for Sisney"
+
+
+def test_critique_interactive_html_agent_exists():
+    """The interactive critique HTML agent must exist and declare the inputs
+    and behavior the orchestration depends on."""
+    text = read("agents/critique-interactive-html-generator.md")
+    # Frontmatter
+    assert text.startswith("---\nmodel: sonnet\n---"), "missing sonnet model frontmatter"
+    # Required input placeholders
+    for placeholder in [
+        "{aggregated-json-path}",
+        "{design-file-path}",
+        "{session-name}",
+        "{mode}",
+    ]:
+        assert placeholder in text, f"agent must document input: {placeholder}"
+    # Output path convention
+    assert "docs/mockups/{session-name}-critique.html" in text, \
+        "agent must write to the standard critique HTML output path"
+    # Default toggle states match orchestration's Apply Fixes bias
+    assert "high" in text.lower() and "medium" in text.lower() and "low" in text.lower(), \
+        "agent must address all three severity buckets"
+    # Fact-checks are read-only per the orchestration's auto-apply rule
+    assert "not toggleable" in text.lower() or "read-only" in text.lower(), \
+        "fact-checks must be documented as non-toggleable"
+    # Clipboard-only round-trip (no auto-send)
+    assert "clipboard" in text.lower() or "navigator.clipboard" in text, \
+        "agent must describe clipboard-based copy-as-prompt"
+    # Don't commit — brainstorming commits artifacts together
+    assert "Do NOT commit" in text or "do not commit" in text.lower(), \
+        "agent must warn against committing"
+
+
+def test_orchestration_dispatches_interactive_html():
+    """The shared critique panel orchestration must dispatch the interactive
+    decision HTML generator after aggregation and document the JSON schema
+    both aggregation paths produce."""
+    text = read("skills/_shared/critique-panel-orchestration.md")
+    # New section header
+    assert "## Interactive Decision HTML" in text, \
+        "orchestration must add an Interactive Decision HTML section"
+    # New agent reference
+    assert "critique-interactive-html-generator" in text, \
+        "orchestration must reference the new agent"
+    # Both aggregation paths write the same two files
+    assert "aggregated.md" in text and "aggregated.json" in text, \
+        "orchestration must require aggregated.md + aggregated.json from aggregation step"
+    # JSON schema documented (fact_checks + findings)
+    assert "fact_checks" in text and "findings" in text, \
+        "orchestration must document the structured aggregator output schema"
+    # Sub-agent aggregator must now have Write tool
+    assert "Glob, Read, and Write tools" in text, \
+        "sub-agent aggregator must have Write tool to produce both files"
+    # User-facing instructions for the round-trip
+    assert "Copy follow-up prompt" in text, \
+        "orchestration must surface the copy-follow-up-prompt affordance to the user"
+    # Chat path remains as fallback
+    assert "both paths work" in text.lower() or "chat path" in text.lower(), \
+        "orchestration must preserve chat path as a fallback"
 
 
 def test_plugin_version_bumped():

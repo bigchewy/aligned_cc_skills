@@ -19,3 +19,9 @@ If a question during the brainstorm requires deeper detail about the project —
 This rule applies to the four modes that produce a live HTML artifact: software, business, authoring, and planning. Research mode does not generate a live artifact and skips this rule.
 
 Before committing the snapshot at `docs/mockups/{session-name}.html`, verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in the file. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh.
+
+## Interaction principles (apply to every mode)
+
+- **One question at a time** — Don't overwhelm with multiple questions
+- **Multiple choice preferred** — Easier to answer than open-ended when possible
+- **Gates are mandatory** — Confirm completion of each phase before moving on

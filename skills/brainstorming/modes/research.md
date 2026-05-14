@@ -224,6 +224,5 @@ When critiquing an existing research synthesis (instead of writing one), use the
 - **Honest confidence** - State the recommendation's confidence level, neither falsely high nor hedged-into-uselessness
 - **Open questions named** - Unresolved questions go in their own section with what would resolve them
 - **No codebase consult** - Research mode's source of truth is the cited literature, not the project's source files
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **Gates are mandatory** - Confirm completion of each phase before moving on
+
+(Process-wide interaction principles — one question at a time, multiple choice preferred, gates mandatory — live in `references/shared-rules.md` and apply here.)

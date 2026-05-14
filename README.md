@@ -94,11 +94,7 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier). Secondary entry point for users with existing specs |
 | executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
 | finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
-| root-cause-analysis | Problem-solving | `/aligned:root-cause-analysis` | Root cause investigation for software and business problems with optional multi-agent mode |
-| eval-audit | Problem-solving | `/aligned:eval-audit` | Eval coverage auditor with hook trigger |
 | using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
-| codebase-audit | Maintenance | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
-| kanban-resolve | Maintenance | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
 
 ## What this plugin does NOT include
 
@@ -116,6 +112,7 @@ This plugin is distributed to many users. It intentionally does not ship anythin
 | artifact-verifier | 98% accuracy gate for document fact-checking |
 | code-reviewer | Post-implementation review against plan and coding standards |
 | code-simplifier | Scans branch changes for simplification opportunities |
+| critique-interactive-html-generator | Interactive HTML for accept/reject decisions on brainstorming critique findings, with copy-as-prompt round-trip |
 | flowchart-generator | Mermaid.js flowcharts for data flows, processes, and decision trees |
 | kanban-triage | Validates Kanban items through 5-phase root cause analysis |
 | mockup-generator | Self-contained HTML mockups for design-phase visualization |

@@ -119,6 +119,18 @@ Can the design be translated into concrete next steps?
 - BAD: "Improve the onboarding experience" with no specific actions
 - GOOD: "Rewrite the welcome email (owner: the user, by Thursday) to include the 3 specific outcomes from the diagnostic call"
 
+### 9. Decision quality (if Decision Log present)
+
+If the design includes a Decision Log, evaluate each decision entry.
+
+- For each decision, assess whether the chosen approach is the best option given the stated alternatives
+- Rate each: **sound** (good choice), **questionable** (reasonable but worth the user's attention), or **wrong** (an alternative is clearly better)
+- Cite evidence from referenced materials or domain knowledge for any non-sound rating
+- If no Decision Log is present, mark N/A
+
+- BAD: Decision claims "no alternatives exist" when obvious alternatives are visible in prior strategy docs
+- GOOD: Decision clearly explains trade-offs and the choice aligns with evidence
+
 ## Critique Output Format
 
 ```markdown
@@ -144,14 +156,15 @@ Can the design be translated into concrete next steps?
 
 | # | Criterion | Result |
 |---|-----------|--------|
-| 1 | Goal precision | {Pass / N issues found} |
-| 2 | Problem diagnosis completeness | {Pass / N issues found} |
-| 3 | Root cause depth | {Pass / N issues found} |
-| 4 | Solution-problem alignment | {Pass / N issues found} |
-| 5 | Missing stakeholders | {Pass / N issues found} |
-| 6 | Feasibility and constraints | {Pass / N issues found} |
-| 7 | Scope discipline | {Pass / N issues found} |
-| 8 | Actionability | {Pass / N issues found} |
+| 1 | Goal precision | {Pass / N issues found / N/A — reason} |
+| 2 | Problem diagnosis completeness | {Pass / N issues found / N/A — reason} |
+| 3 | Root cause depth | {Pass / N issues found / N/A — reason} |
+| 4 | Solution-problem alignment | {Pass / N issues found / N/A — reason} |
+| 5 | Missing stakeholders | {Pass / N issues found / N/A — reason} |
+| 6 | Feasibility and constraints | {Pass / N issues found / N/A — reason} |
+| 7 | Scope discipline | {Pass / N issues found / N/A — reason} |
+| 8 | Actionability | {Pass / N issues found / N/A — reason} |
+| 9 | Decision quality | {Pass / N issues found / N/A — reason} |
 ```
 
 ## Important

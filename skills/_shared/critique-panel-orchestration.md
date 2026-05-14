@@ -15,7 +15,7 @@ Before proceeding, verify all required parameters are present in the SKILL.md co
 - `aggregation` must be either "sub-agent" or "inline"
 - `criteria-assignment` must be "yes" (with mapping table provided) or "no"
 - `visual-artifacts` must be a path or "none"
-- `portfolio-file-path` is OPTIONAL — set only by Planning mode for the spawn-list artifact attached alongside `visual-artifacts`. If present, critic prompt templates may reference `{portfolio-file-path}` and instruct critics to read it for spawn-brief-quality assessment. If absent, ignore.
+- `portfolio-file-path` is OPTIONAL — set only by Planning mode for the spawn-list artifact attached alongside `visual-artifacts`. Only **critic** prompt templates may reference `{portfolio-file-path}` and instruct critics to read it for spawn-brief-quality assessment. The **aggregator** does not receive this field (see Scope note under Aggregation). If absent, ignore.
 - `critique-temp-directory` must be set
 - At least one critic prompt template must be provided
 
@@ -57,20 +57,58 @@ The checklist is at `{base-directory}/{checklist-filename}`. Verify the path exi
 
 After all critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
 
-"You are a critique aggregator. You have access to Glob and Read tools. Do not use Bash for searching. Read all report files in `{critique-temp-directory}/round-1/`. Also read the design document at `{design-file-path}` for context.
+> **Scope note (Planning mode):** The aggregator does NOT read `{portfolio-file-path}` even when set. Critics already evaluate portfolio-grounded claims (criterion 7) and surface findings in their reports; the aggregator's job is to merge and dedupe those reports, not to re-verify against the portfolio. If you need an independent portfolio-grounded check at aggregation time, escalate by adding a critic — don't expand the aggregator's input set.
+
+"You are a critique aggregator. You have access to Glob, Read, and Write tools. Do not use Bash for searching. Read all report files in `{critique-temp-directory}/round-1/`. Also read the design document at `{design-file-path}` for context.
 
 Produce a unified report:
 - **Fact-checks:** The fact-check report (from the designated fact-checker if division-of-labor, or merged from all critics if all-critics) is the authoritative source. Summarize: total claims checked, accuracy percentage, list every INCORRECT claim with the correction. If another critic flagged a factual issue incidentally, include it.
 - **Critique findings:** Merge all critic findings, preserving persona tags. De-duplicate — when two or more critics flag the same issue, keep the highest-severity version and note all sources. Group by severity (high → medium → low).
 - **Action items:** List concrete changes needed, ordered by severity. For each, note which critic(s) raised it.
 
-Be concise — the goal is to give the design author a clear, actionable summary without needing to read the raw reports. Keep the unified report under 1500 words."
+Be concise — the goal is to give the design author a clear, actionable summary without needing to read the raw reports. Keep the unified report under 1500 words.
+
+Write TWO output files using the Write tool:
+1. `{critique-temp-directory}/round-1/aggregated.md` — the prose unified report (the content described above).
+2. `{critique-temp-directory}/round-1/aggregated.json` — a structured snapshot of the same data for the downstream interactive decision HTML. Schema:
+
+    {
+      \"fact_checks\": [
+        {\"id\": \"fc-1\", \"claim\": \"<original>\", \"correction\": \"<corrected>\", \"critic\": \"<critic-name>\"}
+      ],
+      \"findings\": [
+        {\"id\": \"h-1\", \"severity\": \"high\",   \"text\": \"<finding>\", \"action\": \"<suggested fix>\", \"critics\": [\"<name>\"]},
+        {\"id\": \"m-1\", \"severity\": \"medium\", \"text\": \"<finding>\", \"action\": \"<suggested fix>\", \"critics\": [\"<name>\"]},
+        {\"id\": \"l-1\", \"severity\": \"low\",    \"text\": \"<finding>\", \"action\": \"<suggested fix>\", \"critics\": [\"<name>\"]}
+      ]
+    }
+
+IDs are stable kebab strings (h-1, h-2, m-1, fc-1, ...). Return only a one-line confirmation that both files were written."
 
 Present the aggregation agent's unified report to the user.
 
 **If `aggregation` is "inline":**
 
-Merge all critic reports in the main thread. De-duplicate, preserve persona tags, group by severity (high → medium → low). Present the unified report to the user.
+Merge all critic reports in the main thread. De-duplicate, preserve persona tags, group by severity (high → medium → low). Present the unified report to the user. Then write the same data to two files using the Write tool:
+1. `{critique-temp-directory}/round-1/aggregated.md` — the prose unified report.
+2. `{critique-temp-directory}/round-1/aggregated.json` — the structured snapshot using the schema documented in the sub-agent aggregator instruction above (`fact_checks` and `findings` arrays with stable kebab IDs).
+
+## Interactive Decision HTML
+
+After the aggregation step writes `aggregated.md` and `aggregated.json` (both paths produce the same files), dispatch the critique-interactive-html-generator agent via Task tool (`subagent_type=general-purpose`):
+
+"Read `agents/critique-interactive-html-generator.md` for your full workflow. Generate an interactive critique decisions HTML.
+- Aggregated JSON: `{critique-temp-directory}/round-1/aggregated.json`
+- Design file: `{design-file-path}`
+- Session name: `{session-name}`
+- Mode: `{mode}` (one of: software | business | research | authoring | planning — supplied by the calling mode file context)
+- Project root: `{project-root}`"
+
+Then tell the user:
+
+> "Critique findings are open in your browser at `docs/mockups/{session-name}-critique.html`. Toggle accept/reject on each finding, add modify notes per tab if needed, then click **Copy follow-up prompt** and paste it back here. Or approve findings in chat directly — both paths work."
+
+The chat path remains the fallback: any user who skips the browser can approve findings inline and the Apply Fixes step proceeds normally.
 
 ## Apply Fixes
 

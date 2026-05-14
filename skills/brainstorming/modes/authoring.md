@@ -339,6 +339,5 @@ When critiquing an existing authoring design (instead of writing one), use the c
 - **No silent retries** — When the Research sub-flow fails, surface the failure with three options (skip / retry / retarget); never auto-fallback to inline research
 - **Orphan catalog is mandatory** — What got considered and excluded is part of the design, not an afterthought
 - **Voice is verified, not assumed** — Sample prose against the brand voice file before declaring voice consistency
-- **One question at a time** — Don't overwhelm with multiple questions
-- **Multiple choice preferred** — Easier to answer than open-ended when possible
-- **Gates are mandatory** — Confirm completion of each phase before moving on
+
+(Process-wide interaction principles — one question at a time, multiple choice preferred, gates mandatory — live in `references/shared-rules.md` and apply here.)

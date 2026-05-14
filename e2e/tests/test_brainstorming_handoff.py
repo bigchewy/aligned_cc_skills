@@ -10,8 +10,6 @@ validation step in modes/authoring.md) against fixture synthesis files.
 """
 from pathlib import Path
 
-import pytest
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 FIXTURES = REPO_ROOT / "e2e/fixtures/brainstorming-handoff"
 
@@ -118,8 +116,9 @@ def test_portfolio_entry_with_missing_keywords_signals_disambiguation():
     # The third entry is the generic-brief case; find it and check
     # its spawn-brief blockquote does NOT contain mode-disambiguating verbs
     third_marker = "## Generic-brief case"
-    if third_marker not in text:
-        pytest.skip("portfolio fixture missing 'Generic-brief case' entry — see Task 24 spec")
+    assert third_marker in text, (
+        f"portfolio fixture missing '{third_marker}' entry — fixture drift would silently disable this contract test"
+    )
     third_block_start = text.index(third_marker)
     # Extract the spawn-brief blockquote in the third entry
     spawn_idx = text.index("**Spawn brief", third_block_start)
