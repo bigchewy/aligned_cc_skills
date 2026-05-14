@@ -30,3 +30,19 @@ def test_plan_phase_exports_subagent_model_opus():
         "phases/plan.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
         "PLAN_SUBAGENT_MODEL override defaulting to opus"
     )
+
+
+def test_mockup_phase_exports_anthropic_model_sonnet():
+    text = _read(PHASES_DIR / "mockup.sh")
+    assert 'export ANTHROPIC_MODEL="${MOCKUP_MODEL:-sonnet}"' in text, (
+        "phases/mockup.sh must export ANTHROPIC_MODEL with MOCKUP_MODEL "
+        "override defaulting to sonnet"
+    )
+
+
+def test_mockup_phase_exports_subagent_model_sonnet():
+    text = _read(PHASES_DIR / "mockup.sh")
+    assert 'export CLAUDE_CODE_SUBAGENT_MODEL="${MOCKUP_SUBAGENT_MODEL:-sonnet}"' in text, (
+        "phases/mockup.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
+        "MOCKUP_SUBAGENT_MODEL override defaulting to sonnet"
+    )

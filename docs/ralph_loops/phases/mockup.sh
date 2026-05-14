@@ -15,6 +15,10 @@
 
 set -u
 
+# --- Model selection (override via MOCKUP_MODEL / MOCKUP_SUBAGENT_MODEL) ---
+export ANTHROPIC_MODEL="${MOCKUP_MODEL:-sonnet}"
+export CLAUDE_CODE_SUBAGENT_MODEL="${MOCKUP_SUBAGENT_MODEL:-sonnet}"
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 RALPH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 

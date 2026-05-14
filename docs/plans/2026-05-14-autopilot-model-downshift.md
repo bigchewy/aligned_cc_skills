@@ -94,7 +94,7 @@ git commit -m "feat(autopilot): pin plan phase to Opus via ANTHROPIC_MODEL expor
 
 ---
 
-### Task 2: Add per-phase model env vars to `phases/mockup.sh` (Sonnet)
+### ✅ Task 2: Add per-phase model env vars to `phases/mockup.sh` (Sonnet)
 
 **Files:**
 - Modify: `e2e/tests/test_autopilot_model_selection.py` (add 2 tests)
