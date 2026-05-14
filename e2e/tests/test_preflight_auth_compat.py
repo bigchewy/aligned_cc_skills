@@ -157,3 +157,30 @@ def test_behavioral_missing_call_site_files_pass(tmp_path):
     result = _run_block(ralph_dir, log_file)
     assert result.returncode == 0
     assert not log_file.exists()
+
+
+def test_behavioral_comment_only_mention_does_not_halt(tmp_path):
+    """A comment that documents *why* --bare is forbidden (e.g.,
+    `# Do NOT use --bare here — breaks OAuth`) is welcome and must not
+    trigger a halt. The grep pattern anchors on lines whose first
+    non-whitespace token is `claude`, so comment lines (starting with
+    `#`) are skipped. This test locks in that semantic — a future
+    maintainer who broadens the pattern to a plain substring scan would
+    break this test."""
+    ralph_dir = tmp_path / "ralph_loops"
+    (ralph_dir / "lib").mkdir(parents=True)
+    safe_with_comment = (
+        "# Do NOT add --bare here — breaks Max-plan OAuth.\n"
+        '  claude -p - < "$PROMPT_FILE" &\n'
+    )
+    (ralph_dir / "lib" / "process.sh").write_text(safe_with_comment)
+    (ralph_dir / "run-ralph.sh").write_text(safe_with_comment)
+    log_file = tmp_path / "write_halt.log"
+    result = _run_block(ralph_dir, log_file)
+    assert result.returncode == 0, (
+        f"Block must NOT halt when --bare appears only in a comment. "
+        f"stdout={result.stdout!r} stderr={result.stderr!r}"
+    )
+    assert not log_file.exists(), (
+        "write_halt must not be called when --bare is only in a comment"
+    )

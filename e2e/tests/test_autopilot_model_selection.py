@@ -10,12 +10,22 @@ authenticate via OAuth, so --bare is incompatible. See
 docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md."""
 
 from __future__ import annotations
+import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 RALPH_DIR = REPO_ROOT / "docs" / "ralph_loops"
 PHASES_DIR = RALPH_DIR / "phases"
 LIB_DIR = RALPH_DIR / "lib"
+
+# Matches a line whose first non-whitespace token is `claude` and which
+# also contains `--bare` — i.e., an actual executable invocation, NOT a
+# comment, docstring, or heredoc that merely mentions the flag. Mirrors
+# the grep pattern in phases/preflight.sh AUTH-COMPAT BLOCK so the
+# static and runtime guards agree on what counts as a forbidden use.
+CLAUDE_BARE_INVOCATION = re.compile(
+    r"^[ \t]*claude[ \t].*--bare", re.MULTILINE
+)
 
 
 def _read(path: Path) -> str:
@@ -93,14 +103,20 @@ def test_lib_process_does_not_use_bare_flag():
     read). Autopilot must work for Max-plan users on OAuth, so the flag
     is forbidden in any headless invocation. Regression guard against
     re-adoption (was added in commit 2d883ef, reverted on
-    fix/autopilot-bare-oauth-incompat)."""
+    fix/autopilot-bare-oauth-incompat).
+
+    The regex matches only executable `claude ... --bare` lines, not
+    comments or docstrings that mention the flag — adding a "do NOT use
+    --bare here" comment to the call site must not false-fail this test.
+    """
     text = _read(LIB_DIR / "process.sh")
-    assert "--bare" not in text, (
+    match = CLAUDE_BARE_INVOCATION.search(text)
+    assert match is None, (
         "lib/process.sh must NOT pass --bare to claude. The flag forces "
         "API-key-only auth and breaks Max-plan OAuth users. If you want "
         "the non-auth benefits of --bare (skip MCP/hooks/CLAUDE.md), wait "
         "for Anthropic to expose them as separate flags; do not re-adopt "
-        "--bare in autopilot."
+        f"--bare in autopilot. Offending line: {match.group(0)!r}"
     )
 
 
@@ -109,9 +125,11 @@ def test_run_ralph_does_not_use_bare_flag():
     test_lib_process_does_not_use_bare_flag — applied to run-ralph.sh's
     direct claude invocation (the ralph loop body)."""
     text = _read(RALPH_DIR / "run-ralph.sh")
-    assert "--bare" not in text, (
+    match = CLAUDE_BARE_INVOCATION.search(text)
+    assert match is None, (
         "run-ralph.sh must NOT pass --bare to claude. --bare forces "
-        "API-key-only auth and breaks Max-plan OAuth users."
+        "API-key-only auth and breaks Max-plan OAuth users. "
+        f"Offending line: {match.group(0)!r}"
     )
 
 

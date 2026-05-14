@@ -243,7 +243,12 @@ while :; do
 
   start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
-  # Run claude in background so we can enforce a timeout
+  # Run claude in background so we can enforce a timeout.
+  # Do NOT add --bare here. The flag restricts auth to ANTHROPIC_API_KEY
+  # or apiKeyHelper (OAuth and keychain are never read, per `claude
+  # --help`), which breaks Max-plan users on OAuth. Same constraint as
+  # lib/process.sh:run_claude_phase. See
+  # docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md.
   claude -p - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
 

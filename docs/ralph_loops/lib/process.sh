@@ -87,6 +87,11 @@ run_claude_phase() {
   local phase="$1"
   local timeout="$2"
 
+  # Do NOT add --bare here. The flag restricts auth to ANTHROPIC_API_KEY
+  # or apiKeyHelper (OAuth and keychain are never read, per `claude
+  # --help`), which breaks Max-plan users on OAuth. Preflight catches
+  # this at runtime; tests catch it at CI; do not test the guards.
+  # See docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md.
   claude -p - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
 
