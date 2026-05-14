@@ -14,16 +14,15 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-import pytest
-
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 RALPH_DIR = REPO_ROOT / "docs" / "ralph_loops"
 
 
 def _make_stub_claude(tmpdir: Path, env_dump_file: Path, args_dump_file: Path) -> Path:
     """Write a fake `claude` script that records its env AND its argv to
-    separate files. argv capture is needed because `--bare` is a CLI
-    flag, not an env var — it won't appear in `env` output."""
+    separate files. argv capture lets us assert specific CLI flags (like
+    the now-forbidden `--bare`) are absent — those don't show up in
+    `env` output."""
     stub = tmpdir / "claude"
     stub.write_text(
         "#!/usr/bin/env bash\n"
@@ -140,15 +139,21 @@ def test_plan_phase_respects_plan_model_override():
     )
 
 
-def test_plan_phase_invokes_claude_with_bare_flag():
-    """Behavioral counterpart to the static-parse --bare assertion in
-    test_autopilot_model_selection.py. Skip if Task 5 audit produced
-    verdict: SKIP-BARE (in that case lib/process.sh has no --bare and
-    this assertion will fail correctly)."""
+def test_plan_phase_does_not_invoke_claude_with_bare_flag():
+    """Behavioral counterpart to the static-parse assertions in
+    test_autopilot_model_selection.py. Confirms that when plan.sh runs
+    end-to-end (with a stub claude), the actual argv passed to claude
+    does NOT contain `--bare`.
+
+    Why: --bare forces Anthropic auth to "strictly ANTHROPIC_API_KEY or
+    apiKeyHelper via --settings (OAuth and keychain are never read)" per
+    `claude --help`. Max-plan users authenticate via OAuth, so --bare
+    breaks autopilot for them. Static-parse tests catch the obvious
+    re-adoption; this behavioral test catches subtler regressions where
+    the flag might get injected via a wrapper or env-driven indirection
+    that the static scan would miss."""
     _, args = _run_phase_with_stub(RALPH_DIR / "phases" / "plan.sh", {})
-    audit = REPO_ROOT / "docs" / "plans" / "2026-05-14-autopilot-model-downshift-audit.md"
-    if audit.exists() and "verdict: SKIP-BARE" in audit.read_text(encoding="utf-8"):
-        pytest.skip("--bare adoption skipped per Task 5 audit verdict")
-    assert "--bare" in args, (
-        f"phases/plan.sh should invoke claude with --bare; got args={args!r}"
+    assert "--bare" not in args, (
+        f"phases/plan.sh must NOT pass --bare to claude (forces "
+        f"API-key-only auth, breaks Max-plan OAuth); got args={args!r}"
     )

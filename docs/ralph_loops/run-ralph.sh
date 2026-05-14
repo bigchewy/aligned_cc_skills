@@ -244,7 +244,7 @@ while :; do
   start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
   # Run claude in background so we can enforce a timeout
-  claude -p --bare - < "$PROMPT_FILE" &
+  claude -p - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
 
   start_watchdog "$ITERATION_TIMEOUT" "iteration $ITERATION"

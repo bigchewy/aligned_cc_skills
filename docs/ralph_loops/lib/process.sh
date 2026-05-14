@@ -87,7 +87,7 @@ run_claude_phase() {
   local phase="$1"
   local timeout="$2"
 
-  claude -p --bare - < "$PROMPT_FILE" &
+  claude -p - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
 
   start_watchdog "$timeout" "$phase"

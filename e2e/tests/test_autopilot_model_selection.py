@@ -1,7 +1,13 @@
 """Static-parse tests asserting each phase script exports the correct
 ANTHROPIC_MODEL and CLAUDE_CODE_SUBAGENT_MODEL defaults, and that the
-claude -p call sites use --bare. No subprocess execution — assertions
-on text content of bash files."""
+claude -p call sites do NOT use --bare. No subprocess execution —
+assertions on text content of bash files.
+
+Why --bare is forbidden: per `claude --help`, --bare restricts Anthropic
+auth to "strictly ANTHROPIC_API_KEY or apiKeyHelper via --settings (OAuth
+and keychain are never read)". Autopilot must work for Max-plan users who
+authenticate via OAuth, so --bare is incompatible. See
+docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md."""
 
 from __future__ import annotations
 from pathlib import Path
@@ -82,19 +88,30 @@ def test_run_ralph_exports_subagent_model_sonnet():
     )
 
 
-def test_lib_process_uses_bare_flag():
+def test_lib_process_does_not_use_bare_flag():
+    """`--bare` makes Anthropic auth API-key-only (OAuth/keychain never
+    read). Autopilot must work for Max-plan users on OAuth, so the flag
+    is forbidden in any headless invocation. Regression guard against
+    re-adoption (was added in commit 2d883ef, reverted on
+    fix/autopilot-bare-oauth-incompat)."""
     text = _read(LIB_DIR / "process.sh")
-    assert 'claude -p --bare - < "$PROMPT_FILE"' in text, (
-        "lib/process.sh must invoke claude -p with --bare flag "
-        "(Anthropic-recommended mode for scripted calls, skips "
-        "MCP/hooks/CLAUDE.md auto-discovery, reduces token spend)"
+    assert "--bare" not in text, (
+        "lib/process.sh must NOT pass --bare to claude. The flag forces "
+        "API-key-only auth and breaks Max-plan OAuth users. If you want "
+        "the non-auth benefits of --bare (skip MCP/hooks/CLAUDE.md), wait "
+        "for Anthropic to expose them as separate flags; do not re-adopt "
+        "--bare in autopilot."
     )
 
 
-def test_run_ralph_uses_bare_flag():
+def test_run_ralph_does_not_use_bare_flag():
+    """Same OAuth-incompatibility constraint as
+    test_lib_process_does_not_use_bare_flag — applied to run-ralph.sh's
+    direct claude invocation (the ralph loop body)."""
     text = _read(RALPH_DIR / "run-ralph.sh")
-    assert 'claude -p --bare - < "$PROMPT_FILE"' in text, (
-        "run-ralph.sh must invoke claude -p with --bare flag"
+    assert "--bare" not in text, (
+        "run-ralph.sh must NOT pass --bare to claude. --bare forces "
+        "API-key-only auth and breaks Max-plan OAuth users."
     )
 
 
