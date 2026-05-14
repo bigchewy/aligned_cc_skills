@@ -333,7 +333,7 @@ git commit -m "docs: audit phase prompts for --bare compatibility"
 
 ---
 
-### Task 6: Add `--bare` flag to `claude -p` call sites
+### ✅ Task 6: Add `--bare` flag to `claude -p` call sites
 
 > ORDERING: Task 4 modifies `run-ralph.sh` (adds env exports). Task 6 also modifies `run-ralph.sh` (adds `--bare`). Task 4 must complete before Task 6 begins — otherwise the test/implementation in Task 4 will conflict with this task's edits.
 

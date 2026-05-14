@@ -80,3 +80,19 @@ def test_run_ralph_exports_subagent_model_sonnet():
         "run-ralph.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
         "RALPH_SUBAGENT_MODEL override defaulting to sonnet"
     )
+
+
+def test_lib_process_uses_bare_flag():
+    text = _read(LIB_DIR / "process.sh")
+    assert 'claude -p --bare - < "$PROMPT_FILE"' in text, (
+        "lib/process.sh must invoke claude -p with --bare flag "
+        "(Anthropic-recommended mode for scripted calls, skips "
+        "MCP/hooks/CLAUDE.md auto-discovery, reduces token spend)"
+    )
+
+
+def test_run_ralph_uses_bare_flag():
+    text = _read(RALPH_DIR / "run-ralph.sh")
+    assert 'claude -p --bare - < "$PROMPT_FILE"' in text, (
+        "run-ralph.sh must invoke claude -p with --bare flag"
+    )
