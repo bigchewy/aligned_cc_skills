@@ -59,10 +59,10 @@ tests:
       system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
       brief: "Why is our pilot conversion stuck"
       expected_mode: business
-  - description: "business-2: pricing strategy"
+  - description: "business-2: tier-2 pricing diagnosis"
     vars:
       system_context: file://../../fixtures/skill-prompts/brainstorming-five-modes.md
-      brief: "Pricing strategy for tier-2"
+      brief: "Tier-2 pricing isn't converting — what's wrong and what should we change?"
       expected_mode: business
   - description: "business-3: meeting prep"
     vars:

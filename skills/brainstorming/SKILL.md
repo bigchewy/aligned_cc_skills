@@ -12,9 +12,9 @@ A unified brainstorming skill that adapts its process based on what you're
 working on. Five modes covering distinct shapes of brainstorm work:
 
 - **Software** — fluid Q&A with Architect auto-consult; deliverable is a design doc.
-- **Business** — structured 4-phase process (Goal → Problems → Root Causes → Solutions); deliverable is a strategic plan.
+- **Business** — structured 4-phase diagnostic process (Goal → Problems → Root Causes → Solutions); deliverable is an action plan for resolving a diagnosed problem (not a strategic document — those go to Authoring).
 - **Research** — corpus survey + comparative synthesis with Skeptic Pass; deliverable is a research memo or KB artifact.
-- **Authoring** — content sequencing with domain-advisor panel and optional Research sub-phase; deliverable is a sequenced design doc (curriculum, framework prompts, exercise programs).
+- **Authoring** — structured-document arrangement with framework + domain-advisor panel and optional Research sub-phase; deliverable is a sequenced design doc — curricula, framework prompts, exercise programs, OR strategy memos, competitive analyses, positioning briefs, market analyses, GTM/sales documents.
 - **Planning** — multi-feature portfolio sequencing with strategy advisors; deliverable is a roadmap + spawn-list portfolio.
 
 ## Step 1: Detect Mode
@@ -30,12 +30,16 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): project contains code files (package.json,
   Cargo.toml, go.mod, pyproject.toml, etc.)
 
-**Business mode** — strategy, decisions, RCA-shaped diagnosis:
-- Topic signals: strategy, sales, marketing, positioning, meeting prep,
-  decisions, stakeholders, pricing, proposals, RCA, diagnosis,
-  "why isn't this working"
+**Business mode** — diagnostic work with an action-plan deliverable:
+- Topic signals (all diagnostic in shape — "something isn't working,
+  help me figure out what to do"): "why isn't this working", RCA,
+  diagnosis, "what should we do about X", strategy *problem* (not
+  strategy *document*), sales/marketing/positioning *issues to
+  resolve* (not documents to author), meeting prep for a decision,
+  stakeholder conflict, pricing/proposal review where the question
+  is "what's wrong" or "what next"
 - Environment (tiebreaker): project is docs-only, Obsidian vault, or
-  non-code directory
+  non-code directory AND the request is shaped as a problem to solve
 
 **Research mode** — evidence synthesis, comparative review, literature audit:
 - Topic signals: literature review, evidence map, comparative review,
@@ -45,13 +49,21 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): knowledge folders, prior research artifacts,
   or registries are present
 
-**Authoring mode** — content design, curriculum sequencing, voice migration:
+**Authoring mode** — structured-document arrangement (content design OR strategic document):
 - Topic signals: curriculum, program design, sequence content,
   exercise sequencing, content design, "what to teach in what order",
   rewrite for audience, voice migration, framework prompt authoring,
-  chapter sequencing
+  chapter sequencing, **competitive analysis, positioning brief,
+  strategy memo, market analysis, go-to-market doc, sales pitch,
+  battle card, one-pager, "write a [strategic document]", "build a
+  [framework]-shaped document", any request whose deliverable is a
+  named document authored from a framework**
 - Environment (tiebreaker): content registries, prior curricula,
-  brand voice files are present
+  brand voice files are present, OR the request's topic matches a
+  `domains:` entry in `frameworks/registry.yaml` (e.g.,
+  `competitive-analysis`, `positioning`, `market-strategy`,
+  `go-to-market`) — when a registered framework matches the topic,
+  prefer Authoring
 
 **Planning mode** — multi-feature roadmap, portfolio sequencing:
 - Topic signals: roadmap, prioritization, portfolio, "what to build next",
@@ -74,8 +86,9 @@ Once answered, present the mode explanation block and proceed to Step 2.
 Apply these in order when topic signals overlap multiple modes:
 
 - **Software vs Authoring:** If the deliverable is *code that runs*, Software. If the deliverable is *content humans consume* (curriculum, prompts, exercises) even when there's a code seam, Authoring. The canonical test: a brainstorm with a runtime adapter (code) but 70% content-sequencing work routes to Authoring.
-- **Authoring vs Research:** If the deliverable is *an arrangement* (sequence, registry, curriculum), Authoring. If the deliverable is *an evidence map / ranked synthesis* with no arrangement output, Research. Authoring includes Research as an optional sub-phase (file-mediated sub-agent fork — see modes/authoring.md).
+- **Authoring vs Research:** If the deliverable is *an arrangement* (sequence, registry, curriculum, framework-shaped strategic document), Authoring. If the deliverable is *an evidence map / ranked synthesis* with no arrangement output, Research. Authoring includes Research as an optional sub-phase (file-mediated sub-agent fork — see modes/authoring.md).
 - **Business vs Planning:** If the work is *diagnostic* (why isn't X working, what should we do about Y problem), Business. If the work is *generative portfolio sequencing* (which N things should we build, in what order), Planning.
+- **Business vs Authoring:** The clarifying test is *what's on the page when we're done.* If the deliverable is an *action plan* — what we'll do differently to address a problem — that's Business (diagnostic four-phase flow). If the deliverable is a *strategic document shaped by a named framework* (competitive analysis, positioning brief, market memo, sales pitch, GTM doc), that's Authoring. "Our positioning isn't landing — why?" is Business (problem to diagnose). "Write a competitive analysis of PLANTED" or "build a positioning brief using Dunford" is Authoring (document to author from a framework). When the topic matches a framework's `domains:` in `frameworks/registry.yaml`, that is a strong signal for Authoring.
 
 **Disambiguation refusal handling:** If the user picks "Other" or types a free-form answer that doesn't map to any of the 5 modes, ask one follow-up: "Could you describe in one sentence what you want as the deliverable — a design doc, a strategy memo, an evidence map, a sequenced curriculum, or a multi-feature roadmap?" If still ambiguous after the second question, do NOT silent-default. Instead, present an open-text re-prompt: "Describe in your own words what you're trying to produce." Run signal detection on the free-text answer and route to the closest match. If detection still fails, offer a final explicit list (all 5 modes, plus "I'm not sure — let me explore for a few questions first" which routes to Business mode for RCA-shaped exploration since not-knowing-the-shape is itself a diagnostic stance).
 
@@ -99,11 +112,11 @@ Grouping is editorial display only — no enum in code. "Build & ship" both prod
 
 **Software mode description:** "Fluid Q&A with automatic Architect consultation on technical decisions. Produces a validated design doc."
 
-**Business mode description:** "Structured phases (Goal, Problems, Root Causes, Solutions) with gates. Adapts depth to task complexity — tactical tasks move faster, strategic challenges get full diagnostic treatment."
+**Business mode description:** "Structured *diagnostic* phases (Goal, Problems, Root Causes, Solutions) with gates. For problems being diagnosed and resolved with an action plan — not for strategic documents being authored. If the deliverable is a document shaped by a framework (competitive analysis, positioning brief, market memo), Authoring mode is the right fit."
 
 **Research mode description:** "Corpus survey, comparative synthesis with Skeptic Pass critique, ranked recommendations with caveats. Produces a research memo or KB artifact."
 
-**Authoring mode description:** "Content sequencing with domain-advisor panel; optional Research sub-phase via file-mediated sub-agent fork. Produces a sequenced design doc (curriculum, framework prompts, exercises)."
+**Authoring mode description:** "Structured-document arrangement with framework + domain-advisor panel; optional Research sub-phase via file-mediated sub-agent fork. Produces a sequenced design doc — curricula, framework prompts, exercises, OR strategy memos, competitive analyses, positioning briefs, GTM/sales documents."
 
 **Planning mode description:** "Portfolio sequencing with strategy advisors (Christensen, Rumelt, Eric Ries — plus Cagan when available). Produces a roadmap + spawn-list portfolio whose entries seed future brainstorms."
 
@@ -128,7 +141,7 @@ accordingly."
 | Software | code artifacts (package.json, src/, architecture.md, recent commits) |
 | Business | domain materials (positioning, meeting notes, prior strategy, stakeholders) |
 | Research | literature/KB/registries (`knowledge/`, `frameworks/registry.yaml`, `advisors/registry.yaml`, prior `*-research.md`) |
-| Authoring | content registries + frameworks + prior curricula (`frameworks/`, exercise/lesson registries, `*-design.md` for content work, brand voice files) |
+| Authoring | document corpus — frameworks, advisors, prior arrangements (`frameworks/`, `advisors/`, exercise/lesson registries, `*-design.md` files, brand voice files; for strategic-document work also surface prior competitive/positioning/market memos and any `clients/<name>/` material on the subject) |
 | Planning | prior roadmaps + open kanban + customer asks (`*-roadmap.md`, `*-portfolio.md`, `docs/kanban/`, `clients/*/`) |
 
 Do not wait for the scan to complete before proceeding to Step 3.

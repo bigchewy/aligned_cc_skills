@@ -12,12 +12,16 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): project contains code files (package.json,
   Cargo.toml, go.mod, pyproject.toml, etc.)
 
-**Business mode** — strategy, decisions, RCA-shaped diagnosis:
-- Topic signals: strategy, sales, marketing, positioning, meeting prep,
-  decisions, stakeholders, pricing, proposals, RCA, diagnosis,
-  "why isn't this working"
+**Business mode** — diagnostic work with an action-plan deliverable:
+- Topic signals (all diagnostic in shape — "something isn't working,
+  help me figure out what to do"): "why isn't this working", RCA,
+  diagnosis, "what should we do about X", strategy *problem* (not
+  strategy *document*), sales/marketing/positioning *issues to
+  resolve* (not documents to author), meeting prep for a decision,
+  stakeholder conflict, pricing/proposal review where the question
+  is "what's wrong" or "what next"
 - Environment (tiebreaker): project is docs-only, Obsidian vault, or
-  non-code directory
+  non-code directory AND the request is shaped as a problem to solve
 
 **Research mode** — evidence synthesis, comparative review, literature audit:
 - Topic signals: literature review, evidence map, comparative review,
@@ -27,13 +31,21 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): knowledge folders, prior research artifacts,
   or registries are present
 
-**Authoring mode** — content design, curriculum sequencing, voice migration:
+**Authoring mode** — structured-document arrangement (content design OR strategic document):
 - Topic signals: curriculum, program design, sequence content,
   exercise sequencing, content design, "what to teach in what order",
   rewrite for audience, voice migration, framework prompt authoring,
-  chapter sequencing
+  chapter sequencing, **competitive analysis, positioning brief,
+  strategy memo, market analysis, go-to-market doc, sales pitch,
+  battle card, one-pager, "write a [strategic document]", "build a
+  [framework]-shaped document", any request whose deliverable is a
+  named document authored from a framework**
 - Environment (tiebreaker): content registries, prior curricula,
-  brand voice files are present
+  brand voice files are present, OR the request's topic matches a
+  `domains:` entry in `frameworks/registry.yaml` (e.g.,
+  `competitive-analysis`, `positioning`, `market-strategy`,
+  `go-to-market`) — when a registered framework matches the topic,
+  prefer Authoring
 
 **Planning mode** — multi-feature roadmap, portfolio sequencing:
 - Topic signals: roadmap, prioritization, portfolio, "what to build next",
@@ -53,5 +65,6 @@ software mode. Environment is a tiebreaker when topic keywords are absent.
 Apply these in order when topic signals overlap multiple modes:
 
 - **Software vs Authoring:** If the deliverable is *code that runs*, Software. If the deliverable is *content humans consume* (curriculum, prompts, exercises) even when there's a code seam, Authoring. The canonical test: a brainstorm with a runtime adapter (code) but 70% content-sequencing work routes to Authoring.
-- **Authoring vs Research:** If the deliverable is *an arrangement* (sequence, registry, curriculum), Authoring. If the deliverable is *an evidence map / ranked synthesis* with no arrangement output, Research. Authoring includes Research as an optional sub-phase.
+- **Authoring vs Research:** If the deliverable is *an arrangement* (sequence, registry, curriculum, framework-shaped strategic document), Authoring. If the deliverable is *an evidence map / ranked synthesis* with no arrangement output, Research. Authoring includes Research as an optional sub-phase.
 - **Business vs Planning:** If the work is *diagnostic* (why isn't X working, what should we do about Y problem), Business. If the work is *generative portfolio sequencing* (which N things should we build, in what order), Planning.
+- **Business vs Authoring:** The clarifying test is *what's on the page when we're done.* If the deliverable is an *action plan* — what we'll do differently to address a problem — that's Business (diagnostic four-phase flow). If the deliverable is a *strategic document shaped by a named framework* (competitive analysis, positioning brief, market memo, sales pitch, GTM doc), that's Authoring. "Our positioning isn't landing — why?" is Business (problem to diagnose). "Write a competitive analysis of PLANTED" or "build a positioning brief using Dunford" is Authoring (document to author from a framework). When the topic matches a framework's `domains:` in `frameworks/registry.yaml`, that is a strong signal for Authoring.

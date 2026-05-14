@@ -950,6 +950,15 @@ frameworks:
     domains: [biomechanics, tissue-stiffness, compensation-patterns, movement-dysfunction]
     use_when: "someone has compensatory movement patterns and needs to understand how relative tissue stiffness drives motion to the wrong joints"
 
+  - id: root-cause-analysis
+    name: "a Root Cause Analysis to diagnose why a problem exists before designing solutions"
+    advisor: wise-eric
+    purpose: "a four-phase diagnostic process — Gap → Obstacles → Root Causes → Solutions — that produces a defensible diagnostic document"
+    category: strategy
+    domains: [diagnosis, problem-solving, root-cause-analysis, strategic-diagnosis, decision-making]
+    use_when: "something isn't working and the user needs to diagnose why before proposing fixes; the deliverable is a diagnostic document, not a brainstorm"
+    helpful_documents: ["prior diagnoses", "relevant data or examples"]
+
   - id: sales-pitch-structure
     name: "building a sales pitch that translates their positioning into a compelling narrative. This is the methodology from \"Sales Pitch\""
     advisor: april-dunford
