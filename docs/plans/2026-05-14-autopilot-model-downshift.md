@@ -20,7 +20,7 @@ None. All changes are within `docs/ralph_loops/` and `e2e/tests/`. No manual set
 
 ---
 
-### Task 1: Add per-phase model env vars to `phases/plan.sh` (Opus)
+### ✅ Task 1: Add per-phase model env vars to `phases/plan.sh` (Opus)
 
 **Files:**
 - Create: `e2e/tests/test_autopilot_model_selection.py`
