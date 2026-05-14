@@ -17,6 +17,13 @@
 
 set -u
 
+# --- Model selection (override via VERIFY_MODEL / VERIFY_SUBAGENT_MODEL) ---
+# Sonnet (not Haiku): verify interprets failing stack traces and build
+# errors. A misclassification of a real failure as transient is the
+# worst-case outcome of model downshifting.
+export ANTHROPIC_MODEL="${VERIFY_MODEL:-sonnet}"
+export CLAUDE_CODE_SUBAGENT_MODEL="${VERIFY_SUBAGENT_MODEL:-sonnet}"
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 RALPH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 

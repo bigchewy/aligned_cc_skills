@@ -46,3 +46,20 @@ def test_mockup_phase_exports_subagent_model_sonnet():
         "phases/mockup.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
         "MOCKUP_SUBAGENT_MODEL override defaulting to sonnet"
     )
+
+
+def test_verify_phase_exports_anthropic_model_sonnet():
+    text = _read(PHASES_DIR / "verify.sh")
+    assert 'export ANTHROPIC_MODEL="${VERIFY_MODEL:-sonnet}"' in text, (
+        "phases/verify.sh must export ANTHROPIC_MODEL with VERIFY_MODEL "
+        "override defaulting to sonnet (NOT haiku — verify must interpret "
+        "failing stack traces and build errors)"
+    )
+
+
+def test_verify_phase_exports_subagent_model_sonnet():
+    text = _read(PHASES_DIR / "verify.sh")
+    assert 'export CLAUDE_CODE_SUBAGENT_MODEL="${VERIFY_SUBAGENT_MODEL:-sonnet}"' in text, (
+        "phases/verify.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
+        "VERIFY_SUBAGENT_MODEL override defaulting to sonnet"
+    )

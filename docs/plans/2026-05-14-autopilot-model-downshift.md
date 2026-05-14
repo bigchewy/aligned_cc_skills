@@ -150,7 +150,7 @@ git commit -m "feat(autopilot): downshift mockup phase to Sonnet via env var"
 
 ---
 
-### Task 3: Add per-phase model env vars to `phases/verify.sh` (Sonnet)
+### ✅ Task 3: Add per-phase model env vars to `phases/verify.sh` (Sonnet)
 
 **Files:**
 - Modify: `e2e/tests/test_autopilot_model_selection.py` (add 2 tests)
