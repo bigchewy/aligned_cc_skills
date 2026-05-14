@@ -25,6 +25,13 @@ HEARTBEAT_INTERVAL="${HEARTBEAT_INTERVAL:-30}"
 # human intervention — autopilot is unattended by contract.
 MAX_BLOCKED_ITERATIONS="${MAX_BLOCKED_ITERATIONS:-3}"
 
+# --- Model selection (override via RALPH_MODEL / RALPH_SUBAGENT_MODEL) ---
+# Sonnet for the ralph execute loop: up to 50 iterations of TDD task
+# execution dominate total autopilot cost. Anthropic docs call Sonnet
+# "for daily coding tasks" — this is the canonical use case.
+export ANTHROPIC_MODEL="${RALPH_MODEL:-sonnet}"
+export CLAUDE_CODE_SUBAGENT_MODEL="${RALPH_SUBAGENT_MODEL:-sonnet}"
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EXECUTE="$SCRIPT_DIR/EXECUTE-PLAN.md"
 

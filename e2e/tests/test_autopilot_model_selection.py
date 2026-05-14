@@ -63,3 +63,20 @@ def test_verify_phase_exports_subagent_model_sonnet():
         "phases/verify.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
         "VERIFY_SUBAGENT_MODEL override defaulting to sonnet"
     )
+
+
+def test_run_ralph_exports_anthropic_model_sonnet():
+    text = _read(RALPH_DIR / "run-ralph.sh")
+    assert 'export ANTHROPIC_MODEL="${RALPH_MODEL:-sonnet}"' in text, (
+        "run-ralph.sh must export ANTHROPIC_MODEL with RALPH_MODEL "
+        "override defaulting to sonnet (highest-leverage downshift — "
+        "up to 50 iterations dominate total cost)"
+    )
+
+
+def test_run_ralph_exports_subagent_model_sonnet():
+    text = _read(RALPH_DIR / "run-ralph.sh")
+    assert 'export CLAUDE_CODE_SUBAGENT_MODEL="${RALPH_SUBAGENT_MODEL:-sonnet}"' in text, (
+        "run-ralph.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
+        "RALPH_SUBAGENT_MODEL override defaulting to sonnet"
+    )

@@ -210,7 +210,7 @@ git commit -m "feat(autopilot): downshift verify phase to Sonnet via env var"
 
 ---
 
-### Task 4: Add per-phase model env vars to `run-ralph.sh` (Sonnet)
+### ✅ Task 4: Add per-phase model env vars to `run-ralph.sh` (Sonnet)
 
 **Files:**
 - Modify: `e2e/tests/test_autopilot_model_selection.py` (add 2 tests)
