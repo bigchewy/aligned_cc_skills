@@ -30,6 +30,16 @@
 
 > Symptoms feel like causes because they're closer to the surface. The framework's Phase 3 exists specifically to push past them.
 
+### Confirming a software-side root cause without Architect verification
+
+**User:** "The root cause is the onboarding flag isn't being set on signup."
+
+**Wrong:** "That makes sense. Let's design solutions around making sure the flag gets set correctly."
+
+**Right:** "That's plausible, but before we lock it in let me have The Architect verify against the actual code. Software diagnoses sound right but turn out wrong all the time — the flag might be set correctly and the bug might live somewhere else (a redirect, a feature gate, a stale cache). I won't confirm a code-side root cause on a guess when the code can be read."
+
+> Software-side diagnoses feel certain because the user can explain them coherently. But coherent explanations are often wrong — the real cause is somewhere the user hasn't looked. The Architect is the verification step that catches this; skipping it means designing solutions for a problem that isn't actually the problem.
+
 ### Accepting external conditions as root causes
 
 **User:** "The root cause is that buyers are more price-sensitive now."

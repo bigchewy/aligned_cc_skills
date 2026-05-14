@@ -54,6 +54,20 @@
 
 > Walks the 'why' ladder, then explicitly tests whether the candidate root cause explains multiple symptoms.
 
+### Verifying a software-side candidate with The Architect
+
+**User:** "The root cause is that the `onboarding_completed` flag is never being set, so new users keep seeing the post-onboarding home screen instead of the new flow."
+
+**Facilitator:** "Plausible — but before we lock that in, let me have The Architect verify against the actual code. One moment."
+
+*Dispatches The Architect sub-agent with the candidate root cause, the Phase 1 gap ("new users don't see the new onboarding flow on first login"), and the Phase 2 obstacles list.*
+
+**Architect (returned findings):** "PARTIALLY CONFIRMED. The `onboarding_completed` flag is set correctly on completion (`src/app/onboarding/complete/route.ts:34`). The actual issue: the first-login redirect at `middleware.ts:67` checks `session.user.created_at` against a hard-coded timestamp (`2025-11-15`) that pre-dates the new flow's release. New users created after that date are matched against the OLD onboarding flag, not the new one. Adjacent cause: the same hard-coded date is used in three other places (`auth/callback`, `dashboard/layout`, `pricing-page`), so the bug surfaces in multiple flows."
+
+**Facilitator:** "The Architect found something. Your candidate was close but slightly off — the flag IS being set correctly. The real cause is a hard-coded date in `middleware.ts:67` that gates which onboarding flow new users see. And the same date pattern lives in three other places, which means we have one root cause with four symptoms. Does that match what you're seeing — has the bug shown up in any of those other flows?"
+
+> The Architect's verification refined a partially-correct user diagnosis, surfaced the actual code-side cause with file:line evidence, and revealed adjacent symptoms. The facilitator then re-engages the user with the refined diagnosis for confirmation.
+
 ### User naming an external condition
 
 **User:** "The root cause is the economy — buyers aren't spending."

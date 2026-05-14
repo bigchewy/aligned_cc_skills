@@ -75,7 +75,28 @@ Look for patterns: do multiple obstacles share a single root cause? That's often
 
 If the user names an external condition (the economy, the market, a competitor) as a root cause, push back: external factors are conditions, not causes. Other actors face the same conditions and respond differently. What's different about this user's response? That's where the root cause lives.
 
-**Gate:** Present root causes mapped to the obstacles from Phase 2. Get confirmation before moving to solutions.
+**Architect consultation (when the root cause touches code):**
+
+If the candidate root cause involves software — a code path, a data flow, an integration, an architectural decision, a missing/wrong feature flag, a database state, or any "the code is doing X but should do Y" claim — verify the candidate against the actual codebase before confirming it as the root cause.
+
+Dispatch The Architect (`advisors/prompts/the-architect.md`) as a sub-agent via the Task tool (`subagent_type=general-purpose`, `model=opus`). Pass:
+
+- The candidate root cause as the user has stated it
+- The Phase 1 gap restated
+- The Phase 2 obstacles list
+
+Ask The Architect to: (1) verify the candidate against the actual code with file:line evidence, (2) surface adjacent software-side causes the user may have missed, (3) flag if the candidate is itself a symptom of a deeper code-side cause.
+
+Integrate the findings before presenting to the user:
+
+- **CONFIRMED** → present the root cause with The Architect's evidence
+- **PARTIALLY CONFIRMED** → present the refined version with The Architect's adjustments
+- **WRONG DIAGNOSIS** → present The Architect's alternative root cause for user confirmation
+- **DEEPER CAUSE FLAGGED** → ask the user: "The Architect found this candidate is a symptom of {deeper cause} — should we make that the root cause instead?"
+
+Skip this consultation when the root cause is pure-business (organizational, strategic, market, pricing, stakeholder) with no code involvement.
+
+**Gate:** Present root causes mapped to the obstacles from Phase 2 (with The Architect's evidence where applicable). Get confirmation before moving to solutions.
 
 WAIT for user confirmation.
 
@@ -117,6 +138,7 @@ This is the artifact. The diagnosis is now a document, not a conversation.
 - Use the "ask why" technique to push past the first plausible answer
 - Categorize obstacles into the five buckets to catch blind spots
 - Test root causes against the common patterns
+- For software-side candidates, dispatch The Architect to verify against the actual code before confirming the root cause with the user — never confirm a code-side diagnosis on the user's word alone when the code can be read
 - Propose 2–3 solutions, never one, never five
 - Every solution must address a named root cause and name its failure mode
 - The output is a document — Gap, Obstacles, Root Causes, Chosen Approach, What we're not doing
