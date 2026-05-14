@@ -43,3 +43,24 @@ def test_finishing_does_not_reintroduce_gate_language(needle):
         f"The Step 0.5 evidence gate was removed in 0.27.3; this guard prevents "
         f"accidental reintroduction."
     )
+
+
+# Required cross-references — if either file is renamed, the linking prose
+# rots silently. Each tuple is (source-file, expected-target-substring).
+REQUIRED_CROSS_REFS = [
+    (
+        REPO_ROOT / "skills" / "finishing-a-development-branch" / "references" / "deployment-pitfall-catalog.md",
+        "skills/_shared/manual-deploy-artifact-catalog.md",
+    ),
+]
+
+
+@pytest.mark.parametrize("source,target_rel", REQUIRED_CROSS_REFS)
+def test_cross_reference_link_resolves(source, target_rel):
+    assert source.is_file(), f"source file missing: {source}"
+    text = source.read_text(encoding="utf-8")
+    assert target_rel in text, (
+        f"{source.relative_to(REPO_ROOT)} must reference {target_rel!r}"
+    )
+    target = REPO_ROOT / target_rel
+    assert target.is_file(), f"cross-reference target does not resolve: {target_rel}"

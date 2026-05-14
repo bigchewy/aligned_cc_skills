@@ -2,7 +2,7 @@
 
 # Create SVG Diagram
 
-Hand-coded SVG diagrams matching a project's design tokens from the local repo's `docs/design/design-principles.md`.
+Hand-coded SVG diagrams matching a project's design tokens from the `design-principles.md` path resolved by the router.
 
 ## Step 1: Read Design Principles (REQUIRED)
 

@@ -20,3 +20,7 @@ When filing an entry to the Kanban board:
 ```
 
 4. Write the incremented number back to `docs/kanban/.counter`
+
+## Commit branch
+
+Commit KB entries to the **current branch** (the branch the work was reviewed on). Use bare `git add/commit` against the working repo — never `git -C <main-repo>` from a worktree. Findings merge into main with the feature; cross-committing from a worktree to whatever branch the main repo happened to be on has stranded entries on sister branches.

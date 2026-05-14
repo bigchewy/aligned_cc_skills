@@ -39,7 +39,7 @@ Check the output. If it shows `main` or `master`, STOP. Tell the user and offer 
 
 ### Step 2: Execute Build Tasks
 
-**Execution mode:** autonomous by default (defined in Overview). If the user explicitly requested checkpoints, or the plan is marked for batched execution, switch to batched mode: process tasks in groups of 3–7 and report between batches.
+**Execution mode:** autonomous by default — execute all tasks without pausing between them. If the user explicitly requested checkpoints, or the plan is marked for batched execution, switch to batched mode: process tasks in groups of 3–7 and report between batches.
 
 For each task:
 1. Mark as in_progress

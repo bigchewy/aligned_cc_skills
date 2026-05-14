@@ -58,6 +58,18 @@ for t in (d.get("mcp-tools-required") or []):
   return 0
 }
 
+# _walk_upward_collect <start-dir> <relative-filename>
+# Echoes one absolute path per line for each existing match while walking up
+# from <start-dir> toward `/`. Stops at `/`. Caller appends home fallbacks.
+_walk_upward_collect() {
+  local dir="$(cd "$1" && pwd -P)"
+  local rel="$2"
+  while [ "$dir" != "/" ]; do
+    [ -f "$dir/$rel" ] && echo "$dir/$rel"
+    dir="$(dirname "$dir")"
+  done
+}
+
 # check_mcp_tool <tool-string> [worktree-cwd]
 # Walks .mcp.json upward from worktree → main repo → $HOME/.claude/.
 # Exit 0 = server defined and tool allowlisted, 2 = halt (server unreachable
@@ -69,13 +81,8 @@ check_mcp_tool() {
   local server="${tool#mcp__}"
   server="${server%%__*}"
 
-  # Walk upward; accumulate .mcp.json paths in order
-  local dir="$(cd "$cwd" && pwd -P)"
   local mcp_files=()
-  while [ "$dir" != "/" ]; do
-    [ -f "$dir/.mcp.json" ] && mcp_files+=("$dir/.mcp.json")
-    dir="$(dirname "$dir")"
-  done
+  while IFS= read -r line; do mcp_files+=("$line"); done < <(_walk_upward_collect "$cwd" .mcp.json)
   [ -f "$HOME/.claude/.mcp.json" ] && mcp_files+=("$HOME/.claude/.mcp.json")
   [ -f "$HOME/.mcp.json" ] && mcp_files+=("$HOME/.mcp.json")
 
@@ -100,11 +107,7 @@ sys.exit(0 if os.environ['MCP_SERVER'] in (d.get('mcpServers') or {}) else 1)
 
   # Allowlist check: walk settings.local.json from worktree → main → $HOME/.claude
   local settings_files=()
-  dir="$(cd "$cwd" && pwd -P)"
-  while [ "$dir" != "/" ]; do
-    [ -f "$dir/.claude/settings.local.json" ] && settings_files+=("$dir/.claude/settings.local.json")
-    dir="$(dirname "$dir")"
-  done
+  while IFS= read -r line; do settings_files+=("$line"); done < <(_walk_upward_collect "$cwd" .claude/settings.local.json)
   [ -f "$HOME/.claude/settings.local.json" ] && settings_files+=("$HOME/.claude/settings.local.json")
 
   for f in "${settings_files[@]+"${settings_files[@]}"}"; do

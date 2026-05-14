@@ -40,7 +40,7 @@ def _section_severity(text: str, entry_start: int) -> str | None:
 
 
 def _iter_entries(text: str):
-    """Yield (entry_id, entry_body, parent_severity) tuples.
+    """Yield (entry_id, entry_body, parent_severity, yaml_block) tuples.
 
     An entry starts with `### <ID>: <Title>` and ends at the next `###` heading
     or a following `## ` (severity) heading, whichever comes first.
@@ -51,11 +51,16 @@ def _iter_entries(text: str):
         entry_id = m.group(1)
         body_start = m.end()
         next_h3 = entry_starts[i + 1].start() if i + 1 < len(entry_starts) else len(text)
-        # Also stop at the next `## ` if it precedes the next `###`.
         stop_h2 = next((h2.start() for h2 in next_h2 if h2.start() > body_start), len(text))
-        body_end = min(next_h3, stop_h2)
+        body = text[body_start:min(next_h3, stop_h2)]
         parent = _section_severity(text, m.start())
-        yield entry_id, text[body_start:body_end], parent
+        yaml_blocks = re.findall(r"```yaml\n(.*?)```", body, re.DOTALL)
+        yaml_block = yaml_blocks[0] if yaml_blocks else ""
+        yield entry_id, body, parent, yaml_block, len(yaml_blocks)
+
+
+CATALOG_TEXT = _read_catalog()
+ENTRIES = list(_iter_entries(CATALOG_TEXT))
 
 
 def test_catalog_file_exists():
@@ -63,48 +68,40 @@ def test_catalog_file_exists():
 
 
 def test_catalog_has_schema_header():
-    text = _read_catalog()
-    assert "## Schema" in text, "Catalog must contain a '## Schema' section"
+    assert "## Schema" in CATALOG_TEXT, "Catalog must contain a '## Schema' section"
 
 
 def test_catalog_has_builtin_exemption_patterns():
-    text = _read_catalog()
-    assert "**/seed/**" in text
-    assert "**/fixtures/**" in text
-    assert "**/__tests__/**" in text
-    assert "**/*.test.*" in text
+    assert "**/seed/**" in CATALOG_TEXT
+    assert "**/fixtures/**" in CATALOG_TEXT
+    assert "**/__tests__/**" in CATALOG_TEXT
+    assert "**/*.test.*" in CATALOG_TEXT
 
 
 def test_catalog_has_at_least_one_entry():
-    text = _read_catalog()
-    entries = list(_iter_entries(text))
-    assert entries, "Catalog must contain at least one entry (### M<n>: ...)"
+    assert ENTRIES, "Catalog must contain at least one entry (### M<n>: ...)"
 
 
-@pytest.mark.parametrize("entry_id,body,parent_severity", list(_iter_entries(_read_catalog())))
-def test_entry_has_required_prose_headers(entry_id, body, parent_severity):
+@pytest.mark.parametrize("entry_id,body,parent_severity,yaml_block,yaml_count", ENTRIES)
+def test_entry_has_required_prose_headers(entry_id, body, parent_severity, yaml_block, yaml_count):
     for header in REQUIRED_PROSE_HEADERS:
         assert header in body, f"Entry {entry_id} missing prose header: {header}"
 
 
-@pytest.mark.parametrize("entry_id,body,parent_severity", list(_iter_entries(_read_catalog())))
-def test_entry_has_exactly_one_fenced_yaml_block(entry_id, body, parent_severity):
-    blocks = re.findall(r"```yaml\n(.*?)```", body, re.DOTALL)
-    assert len(blocks) == 1, (
-        f"Entry {entry_id} must have exactly one ```yaml fenced block, found {len(blocks)}"
+@pytest.mark.parametrize("entry_id,body,parent_severity,yaml_block,yaml_count", ENTRIES)
+def test_entry_has_exactly_one_fenced_yaml_block(entry_id, body, parent_severity, yaml_block, yaml_count):
+    assert yaml_count == 1, (
+        f"Entry {entry_id} must have exactly one ```yaml fenced block, found {yaml_count}"
     )
 
 
-@pytest.mark.parametrize("entry_id,body,parent_severity", list(_iter_entries(_read_catalog())))
-def test_entry_yaml_block_has_allowed_fields(entry_id, body, parent_severity):
-    blocks = re.findall(r"```yaml\n(.*?)```", body, re.DOTALL)
-    data = yaml.safe_load(blocks[0])
+@pytest.mark.parametrize("entry_id,body,parent_severity,yaml_block,yaml_count", ENTRIES)
+def test_entry_yaml_block_has_allowed_fields(entry_id, body, parent_severity, yaml_block, yaml_count):
+    data = yaml.safe_load(yaml_block)
     assert isinstance(data, dict), f"Entry {entry_id} yaml block must parse to a mapping"
-    # Must have detector_glob or detector_grep (or both)
     assert "detector_glob" in data or "detector_grep" in data, (
         f"Entry {entry_id} must define detector_glob or detector_grep"
     )
-    # severity
     assert "severity" in data, f"Entry {entry_id} missing severity"
     assert data["severity"] in ALLOWED_SEVERITIES, (
         f"Entry {entry_id} severity must be one of {ALLOWED_SEVERITIES}"

@@ -20,6 +20,16 @@ from pathlib import Path
 DEFAULT_THRESHOLD = 0.92
 
 
+def _slice_sections(output: str, matches: list) -> list[dict]:
+    """Slice text between consecutive regex match positions into name/content dicts."""
+    result = []
+    for i, m in enumerate(matches):
+        start = m.end()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(output)
+        result.append({"name": m.group(1).strip(), "content": output[start:end].strip()})
+    return result
+
+
 def parse_persona_sections(output: str) -> list[dict]:
     """Extract individual persona sections from structured LLM output.
 
@@ -29,54 +39,21 @@ def parse_persona_sections(output: str) -> list[dict]:
 
     Returns list of {"name": str, "content": str} dicts.
     Returns empty list if no recognizable persona structure found.
-    """
-    sections: list[dict] = []
 
-    # Try markdown headers first: ## The Persona Name or ## Persona Name
-    header_pattern = re.compile(r"^##\s+(.+)$", re.MULTILINE)
-    headers = list(header_pattern.finditer(output))
+    Priority: a pattern with ≥2 matches wins over a single-match fallback —
+    so a stray ## header in numbered output doesn't preempt the real format.
+    """
+    headers = list(re.finditer(r"^##\s+(.+)$", output, re.MULTILINE))
+    numbered = list(re.finditer(r"^\d+\.\s+\*\*(.+?)\*\*\s*$", output, re.MULTILINE))
 
     if len(headers) >= 2:
-        for i, match in enumerate(headers):
-            name = match.group(1).strip()
-            start = match.end()
-            end = headers[i + 1].start() if i + 1 < len(headers) else len(output)
-            content = output[start:end].strip()
-            sections.append({"name": name, "content": content})
-        return sections
-
-    # Try numbered bold: 1. **Persona Name**
-    numbered_pattern = re.compile(
-        r"^\d+\.\s+\*\*(.+?)\*\*\s*$", re.MULTILINE
-    )
-    numbered_headers = list(numbered_pattern.finditer(output))
-
-    if len(numbered_headers) >= 2:
-        for i, match in enumerate(numbered_headers):
-            name = match.group(1).strip()
-            start = match.end()
-            end = (
-                numbered_headers[i + 1].start()
-                if i + 1 < len(numbered_headers)
-                else len(output)
-            )
-            content = output[start:end].strip()
-            sections.append({"name": name, "content": content})
-        return sections
-
-    # Single header — still return it
-    if len(headers) == 1:
-        name = headers[0].group(1).strip()
-        content = output[headers[0].end() :].strip()
-        sections.append({"name": name, "content": content})
-        return sections
-
-    if len(numbered_headers) == 1:
-        name = numbered_headers[0].group(1).strip()
-        content = output[numbered_headers[0].end() :].strip()
-        sections.append({"name": name, "content": content})
-        return sections
-
+        return _slice_sections(output, headers)
+    if len(numbered) >= 2:
+        return _slice_sections(output, numbered)
+    if headers:
+        return _slice_sections(output, headers)
+    if numbered:
+        return _slice_sections(output, numbered)
     return []
 
 

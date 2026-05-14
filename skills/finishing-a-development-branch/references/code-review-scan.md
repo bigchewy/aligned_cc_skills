@@ -77,7 +77,7 @@ prompt: "Analyze the branch changes for simplification opportunities.
    - **Discovered during:** `finishing-a-development-branch (code-simplifier)`
    - **Why out of scope:** `Simplification opportunity — not a bug or part of the current task`
    - Map finding fields: title → KB title, `file:line_range` → Location, observed → Observed, suggestion → Expected, severity → Severity
-3. Commit the Kanban entries. **If CWD is a worktree**, use `git -C <main-repo-path> add/commit` (KB files are in main repo). If CWD is the main repo, use bare `git add/commit`.
+3. Commit the Kanban entries to the **current branch** (the branch under review) using bare `git add/commit`. KB findings are part of the work being reviewed — they ride into main on the feature-merge and become visible everywhere then. Do NOT cross-commit to the main repo from a worktree; that has stranded findings on whatever sister branch the main repo happened to be on. See `skills/_shared/kanban-entry-format.md` §Commit branch.
 
 **Report to user:**
 ```
