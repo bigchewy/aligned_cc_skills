@@ -1,0 +1,28 @@
+#!/bin/bash
+# Auto-regenerate the Kanban board HTML when a commit touches docs/kanban/*.md.
+#
+# Installed via: git config core.hooksPath scripts/hooks
+# Disable temporarily by passing --no-verify is not enough (post-commit doesn't
+# block); rename this file or change core.hooksPath if you need to silence it.
+
+set -e
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD -- 'docs/kanban/*.md' 2>/dev/null || true)
+
+# No kanban changes in this commit? Silent exit.
+[ -z "$CHANGED" ] && exit 0
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "[post-commit] node not on PATH; skipping Kanban board regen"
+  exit 0
+fi
+
+# Regenerate. Fail soft so a broken script never blocks the commit (post-commit
+# can't roll back anyway, but we still don't want a noisy stack trace).
+if ! node "$REPO_ROOT/scripts/generate-kanban-board.cjs" >/dev/null 2>&1; then
+  echo "[post-commit] Kanban board regen failed; run scripts/generate-kanban-board.cjs manually to see the error"
+  exit 0
+fi
+
+echo "[post-commit] Regenerated docs/kanban/board.html"

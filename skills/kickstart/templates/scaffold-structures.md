@@ -45,8 +45,11 @@ project/
 │   ├── eval-runner.ts                  # Starter eval runner (TS-based projects)
 │   └── .gitignore                      # eval-log.jsonl, .eval-audit-last-run
 ├── scripts/
+│   ├── generate-kanban-board.cjs       # HTML triage view of docs/kanban/ (.cjs so it works in both CommonJS and ESM repos)
+│   └── hooks/
+│       └── post-commit                 # Auto-regenerates board.html when KB items change
 ├── eslint-rules/
-└── .gitignore                          # Append eval patterns to the base .gitignore
+└── .gitignore                          # Append eval + board.html patterns to the base .gitignore
 ```
 
 > **Note:** YAML-based eval projects (like this plugin) use `eval-surface.yaml` + `trigger-map.yaml` instead of the `.ts` files. The TS scaffold is for general-purpose projects with TypeScript eval runners.

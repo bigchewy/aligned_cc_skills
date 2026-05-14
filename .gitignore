@@ -13,5 +13,6 @@ aligned-cowork.zip
 *.plugin
 docs/plans/
 docs/investigations/
+docs/kanban/board.html
 *.draft.yaml
 *.draft.pass1.yaml

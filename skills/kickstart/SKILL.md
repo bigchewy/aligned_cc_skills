@@ -77,6 +77,33 @@ mkdir -p docs/kanban/todo docs/kanban/in-progress docs/kanban/done docs/kanban/d
 echo "1" > docs/kanban/.counter
 ```
 
+**Kanban board generator + post-commit hook (Software only):**
+
+Copy two tracked files from the skill's templates into the project, then wire up the git hook so the HTML view auto-regenerates whenever a Kanban item is committed:
+
+```bash
+mkdir -p scripts/hooks
+cp {base-directory}/templates/scripts/generate-kanban-board.cjs scripts/generate-kanban-board.cjs
+cp {base-directory}/templates/scripts/hooks/post-commit scripts/hooks/post-commit
+chmod +x scripts/hooks/post-commit
+```
+
+If the project is already a git repo (`.git/` exists), redirect git's hooks to the tracked directory so the post-commit hook fires automatically when `docs/kanban/*.md` changes in a commit:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+If `.git/` does not exist yet, skip the `git config` line and tell the user to run it themselves after `git init`.
+
+Append `docs/kanban/board.html` to the project's `.gitignore` — the HTML view is regenerated from the markdown and should not be tracked.
+
+Generate the initial board once so the user has something to open:
+
+```bash
+node scripts/generate-kanban-board.cjs
+```
+
 **e2e/.gitignore:**
 ```
 eval-log.jsonl
@@ -150,7 +177,7 @@ Output the appropriate message based on `project_type`, then commit all scaffold
 
 **General:** "Project scaffolded. Start with `/aligned:brainstorming` to define your first initiative, or fill in the CLAUDE.md sections as you discover what conventions matter for this workspace."
 
-Commit all scaffolded files. Stage each file created or modified during scaffolding explicitly — enumerate them from the list of files written in Phase 3 and Phase 4 (for software: `CLAUDE.md`, `.claude/settings.json`, `.gitignore`, `docs/architecture.md`, `docs/design/design-principles.md`, `docs/kanban/.counter`, `e2e/.gitignore`, any stub directories that contain `.gitkeep`; for business/personal/general: `CLAUDE.md`, `.claude/settings.json`, `.gitignore`).
+Commit all scaffolded files. Stage each file created or modified during scaffolding explicitly — enumerate them from the list of files written in Phase 3 and Phase 4 (for software: `CLAUDE.md`, `.claude/settings.json`, `.gitignore`, `docs/architecture.md`, `docs/design/design-principles.md`, `docs/kanban/.counter`, `scripts/generate-kanban-board.cjs`, `scripts/hooks/post-commit`, `e2e/.gitignore`, any stub directories that contain `.gitkeep`; for business/personal/general: `CLAUDE.md`, `.claude/settings.json`, `.gitignore`).
 
 ```bash
 git add <each file enumerated above>

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>__TITLE__</title>
+  <style>
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --color-danger: #b91c1c;
+      --color-danger-subtle: #fef2f2;
+      --color-success: #047857;
+      --color-success-subtle: #ecfdf5;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      color: var(--color-foreground);
+      margin: 0;
+      padding: 0 0 80px 0;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--color-background);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 32px;
+      z-index: 50;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 4px 0; }
+    .subtitle { font-size: 0.9rem; color: var(--color-secondary); margin: 0 0 12px 0; }
+    .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    #search {
+      flex: 1;
+      min-width: 240px;
+      padding: 8px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: white;
+      font-family: inherit;
+    }
+    #search:focus { outline: none; border-color: var(--color-accent); }
+    .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; max-width: 100%; }
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      border: 1px solid var(--color-border);
+      background: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 100ms;
+    }
+    .pill:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .pill.active { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .pill .count { opacity: 0.6; margin-left: 4px; }
+
+    main { padding: 16px 32px; max-width: 1200px; margin: 0 auto; }
+    .group-heading {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 24px 0 8px 0;
+    }
+
+    .row {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: border-color 100ms;
+    }
+    .row:hover { border-color: var(--color-dimmed); }
+    .row.modified { border-color: var(--color-accent); background: var(--color-accent-subtle); }
+    .row.marked-delete {
+      border-color: var(--color-danger);
+      background: var(--color-danger-subtle);
+      opacity: 0.7;
+    }
+    .row.marked-delete .row-header h3 .row-name { text-decoration: line-through; }
+    .row.expanded { border-color: var(--color-foreground); }
+    .row-header {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .row-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .row-info { flex: 1; min-width: 0; }
+    .row-id {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--color-dimmed);
+      font-weight: 400;
+      margin-left: 8px;
+    }
+    .row-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: var(--color-surface);
+      color: var(--color-secondary);
+      white-space: nowrap;
+    }
+    .row-badge.advisor { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .row-badge.modified { background: var(--color-accent); color: white; }
+    .row-badge.delete { background: var(--color-danger); color: white; }
+    .row-summary {
+      font-size: 0.85rem;
+      color: var(--color-secondary);
+      margin: 4px 0 0 0;
+    }
+    .row-body {
+      display: none;
+      padding: 0 16px 16px 16px;
+      border-top: 1px solid var(--color-border);
+    }
+    .row.expanded .row-body { display: block; }
+
+    .field { margin: 12px 0; }
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .field input, .field textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 6px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: white;
+      color: var(--color-foreground);
+      resize: vertical;
+    }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--color-accent); }
+    .field textarea { min-height: 60px; line-height: 1.5; }
+    .field.modified label { color: var(--color-accent); }
+    .field.modified input, .field.modified textarea { border-color: var(--color-accent); background: var(--color-accent-subtle); }
+    .field-readonly {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      padding: 6px 10px;
+      background: var(--color-muted);
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-border);
+    }
+    .btn {
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      background: white;
+      color: var(--color-foreground);
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 100ms;
+    }
+    .btn:hover { border-color: var(--color-foreground); }
+    .btn-danger { color: var(--color-danger); border-color: var(--color-danger); }
+    .btn-danger:hover { background: var(--color-danger); color: white; }
+    .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+    .btn-ghost { background: transparent; border-color: transparent; color: var(--color-secondary); }
+    .btn-ghost:hover { color: var(--color-foreground); border-color: var(--color-border); }
+
+    .stats {
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      padding: 8px 0 16px 0;
+    }
+    .empty {
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--color-dimmed);
+      font-size: 0.9rem;
+    }
+
+    /* Pending changes bar */
+    #pending-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-foreground);
+      color: white;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    #pending-bar.hidden { display: none; }
+    #pending-bar .pending-count { font-size: 0.95rem; font-weight: 600; }
+    #pending-bar .pending-detail { color: rgba(255,255,255,0.7); font-size: 0.85rem; flex: 1; }
+    #pending-bar .btn { background: white; color: var(--color-foreground); border-color: white; }
+    #pending-bar .btn:hover { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    #pending-bar .btn-ghost { background: transparent; color: rgba(255,255,255,0.7); border-color: transparent; }
+    #pending-bar .btn-ghost:hover { color: white; background: rgba(255,255,255,0.1); border-color: transparent; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 24px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal h2 { margin: 0 0 8px 0; font-size: 1.2rem; }
+    .modal p { color: var(--color-secondary); font-size: 0.88rem; margin: 0 0 16px 0; }
+    .modal textarea {
+      flex: 1;
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-muted);
+      color: var(--color-foreground);
+      resize: none;
+      min-height: 320px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .copy-success {
+      color: var(--color-success);
+      font-size: 0.85rem;
+      align-self: center;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>__TITLE__</h1>
+    <p class="subtitle" id="header-subtitle"></p>
+    <div class="controls">
+      <input id="search" type="text" placeholder="Search by id, name, or any field..." autocomplete="off">
+      <div class="filter-pills" id="category-pills"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="stats" id="stats"></div>
+    <div id="rows"></div>
+    <div class="empty" id="empty" style="display:none;">No matches.</div>
+  </main>
+
+  <div id="pending-bar" class="hidden">
+    <span class="pending-count" id="pending-count">0 pending changes</span>
+    <span class="pending-detail" id="pending-detail"></span>
+    <button class="btn btn-ghost" id="clear-pending">Clear all</button>
+    <button class="btn btn-primary" id="export-pending">Export queue</button>
+  </div>
+
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal">
+      <h2>Export queue</h2>
+      <p>Copy the JSON below and paste it back into Claude Code to apply the changes. localStorage retains the queue until you clear it manually.</p>
+      <textarea id="export-text" readonly></textarea>
+      <div class="modal-actions">
+        <span class="copy-success" id="copy-success" style="display:none;">Copied to clipboard</span>
+        <button class="btn" id="modal-close">Close</button>
+        <button class="btn btn-primary" id="modal-copy">Copy to clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script id="config-data" type="application/json">__CONFIG_JSON__</script>
+  <script>
+    // ========== Config injected at build time ==========
+    const CONFIG = JSON.parse(document.getElementById("config-data").textContent);
+    const ENTITY_TYPE = CONFIG.entityType;        // "framework" or "advisor"
+    const REGISTRY_DATA = CONFIG.registry;
+    const GENERATED_AT = CONFIG.generatedAt;
+
+    const STORAGE_KEY = `aligned-catalog:${ENTITY_TYPE}:pending`;
+    const ENTITIES = ENTITY_TYPE === "framework" ? REGISTRY_DATA.frameworks : REGISTRY_DATA.advisors;
+
+    // Schema per entity type
+    const SCHEMAS = {
+      framework: {
+        readonly: ["id", "advisor"],
+        editable: [
+          { key: "name", label: "Name", type: "input" },
+          { key: "purpose", label: "Purpose", type: "textarea" },
+          { key: "category", label: "Category", type: "input" },
+          { key: "domains", label: "Domains (comma-separated)", type: "array" },
+          { key: "use_when", label: "Use when", type: "textarea" },
+          { key: "required_documents", label: "Required documents (comma-separated)", type: "array" },
+          { key: "helpful_documents", label: "Helpful documents (comma-separated)", type: "array" },
+        ],
+        groupBy: "category",
+        summaryField: "purpose",
+        secondaryBadge: "advisor",
+      },
+      advisor: {
+        readonly: ["id", "prompt"],
+        editable: [
+          { key: "name", label: "Name", type: "input" },
+          { key: "summary", label: "Summary", type: "input" },
+          { key: "domains", label: "Domains (comma-separated)", type: "array" },
+          { key: "evaluation_expertise", label: "Evaluation expertise", type: "textarea" },
+          { key: "best_for", label: "Best for", type: "textarea" },
+          { key: "not_for", label: "Not for", type: "textarea" },
+        ],
+        groupBy: null,
+        summaryField: "summary",
+        secondaryBadge: null,
+      },
+    };
+    const SCHEMA = SCHEMAS[ENTITY_TYPE];
+
+    // ========== State management ==========
+    function loadPending() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { deletes: {}, updates: {} };
+        const parsed = JSON.parse(raw);
+        return {
+          deletes: parsed.deletes || {},
+          updates: parsed.updates || {},
+        };
+      } catch (e) {
+        console.warn("localStorage parse failed; resetting", e);
+        return { deletes: {}, updates: {} };
+      }
+    }
+
+    function savePending() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(pending));
+      } catch (e) {
+        alert("localStorage save failed: " + e.message);
+      }
+    }
+
+    let pending = loadPending();
+
+    function getCurrentValue(entity, key) {
+      if (pending.updates[entity.id] && key in pending.updates[entity.id]) {
+        return pending.updates[entity.id][key];
+      }
+      return entity[key];
+    }
+
+    function isModified(entity) {
+      return !!(pending.updates[entity.id] && Object.keys(pending.updates[entity.id]).length > 0);
+    }
+
+    function isMarkedDelete(entity) {
+      return !!pending.deletes[entity.id];
+    }
+
+    function totalPending() {
+      let c = 0;
+      for (const id in pending.deletes) c++;
+      for (const id in pending.updates) {
+        if (Object.keys(pending.updates[id]).length > 0) c++;
+      }
+      return c;
+    }
+
+    function setUpdate(id, key, originalValue, newValue) {
+      const same = JSON.stringify(originalValue) === JSON.stringify(newValue);
+      if (!pending.updates[id]) pending.updates[id] = {};
+      if (same) {
+        delete pending.updates[id][key];
+        if (Object.keys(pending.updates[id]).length === 0) delete pending.updates[id];
+      } else {
+        pending.updates[id][key] = newValue;
+      }
+      savePending();
+    }
+
+    function toggleDelete(id) {
+      if (pending.deletes[id]) delete pending.deletes[id];
+      else pending.deletes[id] = true;
+      savePending();
+    }
+
+    function clearAll() {
+      pending = { deletes: {}, updates: {} };
+      savePending();
+    }
+
+    // ========== DOM helpers ==========
+    function el(tag, props, ...children) {
+      const node = document.createElement(tag);
+      if (props) {
+        for (const k in props) {
+          if (k === "class") node.className = props[k];
+          else if (k === "dataset") {
+            for (const dk in props.dataset) node.dataset[dk] = props.dataset[dk];
+          } else if (k.startsWith("on") && typeof props[k] === "function") {
+            node.addEventListener(k.slice(2).toLowerCase(), props[k]);
+          } else if (k === "style" && typeof props[k] === "object") {
+            for (const sk in props.style) node.style[sk] = props.style[sk];
+          } else if (k in node) {
+            node[k] = props[k];
+          } else {
+            node.setAttribute(k, props[k]);
+          }
+        }
+      }
+      for (const child of children) {
+        if (child === null || child === undefined || child === false) continue;
+        if (Array.isArray(child)) {
+          for (const c of child) {
+            if (c === null || c === undefined || c === false) continue;
+            node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+          }
+        } else {
+          node.appendChild(typeof child === "string" ? document.createTextNode(child) : child);
+        }
+      }
+      return node;
+    }
+
+    // ========== Rendering ==========
+    function renderHeader() {
+      const sub = document.getElementById("header-subtitle");
+      const total = ENTITIES.length;
+      sub.textContent = `${total} entries · generated ${GENERATED_AT.slice(0, 10)}`;
+    }
+
+    function renderCategoryPills() {
+      const container = document.getElementById("category-pills");
+      while (container.firstChild) container.removeChild(container.firstChild);
+      if (!SCHEMA.groupBy) {
+        container.style.display = "none";
+        return;
+      }
+      const counts = {};
+      for (const e of ENTITIES) {
+        const cat = e[SCHEMA.groupBy] || "(uncategorized)";
+        counts[cat] = (counts[cat] || 0) + 1;
+      }
+      const sorted = Object.keys(counts).sort();
+      const allBtn = el("button", { class: "pill active", dataset: { cat: "__ALL__" } });
+      allBtn.appendChild(document.createTextNode("All "));
+      const allCount = el("span", { class: "count" }, String(ENTITIES.length));
+      allBtn.appendChild(allCount);
+      container.appendChild(allBtn);
+      for (const cat of sorted) {
+        const btn = el("button", { class: "pill", dataset: { cat } });
+        btn.appendChild(document.createTextNode(cat + " "));
+        btn.appendChild(el("span", { class: "count" }, String(counts[cat])));
+        container.appendChild(btn);
+      }
+      container.addEventListener("click", e => {
+        let target = e.target;
+        while (target && !target.classList.contains("pill")) target = target.parentElement;
+        if (!target) return;
+        document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+        target.classList.add("active");
+        currentFilter.category = target.dataset.cat;
+        renderRows();
+      });
+    }
+
+    const currentFilter = { search: "", category: "__ALL__" };
+
+    function matchesFilter(entity) {
+      if (SCHEMA.groupBy && currentFilter.category !== "__ALL__") {
+        const cat = entity[SCHEMA.groupBy] || "(uncategorized)";
+        if (cat !== currentFilter.category) return false;
+      }
+      if (currentFilter.search) {
+        const q = currentFilter.search.toLowerCase();
+        const haystack = [
+          entity.id || "",
+          entity.name || "",
+          entity[SCHEMA.summaryField] || "",
+          entity[SCHEMA.groupBy] || "",
+          (entity.domains || []).join(" "),
+        ].join(" ").toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    }
+
+    function arrayToString(v) {
+      if (Array.isArray(v)) return v.join(", ");
+      return v || "";
+    }
+    function stringToArray(s) {
+      return s.split(",").map(x => x.trim()).filter(Boolean);
+    }
+
+    function renderRow(entity) {
+      const row = el("div", { class: "row", dataset: { id: entity.id } });
+      if (isModified(entity)) row.classList.add("modified");
+      if (isMarkedDelete(entity)) row.classList.add("marked-delete");
+
+      const info = el("div", { class: "row-info" });
+      const name = getCurrentValue(entity, "name") || entity.id;
+      const h3 = el("h3", null,
+        el("span", { class: "row-name" }, name),
+        el("span", { class: "row-id" }, entity.id)
+      );
+      info.appendChild(h3);
+      const summary = getCurrentValue(entity, SCHEMA.summaryField) || "";
+      if (summary) {
+        const sEl = el("p", { class: "row-summary" }, summary.slice(0, 200) + (summary.length > 200 ? "…" : ""));
+        info.appendChild(sEl);
+      }
+
+      const header = el("div", { class: "row-header" }, info);
+
+      // Badges
+      if (SCHEMA.groupBy) {
+        const cat = getCurrentValue(entity, SCHEMA.groupBy) || "(uncategorized)";
+        header.appendChild(el("span", { class: "row-badge" }, cat));
+      }
+      if (SCHEMA.secondaryBadge && entity[SCHEMA.secondaryBadge]) {
+        header.appendChild(el("span", { class: "row-badge advisor" }, entity[SCHEMA.secondaryBadge]));
+      }
+      if (isMarkedDelete(entity)) {
+        header.appendChild(el("span", { class: "row-badge delete" }, "DELETE"));
+      } else if (isModified(entity)) {
+        header.appendChild(el("span", { class: "row-badge modified" }, "EDITED"));
+      }
+
+      header.addEventListener("click", () => {
+        row.classList.toggle("expanded");
+        if (row.classList.contains("expanded") && !row.dataset.bodyRendered) {
+          renderRowBody(row, entity);
+          row.dataset.bodyRendered = "1";
+        }
+      });
+      row.appendChild(header);
+
+      const body = el("div", { class: "row-body" });
+      row.appendChild(body);
+      return row;
+    }
+
+    function renderRowBody(row, entity) {
+      const body = row.querySelector(".row-body");
+      while (body.firstChild) body.removeChild(body.firstChild);
+
+      // Read-only fields
+      for (const key of SCHEMA.readonly) {
+        if (entity[key] === undefined || entity[key] === null) continue;
+        body.appendChild(
+          el("div", { class: "field" },
+            el("label", null, key),
+            el("div", { class: "field-readonly" }, String(entity[key]))
+          )
+        );
+      }
+
+      // Editable fields
+      for (const cfg of SCHEMA.editable) {
+        const f = el("div", { class: "field" });
+        const isMod = pending.updates[entity.id] && cfg.key in pending.updates[entity.id];
+        if (isMod) f.classList.add("modified");
+        const original = entity[cfg.key];
+        const current = getCurrentValue(entity, cfg.key);
+
+        f.appendChild(el("label", null, cfg.label));
+
+        let inputEl;
+        if (cfg.type === "textarea") {
+          inputEl = el("textarea");
+          inputEl.value = current == null ? "" : current;
+        } else if (cfg.type === "array") {
+          inputEl = el("input", { type: "text" });
+          inputEl.value = arrayToString(current);
+        } else {
+          inputEl = el("input", { type: "text" });
+          inputEl.value = current == null ? "" : current;
+        }
+        inputEl.dataset.key = cfg.key;
+        inputEl.addEventListener("input", () => {
+          let newValue = inputEl.value;
+          if (cfg.type === "array") newValue = stringToArray(newValue);
+          setUpdate(entity.id, cfg.key, original, newValue);
+          row.classList.toggle("modified", isModified(entity));
+          f.classList.toggle("modified", !!(pending.updates[entity.id] && cfg.key in (pending.updates[entity.id] || {})));
+          updateBadges(row, entity);
+          updatePendingBar();
+        });
+        f.appendChild(inputEl);
+        body.appendChild(f);
+      }
+
+      // Action buttons
+      const actions = el("div", { class: "row-actions" });
+      const delBtn = el("button", { class: "btn btn-danger" }, isMarkedDelete(entity) ? "Undelete" : `Mark ${ENTITY_TYPE} for deletion`);
+      delBtn.addEventListener("click", () => {
+        toggleDelete(entity.id);
+        row.classList.toggle("marked-delete", isMarkedDelete(entity));
+        delBtn.textContent = isMarkedDelete(entity) ? "Undelete" : `Mark ${ENTITY_TYPE} for deletion`;
+        updateBadges(row, entity);
+        updatePendingBar();
+      });
+      actions.appendChild(delBtn);
+
+      const revertBtn = el("button", { class: "btn btn-ghost" }, "Revert all changes");
+      revertBtn.addEventListener("click", () => {
+        delete pending.updates[entity.id];
+        delete pending.deletes[entity.id];
+        savePending();
+        row.dataset.bodyRendered = "";
+        const innerBody = row.querySelector(".row-body");
+        while (innerBody.firstChild) innerBody.removeChild(innerBody.firstChild);
+        renderRowBody(row, entity);
+        row.dataset.bodyRendered = "1";
+        row.classList.remove("modified", "marked-delete");
+        updateBadges(row, entity);
+        updatePendingBar();
+      });
+      actions.appendChild(revertBtn);
+      body.appendChild(actions);
+    }
+
+    function updateBadges(row, entity) {
+      const header = row.querySelector(".row-header");
+      header.querySelectorAll(".row-badge.modified, .row-badge.delete").forEach(b => b.remove());
+      if (isMarkedDelete(entity)) {
+        header.appendChild(el("span", { class: "row-badge delete" }, "DELETE"));
+      } else if (isModified(entity)) {
+        header.appendChild(el("span", { class: "row-badge modified" }, "EDITED"));
+      }
+    }
+
+    function renderRows() {
+      const container = document.getElementById("rows");
+      const empty = document.getElementById("empty");
+      while (container.firstChild) container.removeChild(container.firstChild);
+      const matches = ENTITIES.filter(matchesFilter);
+      const total = matches.length;
+      const stats = document.getElementById("stats");
+      stats.textContent = `${total} of ${ENTITIES.length} ${ENTITY_TYPE}${total === 1 ? '' : 's'} shown`;
+      if (total === 0) {
+        empty.style.display = "block";
+        return;
+      }
+      empty.style.display = "none";
+
+      if (SCHEMA.groupBy && currentFilter.category === "__ALL__") {
+        const groups = {};
+        for (const e of matches) {
+          const cat = e[SCHEMA.groupBy] || "(uncategorized)";
+          if (!groups[cat]) groups[cat] = [];
+          groups[cat].push(e);
+        }
+        const sortedCats = Object.keys(groups).sort();
+        for (const cat of sortedCats) {
+          container.appendChild(el("h2", { class: "group-heading" }, `${cat} (${groups[cat].length})`));
+          for (const entity of groups[cat]) container.appendChild(renderRow(entity));
+        }
+      } else {
+        for (const entity of matches) container.appendChild(renderRow(entity));
+      }
+    }
+
+    function updatePendingBar() {
+      const bar = document.getElementById("pending-bar");
+      const total = totalPending();
+      if (total === 0) {
+        bar.classList.add("hidden");
+        return;
+      }
+      bar.classList.remove("hidden");
+      const dCount = Object.keys(pending.deletes).length;
+      const uCount = Object.keys(pending.updates).filter(id => Object.keys(pending.updates[id]).length > 0).length;
+      document.getElementById("pending-count").textContent = `${total} pending change${total === 1 ? '' : 's'}`;
+      document.getElementById("pending-detail").textContent = `${dCount} deletion${dCount === 1 ? '' : 's'} · ${uCount} edit${uCount === 1 ? '' : 's'}`;
+    }
+
+    function buildExportPayload() {
+      const actions = [];
+      for (const id in pending.deletes) actions.push({ type: "delete", id });
+      for (const id in pending.updates) {
+        const changes = pending.updates[id];
+        if (Object.keys(changes).length === 0) continue;
+        actions.push({ type: "update", id, changes });
+      }
+      return {
+        version: 1,
+        type: `${ENTITY_TYPE}-triage`,
+        generated: new Date().toISOString(),
+        actions,
+      };
+    }
+
+    // ========== Wire up ==========
+    document.getElementById("search").addEventListener("input", e => {
+      currentFilter.search = e.target.value;
+      renderRows();
+    });
+
+    document.getElementById("clear-pending").addEventListener("click", () => {
+      if (totalPending() === 0) return;
+      if (!confirm(`Clear all ${totalPending()} pending changes? This cannot be undone.`)) return;
+      clearAll();
+      document.querySelectorAll(".row").forEach(r => {
+        r.classList.remove("modified", "marked-delete", "expanded");
+        r.dataset.bodyRendered = "";
+        const body = r.querySelector(".row-body");
+        if (body) while (body.firstChild) body.removeChild(body.firstChild);
+        const id = r.dataset.id;
+        const entity = ENTITIES.find(e => e.id === id);
+        if (entity) updateBadges(r, entity);
+      });
+      updatePendingBar();
+    });
+
+    const exportModal = document.getElementById("export-modal");
+    document.getElementById("export-pending").addEventListener("click", () => {
+      const payload = buildExportPayload();
+      document.getElementById("export-text").value = JSON.stringify(payload, null, 2);
+      document.getElementById("copy-success").style.display = "none";
+      exportModal.classList.add("show");
+    });
+    document.getElementById("modal-close").addEventListener("click", () => exportModal.classList.remove("show"));
+    document.getElementById("modal-copy").addEventListener("click", async () => {
+      const t = document.getElementById("export-text").value;
+      try {
+        await navigator.clipboard.writeText(t);
+        document.getElementById("copy-success").style.display = "block";
+        setTimeout(() => { document.getElementById("copy-success").style.display = "none"; }, 2500);
+      } catch (e) {
+        document.getElementById("export-text").select();
+        document.execCommand("copy");
+        document.getElementById("copy-success").style.display = "block";
+      }
+    });
+    exportModal.addEventListener("click", e => {
+      if (e.target === exportModal) exportModal.classList.remove("show");
+    });
+
+    // Initial render
+    renderHeader();
+    renderCategoryPills();
+    renderRows();
+    updatePendingBar();
+  </script>
+</body>
+</html>

@@ -3,397 +3,795 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Framework Catalog — Aligned Plugin</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Framework Catalog</title>
+  <style>
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --color-danger: #b91c1c;
+      --color-danger-subtle: #fef2f2;
+      --color-success: #047857;
+      --color-success-subtle: #ecfdf5;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      color: var(--color-foreground);
+      margin: 0;
+      padding: 0 0 80px 0;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--color-background);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 32px;
+      z-index: 50;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 4px 0; }
+    .subtitle { font-size: 0.9rem; color: var(--color-secondary); margin: 0 0 12px 0; }
+    .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    #search {
+      flex: 1;
+      min-width: 240px;
+      padding: 8px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: white;
+      font-family: inherit;
+    }
+    #search:focus { outline: none; border-color: var(--color-accent); }
+    .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; max-width: 100%; }
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      border: 1px solid var(--color-border);
+      background: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 100ms;
+    }
+    .pill:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .pill.active { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .pill .count { opacity: 0.6; margin-left: 4px; }
+
+    main { padding: 16px 32px; max-width: 1200px; margin: 0 auto; }
+    .group-heading {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 24px 0 8px 0;
+    }
+
+    .row {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: border-color 100ms;
+    }
+    .row:hover { border-color: var(--color-dimmed); }
+    .row.modified { border-color: var(--color-accent); background: var(--color-accent-subtle); }
+    .row.marked-delete {
+      border-color: var(--color-danger);
+      background: var(--color-danger-subtle);
+      opacity: 0.7;
+    }
+    .row.marked-delete .row-header h3 .row-name { text-decoration: line-through; }
+    .row.expanded { border-color: var(--color-foreground); }
+    .row-header {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .row-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .row-info { flex: 1; min-width: 0; }
+    .row-id {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--color-dimmed);
+      font-weight: 400;
+      margin-left: 8px;
+    }
+    .row-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: var(--color-surface);
+      color: var(--color-secondary);
+      white-space: nowrap;
+    }
+    .row-badge.advisor { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .row-badge.modified { background: var(--color-accent); color: white; }
+    .row-badge.delete { background: var(--color-danger); color: white; }
+    .row-summary {
+      font-size: 0.85rem;
+      color: var(--color-secondary);
+      margin: 4px 0 0 0;
+    }
+    .row-body {
+      display: none;
+      padding: 0 16px 16px 16px;
+      border-top: 1px solid var(--color-border);
+    }
+    .row.expanded .row-body { display: block; }
+
+    .field { margin: 12px 0; }
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .field input, .field textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 6px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: white;
+      color: var(--color-foreground);
+      resize: vertical;
+    }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--color-accent); }
+    .field textarea { min-height: 60px; line-height: 1.5; }
+    .field.modified label { color: var(--color-accent); }
+    .field.modified input, .field.modified textarea { border-color: var(--color-accent); background: var(--color-accent-subtle); }
+    .field-readonly {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      padding: 6px 10px;
+      background: var(--color-muted);
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-border);
+    }
+    .btn {
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      background: white;
+      color: var(--color-foreground);
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 100ms;
+    }
+    .btn:hover { border-color: var(--color-foreground); }
+    .btn-danger { color: var(--color-danger); border-color: var(--color-danger); }
+    .btn-danger:hover { background: var(--color-danger); color: white; }
+    .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+    .btn-ghost { background: transparent; border-color: transparent; color: var(--color-secondary); }
+    .btn-ghost:hover { color: var(--color-foreground); border-color: var(--color-border); }
+
+    .stats {
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      padding: 8px 0 16px 0;
+    }
+    .empty {
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--color-dimmed);
+      font-size: 0.9rem;
+    }
+
+    /* Pending changes bar */
+    #pending-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-foreground);
+      color: white;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    #pending-bar.hidden { display: none; }
+    #pending-bar .pending-count { font-size: 0.95rem; font-weight: 600; }
+    #pending-bar .pending-detail { color: rgba(255,255,255,0.7); font-size: 0.85rem; flex: 1; }
+    #pending-bar .btn { background: white; color: var(--color-foreground); border-color: white; }
+    #pending-bar .btn:hover { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    #pending-bar .btn-ghost { background: transparent; color: rgba(255,255,255,0.7); border-color: transparent; }
+    #pending-bar .btn-ghost:hover { color: white; background: rgba(255,255,255,0.1); border-color: transparent; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 24px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal h2 { margin: 0 0 8px 0; font-size: 1.2rem; }
+    .modal p { color: var(--color-secondary); font-size: 0.88rem; margin: 0 0 16px 0; }
+    .modal textarea {
+      flex: 1;
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-muted);
+      color: var(--color-foreground);
+      resize: none;
+      min-height: 320px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .copy-success {
+      color: var(--color-success);
+      font-size: 0.85rem;
+      align-self: center;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Framework Catalog</h1>
+    <p class="subtitle" id="header-subtitle"></p>
+    <div class="controls">
+      <input id="search" type="text" placeholder="Search by id, name, or any field..." autocomplete="off">
+      <div class="filter-pills" id="category-pills"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="stats" id="stats"></div>
+    <div id="rows"></div>
+    <div class="empty" id="empty" style="display:none;">No matches.</div>
+  </main>
+
+  <div id="pending-bar" class="hidden">
+    <span class="pending-count" id="pending-count">0 pending changes</span>
+    <span class="pending-detail" id="pending-detail"></span>
+    <button class="btn btn-ghost" id="clear-pending">Clear all</button>
+    <button class="btn btn-primary" id="export-pending">Export queue</button>
+  </div>
+
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal">
+      <h2>Export queue</h2>
+      <p>Copy the JSON below and paste it back into Claude Code to apply the changes. localStorage retains the queue until you clear it manually.</p>
+      <textarea id="export-text" readonly></textarea>
+      <div class="modal-actions">
+        <span class="copy-success" id="copy-success" style="display:none;">Copied to clipboard</span>
+        <button class="btn" id="modal-close">Close</button>
+        <button class="btn btn-primary" id="modal-copy">Copy to clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script id="config-data" type="application/json">{"entityType": "framework", "registry": {"frameworks": [{"id": "100-percent-responsibility", "name": "100% Responsibility", "advisor": "diana-chapman", "purpose": "taking full ownership of your contribution to a situation without blame or shame", "category": "leadership", "domains": ["accountability", "self-awareness", "conscious-leadership"], "use_when": "someone is blaming others or external circumstances for their situation and needs to reclaim agency"}, {"id": "5-components-positioning", "name": "your 5 Components of Positioning framework. This is the methodology from \"Obviously Awesome\"", "advisor": "april-dunford", "purpose": "a sequential process that builds differentiated positioning from the ground up", "category": "positioning", "domains": ["positioning", "competitive-analysis", "market-strategy", "product-marketing"], "use_when": "a business needs to define or refine its market positioning from scratch using a structured methodology", "required_documents": ["positioning statement"], "helpful_documents": ["competitive landscape", "customer research"]}, {"id": "5-step-process", "name": "the 5-Step Process to help them achieve what they want in life by systematically addressing problems and evolving", "advisor": "ray-dalio", "purpose": "a five-step loop for achieving goals by identifying problems, diagnosing root causes, designing plans, and pushing through to results", "category": "strategy", "domains": ["goal-setting", "problem-solving", "personal-development", "decision-making"], "use_when": "someone wants a systematic process for setting goals, identifying problems, diagnosing root causes, designing solutions, and executing", "helpful_documents": ["business goals"]}, {"id": "6-step-process", "name": "6-Step Process", "advisor": "wise-eric", "purpose": "a structured approach to solving operational problems that starts with a mindset check before goal-setting, diagnosis, and planning", "category": "strategy", "domains": ["goal-setting", "problem-solving", "operational-planning", "mindset"], "use_when": "someone wants a systematic process for setting goals, diagnosing problems, designing solutions, and executing with mindset alignment", "helpful_documents": ["company strategy", "business goals"]}, {"id": "8-cs-self-leadership", "name": "8 C's of Self-Leadership", "advisor": "richard-schwartz", "purpose": "assessing Self energy through Calm, Curiosity, Clarity, Compassion, Confidence, Creativity, Courage, and Connectedness", "category": "psychology", "domains": ["self-leadership", "internal-family-systems", "self-awareness", "emotional-regulation"], "use_when": "someone wants to assess their current state of Self energy or check whether they are leading from Self versus a part"}, {"id": "80-20-audit", "name": "an 80/20 Audit", "advisor": "tim-ferriss", "purpose": "a ruthless Pareto analysis of their work and life to identify what to double down on and what to eliminate", "category": "strategy", "domains": ["productivity", "prioritization", "time-management", "elimination"], "use_when": "someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results", "helpful_documents": ["business goals"]}, {"id": "abcde-reframe", "name": "ABCDE Reframe", "advisor": "martin-seligman", "purpose": "challenging pessimistic thoughts using the ABCDE cognitive reframe method", "category": "psychology", "domains": ["cognitive-reframing", "optimism", "resilience", "mental-health"], "use_when": "someone is caught in pessimistic thinking patterns and needs a structured method to dispute and reframe negative beliefs"}, {"id": "above-below-the-line", "name": "Above/Below the Line", "advisor": "diana-chapman", "purpose": "locating yourself on the line, working the Drama Triangle, and shifting through tailored willingness questions", "category": "leadership", "domains": ["conscious-leadership", "self-awareness", "emotional-regulation", "reactivity"], "use_when": "someone is reactive or defensive and needs to check whether they are operating from above or below the line"}, {"id": "accusation-audit", "name": "an Accusation Audit", "advisor": "chris-voss", "purpose": "a technique for disarming negativity by naming it before the other person can", "category": "negotiation", "domains": ["negotiation", "conflict-resolution", "communication", "persuasion"], "use_when": "someone is entering a conversation where the other party likely has negative assumptions and needs to preemptively defuse them"}, {"id": "act-flexibility", "name": "ACT Flexibility", "advisor": "steven-hayes", "purpose": "building psychological flexibility through acceptance and values-based action", "category": "psychology", "domains": ["acceptance", "mindfulness", "values", "psychological-flexibility"], "use_when": "someone is stuck in rigid thinking or avoidance patterns and needs to build flexibility through acceptance and committed action"}, {"id": "audience-first-business-model", "name": "the Audience-First Business Model", "advisor": "danny-iny", "purpose": "the approach that flips the traditional course creation sequence to build audience before products and validate through engagement before building", "category": "onboarding", "domains": ["course-creation", "audience-building", "validation", "business-model"], "use_when": "someone wants to create a course or digital product and needs to validate demand by building an audience first", "helpful_documents": ["content strategy", "business goals"]}, {"id": "autonomic-fatigue-vs-training-fatigue", "name": "Autonomic Fatigue vs Training Fatigue", "advisor": "benjamin-levine", "purpose": "distinguishing between CNS-mediated autonomic fatigue and normal peripheral training fatigue to optimize recovery", "category": "health-autonomic", "domains": ["autonomic-dysfunction", "exercise-physiology", "recovery", "fatigue-management"], "use_when": "someone with autonomic dysfunction needs to distinguish whether their fatigue is autonomic or training-related to adjust their recovery strategy"}, {"id": "autonomic-testing-interpretation", "name": "the Autonomic Testing Interpretation framework", "advisor": "roy-freeman", "purpose": "a systematic approach to understanding what autonomic tests actually measure, their limitations, and how to synthesize results into clinical meaning", "category": "health-autonomic", "domains": ["autonomic-testing", "clinical-interpretation", "diagnostic-reasoning"], "use_when": "someone has autonomic test results and needs help interpreting what they mean clinically"}, {"id": "batched-content-system", "name": "the Batched Content Creation System", "advisor": "jasmine-star", "purpose": "a framework for batch-creating content to maintain consistent posting without daily overwhelm", "category": "content-strategy", "domains": ["content-creation", "productivity", "social-media", "batch-processing"], "use_when": "someone struggles with consistent content creation and needs a system for batching production efficiently", "helpful_documents": ["content strategy"]}, {"id": "believability-weighted-decision-making", "name": "Believability-Weighted Decision Making to improve their decision quality by weighting opinions based on track record and expertise", "advisor": "ray-dalio", "purpose": "weighting opinions by track record and explanatory logic to improve decision quality", "category": "strategy", "domains": ["decision-making", "team-dynamics", "meritocracy", "collective-intelligence"], "use_when": "a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise"}, {"id": "bio-promise-alignment", "name": "the Bio-Promise Alignment Framework", "advisor": "sue-b-zimmerman", "purpose": "a method for ensuring your Instagram content delivers on the contract your bio makes with followers. Disconnect between bio and content destroys trust and kills conversions", "category": "social-media", "domains": ["instagram", "profile-optimization", "content-alignment", "conversion"], "use_when": "someone's Instagram bio promises one thing but their content delivers another, causing follower drop-off", "helpful_documents": ["content strategy", "positioning statement"]}, {"id": "braving-trust-inventory", "name": "BRAVING Trust Inventory", "advisor": "brene-brown", "purpose": "assessing and building trust using the seven BRAVING elements", "category": "leadership", "domains": ["trust", "relationships", "vulnerability", "team-culture"], "use_when": "someone needs to assess the state of trust in a relationship or team using a structured framework"}, {"id": "build-measure-learn", "name": "the Build-Measure-Learn loop to design a learning cycle for their product initiative", "advisor": "eric-ries", "purpose": "designing a learning cycle that starts with what you need to learn, then works backward to what to measure and build", "category": "startup", "domains": ["lean-startup", "experimentation", "product-development", "validated-learning"], "use_when": "a team needs to design a rapid learning cycle for a product initiative to validate assumptions quickly", "helpful_documents": ["product description", "customer research"]}, {"id": "calibrated-questions", "name": "Calibrated Questions", "advisor": "chris-voss", "purpose": "a technique for influencing outcomes by asking questions that make the other person solve your problem", "category": "negotiation", "domains": ["negotiation", "influence", "communication", "problem-solving"], "use_when": "someone needs to steer a negotiation or conversation by asking how/what questions that shift the problem to the other party"}, {"id": "cardiac-deconditioning-model", "name": "Cardiac Deconditioning Model", "advisor": "benjamin-levine", "purpose": "understanding POTS as secondary to cardiac atrophy and reduced blood volume, with exercise as primary intervention", "category": "health-autonomic", "domains": ["POTS", "cardiac-rehabilitation", "exercise-prescription", "deconditioning"], "use_when": "someone with POTS needs to understand the cardiac deconditioning hypothesis and exercise as a primary treatment pathway"}, {"id": "cars", "name": "CARs (Controlled Articular Rotations)", "advisor": "andreo-spina", "purpose": "a daily joint health maintenance practice", "category": "health-movement", "domains": ["joint-health", "mobility", "daily-practice", "movement-maintenance"], "use_when": "someone wants a daily joint maintenance routine to assess and maintain articular health and range of motion"}, {"id": "cec-method", "name": "the CEC Method", "advisor": "sue-b-zimmerman", "purpose": "the Content-Engagement-Conversion pathway that drives Instagram sales. This is the methodology from Ready Set Gram that transforms random posting into systematic revenue generation", "category": "social-media", "domains": ["instagram", "content-strategy", "engagement", "conversion"], "use_when": "someone posts on Instagram without a system and needs a content-to-conversion pathway", "helpful_documents": ["content strategy", "product description"]}, {"id": "choice-point", "name": "Choice Point", "advisor": "steven-hayes", "purpose": "navigating difficult moments by choosing toward moves over away moves", "category": "psychology", "domains": ["decision-making", "values", "mindfulness", "behavioral-choice"], "use_when": "someone faces a difficult moment and needs to choose between moving toward their values or away from discomfort"}, {"id": "clearing-model", "name": "The Clearing Model to resolve relationship tensions", "advisor": "diana-chapman", "purpose": "a structured process for clearing withholds and resentments using unarguable statements to restore connection", "category": "leadership", "domains": ["conflict-resolution", "communication", "conscious-leadership", "relationships"], "use_when": "two people have unresolved tension and need a structured process to clear it without blame"}, {"id": "cognitive-friction-audit", "name": "the Cognitive Friction Audit", "advisor": "shirin-oreizy", "purpose": "a systematic process for identifying and eliminating decision-making barriers in user journeys. Every friction point costs conversions", "category": "conversion", "domains": ["behavioral-science", "UX", "conversion-optimization", "decision-architecture"], "use_when": "a product or page has high drop-off and someone needs to identify and remove cognitive friction points in the user journey", "helpful_documents": ["customer research", "product description"]}, {"id": "community-amplification", "name": "the Community Amplification Framework", "advisor": "arielle-nissenblatt", "purpose": "a system for transforming passive listeners into active advocates who naturally share your content", "category": "growth", "domains": ["community-building", "word-of-mouth", "audience-engagement", "advocacy"], "use_when": "someone has an audience but needs to turn passive consumers into active advocates who share and promote their content", "helpful_documents": ["content strategy"]}, {"id": "compassionate-inquiry", "name": "Compassionate Inquiry", "advisor": "gabor-mate", "purpose": "a process of exploring what's underneath surface-level distress with curiosity rather than judgment", "category": "psychology", "domains": ["trauma", "self-inquiry", "emotional-healing", "curiosity"], "use_when": "someone presents surface-level distress and needs to explore the deeper emotional patterns underneath with compassion"}, {"id": "composite-autonomic-severity-score", "name": "the Composite Autonomic Severity Score (CASS) framework", "advisor": "roy-freeman", "purpose": "a systematic approach to grading and localizing autonomic deficits by integrating cardiovagal, adrenergic, and sudomotor testing. This framework is based on the Clin Neurophysiol 2021 consensus statement", "category": "health-autonomic", "domains": ["autonomic-testing", "severity-grading", "diagnostic-criteria", "clinical-assessment"], "use_when": "a clinician needs to grade autonomic dysfunction severity by integrating multiple test modalities"}, {"id": "content-inc-model", "name": "the Content Inc", "advisor": "joe-pulizzi", "purpose": "a six-step audience-first model for building a content-driven business before monetizing", "category": "content-strategy", "domains": ["content-marketing", "audience-building", "business-model", "content-first"], "use_when": "someone wants to build a business by establishing a content platform and audience before creating products"}, {"id": "creator-experimentation-protocol", "name": "the Creator Experimentation Protocol", "advisor": "jay-clouse", "purpose": "a scientific framework for testing content and business ideas before scaling, measuring what matters, and building sustainable creator businesses", "category": "content-strategy", "domains": ["experimentation", "content-testing", "creator-business", "metrics"], "use_when": "a creator needs to test content or business ideas systematically before committing resources to scale", "helpful_documents": ["content strategy", "business goals"]}, {"id": "creator-flywheel", "name": "the Creator Flywheel framework", "advisor": "jay-clouse", "purpose": "a systematic approach to building sustainable creator businesses through interconnected experiments and feedback loops, creating businesses that aren't reliant on borrowed platforms", "category": "content-strategy", "domains": ["creator-business", "flywheel-growth", "platform-independence", "sustainability"], "use_when": "a creator wants to build a self-reinforcing business system that compounds over time and doesn't depend on any single platform", "helpful_documents": ["content strategy", "business goals"]}, {"id": "dbt-wise-mind", "name": "DBT Wise Mind", "advisor": "marsha-linehan", "purpose": "finding balance between emotional mind and rational mind", "category": "psychology", "domains": ["emotional-regulation", "mindfulness", "dialectical-thinking", "balance"], "use_when": "someone is making decisions from pure emotion or pure logic and needs to find the balance point of wise mind"}, {"id": "dear-man", "name": "DEAR MAN", "advisor": "marsha-linehan", "purpose": "preparing for assertive communication using the DEAR MAN acronym", "category": "psychology", "domains": ["assertiveness", "communication", "interpersonal-effectiveness", "boundaries"], "use_when": "someone needs to prepare for a difficult conversation where they must assert their needs clearly and effectively"}, {"id": "depth-over-breadth-strategy", "name": "the Depth Over Breadth Content Strategy", "advisor": "jay-clouse", "purpose": "a framework for creating memorable, shareable content by going a mile deep on narrow topics rather than an inch deep on many topics", "category": "content-strategy", "domains": ["content-strategy", "niche-focus", "thought-leadership", "shareability"], "use_when": "a creator is spread too thin across topics and needs to go deeper on fewer subjects for more impact", "helpful_documents": ["content strategy"]}, {"id": "design-principles", "name": "Design Principles", "advisor": "steve-jobs", "purpose": "generating a design-principles document with implementation-ready tokens for colors, typography, and theme", "category": "strategy", "domains": ["product-design", "simplicity", "user-experience", "aesthetics"], "use_when": "someone needs guiding design principles for a product that prioritize simplicity, elegance, and user experience"}, {"id": "directional-susceptibility", "name": "Directional Susceptibility to Movement (DSM) assessment", "advisor": "shirley-sahrmann", "purpose": "a framework for predicting injury risk and understanding pain patterns based on habitual movement directions", "category": "health-movement", "domains": ["movement-assessment", "injury-prevention", "pain-patterns", "biomechanics"], "use_when": "someone has pain or injury risk related to habitual movement patterns and needs to identify directional susceptibility"}, {"id": "dm-relationship-cultivation", "name": "the DM Relationship Cultivation System", "advisor": "jasmine-star", "purpose": "a framework for turning Instagram engagement into sales conversations through authentic relationship building", "category": "social-media", "domains": ["instagram", "direct-messaging", "sales-conversations", "relationship-building"], "use_when": "someone wants to convert Instagram engagement into sales conversations through authentic DM outreach", "helpful_documents": ["content strategy"]}, {"id": "do-things-that-dont-scale", "name": "Do Things That Don't Scale", "advisor": "paul-graham", "purpose": "identifying the unscalable work a founder should be doing right now to learn and recruit users by hand", "category": "startup", "domains": ["early-stage", "customer-acquisition", "founder-hustle", "validation"], "use_when": "a founder is in the earliest stage and needs to identify the unscalable manual things they should be doing to get traction", "helpful_documents": ["product description", "current user count or traction metrics"]}, {"id": "earbuds-recommendation-model", "name": "the EarBuds Recommendation Model", "advisor": "arielle-nissenblatt", "purpose": "a framework for building a human-curated recommendation platform where daily recommendations create personal connection, discovery habits, social proof, and network effects", "category": "podcasting", "domains": ["podcast-discovery", "curation", "recommendation-systems", "community"], "use_when": "someone wants to build a recommendation-driven content platform using human curation and daily habit formation", "helpful_documents": ["content strategy"]}, {"id": "earlyvangelists", "name": "the Earlyvangelists framework to validate their customer hypothesis", "advisor": "eric-ries", "purpose": "specifically, whether they've identified customers who will actually buy versus those who are simply being polite", "category": "startup", "domains": ["customer-validation", "early-adopters", "product-market-fit", "sales"], "use_when": "a startup needs to distinguish between customers who will actually pay versus those giving polite but uncommitted feedback", "helpful_documents": ["customer research", "product description"]}, {"id": "earnestness-filter", "name": "Earnestness Filter", "advisor": "paul-graham", "purpose": "pressure-testing whether a founder is genuinely earnest about their startup or just performing", "category": "startup", "domains": ["founder-mindset", "authenticity", "self-assessment", "motivation"], "use_when": "a founder needs to honestly assess whether they are genuinely committed to their startup or just performing the role", "helpful_documents": ["product description", "founding story or motivation"]}, {"id": "ears-framework", "name": "the EARS Framework", "advisor": "jeremy-enns", "purpose": "a systematic approach to podcast growth that prioritizes retention and revenue over download vanity metrics", "category": "podcasting", "domains": ["podcast-growth", "retention", "revenue", "sustainable-growth"], "use_when": "a podcaster is chasing download numbers and needs to refocus on retention and revenue as growth levers", "helpful_documents": ["content strategy", "business goals"]}, {"id": "energy-audit", "name": "Energy Audit", "advisor": "jim-loehr", "purpose": "assessing and optimizing your physical, emotional, mental, and spiritual energy", "category": "psychology", "domains": ["energy-management", "performance", "well-being", "holistic-health"], "use_when": "someone feels depleted or imbalanced and needs to assess which energy dimension — physical, emotional, mental, or spiritual — needs attention"}, {"id": "engagement-pyramid", "name": "the Engagement Pyramid", "advisor": "arielle-nissenblatt", "purpose": "a model for understanding and cultivating audience engagement levels, from passive consumer to active evangelist. The goal is moving people UP the pyramid, not just acquiring new people at the bottom", "category": "growth", "domains": ["audience-engagement", "community-building", "retention", "advocacy"], "use_when": "someone has an audience but most people are passive consumers and they need a strategy to deepen engagement", "helpful_documents": ["content strategy"]}, {"id": "enneagram-typing", "name": "Enneagram Typing", "advisor": "richard-schwartz", "purpose": "a guided conversation that surfaces motivational patterns for Enneagram typing without using type labels or jargon", "category": "psychology", "domains": ["personality-typing", "self-awareness", "motivational-patterns", "enneagram"], "use_when": "someone wants to discover their Enneagram type through a guided conversation exploring their core motivations"}, {"id": "fear-setting", "name": "Fear-Setting", "advisor": "tim-ferriss", "purpose": "the Stoic exercise of premeditatio malorum that you call \"the most valuable exercise I do every month.\"", "category": "psychology", "domains": ["decision-making", "fear", "stoicism", "risk-assessment"], "use_when": "someone is paralyzed by fear about a decision and needs to systematically define, prevent, and repair the worst-case scenarios"}, {"id": "finding-the-crux", "name": "Finding the Crux", "advisor": "richard-rumelt", "purpose": "identifying the single most critical challenge that unlocks progress", "category": "strategy", "domains": ["strategic-diagnosis", "problem-identification", "focus", "critical-thinking"], "use_when": "someone faces a complex strategic situation and needs to identify the single most important challenge to address first", "helpful_documents": ["company strategy"]}, {"id": "first-principles-thinking", "name": "first principles thinking to break down a problem to its fundamental truths", "advisor": "elon-musk", "purpose": "breaking a problem down to fundamental truths and reasoning up from there instead of by analogy", "category": "strategy", "domains": ["problem-solving", "innovation", "reasoning", "mental-models"], "use_when": "someone is stuck in conventional thinking and needs to decompose a problem to its fundamental truths to find novel solutions"}, {"id": "first-seven-reels", "name": "the Your First 7 Reels framework", "advisor": "elise-darma", "purpose": "a strategic system that maps Reels to customer journey stages from unaware to ready-to-buy. This framework has generated $2.4M+ in tracked organic Instagram sales", "category": "social-media", "domains": ["instagram-reels", "customer-journey", "video-content", "conversion"], "use_when": "someone is starting with Instagram Reels and needs a strategic sequence that maps content to the buyer journey", "helpful_documents": ["content strategy", "product description"]}, {"id": "flexion-intolerance-assessment", "name": "the Flexion Intolerance Assessment", "advisor": "stuart-mcgill", "purpose": "a clinical protocol to identify whether back pain is triggered by flexion, guiding treatment and activity modification", "category": "health-movement", "domains": ["spine-health", "pain-assessment", "clinical-protocol", "movement-modification"], "use_when": "someone has back pain and needs to determine if flexion is the provocative movement to guide treatment decisions"}, {"id": "focus-through-saying-no", "name": "Focus Through Saying No", "advisor": "steve-jobs", "purpose": "a ruthless focus exercise that forces a not-doing list by cutting everything that isn't the single top priority", "category": "strategy", "domains": ["focus", "prioritization", "elimination", "discipline"], "use_when": "someone has too many projects or commitments and needs to ruthlessly cut to focus on what truly matters", "helpful_documents": ["business goals"]}, {"id": "forever-promise", "name": "the Forever Promise Framework", "advisor": "robbie-kellman-baxter", "purpose": "the process of defining the ongoing value commitment that turns a subscription into a real membership relationship", "category": "growth", "domains": ["subscription", "membership", "retention", "value-proposition"], "use_when": "someone is building a subscription or membership business and needs to articulate the ongoing value commitment that keeps members", "helpful_documents": ["strategy", "positioning"]}, {"id": "four-market-types", "name": "the Four Market Types framework to help them identify and test their assumptions about which market they're entering", "advisor": "eric-ries", "purpose": "diagnosing which market type you're entering and aligning your tactics to match", "category": "startup", "domains": ["market-analysis", "startup-strategy", "competitive-positioning", "market-entry"], "use_when": "a startup needs to identify whether they are entering an existing, resegmented, new, or clone market to set the right strategy", "helpful_documents": ["competitive landscape", "market research"]}, {"id": "four-neighborhoods", "name": "the Four Neighborhoods Framework", "advisor": "sue-b-zimmerman", "purpose": "a mental model for understanding Instagram as a village with distinct neighborhoods (Feed, Stories, Reels, Live) where different audiences spend time and expect different content", "category": "social-media", "domains": ["instagram", "content-formats", "platform-strategy", "audience-behavior"], "use_when": "someone needs to understand how different Instagram formats serve different purposes and audiences", "helpful_documents": ["content strategy"]}, {"id": "four-quadrant-focus", "name": "Four-Quadrant Focus", "advisor": "steve-jobs", "purpose": "clarifying product portfolio using a 2x2 grid of your key dimensions", "category": "strategy", "domains": ["product-strategy", "portfolio-management", "simplification", "focus"], "use_when": "someone has a bloated product line and needs a 2x2 grid to simplify down to the essential offerings", "helpful_documents": ["product description"]}, {"id": "growth-hacking-process", "name": "the Growth Hacking Process", "advisor": "sean-ellis", "purpose": "a systematic five-step methodology for achieving sustainable growth. This process scaled Dropbox, LogMeIn, and Eventbrite", "category": "growth", "domains": ["growth-hacking", "experimentation", "metrics", "systematic-growth"], "use_when": "a product team needs a repeatable process for generating, prioritizing, testing, and scaling growth experiments", "helpful_documents": ["product description", "business metrics"]}, {"id": "heart-rate-reserve-training-zones", "name": "establishing their Heart Rate Reserve training zones", "advisor": "benjamin-levine", "purpose": "a personalized zone-based system for precisely dosing exercise intensity during autonomic dysfunction recovery", "category": "health-autonomic", "domains": ["exercise-prescription", "heart-rate-training", "autonomic-recovery", "intensity-dosing"], "use_when": "someone with autonomic dysfunction needs personalized heart rate training zones for safe and effective exercise"}, {"id": "homer-vs-spock", "name": "the Homer vs Spock Framework", "advisor": "shirin-oreizy", "purpose": "a behavioral science approach to understanding how people actually make decisions. People decide with Homer (emotional brain) first, then justify with Spock (rational brain). Marketing to Spock first fails; marketing to Homer first then giving Spock justification converts", "category": "conversion", "domains": ["behavioral-science", "decision-making", "marketing-psychology", "persuasion"], "use_when": "someone's marketing leads with features and logic and they need to understand why emotional appeal must come first", "helpful_documents": ["customer research", "sales materials"]}, {"id": "ice-prioritization", "name": "ICE Prioritization", "advisor": "sean-ellis", "purpose": "a simple but ruthless scoring system to prioritize growth experiments. This framework prevents analysis paralysis and ensures you always work on the highest-value experiments first", "category": "growth", "domains": ["prioritization", "experimentation", "growth", "decision-making"], "use_when": "a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones", "helpful_documents": ["business goals"]}, {"id": "idiot-index", "name": "the Idiot Index to identify cost reduction opportunities", "advisor": "elon-musk", "purpose": "comparing finished cost to raw material cost to expose hidden inefficiency and cost reduction opportunities", "category": "strategy", "domains": ["cost-optimization", "manufacturing", "first-principles", "efficiency"], "use_when": "someone needs to identify cost reduction opportunities by comparing current costs to theoretical minimums", "helpful_documents": ["product description"]}, {"id": "ifs-parts-work", "name": "IFS Parts Work", "advisor": "richard-schwartz", "purpose": "working with your internal parts to understand and heal inner conflicts", "category": "psychology", "domains": ["internal-family-systems", "parts-work", "inner-conflict", "self-therapy"], "use_when": "someone has conflicting internal voices or impulses and wants to understand and work with their parts"}, {"id": "integrative-piloting-process", "name": "the Integrative Piloting Process", "advisor": "danny-iny", "purpose": "a methodology for delivering courses while developing them, using student feedback to iterate in real-time", "category": "onboarding", "domains": ["course-creation", "iterative-development", "student-feedback", "lean-education"], "use_when": "someone is building a course and wants to develop and deliver simultaneously using real student feedback", "helpful_documents": ["product description", "customer research"]}, {"id": "jk5-content-pillars", "name": "the JK5 Content Pillars Method", "advisor": "jenna-kutcher", "purpose": "a framework for creating sustainable content that builds connection AND drives sales by choosing 5 topics (4 that connect, 1 that sells)", "category": "content-strategy", "domains": ["content-pillars", "social-media", "brand-building", "sales-content"], "use_when": "someone needs to define their core content topics to balance audience connection with revenue generation", "helpful_documents": ["content strategy", "positioning statement"]}, {"id": "jobs-to-be-done", "name": "a Jobs to Be Done analysis to understand what progress their customer (or they themselves) are trying to make", "advisor": "clayton-christensen", "purpose": "uncovering the functional, emotional, and social progress a customer is hiring a product to make", "category": "strategy", "domains": ["customer-research", "product-strategy", "innovation", "demand-analysis"], "use_when": "someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features", "helpful_documents": ["customer research", "product description"]}, {"id": "jolt-effect", "name": "the JOLT Effect", "advisor": "matt-dixon", "purpose": "a four-move tactical playbook for rescuing late-stage B2B enterprise deals stalled by customer indecision — Judge the indecision type, Offer a specific recommendation, Limit exploration, Take risk off the table", "category": "sales", "domains": ["b2b-sales", "enterprise-deals", "deal-strategy", "customer-indecision", "late-stage-deals"], "use_when": "a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy", "helpful_documents": ["deal notes", "stakeholder map", "discovery call transcripts"]}, {"id": "mobilizer-taxonomy", "name": "the Mobilizer Taxonomy", "advisor": "matt-dixon", "purpose": "assigning each person in a B2B buying committee to one of seven Dixon archetypes — separating the three Mobilizers (Go-Getter, Teacher, Skeptic) who drive consensus from the four Talkers (Guide, Friend, Climber, Blocker) who feel accessible but don't move deals", "category": "sales", "domains": ["b2b-sales", "enterprise-deals", "stakeholder-mapping", "discovery"], "use_when": "a complex B2B deal has multiple stakeholders and the rep needs to distinguish real consensus-builders from accessible-but-inert stakeholders, especially when a 'champion' feels responsive but the deal isn't advancing", "helpful_documents": ["stakeholder map", "deal notes", "discovery call transcripts", "email threads with the buying committee"]}, {"id": "kernel-of-good-strategy", "name": "building a complete strategy using the kernel", "advisor": "richard-rumelt", "purpose": "the irreducible core that distinguishes actual strategy from goal-setting dressed up as strategy", "category": "strategy", "domains": ["strategic-planning", "diagnosis", "guiding-policy", "coherent-action"], "use_when": "someone's strategy is really just a list of goals and they need to build a real strategy with diagnosis, policy, and actions", "helpful_documents": ["company strategy", "business goals"]}, {"id": "kinesiopathologic-model", "name": "the Kinesiopathologic Model (KPM)", "advisor": "shirley-sahrmann", "purpose": "a framework for understanding how repetitive movement patterns and sustained positions create tissue damage over time", "category": "health-movement", "domains": ["movement-dysfunction", "tissue-damage", "repetitive-strain", "biomechanics"], "use_when": "someone has chronic pain from repetitive movement and needs to understand how their habitual patterns cause tissue damage"}, {"id": "landing-page-assembly", "name": "Landing Page Assembly", "advisor": "oli-gardner", "purpose": "building a high-converting landing page through structured advisor collaboration across six stages", "category": "conversion", "domains": ["landing-pages", "conversion-optimization", "copywriting", "web-design"], "use_when": "someone needs to build or improve a landing page using a structured stage-by-stage assembly process"}, {"id": "leadership-pipeline-passages", "name": "the Leadership Pipeline Passages", "advisor": "ram-charan", "purpose": "diagnosing which passage transition they're navigating and what must shift in their skills, time application, and work values", "category": "leadership", "domains": ["leadership-development", "career-transitions", "management", "organizational-design"], "use_when": "a leader is struggling at a new level and needs to understand what skills, time allocation, and values must shift"}, {"id": "leap-of-faith-assumptions", "name": "the Leap of Faith Assumptions framework to identify and test the critical assumptions underlying their business", "advisor": "eric-ries", "purpose": "identifying and testing the riskiest assumptions underlying a business before building anything", "category": "startup", "domains": ["assumption-testing", "validation", "risk-reduction", "lean-startup"], "use_when": "a startup needs to identify which untested assumptions are most critical to their business and design experiments to test them", "helpful_documents": ["product description", "customer research"]}, {"id": "leopard-movement-hierarchy", "name": "the Leopard Movement Hierarchy", "advisor": "kelly-starrett", "purpose": "a Position → Movement → Speed framework for safe progression. From \"Becoming a Supple Leopard\" pages 28-45", "category": "health-movement", "domains": ["movement-progression", "position-mechanics", "athletic-performance", "injury-prevention"], "use_when": "someone is adding speed or load to movement without proper position foundations and needs to reset their progression"}, {"id": "leveraged-learning", "name": "the Leveraged Learning framework", "advisor": "danny-iny", "purpose": "a six-layer system for designing courses that actually create student transformation, not just content consumption", "category": "onboarding", "domains": ["course-design", "learning-outcomes", "transformation", "instructional-design"], "use_when": "someone is designing a course and needs to ensure it drives real transformation rather than passive content consumption", "helpful_documents": ["product description"]}, {"id": "levine-protocol", "name": "the Levine Protocol", "advisor": "benjamin-levine", "purpose": "a structured 3-month cardiovascular reconditioning program for autonomic dysfunction recovery", "category": "health-autonomic", "domains": ["exercise-protocol", "POTS-treatment", "cardiovascular-reconditioning", "structured-program"], "use_when": "someone with POTS or autonomic dysfunction needs a structured exercise reconditioning program"}, {"id": "living-into-values", "name": "Living Into Values", "advisor": "brene-brown", "purpose": "identifying two core values and operationalizing them into daily behavior", "category": "psychology", "domains": ["values", "self-awareness", "behavior-change", "authenticity"], "use_when": "someone knows their values abstractly but struggles to live them consistently in daily decisions and behavior"}, {"id": "load-velocity-relationship", "name": "the Load-Velocity Relationship", "advisor": "stuart-mcgill", "purpose": "a fundamental biomechanical principle for spine protection. This framework teaches the inverse relationship between load and velocity that governs spine safety", "category": "health-movement", "domains": ["spine-safety", "biomechanics", "load-management", "injury-prevention"], "use_when": "someone is lifting or moving in ways that combine high load with high velocity and needs to understand the spine safety tradeoff"}, {"id": "management-level-progression", "name": "the Management Level Progression framework", "advisor": "lara-hogan", "purpose": "diagnosing where they are on the engineering management ladder and what needs to shift to succeed at their current (or next) level", "category": "leadership", "domains": ["engineering-management", "career-growth", "leadership-skills", "level-progression"], "use_when": "an engineering manager needs to understand what's expected at their current level or prepare for the next one"}, {"id": "mcgill-big-3", "name": "the McGill Big 3", "advisor": "stuart-mcgill", "purpose": "a core stability protocol designed to build endurance and motor control without stressing the spine", "category": "health-fitness", "domains": ["core-stability", "spine-health", "exercise-protocol", "motor-control"], "use_when": "someone needs a spine-safe core stability program that builds endurance without compromising spinal health"}, {"id": "message-magic-system", "name": "the Message Magic System", "advisor": "elise-darma", "purpose": "a 3-part DM automation framework using ManyChat that turns Instagram engagement into sales conversations automatically, 24/7", "category": "social-media", "domains": ["instagram", "DM-automation", "sales-funnels", "ManyChat"], "use_when": "someone wants to automate Instagram DM conversations to convert engagement into sales using chatbot flows", "helpful_documents": ["product description"]}, {"id": "movement-system-impairment", "name": "Movement System Impairment assessment", "advisor": "shirley-sahrmann", "purpose": "a diagnostic framework that identifies movement dysfunction patterns to address the cause of pain, not just the symptoms", "category": "health-movement", "domains": ["movement-assessment", "pain-diagnosis", "dysfunction-patterns", "clinical-reasoning"], "use_when": "someone has chronic musculoskeletal pain and needs to identify the movement dysfunction pattern causing it"}, {"id": "multi-system-approach-pots", "name": "a multi-system assessment of their POTS. This framework acknowledges that POTS is not just a heart rate problem", "advisor": "blair-grubb", "purpose": "a multi-system assessment of POTS that screens cardiovascular, GI, neurological, and immune involvement to build a targeted management plan", "category": "health-autonomic", "domains": ["POTS", "multi-system", "diagnostic-assessment", "treatment-planning"], "use_when": "someone with POTS needs a comprehensive assessment that goes beyond heart rate to address GI, neurological, and immune involvement"}, {"id": "one-one-one-one-method", "name": "the 1-1-1-1 Method", "advisor": "elise-darma", "purpose": "a framework for turning Instagram into a revenue system using just ONE Reel style, ONE Story format, ONE Carousel template, and ONE DM flow", "category": "social-media", "domains": ["instagram", "content-templates", "simplification", "revenue-system"], "use_when": "someone is overwhelmed by Instagram content creation and needs a minimalist system with one template per format", "helpful_documents": ["content strategy", "product description"]}, {"id": "opposite-action", "name": "Opposite Action", "advisor": "marsha-linehan", "purpose": "changing emotional intensity by acting opposite to unhelpful urges", "category": "psychology", "domains": ["emotional-regulation", "DBT", "behavioral-change", "impulse-management"], "use_when": "someone is being driven by an unhelpful emotional urge and needs to deliberately act opposite to it to regulate intensity"}, {"id": "origin-story-interview", "name": "Origin Story Interview", "advisor": "april-dunford", "purpose": "extracting a founder's origin story and use cases for positioning", "category": "positioning", "domains": ["positioning", "storytelling", "founder-narrative", "brand-story"], "use_when": "someone needs to extract and articulate their origin story as a foundation for positioning and brand narrative"}, {"id": "osmopressor-response", "name": "the Osmopressor Response Protocol", "advisor": "italo-biaggioni", "purpose": "a non-pharmacologic intervention for acute BP support using the pressor effect of rapid water ingestion", "category": "health-autonomic", "domains": ["blood-pressure", "non-pharmacologic", "acute-intervention", "orthostatic-hypotension"], "use_when": "someone with orthostatic hypotension needs an immediate non-drug intervention to support blood pressure"}, {"id": "pain-plus-reflection", "name": "the Pain + Reflection = Progress framework to transform failure and pain into catalysts for growth", "advisor": "ray-dalio", "purpose": "transforming failure and pain into progress by pausing, diagnosing the lesson, and designing a new approach", "category": "psychology", "domains": ["resilience", "learning-from-failure", "reflection", "personal-growth"], "use_when": "someone has experienced a painful failure and needs a structured way to extract lessons and turn it into growth"}, {"id": "past-year-review", "name": "the Past Year Review (PYR)", "advisor": "tim-ferriss", "purpose": "a data-driven alternative to vague New Year's resolutions", "category": "strategy", "domains": ["annual-review", "reflection", "goal-setting", "life-design"], "use_when": "someone wants to review their past year systematically to make data-driven decisions about the next year"}, {"id": "performance-standards-by-level", "name": "Performance Standards by Level", "advisor": "ram-charan", "purpose": "diagnosing which passage a leader is actually performing at and creating a development plan that targets the right transition", "category": "leadership", "domains": ["performance-management", "leadership-assessment", "development-planning", "organizational-design"], "use_when": "a leader's performance doesn't match their level and they need to identify which leadership passage they are actually operating at"}, {"id": "perma-wellbeing", "name": "PERMA Wellbeing", "advisor": "martin-seligman", "purpose": "assessing wellbeing across Positive emotion, Engagement, Relationships, Meaning, and Accomplishment", "category": "psychology", "domains": ["wellbeing", "positive-psychology", "life-satisfaction", "flourishing"], "use_when": "someone wants to assess their overall wellbeing across the five dimensions of flourishing"}, {"id": "personal-context-intake", "name": "Personal Context Intake", "advisor": "wise-eric", "purpose": "a structured intake that maps health, emotional patterns, growth background, relationships, and values to build a personal client file", "category": "psychology", "domains": ["intake-assessment", "personal-history", "context-gathering", "coaching"], "use_when": "a new user needs an initial session to share their personal context, history, and goals before working with advisors"}, {"id": "personal-credo", "name": "Personal Credo", "advisor": "jim-loehr", "purpose": "defining a personal mission statement grounded in your deepest values", "category": "psychology", "domains": ["mission-statement", "values", "purpose", "identity"], "use_when": "someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose"}, {"id": "personal-resource-allocation", "name": "a Personal Resource Allocation assessment to examine where their time, energy, and attention actually flow versus where they say they want it to go", "advisor": "clayton-christensen", "purpose": "exposing the gap between where you say your priorities are and where your time and energy actually go", "category": "strategy", "domains": ["resource-allocation", "priorities", "life-strategy", "time-management"], "use_when": "someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions"}, {"id": "pillars-of-integrity", "name": "the Four Pillars of Integrity", "advisor": "jim-dethmer", "purpose": "helping them identify where their integrity is fractured and restore full energetic wholeness", "category": "leadership", "domains": ["integrity", "conscious-leadership", "authenticity", "self-assessment"], "use_when": "someone feels fragmented or out of alignment and needs to identify where their integrity is broken"}, {"id": "pilot-program-methodology", "name": "the Pilot Program Methodology", "advisor": "danny-iny", "purpose": "a validation-first approach to course creation that tests demand before you build", "category": "onboarding", "domains": ["course-validation", "pilot-testing", "demand-validation", "lean-education"], "use_when": "someone wants to validate course demand before investing in full production", "helpful_documents": ["product description", "customer research"]}, {"id": "pivot-or-persevere", "name": "the Pivot or Persevere decision framework to make a structured strategic direction decision", "advisor": "eric-ries", "purpose": "a structured decision process for determining whether to change strategy, stay the course, or stop entirely", "category": "startup", "domains": ["pivot-decision", "strategic-direction", "validated-learning", "lean-startup"], "use_when": "a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one", "helpful_documents": ["product description", "customer research", "business metrics"]}, {"id": "podcast-brand-strategy", "name": "a Podcast Brand Strategy audit", "advisor": "jeremy-enns", "purpose": "the foundational work that determines whether your podcast grows or stalls", "category": "podcasting", "domains": ["podcast-branding", "positioning", "content-strategy", "audience-growth"], "use_when": "a podcaster's growth has stalled and they need to audit their brand positioning and content strategy", "helpful_documents": ["content strategy", "positioning statement"]}, {"id": "podcast-marketing-systems", "name": "Podcast Marketing Systems", "advisor": "jeremy-enns", "purpose": "building sustainable growth infrastructure that compounds over time instead of chasing downloads episode by episode", "category": "podcasting", "domains": ["podcast-marketing", "growth-systems", "sustainable-growth", "infrastructure"], "use_when": "a podcaster is doing one-off promotion per episode and needs sustainable marketing systems that compound", "helpful_documents": ["content strategy", "business goals"]}, {"id": "polarization-mediator", "name": "Polarization Mediator", "advisor": "richard-schwartz", "purpose": "mediating between two conflicting internal parts to find collaboration", "category": "psychology", "domains": ["internal-family-systems", "conflict-mediation", "parts-work", "integration"], "use_when": "someone has two strongly opposing internal parts and needs mediation to find collaboration rather than dominance"}, {"id": "position-priority-principles", "name": "Position Priority Principles", "advisor": "kelly-starrett", "purpose": "establishing the non-negotiable positions for movement longevity", "category": "health-movement", "domains": ["movement-foundations", "position-mechanics", "longevity", "injury-prevention"], "use_when": "someone needs to establish fundamental position standards that protect joints and enable lifelong movement"}, {"id": "positioning-canvas", "name": "Positioning Canvas", "advisor": "april-dunford", "purpose": "capturing positioning work in a one-page canvas for team alignment", "category": "positioning", "domains": ["positioning", "team-alignment", "strategy-documentation", "one-pager"], "use_when": "a team has completed positioning work and needs to capture it in a single-page format for alignment and reference", "helpful_documents": ["positioning statement", "competitive landscape"]}, {"id": "pots-subtype-recognition", "name": "POTS Subtype Recognition", "advisor": "blair-grubb", "purpose": "a diagnostic framework to identify which type of POTS they likely have and how that shapes treatment", "category": "health-autonomic", "domains": ["POTS", "subtype-diagnosis", "treatment-selection", "clinical-classification"], "use_when": "someone with POTS needs to identify their subtype to guide treatment decisions"}, {"id": "presence-check-in", "name": "a Presence Check-In", "advisor": "matt-chapman", "purpose": "helping them arrive fully in this moment, notice where they actually are, and reconnect with what matters", "category": "psychology", "domains": ["mindfulness", "presence", "grounding", "self-awareness"], "use_when": "someone is distracted or disconnected and needs to arrive fully in the present moment before starting deeper work"}, {"id": "problem-solver-positioning", "name": "Problem-Solver Positioning", "advisor": "jasmine-star", "purpose": "a framework to position content around the problem you solve, not what you do", "category": "content-strategy", "domains": ["content-positioning", "problem-framing", "brand-messaging", "audience-connection"], "use_when": "someone describes their business by what they do rather than the problem they solve and it's not resonating", "helpful_documents": ["positioning statement"]}, {"id": "product-market-fit-test", "name": "the Product-Market Fit Test", "advisor": "sean-ellis", "purpose": "a diagnostic to determine if you should scale or iterate based on user love, not vanity metrics", "category": "growth", "domains": ["product-market-fit", "survey-methodology", "growth-readiness", "user-love"], "use_when": "a startup needs to measure whether they have product-market fit before investing in scaling", "helpful_documents": ["product description", "customer research"]}, {"id": "professional-context-intake", "name": "Professional Context Intake", "advisor": "wise-eric", "purpose": "a structured intake that maps business context, expertise, challenges, and decision style to build a professional brief", "category": "strategy", "domains": ["intake-assessment", "business-context", "professional-history", "coaching"], "use_when": "a new user needs an initial session to share their professional and business context before working with business advisors"}, {"id": "proximate-objectives", "name": "Proximate Objectives", "advisor": "richard-rumelt", "purpose": "setting objectives that are achievable and create momentum for harder goals", "category": "strategy", "domains": ["goal-setting", "strategic-planning", "momentum", "achievable-targets"], "use_when": "someone has ambitious goals but no traction and needs to identify achievable near-term objectives that build momentum", "helpful_documents": ["company strategy", "business goals"]}, {"id": "quadrinity", "name": "Quadrinity Process", "advisor": "jim-dethmer", "purpose": "a check-in practice that visits the physical, emotional, intellectual, and spiritual selves in turn", "category": "psychology", "domains": ["body-mind-integration", "emotional-processing", "inner-child", "wholeness"], "use_when": "someone needs to check in with all four aspects of self — physical, emotional, intellectual, and spiritual"}, {"id": "quality-of-life-focus", "name": "the Quality of Life Focus framework", "advisor": "blair-grubb", "purpose": "a patient-centered approach to POTS management that prioritizes symptom management, functional improvement, and psychological validation over chasing a cure", "category": "health-autonomic", "domains": ["POTS", "patient-centered-care", "symptom-management", "functional-improvement"], "use_when": "someone with POTS is exhausted from chasing a cure and needs to refocus on quality of life and functional improvement"}, {"id": "radical-acceptance", "name": "Radical Acceptance", "advisor": "marsha-linehan", "purpose": "reducing suffering by fully accepting reality as it is", "category": "psychology", "domains": ["acceptance", "suffering-reduction", "DBT", "mindfulness"], "use_when": "someone is fighting against a reality they cannot change and their resistance is creating additional suffering"}, {"id": "recommendation-readiness-checklist", "name": "the Recommendation Readiness Checklist", "advisor": "arielle-nissenblatt", "purpose": "a diagnostic to determine if their content is truly ready to be recommended", "category": "content-strategy", "domains": ["content-quality", "recommendation-readiness", "audience-growth", "quality-audit"], "use_when": "someone wants their content recommended but it may not meet the quality bar needed for word-of-mouth growth", "helpful_documents": ["content strategy"]}, {"id": "regret-minimization", "name": "the Regret Minimization Framework to help them make a major life decision by projecting forward and looking back", "advisor": "jeff-bezos", "purpose": "making major life decisions by projecting to age 80 and asking which choice you would regret not taking", "category": "strategy", "domains": ["decision-making", "life-decisions", "long-term-thinking", "regret-avoidance"], "use_when": "someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret"}, {"id": "relative-stiffness-principle", "name": "the Relative Stiffness Principle", "advisor": "shirley-sahrmann", "purpose": "understanding how tissue stiffness relationships drive movement patterns and why compensation occurs at specific joints", "category": "health-movement", "domains": ["biomechanics", "tissue-stiffness", "compensation-patterns", "movement-dysfunction"], "use_when": "someone has compensatory movement patterns and needs to understand how relative tissue stiffness drives motion to the wrong joints"}, {"id": "sales-pitch-structure", "name": "building a sales pitch that translates their positioning into a compelling narrative. This is the methodology from \"Sales Pitch\"", "advisor": "april-dunford", "purpose": "transforming positioning work into a story that helps buyers make confident decisions", "category": "positioning", "domains": ["sales-pitch", "narrative", "positioning", "buyer-enablement"], "use_when": "someone has completed positioning work and needs to translate it into a compelling sales narrative", "required_documents": ["positioning statement"], "helpful_documents": ["competitive landscape", "customer research"]}, {"id": "science-of-design", "name": "the Science of Design Methodology", "advisor": "shirin-oreizy", "purpose": "a 4-phase behavioral science framework for understanding and influencing customer decisions through systematic experimentation", "category": "conversion", "domains": ["behavioral-science", "experimentation", "customer-decisions", "design-methodology"], "use_when": "someone needs a systematic approach to understand and influence how customers make decisions using behavioral science", "helpful_documents": ["customer research", "product description"]}, {"id": "small-fiber-neuropathy-diagnostic", "name": "the Small Fiber Neuropathy Diagnostic Criteria", "advisor": "roy-freeman", "purpose": "a systematic approach to diagnosing idiopathic small fiber neuropathy (iSFN), which affects both pain sensation and autonomic function", "category": "health-autonomic", "domains": ["neuropathy", "diagnostic-criteria", "small-fiber", "clinical-assessment"], "use_when": "someone has symptoms suggesting small fiber neuropathy and needs systematic diagnostic criteria"}, {"id": "smallest-viable-audience", "name": "the Smallest Viable Audience framework to find the people who would miss them if they were gone", "advisor": "seth-godin", "purpose": "defining the smallest group you could serve so well that they would actively recruit others", "category": "growth", "domains": ["audience-strategy", "niche-focus", "marketing-philosophy", "minimum-viable-audience"], "use_when": "someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve"}, {"id": "social-media-queen-method", "name": "the Social Media Queen Method", "advisor": "rachel-pedersen", "purpose": "an organic-first growth system for building authority through authentic value creation", "category": "social-media", "domains": ["organic-growth", "authority-building", "authenticity", "social-media-strategy"], "use_when": "someone wants to build social media authority through organic value creation rather than paid ads", "helpful_documents": ["content strategy", "positioning statement"]}, {"id": "start-with-experience", "name": "Start With Experience", "advisor": "steve-jobs", "purpose": "designing products by starting with customer experience and working backwards", "category": "strategy", "domains": ["product-design", "customer-experience", "backwards-design", "innovation"], "use_when": "a team is starting with technology and working forward instead of starting with the desired customer experience", "helpful_documents": ["product description", "customer research"]}, {"id": "stepwise-treatment-algorithm", "name": "the Stepwise Treatment Algorithm for Orthostatic Hypotension", "advisor": "italo-biaggioni", "purpose": "a mechanism-based approach to treatment that matches interventions to residual autonomic function", "category": "health-autonomic", "domains": ["orthostatic-hypotension", "treatment-algorithm", "pharmacotherapy", "mechanism-based"], "use_when": "someone with orthostatic hypotension needs a stepwise treatment approach matched to their residual autonomic function"}, {"id": "storybrand-homepage", "name": "StoryBrand Homepage Wireframe", "advisor": "donald-miller", "purpose": "building a homepage that passes the grunt test using story structure", "category": "marketing", "domains": ["homepage", "conversion", "storytelling", "copywriting"], "use_when": "someone needs to build or rewrite a homepage that turns visitors into customers by following story structure", "helpful_documents": ["positioning statement", "brand voice guide", "strategic narrative"]}, {"id": "strategic-narrative", "name": "your Five-Element Strategic Narrative framework. This is the methodology behind \"The Greatest Sales Deck I've Ever Seen\"", "advisor": "andy-raskin", "purpose": "the framework that transformed Zuora's positioning and has been used by companies like Gong, Drift, and Salesforce", "category": "positioning", "domains": ["strategic-narrative", "sales-deck", "storytelling", "positioning"], "use_when": "someone needs to build a sales deck or company narrative that opens with a shift in the world, not a product pitch", "helpful_documents": ["positioning statement", "company strategy"]}, {"id": "stress-recovery-oscillation", "name": "Stress-Recovery Oscillation", "advisor": "jim-loehr", "purpose": "designing recovery rituals to oscillate between stress and renewal", "category": "psychology", "domains": ["energy-management", "recovery", "performance", "resilience"], "use_when": "someone is running on fumes without recovery rituals and needs to design deliberate oscillation between stress and renewal"}, {"id": "substrate-assessment", "name": "Substrate Assessment", "advisor": "italo-biaggioni", "purpose": "matching autonomic drug mechanisms to residual sympathetic function", "category": "health-autonomic", "domains": ["pharmacology", "autonomic-function", "drug-selection", "mechanism-matching"], "use_when": "a clinician needs to match autonomic medication choices to the patient's residual sympathetic function"}, {"id": "survivor-guilt-exploration", "name": "an exploration of survivor guilt", "advisor": "gabor-mate", "purpose": "the burden of being safe while others suffer", "category": "psychology", "domains": ["trauma", "guilt", "emotional-processing", "healing"], "use_when": "someone carries guilt about being safe or successful while others they care about suffer"}, {"id": "tactical-empathy-labeling", "name": "Tactical Empathy & Labeling", "advisor": "chris-voss", "purpose": "a technique for understanding and influencing others by verbalizing their emotions", "category": "negotiation", "domains": ["negotiation", "empathy", "emotional-intelligence", "influence"], "use_when": "someone needs to build rapport and influence by accurately labeling the other person's emotions in a conversation"}, {"id": "teach-tailor-take-control", "name": "Teach-Tailor-Take Control (TTTC)", "advisor": "matt-dixon", "purpose": "the three-skill Challenger sales motion — delivering a reframing commercial insight (Teach), adapting it to this specific buyer (Tailor), and assertively guiding commercial dynamics around pricing, timing, and next steps (Take Control)", "category": "sales", "domains": ["b2b-sales", "sales-methodology", "discovery", "enterprise-pitch"], "use_when": "a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps", "helpful_documents": ["account research", "buyer's recent public statements or writing", "pitch deck or meeting agenda", "deal notes"]}, {"id": "ten-minute-mobility-menu", "name": "the 10-Minute Mobility Menu", "advisor": "kelly-starrett", "purpose": "a practical daily maintenance protocol that delivers results in minimal time", "category": "health-movement", "domains": ["mobility", "daily-practice", "movement-maintenance", "time-efficient"], "use_when": "someone needs a quick daily mobility routine they can actually stick to"}, {"id": "the-algorithm", "name": "the 5-step algorithm to dramatically improve any process or product", "advisor": "elon-musk", "purpose": "a strict five-step sequence for improving any process: question requirements, delete, simplify, accelerate, then automate", "category": "strategy", "domains": ["process-improvement", "efficiency", "first-principles", "optimization"], "use_when": "someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach"}, {"id": "the-carousel", "name": "The Carousel to find the emotional truth at the heart of their offering", "advisor": "don-draper", "purpose": "the feeling that makes people lean in, not the feature that makes them nod", "category": "positioning", "domains": ["emotional-marketing", "brand-storytelling", "advertising", "nostalgia"], "use_when": "someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible"}, {"id": "the-story-so-far", "name": "The Story So Far", "advisor": "wise-eric", "purpose": "a reflective tour through a user's session history that surfaces breakthrough moments, patterns, and growth", "category": "psychology", "domains": ["reflection", "journey-review", "progress-tracking", "narrative"], "use_when": "a user wants to reflect on their journey and progress with the Virtual Board over time"}, {"id": "the-work", "name": "The Work", "advisor": "byron-katie", "purpose": "questioning stressful thoughts using four questions and turnarounds", "category": "psychology", "domains": ["self-inquiry", "cognitive-reframing", "stress-reduction", "belief-examination"], "use_when": "someone is suffering from a stressful thought and needs to examine whether it is actually true"}, {"id": "thirty-minute-daily-instagram", "name": "the 30-Minute Daily Instagram System", "advisor": "sue-b-zimmerman", "purpose": "a structured protocol to make Instagram manageable and effective without taking over your life", "category": "social-media", "domains": ["instagram", "time-management", "daily-practice", "efficiency"], "use_when": "someone feels Instagram takes too much time and needs a structured 30-minute daily protocol", "helpful_documents": ["content strategy"]}, {"id": "three-by-three-content-batching", "name": "the 3x3 Content Batching Method", "advisor": "rachel-pedersen", "purpose": "a framework for creating 3 months of content in 3 hours through strategic planning and modular production", "category": "content-strategy", "domains": ["content-batching", "productivity", "content-creation", "modular-production"], "use_when": "someone needs to create months of content efficiently through batching rather than daily creation", "helpful_documents": ["content strategy"]}, {"id": "tissue-state-system", "name": "the Tissue State System to select the right mobilization technique for their specific tissue condition", "advisor": "kelly-starrett", "purpose": "diagnosing whether tissue is stiff, tight, or adhered and matching the right mobilization technique to the condition", "category": "health-movement", "domains": ["tissue-mobilization", "soft-tissue", "recovery", "treatment-selection"], "use_when": "someone needs to select the right mobilization technique based on their specific tissue condition"}, {"id": "type-1-type-2-decisions", "name": "the Type 1 vs Type 2 decision framework to determine the appropriate speed and rigor for their decision", "advisor": "jeff-bezos", "purpose": "classifying decisions as irreversible or reversible and matching the appropriate speed and rigor to each", "category": "strategy", "domains": ["decision-making", "speed-vs-rigor", "reversibility", "organizational-agility"], "use_when": "someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices"}, {"id": "upstream-downstream-diagnostic", "name": "the Upstream/Downstream Diagnostic to find the true source of their pain or movement limitation", "advisor": "kelly-starrett", "purpose": "tracing pain or movement limitation upstream through the kinetic chain to find the true source of dysfunction", "category": "health-movement", "domains": ["pain-source", "movement-chain", "diagnostic", "root-cause"], "use_when": "someone has pain or limitation in one area but the actual source may be upstream or downstream in the movement chain"}, {"id": "value-metric", "name": "the Value Metric Framework to identify the single most important pricing decision they'll make", "advisor": "patrick-campbell", "purpose": "how their customer pays and what they pay for", "category": "pricing", "domains": ["pricing-strategy", "value-metric", "monetization", "customer-value"], "use_when": "someone needs to identify the right value metric for their pricing model — the unit of value customers pay for"}, {"id": "values-clarification", "name": "Values Clarification", "advisor": "steven-hayes", "purpose": "identifying core values across life domains using the Bull's Eye exercise", "category": "psychology", "domains": ["values", "self-discovery", "life-domains", "ACT"], "use_when": "someone is unclear on their core values and needs a structured exercise to identify what matters most across life domains"}, {"id": "virtual-surgery-protocol", "name": "the Virtual Surgery Protocol", "advisor": "stuart-mcgill", "purpose": "behavioral modification mimicking post-surgical care for acute back pain", "category": "health-movement", "domains": ["acute-back-pain", "behavioral-modification", "spine-protection", "conservative-treatment"], "use_when": "someone has acute severe back pain and needs a conservative protocol that treats it with the same seriousness as post-surgical recovery"}, {"id": "vulnerability-check", "name": "Vulnerability Check", "advisor": "brene-brown", "purpose": "exploring shame, vulnerability, and courage in your current situation", "category": "psychology", "domains": ["vulnerability", "shame", "courage", "emotional-exploration"], "use_when": "someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs"}, {"id": "working-backwards", "name": "the Working Backwards process by starting with the customer experience and working backwards to what needs to be built", "advisor": "jeff-bezos", "purpose": "starting from the customer experience and writing the press release before building anything", "category": "strategy", "domains": ["product-development", "customer-centric", "press-release", "backwards-planning"], "use_when": "a team needs to define a new product or feature by writing the press release first and working backwards to what must be built", "helpful_documents": ["product description"]}, {"id": "zone-of-genius", "name": "the Zone of Genius discovery process", "advisor": "wise-eric", "purpose": "identifying your unique genius and distinguishing it from the Zone of Excellence trap where most high achievers get stuck", "category": "psychology", "domains": ["self-discovery", "strengths", "purpose", "career-alignment"], "use_when": "someone wants to identify their zone of genius to align their work with their unique abilities and passions"}, {"id": "permission-blessing", "name": "the Permission Blessing process for writing copy that grants permission before asking anything", "advisor": "kate-bowler", "purpose": "creating empathetic copy for health/wellness and chronic illness audiences by naming physical realities, validating emotions, and dismantling platitudes", "category": "copywriting", "domains": ["empathetic-copywriting", "health-wellness", "chronic-illness", "onboarding-copy", "permission-giving"], "use_when": "writing copy for vulnerable audiences — health apps, chronic illness communities, onboarding flows — where the reader needs to feel seen before being asked to do anything", "helpful_documents": ["brand-voice", "positioning"]}, {"id": "insane-honesty", "name": "the Insane Honesty process for writing B2B content that builds trust by leading with what most companies hide", "advisor": "doug-kessler", "purpose": "creating B2B copy that earns trust through radical honesty, structured around the Galvanizing Story and Three Whys frameworks", "category": "copywriting", "domains": ["b2b-copywriting", "content-strategy", "email-sequences", "thought-leadership", "sales-enablement"], "use_when": "writing B2B professional services copy — cold emails, thought leadership, landing pages, sales enablement — that needs to stand out from corporate noise", "helpful_documents": ["positioning", "brand-voice"]}, {"id": "bowtie-funnel", "name": "the Bowtie Funnel", "advisor": "jacco-van-der-kooij", "purpose": "a diagnostic walk through the end-to-end recurring-revenue architecture — six stages from Awareness through Expansion — to find where revenue is actually leaking", "category": "strategy", "domains": ["revenue-architecture", "gtm-strategy", "sales-process", "customer-success", "saas-metrics"], "use_when": "a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math", "helpful_documents": ["revenue metrics", "customer segmentation"]}, {"id": "6-elements-sdr", "name": "the 6 Elements of the Sales Development Playbook", "advisor": "trish-bertuzzi", "purpose": "a full-function diagnostic and redesign of a B2B sales development organization across six design elements — Strategy, Specialization, Recruiting, Retention, Execution, and Leadership — producing a ranked fix list that stops leaders from hiring more SDRs into a broken design", "category": "sales", "domains": ["sales-development", "sdr-org-design", "pipeline-generation", "sales-enablement", "b2b-sales"], "use_when": "a revenue leader needs to diagnose why their SDR / pipeline-generation function is underperforming — pipeline shortfall, rep churn, scale transition — and wants a structured walk through the six design elements before hiring more reps", "helpful_documents": ["current SDR org chart", "SDR quota and comp plan", "ramp and tenure data", "last 90 days meetings-held and opportunity conversion"]}, {"id": "5-gtm-motions-digital-health", "name": "the 5 GTM Motions for Digital Health", "advisor": "julie-yoo", "purpose": "a motion-commitment diagnostic that forces a digital health founder to pick one primary go-to-market motion — B2C2B, B2SMB, Risk-based contracting, Two-sided networks, or Distribution through aggregators — for the next 18 months, and confirms that product, evidence, buyer, and runway all match the chosen motion", "category": "sales", "domains": ["digital-health", "healthcare-gtm", "enterprise-sales", "healthcare-product-strategy", "payer-provider-sales"], "use_when": "a digital health founder is selecting or refining their go-to-market motion, running multiple motions in parallel with unclear progress, or preparing for a fundraise and needs to commit to a single primary motion backed by matching product, evidence, buyer, and runway assumptions", "helpful_documents": ["current pitch deck", "sales pipeline by segment", "clinical evidence inventory (case studies / outcomes data / RCTs)", "runway and fundraising plan", "integration roadmap (EHR / payer / revenue-cycle)"]}]}, "generatedAt": "2026-05-09T18:08:52.028035+00:00"}</script>
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            accent: { DEFAULT: '#ff6900', hover: '#e55d00', subtle: '#fff7ed' },
-            surface: '#f5f3ef',
-            muted: '#f0eeeb',
-            foreground: '#1a1a1a',
-            secondary: '#555555',
-            dimmed: '#6b7280',
-            border: '#e5e7eb',
-            background: '#faf9f7'
-          },
-          fontFamily: {
-            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-            mono: ['Menlo', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+    // ========== Config injected at build time ==========
+    const CONFIG = JSON.parse(document.getElementById("config-data").textContent);
+    const ENTITY_TYPE = CONFIG.entityType;        // "framework" or "advisor"
+    const REGISTRY_DATA = CONFIG.registry;
+    const GENERATED_AT = CONFIG.generatedAt;
+
+    const STORAGE_KEY = `aligned-catalog:${ENTITY_TYPE}:pending`;
+    const ENTITIES = ENTITY_TYPE === "framework" ? REGISTRY_DATA.frameworks : REGISTRY_DATA.advisors;
+
+    // Schema per entity type
+    const SCHEMAS = {
+      framework: {
+        readonly: ["id", "advisor"],
+        editable: [
+          { key: "name", label: "Name", type: "input" },
+          { key: "purpose", label: "Purpose", type: "textarea" },
+          { key: "category", label: "Category", type: "input" },
+          { key: "domains", label: "Domains (comma-separated)", type: "array" },
+          { key: "use_when", label: "Use when", type: "textarea" },
+          { key: "required_documents", label: "Required documents (comma-separated)", type: "array" },
+          { key: "helpful_documents", label: "Helpful documents (comma-separated)", type: "array" },
+        ],
+        groupBy: "category",
+        summaryField: "purpose",
+        secondaryBadge: "advisor",
+      },
+      advisor: {
+        readonly: ["id", "prompt"],
+        editable: [
+          { key: "name", label: "Name", type: "input" },
+          { key: "summary", label: "Summary", type: "input" },
+          { key: "domains", label: "Domains (comma-separated)", type: "array" },
+          { key: "evaluation_expertise", label: "Evaluation expertise", type: "textarea" },
+          { key: "best_for", label: "Best for", type: "textarea" },
+          { key: "not_for", label: "Not for", type: "textarea" },
+        ],
+        groupBy: null,
+        summaryField: "summary",
+        secondaryBadge: null,
+      },
+    };
+    const SCHEMA = SCHEMAS[ENTITY_TYPE];
+
+    // ========== State management ==========
+    function loadPending() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { deletes: {}, updates: {} };
+        const parsed = JSON.parse(raw);
+        return {
+          deletes: parsed.deletes || {},
+          updates: parsed.updates || {},
+        };
+      } catch (e) {
+        console.warn("localStorage parse failed; resetting", e);
+        return { deletes: {}, updates: {} };
+      }
+    }
+
+    function savePending() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(pending));
+      } catch (e) {
+        alert("localStorage save failed: " + e.message);
+      }
+    }
+
+    let pending = loadPending();
+
+    function getCurrentValue(entity, key) {
+      if (pending.updates[entity.id] && key in pending.updates[entity.id]) {
+        return pending.updates[entity.id][key];
+      }
+      return entity[key];
+    }
+
+    function isModified(entity) {
+      return !!(pending.updates[entity.id] && Object.keys(pending.updates[entity.id]).length > 0);
+    }
+
+    function isMarkedDelete(entity) {
+      return !!pending.deletes[entity.id];
+    }
+
+    function totalPending() {
+      let c = 0;
+      for (const id in pending.deletes) c++;
+      for (const id in pending.updates) {
+        if (Object.keys(pending.updates[id]).length > 0) c++;
+      }
+      return c;
+    }
+
+    function setUpdate(id, key, originalValue, newValue) {
+      const same = JSON.stringify(originalValue) === JSON.stringify(newValue);
+      if (!pending.updates[id]) pending.updates[id] = {};
+      if (same) {
+        delete pending.updates[id][key];
+        if (Object.keys(pending.updates[id]).length === 0) delete pending.updates[id];
+      } else {
+        pending.updates[id][key] = newValue;
+      }
+      savePending();
+    }
+
+    function toggleDelete(id) {
+      if (pending.deletes[id]) delete pending.deletes[id];
+      else pending.deletes[id] = true;
+      savePending();
+    }
+
+    function clearAll() {
+      pending = { deletes: {}, updates: {} };
+      savePending();
+    }
+
+    // ========== DOM helpers ==========
+    function el(tag, props, ...children) {
+      const node = document.createElement(tag);
+      if (props) {
+        for (const k in props) {
+          if (k === "class") node.className = props[k];
+          else if (k === "dataset") {
+            for (const dk in props.dataset) node.dataset[dk] = props.dataset[dk];
+          } else if (k.startsWith("on") && typeof props[k] === "function") {
+            node.addEventListener(k.slice(2).toLowerCase(), props[k]);
+          } else if (k === "style" && typeof props[k] === "object") {
+            for (const sk in props.style) node.style[sk] = props.style[sk];
+          } else if (k in node) {
+            node[k] = props[k];
+          } else {
+            node.setAttribute(k, props[k]);
           }
         }
       }
+      for (const child of children) {
+        if (child === null || child === undefined || child === false) continue;
+        if (Array.isArray(child)) {
+          for (const c of child) {
+            if (c === null || c === undefined || c === false) continue;
+            node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+          }
+        } else {
+          node.appendChild(typeof child === "string" ? document.createTextNode(child) : child);
+        }
+      }
+      return node;
     }
-  </script>
-</head>
-<body class="bg-background text-foreground min-h-screen">
 
-  <div class="max-w-4xl mx-auto px-4 py-10">
-    <h1 class="text-2xl font-medium mb-1">Framework Catalog</h1>
-    <p class="text-sm text-secondary mb-1">138 decision frameworks across 16 categories.</p>
-    <p class="text-xs text-dimmed mb-6 pb-4 border-b border-border">Auto-generated from <code class="text-xs">frameworks/registry.yaml</code></p>
+    // ========== Rendering ==========
+    function renderHeader() {
+      const sub = document.getElementById("header-subtitle");
+      const total = ENTITIES.length;
+      sub.textContent = `${total} entries · generated ${GENERATED_AT.slice(0, 10)}`;
+    }
 
-    <!-- Search -->
-    <div class="flex gap-2 mb-4">
-      <input
-        id="search"
-        type="text"
-        placeholder="Search by name, advisor, category, domain, or use_when..."
-        class="flex-1 px-3 py-2 border border-border rounded-md bg-white text-sm text-foreground placeholder:text-dimmed focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
-        oninput="filterFrameworks()"
-      />
-      <button type="button" onclick="filterFrameworks()" class="px-4 py-2 bg-[#32373c] text-white rounded-full text-sm hover:bg-[#3d4349] transition-colors">Search</button>
-    </div>
-
-    <!-- Category filter pills -->
-    <div id="filter-pills" class="flex gap-1.5 mb-6 flex-wrap"></div>
-
-    <!-- Stats -->
-    <p id="stats" class="text-xs text-dimmed mb-4"></p>
-
-    <!-- Category sections -->
-    <div id="sections"></div>
-
-    <p class="text-xs text-dimmed mt-8 text-center">Generated from <code>frameworks/registry.yaml</code> &middot; <a href="advisor-catalog.html" class="text-accent hover:underline">&larr; Advisor Catalog</a></p>
-  </div>
-
-<script>
-const frameworks = [
-  {"id": "100-percent-responsibility", "name": "100% Responsibility", "advisor": "diana-chapman", "category": "leadership", "domains": ["accountability", "self-awareness", "conscious-leadership"], "use_when": "someone is blaming others or external circumstances for their situation and needs to reclaim agency"},
-  {"id": "5-components-positioning", "name": "your 5 Components of Positioning framework. This is the methodology from \"Obviously Awesome\"", "advisor": "april-dunford", "category": "positioning", "domains": ["positioning", "competitive-analysis", "market-strategy", "product-marketing"], "use_when": "a business needs to define or refine its market positioning from scratch using a structured methodology", "required_documents": ["positioning statement"], "helpful_documents": ["competitive landscape", "customer research"]},
-  {"id": "5-step-process", "name": "the 5-Step Process to help them achieve what they want in life by systematically addressing problems and evolving", "advisor": "ray-dalio", "category": "strategy", "domains": ["goal-setting", "problem-solving", "personal-development", "decision-making"], "use_when": "someone wants a systematic process for setting goals, identifying problems, diagnosing root causes, designing solutions, and executing", "helpful_documents": ["business goals"]},
-  {"id": "6-step-process", "name": "6-Step Process", "advisor": "gabor-mate", "category": "psychology", "domains": ["self-inquiry", "emotional-healing", "trauma-awareness"], "use_when": "someone needs a structured therapeutic process for exploring emotional patterns and their origins", "helpful_documents": ["company strategy", "business goals"]},
-  {"id": "8-cs-self-leadership", "name": "8 C's of Self-Leadership", "advisor": "richard-schwartz", "category": "psychology", "domains": ["self-leadership", "internal-family-systems", "self-awareness", "emotional-regulation"], "use_when": "someone wants to assess their current state of Self energy or check whether they are leading from Self versus a part"},
-  {"id": "80-20-audit", "name": "an 80/20 Audit", "advisor": "tim-ferriss", "category": "strategy", "domains": ["productivity", "prioritization", "time-management", "elimination"], "use_when": "someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results", "helpful_documents": ["business goals"]},
-  {"id": "abcde-reframe", "name": "ABCDE Reframe", "advisor": "martin-seligman", "category": "psychology", "domains": ["cognitive-reframing", "optimism", "resilience", "mental-health"], "use_when": "someone is caught in pessimistic thinking patterns and needs a structured method to dispute and reframe negative beliefs"},
-  {"id": "above-below-the-line", "name": "Above/Below the Line", "advisor": "diana-chapman", "category": "leadership", "domains": ["conscious-leadership", "self-awareness", "emotional-regulation", "reactivity"], "use_when": "someone is reactive or defensive and needs to check whether they are operating from above or below the line"},
-  {"id": "accusation-audit", "name": "an Accusation Audit", "advisor": "chris-voss", "category": "negotiation", "domains": ["negotiation", "conflict-resolution", "communication", "persuasion"], "use_when": "someone is entering a conversation where the other party likely has negative assumptions and needs to preemptively defuse them"},
-  {"id": "act-flexibility", "name": "ACT Flexibility", "advisor": "steven-hayes", "category": "psychology", "domains": ["acceptance", "mindfulness", "values", "psychological-flexibility"], "use_when": "someone is stuck in rigid thinking or avoidance patterns and needs to build flexibility through acceptance and committed action"},
-  {"id": "audience-first-business-model", "name": "the Audience-First Business Model", "advisor": "danny-iny", "category": "onboarding", "domains": ["course-creation", "audience-building", "validation", "business-model"], "use_when": "someone wants to create a course or digital product and needs to validate demand by building an audience first", "helpful_documents": ["content strategy", "business goals"]},
-  {"id": "autonomic-fatigue-vs-training-fatigue", "name": "Autonomic Fatigue vs Training Fatigue", "advisor": "benjamin-levine", "category": "health-autonomic", "domains": ["autonomic-dysfunction", "exercise-physiology", "recovery", "fatigue-management"], "use_when": "someone with autonomic dysfunction needs to distinguish whether their fatigue is autonomic or training-related to adjust their recovery strategy"},
-  {"id": "autonomic-testing-interpretation", "name": "the Autonomic Testing Interpretation framework", "advisor": "roy-freeman", "category": "health-autonomic", "domains": ["autonomic-testing", "clinical-interpretation", "diagnostic-reasoning"], "use_when": "someone has autonomic test results and needs help interpreting what they mean clinically"},
-  {"id": "batched-content-system", "name": "the Batched Content Creation System", "advisor": "jasmine-star", "category": "content-strategy", "domains": ["content-creation", "productivity", "social-media", "batch-processing"], "use_when": "someone struggles with consistent content creation and needs a system for batching production efficiently", "helpful_documents": ["content strategy"]},
-  {"id": "believability-weighted-decision-making", "name": "Believability-Weighted Decision Making to improve their decision quality by weighting opinions based on track record and expertise", "advisor": "ray-dalio", "category": "strategy", "domains": ["decision-making", "team-dynamics", "meritocracy", "collective-intelligence"], "use_when": "a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise"},
-  {"id": "bio-promise-alignment", "name": "the Bio-Promise Alignment Framework", "advisor": "sue-b-zimmerman", "category": "social-media", "domains": ["instagram", "profile-optimization", "content-alignment", "conversion"], "use_when": "someone's Instagram bio promises one thing but their content delivers another, causing follower drop-off", "helpful_documents": ["content strategy", "positioning statement"]},
-  {"id": "braving-trust-inventory", "name": "BRAVING Trust Inventory", "advisor": "brene-brown", "category": "leadership", "domains": ["trust", "relationships", "vulnerability", "team-culture"], "use_when": "someone needs to assess the state of trust in a relationship or team using a structured framework"},
-  {"id": "build-measure-learn", "name": "the Build-Measure-Learn loop to design a learning cycle for their product initiative", "advisor": "eric-ries", "category": "startup", "domains": ["lean-startup", "experimentation", "product-development", "validated-learning"], "use_when": "a team needs to design a rapid learning cycle for a product initiative to validate assumptions quickly", "helpful_documents": ["product description", "customer research"]},
-  {"id": "calibrated-questions", "name": "Calibrated Questions", "advisor": "chris-voss", "category": "negotiation", "domains": ["negotiation", "influence", "communication", "problem-solving"], "use_when": "someone needs to steer a negotiation or conversation by asking how/what questions that shift the problem to the other party"},
-  {"id": "cardiac-deconditioning-model", "name": "Cardiac Deconditioning Model", "advisor": "benjamin-levine", "category": "health-autonomic", "domains": ["POTS", "cardiac-rehabilitation", "exercise-prescription", "deconditioning"], "use_when": "someone with POTS needs to understand the cardiac deconditioning hypothesis and exercise as a primary treatment pathway"},
-  {"id": "cars", "name": "CARs (Controlled Articular Rotations)", "advisor": "andreo-spina", "category": "health-movement", "domains": ["joint-health", "mobility", "daily-practice", "movement-maintenance"], "use_when": "someone wants a daily joint maintenance routine to assess and maintain articular health and range of motion"},
-  {"id": "cec-method", "name": "the CEC Method", "advisor": "sue-b-zimmerman", "category": "social-media", "domains": ["instagram", "content-strategy", "engagement", "conversion"], "use_when": "someone posts on Instagram without a system and needs a content-to-conversion pathway", "helpful_documents": ["content strategy", "product description"]},
-  {"id": "choice-point", "name": "Choice Point", "advisor": "steven-hayes", "category": "psychology", "domains": ["decision-making", "values", "mindfulness", "behavioral-choice"], "use_when": "someone faces a difficult moment and needs to choose between moving toward their values or away from discomfort"},
-  {"id": "clearing-model", "name": "The Clearing Model to resolve relationship tensions", "advisor": "diana-chapman", "category": "leadership", "domains": ["conflict-resolution", "communication", "conscious-leadership", "relationships"], "use_when": "two people have unresolved tension and need a structured process to clear it without blame"},
-  {"id": "cognitive-friction-audit", "name": "the Cognitive Friction Audit", "advisor": "shirin-oreizy", "category": "conversion", "domains": ["behavioral-science", "UX", "conversion-optimization", "decision-architecture"], "use_when": "a product or page has high drop-off and someone needs to identify and remove cognitive friction points in the user journey", "helpful_documents": ["customer research", "product description"]},
-  {"id": "community-amplification", "name": "the Community Amplification Framework", "advisor": "arielle-nissenblatt", "category": "growth", "domains": ["community-building", "word-of-mouth", "audience-engagement", "advocacy"], "use_when": "someone has an audience but needs to turn passive consumers into active advocates who share and promote their content", "helpful_documents": ["content strategy"]},
-  {"id": "compassionate-inquiry", "name": "Compassionate Inquiry", "advisor": "gabor-mat", "category": "psychology", "domains": ["trauma", "self-inquiry", "emotional-healing", "curiosity"], "use_when": "someone presents surface-level distress and needs to explore the deeper emotional patterns underneath with compassion"},
-  {"id": "composite-autonomic-severity-score", "name": "the Composite Autonomic Severity Score (CASS) framework", "advisor": "roy-freeman", "category": "health-autonomic", "domains": ["autonomic-testing", "severity-grading", "diagnostic-criteria", "clinical-assessment"], "use_when": "a clinician needs to grade autonomic dysfunction severity by integrating multiple test modalities"},
-  {"id": "content-inc-model", "name": "the Content Inc", "advisor": "joe-pulizzi", "category": "content-strategy", "domains": ["content-marketing", "audience-building", "business-model", "content-first"], "use_when": "someone wants to build a business by establishing a content platform and audience before creating products"},
-  {"id": "creator-experimentation-protocol", "name": "the Creator Experimentation Protocol", "advisor": "jay-clouse", "category": "content-strategy", "domains": ["experimentation", "content-testing", "creator-business", "metrics"], "use_when": "a creator needs to test content or business ideas systematically before committing resources to scale", "helpful_documents": ["content strategy", "business goals"]},
-  {"id": "creator-flywheel", "name": "the Creator Flywheel framework", "advisor": "jay-clouse", "category": "content-strategy", "domains": ["creator-business", "flywheel-growth", "platform-independence", "sustainability"], "use_when": "a creator wants to build a self-reinforcing business system that compounds over time and doesn't depend on any single platform", "helpful_documents": ["content strategy", "business goals"]},
-  {"id": "dbt-wise-mind", "name": "DBT Wise Mind", "advisor": "marsha-linehan", "category": "psychology", "domains": ["emotional-regulation", "mindfulness", "dialectical-thinking", "balance"], "use_when": "someone is making decisions from pure emotion or pure logic and needs to find the balance point of wise mind"},
-  {"id": "dear-man", "name": "DEAR MAN", "advisor": "marsha-linehan", "category": "psychology", "domains": ["assertiveness", "communication", "interpersonal-effectiveness", "boundaries"], "use_when": "someone needs to prepare for a difficult conversation where they must assert their needs clearly and effectively"},
-  {"id": "depth-over-breadth-strategy", "name": "the Depth Over Breadth Content Strategy", "advisor": "jay-clouse", "category": "content-strategy", "domains": ["content-strategy", "niche-focus", "thought-leadership", "shareability"], "use_when": "a creator is spread too thin across topics and needs to go deeper on fewer subjects for more impact", "helpful_documents": ["content strategy"]},
-  {"id": "design-principles", "name": "Design Principles", "advisor": "steve-jobs", "category": "strategy", "domains": ["product-design", "simplicity", "user-experience", "aesthetics"], "use_when": "someone needs guiding design principles for a product that prioritize simplicity, elegance, and user experience"},
-  {"id": "directional-susceptibility", "name": "Directional Susceptibility to Movement (DSM) assessment", "advisor": "shirley-sahrmann", "category": "health-movement", "domains": ["movement-assessment", "injury-prevention", "pain-patterns", "biomechanics"], "use_when": "someone has pain or injury risk related to habitual movement patterns and needs to identify directional susceptibility"},
-  {"id": "dm-relationship-cultivation", "name": "the DM Relationship Cultivation System", "advisor": "jasmine-star", "category": "social-media", "domains": ["instagram", "direct-messaging", "sales-conversations", "relationship-building"], "use_when": "someone wants to convert Instagram engagement into sales conversations through authentic DM outreach", "helpful_documents": ["content strategy"]},
-  {"id": "do-things-that-dont-scale", "name": "Do Things That Don't Scale", "advisor": "paul-graham", "category": "startup", "domains": ["early-stage", "customer-acquisition", "founder-hustle", "validation"], "use_when": "a founder is in the earliest stage and needs to identify the unscalable manual things they should be doing to get traction", "helpful_documents": ["product description", "current user count or traction metrics"]},
-  {"id": "earbuds-recommendation-model", "name": "the EarBuds Recommendation Model", "advisor": "arielle-nissenblatt", "category": "podcasting", "domains": ["podcast-discovery", "curation", "recommendation-systems", "community"], "use_when": "someone wants to build a recommendation-driven content platform using human curation and daily habit formation", "helpful_documents": ["content strategy"]},
-  {"id": "earlyvangelists", "name": "the Earlyvangelists framework to validate their customer hypothesis", "advisor": "eric-ries", "category": "startup", "domains": ["customer-validation", "early-adopters", "product-market-fit", "sales"], "use_when": "a startup needs to distinguish between customers who will actually pay versus those giving polite but uncommitted feedback", "helpful_documents": ["customer research", "product description"]},
-  {"id": "earnestness-filter", "name": "Earnestness Filter", "advisor": "paul-graham", "category": "startup", "domains": ["founder-mindset", "authenticity", "self-assessment", "motivation"], "use_when": "a founder needs to honestly assess whether they are genuinely committed to their startup or just performing the role", "helpful_documents": ["product description", "founding story or motivation"]},
-  {"id": "ears-framework", "name": "the EARS Framework", "advisor": "jeremy-enns", "category": "podcasting", "domains": ["podcast-growth", "retention", "revenue", "sustainable-growth"], "use_when": "a podcaster is chasing download numbers and needs to refocus on retention and revenue as growth levers", "helpful_documents": ["content strategy", "business goals"]},
-  {"id": "energy-audit", "name": "Energy Audit", "advisor": "jim-loehr", "category": "psychology", "domains": ["energy-management", "performance", "well-being", "holistic-health"], "use_when": "someone feels depleted or imbalanced and needs to assess which energy dimension \u2014 physical, emotional, mental, or spiritual \u2014 needs attention"},
-  {"id": "engagement-pyramid", "name": "the Engagement Pyramid", "advisor": "arielle-nissenblatt", "category": "growth", "domains": ["audience-engagement", "community-building", "retention", "advocacy"], "use_when": "someone has an audience but most people are passive consumers and they need a strategy to deepen engagement", "helpful_documents": ["content strategy"]},
-  {"id": "enneagram-typing", "name": "Enneagram Typing", "advisor": "richard-schwartz", "category": "psychology", "domains": ["personality-typing", "self-awareness", "motivational-patterns", "enneagram"], "use_when": "someone wants to discover their Enneagram type through a guided conversation exploring their core motivations"},
-  {"id": "fear-setting", "name": "Fear-Setting", "advisor": "tim-ferriss", "category": "psychology", "domains": ["decision-making", "fear", "stoicism", "risk-assessment"], "use_when": "someone is paralyzed by fear about a decision and needs to systematically define, prevent, and repair the worst-case scenarios"},
-  {"id": "finding-the-crux", "name": "Finding the Crux", "advisor": "richard-rumelt", "category": "strategy", "domains": ["strategic-diagnosis", "problem-identification", "focus", "critical-thinking"], "use_when": "someone faces a complex strategic situation and needs to identify the single most important challenge to address first", "helpful_documents": ["company strategy"]},
-  {"id": "first-principles-thinking", "name": "first principles thinking to break down a problem to its fundamental truths", "advisor": "elon-musk", "category": "strategy", "domains": ["problem-solving", "innovation", "reasoning", "mental-models"], "use_when": "someone is stuck in conventional thinking and needs to decompose a problem to its fundamental truths to find novel solutions"},
-  {"id": "first-seven-reels", "name": "the Your First 7 Reels framework", "advisor": "elise-darma", "category": "social-media", "domains": ["instagram-reels", "customer-journey", "video-content", "conversion"], "use_when": "someone is starting with Instagram Reels and needs a strategic sequence that maps content to the buyer journey", "helpful_documents": ["content strategy", "product description"]},
-  {"id": "flexion-intolerance-assessment", "name": "the Flexion Intolerance Assessment", "advisor": "stuart-mcgill", "category": "health-movement", "domains": ["spine-health", "pain-assessment", "clinical-protocol", "movement-modification"], "use_when": "someone has back pain and needs to determine if flexion is the provocative movement to guide treatment decisions"},
-  {"id": "focus-through-saying-no", "name": "Focus Through Saying No", "advisor": "steve-jobs", "category": "strategy", "domains": ["focus", "prioritization", "elimination", "discipline"], "use_when": "someone has too many projects or commitments and needs to ruthlessly cut to focus on what truly matters", "helpful_documents": ["business goals"]},
-  {"id": "forever-promise", "name": "the Forever Promise Framework", "advisor": "robbie-kellman-baxter", "category": "growth", "domains": ["subscription", "membership", "retention", "value-proposition"], "use_when": "someone is building a subscription or membership business and needs to articulate the ongoing value commitment that keeps members", "helpful_documents": ["strategy", "positioning"]},
-  {"id": "four-market-types", "name": "the Four Market Types framework to help them identify and test their assumptions about which market they're entering", "advisor": "eric-ries", "category": "startup", "domains": ["market-analysis", "startup-strategy", "competitive-positioning", "market-entry"], "use_when": "a startup needs to identify whether they are entering an existing, resegmented, new, or clone market to set the right strategy", "helpful_documents": ["competitive landscape", "market research"]},
-  {"id": "four-neighborhoods", "name": "the Four Neighborhoods Framework", "advisor": "sue-b-zimmerman", "category": "social-media", "domains": ["instagram", "content-formats", "platform-strategy", "audience-behavior"], "use_when": "someone needs to understand how different Instagram formats serve different purposes and audiences", "helpful_documents": ["content strategy"]},
-  {"id": "four-quadrant-focus", "name": "Four-Quadrant Focus", "advisor": "steve-jobs", "category": "strategy", "domains": ["product-strategy", "portfolio-management", "simplification", "focus"], "use_when": "someone has a bloated product line and needs a 2x2 grid to simplify down to the essential offerings", "helpful_documents": ["product description"]},
-  {"id": "growth-hacking-process", "name": "the Growth Hacking Process", "advisor": "sean-ellis", "category": "growth", "domains": ["growth-hacking", "experimentation", "metrics", "systematic-growth"], "use_when": "a product team needs a repeatable process for generating, prioritizing, testing, and scaling growth experiments", "helpful_documents": ["product description", "business metrics"]},
-  {"id": "heart-rate-reserve-training-zones", "name": "establishing their Heart Rate Reserve training zones", "advisor": "benjamin-levine", "category": "health-autonomic", "domains": ["exercise-prescription", "heart-rate-training", "autonomic-recovery", "intensity-dosing"], "use_when": "someone with autonomic dysfunction needs personalized heart rate training zones for safe and effective exercise"},
-  {"id": "homer-vs-spock", "name": "the Homer vs Spock Framework", "advisor": "shirin-oreizy", "category": "conversion", "domains": ["behavioral-science", "decision-making", "marketing-psychology", "persuasion"], "use_when": "someone's marketing leads with features and logic and they need to understand why emotional appeal must come first", "helpful_documents": ["customer research", "sales materials"]},
-  {"id": "ice-prioritization", "name": "ICE Prioritization", "advisor": "sean-ellis", "category": "growth", "domains": ["prioritization", "experimentation", "growth", "decision-making"], "use_when": "a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones", "helpful_documents": ["business goals"]},
-  {"id": "idiot-index", "name": "the Idiot Index to identify cost reduction opportunities", "advisor": "elon-musk", "category": "strategy", "domains": ["cost-optimization", "manufacturing", "first-principles", "efficiency"], "use_when": "someone needs to identify cost reduction opportunities by comparing current costs to theoretical minimums", "helpful_documents": ["product description"]},
-  {"id": "ifs-parts-work", "name": "IFS Parts Work", "advisor": "richard-schwartz", "category": "psychology", "domains": ["internal-family-systems", "parts-work", "inner-conflict", "self-therapy"], "use_when": "someone has conflicting internal voices or impulses and wants to understand and work with their parts"},
-  {"id": "integrative-piloting-process", "name": "the Integrative Piloting Process", "advisor": "danny-iny", "category": "onboarding", "domains": ["course-creation", "iterative-development", "student-feedback", "lean-education"], "use_when": "someone is building a course and wants to develop and deliver simultaneously using real student feedback", "helpful_documents": ["product description", "customer research"]},
-  {"id": "jk5-content-pillars", "name": "the JK5 Content Pillars Method", "advisor": "jenna-kutcher", "category": "content-strategy", "domains": ["content-pillars", "social-media", "brand-building", "sales-content"], "use_when": "someone needs to define their core content topics to balance audience connection with revenue generation", "helpful_documents": ["content strategy", "positioning statement"]},
-  {"id": "jobs-to-be-done", "name": "a Jobs to Be Done analysis to understand what progress their customer (or they themselves) are trying to make", "advisor": "clayton-christensen", "category": "strategy", "domains": ["customer-research", "product-strategy", "innovation", "demand-analysis"], "use_when": "someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features", "helpful_documents": ["customer research", "product description"]},
-  {"id": "kernel-of-good-strategy", "name": "building a complete strategy using the kernel", "advisor": "richard-rumelt", "category": "strategy", "domains": ["strategic-planning", "diagnosis", "guiding-policy", "coherent-action"], "use_when": "someone's strategy is really just a list of goals and they need to build a real strategy with diagnosis, policy, and actions", "helpful_documents": ["company strategy", "business goals"]},
-  {"id": "kinesiopathologic-model", "name": "the Kinesiopathologic Model (KPM)", "advisor": "shirley-sahrmann", "category": "health-movement", "domains": ["movement-dysfunction", "tissue-damage", "repetitive-strain", "biomechanics"], "use_when": "someone has chronic pain from repetitive movement and needs to understand how their habitual patterns cause tissue damage"},
-  {"id": "landing-page-assembly", "name": "Landing Page Assembly", "advisor": "oli-gardner", "category": "conversion", "domains": ["landing-pages", "conversion-optimization", "copywriting", "web-design"], "use_when": "someone needs to build or improve a landing page using a structured stage-by-stage assembly process"},
-  {"id": "leadership-pipeline-passages", "name": "the Leadership Pipeline Passages", "advisor": "ram-charan", "category": "leadership", "domains": ["leadership-development", "career-transitions", "management", "organizational-design"], "use_when": "a leader is struggling at a new level and needs to understand what skills, time allocation, and values must shift"},
-  {"id": "leap-of-faith-assumptions", "name": "the Leap of Faith Assumptions framework to identify and test the critical assumptions underlying their business", "advisor": "eric-ries", "category": "startup", "domains": ["assumption-testing", "validation", "risk-reduction", "lean-startup"], "use_when": "a startup needs to identify which untested assumptions are most critical to their business and design experiments to test them", "helpful_documents": ["product description", "customer research"]},
-  {"id": "leopard-movement-hierarchy", "name": "the Leopard Movement Hierarchy", "advisor": "kelly-starrett", "category": "health-movement", "domains": ["movement-progression", "position-mechanics", "athletic-performance", "injury-prevention"], "use_when": "someone is adding speed or load to movement without proper position foundations and needs to reset their progression"},
-  {"id": "leveraged-learning", "name": "the Leveraged Learning framework", "advisor": "danny-iny", "category": "onboarding", "domains": ["course-design", "learning-outcomes", "transformation", "instructional-design"], "use_when": "someone is designing a course and needs to ensure it drives real transformation rather than passive content consumption", "helpful_documents": ["product description"]},
-  {"id": "levine-protocol", "name": "the Levine Protocol", "advisor": "benjamin-levine", "category": "health-autonomic", "domains": ["exercise-protocol", "POTS-treatment", "cardiovascular-reconditioning", "structured-program"], "use_when": "someone with POTS or autonomic dysfunction needs a structured exercise reconditioning program"},
-  {"id": "living-into-values", "name": "Living Into Values", "advisor": "brene-brown", "category": "psychology", "domains": ["values", "self-awareness", "behavior-change", "authenticity"], "use_when": "someone knows their values abstractly but struggles to live them consistently in daily decisions and behavior"},
-  {"id": "load-velocity-relationship", "name": "the Load-Velocity Relationship", "advisor": "stuart-mcgill", "category": "health-movement", "domains": ["spine-safety", "biomechanics", "load-management", "injury-prevention"], "use_when": "someone is lifting or moving in ways that combine high load with high velocity and needs to understand the spine safety tradeoff"},
-  {"id": "management-level-progression", "name": "the Management Level Progression framework", "advisor": "lara-hogan", "category": "leadership", "domains": ["engineering-management", "career-growth", "leadership-skills", "level-progression"], "use_when": "an engineering manager needs to understand what's expected at their current level or prepare for the next one"},
-  {"id": "mcgill-big-3", "name": "the McGill Big 3", "advisor": "stuart-mcgill", "category": "health-fitness", "domains": ["core-stability", "spine-health", "exercise-protocol", "motor-control"], "use_when": "someone needs a spine-safe core stability program that builds endurance without compromising spinal health"},
-  {"id": "message-magic-system", "name": "the Message Magic System", "advisor": "elise-darma", "category": "social-media", "domains": ["instagram", "DM-automation", "sales-funnels", "ManyChat"], "use_when": "someone wants to automate Instagram DM conversations to convert engagement into sales using chatbot flows", "helpful_documents": ["product description"]},
-  {"id": "movement-system-impairment", "name": "Movement System Impairment assessment", "advisor": "shirley-sahrmann", "category": "health-movement", "domains": ["movement-assessment", "pain-diagnosis", "dysfunction-patterns", "clinical-reasoning"], "use_when": "someone has chronic musculoskeletal pain and needs to identify the movement dysfunction pattern causing it"},
-  {"id": "multi-system-approach-pots", "name": "a multi-system assessment of their POTS. This framework acknowledges that POTS is not just a heart rate problem", "advisor": "blair-grubb", "category": "health-autonomic", "domains": ["POTS", "multi-system", "diagnostic-assessment", "treatment-planning"], "use_when": "someone with POTS needs a comprehensive assessment that goes beyond heart rate to address GI, neurological, and immune involvement"},
-  {"id": "one-one-one-one-method", "name": "the 1-1-1-1 Method", "advisor": "elise-darma", "category": "social-media", "domains": ["instagram", "content-templates", "simplification", "revenue-system"], "use_when": "someone is overwhelmed by Instagram content creation and needs a minimalist system with one template per format", "helpful_documents": ["content strategy", "product description"]},
-  {"id": "opposite-action", "name": "Opposite Action", "advisor": "marsha-linehan", "category": "psychology", "domains": ["emotional-regulation", "DBT", "behavioral-change", "impulse-management"], "use_when": "someone is being driven by an unhelpful emotional urge and needs to deliberately act opposite to it to regulate intensity"},
-  {"id": "origin-story-interview", "name": "Origin Story Interview", "advisor": "april-dunford", "category": "positioning", "domains": ["positioning", "storytelling", "founder-narrative", "brand-story"], "use_when": "someone needs to extract and articulate their origin story as a foundation for positioning and brand narrative"},
-  {"id": "osmopressor-response", "name": "the Osmopressor Response Protocol", "advisor": "italo-biaggioni", "category": "health-autonomic", "domains": ["blood-pressure", "non-pharmacologic", "acute-intervention", "orthostatic-hypotension"], "use_when": "someone with orthostatic hypotension needs an immediate non-drug intervention to support blood pressure"},
-  {"id": "pain-plus-reflection", "name": "the Pain + Reflection = Progress framework to transform failure and pain into catalysts for growth", "advisor": "ray-dalio", "category": "psychology", "domains": ["resilience", "learning-from-failure", "reflection", "personal-growth"], "use_when": "someone has experienced a painful failure and needs a structured way to extract lessons and turn it into growth"},
-  {"id": "past-year-review", "name": "the Past Year Review (PYR)", "advisor": "tim-ferriss", "category": "strategy", "domains": ["annual-review", "reflection", "goal-setting", "life-design"], "use_when": "someone wants to review their past year systematically to make data-driven decisions about the next year"},
-  {"id": "performance-standards-by-level", "name": "Performance Standards by Level", "advisor": "ram-charan", "category": "leadership", "domains": ["performance-management", "leadership-assessment", "development-planning", "organizational-design"], "use_when": "a leader's performance doesn't match their level and they need to identify which leadership passage they are actually operating at"},
-  {"id": "perma-wellbeing", "name": "PERMA Wellbeing", "advisor": "martin-seligman", "category": "psychology", "domains": ["wellbeing", "positive-psychology", "life-satisfaction", "flourishing"], "use_when": "someone wants to assess their overall wellbeing across the five dimensions of flourishing"},
-  {"id": "personal-context-intake", "name": "Personal Context Intake", "advisor": "wise-eric", "category": "psychology", "domains": ["intake-assessment", "personal-history", "context-gathering", "coaching"], "use_when": "a new user needs an initial session to share their personal context, history, and goals before working with advisors"},
-  {"id": "personal-credo", "name": "Personal Credo", "advisor": "jim-loehr", "category": "psychology", "domains": ["mission-statement", "values", "purpose", "identity"], "use_when": "someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose"},
-  {"id": "personal-resource-allocation", "name": "a Personal Resource Allocation assessment to examine where their time, energy, and attention actually flow versus where they say they want it to go", "advisor": "clayton-christensen", "category": "strategy", "domains": ["resource-allocation", "priorities", "life-strategy", "time-management"], "use_when": "someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions"},
-  {"id": "pillars-of-integrity", "name": "the Four Pillars of Integrity", "advisor": "jim-dethmer", "category": "leadership", "domains": ["integrity", "conscious-leadership", "authenticity", "self-assessment"], "use_when": "someone feels fragmented or out of alignment and needs to identify where their integrity is broken"},
-  {"id": "pilot-program-methodology", "name": "the Pilot Program Methodology", "advisor": "danny-iny", "category": "onboarding", "domains": ["course-validation", "pilot-testing", "demand-validation", "lean-education"], "use_when": "someone wants to validate course demand before investing in full production", "helpful_documents": ["product description", "customer research"]},
-  {"id": "pivot-or-persevere", "name": "the Pivot or Persevere decision framework to make a structured strategic direction decision", "advisor": "eric-ries", "category": "startup", "domains": ["pivot-decision", "strategic-direction", "validated-learning", "lean-startup"], "use_when": "a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one", "helpful_documents": ["product description", "customer research", "business metrics"]},
-  {"id": "podcast-brand-strategy", "name": "a Podcast Brand Strategy audit", "advisor": "jeremy-enns", "category": "podcasting", "domains": ["podcast-branding", "positioning", "content-strategy", "audience-growth"], "use_when": "a podcaster's growth has stalled and they need to audit their brand positioning and content strategy", "helpful_documents": ["content strategy", "positioning statement"]},
-  {"id": "podcast-marketing-systems", "name": "Podcast Marketing Systems", "advisor": "jeremy-enns", "category": "podcasting", "domains": ["podcast-marketing", "growth-systems", "sustainable-growth", "infrastructure"], "use_when": "a podcaster is doing one-off promotion per episode and needs sustainable marketing systems that compound", "helpful_documents": ["content strategy", "business goals"]},
-  {"id": "polarization-mediator", "name": "Polarization Mediator", "advisor": "richard-schwartz", "category": "psychology", "domains": ["internal-family-systems", "conflict-mediation", "parts-work", "integration"], "use_when": "someone has two strongly opposing internal parts and needs mediation to find collaboration rather than dominance"},
-  {"id": "position-priority-principles", "name": "Position Priority Principles", "advisor": "kelly-starrett", "category": "health-movement", "domains": ["movement-foundations", "position-mechanics", "longevity", "injury-prevention"], "use_when": "someone needs to establish fundamental position standards that protect joints and enable lifelong movement"},
-  {"id": "positioning-canvas", "name": "Positioning Canvas", "advisor": "april-dunford", "category": "positioning", "domains": ["positioning", "team-alignment", "strategy-documentation", "one-pager"], "use_when": "a team has completed positioning work and needs to capture it in a single-page format for alignment and reference", "helpful_documents": ["positioning statement", "competitive landscape"]},
-  {"id": "pots-subtype-recognition", "name": "POTS Subtype Recognition", "advisor": "blair-grubb", "category": "health-autonomic", "domains": ["POTS", "subtype-diagnosis", "treatment-selection", "clinical-classification"], "use_when": "someone with POTS needs to identify their subtype to guide treatment decisions"},
-  {"id": "presence-check-in", "name": "a Presence Check-In", "advisor": "matt-chapman", "category": "psychology", "domains": ["mindfulness", "presence", "grounding", "self-awareness"], "use_when": "someone is distracted or disconnected and needs to arrive fully in the present moment before starting deeper work"},
-  {"id": "problem-solver-positioning", "name": "Problem-Solver Positioning", "advisor": "jasmine-star", "category": "content-strategy", "domains": ["content-positioning", "problem-framing", "brand-messaging", "audience-connection"], "use_when": "someone describes their business by what they do rather than the problem they solve and it's not resonating", "helpful_documents": ["positioning statement"]},
-  {"id": "product-market-fit-test", "name": "the Product-Market Fit Test", "advisor": "sean-ellis", "category": "growth", "domains": ["product-market-fit", "survey-methodology", "growth-readiness", "user-love"], "use_when": "a startup needs to measure whether they have product-market fit before investing in scaling", "helpful_documents": ["product description", "customer research"]},
-  {"id": "professional-context-intake", "name": "Professional Context Intake", "advisor": "wise-eric", "category": "strategy", "domains": ["intake-assessment", "business-context", "professional-history", "coaching"], "use_when": "a new user needs an initial session to share their professional and business context before working with business advisors"},
-  {"id": "proximate-objectives", "name": "Proximate Objectives", "advisor": "richard-rumelt", "category": "strategy", "domains": ["goal-setting", "strategic-planning", "momentum", "achievable-targets"], "use_when": "someone has ambitious goals but no traction and needs to identify achievable near-term objectives that build momentum", "helpful_documents": ["company strategy", "business goals"]},
-  {"id": "quadrinity", "name": "Quadrinity Process", "advisor": "jim-dethmer", "category": "psychology", "domains": ["body-mind-integration", "emotional-processing", "inner-child", "wholeness"], "use_when": "someone needs to check in with all four aspects of self \u2014 physical, emotional, intellectual, and spiritual"},
-  {"id": "quality-of-life-focus", "name": "the Quality of Life Focus framework", "advisor": "blair-grubb", "category": "health-autonomic", "domains": ["POTS", "patient-centered-care", "symptom-management", "functional-improvement"], "use_when": "someone with POTS is exhausted from chasing a cure and needs to refocus on quality of life and functional improvement"},
-  {"id": "radical-acceptance", "name": "Radical Acceptance", "advisor": "marsha-linehan", "category": "psychology", "domains": ["acceptance", "suffering-reduction", "DBT", "mindfulness"], "use_when": "someone is fighting against a reality they cannot change and their resistance is creating additional suffering"},
-  {"id": "recommendation-readiness-checklist", "name": "the Recommendation Readiness Checklist", "advisor": "arielle-nissenblatt", "category": "content-strategy", "domains": ["content-quality", "recommendation-readiness", "audience-growth", "quality-audit"], "use_when": "someone wants their content recommended but it may not meet the quality bar needed for word-of-mouth growth", "helpful_documents": ["content strategy"]},
-  {"id": "regret-minimization", "name": "the Regret Minimization Framework to help them make a major life decision by projecting forward and looking back", "advisor": "jeff-bezos", "category": "strategy", "domains": ["decision-making", "life-decisions", "long-term-thinking", "regret-avoidance"], "use_when": "someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret"},
-  {"id": "relative-stiffness-principle", "name": "the Relative Stiffness Principle", "advisor": "shirley-sahrmann", "category": "health-movement", "domains": ["biomechanics", "tissue-stiffness", "compensation-patterns", "movement-dysfunction"], "use_when": "someone has compensatory movement patterns and needs to understand how relative tissue stiffness drives motion to the wrong joints"},
-  {"id": "sales-pitch-structure", "name": "building a sales pitch that translates their positioning into a compelling narrative. This is the methodology from \"Sales Pitch\"", "advisor": "april-dunford", "category": "positioning", "domains": ["sales-pitch", "narrative", "positioning", "buyer-enablement"], "use_when": "someone has completed positioning work and needs to translate it into a compelling sales narrative", "required_documents": ["positioning statement"], "helpful_documents": ["competitive landscape", "customer research"]},
-  {"id": "science-of-design", "name": "the Science of Design Methodology", "advisor": "shirin-oreizy", "category": "conversion", "domains": ["behavioral-science", "experimentation", "customer-decisions", "design-methodology"], "use_when": "someone needs a systematic approach to understand and influence how customers make decisions using behavioral science", "helpful_documents": ["customer research", "product description"]},
-  {"id": "small-fiber-neuropathy-diagnostic", "name": "the Small Fiber Neuropathy Diagnostic Criteria", "advisor": "roy-freeman", "category": "health-autonomic", "domains": ["neuropathy", "diagnostic-criteria", "small-fiber", "clinical-assessment"], "use_when": "someone has symptoms suggesting small fiber neuropathy and needs systematic diagnostic criteria"},
-  {"id": "smallest-viable-audience", "name": "the Smallest Viable Audience framework to find the people who would miss them if they were gone", "advisor": "seth-godin", "category": "growth", "domains": ["audience-strategy", "niche-focus", "marketing-philosophy", "minimum-viable-audience"], "use_when": "someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve"},
-  {"id": "social-media-queen-method", "name": "the Social Media Queen Method", "advisor": "rachel-pedersen", "category": "social-media", "domains": ["organic-growth", "authority-building", "authenticity", "social-media-strategy"], "use_when": "someone wants to build social media authority through organic value creation rather than paid ads", "helpful_documents": ["content strategy", "positioning statement"]},
-  {"id": "start-with-experience", "name": "Start With Experience", "advisor": "steve-jobs", "category": "strategy", "domains": ["product-design", "customer-experience", "backwards-design", "innovation"], "use_when": "a team is starting with technology and working forward instead of starting with the desired customer experience", "helpful_documents": ["product description", "customer research"]},
-  {"id": "stepwise-treatment-algorithm", "name": "the Stepwise Treatment Algorithm for Orthostatic Hypotension", "advisor": "italo-biaggioni", "category": "health-autonomic", "domains": ["orthostatic-hypotension", "treatment-algorithm", "pharmacotherapy", "mechanism-based"], "use_when": "someone with orthostatic hypotension needs a stepwise treatment approach matched to their residual autonomic function"},
-  {"id": "strategic-narrative", "name": "your Five-Element Strategic Narrative framework. This is the methodology behind \"The Greatest Sales Deck I've Ever Seen\"", "advisor": "andy-raskin", "category": "positioning", "domains": ["strategic-narrative", "sales-deck", "storytelling", "positioning"], "use_when": "someone needs to build a sales deck or company narrative that opens with a shift in the world, not a product pitch", "helpful_documents": ["positioning statement", "company strategy"]},
-  {"id": "stress-recovery-oscillation", "name": "Stress-Recovery Oscillation", "advisor": "jim-loehr", "category": "psychology", "domains": ["energy-management", "recovery", "performance", "resilience"], "use_when": "someone is running on fumes without recovery rituals and needs to design deliberate oscillation between stress and renewal"},
-  {"id": "substrate-assessment", "name": "Substrate Assessment", "advisor": "italo-biaggioni", "category": "health-autonomic", "domains": ["pharmacology", "autonomic-function", "drug-selection", "mechanism-matching"], "use_when": "a clinician needs to match autonomic medication choices to the patient's residual sympathetic function"},
-  {"id": "survivor-guilt-exploration", "name": "an exploration of survivor guilt", "advisor": "gabor-mat", "category": "psychology", "domains": ["trauma", "guilt", "emotional-processing", "healing"], "use_when": "someone carries guilt about being safe or successful while others they care about suffer"},
-  {"id": "tactical-empathy-labeling", "name": "Tactical Empathy & Labeling", "advisor": "chris-voss", "category": "negotiation", "domains": ["negotiation", "empathy", "emotional-intelligence", "influence"], "use_when": "someone needs to build rapport and influence by accurately labeling the other person's emotions in a conversation"},
-  {"id": "ten-minute-mobility-menu", "name": "the 10-Minute Mobility Menu", "advisor": "kelly-starrett", "category": "health-movement", "domains": ["mobility", "daily-practice", "movement-maintenance", "time-efficient"], "use_when": "someone needs a quick daily mobility routine they can actually stick to"},
-  {"id": "the-algorithm", "name": "the 5-step algorithm to dramatically improve any process or product", "advisor": "elon-musk", "category": "strategy", "domains": ["process-improvement", "efficiency", "first-principles", "optimization"], "use_when": "someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach"},
-  {"id": "the-carousel", "name": "The Carousel to find the emotional truth at the heart of their offering", "advisor": "don-draper", "category": "positioning", "domains": ["emotional-marketing", "brand-storytelling", "advertising", "nostalgia"], "use_when": "someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible"},
-  {"id": "the-story-so-far", "name": "The Story So Far", "advisor": "wise-eric", "category": "psychology", "domains": ["reflection", "journey-review", "progress-tracking", "narrative"], "use_when": "a user wants to reflect on their journey and progress with the Virtual Board over time"},
-  {"id": "the-work", "name": "The Work", "advisor": "byron-katie", "category": "psychology", "domains": ["self-inquiry", "cognitive-reframing", "stress-reduction", "belief-examination"], "use_when": "someone is suffering from a stressful thought and needs to examine whether it is actually true"},
-  {"id": "thirty-minute-daily-instagram", "name": "the 30-Minute Daily Instagram System", "advisor": "sue-b-zimmerman-theinstagramexpert", "category": "social-media", "domains": ["instagram", "time-management", "daily-practice", "efficiency"], "use_when": "someone feels Instagram takes too much time and needs a structured 30-minute daily protocol", "helpful_documents": ["content strategy"]},
-  {"id": "three-by-three-content-batching", "name": "the 3x3 Content Batching Method", "advisor": "rachel-pedersen", "category": "content-strategy", "domains": ["content-batching", "productivity", "content-creation", "modular-production"], "use_when": "someone needs to create months of content efficiently through batching rather than daily creation", "helpful_documents": ["content strategy"]},
-  {"id": "tissue-state-system", "name": "the Tissue State System to select the right mobilization technique for their specific tissue condition", "advisor": "kelly-starrett", "category": "health-movement", "domains": ["tissue-mobilization", "soft-tissue", "recovery", "treatment-selection"], "use_when": "someone needs to select the right mobilization technique based on their specific tissue condition"},
-  {"id": "type-1-type-2-decisions", "name": "the Type 1 vs Type 2 decision framework to determine the appropriate speed and rigor for their decision", "advisor": "jeff-bezos", "category": "strategy", "domains": ["decision-making", "speed-vs-rigor", "reversibility", "organizational-agility"], "use_when": "someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices"},
-  {"id": "upstream-downstream-diagnostic", "name": "the Upstream/Downstream Diagnostic to find the true source of their pain or movement limitation", "advisor": "kelly-starrett", "category": "health-movement", "domains": ["pain-source", "movement-chain", "diagnostic", "root-cause"], "use_when": "someone has pain or limitation in one area but the actual source may be upstream or downstream in the movement chain"},
-  {"id": "value-metric", "name": "the Value Metric Framework to identify the single most important pricing decision they'll make", "advisor": "patrick-campbell", "category": "pricing", "domains": ["pricing-strategy", "value-metric", "monetization", "customer-value"], "use_when": "someone needs to identify the right value metric for their pricing model \u2014 the unit of value customers pay for"},
-  {"id": "values-clarification", "name": "Values Clarification", "advisor": "steven-hayes", "category": "psychology", "domains": ["values", "self-discovery", "life-domains", "ACT"], "use_when": "someone is unclear on their core values and needs a structured exercise to identify what matters most across life domains"},
-  {"id": "virtual-surgery-protocol", "name": "the Virtual Surgery Protocol", "advisor": "stuart-mcgill", "category": "health-movement", "domains": ["acute-back-pain", "behavioral-modification", "spine-protection", "conservative-treatment"], "use_when": "someone has acute severe back pain and needs a conservative protocol that treats it with the same seriousness as post-surgical recovery"},
-  {"id": "vulnerability-check", "name": "Vulnerability Check", "advisor": "brene-brown", "category": "psychology", "domains": ["vulnerability", "shame", "courage", "emotional-exploration"], "use_when": "someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs"},
-  {"id": "working-backwards", "name": "the Working Backwards process by starting with the customer experience and working backwards to what needs to be built", "advisor": "jeff-bezos", "category": "strategy", "domains": ["product-development", "customer-centric", "press-release", "backwards-planning"], "use_when": "a team needs to define a new product or feature by writing the press release first and working backwards to what must be built", "helpful_documents": ["product description"]},
-  {"id": "zone-of-genius", "name": "the Zone of Genius discovery process", "advisor": "wise-eric", "category": "psychology", "domains": ["self-discovery", "strengths", "purpose", "career-alignment"], "use_when": "someone wants to identify their zone of genius to align their work with their unique abilities and passions"}
-];
-
-let activeCategory = 'all';
-let collapsedCategories = new Set();
-
-function el(tag, attrs, children) {
-  const node = document.createElement(tag);
-  if (attrs) {
-    Object.entries(attrs).forEach(([k, v]) => {
-      if (k === 'className') node.className = v;
-      else if (k.startsWith('on')) node.addEventListener(k.slice(2).toLowerCase(), v);
-      else node.setAttribute(k, v);
-    });
-  }
-  if (children !== undefined) {
-    if (typeof children === 'string') node.textContent = children;
-    else if (Array.isArray(children)) children.forEach(c => { if (c) node.appendChild(c); });
-    else if (children instanceof Node) node.appendChild(children);
-  }
-  return node;
-}
-
-function getCategories() {
-  const cats = {};
-  frameworks.forEach(f => {
-    cats[f.category] = (cats[f.category] || 0) + 1;
-  });
-  return Object.entries(cats).sort((a, b) => b[1] - a[1]);
-}
-
-function renderFilterPills() {
-  const container = document.getElementById('filter-pills');
-  container.replaceChildren();
-  const cats = getCategories();
-  const filters = [{ key: 'all', label: 'All (' + frameworks.length + ')' }, ...cats.map(([k, v]) => ({ key: k, label: k + ' (' + v + ')' }))];
-  filters.forEach(f => {
-    const active = activeCategory === f.key;
-    const btn = el('button', {
-      className: 'px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ' +
-        (active ? 'bg-accent text-white' : 'bg-accent-subtle text-accent hover:bg-accent hover:text-white'),
-      onClick: () => { activeCategory = f.key; renderFilterPills(); filterFrameworks(); }
-    }, f.label);
-    container.appendChild(btn);
-  });
-}
-
-function filterFrameworks() {
-  const query = document.getElementById('search').value.toLowerCase().trim();
-  const filtered = frameworks.filter(f => {
-    if (activeCategory !== 'all' && f.category !== activeCategory) return false;
-    if (!query) return true;
-    const searchable = [f.name, f.advisor, f.category, f.use_when, ...f.domains].join(' ').toLowerCase();
-    return searchable.includes(query);
-  });
-  renderSections(filtered);
-  document.getElementById('stats').textContent = 'Showing ' + filtered.length + ' of ' + frameworks.length + ' frameworks';
-}
-
-function toggleCategory(cat) {
-  if (collapsedCategories.has(cat)) {
-    collapsedCategories.delete(cat);
-  } else {
-    collapsedCategories.add(cat);
-  }
-  filterFrameworks();
-}
-
-function toggleDetails(id) {
-  const details = document.getElementById('details-' + id);
-  const arrow = document.getElementById('arrow-' + id);
-  if (details.classList.contains('hidden')) {
-    details.classList.remove('hidden');
-    arrow.textContent = '\u25BE';
-  } else {
-    details.classList.add('hidden');
-    arrow.textContent = '\u25B8';
-  }
-}
-
-function advisorDisplayName(id) {
-  return id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
-function renderSections(list) {
-  const container = document.getElementById('sections');
-  container.replaceChildren();
-
-  if (list.length === 0) {
-    container.appendChild(el('p', { className: 'text-sm text-dimmed py-8 text-center' }, 'No frameworks match your search.'));
-    return;
-  }
-
-  // Group by category
-  const groups = {};
-  list.forEach(f => {
-    if (!groups[f.category]) groups[f.category] = [];
-    groups[f.category].push(f);
-  });
-
-  // Sort categories by count descending
-  const sorted = Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
-
-  sorted.forEach(([cat, items]) => {
-    const collapsed = collapsedCategories.has(cat);
-    const section = el('div', { className: 'mb-6' });
-
-    // Category header
-    const header = el('div', {
-      className: 'flex items-center gap-2 cursor-pointer mb-2 select-none',
-      onClick: () => toggleCategory(cat)
-    });
-    header.appendChild(el('span', { className: 'text-xs text-dimmed' }, collapsed ? '\u25B8' : '\u25BE'));
-    header.appendChild(el('h2', { className: 'text-sm font-semibold text-foreground' }, cat));
-    header.appendChild(el('span', { className: 'text-xs text-dimmed' }, '(' + items.length + ')'));
-    section.appendChild(header);
-
-    if (!collapsed) {
-      const cards = el('div', { className: 'flex flex-col gap-2' });
-      items.forEach(f => {
-        const hasDetails = f.domains.length > 0 || f.required_documents || f.helpful_documents;
-
-        const card = el('div', {
-          className: 'bg-white border border-border rounded-md p-3 hover:border-accent/30 transition-colors' + (hasDetails ? ' cursor-pointer' : '')
-        });
-        if (hasDetails) card.addEventListener('click', () => toggleDetails(f.id));
-
-        // Header row
-        const headerRow = el('div', { className: 'flex justify-between items-start' });
-        const nameRow = el('div', { className: 'flex items-center' });
-
-        const arrow = el('span', { id: 'arrow-' + f.id, className: 'text-dimmed text-xs mr-1.5' }, hasDetails ? '\u25B8' : '');
-        if (!hasDetails) arrow.style.width = '0.875rem';
-        nameRow.appendChild(arrow);
-        nameRow.appendChild(el('span', { className: 'font-semibold text-sm text-foreground' }, f.name));
-        headerRow.appendChild(nameRow);
-
-        // Advisor link
-        const advisorLink = el('a', {
-          className: 'text-xs text-accent hover:underline hidden sm:inline',
-          href: 'advisor-catalog.html#' + f.advisor
-        }, advisorDisplayName(f.advisor));
-        advisorLink.addEventListener('click', (e) => e.stopPropagation());
-        headerRow.appendChild(advisorLink);
-        card.appendChild(headerRow);
-
-        // Use when
-        if (f.use_when) {
-          card.appendChild(el('p', { className: 'text-xs text-secondary mt-1 ml-5' }, f.use_when));
-        }
-
-        // Details (hidden)
-        if (hasDetails) {
-          const details = el('div', { id: 'details-' + f.id, className: 'hidden mt-3 pt-3 border-t border-border' });
-
-          if (f.domains.length > 0) {
-            const domSection = el('div', { className: 'mb-3' });
-            domSection.appendChild(el('p', { className: 'text-xs font-medium text-foreground mb-1' }, 'Domains'));
-            const pills = el('div', { className: 'flex flex-wrap gap-1' });
-            f.domains.forEach(d => {
-              pills.appendChild(el('span', { className: 'text-[0.7rem] px-1.5 py-px rounded-full bg-muted text-secondary' }, d));
-            });
-            domSection.appendChild(pills);
-            details.appendChild(domSection);
-          }
-
-          if (f.required_documents) {
-            const reqSection = el('div', { className: 'mb-3' });
-            reqSection.appendChild(el('p', { className: 'text-xs font-medium text-foreground mb-0.5' }, 'Required documents'));
-            reqSection.appendChild(el('p', { className: 'text-xs text-secondary' }, f.required_documents.join(', ')));
-            details.appendChild(reqSection);
-          }
-
-          if (f.helpful_documents) {
-            const helpSection = el('div', { className: 'mb-3' });
-            helpSection.appendChild(el('p', { className: 'text-xs font-medium text-foreground mb-0.5' }, 'Helpful documents'));
-            helpSection.appendChild(el('p', { className: 'text-xs text-secondary' }, f.helpful_documents.join(', ')));
-            details.appendChild(helpSection);
-          }
-
-          card.appendChild(details);
-        }
-
-        cards.appendChild(card);
+    function renderCategoryPills() {
+      const container = document.getElementById("category-pills");
+      while (container.firstChild) container.removeChild(container.firstChild);
+      if (!SCHEMA.groupBy) {
+        container.style.display = "none";
+        return;
+      }
+      const counts = {};
+      for (const e of ENTITIES) {
+        const cat = e[SCHEMA.groupBy] || "(uncategorized)";
+        counts[cat] = (counts[cat] || 0) + 1;
+      }
+      const sorted = Object.keys(counts).sort();
+      const allBtn = el("button", { class: "pill active", dataset: { cat: "__ALL__" } });
+      allBtn.appendChild(document.createTextNode("All "));
+      const allCount = el("span", { class: "count" }, String(ENTITIES.length));
+      allBtn.appendChild(allCount);
+      container.appendChild(allBtn);
+      for (const cat of sorted) {
+        const btn = el("button", { class: "pill", dataset: { cat } });
+        btn.appendChild(document.createTextNode(cat + " "));
+        btn.appendChild(el("span", { class: "count" }, String(counts[cat])));
+        container.appendChild(btn);
+      }
+      container.addEventListener("click", e => {
+        let target = e.target;
+        while (target && !target.classList.contains("pill")) target = target.parentElement;
+        if (!target) return;
+        document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+        target.classList.add("active");
+        currentFilter.category = target.dataset.cat;
+        renderRows();
       });
-      section.appendChild(cards);
     }
 
-    container.appendChild(section);
-  });
-}
+    const currentFilter = { search: "", category: "__ALL__" };
 
-// Initial render
-renderFilterPills();
-filterFrameworks();
-</script>
+    function matchesFilter(entity) {
+      if (SCHEMA.groupBy && currentFilter.category !== "__ALL__") {
+        const cat = entity[SCHEMA.groupBy] || "(uncategorized)";
+        if (cat !== currentFilter.category) return false;
+      }
+      if (currentFilter.search) {
+        const q = currentFilter.search.toLowerCase();
+        const haystack = [
+          entity.id || "",
+          entity.name || "",
+          entity[SCHEMA.summaryField] || "",
+          entity[SCHEMA.groupBy] || "",
+          (entity.domains || []).join(" "),
+        ].join(" ").toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    }
 
+    function arrayToString(v) {
+      if (Array.isArray(v)) return v.join(", ");
+      return v || "";
+    }
+    function stringToArray(s) {
+      return s.split(",").map(x => x.trim()).filter(Boolean);
+    }
+
+    function renderRow(entity) {
+      const row = el("div", { class: "row", dataset: { id: entity.id } });
+      if (isModified(entity)) row.classList.add("modified");
+      if (isMarkedDelete(entity)) row.classList.add("marked-delete");
+
+      const info = el("div", { class: "row-info" });
+      const name = getCurrentValue(entity, "name") || entity.id;
+      const h3 = el("h3", null,
+        el("span", { class: "row-name" }, name),
+        el("span", { class: "row-id" }, entity.id)
+      );
+      info.appendChild(h3);
+      const summary = getCurrentValue(entity, SCHEMA.summaryField) || "";
+      if (summary) {
+        const sEl = el("p", { class: "row-summary" }, summary.slice(0, 200) + (summary.length > 200 ? "…" : ""));
+        info.appendChild(sEl);
+      }
+
+      const header = el("div", { class: "row-header" }, info);
+
+      // Badges
+      if (SCHEMA.groupBy) {
+        const cat = getCurrentValue(entity, SCHEMA.groupBy) || "(uncategorized)";
+        header.appendChild(el("span", { class: "row-badge" }, cat));
+      }
+      if (SCHEMA.secondaryBadge && entity[SCHEMA.secondaryBadge]) {
+        header.appendChild(el("span", { class: "row-badge advisor" }, entity[SCHEMA.secondaryBadge]));
+      }
+      if (isMarkedDelete(entity)) {
+        header.appendChild(el("span", { class: "row-badge delete" }, "DELETE"));
+      } else if (isModified(entity)) {
+        header.appendChild(el("span", { class: "row-badge modified" }, "EDITED"));
+      }
+
+      header.addEventListener("click", () => {
+        row.classList.toggle("expanded");
+        if (row.classList.contains("expanded") && !row.dataset.bodyRendered) {
+          renderRowBody(row, entity);
+          row.dataset.bodyRendered = "1";
+        }
+      });
+      row.appendChild(header);
+
+      const body = el("div", { class: "row-body" });
+      row.appendChild(body);
+      return row;
+    }
+
+    function renderRowBody(row, entity) {
+      const body = row.querySelector(".row-body");
+      while (body.firstChild) body.removeChild(body.firstChild);
+
+      // Read-only fields
+      for (const key of SCHEMA.readonly) {
+        if (entity[key] === undefined || entity[key] === null) continue;
+        body.appendChild(
+          el("div", { class: "field" },
+            el("label", null, key),
+            el("div", { class: "field-readonly" }, String(entity[key]))
+          )
+        );
+      }
+
+      // Editable fields
+      for (const cfg of SCHEMA.editable) {
+        const f = el("div", { class: "field" });
+        const isMod = pending.updates[entity.id] && cfg.key in pending.updates[entity.id];
+        if (isMod) f.classList.add("modified");
+        const original = entity[cfg.key];
+        const current = getCurrentValue(entity, cfg.key);
+
+        f.appendChild(el("label", null, cfg.label));
+
+        let inputEl;
+        if (cfg.type === "textarea") {
+          inputEl = el("textarea");
+          inputEl.value = current == null ? "" : current;
+        } else if (cfg.type === "array") {
+          inputEl = el("input", { type: "text" });
+          inputEl.value = arrayToString(current);
+        } else {
+          inputEl = el("input", { type: "text" });
+          inputEl.value = current == null ? "" : current;
+        }
+        inputEl.dataset.key = cfg.key;
+        inputEl.addEventListener("input", () => {
+          let newValue = inputEl.value;
+          if (cfg.type === "array") newValue = stringToArray(newValue);
+          setUpdate(entity.id, cfg.key, original, newValue);
+          row.classList.toggle("modified", isModified(entity));
+          f.classList.toggle("modified", !!(pending.updates[entity.id] && cfg.key in (pending.updates[entity.id] || {})));
+          updateBadges(row, entity);
+          updatePendingBar();
+        });
+        f.appendChild(inputEl);
+        body.appendChild(f);
+      }
+
+      // Action buttons
+      const actions = el("div", { class: "row-actions" });
+      const delBtn = el("button", { class: "btn btn-danger" }, isMarkedDelete(entity) ? "Undelete" : `Mark ${ENTITY_TYPE} for deletion`);
+      delBtn.addEventListener("click", () => {
+        toggleDelete(entity.id);
+        row.classList.toggle("marked-delete", isMarkedDelete(entity));
+        delBtn.textContent = isMarkedDelete(entity) ? "Undelete" : `Mark ${ENTITY_TYPE} for deletion`;
+        updateBadges(row, entity);
+        updatePendingBar();
+      });
+      actions.appendChild(delBtn);
+
+      const revertBtn = el("button", { class: "btn btn-ghost" }, "Revert all changes");
+      revertBtn.addEventListener("click", () => {
+        delete pending.updates[entity.id];
+        delete pending.deletes[entity.id];
+        savePending();
+        row.dataset.bodyRendered = "";
+        const innerBody = row.querySelector(".row-body");
+        while (innerBody.firstChild) innerBody.removeChild(innerBody.firstChild);
+        renderRowBody(row, entity);
+        row.dataset.bodyRendered = "1";
+        row.classList.remove("modified", "marked-delete");
+        updateBadges(row, entity);
+        updatePendingBar();
+      });
+      actions.appendChild(revertBtn);
+      body.appendChild(actions);
+    }
+
+    function updateBadges(row, entity) {
+      const header = row.querySelector(".row-header");
+      header.querySelectorAll(".row-badge.modified, .row-badge.delete").forEach(b => b.remove());
+      if (isMarkedDelete(entity)) {
+        header.appendChild(el("span", { class: "row-badge delete" }, "DELETE"));
+      } else if (isModified(entity)) {
+        header.appendChild(el("span", { class: "row-badge modified" }, "EDITED"));
+      }
+    }
+
+    function renderRows() {
+      const container = document.getElementById("rows");
+      const empty = document.getElementById("empty");
+      while (container.firstChild) container.removeChild(container.firstChild);
+      const matches = ENTITIES.filter(matchesFilter);
+      const total = matches.length;
+      const stats = document.getElementById("stats");
+      stats.textContent = `${total} of ${ENTITIES.length} ${ENTITY_TYPE}${total === 1 ? '' : 's'} shown`;
+      if (total === 0) {
+        empty.style.display = "block";
+        return;
+      }
+      empty.style.display = "none";
+
+      if (SCHEMA.groupBy && currentFilter.category === "__ALL__") {
+        const groups = {};
+        for (const e of matches) {
+          const cat = e[SCHEMA.groupBy] || "(uncategorized)";
+          if (!groups[cat]) groups[cat] = [];
+          groups[cat].push(e);
+        }
+        const sortedCats = Object.keys(groups).sort();
+        for (const cat of sortedCats) {
+          container.appendChild(el("h2", { class: "group-heading" }, `${cat} (${groups[cat].length})`));
+          for (const entity of groups[cat]) container.appendChild(renderRow(entity));
+        }
+      } else {
+        for (const entity of matches) container.appendChild(renderRow(entity));
+      }
+    }
+
+    function updatePendingBar() {
+      const bar = document.getElementById("pending-bar");
+      const total = totalPending();
+      if (total === 0) {
+        bar.classList.add("hidden");
+        return;
+      }
+      bar.classList.remove("hidden");
+      const dCount = Object.keys(pending.deletes).length;
+      const uCount = Object.keys(pending.updates).filter(id => Object.keys(pending.updates[id]).length > 0).length;
+      document.getElementById("pending-count").textContent = `${total} pending change${total === 1 ? '' : 's'}`;
+      document.getElementById("pending-detail").textContent = `${dCount} deletion${dCount === 1 ? '' : 's'} · ${uCount} edit${uCount === 1 ? '' : 's'}`;
+    }
+
+    function buildExportPayload() {
+      const actions = [];
+      for (const id in pending.deletes) actions.push({ type: "delete", id });
+      for (const id in pending.updates) {
+        const changes = pending.updates[id];
+        if (Object.keys(changes).length === 0) continue;
+        actions.push({ type: "update", id, changes });
+      }
+      return {
+        version: 1,
+        type: `${ENTITY_TYPE}-triage`,
+        generated: new Date().toISOString(),
+        actions,
+      };
+    }
+
+    // ========== Wire up ==========
+    document.getElementById("search").addEventListener("input", e => {
+      currentFilter.search = e.target.value;
+      renderRows();
+    });
+
+    document.getElementById("clear-pending").addEventListener("click", () => {
+      if (totalPending() === 0) return;
+      if (!confirm(`Clear all ${totalPending()} pending changes? This cannot be undone.`)) return;
+      clearAll();
+      document.querySelectorAll(".row").forEach(r => {
+        r.classList.remove("modified", "marked-delete", "expanded");
+        r.dataset.bodyRendered = "";
+        const body = r.querySelector(".row-body");
+        if (body) while (body.firstChild) body.removeChild(body.firstChild);
+        const id = r.dataset.id;
+        const entity = ENTITIES.find(e => e.id === id);
+        if (entity) updateBadges(r, entity);
+      });
+      updatePendingBar();
+    });
+
+    const exportModal = document.getElementById("export-modal");
+    document.getElementById("export-pending").addEventListener("click", () => {
+      const payload = buildExportPayload();
+      document.getElementById("export-text").value = JSON.stringify(payload, null, 2);
+      document.getElementById("copy-success").style.display = "none";
+      exportModal.classList.add("show");
+    });
+    document.getElementById("modal-close").addEventListener("click", () => exportModal.classList.remove("show"));
+    document.getElementById("modal-copy").addEventListener("click", async () => {
+      const t = document.getElementById("export-text").value;
+      try {
+        await navigator.clipboard.writeText(t);
+        document.getElementById("copy-success").style.display = "block";
+        setTimeout(() => { document.getElementById("copy-success").style.display = "none"; }, 2500);
+      } catch (e) {
+        document.getElementById("export-text").select();
+        document.execCommand("copy");
+        document.getElementById("copy-success").style.display = "block";
+      }
+    });
+    exportModal.addEventListener("click", e => {
+      if (e.target === exportModal) exportModal.classList.remove("show");
+    });
+
+    // Initial render
+    renderHeader();
+    renderCategoryPills();
+    renderRows();
+    updatePendingBar();
+  </script>
 </body>
 </html>
