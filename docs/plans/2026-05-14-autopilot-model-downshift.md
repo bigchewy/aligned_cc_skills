@@ -270,7 +270,7 @@ git commit -m "feat(autopilot): downshift ralph execute loop to Sonnet via env v
 
 ---
 
-### Task 5: Audit phase prompts for CLAUDE.md auto-discovery dependencies
+### ✅ Task 5: Audit phase prompts for CLAUDE.md auto-discovery dependencies
 
 **Files:**
 - Read-only: `docs/ralph_loops/WRITE-PLAN.md`, `docs/ralph_loops/EXECUTE-PLAN.md`, `docs/ralph_loops/MOCKUP-FIDELITY.md`, `docs/ralph_loops/VERIFY-BRANCH.md`, `CLAUDE.md` (repo root)
