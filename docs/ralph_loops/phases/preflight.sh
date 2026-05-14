@@ -20,6 +20,31 @@ source "$RALPH_DIR/lib/manifest.sh"
 # shellcheck source=../lib/halt.sh
 source "$RALPH_DIR/lib/halt.sh"
 
+# === AUTH-COMPAT BLOCK START ===
+# Defense-in-depth against the OAuth-incompat regression fixed on
+# fix/autopilot-bare-oauth-incompat. The static tests in
+# e2e/tests/test_autopilot_model_selection.py also enforce this, but if
+# someone runs autopilot from a branch that bypassed CI, this block fails
+# fast with a clear auth-cause message instead of letting the plan phase
+# emit the cryptic "Could not find the plan file" downstream error.
+#
+# Inputs: $RALPH_DIR (resolved above)
+# Halts: write_halt headless_auth_incompat preflight <message>; exit 2
+# See:   docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md
+AUTH_COMPAT_CALL_SITES=(
+  "$RALPH_DIR/lib/process.sh"
+  "$RALPH_DIR/run-ralph.sh"
+)
+for _auth_compat_f in "${AUTH_COMPAT_CALL_SITES[@]}"; do
+  if [ -f "$_auth_compat_f" ] && grep -q -- '--bare' "$_auth_compat_f"; then
+    write_halt headless_auth_incompat preflight \
+      "Headless call site '$_auth_compat_f' passes --bare to claude. --bare restricts auth to ANTHROPIC_API_KEY or apiKeyHelper (OAuth and keychain are never read, per 'claude --help'), which breaks Max-plan users. Revert the call site to 'claude -p - < \"\$PROMPT_FILE\"' (no --bare). See docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md."
+    exit 2
+  fi
+done
+unset _auth_compat_f
+# === AUTH-COMPAT BLOCK END ===
+
 # If plan doesn't exist yet (first-ever invocation), skip — phase 1.5 catches it.
 if [ ! -f "${PLAN_FILE:-}" ]; then
   echo "preflight: no plan file yet; deferring manifest checks to post-plan re-run"

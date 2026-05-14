@@ -41,6 +41,7 @@ Required fields: `reason`, `phase`, `log`, `next-action`. Optional: `fix-instruc
 | `uncommitted_main` | worktree | Main has uncommitted changes that block `git merge main` into the worktree |
 | `verify_failed` | verify | Tests / build / eval failed |
 | `phase_crashed` | any | Phase script exited unexpectedly; `details:` carries last 10 lines of stderr |
+| `headless_auth_incompat` | preflight | A headless `claude` call site uses `--bare`, which restricts auth to API-key only and breaks Max-plan OAuth users |
 
 ## Centralized fix-instructions (DevEx M7)
 

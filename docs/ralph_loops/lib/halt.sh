@@ -126,6 +126,24 @@ Fix:
   this sentinel, if captured). Fix the underlying issue, then re-run.
 EOF
       ;;
+    headless_auth_incompat)
+      cat <<'EOF'
+A headless claude call site passes --bare. Per `claude --help`, --bare
+restricts Anthropic auth to ANTHROPIC_API_KEY or apiKeyHelper — OAuth
+and keychain are never read. Autopilot must work for Max-plan OAuth
+users, so --bare is incompatible.
+
+Fix:
+  Remove --bare from the call site named in the details: field above.
+  The canonical invocation is:
+      claude -p - < "$PROMPT_FILE" &
+  (no --bare). After removing it, re-run autopilot.sh.
+
+Background: see docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md
+for the original incident and the upstream-feedback gap (no per-flag
+opt-out exists for --bare's non-auth benefits).
+EOF
+      ;;
     *)
       echo "Unknown halt reason: $reason"
       echo "Add a case to lib/halt.sh format_halt() and update"
