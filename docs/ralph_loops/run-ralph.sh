@@ -13,6 +13,8 @@ set -u
 #   ITERATION_TIMEOUT   — seconds per iteration before kill (default: 900 = 15 min)
 #   MAX_TIMEOUTS        — consecutive timeout cap before abort (default: 5)
 #   HEARTBEAT_INTERVAL  — seconds between heartbeat messages (default: 30)
+#   RALPH_MODEL         — Model for the loop (default: sonnet)
+#   RALPH_SUBAGENT_MODEL — Subagent model for the loop (default: sonnet)
 
 WORKTREE="${1:?Usage: run-ralph.sh <worktree-path> <plan-file-path>}"
 PLAN="${2:?Usage: run-ralph.sh <worktree-path> <plan-file-path>}"
@@ -24,6 +26,13 @@ HEARTBEAT_INTERVAL="${HEARTBEAT_INTERVAL:-30}"
 # auto-skips it (rewrites the heading to ⏭️) so the loop never halts for
 # human intervention — autopilot is unattended by contract.
 MAX_BLOCKED_ITERATIONS="${MAX_BLOCKED_ITERATIONS:-3}"
+
+# --- Model selection (override via RALPH_MODEL / RALPH_SUBAGENT_MODEL) ---
+# Sonnet for the ralph execute loop: up to 50 iterations of TDD task
+# execution dominate total autopilot cost. Anthropic docs call Sonnet
+# "for daily coding tasks" — this is the canonical use case.
+export ANTHROPIC_MODEL="${RALPH_MODEL:-sonnet}"
+export CLAUDE_CODE_SUBAGENT_MODEL="${RALPH_SUBAGENT_MODEL:-sonnet}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EXECUTE="$SCRIPT_DIR/EXECUTE-PLAN.md"
@@ -235,7 +244,7 @@ while :; do
   start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
   # Run claude in background so we can enforce a timeout
-  claude -p - < "$PROMPT_FILE" &
+  claude -p --bare - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
 
   start_watchdog "$ITERATION_TIMEOUT" "iteration $ITERATION"

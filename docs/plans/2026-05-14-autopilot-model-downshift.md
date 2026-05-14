@@ -20,7 +20,7 @@ None. All changes are within `docs/ralph_loops/` and `e2e/tests/`. No manual set
 
 ---
 
-### Task 1: Add per-phase model env vars to `phases/plan.sh` (Opus)
+### ✅ Task 1: Add per-phase model env vars to `phases/plan.sh` (Opus)
 
 **Files:**
 - Create: `e2e/tests/test_autopilot_model_selection.py`
@@ -94,7 +94,7 @@ git commit -m "feat(autopilot): pin plan phase to Opus via ANTHROPIC_MODEL expor
 
 ---
 
-### Task 2: Add per-phase model env vars to `phases/mockup.sh` (Sonnet)
+### ✅ Task 2: Add per-phase model env vars to `phases/mockup.sh` (Sonnet)
 
 **Files:**
 - Modify: `e2e/tests/test_autopilot_model_selection.py` (add 2 tests)
@@ -150,7 +150,7 @@ git commit -m "feat(autopilot): downshift mockup phase to Sonnet via env var"
 
 ---
 
-### Task 3: Add per-phase model env vars to `phases/verify.sh` (Sonnet)
+### ✅ Task 3: Add per-phase model env vars to `phases/verify.sh` (Sonnet)
 
 **Files:**
 - Modify: `e2e/tests/test_autopilot_model_selection.py` (add 2 tests)
@@ -210,7 +210,7 @@ git commit -m "feat(autopilot): downshift verify phase to Sonnet via env var"
 
 ---
 
-### Task 4: Add per-phase model env vars to `run-ralph.sh` (Sonnet)
+### ✅ Task 4: Add per-phase model env vars to `run-ralph.sh` (Sonnet)
 
 **Files:**
 - Modify: `e2e/tests/test_autopilot_model_selection.py` (add 2 tests)
@@ -270,7 +270,7 @@ git commit -m "feat(autopilot): downshift ralph execute loop to Sonnet via env v
 
 ---
 
-### Task 5: Audit phase prompts for CLAUDE.md auto-discovery dependencies
+### ✅ Task 5: Audit phase prompts for CLAUDE.md auto-discovery dependencies
 
 **Files:**
 - Read-only: `docs/ralph_loops/WRITE-PLAN.md`, `docs/ralph_loops/EXECUTE-PLAN.md`, `docs/ralph_loops/MOCKUP-FIDELITY.md`, `docs/ralph_loops/VERIFY-BRANCH.md`, `CLAUDE.md` (repo root)
@@ -333,7 +333,7 @@ git commit -m "docs: audit phase prompts for --bare compatibility"
 
 ---
 
-### Task 6: Add `--bare` flag to `claude -p` call sites
+### ✅ Task 6: Add `--bare` flag to `claude -p` call sites
 
 > ORDERING: Task 4 modifies `run-ralph.sh` (adds env exports). Task 6 also modifies `run-ralph.sh` (adds `--bare`). Task 4 must complete before Task 6 begins — otherwise the test/implementation in Task 4 will conflict with this task's edits.
 
@@ -404,7 +404,9 @@ git commit -m "feat(autopilot): adopt claude -p --bare for headless calls"
 
 ---
 
-### Task 7: Behavioral integration test — env propagation to a stub `claude` binary
+### ✅ Task 7: Behavioral integration test — env propagation to a stub `claude` binary
+
+> DEVIATION: (1) used `stdin/stdout/stderr=DEVNULL` instead of `capture_output=True` — phases' background heartbeat/watchdog spawn orphan `sleep` children that inherit captured pipes and prevent subprocess.run from observing bash exit until the sleep expires (the test only needs the env_dump and args_dump files, not stdout). (2) Changed plan.md fixture from `**Mockups:** none` to `**Mockups:** mockup-1.html` — `none` causes mockup.sh to exit 3 before invoking claude, so the env dump was empty.
 
 **Files:**
 - Create: `e2e/tests/test_autopilot_model_env_propagation.py`
@@ -577,7 +579,7 @@ git commit -m "test(autopilot): behavioral check that phase scripts propagate mo
 
 ---
 
-### Task 8: Document new env vars in `autopilot.sh` and `run-ralph.sh` headers
+### ✅ Task 8: Document new env vars in `autopilot.sh` and `run-ralph.sh` headers
 
 **Files:**
 - Modify: `docs/ralph_loops/autopilot.sh` (the env-var documentation comment block at the top)

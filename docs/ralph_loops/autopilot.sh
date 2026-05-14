@@ -28,6 +28,14 @@ set -u
 #   PHASE_TIMEOUT       — Timeout for plan-writing and verify phases (default: 3600 = 60 min)
 #   MAX_MOCKUP_ITERATIONS — Mockup fidelity loop cap (default: 5)
 #   MOCKUP_TIMEOUT      — Timeout per mockup fidelity iteration (default: 900 = 15 min)
+#   PLAN_MODEL          — Model for plan phase (default: opus)
+#   PLAN_SUBAGENT_MODEL — Subagent model for plan phase (default: opus)
+#   MOCKUP_MODEL        — Model for mockup phase (default: sonnet)
+#   MOCKUP_SUBAGENT_MODEL — Subagent model for mockup phase (default: sonnet)
+#   VERIFY_MODEL        — Model for verify phase (default: sonnet)
+#   VERIFY_SUBAGENT_MODEL — Subagent model for verify phase (default: sonnet)
+#   RALPH_MODEL         — Model for ralph execute loop (default: sonnet)
+#   RALPH_SUBAGENT_MODEL — Subagent model for ralph execute (default: sonnet)
 
 PROJECT="${1:?Usage: autopilot.sh <project-path> <design-doc-path> [branch-name]}"
 DESIGN_DOC="${2:?Usage: autopilot.sh <project-path> <design-doc-path> [branch-name]}"
