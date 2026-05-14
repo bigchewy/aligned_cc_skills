@@ -13,6 +13,8 @@ set -u
 #   ITERATION_TIMEOUT   — seconds per iteration before kill (default: 900 = 15 min)
 #   MAX_TIMEOUTS        — consecutive timeout cap before abort (default: 5)
 #   HEARTBEAT_INTERVAL  — seconds between heartbeat messages (default: 30)
+#   RALPH_MODEL         — Model for the loop (default: sonnet)
+#   RALPH_SUBAGENT_MODEL — Subagent model for the loop (default: sonnet)
 
 WORKTREE="${1:?Usage: run-ralph.sh <worktree-path> <plan-file-path>}"
 PLAN="${2:?Usage: run-ralph.sh <worktree-path> <plan-file-path>}"

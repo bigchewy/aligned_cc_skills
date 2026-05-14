@@ -96,3 +96,26 @@ def test_run_ralph_uses_bare_flag():
     assert 'claude -p --bare - < "$PROMPT_FILE"' in text, (
         "run-ralph.sh must invoke claude -p with --bare flag"
     )
+
+
+def test_autopilot_header_documents_model_env_vars():
+    text = _read(RALPH_DIR / "autopilot.sh")
+    # Anchor on the comment-prefix form to verify the HEADER documents
+    # the var — not the export line from earlier tasks, which would
+    # produce a false-pass.
+    for var in ("PLAN_MODEL", "MOCKUP_MODEL", "VERIFY_MODEL", "RALPH_MODEL"):
+        assert f"#   {var}" in text, (
+            f"autopilot.sh header must document the {var} env var so users "
+            "can discover the override knob (look for the '#   NAME' line)"
+        )
+
+
+def test_run_ralph_header_documents_model_env_vars():
+    text = _read(RALPH_DIR / "run-ralph.sh")
+    # Same anchor as above — comment-prefix form distinguishes the
+    # header doc line from the export statement added in Task 4.
+    for var in ("RALPH_MODEL", "RALPH_SUBAGENT_MODEL"):
+        assert f"#   {var}" in text, (
+            f"run-ralph.sh header must document the {var} env var "
+            "(look for the '#   NAME' line)"
+        )

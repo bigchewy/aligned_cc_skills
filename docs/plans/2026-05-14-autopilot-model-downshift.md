@@ -579,7 +579,7 @@ git commit -m "test(autopilot): behavioral check that phase scripts propagate mo
 
 ---
 
-### Task 8: Document new env vars in `autopilot.sh` and `run-ralph.sh` headers
+### ✅ Task 8: Document new env vars in `autopilot.sh` and `run-ralph.sh` headers
 
 **Files:**
 - Modify: `docs/ralph_loops/autopilot.sh` (the env-var documentation comment block at the top)
