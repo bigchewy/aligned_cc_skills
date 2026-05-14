@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategy Mode and Shared Runners</title>
+  <!-- Mermaid for diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Tailwind for utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: 'var(--color-accent)', hover: 'var(--color-accent-hover)', subtle: 'var(--color-accent-subtle)' },
+            surface: 'var(--color-surface)',
+            muted: 'var(--color-muted)',
+            foreground: 'var(--color-foreground)',
+            secondary: 'var(--color-secondary)',
+            dimmed: 'var(--color-dimmed)',
+            border: 'var(--color-border)'
+          },
+          fontFamily: {
+            sans: ['var(--font-sans)'],
+            mono: ['var(--font-mono)']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* --- Brand tokens ---
+       Populated by the brainstorming skill from the project's
+       docs/design/design-principles.md (or the global fallback at
+       ~/.claude/docs/design/design-principles.md). Defaults below match
+       the aligned plugin's own brand and apply when no design-principles
+       file is found. The whole inline <style> block, the Tailwind config
+       above, and the Mermaid theme below all read from these vars — so
+       changing values here is the only edit needed to rebrand the artifact. */
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--color-muted);
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--color-muted);
+      padding-left: 16px;
+      background: var(--color-background);
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-accent-subtle);
+      color: var(--color-accent);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-deferred {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-surface);
+      color: var(--color-dimmed);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: var(--color-foreground); margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: var(--color-accent);
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--color-secondary); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Component cards */
+    .component-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .component-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 4px;
+    }
+    .component-card .use-case {
+      font-size: 0.82rem;
+      color: var(--color-dimmed);
+      margin-bottom: 12px;
+    }
+    .component-card code {
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 0.78rem;
+      background: var(--color-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--color-foreground);
+    }
+    .component-preview {
+      background: var(--color-background);
+      border: 1px solid var(--color-muted);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    /* Phase tracker */
+    .mini-phase-tracker {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+    .mini-phase-item {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-right: none;
+    }
+    .mini-phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .mini-phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
+    .mini-phase-item.current {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    /* Card grid */
+    .mini-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .mini-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.75rem;
+      color: var(--color-foreground);
+    }
+    .mini-card strong { font-weight: 600; display: block; margin-bottom: 2px; }
+    .mini-card span { color: var(--color-dimmed); font-size: 0.7rem; }
+
+    /* Compare grid */
+    .mini-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .mini-compare-col {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.72rem;
+    }
+    .mini-compare-col h4 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-foreground);
+    }
+    .mini-compare-col .pro { color: #047857; }
+    .mini-compare-col .con { color: #b91c1c; }
+
+    /* Callouts */
+    .mini-callout {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      border-left: 3px solid;
+      margin-bottom: 6px;
+    }
+    .mini-callout.decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .mini-callout.constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .mini-callout.risk { background: #fef2f2; border-color: #b91c1c; color: #b91c1c; }
+
+    /* Change table */
+    .change-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .change-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--color-foreground);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .change-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-muted);
+      color: var(--color-foreground);
+      vertical-align: top;
+    }
+    .change-table .file-path {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    .status-modified { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-unchanged { background: var(--color-surface); color: var(--color-dimmed); }
+    .status-new { background: #ecfdf5; color: #047857; }
+
+    /* Success criteria */
+    .criteria-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .criteria-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-muted);
+      align-items: flex-start;
+    }
+    .criteria-item:last-child { border-bottom: none; }
+    .criteria-num {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+    .criteria-text {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      line-height: 1.5;
+    }
+    .criteria-text strong { font-weight: 600; }
+
+    /* Test strategy */
+    .test-category {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .test-category h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .test-items {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      padding-left: 20px;
+      margin: 0;
+    }
+    .test-items li {
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    /* Phase tracker */
+    .phase-tracker {
+      display: flex;
+      gap: 0;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .phase-item {
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-right: none;
+    }
+    .phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
+    .phase-current {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    /* Card grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 0.85rem;
+      color: var(--color-secondary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Comparison grid */
+    .compare-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .compare-2col { grid-template-columns: repeat(2, 1fr); }
+    .compare-3col { grid-template-columns: repeat(3, 1fr); }
+    .compare-grid .col {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .compare-grid .col h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .compare-grid .pro { color: #047857; font-size: 0.85rem; }
+    .compare-grid .con { color: #b91c1c; font-size: 0.85rem; }
+
+    /* Callout boxes */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      border-left: 4px solid;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .callout-decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .callout-constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: var(--color-foreground); }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: var(--color-foreground); }
+    .callout strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Strategy Mode and Shared Runners</h1>
+  <p class="subtitle">Refactoring Brainstorming's Business and Authoring modes into a single dispatch layer</p>
+  <p class="context">Topic: framework-runner-refactor &middot; 2026-05-09 &middot; Software brainstorm &middot; <code>docs/plans/2026-05-09-framework-runner-refactor-design.md</code></p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+    <button class="tab-btn" onclick="switchTab('flow')">Data Flow</button>
+    <button class="tab-btn" onclick="switchTab('components')">Components</button>
+    <button class="tab-btn" onclick="switchTab('migration')">Migration</button>
+    <button class="tab-btn" onclick="switchTab('testing')">Testing</button>
+  </div>
+
+  <!-- Overview -->
+  <div id="panel-overview" class="tab-panel active">
+    <div class="section">
+      <h2>Goal</h2>
+      <p class="description">Replace brainstorming's <code>Business</code> and <code>Authoring</code> modes &mdash; both running hardcoded phase scripts that duplicate registered frameworks &mdash; with a single <strong>strategy mode</strong> that dispatches to one of three engines: a registered framework, an advisor-led conversation, or open exploration. Brainstorm scaffolding (project scan, intake, critique, viz, commit, handoff) wraps the selected engine.</p>
+    </div>
+
+    <div class="section">
+      <h2>Three real use cases <span class="badge">user-confirmed</span></h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>1. Apply a known framework</h3>
+          <p>You already know which framework fits &mdash; April Dunford 5-Components, 80/20 Audit, Accusation Audit. Generic 4-phase RCA is in the way.</p>
+        </div>
+        <div class="card">
+          <h3>2. Think with a specific advisor</h3>
+          <p>You want Wise Eric, Diana Chapman, April Dunford as a thinking partner. Process-light, persona-led conversation.</p>
+        </div>
+        <div class="card">
+          <h3>3. Strategic exploration</h3>
+          <p>Strategic question without a chosen framework. The Goal &rarr; Problems &rarr; Root Causes &rarr; Solutions shape is wrong because nothing is being diagnosed.</p>
+        </div>
+      </div>
+      <div class="callout callout-note" style="background:#f0f9ff; border-left:3px solid #0284c7; padding:12px 16px; border-radius:6px; font-size:0.85rem;">
+        <strong>Not a real use case:</strong> tactical sequencing. The current Business mode operational-vs-diagnostic depth branch (<code>business.md:43-71</code>) solves a problem the user does not have. Removing it.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>What changes for the user</h2>
+      <div class="compare-grid compare-2col">
+        <div class="col">
+          <h3>Today</h3>
+          <p class="con">- 5 modes, including separate Business and Authoring with hardcoded phase scripts</p>
+          <p class="con">- Generic facilitator voice, no advisor persona</p>
+          <p class="con">- Framework registry (147 entries) cannot be invoked from inside a brainstorm</p>
+          <p class="con">- Operational-vs-diagnostic depth branch chooses for you, often wrong</p>
+        </div>
+        <div class="col">
+          <h3>After refactor</h3>
+          <p class="pro">+ 4 modes: Software, Strategy, Research, Planning</p>
+          <p class="pro">+ Strategy auto-detects best framework or advisor, offers with override</p>
+          <p class="pro">+ Brainstorm scaffolding (scan, critique, viz, commit, handoff) wraps any of 147 frameworks or 70 advisors</p>
+          <p class="pro">+ No depth branch &mdash; engine choice replaces it</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decisions -->
+  <div id="panel-decisions" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('decisions','d1')">D1 &middot; Mode collapse</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('decisions','d2')">D2 &middot; Detection location</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('decisions','d3')">D3 &middot; Shared runners</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('decisions','d4')">D4 &middot; Metadata</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('decisions','d5')">D5 &middot; Fallback ladder</button>
+    </div>
+
+    <div id="sub-d1" class="sub-panel active">
+      <div class="section">
+        <h2>D1 &mdash; Collapse Business + Authoring into one strategy mode</h2>
+        <p class="description">The recently-extracted shared scaffolding (commits <code>89b4cad</code>, <code>eb4c869</code>) shrunk mode files toward "config + the mode-specific bit." The mode-specific bit in Business and Authoring is no longer a distinct <em>process</em> &mdash; both are "facilitate dialogue &rarr; produce design doc &rarr; critique panel" with different critic pools and templates. That is a config table, not a mode file.</p>
+        <div class="callout callout-decision"><strong>Decision</strong> Replace <code>business.md</code> and <code>authoring.md</code> with one <code>strategy.md</code>. Brainstorming becomes a 4-mode skill.</div>
+        <div class="callout callout-note" style="background:#f0f9ff; border-left:3px solid #0284c7; padding:12px 16px; border-radius:6px; font-size:0.85rem; margin-top:12px;"><strong>Why Software/Research/Planning stay separate:</strong> they have unique <em>processes</em> (Architect auto-consult mid-flow; Skeptic Pass + corpus survey; portfolio sequencing). Business and Authoring don't.</div>
+      </div>
+    </div>
+
+    <div id="sub-d2" class="sub-panel">
+      <div class="section">
+        <h2>D2 &mdash; Detection extends contextual-recommendation</h2>
+        <p class="description"><code>skills/_shared/contextual-recommendation.md</code> already abstracts advisor vs framework field-mapping. Add a multi-entity mode (<code>framework-or-advisor</code>) that scores both registries in one pass. Auto-select vs shortlist confidence machinery already exists.</p>
+        <div class="callout callout-decision"><strong>Decision</strong> Engine detection lives in <code>strategy.md</code> Phase 1 by invoking the extended contextual-recommendation. <strong>Not</strong> in <code>SKILL.md</code> Step 1.</div>
+        <div class="callout callout-constraint" style="margin-top:12px;"><strong>Constraint</strong> Mode detection (which mode) and engine detection (which framework/advisor) are different questions. Layering them muddies both.</div>
+      </div>
+    </div>
+
+    <div id="sub-d3" class="sub-panel">
+      <div class="section">
+        <h2>D3 &mdash; Extract shared framework-runner and advisor-runner</h2>
+        <p class="description"><code>use-framework/SKILL.md</code> Steps 4-5 (Load + Run framework) plus Voice + Composability rules are <em>runner protocol</em> &mdash; identical regardless of caller. Steps 1-3 are <em>discovery and matching</em> &mdash; caller-specific.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+flowchart LR
+  UF[use-framework SKILL.md<br/>Steps 1-3: discovery] --> FR[_shared/framework-runner.md<br/>Steps 4-5: execution]
+  STRAT[strategy.md Phase 1<br/>auto-detect via contextual-rec] --> FR
+  FR --> VOICE[Voice + WAIT discipline<br/>+ intake-gate strict/advisory]
+  UA[use-advisor SKILL.md<br/>discovery] --> AR[_shared/advisor-runner.md<br/>execution]
+  STRAT --> AR
+  AR --> VOICE
+          </pre>
+        </div>
+        <div class="callout callout-decision" style="margin-top:12px;"><strong>Decision</strong> Both top-level <code>use-framework</code>/<code>use-advisor</code> and <code>strategy.md</code> invoke the same shared runner. Bidirectional contract: an advisor in mid-conversation can invoke the framework runner; runner returns control to the advisor on completion.</div>
+        <div class="callout callout-note" style="background:#f0f9ff; border-left:3px solid #0284c7; padding:12px 16px; border-radius:6px; font-size:0.85rem; margin-top:12px;"><strong>Intake-gate parameter:</strong> <code>advisory</code> (default; current behavior) or <code>strict</code> (gate on missing <code>required_documents</code>; brainstorm wrapper passes this).</div>
+      </div>
+    </div>
+
+    <div id="sub-d4" class="sub-panel">
+      <div class="section">
+        <h2>D4 &mdash; Metadata location</h2>
+        <p class="description">New fields needed: <code>deliverable_type</code>, <code>default_critic_advisors</code>, <code>follow_on_frameworks</code>.</p>
+        <div class="compare-grid compare-2col">
+          <div class="col">
+            <h3>Registry only</h3>
+            <p class="pro">+ One file edit; trivial blast radius</p>
+            <p class="con">- Authoring-time invisibility for framework writers; closing-phase output drifts from runner expectation</p>
+          </div>
+          <div class="col">
+            <h3>Both (registry authoritative)</h3>
+            <p class="pro">+ Self-checking loop catches drift</p>
+            <p class="pro">+ Framework authors see deliverable_type at the top of their prompt</p>
+            <p class="con">- Migration script touches 147 prompt.md files (mechanical)</p>
+          </div>
+        </div>
+        <div class="callout callout-decision" style="margin-top:12px;"><strong>Decision</strong> <code>default_critic_advisors</code> + <code>follow_on_frameworks</code>: registry only. <code>deliverable_type</code>: registry authoritative + mirrored to prompt.md frontmatter via one-shot migration. CI eval flags drift.</div>
+      </div>
+    </div>
+
+    <div id="sub-d5" class="sub-panel">
+      <div class="section">
+        <h2>D5 &mdash; Fallback ladder</h2>
+        <p class="description">Engine selection runs through this ladder. The 6-Step Process is <strong>not</strong> the default &mdash; it's structurally tactical-sequencing (the rejected use case) and opens with a strong-opinion mindset check.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+flowchart TD
+  START[Topic + project scan] --> SCORE[Multi-entity scoring<br/>frameworks + advisors]
+  SCORE --> Q1{Framework match<br/>auto-select threshold?}
+  Q1 -- yes --> RUNFW[Run framework via<br/>shared runner]
+  Q1 -- no --> Q2{Advisor match<br/>auto-select threshold?}
+  Q2 -- yes --> RUNADV[Adopt advisor;<br/>free exploration]
+  Q2 -- no --> Q3{Any score &gt; 0?}
+  Q3 -- yes --> WEAK[Highest-scoring advisor;<br/>lower the bar]
+  Q3 -- no --> DEFAULT[Wise Eric default;<br/>'what are you working on?']
+  RUNADV -.advisor may dispatch<br/>framework mid-flow.-> RUNFW
+          </pre>
+        </div>
+        <div class="callout callout-decision" style="margin-top:12px;"><strong>Decision</strong> Default last-resort advisor: Wise Eric. Owns the 6-step framework so can recommend it mid-flow when warranted; canonical strategic generalist; prompt handles ambiguous-intent gracefully.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Flow -->
+  <div id="panel-flow" class="tab-panel">
+    <div class="section">
+      <h2>End-to-end session flow</h2>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+flowchart TD
+  U[User: /aligned:brainstorming topic] --> S1[SKILL.md Step 1<br/>Detect mode &rarr; Strategy]
+  S1 --> S2[SKILL.md Step 2<br/>Dispatch project scan in background]
+  S2 --> S3[SKILL.md Step 3<br/>Read shared-rules + strategy.md + checklist]
+  S3 --> P1[strategy.md Phase 1<br/>Engine selection via multi-entity scoring]
+  P1 --> ENGINE{Engine}
+  ENGINE -- framework --> RFW[_shared/framework-runner.md<br/>intake=strict, WAIT discipline]
+  ENGINE -- advisor --> RAD[_shared/advisor-runner.md<br/>persona, voice, can dispatch framework]
+  ENGINE -- exploration --> RAD
+  RFW --> P3[strategy.md Phase 3<br/>Post-engine dispatch by deliverable_type]
+  RAD --> P3
+  P3 --> VIZ[Visualization protocol<br/>live + pre-critique snapshot]
+  VIZ --> CRIT[Critique panel<br/>critic pool from deliverable_type or framework metadata]
+  CRIT --> POST[Visualization regen + Commit + Next-step prompt]
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Phase 3 dispatch by deliverable_type</h2>
+      <p class="description">The post-engine flow picks template + critique checklist sections + critic pool + handoff based on the engine's <code>deliverable_type</code>. Free exploration with no framework: user picks the type at session end (or system infers from the artifact shape).</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>deliverable_type</th><th>Template section</th><th>Default critic pool</th><th>Handoff</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>content</code></td><td>artifact-focused (positioning canvas, copy, sequence)</td><td>brand-voice + domain advisor + skeptic</td><td>writing-plans (if implementable) OR copy-export</td></tr>
+          <tr><td><code>decision</code></td><td>decision-focused (verdict + reasoning)</td><td>skeptic + relevant-domain advisor</td><td>kanban entry OR follow-on advisor</td></tr>
+          <tr><td><code>plan</code></td><td>plan-focused (sequenced actions + feedback loops)</td><td>strategy advisor + execution skeptic</td><td>writing-plans</td></tr>
+          <tr><td><code>analysis</code></td><td>analysis-focused (structured understanding)</td><td>domain expert + skeptic</td><td>research memo OR follow-on framework</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Components -->
+  <div id="panel-components" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('components','new')">New files</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('components','modified')">Modified</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('components','deleted')">Deleted</button>
+    </div>
+
+    <div id="sub-new" class="sub-panel active">
+      <table class="change-table">
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td class="file-path">skills/_shared/framework-runner.md</td><td>Steps 4-5 of current use-framework + Voice/Composability/WAIT rules. Configurable intake-gate (strict | advisory).</td></tr>
+          <tr><td class="file-path">skills/_shared/advisor-runner.md</td><td>Parallel extraction from use-advisor. Persona adoption, voice carrying, optional mid-flow framework dispatch.</td></tr>
+          <tr><td class="file-path">skills/brainstorming/modes/strategy.md</td><td>Replaces business.md + authoring.md. Phase 1 engine selection, Phase 2 engine execution, Phase 3 deliverable_type dispatch.</td></tr>
+          <tr><td class="file-path">skills/brainstorming/strategy-critique-checklist.md</td><td>Replaces business and authoring checklists. Conditional sections by deliverable_type.</td></tr>
+          <tr><td class="file-path">skills/brainstorming/references/templates/strategy-template.html</td><td>Replaces business-template + authoring-template. Conditional sections per deliverable_type.</td></tr>
+          <tr><td class="file-path">tools/sync_framework_frontmatter.py</td><td>One-shot migration script. Mirrors deliverable_type from registry to prompt.md frontmatter. Idempotent.</td></tr>
+          <tr><td class="file-path">e2e/scenarios/strategy-mode-engine-selection.yaml</td><td>Eval scenarios calibrating auto-select / shortlist / fallback thresholds.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="sub-modified" class="sub-panel">
+      <table class="change-table">
+        <thead><tr><th>File</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td class="file-path">skills/_shared/contextual-recommendation.md</td><td>New <code>framework-or-advisor</code> entity type. Field-mapping table extends to merge advisor + framework scoring in one pass.</td></tr>
+          <tr><td class="file-path">skills/use-framework/SKILL.md</td><td>Steps 4-5 deleted, replaced with one line invoking shared runner. Steps 1-3 unchanged.</td></tr>
+          <tr><td class="file-path">skills/use-advisor/SKILL.md</td><td>Invocation logic deleted, replaced with shared runner invocation.</td></tr>
+          <tr><td class="file-path">skills/brainstorming/SKILL.md</td><td>Step 1 mode list 5 &rarr; 4 (Software, Strategy, Research, Planning). Disambiguation rules updated. Mode-explanation block regrouping preserved.</td></tr>
+          <tr><td class="file-path">frameworks/registry.yaml</td><td>Adds <code>deliverable_type</code>, <code>default_critic_advisors</code>, <code>follow_on_frameworks</code> to all 147 entries.</td></tr>
+          <tr><td class="file-path">frameworks/&lt;id&gt;/prompt.md &times; 147</td><td>Mirrored <code>deliverable_type</code> added to each frontmatter (scripted via migration).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="sub-deleted" class="sub-panel">
+      <table class="change-table">
+        <thead><tr><th>File</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td class="file-path">skills/brainstorming/modes/business.md</td><td>Replaced by strategy.md</td></tr>
+          <tr><td class="file-path">skills/brainstorming/modes/authoring.md</td><td>Replaced by strategy.md</td></tr>
+          <tr><td class="file-path">skills/brainstorming/business-critique-checklist.md</td><td>Replaced by strategy-critique-checklist.md</td></tr>
+          <tr><td class="file-path">skills/brainstorming/authoring-critique-checklist.md</td><td>Replaced by strategy-critique-checklist.md</td></tr>
+          <tr><td class="file-path">skills/brainstorming/references/templates/business-template.html</td><td>Replaced by strategy-template.html</td></tr>
+          <tr><td class="file-path">skills/brainstorming/references/templates/authoring-template.html</td><td>Replaced by strategy-template.html</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-note" style="background:#f0f9ff; border-left:3px solid #0284c7; padding:12px 16px; border-radius:6px; font-size:0.85rem; margin-top:12px;"><strong>Pre-1.0 plugin (0.27.0):</strong> clean deletion permitted. No shim layer needed.</div>
+    </div>
+  </div>
+
+  <!-- Migration -->
+  <div id="panel-migration" class="tab-panel">
+    <div class="section">
+      <h2>Sequencing &mdash; strict ordering required</h2>
+      <p class="description">Architect flagged the critical path: Step 4 (mode collapse) cannot ship before Step 2 (metadata migration) completes, or Phase 3 dispatch crashes on missing <code>deliverable_type</code>. Steps 0&ndash;3 are non-breaking; Step 4 is the user-visible cutover.</p>
+      <div class="phase-tracker">
+        <div class="phase-item">Step 0: Preconditions</div>
+        <div class="phase-item">Step 1: Extract runners</div>
+        <div class="phase-item">Step 2: Metadata migration</div>
+        <div class="phase-item">Step 3: Multi-entity scoring</div>
+        <div class="phase-item">Step 4: Cutover</div>
+      </div>
+
+      <ol class="bullet-list" style="font-size:0.92rem;">
+        <li><strong>Step 0 (preconditions, parallel):</strong> Resolve KB-033 (empty <code>purpose</code> fields). Audit and clean <code>name</code> field hygiene in <code>frameworks/registry.yaml</code>.</li>
+        <li><strong>Step 1 (extract runners, non-breaking):</strong> Move <code>use-framework</code> Steps 4-5 to <code>_shared/framework-runner.md</code>. Same for <code>use-advisor</code>. Backward-compat eval verifies identical behavior.</li>
+        <li><strong>Step 2 (metadata, non-breaking):</strong> Define deliverable_type taxonomy. Manually classify all 147 frameworks. Add registry fields. Run migration script. Add CI drift check.</li>
+        <li><strong>Step 3 (multi-entity scoring, non-breaking):</strong> Extend contextual-recommendation. Calibrate thresholds via new eval scenarios.</li>
+        <li><strong>Step 4 (cutover, user-visible):</strong> Ship strategy.md + checklist + template. Update SKILL.md to 4 modes. Delete business.md, authoring.md, their checklists and templates. Bump plugin version.</li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2>Cross-cutting risks</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Critical-path coupling</h3>
+          <p>Steps 2 + 4 share dispatch table. <code>deliverable_type</code> must be populated before strategy.md ships, or fallback runs everywhere.</p>
+        </div>
+        <div class="card">
+          <h3>Confidence calibration</h3>
+          <p>Auto-select vs shortlist thresholds for merged scoring need eval-driven calibration. Too lenient &rarr; bad fits; too strict &rarr; fallback never fires.</p>
+        </div>
+        <div class="card">
+          <h3>Bidirectional runner contract</h3>
+          <p>Advisor in mid-conversation must be able to invoke framework-runner; runner must return control to the advisor. Existing Composability rule extends.</p>
+        </div>
+        <div class="card">
+          <h3>Strategy vs Research disambiguation</h3>
+          <p>New rule needed: evidence map from external corpus &rarr; Research; decision/plan informed by existing context &rarr; Strategy.</p>
+        </div>
+        <div class="card">
+          <h3>Taxonomy edge cases</h3>
+          <p>Frameworks producing both content + decision (e.g. 5-components-positioning). Validate primary-tag rule against 10-15 ambiguous frameworks before classifying all 147.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testing -->
+  <div id="panel-testing" class="tab-panel">
+    <div class="section">
+      <h2>Testing strategy</h2>
+      <p class="description">Per CLAUDE.md TDD rule: every async operation that can fail in production has both success AND error tests. Eval scenarios calibrate confidence thresholds; unit tests cover the migration script.</p>
+    </div>
+
+    <div class="test-category">
+      <h3>Eval scenarios</h3>
+      <ul class="test-items">
+        <li><code>strategy-mode-engine-selection.yaml</code> &mdash; calibrate auto-select / shortlist / fallback ladder. Strong framework match, strong advisor match, weak match, no signal, shortlist case.</li>
+        <li><code>framework-runner-extraction.yaml</code> &mdash; <code>use-framework</code> and strategy-mode invocations produce identical execution. WAIT discipline, voice carrying, intake-gate behavior.</li>
+        <li><code>deliverable-type-dispatch.yaml</code> &mdash; Phase 3 picks correct template + critic pool per type. Includes missing-deliverable_type fallback path.</li>
+        <li><code>use-framework-backward-compat.yaml</code> &mdash; direct <code>/aligned:use-framework</code> invocation produces identical pre-refactor behavior.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>Unit tests</h3>
+      <ul class="test-items">
+        <li><code>tools/test_sync_framework_frontmatter.py</code> &mdash; idempotency, YAML escaping for quoted names (5-components-positioning has embedded quotes), missing prompt.md, missing registry entry.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>Error paths (mandatory per TDD rule)</h3>
+      <ul class="test-items">
+        <li>Framework runner with missing prompt.md &rarr; existing error preserved</li>
+        <li>Framework runner with empty prompt.md &rarr; existing error preserved</li>
+        <li>Framework runner with broken advisor reference &rarr; generic facilitator voice + Decision Log entry</li>
+        <li>Strategy mode with missing <code>deliverable_type</code> &rarr; fallback critique pool + warning to user</li>
+        <li>Strategy mode with project scan failure &rarr; engine selection on topic alone + user notification</li>
+        <li>Contextual-recommendation multi-entity mode with empty registries &rarr; graceful prompt for input</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    var __rs = getComputedStyle(document.documentElement);
+    function __tok(name, fallback) {
+      var v = __rs.getPropertyValue(name).trim();
+      return v || fallback;
+    }
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: __tok('--font-sans', 'system-ui, -apple-system, sans-serif'),
+        fontSize: '14px',
+        lineColor: __tok('--color-border', '#e5e7eb'),
+        primaryColor: __tok('--color-muted', '#f0eeeb'),
+        primaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        primaryBorderColor: __tok('--color-border', '#e5e7eb'),
+        secondaryColor: __tok('--color-accent-subtle', '#fff7ed'),
+        secondaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        secondaryBorderColor: __tok('--color-accent', '#ff6900'),
+        tertiaryColor: __tok('--color-surface', '#f5f3ef'),
+        tertiaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        tertiaryBorderColor: __tok('--color-secondary', '#555555')
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render diagrams with class="mermaid" on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one if none active
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

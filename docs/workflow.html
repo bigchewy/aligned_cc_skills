@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aligned Skills Workflow — Eric Page</title>
+<meta name="description" content="Interactive overview of the Aligned plugin workflow for Claude Code — brainstorming, planning, execution, and finishing pipelines for software, strategy, and content.">
+<style>
+  :root {
+    --color-background: #faf9f7;
+    --color-surface: #f5f3ef;
+    --color-foreground: #1a1a1a;
+    --color-muted: #f0eeeb;
+    --color-secondary: #555555;
+    --color-dimmed: #6b7280;
+    --color-accent: #1e2847;
+    --color-accent-subtle: #e8ebf2;
+    --color-border: #e5e7eb;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: "New York", Georgia, "Cambria", "Times New Roman", serif;
+    --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  @media (min-width: 640px) { .container { padding: 48px 24px 80px; } }
+
+  .header { text-align: center; margin-bottom: 48px; }
+  .header h1 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 1.8rem; letter-spacing: -0.02em;
+    margin: 0 0 8px;
+  }
+  @media (min-width: 640px) { .header h1 { font-size: 2.4rem; } }
+  .header p { font-size: 1.05rem; color: var(--color-secondary); font-weight: 300; margin: 0; }
+
+  code.inline {
+    font-family: var(--font-mono); font-size: 0.88rem;
+    background: var(--color-muted); padding: 2px 8px;
+    border-radius: 4px; color: var(--color-accent);
+  }
+  code.skill-tag {
+    font-family: var(--font-mono); font-size: 0.8rem;
+    color: var(--color-accent); background: var(--color-muted);
+    padding: 2px 8px; border-radius: 4px;
+    display: inline-block; margin-bottom: 6px;
+  }
+  code.small-tag {
+    font-family: var(--font-mono); font-size: 0.78rem;
+    background: var(--color-muted); padding: 1px 6px;
+    border-radius: 3px; color: var(--color-accent);
+  }
+
+  .pipeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+
+  .phase, .track {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    transition: box-shadow 200ms, transform 200ms;
+    overflow: hidden;
+  }
+  .phase { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  .phase:hover, .track:hover {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+  }
+  .track.primary {
+    border: 2px solid var(--color-accent);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  }
+
+  .phase-head, .track-head {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 20px 24px 16px; cursor: pointer; user-select: none;
+  }
+
+  .phase-num {
+    width: 40px; height: 40px; min-width: 40px;
+    border-radius: 9999px; display: flex;
+    align-items: center; justify-content: center;
+    font-family: var(--font-serif); font-weight: 700;
+    font-size: 1.1rem; color: white;
+    margin-top: 2px; background: var(--color-accent);
+  }
+
+  .phase-body, .track-body { flex: 1; }
+  .phase-body h2, .track-body h3 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 1.35rem; color: var(--color-foreground);
+    letter-spacing: -0.01em; margin: 0 0 2px;
+  }
+  .phase-body p, .track-body p {
+    font-size: 0.95rem; color: var(--color-secondary);
+    font-weight: 300; margin: 0;
+  }
+  .track-body h4 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 1.1rem; color: var(--color-foreground);
+    margin: 0 0 8px;
+  }
+
+  .chevron {
+    color: var(--color-dimmed); font-size: 1.2rem;
+    transition: transform 300ms; margin-top: 8px;
+    min-width: 20px; text-align: center;
+  }
+
+  .expand-region {
+    overflow: hidden; max-height: 0;
+    transition: max-height 400ms ease-in-out;
+  }
+  .phase.open .expand-region, .track.open .expand-region { max-height: 4000px; }
+  .phase.open .chevron, .track.open .chevron { transform: rotate(180deg); }
+
+  .phase-content { padding: 0 24px 24px 80px; }
+  .track-content { padding: 0 24px 24px; }
+  @media (max-width: 640px) { .phase-content { padding-left: 24px; } }
+
+  .mode-label {
+    font-size: 0.78rem; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--color-dimmed);
+    font-weight: 500; margin-bottom: 8px; padding-left: 2px;
+  }
+  .mode-label.next {
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .steps { list-style: none; position: relative; padding: 0; margin: 0; }
+  .steps::before {
+    content: ''; position: absolute;
+    left: 7px; top: 8px; bottom: 8px;
+    width: 1.5px; background: var(--color-border);
+  }
+  .steps li {
+    position: relative; padding-left: 28px; padding-bottom: 12px;
+    font-size: 0.9rem;
+  }
+  .steps li:last-child { padding-bottom: 0; }
+  .steps li::before {
+    content: ''; position: absolute;
+    left: 3px; top: 8px;
+    width: 9px; height: 9px;
+    border-radius: 9999px;
+    background: var(--color-muted);
+    border: 1.5px solid var(--color-border);
+  }
+  .steps li.key::before {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .steps li .label { color: var(--color-foreground); font-weight: 400; }
+  .steps li .note { color: var(--color-dimmed); font-size: 0.82rem; font-weight: 300; margin-left: 2px; }
+
+  .subskills {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+  }
+  .subskills .row-label {
+    font-size: 0.78rem; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--color-dimmed);
+    width: 100%; margin-bottom: 2px; font-weight: 500;
+  }
+  .tag {
+    font-family: var(--font-mono); font-size: 0.72rem;
+    padding: 3px 10px; border-radius: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-secondary);
+    transition: background 150ms, border-color 150ms;
+  }
+  .tag:hover {
+    background: var(--color-muted);
+    border-color: var(--color-dimmed);
+  }
+
+  .callout {
+    font-size: 0.82rem; color: var(--color-secondary);
+    font-weight: 300; background: var(--color-accent-subtle);
+    border: 1px solid var(--color-accent);
+    border-radius: 8px; padding: 8px 12px;
+    margin-bottom: 16px;
+  }
+  .callout strong { font-weight: 500; color: var(--color-foreground); }
+
+  .connector {
+    display: flex; align-items: center; justify-content: center;
+    padding: 8px 0; position: relative;
+  }
+  .connector .bar {
+    width: 2px; height: 32px; border-radius: 1px;
+    background: var(--color-accent);
+  }
+  .connector .arrow {
+    position: absolute; bottom: 4px;
+    color: var(--color-accent); font-size: 0.75rem;
+  }
+
+  .section-h2 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 1.5rem; color: var(--color-foreground);
+    margin: 0;
+  }
+  .section-sub {
+    color: var(--color-dimmed); font-size: 0.88rem;
+    font-weight: 300; margin: 4px 0 0;
+  }
+
+  .dual-grid {
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+  }
+  @media (min-width: 1024px) { .dual-grid { grid-template-columns: 1fr 1fr; } }
+
+  .pill {
+    font-size: 0.65rem; padding: 1px 8px;
+    border-radius: 9999px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+  }
+  .pill-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+
+  .sub-section + .sub-section {
+    padding-top: 24px; margin-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .parallel-grid {
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+  }
+  @media (min-width: 640px) {
+    .parallel-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  }
+
+  .card {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    transition: box-shadow 200ms, transform 200ms;
+    padding: 20px;
+  }
+  .card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+  }
+  .label-upper {
+    font-size: 0.72rem; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--color-dimmed);
+    font-weight: 500; margin-bottom: 8px;
+  }
+  .card h3 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 1.1rem; color: var(--color-foreground);
+    margin: 0 0 4px;
+  }
+  .card p {
+    font-size: 0.88rem; color: var(--color-secondary);
+    font-weight: 300; margin: 0; line-height: 1.5;
+  }
+  .card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+  .util-grid {
+    display: grid; grid-template-columns: 1fr; gap: 12px;
+  }
+  @media (min-width: 640px) {
+    .util-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  }
+  .util-card {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    padding: 16px;
+    transition: box-shadow 200ms, transform 200ms;
+  }
+  .util-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+  }
+  .util-card h3 {
+    font-family: var(--font-mono); font-size: 0.78rem;
+    color: var(--color-accent); margin: 0 0 4px; font-weight: 500;
+  }
+  .util-card p {
+    font-size: 0.85rem; color: var(--color-secondary);
+    font-weight: 300; margin: 0; line-height: 1.5;
+  }
+  .badge-row { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+  .badge {
+    font-size: 0.65rem; padding: 1px 6px;
+    border-radius: 4px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+  }
+
+  .iron-rules {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    margin-top: 48px; padding: 24px;
+  }
+  .iron-rules h2 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 1.3rem; color: var(--color-foreground);
+    margin: 0 0 16px;
+  }
+  .iron-rules ul {
+    list-style: none; display: grid;
+    grid-template-columns: 1fr; gap: 8px;
+    padding: 0; margin: 0;
+  }
+  @media (min-width: 640px) {
+    .iron-rules ul { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  }
+  .iron-rules li {
+    font-size: 0.88rem; color: var(--color-foreground);
+    padding: 8px 12px; background: var(--color-background);
+    border-radius: 8px;
+    border-left: 3px solid var(--color-accent);
+    font-weight: 300;
+  }
+  .iron-rules li strong { font-weight: 500; color: var(--color-foreground); }
+
+  .kickstart {
+    margin-top: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px; padding: 24px;
+    text-align: center;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    background: var(--color-accent-subtle);
+  }
+  .kickstart h2 {
+    font-family: var(--font-serif); font-weight: 500;
+    font-size: 1.2rem; color: var(--color-foreground);
+    margin: 0 0 6px;
+  }
+  .kickstart .skill-name {
+    font-family: var(--font-mono); font-size: 0.8rem;
+    color: var(--color-accent); margin: 0;
+  }
+  .kickstart .desc {
+    font-size: 0.9rem; color: var(--color-secondary);
+    font-weight: 300; margin: 8px auto 0; max-width: 600px;
+  }
+
+  footer.foot {
+    text-align: center; margin-top: 48px;
+    padding-top: 24px; border-top: 1px solid var(--color-border);
+    font-size: 0.82rem; color: var(--color-dimmed); font-weight: 300;
+  }
+  footer.foot code {
+    font-family: var(--font-mono); font-size: 0.76rem;
+    background: var(--color-muted);
+    padding: 1px 6px; border-radius: 3px;
+  }
+
+  .center { text-align: center; }
+  .mt-12 { margin-top: 48px; }
+  .mb-6 { margin-bottom: 24px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <h1>How Aligned Works</h1>
+    <p>A skill-driven workflow for software, strategy, and content — powered by <code class="inline">aligned</code> v0.27.0</p>
+  </header>
+
+  <div class="pipeline">
+    <!-- PHASE 1: BRAINSTORM -->
+    <div class="phase" id="phase-1">
+      <div class="phase-head" data-toggle="phase-1">
+        <div class="phase-num">1</div>
+        <div class="phase-body">
+          <code class="skill-tag">/aligned:brainstorming</code>
+          <h2>Brainstorm</h2>
+          <p>Explore the idea, question assumptions, design the approach, generate mockups, and critique everything before writing a single line of code or strategy doc.</p>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="expand-region">
+        <div class="phase-content">
+          <div class="callout">
+            <strong>Five-mode router:</strong> The skill classifies your topic into one of five modes — software, business, research, authoring, or planning — and runs the matching process. Each ends with a multi-critic review from the advisor pool.
+          </div>
+
+          <div class="mode-label">Software Mode</div>
+          <ul class="steps">
+            <li class="key"><span class="label">Project scan sub-agent</span><span class="note"> — surveys structure, git history, patterns, tech stack</span></li>
+            <li><span class="label">Understand the idea</span><span class="note"> — one question at a time, no rush</span></li>
+            <li><span class="label">Architect auto-consult</span><span class="note"> — technical options vetted against codebase before presenting</span></li>
+            <li><span class="label">Explore 2–3 approaches</span><span class="note"> — trade-offs for each, lead with architect-recommended</span></li>
+            <li class="key"><span class="label">Present the design</span><span class="note"> — 200–300 word sections, clear structure</span></li>
+            <li class="key"><span class="label">Generate visualization</span><span class="note"> — mockup, flowchart, and/or architecture diagram auto-selected</span></li>
+            <li><span class="label">Write design doc</span><span class="note"> — saved to docs/plans/</span></li>
+            <li class="key"><span class="label">Multi-critic review</span><span class="note"> — 1–4 critics auto-selected from advisor pool, with division of labor</span></li>
+            <li class="key"><span class="label">Create git worktree</span><span class="note"> — isolated workspace for implementation</span></li>
+          </ul>
+
+          <div class="mode-label next">Business Mode</div>
+          <ul class="steps">
+            <li class="key"><span class="label">Goal clarification</span><span class="note"> — converge on a specific objective</span></li>
+            <li class="key"><span class="label">Problem identification</span><span class="note"> — structured obstacle mapping</span></li>
+            <li class="key"><span class="label">Root cause analysis</span><span class="note"> — 5 Whys / First Principles to find leverage points</span></li>
+            <li class="key"><span class="label">Solution design</span><span class="note"> — constrained options with trade-offs and resource requirements</span></li>
+            <li class="key"><span class="label">Multi-critic review</span><span class="note"> — 2–4 advisors (e.g., Dunford, Rumelt, Walling)</span></li>
+          </ul>
+
+          <div class="mode-label next">Research Mode</div>
+          <ul class="steps">
+            <li class="key"><span class="label">Corpus survey</span><span class="note"> — comparative review of literature, registries, or prior artifacts</span></li>
+            <li><span class="label">Comparative synthesis</span><span class="note"> — evidence map or ranked review</span></li>
+            <li class="key"><span class="label">Skeptic Pass</span><span class="note"> — challenge claims and surface gaps</span></li>
+            <li><span class="label">Deliverable: research memo or KB artifact</span></li>
+          </ul>
+
+          <div class="mode-label next">Authoring Mode</div>
+          <ul class="steps">
+            <li class="key"><span class="label">Content sequencing</span><span class="note"> — curriculum, prompts, exercise programs, chapter order</span></li>
+            <li><span class="label">Optional Research sub-phase</span><span class="note"> — file-mediated sub-agent fork for evidence base</span></li>
+            <li class="key"><span class="label">Domain-advisor panel</span><span class="note"> — voice and accuracy review</span></li>
+            <li><span class="label">Deliverable: sequenced design doc</span></li>
+          </ul>
+
+          <div class="mode-label next">Planning Mode</div>
+          <ul class="steps">
+            <li class="key"><span class="label">Multi-feature portfolio sequencing</span><span class="note"> — what to build, in what order</span></li>
+            <li><span class="label">Strategy advisor consult</span><span class="note"> — sequencing trade-offs and dependencies</span></li>
+            <li class="key"><span class="label">Roadmap + spawn-list</span><span class="note"> — feeds into writing-plans for individual builds</span></li>
+          </ul>
+
+          <div class="subskills">
+            <div class="row-label">Sub-skills invoked</div>
+            <span class="tag">using-git-worktrees</span>
+            <span class="tag">create-image</span>
+            <span class="tag">Sub-agent: project scan</span>
+            <span class="tag">Sub-agent: Architect consult</span>
+            <span class="tag">Advisor pool: 1–4 critics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="bar"></div><span class="arrow">▾</span></div>
+
+    <!-- PHASE 2: PLAN -->
+    <div class="phase" id="phase-2">
+      <div class="phase-head" data-toggle="phase-2">
+        <div class="phase-num">2</div>
+        <div class="phase-body">
+          <code class="skill-tag">/aligned:writing-plans</code>
+          <h2>Plan</h2>
+          <p>Convert a brainstorm or spec into a TDD implementation plan with dual-critic review. Plans live on main and feed the Execute phase.</p>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="expand-region">
+        <div class="phase-content">
+          <ul class="steps">
+            <li><span class="label">Research the codebase</span><span class="note"> — read architecture docs, grep for patterns</span></li>
+            <li class="key"><span class="label">Write tasks in small steps</span><span class="note"> — test file first, then implementation</span></li>
+            <li><span class="label">Verify every file path &amp; snippet</span><span class="note"> — no hallucinated references</span></li>
+            <li><span class="label">Add decision log</span><span class="note"> — document architectural choices</span></li>
+            <li class="key"><span class="label">Dual-critic review</span><span class="note"> — Architect + Verifier agents in parallel</span></li>
+            <li><span class="label">Critique round 2</span><span class="note"> — only if issues found</span></li>
+            <li><span class="label">Manual-deploy artifact catalog</span><span class="note"> — auto-flags Supabase migrations and env-var additions for Post-Automation section</span></li>
+            <li class="key"><span class="label">Save plan to main branch</span><span class="note"> — committed to docs/plans/ on main</span></li>
+          </ul>
+          <div class="subskills">
+            <div class="row-label">Sub-skills invoked</div>
+            <span class="tag">Sub-agent: codebase research</span>
+            <span class="tag">Sub-agent: Architect critic</span>
+            <span class="tag">Sub-agent: Verifier critic</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="bar"></div><span class="arrow">▾</span></div>
+
+    <!-- PHASE 3: EXECUTE -->
+    <div class="phase" id="phase-3">
+      <div class="phase-head" data-toggle="phase-3">
+        <div class="phase-num">3</div>
+        <div class="phase-body">
+          <code class="skill-tag">/aligned:executing-plans</code>
+          <h2>Execute</h2>
+          <p>Implement the plan task-by-task in batches with TDD discipline and review checkpoints between batches.</p>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="expand-region">
+        <div class="phase-content">
+          <ul class="steps">
+            <li><span class="label">Load plan from main worktree</span></li>
+            <li class="key"><span class="label">Implement in batches of 5</span><span class="note"> — TDD: test first, then code</span></li>
+            <li><span class="label">Run verifications per task</span></li>
+            <li><span class="label">Check LLM surface changes</span><span class="note"> — auto-trigger evals if prompts changed</span></li>
+            <li><span class="label">Report &amp; wait for review</span><span class="note"> — user approves before next batch</span></li>
+            <li><span class="label">Log out-of-scope bugs</span><span class="note"> — to Kanban board, no detours</span></li>
+          </ul>
+          <div class="subskills">
+            <div class="row-label">Sub-skills invoked</div>
+            <span class="tag">eval-audit</span>
+            <span class="tag">root-cause-analysis</span>
+            <span class="tag">code-reviewer agent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="bar"></div><span class="arrow">▾</span></div>
+
+    <!-- PHASE 4: FINISH -->
+    <div class="phase" id="phase-4">
+      <div class="phase-head" data-toggle="phase-4">
+        <div class="phase-num">4</div>
+        <div class="phase-body">
+          <code class="skill-tag">/aligned:finishing-a-development-branch</code>
+          <h2>Finish</h2>
+          <p>The manual merge/deploy decision point after either path. Verify everything works, scan for code simplification opportunities, then merge, PR, or keep the branch. Archive the plan and clean up the worktree.</p>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="expand-region">
+        <div class="phase-content">
+          <ul class="steps">
+            <li class="key"><span class="label">Manual-deploy evidence gate</span><span class="note"> — hard-stops merge until catalog artifacts (migrations, env vars) are verified</span></li>
+            <li class="key"><span class="label">Deployment platform audit</span><span class="note"> — file system access, env vars, dynamic requires, native deps</span></li>
+            <li class="key"><span class="label">Run full test suite</span><span class="note"> — hard stop if failing</span></li>
+            <li><span class="label">Run production build</span><span class="note"> — hard stop if failing</span></li>
+            <li><span class="label">LLM eval</span><span class="note"> — if prompt/surface files changed</span></li>
+            <li><span class="label">Update architecture docs</span><span class="note"> — if architecture changed</span></li>
+            <li><span class="label">Code simplification scan</span><span class="note"> — code-simplifier agent reviews branch diff</span></li>
+            <li class="key"><span class="label">Present 4 options</span><span class="note"> — merge locally, deploy + smoke test, keep, or discard</span></li>
+            <li><span class="label">Execute chosen option</span><span class="note"> — deploy option includes Vercel MCP + Playwright smoke tests</span></li>
+            <li><span class="label">Archive plan to completed/</span></li>
+            <li><span class="label">Cleanup worktree</span></li>
+          </ul>
+          <div class="subskills">
+            <div class="row-label">Sub-skills invoked</div>
+            <span class="tag">code-simplifier agent</span>
+            <span class="tag">artifact-verifier agent</span>
+            <span class="tag">eval-audit</span>
+            <span class="tag">doc-staleness-detector agent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPANION TRACKS -->
+  <div class="mt-12">
+    <div class="center mb-6 mt-12">
+      <h2 class="section-h2">Companion Tracks</h2>
+      <p class="section-sub">Standalone skills used alongside or independently of the dev pipeline</p>
+    </div>
+    <div class="parallel-grid">
+      <div class="card">
+        <div class="label-upper">Virtual Board of Advisors</div>
+        <h3>70 Advisors · 147 Frameworks</h3>
+        <p>Domain experts for brainstorming critique, strategic thinking, and specialized guidance. Auto-selected by skills or invoked directly. Add your own advisors and frameworks.</p>
+        <div class="tag-row">
+          <span class="tag">use-advisor</span>
+          <span class="tag">use-framework</span>
+          <span class="tag">add-advisor</span>
+          <span class="tag">add-framework</span>
+          <span class="tag">find-potential-advisors</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label-upper">Persona Testing</div>
+        <h3>Buyer &amp; User Reactions</h3>
+        <p>Test content against simulated buyer or user personas. Produces an aggregation report and appends results to a longitudinal scorecard for cross-variant comparison.</p>
+        <div class="tag-row">
+          <span class="tag">persona-panel</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label-upper">Diagnosis &amp; Maintenance</div>
+        <h3>Audits &amp; Investigation</h3>
+        <p>Multi-dimensional codebase audit, root cause investigation, eval coverage checks, and Kanban triage — invoked any time, in or out of the pipeline.</p>
+        <div class="tag-row">
+          <span class="tag">codebase-audit</span>
+          <span class="tag">root-cause-analysis</span>
+          <span class="tag">eval-audit</span>
+          <span class="tag">kanban-resolve</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UTILITY SKILLS & AGENTS -->
+  <div class="mt-12">
+    <h2 class="section-h2 center" style="text-align:center;margin-bottom:24px;">Utility Skills &amp; Agents</h2>
+    <p class="center" style="color:var(--color-dimmed);font-size:0.88rem;font-weight:300;margin:0 0 20px;">
+      Available at any phase — invoked automatically or on demand
+    </p>
+    <div class="util-grid">
+      <div class="util-card">
+        <h3>create-design-principles</h3>
+        <p>Interactive design system discovery with Steve Jobs persona. Generates design-principles.md with tokens, patterns, and anti-patterns.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span></div>
+      </div>
+      <div class="util-card">
+        <h3>create-image</h3>
+        <p>Hand-coded SVG diagrams, charts, flowcharts, brand icons, and decorative illustrations matching project design tokens.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span><span class="badge">Execute</span></div>
+      </div>
+      <div class="util-card">
+        <h3>using-git-worktrees</h3>
+        <p>Isolated workspaces per feature. Smart directory selection, safety verification, env file handling.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span><span class="badge">Plan</span><span class="badge">Finish</span></div>
+      </div>
+      <div class="util-card">
+        <h3>architecture-diagram-generator agent</h3>
+        <p>SVG architecture diagrams with change highlighting. Also updates docs/architecture.md.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span><span class="badge">Finish</span></div>
+      </div>
+      <div class="util-card">
+        <h3>artifact-verifier agent</h3>
+        <p>Document fact-checking gate with 98% accuracy target. Verifies claims before deliverables ship.</p>
+        <div class="badge-row"><span class="badge">Finish</span></div>
+      </div>
+      <div class="util-card">
+        <h3>code-reviewer agent</h3>
+        <p>Post-implementation review against plan and coding standards. Dispatched as an independent sub-agent.</p>
+        <div class="badge-row"><span class="badge">Execute</span><span class="badge">Finish</span></div>
+      </div>
+      <div class="util-card">
+        <h3>code-simplifier agent</h3>
+        <p>Scans branch diff for simplification opportunities. Writes findings to Kanban board, never edits code directly.</p>
+        <div class="badge-row"><span class="badge">Finish</span></div>
+      </div>
+      <div class="util-card">
+        <h3>doc-staleness-detector agent</h3>
+        <p>Compares git history of docs vs source files to detect stale documentation. Logs findings to Kanban board, never edits directly.</p>
+        <div class="badge-row"><span class="badge">Finish</span></div>
+      </div>
+      <div class="util-card">
+        <h3>flowchart-generator agent</h3>
+        <p>Mermaid flowcharts for data flows, processes, and decision trees. Self-contained HTML output.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span></div>
+      </div>
+      <div class="util-card">
+        <h3>kanban-triage agent</h3>
+        <p>Validates Kanban items through 5-phase root cause analysis before code changes. Quality gate between flagged and fixed.</p>
+        <div class="badge-row"><span class="badge">Execute</span><span class="badge">Finish</span></div>
+      </div>
+      <div class="util-card">
+        <h3>mockup-generator agent</h3>
+        <p>Self-contained HTML mockups using project design tokens. Visual before code.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span></div>
+      </div>
+      <div class="util-card">
+        <h3>project-scanner agent</h3>
+        <p>Fast codebase scan for brainstorming context — languages, structure, dependencies, conventions.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span></div>
+      </div>
+      <div class="util-card">
+        <h3>session-document-generator agent</h3>
+        <p>Orchestrates diagram agents to produce consolidated tabbed HTML documents with multiple visualizations.</p>
+        <div class="badge-row"><span class="badge">Brainstorm</span><span class="badge">Finish</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IRON RULES -->
+  <div class="iron-rules">
+    <h2>Iron Rules</h2>
+    <ul>
+      <li><strong>Tests first.</strong> No production code without a failing test.</li>
+      <li><strong>Error paths too.</strong> Every mockResolvedValue needs a mockRejectedValue test.</li>
+      <li><strong>Verify before claiming.</strong> No "it works" without fresh evidence.</li>
+      <li><strong>Root cause first.</strong> No fix without investigation. No symptom-patching.</li>
+      <li><strong>Fresh agents for critique.</strong> Never self-review; always spawn a sub-agent.</li>
+      <li><strong>Plans live on main.</strong> Committed to docs/plans/ on the main branch.</li>
+      <li><strong>3 strikes = rethink.</strong> If 3 fixes fail, question the architecture.</li>
+      <li><strong>No detours.</strong> Out-of-scope bugs go to the Kanban board.</li>
+    </ul>
+  </div>
+
+  <!-- KICKSTART -->
+  <div class="kickstart">
+    <h2>Project Setup</h2>
+    <p class="skill-name">/aligned:kickstart</p>
+    <p class="desc">Scaffolds a new project with all conventions: CLAUDE.md, docs structure (plans, kanban, ralph_loops, design, lessons-learned, architecture), eval infrastructure, and design principles placeholder. Auto-enables the plugin in project settings.</p>
+  </div>
+
+  <footer class="foot">
+    Built with Claude Code · <code>aligned</code> plugin · 18 skills · 10 agents · 70 advisors · 147 frameworks
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('[data-toggle]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var id = el.getAttribute('data-toggle');
+      var target = document.getElementById(id);
+      if (target) target.classList.toggle('open');
+    });
+  });
+</script>
+</body>
+</html>
