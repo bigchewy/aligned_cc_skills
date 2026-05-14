@@ -404,7 +404,9 @@ git commit -m "feat(autopilot): adopt claude -p --bare for headless calls"
 
 ---
 
-### Task 7: Behavioral integration test — env propagation to a stub `claude` binary
+### ✅ Task 7: Behavioral integration test — env propagation to a stub `claude` binary
+
+> DEVIATION: (1) used `stdin/stdout/stderr=DEVNULL` instead of `capture_output=True` — phases' background heartbeat/watchdog spawn orphan `sleep` children that inherit captured pipes and prevent subprocess.run from observing bash exit until the sleep expires (the test only needs the env_dump and args_dump files, not stdout). (2) Changed plan.md fixture from `**Mockups:** none` to `**Mockups:** mockup-1.html` — `none` causes mockup.sh to exit 3 before invoking claude, so the env dump was empty.
 
 **Files:**
 - Create: `e2e/tests/test_autopilot_model_env_propagation.py`
