@@ -181,7 +181,7 @@
 
 <section id="why-now">
 <h2><span class="num">01</span>Why now</h2>
-<p class="lede">Three forces collide, and waiting compounds the cost.</p>
+<p>Three forces collide, and waiting compounds the cost.</p>
 <div class="card-grid">
   <div class="card-tight"><h5>Generators are multiplying</h5><p>Ten or more generator agents will reach into <code>brand/</code> within the next year. Today they hardcode paths; they break the moment an org's folder diverges.</p></div>
   <div class="card-tight"><h5>Two prior-art instances disagree</h5><p><code>dispatch-tracker/brand/</code> and <code>planted/brand/aligned/</code> started from the same intent but drifted. No canonical scaffold exists for a new B2B org.</p></div>
@@ -203,6 +203,7 @@
 
 <section id="constraints">
 <h2><span class="num">03</span>Hard constraints</h2>
+<p>Rules the architecture must honor in every implementation. Each constraint is enforceable — a generator, a lint, or a schema check fails if it's violated. These are pass/fail; the "Core commitments" section below covers the softer worldview.</p>
 <div class="constraint"><strong>Single-org per repo.</strong> Top-level <code>brand/</code>, single-tenant. No nested <code>brand/{slug}/</code> patterns. Multi-brand orgs use separate repos.</div>
 <div class="constraint"><strong>One shape, every digital health company.</strong> Directory layout identical across subdomains — telehealth, RPM, behavioral health, digital therapeutics, payer-side, provider-side, condition platforms. B2C consumer wellness, general B2B SaaS, agencies, and advisory practices are out of scope as target users. <code>dispatch-tracker/brand/</code> is retained as a structural reference instance only.</div>
 <div class="constraint"><strong>AI-first design.</strong> Primary consumer is generator agents (~95% of reads). Humans validate occasionally. Optimize for machine-parseable structure, terse summaries, dense slice tagging.</div>
@@ -221,6 +222,7 @@
 
 <section id="commitments">
 <h2><span class="num">04</span>Core commitments</h2>
+<p>The worldview the design rests on. Softer than hard constraints — these are the principles that explain <em>why</em> the architecture is shaped the way it is. They don't fail lints, but they're the rationale a future revision must address before overturning a decision.</p>
 
 <div class="card">
   <h4>Structural orthogonality — Dunford-validated boundary</h4>
@@ -245,7 +247,7 @@
 
 <section id="directory">
 <h2><span class="num">05</span>Directory tree</h2>
-<p>Top-level <code>brand/</code> for single-org B2B repos. Every file is optional except <code>CLAUDE.md</code>; the loader gracefully degrades.</p>
+<p>The canonical folder layout. Every digital-health org installs this same shape. Generators read predictable paths regardless of subdomain. Every file is optional except <code>CLAUDE.md</code> — the loader gracefully degrades when slices are missing.</p>
 
 <pre><span class="folder">brand/</span>
 ├── <span class="key">CLAUDE.md</span>                       <span class="comment"># manifest + slice index + "deepen next" queue</span>
@@ -301,7 +303,7 @@
 
 <section id="frontmatter">
 <h2><span class="num">06</span>Frontmatter schema</h2>
-<p>Mandatory on every <code>.md</code>. Seven required + a handful of optionals. AI-first: terse summaries, dense slice tagging.</p>
+<p>Metadata every <code>.md</code> file declares at the top. Lets generators discover which slices a file exposes, gauge confidence, and reason about provenance without reading the body. Seven required fields, a handful of optionals.</p>
 <pre><span class="key">---</span>
 <span class="key">id:</span> <span class="string">guideline-positioning</span>
 <span class="key">type:</span> <span class="string">positioning</span>                          <span class="comment"># positioning|narrative|messaging|voice|persona|audience|...</span>
@@ -328,6 +330,7 @@
 
 <section id="provenance">
 <h2><span class="num">07</span>Provenance &amp; confidence</h2>
+<p>How an agent knows whether a slice is trustworthy enough to use. Two axes — <code>status</code> (workflow state: is this human-validated?) and <code>confidence</code> (source quality: how solid is the underlying evidence?). Generators set thresholds; slices below the bar are excluded with a footnote.</p>
 <table>
 <thead><tr><th>Status</th><th>Meaning</th><th>Generator behavior</th></tr></thead>
 <tbody>
@@ -349,7 +352,7 @@
 
 <section id="slices">
 <h2><span class="num">08</span>Slice-loading mechanics</h2>
-<p>Every H2 is a slice. <code>{folder}/{file-stem}#{slice-slug}</code>. Lowercase, replace non-alphanumerics with <code>-</code>, collapse repeats.</p>
+<p>How agents consume parts of a file instead of the whole. Every H2 in a <code>.md</code> file is a load-addressable slice; generators request only the slices they need. Saves tokens, narrows context, and keeps generators from "improving" content they shouldn't have seen in the first place.</p>
 <table>
 <thead><tr><th>Case</th><th>Rule</th></tr></thead>
 <tbody>
@@ -363,7 +366,7 @@
 
 <section id="manifest">
 <h2><span class="num">09</span>CLAUDE.md manifest template</h2>
-<p>Every brand folder ships this shape: header (version + status overview), slice index tables by layer, composition contract summary, "Next Steps to Deepen" queue, sources, status legend.</p>
+<p>The single front-door file every generator reads first. Lists what's in the brand folder, the status and confidence of each file, the composition contract summary, and the queue of frameworks to run next. Claude Code auto-loads <code>CLAUDE.md</code> — making it the manifest means generators always see the index before they reach for a specific slice.</p>
 <table>
 <thead><tr><th class="num">#</th><th>Framework</th><th>Section it deepens</th><th>Skip if</th></tr></thead>
 <tbody>
@@ -381,7 +384,7 @@
 
 <section id="contracts">
 <h2><span class="num">10</span>Composition contract</h2>
-<p>Lives at <code>brand/contracts.yaml</code>. Source of truth for which generator reads what. Generators also load <code>clients/{prospect}.md</code> as a third overlay.</p>
+<p>The wiring between generators and brand slices. Each generator declares which slices it requires and which are optional; the shared loader resolves them. Centralizing this in <code>contracts.yaml</code> means a generator can be added or removed without every other generator having to know.</p>
 <pre><span class="key">generators:</span>
   <span class="key">generate-deck:</span>
     <span class="key">requires:</span>
@@ -410,6 +413,7 @@
 
 <section id="eval">
 <h2><span class="num">11</span>Eval surface</h2>
+<p>Programmatic checks that verify generated content stays on-brand. When a deck, blog post, or landing page comes out of a generator, the eval scenarios run against it — catching banned phrases, missing positioning components, unsourced claims, or competitor lists drifting between files <em>before</em> the artifact ships. Run at generation time, on a cadence, or manually via <code>/aligned:eval-audit</code>.</p>
 <table>
 <thead><tr><th>Eval</th><th>Checks</th><th>Pass criterion</th></tr></thead>
 <tbody>
@@ -422,7 +426,7 @@
 
 <section id="versioning">
 <h2><span class="num">12</span>Versioning</h2>
-<p>Two layers — file-level <code>updated:</code> in frontmatter, folder-level <code>version.yaml</code>:</p>
+<p>How agents and tools track the brand folder's evolution. Two layers — file-level <code>updated:</code> in frontmatter, folder-level semver in <code>version.yaml</code>. Generated artifacts stamp the brand version they consumed, so a stale deck from six months ago is detectable when positioning changes.</p>
 <pre><span class="key">version:</span> <span class="string">0.4.0</span>
 <span class="key">generated_at:</span> <span class="string">2026-05-15</span>
 <span class="key">generated_by:</span> <span class="string">reverse-engineered-brand</span>
@@ -434,7 +438,7 @@
 
 <section id="multi-org">
 <h2><span class="num">13</span>Subdomain reuse (digital health)</h2>
-<p>Same shape. Different fills across digital-health subdomains.</p>
+<p>Proof that one architecture serves many subdomains. The directory shape doesn't change between a behavioral-health platform, an RPM company, and a digital therapeutic — only the fills (category names, competitors, personas, voice principles) shift. Below: the same canonical slots filled three ways.</p>
 
 <table>
 <thead><tr><th>Subdomain</th><th><code>strategy/positioning#category</code> (illustrative)</th></tr></thead>
@@ -484,6 +488,7 @@
 <!-- ============================================================ -->
 <section id="decisions">
 <h2><span class="num">14</span>Decision log <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive</span></h2>
+<p>Every architectural choice this design made, with the reasoning behind it and a confidence rating. Use this section to register disagreement: toggle any decision to "Reject" and the prompt below auto-fills with revision instructions for me.</p>
 
 <div class="interactive-section">
 <div class="interactive-banner">
@@ -663,7 +668,7 @@
 
 <section id="orphans">
 <h2><span class="num">15</span>Orphan / residual catalog</h2>
-<p>Considered and excluded. One-line reason each.</p>
+<p>What was considered during design and excluded, with the one-line reason for each. Prevents future revisits of settled-and-rejected ideas — when someone six months from now asks "why isn't there a monolithic brand-style-guide?", the answer is here.</p>
 <ul class="dash">
   <li><strong>Monolithic <code>brand-style-guide.md</code></strong> — duplicates design files.</li>
   <li><strong>Planted's <code>guides/</code> folder</strong> — how-to belongs in <code>CLAUDE.md</code>.</li>
@@ -683,6 +688,7 @@
 
 <section id="frameworks">
 <h2><span class="num">16</span>Framework registration</h2>
+<p>The interactive workshops that populate the brand folder. Each framework deepens one section of <code>brand/</code> via a structured Q&amp;A with the user (and often a specific advisor like Dunford or Raskin). The orchestrator <code>reverse-engineered-brand</code> chains them together for a cold-start; individual frameworks can be re-run later to sharpen any one section.</p>
 <p><strong>Nine frameworks + one orchestrator.</strong> Four existing wraps. Six net-new (counting the orchestrator). v0.3 simplified from twelve frameworks down to nine.</p>
 
 <h3>Orchestrator (run-once on cold start)</h3>
@@ -740,6 +746,7 @@
 
 <section id="migration">
 <h2><span class="num">17</span>Migration &amp; adoption</h2>
+<p>How to ship this design without breaking existing consumers. The existing <code>generate-deck</code>, <code>generate-blog-post</code>, and <code>generate-one-pager</code> skills hardcode the old <code>brand/guidelines/*</code> paths — those paths change to <code>brand/strategy/*</code>, <code>brand/language/*</code>, etc. in this design. The plan: change everything in one coordinated PR. No aliasing shim, no deprecation window.</p>
 <p><strong>Clean-state cutover. No aliasing shim.</strong> Single coordinated PR migrates the dispatch-tracker reference instance and updates the existing generator skills in the same change.</p>
 
 <div class="card">
@@ -766,6 +773,7 @@
 <!-- ============================================================ -->
 <section id="questions">
 <h2><span class="num">18</span>Open questions <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive</span></h2>
+<p>Decisions deliberately deferred — each has a named trigger that would resolve it later, so we don't fake-answer questions whose right answer depends on evidence we don't have yet. Toggle any to "Include" to ask now, "Reject" to remove from the list entirely, or leave "Defer" to keep on watch.</p>
 
 <div class="interactive-section">
 <div class="interactive-banner">
@@ -885,6 +893,7 @@
 
 <section id="tests">
 <h2><span class="num">19</span>Tests required</h2>
+<p>What must pass before this design is considered shipped. Schema lints prove every file conforms to the frontmatter contract. Generator contract tests prove every <code>requires:</code> slice resolves. Eval scenarios prove generated content stays on-brand. Migration tests prove dispatch-tracker still produces equivalent output after the rename.</p>
 <table>
 <thead><tr><th>Test</th><th>Verifies</th></tr></thead>
 <tbody>
