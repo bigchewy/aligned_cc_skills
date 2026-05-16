@@ -1,148 +1,112 @@
 # Reverse-Engineered Brand Examples
 
+Running example: **Fieldline** — a B2B SaaS company that helps mid-market field-service organizations dispatch, track, and invoice without spreadsheets.
+
+---
+
 ## PHASE 0: Intake
 
-### User gives clear URL and supplementary folder
+### User giving a clear URL and optional local folder
 
-**User:** "The URL is acmecorp.com. I've also got a folder at ~/Documents/acme-brand/ — there are three customer interview transcripts and our last sales deck in there."
+**User:** "The URL is fieldline.io. I also have a folder at ~/Documents/fieldline-research with a few customer interview transcripts and our last sales deck."
 
-**Advisor:** "Perfect. I'll read the homepage and the supplementary content in parallel. Customer interviews and a sales deck are high-signal inputs — we should be able to reach medium confidence on several slices. Give me a moment to load and summarize what I'm seeing before we talk through it."
+**Advisor:** "Got it. Public surface: fieldline.io. Supplementary content: ~/Documents/fieldline-research — I'll check for interview transcripts and any deck or one-pager files. I'll read the homepage and About page first to establish a baseline before touching the supplementary content, so I'm not anchoring on internal language before I see what you say publicly. Any time pressure or hard constraints before I start?"
 
-> Confirms the inputs, signals what confidence gain the supplementary content enables, and moves immediately to PHASE 1.
+> Opens with explicit sequencing — public surface before internal documents — and checks for constraints before consuming the URL
 
-### User gives a vague description without a URL
+### User giving a vague description without a URL
 
-**User:** "We're a software company that helps marketing teams do better content. We've been around about four years."
+**User:** "We help field-service companies manage their operations. I don't have a public URL — we're kind of pre-launch."
 
-**Advisor:** "I need a URL before we can start. I'm going to read your public surface — your homepage or About page — as the baseline hypothesis for everything we build. Without it, I'm guessing, and guesses don't become a brand folder you can trust.
+**Advisor:** "Understood — pre-launch or private company, no public URL. I can still run this session, but the intake changes: instead of reading your public surface, I'll need you to walk me through what you currently say to a prospect in the first two minutes of a call. That becomes our stand-in for the homepage. Do you have a deck, one-pager, or even a strong email template I can use as the raw material? If not, start with the two-minute pitch and we'll build from there."
 
-What's the company's homepage URL?"
-
-> Holds the WAIT. Does not attempt to proceed on a verbal description alone.
-
-### User pushes back on needing a URL
-
-**User:** "The website is really out of date — it doesn't represent where we are at all. Can we just skip it?"
-
-**Advisor:** "I still need it. Here's why: the public surface is the market's current perception — not what you want it to be, but what it actually is right now. That gap between 'where the website is' and 'where you are' is exactly what we need to map. It becomes evidence of positioning drift, and it tells us which slices of the brand folder need the most urgent deepening.
-
-The outdated website is data, not a problem to skip. Give me the URL."
-
-> Reframes the outdated-website objection as signal rather than noise.
+> Doesn't stall on the missing URL — offers a concrete fallback and keeps the session moving
 
 ---
 
 ## PHASE 1: Public surface review
 
-### Advisor's read matches user's intent
+### Advisor's URL summary matching the user's intent
 
-**Advisor:** "Here's what I'm seeing on the surface:
+**User:** "What did you find on the homepage?"
 
-Acme Corp appears to sell a content analytics platform targeted at B2B marketing teams, specifically those managing high-volume content programs. The homepage leads with 'know what's working before you publish' — a differentiated claim around predictive insights rather than post-hoc reporting. The primary audience looks like demand-gen and content ops roles at mid-market SaaS companies.
+**Advisor:** "Fieldline leads with 'Stop losing revenue to missed appointments and manual invoicing.' The hero section targets field-service companies — HVAC, plumbing, electrical — that are growing past the point where spreadsheets and phone calls work. The value proposition is operational control: dispatch visibility, automated scheduling, and same-day invoicing. The word 'spreadsheet' appears four times above the fold. The primary audience signal is company size — language like 'your growing team' suggests 20–200 employees rather than enterprise. Does that match how you'd describe what you do?"
 
-What's notably absent: no mention of integrations, no pricing signal, very little social proof above the fold.
+> Presents a concrete summary and closes with a calibration check — doesn't assume accuracy
 
-Does this match what you know about the company? What am I missing or misreading?"
+**User:** "Yes, that's exactly it."
 
-**User:** "That's pretty accurate. The only thing I'd correct is the audience — it's actually editorial teams at media companies, not marketing teams at SaaS."
+**Advisor:** "Good. I'll lock that as the baseline audience frame and move to your supplementary content."
 
-> User corrects an inferred audience claim. The advisor incorporates this before seeding the sub-frameworks.
+> Confirms the frame is locked before proceeding — no drift between phases
 
-**Advisor:** "Noted — editorial teams at media companies, not demand-gen at SaaS. That changes the competitive alternatives and the JTBD frame substantially. Let me carry that forward. Everything downstream will be built from that audience, not what the website implied."
+### User correcting an inferred audience claim
 
-> Confirms the correction explicitly so the user knows it's been absorbed.
+**User:** "You said our audience is 20–200 employees — that's not right. Our sweet spot is 50–500, and we've been moving upmarket. We just closed a 600-person roofing company."
 
-### Advisor catches a positioning gap the user missed
+**Advisor:** "Corrected — 50–500 is the stated sweet spot, upmarket motion in progress. That changes the positioning question: your homepage is signaling small-team ('your growing team'), but your deal motion is landing mid-market. That gap is either a funnel problem — qualified buyers self-select out before they talk to sales — or a messaging lag — your best customers are bigger than your homepage implies. We'll surface that in the positioning work. I'll adjust the audience assumption across all subsequent phases."
 
-**Advisor:** "One thing worth flagging: the homepage makes three separate value claims — predictive insights, workflow automation, and team collaboration — but none of them is emphasized over the others. It reads like a feature list, not a position. If all three are equal, competitors can claim any one of them and it won't feel like a theft.
-
-We'll need to pick one when we get to PHASE 2. Does the team have a sense of which of those three drives most purchase decisions?"
-
-**User:** "Honestly, I think we lead with prediction — that's the thing nobody else does."
-
-> User surfaces a prioritization insight in response to a framing observation.
-
-**Advisor:** "Good. Predictive insights is our tentative leading differentiator. We'll test that assumption when we run the 5 Components positioning framework."
+> Accepts the correction immediately, names the strategic implication, and commits to carrying it forward across all phases
 
 ---
 
 ## PHASE 6: Messaging-distillation handoff
 
-### Advisor surfaces tagline draft and asks for calibration
+### Advisor surfacing a tagline draft and asking for calibration
 
-**Advisor:** "I'm about to hand off to the messaging-distillation framework. Before I do, here's what I'm carrying in from positioning and narrative:
+**Advisor:** "Positioning is complete. Before I open the messaging-distillation framework, I want to surface one inference for your calibration. The positioning work landed on 'operational control for field-service teams that have outgrown spreadsheets' as the category framing. A candidate tagline that falls out of that: 'The dispatch layer your crew actually uses.' It hits the operational register, implies adoption (not just purchase), and sidesteps the generic 'platform' language that saturates your category. Does that direction feel right, or does it pull away from something important?"
 
-- **Category:** Predictive content intelligence
-- **Leading differentiator:** Know what will perform before you commit budget
-- **Target:** Editorial directors and content ops leads at mid-market media companies
-- **Tagline candidates from positioning synthesis:**
-  - 'Stop guessing. Start knowing.'
-  - 'Content confidence, before publish.'
-  - 'Predict. Publish. Repeat.'
+> Probes tagline direction before opening the framework — surfaces the inference so the user can correct it before it gets baked in
 
-These are rough — messaging-distillation will refine them. But I want your reaction before we go in. Do any of these land, and are there phrases from your customers or sales calls that we should seed the framework with?"
+**User:** "I like the direction but 'crew' sounds too blue-collar for our upmarket move. We'd say 'team' or 'ops team.'"
 
-**User:** "The first one is closest. Customers literally say 'we were guessing' when they describe life before us. Seed with that."
+**Advisor:** "Noted — 'crew' activates the wrong register for the upmarket buyer. 'Team' is safer; 'ops team' is more precise and carries more authority. Carrying that word-choice forward into the messaging session. Opening the messaging-distillation framework now — you'll be asked about tagline variants, value-prop phrasings, and persona-specific language."
 
-> User confirms a tagline direction and provides a customer language cue to seed the sub-framework.
-
-**Advisor:** "'We were guessing' is a strong voice-of-customer signal. I'll carry that phrase and the 'stop guessing' frame into messaging-distillation."
-
-### Advisor catches a value-prop conflict before handoff
-
-**Advisor:** "I'm seeing a tension across our outputs. PHASE 2 positioning says the target is editorial directors. But PHASE 4's JTBD surfaced a second audience — content ops managers — with a different job-to-be-done: reduce publishing cycle time, not improve performance prediction. These two audiences want different things.
-
-Before we go into messaging-distillation, I want a decision: do we message to both audiences with separate value props, or do we pick one primary and treat the other as secondary?
-
-This affects how many messaging tracks messaging-distillation produces. One primary is simpler. Two parallel tracks is more work but may be the honest answer if both roles are genuinely on the buying committee."
-
-**User:** "Two tracks. Both are in the room on every deal."
-
-> User confirms the multi-audience structure. Advisor carries this into the sub-framework.
+> Accepts the register correction and explicitly commits it to carry-forward before handing off to the next framework
 
 ---
 
 ## PHASE 11: Folder write
 
-### Advisor previews manifest and asks for confirmation
+### Advisor previewing the write and asking for confirmation
 
-**Advisor:** "Here's everything I'm about to write:
+**Advisor:** "Ready to write the brand folder. Here's what I'm about to create under `brand/`:
 
-| File | Status | Confidence |
-|------|--------|------------|
-| brand/positioning.md | draft | medium |
-| brand/narrative.md | draft | medium |
-| brand/jobs-to-be-done.md | draft | low |
-| brand/personas/editorial-director.md | draft | medium |
-| brand/personas/content-ops-manager.md | draft | low |
-| brand/messaging.md | draft | medium |
-| brand/competitive.md | draft | low |
-| brand/proof-points.md | draft | low |
-| brand/brand-voice.md | draft | medium |
-| brand/design-principles.md | missing | — |
-| brand/version.yaml | — | — |
-| brand/CLAUDE.md | — | — |
-| brand/contracts.yaml | — | — |
+```
+brand/
+  strategy/
+    positioning.md       (confidence: high)
+    narrative.md         (confidence: high)
+    jobs-to-be-done.md   (confidence: medium)
+  personas/
+    vp-ops.md            (confidence: high)
+    owner-operator.md    (confidence: medium)
+  language/
+    messaging.md         (confidence: high)
+    voice.md             (confidence: high)
+  market/
+    competitive.md       (confidence: medium)
+  proof/
+    proof-points.md      (confidence: low)
+  design/
+    design-principles.md (confidence: medium)
+```
 
-JTBD and competitive are low because we had no customer interview data or deal history to cross-reference. Content-ops persona is low because we only have one inferred data point.
+`proof-points.md` is at low confidence — I only have two quantitative claims from your homepage, both unverified. `jobs-to-be-done.md` is at medium — inferred from the interview transcripts, not validated with you directly. Everything else has session-level backing. Confirm this write, or adjust confidence tiers or paths before I proceed."
 
-**Confirm, and I'll write the folder atomically.**"
+> Previews the full folder structure with confidence tiers before touching the filesystem — gives the user a final correction window
 
-**User:** "One change: personas/editorial-director.md should be medium, but content-ops-manager.md should stay low. We have three editorial director interviews from PHASE 1's supplementary folder — that warrants medium. Ops is genuinely inferred."
+### User requesting a confidence tier change
 
-> User exercises judgment on confidence levels based on evidence they know the advisor processed.
+**User:** "The jobs-to-be-done.md should be high confidence, not medium. We went through all five jobs in detail during the session."
 
-**Advisor:** "Agreed. Editorial director moves to medium — three interview transcripts is real signal. Content-ops stays low. Updating the manifest now, then writing."
+**Advisor:** "You're right — we validated all five jobs against the interview transcripts and you confirmed each one. Bumping jobs-to-be-done.md to high confidence. Revised write:
 
-### User requests a confidence upgrade at write time
+```
+  strategy/
+    jobs-to-be-done.md   (confidence: high)  ← updated
+```
 
-**User:** "Actually, the competitive.md confidence should be medium, not low. We walked through all five competitors in the battle-card phase and I validated every differentiator claim by hand."
+All other tiers unchanged. Writing now."
 
-**Advisor:** "You're right — the battle-card PHASE was thorough and you confirmed each claim against your direct sales experience. That's user-validated evidence, not inference. Competitive moves to medium.
-
-Updated manifest:
-- brand/competitive.md — draft / **medium**
-
-Everything else stays as listed. Ready to write."
-
-> Advisor updates the manifest on user request with a clear reason, does not push back on a well-supported ask.
+> Accepts the correction with a one-line rationale check, restates only the changed item, and proceeds without re-listing the entire structure

@@ -38,7 +38,9 @@ This plan ships only the canonical schema spec, the shared loader, and the six n
 
 ---
 
-### Task 1: Reference doc — `docs/brand-folder-spec.md`
+### ✅ Task 1: Reference doc — `docs/brand-folder-spec.md`
+
+> MOCKUP DEVIATION: The spec header cites `docs/mockups/2026-05-15-ai-native-brand-folder.html` (v0.6) as the source design instead of `docs/plans/2026-05-15-ai-native-brand-folder-design.md` as the plan template specified. The design doc path does not exist in this repo; the HTML mockup is the actual canonical design artifact. Pointing to a non-existent file would create a broken reference.
 
 **Files:**
 - Create: `docs/brand-folder-spec.md`
@@ -126,7 +128,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(brand): add ca
 
 ---
 
-### Task 2: Shared loader skill — `skills/_shared/load-brand-slices.md`
+### ✅ Task 2: Shared loader skill — `skills/_shared/load-brand-slices.md`
 
 **Files:**
 - Create: `skills/_shared/load-brand-slices.md`
@@ -220,7 +222,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(skills): add s
 
 ---
 
-### Task 3: Framework `reverse-engineered-brand` — prompt.md
+### ✅ Task 3: Framework `reverse-engineered-brand` — prompt.md
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/prompt.md`
@@ -324,7 +326,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 4: Framework `reverse-engineered-brand` — examples.md
+### ✅ Task 4: Framework `reverse-engineered-brand` — examples.md
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/examples.md`
@@ -372,7 +374,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 5: Framework `reverse-engineered-brand` — anti-examples.md
+### ✅ Task 5: Framework `reverse-engineered-brand` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/anti-examples.md`
@@ -419,7 +421,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 6: Framework `buyer-persona` — prompt.md
+### ✅ Task 6: Framework `buyer-persona` — prompt.md
 
 **Files:**
 - Create: `frameworks/buyer-persona/prompt.md`
@@ -502,7 +504,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 7: Framework `buyer-persona` — examples.md
+### ✅ Task 7: Framework `buyer-persona` — examples.md
 
 **Files:**
 - Create: `frameworks/buyer-persona/examples.md`
@@ -541,7 +543,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 8: Framework `buyer-persona` — anti-examples.md
+### ✅ Task 8: Framework `buyer-persona` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/buyer-persona/anti-examples.md`
@@ -580,7 +582,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 9: Framework `messaging-distillation` — prompt.md
+### ✅ Task 9: Framework `messaging-distillation` — prompt.md
 
 **Files:**
 - Create: `frameworks/messaging-distillation/prompt.md`
@@ -661,7 +663,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 10: Framework `messaging-distillation` — examples.md
+### ✅ Task 10: Framework `messaging-distillation` — examples.md
 
 **Files:**
 - Create: `frameworks/messaging-distillation/examples.md`
@@ -696,7 +698,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 11: Framework `messaging-distillation` — anti-examples.md
+### ✅ Task 11: Framework `messaging-distillation` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/messaging-distillation/anti-examples.md`
@@ -734,7 +736,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 12: Framework `brand-voice` — prompt.md
+### ✅ Task 12: Framework `brand-voice` — prompt.md
 
 **Files:**
 - Create: `frameworks/brand-voice/prompt.md`
@@ -812,7 +814,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 13: Framework `brand-voice` — examples.md
+### ✅ Task 13: Framework `brand-voice` — examples.md
 
 **Files:**
 - Create: `frameworks/brand-voice/examples.md`
@@ -847,7 +849,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 14: Framework `brand-voice` — anti-examples.md
+### ✅ Task 14: Framework `brand-voice` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/brand-voice/anti-examples.md`
@@ -885,7 +887,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 15: Framework `proof-points-audit` — prompt.md
+### ✅ Task 15: Framework `proof-points-audit` — prompt.md
 
 **Files:**
 - Create: `frameworks/proof-points-audit/prompt.md`
@@ -964,7 +966,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 16: Framework `proof-points-audit` — examples.md
+### ✅ Task 16: Framework `proof-points-audit` — examples.md
 
 **Files:**
 - Create: `frameworks/proof-points-audit/examples.md`
@@ -999,7 +1001,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 17: Framework `proof-points-audit` — anti-examples.md
+### ✅ Task 17: Framework `proof-points-audit` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/proof-points-audit/anti-examples.md`
@@ -1037,7 +1039,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 18: Framework `competitive-battle-card` — prompt.md
+### ✅ Task 18: Framework `competitive-battle-card` — prompt.md
 
 **Files:**
 - Create: `frameworks/competitive-battle-card/prompt.md`
@@ -1114,7 +1116,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 19: Framework `competitive-battle-card` — examples.md
+### ✅ Task 19: Framework `competitive-battle-card` — examples.md
 
 **Files:**
 - Create: `frameworks/competitive-battle-card/examples.md`
@@ -1149,7 +1151,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 20: Framework `competitive-battle-card` — anti-examples.md
+### ✅ Task 20: Framework `competitive-battle-card` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/competitive-battle-card/anti-examples.md`
@@ -1187,7 +1189,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 21: Register the six new frameworks in `frameworks/registry.yaml`
+### ✅ Task 21: Register the six new frameworks in `frameworks/registry.yaml`
 
 **Files:**
 - Modify: `frameworks/registry.yaml` (append six new entries)
@@ -1305,7 +1307,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): r
 
 ---
 
-### Task 22: Bump plugin version and update README skill reference
+### ✅ Task 22: Bump plugin version and update README skill reference
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json` (version bump)
@@ -1364,7 +1366,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "chore: bump version
 
 ---
 
-### Task 23: Smoke-test the new frameworks via `use-framework`
+### ✅ Task 23: Smoke-test the new frameworks via `use-framework`
 
 **Files:**
 - No file changes — this is a smoke test that validates the prior tasks integrate correctly.

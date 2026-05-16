@@ -1254,3 +1254,63 @@ frameworks:
     domains: [digital-health, healthcare-gtm, enterprise-sales, healthcare-product-strategy, payer-provider-sales]
     use_when: "a digital health founder is selecting or refining their go-to-market motion, running multiple motions in parallel with unclear progress, or preparing for a fundraise and needs to commit to a single primary motion backed by matching product, evidence, buyer, and runway assumptions"
     helpful_documents: ["current pitch deck", "sales pipeline by segment", "clinical evidence inventory (case studies / outcomes data / RCTs)", "runway and fundraising plan", "integration roadmap (EHR / payer / revenue-cycle)"]
+
+  - id: reverse-engineered-brand
+    name: "a Reverse-Engineered Brand session — a fully interactive walk-through that takes a public URL plus optional supplementary content and produces a canonical brand/ folder ready for human validation"
+    advisor: april-dunford
+    purpose: "the orchestrator that composes positioning, narrative, jobs-to-be-done, buyer-persona, messaging-distillation, competitive-battle-card, proof-points-audit, brand-voice, and design-principles into a single cold-start brand folder build"
+    category: positioning
+    domains: [brand-folder, positioning, audiences, personas, messaging, voice, competitive, proof-points, design]
+    use_when: "an organization is building its first canonical brand/ folder from a public URL and optional supplementary content"
+    required_documents: ["a public URL for the org (homepage or About page)"]
+    helpful_documents: ["a local folder path with supplementary content (past decks, customer interviews, sample copy, internal docs)"]
+
+  - id: buyer-persona
+    name: "a Buyer-Persona framework — a structured walk-through that produces a role-specific persona file for the buying committee"
+    advisor: matt-dixon
+    purpose: "produces one personas/{role}.md file per run, capturing role overview, evaluation criteria, skepticism triggers, language resonance, and common objections — anchored in the Challenger commercial-insight frame"
+    category: customer
+    domains: [buyer-persona, buying-committee, sales-strategy, customer-research]
+    use_when: "an organization needs to characterize a specific role on the buying committee (champion, mobilizer, blocker, approver)"
+    required_documents: ["the role being profiled (e.g., CMO, VP-Ops, Chief People Officer)"]
+    helpful_documents: ["customer research", "interview transcripts", "competitor positioning"]
+
+  - id: messaging-distillation
+    name: "a Messaging Distillation framework — the workshop that turns a positioning chain into copy-ready language"
+    advisor: april-dunford
+    purpose: "distills positioning and narrative into a language/messaging.md file with slices for category name, tagline, elevator-pitch variants, value-prop phrasings, value-prop-to-persona map, key phrases, and (optional) pricing language"
+    category: positioning
+    domains: [messaging, copywriting, positioning, value-propositions]
+    use_when: "positioning and narrative are complete and the org needs copy-ready language for decks, pages, emails, and one-pagers"
+    required_documents: ["completed strategy/positioning.md (5-components output)"]
+    helpful_documents: ["strategy/narrative.md", "personas/*.md", "proof/proof-points.md", "sample existing copy"]
+
+  - id: brand-voice
+    name: "a Brand-Voice framework — a structured pass that extracts tone principles, register, banned phrases, terminology, and glossary into a single voice.md file"
+    advisor: steve-krug
+    purpose: "extracts a complete language/voice.md from 3–10 sample pieces of existing copy, with seven slices (tone-principles, register-table, dos-and-donts, banned-phrases, banned-terms, glossary, competitor-naming)"
+    category: brand
+    domains: [voice, tone, terminology, brand-language, copywriting]
+    use_when: "an organization has existing copy and needs to extract a documented brand voice + terminology contract"
+    required_documents: ["3–10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales emails)"]
+    helpful_documents: ["competitor copy samples", "category-name and tagline from messaging.md"]
+
+  - id: proof-points-audit
+    name: "a Proof-Points Audit framework — a structured pass that extracts every quantitative claim from existing copy and grounds it in source + date + confidence"
+    advisor: the-qa-engineer
+    purpose: "produces proof/proof-points.md with structured, sourced, dated claims; conditionally splits into proof/clinical-evidence.md and proof/compliance.md when the org has clinical evidence or compliance certifications"
+    category: evidence
+    domains: [proof-points, evidence, claims-substantiation, brand-credibility]
+    use_when: "an organization needs to inventory and verify every quantitative or proof-shaped claim in its customer-facing copy"
+    required_documents: ["existing customer-facing copy (homepage, deck, one-pager)"]
+    helpful_documents: ["customer interview transcripts", "case study drafts", "third-party reports", "regulatory filings"]
+
+  - id: competitive-battle-card
+    name: "a Competitive Battle-Card framework — a deep view of the competitive terrain built on the canonical alternatives list in positioning"
+    advisor: april-dunford
+    purpose: "produces market/competitive.md with competitive-landscape, differentiators, and common-objections slices; declares depends_on against strategy/positioning#competitive-alternatives so drift is detectable"
+    category: competitive-analysis
+    domains: [competitive-analysis, battle-cards, sales-enablement, objection-handling]
+    use_when: "positioning and messaging are complete and the org needs a salesperson's working battle card for the named competitors"
+    required_documents: ["completed strategy/positioning.md (Component 1: competitive alternatives)", "completed language/messaging.md (value-prop phrasings)"]
+    helpful_documents: ["customer win/loss interviews", "competitor public materials"]

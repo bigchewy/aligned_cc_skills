@@ -1,9 +1,9 @@
 # Aligned
 
-A virtual board of advisors for Claude Code. 70 expert personas, 147 structured frameworks, auto-selected by context.
+A virtual board of advisors for Claude Code. 70 expert personas, 154 structured frameworks, auto-selected by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.14.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.30.0-green.svg)](.claude-plugin/plugin.json)
 
 ```
 /plugin marketplace add bigchewy/aligned_cc_skills
@@ -68,7 +68,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 1. **Converse with an advisor.** `/aligned:use-advisor April Dunford` and describe a positioning challenge. She runs her actual methodology.
 2. **Run a brainstorm.** `/aligned:brainstorming` with a real problem. The system auto-detects your domain and selects relevant advisors for the critique panel.
 3. **Layer in context.** Add competitors, personas, and strategy docs to your project folder and update your `CLAUDE.md` to let the system know what's there. The advisors incorporate your company context into every conversation.
-4. **Try a framework.** `/aligned:use-framework` to browse 147 structured decision frameworks with interactive, phase-gated walkthroughs.
+4. **Try a framework.** `/aligned:use-framework` to browse 154 structured decision frameworks with interactive, phase-gated walkthroughs.
 ## Reference
 
 ### Skill Reference
@@ -186,6 +186,14 @@ Semver, pre-1.0:
 Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
+
+##### 0.30.0: AI-Native Brand Folder
+- **Canonical brand folder spec** (`docs/brand-folder-spec.md`): schema reference for the AI-native `brand/` folder — directory tree, frontmatter contract, provenance/confidence model, slice-loading mechanics, composition contracts, versioning, and consumer-side eval scenarios.
+- **Shared loader** (`skills/_shared/load-brand-slices.md`): single loader that every brand-consuming generator delegates to; resolves `{folder}/{file-stem}#{slice-slug}` references, validates frontmatter, and degrades gracefully on missing slices.
+- **6 new frameworks** for authoring an AI-native brand folder:
+  - `reverse-engineered-brand` — orchestrator that runs the five sub-frameworks in sequence
+  - `buyer-persona`, `messaging-distillation`, `brand-voice`, `proof-points-audit`, `competitive-battle-card`
+- **154 frameworks** (+6)
 
 ##### 0.26.0: Manual Deploy Artifact Catalog
 - **Manual-deploy artifact catalog** (`skills/_shared/manual-deploy-artifact-catalog.md`): detects files whose creation requires a manual production step (v1: Supabase migrations, env-var additions). Consumed by `writing-plans` (auto-populates the plan's Post-Automation section) and `finishing-a-development-branch` (Step 0.5 hard-gates merge on missing evidence). See the design doc at `docs/plans/2026-04-20-manual-deploy-artifacts-rca-design.md`.
