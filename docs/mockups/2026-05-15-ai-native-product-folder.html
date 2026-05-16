@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Native Product Folder — Design v0.2 (digital health)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream-50:  #FDFCFA; --cream-100: #FAF8F5; --cream-200: #F5F2EE; --cream-300: #EBE6E0;
+    --bark-900:  #2C2825; --bark-700:  #3D3833; --bark-500:  #6B6560; --bark-400:  #8A847E;
+    --bark-300:  #A9A49E; --bark-200:  #D4D0CB; --bark-100:  #E8E5E1;
+    --forest-600: #3D6B4A; --forest-500: #4A7C59; --forest-400: #6B9B7A; --forest-100: #E8F0EB;
+    --error:   #A65D5D; --success: #5B8A5B; --warning: #B8935A;
+    --shadow-sm: 0 1px 2px rgba(44, 40, 37, 0.04);
+    --shadow-md: 0 2px 8px rgba(44, 40, 37, 0.06);
+    --shadow-lg: 0 4px 16px rgba(44, 40, 37, 0.08);
+    --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
+    --font-display: 'Fraunces', Georgia, 'Cambria', 'Times New Roman', serif;
+    --font-body:    'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: var(--bark-700); background: var(--cream-100); margin: 0; padding: 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  .watermark { position: fixed; top: -100px; right: -200px; width: 800px; height: 800px; z-index: 0; pointer-events: none; opacity: 0.05; }
+  .watermark svg { width: 100%; height: 100%; }
+  .layout { display: grid; grid-template-columns: 280px 1fr; max-width: 1400px; margin: 0 auto; min-height: 100vh; position: relative; z-index: 1; }
+  aside.toc { background: var(--cream-50); border-right: 1px solid var(--cream-300); padding: 48px 32px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  aside.toc h2 { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--bark-500); letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 16px 0; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; counter-reset: section; }
+  aside.toc ol li { counter-increment: section; margin-bottom: 4px; }
+  aside.toc ol li::before { content: counter(section) "."; color: var(--bark-400); font-family: var(--font-display); font-feature-settings: 'tnum'; font-size: 13px; margin-right: 8px; display: inline-block; width: 20px; }
+  aside.toc a { color: var(--bark-700); text-decoration: none; font-size: 14px; border-bottom: 1px solid transparent; transition: border-color 0.15s ease, color 0.15s ease; }
+  aside.toc a:hover { color: var(--forest-500); border-bottom-color: var(--forest-400); }
+  aside.toc a.interactive { color: var(--forest-600); font-weight: 500; }
+  aside.toc a.interactive::after { content: " ●"; font-size: 10px; color: var(--forest-500); }
+  main { padding: 64px 56px; max-width: 920px; }
+  .header { margin-bottom: 56px; padding-bottom: 32px; border-bottom: 1px solid var(--cream-300); }
+  .eyebrow { font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--forest-500); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 16px; }
+  h1 { font-family: var(--font-display); font-size: 48px; font-weight: 500; line-height: 1.1; color: var(--bark-900); margin: 0 0 16px 0; letter-spacing: -0.02em; }
+  .subtitle { font-family: var(--font-display); font-style: italic; font-size: 19px; font-weight: 400; color: var(--bark-500); line-height: 1.5; max-width: 60ch; margin: 0 0 32px 0; }
+  .meta-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--bark-500); }
+  .meta-row .meta-label { color: var(--bark-400); }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--forest-100); color: var(--forest-600); border-radius: 999px; font-size: 12px; font-weight: 500; letter-spacing: 0.02em; }
+  h2 { font-family: var(--font-display); font-size: 32px; font-weight: 500; color: var(--bark-900); margin: 64px 0 16px 0; letter-spacing: -0.015em; line-height: 1.2; scroll-margin-top: 24px; }
+  h2 .num { color: var(--bark-300); font-feature-settings: 'tnum'; margin-right: 12px; }
+  h3 { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--bark-900); margin: 40px 0 12px 0; line-height: 1.3; }
+  h4 { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--bark-700); margin: 28px 0 8px 0; text-transform: uppercase; letter-spacing: 0.06em; }
+  p { margin: 0 0 16px 0; }
+  p.lede { font-size: 18px; line-height: 1.6; color: var(--bark-700); margin-bottom: 24px; }
+  strong { color: var(--bark-900); font-weight: 600; }
+  em { font-style: italic; color: var(--bark-700); }
+  ul, ol { padding-left: 24px; margin: 0 0 16px 0; }
+  li { margin-bottom: 6px; }
+  ul.dash { list-style: none; padding-left: 0; }
+  ul.dash li { position: relative; padding-left: 24px; }
+  ul.dash li::before { content: "—"; position: absolute; left: 0; color: var(--forest-500); font-weight: 500; }
+  .card { background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card-tight { background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-md); padding: 16px 20px; }
+  .card-tight h5 { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--bark-900); margin: 0 0 6px 0; }
+  .card-tight p { font-size: 14px; color: var(--bark-500); margin: 0; line-height: 1.5; }
+  .constraint { border-left: 3px solid var(--forest-500); padding: 4px 0 4px 20px; margin-bottom: 16px; }
+  .constraint strong:first-child { color: var(--bark-900); font-weight: 600; }
+  code { font-family: var(--font-mono); font-size: 13px; background: var(--cream-200); color: var(--bark-900); padding: 1px 6px; border-radius: 4px; }
+  pre { background: var(--bark-900); color: var(--cream-100); padding: 24px; border-radius: var(--radius-lg); overflow-x: auto; font-family: var(--font-mono); font-size: 13px; line-height: 1.65; box-shadow: var(--shadow-md); margin: 24px 0; }
+  pre code { background: none; color: inherit; padding: 0; }
+  pre .comment { color: var(--bark-400); } pre .key { color: #C4B999; } pre .string { color: #B8C99A; } pre .folder { color: var(--forest-400); } pre .delta { color: #E8B86A; font-weight: 500; } pre .strike { color: var(--error); text-decoration: line-through; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 14px; background: var(--cream-50); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+  thead { background: var(--cream-200); }
+  th { text-align: left; padding: 12px 16px; font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--bark-700); border-bottom: 1px solid var(--cream-300); letter-spacing: 0.02em; }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--cream-200); color: var(--bark-700); vertical-align: top; line-height: 1.55; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--cream-100); }
+  td code { font-size: 12px; }
+  td.num { font-feature-settings: 'tnum'; color: var(--bark-400); font-family: var(--font-display); white-space: nowrap; }
+
+  .interactive-section { background: linear-gradient(180deg, var(--forest-100) 0%, var(--cream-100) 60px); border-radius: var(--radius-xl); padding: 24px 28px 32px; margin: 32px -28px; }
+  .interactive-banner { display: flex; gap: 12px; align-items: flex-start; background: var(--cream-50); border: 1px solid var(--forest-100); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--bark-700); }
+  .interactive-banner .icon { color: var(--forest-500); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  .interactive-banner strong { color: var(--bark-900); }
+  table.interactive td { vertical-align: middle; }
+  table.interactive .decision-num { font-family: var(--font-display); font-feature-settings: 'tnum'; color: var(--bark-400); font-weight: 500; }
+  table.interactive .decision-title { font-weight: 500; color: var(--bark-900); }
+  table.interactive td.decision-desc { font-size: 13px; color: var(--bark-500); line-height: 1.5; }
+  select.dropdown { font-family: var(--font-body); font-size: 13px; padding: 6px 10px; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--cream-50); color: var(--bark-700); cursor: pointer; min-width: 110px; }
+  select.dropdown:focus { outline: none; border-color: var(--forest-400); box-shadow: 0 0 0 3px var(--forest-100); }
+  select.dropdown.reject, select.dropdown.include { color: var(--forest-600); font-weight: 500; border-color: var(--forest-400); background: var(--forest-100); }
+  select.dropdown.q-reject { color: var(--error); font-weight: 500; border-color: var(--error); background: #F4E3E3; }
+  tr.row-active td { background: var(--forest-100) !important; }
+  tr.row-rejected td { background: #F4E3E3 !important; }
+  tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: var(--error); text-decoration-thickness: 1px; }
+  tr.section-divider td { background: var(--cream-200); color: var(--bark-700); font-family: var(--font-display); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--cream-300); border-bottom: 1px solid var(--cream-300); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--forest-600); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--bark-400); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+  .prompt-box { margin-top: 20px; background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); }
+  .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .prompt-box-label { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--bark-700); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn { font-family: var(--font-body); font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--cream-300); background: var(--cream-100); color: var(--bark-700); font-weight: 500; transition: background 0.15s ease, border-color 0.15s ease; }
+  .btn:hover { background: var(--cream-200); border-color: var(--bark-300); }
+  .btn-primary { background: var(--forest-500); color: white; border-color: var(--forest-500); }
+  .btn-primary:hover { background: var(--forest-600); border-color: var(--forest-600); }
+  .btn.copied { background: var(--success); color: white; border-color: var(--success); }
+  textarea.prompt-textarea { width: 100%; min-height: 160px; padding: 14px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--bark-900); background: var(--cream-100); border: 1px solid var(--cream-300); border-radius: var(--radius-md); resize: vertical; transition: border-color 0.15s ease; }
+  textarea.prompt-textarea:focus { outline: none; border-color: var(--forest-400); box-shadow: 0 0 0 3px var(--forest-100); }
+  .prompt-hint { margin-top: 8px; font-size: 12px; color: var(--bark-400); font-style: italic; }
+
+  .sev { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; vertical-align: middle; }
+  .sev.high { background: var(--error); } .sev.med { background: var(--warning); } .sev.low { background: var(--bark-300); } .sev.sound { background: var(--success); }
+  blockquote { background: var(--cream-50); border-left: 3px solid var(--forest-500); padding: 16px 24px; margin: 24px 0; border-radius: 0 var(--radius-md) var(--radius-md) 0; font-style: italic; color: var(--bark-700); }
+  blockquote p:last-child { margin-bottom: 0; }
+  .graph { background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-lg); padding: 24px; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--bark-700); overflow-x: auto; white-space: pre; box-shadow: var(--shadow-sm); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; }
+  .pill.new { background: var(--forest-100); color: var(--forest-600); }
+  .pill.existing { background: var(--cream-200); color: var(--bark-500); }
+  .pill.draft { background: #FBF2E0; color: var(--warning); }
+  .pill.validated { background: var(--forest-100); color: var(--forest-600); }
+  .pill.delta { background: #FBF2E0; color: var(--warning); }
+  .pill.optional { background: var(--cream-200); color: var(--bark-500); }
+  .pill.mandatory { background: var(--forest-100); color: var(--forest-600); }
+  .pill.tentative { background: #F4E3E3; color: var(--error); }
+  .pill.struck { background: #F4E3E3; color: var(--error); text-decoration: line-through; }
+  .critic-tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 4px; font-weight: 500; margin-left: 6px; vertical-align: middle; background: var(--cream-200); color: var(--bark-500); font-family: var(--font-mono); }
+  .critic-tag.yoo { background: #E8F0EB; color: var(--forest-600); }
+  .critic-tag.dunford { background: #FBF2E0; color: var(--warning); }
+  .critic-tag.dixon { background: #F4E3E3; color: var(--error); }
+  .critic-tag.architect { background: var(--bark-200); color: var(--bark-700); }
+  footer.bottom { margin-top: 96px; padding-top: 32px; border-top: 1px solid var(--cream-300); color: var(--bark-400); font-size: 13px; font-style: italic; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } aside.toc { display: none; } main { padding: 32px 24px; } h1 { font-size: 36px; } h2 { font-size: 26px; } .interactive-section { margin: 32px -16px; padding: 20px; } }
+</style>
+</head>
+<body>
+
+<div class="watermark" aria-hidden="true">
+  <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="400" cy="400" r="350" fill="#4A7C59" opacity="0.03"/>
+    <path d="M 400 700 Q 410 550 395 400 Q 380 250 410 100" stroke="#4A7C59" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.35"/>
+    <path d="M 395 550 Q 320 530 280 480 Q 320 510 395 540" fill="#4A7C59" opacity="0.25"/>
+    <path d="M 400 450 Q 310 430 260 380 Q 310 410 400 440" fill="#4A7C59" opacity="0.20"/>
+    <path d="M 395 350 Q 330 340 290 300 Q 340 320 395 345" fill="#4A7C59" opacity="0.18"/>
+    <path d="M 405 600 Q 480 580 520 530 Q 480 560 405 590" fill="#4A7C59" opacity="0.25"/>
+    <path d="M 405 500 Q 495 480 540 430 Q 495 460 405 490" fill="#4A7C59" opacity="0.22"/>
+    <path d="M 405 400 Q 470 390 510 350 Q 460 370 405 395" fill="#4A7C59" opacity="0.18"/>
+    <path d="M 410 280 Q 470 270 500 240 Q 460 260 410 275" fill="#4A7C59" opacity="0.15"/>
+    <path d="M 410 180 Q 460 170 490 145 Q 450 165 410 175" fill="#4A7C59" opacity="0.12"/>
+  </svg>
+</div>
+
+<div class="layout">
+<aside class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#why-now">Why now</a></li>
+    <li><a href="#goal">Goal</a></li>
+    <li><a href="#constraints">Hard constraints</a></li>
+    <li><a href="#commitments">Core commitments</a></li>
+    <li><a href="#sibling-map">Sibling map: brand × product × sales</a></li>
+    <li><a href="#directory">Directory tree</a></li>
+    <li><a href="#exclusions">What's NOT in product/</a></li>
+    <li><a href="#frontmatter">Frontmatter schema</a></li>
+    <li><a href="#tiered">Tiered minimums</a></li>
+    <li><a href="#decay">Decay windows</a></li>
+    <li><a href="#contracts">Composition contract</a></li>
+    <li><a href="#merge">Contract merge semantics</a></li>
+    <li><a href="#loader">Shared loader</a></li>
+    <li><a href="#eval">Eval surface</a></li>
+    <li><a href="#multi-product">Multi-product orgs</a></li>
+    <li><a href="#subdomain">Subdomain reuse</a></li>
+    <li><a href="#decisions" class="interactive">Decision log</a></li>
+    <li><a href="#orphans">Orphan catalog</a></li>
+    <li><a href="#frameworks">Framework registration</a></li>
+    <li><a href="#questions" class="interactive">Open questions</a></li>
+    <li><a href="#tests">Tests required</a></li>
+    <li><a href="#critique">Critique integration log</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="header">
+  <div class="eyebrow">Design Document · v0.2 · Authoring brainstorm · strategy mode · critique-integrated</div>
+  <h1>The AI-Native Product Folder</h1>
+  <p class="subtitle">Sibling to <code>brand/</code> and <code>sales/</code>. Holds the operational and product facts a digital-health marketing-asset generator must cite without hallucinating — PMPM, EHR footprint, coverage matrices, value-based-contract structures, clinical workflow, regulatory tailwinds. v0.2 integrates findings from a four-critic panel (Yoo / Dunford / Dixon / Architect).</p>
+  <div class="meta-row">
+    <span><span class="meta-label">Date</span> 2026-05-15</span>
+    <span><span class="meta-label">Topic</span> <code>ai-native-product-folder</code></span>
+    <span><span class="meta-label">Mode</span> Authoring (strategy)</span>
+    <span><span class="meta-label">Revision</span> v0.2</span>
+    <span class="badge">Target: digital health companies</span>
+  </div>
+  <p style="margin-top: 20px; font-size: 13px; color: var(--bark-500); font-style: italic;">
+    Critique panel reports: <code>/tmp/brainstorm-critique-product-folder/{julie-yoo,april-dunford,matt-dixon,the-architect}.md</code>
+  </p>
+</header>
+
+<section id="why-now">
+<h2><span class="num">01</span>Why now</h2>
+<p>Brand was canonicalized (v0.5). Generators now reach into <code>brand/</code> for thesis. But several recent generation runs surfaced a class of fact <code>brand/</code> can't carry — and the cost of leaving it un-canonicalized compounds with every new generator.</p>
+<div class="card-grid">
+  <div class="card-tight"><h5>Payer-deck economics are nowhere</h5><p>A Medicaid-MCO deck needs PMPM tiers, MLR impact from prior pilots, and reimbursement-code coverage. Brand can't carry numbers that change per contract.</p></div>
+  <div class="card-tight"><h5>EHR-integration claims drift</h5><p>"We integrate with Epic via Vendor Services" — which version? which release track? which workflow? Generators hallucinate or omit. <span class="critic-tag yoo">Yoo fact-check</span></p></div>
+  <div class="card-tight"><h5>Coverage matrices go stale silently</h5><p>"Available in 38 states for commercial and MA, 14 states for Medicaid." Updates monthly; a stale number is a compliance risk.</p></div>
+  <div class="card-tight"><h5>Workflow integration ≠ clinical evidence</h5><p>RCT results live in <code>brand/proof/clinical-evidence.md</code>. The actual workflow — EHR inbox, SMART app, alert triage — has nowhere to live.</p></div>
+  <div class="card-tight"><h5>Regulatory tailwinds rotate quarterly</h5><p>CMS rules, state Medicaid waivers, ERISA decisions, drug-class shifts. Brand's cadence is wrong for facts that move every 90 days.</p></div>
+  <div class="card-tight"><h5>Composite numbers want a single source</h5><p>The same readmission-reduction figure is hand-rewritten across decks, blog posts, case studies. Atomic per-cohort numbers can't supply blended/aggregated rollups. <span class="critic-tag dunford">Dunford H</span></p></div>
+</div>
+<p>We define the sibling now, before generators accumulate ad-hoc fact lookups that drift across implementations — exactly the failure mode brand-folder canonicalization was meant to prevent.</p>
+</section>
+
+<section id="goal">
+<h2><span class="num">02</span>Goal</h2>
+<blockquote><p>Define the canonical <code>product/</code> folder that an AI-native <strong>digital-health company</strong> installs once, and from which every marketing-asset generator pulls operational and product facts predictably — same shape, frontmatter discipline, and slice-loading mechanics as <code>brand/</code>, plus stricter source-citation and decay rigor, plus actuarial-grade fields for late-stage proof-points.</p></blockquote>
+<ul class="dash">
+  <li>Encode <strong>operational and product fact</strong> the way brand encodes durable thesis.</li>
+  <li>Be <strong>digital-health domain-specific</strong> — slot list reflects EHR, reimbursement, VBC, coverage by line of business, clinical workflow, regulatory tailwinds.</li>
+  <li>Be <strong>"OK to quote in a public-facing deck" by default</strong> — engineering-internal facts go elsewhere.</li>
+  <li>Encode <strong>source-citation rigor beyond brand</strong> — sources, denominator, validated_at, decay_window mandatory; methodology / comparator / CI for actuarial-grade facts.</li>
+  <li>Compose with brand and clients at generation time: <code>brand × product × clients/{prospect}</code>.</li>
+</ul>
+</section>
+
+<section id="constraints">
+<h2><span class="num">03</span>Hard constraints</h2>
+<p>Rules the architecture must honor in every implementation. Each is enforceable — a generator, lint, or schema check fails on violation.</p>
+<div class="constraint"><strong>Sibling to <code>brand/</code> and <code>sales/</code>, not nested.</strong> Top-level <code>product/</code>, single-tenant.</div>
+<div class="constraint"><strong>Single-org per repo.</strong> Multi-product = sub-folders within <code>product/</code> OR separate repos (§15).</div>
+<div class="constraint"><strong>One shape, every digital health company.</strong> Identical layout across telehealth, RPM, behavioral health, digital therapeutics, payer-side, provider-side, condition platforms.</div>
+<div class="constraint"><strong>AI-first design.</strong> Primary consumer is generator agents (~95% of reads).</div>
+<div class="constraint"><strong>Frontmatter mandatory on every <code>.md</code>.</strong> Tiered minimums by <code>confidence:</code> level (§09). <span class="critic-tag dixon">Dixon M1</span></div>
+<div class="constraint"><strong>"Marketing-quotable, not engineering-internal" — split gate.</strong> <span class="critic-tag dunford">Dunford H</span><br>
+  &nbsp;&nbsp;<strong>Inclusion (4a):</strong> file is in product/ if a generator would quote it (in part or summary) in a public-facing artifact.<br>
+  &nbsp;&nbsp;<strong>Exclusion (4b — adversarial):</strong> excluded if pasting verbatim would (a) fail a fact-check OR (b) create competitive/legal/reputational harm. Operative test: <em>"If a competitor's analyst found this file in a leaked grep, would that hurt us?"</em> If yes, NOT product/. Kills <code>roadmap.md</code>, raw customer data, security incidents.<br>
+  &nbsp;&nbsp;<em>Enforced at PR review, not at frontmatter parse — too contextual for a regex check.</em></div>
+<div class="constraint"><strong>No content duplication.</strong> A fact lives in exactly one file. <code>brand/proof/case-studies.md</code> <em>references</em> <code>product/economics/...</code> by slice path; never restates the number.</div>
+<div class="constraint"><strong>Every fact is sourced.</strong> <code>sources:</code> mandatory. <code>sources[].kind</code> enum is the <strong>union of brand's enum + product extensions</strong>: <code>url | interview | doc | claim | contract-attestation | regulatory-filing | audit-attestation | vendor-attestation | payer-feed | claims-data</code>. <span class="critic-tag architect">Architect S2</span></div>
+<div class="constraint"><strong><code>validated_at</code> mandatory.</strong> ISO 8601 (<code>YYYY-MM-DD</code>); lint rejects other formats. <span class="critic-tag architect">Architect S6</span></div>
+<div class="constraint"><strong><code>decay_window</code> required.</strong> Format <code>&lt;integer&gt;d</code>; lint rejects other units. Default <code>180d</code>; per-directory overrides (§10). <span class="critic-tag architect">Architect S1</span></div>
+<div class="constraint"><strong><code>proof-product-link</code> eval is gated on <code>product/</code> existence.</strong> Skipped (not failed) when <code>product/</code> is absent — permits brand-only orgs and the brand-before-product cutover gap. <span class="critic-tag architect">Architect E3</span></div>
+<div class="constraint"><strong>Provenance, confidence, status, slice-loading — same as brand.</strong> Reuse the shared loader (§13).</div>
+<div class="constraint"><strong>Clean-state cutover.</strong> Coordinated PR with brand canonicalization. No aliasing shim.</div>
+</section>
+
+<section id="commitments">
+<h2><span class="num">04</span>Core commitments</h2>
+<p>Softer than hard constraints — the principles that explain <em>why</em> the architecture is shaped this way.</p>
+
+<div class="card">
+  <h4>Fact, not fiction — the central commitment</h4>
+  <p>Every file is a fact register. Narrative lives in <code>brand/</code>. The reviewer test:</p>
+  <blockquote style="margin: 12px 0 0 0;"><p>"Could a sales rep paste any sentence from this file into a customer-facing artifact and have it survive (a) a fact-check AND (b) the company's disclosure standards?" — both clauses must be true.</p></blockquote>
+</div>
+
+<div class="card" style="background: var(--cream-50); border-left: 3px solid var(--forest-500);">
+  <h4 style="margin-top: 0;">Definition: fact register <span class="critic-tag dunford">Dunford LOW</span></h4>
+  <p style="margin-bottom: 0;">A <em>fact register</em> is a structured catalog of typed, sourced, dated assertions — each addressable as a slice, each carrying its denominator (when applicable), each with a decay window. It is not a narrative; it is a lookup table a generator queries by slice path.</p>
+</div>
+
+<div class="card-grid">
+  <div class="card-tight"><h5>Numbers live here once <em>— including composite</em></h5><p>Atomic per-cohort numbers at <code>{folder}/{topic}.md</code>. <strong>Composite/blended numbers are first-class facts</strong> at <code>{folder}/{topic}-blended.md</code>, with methodology disclosed. Brand never inline-composes math. <span class="critic-tag dunford">Dunford H</span></p></div>
+  <div class="card-tight"><h5>Source-citation rigor is the delta</h5><p>Brand can carry an unsourced positioning paragraph. Product cannot. Every claim is sourced or it doesn't ship.</p></div>
+  <div class="card-tight"><h5>Decay is encoded, not advisory</h5><p><code>decay_window:</code> is enforced — three-actor enforcement model in §15.2.</p></div>
+  <div class="card-tight"><h5>Generator-facing first</h5><p>Files written so a generator pulls a slice and produces an on-brand, factually-correct sentence with no further interpretation.</p></div>
+  <div class="card-tight"><h5>Composition order is meaningful</h5><p>brand sets the <em>interpretive frame</em>; product fills <em>evidence slots</em>; clients overlays <em>per-deal filters</em>. Reverse the order and the generator becomes a fact-stitcher, not a narrative composer. <span class="critic-tag dunford">Dunford MED</span></p></div>
+  <div class="card-tight"><h5>clients/ is selection, not correction</h5><p><code>clients/</code> selects which slices to pull and with what emphasis. It does NOT override product values. If clients contradicts product, that's a bug in product. <span class="critic-tag dunford">Dunford MED</span></p></div>
+</div>
+</section>
+
+<section id="sibling-map">
+<h2><span class="num">05</span>Sibling map: brand × product × sales</h2>
+<p>The three durable folders an AI-native digital-health company installs at the repo root. Each owns a distinct kind of context. A marketing-asset generator composes from all three.</p>
+
+<table>
+<thead><tr><th>Folder</th><th>Owns</th><th>Cadence</th><th>Reviewer test</th></tr></thead>
+<tbody>
+<tr>
+  <td><code>brand/</code></td>
+  <td>Durable thesis. Positioning, narrative, messaging, voice, audiences, personas, market terrain, design, proof <em>stories</em>.</td>
+  <td>Slow. Positioning ~2× / year. Messaging constantly. Narrative on strategy shifts.</td>
+  <td>"Does this require reasoning to defend?"</td>
+</tr>
+<tr>
+  <td><code>product/</code> <span class="pill new">new</span></td>
+  <td>Operational and product fact. PMPM, EHR footprint, coverage matrix, VBC structures, clinical workflow, engagement <em>numbers</em>, regulatory tailwinds.</td>
+  <td>Mixed. Coverage monthly; regulatory quarterly; engagement half-yearly.</td>
+  <td>"Survives a fact-check AND survives disclosure scrutiny?"</td>
+</tr>
+<tr>
+  <td><code>sales/</code> <span class="pill optional">future sibling</span></td>
+  <td>Deal-stage playbook. Pricing-with-discounts, talk tracks, deal-cycle playbook, MEDDIC fields, NDA-gated specifics.</td>
+  <td>Per-deal.</td>
+  <td>"Is this what a rep does mid-cycle, behind the scenes?"</td>
+</tr>
+</tbody></table>
+
+<div class="card" style="background: var(--forest-100); border-color: var(--forest-400);">
+  <h4 style="color: var(--forest-600); margin-top: 0;">Six boundary clarifications</h4>
+  <ol style="margin-bottom: 0;">
+    <li><strong>product/ vs brand/proof/ — numbers vs stories.</strong> Numbers (atomic AND composite) live in product/. Stories live in brand/proof/case-studies.md referencing via <code>depends_on:</code>. Composite numbers are first-class at <code>{folder}/{topic}-blended.md</code> with methodology.</li>
+    <li><strong>product/ vs engineering tree — quotable test.</strong> If a generator would quote it, product/. If only engineers/ops read it, engineering tree.</li>
+    <li><strong>Coverage ⊥ audiences <span class="critic-tag dunford">Dunford MED</span>.</strong> Coverage = "where can we legally operate?" (regulatory + LOB). Audiences = "who do we choose to sell to?" (vertical + segment). Orthogonal cuts, not duplicates.</li>
+    <li><strong>clients/ is composition-by-selection <span class="critic-tag dunford">Dunford MED</span>.</strong> Per-prospect cohort selection + competitive context + integration context. Never overrides product values. If clients contradicts product, fix product.</li>
+    <li><strong>Compliance straddles <span class="critic-tag yoo">Yoo B2</span>.</strong> brand/proof/compliance.md = the attestation we hold (HIPAA, SOC 2, HITRUST as proof story). product/coverage/accreditation.md = the coverage implication (HITRUST r2 required for Anthem). They co-reference.</li>
+    <li><strong>Clinical-evidence dependency is one-way <span class="critic-tag yoo">Yoo B1</span>.</strong> <code>product/clinical/clinical-protocols.md</code> MAY <code>depends_on: brand/proof/clinical-evidence#trial-x</code> to ground a threshold. Reverse forbidden.</li>
+  </ol>
+</div>
+
+<div class="card" style="background: #FBF2E0; border-color: var(--warning);">
+  <h4 style="color: var(--warning); margin-top: 0;">Acknowledged gap: <code>clients/</code> schema is the next sibling design <span class="critic-tag dixon">Dixon H1</span></h4>
+  <p style="margin-bottom: 0;">The composition contract assumes <code>clients/{prospect}.md</code> exists with required slots: discovery synthesis, internal-stakeholder map (mobilizer / talker / blocker), per-stakeholder priorities, prior-pilot history, current-vendor stack, deal stage, blockers/risks. <strong>Without that schema defined, "tailored deck" reduces to "templated deck with name find-and-replace."</strong> Out of scope here; named as a known gap.</p>
+</div>
+</section>
+
+<section id="directory">
+<h2><span class="num">06</span>Directory tree</h2>
+<p>Canonical layout. Yellow markers indicate v0.2 additions, renames, and removals. Most files optional except <code>CLAUDE.md</code>; <code>network/</code> conditional on marketplace plays.</p>
+
+<pre><span class="folder">product/</span>
+├── <span class="key">CLAUDE.md</span>
+├── <span class="key">version.yaml</span>
+│
+├── <span class="folder">motions/</span>                        <span class="comment"># HOW WE SELL — operational reality (Decision #6 carve-out: "because" vs number)</span>
+│   ├── <span class="key">b2c2b.md</span>
+│   ├── <span class="key">b2smb.md</span>                      <span class="delta"># RENAMED v0.2 from b2-smb.md (Yoo L2)</span>
+│   ├── <span class="key">risk-based.md</span>
+│   ├── <span class="key">two-sided-network.md</span>          <span class="comment"># OPTIONAL</span>
+│   └── <span class="key">aggregator.md</span>                 <span class="comment"># OPTIONAL</span>
+│
+├── <span class="folder">economics/</span>                      <span class="comment"># MONEY FACTS</span>
+│   ├── <span class="key">pmpm.md</span>
+│   ├── <span class="key">value-based-contracts.md</span>      <span class="comment"># shared-savings, capitation, bundled, P4P, full risk, two-sided</span>
+│   ├── <span class="key">reimbursement-codes.md</span>        <span class="comment"># CCM 99490+99439+99487/89; PCM 99424-27; RPM 99453/99454/99457/99458 + 2026 99445/99470</span>
+│   ├── <span class="key">unit-economics.md</span>
+│   ├── <span class="key">mlr-impact.md</span>                 <span class="comment"># atomic per-cohort</span>
+│   ├── <span class="delta">mlr-impact-blended.md</span>          <span class="delta"># NEW v0.2 (Dunford H) — book-wide blended MLR with methodology</span>
+│   ├── <span class="delta">risk-adjustment.md</span>             <span class="delta"># NEW v0.2 (Yoo H2) — HCC capture, RAF lift, v28 transition</span>
+│   ├── <span class="delta">absenteeism-productivity.md</span>    <span class="delta"># NEW v0.2 (Dixon M2) — split from employer-roi</span>
+│   ├── <span class="delta">claims-cost-impact.md</span>          <span class="delta"># NEW v0.2 (Dixon M2) — split from employer-roi</span>
+│   ├── <span class="delta">business-case-template.md</span>      <span class="delta"># NEW v0.2 (Dixon H2) — Mobilizer-arming TCO synthesizer source</span>
+│   └── <span class="key">specialty-pharmacy.md</span>         <span class="comment"># OPTIONAL — DTx-specific (Yoo L5)</span>
+│
+├── <span class="folder">integration/</span>                    <span class="comment"># PIPES</span>
+│   ├── <span class="key">ehr.md</span>                        <span class="comment"># Epic Vendor Services / Showroom (formerly App Orchard — Yoo fact-check), Cerner, Athena, eCW, NextGen</span>
+│   ├── <span class="key">fhir-hl7.md</span>                   <span class="comment"># FHIR R4 + protocol_versions: { us_core: "6.1.0", smart_app_launch: "2.0.0" }</span>
+│   ├── <span class="key">claims-data.md</span>
+│   ├── <span class="key">identity-sso.md</span>               <span class="comment"># SSO + IAL2 / NIST 800-63-3 (member-facing apps tied to gov programs)</span>
+│   ├── <span class="key">e-prescribing.md</span>              <span class="comment"># Surescripts, NCPDP SCRIPT v2023011, EPCS, IDP provider</span>
+│   ├── <span class="delta">tefca-qhin.md</span>                  <span class="delta"># NEW v0.2 (Yoo M4) — TEFCA framework, QHIN onboarding</span>
+│   ├── <span class="delta">clearinghouses.md</span>              <span class="delta"># NEW v0.2 (Yoo M4) — Change Healthcare/Optum, Availity, Waystar</span>
+│   ├── <span class="delta">benefits-platforms.md</span>          <span class="delta"># NEW v0.2 (Dixon M2) — Workday, bswift, Empyrean (split from employer-roi)</span>
+│   ├── <span class="delta">migration.md</span>                   <span class="delta"># NEW v0.2 (Dunford + Dixon battle-card) — switching cost, data-migration, timeline</span>
+│   ├── <span class="key">ccda.md</span>                       <span class="comment"># OPTIONAL (Yoo M4) — Consolidated CDA / transitions of care</span>
+│   ├── <span class="key">direct-trust.md</span>               <span class="comment"># OPTIONAL (Yoo M4) — Direct messaging via HISP</span>
+│   ├── <span class="key">pdmp.md</span>                       <span class="comment"># OPTIONAL (Yoo recommendation #8) — state PDMP</span>
+│   └── <span class="key">lab-feeds.md</span>                  <span class="comment"># OPTIONAL (Yoo recommendation #13)</span>
+│
+├── <span class="folder">coverage/</span>                       <span class="comment"># WHERE PRODUCT IS USABLE</span>
+│   ├── <span class="key">matrix.md</span>                     <span class="comment"># state × LOB</span>
+│   ├── <span class="key">state-medicaid.md</span>             <span class="comment"># 1115 + 1915(c) + 1915(i) + MCO carve-outs</span>
+│   ├── <span class="key">accreditation.md</span>              <span class="comment"># NCQA Credentialing Accreditation (formerly "NCQA-CR" typo — Yoo); HITRUST i1/r2/e1; URAC; ONC HTI-1</span>
+│   ├── <span class="key">network-status.md</span>
+│   └── <span class="delta">network-adequacy.md</span>            <span class="delta"># NEW v0.2 (Yoo M3) — CMS T&D, state NA, appointment-wait, language coverage</span>
+│
+├── <span class="folder">engagement/</span>                     <span class="comment"># MEMBER REALITY — numbers live here</span>
+│   ├── <span class="key">activation-rates.md</span>
+│   ├── <span class="key">retention.md</span>
+│   ├── <span class="key">nps.md</span>                        <span class="comment"># specify methodology by default (member vs provider vs employer-buyer)</span>
+│   ├── <span class="key">outcomes-engagement.md</span>
+│   └── <span class="delta">equity-disparities.md</span>          <span class="delta"># NEW v0.2 (Yoo M5) — REL/SOGI/dual/geographic stratification (MA HEI, RFP table-stakes)</span>
+│
+├── <span class="folder">clinical/</span>                       <span class="comment"># CLINICAL WORKFLOW</span>
+│   ├── <span class="key">workflow-integration.md</span>
+│   ├── <span class="key">care-pathways.md</span>
+│   ├── <span class="key">clinical-protocols.md</span>         <span class="comment"># PHQ-9, GAD-7, PHQ-A, AUDIT, DAST-10, C-SSRS</span>
+│   ├── <span class="delta">quality-measures.md</span>            <span class="delta"># NEW v0.2 (Yoo H3) — HEDIS / Star measure performance with denominators</span>
+│   └── <span class="key">advisory-board.md</span>             <span class="comment"># OPTIONAL</span>
+│
+├── <span class="folder">regulatory/</span>                     <span class="comment"># TAILWINDS — 90d cadence</span>
+│   ├── <span class="delta">compliance-rules.md</span>            <span class="delta"># NEW v0.2 (Yoo M2) — rules-affecting-our-product (HIPAA, FDA QSR)</span>
+│   ├── <span class="delta">buyer-tailwinds.md</span>             <span class="delta"># NEW v0.2 (Yoo M2) — rules-driving-buyer-urgency</span>
+│   ├── <span class="key">cms-rules.md</span>                  <span class="comment"># PFS / IPPS / OPPS / MA Final Notice (sub-slices per Yoo L8)</span>
+│   ├── <span class="delta">cmmi-models.md</span>                 <span class="delta"># NEW v0.2 (Yoo H1) — ACO REACH, MCP, PC Flex, AHEAD, LEAD, EOM, KCC</span>
+│   ├── <span class="key">state-waivers.md</span>
+│   ├── <span class="key">erisa-decisions.md</span>
+│   ├── <span class="delta">forty-two-cfr-part-2.md</span>        <span class="delta"># NEW v0.2 (Yoo recommendation #9) — SUD records confidentiality</span>
+│   ├── <span class="key">three-forty-b.md</span>              <span class="comment"># OPTIONAL (Yoo L7) — hospital-system / specialty-pharmacy plays</span>
+│   └── <span class="delta">drug-class-shifts.md</span>           <span class="delta"># RENAMED v0.2 from glp-1-economics.md (Yoo L3); use slice headers per drug class</span>
+│
+├── <span class="folder">network/</span>                        <span class="comment"># OPTIONAL — marketplace / panel plays</span>
+│   ├── <span class="key">panel-composition.md</span>
+│   ├── <span class="key">geographic-density.md</span>
+│   └── <span class="key">credentialing.md</span>              <span class="comment"># PSV per NCQA Credentialing Accreditation standards</span>
+│
+├── <span class="key">contracts.yaml</span>                  <span class="comment"># extends brand/contracts.yaml — additive, deep-merge per generator</span>
+└── <span class="folder">eval/</span>                           <span class="comment"># 12 net-new evals (§14)</span></pre>
+</section>
+
+<section id="exclusions">
+<h2><span class="num">07</span>What's NOT in <code>product/</code></h2>
+<p>The split-gate (inclusion + adversarial exclusion) rejects a list of files that look superficially like they belong but don't.</p>
+
+<table>
+<thead><tr><th>Excluded</th><th>Why / where it goes</th></tr></thead>
+<tbody>
+<tr><td><code>product/architecture/</code>, <code>api-specs/</code>, <code>runbooks/</code></td><td>Engineering tree</td></tr>
+<tr><td><code>product/security-incidents/</code></td><td>Internal-only — fails exclusion clause (b)</td></tr>
+<tr><td><code>product/roadmap.md</code></td><td>Confidential — adversarial test ("competitor sees it leaked, hurts us") fails</td></tr>
+<tr><td><code>product/customer-list-raw/</code></td><td>Privacy + PHI — fails (b)</td></tr>
+<tr><td><code>product/personas/</code></td><td><code>brand/personas/</code></td></tr>
+<tr><td><code>product/competitive/</code></td><td><code>brand/market/competitive.md</code> <em>(with acknowledged source-rigor asymmetry — see Decision #33)</em></td></tr>
+<tr><td><code>product/positioning/</code></td><td><code>brand/strategy/positioning.md</code></td></tr>
+<tr><td><code>product/pricing-detail.md</code></td><td><code>sales/</code></td></tr>
+<tr><td><code>product/sales-playbook.md</code></td><td><code>sales/</code></td></tr>
+<tr><td><code>product/awards.md</code>, <code>g2-reviews.md</code></td><td><code>brand/proof/awards-press.md</code></td></tr>
+<tr><td><code>product/case-studies.md</code></td><td><code>brand/proof/case-studies.md</code> — numbers in product/, story in brand/</td></tr>
+<tr><td><code>product/clinical-evidence.md</code></td><td><code>brand/proof/clinical-evidence.md</code> (RCT/RWE narrative); workflow + protocols in product/clinical/</td></tr>
+<tr><td>Top-level <code>regulatory/</code> at repo root</td><td>Subfolder of product/ is right</td></tr>
+<tr><td><code>product/glossary.md</code></td><td><code>brand/language/terminology.md</code></td></tr>
+</tbody></table>
+
+<div class="card" style="background: #FBF2E0; border-left: 3px solid var(--warning);">
+  <h4 style="margin-top: 0;">Sibling acknowledgment: where the rep's NDA-gated facts live <span class="critic-tag dixon">Dixon M3</span></h4>
+  <p style="margin-bottom: 0;">Some facts a rep needs (NDA-gated roadmap detail, exec sponsor map, late-stage discount authority) belong in neither product nor brand. They live in a future <code>sales/</code> (or <code>sales/confidential/</code>). Surfaced here so reps don't keep shadow-IT side-docs.</p>
+</div>
+</section>
+
+<section id="frontmatter">
+<h2><span class="num">08</span>Frontmatter schema</h2>
+<p>Identical to brand, with the deltas below. Yellow markers indicate fields added or required-status promoted in v0.2; red strikethrough indicates fields removed in critique integration.</p>
+
+<pre><span class="key">---</span>
+<span class="key">id:</span> <span class="string">pmpm-pricing</span>
+<span class="key">type:</span> <span class="string">economics</span>                            <span class="comment"># economics|integration|coverage|engagement|clinical|regulatory|motions|network</span>
+<span class="key">slices:</span>
+  - <span class="string">tier-structure</span>
+  - <span class="string">contract-minimums</span>
+<span class="key">status:</span> <span class="string">validated</span>                          <span class="comment"># draft | validated | retired</span>
+<span class="key">confidence:</span> <span class="string">high</span>                           <span class="comment"># low | medium | high — tiered minimum keys off this</span>
+
+<span class="strike">external_quotable: true                    # STRUCK v0.2 (Architect S4) — tautology; gate is PR-review</span>
+
+<span class="delta">evidence_kind:</span> <span class="string">customer-attestation</span>        <span class="delta"># enum: rct|rwe|internal-instrumentation|audit|vendor-attestation|</span>
+                                            <span class="delta">#       regulatory-filing|customer-attestation|analyst-report|press-release</span>
+                                            <span class="strike">#       "inferred" REMOVED v0.2 (Architect S5 + Dunford L) — closed the fiction loophole</span>
+
+<span class="delta">sources:</span>                                    <span class="delta"># MANDATORY. Enum union with brand:</span>
+                                            <span class="delta">#   url | interview | doc | claim | contract-attestation |</span>
+                                            <span class="delta">#   regulatory-filing | audit-attestation | vendor-attestation |</span>
+                                            <span class="delta">#   payer-feed | claims-data</span>
+  - <span class="key">{ kind:</span> <span class="string">contract-attestation</span><span class="key">,</span> <span class="key">value:</span> <span class="string">"Payer X executed 2025-04-12, ref: legal/contracts/2025-payer-x.pdf"</span> <span class="key">}</span>
+  - <span class="key">{ kind:</span> <span class="string">url</span><span class="key">,</span> <span class="key">value:</span> <span class="string">"https://www.cms.gov/medicare/medicare-advantage/value-based"</span> <span class="key">}</span>
+
+<span class="comment"># === Quantitative fields ===</span>
+<span class="delta">denominator:</span> <span class="string">"members in capitated arrangements, n=12,400"</span>
+                                            <span class="delta"># Always-present-with-null-or-string (Architect S3):</span>
+                                            <span class="delta">#   string when slice carries rate/percentage</span>
+                                            <span class="delta">#   literal `null` when slice has no rate (records "considered, none applies")</span>
+                                            <span class="delta">#   field-omitted = lint failure</span>
+
+<span class="comment"># === Actuarial-grade additions for confidence: high (Dixon H3) ===</span>
+<span class="delta">methodology:</span> <span class="string">"pre/post comparison; matched-control via propensity score; 24-month outcome window; risk-adjusted using HCC v28"</span>
+<span class="delta">comparator:</span> <span class="string">"matched control cohort, n=12,400, attribution via primary-care assignment"</span>
+<span class="delta">confidence_interval:</span> <span class="string">"95% CI: 2.6 — 3.8 percentage points"</span>   <span class="delta"># OPTIONAL when stat-sig applicable</span>
+<span class="delta">analysis_provenance:</span> <span class="string">"internal/analytics/2025-q4-mlr-claim-readout.ipynb (commit a3f8a32)"</span>
+
+<span class="comment"># === Decay & validation ===</span>
+<span class="delta">validated_at:</span> <span class="string">2026-04-30</span>                   <span class="delta"># MANDATORY. ISO 8601 (YYYY-MM-DD); lint rejects other formats</span>
+<span class="key">validated_by:</span> <span class="string">"operations-lead@example.com"</span>
+<span class="delta">decay_window:</span> <span class="string">180d</span>                        <span class="delta"># MANDATORY. Format: &lt;integer&gt;d (days only); lint rejects other units</span>
+
+<span class="comment"># === For integration/*.md only ===</span>
+<span class="delta">protocol_versions:</span>                          <span class="delta"># NEW v0.2 (Yoo L6) — required for integration/*.md</span>
+  <span class="delta">us_core:</span> <span class="delta">"6.1.0"</span>
+  <span class="delta">smart_app_launch:</span> <span class="delta">"2.0.0"</span>
+  <span class="delta">fhir:</span> <span class="delta">"R4"</span>
+  <span class="delta">ncpdp_script:</span> <span class="delta">"2023011"</span>
+
+<span class="comment"># === Slice graph ===</span>
+<span class="key">depends_on:</span>
+  - <span class="string">"brand/strategy/positioning#target-customers"</span>
+<span class="key">consumers:</span> [<span class="string">generate-payer-deck</span>, <span class="string">generate-employer-one-pager</span>]
+<span class="key">tags:</span> [<span class="string">pmpm</span>, <span class="string">vbc</span>, <span class="string">economics</span>]
+<span class="key">summary:</span> &gt; <span class="string">"PMPM pricing tiers and contract minimums across commercial, Medicaid, MA."</span>
+<span class="key">---</span></pre>
+
+<h4>Frontmatter deltas vs brand (with critic attribution)</h4>
+<table>
+<thead><tr><th>Field</th><th>Brand</th><th>Product (v0.2)</th><th>Critic</th></tr></thead>
+<tbody>
+<tr><td><code>sources:</code></td><td><span class="pill optional">optional</span></td><td><span class="pill mandatory">mandatory</span>; enum union</td><td><span class="critic-tag architect">Architect S2</span></td></tr>
+<tr><td><code>validated_at:</code></td><td><span class="pill optional">optional</span></td><td><span class="pill mandatory">mandatory</span>; ISO 8601</td><td><span class="critic-tag architect">Architect S6</span></td></tr>
+<tr><td><code>decay_window:</code></td><td>—</td><td><span class="pill mandatory">required</span>; <code>&lt;integer&gt;d</code></td><td><span class="critic-tag architect">Architect S1</span></td></tr>
+<tr><td><code>external_quotable:</code></td><td>—</td><td><span class="pill struck">STRUCK v0.2</span></td><td><span class="critic-tag architect">Architect S4</span> — tautology</td></tr>
+<tr><td><code>evidence_kind:</code></td><td>—</td><td><span class="pill mandatory">required enum</span> <em>without</em> <code>inferred</code></td><td><span class="critic-tag architect">Architect S5</span> + <span class="critic-tag dunford">Dunford L</span></td></tr>
+<tr><td><code>denominator:</code></td><td>—</td><td><span class="pill mandatory">always-present</span>; string or <code>null</code></td><td><span class="critic-tag architect">Architect S3</span></td></tr>
+<tr><td><code>methodology:</code></td><td>—</td><td>required at <code>confidence: high</code></td><td><span class="critic-tag dixon">Dixon H3</span></td></tr>
+<tr><td><code>comparator:</code></td><td>—</td><td>required at <code>confidence: high</code></td><td><span class="critic-tag dixon">Dixon H3</span></td></tr>
+<tr><td><code>confidence_interval:</code></td><td>—</td><td>optional; required when stat-sig applies</td><td><span class="critic-tag dixon">Dixon H3</span></td></tr>
+<tr><td><code>analysis_provenance:</code></td><td>—</td><td>required at <code>confidence: high</code></td><td><span class="critic-tag dixon">Dixon H3</span> — "show me the SQL"</td></tr>
+<tr><td><code>protocol_versions:</code> (integration/* only)</td><td>—</td><td>required for integration/*.md</td><td><span class="critic-tag yoo">Yoo L6</span></td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="tiered">
+<h2><span class="num">09</span>Tiered minimum frontmatter <span class="critic-tag dixon">Dixon M1</span></h2>
+<p>Without this, the source-citation discipline produces a 40%-empty folder. With it, operators ship at <code>low</code> and enrich over time as evidence is gathered. Generators MAY filter on <code>min_confidence:</code>; default <code>medium</code>.</p>
+
+<table>
+<thead><tr><th><code>confidence:</code></th><th>Required minimum</th><th>Use when</th></tr></thead>
+<tbody>
+<tr><td><span class="pill draft">low</span></td><td><code>id, type, slices, status, confidence, sources (≥1), validated_at, decay_window</code></td><td>Initial population — fact established but evidentiary detail not yet gathered. Generator-default-rejects unless explicitly opted in.</td></tr>
+<tr><td><span class="pill validated">medium</span></td><td>low + <code>evidence_kind, denominator</code> (when applicable)</td><td>Cited in routine generator output (decks, blog posts, one-pagers, landing pages).</td></tr>
+<tr><td><span class="pill mandatory">high</span></td><td>medium + <code>methodology, comparator, analysis_provenance</code></td><td>Late-stage proof-points subject to actuarial / scientific scrutiny. Required for committee-grade decks.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="decay">
+<h2><span class="num">10</span>Decay windows by directory</h2>
+<p>Defaults the lint enforces, picked to match how fast each kind of fact moves in digital-health reality.</p>
+
+<table>
+<thead><tr><th>Directory / file</th><th>Default <code>decay_window</code></th><th>Why this cadence</th></tr></thead>
+<tbody>
+<tr><td><code>motions/</code></td><td><code>180d</code></td><td>Engine mechanics shift mid-year</td></tr>
+<tr><td><code>economics/pmpm.md</code> (active tiers)</td><td><code>90d</code></td><td>Negotiated pricing per renewal</td></tr>
+<tr><td><code>economics/value-based-contracts.md</code></td><td><code>180d</code></td><td>Framework structures stable</td></tr>
+<tr><td><code>economics/reimbursement-codes.md</code></td><td><code>365d</code></td><td>CPT/HCPCS shifts annually with CMS Final Rules</td></tr>
+<tr><td><code>economics/risk-adjustment.md</code> <span class="pill new">v0.2</span></td><td><code>180d</code></td><td>RAF/HCC v-transitions; refresh per CMS PFS Final Rule cycle</td></tr>
+<tr><td><code>integration/</code></td><td><code>180d</code></td><td>EHR/protocol versions evolve quarterly</td></tr>
+<tr><td><code>integration/tefca-qhin.md</code> <span class="pill new">v0.2</span></td><td><code>90d</code></td><td>QHIN onboarding state changes monthly in 2026</td></tr>
+<tr><td><code>coverage/matrix.md</code></td><td><code>90d</code></td><td>State expansions monthly</td></tr>
+<tr><td><code>coverage/network-adequacy.md</code> <span class="pill new">v0.2</span></td><td><code>90d</code></td><td>NA-standard compliance changes contract by contract</td></tr>
+<tr><td><code>coverage/accreditation.md</code></td><td><code>365d</code></td><td>URAC/NCQA/HITRUST audit cycles annual</td></tr>
+<tr><td><code>engagement/</code></td><td><code>180d</code></td><td>Cohort numbers quarterly to half-yearly</td></tr>
+<tr><td><code>engagement/equity-disparities.md</code> <span class="pill new">v0.2</span></td><td><code>180d</code></td><td>RFP cadence; HEI reporting cycles</td></tr>
+<tr><td><code>clinical/workflow-integration.md</code></td><td><code>365d</code></td><td>Workflow patterns stable</td></tr>
+<tr><td><code>clinical/quality-measures.md</code> <span class="pill new">v0.2</span></td><td><code>180d</code></td><td>HEDIS/Star measures change annually; performance updates faster</td></tr>
+<tr><td><code>regulatory/</code></td><td><code>90d</code></td><td>CMS rules shift quarterly minimum</td></tr>
+<tr><td><code>network/</code></td><td><code>90d</code></td><td>Panel composition monthly</td></tr>
+</tbody>
+</table>
+
+<p style="margin-top: 16px; font-size: 14px; color: var(--bark-500); font-style: italic;">Generators MAY declare <code>min_freshness: in-window</code> in <code>contracts.yaml</code> — the build fails when any required slice is past its <code>decay_window</code>. Three-actor enforcement model in §14.2.</p>
+</section>
+
+<section id="contracts">
+<h2><span class="num">11</span>Composition contract</h2>
+<p>Generators compose <strong>three layers</strong>: <code>brand × product × clients/{prospect}</code>. <code>product/contracts.yaml</code> extends <code>brand/contracts.yaml</code> — additive, deep-merge per generator on distinct keys.</p>
+
+<pre><span class="key">generators:</span>
+  <span class="key">generate-payer-deck:</span>
+    <span class="key">brand_requires:</span>
+      - <span class="string">strategy/positioning</span>
+      - <span class="string">language/messaging#category-name</span>
+      - <span class="string">personas/{payer-role}</span>
+      - <span class="string">audiences/health-plan-commercial</span>
+    <span class="key">product_requires:</span>
+      - <span class="string">economics/pmpm</span>
+      - <span class="string">economics/value-based-contracts</span>
+      - <span class="string">economics/mlr-impact</span>
+      - <span class="delta">economics/risk-adjustment</span>           <span class="delta"># NEW v0.2 (Yoo H2)</span>
+      - <span class="delta">clinical/quality-measures</span>            <span class="delta"># NEW v0.2 (Yoo H3)</span>
+      - <span class="string">coverage/matrix</span>
+      - <span class="delta">coverage/network-adequacy</span>            <span class="delta"># NEW v0.2 (Yoo M3)</span>
+      - <span class="string">engagement/retention</span>
+      - <span class="delta">engagement/equity-disparities</span>        <span class="delta"># NEW v0.2 (Yoo M5)</span>
+      - <span class="delta">regulatory/cmmi-models</span>               <span class="delta"># NEW v0.2 (Yoo H1)</span>
+    <span class="key">product_optional:</span>
+      - <span class="string">economics/reimbursement-codes</span>
+      - <span class="delta">economics/business-case-template</span>     <span class="delta"># NEW v0.2 (Dixon H2)</span>
+      - <span class="string">clinical/workflow-integration</span>
+      - <span class="string">regulatory/buyer-tailwinds</span>
+    <span class="key">min_confidence:</span> <span class="string">medium</span>
+    <span class="key">min_freshness:</span> <span class="string">in-window</span>           <span class="comment"># fail when any required slice past decay_window</span>
+
+  <span class="key">generate-cmo-deck:</span>
+    <span class="key">brand_requires:</span> [<span class="string">strategy/positioning</span>, <span class="string">personas/{cmo-role}</span>, <span class="string">audiences/providers-large-systems</span>]
+    <span class="key">product_requires:</span>
+      - <span class="string">clinical/workflow-integration</span>
+      - <span class="delta">clinical/quality-measures</span>            <span class="delta"># NEW v0.2</span>
+      - <span class="string">integration/ehr</span>
+      - <span class="string">integration/fhir-hl7</span>
+      - <span class="delta">integration/tefca-qhin</span>               <span class="delta"># NEW v0.2 — fast-rising 2026 procurement question</span>
+      - <span class="string">engagement/outcomes-engagement</span>
+
+  <span class="key">generate-employer-one-pager:</span>
+    <span class="key">brand_requires:</span> [<span class="string">strategy/positioning</span>, <span class="string">language/messaging#tagline</span>]
+    <span class="key">product_requires:</span>
+      - <span class="delta">economics/absenteeism-productivity</span>   <span class="delta"># NEW v0.2 (split from employer-roi)</span>
+      - <span class="delta">economics/claims-cost-impact</span>         <span class="delta"># NEW v0.2 (split from employer-roi)</span>
+      - <span class="string">engagement/activation-rates</span>
+      - <span class="delta">integration/benefits-platforms</span>       <span class="delta"># NEW v0.2 (moved here from economics/employer-roi)</span>
+      - <span class="string">integration/identity-sso</span>
+
+  <span class="key">generate-battlecard:</span>
+    <span class="key">brand_requires:</span>
+      - <span class="string">market/competitive</span>
+      - <span class="string">market/alternatives</span>
+      - <span class="string">language/messaging#objection-handlers</span>
+      - <span class="delta">proof/case-studies#switchers-from-{competitor}</span>   <span class="delta"># NEW v0.2 (Dunford battle-card)</span>
+    <span class="key">product_requires:</span>
+      - <span class="string">integration/ehr</span>
+      - <span class="delta">integration/migration</span>                <span class="delta"># NEW v0.2 (Dunford + Dixon) — switching cost</span>
+      - <span class="string">coverage/matrix</span>
+      - <span class="string">economics/reimbursement-codes</span>
+    <span class="comment"># Acknowledged competitor-asymmetry limitation (Dixon H4):</span>
+    <span class="comment"># brand/market/competitive slices are NOT held to product-grade source rigor.</span>
+    <span class="comment"># Battle-card output flags an adversarial-use disclaimer in appendix. v0.3 candidate.</span>
+
+  <span class="delta">generate-mobilizer-business-case:</span>           <span class="delta"># NEW v0.2 generator (Dixon H2)</span>
+    <span class="key">brand_requires:</span> [<span class="string">strategy/positioning#target-customers</span>, <span class="string">language/messaging#value-prop-phrasings</span>]
+    <span class="key">product_requires:</span>
+      - <span class="delta">economics/business-case-template</span>     <span class="comment"># the synthesizer slot</span>
+      - <span class="string">economics/pmpm</span>
+      - <span class="delta">economics/mlr-impact-blended</span>         <span class="comment"># composite, methodology disclosed</span>
+      - <span class="delta">economics/risk-adjustment</span>
+      - <span class="string">engagement/retention</span>
+    <span class="key">output:</span> <span class="string">"one-page CFO-ready TCO narrative with sourced inputs and methodology footer"</span>
+
+<span class="key">extends:</span>
+  - <span class="string">brand/contracts.yaml</span></pre>
+</section>
+
+<section id="merge">
+<h2><span class="num">12</span>Contract merge semantics <span class="critic-tag architect">Architect E1</span></h2>
+<p>The single most important spec for v1 implementation. Without it, v1 ships with a loader that has to guess the contract shape.</p>
+
+<div class="card">
+  <h4>Coordinated rename in brand</h4>
+  <p>Brand's existing <code>requires:</code> field is renamed to <code>brand_requires:</code>; <code>optional:</code> to <code>brand_optional:</code>. Performed in the <strong>same coordinated PR</strong> as product v1 ship. No backward-compat shim.</p>
+
+  <h4>Per-generator deep merge on distinct keys</h4>
+  <p>When both files declare <code>generators.generate-X</code>, the merge is per-generator deep merge: <code>brand_requires:</code> from brand's contracts and <code>product_requires:</code> from product's contracts <em>do not collide</em> because they have distinct names.</p>
+
+  <h4>Last-write-wins on scalar overrides</h4>
+  <p><code>min_confidence</code>, <code>min_freshness</code>, <code>compose</code> are last-write-wins (product overrides brand if it redeclares).</p>
+
+  <h4>Loader signature extension <span class="critic-tag architect">Architect L3</span></h4>
+  <p>The shared loader returns <code>is_in_window: bool</code> per slice (computed from <code>validated_at + decay_window</code>) and accepts a <code>min_freshness: in-window | any</code> parameter (default <code>any</code>, brand-backward-compatible). When <code>min_freshness: in-window</code> is set and any required slice has <code>is_in_window: false</code>, the loader refuses with a structured error naming the stale slice.</p>
+</div>
+</section>
+
+<section id="loader">
+<h2><span class="num">13</span>Shared loader <span class="critic-tag architect">Architect L1</span></h2>
+<p><strong>Verified this turn:</strong> there is no <code>skills/_shared/load-brand-slices.md</code> in the repo today. Both brand and product are pre-implementation. So the rename premise is false; author the loader once, generically.</p>
+
+<div class="card">
+  <h4>Author once, generically: <code>skills/_shared/load-context-slices.md</code></h4>
+  <ul class="dash">
+    <li>Loader takes <code>folder</code> (<code>brand</code> | <code>product</code> | future siblings) parameter.</li>
+    <li>Loader takes <code>context_root</code> parameter for multi-product orgs (defaults to <code>folder</code>; set to <code>product/care-coordination</code> for sub-folder pattern).</li>
+    <li>Brand and product are siblings of consumption, not separate loaders.</li>
+    <li>Brand-folder design's reference to <code>load-brand-slices.md</code> is superseded in the coordinated PR (Architect coordinated edit #4).</li>
+  </ul>
+
+  <h4>Slice path syntax for multi-product orgs <span class="critic-tag architect">Architect L2</span></h4>
+  <ul class="dash">
+    <li>Within a <code>context_root</code>, paths remain 2-segment: <code>economics/pmpm#tier-structure</code>.</li>
+    <li>Cross-context references use full 3-segment path: <code>product/care-coordination/economics/pmpm#tier-structure</code>.</li>
+  </ul>
+</div>
+</section>
+
+<section id="eval">
+<h2><span class="num">14</span>Eval surface (12 evals)</h2>
+<p>Programmatic checks enforcing product-folder discipline. Run via <code>/aligned:eval-audit</code> (existing skill — no new runner infrastructure for v1). PR CI hook reads <code>product/eval/</code> and runs all. A daily freshness cron runs <code>freshness.md</code> + <code>regulatory-currency.md</code> only and files Kanban entries for files past 75% of <code>decay_window</code> (advance warning). <span class="critic-tag architect">Architect E4</span></p>
+
+<table>
+<thead><tr><th>Eval</th><th>Checks</th><th>Pass criterion</th></tr></thead>
+<tbody>
+<tr><td><code>source-presence.md</code></td><td>Every file in product/ has non-empty <code>sources:</code></td><td>0% missing</td></tr>
+<tr><td><code>source-type-valid.md</code></td><td>Each <code>sources[].kind</code> in union enum</td><td>0% untyped</td></tr>
+<tr><td><code>validated-at-present.md</code></td><td>Every file has <code>validated_at:</code> ISO date</td><td>0% missing</td></tr>
+<tr><td><code>freshness.md</code></td><td><code>validated_at</code> within <code>decay_window</code></td><td>0% stale</td></tr>
+<tr><td><code>denominator-present.md</code></td><td>Every slice carrying %/rates has non-null <code>denominator:</code> (field present, may be <code>null</code> when n/a)</td><td>0% missing</td></tr>
+<tr><td><code>evidence-not-inferred.md</code> <span class="pill new">v0.2</span></td><td>No file has <code>evidence_kind: inferred</code></td><td>0% (enum doesn't permit; belt-and-suspenders) <span class="critic-tag architect">Architect S5</span></td></tr>
+<tr><td><code>actuarial-fields-on-high-confidence.md</code> <span class="pill new">v0.2</span></td><td>Every <code>confidence: high</code> file has methodology, comparator, analysis_provenance</td><td>0% missing <span class="critic-tag dixon">Dixon H3</span></td></tr>
+<tr><td><code>proof-product-link.md</code></td><td>Every quantitative claim in <code>brand/proof/</code> resolves to a <code>product/</code> slice via <code>depends_on:</code> — see §14.1</td><td>0% orphaned; <strong>skipped when product/ absent</strong> <span class="critic-tag architect">Architect E2+E3</span></td></tr>
+<tr><td><code>regulatory-currency.md</code></td><td>Every <code>product/regulatory/</code> file within 90d</td><td>0% stale</td></tr>
+<tr><td><code>coverage-state-completeness.md</code></td><td>If <code>coverage/matrix.md</code> claims X states, <code>state-medicaid.md</code> enumerates them</td><td>0% mismatched</td></tr>
+<tr><td><code>engagement-cohort-named.md</code></td><td>Every engagement metric names cohort + denominator</td><td>0% un-named</td></tr>
+<tr><td><code>protocol-versions-present.md</code> <span class="pill new">v0.2</span></td><td>Every <code>integration/*.md</code> has <code>protocol_versions:</code> block</td><td>0% missing <span class="critic-tag yoo">Yoo L6</span></td></tr>
+</tbody>
+</table>
+
+<h3 style="margin-top: 32px;">14.1 — <code>proof-product-link</code> detection mechanism <span class="critic-tag architect">Architect E2</span></h3>
+<p>The eval needs deterministic detection. Adopt <strong>HTML-comment claim markers</strong> in <code>brand/proof/</code> files:</p>
+
+<pre><span class="comment">The diabetes pilot reduced medical costs by</span>
+<span class="comment">&lt;!-- CLAIM:metric=mlr-impact --&gt;3.2 percentage points&lt;!-- /CLAIM --&gt;</span>
+<span class="comment">over 18 months.</span></pre>
+
+<p>The eval extracts each <code>metric=</code> value and verifies the file's frontmatter <code>depends_on:</code> includes a <code>product/</code> slice whose <code>id</code> (or <code>id#slug</code>) matches. Untagged numbers are NOT enforced — trades sensitivity (eval misses unmarked numbers) for specificity (no false positives on dates, version numbers, line counts).</p>
+
+<h3 style="margin-top: 32px;">14.2 — Freshness enforcement model <span class="critic-tag architect">Architect E5</span></h3>
+<p>Three enforcement points, three actors:</p>
+<table>
+<thead><tr><th>Point</th><th>Behavior</th><th>Actor responsible</th></tr></thead>
+<tbody>
+<tr><td><strong>Generator-time</strong></td><td>Loader fail-closed when <code>min_freshness: in-window</code> declared and any required slice stale</td><td>Generator caller — alerted, must refresh and re-run</td></tr>
+<tr><td><strong>Operator-time</strong></td><td><code>/aligned:eval-audit</code> returns stale-file list</td><td>Operator decides refresh-now or accept-staleness for non-stale-blocking generation</td></tr>
+<tr><td><strong>Cron-time</strong></td><td>Daily script adds Kanban entries for files past 75% of <code>decay_window</code> (advance warning)</td><td>Operator owning the file's domain runs the per-folder framework (regulatory-tailwinds-scan, coverage-matrix-audit, etc.) to refresh</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="multi-product">
+<h2><span class="num">15</span>Multi-product orgs</h2>
+<p>Single-org-per-repo holds. For orgs with more than one distinct product, <strong>pick one</strong> of the two patterns below — never both.</p>
+
+<table>
+<thead><tr><th>Pattern</th><th>Use when</th><th>Slice-path syntax</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>Sub-folders within <code>product/</code></strong><br><code>product/care-coordination/economics/...</code></td>
+  <td>Products share single brand thesis and single sales motion</td>
+  <td>Loader takes <code>context_root: product/care-coordination</code>; within-context paths are 2-segment</td>
+</tr>
+<tr>
+  <td><strong>Separate repos</strong></td>
+  <td>Products have distinct brand thesis, motions, or buyer committees</td>
+  <td>Standard 2-segment paths within each repo</td>
+</tr>
+</tbody>
+</table>
+<p style="margin-top: 12px;"><strong>Recommendation:</strong> default to separate repos. Sub-folders is the escape hatch for the narrow shared-brand case.</p>
+</section>
+
+<section id="subdomain">
+<h2><span class="num">16</span>Subdomain reuse (digital health)</h2>
+<p>Same architecture serves many subdomains. Below: the same canonical slots filled five ways. (Yoo fact-check corrections applied: Epic Vendor Services / Showroom replaces "App Orchard"; 2026 PFS Final Rule RPM codes added; NCQA Credentialing Accreditation correctly named.)</p>
+
+<table>
+<thead><tr><th>Subdomain</th><th><code>economics/pmpm.md</code> typically contains</th></tr></thead>
+<tbody>
+<tr><td><strong>Behavioral health platform</strong></td><td>PMPM tiered by EAP / commercial / Medicaid; engagement-based vs flat-fee; carve-out vs carve-in pricing</td></tr>
+<tr><td><strong>Remote patient monitoring</strong></td><td>Per-enrolled-patient-per-month device + monitoring fee; CMS RPM CPT codes 99453/99454/99457/99458 + new 2026 99445/99470 (PFS Final Rule); risk-share overlays</td></tr>
+<tr><td><strong>Digital therapeutic</strong></td><td>Prescription-based; per-Rx vs per-engaged-patient; payer formulary tier; specialty-pharmacy distribution</td></tr>
+<tr><td><strong>Provider-side workflow</strong></td><td>Per-user-per-month seat; tiered by site count; capitation-share when bundled</td></tr>
+<tr><td><strong>Payer-side analytics</strong></td><td>PMPM tiered by attributed-life count; performance-based overlays</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead><tr><th>Subdomain</th><th><code>integration/ehr.md</code> typical footprint</th></tr></thead>
+<tbody>
+<tr><td><strong>Behavioral health</strong></td><td><strong>Epic Vendor Services / Showroom</strong> (formerly App Orchard), Cerner, NextGen, eClinicalWorks, Athena — plus BH EHRs (Netsmart, Qualifacts, Credible)</td></tr>
+<tr><td><strong>RPM</strong></td><td>Epic Vendor Services (device-data ingestion), Cerner, Athena — plus device platforms (Apple Health, Withings, Dexcom)</td></tr>
+<tr><td><strong>Digital therapeutic</strong></td><td>Epic SMART-on-FHIR launch, Surescripts e-Rx, payer-managed formulary (limited EHR depth)</td></tr>
+<tr><td><strong>Provider-side workflow</strong></td><td>Bidirectional Epic / Cerner / Athena / Allscripts via FHIR R4 + HL7 v2; SAML SSO; SMART-on-FHIR</td></tr>
+<tr><td><strong>Payer-side analytics</strong></td><td>Less EHR-direct; primarily claims-pipe + payer-feed; selective FHIR ingestion</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead><tr><th>Subdomain</th><th>Likely <code>regulatory/</code> tailwinds (now including <code>cmmi-models.md</code> per Yoo H1)</th></tr></thead>
+<tbody>
+<tr><td><strong>Behavioral health</strong></td><td>MHPAEA parity enforcement; behavioral-health Star Ratings; state SMI/SUD waivers; <strong>CMMI: AHEAD, MCP for primary-care-adjacent</strong>; 42 CFR Part 2 (SUD)</td></tr>
+<tr><td><strong>RPM</strong></td><td>CMS RPM/RTM Final Rule annual updates; chronic-care-management code interaction; MA Star Ratings adherence; <strong>CMMI: ACO REACH (through 2026), LEAD (2027)</strong></td></tr>
+<tr><td><strong>Digital therapeutic</strong></td><td>FDA pre-cert; state Medicaid PDT coverage; PDT Access Act; specialty-pharmacy-distribution rules</td></tr>
+<tr><td><strong>Provider-side</strong></td><td>21st Century Cures Information Blocking; ONC HTI-1; surprise-billing; <strong>CMMI: MCP, ACO REACH, KCC, EOM</strong></td></tr>
+<tr><td><strong>Payer-side</strong></td><td>CMS Interoperability Final Rule; HEDIS measure changes; IRA Part D redesign; ACO REACH program changes; MA risk-adjustment v28 phase-in</td></tr>
+</tbody>
+</table>
+
+<div class="card" style="background: #FBF2E0;">
+  <h4 style="margin-top: 0;">Motion-bias acknowledgment <span class="critic-tag yoo">Yoo closing note</span></h4>
+  <p style="margin-bottom: 0;">This design is most useful for digital-health companies committed to <strong>risk-based contracting</strong> or <strong>B2C2B</strong> as their primary motion. B2SMB-only companies will overspend on the <code>regulatory/</code> slot. Pure two-sided-network plays need <code>network/</code> mandatory and likely a <code>marketplace-economics.md</code> slot the design doesn't anticipate. Single-motion installers can skip non-applicable slots.</p>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- INTERACTIVE: Decision Log                                     -->
+<!-- ============================================================ -->
+<section id="decisions">
+<h2><span class="num">17</span>Decision log <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive · v0.2</span></h2>
+<p>Every architectural choice this design made, with reasoning. Decisions grouped into six categories. v0.2 markers indicate items added or revised in critique integration. Numbers are stable IDs.</p>
+
+<div class="interactive-section">
+<div class="interactive-banner">
+  <span class="icon">●</span>
+  <div><strong>Approve or reject each decision below.</strong> The prompt at the bottom auto-updates with your rejections. Copy it back to me — or edit inline before sending.</div>
+</div>
+
+<table class="interactive" id="decisions-table">
+<thead><tr><th class="num">#</th><th style="width: 22%">Decision</th><th>Description</th><th style="width: 130px">Status</th></tr></thead>
+<tbody>
+<tr class="section-divider"><td colspan="4"><span class="section-letter">A</span>Scope &amp; design philosophy<span class="section-count">5 decisions</span></td></tr>
+<tr data-id="1" data-title="Sibling to brand/ and sales/, not nested">
+  <td class="num decision-num">1</td>
+  <td class="decision-title">Sibling to <code>brand/</code> and <code>sales/</code>, not nested</td>
+  <td class="decision-desc">Brand=durable thesis; product=operational fact; sales=deal-stage playbook. Three orthogonal concerns, three sibling folders.</td>
+  <td><select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="2" data-title="AI-first design; humans validate occasionally">
+  <td class="num decision-num">2</td>
+  <td class="decision-title">AI-first design; humans validate occasionally</td>
+  <td class="decision-desc">Mirrors brand. ~95% of reads come from generator agents.</td>
+  <td><select class="dropdown" data-id="2"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="3" data-title="Digital-health focus only">
+  <td class="num decision-num">3</td>
+  <td class="decision-title">Digital-health focus only</td>
+  <td class="decision-desc">Slot list digital-health-specific. General B2B SaaS, B2C consumer wellness, agencies are out of scope.</td>
+  <td><select class="dropdown" data-id="3"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="4a" data-title="Inclusion test for marketing-quotable gate (split from old #4)">
+  <td class="num decision-num">4a <span class="pill new">v0.2</span></td>
+  <td class="decision-title"><strong>Inclusion test:</strong> file is in product/ if a generator would quote it (in part or summary) in a public-facing artifact</td>
+  <td class="decision-desc">Split from v0.1 Decision #4. The inclusion clause is positive: "would a generator pull from this?" <span class="critic-tag dunford">Dunford H</span></td>
+  <td><select class="dropdown" data-id="4a"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="4b" data-title="Adversarial exclusion test (split from old #4)">
+  <td class="num decision-num">4b <span class="pill new">v0.2</span></td>
+  <td class="decision-title"><strong>Exclusion test:</strong> excluded if pasting verbatim would (a) fail a fact-check OR (b) create competitive/legal/reputational harm</td>
+  <td class="decision-desc">Operative reformulation: <em>"If a competitor's analyst found this leaked, would it hurt us?"</em> Kills <code>roadmap.md</code>, raw customer data, security incidents. Enforced at PR review. <span class="critic-tag dunford">Dunford H</span></td>
+  <td><select class="dropdown" data-id="4b"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">B</span>Repo layout &amp; content boundaries<span class="section-count">11 decisions</span></td></tr>
+<tr data-id="5" data-title="Folder grouping by operational lens">
+  <td class="num decision-num">5</td>
+  <td class="decision-title">Folder grouping by operational lens</td>
+  <td class="decision-desc"><code>motions/ economics/ integration/ coverage/ engagement/ clinical/ regulatory/ network(opt)/</code></td>
+  <td><select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="6" data-title="motions/ — TENTATIVE, with operator-runnable test (Dunford H + Yoo M1)">
+  <td class="num decision-num">6 <span class="pill tentative">tentative</span></td>
+  <td class="decision-title"><code>motions/</code> with operator-runnable test — TENTATIVE</td>
+  <td class="decision-desc"><strong>Operator test:</strong> "If the fact has 'because' in it, it's <code>brand/strategy/positioning#target-customers</code> (strategic claim defended by reasoning). If it has a number in it, it's <code>product/motions/{motion}.md</code> (a measurement)." <strong>90-day operator-trial; if double-homing emerges, fold into brand+economics+engagement and delete motions/ in v0.3.</strong> <span class="critic-tag dunford">Dunford H</span> <span class="critic-tag yoo">Yoo M1</span></td>
+  <td><select class="dropdown" data-id="6"><option value="approve">Approve (TENTATIVE)</option><option value="reject">Reject — kill motions/</option></select></td>
+</tr>
+<tr data-id="7" data-title="ACCEPT economics/ (now expanded)">
+  <td class="num decision-num">7</td>
+  <td class="decision-title">ACCEPT <code>economics/</code> — expanded</td>
+  <td class="decision-desc">Adds <code>risk-adjustment</code> (Yoo H2), <code>mlr-impact-blended</code> (Dunford H), <code>business-case-template</code> (Dixon H2), <code>absenteeism-productivity</code> + <code>claims-cost-impact</code> (Dixon M2 split), <code>specialty-pharmacy</code> (Yoo L5).</td>
+  <td><select class="dropdown" data-id="7"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="8" data-title="ACCEPT integration/ (now expanded)">
+  <td class="num decision-num">8</td>
+  <td class="decision-title">ACCEPT <code>integration/</code> — expanded</td>
+  <td class="decision-desc">Adds <code>tefca-qhin</code>, <code>clearinghouses</code>, <code>benefits-platforms</code>, <code>migration</code> (Dunford+Dixon battle-card), <code>pdmp</code>, <code>lab-feeds</code>, <code>direct-trust</code>, <code>ccda</code>.</td>
+  <td><select class="dropdown" data-id="8"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="9" data-title="ACCEPT coverage/ (now with network-adequacy)">
+  <td class="num decision-num">9</td>
+  <td class="decision-title">ACCEPT <code>coverage/</code> — adds <code>network-adequacy</code> (Yoo M3)</td>
+  <td class="decision-desc">CMS time-and-distance, state NA, appointment-wait, language coverage. Required for telehealth/BH/virtual-primary-care.</td>
+  <td><select class="dropdown" data-id="9"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="10" data-title="ACCEPT engagement/ (now with equity-disparities)">
+  <td class="num decision-num">10</td>
+  <td class="decision-title">ACCEPT <code>engagement/</code> — adds <code>equity-disparities</code> (Yoo M5)</td>
+  <td class="decision-desc">REL/SOGI/dual-eligible/geographic stratification. MA Health Equity Index + RFP table-stakes.</td>
+  <td><select class="dropdown" data-id="10"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="11" data-title="ACCEPT clinical/ (now with quality-measures + triadic dependency)">
+  <td class="num decision-num">11</td>
+  <td class="decision-title">ACCEPT <code>clinical/</code> — adds <code>quality-measures</code> (Yoo H3); explicit triadic dependency for workflow-integration studies (Dunford MED)</td>
+  <td class="decision-desc">HEDIS / Star measure performance with denominators. Workflow-integration studies straddle brand/proof/clinical-evidence (RWE narrative); composition rule named: a CMO deck composes all three.</td>
+  <td><select class="dropdown" data-id="11"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="12" data-title="ACCEPT regulatory/ (compliance-rules vs buyer-tailwinds split + new files)">
+  <td class="num decision-num">12</td>
+  <td class="decision-title">ACCEPT <code>regulatory/</code> — split + expanded</td>
+  <td class="decision-desc">Adds <code>cmmi-models</code> (Yoo H1), <code>compliance-rules</code> vs <code>buyer-tailwinds</code> split (Yoo M2), <code>forty-two-cfr-part-2</code> (Yoo #9), <code>three-forty-b</code> (Yoo L7). Renamed <code>glp-1-economics</code> → <code>drug-class-shifts</code> (Yoo L3).</td>
+  <td><select class="dropdown" data-id="12"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="13" data-title="CONDITIONAL ACCEPT network/ — mandatory for two-sided-network motions">
+  <td class="num decision-num">13</td>
+  <td class="decision-title">CONDITIONAL ACCEPT <code>network/</code></td>
+  <td class="decision-desc">Mandatory for two-sided-network motions; optional otherwise.</td>
+  <td><select class="dropdown" data-id="13"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="14" data-title="brand/proof/case-studies stays in brand; composite numbers are first-class in product/">
+  <td class="num decision-num">14</td>
+  <td class="decision-title"><code>brand/proof/case-studies.md</code> stays in brand; <strong>composite numbers are first-class in product/ at <code>{folder}/{topic}-blended.md</code></strong> with methodology disclosed</td>
+  <td class="decision-desc">Resolves the "blended number" gap (Dunford H). Brand never inline-composes math.</td>
+  <td><select class="dropdown" data-id="14"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="15" data-title="Single-org per repo. Multi-product = sub-folders OR separate repos">
+  <td class="num decision-num">15</td>
+  <td class="decision-title">Single-org per repo. Multi-product = sub-folders OR separate repos — pick one</td>
+  <td class="decision-desc">Recommend separate repos for distinct brand thesis; sub-folders only when brand truly is shared.</td>
+  <td><select class="dropdown" data-id="15"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">C</span>File format &amp; metadata<span class="section-count">3 decisions</span></td></tr>
+<tr data-id="16" data-title="Frontmatter source-citation rigor + tiered minimum + schema specs + STRUCK external_quotable + STRUCK inferred">
+  <td class="num decision-num">16</td>
+  <td class="decision-title">Frontmatter source-citation rigor — schema specs + tiered minimum</td>
+  <td class="decision-desc"><strong>STRUCK <code>external_quotable</code> field</strong> (Architect S4 — tautology) and <strong>STRUCK <code>evidence_kind: inferred</code></strong> (Architect S5 + Dunford L — fiction loophole). Schema specs: <code>decay_window</code> = <code>&lt;integer&gt;d</code>; <code>validated_at</code> = ISO 8601; <code>denominator</code> = always-present-with-null-or-string; <code>sources[].kind</code> = enum union. Tiered minimum by <code>confidence:</code> level (Dixon M1).</td>
+  <td><select class="dropdown" data-id="16"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="17" data-title="Provenance, confidence, status, slice-loading — same as brand">
+  <td class="num decision-num">17</td>
+  <td class="decision-title">Provenance, confidence, status, slice-loading — same as brand</td>
+  <td class="decision-desc">Reuse the shared loader. No new contracts where existing ones work.</td>
+  <td><select class="dropdown" data-id="17"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="18" data-title="Per-directory decay_window defaults (16 entries)">
+  <td class="num decision-num">18</td>
+  <td class="decision-title">Per-directory <code>decay_window</code> defaults (16 entries)</td>
+  <td class="decision-desc">Default 180d. Overrides: regulatory=90d, coverage/matrix=90d, network=90d, accreditation/reimbursement-codes=365d, clinical-workflow=365d.</td>
+  <td><select class="dropdown" data-id="18"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">D</span>Contracts &amp; composition<span class="section-count">4 decisions</span></td></tr>
+<tr data-id="19" data-title="brand × product × clients composition order with narrative-anchoring rationale + clients selection-not-correction">
+  <td class="num decision-num">19</td>
+  <td class="decision-title"><code>brand × product × clients</code> — order with narrative-anchoring rationale</td>
+  <td class="decision-desc">Brand sets interpretive frame; product fills evidence slots; clients overlays per-deal filter. Loading product before brand inverts narrative-anchoring (generator becomes a fact-stitcher). <strong>clients/ is composition-by-selection, not composition-by-correction</strong> — if clients contradicts product, fix product. <span class="critic-tag dunford">Dunford MED</span></td>
+  <td><select class="dropdown" data-id="19"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="20" data-title="proof-product-link eval — HTML claim markers + skipped when product/ absent">
+  <td class="num decision-num">20</td>
+  <td class="decision-title"><code>proof-product-link</code> eval — HTML claim markers + skipped when <code>product/</code> absent</td>
+  <td class="decision-desc">Detection mechanism: <code>&lt;!-- CLAIM:metric=... --&gt;</code> in brand/proof/. Untagged numbers not enforced. Eval is no-op when product/ doesn't exist (gates brand-only orgs and brand-before-product cutover gap). <span class="critic-tag architect">Architect E2+E3</span></td>
+  <td><select class="dropdown" data-id="20"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="21" data-title="min_freshness opt-in + 3-actor enforcement model">
+  <td class="num decision-num">21</td>
+  <td class="decision-title"><code>min_freshness: in-window</code> opt-in + 3-actor enforcement</td>
+  <td class="decision-desc">Generator-time fail-closed; operator-time warn via <code>/aligned:eval-audit</code>; cron-time advance Kanban warnings at 75% of <code>decay_window</code>. <span class="critic-tag architect">Architect E5</span></td>
+  <td><select class="dropdown" data-id="21"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="22" data-title="contracts.yaml extends with deep-merge; brand requires: → brand_requires: coordinated rename">
+  <td class="num decision-num">22</td>
+  <td class="decision-title"><code>contracts.yaml</code> extends with deep-merge; brand <code>requires:</code> → <code>brand_requires:</code> coordinated rename</td>
+  <td class="decision-desc">Per-generator deep merge on distinct keys. Brand's existing <code>requires:</code> renamed to <code>brand_requires:</code> in same coordinated PR. No backward-compat shim. <strong>The single most important spec for v1 implementation.</strong> <span class="critic-tag architect">Architect E1</span></td>
+  <td><select class="dropdown" data-id="22"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">E</span>Frameworks &amp; rollout<span class="section-count">3 decisions</span></td></tr>
+<tr data-id="23" data-title="Per-folder deepening framework (8 net-new)">
+  <td class="num decision-num">23</td>
+  <td class="decision-title">Per-folder deepening framework (8 net-new)</td>
+  <td class="decision-desc">payer-economics-audit, ehr-integration-audit, coverage-matrix-audit, engagement-baseline-audit, clinical-workflow-mapping, regulatory-tailwinds-scan, network-density-mapping, motion-mechanics-audit.</td>
+  <td><select class="dropdown" data-id="23"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="24" data-title="No pricing-detail.md, no roadmap.md in product/">
+  <td class="num decision-num">24</td>
+  <td class="decision-title">No <code>pricing-detail.md</code>, no <code>roadmap.md</code> in product/</td>
+  <td class="decision-desc">Pricing-with-discounts = sales/. Roadmap = confidential.</td>
+  <td><select class="dropdown" data-id="24"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="25" data-title="Clean-state cutover; coordinated PR with brand canonicalization">
+  <td class="num decision-num">25</td>
+  <td class="decision-title">Clean-state cutover; coordinated PR with brand canonicalization</td>
+  <td class="decision-desc">No aliasing shim. Same coordinated PR includes brand's <code>requires:</code> → <code>brand_requires:</code> rename + product v1 ship.</td>
+  <td><select class="dropdown" data-id="25"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">F</span>v0.2 critique-driven additions<span class="section-count">10 decisions</span></td></tr>
+<tr data-id="26" data-title="Actuarial-grade fields at confidence: high (Dixon H3)">
+  <td class="num decision-num">26 <span class="pill new">v0.2</span></td>
+  <td class="decision-title">Actuarial-grade fields at <code>confidence: high</code></td>
+  <td class="decision-desc"><code>methodology</code>, <code>comparator</code>, <code>confidence_interval</code> (when stat-sig), <code>analysis_provenance</code>. Actuary reading the frontmatter recognizes the rigor. Without these, late-stage proof-points die at the actuarial gate. <span class="critic-tag dixon">Dixon H3</span></td>
+  <td><select class="dropdown" data-id="26"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="27" data-title="generate-mobilizer-business-case generator (Dixon H2)">
+  <td class="num decision-num">27 <span class="pill new">v0.2</span></td>
+  <td class="decision-title"><code>generate-mobilizer-business-case</code> generator</td>
+  <td class="decision-desc">Pulls <code>business-case-template</code> + economics inputs. Output: one-page CFO-ready TCO narrative for Mobilizer-driven internal selling. The single highest-ROI generator output for complex enterprise health-plan deals. <span class="critic-tag dixon">Dixon H2</span></td>
+  <td><select class="dropdown" data-id="27"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="28" data-title="Shared loader is generic from day one (Architect L1)">
+  <td class="num decision-num">28 <span class="pill new">v0.2</span></td>
+  <td class="decision-title">Shared loader is generic from day one</td>
+  <td class="decision-desc"><code>skills/_shared/load-context-slices.md</code> accepts <code>folder</code> + <code>context_root</code>. Brand-folder's reference to <code>load-brand-slices.md</code> superseded in coordinated PR. <span class="critic-tag architect">Architect L1</span></td>
+  <td><select class="dropdown" data-id="28"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="29" data-title="Multi-product slice-path syntax (Architect L2)">
+  <td class="num decision-num">29 <span class="pill new">v0.2</span></td>
+  <td class="decision-title">Multi-product slice-path syntax</td>
+  <td class="decision-desc">Loader takes <code>context_root</code> param; cross-context refs use 3-segment full path. <span class="critic-tag architect">Architect L2</span></td>
+  <td><select class="dropdown" data-id="29"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="30" data-title="Eval runner is /aligned:eval-audit (Architect E4)">
+  <td class="num decision-num">30 <span class="pill new">v0.2</span></td>
+  <td class="decision-title">Eval runner is <code>/aligned:eval-audit</code></td>
+  <td class="decision-desc">No new runner infrastructure for v1. PR CI hook + daily freshness cron with 75% advance warning. <span class="critic-tag architect">Architect E4</span></td>
+  <td><select class="dropdown" data-id="30"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="31" data-title="integration/migration.md for switching cost (Dunford + Dixon)">
+  <td class="num decision-num">31 <span class="pill new">v0.2</span></td>
+  <td class="decision-title"><code>integration/migration.md</code> for switching cost</td>
+  <td class="decision-desc">Battle-card requires switching-cost detail (effort, timeline, data-migration approach). Without it, battle card the design generates is a feature-comparison sheet, not a sales weapon. Lost to incumbents who are already integrated. <span class="critic-tag dunford">Dunford</span> <span class="critic-tag dixon">Dixon</span></td>
+  <td><select class="dropdown" data-id="31"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="32" data-title="protocol_versions: block on integration/*.md (Yoo L6)">
+  <td class="num decision-num">32 <span class="pill new">v0.2</span></td>
+  <td class="decision-title"><code>protocol_versions:</code> block on integration/*.md</td>
+  <td class="decision-desc">US Core 6.1.0, SMART App Launch 2.0.0, NCPDP SCRIPT 2023011. CIO buyers ask "are you on US Core 6.1.0?" not "are you on FHIR R4?" <span class="critic-tag yoo">Yoo L6</span></td>
+  <td><select class="dropdown" data-id="32"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="33" data-title="Acknowledged battle-card competitor asymmetry (Dixon H4)">
+  <td class="num decision-num">33 <span class="pill new">v0.2</span></td>
+  <td class="decision-title">Acknowledged battle-card competitor-asymmetry limitation</td>
+  <td class="decision-desc"><code>brand/market/competitive</code> not held to product-grade source rigor. Battle-card output flags adversarial-use disclaimer in appendix. Full fix (promoting brand/market/competitive OR adding <code>product/competitive/</code>) deferred to v0.3 (Open Question #14). <span class="critic-tag dixon">Dixon H4</span></td>
+  <td><select class="dropdown" data-id="33"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="34" data-title="clients/ schema is the next sibling design — out of scope here, named gap (Dixon H1)">
+  <td class="num decision-num">34 <span class="pill new">v0.2</span></td>
+  <td class="decision-title"><code>clients/</code> schema is the next sibling design — out of scope, named gap</td>
+  <td class="decision-desc">Composition contract assumes <code>clients/{prospect}.md</code> exists. Without its schema defined, "tailored deck" reduces to "templated deck with name find-and-replace." Dixon's largest single rep-readiness concern. Named here so the gap is visible. <span class="critic-tag dixon">Dixon H1</span></td>
+  <td><select class="dropdown" data-id="34"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="35" data-title="Time-series / longitudinal modeling deferred to Open Question #11 (Dixon H5)">
+  <td class="num decision-num">35 <span class="pill new">v0.2</span></td>
+  <td class="decision-title">Time-series / longitudinal modeling deferred</td>
+  <td class="decision-desc">Current frontmatter models snapshots, not trajectories. Year-over-year renewal comparisons fall back to git history in v1. Open Question #11 carries the trigger. <span class="critic-tag dixon">Dixon H5</span></td>
+  <td><select class="dropdown" data-id="35"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+</tbody>
+</table>
+
+<div class="prompt-box">
+  <div class="prompt-box-header">
+    <span class="prompt-box-label">Prompt to send back</span>
+    <div class="prompt-actions">
+      <button class="btn" id="regenerate-decisions" type="button">Regenerate</button>
+      <button class="btn btn-primary" id="copy-decisions" type="button">Copy</button>
+    </div>
+  </div>
+  <textarea class="prompt-textarea" id="decisions-prompt" spellcheck="false"></textarea>
+  <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+</div>
+</div>
+</section>
+
+<section id="orphans">
+<h2><span class="num">18</span>Orphan / residual catalog</h2>
+<p>Considered during design and excluded. Each one-line reason. Prevents future revisits of settled-and-rejected ideas.</p>
+<ul class="dash">
+  <li><strong><code>product/architecture/</code>, <code>api-specs/</code>, <code>runbooks/</code>, <code>security-incidents/</code></strong> — engineering tree / fails exclusion gate.</li>
+  <li><strong><code>product/roadmap.md</code></strong> — confidential; competitors read decks.</li>
+  <li><strong><code>product/customer-list-raw/</code></strong> — privacy + potential PHI.</li>
+  <li><strong><code>product/personas/</code></strong>, <strong><code>competitive/</code></strong>, <strong><code>positioning/</code></strong> — live in <code>brand/</code>.</li>
+  <li><strong><code>product/pricing-detail.md</code>, <code>sales-playbook.md</code></strong> — sales/.</li>
+  <li><strong><code>product/awards.md</code>, <code>g2-reviews.md</code></strong> — <code>brand/proof/awards-press.md</code>.</li>
+  <li><strong><code>product/case-studies.md</code>, <code>clinical-evidence.md</code></strong> — brand/proof/; numbers and workflow live in product/.</li>
+  <li><strong>Top-level <code>regulatory/</code> at repo root</strong> — overweight; subfolder of product/ is right.</li>
+  <li><strong><code>product/glossary.md</code></strong> — <code>brand/language/terminology.md</code>.</li>
+  <li><strong>Pre-computed <code>brand × product</code> snapshots cached per generator</strong> — runtime composition wins; cache premature.</li>
+  <li><strong>Per-region locale folders inside <code>product/</code></strong> — coverage axes handle geography; locale is brand/language.</li>
+  <li><strong><code>external_quotable</code> as a frontmatter field</strong> — STRUCK v0.2 (Architect S4) — gating rule is PR-review, not regex.</li>
+  <li><strong><code>evidence_kind: inferred</code> as enum value</strong> — STRUCK v0.2 (Architect S5 + Dunford L) — fiction loophole.</li>
+  <li><strong>Per-product <code>clients/</code> nested under product/</strong> — clients/ is sibling to product/, not nested.</li>
+  <li><strong>Pre-canned per-rep deck variants in product/</strong> — variant generation is generator-time composition (per-persona slice priorities), not a folder.</li>
+</ul>
+</section>
+
+<section id="frameworks">
+<h2><span class="num">19</span>Framework registration</h2>
+<p>The interactive workshops that populate <code>product/</code>. Each framework deepens one top-level folder via structured Q&amp;A. Mirrors brand's per-section pattern.</p>
+
+<table>
+<thead><tr><th class="num">#</th><th>ID</th><th>Deepens</th><th>Cadence</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td><code>payer-economics-audit</code></td><td><code>product/economics/</code></td><td>per renewal cycle</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">2</td><td><code>ehr-integration-audit</code></td><td><code>product/integration/</code></td><td>quarterly</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">3</td><td><code>coverage-matrix-audit</code></td><td><code>product/coverage/</code></td><td>monthly to quarterly</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">4</td><td><code>engagement-baseline-audit</code></td><td><code>product/engagement/</code></td><td>quarterly to half-yearly</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">5</td><td><code>clinical-workflow-mapping</code></td><td><code>product/clinical/</code></td><td>per major release</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">6</td><td><code>regulatory-tailwinds-scan</code></td><td><code>product/regulatory/</code></td><td>quarterly</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">7</td><td><code>network-density-mapping</code></td><td><code>product/network/</code> (optional)</td><td>monthly</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">8</td><td><code>motion-mechanics-audit</code></td><td><code>product/motions/</code></td><td>per channel-mix shift</td><td><span class="pill new">net-new</span></td></tr>
+</tbody>
+</table>
+
+<p style="margin-top: 16px;"><strong>No orchestrator yet.</strong> Unlike brand's <code>reverse-engineered-brand</code>, no single "reverse-engineered-product" exists — a public URL doesn't surface PMPM tiers, EHR list, or coverage matrix. <code>product/</code> deepening is interview-driven from the operator side, not crawl-driven.</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- INTERACTIVE: Open Questions                                   -->
+<!-- ============================================================ -->
+<section id="questions">
+<h2><span class="num">20</span>Open questions <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive · v0.2</span></h2>
+<p>Decisions deliberately deferred. Toggle "Include" to ask now, "Reject" to remove from the list, or leave "Defer" to keep on watch. v0.2 expanded the list with critique-derived questions.</p>
+
+<div class="interactive-section">
+<div class="interactive-banner">
+  <span class="icon">●</span>
+  <div><strong>Three options per question.</strong> <em>Defer</em> keeps it on the list. <em>Include</em> queues it interactively. <em>Reject</em> removes it.</div>
+</div>
+
+<table class="interactive" id="questions-table">
+<thead><tr><th class="num">#</th><th style="width: 35%">Question</th><th>Trigger that would resolve it</th><th style="width: 130px">Status</th></tr></thead>
+<tbody>
+<tr class="section-divider"><td colspan="4"><span class="section-letter">A</span>Boundary &amp; placement<span class="section-count">5 questions</span></td></tr>
+<tr data-id="1" data-title="Where does pricing live? product/economics/pmpm.md vs sales/pricing-playbook.md?">
+  <td class="num">1</td>
+  <td>Where does <strong>pricing</strong> live? <code>product/economics/pmpm.md</code> (rack rates) vs <code>sales/pricing-playbook.md</code> (deal pricing)?</td>
+  <td>First sales/ folder design.</td>
+  <td><select class="dropdown q-dropdown" data-id="1"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="2" data-title="Public partnership announcements — product/integration/ehr.md or brand/proof/awards-press.md?">
+  <td class="num">2</td>
+  <td>Public partnership announcements ("now in Epic Vendor Services") — <code>product/integration/ehr.md</code> or <code>brand/proof/awards-press.md</code>?</td>
+  <td>First org with active integration-partnership PR cadence.</td>
+  <td><select class="dropdown q-dropdown" data-id="2"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="3" data-title="clinical/advisory-board.md placement">
+  <td class="num">3</td>
+  <td>Does <code>clinical/advisory-board.md</code> belong in <code>product/clinical/</code> or <code>brand/proof/clinical-evidence.md</code>?</td>
+  <td>First org with a public-facing clinical advisory board.</td>
+  <td><select class="dropdown q-dropdown" data-id="3"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="4" data-title="Does motions/ survive the 90-day operator trial?">
+  <td class="num">4</td>
+  <td>Does <code>motions/</code> survive the 90-day operator-trial, or fold into brand+economics+engagement in v0.3?</td>
+  <td>90-day review against double-homing rate.</td>
+  <td><select class="dropdown q-dropdown" data-id="4"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="14" data-title="Promote brand/market/competitive to product-grade rigor, or add product/competitive/?">
+  <td class="num">14 <span class="pill new">v0.2</span></td>
+  <td>Promote <code>brand/market/competitive</code> to product-grade source rigor, or add <code>product/competitive/</code>? Battle-card asymmetry today — us-facts cited, them-facts hand-waved. <span class="critic-tag dixon">Dixon H4</span></td>
+  <td>First lost deal where a sophisticated buyer caught the asymmetry.</td>
+  <td><select class="dropdown q-dropdown" data-id="14"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">B</span>Scaling &amp; granularity<span class="section-count">5 questions</span></td></tr>
+<tr data-id="5" data-title="When does coverage/matrix.md split into per-state files?">
+  <td class="num">5</td>
+  <td>At what scale does <code>coverage/matrix.md</code> split into per-state files?</td>
+  <td>First org with &gt; 25 state-specific Medicaid programs.</td>
+  <td><select class="dropdown q-dropdown" data-id="5"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="6" data-title="engagement/ by-cohort sub-slices?">
+  <td class="num">6</td>
+  <td>Should <code>engagement/</code> carry by-cohort sub-slices (commercial / Medicaid / MA), or stay buyer-type-agnostic?</td>
+  <td>First case where a deck cited the wrong cohort.</td>
+  <td><select class="dropdown q-dropdown" data-id="6"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="7" data-title="Per-product sub-folder vs separate repo default">
+  <td class="num">7</td>
+  <td>Per-product sub-folder vs separate repo — which becomes the default?</td>
+  <td>First multi-product org with shared brand thesis.</td>
+  <td><select class="dropdown q-dropdown" data-id="7"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="8" data-title="network/network-performance.md slice?">
+  <td class="num">8</td>
+  <td>Does <code>network/</code> need a <code>network-performance.md</code> slice (utilization, no-show)?</td>
+  <td>First marketplace org with measurable performance asks.</td>
+  <td><select class="dropdown q-dropdown" data-id="8"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="18" data-title="cms-rules.md sub-slices per rule cycle (PFS, IPPS, OPPS, MA)">
+  <td class="num">18 <span class="pill new">v0.2</span></td>
+  <td>Sub-slices in <code>cms-rules.md</code> per rule cycle (<code>## pfs-yearly</code>, <code>## ipps-yearly</code>, <code>## opps-yearly</code>, <code>## ma-final-notice</code>)? <span class="critic-tag yoo">Yoo L8</span></td>
+  <td>When 4+ rule-cycle items accumulate in one file.</td>
+  <td><select class="dropdown q-dropdown" data-id="18"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">C</span>Cadence &amp; freshness<span class="section-count">2 questions</span></td></tr>
+<tr data-id="9" data-title="drug-class-shifts.md as slice headers vs grow into a folder?">
+  <td class="num">9</td>
+  <td>Should <code>regulatory/drug-class-shifts.md</code> use slice headers per drug class, or grow into a folder?</td>
+  <td>When 5+ drug-class slices accumulate.</td>
+  <td><select class="dropdown q-dropdown" data-id="9"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="10" data-title="Pre-computed brand × product snapshots cached per generator?">
+  <td class="num">10</td>
+  <td>Pre-computed <code>brand × product</code> snapshots cached per generator?</td>
+  <td>First measurable composition-time latency regression (&gt; 2s).</td>
+  <td><select class="dropdown q-dropdown" data-id="10"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">D</span>v0.2 critique-derived questions<span class="section-count">10 questions</span></td></tr>
+<tr data-id="11" data-title="Time-series / longitudinal slice structure (Dixon H5)">
+  <td class="num">11 <span class="pill new">v0.2</span></td>
+  <td>Time-series / longitudinal slice structure for renewal year-over-year comparisons. <code>time_series:</code> block? Per-vintage files? <span class="critic-tag dixon">Dixon H5</span></td>
+  <td>First failed renewal-deck generation.</td>
+  <td><select class="dropdown q-dropdown" data-id="11"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="12" data-title="persona_priority: field on slices for per-persona deck variants (Dixon M4)">
+  <td class="num">12 <span class="pill new">v0.2</span></td>
+  <td><code>persona_priority:</code> field on slices for per-persona deck variants (actuary headline ≠ VP-Network headline). <span class="critic-tag dixon">Dixon M4</span></td>
+  <td>First buying-committee deck where the wrong fact got front-loaded.</td>
+  <td><select class="dropdown q-dropdown" data-id="12"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="13" data-title="urgency_implication: field on regulatory slices (Dixon M5)">
+  <td class="num">13 <span class="pill new">v0.2</span></td>
+  <td><code>urgency_implication:</code> field on regulatory slices for teach-fuel ("HEDIS X changed → MA bonus $A at risk"). <span class="critic-tag dixon">Dixon M5</span></td>
+  <td>First Challenger pitch where the rule cite landed flat without the implication.</td>
+  <td><select class="dropdown q-dropdown" data-id="13"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="15" data-title="geographic_scope: and lob: fields on slices (Dixon L2/L3)">
+  <td class="num">15 <span class="pill new">v0.2</span></td>
+  <td><code>geographic_scope:</code> and <code>lob:</code> fields on slices — many digital-health facts are state-or-LOB-scoped, not nationally true. <span class="critic-tag dixon">Dixon L2/L3</span></td>
+  <td>First wrong-geography quotation in a generated artifact.</td>
+  <td><select class="dropdown q-dropdown" data-id="15"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="16" data-title="peer_reviewed: bool orthogonal to evidence_kind (Dixon L1)">
+  <td class="num">16 <span class="pill new">v0.2</span></td>
+  <td><code>peer_reviewed: bool</code> orthogonal to <code>evidence_kind</code> — JAMA-published RCT vs unpublished RCT carry different weights. <span class="critic-tag dixon">Dixon L1</span></td>
+  <td>First clinical claim that needed publication-status differentiation.</td>
+  <td><select class="dropdown q-dropdown" data-id="16"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="17" data-title="HITRUST tier in coverage vs brand (Yoo L4)">
+  <td class="num">17 <span class="pill new">v0.2</span></td>
+  <td>HITRUST tier (i1/r2/e1) in <code>coverage/accreditation.md</code> vs <code>brand/proof/compliance.md</code>? Tier is a coverage fact; attestation is brand/proof. <span class="critic-tag yoo">Yoo L4</span></td>
+  <td>First buyer who asked "which HITRUST tier?" and got a wrong-folder answer.</td>
+  <td><select class="dropdown q-dropdown" data-id="17"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="19" data-title="carrier-fronting.md and motions/broker-channel.md? (Yoo)">
+  <td class="num">19 <span class="pill new">v0.2</span></td>
+  <td><code>carrier-fronting.md</code> and <code>motions/broker-channel.md</code> for self-insured employer reps selling through Mercer/Aon/WTW with Aetna/Cigna/Anthem fronting? <span class="critic-tag yoo">Yoo</span></td>
+  <td>First employer-targeting deck failure.</td>
+  <td><select class="dropdown q-dropdown" data-id="19"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="20" data-title="NDA-gated sales/confidential/ sibling acknowledgment (Dixon M3)">
+  <td class="num">20 <span class="pill new">v0.2</span></td>
+  <td>NDA-gated <code>sales/confidential/</code> sibling — for facts a rep needs that fail the disclosure clause. <span class="critic-tag dixon">Dixon M3</span></td>
+  <td>First sales/ folder design.</td>
+  <td><select class="dropdown q-dropdown" data-id="20"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+</tbody>
+</table>
+
+<div class="prompt-box">
+  <div class="prompt-box-header">
+    <span class="prompt-box-label">Prompt to send back</span>
+    <div class="prompt-actions">
+      <button class="btn" id="regenerate-questions" type="button">Regenerate</button>
+      <button class="btn btn-primary" id="copy-questions" type="button">Copy</button>
+    </div>
+  </div>
+  <textarea class="prompt-textarea" id="questions-prompt" spellcheck="false"></textarea>
+  <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+</div>
+</div>
+</section>
+
+<section id="tests">
+<h2><span class="num">21</span>Tests required</h2>
+<p>What must pass before the design is shipped. Schema lints prove every file conforms to the frontmatter contract. Generator contract tests prove every <code>product_requires:</code> slice resolves. Eval scenarios prove sourcing, freshness, and actuarial-rigor disciplines hold.</p>
+<table>
+<thead><tr><th>Test</th><th>Verifies</th></tr></thead>
+<tbody>
+<tr><td><code>frameworks/registry.yaml</code> lint</td><td>All 8 net-new product-folder framework entries pass schema</td></tr>
+<tr><td><code>product/contracts.yaml</code> schema</td><td>References only valid slice paths; <code>extends:</code> resolves</td></tr>
+<tr><td>Frontmatter required-field lint (tiered by <code>confidence:</code>)</td><td>Every <code>.md</code> in <code>product/</code> meets its tier's minimum (low/medium/high)</td></tr>
+<tr><td>Frontmatter format lints</td><td><code>decay_window</code> matches <code>&lt;integer&gt;d</code>; <code>validated_at</code> matches ISO 8601; <code>denominator</code> field-present-or-null</td></tr>
+<tr><td><code>source-presence</code> + <code>source-type-valid</code> evals</td><td>0% empty <code>sources:</code>; 0% un-typed <code>kind</code></td></tr>
+<tr><td><code>freshness</code> eval</td><td>0% past <code>decay_window:</code></td></tr>
+<tr><td><code>denominator-present</code> eval</td><td>0% slices carrying %/rates lack <code>denominator:</code></td></tr>
+<tr><td><code>evidence-not-inferred</code> eval <span class="pill new">v0.2</span></td><td>0% files with <code>evidence_kind: inferred</code></td></tr>
+<tr><td><code>actuarial-fields-on-high-confidence</code> eval <span class="pill new">v0.2</span></td><td>Every <code>confidence: high</code> file has methodology, comparator, analysis_provenance</td></tr>
+<tr><td><code>protocol-versions-present</code> eval <span class="pill new">v0.2</span></td><td>Every <code>integration/*.md</code> has <code>protocol_versions:</code></td></tr>
+<tr><td><code>proof-product-link</code> eval (HTML claim markers)</td><td>0% orphaned; <strong>skipped when <code>product/</code> absent</strong></td></tr>
+<tr><td><code>regulatory-currency</code> eval</td><td>0% <code>product/regulatory/</code> files past 90 days</td></tr>
+<tr><td>Contract merge test <span class="pill new">v0.2</span></td><td><code>product/contracts.yaml extends brand/contracts.yaml</code> resolves to expected per-generator deep-merge</td></tr>
+<tr><td>Coordinated rename test <span class="pill new">v0.2</span></td><td>Brand's <code>requires:</code> → <code>brand_requires:</code> migration leaves no <code>requires:</code> references behind</td></tr>
+<tr><td>Loader signature test <span class="pill new">v0.2</span></td><td><code>load-context-slices.md</code> accepts <code>folder</code>, <code>context_root</code>, <code>min_freshness</code>; returns <code>is_in_window</code></td></tr>
+<tr><td>Claim-marker detection test <span class="pill new">v0.2</span></td><td><code>proof-product-link.md</code> correctly extracts <code>&lt;!-- CLAIM:metric=... --&gt;</code> markers</td></tr>
+<tr><td>Skip-when-absent test <span class="pill new">v0.2</span></td><td><code>proof-product-link.md</code> is no-op when <code>product/</code> doesn't exist</td></tr>
+<tr><td>Mobilizer business-case generator test <span class="pill new">v0.2</span></td><td><code>generate-mobilizer-business-case</code> produces TCO narrative with sourced inputs and methodology footer</td></tr>
+<tr><td>Generator contract tests (per generator)</td><td>All <code>product_requires:</code> slices resolve, or generator surfaces clear error</td></tr>
+<tr><td>Migration test</td><td>Canary payer deck and CMO deck regenerate equivalently with the new <code>brand × product</code> composition</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="critique">
+<h2><span class="num">22</span>Critique integration log</h2>
+<p>Trace from each critic finding to v0.2 disposition. Critic-tag legend: <span class="critic-tag yoo">Yoo</span> <span class="critic-tag dunford">Dunford</span> <span class="critic-tag dixon">Dixon</span> <span class="critic-tag architect">Architect</span></p>
+
+<h3>Findings adopted into v0.2</h3>
+<table>
+<thead><tr><th>Finding</th><th>Critic</th><th>v0.2 disposition</th></tr></thead>
+<tbody>
+<tr><td><code>motions/</code> carve-out is too philosophical for operators</td><td>Dunford H + Yoo M1</td><td>Decision #6 downgraded to TENTATIVE; rule rewritten with operator-runnable test ("'because' vs number"); 90-day operator trial committed</td></tr>
+<tr><td>Marketing-quotable gate needs adversarial reformulation</td><td>Dunford H</td><td>Split into Decision #4a (inclusion) and #4b (exclusion); adversarial test added</td></tr>
+<tr><td><code>external_quotable</code> field is tautology</td><td>Architect S4</td><td>STRUCK from frontmatter; gating moved to PR review</td></tr>
+<tr><td><code>evidence_kind: inferred</code> is fiction loophole</td><td>Architect S5 + Dunford L</td><td>STRUCK from enum; <code>evidence-not-inferred</code> eval added</td></tr>
+<tr><td>Composite/blended numbers have no home</td><td>Dunford H</td><td>Decision #14 expanded; <code>{folder}/{topic}-blended.md</code> first-class with methodology</td></tr>
+<tr><td>Missing CMMI / APM models tailwind slot</td><td>Yoo H1</td><td>Added <code>regulatory/cmmi-models.md</code></td></tr>
+<tr><td>Missing risk-adjustment / HCC capture</td><td>Yoo H2</td><td>Added <code>economics/risk-adjustment.md</code></td></tr>
+<tr><td>Missing HEDIS / Star quality-measure performance</td><td>Yoo H3</td><td>Added <code>clinical/quality-measures.md</code></td></tr>
+<tr><td>Missing network-adequacy</td><td>Yoo M3</td><td>Added <code>coverage/network-adequacy.md</code></td></tr>
+<tr><td>Missing equity-disparities</td><td>Yoo M5</td><td>Added <code>engagement/equity-disparities.md</code></td></tr>
+<tr><td>Missing TEFCA / QHIN, clearinghouses, 42 CFR Part 2</td><td>Yoo M4 + recommendations</td><td>Added <code>integration/tefca-qhin.md</code>, <code>integration/clearinghouses.md</code>, <code>regulatory/forty-two-cfr-part-2.md</code></td></tr>
+<tr><td>"Epic App Orchard" is stale (shut down 2023)</td><td>Yoo fact-check #1</td><td>Replaced with "Epic Vendor Services / Showroom" everywhere</td></tr>
+<tr><td>RPM CPT codes need 2026 PFS Final Rule additions</td><td>Yoo fact-check #2</td><td>Added 99445/99470 to <code>economics/reimbursement-codes.md</code> notes</td></tr>
+<tr><td>"NCQA-CR" is misleading shorthand</td><td>Yoo fact-check #8</td><td>Replaced with "NCQA Credentialing Accreditation"</td></tr>
+<tr><td>Need <code>protocol_versions:</code> on integration/*.md</td><td>Yoo L6</td><td>Added to frontmatter; <code>protocol-versions-present</code> eval added</td></tr>
+<tr><td>Rename <code>glp-1-economics.md</code> → <code>drug-class-shifts.md</code></td><td>Yoo L3</td><td>Renamed; slice headers per drug class</td></tr>
+<tr><td>Rename <code>b2-smb.md</code> → <code>b2smb.md</code></td><td>Yoo L2</td><td>Renamed</td></tr>
+<tr><td>Actuarial methodology fields (rep needs at late stage)</td><td>Dixon H3</td><td>Added <code>methodology</code>, <code>comparator</code>, <code>confidence_interval</code>, <code>analysis_provenance</code> at <code>confidence: high</code></td></tr>
+<tr><td>Mobilizer-arming TCO synthesizer absent</td><td>Dixon H2</td><td>Added <code>economics/business-case-template.md</code> + <code>generate-mobilizer-business-case</code> generator</td></tr>
+<tr><td>Source-rigor will block population</td><td>Dixon M1</td><td>Tiered minimum frontmatter by <code>confidence:</code> level</td></tr>
+<tr><td>Split <code>economics/employer-roi.md</code> (4 buyer concerns in 1 file)</td><td>Dixon M2</td><td>Split into <code>absenteeism-productivity.md</code> + <code>claims-cost-impact.md</code>; benefits-platforms moved to <code>integration/</code></td></tr>
+<tr><td>Battle-card needs switching-cost slice</td><td>Dunford + Dixon</td><td>Added <code>integration/migration.md</code>; battle-card composition updated</td></tr>
+<tr><td><code>decay_window</code> format unspecified</td><td>Architect S1</td><td>Specified as <code>&lt;integer&gt;d</code>; lint rejects other units</td></tr>
+<tr><td><code>sources[].kind</code> enum union with brand</td><td>Architect S2</td><td>Enum union enumerated; lint validates</td></tr>
+<tr><td><code>denominator: null</code> vs field-omission</td><td>Architect S3</td><td>Always-present-with-null-or-string semantic specified</td></tr>
+<tr><td><code>validated_at</code> ISO 8601 format</td><td>Architect S6</td><td>Specified; lint enforces</td></tr>
+<tr><td>Loader doesn't exist; <code>load-brand-slices.md</code> rename premise false</td><td>Architect L1</td><td>Decision #28: generic <code>load-context-slices.md</code> from day one; brand-folder design's reference superseded in coordinated PR</td></tr>
+<tr><td>Multi-product slice-path syntax</td><td>Architect L2</td><td><code>context_root</code> param + 3-segment cross-context refs specified</td></tr>
+<tr><td>Loader signature for <code>min_freshness</code></td><td>Architect L3</td><td>Returns <code>is_in_window</code>; accepts <code>min_freshness</code>; structured-error refusal</td></tr>
+<tr><td><code>extends:</code> merge semantic + brand <code>requires:</code> rename</td><td>Architect E1</td><td>Decision #22: per-generator deep merge on distinct keys; coordinated rename in same PR. <strong>Single most important spec for v1.</strong></td></tr>
+<tr><td><code>proof-product-link</code> detection mechanism</td><td>Architect E2</td><td>HTML claim markers <code>&lt;!-- CLAIM:metric=... --&gt;</code> committed</td></tr>
+<tr><td><code>proof-product-link</code> chicken-and-egg cutover gap</td><td>Architect E3</td><td>Skip-when-absent guard added to Hard constraints</td></tr>
+<tr><td>Eval runner location un-spec'd</td><td>Architect E4</td><td>Decision #30: <code>/aligned:eval-audit</code> + PR CI hook + freshness cron</td></tr>
+<tr><td>Decay-window enforcement timing ambiguous</td><td>Architect E5</td><td>3-actor model spec'd: generator-time fail-closed, operator-time warn, cron-time 75% advance warning</td></tr>
+<tr><td>Composition order needs positioning rationale</td><td>Dunford MED</td><td>Decision #19 — narrative-anchoring rationale added</td></tr>
+<tr><td><code>clients/</code> selection-not-correction rule</td><td>Dunford MED</td><td>Decision #19 expanded; selection rule named</td></tr>
+<tr><td>Coverage ⊥ audiences orthogonality</td><td>Dunford MED</td><td>Boundary clarification #3 added to §05</td></tr>
+<tr><td>Define "fact register"</td><td>Dunford LOW</td><td>Definition added in Core Commitments</td></tr>
+<tr><td>Compliance straddles brand/proof + product/coverage</td><td>Yoo B2</td><td>Boundary clarification #5 added to §05</td></tr>
+<tr><td>Clinical-evidence dependency direction</td><td>Yoo B1</td><td>Boundary clarification #6: <code>product/clinical/</code> → <code>brand/proof/clinical-evidence</code> allowed; reverse forbidden</td></tr>
+<tr><td>Battle-card competitor asymmetry</td><td>Dixon H4</td><td>Decision #33: acknowledged limitation; battle-card flags adversarial-use disclaimer; full fix → Open Question #14</td></tr>
+<tr><td><code>clients/</code> schema undefined (largest single rep-readiness gap)</td><td>Dixon H1</td><td>Decision #34: acknowledged as next sibling design (out of scope here, named gap)</td></tr>
+<tr><td>Time-series / longitudinal modeling for renewals</td><td>Dixon H5</td><td>Decision #35: deferred; Open Question #11 carries trigger</td></tr>
+</tbody>
+</table>
+
+<h3 style="margin-top: 32px;">Findings deferred to open questions</h3>
+<ul class="dash">
+  <li><span class="critic-tag dixon">Dixon M4</span> <code>persona_priority:</code> field on slices → Open Question #12</li>
+  <li><span class="critic-tag dixon">Dixon M5</span> <code>urgency_implication:</code> field on regulatory → Open Question #13</li>
+  <li><span class="critic-tag dixon">Dixon L2/L3</span> <code>geographic_scope:</code> + <code>lob:</code> fields → Open Question #15</li>
+  <li><span class="critic-tag dixon">Dixon L1</span> <code>peer_reviewed: bool</code> orthogonal to evidence_kind → Open Question #16</li>
+  <li><span class="critic-tag yoo">Yoo L4</span> HITRUST tier in coverage vs brand → Open Question #17</li>
+  <li><span class="critic-tag yoo">Yoo L8</span> <code>cms-rules.md</code> sub-slices per rule cycle → Open Question #18</li>
+  <li><span class="critic-tag yoo">Yoo</span> Carrier-fronting / broker-channel slots for self-insured employer reps → Open Question #19</li>
+  <li><span class="critic-tag dixon">Dixon M3</span> NDA-gated <code>sales/confidential/</code> sibling → Open Question #20 (resolves with sales/ design)</li>
+</ul>
+
+<h3 style="margin-top: 32px;">Findings acknowledged but not addressed</h3>
+<ul class="dash">
+  <li><span class="critic-tag dixon">Dixon H4</span> Battle-card competitor asymmetry — full fix deferred to v0.3 (acknowledged in Decision #33)</li>
+  <li><span class="critic-tag dixon">Dixon H1</span> <code>clients/</code> schema — explicitly the next sibling design (acknowledged in Decision #34)</li>
+  <li><span class="critic-tag dixon">Dixon H5</span> Time-series modeling — explicitly deferred (Decision #35)</li>
+</ul>
+</section>
+
+<footer class="bottom">
+<p><em>Generated from</em> <code>docs/plans/2026-05-15-ai-native-product-folder-design.md</code> v0.2 <em>using the Planted "Warm Journal" design system. Brand tokens —</em> cream <em>·</em> bark <em>·</em> forest<em>. Sibling to</em> <code>docs/mockups/2026-05-15-ai-native-brand-folder.html</code><em>. Critique panel: Julie Yoo / April Dunford / Matt Dixon / The Architect, 2026-05-15.</em></p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ─── DECISION LOG ─────────────────────────────────────────────────────
+  const decisionsTable = document.getElementById('decisions-table');
+  const decisionsPrompt = document.getElementById('decisions-prompt');
+  const decisionsCopyBtn = document.getElementById('copy-decisions');
+  const decisionsRegenBtn = document.getElementById('regenerate-decisions');
+
+  function buildDecisionsPrompt() {
+    const rejected = Array.from(decisionsTable.querySelectorAll('tbody tr[data-id]'))
+      .filter(tr => tr.querySelector('select').value === 'reject')
+      .map(tr => ({ num: tr.dataset.id, title: tr.dataset.title }));
+
+    if (rejected.length === 0) {
+      return "All decisions approved on design v0.2 of the AI-native product folder.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.";
+    }
+
+    const lines = [
+      "I've reviewed design v0.2 of the AI-native product folder and I'm rejecting the following decisions:",
+      ""
+    ];
+    rejected.forEach(d => {
+      lines.push(`  • Decision #${d.num} — ${d.title}`);
+      lines.push(`    Reason: <add your reason here>`);
+      lines.push("");
+    });
+    lines.push("Please revise the design to address these rejections and re-present v0.3.");
+    lines.push("");
+    lines.push("If you have an alternative recommendation for any of these, propose it before I commit to a replacement.");
+    return lines.join("\n");
+  }
+
+  function updateDecisionRow(select) {
+    const tr = select.closest('tr');
+    if (select.value === 'reject') {
+      select.classList.add('reject');
+      tr.classList.add('row-active');
+    } else {
+      select.classList.remove('reject');
+      tr.classList.remove('row-active');
+    }
+  }
+
+  function refreshDecisions() {
+    decisionsPrompt.value = buildDecisionsPrompt();
+  }
+
+  decisionsTable.querySelectorAll('select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      updateDecisionRow(sel);
+      refreshDecisions();
+    });
+  });
+
+  decisionsRegenBtn.addEventListener('click', refreshDecisions);
+
+  decisionsCopyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(decisionsPrompt.value).then(() => {
+      const original = decisionsCopyBtn.textContent;
+      decisionsCopyBtn.textContent = 'Copied ✓';
+      decisionsCopyBtn.classList.add('copied');
+      setTimeout(() => {
+        decisionsCopyBtn.textContent = original;
+        decisionsCopyBtn.classList.remove('copied');
+      }, 1800);
+    }).catch(() => {
+      decisionsPrompt.select();
+      document.execCommand('copy');
+    });
+  });
+
+  // ─── OPEN QUESTIONS ───────────────────────────────────────────────────
+  const questionsTable = document.getElementById('questions-table');
+  const questionsPrompt = document.getElementById('questions-prompt');
+  const questionsCopyBtn = document.getElementById('copy-questions');
+  const questionsRegenBtn = document.getElementById('regenerate-questions');
+
+  function buildQuestionsPrompt() {
+    const rows = Array.from(questionsTable.querySelectorAll('tbody tr[data-id]'));
+    const included = rows
+      .filter(tr => tr.querySelector('select').value === 'include')
+      .map(tr => ({ num: tr.dataset.id, title: tr.dataset.title }));
+    const rejected = rows
+      .filter(tr => tr.querySelector('select').value === 'reject')
+      .map(tr => ({ num: tr.dataset.id, title: tr.dataset.title }));
+
+    if (included.length === 0 && rejected.length === 0) {
+      return "All open questions deferred on design v0.2 of the AI-native product folder.\n\nProceed with the design as-is; we'll resolve these as the named triggers fire.";
+    }
+
+    const lines = [
+      "Design v0.2 of the AI-native product folder — open-questions review:",
+      ""
+    ];
+
+    if (included.length > 0) {
+      lines.push("ASK ME NOW (resolve interactively, one at a time):");
+      included.forEach(q => { lines.push(`  • Question #${q.num} — ${q.title}`); });
+      lines.push("");
+      lines.push("For these: please ask me one at a time. Use multiple-choice options when reasonable.");
+      lines.push("");
+    }
+
+    if (rejected.length > 0) {
+      lines.push("REJECT (remove from open-questions list entirely):");
+      rejected.forEach(q => {
+        lines.push(`  • Question #${q.num} — ${q.title}`);
+        lines.push(`    Reason: <add your reason here>`);
+      });
+      lines.push("");
+    }
+
+    if (included.length > 0 && rejected.length > 0) {
+      lines.push("Handle the REJECT items first, then start the ASK ME NOW questions.");
+    }
+
+    return lines.join("\n");
+  }
+
+  function updateQuestionRow(select) {
+    const tr = select.closest('tr');
+    select.classList.remove('include', 'q-reject');
+    tr.classList.remove('row-active', 'row-rejected');
+    if (select.value === 'include') {
+      select.classList.add('include');
+      tr.classList.add('row-active');
+    } else if (select.value === 'reject') {
+      select.classList.add('q-reject');
+      tr.classList.add('row-rejected');
+    }
+  }
+
+  function refreshQuestions() {
+    questionsPrompt.value = buildQuestionsPrompt();
+  }
+
+  questionsTable.querySelectorAll('select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      updateQuestionRow(sel);
+      refreshQuestions();
+    });
+  });
+
+  questionsRegenBtn.addEventListener('click', refreshQuestions);
+
+  questionsCopyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(questionsPrompt.value).then(() => {
+      const original = questionsCopyBtn.textContent;
+      questionsCopyBtn.textContent = 'Copied ✓';
+      questionsCopyBtn.classList.add('copied');
+      setTimeout(() => {
+        questionsCopyBtn.textContent = original;
+        questionsCopyBtn.classList.remove('copied');
+      }, 1800);
+    }).catch(() => {
+      questionsPrompt.select();
+      document.execCommand('copy');
+    });
+  });
+
+  // ─── INIT ────────────────────────────────────────────────────────────
+  refreshDecisions();
+  refreshQuestions();
+})();
+</script>
+</body>
+</html>

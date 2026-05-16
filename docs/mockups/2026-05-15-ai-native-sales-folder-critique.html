@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026-05-15 Ai Native Sales Folder — Critique Decisions</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      color: #1a1a1a;
+      margin: 0 auto;
+      padding: 40px 40px 120px;
+      max-width: 960px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 4px; }
+    .subtitle { font-size: 0.95rem; color: #555; margin: 0 0 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin: 0 0 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
+    .tab-count {
+      display: inline-block; background: #f5f3ef; color: #555;
+      font-size: 0.75rem; padding: 1px 7px; border-radius: 9999px;
+      margin-left: 6px; font-weight: 500;
+    }
+    .tab-btn.active .tab-count { background: #fff7ed; color: #e8762b; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .finding {
+      background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 18px 20px; margin-bottom: 12px;
+      display: flex; gap: 16px; align-items: flex-start;
+      transition: opacity 150ms, border-color 150ms;
+    }
+    .finding.rejected { opacity: 0.5; border-color: #f0eeeb; background: #fafafa; }
+    .finding-toggle { flex-shrink: 0; padding-top: 2px; }
+    .toggle-switch {
+      position: relative; width: 44px; height: 24px;
+      background: #d1d5db; border-radius: 9999px; cursor: pointer;
+      transition: background 150ms;
+    }
+    .toggle-switch.on { background: #6b8e4e; }
+    .toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; background: white; border-radius: 9999px;
+      transition: transform 150ms; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(20px); }
+    .toggle-label {
+      font-size: 0.72rem; color: #6b7280; text-align: center; margin-top: 4px;
+      font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .finding-body { flex: 1; min-width: 0; }
+    .finding-critics { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .critic-tag {
+      font-size: 0.72rem; padding: 1px 8px; border-radius: 9999px;
+      background: #fff7ed; color: #e8762b; font-weight: 500;
+    }
+    .finding-text { font-size: 0.92rem; line-height: 1.5; color: #1a1a1a; margin-bottom: 6px; }
+    .finding-action { font-size: 0.85rem; color: #555; line-height: 1.5; }
+    .finding-action strong { color: #1a1a1a; font-weight: 500; }
+
+    .fact-check {
+      background: white; border: 1px solid #e5e7eb; border-left: 3px solid #6b8e4e;
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+    }
+    .fact-check-claim { font-size: 0.85rem; color: #6b7280; text-decoration: line-through; margin-bottom: 4px; }
+    .fact-check-correction { font-size: 0.92rem; color: #1a1a1a; line-height: 1.5; }
+    .fact-check-critic { font-size: 0.72rem; color: #e8762b; font-weight: 500; margin-top: 6px; }
+    .auto-apply-notice {
+      font-size: 0.82rem; color: #6b7280; background: #f5f3ef;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;
+    }
+
+    .modify-notes { margin-top: 24px; padding-top: 20px; border-top: 1px dashed #e5e7eb; }
+    .modify-notes label {
+      display: block; font-size: 0.85rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px;
+    }
+    .modify-notes textarea {
+      width: 100%; min-height: 80px; padding: 10px 12px;
+      font-family: inherit; font-size: 0.88rem;
+      border: 1px solid #e5e7eb; border-radius: 8px; resize: vertical; background: white;
+    }
+    .modify-notes textarea:focus { outline: none; border-color: #e8762b; }
+
+    .empty {
+      font-size: 0.88rem; color: #6b7280; padding: 24px; text-align: center;
+      background: #f5f3ef; border-radius: 8px;
+    }
+
+    .action-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.04); z-index: 10;
+    }
+    .summary { font-size: 0.88rem; color: #555; }
+    .summary strong { color: #1a1a1a; }
+    .copy-btn {
+      padding: 10px 20px; font-size: 0.88rem; font-weight: 500; color: white;
+      background: #e8762b; border: none; border-radius: 8px; cursor: pointer;
+      transition: background 150ms; font-family: inherit;
+    }
+    .copy-btn:hover { background: #cc6725; }
+    .copy-btn.copied { background: #6b8e4e; }
+  </style>
+</head>
+<body>
+  <h1>2026-05-15 AI Native Sales Folder</h1>
+  <p class="subtitle">Brainstorming session · software mode</p>
+  <p class="context">Critique decisions. Toggle findings to accept or reject, add modify notes per tab if needed, then copy the follow-up prompt back into Claude Code.</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="high">High <span class="tab-count">16</span></button>
+    <button class="tab-btn" data-tab="medium">Medium <span class="tab-count">24</span></button>
+    <button class="tab-btn" data-tab="low">Low <span class="tab-count">5</span></button>
+    <button class="tab-btn" data-tab="facts">Fact-checks <span class="tab-count">7</span></button>
+  </div>
+
+  <div class="tab-panel active" id="panel-high">
+    <div class="finding" data-id="h-1" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Loader rename targets a file that does not exist; Decision 16 is highest-blast-radius and least specified. Once the loader ships, the path string embeds across every brand and sales generator (not just the 3 named).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Demote Decision 16 to &#x27;additive thin loader in v1, evaluate generalization in v2&#x27;. Strip rename framing from migration steps.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-2" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Cross-folder depends_on: resolution is asserted, not specified. No tree-inference rule, no error behavior for unknown trees, no spec for how brand-side persona x audience overlay interacts with sales -&gt; brand -&gt; clients composition order.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add &#x27;Loader resolution algorithm&#x27; subsection: tree inference rule (leading segment match against allowlist), unknown-tree error behavior, overlay-vs-pipeline composition semantics.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-3" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Dual-shape clients/{prospect} (file or folder) contract is hand-waved. &#x27;Loader treats both the same&#x27; is unspecified - which file in folder shape resolves clients/acme-health#committee?</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Specify folder-shape resolution rule (e.g., {prospect}.md -&gt; index.md -&gt; first-file-with-matching-H2 -&gt; fail) OR forbid dual shape in v1.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-4" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">17-test list has structural gaps at most error-prone surfaces: no degraded-mode error-path test for missing depends_on slices (CLAUDE.md mandates error tests for mocks); no clients-shape-collision test pre-lint; no cross-tree-disambiguation test; loader-delegation-test overlaps brand&#x27;s shared-loader-delegation-test without acknowledgment.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add 3 missing tests: degraded-mode-output, clients-shape-collision-resolution, cross-tree-disambiguation. Reconcile loader-delegation-test vs brand&#x27;s shared-loader-delegation-test.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-5" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">JOLT driver count and labels wrong (3 not 4; &#x27;Lack of Information&#x27; not &#x27;Information Burden&#x27;) and Teach pitch missing The Warmer (6 steps not 5). Hardcoded into directory, frontmatter, evals.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Reduce to 3 driver files (outcome-uncertainty, valuation-problems, lack-of-information); relocate Anticipated Regret to a T-style response file. Add the-warmer as 6th Teach-pitch step; update slices, eval, directory comment.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-6" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-6', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">Indecision vs preference-for-status-quo conflation - the most important diagnostic in The JOLT Effect. Status-quo solved by Challenger insight; indecision by JOLT. Standard &#x27;build the business case&#x27; response worsens indecision. Design has no diagnosis gating step.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add indecision/diagnose.md (or discovery/diagnose-indecision-vs-status-quo.md) as the gating step + eval indecision-vs-status-quo-diagnosed.md that fails if a deal-resurrection play picks a JOLT driver without diagnosis.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-7" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-7', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+        </div>
+        <div class="finding-text">Five &#x27;pre-close stages&#x27; are NAMED, not SPECIFIED. No exit artifact, entry precondition, or conversion metric per stage. &#x27;We are in Teach&#x27; is a vibe, not a stage.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Each sales/stages/{stage}.md must declare exit_artifact: schema, entry_precondition: schema, conversion_metric: rate-the-org-tracks.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-8" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-8', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+        </div>
+        <div class="finding-text">Bowtie reconciliation claim is dishonest about scope. Decision 11 collapses Bowtie&#x27;s Awareness/Education into one &#x27;Discovery&#x27; stage and Selection-&gt;Commit into &#x27;Close&#x27;. Post-close (Onboarding, Impact, Expansion) exiled to clients/ loses ~50% of recurring-revenue lifecycle.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either rename folder to acquisition/ and acknowledge right-side gap, OR add stages/onboarding.md, impact.md, expansion.md.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-9" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-9', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+        </div>
+        <div class="finding-text">No conversion-rate / velocity / stall-rate measurement layer. Word &#x27;conversion&#x27; appears 0 times. None of 11 evals measures stage-to-stage transition health. A sales playbook without conversion measurement is a content library.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add metrics/ directory or conversion-rates.md at the root; specify per-stage owned rates; add evals like discovery-to-teach-conversion-tracked, stalled-at-stage-flagged.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-10" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-10', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">&#x27;No CRM emulation&#x27; constraint violated in spirit by clients/{prospect}.md schema (current_stage, mobilizer_id, meddpicc, committee, stakeholder-profile-map, stall-context, crm_link = a CRM opportunity record in markdown). Will become a shadow CRM, especially in healthcare where Salesforce is hostile to physician-contact data.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Pick: (a) one-way CRM mirror with declared SLA + crm-drift-detection eval, OR (b) generators query CRM at runtime and clients/ carries no opportunity state. Update Decision 2 reasoning honestly either way.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-11" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-11', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">SDR layer missing entirely. Every artifact assumes &#x27;qualified opportunity created&#x27;. No outbound sequences, ICP-fit rubric, account research protocol, SDR-&gt;AE handoff, BANT-Lite. Digital-health enterprise has 4-6 weeks of SDR work to GET to discovery.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either explicitly scope to &#x27;AE playbook, post-qualified-opportunity&#x27; with SDR out-of-scope statement, OR add outbound/ + handoff/ peer dirs.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-12" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-12', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">Six framework workshops + orchestrator is consultant-bait. Decision 19 (six frameworks) + Decision 20 (orchestrator) + Decision 21 (run order) historically collapses by week 9. Bridge Group experience: framework completion rates drop ~50% per added workshop in a series of more than 3.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Ship 2 frameworks v1 (commercial-insight, objection-library); defer 4 with real promotion triggers; defer orchestrator until 4+ frameworks exist standalone.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-13" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-13', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">Nine subdirectories - half are decoration for rep daily use. Real (rep opens mid-deal): insight, discovery, objections, references, plays. Reference material: buyers, stages. Indecision should be one file. Eval is ops, not rep-facing. Reps can hold 6 in their head; not 9.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Collapse buyers/ + stages/ -&gt; frameworks/; demote indecision/ to single file; move eval/ under _ops/. Yields 6 rep-facing folders + 1 ops folder.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-14" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-14', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">GTM motion is orientation reading, not a slot - design silently presupposes B2B-enterprise risk-based motion. B2C2B (broker-RFP), B2SMB (no committee), aggregator-distribution (Mobilizer inverts) all break.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add sales/motion.md + applies_to_motion: frontmatter so generators can filter by motion, OR have orchestrator emit motion-specific skeletons.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-15" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-15', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">EHR / payer-API integration has no first-class home - buried in objections/risk.md. Integration is a 12-18-month parallel workstream that determines whether the deal closes (Epic App Orchard alone is 6-9 months) - not a 20-minute objection.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add plays/integration-scoping.md as first-class play; integration-readiness section in MCP template; integration discovery questions in discovery/by-vertical/{provider,payer}.md.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-16" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-16', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">Champion identification doesn&#x27;t differentiate clinical vs economic champion. Healthcare deals need clinical champion (CMO/CMIO/Service Line Chair) by TEACH and economic champion (CFO/COO) by TAILOR. Different motivations, different playbooks. Single mobilizer_id collapses them.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add clinical_champion_id + economic_champion_id (or champion_role enum); fork mobilizer-id-required into clinical-by-TEACH + economic-by-TAILOR.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-high">Modify notes for High severity (optional)</label>
+      <textarea id="notes-high" placeholder="Anything you want to add, override, or annotate for high-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-medium">
+    <div class="finding" data-id="m-1" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Composition order stated but not enforceable - only enforcement is a runtime eval. No schema rule prevents wrong-order requires:.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either partition contracts.yaml into requires_sales:, requires_brand:, requires_clients: per tree, OR demote Decision 15 to &#x27;convention surfaced by eval, not enforced by loader&#x27; and acknowledge per-deal-hack risk remains.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-2" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">sales_relevant: field silently mutates brand schema. Sales design adds frontmatter field to brand/ without brand-side review or test.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Move sales_relevant: to a sales-side index (sales/buyers/sales-relevance.yaml), OR add explicit &#x27;brand frontmatter delta&#x27; subsection naming brand-side ownership and the brand-side test.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-3" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">applies_to_stage: introduces a fourth tree concept implicitly. Sales-only field but stage-relevance is a cross-tree question (brand persona with stage-specific KPIs has no way to express it).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either declare brand slices stage-agnostic by definition (clean rule, easy to test), OR extend applies_to_stage: to brand frontmatter.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-4" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+        </div>
+        <div class="finding-text">Composition-order framing treats per-deal hacks as threats; they are the signal for playbook evolution. No promotion path from clients/{prospect}/{novel-artifact}.md -&gt; sales/ slice. Without it, the playbook only gets staler.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add a playbook-promotion workflow: how do per-deal artifacts that worked become candidates for sales/ slice updates?</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-5" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">last_used_in_deal: will be gamed; eval will lie. Auto-update on generator run = measures generator hit-rate not actual usage. Rep-stamped = field goes stale across the board.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Resolve open question 8 in v1 with writeback-pipeline spec (combination of generator-run signal + call-recording or rep self-attest), OR drop the field + eval from v1.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-6" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-6', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">MEDDPICC is wrong v1 default for digital-health enterprise. SPICED (Situation, Pain, Impact, Critical event, Decision) fits payer/provider clinical discovery and composes naturally with Challenger reframe. Also: MEDDPICC is AE-stage, SDRs cannot fill it.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Move open questions 3 &amp; 7 to v1 resolved. Ship MEDDPICC + BANT-Lite + SPICED side-by-side via qualification_rubric: choice in version.yaml, default to SPICED for digital health.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-7" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-7', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">plays/ files: multi-thread.md and disqualification.md are padding (reps know how to do these; not opened mid-deal). deal-resurrection.md overlaps indecision/ content (one workflow, two files).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Keep mutual-close-plan.md + exec-brief.md. Drop multi-thread.md + disqualification.md. Merge deal-resurrection.md into the indecision file.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-8" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-8', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">Six objection categories miss ICP-misalignment (&#x27;we are not the right fit&#x27; - common in digital-health) and double-count authority + internal-politics (both about getting more people in the room).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Five categories: pricing, timing, risk, incumbency, committee-expansion (merging authority + internal-politics), fit (new ICP-misalignment slot).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-9" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-9', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">References playbook 5-axis matrix (case-study x objection x stage x persona x vertical) will degrade to 2-axis in practice. ~9,600 cells unmaintainable; account teams populate only what they query on.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Ship v1 as case-study x objection (2-axis); add stage as third axis when v1 evidence shows reps querying by stage; defer persona and vertical.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-10" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-10', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">Eval bars committee-coverage and mobilizer-id-required are compliance theater. 6.8 average is 2015 tech-B2B; healthcare runs 8-15 (a 3-of-12 pass would inflate the committee). 100% Mobilizer-named past TEACH gets gamed within 90 days.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Make committee-coverage motion-aware (&gt;=3 SMB, &gt;=6 enterprise; pass if total &lt;4 documented). Make mobilizer-id-required two-tier: candidate-Mobilizer-by-TEACH, confirmed-Mobilizer-by-TAILOR.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-11" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-11', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">17 tests in v1 - half can defer. Many depend on infrastructure that does not exist (writeback pipeline, references infrastructure, full persona coverage). Bridge Group benchmark: programs that ship 15+ metrics get ignored.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Ship 8 v1 tests (frontmatter lint, commercial-insight-trace, objection-coverage, concern-vs-competitor-separation, slice-slug lint, cross-folder lint, generator contract tests, registry lint). Document 9 deferred with promotion triggers.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-12" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-12', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+        </div>
+        <div class="finding-text">Exec-brief / MCP / deal-resurrection templates have no field schema specified. &#x27;One-page exec brief template&#x27; and &#x27;MCP template + field schema&#x27; without H2-slice structure means the framework reinvents the schema every run.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Specify H2-slice structure for plays/exec-brief.md, mutual-close-plan.md, deal-resurrection.md (or include example file).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-13" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-13', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Jacco van der Kooij</span>
+        </div>
+        <div class="finding-text">plays/ is generic-SaaS-AE play set, not digital-health-shaped. Architecture claims digital-health specificity but Section 6 texture (FDA, BAA, MA STARS, 42 CFR Part 2) lives only in fills, not in plays list.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add 4 digital-health plays: clinical-validation-plan, security-and-compliance-runbook, pilot-to-production-conversion-plan, payer-reimbursement-pathway. OR explicitly admit v1 ships generic plays and v2 layers in digital-health.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-14" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-14', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">Provider/Payer/Employer paths share shape but have structurally different buying processes (provider: clinical committee + EHR; payer: actuarial review + claims-data DUA; employer: broker + plan-year drop-dead). Vertical != buyer-side.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add discovery/by-buyer-side/{provider|payer|employer|direct}.md axis OR applies_to_buyer_side: frontmatter, OR document the overload explicitly.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-15" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-15', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">Indecision drivers missing digital-health 5th: Regulatory/Coverage Uncertainty. Akili, Pear, Click, MA RPM all stalled on coverage/code uncertainty - not Outcome Uncertainty (outcomes proven).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add indecision/regulatory-coverage-uncertainty.md as a driver explicitly named for digital-health (or restructure once Anticipated Regret is moved per fc-3).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-16" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-16', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">Subdomain Reuse table fills are uneven - RPM reframes are Mad-Libs generic (every RPM company has been pitching them for 10 years), and DTx-payer Mobilizer is wrong (Pharmacy Director is gatekeeper in P&amp;T review, not Mobilizer; actual Mobilizer is Medical Director / VP Behavioral Health / VP Innovation).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Replace generic RPM reframes with surprise-the-buyer reframes (e.g., RPM cost pays for itself in STARS uplift, not readmission avoidance). Fix DTx-payer Mobilizer to Medical Director / VP Behavioral Health / VP Innovation.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-17" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-17', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">Clinical evidence ladder isn&#x27;t differentiated by buyer-side. Payer demands actuarial-grade outcomes; case studies fail at first review. References playbook matrix has no evidence-grade axis.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add evidence_grade: axis (case-study | peer-reviewed | claims-data-analysis | actuarial-validated | rct | rwe-registry) to references playbook + buyer-side routing rule (payer/risk-based MUST use claims-data or actuarial minimum).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-18" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-18', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">6-month reference freshness too aggressive for healthcare. Healthcare execs do 2-4 reference calls/quarter total; 6-month bar guarantees false-stale flags. What actually goes stale is legal clearance and primary-contact-in-seat, not the call.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Extend to 12 months for healthcare (or motion-aware: 6 tech-B2B / 12 healthcare) OR split metric into last_talked_to + last_legal_clearance_check + primary_contact_still_in_seat.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-19" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-19', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">&#x27;Blocker&#x27; archetype vs lowercase &#x27;blocker&#x27; verb drift. Mockup uses &#x27;this committee&#x27;s blocker&#x27; (lowercase generic) and &#x27;Talker is blocking&#x27; interchangeably with the 7th Challenger profile. Will leak into generated content.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add glossary slice in buyers/stakeholder-profiles.md distinguishing Blocker (capitalized archetype) from blocking (lowercase verb). Add lint for lowercase &#x27;blocker&#x27; used as the archetype.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-20" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-20', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">Cost-of-inaction playbook names &#x27;calculator template&#x27; instead of Rational Drowning mechanic. Rational Drowning is a teaching mechanic that makes the buyer feel the number, not a spreadsheet to argue about.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Rename or restructure so insight/cost-of-inaction.md describes the Rational Drowning script (delivery so it lands as drowning, not as a number); calculators belong in MCP / business-case territory.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-21" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-21', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">The 5 Challenger rep profiles missing entirely (Hard Worker, Challenger, Relationship Builder, Lone Wolf, Reactive Problem Solver). No reps/ directory. A play designed for a Challenger fails when handed to a Relationship Builder.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either add sales/reps/profiles.md (and accept the folder serves enablement too) OR explicitly mark &#x27;rep-profile coaching out of scope; lives in enablement system&#x27; in orphan catalog.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-22" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-22', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">Teach/Tailor/Take-Control -&gt; 5-stage Bowtie mapping is being bent. &#x27;Discovery -&gt; Teach&#x27; is the Hard Worker sequence; Challengers walk in armed with a hypothesis (The Warmer) and use Teach to create discovery.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either acknowledge in Decision 11 reasoning that this is Bowtie funnel with Challenger labels grafted on (state as deliberate hybrid), OR embed discovery inside Teach as a sub-slice.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-23" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-23', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">Discovery question types named generically; question-banks.md uses Sandler/Voss vocabulary (open/calibrated/diagnostic/negative-reverse) but is represented as the Challenger discovery layer. Challenger discovery is hypothesis-confirming, not open-ended.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Rename question-banks.md slices to make Challenger-style hypothesis-confirming questions a distinct slice, OR split into discovery/challenger-hypothesis.md and discovery/voss-tactical-empathy.md.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-24" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-24', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Decision 21 &#x27;objections + references can run in parallel&#x27; not modeled. Brand orchestrator does not exist; framework runner has explicit WAIT points per CLAUDE.md (single-threaded interactive).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Replace &#x27;in parallel&#x27; with &#x27;in either order (both depend only on stakeholder-mapping)&#x27;, OR acknowledge orchestrator does not actually parallelize - the graph shows logical dependency, not concurrent execution.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-medium">Modify notes for Medium severity (optional)</label>
+      <textarea id="notes-medium" placeholder="Anything you want to add, override, or annotate for medium-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-low">
+    <div class="finding rejected" data-id="l-1" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch " onclick="toggleFinding('l-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">Mobilizer-is-the-unit framing correct but underused. ~1 in 6 stakeholders is a Mobilizer; modal champion is a Talker; Friend-led deals are worse than no deal. Talker-champion is a deal-quality signal, not just a flag.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add champion-classification verification step to TEACH-&gt;TAILOR transition. Make multi-thread.md and disqualification.md formally consume the classification. Add eval champion-classified.md.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-2" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch " onclick="toggleFinding('l-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+          <span class="critic-tag">Julie Yoo</span>
+        </div>
+        <div class="finding-text">6.8-buyer figure is 2015 CEB/Gartner research; current B2B is 10-11; healthcare 8-15. Hardcoded into eval.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Replace &#x27;6.8-buyer&#x27; with &#x27;typical 6-11 person committee (current research ~10; healthcare 8-15)&#x27;. Encode the dynamic (more committee = more indecision risk), not the snapshot.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-3" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch " onclick="toggleFinding('l-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Matt Dixon</span>
+        </div>
+        <div class="finding-text">Constructive Tension (the Customer-side play that mirrors Challenger Reframe - Mobilizer creates tension inside the buying committee) missing. buying-committee.md covers dynamics but does not name it as a play.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add Constructive Tension as a named play in buyers/buying-committee.md.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-4" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch " onclick="toggleFinding('l-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Trish Bertuzzi</span>
+        </div>
+        <div class="finding-text">applies_to_stage: is metadata-for-metadata&#x27;s-sake. Most slices stage-agnostic (objections at any stage; profiles stage-independent); slices that ARE stage-specific live in stages/{stage}.md where directory encodes the stage. Tax on every slice for small benefit.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Drop from required frontmatter. If stage-specific filtering is wanted, add as optional tag (tags: [stage:tailor]) on the small number of slices where it matters.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-5" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch " onclick="toggleFinding('l-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Decision 4 &#x27;nine subdirectories&#x27; count check passes. Architect verified count of 9 (eval/ included; CLAUDE.md, version.yaml, contracts.yaml are top-level files, not subdirs).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> No change required; documented as verified non-issue.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-low">Modify notes for Low severity (optional)</label>
+      <textarea id="notes-low" placeholder="Anything you want to add, override, or annotate for low-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-facts">
+    <div class="auto-apply-notice">
+      Fact-check corrections are applied automatically per the critique-panel protocol. Use the modify notes below if you want to override or annotate a specific correction.
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">v1 generalizes skills/_shared/load-brand-slices.md (implies file exists today)</div>
+      <div class="fact-check-correction">→ File does not exist. Brand loader is itself a v1 deliverable that has not shipped. Either declare hard sequencing dependency on brand v1 shipping the loader first, or reframe as building load-slices.md fresh as the FIRST loader in either tree&#x27;s v1. Drop the rename framing.</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Decision 20 mirrors reverse-engineered-brand orchestrator</div>
+      <div class="fact-check-correction">→ reverse-engineered-brand is not registered in frameworks/registry.yaml and no folder exists. It is itself a forward-looking deliverable, not an existing pattern. Remove the &#x27;mirrors existing&#x27; framing.</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">JOLT identifies 4 indecision drivers: Outcome Uncertainty, Valuation Problems, Information Burden, Anticipated Regret</div>
+      <div class="fact-check-correction">→ The JOLT Effect identifies 3 drivers: Outcome Uncertainty, Valuation Problems, Lack of Information. Anticipated Regret / FOMU is the underlying emotional state addressed by the T (Take fear off the table), not a fourth driver. Reduce to 3 driver files; relocate Anticipated Regret as a response-side concept.</div>
+      <div class="fact-check-critic">Matt Dixon</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Third indecision driver named &#x27;Information Burden&#x27;</div>
+      <div class="fact-check-correction">→ Dixon&#x27;s canonical term is &#x27;Lack of Information&#x27; (under-informed). &#x27;Information Burden&#x27; implies overload (opposite polarity, opposite response). Rename information-burden.md to lack-of-information.md.</div>
+      <div class="fact-check-critic">Matt Dixon</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Teach pitch is a 5-step sequence: Reframe -&gt; Rational Drowning -&gt; Emotional Impact -&gt; New Way -&gt; Your Solution</div>
+      <div class="fact-check-correction">→ The Challenger Sale specifies 6 steps: The Warmer -&gt; Reframe -&gt; Rational Drowning -&gt; Emotional Impact -&gt; A New Way -&gt; Your Solution. The Warmer is not optional in the book. Add the-warmer slice; update commercial-insight-trace.md eval to check 6 in order.</div>
+      <div class="fact-check-critic">Matt Dixon</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">dispatch-tracker/prospects/acme-corp.md and planted/clients/basis/ are precedents for clients/{prospect} shape</div>
+      <div class="fact-check-correction">→ Neither directory exists in this repo. Both are external sibling projects the sales loader will not actually read. Should be flagged as external precedents, not in-repo patterns.</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">MEDDPICC named as type: enum value implies an anchoring framework exists</div>
+      <div class="fact-check-correction">→ No MEDDPICC framework exists in frameworks/registry.yaml. Acknowledge that no qualification-rubric framework anchors the type value, or add one.</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-facts">Override or annotate fact-checks (optional)</label>
+      <textarea id="notes-facts" placeholder="Anything to override or annotate..."></textarea>
+    </div>
+  </div>
+
+  <div class="action-footer">
+    <div class="summary"><strong id="accept-count">0</strong> accepted · <strong id="reject-count">0</strong> rejected</div>
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy follow-up prompt</button>
+  </div>
+
+  <script>
+    const FINDINGS = [
+      {"id":"h-1","severity":"high","text":"Loader rename targets a file that does not exist; Decision 16 is highest-blast-radius and least specified. Once the loader ships, the path string embeds across every brand and sales generator (not just the 3 named).","action":"Demote Decision 16 to 'additive thin loader in v1, evaluate generalization in v2'. Strip rename framing from migration steps.","critics":["The Architect"],"accepted":true},
+      {"id":"h-2","severity":"high","text":"Cross-folder depends_on: resolution is asserted, not specified. No tree-inference rule, no error behavior for unknown trees, no spec for how brand-side persona x audience overlay interacts with sales -> brand -> clients composition order.","action":"Add 'Loader resolution algorithm' subsection: tree inference rule (leading segment match against allowlist), unknown-tree error behavior, overlay-vs-pipeline composition semantics.","critics":["The Architect"],"accepted":true},
+      {"id":"h-3","severity":"high","text":"Dual-shape clients/{prospect} (file or folder) contract is hand-waved. 'Loader treats both the same' is unspecified - which file in folder shape resolves clients/acme-health#committee?","action":"Specify folder-shape resolution rule (e.g., {prospect}.md -> index.md -> first-file-with-matching-H2 -> fail) OR forbid dual shape in v1.","critics":["The Architect"],"accepted":true},
+      {"id":"h-4","severity":"high","text":"17-test list has structural gaps at most error-prone surfaces: no degraded-mode error-path test for missing depends_on slices (CLAUDE.md mandates error tests for mocks); no clients-shape-collision test pre-lint; no cross-tree-disambiguation test; loader-delegation-test overlaps brand's shared-loader-delegation-test without acknowledgment.","action":"Add 3 missing tests: degraded-mode-output, clients-shape-collision-resolution, cross-tree-disambiguation. Reconcile loader-delegation-test vs brand's shared-loader-delegation-test.","critics":["The Architect"],"accepted":true},
+      {"id":"h-5","severity":"high","text":"JOLT driver count and labels wrong (3 not 4; 'Lack of Information' not 'Information Burden') and Teach pitch missing The Warmer (6 steps not 5). Hardcoded into directory, frontmatter, evals.","action":"Reduce to 3 driver files (outcome-uncertainty, valuation-problems, lack-of-information); relocate Anticipated Regret to a T-style response file. Add the-warmer as 6th Teach-pitch step; update slices, eval, directory comment.","critics":["Matt Dixon"],"accepted":true},
+      {"id":"h-6","severity":"high","text":"Indecision vs preference-for-status-quo conflation - the most important diagnostic in The JOLT Effect. Status-quo solved by Challenger insight; indecision by JOLT. Standard 'build the business case' response worsens indecision. Design has no diagnosis gating step.","action":"Add indecision/diagnose.md (or discovery/diagnose-indecision-vs-status-quo.md) as the gating step + eval indecision-vs-status-quo-diagnosed.md that fails if a deal-resurrection play picks a JOLT driver without diagnosis.","critics":["Matt Dixon"],"accepted":true},
+      {"id":"h-7","severity":"high","text":"Five 'pre-close stages' are NAMED, not SPECIFIED. No exit artifact, entry precondition, or conversion metric per stage. 'We are in Teach' is a vibe, not a stage.","action":"Each sales/stages/{stage}.md must declare exit_artifact: schema, entry_precondition: schema, conversion_metric: rate-the-org-tracks.","critics":["Jacco van der Kooij"],"accepted":true},
+      {"id":"h-8","severity":"high","text":"Bowtie reconciliation claim is dishonest about scope. Decision 11 collapses Bowtie's Awareness/Education into one 'Discovery' stage and Selection->Commit into 'Close'. Post-close (Onboarding, Impact, Expansion) exiled to clients/ loses ~50% of recurring-revenue lifecycle.","action":"Either rename folder to acquisition/ and acknowledge right-side gap, OR add stages/onboarding.md, impact.md, expansion.md.","critics":["Jacco van der Kooij"],"accepted":true},
+      {"id":"h-9","severity":"high","text":"No conversion-rate / velocity / stall-rate measurement layer. Word 'conversion' appears 0 times. None of 11 evals measures stage-to-stage transition health. A sales playbook without conversion measurement is a content library.","action":"Add metrics/ directory or conversion-rates.md at the root; specify per-stage owned rates; add evals like discovery-to-teach-conversion-tracked, stalled-at-stage-flagged.","critics":["Jacco van der Kooij"],"accepted":true},
+      {"id":"h-10","severity":"high","text":"'No CRM emulation' constraint violated in spirit by clients/{prospect}.md schema (current_stage, mobilizer_id, meddpicc, committee, stakeholder-profile-map, stall-context, crm_link = a CRM opportunity record in markdown). Will become a shadow CRM, especially in healthcare where Salesforce is hostile to physician-contact data.","action":"Pick: (a) one-way CRM mirror with declared SLA + crm-drift-detection eval, OR (b) generators query CRM at runtime and clients/ carries no opportunity state. Update Decision 2 reasoning honestly either way.","critics":["Jacco van der Kooij","Julie Yoo"],"accepted":true},
+      {"id":"h-11","severity":"high","text":"SDR layer missing entirely. Every artifact assumes 'qualified opportunity created'. No outbound sequences, ICP-fit rubric, account research protocol, SDR->AE handoff, BANT-Lite. Digital-health enterprise has 4-6 weeks of SDR work to GET to discovery.","action":"Either explicitly scope to 'AE playbook, post-qualified-opportunity' with SDR out-of-scope statement, OR add outbound/ + handoff/ peer dirs.","critics":["Trish Bertuzzi"],"accepted":true},
+      {"id":"h-12","severity":"high","text":"Six framework workshops + orchestrator is consultant-bait. Decision 19 (six frameworks) + Decision 20 (orchestrator) + Decision 21 (run order) historically collapses by week 9. Bridge Group experience: framework completion rates drop ~50% per added workshop in a series of more than 3.","action":"Ship 2 frameworks v1 (commercial-insight, objection-library); defer 4 with real promotion triggers; defer orchestrator until 4+ frameworks exist standalone.","critics":["Trish Bertuzzi"],"accepted":true},
+      {"id":"h-13","severity":"high","text":"Nine subdirectories - half are decoration for rep daily use. Real (rep opens mid-deal): insight, discovery, objections, references, plays. Reference material: buyers, stages. Indecision should be one file. Eval is ops, not rep-facing. Reps can hold 6 in their head; not 9.","action":"Collapse buyers/ + stages/ -> frameworks/; demote indecision/ to single file; move eval/ under _ops/. Yields 6 rep-facing folders + 1 ops folder.","critics":["Trish Bertuzzi"],"accepted":true},
+      {"id":"h-14","severity":"high","text":"GTM motion is orientation reading, not a slot - design silently presupposes B2B-enterprise risk-based motion. B2C2B (broker-RFP), B2SMB (no committee), aggregator-distribution (Mobilizer inverts) all break.","action":"Add sales/motion.md + applies_to_motion: frontmatter so generators can filter by motion, OR have orchestrator emit motion-specific skeletons.","critics":["Julie Yoo"],"accepted":true},
+      {"id":"h-15","severity":"high","text":"EHR / payer-API integration has no first-class home - buried in objections/risk.md. Integration is a 12-18-month parallel workstream that determines whether the deal closes (Epic App Orchard alone is 6-9 months) - not a 20-minute objection.","action":"Add plays/integration-scoping.md as first-class play; integration-readiness section in MCP template; integration discovery questions in discovery/by-vertical/{provider,payer}.md.","critics":["Julie Yoo"],"accepted":true},
+      {"id":"h-16","severity":"high","text":"Champion identification doesn't differentiate clinical vs economic champion. Healthcare deals need clinical champion (CMO/CMIO/Service Line Chair) by TEACH and economic champion (CFO/COO) by TAILOR. Different motivations, different playbooks. Single mobilizer_id collapses them.","action":"Add clinical_champion_id + economic_champion_id (or champion_role enum); fork mobilizer-id-required into clinical-by-TEACH + economic-by-TAILOR.","critics":["Julie Yoo"],"accepted":true},
+      {"id":"m-1","severity":"medium","text":"Composition order stated but not enforceable - only enforcement is a runtime eval. No schema rule prevents wrong-order requires:.","action":"Either partition contracts.yaml into requires_sales:, requires_brand:, requires_clients: per tree, OR demote Decision 15 to 'convention surfaced by eval, not enforced by loader' and acknowledge per-deal-hack risk remains.","critics":["The Architect"],"accepted":true},
+      {"id":"m-2","severity":"medium","text":"sales_relevant: field silently mutates brand schema. Sales design adds frontmatter field to brand/ without brand-side review or test.","action":"Move sales_relevant: to a sales-side index (sales/buyers/sales-relevance.yaml), OR add explicit 'brand frontmatter delta' subsection naming brand-side ownership and the brand-side test.","critics":["The Architect"],"accepted":true},
+      {"id":"m-3","severity":"medium","text":"applies_to_stage: introduces a fourth tree concept implicitly. Sales-only field but stage-relevance is a cross-tree question (brand persona with stage-specific KPIs has no way to express it).","action":"Either declare brand slices stage-agnostic by definition (clean rule, easy to test), OR extend applies_to_stage: to brand frontmatter.","critics":["The Architect"],"accepted":true},
+      {"id":"m-4","severity":"medium","text":"Composition-order framing treats per-deal hacks as threats; they are the signal for playbook evolution. No promotion path from clients/{prospect}/{novel-artifact}.md -> sales/ slice. Without it, the playbook only gets staler.","action":"Add a playbook-promotion workflow: how do per-deal artifacts that worked become candidates for sales/ slice updates?","critics":["Jacco van der Kooij"],"accepted":true},
+      {"id":"m-5","severity":"medium","text":"last_used_in_deal: will be gamed; eval will lie. Auto-update on generator run = measures generator hit-rate not actual usage. Rep-stamped = field goes stale across the board.","action":"Resolve open question 8 in v1 with writeback-pipeline spec (combination of generator-run signal + call-recording or rep self-attest), OR drop the field + eval from v1.","critics":["Jacco van der Kooij","Trish Bertuzzi"],"accepted":true},
+      {"id":"m-6","severity":"medium","text":"MEDDPICC is wrong v1 default for digital-health enterprise. SPICED (Situation, Pain, Impact, Critical event, Decision) fits payer/provider clinical discovery and composes naturally with Challenger reframe. Also: MEDDPICC is AE-stage, SDRs cannot fill it.","action":"Move open questions 3 & 7 to v1 resolved. Ship MEDDPICC + BANT-Lite + SPICED side-by-side via qualification_rubric: choice in version.yaml, default to SPICED for digital health.","critics":["Jacco van der Kooij","Trish Bertuzzi"],"accepted":true},
+      {"id":"m-7","severity":"medium","text":"plays/ files: multi-thread.md and disqualification.md are padding (reps know how to do these; not opened mid-deal). deal-resurrection.md overlaps indecision/ content (one workflow, two files).","action":"Keep mutual-close-plan.md + exec-brief.md. Drop multi-thread.md + disqualification.md. Merge deal-resurrection.md into the indecision file.","critics":["Trish Bertuzzi"],"accepted":true},
+      {"id":"m-8","severity":"medium","text":"Six objection categories miss ICP-misalignment ('we are not the right fit' - common in digital-health) and double-count authority + internal-politics (both about getting more people in the room).","action":"Five categories: pricing, timing, risk, incumbency, committee-expansion (merging authority + internal-politics), fit (new ICP-misalignment slot).","critics":["Trish Bertuzzi"],"accepted":true},
+      {"id":"m-9","severity":"medium","text":"References playbook 5-axis matrix (case-study x objection x stage x persona x vertical) will degrade to 2-axis in practice. ~9,600 cells unmaintainable; account teams populate only what they query on.","action":"Ship v1 as case-study x objection (2-axis); add stage as third axis when v1 evidence shows reps querying by stage; defer persona and vertical.","critics":["Trish Bertuzzi"],"accepted":true},
+      {"id":"m-10","severity":"medium","text":"Eval bars committee-coverage and mobilizer-id-required are compliance theater. 6.8 average is 2015 tech-B2B; healthcare runs 8-15 (a 3-of-12 pass would inflate the committee). 100% Mobilizer-named past TEACH gets gamed within 90 days.","action":"Make committee-coverage motion-aware (>=3 SMB, >=6 enterprise; pass if total <4 documented). Make mobilizer-id-required two-tier: candidate-Mobilizer-by-TEACH, confirmed-Mobilizer-by-TAILOR.","critics":["Trish Bertuzzi","Julie Yoo"],"accepted":true},
+      {"id":"m-11","severity":"medium","text":"17 tests in v1 - half can defer. Many depend on infrastructure that does not exist (writeback pipeline, references infrastructure, full persona coverage). Bridge Group benchmark: programs that ship 15+ metrics get ignored.","action":"Ship 8 v1 tests (frontmatter lint, commercial-insight-trace, objection-coverage, concern-vs-competitor-separation, slice-slug lint, cross-folder lint, generator contract tests, registry lint). Document 9 deferred with promotion triggers.","critics":["Trish Bertuzzi"],"accepted":true},
+      {"id":"m-12","severity":"medium","text":"Exec-brief / MCP / deal-resurrection templates have no field schema specified. 'One-page exec brief template' and 'MCP template + field schema' without H2-slice structure means the framework reinvents the schema every run.","action":"Specify H2-slice structure for plays/exec-brief.md, mutual-close-plan.md, deal-resurrection.md (or include example file).","critics":["Jacco van der Kooij"],"accepted":true},
+      {"id":"m-13","severity":"medium","text":"plays/ is generic-SaaS-AE play set, not digital-health-shaped. Architecture claims digital-health specificity but Section 6 texture (FDA, BAA, MA STARS, 42 CFR Part 2) lives only in fills, not in plays list.","action":"Add 4 digital-health plays: clinical-validation-plan, security-and-compliance-runbook, pilot-to-production-conversion-plan, payer-reimbursement-pathway. OR explicitly admit v1 ships generic plays and v2 layers in digital-health.","critics":["Jacco van der Kooij"],"accepted":true},
+      {"id":"m-14","severity":"medium","text":"Provider/Payer/Employer paths share shape but have structurally different buying processes (provider: clinical committee + EHR; payer: actuarial review + claims-data DUA; employer: broker + plan-year drop-dead). Vertical != buyer-side.","action":"Add discovery/by-buyer-side/{provider|payer|employer|direct}.md axis OR applies_to_buyer_side: frontmatter, OR document the overload explicitly.","critics":["Julie Yoo"],"accepted":true},
+      {"id":"m-15","severity":"medium","text":"Indecision drivers missing digital-health 5th: Regulatory/Coverage Uncertainty. Akili, Pear, Click, MA RPM all stalled on coverage/code uncertainty - not Outcome Uncertainty (outcomes proven).","action":"Add indecision/regulatory-coverage-uncertainty.md as a driver explicitly named for digital-health (or restructure once Anticipated Regret is moved per fc-3).","critics":["Julie Yoo"],"accepted":true},
+      {"id":"m-16","severity":"medium","text":"Subdomain Reuse table fills are uneven - RPM reframes are Mad-Libs generic (every RPM company has been pitching them for 10 years), and DTx-payer Mobilizer is wrong (Pharmacy Director is gatekeeper in P&T review, not Mobilizer; actual Mobilizer is Medical Director / VP Behavioral Health / VP Innovation).","action":"Replace generic RPM reframes with surprise-the-buyer reframes (e.g., RPM cost pays for itself in STARS uplift, not readmission avoidance). Fix DTx-payer Mobilizer to Medical Director / VP Behavioral Health / VP Innovation.","critics":["Julie Yoo"],"accepted":true},
+      {"id":"m-17","severity":"medium","text":"Clinical evidence ladder isn't differentiated by buyer-side. Payer demands actuarial-grade outcomes; case studies fail at first review. References playbook matrix has no evidence-grade axis.","action":"Add evidence_grade: axis (case-study | peer-reviewed | claims-data-analysis | actuarial-validated | rct | rwe-registry) to references playbook + buyer-side routing rule (payer/risk-based MUST use claims-data or actuarial minimum).","critics":["Julie Yoo"],"accepted":true},
+      {"id":"m-18","severity":"medium","text":"6-month reference freshness too aggressive for healthcare. Healthcare execs do 2-4 reference calls/quarter total; 6-month bar guarantees false-stale flags. What actually goes stale is legal clearance and primary-contact-in-seat, not the call.","action":"Extend to 12 months for healthcare (or motion-aware: 6 tech-B2B / 12 healthcare) OR split metric into last_talked_to + last_legal_clearance_check + primary_contact_still_in_seat.","critics":["Julie Yoo"],"accepted":true},
+      {"id":"m-19","severity":"medium","text":"'Blocker' archetype vs lowercase 'blocker' verb drift. Mockup uses 'this committee's blocker' (lowercase generic) and 'Talker is blocking' interchangeably with the 7th Challenger profile. Will leak into generated content.","action":"Add glossary slice in buyers/stakeholder-profiles.md distinguishing Blocker (capitalized archetype) from blocking (lowercase verb). Add lint for lowercase 'blocker' used as the archetype.","critics":["Matt Dixon"],"accepted":true},
+      {"id":"m-20","severity":"medium","text":"Cost-of-inaction playbook names 'calculator template' instead of Rational Drowning mechanic. Rational Drowning is a teaching mechanic that makes the buyer feel the number, not a spreadsheet to argue about.","action":"Rename or restructure so insight/cost-of-inaction.md describes the Rational Drowning script (delivery so it lands as drowning, not as a number); calculators belong in MCP / business-case territory.","critics":["Matt Dixon"],"accepted":true},
+      {"id":"m-21","severity":"medium","text":"The 5 Challenger rep profiles missing entirely (Hard Worker, Challenger, Relationship Builder, Lone Wolf, Reactive Problem Solver). No reps/ directory. A play designed for a Challenger fails when handed to a Relationship Builder.","action":"Either add sales/reps/profiles.md (and accept the folder serves enablement too) OR explicitly mark 'rep-profile coaching out of scope; lives in enablement system' in orphan catalog.","critics":["Matt Dixon"],"accepted":true},
+      {"id":"m-22","severity":"medium","text":"Teach/Tailor/Take-Control -> 5-stage Bowtie mapping is being bent. 'Discovery -> Teach' is the Hard Worker sequence; Challengers walk in armed with a hypothesis (The Warmer) and use Teach to create discovery.","action":"Either acknowledge in Decision 11 reasoning that this is Bowtie funnel with Challenger labels grafted on (state as deliberate hybrid), OR embed discovery inside Teach as a sub-slice.","critics":["Matt Dixon"],"accepted":true},
+      {"id":"m-23","severity":"medium","text":"Discovery question types named generically; question-banks.md uses Sandler/Voss vocabulary (open/calibrated/diagnostic/negative-reverse) but is represented as the Challenger discovery layer. Challenger discovery is hypothesis-confirming, not open-ended.","action":"Rename question-banks.md slices to make Challenger-style hypothesis-confirming questions a distinct slice, OR split into discovery/challenger-hypothesis.md and discovery/voss-tactical-empathy.md.","critics":["Matt Dixon"],"accepted":true},
+      {"id":"m-24","severity":"medium","text":"Decision 21 'objections + references can run in parallel' not modeled. Brand orchestrator does not exist; framework runner has explicit WAIT points per CLAUDE.md (single-threaded interactive).","action":"Replace 'in parallel' with 'in either order (both depend only on stakeholder-mapping)', OR acknowledge orchestrator does not actually parallelize - the graph shows logical dependency, not concurrent execution.","critics":["The Architect"],"accepted":true},
+      {"id":"l-1","severity":"low","text":"Mobilizer-is-the-unit framing correct but underused. ~1 in 6 stakeholders is a Mobilizer; modal champion is a Talker; Friend-led deals are worse than no deal. Talker-champion is a deal-quality signal, not just a flag.","action":"Add champion-classification verification step to TEACH->TAILOR transition. Make multi-thread.md and disqualification.md formally consume the classification. Add eval champion-classified.md.","critics":["Matt Dixon"],"accepted":false},
+      {"id":"l-2","severity":"low","text":"6.8-buyer figure is 2015 CEB/Gartner research; current B2B is 10-11; healthcare 8-15. Hardcoded into eval.","action":"Replace '6.8-buyer' with 'typical 6-11 person committee (current research ~10; healthcare 8-15)'. Encode the dynamic (more committee = more indecision risk), not the snapshot.","critics":["Matt Dixon","Julie Yoo"],"accepted":false},
+      {"id":"l-3","severity":"low","text":"Constructive Tension (the Customer-side play that mirrors Challenger Reframe - Mobilizer creates tension inside the buying committee) missing. buying-committee.md covers dynamics but does not name it as a play.","action":"Add Constructive Tension as a named play in buyers/buying-committee.md.","critics":["Matt Dixon"],"accepted":false},
+      {"id":"l-4","severity":"low","text":"applies_to_stage: is metadata-for-metadata's-sake. Most slices stage-agnostic (objections at any stage; profiles stage-independent); slices that ARE stage-specific live in stages/{stage}.md where directory encodes the stage. Tax on every slice for small benefit.","action":"Drop from required frontmatter. If stage-specific filtering is wanted, add as optional tag (tags: [stage:tailor]) on the small number of slices where it matters.","critics":["Trish Bertuzzi"],"accepted":false},
+      {"id":"l-5","severity":"low","text":"Decision 4 'nine subdirectories' count check passes. Architect verified count of 9 (eval/ included; CLAUDE.md, version.yaml, contracts.yaml are top-level files, not subdirs)","action":"No change required; documented as verified non-issue.","critics":["The Architect"],"accepted":false}
+    ];
+    const FACT_CHECKS = [
+      {"id":"fc-1","claim":"v1 generalizes skills/_shared/load-brand-slices.md (implies file exists today)","correction":"File does not exist. Brand loader is itself a v1 deliverable that has not shipped. Either declare hard sequencing dependency on brand v1 shipping the loader first, or reframe as building load-slices.md fresh as the FIRST loader in either tree's v1. Drop the rename framing.","critic":"The Architect"},
+      {"id":"fc-2","claim":"Decision 20 mirrors reverse-engineered-brand orchestrator","correction":"reverse-engineered-brand is not registered in frameworks/registry.yaml and no folder exists. It is itself a forward-looking deliverable, not an existing pattern. Remove the 'mirrors existing' framing.","critic":"The Architect"},
+      {"id":"fc-3","claim":"JOLT identifies 4 indecision drivers: Outcome Uncertainty, Valuation Problems, Information Burden, Anticipated Regret","correction":"The JOLT Effect identifies 3 drivers: Outcome Uncertainty, Valuation Problems, Lack of Information. Anticipated Regret / FOMU is the underlying emotional state addressed by the T (Take fear off the table), not a fourth driver. Reduce to 3 driver files; relocate Anticipated Regret as a response-side concept.","critic":"Matt Dixon"},
+      {"id":"fc-4","claim":"Third indecision driver named 'Information Burden'","correction":"Dixon's canonical term is 'Lack of Information' (under-informed). 'Information Burden' implies overload (opposite polarity, opposite response). Rename information-burden.md to lack-of-information.md.","critic":"Matt Dixon"},
+      {"id":"fc-5","claim":"Teach pitch is a 5-step sequence: Reframe -> Rational Drowning -> Emotional Impact -> New Way -> Your Solution","correction":"The Challenger Sale specifies 6 steps: The Warmer -> Reframe -> Rational Drowning -> Emotional Impact -> A New Way -> Your Solution. The Warmer is not optional in the book. Add the-warmer slice; update commercial-insight-trace.md eval to check 6 in order.","critic":"Matt Dixon"},
+      {"id":"fc-6","claim":"dispatch-tracker/prospects/acme-corp.md and planted/clients/basis/ are precedents for clients/{prospect} shape","correction":"Neither directory exists in this repo. Both are external sibling projects the sales loader will not actually read. Should be flagged as external precedents, not in-repo patterns.","critic":"The Architect"},
+      {"id":"fc-7","claim":"MEDDPICC named as type: enum value implies an anchoring framework exists","correction":"No MEDDPICC framework exists in frameworks/registry.yaml. Acknowledge that no qualification-rubric framework anchors the type value, or add one.","critic":"The Architect"}
+    ];
+    const SESSION = {
+      name: "2026-05-15-ai-native-sales-folder",
+      mode: "software",
+      designPath: "/Users/ericpage/software/aligned_cc_skills/docs/plans/2026-05-15-ai-native-sales-folder-design.md"
+    };
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    function toggleFinding(id, el) {
+      const finding = FINDINGS.find(f => f.id === id);
+      if (!finding) return;
+      finding.accepted = !finding.accepted;
+      el.classList.toggle('on');
+      const card = el.closest('.finding');
+      const label = el.parentElement.querySelector('.toggle-label');
+      if (finding.accepted) {
+        card.classList.remove('rejected');
+        label.textContent = 'accept';
+      } else {
+        card.classList.add('rejected');
+        label.textContent = 'reject';
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const accepted = FINDINGS.filter(f => f.accepted).length;
+      const rejected = FINDINGS.filter(f => !f.accepted).length;
+      document.getElementById('accept-count').textContent = accepted;
+      document.getElementById('reject-count').textContent = rejected;
+    }
+
+    function buildPrompt() {
+      const accept = FINDINGS.filter(f => f.accepted);
+      const reject = FINDINGS.filter(f => !f.accepted);
+
+      const formatFinding = f => {
+        const critics = f.critics && f.critics.length ? '[' + f.critics.join(', ') + '] ' : '';
+        return '- ' + critics + f.text;
+      };
+
+      const notes = {
+        high:   document.getElementById('notes-high').value.trim()   || '(none)',
+        medium: document.getElementById('notes-medium').value.trim() || '(none)',
+        low:    document.getElementById('notes-low').value.trim()    || '(none)',
+        facts:  document.getElementById('notes-facts').value.trim()  || '(none)'
+      };
+
+      const factLines = FACT_CHECKS.length
+        ? FACT_CHECKS.map(fc => '- ' + fc.claim + ' → ' + fc.correction).join('\n')
+        : '(none)';
+
+      return [
+        'Resume brainstorming session "' + SESSION.name + '" (' + SESSION.mode + ' mode) at `' + SESSION.designPath + '`.',
+        'Critique decisions from interactive review:',
+        '',
+        'ACCEPT (apply these):',
+        accept.length ? accept.map(formatFinding).join('\n') : '(none)',
+        '',
+        'REJECT (skip these):',
+        reject.length ? reject.map(formatFinding).join('\n') : '(none)',
+        '',
+        'FACT-CHECKS (auto-applied):',
+        factLines,
+        '',
+        'MODIFY NOTES:',
+        '- High severity: '   + notes.high,
+        '- Medium severity: ' + notes.medium,
+        '- Low severity: '    + notes.low,
+        '- Fact-checks: '     + notes.facts,
+        '',
+        'Apply the accepted findings and any modify notes, skip the rejected ones, regenerate the design doc, then refresh the session visualization per the post-critique checklist in the mode file.'
+      ].join('\n');
+    }
+
+    function copyPrompt(btn) {
+      const text = buildPrompt();
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied — paste in Claude Code';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2400);
+      }).catch(err => {
+        btn.textContent = 'Copy failed — see console';
+        console.error('Clipboard write failed:', err);
+      });
+    }
+
+    updateSummary();
+  </script>
+</body>
+</html>

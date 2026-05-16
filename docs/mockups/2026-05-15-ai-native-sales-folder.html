@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Native Sales Folder — Design v0.1 (digital health)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream-50:  #FDFCFA; --cream-100: #FAF8F5; --cream-200: #F5F2EE; --cream-300: #EBE6E0;
+    --bark-900:  #2C2825; --bark-700:  #3D3833; --bark-500:  #6B6560; --bark-400:  #8A847E;
+    --bark-300:  #A9A49E; --bark-200:  #D4D0CB; --bark-100:  #E8E5E1;
+    --forest-600: #3D6B4A; --forest-500: #4A7C59; --forest-400: #6B9B7A; --forest-100: #E8F0EB;
+    --error:   #A65D5D; --success: #5B8A5B; --warning: #B8935A;
+    --shadow-sm: 0 1px 2px rgba(44, 40, 37, 0.04);
+    --shadow-md: 0 2px 8px rgba(44, 40, 37, 0.06);
+    --shadow-lg: 0 4px 16px rgba(44, 40, 37, 0.08);
+    --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
+    --font-display: 'Fraunces', Georgia, 'Cambria', 'Times New Roman', serif;
+    --font-body:    'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: var(--bark-700); background: var(--cream-100); margin: 0; padding: 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  .watermark { position: fixed; top: -100px; right: -200px; width: 800px; height: 800px; z-index: 0; pointer-events: none; opacity: 0.05; }
+  .watermark svg { width: 100%; height: 100%; }
+  .layout { display: grid; grid-template-columns: 280px 1fr; max-width: 1400px; margin: 0 auto; min-height: 100vh; position: relative; z-index: 1; }
+  aside.toc { background: var(--cream-50); border-right: 1px solid var(--cream-300); padding: 48px 32px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  aside.toc h2 { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--bark-500); letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 16px 0; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; counter-reset: section; }
+  aside.toc ol li { counter-increment: section; margin-bottom: 4px; }
+  aside.toc ol li::before { content: counter(section) "."; color: var(--bark-400); font-family: var(--font-display); font-feature-settings: 'tnum'; font-size: 13px; margin-right: 8px; display: inline-block; width: 20px; }
+  aside.toc a { color: var(--bark-700); text-decoration: none; font-size: 14px; border-bottom: 1px solid transparent; transition: border-color 0.15s ease, color 0.15s ease; }
+  aside.toc a:hover { color: var(--forest-500); border-bottom-color: var(--forest-400); }
+  aside.toc a.interactive { color: var(--forest-600); font-weight: 500; }
+  aside.toc a.interactive::after { content: " ●"; font-size: 10px; color: var(--forest-500); }
+  main { padding: 64px 56px; max-width: 920px; }
+  .header { margin-bottom: 56px; padding-bottom: 32px; border-bottom: 1px solid var(--cream-300); }
+  .eyebrow { font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--forest-500); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 16px; }
+  h1 { font-family: var(--font-display); font-size: 48px; font-weight: 500; line-height: 1.1; color: var(--bark-900); margin: 0 0 16px 0; letter-spacing: -0.02em; }
+  .subtitle { font-family: var(--font-display); font-style: italic; font-size: 19px; font-weight: 400; color: var(--bark-500); line-height: 1.5; max-width: 60ch; margin: 0 0 32px 0; }
+  .meta-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--bark-500); }
+  .meta-row .meta-label { color: var(--bark-400); }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--forest-100); color: var(--forest-600); border-radius: 999px; font-size: 12px; font-weight: 500; letter-spacing: 0.02em; }
+  h2 { font-family: var(--font-display); font-size: 32px; font-weight: 500; color: var(--bark-900); margin: 64px 0 16px 0; letter-spacing: -0.015em; line-height: 1.2; scroll-margin-top: 24px; }
+  h2 .num { color: var(--bark-300); font-feature-settings: 'tnum'; margin-right: 12px; }
+  h3 { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--bark-900); margin: 40px 0 12px 0; line-height: 1.3; }
+  h4 { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--bark-700); margin: 28px 0 8px 0; text-transform: uppercase; letter-spacing: 0.06em; }
+  p { margin: 0 0 16px 0; }
+  p.lede { font-size: 18px; line-height: 1.6; color: var(--bark-700); margin-bottom: 24px; }
+  strong { color: var(--bark-900); font-weight: 600; }
+  em { font-style: italic; color: var(--bark-700); }
+  ul, ol { padding-left: 24px; margin: 0 0 16px 0; }
+  li { margin-bottom: 6px; }
+  ul.dash { list-style: none; padding-left: 0; }
+  ul.dash li { position: relative; padding-left: 24px; }
+  ul.dash li::before { content: "—"; position: absolute; left: 0; color: var(--forest-500); font-weight: 500; }
+  .card { background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card-tight { background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-md); padding: 16px 20px; }
+  .card-tight h5 { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--bark-900); margin: 0 0 6px 0; }
+  .card-tight p { font-size: 14px; color: var(--bark-500); margin: 0; line-height: 1.5; }
+  .constraint { border-left: 3px solid var(--forest-500); padding: 4px 0 4px 20px; margin-bottom: 16px; }
+  .constraint strong:first-child { color: var(--bark-900); font-weight: 600; }
+  code { font-family: var(--font-mono); font-size: 13px; background: var(--cream-200); color: var(--bark-900); padding: 1px 6px; border-radius: 4px; }
+  pre { background: var(--bark-900); color: var(--cream-100); padding: 24px; border-radius: var(--radius-lg); overflow-x: auto; font-family: var(--font-mono); font-size: 13px; line-height: 1.65; box-shadow: var(--shadow-md); margin: 24px 0; }
+  pre code { background: none; color: inherit; padding: 0; }
+  pre .comment { color: var(--bark-400); } pre .key { color: #C4B999; } pre .string { color: #B8C99A; } pre .folder { color: var(--forest-400); }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 14px; background: var(--cream-50); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+  thead { background: var(--cream-200); }
+  th { text-align: left; padding: 12px 16px; font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--bark-700); border-bottom: 1px solid var(--cream-300); letter-spacing: 0.02em; }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--cream-200); color: var(--bark-700); vertical-align: top; line-height: 1.55; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--cream-100); }
+  td code { font-size: 12px; }
+  td.num { font-feature-settings: 'tnum'; color: var(--bark-400); font-family: var(--font-display); white-space: nowrap; }
+
+  /* Interactive widgets */
+  .interactive-section { background: linear-gradient(180deg, var(--forest-100) 0%, var(--cream-100) 60px); border-radius: var(--radius-xl); padding: 24px 28px 32px; margin: 32px -28px; }
+  .interactive-banner { display: flex; gap: 12px; align-items: flex-start; background: var(--cream-50); border: 1px solid var(--forest-100); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--bark-700); }
+  .interactive-banner .icon { color: var(--forest-500); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  .interactive-banner strong { color: var(--bark-900); }
+  table.interactive td { vertical-align: middle; }
+  table.interactive .decision-num { font-family: var(--font-display); font-feature-settings: 'tnum'; color: var(--bark-400); font-weight: 500; }
+  table.interactive .decision-title { font-weight: 500; color: var(--bark-900); }
+  table.interactive td.decision-desc { font-size: 13px; color: var(--bark-500); line-height: 1.5; }
+  select.dropdown { font-family: var(--font-body); font-size: 13px; padding: 6px 10px; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--cream-50); color: var(--bark-700); cursor: pointer; min-width: 110px; }
+  select.dropdown:focus { outline: none; border-color: var(--forest-400); box-shadow: 0 0 0 3px var(--forest-100); }
+  select.dropdown.reject, select.dropdown.include { color: var(--forest-600); font-weight: 500; border-color: var(--forest-400); background: var(--forest-100); }
+  select.dropdown.q-reject { color: var(--error); font-weight: 500; border-color: var(--error); background: #F4E3E3; }
+  tr.row-active td { background: var(--forest-100) !important; }
+  tr.row-rejected td { background: #F4E3E3 !important; }
+  tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: var(--error); text-decoration-thickness: 1px; }
+  tr.section-divider td { background: var(--cream-200); color: var(--bark-700); font-family: var(--font-display); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--cream-300); border-bottom: 1px solid var(--cream-300); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--forest-600); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--bark-400); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+  .prompt-box { margin-top: 20px; background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); }
+  .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .prompt-box-label { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--bark-700); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn { font-family: var(--font-body); font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--cream-300); background: var(--cream-100); color: var(--bark-700); font-weight: 500; transition: background 0.15s ease, border-color 0.15s ease; }
+  .btn:hover { background: var(--cream-200); border-color: var(--bark-300); }
+  .btn-primary { background: var(--forest-500); color: white; border-color: var(--forest-500); }
+  .btn-primary:hover { background: var(--forest-600); border-color: var(--forest-600); }
+  .btn.copied { background: var(--success); color: white; border-color: var(--success); }
+  textarea.prompt-textarea { width: 100%; min-height: 160px; padding: 14px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--bark-900); background: var(--cream-100); border: 1px solid var(--cream-300); border-radius: var(--radius-md); resize: vertical; transition: border-color 0.15s ease; }
+  textarea.prompt-textarea:focus { outline: none; border-color: var(--forest-400); box-shadow: 0 0 0 3px var(--forest-100); }
+  .prompt-hint { margin-top: 8px; font-size: 12px; color: var(--bark-400); font-style: italic; }
+
+  .sev { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; vertical-align: middle; }
+  .sev.high { background: var(--error); } .sev.med { background: var(--warning); } .sev.low { background: var(--bark-300); } .sev.sound { background: var(--success); }
+  blockquote { background: var(--cream-50); border-left: 3px solid var(--forest-500); padding: 16px 24px; margin: 24px 0; border-radius: 0 var(--radius-md) var(--radius-md) 0; font-style: italic; color: var(--bark-700); }
+  blockquote p:last-child { margin-bottom: 0; }
+  .graph { background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-lg); padding: 24px; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--bark-700); overflow-x: auto; white-space: pre; box-shadow: var(--shadow-sm); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; }
+  .pill.new { background: var(--forest-100); color: var(--forest-600); }
+  .pill.existing { background: var(--cream-200); color: var(--bark-500); }
+  .pill.draft { background: #FBF2E0; color: var(--warning); }
+  .pill.validated { background: var(--forest-100); color: var(--forest-600); }
+  footer.bottom { margin-top: 96px; padding-top: 32px; border-top: 1px solid var(--cream-300); color: var(--bark-400); font-size: 13px; font-style: italic; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } aside.toc { display: none; } main { padding: 32px 24px; } h1 { font-size: 36px; } h2 { font-size: 26px; } .interactive-section { margin: 32px -16px; padding: 20px; } }
+</style>
+</head>
+<body>
+
+<div class="watermark" aria-hidden="true">
+  <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="400" cy="400" r="350" fill="#4A7C59" opacity="0.03"/>
+    <path d="M 400 700 Q 410 550 395 400 Q 380 250 410 100" stroke="#4A7C59" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.35"/>
+    <path d="M 395 550 Q 320 530 280 480 Q 320 510 395 540" fill="#4A7C59" opacity="0.25"/>
+    <path d="M 400 450 Q 310 430 260 380 Q 310 410 400 440" fill="#4A7C59" opacity="0.20"/>
+    <path d="M 395 350 Q 330 340 290 300 Q 340 320 395 345" fill="#4A7C59" opacity="0.18"/>
+    <path d="M 405 600 Q 480 580 520 530 Q 480 560 405 590" fill="#4A7C59" opacity="0.25"/>
+    <path d="M 405 500 Q 495 480 540 430 Q 495 460 405 490" fill="#4A7C59" opacity="0.22"/>
+    <path d="M 405 400 Q 470 390 510 350 Q 460 370 405 395" fill="#4A7C59" opacity="0.18"/>
+    <path d="M 410 280 Q 470 270 500 240 Q 460 260 410 275" fill="#4A7C59" opacity="0.15"/>
+    <path d="M 410 180 Q 460 170 490 145 Q 450 165 410 175" fill="#4A7C59" opacity="0.12"/>
+  </svg>
+</div>
+
+<div class="layout">
+<aside class="toc">
+  <h2>Contents</h2>
+  <div style="margin-bottom: 16px; padding: 10px 12px; background: var(--forest-100); border-radius: var(--radius-sm); font-size: 12px; color: var(--forest-600); line-height: 1.4;">
+    <strong>v0.2 — Round 1 critique applied.</strong> 5 critics (Architect, Dixon, Kooij, Bertuzzi, Yoo) returned 17 high / 24 medium / 5 low findings. Mandatory fact corrections applied; architectural pivots open in critique HTML.
+  </div>
+  <ol>
+    <li><a href="#why-now">Why now</a></li>
+    <li><a href="#goal">Goal</a></li>
+    <li><a href="#constraints">Hard constraints</a></li>
+    <li><a href="#commitments">Core commitments</a></li>
+    <li><a href="#triangle">Three-folder triangle</a></li>
+    <li><a href="#directory">Directory tree</a></li>
+    <li><a href="#frontmatter">Frontmatter (deltas)</a></li>
+    <li><a href="#slices">Slice-loading</a></li>
+    <li><a href="#manifest">CLAUDE.md template</a></li>
+    <li><a href="#contracts">Composition contract</a></li>
+    <li><a href="#resolved">Resolved questions</a></li>
+    <li><a href="#eval">Eval surface</a></li>
+    <li><a href="#multi-org">Subdomain reuse</a></li>
+    <li><a href="#decisions" class="interactive">Decision log</a></li>
+    <li><a href="#orphans">Orphan catalog</a></li>
+    <li><a href="#frameworks">Framework registration</a></li>
+    <li><a href="#migration">Migration &amp; adoption</a></li>
+    <li><a href="#questions" class="interactive">Open questions</a></li>
+    <li><a href="#tests">Tests required</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="header">
+  <div class="eyebrow">Design Document · v0.2 · Software brainstorm · Round 1 critique applied</div>
+  <h1>The AI-Native Sales Folder</h1>
+  <p class="subtitle">A canonical sibling to <code>brand/</code> — where generator agents read the reusable playbook a rep uses to MOVE A DEAL through 9–18-month digital-health enterprise cycles. Same shape, different fills across subdomains and buyer-side mixes.</p>
+  <div class="meta-row">
+    <span><span class="meta-label">Date</span> 2026-05-15</span>
+    <span><span class="meta-label">Topic</span> <code>ai-native-sales-folder</code></span>
+    <span><span class="meta-label">Mode</span> Software</span>
+    <span><span class="meta-label">Revision</span> v0.2 (post-critique)</span>
+    <span class="badge">Backbone: Challenger / JOLT / Challenger Customer (Dixon)</span>
+  </div>
+</header>
+
+<section id="why-now">
+<h2><span class="num">01</span>Why now</h2>
+<p><code>brand/</code> tells generators <em>what is true about us</em>. But a deal does not move on truth alone. A deal moves when a rep teaches a buyer something they didn't know about their own business, neutralizes the buying-committee dynamics that cause indecision, and removes the four reasons a buyer would say <em>"let's wait."</em> That is the playbook layer — and right now it lives in reps' heads, scattered slack messages, and a few half-finished battle cards.</p>
+<div class="card-grid">
+  <div class="card-tight"><h5>Generators are reaching past brand/</h5><p>Sales reps want a deck that teaches a reframe tailored to <em>this CMIO</em>, anticipates <em>this committee's blocker</em>, and includes a mutual close plan procurement can sign. None of that lives in <code>brand/</code>.</p></div>
+  <div class="card-tight"><h5>Dixon's three books name the slots</h5><p><em>The Challenger Sale</em>, <em>The Challenger Customer</em>, and <em>The JOLT Effect</em> collectively define the surface: commercial insight, the 7 stakeholder profiles, the 6.8-buyer committee, the 4 indecision drivers, the Mobilizer / Talker / Blocker taxonomy, the Teach / Tailor / Take-Control sequence.</p></div>
+  <div class="card-tight"><h5>clients/ already needed a playbook</h5><p>The brand-folder design carved out <code>clients/{prospect}.md</code> for transient deal data. Without a playbook to compose against, every prospect file becomes a copy-paste of the previous one. <code>sales/</code> is that playbook.</p></div>
+</div>
+<p>This is not CRM. CRM tracks <em>the deal</em>. <code>sales/</code> carries <em>the way we sell</em> — the reusable artifacts every deal composes against. Per-deal data stays in <code>clients/</code>. Durable thesis stays in <code>brand/</code>. The reusable playbook lives here.</p>
+</section>
+
+<section id="goal">
+<h2><span class="num">02</span>Goal</h2>
+<blockquote><p>Define the canonical <code>sales/</code> folder that an AI-native <strong>digital health company</strong> installs once, and from which every sales-asset generator — discovery preps, exec briefs, mutual close plans, deal-stage decks, objection handlers, indecision-driver responses, references-playbook lookups — reads predictably.</p></blockquote>
+<ul class="dash">
+  <li>Work uniformly across digital-health subdomains and buyer-side mixes (provider / payer / employer / direct-to-consumer Rx).</li>
+  <li>Compose against <code>brand/</code> by reference (no duplication of personas, proof, competitive content).</li>
+  <li>Compose against <code>clients/{prospect}</code> as a per-deal overlay (single-file or folder shape).</li>
+  <li>Encode provenance (status + confidence) at the same bar as <code>brand/</code>, plus one sales-only field that surfaces playbook drift.</li>
+  <li>Ship a manifest that tells the next thread what to deepen next.</li>
+</ul>
+</section>
+
+<section id="constraints">
+<h2><span class="num">03</span>Hard constraints</h2>
+<p>Rules the architecture must honor in every implementation. Each constraint is enforceable — a generator, a lint, or a schema check fails if it's violated.</p>
+<div class="constraint"><strong>Sibling to <code>brand/</code>, not nested under it.</strong> <code>sales/</code> is a top-level peer at the same level as <code>brand/</code> and <code>clients/</code>. Generators that previously read only <code>brand/</code> now read all three — one loader.</div>
+<div class="constraint"><strong>One shape, every digital-health company.</strong> Identical directory layout across telehealth, RPM, behavioral health, digital therapeutics, payer / provider / employer mixes. Subdomains shift the fills, never the slots.</div>
+<div class="constraint"><strong>No content duplication with <code>brand/</code>.</strong> Personas, proof, competitive content live in <code>brand/</code>. <code>sales/</code> references them by slug via <code>depends_on:</code>. Concern-keyed objections in <code>sales/</code> reference competitor-keyed comparisons in <code>brand/</code> — they don't try to be each other.</div>
+<div class="constraint"><strong>Per-deal state stays in <code>clients/</code>.</strong> <code>sales/</code> holds reusable templates and the playbook of plays. Both <code>clients/{prospect}.md</code> (single-file, dispatch-tracker precedent) and <code>clients/{prospect}/</code> (folder, planted precedent) shapes are valid.</div>
+<div class="constraint"><strong>AI-first design.</strong> Primary consumer is generator agents. Optimize for machine-parseable structure, terse summaries, dense slice tagging.</div>
+<div class="constraint"><strong>Frontmatter mandatory on every <code>.md</code>.</strong> Same schema as <code>brand/</code>, plus 3 optional sales-only fields.</div>
+<div class="constraint"><strong>Provenance + confidence — same scheme as <code>brand/</code>.</strong> <code>status: draft | validated | retired</code>. <code>confidence: low | medium | high</code>. Plus <code>last_used_in_deal:</code> for playbook-drift detection.</div>
+<div class="constraint"><strong>Slice-loadable by H2.</strong> <code>{file}#{slug}</code>. No nested H2-as-decoration.</div>
+<div class="constraint"><strong>One loader, not three.</strong> v1 generalizes <code>skills/_shared/load-brand-slices.md</code> → <code>skills/_shared/load-slices.md</code> with a <code>tree:</code> parameter (<code>brand | sales | clients</code>).</div>
+<div class="constraint"><strong>Composition order is fixed.</strong> <code>sales/</code> (playbook) → <code>brand/</code> (thesis) → <code>clients/{prospect}</code> (deal). Reverse lets a per-deal hack override company truth.</div>
+<div class="constraint"><strong>No CRM emulation.</strong> <code>sales/</code> does not mirror opportunity stages, dollar amounts, forecast dates, or contact records. <code>clients/{prospect}</code> carries a <code>crm_link:</code> reference.</div>
+<div class="constraint"><strong>No legal text or contract clauses.</strong> Contracts live in their own system. <code>sales/</code> carries the rep's playbook for <em>navigating</em> legal/security review, not the contracts themselves.</div>
+<div class="constraint"><strong>Clean-state cutover.</strong> No legacy aliases. v1 ships the new layout; existing sales-asset generators (if any) are updated in the same change.</div>
+</section>
+
+<section id="commitments">
+<h2><span class="num">04</span>Core commitments</h2>
+<p>The worldview the design rests on. Softer than hard constraints — these are the principles that explain <em>why</em> the architecture is shaped the way it is.</p>
+
+<div class="card">
+  <h4>The three-folder triangle</h4>
+  <p style="margin-bottom: 12px;">Three folders, three jobs, three change cadences:</p>
+  <ul class="dash">
+    <li><strong><code>brand/</code></strong> — the WHY. Durable thesis. Changes ~2× per year. Customer-agnostic.</li>
+    <li><strong><code>sales/</code></strong> — the HOW. Reusable playbook for moving a deal. Changes when reps learn what's working. Customer-aware (vertical / persona / stage), but not deal-specific.</li>
+    <li><strong><code>clients/{prospect}</code></strong> — the THIS DEAL. Per-prospect instance. Changes constantly inside an active cycle. Deal-specific.</li>
+  </ul>
+  <p style="margin-top: 12px; font-size: 14px; color: var(--bark-500); font-style: italic;">Three change cadences = three folders = three review processes. Generators always compose all three.</p>
+</div>
+
+<div class="card-grid">
+  <div class="card-tight"><h5>Concern-keyed, not competitor-keyed</h5><p>Objections are organized by what the buyer is worried about (pricing, timing, risk, incumbency, authority, internal-politics) — not by competitor. Competitor talk-tracks live in <code>brand/market/competitive.md</code> and are referenced when relevant.</p></div>
+  <div class="card-tight"><h5>Profile is orthogonal to role</h5><p>A CMIO can be Mobilizer or Blocker. The 7-profile taxonomy lives in <code>sales/buyers/stakeholder-profiles.md</code>. The typical role↔profile distribution lives in <code>by-persona/{role}.md</code> with confidence labels — not pretending the role determines the profile.</p></div>
+  <div class="card-tight"><h5>Cost-of-inaction has two halves</h5><p>The evidence (industry numbers + customer outcomes) lives in <code>brand/proof/cost-of-inaction-evidence.md</code>. The playbook (calculator script + reframe sequence + the silence after the number lands) lives in <code>sales/insight/cost-of-inaction.md</code>.</p></div>
+  <div class="card-tight"><h5>Commercial insight ≠ narrative</h5><p>Narrative is the macro shift, customer-agnostic, durable. Commercial insight is buyer-surprise-tuned, gets refined as new data lands. They cross-reference via <code>depends_on:</code> but live independently.</p></div>
+  <div class="card-tight"><h5>Deal stages reusable, status per-deal</h5><p><code>sales/stages/{stage}.md</code> defines what TEACH / TAILOR / TAKE-CONTROL <em>are</em>. <code>clients/{prospect}#current_stage</code> declares where one deal sits.</p></div>
+  <div class="card-tight"><h5>Mobilizer is the unit of progress</h5><p>A deal with an identified Mobilizer is a different stage than a deal whose champion is a Talker. <code>buying-committee.md</code> defines dynamics; <code>clients/{prospect}#mobilizer_id</code> declares the person.</p></div>
+</div>
+</section>
+
+<section id="triangle">
+<h2><span class="num">05</span>Three-folder triangle</h2>
+<p>How <code>brand/</code>, <code>sales/</code>, and <code>clients/</code> compose. Each folder owns one job; generators read across all three. The triangle is the load-bearing architectural commitment of this design.</p>
+
+<div class="graph">                       ┌──────────────────────┐
+                       │       brand/         │
+                       │  durable thesis      │
+                       │  positioning         │
+                       │  narrative           │
+                       │  voice · proof       │
+                       │  personas · audiences│
+                       │  market · design     │
+                       └──────────┬───────────┘
+                                  │ depends_on:
+                                  │ brand/personas/{role}#kpis
+                                  │ brand/proof/cost-of-inaction-evidence
+                                  │ brand/strategy/narrative#shift-in-the-world
+                                  ▼
+              ┌──────────────────────────────────────┐
+              │              sales/                  │
+              │     reusable playbook                │
+              │     ─────────────────                │
+              │  insight · discovery · buyers        │
+              │  objections · indecision             │
+              │  references · stages · plays         │
+              └──────────────────┬───────────────────┘
+                                 │ instance overlay
+                                 │ clients/{prospect}#current_stage
+                                 │ clients/{prospect}#mobilizer_id
+                                 │ clients/{prospect}#meddpicc
+                                 ▼
+                       ┌──────────────────────┐
+                       │  clients/{prospect}  │
+                       │  per-deal instance   │
+                       │  ─────────────────   │
+                       │  current_stage       │
+                       │  mobilizer_id        │
+                       │  committee map       │
+                       │  MEDDPICC fields     │
+                       │  MCP instance        │
+                       │  crm_link            │
+                       └──────────────────────┘
+
+        Composition order: sales/ (playbook) → brand/ (thesis) → clients/ (deal)</div>
+
+<p>A generator that produces a TEACH-stage deck for ACME Health pulls: the 5-step Teach pitch from <code>sales/insight/commercial-insight.md</code>, the company positioning from <code>brand/strategy/positioning.md</code>, ACME's deal context from <code>clients/acme-health.md</code>. The same generator produces a different deck for a different prospect — same playbook, different brand fills (still ACME's industry vertical), different deal context.</p>
+</section>
+
+<section id="directory">
+<h2><span class="num">06</span>Directory tree</h2>
+<p>The canonical folder layout. Every digital-health org installs this same shape. Generators read predictable paths regardless of subdomain. Every file is optional except <code>CLAUDE.md</code> — the loader gracefully degrades when slices are missing.</p>
+
+<pre><span class="folder">sales/</span>
+├── <span class="key">CLAUDE.md</span>                       <span class="comment"># manifest + slice index + "deepen next" queue</span>
+├── <span class="key">version.yaml</span>                    <span class="comment"># semver, generator provenance, git_sha</span>
+│
+├── <span class="folder">insight/</span>                        <span class="comment"># the WEAPON — what we teach the buyer</span>
+│   ├── <span class="key">commercial-insight.md</span>       <span class="comment"># 6-step Teach pitch: Warmer → Reframe → Rational Drowning → Emotional Impact → New Way → Your Solution</span>
+│   ├── <span class="key">cost-of-inaction.md</span>         <span class="comment"># the Rational Drowning mechanic — make the buyer FEEL the cost (not a calculator)</span>
+│   └── <span class="folder">reframes/</span>                   <span class="comment"># OPTIONAL named reframes per audience or vertical</span>
+│       └── <span class="key">{audience}.md</span>
+│
+├── <span class="folder">discovery/</span>                      <span class="comment"># the QUESTIONS — what reps ask, in what order</span>
+│   ├── <span class="key">question-banks.md</span>           <span class="comment"># open / calibrated / diagnostic / negative-reverse</span>
+│   ├── <span class="key">meddpicc.md</span>                 <span class="comment"># qualification scoring rubric</span>
+│   ├── <span class="folder">by-persona/</span>                 <span class="comment"># depends_on brand/personas/{role}</span>
+│   │   └── <span class="key">{role}.md</span>
+│   └── <span class="folder">by-vertical/</span>                <span class="comment"># depends_on brand/audiences/{vertical}</span>
+│       └── <span class="key">{vertical}.md</span>
+│
+├── <span class="folder">buyers/</span>                         <span class="comment"># the COMMITTEE — who's in the room</span>
+│   ├── <span class="key">stakeholder-profiles.md</span>     <span class="comment"># 7 Challenger profiles (Go-Getter, Teacher, Skeptic, Friend, Climber, Guide, Blocker)</span>
+│   ├── <span class="folder">by-persona/</span>                 <span class="comment"># typical role↔profile distribution, confidence-labeled</span>
+│   │   └── <span class="key">{role}.md</span>
+│   └── <span class="key">buying-committee.md</span>         <span class="comment"># 6.8-buyer dynamics, common conflicts, mobilizer-id protocol</span>
+│
+├── <span class="folder">objections/</span>                     <span class="comment"># the BLOCKERS — concern-keyed, NEVER competitor-keyed</span>
+│   ├── <span class="key">pricing.md</span>                  <span class="comment"># too expensive, ROI, contract length</span>
+│   ├── <span class="key">timing.md</span>                   <span class="comment"># next budget, current contract, competing initiative</span>
+│   ├── <span class="key">risk.md</span>                     <span class="comment"># security, compliance, clinical, regulatory, data residency</span>
+│   ├── <span class="key">incumbency.md</span>               <span class="comment"># we already use X, switching cost, training overhead</span>
+│   ├── <span class="key">authority.md</span>                <span class="comment"># need to bring in legal / CMO / board</span>
+│   └── <span class="key">internal-politics.md</span>        <span class="comment"># competing initiative, dept turf, power dynamics</span>
+│
+├── <span class="folder">indecision/</span>                     <span class="comment"># the JOLT response per driver (3 drivers, not 4) + diagnose gate</span>
+│   ├── <span class="key">diagnose.md</span>                 <span class="comment"># THE GATE: indecision vs. status-quo-preference (most-important JOLT diagnostic)</span>
+│   ├── <span class="key">outcome-uncertainty.md</span>      <span class="comment"># detection + JOLT "Offer recommendation" response + scripts</span>
+│   ├── <span class="key">valuation-problems.md</span>       <span class="comment"># ROI calculation friction</span>
+│   ├── <span class="key">lack-of-information.md</span>      <span class="comment"># under-informed (NOT "information burden" / overload — opposite polarity)</span>
+│   └── <span class="key">take-risk-off-the-table.md</span>  <span class="comment"># JOLT "T" — Anticipated Regret / FOMU response across all 3 drivers</span>
+│
+├── <span class="folder">references/</span>                     <span class="comment"># the PROOF DEPLOYMENT — playbook</span>
+│   ├── <span class="key">playbook.md</span>                 <span class="comment"># matrix: case-study × objection × stage × persona × vertical</span>
+│   └── <span class="folder">protocols/</span>                  <span class="comment"># per-customer protocol (legal status, intro path, freshness)</span>
+│       └── <span class="key">{customer}.md</span>
+│
+├── <span class="folder">stages/</span>                         <span class="comment"># the FUNNEL — pre-close deal stages</span>
+│   ├── <span class="key">discovery.md</span>                <span class="comment"># rep finding the deal, qualifying</span>
+│   ├── <span class="key">teach.md</span>                    <span class="comment"># commercial insight delivered, reframe lands</span>
+│   ├── <span class="key">tailor.md</span>                   <span class="comment"># insight adapted per role, mobilizer engaged, business case built</span>
+│   ├── <span class="key">take-control.md</span>             <span class="comment"># negotiation, procurement, security review, MCP</span>
+│   └── <span class="key">close.md</span>                    <span class="comment"># signed (post-close → handoff to clients/ for landing)</span>
+│
+├── <span class="folder">plays/</span>                          <span class="comment"># the SEQUENCES — multi-step plays</span>
+│   ├── <span class="key">mutual-close-plan.md</span>        <span class="comment"># MCP template + field schema + rep guidance</span>
+│   ├── <span class="key">exec-brief.md</span>               <span class="comment"># one-page exec brief template</span>
+│   ├── <span class="key">deal-resurrection.md</span>        <span class="comment"># JOLT plays for stalled deals</span>
+│   ├── <span class="key">multi-thread.md</span>             <span class="comment"># "go around the Talker" play</span>
+│   └── <span class="key">disqualification.md</span>         <span class="comment"># when to walk (and how to walk professionally)</span>
+│
+├── <span class="key">contracts.yaml</span>                  <span class="comment"># composition contract: sales generator → required + optional slices</span>
+└── <span class="folder">eval/</span>                           <span class="comment"># scenarios that verify on-playbook output</span>
+
+<span class="comment"># NOT in sales/ — sibling tree:</span>
+<span class="folder">brand/</span>                              <span class="comment"># durable thesis (positioning, narrative, voice, proof)</span>
+<span class="folder">clients/</span>
+├── <span class="key">{prospect-name}.md</span>              <span class="comment"># single-file shape — dispatch-tracker precedent</span>
+└── <span class="folder">{prospect-name}/</span>                <span class="comment"># folder shape — planted precedent (when artifacts proliferate)</span>
+    ├── <span class="key">CLAUDE.md</span>
+    ├── <span class="key">mutual-close-plan.md</span>
+    ├── <span class="key">exec-brief.md</span>
+    └── <span class="key">discovery-notes.md</span></pre>
+
+<h4>Per-file purpose (what it owns vs. does NOT own)</h4>
+<table>
+<thead><tr><th>Path</th><th>Owns</th><th>Does NOT own</th></tr></thead>
+<tbody>
+<tr><td><code>insight/commercial-insight.md</code></td><td>The <strong>6-step</strong> Teach pitch (Warmer / Reframe / Rational Drowning / Emotional Impact / New Way / Your Solution) + the data point that grounds it</td><td>The durable narrative arc (lives in <code>brand/strategy/narrative.md</code>)</td></tr>
+<tr><td><code>insight/cost-of-inaction.md</code></td><td>The <strong>Rational Drowning mechanic</strong> — discovery sequence and reframe script that makes the buyer <em>feel</em> the cost (not a spreadsheet calculator)</td><td>The <em>evidence</em> (lives in <code>brand/proof/cost-of-inaction-evidence.md</code>)</td></tr>
+<tr><td><code>discovery/by-persona/{role}.md</code></td><td>Discovery questions a rep asks <em>that role</em></td><td>Role definition (lives in <code>brand/personas/{role}.md</code>)</td></tr>
+<tr><td><code>discovery/meddpicc.md</code></td><td>Qualification scoring rubric</td><td>Per-deal MEDDPICC scores (live in <code>clients/{prospect}.md</code>)</td></tr>
+<tr><td><code>buyers/stakeholder-profiles.md</code></td><td>The 7 Challenger profiles, one slice per profile</td><td>Role definitions (those live in <code>brand/personas/</code>)</td></tr>
+<tr><td><code>buyers/by-persona/{role}.md</code></td><td>Typical profile distribution <em>for this role</em>, confidence-labeled</td><td>Role responsibilities (live in <code>brand/personas/{role}.md</code>)</td></tr>
+<tr><td><code>objections/{concern}.md</code></td><td>One concern category, H2 slices per specific objection, responses per stakeholder profile</td><td>Competitive comparisons (those live in <code>brand/market/competitive.md</code>)</td></tr>
+<tr><td><code>indecision/diagnose.md</code></td><td>The gating step — diagnose <strong>indecision vs. preference-for-status-quo</strong> before picking a JOLT response (Dixon: most-important diagnostic)</td><td>Driver-specific tactics (those live per-driver below)</td></tr>
+<tr><td><code>indecision/{driver}.md</code></td><td>One of the <strong>3 JOLT drivers</strong> (Outcome Uncertainty / Valuation Problems / Lack of Information) — detection + JOLT response + scripts + verification</td><td>Driver theory (referenced in <code>CLAUDE.md</code>, not duplicated)</td></tr>
+<tr><td><code>indecision/take-risk-off-the-table.md</code></td><td>JOLT's <strong>T</strong> — Anticipated Regret / FOMU response that applies <em>across</em> all 3 drivers (pilot-with-opt-out, phased commitment, opt-out clause)</td><td>The driver-specific responses (those live per-driver above)</td></tr>
+<tr><td><code>references/playbook.md</code></td><td>Multi-axis matrix: which customer for which objection at which stage</td><td>Case-study content (lives in <code>brand/proof/case-studies.md</code>)</td></tr>
+<tr><td><code>references/protocols/{customer}.md</code></td><td>Per-customer protocol — legal status, intro path, last-talked-to date</td><td>The customer story itself (lives in <code>brand/proof/case-studies.md</code>)</td></tr>
+<tr><td><code>stages/{stage}.md</code></td><td>Stage definition: entry/exit criteria, recommended assets, common objections, verification questions</td><td>Per-deal current stage (lives in <code>clients/{prospect}#current_stage</code>)</td></tr>
+<tr><td><code>plays/mutual-close-plan.md</code></td><td>MCP template + field schema + rep guidance</td><td>Per-deal MCP instance (lives in <code>clients/</code>)</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="frontmatter">
+<h2><span class="num">07</span>Frontmatter — deltas from <code>brand/</code></h2>
+<p>The 7 required fields and 5 optional ones from the brand schema apply unchanged. Three additions and one enum extension are sales-only.</p>
+
+<pre><span class="key">---</span>
+<span class="key">id:</span> <span class="string">insight-commercial-insight</span>
+<span class="key">type:</span> <span class="string">commercial-insight</span>                     <span class="comment"># NEW enum values: commercial-insight | objection | indecision-response |</span>
+                                              <span class="comment">#                  stage | play | discovery-bank |</span>
+                                              <span class="comment">#                  references-playbook | stakeholder-profile | meddpicc</span>
+<span class="key">slices:</span>
+  - <span class="string">warmer</span>                                <span class="comment"># NEW v0.2 — was missing in v0.1 (Dixon: Teach pitch is 6 steps, not 5)</span>
+  - <span class="string">reframe</span>
+  - <span class="string">rational-drowning</span>
+  - <span class="string">emotional-impact</span>
+  - <span class="string">new-way</span>
+  - <span class="string">your-solution</span>
+<span class="key">status:</span> <span class="string">validated</span>
+<span class="key">confidence:</span> <span class="string">high</span>
+<span class="key">updated:</span> <span class="string">2026-05-15</span>
+<span class="key">last_used_in_deal:</span> <span class="string">2026-05-12</span>                 <span class="comment"># NEW — flags playbook drift if unused &gt; 90 days</span>
+<span class="key">applies_to_stage:</span> [<span class="string">teach</span>]                      <span class="comment"># NEW — pre-filter slices by deal stage</span>
+<span class="key">sources:</span>
+  - <span class="key">{ kind:</span> <span class="string">book</span><span class="key">,</span> <span class="key">value:</span> <span class="string">"The Challenger Sale, Dixon &amp; Adamson, 2011"</span> <span class="key">}</span>
+  - <span class="key">{ kind:</span> <span class="string">deal</span><span class="key">,</span> <span class="key">value:</span> <span class="string">"Acme Health Q2-2026 Teach call recording"</span> <span class="key">}</span>
+<span class="key">depends_on:</span>                                  <span class="comment"># cross-folder references via slice path</span>
+  - <span class="string">"brand/strategy/narrative#shift-in-the-world"</span>
+  - <span class="string">"brand/proof/cost-of-inaction-evidence#payer-numbers"</span>
+  - <span class="string">"sales/buyers/stakeholder-profiles#mobilizer-go-getter"</span>
+<span class="key">consumers:</span> [<span class="string">generate-stage-deck</span>, <span class="string">generate-discovery-prep</span>, <span class="string">generate-exec-brief</span>]
+<span class="key">tags:</span> [<span class="string">challenger</span>, <span class="string">teach-pitch</span>, <span class="string">dixon</span>]
+<span class="key">summary:</span> &gt; <span class="string">5-step Teach pitch the rep delivers in TEACH stage to install a reframe before showing the solution.</span>
+<span class="key">---</span></pre>
+
+<table>
+<thead><tr><th>New field</th><th>Type</th><th>Why sales-only</th></tr></thead>
+<tbody>
+<tr><td><code>last_used_in_deal:</code></td><td>ISO date, optional</td><td>Lets a "playbook drift" lint flag slices unused in any active deal for &gt; 90 days. Brand content doesn't go stale because no one cited it.</td></tr>
+<tr><td><code>applies_to_stage:</code></td><td>List of stage IDs, optional</td><td>Lets a generator pre-filter slices by deal stage. <code>generate-tailor-stage-deck</code> only loads slices with <code>applies_to_stage: [tailor]</code> or stage-agnostic (empty list).</td></tr>
+<tr><td><code>sales_relevant:</code> (in <code>brand/personas/</code>)</td><td>Boolean, optional, default true</td><td>Lets a brand persona opt out of needing a corresponding <code>sales/buyers/by-persona/{role}.md</code> companion (e.g., post-sale champion roles).</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="slices">
+<h2><span class="num">08</span>Slice-loading mechanics</h2>
+<p>Same H2-as-slice contract as <code>brand/</code>. Generators request only the slices they need. The shared loader gains a <code>tree:</code> parameter so one parser handles all three folders.</p>
+<table>
+<thead><tr><th>Case</th><th>Rule</th></tr></thead>
+<tbody>
+<tr><td>Cross-folder reference</td><td><code>depends_on: ["brand/personas/{role}#kpis", "sales/buyers/stakeholder-profiles#mobilizer-go-getter", "clients/{prospect}#committee"]</code> — loader resolves path against the right tree.</td></tr>
+<tr><td>Two H2s slug-collide within a file</td><td>Append <code>-2</code>, <code>-3</code> in document order. Lint warns.</td></tr>
+<tr><td><code>slices:</code> declares a slug missing from body</td><td>Loader returns <code>status: missing-in-body</code>. Lint fails.</td></tr>
+<tr><td>H2 in body, not in <code>slices:</code></td><td>Loader does NOT expose. Lint warns.</td></tr>
+<tr><td><code>clients/{prospect}</code> exists as both file and folder</td><td>Lint fails — pick one shape per prospect.</td></tr>
+<tr><td>A slice <code>depends_on:</code> a missing path</td><td>Loader returns <code>status: missing-dependency</code>. Generator gracefully degrades — runs without that slice and notes the gap in output appendix.</td></tr>
+</tbody>
+</table>
+<p>v1 ships <strong>one loader</strong> at <code>skills/_shared/load-slices.md</code> (renamed from <code>load-brand-slices.md</code> as part of the cutover). Every generator delegates — no inline frontmatter parsing, ever.</p>
+</section>
+
+<section id="manifest">
+<h2><span class="num">09</span>CLAUDE.md manifest template</h2>
+<p>The single front-door file every sales-asset generator reads first. Lists what's in the sales folder, the status and confidence of each file, the composition contract summary, and the queue of frameworks to run next. Mirrors the brand-folder manifest pattern.</p>
+<table>
+<thead><tr><th class="num">#</th><th>Framework</th><th>Section it deepens</th><th>Skip if</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td><code>commercial-insight</code> <span class="pill new">new</span></td><td><code>insight/commercial-insight.md</code></td><td>requires <code>brand/strategy/narrative</code> + <code>brand/proof/cost-of-inaction-evidence</code></td></tr>
+<tr><td class="num">2</td><td><code>stakeholder-mapping</code> <span class="pill new">new</span></td><td><code>buyers/stakeholder-profiles.md</code> + <code>buyers/by-persona/</code></td><td>single-stakeholder sales motion</td></tr>
+<tr><td class="num">3</td><td><code>objection-library</code> <span class="pill new">new</span></td><td><code>objections/*.md</code></td><td>requires stakeholder-profiles first</td></tr>
+<tr><td class="num">4</td><td><code>references-playbook</code> <span class="pill new">new</span></td><td><code>references/playbook.md</code> + <code>references/protocols/</code></td><td>no validated case studies in <code>brand/proof/</code></td></tr>
+<tr><td class="num">5</td><td><code>indecision-audit</code> <span class="pill new">new</span></td><td><code>indecision/*.md</code></td><td>requires <code>objection-library</code> first</td></tr>
+<tr><td class="num">6</td><td><code>mutual-close-plan-design</code> <span class="pill new">new</span></td><td><code>plays/mutual-close-plan.md</code></td><td>requires <code>stages/take-control.md</code> + <code>buyers/buying-committee.md</code></td></tr>
+<tr><td class="num">7</td><td><code>discovery-question-bank</code> <span class="pill new">new</span></td><td><code>discovery/question-banks.md</code> + <code>discovery/by-persona/</code></td><td>requires <code>brand/personas/</code></td></tr>
+<tr><td class="num">8</td><td><code>stage-asset-catalog</code> <span class="pill new">new</span></td><td><code>stages/*.md</code></td><td>brand new motion — defer until plays exist</td></tr>
+<tr><td class="num">9</td><td><code>5-gtm-motions-digital-health</code></td><td>orientation reading for run-order</td><td><span class="pill existing">existing — already in registry</span></td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="contracts">
+<h2><span class="num">10</span>Composition contract</h2>
+<p>The wiring between sales-asset generators and the slices they consume across <code>sales/ + brand/ + clients/</code>. Centralizing this in <code>sales/contracts.yaml</code> means a generator can be added without every other generator having to know.</p>
+<pre><span class="key">generators:</span>
+
+  <span class="key">generate-discovery-prep:</span>
+    <span class="key">requires:</span>
+      - <span class="string">sales/discovery/question-banks</span>
+      - <span class="string">sales/discovery/by-persona/{role}</span>          <span class="comment"># role from clients/{prospect}#primary_contact_role</span>
+      - <span class="string">sales/discovery/by-vertical/{vertical}</span>     <span class="comment"># vertical from clients/{prospect}#vertical</span>
+      - <span class="string">sales/buyers/stakeholder-profiles</span>
+      - <span class="string">clients/{prospect}#discovery-context</span>
+    <span class="key">optional:</span>
+      - <span class="string">brand/personas/{role}</span>
+      - <span class="string">brand/audiences/{vertical}</span>
+      - <span class="string">sales/buyers/by-persona/{role}</span>
+    <span class="key">compose:</span>
+      <span class="key">sales_x_brand_x_clients:</span> <span class="string">"sales playbook → brand context → clients/{prospect} instance"</span>
+    <span class="key">min_confidence:</span> <span class="string">medium</span>
+
+  <span class="key">generate-exec-brief:</span>
+    <span class="key">requires:</span>
+      - <span class="string">sales/plays/exec-brief</span>
+      - <span class="string">sales/insight/commercial-insight</span>
+      - <span class="string">brand/proof/proof-points</span>
+      - <span class="string">brand/proof/case-studies</span>
+      - <span class="string">clients/{prospect}#exec-context</span>
+    <span class="key">optional:</span>
+      - <span class="string">sales/references/playbook</span>
+      - <span class="string">sales/insight/cost-of-inaction</span>
+      - <span class="string">brand/proof/cost-of-inaction-evidence</span>
+    <span class="key">min_confidence:</span> <span class="string">high</span>                          <span class="comment"># exec brief is high-stakes — require validated content</span>
+
+  <span class="key">generate-stage-deck:</span>
+    <span class="key">requires:</span>
+      - <span class="string">sales/stages/{stage}</span>                     <span class="comment"># stage from clients/{prospect}#current_stage</span>
+      - <span class="string">sales/insight/commercial-insight</span>
+      - <span class="string">brand/strategy/positioning</span>
+      - <span class="string">brand/language/messaging#category-name</span>
+      - <span class="string">clients/{prospect}#deal-context</span>
+    <span class="key">optional:</span>
+      - <span class="string">sales/objections/{concern}</span>               <span class="comment"># concerns from clients/{prospect}#known_objections</span>
+      - <span class="string">brand/proof/case-studies</span>
+
+  <span class="key">generate-mutual-close-plan:</span>
+    <span class="key">requires:</span>
+      - <span class="string">sales/plays/mutual-close-plan</span>
+      - <span class="string">sales/stages/take-control</span>
+      - <span class="string">sales/buyers/buying-committee</span>
+      - <span class="string">clients/{prospect}#committee</span>
+      - <span class="string">clients/{prospect}#meddpicc</span>
+    <span class="key">optional:</span>
+      - <span class="string">sales/objections/timing</span>
+      - <span class="string">sales/objections/authority</span>
+
+  <span class="key">generate-objection-handler:</span>
+    <span class="key">requires:</span>
+      - <span class="string">sales/objections/{concern}</span>
+      - <span class="string">sales/buyers/stakeholder-profiles</span>
+      - <span class="string">clients/{prospect}#stakeholder-profile-map</span>
+    <span class="key">optional:</span>
+      - <span class="string">brand/market/competitive#vs-{competitor}</span>   <span class="comment"># only when objection involves a named competitor</span>
+      - <span class="string">brand/proof/case-studies</span>
+      - <span class="string">sales/references/playbook</span>
+
+  <span class="key">generate-deal-resurrection-play:</span>
+    <span class="key">requires:</span>
+      - <span class="string">sales/plays/deal-resurrection</span>
+      - <span class="string">sales/indecision/{driver}</span>                <span class="comment"># driver inferred from stall pattern</span>
+      - <span class="string">clients/{prospect}#stall-context</span>
+
+  <span class="key">generate-deal-stage-email:</span>
+    <span class="key">requires:</span>
+      - <span class="string">sales/stages/{stage}</span>
+      - <span class="string">clients/{prospect}#deal-context</span>
+      - <span class="string">brand/language/voice#tone-principles</span>
+
+<span class="key">extends:</span> []   <span class="comment"># third-party plugins MAY add sales generators via brand_contract:-style blocks</span></pre>
+</section>
+
+<section id="resolved">
+<h2><span class="num">11</span>Resolved questions</h2>
+<p>The seven design questions you asked, with the choice taken and the alternative considered. Each is grounded in the architecture above.</p>
+
+<div class="card" style="border-left: 3px solid var(--warning); background: #FBF2E0; padding: 16px 20px; margin-bottom: 24px;">
+<p style="margin: 0; font-size: 14px;"><strong>v0.2 critique-applied corrections affecting this section:</strong> The 5-step Teach pitch in Q1 is now <strong>6 steps</strong> with The Warmer added (Dixon caught this). The 4 indecision drivers in Q-related discussion are now <strong>3 drivers</strong> (Outcome Uncertainty, Valuation Problems, Lack of Information — not "Information Burden" which is the opposite polarity term). Anticipated Regret is relocated as JOLT's <strong>T</strong> response (Take fear off the table), not a fourth driver. The cost-of-inaction "calculator" framing in Q4 is renamed to the <strong>Rational Drowning mechanic</strong> (Dixon's teaching mechanic — make the buyer feel the number, not run a spreadsheet).</p>
+</div>
+
+<h3>Q1 · Where does the Challenger commercial insight live?</h3>
+<p><strong>Choice:</strong> <code>sales/insight/commercial-insight.md</code>, with <code>depends_on: [brand/strategy/narrative#shift-in-the-world, brand/proof/cost-of-inaction-evidence]</code>. Overlap with narrative is real but they are not the same artifact: narrative is customer-agnostic and durable (the macro shift the company sees), commercial insight is buyer-surprise-tuned and gets refined as new data lands (the in-the-room reframe). Different change cadences, different generators consume each.</p>
+<p><em>Alternative considered:</em> fuse them into a single <code>narrative-and-insight.md</code>. Rejected — couples cadences, and a marketing generator (which wants the durable arc) and a sales-deck generator (which wants the in-room reframe) would have to filter the same file. Two files, one <code>depends_on:</code> is cleaner.</p>
+
+<h3>Q2 · How do per-persona discovery questions compose with <code>brand/personas/{role}.md</code>?</h3>
+<p><strong>Choice:</strong> Reference by slug, never duplicate. <code>sales/discovery/by-persona/{role}.md</code> declares <code>depends_on: [brand/personas/{role}#kpis, brand/personas/{role}#language, brand/personas/{role}#objections]</code>. The loader merges role definition (from brand) with discovery questions (from sales) at runtime.</p>
+<p><em>Alternative considered:</em> duplicate the role's KPIs into the sales discovery file for self-containment. Rejected — violates the no-duplication constraint and creates drift the moment brand updates a KPI.</p>
+
+<h3>Q3 · Mobilizer / Talker / Blocker taxonomy per role — where, and how kept in sync?</h3>
+<p><strong>Choice:</strong> Two-file split. <code>sales/buyers/stakeholder-profiles.md</code> carries the <em>taxonomy itself</em> (one slice per profile: <code>mobilizer-go-getter</code>, <code>mobilizer-teacher</code>, <code>mobilizer-skeptic</code>, <code>talker-friend</code>, <code>talker-climber</code>, <code>talker-guide</code>, <code>blocker</code>). <code>sales/buyers/by-persona/{role}.md</code> carries the <em>typical distribution for this role</em>, with confidence labels — because a CMIO is Mobilizer-Teacher <em>some of the time</em>, not always.</p>
+<p>Sync mechanism: an eval scenario asserts every <code>brand/personas/{role}.md</code> has a corresponding <code>sales/buyers/by-persona/{role}.md</code>, OR the role declares <code>sales_relevant: false</code> in its frontmatter.</p>
+<p><em>Alternative considered:</em> embed the profile distribution inside <code>brand/personas/{role}.md</code>. Rejected — collapses the orthogonality the Challenger Customer book is built on (profile is per-individual, role is per-job-title).</p>
+
+<h3>Q4 · Cost-of-inaction by vertical — sales/ or proof/?</h3>
+<p><strong>Choice:</strong> Split. <code>brand/proof/cost-of-inaction-evidence.md</code> carries the verifiable industry numbers and customer outcomes (sourced, dated). <code>sales/insight/cost-of-inaction.md</code> carries the playbook for using the numbers in a deal — discovery sequence, calculator script, the deliberate silence after the number lands.</p>
+<p>The split mirrors how <code>brand/proof/case-studies.md</code> (evidence) relates to <code>sales/references/playbook.md</code> (deployment).</p>
+<p><em>Alternative considered:</em> keep it all in <code>brand/proof/</code>. Rejected — muddles two different artifacts (verifiable claim vs. rep playbook) that update at different cadences and serve different consumers.</p>
+
+<h3>Q5 · Objection library keyed by concern, not competitor</h3>
+<p><strong>Choice:</strong> Yes, fully distinct from <code>brand/market/competitive.md</code>. Six concern-keyed files in <code>sales/objections/</code>: <code>pricing</code>, <code>timing</code>, <code>risk</code>, <code>incumbency</code>, <code>authority</code>, <code>internal-politics</code>. Each H2 is one specific objection with responses <em>per stakeholder profile</em>. When an objection involves a competitor, the response references <code>brand/market/competitive.md#vs-{competitor}</code>. The two never collapse.</p>
+<p><em>Alternative considered:</em> one objection file per competitor. Rejected — doesn't scale (every new competitor needs a new file), and most objections aren't competitor-specific (timing, authority, internal politics happen regardless of who else is in the deal).</p>
+
+<h3>Q6 · References playbook — deal-stage and objection-type indexing</h3>
+<p><strong>Choice:</strong> <code>sales/references/playbook.md</code> is a multi-axis matrix indexed by <code>case-study × objection × stage × persona × vertical</code>. Each row is one usable reference recommendation. <code>sales/references/protocols/{customer}.md</code> holds per-customer protocol detail (legal status / named-reference clearance, intro path through CSM, preferred meeting style, last-talked-to date for freshness). Composes against <code>brand/proof/case-studies.md</code> by slug.</p>
+<p><em>Alternative considered:</em> tag each case study in <code>brand/proof/case-studies.md</code> with objection/stage/persona metadata. Rejected — pollutes brand artifacts with sales-cycle metadata that brand consumers (decks, blog posts) don't need; metadata cadence (which references are still warm) is sales-side, not brand-side.</p>
+
+<h3>Q7 · Deal-stage assets — Challenger TEACH/TAILOR/TAKE-CONTROL or Bowtie?</h3>
+<p><strong>Choice:</strong> Five pre-close stages that absorb both: <code>discovery | teach | tailor | take-control | close</code>. Each in <code>sales/stages/{stage}.md</code>. Mapping:</p>
+<ul class="dash">
+  <li><strong>Discovery</strong> = Bowtie's Awareness/Education — the rep finding the deal and qualifying.</li>
+  <li><strong>Teach</strong> = Challenger's Teach + JOLT's <em>Judge the indecision level</em>.</li>
+  <li><strong>Tailor</strong> = Challenger's Tailor + JOLT's <em>Offer your recommendation</em>.</li>
+  <li><strong>Take-Control</strong> = Challenger's Take Control + JOLT's <em>Limit the exploration</em>.</li>
+  <li><strong>Close</strong> = Bowtie's Selection→Commit + JOLT's <em>Take fear of failure off the table</em>.</li>
+</ul>
+<p>Onboarding / Adopt / Expand / Renewal are post-close and live in <code>clients/{prospect}</code> lifecycle, not <code>sales/</code>.</p>
+<p><em>Alternative considered:</em> use Bowtie's eight stages directly. Rejected — pre-close granularity matters more than post-close granularity for the playbook layer (post-close is per-deal lifecycle, not reusable plays); the five chosen stages give every stage a Challenger-or-JOLT verb attached.</p>
+</section>
+
+<section id="eval">
+<h2><span class="num">12</span>Eval surface</h2>
+<p>Programmatic checks that verify generated content stays on-playbook. Brand-folder evals verify <em>on-brand</em>; sales-folder evals verify <em>on-playbook</em>. Run at generation time, on a cadence, or via <code>/aligned:eval-audit</code>.</p>
+<table>
+<thead><tr><th>Eval</th><th>Checks</th><th>Pass criterion</th></tr></thead>
+<tbody>
+<tr><td><code>commercial-insight-trace.md</code></td><td>TEACH-stage assets trace the <strong>6-step</strong> Teach pitch (Warmer → Reframe → Rational Drowning → Emotional Impact → New Way → Your Solution) in order</td><td>All 6 components present in order</td></tr>
+<tr><td><code>indecision-vs-status-quo-diagnosed.md</code> <span class="pill new">v0.2</span></td><td>Every deal-resurrection or stalled-deal play passes through <code>indecision/diagnose.md</code> before picking a JOLT response (status-quo and indecision get opposite responses)</td><td>100% gated through diagnose</td></tr>
+<tr><td><code>objection-coverage.md</code></td><td>Each objection has a response per stakeholder profile</td><td>≥ 1 response per (objection × profile) cell</td></tr>
+<tr><td><code>mobilizer-id-required.md</code></td><td>Every <code>clients/{prospect}</code> past TEACH names a Mobilizer</td><td>100% Mobilizer-named past TEACH</td></tr>
+<tr><td><code>references-freshness.md</code></td><td>Reference protocols have <code>last_talked_to:</code> within 6 months</td><td>100% fresh</td></tr>
+<tr><td><code>cost-of-inaction-cited.md</code></td><td>Commercial-insight slices cite <code>brand/proof/cost-of-inaction-evidence</code></td><td>100% citation rate</td></tr>
+<tr><td><code>indecision-driver-named.md</code></td><td>TAKE-CONTROL and <code>deal-resurrection</code> plays target ≥ 1 of the <strong>3 JOLT drivers</strong> (Outcome Uncertainty / Valuation Problems / Lack of Information)</td><td>≥ 1 driver per play</td></tr>
+<tr><td><code>committee-coverage.md</code></td><td>TAILOR-stage assets name ≥ 3 of the 6.8 typical buying-committee members</td><td>≥ 3 buyers per Tailor asset</td></tr>
+<tr><td><code>playbook-drift.md</code></td><td>Slices unused in any active deal &gt; 90 days surfaced for review</td><td>≤ 5 stale slices, or all justified</td></tr>
+<tr><td><code>concern-vs-competitor-separation.md</code></td><td>No file in <code>sales/objections/</code> is keyed by competitor name</td><td>0 competitor-keyed objection files</td></tr>
+<tr><td><code>composition-order-check.md</code></td><td>Generator outputs preserve <code>sales → brand → clients</code> overlay order</td><td>Reverse-order overrides flagged</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="multi-org">
+<h2><span class="num">13</span>Subdomain reuse (digital health)</h2>
+<p>Proof that one playbook architecture serves many subdomains <em>and</em> buyer-side mixes. The directory shape doesn't change between behavioral health to a payer, RPM to an ACO, or a digital therapeutic to a specialty pharmacy — only the fills shift. Below: the same canonical slots filled six ways.</p>
+
+<table>
+<thead><tr><th>Subdomain × Buyer</th><th><code>insight/commercial-insight#reframe</code> (illustrative)</th></tr></thead>
+<tbody>
+<tr><td><strong>Behavioral health × payer</strong></td><td>"Your members reach a clinician at 3+ symptoms — by then 30-day ER cost is $X per member-episode. The window where a digital intervention prevents the ER visit closes 18 days earlier than your current pathway sees them."</td></tr>
+<tr><td><strong>Behavioral health × employer</strong></td><td>"Your EAP utilization is 4% but disability claims for anxiety are growing 12% YoY — the population that needs help isn't the population that calls the EAP."</td></tr>
+<tr><td><strong>RPM × payer (MA)</strong></td><td>"Your readmission penalty for [CHF / COPD / diabetes] last year was $X — concentrated in the 8% of members with [specific risk pattern]. Your current care-management workflow can't see that pattern until day 22 post-discharge."</td></tr>
+<tr><td><strong>RPM × provider (ACO)</strong></td><td>"Your shared-savings shortfall for [condition] is $X. The gap is concentrated in members between provider visits — the period your current outreach doesn't cover."</td></tr>
+<tr><td><strong>Digital therapeutic × payer</strong></td><td>"[Indication] adherence in your population is X% — every percentage point of adherence = $Y in avoided downstream cost. Your current pharmacy benefit doesn't have an instrument that moves adherence in this category."</td></tr>
+<tr><td><strong>Digital therapeutic × specialty pharmacy</strong></td><td>"Your dispense-to-active-use conversion for [drug class] is X% — but 60% of patients who lapse cite [specific friction] you can't address through refill workflows."</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead><tr><th>Subdomain × Buyer</th><th>Typical <code>buyers/buying-committee#mobilizer-likely-role</code></th></tr></thead>
+<tbody>
+<tr><td><strong>Behavioral health × payer</strong></td><td>VP Clinical Programs (often Go-Getter) or Chief Medical Officer (Skeptic-turned-Teacher when peer-org outcome data lands)</td></tr>
+<tr><td><strong>Behavioral health × employer</strong></td><td>Director of Benefits (Go-Getter when wellbeing is CEO priority) or Chief People Officer (Teacher under retention pressure)</td></tr>
+<tr><td><strong>RPM × payer (MA)</strong></td><td>Director of Care Management (Go-Getter) or VP STARS (Teacher when a STARS measure is at risk)</td></tr>
+<tr><td><strong>RPM × provider (ACO)</strong></td><td>ACO Medical Director or Director of Population Health (often dual Mobilizer-Teacher)</td></tr>
+<tr><td><strong>Digital therapeutic × payer</strong></td><td>Medical Director / VP Behavioral Health / VP Innovation (Yoo, v0.2 fix: Pharmacy Director is the <em>gatekeeper</em>, not the Mobilizer — needed for clearance, doesn't drive consensus)</td></tr>
+<tr><td><strong>Digital therapeutic × specialty pharmacy</strong></td><td>Director of Clinical Programs or VP of Adherence Programs</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead><tr><th>Subdomain × Buyer</th><th>Typical <code>indecision/{driver}</code> that stalls the deal</th></tr></thead>
+<tbody>
+<tr><td><strong>Behavioral health × payer</strong></td><td>Outcome Uncertainty (will engagement actually happen at scale?) — neutralize with cohort-level engagement data</td></tr>
+<tr><td><strong>Behavioral health × employer</strong></td><td>Anticipated Regret ("what if the wellness director who picks this leaves and I'm holding the bag?") — neutralize with rep-side commitment to transition support</td></tr>
+<tr><td><strong>RPM × payer (MA)</strong></td><td>Valuation Problems (can we calculate per-member ROI in our actuarial model?) — neutralize with co-built attribution methodology</td></tr>
+<tr><td><strong>RPM × provider (ACO)</strong></td><td>Information Burden (clinical / IT / financial / legal evaluations all due, no one synthesizing) — neutralize with synthesis exec brief</td></tr>
+<tr><td><strong>Digital therapeutic × payer</strong></td><td>Outcome Uncertainty + Information Burden (FDA evidence dossier is dense, internal pharmacy review takes 6+ weeks) — neutralize with payer-tailored evidence summary</td></tr>
+<tr><td><strong>Digital therapeutic × specialty pharmacy</strong></td><td>Valuation Problems (which line of business absorbs the cost vs. captures the savings) — neutralize with line-of-business reconciliation worksheet</td></tr>
+</tbody>
+</table>
+
+<table>
+<thead><tr><th>Subdomain × Buyer</th><th>Typical <code>objections/risk</code> top concern</th></tr></thead>
+<tbody>
+<tr><td><strong>Behavioral health × payer</strong></td><td>Member-data flow &amp; privacy (HIPAA + BAA + 42 CFR Part 2 if SUD content)</td></tr>
+<tr><td><strong>Behavioral health × employer</strong></td><td>Anti-stigma / member-trust risk (will employees use it if they fear employer visibility?)</td></tr>
+<tr><td><strong>RPM × payer (MA)</strong></td><td>Device data accuracy &amp; RPM-billing-code defensibility</td></tr>
+<tr><td><strong>RPM × provider (ACO)</strong></td><td>EHR integration risk + clinical-workflow burden on staff</td></tr>
+<tr><td><strong>Digital therapeutic × payer</strong></td><td>FDA-clearance-based efficacy claims vs. real-world outcomes in claims data</td></tr>
+<tr><td><strong>Digital therapeutic × specialty pharmacy</strong></td><td>Pharmacy-benefit-vs-medical-benefit billing complexity</td></tr>
+</tbody>
+</table>
+
+<p style="margin-top: 24px; font-size: 14px; color: var(--bark-500); font-style: italic;">Across all six cases, <code>sales/insight/commercial-insight.md</code>, <code>sales/buyers/buying-committee.md</code>, <code>sales/indecision/</code>, and <code>sales/objections/risk.md</code> are the <strong>same files in the same slots</strong>. Only the fills change. A rep at any of these companies opens the same paths, runs the same generators, and gets a deal-relevant output.</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- INTERACTIVE: Decision Log                                     -->
+<!-- ============================================================ -->
+<section id="decisions">
+<h2><span class="num">14</span>Decision log <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive</span></h2>
+<p>Every architectural choice this design made, with reasoning. Decisions are grouped — <strong>scope &amp; philosophy</strong>, <strong>folder layout &amp; content boundaries</strong>, <strong>frontmatter &amp; metadata</strong>, <strong>composition rules</strong>, <strong>frameworks &amp; rollout</strong>. Toggle any decision to "Reject" and the prompt below auto-fills with revision instructions.</p>
+
+<div class="interactive-section">
+<div class="interactive-banner">
+  <span class="icon">●</span>
+  <div><strong>Approve or reject each decision below.</strong> The prompt at the bottom auto-updates with your rejections. Copy it and paste it back to me — or edit it inline before sending.</div>
+</div>
+
+<table class="interactive" id="decisions-table">
+<thead><tr><th class="num">#</th><th style="width: 22%">Decision</th><th>Description</th><th style="width: 130px">Status</th></tr></thead>
+<tbody>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">A</span>Scope &amp; philosophy<span class="section-count">3 decisions</span></td></tr>
+<tr data-id="1" data-title="Sibling to brand/, not nested under it">
+  <td class="num decision-num">1</td>
+  <td class="decision-title">Sibling to <code>brand/</code>, not nested under it</td>
+  <td class="decision-desc">Three-folder triangle (brand/sales/clients) maps to three change cadences (durable / playbook-iteration / per-deal). Nesting forces lock-step versioning that none of the three actually need.</td>
+  <td><select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="2" data-title="No CRM emulation — crm_link reference, not mirror">
+  <td class="num decision-num">2</td>
+  <td class="decision-title">No CRM emulation — <code>crm_link:</code> reference, not mirror</td>
+  <td class="decision-desc">CRM is the system of record for opportunity state. Mirroring it produces drift; referencing it stays clean. The playbook layer doesn't need to know dollar amounts.</td>
+  <td><select class="dropdown" data-id="2"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="3" data-title="Same provenance scheme as brand/, plus last_used_in_deal">
+  <td class="num decision-num">3</td>
+  <td class="decision-title">Same provenance scheme as <code>brand/</code>, plus <code>last_used_in_deal</code></td>
+  <td class="decision-desc">Cross-folder consistency lets one loader handle both. The third field surfaces playbook drift — sales content goes stale faster than brand content.</td>
+  <td><select class="dropdown" data-id="3"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">B</span>Folder layout &amp; content boundaries<span class="section-count">8 decisions</span></td></tr>
+<tr data-id="4" data-title="Nine subdirectories, one per Challenger/JOLT/Customer concept">
+  <td class="num decision-num">4</td>
+  <td class="decision-title">Nine subdirectories: insight, discovery, buyers, objections, indecision, references, stages, plays, eval</td>
+  <td class="decision-desc">Each maps to one named section of the Challenger / JOLT / Challenger Customer body of work. Collapsing any two couples concepts the books deliberately separate.</td>
+  <td><select class="dropdown" data-id="4"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="5" data-title="Commercial insight is its own file; not fused with narrative.md">
+  <td class="num decision-num">5</td>
+  <td class="decision-title">Commercial insight is its own file; <em>not</em> fused with <code>brand/strategy/narrative.md</code></td>
+  <td class="decision-desc">They serve different consumers and change at different cadences. Narrative is customer-agnostic and durable; commercial insight is buyer-surprise-tuned and refines as new data lands.</td>
+  <td><select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="6" data-title="Cost-of-inaction split: brand/proof (data) and sales/insight (playbook)">
+  <td class="num decision-num">6</td>
+  <td class="decision-title">Cost-of-inaction split: <code>brand/proof/cost-of-inaction-evidence.md</code> (data) + <code>sales/insight/cost-of-inaction.md</code> (playbook)</td>
+  <td class="decision-desc">Mirrors the case-study split (evidence in brand, deployment playbook in sales). Lets the data update independently from the script that uses it.</td>
+  <td><select class="dropdown" data-id="6"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="7" data-title="Objections concern-keyed, never competitor-keyed">
+  <td class="num decision-num">7</td>
+  <td class="decision-title">Objections concern-keyed (pricing, timing, risk, incumbency, authority, internal-politics) — never competitor-keyed</td>
+  <td class="decision-desc">Concern-keyed scales: a new competitor doesn't require a new objection file. Competitor comparisons live in <code>brand/market/competitive.md</code> and are referenced when the objection involves a competitor.</td>
+  <td><select class="dropdown" data-id="7"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="8" data-title="Stakeholder profile orthogonal to role; two-file split">
+  <td class="num decision-num">8</td>
+  <td class="decision-title">Stakeholder profile orthogonal to role — taxonomy in <code>stakeholder-profiles.md</code>, distribution in <code>by-persona/{role}.md</code></td>
+  <td class="decision-desc">A CMIO can be Mobilizer or Blocker. Encoding profile <em>into</em> persona collapses the orthogonality the Challenger Customer book is built on.</td>
+  <td><select class="dropdown" data-id="8"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="9" data-title="Per-persona discovery references brand/personas/ by slug">
+  <td class="num decision-num">9</td>
+  <td class="decision-title">Per-persona discovery references <code>brand/personas/{role}</code> by slug; never duplicates</td>
+  <td class="decision-desc">Same anti-duplication rule as brand. Loader merges role-definition slice with sales-side discovery-question slice at runtime.</td>
+  <td><select class="dropdown" data-id="9"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="10" data-title="References playbook is multi-axis matrix">
+  <td class="num decision-num">10</td>
+  <td class="decision-title">References playbook is a multi-axis matrix in <code>references/playbook.md</code></td>
+  <td class="decision-desc">Indexed by case-study × objection × stage × persona × vertical. Lets a generator answer "which customer should I cite to a CMIO at TAILOR worried about clinical risk in a behavioral-health deal" without scanning N case studies.</td>
+  <td><select class="dropdown" data-id="10"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="11" data-title="Five pre-close stages: discovery / teach / tailor / take-control / close">
+  <td class="num decision-num">11</td>
+  <td class="decision-title">Five pre-close stages: discovery / teach / tailor / take-control / close</td>
+  <td class="decision-desc">Maps both Challenger (Teach/Tailor/Take Control) and Bowtie pre-close. Onboarding/expansion is per-deal lifecycle, not reusable plays — it lives in <code>clients/</code>.</td>
+  <td><select class="dropdown" data-id="11"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">C</span>Frontmatter &amp; metadata<span class="section-count">3 decisions</span></td></tr>
+<tr data-id="12" data-title="Same brand schema + 3 sales-only optional fields">
+  <td class="num decision-num">12</td>
+  <td class="decision-title">Same 7-required-field schema as <code>brand/</code> + 3 optional sales-only fields</td>
+  <td class="decision-desc">New fields: <code>last_used_in_deal</code>, <code>applies_to_stage</code>, expanded <code>type</code> enum. Schema reuse lets one validator + one loader handle both folders.</td>
+  <td><select class="dropdown" data-id="12"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="13" data-title="Stage IDs match directory names verbatim">
+  <td class="num decision-num">13</td>
+  <td class="decision-title">Stage IDs match directory names verbatim</td>
+  <td class="decision-desc">Conventional paths beat aliases. The string <code>"teach"</code> always means the same thing across <code>applies_to_stage:</code>, <code>clients/{prospect}#current_stage</code>, and <code>sales/stages/teach.md</code>.</td>
+  <td><select class="dropdown" data-id="13"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="14" data-title="Per-customer reference protocols in references/protocols/">
+  <td class="num decision-num">14</td>
+  <td class="decision-title">Per-customer reference protocols in <code>references/protocols/{customer}.md</code></td>
+  <td class="decision-desc">Matrix file (<code>playbook.md</code>) handles indexing. Per-customer files hold protocol details (legal status, intro path) that don't fit a matrix cell.</td>
+  <td><select class="dropdown" data-id="14"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">D</span>Composition rules<span class="section-count">4 decisions</span></td></tr>
+<tr data-id="15" data-title="Composition order: sales/ → brand/ → clients/{prospect}">
+  <td class="num decision-num">15</td>
+  <td class="decision-title">Composition order is fixed: <code>sales/ → brand/ → clients/{prospect}</code></td>
+  <td class="decision-desc">Playbook is base; brand provides company-specific overlay; clients provides deal-specific overlay. Reverse-order composition lets a per-deal hack override company truth.</td>
+  <td><select class="dropdown" data-id="15"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="16" data-title="One loader (load-slices.md with tree: parameter)">
+  <td class="num decision-num">16</td>
+  <td class="decision-title">One loader (<code>skills/_shared/load-slices.md</code> with <code>tree:</code> parameter), not three</td>
+  <td class="decision-desc">Same principle the brand mockup adopted ("one loader, not six"). Parsing primitives are tree-agnostic. Renames the brand-only loader as part of v1 cutover.</td>
+  <td><select class="dropdown" data-id="16"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="17" data-title="Cross-folder references via depends_on slice paths">
+  <td class="num decision-num">17</td>
+  <td class="decision-title">Cross-folder references via <code>depends_on:</code> slice paths (<code>brand/personas/{role}#kpis</code>)</td>
+  <td class="decision-desc">Standard slice-path syntax extends naturally. Loader resolves the path against the right tree.</td>
+  <td><select class="dropdown" data-id="17"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="18" data-title="Generators MUST guard on file existence — graceful degradation">
+  <td class="num decision-num">18</td>
+  <td class="decision-title">Generators MUST guard on file existence — sales folder gracefully degrades when slices missing</td>
+  <td class="decision-desc">Same rule as brand. A new install with empty <code>sales/discovery/by-vertical/</code> doesn't crash <code>generate-discovery-prep</code>; it runs without vertical-specific questions and notes the gap.</td>
+  <td><select class="dropdown" data-id="18"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">E</span>Frameworks &amp; rollout<span class="section-count">4 decisions</span></td></tr>
+<tr data-id="19" data-title="Six net-new sales frameworks">
+  <td class="num decision-num">19</td>
+  <td class="decision-title">Six net-new frameworks: <code>commercial-insight</code>, <code>stakeholder-mapping</code>, <code>objection-library</code>, <code>indecision-audit</code>, <code>mutual-close-plan-design</code>, <code>references-playbook</code></td>
+  <td class="decision-desc">Each maps to one section of <code>sales/</code>. Run individually to deepen one section, or chain via the orchestrator.</td>
+  <td><select class="dropdown" data-id="19"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="20" data-title="One orchestrator: reverse-engineered-sales">
+  <td class="num decision-num">20</td>
+  <td class="decision-title">One orchestrator framework: <code>reverse-engineered-sales</code></td>
+  <td class="decision-desc">Mirrors <code>reverse-engineered-brand</code>. Cold-start path: brand at minimum draft, sales empty, orchestrator builds the playbook in dependency order.</td>
+  <td><select class="dropdown" data-id="20"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="21" data-title="Canonical run order: insight → mapping → objections → references → indecision → MCP">
+  <td class="num decision-num">21</td>
+  <td class="decision-title">Canonical run order: <code>commercial-insight → stakeholder-mapping → objection-library → references-playbook → indecision-audit → mutual-close-plan-design</code></td>
+  <td class="decision-desc">Insight anchors the whole stack. Stakeholder mapping defines the committee. Objections + references can run in parallel (both need stakeholder profiles). Indecision audit needs objections (to map to drivers). MCP design runs last (synthesizes everything).</td>
+  <td><select class="dropdown" data-id="21"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="22" data-title="Clean-state cutover, no aliasing">
+  <td class="num decision-num">22</td>
+  <td class="decision-title">Clean-state cutover — no legacy aliases</td>
+  <td class="decision-desc">Same as brand. Single coordinated PR. No deprecation window. Existing sales-asset generators (if any) updated in same change; loader renamed in same change.</td>
+  <td><select class="dropdown" data-id="22"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+</tbody>
+</table>
+
+<div class="prompt-box">
+  <div class="prompt-box-header">
+    <span class="prompt-box-label">Prompt to send back</span>
+    <div class="prompt-actions">
+      <button class="btn" id="regenerate-decisions" type="button">Regenerate</button>
+      <button class="btn btn-primary" id="copy-decisions" type="button">Copy</button>
+    </div>
+  </div>
+  <textarea class="prompt-textarea" id="decisions-prompt" spellcheck="false"></textarea>
+  <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+</div>
+</div>
+</section>
+
+<section id="orphans">
+<h2><span class="num">15</span>Orphan / residual catalog</h2>
+<p>What was considered during design and excluded, with the one-line reason for each. Prevents future revisits of settled-and-rejected ideas.</p>
+<ul class="dash">
+  <li><strong>Sales folder nested under <code>brand/sales/</code></strong> — couples lifecycles that should change independently.</li>
+  <li><strong>One unified objection-library file</strong> — not slice-loadable at the concern granularity generators need.</li>
+  <li><strong>Per-competitor objection files</strong> — doesn't scale; most objections aren't competitor-specific.</li>
+  <li><strong>Profile distribution embedded in <code>brand/personas/{role}.md</code></strong> — collapses orthogonality of profile vs. role.</li>
+  <li><strong>Cost-of-inaction in <code>sales/</code> only</strong> — separates evidence from playbook; data updates independently from script.</li>
+  <li><strong>Cost-of-inaction in <code>brand/proof/</code> only</strong> — muddles two artifacts (verifiable claim vs. rep playbook) with different consumers.</li>
+  <li><strong>Bowtie's eight stages directly</strong> — pre-close granularity matters for the playbook layer; post-close is per-deal lifecycle.</li>
+  <li><strong>Onboarding / Adopt / Expand / Renewal as <code>sales/stages/</code> entries</strong> — those are per-deal lifecycle, live in <code>clients/{prospect}</code>.</li>
+  <li><strong>Mirroring CRM opportunity stage / forecast / dollar amount in <code>clients/{prospect}</code></strong> — produces drift; CRM is system of record. Reference via <code>crm_link:</code>.</li>
+  <li><strong>Contract clauses or legal templates in <code>sales/</code></strong> — live in their own system; <code>sales/</code> carries the playbook for navigating legal review, not the contracts.</li>
+  <li><strong>Per-rep playbook variants</strong> — playbook drift is solved by <code>last_used_in_deal:</code> + retiring slices, not by fragmenting the canonical playbook.</li>
+  <li><strong>Talk-track audio/video clips in v1</strong> — text-only for v1 (open question for later).</li>
+  <li><strong>BANT / GPCT / MEDDIC alternatives to MEDDPICC in v1</strong> — single qualification rubric per install; alternatives are open question.</li>
+  <li><strong>Three separate loaders (brand-loader / sales-loader / clients-loader)</strong> — one parameterized loader matches the brand mockup's "one loader, not six" rule.</li>
+  <li><strong>Sales <code>contracts.yaml</code> redefining brand generators</strong> — sales contracts only declare sales-asset generators; brand generators stay in brand contracts.</li>
+</ul>
+</section>
+
+<section id="frameworks">
+<h2><span class="num">16</span>Framework registration</h2>
+<p>The interactive workshops that populate the sales folder. Each framework deepens one section of <code>sales/</code> via a structured Q&amp;A with the user (and often a specific advisor like Dixon, Kooij, Bertuzzi, or Yoo). The orchestrator <code>reverse-engineered-sales</code> chains them together for a cold-start; individual frameworks can be re-run later to sharpen any one section.</p>
+<p><strong>Six per-section frameworks + one orchestrator + two existing supports.</strong></p>
+
+<h3>Orchestrator (run-once on cold start)</h3>
+<table>
+<thead><tr><th class="num">#</th><th>ID</th><th>What it deepens</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td class="num">0</td><td><code>reverse-engineered-sales</code></td><td>Entire sales/ folder. <strong>Fully interactive, brainstorm-shaped.</strong> Inputs: existing brand/ folder + (optional) prior sales artifacts (decks, MCPs, deal post-mortems). Composes 1–6 below.</td><td><span class="pill new">net-new orchestrator</span></td></tr>
+</tbody>
+</table>
+
+<h3>Per-section frameworks</h3>
+<table>
+<thead><tr><th class="num">#</th><th>ID</th><th>Deepens</th><th>Advisor</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td><code>commercial-insight</code></td><td><code>insight/commercial-insight.md</code> + <code>insight/cost-of-inaction.md</code></td><td>matt-dixon</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">2</td><td><code>stakeholder-mapping</code></td><td><code>buyers/stakeholder-profiles.md</code> + <code>buyers/by-persona/</code> + <code>buyers/buying-committee.md</code></td><td>matt-dixon</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">3</td><td><code>objection-library</code></td><td><code>objections/*.md</code></td><td>chris-voss + matt-dixon</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">4</td><td><code>references-playbook</code></td><td><code>references/playbook.md</code> + <code>references/protocols/</code></td><td>trish-bertuzzi</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">5</td><td><code>indecision-audit</code></td><td><code>indecision/*.md</code></td><td>matt-dixon</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">6</td><td><code>mutual-close-plan-design</code></td><td><code>plays/mutual-close-plan.md</code></td><td>jacco-van-der-kooij</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">7</td><td><code>discovery-question-bank</code></td><td><code>discovery/question-banks.md</code> + <code>discovery/by-persona/</code></td><td>chris-voss</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">8</td><td><code>5-gtm-motions-digital-health</code></td><td>orientation reading for run-order; helps pick which GTM motion the playbook serves</td><td>julie-yoo</td><td><span class="pill existing">existing</span></td></tr>
+<tr><td class="num">9</td><td><code>bowtie-funnel</code></td><td>orientation reading for stages; reconciles Challenger and Bowtie vocab</td><td>jacco-van-der-kooij</td><td><span class="pill existing">existing</span></td></tr>
+</tbody>
+</table>
+
+<h3>Canonical run order: <code>1 → 2 → 3 → 4 → 5 → 6</code></h3>
+<p>Insight anchors everything (the Teach pitch is the spine). Stakeholder mapping defines the committee around the insight. Objection library and references playbook can run in parallel (both need stakeholder profiles). Indecision audit needs objections (to map specific objections to specific JOLT drivers). Mutual-close-plan design runs last because it synthesizes everything: the commercial insight to teach, the committee to navigate, the objections likely to land, and the indecision drivers most likely to stall the close. Discovery-question-bank (#7) is a deepening framework run after the first cycle when reps know what they wish they'd asked.</p>
+
+<div class="graph">                  reverse-engineered-sales (orchestrator)
+                              │
+                              ▼
+                  (existing brand/ + optional prior sales artifacts)
+                              │
+                              ▼
+                  commercial-insight  (Dixon)
+                              │
+                              ▼
+                  stakeholder-mapping  (Dixon)
+                              │
+              ┌───────────────┴───────────────┐
+              ▼                               ▼
+       objection-library                references-playbook
+       (Voss + Dixon)                   (Bertuzzi)
+              │                               │
+              └───────────────┬───────────────┘
+                              ▼
+                      indecision-audit  (Dixon)
+                              │
+                              ▼
+                  mutual-close-plan-design  (Kooij)
+                              │
+                              ▼
+              [optional] discovery-question-bank (Voss)
+                              │
+                              ▼
+                          sales/ ready</div>
+</section>
+
+<section id="migration">
+<h2><span class="num">17</span>Migration &amp; adoption</h2>
+<p>How to ship this design. There are no existing sales-asset generators in the canonical plugin (the project scan confirmed). The risk surface is the brand-loader rename — existing brand generators (<code>generate-deck</code>, <code>generate-blog-post</code>, <code>generate-one-pager</code>) reference the loader path. They migrate in the same coordinated PR.</p>
+
+<div class="card">
+  <h4>Single-PR rollout</h4>
+  <ol>
+    <li><strong>Rename the loader.</strong> <code>skills/_shared/load-brand-slices.md</code> → <code>skills/_shared/load-slices.md</code> with a <code>tree:</code> parameter (<code>brand | sales | clients</code>). Parsing primitives unchanged.</li>
+    <li><strong>Update brand-side generators.</strong> <code>generate-deck</code>, <code>generate-blog-post</code>, <code>generate-one-pager</code> get the new loader path + the explicit <code>tree: brand</code> parameter. No content changes.</li>
+    <li><strong>Ship the sales <code>contracts.yaml</code> and CLAUDE.md template.</strong> Empty sales/ folder is valid (loader gracefully degrades).</li>
+    <li><strong>Register the 6 net-new frameworks + orchestrator</strong> in <code>frameworks/registry.yaml</code>.</li>
+    <li><strong>Add the 10 new evals</strong> as eval-scenario entries.</li>
+    <li><strong>Lint enabled from day one.</strong> Frontmatter required-field lint, cross-folder <code>depends_on:</code> resolution lint, sales-relevance-coverage lint all fail the build on violation.</li>
+    <li><strong>Reference instance backfill (optional, follow-on PR).</strong> Populate <code>dispatch-tracker/sales/</code> via <code>reverse-engineered-sales</code> as a structural validation.</li>
+  </ol>
+  <p style="margin-top: 16px; font-size: 14px; color: var(--bark-500); font-style: italic;">No deprecation window. The brand loader move is in-place; no aliasing shim left behind.</p>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- INTERACTIVE: Open Questions                                   -->
+<!-- ============================================================ -->
+<section id="questions">
+<h2><span class="num">18</span>Open questions <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive</span></h2>
+<p>Decisions deliberately deferred — each has a named trigger that would resolve it later. Toggle any to "Include" to ask now, "Reject" to remove from the list entirely, or leave "Defer" to keep on watch.</p>
+
+<div class="interactive-section">
+<div class="interactive-banner">
+  <span class="icon">●</span>
+  <div><strong>Three options per question.</strong> <em>Defer</em> (default) keeps it on the list for later. <em>Include</em> queues it for me to ask you interactively now. <em>Reject</em> removes it from the list entirely. The prompt below auto-updates.</div>
+</div>
+
+<table class="interactive" id="questions-table">
+<thead><tr><th class="num">#</th><th style="width: 35%">Question</th><th>Trigger that would resolve it</th><th style="width: 130px">Status</th></tr></thead>
+<tbody>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">A</span>Content scope expansions<span class="section-count">3 questions</span></td></tr>
+<tr data-id="1" data-title="Should sales/ carry talk-track audio/video clips, or stay text-only?">
+  <td class="num">1</td>
+  <td>Should <code>sales/</code> carry talk-track audio/video reference clips, or stay text-only?</td>
+  <td>First request from a rep to "show me how Sarah handled this objection."</td>
+  <td><select class="dropdown q-dropdown" data-id="1"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="2" data-title="Should there be a competitive-displacement/ subdirectory?">
+  <td class="num">2</td>
+  <td>Should there be a <code>sales/competitive-displacement/</code> directory for plays specifically about replacing an incumbent vendor?</td>
+  <td>First deal where displacement-of-incumbent is the <em>whole</em> play, not one objection within a broader sale.</td>
+  <td><select class="dropdown q-dropdown" data-id="2"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="3" data-title="MEDDPICC vs alternatives (MEDDIC / BANT / GPCT)">
+  <td class="num">3</td>
+  <td>Should <code>meddpicc.md</code> be replaced or supplemented by an alternative for orgs that don't use MEDDPICC?</td>
+  <td>First org adopting <code>sales/</code> whose existing process is incompatible with MEDDPICC.</td>
+  <td><select class="dropdown q-dropdown" data-id="3"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">B</span>Slicing &amp; composition<span class="section-count">3 questions</span></td></tr>
+<tr data-id="4" data-title="Indecision-driver detection: LLM-inferred from stall pattern, or rep-declared?">
+  <td class="num">4</td>
+  <td>Should indecision-driver detection be LLM-inferred from stall pattern, or rep-declared in <code>clients/{prospect}</code>?</td>
+  <td>First rep frustration with auto-detection accuracy (or absence).</td>
+  <td><select class="dropdown q-dropdown" data-id="4"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="5" data-title="objection-coverage eval — too-large objection files?">
+  <td class="num">5</td>
+  <td>Does the <code>objection-coverage.md</code> requirement (response per profile per objection) produce too-large objection files?</td>
+  <td>First objection file that exceeds 2,000 tokens.</td>
+  <td><select class="dropdown q-dropdown" data-id="5"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="6" data-title="When does loader auto-prefer folder shape for clients/?">
+  <td class="num">6</td>
+  <td>When does the loader auto-prefer the folder shape (<code>clients/{prospect}/</code>) over the single-file shape — at slice count, file size, or always-folder for new prospects?</td>
+  <td>First org adopting <code>sales/</code> whose existing <code>clients/</code> is single-file shape and crosses the artifact-proliferation threshold in flight.</td>
+  <td><select class="dropdown q-dropdown" data-id="6"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">C</span>Observability &amp; integrations<span class="section-count">3 questions</span></td></tr>
+<tr data-id="7" data-title="references/playbook.md integrate with CRM activity feed for freshness?">
+  <td class="num">7</td>
+  <td>Should <code>references/playbook.md</code> integrate with a CRM activity feed (last-touched date for the customer) or stay manual?</td>
+  <td>First time a stale reference (last-talked-to &gt; 6 months) gets recommended in an active deal.</td>
+  <td><select class="dropdown q-dropdown" data-id="7"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="8" data-title="last_used_in_deal — auto-updated from generator runs, or rep-stamped?">
+  <td class="num">8</td>
+  <td>Should <code>last_used_in_deal:</code> auto-update from generator-run logs, or be rep-stamped post-call?</td>
+  <td>First time a slice ages out unfairly because no generator run was logged against it.</td>
+  <td><select class="dropdown q-dropdown" data-id="8"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="9" data-title="Eval scenarios run automatically on every generation, or on demand?">
+  <td class="num">9</td>
+  <td>Auto-run sales evals on every generation, or on demand?</td>
+  <td>First sales-asset shipped that violated <code>commercial-insight-trace</code> or <code>indecision-driver-named</code> in production.</td>
+  <td><select class="dropdown q-dropdown" data-id="9"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+</tbody>
+</table>
+
+<div class="prompt-box">
+  <div class="prompt-box-header">
+    <span class="prompt-box-label">Prompt to send back</span>
+    <div class="prompt-actions">
+      <button class="btn" id="regenerate-questions" type="button">Regenerate</button>
+      <button class="btn btn-primary" id="copy-questions" type="button">Copy</button>
+    </div>
+  </div>
+  <textarea class="prompt-textarea" id="questions-prompt" spellcheck="false"></textarea>
+  <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+</div>
+</div>
+</section>
+
+<section id="tests">
+<h2><span class="num">19</span>Tests required</h2>
+<p>What must pass before this design is considered shipped. Schema lints prove every file conforms. Generator contract tests prove every <code>requires:</code> slice resolves across three folders. Eval scenarios prove generated content stays on-playbook. Cross-folder tests prove the loader rename didn't break brand-side generators.</p>
+<table>
+<thead><tr><th>Test</th><th>Verifies</th></tr></thead>
+<tbody>
+<tr><td><code>frameworks/registry.yaml</code> lint</td><td>All 6 net-new sales framework entries pass schema</td></tr>
+<tr><td><code>sales/contracts.yaml</code> schema</td><td>References only valid slice paths across <code>sales/</code>, <code>brand/</code>, <code>clients/</code></td></tr>
+<tr><td>Generator contract tests (per sales generator)</td><td>All <code>requires:</code> slices resolve, or generator surfaces clear error</td></tr>
+<tr><td>Frontmatter schema lint (sales-extended)</td><td>Every <code>.md</code> in <code>sales/</code> has the 7 required fields; sales-only fields validate type</td></tr>
+<tr><td><code>commercial-insight-trace</code> eval</td><td>Canary TEACH-stage deck traces all 5 Teach-pitch components in order</td></tr>
+<tr><td><code>objection-coverage</code> eval</td><td>Canary objection file has ≥ 1 response per stakeholder profile</td></tr>
+<tr><td><code>mobilizer-id-required</code> eval</td><td>Canary <code>clients/{prospect}</code> past TEACH names a <code>mobilizer_id:</code></td></tr>
+<tr><td><code>references-freshness</code> eval</td><td>Canary reference protocol has <code>last_talked_to:</code> within 6 months</td></tr>
+<tr><td><code>cost-of-inaction-cited</code> eval</td><td>Canary commercial-insight slice cites a <code>brand/proof/cost-of-inaction-evidence</code> slice</td></tr>
+<tr><td><code>indecision-driver-named</code> eval</td><td>Canary deal-resurrection play targets ≥ 1 of the 4 JOLT drivers</td></tr>
+<tr><td><code>concern-vs-competitor-separation</code> eval</td><td>No <code>sales/objections/</code> file is named after a competitor</td></tr>
+<tr><td><code>composition-order-check</code> eval</td><td>Generator output preserves <code>sales → brand → clients</code> overlay order</td></tr>
+<tr><td><code>cross-folder-depends-on-resolution</code> lint</td><td>Every <code>depends_on:</code> slice path resolves in the correct tree</td></tr>
+<tr><td><code>sales-relevance-coverage</code> lint</td><td>Every <code>brand/personas/{role}</code> has corresponding <code>sales/buyers/by-persona/{role}</code> OR sets <code>sales_relevant: false</code></td></tr>
+<tr><td><code>loader-delegation-test</code></td><td>Each sales generator delegates to <code>skills/_shared/load-slices.md</code> — no inline frontmatter parsing</td></tr>
+<tr><td>Brand-loader rename regression</td><td>Existing brand generators (<code>generate-deck</code>, <code>generate-blog-post</code>, <code>generate-one-pager</code>) produce equivalent output before/after loader rename</td></tr>
+<tr><td><code>clients-shape-consistency</code> lint</td><td>No prospect exists as both <code>clients/{prospect}.md</code> and <code>clients/{prospect}/</code> simultaneously</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="bottom">
+<p><em>Generated from</em> <code>docs/plans/2026-05-15-ai-native-sales-folder-design.md</code> v0.1 <em>· Sibling design:</em> <code>docs/mockups/2026-05-15-ai-native-brand-folder.html</code> <em>· Same Warm Journal design system.</em></p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ─── DECISION LOG ─────────────────────────────────────────────────────
+  const decisionsTable = document.getElementById('decisions-table');
+  const decisionsPrompt = document.getElementById('decisions-prompt');
+  const decisionsCopyBtn = document.getElementById('copy-decisions');
+  const decisionsRegenBtn = document.getElementById('regenerate-decisions');
+
+  function buildDecisionsPrompt() {
+    const rejected = Array.from(decisionsTable.querySelectorAll('tbody tr[data-id]'))
+      .filter(tr => tr.querySelector('select').value === 'reject')
+      .map(tr => ({ num: tr.dataset.id, title: tr.dataset.title }));
+
+    if (rejected.length === 0) {
+      return "All decisions approved on design v0.1 of the AI-native sales folder.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.";
+    }
+
+    const lines = [
+      "I've reviewed design v0.1 of the AI-native sales folder and I'm rejecting the following decisions:",
+      ""
+    ];
+    rejected.forEach(d => {
+      lines.push(`  • Decision #${d.num} — ${d.title}`);
+      lines.push(`    Reason: <add your reason here>`);
+      lines.push("");
+    });
+    lines.push("Please revise the design to address these rejections and re-present v0.2.");
+    lines.push("");
+    lines.push("If you have an alternative recommendation for any of these, propose it before I commit to a replacement.");
+    return lines.join("\n");
+  }
+
+  function updateDecisionRow(select) {
+    const tr = select.closest('tr');
+    if (select.value === 'reject') {
+      select.classList.add('reject');
+      tr.classList.add('row-active');
+    } else {
+      select.classList.remove('reject');
+      tr.classList.remove('row-active');
+    }
+  }
+
+  function refreshDecisions() {
+    decisionsPrompt.value = buildDecisionsPrompt();
+  }
+
+  decisionsTable.querySelectorAll('select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      updateDecisionRow(sel);
+      refreshDecisions();
+    });
+  });
+
+  decisionsRegenBtn.addEventListener('click', refreshDecisions);
+
+  decisionsCopyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(decisionsPrompt.value).then(() => {
+      const original = decisionsCopyBtn.textContent;
+      decisionsCopyBtn.textContent = 'Copied ✓';
+      decisionsCopyBtn.classList.add('copied');
+      setTimeout(() => {
+        decisionsCopyBtn.textContent = original;
+        decisionsCopyBtn.classList.remove('copied');
+      }, 1800);
+    }).catch(() => {
+      decisionsPrompt.select();
+      document.execCommand('copy');
+    });
+  });
+
+  // ─── OPEN QUESTIONS ───────────────────────────────────────────────────
+  const questionsTable = document.getElementById('questions-table');
+  const questionsPrompt = document.getElementById('questions-prompt');
+  const questionsCopyBtn = document.getElementById('copy-questions');
+  const questionsRegenBtn = document.getElementById('regenerate-questions');
+
+  function buildQuestionsPrompt() {
+    const rows = Array.from(questionsTable.querySelectorAll('tbody tr[data-id]'));
+    const included = rows.filter(tr => tr.querySelector('select').value === 'include')
+      .map(tr => ({ num: tr.dataset.id, title: tr.dataset.title }));
+    const rejected = rows.filter(tr => tr.querySelector('select').value === 'reject')
+      .map(tr => ({ num: tr.dataset.id, title: tr.dataset.title }));
+
+    if (included.length === 0 && rejected.length === 0) {
+      return "All open questions deferred on design v0.1 of the AI-native sales folder.\n\nProceed with the design as-is; we'll resolve these as the named triggers fire.";
+    }
+
+    const lines = ["Design v0.1 of the AI-native sales folder — open-questions review:", ""];
+
+    if (included.length > 0) {
+      lines.push("ASK ME NOW (resolve interactively, one at a time):");
+      included.forEach(q => { lines.push(`  • Question #${q.num} — ${q.title}`); });
+      lines.push("");
+      lines.push("For these: please ask me one at a time. Use multiple-choice options when reasonable. Don't assume answers — wait for my response before moving to the next.");
+      lines.push("");
+    }
+
+    if (rejected.length > 0) {
+      lines.push("REJECT (remove from open-questions list entirely — not worth asking now or later):");
+      rejected.forEach(q => {
+        lines.push(`  • Question #${q.num} — ${q.title}`);
+        lines.push(`    Reason: <add your reason here, or leave blank>`);
+      });
+      lines.push("");
+      lines.push("For these: drop them from the design's Open Questions section. Update the design doc and HTML to reflect their removal.");
+      lines.push("");
+    }
+
+    if (included.length > 0 && rejected.length > 0) {
+      lines.push("Handle the REJECT items first (housekeeping), then start the ASK ME NOW questions.");
+    }
+
+    return lines.join("\n");
+  }
+
+  function updateQuestionRow(select) {
+    const tr = select.closest('tr');
+    select.classList.remove('include', 'q-reject');
+    tr.classList.remove('row-active', 'row-rejected');
+    if (select.value === 'include') {
+      select.classList.add('include');
+      tr.classList.add('row-active');
+    } else if (select.value === 'reject') {
+      select.classList.add('q-reject');
+      tr.classList.add('row-rejected');
+    }
+  }
+
+  function refreshQuestions() {
+    questionsPrompt.value = buildQuestionsPrompt();
+  }
+
+  questionsTable.querySelectorAll('select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      updateQuestionRow(sel);
+      refreshQuestions();
+    });
+  });
+
+  questionsRegenBtn.addEventListener('click', refreshQuestions);
+
+  questionsCopyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(questionsPrompt.value).then(() => {
+      const original = questionsCopyBtn.textContent;
+      questionsCopyBtn.textContent = 'Copied ✓';
+      questionsCopyBtn.classList.add('copied');
+      setTimeout(() => {
+        questionsCopyBtn.textContent = original;
+        questionsCopyBtn.classList.remove('copied');
+      }, 1800);
+    }).catch(() => {
+      questionsPrompt.select();
+      document.execCommand('copy');
+    });
+  });
+
+  // ─── INIT ────────────────────────────────────────────────────────────
+  refreshDecisions();
+  refreshQuestions();
+})();
+</script>
+</body>
+</html>
