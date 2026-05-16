@@ -1149,7 +1149,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 20: Framework `competitive-battle-card` — anti-examples.md
+### ✅ Task 20: Framework `competitive-battle-card` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/competitive-battle-card/anti-examples.md`
