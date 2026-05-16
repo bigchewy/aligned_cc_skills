@@ -1364,7 +1364,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "chore: bump version
 
 ---
 
-### Task 23: Smoke-test the new frameworks via `use-framework`
+### ✅ Task 23: Smoke-test the new frameworks via `use-framework`
 
 **Files:**
 - No file changes — this is a smoke test that validates the prior tasks integrate correctly.
