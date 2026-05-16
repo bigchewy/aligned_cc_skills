@@ -100,7 +100,9 @@ handle_signal() {
   echo ""
   echo "Interrupted — shutting down..." >&2
   if [ -n "$CLAUDE_PID" ]; then
-    kill "$CLAUDE_PID" 2>/dev/null || true
+    # Negative PID — kill the whole tree, not just claude (MCP children
+    # are in claude's process group via _AUTOPILOT_SPAWN_SESSION).
+    kill -TERM -- "-$CLAUDE_PID" 2>/dev/null || true
   fi
   # EXIT trap handles the rest
   exit 130
@@ -249,7 +251,10 @@ while :; do
   # --help`), which breaks Max-plan users on OAuth. Same constraint as
   # lib/process.sh:run_claude_phase. See
   # docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md.
-  claude -p - < "$PROMPT_FILE" &
+  # Spawned via _AUTOPILOT_SPAWN_SESSION so claude leads its own session
+  # — kill_claude (and the watchdog) use negative-PID signalling to take
+  # the MCP children with it instead of orphaning them to PID 1.
+  "${_AUTOPILOT_SPAWN_SESSION[@]}" claude -p - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
 
   start_watchdog "$ITERATION_TIMEOUT" "iteration $ITERATION"
