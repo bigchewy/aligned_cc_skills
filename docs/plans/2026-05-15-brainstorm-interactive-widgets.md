@@ -22,7 +22,7 @@
 
 ---
 
-### Task 1: Add failing pytest scaffold for widget tests
+### ✅ Task 1: Add failing pytest scaffold for widget tests
 
 **Files:**
 - Create: `e2e/tests/test_brainstorm_widgets.py`
@@ -208,7 +208,9 @@ git commit -m "test(brainstorming): add failing widget sidecar + state-compositi
 
 ---
 
-### Task 2: Build widgets.html sidecar CSS + widget HTML blocks
+### ✅ Task 2: Build widgets.html sidecar CSS + widget HTML blocks
+
+> MOCKUP DEVIATION: Decision banner text — the mockup uses a directive, session-specific banner ("Approve or reject each decision below. The prompt at the bottom auto-updates with your rejections. Copy it and paste it back to me — or edit it inline before sending."). The sidecar template uses a reusable instructional form ("Two options per decision. Approve (default) means you accept it. Reject queues it for revision.") that works across all future brainstorm sessions without first-person session language.
 
 **Files:**
 - Create: `skills/brainstorming/references/widgets.html`
@@ -407,7 +409,7 @@ git commit -m "feat(brainstorming): add widgets sidecar CSS + HTML blocks"
 
 ---
 
-### Task 3: Build the widget JS — two guarded IIFEs, dirty-flag textareas, clipboard fallback
+### ✅ Task 3: Build the widget JS — two guarded IIFEs, dirty-flag textareas, clipboard fallback
 
 **Files:**
 - Modify: `skills/brainstorming/references/widgets.html` (replace the SCRIPT stub with full IIFE logic)
@@ -647,7 +649,7 @@ git commit -m "feat(brainstorming): wire decision-log + open-questions widget II
 
 ---
 
-### Task 4: Extend live-refresh IIFE to compose widget state — all four templates
+### ✅ Task 4: Extend live-refresh IIFE to compose widget state — all four templates
 
 > **Dependency note:** This task touches all four template files in a single commit. The md5-equality lint requires byte-identity, so partial commits are not allowed. Make the same diff to all four files before committing.
 
@@ -763,7 +765,7 @@ git commit -m "feat(brainstorming): compose widget state into live-refresh IIFE 
 
 ---
 
-### Task 5: Add strip-script integration test
+### ✅ Task 5: Add strip-script integration test
 
 **Files:**
 - Modify: `e2e/tests/test_brainstorm_widgets.py` (append a new test)
@@ -875,7 +877,7 @@ git commit -m "test(brainstorming): assert strip-script preserves widget JS in c
 
 ---
 
-### Task 6: Document the Interactive Widgets component in brainstorm-components.md
+### ✅ Task 6: Document the Interactive Widgets component in brainstorm-components.md
 
 **Files:**
 - Modify: `skills/brainstorming/references/brainstorm-components.md` (append a new "Interactive Widgets" component section)
@@ -961,7 +963,7 @@ git commit -m "docs(brainstorming): document Interactive Widgets component contr
 
 ---
 
-### Task 7: Add widget-injection step to visualization-protocol.md
+### ✅ Task 7: Add widget-injection step to visualization-protocol.md
 
 **Files:**
 - Modify: `skills/brainstorming/references/visualization-protocol.md` (append a new step after step 5 of the Live phase, or place inside the Pre-critique snapshot section — whichever ordering matches the design intent)
@@ -1013,7 +1015,7 @@ git commit -m "docs(brainstorming): inject widgets in Live + Pre-critique + Post
 
 ---
 
-### Task 8: Strengthen the strip-script rule with widget-survival assertion
+### ✅ Task 8: Strengthen the strip-script rule with widget-survival assertion
 
 **Files:**
 - Modify: `skills/brainstorming/references/shared-rules.md` (the "Stripping the live-refresh script" section)
@@ -1035,7 +1037,7 @@ git commit -m "docs(brainstorming): require widget survival in strip-script rule
 
 ---
 
-### Task 9: Mandate widget injection in all four mode files
+### ✅ Task 9: Mandate widget injection in all four mode files
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md`
@@ -1077,7 +1079,7 @@ git commit -m "docs(brainstorming): mandate widget injection when triage entries
 
 ---
 
-### Task 10: Extend criterion 9 in all five critique checklists to cover Open Questions
+### ✅ Task 10: Extend criterion 9 in all five critique checklists to cover Open Questions
 
 **Files:**
 - Modify: `skills/brainstorming/design-critique-checklist.md` (criterion 9, the "Decision quality" heading)
@@ -1115,7 +1117,7 @@ git commit -m "docs(brainstorming): extend criterion 9 to evaluate Open Question
 
 ---
 
-### Task 11: Bump plugin version
+### ✅ Task 11: Bump plugin version
 
 **Files:**
 - Modify: `.claude-plugin/plugin.json`

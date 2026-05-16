@@ -9,7 +9,7 @@
         "repo": "bigchewy/aligned_cc_skills"
       },
       "description": "Skill stack for Claude Code: brainstorming, structured thinking, 70 advisor personas, 147 frameworks, TDD pipeline, automated quality gates",
-      "version": "0.28.0"
+      "version": "0.29.0"
     }
   ]
 }

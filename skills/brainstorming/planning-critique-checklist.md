@@ -101,12 +101,15 @@ Criterion 7 (Spawn-brief quality) operates on `portfolio.md`. The portfolio path
 - BAD: Opportunity space is "reduce sales-rep data entry," but item 4 is "redesign the marketing site." Item lands in the portfolio with no rationale.
 - GOOD: Each item ties back to the opportunity space; one-off items are flagged as "opportunistic — small effort, adjacent value, not a core bet."
 
-### 9. Decision quality (if Decision Log present)
+### 9. Decision quality (if Decision Log or Open Questions list present)
+
+If the plan includes a Decision Log or an Open Questions list, evaluate each decision entry and each open-questions triage call.
 
 - For each decision, assess whether the chosen approach is the best option given the stated alternatives.
 - Rate each: **sound**, **questionable**, **wrong**.
 - Cite evidence from the codebase, prior plans, or domain knowledge for any non-sound rating.
-- If no Decision Log, mark N/A.
+- For each Open Questions entry, assess whether the named *trigger that would resolve it* is concrete and observable, or vague enough that the question will never actually re-fire. Vague triggers are a smell.
+- If no Decision Log or Open Questions list is present, mark N/A.
 
 ## Critique Output Format
 

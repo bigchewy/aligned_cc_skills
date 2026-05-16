@@ -51,12 +51,23 @@ After the trigger fires, run these five steps before any critique work begins:
 
 5. **Update the file as each subsequent design section is validated** (Write tool to add the new section's content). Preserve the `:root` block exactly as written in step 3 — do not regenerate it. The browser picks up changes within 15 seconds via the self-refresh script.
 
+6. **Inject interactive widgets if the design produced a Decision Log (>=1 entry) or an Open Questions list (>=1 entry).** Read `{base-directory}/references/widgets.html` and perform three injections into `/tmp/brainstorm-{topic}-{timestamp}/live.html`:
+
+   a. **WIDGETS-CSS block** — insert once into `<head>` after the inline `<style>` block. Copy verbatim between (and including) `<!-- WIDGETS-CSS-START -->` and `<!-- WIDGETS-CSS-END -->`.
+
+   b. **WIDGETS-SCRIPT block** — insert once immediately before `</body>`. Copy verbatim between (and including) `<!-- WIDGETS-SCRIPT-START -->` and `<!-- WIDGETS-SCRIPT-END -->`. **The block MUST land outside the `<!-- LIVE-REFRESH-START -->...<!-- LIVE-REFRESH-END -->` delimiters** so the strip-script rule preserves widget JS in committed snapshots.
+
+   c. **WIDGET-HTML blocks** — for the Decision Log section, copy `WIDGET-HTML: decision-log-flat` (if <10 entries) or `WIDGET-HTML: decision-log-categorized` (if >=10 entries) into the Decision Log `<section>`, then append the `WIDGET-HTML: prompt-box` block with `{widget-id}` substituted to `decisions`. For the Open Questions section, mirror the same with `open-questions-*` and `{widget-id}` = `questions`. Every triage row must carry `data-id="N"` and `data-title="..."`; section-divider rows must carry class `section-divider` and no `data-id` (see `brainstorm-components.md` § Interactive Widgets).
+
+   Do not rewrite the widget code from memory — the file copy is the contract.
+
 ## Pre-critique snapshot
 
 Before dispatching the critique panel, copy the live visualization to its permanent location so critics can access it:
 
 1. Copy `/tmp/brainstorm-{topic}-{timestamp}/live.html` to `docs/mockups/{session-name}.html`.
 2. Add `**Mockups:** docs/mockups/{session-name}.html` to the design document header (write AFTER the copy so the file exists at commit time).
+2.5. If the design includes a Decision Log or Open Questions widget, verify that the committed snapshot at `docs/mockups/{session-name}.html` still contains the `<!-- WIDGETS-SCRIPT-START -->` marker and that the widget tables (`id="decisions-table"`, `id="questions-table"`) bind on load (open the file in a browser — the prompt textareas should populate without console errors).
 3. The critique panel's `visual-artifacts` config references `docs/mockups/{session-name}.html` — this copy ensures it exists at that path.
 
 ## Post-critique regeneration
@@ -70,6 +81,8 @@ If the design document was modified by fact-check corrections or user-approved c
 Do not rewrite the template from memory — the file copy is the contract.
 
 Skip regeneration if the design document is unchanged (all critique verdicts were APPROVE with no corrections applied).
+
+- **Re-inject interactive widgets** if the corrected design still contains a Decision Log (>=1 entry) or Open Questions list (>=1 entry). Re-run the Live-phase step 6 widget-injection procedure (Read `{base-directory}/references/widgets.html`; inject CSS into `<head>`, SCRIPT before `</body>` outside LIVE-REFRESH delimiters, HTML blocks inside their owning sections). The widget JS must land in the regenerated file BEFORE the strip-script rule runs, otherwise the committed snapshot ships without the interactive surface.
 
 After regeneration (or if no regeneration was needed), apply the strip-script rule from `{base-directory}/references/shared-rules.md` to `docs/mockups/{session-name}.html`.
 

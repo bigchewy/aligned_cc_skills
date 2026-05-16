@@ -240,7 +240,7 @@ def test_skill_md_step2_has_per_mode_emphasis():
         "code artifacts",
         "domain materials",
         "literature/KB/registries",
-        "content registries",
+        "document corpus",
         "prior roadmaps",
     ]:
         assert hint in step2, f"missing per-mode emphasis hint: {hint}"

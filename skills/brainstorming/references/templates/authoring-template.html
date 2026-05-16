@@ -41,7 +41,7 @@
 
       function saveState() {
         try {
-          var state = { tab: null, subTabs: {}, scrollY: window.scrollY };
+          var state = { tab: null, subTabs: {}, scrollY: window.scrollY, widgets: { selects: {}, textareas: {} } };
           var activeTabBtn = document.querySelector('#main-tabs .tab-btn.active');
           if (activeTabBtn) {
             var m = (activeTabBtn.getAttribute('onclick') || '').match(/switchTab\('([^']+)'\)/);
@@ -53,6 +53,23 @@
             var sm = (activeSubBtn.getAttribute('onclick') || '').match(/switchSubTab\('([^']+)',\s*'([^']+)'\)/);
             if (sm) state.subTabs[sm[1]] = sm[2];
           });
+          // Widget state — every triage <select data-id> + every prompt textarea.
+          // Wrap in its own try so a widget-side failure can't disable tab/sub-tab/scrollY
+          // persistence (which used to be wrapped only by the outer try/catch).
+          try {
+            document.querySelectorAll('select.dropdown[data-id]').forEach(function(sel) {
+              var table = sel.closest('table');
+              var tableId = (table && table.id) ? table.id : 'orphan';
+              state.widgets.selects[tableId + ':' + sel.dataset.id] = sel.value;
+            });
+            document.querySelectorAll('textarea.prompt-textarea').forEach(function(ta) {
+              if (!ta.id) return;
+              state.widgets.textareas[ta.id] = { value: ta.value, dirty: ta.dataset.dirty === 'true' };
+            });
+          } catch (we) {
+            // Widget capture failed — preserve everything else by clearing the partial.
+            state.widgets = { selects: {}, textareas: {} };
+          }
           sessionStorage.setItem(STATE_KEY, JSON.stringify(state));
         } catch (e) { /* storage unavailable — skip */ }
       }
@@ -89,6 +106,33 @@
             });
           }
           if (typeof state.scrollY === 'number') window.scrollTo(0, state.scrollY);
+          if (state.widgets) {
+            // Inner try/catch so widget restore failure can't disable tab/sub-tab/scrollY restore.
+            try {
+              if (state.widgets.selects) {
+                Object.keys(state.widgets.selects).forEach(function(key) {
+                  var parts = key.split(':');
+                  var tableId = parts[0];
+                  var dataId = parts[1];
+                  var sel = document.querySelector('#' + tableId + ' select[data-id="' + dataId + '"]');
+                  if (sel) {
+                    sel.value = state.widgets.selects[key];
+                    // Re-fire change so the widget JS rebuilds row class + prompt textarea.
+                    sel.dispatchEvent(new Event('change'));
+                  }
+                });
+              }
+              if (state.widgets.textareas) {
+                Object.keys(state.widgets.textareas).forEach(function(id) {
+                  var ta = document.getElementById(id);
+                  if (!ta) return;
+                  var entry = state.widgets.textareas[id];
+                  ta.value = entry.value;
+                  if (entry.dirty) ta.dataset.dirty = 'true';
+                });
+              }
+            } catch (we) { /* widget restore failed — leave widgets at default */ }
+          }
         } catch (e) { /* corrupted state — ignore */ }
       }
 
