@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI-Native Brand Folder — Design v0.5 (digital health)</title>
+<title>AI-Native Brand Folder — Design v0.6 (digital health)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -94,6 +94,10 @@
   tr.row-active td { background: var(--forest-100) !important; }
   tr.row-rejected td { background: #F4E3E3 !important; }
   tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: var(--error); text-decoration-thickness: 1px; }
+  tr.section-divider td { background: var(--cream-200); color: var(--bark-700); font-family: var(--font-display); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--cream-300); border-bottom: 1px solid var(--cream-300); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--forest-600); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--bark-400); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
   .prompt-box { margin-top: 20px; background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); }
   .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .prompt-box-label { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--bark-700); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -167,14 +171,14 @@
 <main>
 
 <header class="header">
-  <div class="eyebrow">Design Document · v0.5 · Authoring brainstorm</div>
+  <div class="eyebrow">Design Document · v0.6 · Authoring brainstorm</div>
   <h1>The AI-Native Brand Folder</h1>
   <p class="subtitle">A canonical shape for digital health companies becoming AI-native — where generator agents consume brand context to produce decks, blog posts, one-pagers, emails, landing pages, and battlecards. Same shape, different fills across digital-health subdomains.</p>
   <div class="meta-row">
     <span><span class="meta-label">Date</span> 2026-05-15</span>
     <span><span class="meta-label">Topic</span> <code>ai-native-brand-folder</code></span>
     <span><span class="meta-label">Mode</span> Authoring</span>
-    <span><span class="meta-label">Revision</span> v0.5</span>
+    <span><span class="meta-label">Revision</span> v0.6</span>
     <span class="badge">Target: digital health companies</span>
   </div>
 </header>
@@ -236,7 +240,7 @@
 </div>
 
 <div class="card-grid">
-  <div class="card-tight"><h5>Markets vs roles</h5><p><code>audiences/</code> = markets (verticals). <code>personas/</code> = roles. They compose at generation time.</p></div>
+  <div class="card-tight"><h5>Markets vs roles</h5><p><code>audiences/</code> = markets (channel × segment). <code>personas/</code> = roles. They compose at generation time; missing dimensions degrade gracefully.</p></div>
   <div class="card-tight"><h5>Brand voice ≠ person voice</h5><p><code>voice.md</code> is institutional. <code>voices/{name}.md</code> (optional) for named spokespeople.</p></div>
   <div class="card-tight"><h5>Slices over files</h5><p>A generator that needs the category name loads <code>messaging#category-name</code>, not all of positioning.md.</p></div>
   <div class="card-tight"><h5>Confidence as label</h5><p>Every file declares <code>confidence: low | medium | high</code>. Generators consume thresholds.</p></div>
@@ -258,9 +262,8 @@
 │   └── <span class="key">narrative.md</span>                <span class="comment"># Raskin 5-element arc</span>
 │
 ├── <span class="folder">language/</span>                       <span class="comment"># the WORDS — distilled copy + audience map</span>
-│   ├── <span class="key">messaging.md</span>                <span class="comment"># category, tagline, elevator variants, vp×persona map</span>
-│   ├── <span class="key">voice.md</span>                    <span class="comment"># tone, register, dos/don'ts, banned phrases</span>
-│   ├── <span class="key">terminology.md</span>              <span class="comment"># approved/banned terms, glossary</span>
+│   ├── <span class="key">messaging.md</span>                <span class="comment"># category, tagline, elevator variants, vp×persona map, pricing language (optional slice)</span>
+│   ├── <span class="key">voice.md</span>                    <span class="comment"># tone, register, dos/don'ts, banned phrases/terms, glossary</span>
 │   └── <span class="folder">voices/</span>                     <span class="comment"># OPTIONAL named spokespeople</span>
 │       └── <span class="key">{name}.md</span>
 │
@@ -272,11 +275,14 @@
 │   └── <span class="key">compliance.md</span>               <span class="comment"># HIPAA, SOC 2, HITRUST, FDA QSR, ISO, accessibility, audit readiness</span>
 │
 ├── <span class="folder">market/</span>                         <span class="comment"># the TERRAIN — who else is here</span>
-│   ├── <span class="key">competitive.md</span>              <span class="comment"># battle-card: objections, comparisons</span>
+│   ├── <span class="key">competitive.md</span>              <span class="comment"># deep battle-card; depends_on strategy/positioning#competitive-alternatives</span>
 │   └── <span class="key">alternatives.md</span>             <span class="comment"># status quo, build-in-house, do-nothing</span>
 │
-├── <span class="folder">audiences/</span>                      <span class="comment"># MARKETS — verticals/segments</span>
-│   └── <span class="key">{vertical}.md</span>
+├── <span class="folder">audiences/</span>                      <span class="comment"># MARKETS — channel × segment composition</span>
+│   ├── <span class="folder">channels/</span>                   <span class="comment"># employer, payer, provider, pharma</span>
+│   │   └── <span class="key">{channel}.md</span>
+│   └── <span class="folder">segments/</span>                   <span class="comment"># commercial, medicaid, ma, aco, ...</span>
+│       └── <span class="key">{segment}.md</span>
 │
 ├── <span class="folder">personas/</span>                       <span class="comment"># ROLES — buyer/user roles</span>
 │   └── <span class="key">{role}.md</span>
@@ -372,10 +378,10 @@
 <tbody>
 <tr><td class="num">1</td><td><code>5-components-positioning</code></td><td><code>strategy/positioning.md</code></td><td>already validated</td></tr>
 <tr><td class="num">2</td><td><code>strategic-narrative</code></td><td><code>strategy/narrative.md</code></td><td>requires positioning first</td></tr>
-<tr><td class="num">3</td><td><code>jobs-to-be-done</code></td><td><code>audiences/{vertical}.md</code></td><td>single-vertical org</td></tr>
+<tr><td class="num">3</td><td><code>jobs-to-be-done</code></td><td><code>audiences/{channels,segments}/*.md</code></td><td>single-vertical org</td></tr>
 <tr><td class="num">4</td><td><code>buyer-persona</code> <span class="pill new">new</span></td><td><code>personas/{role}.md</code></td><td>single-stakeholder sale</td></tr>
 <tr><td class="num">5</td><td><code>messaging-distillation</code> <span class="pill new">new</span></td><td><code>language/messaging.md</code></td><td>requires #1 + #2</td></tr>
-<tr><td class="num">6</td><td><code>brand-voice</code> <span class="pill new">new</span></td><td><code>language/voice.md</code> + <code>language/terminology.md</code></td><td>voice already documented</td></tr>
+<tr><td class="num">6</td><td><code>brand-voice</code> <span class="pill new">new</span></td><td><code>language/voice.md</code> (incl. terminology + glossary slices)</td><td>voice already documented</td></tr>
 <tr><td class="num">7</td><td><code>proof-points-audit</code> <span class="pill new">new</span></td><td><code>proof/proof-points.md</code></td><td>early-stage, no public proof</td></tr>
 <tr><td class="num">8</td><td><code>competitive-battle-card</code> <span class="pill new">new</span></td><td><code>market/competitive.md</code></td><td>requires positioning first</td></tr>
 <tr><td class="num">9</td><td><code>design-principles</code></td><td><code>design/design-principles.md</code></td><td>inherits parent brand</td></tr>
@@ -394,11 +400,13 @@
       - <span class="string">language/messaging#value-prop-to-persona-map</span>
       - <span class="string">language/voice#tone-principles</span>
       - <span class="string">personas/{role}</span>           <span class="comment"># from clients/{prospect}.md</span>
-      - <span class="string">audiences/{vertical}</span>      <span class="comment"># from clients/{prospect}.md</span>
     <span class="key">optional:</span>
+      - <span class="string">audiences/channels/{channel}</span>   <span class="comment"># from clients/{prospect}.md; degrades gracefully</span>
+      - <span class="string">audiences/segments/{segment}</span>   <span class="comment"># from clients/{prospect}.md; degrades gracefully</span>
       - <span class="string">strategy/narrative</span>
       - <span class="string">proof/proof-points</span>
       - <span class="string">market/competitive</span>
+      - <span class="string">language/messaging#pricing-language</span>
     <span class="key">compose:</span>
       <span class="key">brand_x_clients:</span> <span class="string">"load brand slices, then clients/{prospect}.md as third overlay"</span>
       <span class="key">persona_x_audience:</span> <span class="string">"base=persona, overlay=audience (last-write-wins per H2)"</span>
@@ -488,7 +496,7 @@
 <!-- ============================================================ -->
 <section id="decisions">
 <h2><span class="num">14</span>Decision log <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive</span></h2>
-<p>Every architectural choice this design made, with the reasoning behind it and a confidence rating. Use this section to register disagreement: toggle any decision to "Reject" and the prompt below auto-fills with revision instructions for me.</p>
+<p>Every architectural choice this design made, with the reasoning behind it. Decisions are grouped into five categories — <strong>scope & philosophy</strong>, <strong>repo layout & content boundaries</strong>, <strong>file format & metadata</strong>, <strong>contracts & composition rules</strong>, and <strong>frameworks & rollout</strong> — so you can review by theme rather than wading through 25 in flat order. Numbers are stable IDs (referenced elsewhere), not a sequence. Toggle any decision to "Reject" and the prompt below auto-fills with revision instructions.</p>
 
 <div class="interactive-section">
 <div class="interactive-banner">
@@ -499,11 +507,44 @@
 <table class="interactive" id="decisions-table">
 <thead><tr><th class="num">#</th><th style="width: 22%">Decision</th><th>Description</th><th style="width: 130px">Status</th></tr></thead>
 <tbody>
+<tr class="section-divider"><td colspan="4"><span class="section-letter">A</span>Scope & design philosophy<span class="section-count">2 decisions</span></td></tr>
+<tr data-id="9" data-title="AI-first design, humans validate occasionally">
+  <td class="num decision-num">9</td>
+  <td class="decision-title">AI-first design; humans validate occasionally</td>
+  <td class="decision-desc">~95% of reads come from generator agents. Optimize for machine-parseable structure, terse summaries, dense slice tagging. No long-form prose narrative.</td>
+  <td><select class="dropdown" data-id="9"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="10" data-title="Digital health focus only (revised from B2B)">
+  <td class="num decision-num">10</td>
+  <td class="decision-title">Digital health focus only</td>
+  <td class="decision-desc">Design serves digital health companies across subdomains (telehealth, RPM, behavioral health, digital therapeutics, payer-side, provider-side, condition platforms). General B2B SaaS, B2C consumer wellness, agencies, and advisory practices are out of scope as target users. <em>Revised from v0.3 "B2B focus."</em></td>
+  <td><select class="dropdown" data-id="10"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">B</span>Repo layout & content boundaries<span class="section-count">13 decisions</span></td></tr>
 <tr data-id="1" data-title="Three-file split: positioning / narrative / messaging">
   <td class="num decision-num">1</td>
   <td class="decision-title">Three-file split: positioning / narrative / messaging</td>
   <td class="decision-desc">Each lens is genuinely orthogonal. <strong>Dunford boundary:</strong> positioning = "requires reasoning to defend"; messaging = "string you'd paste into a slide"; narrative = "arc, not a logic chain". Different change cadences = three review processes.</td>
   <td><select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="5" data-title="Folder grouping by intent (strategy/language/proof/market)">
+  <td class="num decision-num">5</td>
+  <td class="decision-title">Folder grouping by intent: <code>strategy/ language/ proof/ market/</code></td>
+  <td class="decision-desc">Group folders by intent rather than dispatch-tracker's flat <code>guidelines/</code>. Add <code>eval/</code>, <code>contracts.yaml</code>, <code>version.yaml</code> as net-new load-bearing. Drop unused TS stubs.</td>
+  <td><select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="24" data-title="Single-org per repo, top-level brand/">
+  <td class="num decision-num">24</td>
+  <td class="decision-title">Single-org per repo, top-level <code>brand/</code></td>
+  <td class="decision-desc">No nested <code>brand/{slug}/</code>. Multi-brand orgs use separate repos. Matches dispatch-tracker reality.</td>
+  <td><select class="dropdown" data-id="24"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="13" data-title="Kill symlinks to outside the repo">
+  <td class="num decision-num">13</td>
+  <td class="decision-title">Kill symlinks to outside the repo</td>
+  <td class="decision-desc">brand/ is self-contained. No symlinks to Obsidian or external trees. Source-of-truth lives in the repo.</td>
+  <td><select class="dropdown" data-id="13"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
 <tr data-id="2" data-title="Markets vs roles: audiences/ + personas/ separate">
   <td class="num decision-num">2</td>
@@ -523,12 +564,44 @@
   <td class="decision-desc">Per-deal prospect files live at <code>clients/{prospect-name}.md</code>. Brand is durable thesis; clients/ is transient deal data. Generators compose brand + clients.</td>
   <td><select class="dropdown" data-id="4"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
-<tr data-id="5" data-title="Folder grouping by intent (strategy/language/proof/market)">
-  <td class="num decision-num">5</td>
-  <td class="decision-title">Folder grouping by intent: <code>strategy/ language/ proof/ market/</code></td>
-  <td class="decision-desc">Group folders by intent rather than dispatch-tracker's flat <code>guidelines/</code>. Add <code>eval/</code>, <code>contracts.yaml</code>, <code>version.yaml</code> as net-new load-bearing. Drop unused TS stubs.</td>
-  <td><select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+<tr data-id="14" data-title="Voice + voices/{name}.md (institutional + spokesperson)">
+  <td class="num decision-num">14</td>
+  <td class="decision-title">Voice + <code>voices/{name}.md</code></td>
+  <td class="decision-desc"><code>language/voice.md</code> is institutional (mandatory). <code>language/voices/{name}.md</code> are named spokesperson voices (optional). Founder-led blogs compose both.</td>
+  <td><select class="dropdown" data-id="14"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
+<tr data-id="18" data-title="Messaging owns LANGUAGE + AUDIENCE-MAPPING">
+  <td class="num decision-num">18</td>
+  <td class="decision-title">Messaging = language + audience mapping</td>
+  <td class="decision-desc">category-name string, tagline, elevator-pitch variants per audience, value-prop phrasings, value-prop-to-persona map, key phrases. Not positioning rationale. Not proof references.</td>
+  <td><select class="dropdown" data-id="18"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="25" data-title="Add proof/clinical-evidence.md and proof/compliance.md">
+  <td class="num decision-num">25</td>
+  <td class="decision-title">Add <code>proof/clinical-evidence.md</code> + <code>proof/compliance.md</code></td>
+  <td class="decision-desc">Two new slice-loadable files under <code>proof/</code>. <strong>Clinical evidence</strong>: RCTs, peer-reviewed pubs, real-world evidence, regulatory clearances (FDA 510(k), De Novo, breakthrough device, CE Mark), validation studies, clinical advisory board, outcomes summaries. <strong>Compliance</strong>: HIPAA + BAA, SOC 2 Type II, HITRUST CSF, FDA QSR / ISO 13485, ISO 27001, security attestations, accessibility, audit readiness. Both belong under <code>proof/</code> because they are evidence artifacts — not competitive terrain, and overweight as their own top-level folder.</td>
+  <td><select class="dropdown" data-id="25"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="26" data-title="Fold terminology.md into voice.md (single file)">
+  <td class="num decision-num">26</td>
+  <td class="decision-title">Fold <code>terminology.md</code> into <code>voice.md</code></td>
+  <td class="decision-desc">Single <code>language/voice.md</code> with slices: <code>#tone</code>, <code>#register</code>, <code>#dos-and-donts</code>, <code>#banned-phrases</code>, <code>#banned-terms</code>, <code>#glossary</code>. Reason: banned-phrases vs banned-terms boundary was fuzzy in practice; one file removes the collision and the duplicate-source-of-truth risk. <em>Revised from v0.5 two-file split.</em></td>
+  <td><select class="dropdown" data-id="26"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="27" data-title="audiences/ split into channels/ + segments/ subfolders">
+  <td class="num decision-num">27</td>
+  <td class="decision-title"><code>audiences/</code> split into <code>channels/</code> + <code>segments/</code></td>
+  <td class="decision-desc">Channel (employer / payer / provider / pharma) and segment (commercial / medicaid / MA / ACO / dual / pediatric) have different procurement timelines and evidence bars. Generators compose any combination: <code>channels/payer</code> × <code>segments/medicaid</code> × <code>personas/cmo</code>. Missing dimensions degrade gracefully — composition continues with whatever exists.</td>
+  <td><select class="dropdown" data-id="27"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="28" data-title="pricing-language as optional slice in messaging.md (placeholder)">
+  <td class="num decision-num">28</td>
+  <td class="decision-title"><code>messaging.md#pricing-language</code> as optional slice</td>
+  <td class="decision-desc">Placeholder slice for how to talk about price (not the price itself, which lives in a billing system). Optional in all generator contracts; may not be used often, but reserved so it has a home when it is. No new file — slice in existing <code>language/messaging.md</code>.</td>
+  <td><select class="dropdown" data-id="28"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">C</span>File format & metadata<span class="section-count">4 decisions</span></td></tr>
 <tr data-id="6" data-title="Comprehensive frontmatter (7 required, ~5 optional)">
   <td class="num decision-num">6</td>
   <td class="decision-title">Comprehensive frontmatter (7 required, ~5 optional)</td>
@@ -547,47 +620,57 @@
   <td class="decision-desc"><code>confidence: low | medium | high</code>. No numeric scores. The fake precision of <code>0.65</code> vs <code>0.7</code> is harmful for review.</td>
   <td><select class="dropdown" data-id="8"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
-<tr data-id="9" data-title="AI-first design, humans validate occasionally">
-  <td class="num decision-num">9</td>
-  <td class="decision-title">AI-first design; humans validate occasionally</td>
-  <td class="decision-desc">~95% of reads come from generator agents. Optimize for machine-parseable structure, terse summaries, dense slice tagging. No long-form prose narrative.</td>
-  <td><select class="dropdown" data-id="9"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="10" data-title="Digital health focus only (revised from B2B)">
-  <td class="num decision-num">10</td>
-  <td class="decision-title">Digital health focus only</td>
-  <td class="decision-desc">Design serves digital health companies across subdomains (telehealth, RPM, behavioral health, digital therapeutics, payer-side, provider-side, condition platforms). General B2B SaaS, B2C consumer wellness, agencies, and advisory practices are out of scope as target users. <em>Revised from v0.3 "B2B focus."</em></td>
-  <td><select class="dropdown" data-id="10"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
 <tr data-id="11" data-title="CLAUDE.md mandatory, index.yaml deferred">
   <td class="num decision-num">11</td>
   <td class="decision-title"><code>CLAUDE.md</code> mandatory, <code>index.yaml</code> deferred</td>
   <td class="decision-desc">v1 ships CLAUDE.md only (the actual front door Claude Code auto-loads). Add index.yaml when a programmatic consumer needs structured access.</td>
   <td><select class="dropdown" data-id="11"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">D</span>Contracts & composition rules<span class="section-count">5 decisions</span></td></tr>
 <tr data-id="12" data-title="Central contracts.yaml with extends: for third-party plugins">
   <td class="num decision-num">12</td>
   <td class="decision-title">Central <code>contracts.yaml</code> + <code>extends:</code> for third-party plugins</td>
   <td class="decision-desc">Generators read <code>brand/contracts.yaml</code>. Third-party plugin SKILL.mds MAY declare <code>brand_contract:</code> blocks discovered via <code>extends:</code>.</td>
   <td><select class="dropdown" data-id="12"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
-<tr data-id="13" data-title="Kill symlinks to outside the repo">
-  <td class="num decision-num">13</td>
-  <td class="decision-title">Kill symlinks to outside the repo</td>
-  <td class="decision-desc">brand/ is self-contained. No symlinks to Obsidian or external trees. Source-of-truth lives in the repo.</td>
-  <td><select class="dropdown" data-id="13"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+<tr data-id="19" data-title="Brand-loader in v1 (shared skill, no inline duplication)">
+  <td class="num decision-num">19</td>
+  <td class="decision-title">Brand-loader in v1 (shared skill)</td>
+  <td class="decision-desc">v1 ships <code>skills/_shared/load-brand-slices.md</code>. Every generator delegates. No inline duplication of frontmatter/H2 parsing across 10+ generators.</td>
+  <td><select class="dropdown" data-id="19"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
-<tr data-id="14" data-title="Voice + voices/{name}.md (institutional + spokesperson)">
-  <td class="num decision-num">14</td>
-  <td class="decision-title">Voice + <code>voices/{name}.md</code></td>
-  <td class="decision-desc"><code>language/voice.md</code> is institutional (mandatory). <code>language/voices/{name}.md</code> are named spokesperson voices (optional). Founder-led blogs compose both.</td>
-  <td><select class="dropdown" data-id="14"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+<tr data-id="22" data-title="Persona × audience composition rule (v1 contract)">
+  <td class="num decision-num">22</td>
+  <td class="decision-title">Persona × audience composition rule (v1)</td>
+  <td class="decision-desc">Base = persona, overlay = audience (last-write-wins per H2), optional third overlay = prospect file from <code>clients/</code>. Shared loader enforces.</td>
+  <td><select class="dropdown" data-id="22"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
+<tr data-id="21" data-title="Competitive ↔ positioning Component 1 drift enforcement">
+  <td class="num decision-num">21</td>
+  <td class="decision-title">Competitive ↔ positioning drift enforcement</td>
+  <td class="decision-desc"><code>market/competitive.md</code> MUST declare <code>depends_on: [strategy/positioning#competitive-alternatives]</code>. Positioning is the canonical competitor list (short, reasoning-grade); <code>competitive.md</code> is the deep battle-card view of the same names. Eval scenario asserts every competitor in <code>competitive.md</code> is in positioning Component 1.</td>
+  <td><select class="dropdown" data-id="21"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="29" data-title="Loader degrades gracefully on missing slices (no fail-fast)">
+  <td class="num decision-num">29</td>
+  <td class="decision-title">Graceful degradation on missing slices</td>
+  <td class="decision-desc">The shared loader composes whatever exists. Missing slices — whether the file is absent, the slice slug is missing, or the file failed to parse — do not abort generation. Generator continues with what it has and footnotes the absence in the output appendix. Reason: brand folders are partial-by-design, especially in early lifecycle; halting on absence would block every cold-start generation.</td>
+  <td><select class="dropdown" data-id="29"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">E</span>Frameworks & rollout<span class="section-count">5 decisions</span></td></tr>
 <tr data-id="15" data-title="Single orchestrator framework (reverse-engineered-brand)">
   <td class="num decision-num">15</td>
   <td class="decision-title">Single orchestrator framework</td>
   <td class="decision-desc"><code>reverse-engineered-brand</code> composes the 9 sub-frameworks in canonical sequence. Sub-frameworks remain individually invocable for deepening.</td>
   <td><select class="dropdown" data-id="15"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="23" data-title="Framework count simplified: 9 + orchestrator">
+  <td class="num decision-num">23</td>
+  <td class="decision-title">Framework count simplified: 9 + orchestrator</td>
+  <td class="decision-desc">Dropped <code>four-market-types</code> (overlaps positioning C4), <code>origin-story-interview</code> (founder-specific). Collapsed <code>terminology-codification</code> + <code>brand-voice-codification</code> into one <code>brand-voice</code> framework producing a single <code>voice.md</code> with terminology + glossary slices.</td>
+  <td><select class="dropdown" data-id="23"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
 <tr data-id="16" data-title="reverse-engineered-brand fully interactive, brainstorm-shaped">
   <td class="num decision-num">16</td>
@@ -601,53 +684,11 @@
   <td class="decision-desc">Public URL (homepage, About) for crawl, plus optional local folder where user points to supplementary content (past decks, customer interviews, internal docs).</td>
   <td><select class="dropdown" data-id="17"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
-<tr data-id="18" data-title="Messaging owns LANGUAGE + AUDIENCE-MAPPING">
-  <td class="num decision-num">18</td>
-  <td class="decision-title">Messaging = language + audience mapping</td>
-  <td class="decision-desc">category-name string, tagline, elevator-pitch variants per audience, value-prop phrasings, value-prop-to-persona map, key phrases. Not positioning rationale. Not proof references.</td>
-  <td><select class="dropdown" data-id="18"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="19" data-title="Brand-loader in v1 (shared skill, no inline duplication)">
-  <td class="num decision-num">19</td>
-  <td class="decision-title">Brand-loader in v1 (shared skill)</td>
-  <td class="decision-desc">v1 ships <code>skills/_shared/load-brand-slices.md</code>. Every generator delegates. No inline duplication of frontmatter/H2 parsing across 10+ generators.</td>
-  <td><select class="dropdown" data-id="19"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
 <tr data-id="20" data-title="Clean-state cutover (no legacy aliases)">
   <td class="num decision-num">20</td>
   <td class="decision-title">Clean-state cutover — no legacy aliases</td>
   <td class="decision-desc">v1 ships the new layout. Existing generator skills are updated to read new paths in the same change. No <code>legacy-paths.yaml</code>, no deprecation window. Single coordinated PR.</td>
   <td><select class="dropdown" data-id="20"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="21" data-title="Competitive ↔ positioning Component 1 drift enforcement">
-  <td class="num decision-num">21</td>
-  <td class="decision-title">Competitive ↔ positioning drift enforcement</td>
-  <td class="decision-desc"><code>market/competitive.md</code> MUST declare <code>depends_on: [strategy/positioning#competitive-alternatives]</code>. Eval scenario asserts every competitor is in positioning Component 1.</td>
-  <td><select class="dropdown" data-id="21"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="22" data-title="Persona × audience composition rule (v1 contract)">
-  <td class="num decision-num">22</td>
-  <td class="decision-title">Persona × audience composition rule (v1)</td>
-  <td class="decision-desc">Base = persona, overlay = audience (last-write-wins per H2), optional third overlay = prospect file from <code>clients/</code>. Shared loader enforces.</td>
-  <td><select class="dropdown" data-id="22"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="23" data-title="Framework count simplified: 9 + orchestrator">
-  <td class="num decision-num">23</td>
-  <td class="decision-title">Framework count simplified: 9 + orchestrator</td>
-  <td class="decision-desc">Dropped <code>four-market-types</code> (overlaps positioning C4), <code>origin-story-interview</code> (founder-specific). Collapsed <code>terminology-codification</code> + <code>brand-voice-codification</code> into one <code>brand-voice</code> framework producing both files.</td>
-  <td><select class="dropdown" data-id="23"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="24" data-title="Single-org per repo, top-level brand/">
-  <td class="num decision-num">24</td>
-  <td class="decision-title">Single-org per repo, top-level <code>brand/</code></td>
-  <td class="decision-desc">No nested <code>brand/{slug}/</code>. Multi-brand orgs use separate repos. Matches dispatch-tracker reality.</td>
-  <td><select class="dropdown" data-id="24"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="25" data-title="Add proof/clinical-evidence.md and proof/compliance.md">
-  <td class="num decision-num">25</td>
-  <td class="decision-title">Add <code>proof/clinical-evidence.md</code> + <code>proof/compliance.md</code></td>
-  <td class="decision-desc">Two new slice-loadable files under <code>proof/</code>. <strong>Clinical evidence</strong>: RCTs, peer-reviewed pubs, real-world evidence, regulatory clearances (FDA 510(k), De Novo, breakthrough device, CE Mark), validation studies, clinical advisory board, outcomes summaries. <strong>Compliance</strong>: HIPAA + BAA, SOC 2 Type II, HITRUST CSF, FDA QSR / ISO 13485, ISO 27001, security attestations, accessibility, audit readiness. Both belong under <code>proof/</code> because they are evidence artifacts — not competitive terrain, and overweight as their own top-level folder.</td>
-  <td><select class="dropdown" data-id="25"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
 </tr>
 </tbody>
 </table>
@@ -704,10 +745,10 @@
 <tbody>
 <tr><td class="num">1</td><td><code>5-components-positioning</code></td><td><code>strategy/positioning.md</code></td><td>april-dunford</td><td><span class="pill existing">existing</span></td></tr>
 <tr><td class="num">2</td><td><code>strategic-narrative</code></td><td><code>strategy/narrative.md</code></td><td>andy-raskin</td><td><span class="pill existing">existing</span></td></tr>
-<tr><td class="num">3</td><td><code>jobs-to-be-done</code></td><td><code>audiences/{vertical}.md</code></td><td>clayton-christensen</td><td><span class="pill existing">existing</span></td></tr>
+<tr><td class="num">3</td><td><code>jobs-to-be-done</code></td><td><code>audiences/{channels,segments}/*.md</code></td><td>clayton-christensen</td><td><span class="pill existing">existing</span></td></tr>
 <tr><td class="num">4</td><td><code>buyer-persona</code></td><td><code>personas/{role}.md</code></td><td>matt-dixon</td><td><span class="pill new">net-new</span></td></tr>
 <tr><td class="num">5</td><td><code>messaging-distillation</code></td><td><code>language/messaging.md</code></td><td>april-dunford</td><td><span class="pill new">net-new</span></td></tr>
-<tr><td class="num">6</td><td><code>brand-voice</code></td><td><code>language/voice.md</code> + <code>language/terminology.md</code></td><td>steve-krug</td><td><span class="pill new">net-new</span></td></tr>
+<tr><td class="num">6</td><td><code>brand-voice</code></td><td><code>language/voice.md</code> (tone + register + terminology + glossary slices)</td><td>steve-krug</td><td><span class="pill new">net-new</span></td></tr>
 <tr><td class="num">7</td><td><code>proof-points-audit</code></td><td><code>proof/proof-points.md</code></td><td>the-qa-engineer</td><td><span class="pill new">net-new</span></td></tr>
 <tr><td class="num">8</td><td><code>competitive-battle-card</code></td><td><code>market/competitive.md</code></td><td>april-dunford</td><td><span class="pill new">net-new</span></td></tr>
 <tr><td class="num">9</td><td><code>design-principles</code></td><td><code>design/design-principles.md</code></td><td>steve-jobs</td><td><span class="pill existing">existing</span></td></tr>
@@ -738,7 +779,7 @@
                                       │
                                       ▼
                                 brand-voice
-                          (voice.md + terminology.md)
+                                  (voice.md)
                                       │
                                       ▼
                               design-principles</div>
@@ -773,7 +814,7 @@
 <!-- ============================================================ -->
 <section id="questions">
 <h2><span class="num">18</span>Open questions <span style="font-size: 14px; color: var(--forest-500); font-weight: 400; font-style: italic;">— interactive</span></h2>
-<p>Decisions deliberately deferred — each has a named trigger that would resolve it later, so we don't fake-answer questions whose right answer depends on evidence we don't have yet. Toggle any to "Include" to ask now, "Reject" to remove from the list entirely, or leave "Defer" to keep on watch.</p>
+<p>Decisions deliberately deferred — each has a named trigger that would resolve it later, so we don't fake-answer questions whose right answer depends on evidence we don't have yet. Grouped into four themes: <strong>scaling thresholds</strong>, <strong>layout scope expansions</strong>, <strong>slicing & composition</strong>, and <strong>observability & evals</strong>. Toggle any to "Include" to ask now, "Reject" to remove from the list entirely, or leave "Defer" to keep on watch.</p>
 
 <div class="interactive-section">
 <div class="interactive-banner">
@@ -784,6 +825,7 @@
 <table class="interactive" id="questions-table">
 <thead><tr><th class="num">#</th><th style="width: 35%">Question</th><th>Trigger that would resolve it</th><th style="width: 130px">Status</th></tr></thead>
 <tbody>
+<tr class="section-divider"><td colspan="4"><span class="section-letter">A</span>Scaling thresholds<span class="section-count">3 questions</span></td></tr>
 <tr data-id="1" data-title="Should the shared loader be Read+regex, Task sub-agent, or compiled code?">
   <td class="num">1</td>
   <td>Should the shared loader be Read+regex, Task sub-agent, or compiled code?</td>
@@ -802,17 +844,13 @@
   <td>First time the script's output needs interpretation beyond "below current version."</td>
   <td><select class="dropdown q-dropdown" data-id="3"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
 </tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">B</span>Layout scope expansions<span class="section-count">4 questions</span></td></tr>
 <tr data-id="4" data-title="How should per-product brand folders work for multi-product orgs?">
   <td class="num">4</td>
   <td>Per-product brand folders for multi-product orgs?</td>
   <td>First org with two products under one parent that needs both shared positioning AND product-specific competitive content.</td>
   <td><select class="dropdown q-dropdown" data-id="4"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="5" data-title="Should audiences and personas carry pre-computed composition examples?">
-  <td class="num">5</td>
-  <td>Pre-compute persona × audience merges (precomputed files)?</td>
-  <td>First time LLM-side composition produces inconsistent output.</td>
-  <td><select class="dropdown q-dropdown" data-id="5"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
 </tr>
 <tr data-id="6" data-title="Where do per-locale variations live (en-US, es-MX, ja-JP)?">
   <td class="num">6</td>
@@ -820,41 +858,37 @@
   <td>First org with localized content needs.</td>
   <td><select class="dropdown q-dropdown" data-id="6"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
 </tr>
-<tr data-id="7" data-title="Does voice.md need a Voice DNA sub-slice for generators?">
-  <td class="num">7</td>
-  <td>Does <code>voice.md</code> need a "voice DNA" sub-slice?</td>
-  <td>First case where a generator needs only banned phrases + tone principles and the full voice.md is too much context.</td>
-  <td><select class="dropdown q-dropdown" data-id="7"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="8" data-title="How should missing slices be surfaced — output appendix or coverage dashboard?">
-  <td class="num">8</td>
-  <td>Missing-slice surfacing — appendix or dashboard?</td>
-  <td>First post-mortem on a degraded output where the cause was a missing slice.</td>
-  <td><select class="dropdown q-dropdown" data-id="8"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
-</tr>
-<tr data-id="9" data-title="Should eval scenarios run automatically on every generation, or on demand?">
-  <td class="num">9</td>
-  <td>Auto-run evals on every generation?</td>
-  <td>First brand update that silently broke prior-generated artifacts.</td>
-  <td><select class="dropdown q-dropdown" data-id="9"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
-</tr>
 <tr data-id="10" data-title="How should reverse-engineered-brand handle orgs with multiple URLs (marketing + product + docs)?">
   <td class="num">10</td>
   <td>Multi-URL reverse-engineering (marketing site + product site + docs)?</td>
   <td>First org with split public surface area.</td>
   <td><select class="dropdown q-dropdown" data-id="10"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
 </tr>
-<tr data-id="11" data-title="Should voices/{name}.md follow the same H2-slice contract as voice.md?">
-  <td class="num">11</td>
-  <td>Should <code>voices/{name}.md</code> follow the same slice contract as voice.md?</td>
-  <td>First non-obvious institutional-vs-spokesperson merge.</td>
-  <td><select class="dropdown q-dropdown" data-id="11"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
-</tr>
 <tr data-id="12" data-title="Per-role file vs per-committee matrix file for buyer-persona output?">
   <td class="num">12</td>
   <td>Per-role file vs per-buying-committee matrix?</td>
   <td>First B2B org with cross-persona deal dynamics the per-file format doesn't capture.</td>
   <td><select class="dropdown q-dropdown" data-id="12"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">C</span>Slicing &amp; composition<span class="section-count">6 questions</span></td></tr>
+<tr data-id="5" data-title="Should audiences and personas carry pre-computed composition examples?">
+  <td class="num">5</td>
+  <td>Pre-compute persona × audience merges (precomputed files)?</td>
+  <td>First time LLM-side composition produces inconsistent output.</td>
+  <td><select class="dropdown q-dropdown" data-id="5"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="7" data-title="Does voice.md need a Voice DNA sub-slice for generators?">
+  <td class="num">7</td>
+  <td>Does <code>voice.md</code> need a "voice DNA" sub-slice?</td>
+  <td>First case where a generator needs only banned phrases + tone principles and the full voice.md is too much context.</td>
+  <td><select class="dropdown q-dropdown" data-id="7"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="11" data-title="Should voices/{name}.md follow the same H2-slice contract as voice.md?">
+  <td class="num">11</td>
+  <td>Should <code>voices/{name}.md</code> follow the same slice contract as voice.md?</td>
+  <td>First non-obvious institutional-vs-spokesperson merge.</td>
+  <td><select class="dropdown q-dropdown" data-id="11"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
 </tr>
 <tr data-id="13" data-title="At what scale does value-prop-to-persona map become its own file?">
   <td class="num">13</td>
@@ -873,6 +907,20 @@
   <td><code>slices:</code> in frontmatter — explicit declaration, or auto-inferred from H2s?</td>
   <td>Currently explicit (frontmatter is canonical, H2 must match). Could be auto-inferred to reduce authoring overhead.</td>
   <td><select class="dropdown q-dropdown" data-id="15"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+
+<tr class="section-divider"><td colspan="4"><span class="section-letter">D</span>Observability &amp; evals<span class="section-count">2 questions</span></td></tr>
+<tr data-id="8" data-title="How should missing slices be surfaced — output appendix or coverage dashboard?">
+  <td class="num">8</td>
+  <td>Missing-slice surfacing — appendix or dashboard?</td>
+  <td>First post-mortem on a degraded output where the cause was a missing slice.</td>
+  <td><select class="dropdown q-dropdown" data-id="8"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+</tr>
+<tr data-id="9" data-title="Should eval scenarios run automatically on every generation, or on demand?">
+  <td class="num">9</td>
+  <td>Auto-run evals on every generation?</td>
+  <td>First brand update that silently broke prior-generated artifacts.</td>
+  <td><select class="dropdown q-dropdown" data-id="9"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
 </tr>
 </tbody>
 </table>
@@ -929,7 +977,7 @@
   const decisionsRegenBtn = document.getElementById('regenerate-decisions');
 
   function buildDecisionsPrompt() {
-    const rejected = Array.from(decisionsTable.querySelectorAll('tbody tr'))
+    const rejected = Array.from(decisionsTable.querySelectorAll('tbody tr[data-id]'))
       .filter(tr => tr.querySelector('select').value === 'reject')
       .map(tr => ({
         num: tr.dataset.id,
@@ -1001,7 +1049,7 @@
   const questionsRegenBtn = document.getElementById('regenerate-questions');
 
   function buildQuestionsPrompt() {
-    const rows = Array.from(questionsTable.querySelectorAll('tbody tr'));
+    const rows = Array.from(questionsTable.querySelectorAll('tbody tr[data-id]'));
     const included = rows
       .filter(tr => tr.querySelector('select').value === 'include')
       .map(tr => ({ num: tr.dataset.id, title: tr.dataset.title }));
