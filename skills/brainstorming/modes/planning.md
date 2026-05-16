@@ -181,6 +181,10 @@ When the roadmap has structural complexity (multiple waves, dependency map, capa
 
 If visualization runs: read `{base-directory}/references/visualization-protocol.md` and follow it end-to-end (Live phase + Pre-critique snapshot). Use `{base-directory}/references/templates/planning-template.html` as the template path. The Pre-critique snapshot's `**Mockups:**` field attaches to the roadmap document header (not the portfolio).
 
+**Interactive widgets (conditional, mandatory when triggered):**
+
+If the design produced a Decision Log with >=1 entry OR an Open Questions list with >=1 entry, the visualization protocol's widget-injection step is **mandatory** (not optional). Use the categorized variant of either widget when the corresponding count is >=10; use the flat variant below 10. See `{base-directory}/references/widgets.html` and `{base-directory}/references/brainstorm-components.md` § Interactive Widgets.
+
 **Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
 
 **Critique panel configuration:**

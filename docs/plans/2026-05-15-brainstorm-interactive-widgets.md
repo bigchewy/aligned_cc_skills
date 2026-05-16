@@ -1035,7 +1035,7 @@ git commit -m "docs(brainstorming): require widget survival in strip-script rule
 
 ---
 
-### Task 9: Mandate widget injection in all four mode files
+### ✅ Task 9: Mandate widget injection in all four mode files
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md`

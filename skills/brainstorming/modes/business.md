@@ -146,6 +146,10 @@ Read `{base-directory}/references/visualization-protocol.md` and follow it end-t
 
 If the design does not warrant visual artifacts, skip this section entirely and omit the `**Mockups:**` field from the design document header.
 
+**Interactive widgets (conditional, mandatory when triggered):**
+
+If the design produced a Decision Log with >=1 entry OR an Open Questions list with >=1 entry, the visualization protocol's widget-injection step is **mandatory** (not optional). Use the categorized variant of either widget when the corresponding count is >=10; use the flat variant below 10. See `{base-directory}/references/widgets.html` and `{base-directory}/references/brainstorm-components.md` § Interactive Widgets.
+
 **Fact-Check + Critique Panel (mandatory, dynamic selection):**
 
 **Critique panel configuration:**
