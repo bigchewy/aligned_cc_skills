@@ -20,9 +20,8 @@ Required fields: `reason`, `phase`, `log`, `next-action`. Optional: `fix-instruc
 ## Write protocol
 
 1. Phase script calls `write_halt <reason> <phase> [details]` from `lib/halt.sh`.
-2. `write_halt` writes to `$HALT_PATH.tmp` then `mv` to `$HALT_PATH` (atomic; first writer wins).
-3. If `$HALT_PATH` already exists, append a `secondary-halt:` block rather than overwriting — preserves evidence.
-4. Phase exits with code 2.
+2. `write_halt` writes to `$HALT_PATH.tmp` then `mv` to `$HALT_PATH` (atomic overwrite). The orchestrator exits on first halt, so only one halt is written per run.
+3. Phase exits with code 2.
 
 ## Lifecycle
 
@@ -38,7 +37,6 @@ Required fields: `reason`, `phase`, `log`, `next-action`. Optional: `fix-instruc
 | `mcp_unreachable` | preflight | Plan declares an MCP tool whose server is not defined in any reachable `.mcp.json` |
 | `mcp_tool_not_allowlisted` | preflight | Server defined; tool string not in `permissions.allow` |
 | `manifest_malformed` | preflight | Front-matter present but unparseable / missing required fields |
-| `uncommitted_main` | worktree | Main has uncommitted changes that block `git merge main` into the worktree |
 | `verify_failed` | verify | Tests / build / eval failed |
 | `phase_crashed` | any | Phase script exited unexpectedly; `details:` carries last 10 lines of stderr |
 | `headless_auth_incompat` | preflight | A headless `claude` call site uses `--bare`, which restricts auth to API-key only and breaks Max-plan OAuth users |
