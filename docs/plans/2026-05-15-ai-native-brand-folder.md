@@ -220,7 +220,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(skills): add s
 
 ---
 
-### Task 3: Framework `reverse-engineered-brand` — prompt.md
+### ✅ Task 3: Framework `reverse-engineered-brand` — prompt.md
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/prompt.md`
