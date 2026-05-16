@@ -10,8 +10,9 @@ set -u
 : "${HALT_PATH:=}"
 
 # write_halt <reason> <phase> [details]
-# Atomic write via mv; first writer wins. Subsequent writers append a
-# secondary-halt block rather than overwriting.
+# Atomic write via mv. The orchestrator exits on the first halt, so only
+# one halt is emitted per run; across runs the user deletes the sentinel
+# before re-running. Overwrites unconditionally.
 write_halt() {
   local reason="$1"
   local phase="$2"
@@ -19,17 +20,6 @@ write_halt() {
   local target="${HALT_PATH:-.autopilot-halt}"
   local tmp="${target}.tmp.$$"
   local log="${LOG:-(unknown)}"
-
-  if [ -f "$target" ]; then
-    {
-      echo ""
-      echo "secondary-halt:"
-      echo "  reason: $reason"
-      echo "  phase: $phase"
-      echo "  details: $details"
-    } >> "$target"
-    return 0
-  fi
 
   {
     echo "reason: $reason"
