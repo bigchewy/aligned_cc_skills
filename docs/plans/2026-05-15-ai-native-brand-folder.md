@@ -40,6 +40,8 @@ This plan ships only the canonical schema spec, the shared loader, and the six n
 
 ### ✅ Task 1: Reference doc — `docs/brand-folder-spec.md`
 
+> MOCKUP DEVIATION: The spec header cites `docs/mockups/2026-05-15-ai-native-brand-folder.html` (v0.6) as the source design instead of `docs/plans/2026-05-15-ai-native-brand-folder-design.md` as the plan template specified. The design doc path does not exist in this repo; the HTML mockup is the actual canonical design artifact. Pointing to a non-existent file would create a broken reference.
+
 **Files:**
 - Create: `docs/brand-folder-spec.md`
 
