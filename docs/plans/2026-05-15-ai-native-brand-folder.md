@@ -541,7 +541,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 8: Framework `buyer-persona` — anti-examples.md
+### ✅ Task 8: Framework `buyer-persona` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/buyer-persona/anti-examples.md`
