@@ -1037,7 +1037,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 18: Framework `competitive-battle-card` — prompt.md
+### ✅ Task 18: Framework `competitive-battle-card` — prompt.md
 
 **Files:**
 - Create: `frameworks/competitive-battle-card/prompt.md`
