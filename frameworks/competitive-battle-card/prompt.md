@@ -145,7 +145,7 @@ Assemble the file in this format:
 
 ```markdown
 ---
-slice: [competitive-landscape, differentiators, common-objections]
+slices: [competitive-landscape, differentiators, common-objections]
 depends_on: [strategy/positioning#competitive-alternatives]
 ---
 

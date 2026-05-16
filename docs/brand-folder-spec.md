@@ -119,7 +119,7 @@ status: draft                                # draft | validated | retired
 confidence: medium                          # low | medium | high
 updated: 2026-05-15
 validated_at: 2026-05-15                   # OPTIONAL
-validated_by: eric.w.page@gmail.com        # OPTIONAL
+validated_by: validator@example.com         # OPTIONAL — email or identifier of reviewer
 sources:                                    # OPTIONAL — typed citations
   - { kind: url, value: "https://example.com" }
 depends_on:                                 # OPTIONAL — slice graph edges
