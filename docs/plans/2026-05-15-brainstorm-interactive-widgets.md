@@ -961,7 +961,7 @@ git commit -m "docs(brainstorming): document Interactive Widgets component contr
 
 ---
 
-### Task 7: Add widget-injection step to visualization-protocol.md
+### ✅ Task 7: Add widget-injection step to visualization-protocol.md
 
 **Files:**
 - Modify: `skills/brainstorming/references/visualization-protocol.md` (append a new step after step 5 of the Live phase, or place inside the Pre-critique snapshot section — whichever ordering matches the design intent)
