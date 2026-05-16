@@ -97,15 +97,6 @@ Fix:
   to regenerate.
 EOF
       ;;
-    uncommitted_main)
-      cat <<'EOF'
-Main branch has uncommitted changes that would block 'git merge main'
-into the worktree.
-
-Fix:
-  Commit or stash the changes on main, then re-run autopilot.sh.
-EOF
-      ;;
     verify_failed)
       cat <<'EOF'
 Verification failed (tests, build, or LLM eval).
