@@ -1187,7 +1187,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 21: Register the six new frameworks in `frameworks/registry.yaml`
+### ✅ Task 21: Register the six new frameworks in `frameworks/registry.yaml`
 
 **Files:**
 - Modify: `frameworks/registry.yaml` (append six new entries)
