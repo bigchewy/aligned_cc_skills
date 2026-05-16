@@ -4,109 +4,106 @@ Running example: **Fieldline** — a B2B SaaS company that helps mid-market fiel
 
 ---
 
-## PHASE 0: Intake
+## PHASE 0: Intake (the only WAIT in the build pass)
 
-### User giving a clear URL and optional local folder
+### User giving a clear URL, source folder, write target, and org name
 
-**User:** "The URL is fieldline.io. I also have a folder at ~/Documents/fieldline-research with a few customer interview transcripts and our last sales deck."
+**User:** "URL is fieldline.io. Source folder is ~/Documents/fieldline-research with customer interview transcripts and our last sales deck. Write the brand folder into ~/Documents/fieldline-research/brand. Org name: Fieldline."
 
-**Advisor:** "Got it. Public surface: fieldline.io. Supplementary content: ~/Documents/fieldline-research — I'll check for interview transcripts and any deck or one-pager files. I'll read the homepage and About page first to establish a baseline before touching the supplementary content, so I'm not anchoring on internal language before I see what you say publicly. Any time pressure or hard constraints before I start?"
+**Advisor:** "Got it. Sources: fieldline.io (public) plus ~/Documents/fieldline-research (local). Write target: ~/Documents/fieldline-research/brand. Org name: Fieldline. Running Extract → Transform → Load now. No further interruptions until the HTML review opens in your browser."
 
-> Opens with explicit sequencing — public surface before internal documents — and checks for constraints before consuming the URL
+> The advisor restates the inputs once and proceeds to a fully automated build. No mid-flow questions.
 
 ### User giving a vague description without a URL
 
 **User:** "We help field-service companies manage their operations. I don't have a public URL — we're kind of pre-launch."
 
-**Advisor:** "Understood — pre-launch or private company, no public URL. I can still run this session, but the intake changes: instead of reading your public surface, I'll need you to walk me through what you currently say to a prospect in the first two minutes of a call. That becomes our stand-in for the homepage. Do you have a deck, one-pager, or even a strong email template I can use as the raw material? If not, start with the two-minute pitch and we'll build from there."
+**Advisor:** "Understood — pre-launch, no public URL. For Extract, I'll work from local material only. Point me at a folder with anything written down: deck, one-pager, email template, founder essay, Loom transcript. If you have nothing in writing yet, this framework isn't the right starting point — you'd need to do an intake conversation first and dump that into a file."
 
-> Doesn't stall on the missing URL — offers a concrete fallback and keeps the session moving
-
----
-
-## PHASE 1: Public surface review
-
-### Advisor's URL summary matching the user's intent
-
-**User:** "What did you find on the homepage?"
-
-**Advisor:** "Fieldline leads with 'Stop losing revenue to missed appointments and manual invoicing.' The hero section targets field-service companies — HVAC, plumbing, electrical — that are growing past the point where spreadsheets and phone calls work. The value proposition is operational control: dispatch visibility, automated scheduling, and same-day invoicing. The word 'spreadsheet' appears four times above the fold. The primary audience signal is company size — language like 'your growing team' suggests 20–200 employees rather than enterprise. Does that match how you'd describe what you do?"
-
-> Presents a concrete summary and closes with a calibration check — doesn't assume accuracy
-
-**User:** "Yes, that's exactly it."
-
-**Advisor:** "Good. I'll lock that as the baseline audience frame and move to your supplementary content."
-
-> Confirms the frame is locked before proceeding — no drift between phases
-
-### User correcting an inferred audience claim
-
-**User:** "You said our audience is 20–200 employees — that's not right. Our sweet spot is 50–500, and we've been moving upmarket. We just closed a 600-person roofing company."
-
-**Advisor:** "Corrected — 50–500 is the stated sweet spot, upmarket motion in progress. That changes the positioning question: your homepage is signaling small-team ('your growing team'), but your deal motion is landing mid-market. That gap is either a funnel problem — qualified buyers self-select out before they talk to sales — or a messaging lag — your best customers are bigger than your homepage implies. We'll surface that in the positioning work. I'll adjust the audience assumption across all subsequent phases."
-
-> Accepts the correction immediately, names the strategic implication, and commits to carrying it forward across all phases
+> Offers a concrete substitute for the URL. Does not stall.
 
 ---
 
-## PHASE 6: Messaging-distillation handoff
+## PHASE 1: Extract (silent — no advisor narration to the user)
 
-### Advisor surfacing a tagline draft and asking for calibration
-
-**Advisor:** "Positioning is complete. Before I open the messaging-distillation framework, I want to surface one inference for your calibration. The positioning work landed on 'operational control for field-service teams that have outgrown spreadsheets' as the category framing. A candidate tagline that falls out of that: 'The dispatch layer your crew actually uses.' It hits the operational register, implies adoption (not just purchase), and sidesteps the generic 'platform' language that saturates your category. Does that direction feel right, or does it pull away from something important?"
-
-> Probes tagline direction before opening the framework — surfaces the inference so the user can correct it before it gets baked in
-
-**User:** "I like the direction but 'crew' sounds too blue-collar for our upmarket move. We'd say 'team' or 'ops team.'"
-
-**Advisor:** "Noted — 'crew' activates the wrong register for the upmarket buyer. 'Team' is safer; 'ops team' is more precise and carries more authority. Carrying that word-choice forward into the messaging session. Opening the messaging-distillation framework now — you'll be asked about tagline variants, value-prop phrasings, and persona-specific language."
-
-> Accepts the register correction and explicitly commits it to carry-forward before handing off to the next framework
+The Extract phase is fully silent. No user interaction. The advisor reads every URL page and local file, classifies them, and holds the Source Registry in memory until the Load phase writes it into `brand/CLAUDE.md § Source Registry`.
 
 ---
 
-## PHASE 11: Folder write
+## PHASE 2: Transform (silent — no advisor narration to the user)
 
-### Advisor previewing the write and asking for confirmation
+The Transform phase is fully silent. The advisor produces all slice drafts in memory with confidence tagging, logs every gap and inference as an Open Question, and proceeds straight to Load.
 
-**Advisor:** "Ready to write the brand folder. Here's what I'm about to create under `brand/`:
+---
 
-```
-brand/
-  strategy/
-    positioning.md       (confidence: high)
-    narrative.md         (confidence: high)
-    jobs-to-be-done.md   (confidence: medium)
-  personas/
-    vp-ops.md            (confidence: high)
-    owner-operator.md    (confidence: medium)
-  language/
-    messaging.md         (confidence: high)
-    voice.md             (confidence: high)
-  market/
-    competitive.md       (confidence: medium)
-  proof/
-    proof-points.md      (confidence: low)
-  design/
-    design-principles.md (confidence: medium)
-```
+## PHASE 3: Load and final report
 
-`proof-points.md` is at low confidence — I only have two quantitative claims from your homepage, both unverified. `jobs-to-be-done.md` is at medium — inferred from the interview transcripts, not validated with you directly. Everything else has session-level backing. Confirm this write, or adjust confidence tiers or paths before I proceed."
+### Advisor's end-of-run report
 
-> Previews the full folder structure with confidence tiers before touching the filesystem — gives the user a final correction window
+**Advisor:** "Done. Wrote `~/Documents/fieldline-research/brand` with 11 slice files plus `CLAUDE.md`, `version.yaml`, `contracts.yaml`.
 
-### User requesting a confidence tier change
+Confidence distribution: 3 high, 5 medium, 3 low.
 
-**User:** "The jobs-to-be-done.md should be high confidence, not medium. We went through all five jobs in detail during the session."
+Logged 14 Open Questions covering: primary competitive alternative, owner-operator persona depth, voice register, pricing language, four unverified proof claims, three tagline candidates. The interactive review document is open in your browser at `~/Documents/fieldline-research/brand/open-questions.html` — type answers in the browser, click 'Copy all answers,' then paste the resulting prompt back into Claude Code (this session or a new one) to apply the answers to the folder.
 
-**Advisor:** "You're right — we validated all five jobs against the interview transcripts and you confirmed each one. Bumping jobs-to-be-done.md to high confidence. Revised write:
+The canonical Open Questions queue lives in `brand/CLAUDE.md § Open Questions`. The HTML is a view of it — paste-back keeps them in sync."
 
-```
-  strategy/
-    jobs-to-be-done.md   (confidence: high)  ← updated
+> The final report is single-shot. The advisor reports the manifest, confidence distribution, Open Questions count + topic summary, and the HTML path. No mid-flow updates.
+
+---
+
+## Open Question shape (what the advisor writes during Transform)
+
+Every Open Question in the queue (both in `brand/CLAUDE.md § Open Questions` and `brand/.open-questions.json`) has the same shape:
+
+```markdown
+### OQ-1: Primary competitive alternative
+
+**File:** `strategy/positioning.md`#competitive-alternatives
+**Confidence:** low
+**What I wrote:** Best customers were previously cobbling together spreadsheets and manual dispatch.
+**Question for you:** Was the real alternative for your best customers the spreadsheet state, or were they limping along on a competitor product they hated?
+**Why it matters:** If it's the spreadsheet state, positioning frames against operational chaos. If it's incumbent software, positioning frames against migration pain. Two different messaging arcs.
+**Deepen with:** `/aligned:use-framework 5-components-positioning` for a full interactive pass on this slice
+**Sources:** #4, #6
 ```
 
-All other tiers unchanged. Writing now."
+> The Open Question is a self-contained card: file/anchor, current draft, the calibration question, the downstream consequence, the owning framework for deeper work, and source provenance. The HTML renders each one as an answer-textarea card; the markdown form is the canonical record.
 
-> Accepts the correction with a one-line rationale check, restates only the changed item, and proceeds without re-listing the entire structure
+---
+
+## Slice → owning framework mapping (in CLAUDE.md)
+
+After the build, `brand/CLAUDE.md § Next Steps to Deepen` lists every slice with its owning framework. Example:
+
+```markdown
+## Next Steps to Deepen
+
+- `strategy/positioning.md` → run `/aligned:use-framework 5-components-positioning` for a deeper, interactive pass
+- `strategy/narrative.md` → run `/aligned:use-framework strategic-narrative` for a deeper, interactive pass
+- `language/messaging.md` → run `/aligned:use-framework messaging-distillation` for a deeper, interactive pass
+- `language/voice.md` → run `/aligned:use-framework brand-voice` for a deeper, interactive pass
+- `personas/vp-ops.md` → run `/aligned:use-framework buyer-persona` for a deeper, interactive pass
+- `market/competitive.md` → run `/aligned:use-framework competitive-battle-card` for a deeper, interactive pass
+- `market/alternatives.md` → run `/aligned:use-framework 5-components-positioning` (Component 1 is the canonical source)
+- `proof/proof-points.md` → run `/aligned:use-framework proof-points-audit` for a deeper, interactive pass
+- `audiences/channels/employer.md` → GAP — no framework owns this slice; synthesis is ad-hoc. Consider commissioning a `channel-strategy` framework.
+```
+
+> Every slice in the folder appears here. The user never has to guess which framework to run; the mapping is explicit and authoritative.
+
+---
+
+## HTML review (offline from this session)
+
+After the framework ends, the user reviews `brand/open-questions.html` in the browser. The HTML has:
+
+- One card per Open Question, with file, confidence, draft, question, why-it-matters, and source provenance
+- A textarea on each card for the user's answer
+- A "Skip for now" checkbox on each card
+- Per-card "Copy this question's prompt" button — copies a one-question paste-back prompt
+- Bottom-of-page "Copy all answers" button — copies a batch paste-back prompt
+
+The paste-back prompt is plain Claude Code instructions to apply the answers to the slice files and mark Open Questions resolved in `brand/CLAUDE.md`. The user can paste it into this session, a new session, or any session — the prompt is self-contained and identifies the brand folder path.
+
+> The framework's job ends when the HTML opens. The HTML is the review surface. The paste-back is the apply mechanism. The brand folder is the canonical store.

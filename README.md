@@ -191,7 +191,7 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 - **Canonical brand folder spec** (`docs/brand-folder-spec.md`): schema reference for the AI-native `brand/` folder — directory tree, frontmatter contract, provenance/confidence model, slice-loading mechanics, composition contracts, versioning, and consumer-side eval scenarios.
 - **Shared loader** (`skills/_shared/load-brand-slices.md`): single loader that every brand-consuming generator delegates to; resolves `{folder}/{file-stem}#{slice-slug}` references, validates frontmatter, and degrades gracefully on missing slices.
 - **6 new frameworks** for authoring an AI-native brand folder:
-  - `reverse-engineered-brand` — orchestrator that runs the five sub-frameworks in sequence
+  - `reverse-engineered-brand` — orchestrator that auto-synthesizes a draft brand folder from a URL + local content and opens an interactive HTML review for open questions
   - `buyer-persona`, `messaging-distillation`, `brand-voice`, `proof-points-audit`, `competitive-battle-card`
 - **154 frameworks** (+6)
 

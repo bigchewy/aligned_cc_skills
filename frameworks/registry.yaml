@@ -1256,9 +1256,9 @@ frameworks:
     helpful_documents: ["current pitch deck", "sales pipeline by segment", "clinical evidence inventory (case studies / outcomes data / RCTs)", "runway and fundraising plan", "integration roadmap (EHR / payer / revenue-cycle)"]
 
   - id: reverse-engineered-brand
-    name: "a Reverse-Engineered Brand session — a fully interactive walk-through that takes a public URL plus optional supplementary content and produces a canonical brand/ folder ready for human validation"
+    name: "a Reverse-Engineered Brand build — an ETL session that takes a public URL plus optional source content, automatically synthesizes a canonical brand/ folder, and produces an interactive HTML review document for every educated guess and gap"
     advisor: april-dunford
-    purpose: "the orchestrator that composes positioning, narrative, jobs-to-be-done, buyer-persona, messaging-distillation, competitive-battle-card, proof-points-audit, brand-voice, and design-principles into a single cold-start brand folder build"
+    purpose: "the orchestrator that auto-fills positioning, narrative, jobs-to-be-done, buyer-persona, messaging-distillation, competitive-battle-card, proof-points-audit, brand-voice, and design-principles into a cold-start brand folder, logging every low-confidence inference and gap as an Open Question reviewable in an interactive HTML document with paste-back-to-Claude-Code prompts"
     category: positioning
     domains: [brand-folder, positioning, audiences, personas, messaging, voice, competitive, proof-points, design]
     use_when: "an organization is building its first canonical brand/ folder from a public URL and optional supplementary content"
