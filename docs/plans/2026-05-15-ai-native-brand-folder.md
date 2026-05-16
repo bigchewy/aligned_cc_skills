@@ -38,7 +38,7 @@ This plan ships only the canonical schema spec, the shared loader, and the six n
 
 ---
 
-### Task 1: Reference doc — `docs/brand-folder-spec.md`
+### ✅ Task 1: Reference doc — `docs/brand-folder-spec.md`
 
 **Files:**
 - Create: `docs/brand-folder-spec.md`
