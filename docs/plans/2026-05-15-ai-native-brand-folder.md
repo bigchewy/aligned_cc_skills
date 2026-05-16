@@ -126,7 +126,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "docs(brand): add ca
 
 ---
 
-### Task 2: Shared loader skill — `skills/_shared/load-brand-slices.md`
+### ✅ Task 2: Shared loader skill — `skills/_shared/load-brand-slices.md`
 
 **Files:**
 - Create: `skills/_shared/load-brand-slices.md`
