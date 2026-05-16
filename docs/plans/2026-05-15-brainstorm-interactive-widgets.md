@@ -1013,7 +1013,7 @@ git commit -m "docs(brainstorming): inject widgets in Live + Pre-critique + Post
 
 ---
 
-### Task 8: Strengthen the strip-script rule with widget-survival assertion
+### ✅ Task 8: Strengthen the strip-script rule with widget-survival assertion
 
 **Files:**
 - Modify: `skills/brainstorming/references/shared-rules.md` (the "Stripping the live-refresh script" section)
