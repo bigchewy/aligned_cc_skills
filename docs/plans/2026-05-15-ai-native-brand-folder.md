@@ -696,7 +696,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 11: Framework `messaging-distillation` — anti-examples.md
+### ✅ Task 11: Framework `messaging-distillation` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/messaging-distillation/anti-examples.md`
