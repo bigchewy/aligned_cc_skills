@@ -999,7 +999,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 17: Framework `proof-points-audit` — anti-examples.md
+### ✅ Task 17: Framework `proof-points-audit` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/proof-points-audit/anti-examples.md`
