@@ -210,6 +210,8 @@ git commit -m "test(brainstorming): add failing widget sidecar + state-compositi
 
 ### ✅ Task 2: Build widgets.html sidecar CSS + widget HTML blocks
 
+> MOCKUP DEVIATION: Decision banner text — the mockup uses a directive, session-specific banner ("Approve or reject each decision below. The prompt at the bottom auto-updates with your rejections. Copy it and paste it back to me — or edit it inline before sending."). The sidecar template uses a reusable instructional form ("Two options per decision. Approve (default) means you accept it. Reject queues it for revision.") that works across all future brainstorm sessions without first-person session language.
+
 **Files:**
 - Create: `skills/brainstorming/references/widgets.html`
 
