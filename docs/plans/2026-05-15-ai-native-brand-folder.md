@@ -734,7 +734,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 12: Framework `brand-voice` — prompt.md
+### ✅ Task 12: Framework `brand-voice` — prompt.md
 
 **Files:**
 - Create: `frameworks/brand-voice/prompt.md`
