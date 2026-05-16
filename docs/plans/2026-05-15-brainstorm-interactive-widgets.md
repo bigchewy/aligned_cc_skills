@@ -875,7 +875,7 @@ git commit -m "test(brainstorming): assert strip-script preserves widget JS in c
 
 ---
 
-### Task 6: Document the Interactive Widgets component in brainstorm-components.md
+### ✅ Task 6: Document the Interactive Widgets component in brainstorm-components.md
 
 **Files:**
 - Modify: `skills/brainstorming/references/brainstorm-components.md` (append a new "Interactive Widgets" component section)
