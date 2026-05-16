@@ -847,7 +847,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 14: Framework `brand-voice` — anti-examples.md
+### ✅ Task 14: Framework `brand-voice` — anti-examples.md
 
 **Files:**
 - Create: `frameworks/brand-voice/anti-examples.md`
