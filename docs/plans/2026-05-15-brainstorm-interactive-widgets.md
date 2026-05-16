@@ -22,7 +22,7 @@
 
 ---
 
-### Task 1: Add failing pytest scaffold for widget tests
+### ✅ Task 1: Add failing pytest scaffold for widget tests
 
 **Files:**
 - Create: `e2e/tests/test_brainstorm_widgets.py`
