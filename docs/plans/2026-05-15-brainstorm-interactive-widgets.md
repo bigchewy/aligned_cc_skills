@@ -763,7 +763,7 @@ git commit -m "feat(brainstorming): compose widget state into live-refresh IIFE 
 
 ---
 
-### Task 5: Add strip-script integration test
+### ✅ Task 5: Add strip-script integration test
 
 **Files:**
 - Modify: `e2e/tests/test_brainstorm_widgets.py` (append a new test)
