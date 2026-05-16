@@ -155,8 +155,6 @@ def test_phase_worktree_exists_and_conforms():
     assert "git worktree add" in text or 'git -C "$PROJECT" worktree add' in text
     # Reads WORKTREE_DIR from environment (no stdout-capture pattern)
     assert "WORKTREE_DIR" in text
-    # Emits the structured halt for uncommitted-main case
-    assert "uncommitted_main" in text
 
 
 # Per skills/_shared/autopilot-halt-format.md, every phase mapped to a halt
@@ -164,7 +162,7 @@ def test_phase_worktree_exists_and_conforms():
 # source lib/halt.sh and emit halts via write_halt — never via an inline
 # heredoc. C1 (worktree.sh emitting malformed halts) regressed without
 # tripping the older "uncommitted_main in text" check.
-@pytest.mark.parametrize("phase_name", ["preflight", "worktree", "verify"])
+@pytest.mark.parametrize("phase_name", ["preflight", "verify"])
 def test_halt_emitting_phase_sources_lib_halt(phase_name):
     p = PHASES_DIR / f"{phase_name}.sh"
     text = _read(p)

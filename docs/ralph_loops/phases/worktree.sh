@@ -13,7 +13,6 @@
 # EXIT CODES:
 #   0 — worktree ready, plan file in worktree
 #   1 — worktree creation, npm install, or other unrecoverable failure
-#   2 — halt-with-reason: uncommitted_main (merge conflict against main)
 
 set -u
 
@@ -22,8 +21,6 @@ RALPH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # shellcheck source=../lib/process.sh
 source "$RALPH_DIR/lib/process.sh"
-# shellcheck source=../lib/halt.sh
-source "$RALPH_DIR/lib/halt.sh"
 
 # Alias so the env-link block (moved verbatim from autopilot.sh) keeps
 # its $WORKTREE references unchanged. WORKTREE_DIR is the canonical input.
@@ -33,12 +30,6 @@ WORKTREE="$WORKTREE_DIR"
 
 if [ -d "$WORKTREE_DIR" ]; then
   echo "Worktree already exists: $WORKTREE_DIR"
-
-  # Check for stale merge state
-  if [ -f "$WORKTREE_DIR/.git" ] && git -C "$WORKTREE_DIR" rev-parse MERGE_HEAD &>/dev/null; then
-    echo "WARNING: Worktree has an in-progress merge. Aborting it." >&2
-    git -C "$WORKTREE_DIR" merge --abort 2>/dev/null || true
-  fi
 else
   echo "Creating worktree: $WORKTREE_DIR (branch: $BRANCH)"
 
@@ -101,19 +92,14 @@ done < <(find "$PROJECT" -type l -name '.env*' \
            -not -path "$PROJECT/node_modules/*" -print0 2>/dev/null)
 # === ENV-LINK BLOCK END ===
 
-# Merge main so the plan file is available in the worktree
+# Merge main so the plan file is available in the worktree.
+# On failure, let git's native diagnostic print to stderr and exit 1;
+# autopilot.sh's run_phase converts that to phase_crashed. Do NOT auto-abort —
+# the user needs the MERGE_HEAD state preserved to resolve conflicts in place.
 echo "Merging main into worktree..."
-MERGE_EXIT=0
-git merge main --no-edit 2>&1 || MERGE_EXIT=$?
-if [ "$MERGE_EXIT" -ne 0 ]; then
-  if git -C "$WORKTREE_DIR" rev-parse MERGE_HEAD &>/dev/null 2>&1; then
-    git -C "$WORKTREE_DIR" merge --abort 2>/dev/null || true
-    write_halt uncommitted_main worktree "git merge main aborted; resolve in $WORKTREE_DIR"
-    echo "ERROR: halt — uncommitted_main; resolve in $WORKTREE_DIR" >&2
-    exit 2
-  fi
-  # Non-conflict failure (e.g., already up to date with divergent message)
-  echo "WARNING: git merge main exited $MERGE_EXIT (may already be up to date)."
+if ! git merge main --no-edit; then
+  echo "ERROR: git merge main failed in $WORKTREE_DIR. Resolve in the worktree, commit, then re-run autopilot." >&2
+  exit 1
 fi
 
 # Verify plan file exists in worktree

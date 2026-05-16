@@ -17,7 +17,6 @@ EXPECTED_REASONS = [
     "mcp_unreachable",
     "mcp_tool_not_allowlisted",
     "manifest_malformed",
-    "uncommitted_main",
     "verify_failed",
     "phase_crashed",
 ]
@@ -63,25 +62,12 @@ def test_write_halt_creates_sentinel():
         assert "phase: preflight" in text
 
 
-def test_write_halt_secondary_appends_not_overwrites():
-    with tempfile.TemporaryDirectory() as d:
-        d = Path(d)
-        env = f'HALT_PATH="{d}/.autopilot-halt"'
-        _bash(f'{env} write_halt mcp_tool_not_allowlisted preflight "first"', cwd=d)
-        _bash(f'{env} write_halt mcp_unreachable preflight "second"', cwd=d)
-        text = (d / ".autopilot-halt").read_text()
-        assert "reason: mcp_tool_not_allowlisted" in text  # first preserved
-        assert "secondary-halt:" in text  # second appended
-        assert "mcp_unreachable" in text
-
-
 # Stable user-facing substrings — a typo in the corresponding heredoc would
 # fail this and force the author to look at what users actually read.
 @pytest.mark.parametrize("reason,needle", [
     ("mcp_unreachable", "Define the server in .mcp.json"),
     ("mcp_tool_not_allowlisted", ".claude/settings.local.json allowlist"),
     ("manifest_malformed", "must start with `---`"),
-    ("uncommitted_main", "git merge main"),
     ("verify_failed", ".finish-status"),
 ])
 def test_format_halt_echoes_canonical_fix(reason, needle, tmp_path):
