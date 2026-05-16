@@ -30,12 +30,6 @@ WORKTREE="$WORKTREE_DIR"
 
 if [ -d "$WORKTREE_DIR" ]; then
   echo "Worktree already exists: $WORKTREE_DIR"
-
-  # Check for stale merge state
-  if [ -f "$WORKTREE_DIR/.git" ] && git -C "$WORKTREE_DIR" rev-parse MERGE_HEAD &>/dev/null; then
-    echo "WARNING: Worktree has an in-progress merge. Aborting it." >&2
-    git -C "$WORKTREE_DIR" merge --abort 2>/dev/null || true
-  fi
 else
   echo "Creating worktree: $WORKTREE_DIR (branch: $BRANCH)"
 
