@@ -419,7 +419,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 6: Framework `buyer-persona` — prompt.md
+### ✅ Task 6: Framework `buyer-persona` — prompt.md
 
 **Files:**
 - Create: `frameworks/buyer-persona/prompt.md`
@@ -502,7 +502,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 7: Framework `buyer-persona` — examples.md
+### ✅ Task 7: Framework `buyer-persona` — examples.md
 
 **Files:**
 - Create: `frameworks/buyer-persona/examples.md`
