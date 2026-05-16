@@ -62,6 +62,8 @@ Flag any features, abstractions, or configurability not directly required by the
 - BAD: Design adds a plugin system when the user asked for one specific feature
 - GOOD: Design implements exactly what was requested, nothing more
 
+**Routing note:** When the critique panel runs, this criterion is owned by The Architect (whose prompt carries explicit deletion authority and a Necessity Test — see `skills/writing-plans/references/critique-panel-prompts.md` Round 1 Architect prompt) when no other selected critic has a `simplicity` / `focus` / `scope-control` domain match. It does NOT fall to the fact-checker catch-all.
+
 ### 4. Edge cases and error handling
 
 Verify failure modes are addressed proportionally (not over-engineered, not ignored).
@@ -124,6 +126,8 @@ Does the design stay focused on the stated goal?
 
 - BAD: Design goal is "add session history page" but includes a full analytics dashboard
 - GOOD: Every component directly serves the stated goal
+
+**Routing note:** When the critique panel runs, this criterion is owned by The Architect (with deletion authority and Necessity Test) when no other selected critic has a `simplicity` / `focus` / `scope-control` domain match. It does NOT fall to the fact-checker catch-all.
 
 ### 9. Decision quality (if Decision Log or Open Questions list present)
 
