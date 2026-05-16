@@ -208,7 +208,7 @@ git commit -m "test(brainstorming): add failing widget sidecar + state-compositi
 
 ---
 
-### Task 2: Build widgets.html sidecar CSS + widget HTML blocks
+### ✅ Task 2: Build widgets.html sidecar CSS + widget HTML blocks
 
 **Files:**
 - Create: `skills/brainstorming/references/widgets.html`

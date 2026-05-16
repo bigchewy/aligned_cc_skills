@@ -1,0 +1,173 @@
+<!--
+  Interactive widgets sidecar for the brainstorming skill.
+
+  Read this file during the visualization phase when the active design produced
+  a Decision Log (>=1 entry) or an Open Questions list (>=1 entry). Inject:
+
+    1. The WIDGETS-CSS block once into the template's <head> (after the inline
+       <style> block).
+    2. The WIDGETS-SCRIPT block once before </body>. It MUST land OUTSIDE the
+       LIVE-REFRESH-START...LIVE-REFRESH-END delimiters so
+       the strip-script rule preserves widget JS in committed snapshots.
+    3. The relevant WIDGET-HTML block(s) inside their owning <section>.
+
+  Categorization threshold: use the flat variant when entries < 10. Use the
+  categorized variant (with section-divider rows grouping decisions/questions
+  by theme) when entries >= 10.
+
+  data-id contract: every triage row carries `data-id="N"` and
+  `data-title="..."`. Section-divider rows carry class `section-divider` and
+  no data-id, so the JS selector `tbody tr[data-id]` skips them.
+-->
+
+<!-- WIDGETS-CSS-START -->
+<style>
+  .interactive-section {
+    background: var(--color-accent-subtle);
+    border-radius: 12px;
+    padding: 24px 28px 32px;
+    margin: 32px -28px;
+  }
+  .interactive-banner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--color-foreground);
+  }
+  .interactive-banner .icon { color: var(--color-accent); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  table.interactive td { vertical-align: middle; }
+  table.interactive .decision-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; }
+  table.interactive .decision-title { font-weight: 500; color: var(--color-foreground); }
+  table.interactive td.decision-desc { font-size: 13px; color: var(--color-secondary); line-height: 1.5; }
+
+  select.dropdown { font-family: var(--font-sans); font-size: 13px; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-surface); color: var(--color-foreground); cursor: pointer; min-width: 110px; }
+  select.dropdown:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  select.dropdown.reject, select.dropdown.include { color: var(--color-accent); font-weight: 500; border-color: var(--color-accent); background: var(--color-accent-subtle); }
+  select.dropdown.q-reject { color: #b91c1c; font-weight: 500; border-color: #b91c1c; background: #fef2f2; }
+
+  tr.row-active td { background: var(--color-accent-subtle) !important; }
+  tr.row-rejected td { background: #fef2f2 !important; }
+  tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; }
+
+  tr.section-divider td { background: var(--color-muted); color: var(--color-foreground); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .prompt-box { margin-top: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
+  .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .prompt-box-label { font-size: 13px; font-weight: 600; color: var(--color-foreground); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn { font-family: var(--font-sans); font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--color-border); background: var(--color-muted); color: var(--color-foreground); font-weight: 500; }
+  .btn:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); }
+  .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+  .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .btn.copied { background: #047857; color: white; border-color: #047857; }
+  .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+  textarea.prompt-textarea { width: 100%; min-height: 160px; padding: 14px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--color-foreground); background: var(--color-muted); border: 1px solid var(--color-border); border-radius: 8px; resize: vertical; }
+  textarea.prompt-textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  .prompt-hint { margin-top: 8px; font-size: 12px; color: var(--color-dimmed); font-style: italic; }
+</style>
+<!-- WIDGETS-CSS-END -->
+
+<!-- WIDGETS-SCRIPT-START -->
+<script>
+  // Stub — replaced in Task 3 with two guarded IIFEs.
+</script>
+<!-- WIDGETS-SCRIPT-END -->
+
+<!-- WIDGET-HTML: decision-log-flat -->
+<!--
+  Use when Decision Log has < 10 entries. Drop into the owning <section> in place
+  of the static Decision Log table. Each <tr> needs data-id and data-title.
+
+  Example row:
+    <tr data-id="1" data-title="Use TypeScript">
+      <td class="decision-num">1</td>
+      <td class="decision-title">Use TypeScript</td>
+      <td class="decision-desc">Rationale text here.</td>
+      <td><select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+    </tr>
+-->
+<div class="interactive-section">
+  <div class="interactive-banner">
+    <span class="icon">●</span>
+    <div><strong>Two options per decision.</strong> <em>Approve</em> (default) means you accept it. <em>Reject</em> queues it for revision. The prompt textarea below auto-updates as you toggle dropdowns.</div>
+  </div>
+  <table class="interactive" id="decisions-table">
+    <thead><tr><th class="num">#</th><th>Decision</th><th>Rationale</th><th style="width: 130px">Status</th></tr></thead>
+    <tbody>
+      <!-- One <tr data-id="N" data-title="..."> per decision; final <td> contains:
+        <select class="dropdown" data-id="N"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+      -->
+    </tbody>
+  </table>
+  <!-- prompt-box block: see WIDGET-HTML: prompt-box -->
+</div>
+
+<!-- WIDGET-HTML: decision-log-categorized -->
+<!--
+  Use when Decision Log has >= 10 entries. Identical to decision-log-flat except
+  the <tbody> contains `<tr class="section-divider">` rows grouping decisions
+  by theme (A, B, C ...). Section-divider rows have NO data-id.
+
+  Example:
+    <tr class="section-divider">
+      <td colspan="4"><span class="section-letter">A</span>Architecture<span class="section-count">3 decisions</span></td>
+    </tr>
+-->
+
+<!-- WIDGET-HTML: open-questions-flat -->
+<!--
+  Use when Open Questions has < 10 entries. Three-state dropdown:
+    <select class="dropdown q-dropdown" data-id="N">
+      <option value="defer">Defer</option>
+      <option value="include">Include</option>
+      <option value="reject">Reject</option>
+    </select>
+-->
+<div class="interactive-section">
+  <div class="interactive-banner">
+    <span class="icon">●</span>
+    <div><strong>Three options per question.</strong> <em>Defer</em> (default) keeps it on the list for later. <em>Include</em> queues it for me to ask you interactively now. <em>Reject</em> removes it from the list entirely. The prompt below auto-updates as you change dropdowns.</div>
+  </div>
+  <table class="interactive" id="questions-table">
+    <thead><tr><th class="num">#</th><th>Question</th><th>Trigger that would resolve it</th><th style="width: 130px">Status</th></tr></thead>
+    <tbody>
+      <!-- One <tr data-id="N" data-title="..."> per question. -->
+    </tbody>
+  </table>
+  <!-- prompt-box block: see WIDGET-HTML: prompt-box -->
+</div>
+
+<!-- WIDGET-HTML: open-questions-categorized -->
+<!--
+  Use when Open Questions has >= 10 entries. Identical to open-questions-flat
+  except <tbody> contains `<tr class="section-divider">` rows grouping questions
+  by theme.
+-->
+
+<!-- WIDGET-HTML: prompt-box -->
+<!--
+  Reusable footer for both widget tables. Inject inside `.interactive-section`
+  after the table. Set `id="decisions-prompt"` / `id="questions-prompt"` and
+  matching button IDs (`copy-decisions`, `regenerate-decisions`, etc.).
+-->
+<div class="prompt-box">
+  <div class="prompt-box-header">
+    <span class="prompt-box-label">Prompt to send back</span>
+    <div class="prompt-actions">
+      <button class="btn" id="regenerate-{widget-id}" type="button">Regenerate</button>
+      <button class="btn btn-primary" id="copy-{widget-id}" type="button">Copy</button>
+    </div>
+  </div>
+  <textarea class="prompt-textarea" id="{widget-id}-prompt" spellcheck="false"></textarea>
+  <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+</div>
