@@ -885,7 +885,7 @@ git -C /Users/ericpage/software/aligned_cc_skills commit -m "feat(frameworks): a
 
 ---
 
-### Task 15: Framework `proof-points-audit` — prompt.md
+### ✅ Task 15: Framework `proof-points-audit` — prompt.md
 
 **Files:**
 - Create: `frameworks/proof-points-audit/prompt.md`
