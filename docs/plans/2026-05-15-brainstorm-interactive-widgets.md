@@ -647,7 +647,7 @@ git commit -m "feat(brainstorming): wire decision-log + open-questions widget II
 
 ---
 
-### Task 4: Extend live-refresh IIFE to compose widget state — all four templates
+### ✅ Task 4: Extend live-refresh IIFE to compose widget state — all four templates
 
 > **Dependency note:** This task touches all four template files in a single commit. The md5-equality lint requires byte-identity, so partial commits are not allowed. Make the same diff to all four files before committing.
 
