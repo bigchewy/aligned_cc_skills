@@ -407,7 +407,7 @@ git commit -m "feat(brainstorming): add widgets sidecar CSS + HTML blocks"
 
 ---
 
-### Task 3: Build the widget JS — two guarded IIFEs, dirty-flag textareas, clipboard fallback
+### ✅ Task 3: Build the widget JS — two guarded IIFEs, dirty-flag textareas, clipboard fallback
 
 **Files:**
 - Modify: `skills/brainstorming/references/widgets.html` (replace the SCRIPT stub with full IIFE logic)

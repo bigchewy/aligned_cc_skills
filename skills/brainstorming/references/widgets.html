@@ -79,7 +79,211 @@
 
 <!-- WIDGETS-SCRIPT-START -->
 <script>
-  // Stub — replaced in Task 3 with two guarded IIFEs.
+  (function() {
+    'use strict';
+
+    // Clipboard helper with file:// / non-secure-context fallback.
+    function copyToClipboard(text, btn) {
+      var originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = originalLabel;
+      var showSuccess = function() {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+        }, 1800);
+      };
+      var showFailure = function() {
+        btn.textContent = 'Copy failed — select & Cmd-C';
+        btn.classList.add('btn-error');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('btn-error');
+        }, 3000);
+      };
+      if (!navigator.clipboard || !window.isSecureContext) {
+        // Synchronous fallback for file:// origins and Safari/Firefox non-HTTPS.
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        if (ok) showSuccess(); else showFailure();
+        return;
+      }
+      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
+    }
+
+    function markDirtyOnInput(textarea) {
+      textarea.addEventListener('input', function() {
+        textarea.dataset.dirty = 'true';
+      });
+    }
+
+    // ── DECISION LOG ─────────────────────────────────────────────
+    (function decisionLogWidget() {
+      if (!document.getElementById('decisions-table')) return;
+      var table = document.getElementById('decisions-table');
+      var prompt = document.getElementById('decisions-prompt');
+      var copyBtn = document.getElementById('copy-decisions');
+      var regenBtn = document.getElementById('regenerate-decisions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function rows() {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allRows = rows();
+        if (allRows.length === 0) {
+          return 'No decisions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var rejected = allRows
+          .filter(function(tr) { var sel = tr.querySelector('select'); return sel && sel.value === 'reject'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        if (rejected.length === 0) {
+          return 'All decisions approved.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.';
+        }
+        var lines = ["I've reviewed this design and I'm rejecting the following decisions:", ''];
+        rejected.forEach(function(d) {
+          lines.push('  • Decision #' + d.num + ' — ' + d.title);
+          lines.push('    Reason: <add your reason here>');
+          lines.push('');
+        });
+        lines.push('Please revise the design to address these rejections and re-present.');
+        lines.push('');
+        lines.push('If you have an alternative recommendation for any of these, propose it before I commit to a replacement.');
+        return lines.join('\n');
+      }
+
+      function updateRow(select) {
+        var tr = select.closest('tr');
+        if (!tr) return;
+        if (select.value === 'reject') {
+          select.classList.add('reject');
+          tr.classList.add('row-active');
+        } else {
+          select.classList.remove('reject');
+          tr.classList.remove('row-active');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;  // user edits survive
+        prompt.value = buildPrompt();
+      }
+
+      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateRow(sel);
+          refresh();
+        });
+        updateRow(sel);  // sync initial classes for restored state
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+
+    // ── OPEN QUESTIONS ───────────────────────────────────────────
+    (function openQuestionsWidget() {
+      if (!document.getElementById('questions-table')) return;
+      var table = document.getElementById('questions-table');
+      var prompt = document.getElementById('questions-prompt');
+      var copyBtn = document.getElementById('copy-questions');
+      var regenBtn = document.getElementById('regenerate-questions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function rows() {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allRows = rows();
+        if (allRows.length === 0) {
+          return 'No open questions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var included = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'include'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        var rejected = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'reject'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        if (included.length === 0 && rejected.length === 0) {
+          return 'All open questions deferred.\n\nProceed with the design as-is; we will resolve these as the named triggers fire.';
+        }
+        var lines = ['Open-questions review:', ''];
+        if (included.length > 0) {
+          lines.push('ASK ME NOW (resolve interactively, one at a time):');
+          included.forEach(function(q) { lines.push('  • Question #' + q.num + ' — ' + q.title); });
+          lines.push('');
+          lines.push("For these: please ask me one at a time. Use multiple-choice options when reasonable. Don't assume answers — wait for my response before moving to the next.");
+          lines.push('');
+        }
+        if (rejected.length > 0) {
+          lines.push('REJECT (remove from open-questions list entirely — not worth asking now or later):');
+          rejected.forEach(function(q) {
+            lines.push('  • Question #' + q.num + ' — ' + q.title);
+            lines.push('    Reason: <add your reason here, or leave blank>');
+          });
+          lines.push('');
+          lines.push("For these: drop them from the design's Open Questions section. Update the design doc and HTML to reflect their removal.");
+          lines.push('');
+        }
+        if (included.length > 0 && rejected.length > 0) {
+          lines.push('Handle the REJECT items first (housekeeping), then start the ASK ME NOW questions.');
+        }
+        return lines.join('\n');
+      }
+
+      function updateRow(select) {
+        var tr = select.closest('tr');
+        if (!tr) return;
+        select.classList.remove('include', 'q-reject');
+        tr.classList.remove('row-active', 'row-rejected');
+        if (select.value === 'include') {
+          select.classList.add('include');
+          tr.classList.add('row-active');
+        } else if (select.value === 'reject') {
+          select.classList.add('q-reject');
+          tr.classList.add('row-rejected');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;
+        prompt.value = buildPrompt();
+      }
+
+      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateRow(sel);
+          refresh();
+        });
+        updateRow(sel);
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+  })();
 </script>
 <!-- WIDGETS-SCRIPT-END -->
 
