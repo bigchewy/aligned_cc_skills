@@ -275,3 +275,64 @@ General-purpose content wrapper with white background, border, and rounded corne
 ```
 
 **Notes:** Sections stack vertically with 24px spacing. Use `.description` for secondary text and `.bullet-list` for lists within sections.
+
+---
+
+### Interactive Widgets
+
+Triage UI for the design doc's Decision Log and Open Questions sections. Lets the user toggle Approve/Reject (decisions) or Defer/Include/Reject (questions); a textarea below auto-builds a prompt the user can copy back into the conversation.
+
+**Workflow step:** Post-critique snapshot — wire onto the committed mockup at `docs/mockups/{session-name}.html` whenever the design produced a Decision Log (>=1 entry) OR an Open Questions list (>=1 entry).
+
+**Source:** All widget markup, CSS, and JS lives in `{base-directory}/references/widgets.html`. The model copies the relevant blocks verbatim into the live HTML during visualization — never regenerated from memory.
+
+#### When to use each block
+
+| Entries  | Decision Log block               | Open Questions block             |
+| -------- | -------------------------------- | -------------------------------- |
+| 1–9      | `WIDGET-HTML: decision-log-flat` | `WIDGET-HTML: open-questions-flat` |
+| 10+      | `WIDGET-HTML: decision-log-categorized` | `WIDGET-HTML: open-questions-categorized` |
+
+The categorized variants add `<tr class="section-divider">` rows grouping entries into themes (A, B, C ...). Below 10 entries, flat tables are clearer.
+
+#### Sidecar contract
+
+The model performs three injections during visualization:
+
+1. **WIDGETS-CSS** — one copy, inside `<head>` after the inline `<style>` block.
+2. **WIDGETS-SCRIPT** — one copy, immediately before `</body>`. **MUST land outside the `<!-- LIVE-REFRESH-START -->...<!-- LIVE-REFRESH-END -->` delimiters** — otherwise the strip-script rule destroys the widget JS in the committed snapshot.
+3. **WIDGET-HTML blocks** — inside the owning `<section>` (Decision Log section gets a `decision-log-*` block; Open Questions section gets an `open-questions-*` block). Both wrap in `.interactive-section`. The reusable `WIDGET-HTML: prompt-box` block follows each table.
+
+#### data-id contract (stable IDs)
+
+Every triage row carries:
+- `data-id="N"` — the decision/question number. Stable across reorderings; cross-references in prose (e.g., "see Decision #14") survive categorization.
+- `data-title="..."` — the headline used in the generated prompt text.
+
+Section-divider rows do **not** have `data-id`. The JS selector `tbody tr[data-id]` skips them. Never use bare `tbody tr` — it crashes on dividers.
+
+#### Selector contract (state-composition hook)
+
+Every widget `<select>` MUST include `dropdown` in its `class` attribute (e.g., `class="dropdown"` for decisions, `class="dropdown q-dropdown"` for questions). The `saveState`/`restoreState` IIFE uses the selector `select.dropdown[data-id]` to detect widget state — a select that carries `data-id` but lacks the `dropdown` class token is invisible to the persistence layer and its value will be lost on reload. The `q-dropdown` class is a styling-only addition; `dropdown` is the contract.
+
+#### `{widget-id}` substitution contract
+
+The `WIDGET-HTML: prompt-box` block contains a `{widget-id}` placeholder. Valid values are exactly:
+- `decisions` — for the Decision Log widget (produces IDs `decisions-prompt`, `copy-decisions`, `regenerate-decisions`).
+- `questions` — for the Open Questions widget (produces IDs `questions-prompt`, `copy-questions`, `regenerate-questions`).
+
+The widget JS hardcodes these IDs. A third triage type would substitute syntactically but never bind at runtime — adding a new widget requires editing both the sidecar JS and this contract.
+
+#### State composition (live-refresh persistence)
+
+The template's `saveState`/`restoreState` IIFE captures and restores widget state across the 15-second refresh. The author of the widget HTML doesn't need to wire anything extra — the IIFE auto-detects `select.dropdown[data-id]` and `textarea.prompt-textarea` instances and stores them under `state.widgets.selects` / `state.widgets.textareas`. After reload, dispatched `change` events re-trigger the widget IIFEs' row-class and prompt-textarea rebuild paths.
+
+User edits to the prompt textarea are protected by a dirty flag (`data-dirty="true"`) — auto-refresh respects it so a hand-edited prompt is not clobbered on next dropdown change or next 15-second reload.
+
+#### Empty-state behavior
+
+If a widget's `<tbody>` has zero `tr[data-id]` rows, the prompt textarea renders the hint *"No {decisions|open questions} captured for this design. Either remove this section or add entries before triaging."* — not a false "all approved" message.
+
+#### Clipboard fallback
+
+Committed snapshots open at `file://` (not a secure context). The Copy button uses `navigator.clipboard.writeText` when available and falls back to `document.execCommand('copy')` via a temporary `<textarea>` otherwise. Failure surfaces in the button label as "Copy failed — select & Cmd-C" for 3 seconds, then reverts.

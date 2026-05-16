@@ -18,13 +18,15 @@ RALPH_DIR = REPO_ROOT / "docs" / "ralph_loops"
 PHASES_DIR = RALPH_DIR / "phases"
 LIB_DIR = RALPH_DIR / "lib"
 
-# Matches a line whose first non-whitespace token is `claude` and which
-# also contains `--bare` — i.e., an actual executable invocation, NOT a
-# comment, docstring, or heredoc that merely mentions the flag. Mirrors
-# the grep pattern in phases/preflight.sh AUTH-COMPAT BLOCK so the
-# static and runtime guards agree on what counts as a forbidden use.
+# Matches an executable `claude ... --bare` invocation — either bare on
+# its own line, OR preceded by the canonical session-spawn prefix
+# `"${_AUTOPILOT_SPAWN_SESSION[@]}"`. Comments and docstrings that merely
+# mention the flag are skipped. Mirrors the grep pattern in
+# phases/preflight.sh AUTH-COMPAT BLOCK so the static and runtime guards
+# agree on what counts as a forbidden use.
 CLAUDE_BARE_INVOCATION = re.compile(
-    r"^[ \t]*claude[ \t].*--bare", re.MULTILINE
+    r'^[ \t]*(?:"\$\{_AUTOPILOT_SPAWN_SESSION\[@\]\}"[ \t]+)?claude[ \t].*--bare',
+    re.MULTILINE,
 )
 
 

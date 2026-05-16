@@ -20,6 +20,8 @@ This rule applies to the four modes that produce a live HTML artifact: software,
 
 Before committing the snapshot at `docs/mockups/{session-name}.html`, verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in the file. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh.
 
+**Widget survival.** After stripping, any widget tables (`decisions-table`, `questions-table`) and their `WIDGETS-SCRIPT` block MUST still be present and bind on load. Widget code lives in a separate `<script>` block delimited by `<!-- WIDGETS-SCRIPT-START -->` / `<!-- WIDGETS-SCRIPT-END -->`, outside the LIVE-REFRESH delimiters. If a committed snapshot is missing the widget script after a strip, the widget block was injected inside the LIVE-REFRESH delimiters by mistake — re-run the visualization-protocol's widget-injection step and verify the block lands before `</body>` and AFTER `<!-- LIVE-REFRESH-END -->`.
+
 ## Interaction principles (apply to every mode)
 
 - **One question at a time** — Don't overwhelm with multiple questions

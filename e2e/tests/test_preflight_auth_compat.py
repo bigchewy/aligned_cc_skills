@@ -159,6 +159,52 @@ def test_behavioral_missing_call_site_files_pass(tmp_path):
     assert not log_file.exists()
 
 
+def test_behavioral_bare_in_prefix_form_call_site_halts(tmp_path):
+    """The real call sites in lib/process.sh and run-ralph.sh prepend the
+    session-spawn prefix (`"${_AUTOPILOT_SPAWN_SESSION[@]}" claude -p ...`)
+    so claude becomes a process-group leader and kill_claude can tree-kill
+    it. The preflight grep must still detect `--bare` on those lines —
+    otherwise the regex anchor accidentally narrowed the safety net when
+    the spawn shape changed. Regression guard against that scenario."""
+    ralph_dir = tmp_path / "ralph_loops"
+    (ralph_dir / "lib").mkdir(parents=True)
+    bare_with_prefix = (
+        '  "${_AUTOPILOT_SPAWN_SESSION[@]}" claude -p --bare - < "$PROMPT_FILE" &\n'
+    )
+    (ralph_dir / "lib" / "process.sh").write_text(bare_with_prefix)
+    (ralph_dir / "run-ralph.sh").write_text(
+        '  "${_AUTOPILOT_SPAWN_SESSION[@]}" claude -p - < "$PROMPT_FILE" &\n'
+    )
+    log_file = tmp_path / "write_halt.log"
+    result = _run_block(ralph_dir, log_file)
+    assert result.returncode == 2, (
+        f"Block must exit 2 (halt) when prefix-form call site contains "
+        f"--bare. Got returncode={result.returncode}, stderr={result.stderr!r}"
+    )
+    assert log_file.exists(), "write_halt must be called"
+    log = log_file.read_text()
+    assert "headless_auth_incompat" in log
+    assert "lib/process.sh" in log
+
+
+def test_behavioral_clean_prefix_form_passes(tmp_path):
+    """Mirror of the clean-call-sites test for the prefix form. Ensures
+    the regex broadening for the spawn prefix doesn't accidentally match
+    the safe prefix-form invocation."""
+    ralph_dir = tmp_path / "ralph_loops"
+    (ralph_dir / "lib").mkdir(parents=True)
+    safe_prefix = '  "${_AUTOPILOT_SPAWN_SESSION[@]}" claude -p - < "$PROMPT_FILE" &\n'
+    (ralph_dir / "lib" / "process.sh").write_text(safe_prefix)
+    (ralph_dir / "run-ralph.sh").write_text(safe_prefix)
+    log_file = tmp_path / "write_halt.log"
+    result = _run_block(ralph_dir, log_file)
+    assert result.returncode == 0, (
+        f"Block must exit 0 on clean prefix-form call sites. "
+        f"stdout={result.stdout!r} stderr={result.stderr!r}"
+    )
+    assert not log_file.exists()
+
+
 def test_behavioral_comment_only_mention_does_not_halt(tmp_path):
     """A comment that documents *why* --bare is forbidden (e.g.,
     `# Do NOT use --bare here — breaks OAuth`) is welcome and must not

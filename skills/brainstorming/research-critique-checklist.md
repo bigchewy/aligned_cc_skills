@@ -94,12 +94,15 @@ Critique a research memo for scope clarity, source quality, and recommendation d
 - BAD: Memo ends with the recommendation; no open questions section.
 - GOOD: "Open questions: (1) does Framework X's adolescent evidence base hold beyond N=200? Resolves with: a multi-site replication study. (2) ..."
 
-### 9. Decision quality (if Decision Log present)
+### 9. Decision quality (if Decision Log or Open Questions list present)
+
+If the synthesis includes a Decision Log or an Open Questions list, evaluate each decision entry and each open-questions triage call.
 
 - For each decision, assess whether the chosen approach is the best option given the stated alternatives.
 - Rate each: **sound**, **questionable**, **wrong**.
 - Cite evidence from the corpus or domain knowledge for any non-sound rating.
-- If no Decision Log, mark N/A.
+- For each Open Questions entry, assess whether the named *trigger that would resolve it* is concrete and observable, or vague enough that the question will never actually re-fire. Vague triggers are a smell.
+- If no Decision Log or Open Questions list is present, mark N/A.
 
 ## Critique Output Format
 

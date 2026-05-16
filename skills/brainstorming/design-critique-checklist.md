@@ -125,14 +125,15 @@ Does the design stay focused on the stated goal?
 - BAD: Design goal is "add session history page" but includes a full analytics dashboard
 - GOOD: Every component directly serves the stated goal
 
-### 9. Decision quality (if Decision Log present)
+### 9. Decision quality (if Decision Log or Open Questions list present)
 
-If the design includes a Decision Log, evaluate each decision entry.
+If the design includes a Decision Log or an Open Questions list, evaluate each decision entry and each open-questions triage call.
 
 - For each decision, assess whether the chosen approach is the best option given the stated alternatives
 - Rate each: **sound** (good choice), **questionable** (reasonable but worth the user's attention), or **wrong** (an alternative is clearly better)
 - Cite evidence from the codebase or domain knowledge for any non-sound rating
-- If no Decision Log is present, mark N/A
+- For each Open Questions entry, assess whether the named *trigger that would resolve it* is concrete and observable, or vague enough that the question will never actually re-fire. Vague triggers are a smell.
+- If no Decision Log or Open Questions list is present, mark N/A
 
 - BAD: Decision claims "no alternatives exist" when obvious alternatives are visible in the codebase
 - GOOD: Decision clearly explains trade-offs and the choice aligns with evidence

@@ -34,18 +34,19 @@ source "$RALPH_DIR/lib/halt.sh"
 #
 # MAINTAINERS: if you add another headless `claude` call site anywhere
 # in docs/ralph_loops/, append its path to AUTH_COMPAT_CALL_SITES below.
-# The grep pattern matches only executable invocations — lines whose
-# first non-whitespace token is `claude` — so a comment that explains
-# why --bare is forbidden will NOT trigger a false-positive halt. But a
-# new invocation that uses --bare in a file not listed here would slip
-# past this guard.
+# The grep pattern matches executable invocations — lines whose first
+# non-whitespace token is either `claude` directly OR the canonical
+# session-spawn prefix `"${_AUTOPILOT_SPAWN_SESSION[@]}" claude` — so
+# a comment that explains why --bare is forbidden will NOT trigger a
+# false-positive halt. But a new invocation that uses --bare in a file
+# not listed here would slip past this guard.
 AUTH_COMPAT_CALL_SITES=(
   "$RALPH_DIR/lib/process.sh"
   "$RALPH_DIR/run-ralph.sh"
 )
 for _auth_compat_f in "${AUTH_COMPAT_CALL_SITES[@]}"; do
   if [ -f "$_auth_compat_f" ] && \
-     grep -qE '^[[:space:]]*claude[[:space:]].*--bare' "$_auth_compat_f"; then
+     grep -qE '^[[:space:]]*("\$\{_AUTOPILOT_SPAWN_SESSION\[@\]\}"[[:space:]]+)?claude[[:space:]].*--bare' "$_auth_compat_f"; then
     write_halt headless_auth_incompat preflight \
       "Headless call site '$_auth_compat_f' passes --bare to claude. --bare restricts auth to ANTHROPIC_API_KEY or apiKeyHelper (OAuth and keychain are never read, per 'claude --help'), which breaks Max-plan users. Revert the call site to 'claude -p - < \"\$PROMPT_FILE\"' (no --bare). See docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md."
     exit 2
