@@ -538,7 +538,7 @@ When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-forma
 
 ## Execution Handoff
 
-**Resolve the plugin root path:** The Ralph loop script lives in this plugin's `docs/ralph_loops/` directory. Derive the plugin root as two levels up from `{base-directory}`: `{base-directory}/../..` (i.e., strip `skills/writing-plans/`). Verify the resolved path exists by reading `{plugin-root}/docs/ralph_loops/run-ralph.sh`. **If it cannot be found, STOP and tell the user.** Store as `{plugin-root}`.
+**Resolve the plugin root path:** The Ralph loop script lives in this plugin's `scripts/autopilot/` directory. Derive the plugin root as two levels up from `{base-directory}`: `{base-directory}/../..` (i.e., strip `skills/writing-plans/`). Verify the resolved path exists by reading `{plugin-root}/scripts/autopilot/run-ralph.sh`. **If it cannot be found, STOP and tell the user.** Store as `{plugin-root}`.
 
 After saving the plan (to the main worktree and committed to main), present execution options.
 
@@ -567,5 +567,5 @@ Copy the selected template text into the conversation with the substitutions app
 Before outputting the execution options, verify by checking all three conditions. If any fail, fix before presenting.
 
 1. **Plan file exists on main:** Read `$main_worktree/docs/plans/YYYY-MM-DD-<feature-name>.md` — must succeed.
-2. **run-ralph.sh exists:** Read `{plugin-root}/docs/ralph_loops/run-ralph.sh` — must succeed.
+2. **run-ralph.sh exists:** Read `{plugin-root}/scripts/autopilot/run-ralph.sh` — must succeed.
 3. **Worktree path exists:** Glob `{worktree-path}/*` — must return results.

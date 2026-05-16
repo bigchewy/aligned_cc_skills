@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-HALT_SH = REPO_ROOT / "docs" / "ralph_loops" / "lib" / "halt.sh"
+HALT_SH = REPO_ROOT / "scripts" / "autopilot" / "lib" / "halt.sh"
 HALT_DOC = REPO_ROOT / "skills" / "_shared" / "autopilot-halt-format.md"
 
 EXPECTED_REASONS = [
@@ -80,7 +80,7 @@ def test_format_halt_echoes_canonical_fix(reason, needle, tmp_path):
 
 
 def test_phase_verify_emits_halt_on_failure():
-    verify = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "verify.sh"
+    verify = REPO_ROOT / "scripts" / "autopilot" / "phases" / "verify.sh"
     text = verify.read_text(encoding="utf-8")
     assert "lib/halt.sh" in text, "verify.sh must source lib/halt.sh"
     assert "write_halt verify_failed" in text, \
@@ -103,10 +103,10 @@ def test_format_halt_cases_match_write_halt_callsites():
     assert format_halt_cases, "extracted zero case labels — regex likely stale"
 
     sh_files = sorted(
-        (REPO_ROOT / "docs" / "ralph_loops" / "lib").glob("*.sh"))
+        (REPO_ROOT / "scripts" / "autopilot" / "lib").glob("*.sh"))
     sh_files += sorted(
-        (REPO_ROOT / "docs" / "ralph_loops" / "phases").glob("*.sh"))
-    sh_files.append(REPO_ROOT / "docs" / "ralph_loops" / "autopilot.sh")
+        (REPO_ROOT / "scripts" / "autopilot" / "phases").glob("*.sh"))
+    sh_files.append(REPO_ROOT / "scripts" / "autopilot" / "autopilot.sh")
     static_callsites: set[str] = set()
     for f in sh_files:
         text = f.read_text(encoding="utf-8")
@@ -117,7 +117,7 @@ def test_format_halt_cases_match_write_halt_callsites():
         for m in re.finditer(r'\bwrite_halt\s+([a-z][a-z_0-9]*)\b', text):
             static_callsites.add(m.group(1))
 
-    manifest_sh = REPO_ROOT / "docs" / "ralph_loops" / "lib" / "manifest.sh"
+    manifest_sh = REPO_ROOT / "scripts" / "autopilot" / "lib" / "manifest.sh"
     manifest_text = manifest_sh.read_text(encoding="utf-8")
     check_mcp = re.search(
         r'check_mcp_tool\(\)\s*\{(.*?)^\}', manifest_text,

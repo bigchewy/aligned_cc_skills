@@ -43,7 +43,7 @@ Auto-discover all documentation files. No manual mapping required.
    - `docs/clients/` — client work docs
    - `docs/critiques/` — advisor/framework critique docs
    - `docs/notion-export/` — Notion template content
-   - `docs/ralph_loops/` — Ralph loop prompts (legacy, now at ~/.claude/ralph_loops/)
+   - `scripts/autopilot/` — autopilot orchestration scripts and prompts (active code, not living architecture docs)
    - `docs/future/` — future feature specs
    - `docs/kanban/` — work item tracking
    - `docs/personas/` — structured persona data for persona-panel skill, not documentation

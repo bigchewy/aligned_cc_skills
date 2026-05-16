@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-RALPH_DIR = REPO_ROOT / "docs" / "ralph_loops"
+RALPH_DIR = REPO_ROOT / "scripts" / "autopilot"
 LIB_DIR = RALPH_DIR / "lib"
 
 
@@ -120,7 +120,7 @@ PHASE_HEADER_FIELDS = ("# PHASE:", "# INPUTS:", "# OUTPUTS:", "# EXIT CODES:")
 
 
 def test_phases_dir_exists():
-    assert PHASES_DIR.is_dir(), "docs/ralph_loops/phases/ must exist"
+    assert PHASES_DIR.is_dir(), "scripts/autopilot/phases/ must exist"
 
 
 def test_phase_template_declares_contract():

@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-EXECUTE_PLAN = REPO_ROOT / "docs" / "ralph_loops" / "EXECUTE-PLAN.md"
+EXECUTE_PLAN = REPO_ROOT / "scripts" / "autopilot" / "EXECUTE-PLAN.md"
 DOC_TEXT = EXECUTE_PLAN.read_text(encoding="utf-8")
 
 

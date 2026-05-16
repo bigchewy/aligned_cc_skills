@@ -178,6 +178,8 @@ handle_signal() {
 trap handle_signal INT TERM
 trap cleanup EXIT
 
+start_system_sampler
+
 echo "========================================"
 echo "  Autopilot Pipeline"
 echo "========================================"

@@ -526,8 +526,8 @@ BEFORE completing this skill's process:
 
 **Called by:**
 - **executing-plans** (Step 6) — After all tasks complete
-- **run-ralph.sh** (aligned plugin's `docs/ralph_loops/`) — User runs manually after Ralph loop completes
-- **autopilot.sh** (aligned plugin's `docs/ralph_loops/`) — User runs manually after autopilot completes (autopilot stops at verification, does not merge)
+- **run-ralph.sh** (aligned plugin's `scripts/autopilot/`) — User runs manually after Ralph loop completes
+- **autopilot.sh** (aligned plugin's `scripts/autopilot/`) — User runs manually after autopilot completes (autopilot stops at verification, does not merge)
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill

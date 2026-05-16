@@ -1,5 +1,5 @@
 """Behavioral tests for kill_claude tree-kill semantics in
-docs/ralph_loops/lib/process.sh.
+scripts/autopilot/lib/process.sh.
 
 Regression guard for the orphaned-MCP-server bug: prior to the
 session-spawn + negative-PID kill, `kill_claude` only signalled the
@@ -19,7 +19,7 @@ import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-PROCESS_LIB = REPO_ROOT / "docs" / "ralph_loops" / "lib" / "process.sh"
+PROCESS_LIB = REPO_ROOT / "scripts" / "autopilot" / "lib" / "process.sh"
 
 
 def _bash(script: str, timeout: float = 30.0) -> subprocess.CompletedProcess:

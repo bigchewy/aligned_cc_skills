@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-VERIFY = REPO_ROOT / "docs" / "ralph_loops" / "VERIFY-BRANCH.md"
+VERIFY = REPO_ROOT / "scripts" / "autopilot" / "VERIFY-BRANCH.md"
 
 
 def _read() -> str:

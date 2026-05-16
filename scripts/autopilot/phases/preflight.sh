@@ -33,7 +33,7 @@ source "$RALPH_DIR/lib/halt.sh"
 # See:   docs/lessons-learned/2026-05-14-autopilot-bare-oauth-incompat.md
 #
 # MAINTAINERS: if you add another headless `claude` call site anywhere
-# in docs/ralph_loops/, append its path to AUTH_COMPAT_CALL_SITES below.
+# in scripts/autopilot/, append its path to AUTH_COMPAT_CALL_SITES below.
 # The grep pattern matches executable invocations — lines whose first
 # non-whitespace token is either `claude` directly OR the canonical
 # session-spawn prefix `"${_AUTOPILOT_SPAWN_SESSION[@]}" claude` — so

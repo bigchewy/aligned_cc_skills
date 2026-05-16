@@ -15,7 +15,7 @@ import tempfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-RALPH_DIR = REPO_ROOT / "docs" / "ralph_loops"
+RALPH_DIR = REPO_ROOT / "scripts" / "autopilot"
 
 
 def _make_stub_claude(tmpdir: Path, env_dump_file: Path, args_dump_file: Path) -> Path:

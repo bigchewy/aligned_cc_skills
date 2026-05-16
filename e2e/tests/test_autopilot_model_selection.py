@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-RALPH_DIR = REPO_ROOT / "docs" / "ralph_loops"
+RALPH_DIR = REPO_ROOT / "scripts" / "autopilot"
 PHASES_DIR = RALPH_DIR / "phases"
 LIB_DIR = RALPH_DIR / "lib"
 

@@ -32,7 +32,7 @@ If the Glob returns no matches, STOP and tell the user the plugin appears to be 
 
 ## Plugin root
 
-If a skill needs the plugin root directly (e.g., to locate `docs/ralph_loops/` or reference sibling skill paths), perform steps 1–2 of the Fallback procedure. Do not derive the plugin root by string-manipulating `{base-directory}` — always anchor on `.claude-plugin/plugin.json`.
+If a skill needs the plugin root directly (e.g., to locate `scripts/autopilot/` or reference sibling skill paths), perform steps 1–2 of the Fallback procedure. Do not derive the plugin root by string-manipulating `{base-directory}` — always anchor on `.claude-plugin/plugin.json`.
 
 ## Usage pattern in skill files
 

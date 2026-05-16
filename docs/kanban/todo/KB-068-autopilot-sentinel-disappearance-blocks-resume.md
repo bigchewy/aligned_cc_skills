@@ -3,9 +3,9 @@
 - **Type:** bug
 - **Discovered during:** root-cause-analysis (Planted positioning-defense autopilot resume incident, 2026-05-14)
 - **Location:**
-  - `docs/ralph_loops/autopilot.sh:103` (SENTINEL declaration)
-  - `docs/ralph_loops/autopilot.sh:367` (success-exit deletion)
-  - `docs/ralph_loops/phases/plan.sh:44-65` (sentinel-check + conditional deletion)
+  - `scripts/autopilot/autopilot.sh:103` (SENTINEL declaration)
+  - `scripts/autopilot/autopilot.sh:367` (success-exit deletion)
+  - `scripts/autopilot/phases/plan.sh:44-65` (sentinel-check + conditional deletion)
 - **Observed:** When autopilot halts at the verify phase (exit-code-2 from `run_phase`, autopilot.sh:144-149) and is later re-run, phase 2 (plan-write) is supposed to skip via the sentinel mechanism: `plan.sh:44-56` reads `.autopilot-plan-path`, compares its first line (design-doc path) to the current invocation's `$DESIGN_DOC`, and if they match AND the plan file referenced on line 2 still exists, exits with code 3 (skip). The skip should leave the plan untouched.
   
   In the Planted incident on 2026-05-14, this skip did not fire on resume. Autopilot phase 2 began rewriting the plan from scratch, which would have clobbered an executed plan (1,779 lines, 21 tasks) for which 17+ task commits had already been made on the feature branch. The user noticed within ~90 seconds and killed the process before the new plan was written, so no work was lost — but the failure mode is a data-loss vector if the user steps away during a resume.

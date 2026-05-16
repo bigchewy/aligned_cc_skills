@@ -222,6 +222,10 @@ check_all_settled_and_write_done() {
   fi
 }
 
+_spawn_pgid=""
+
+start_system_sampler
+
 # --- Main loop ---
 
 echo "=== Ralph Loop Started ==="
@@ -241,6 +245,7 @@ while :; do
   fi
 
   echo "--- Iteration $ITERATION starting ($(date '+%H:%M:%S')) ---"
+  log_marker "ralph-iter-$ITERATION starting"
   print_worktree_drift_breadcrumb
 
   start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
@@ -256,6 +261,7 @@ while :; do
   # the MCP children with it instead of orphaning them to PID 1.
   "${_AUTOPILOT_SPAWN_SESSION[@]}" claude -p - < "$PROMPT_FILE" &
   CLAUDE_PID=$!
+  _spawn_pgid="$CLAUDE_PID"
 
   start_watchdog "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
@@ -267,6 +273,7 @@ while :; do
   else
     EXIT_CODE=$?
   fi
+  snapshot_post_wait "ralph-iter-$ITERATION" "$_spawn_pgid" "$EXIT_CODE"
   CLAUDE_PID=""
 
   stop_watchdog

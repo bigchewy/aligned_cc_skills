@@ -20,7 +20,7 @@ Copy into a new Claude Code session:
 Run from any terminal:
 ```bash
 cd {worktree-path}
-bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
+bash {plugin-root}/scripts/autopilot/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
 ```
 
 ````
@@ -50,7 +50,7 @@ git merge main --no-edit
 Then run:
 ```bash
 cd .worktrees/{feature-name}
-bash {plugin-root}/docs/ralph_loops/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
+bash {plugin-root}/scripts/autopilot/run-ralph.sh "$(pwd)" "$(pwd)/docs/plans/YYYY-MM-DD-<feature-name>.md"
 ```
 **IMPORTANT:** If the worktree setup above failed, do NOT run the script — it would execute against your main repo.
 

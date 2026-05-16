@@ -9,7 +9,7 @@ import tempfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-LIB = REPO_ROOT / "docs" / "ralph_loops" / "lib" / "manifest.sh"
+LIB = REPO_ROOT / "scripts" / "autopilot" / "lib" / "manifest.sh"
 FIX = REPO_ROOT / "e2e" / "fixtures" / "manifest"
 
 
@@ -95,7 +95,7 @@ def test_check_mcp_tool_ok():
 
 def test_preflight_passes_when_env_vars_required_unset():
     """End-to-end: invoke preflight against a fixture plan; verify env-var requirements no longer halt preflight."""
-    PREFLIGHT = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "preflight.sh"
+    PREFLIGHT = REPO_ROOT / "scripts" / "autopilot" / "phases" / "preflight.sh"
     fixture = FIX / "plan_with_manifest.md"
     with tempfile.TemporaryDirectory() as d:
         # Set up MCP config in HOME so check_mcp_tool finds playwright and treats it as allowlisted.

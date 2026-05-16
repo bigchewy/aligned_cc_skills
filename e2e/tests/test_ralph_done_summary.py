@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-RUN_RALPH = REPO_ROOT / "docs" / "ralph_loops" / "run-ralph.sh"
+RUN_RALPH = REPO_ROOT / "scripts" / "autopilot" / "run-ralph.sh"
 SCRIPT_TEXT = RUN_RALPH.read_text(encoding="utf-8")
 
 

@@ -17,7 +17,7 @@ import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-PREFLIGHT_PHASE = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "preflight.sh"
+PREFLIGHT_PHASE = REPO_ROOT / "scripts" / "autopilot" / "phases" / "preflight.sh"
 
 START_MARKER = "# === AUTH-COMPAT BLOCK START ==="
 END_MARKER = "# === AUTH-COMPAT BLOCK END ==="

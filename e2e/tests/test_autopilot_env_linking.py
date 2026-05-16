@@ -11,7 +11,7 @@ import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-WORKTREE_PHASE = REPO_ROOT / "docs" / "ralph_loops" / "phases" / "worktree.sh"
+WORKTREE_PHASE = REPO_ROOT / "scripts" / "autopilot" / "phases" / "worktree.sh"
 
 START_MARKER = "# === ENV-LINK BLOCK START ==="
 END_MARKER = "# === ENV-LINK BLOCK END ==="
