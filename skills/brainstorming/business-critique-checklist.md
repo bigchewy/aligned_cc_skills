@@ -119,14 +119,15 @@ Can the design be translated into concrete next steps?
 - BAD: "Improve the onboarding experience" with no specific actions
 - GOOD: "Rewrite the welcome email (owner: the user, by Thursday) to include the 3 specific outcomes from the diagnostic call"
 
-### 9. Decision quality (if Decision Log present)
+### 9. Decision quality (if Decision Log or Open Questions list present)
 
-If the design includes a Decision Log, evaluate each decision entry.
+If the design includes a Decision Log or an Open Questions list, evaluate each decision entry and each open-questions triage call.
 
 - For each decision, assess whether the chosen approach is the best option given the stated alternatives
 - Rate each: **sound** (good choice), **questionable** (reasonable but worth the user's attention), or **wrong** (an alternative is clearly better)
 - Cite evidence from referenced materials or domain knowledge for any non-sound rating
-- If no Decision Log is present, mark N/A
+- For each Open Questions entry, assess whether the named *trigger that would resolve it* is concrete and observable, or vague enough that the question will never actually re-fire. Vague triggers are a smell.
+- If no Decision Log or Open Questions list is present, mark N/A
 
 - BAD: Decision claims "no alternatives exist" when obvious alternatives are visible in prior strategy docs
 - GOOD: Decision clearly explains trade-offs and the choice aligns with evidence

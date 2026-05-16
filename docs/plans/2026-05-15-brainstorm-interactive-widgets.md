@@ -1077,7 +1077,7 @@ git commit -m "docs(brainstorming): mandate widget injection when triage entries
 
 ---
 
-### Task 10: Extend criterion 9 in all five critique checklists to cover Open Questions
+### ✅ Task 10: Extend criterion 9 in all five critique checklists to cover Open Questions
 
 **Files:**
 - Modify: `skills/brainstorming/design-critique-checklist.md` (criterion 9, the "Decision quality" heading)
