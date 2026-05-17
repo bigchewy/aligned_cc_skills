@@ -250,111 +250,129 @@ Match → warning: `slice: {slice-id}, question: {text}, heuristic: compound`.
 
 **Context-bloat guard:** Continue to avoid loading slice draft bodies into orchestrator context. Move drafts on disk; don't re-read them.
 
-Step 3.0: Move drafts from `.build/drafts/` into their final paths.
+**Step 3.1: Aggregate per-slice OQs.**
+
+Read every `.build/slices/{slice-id}.oq.json` file (Glob `{brand-folder-path}/.build/slices/*.oq.json`, sorted alphabetically for deterministic numbering).
+
+1. Take only the `open_questions` array from each file; discard the wrapper.
+2. Concatenate all arrays in slice order. Assign global `OQ-N` ids: `global_id: "OQ-{N}"` where N is 1-indexed across the concatenation.
+
+**GAP-dedupe rule:** For OQs from GAP slices (`framework_slot: null`, `deepen_with: null`), deduplicate by `gap_frameworks_needed` value — emit one P0 meta-OQ per *missing framework* (not per slice instance). If `audiences/channels/employer.md` and `audiences/channels/wholesale.md` both emit a meta-OQ pointing to `channel-strategy`, keep one entry recommending `/aligned:add-framework channel-strategy` and list both slice paths in `why_it_matters`.
+
+**Field-rename mapping (v0.1 → v0.2 schema):** Rename any v0.1 fields the sub-agents may have emitted:
+- `best_guess` → `inferred_value`
+- `what_i_wrote` → `draft_excerpt`
+- `sources` → `evidence` (convert source entries to typed-prefix strings if not already)
+- Drop any `type` field (derived at render time)
+
+The AUTO_MODE preamble enforces v0.2 field names directly, so this step is a no-op for compliant sub-agents. Log a warning if any v0.1 rename was actually applied.
+
+**Step 3.2: Build the `folders` array.**
+
+For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences`, `personas`, `market`, `proof`, `design`):
+- Determine `status`: `Strong` (≥1 slice with HIGH-confidence OQs and 0 P0 OQs), `Partial` (≥1 slice present, some P0 OQs), `Weak` (slice present but mostly LOW confidence), `GAP` (no owning framework).
+- Count `p0_count`, `p1_count`, `p2_count` from the slices in this folder.
+- Build `framework_dispatches`: array of `{framework_id, fills}` entries for each dispatched framework.
+- For GAP folders (e.g., `audiences`): set `gap_frameworks_needed: ["channel-strategy", "audience-segmentation"]` (values derived from the slice-level GAP OQs in that folder).
+
+**Step 3.3: Aggregate competitor dossiers.**
+
+Read every `.build/competitors/{slug}.json` file (Glob `{brand-folder-path}/.build/competitors/*.json`). Concatenate into a `competitors` array on the top-level JSON object.
+
+**Step 3.4: Read behavioral alternatives.**
+
+Read `.build/behavioral-alternatives.json` into the top-level JSON's `behavioral_alternatives` array. If the file does not exist (PHASE 1.5 was skipped or produced no output), use an empty array.
+
+**Step 3.5: Move slice drafts to final paths.**
 
 For each entry in the slice index from PHASE 2:
-- Source: `{brand-folder-path}/.build/drafts/{slice-id}`
+- Source: `{brand-folder-path}/.build/slices/{slice-id}.draft.md`
 - Target: `{brand-folder-path}/{slice-id}`
 - Use Bash `mv` or equivalent. Create parent directories as needed.
 
 This is a filesystem move, not a read — drafts never re-enter orchestrator context.
 
-Step 3.1: Aggregate Open Questions and assign global IDs.
+**Step 3.6: Write top-level brand-folder files.**
 
-For each per-slice OQ file under `{brand-folder-path}/.build/open-questions/` (recursive Glob — files may be nested under slice subdirectories):
-
-1. Read the file. Each is shaped as `{"slice_id": "<slice-path>", "open_questions": [...]}` per the synthesizer's contract.
-2. Take only the `open_questions` array; discard the wrapper.
-3. Append each question to the aggregate list, preserving slice order (sort slice files alphabetically for deterministic numbering).
-
-After all per-slice files are aggregated, walk the combined list in order and assign global ids: `OQ-1`, `OQ-2`, …, `OQ-N`, replacing whatever local id the synthesizer wrote. This is the ONLY place ids are assigned — synthesizers never see global numbering.
-
-The full aggregated queue does come into orchestrator context here, but each OQ is ~100 tokens and total count is typically 10-50, so context impact is bounded (~5K tokens max).
-
-Step 3.2: Assemble manifest artifacts.
-
-**`brand/CLAUDE.md`** per `docs/brand-folder-spec.md § CLAUDE.md template`, plus these sections:
-
+**`{brand-folder-path}/CLAUDE.md`** — brand-folder manifest per `docs/brand-folder-spec.md § CLAUDE.md template`, plus:
 1. **Source Registry** — the registry from PHASE 1, written as a table.
 2. **Slice Index** — every file with status + confidence + owning framework + one-line summary.
-3. **Next Steps to Deepen** (framework-level) — auto-populated from the slice → owning framework mapping in PHASE 2. One line per slice, in this exact format:
+3. **Next Steps to Deepen** — one line per slice, e.g.:
    ```
    - `strategy/positioning.md` → run `/aligned:use-framework 5-components-positioning` for a deeper, interactive pass
-   - `strategy/narrative.md` → run `/aligned:use-framework strategic-narrative` for a deeper, interactive pass
-   - `audiences/channels/employer.md` → GAP — no framework owns this slice; synthesis is ad-hoc. Consider commissioning a `channel-strategy` framework.
+   - `audiences/channels/employer.md` → GAP — no framework owns this slice. Consider `/aligned:add-framework channel-strategy`.
    ```
-   Every slice in the folder appears here. GAP slices are explicitly labeled rather than omitted.
-4. **Open Questions** (item-level) — every gap and low-confidence item logged in PHASE 2, numbered, in the format below. This is the canonical source of truth for the queue; the HTML in step 3.2 is a view of this section.
 
-**`brand/version.yaml`** — version `0.1.0`, `generated_by: reverse-engineered-brand`, `git_sha` if available, `sources: [list of registry entries]`.
+**`{brand-folder-path}/version.yaml`** — `schema_version: "0.2.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
 
-**`brand/contracts.yaml`** — copy canonical contracts from `docs/brand-folder-spec.md § contracts.yaml`.
+**`{brand-folder-path}/contracts.yaml`** — copy canonical contracts from `docs/brand-folder-spec.md § contracts.yaml`.
 
-Open Questions markdown format (one block per question in `brand/CLAUDE.md`):
-
-```markdown
-### OQ-{nn}: {one-line summary}
-
-**File:** `path/to/slice.md`{slice-anchor}
-**Confidence:** low|medium
-**What I wrote:** {one or two sentences describing the current draft}
-**Question for you:** {the specific calibration question}
-**Why it matters:** {one line on what this decision affects downstream}
-**Deepen with:** `/aligned:use-framework {framework-id}` (or `GAP — no framework owns this slice` if `deepen_with` is null)
-**Sources:** {registry entry IDs, or "none"}
-```
-
-Write every file under `{brand-folder-path}` atomically.
-
-Step 3.3: Write the consolidated Open Questions JSON and dispatch the HTML agent.
-
-Write the aggregated Open Questions queue (from Step 3.1) to `{brand-folder-path}/.open-questions.json` in this exact schema:
+**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.2.0"`:
 
 ```json
 {
+  "schema_version": "0.2.0",
+  "folders": [
+    {
+      "id": "strategy",
+      "status": "Partial",
+      "p0_count": 2,
+      "p1_count": 3,
+      "p2_count": 1,
+      "framework_dispatches": [
+        { "framework_id": "5-components-positioning", "fills": ["strategy/positioning.md"] }
+      ]
+    }
+  ],
+  "behavioral_alternatives": [],
+  "competitors": [],
   "open_questions": [
     {
       "id": "OQ-1",
       "file": "strategy/positioning.md",
-      "slice": "competitive-alternatives",
+      "framework_slot": "phase-2-competitive-alternatives",
       "confidence": "low",
-      "what_i_wrote": "...",
+      "impact": "P0",
+      "inferred_value": "...",
+      "draft_excerpt": "...",
       "question": "...",
       "why_it_matters": "...",
       "deepen_with": "5-components-positioning",
-      "sources": ["#4", "#6"]
+      "evidence": ["#4", "#6"]
     }
   ]
 }
 ```
 
-The `deepen_with` field is the owning framework id from the PHASE 2 mapping table, or `null` for GAP slices.
+**Step 3.7: Dispatch the renderer.**
 
-Then read `frameworks/reverse-engineered-brand/render-review-html.md` (the prompt template) and dispatch a Task with `subagent_type: general-purpose` and a prompt built by substituting these placeholders into the template:
+Read `frameworks/reverse-engineered-brand/render-review-html.md` once. Dispatch a Task with `subagent_type: general-purpose` and a prompt built by substituting these placeholders into the template:
 
-- `{open-questions-json-path}` — `{brand-folder-path}/.open-questions.json`
-- `{brand-folder-path}` — absolute path to the `brand/` folder
-- `{org-name}` — the org name from PHASE 0
-- `{output-html-path}` — `{brand-folder-path}/open-questions.html`
+- `{template-path}` — absolute path to `frameworks/reverse-engineered-brand/review-template.html`
+- `{open-questions-json-path}` — absolute path to `{brand-folder-path}/.open-questions.json`
+- `{output-html-path}` — `{brand-folder-path}/review.html`
+- `{brand-folder-path}` — absolute path to the brand folder
+- `{org-name}` — org name from PHASE 0
 
-The sub-agent will render the HTML and open it in the browser.
+The renderer reads the template, substitutes the three tokens (`{open-questions-json}` ← the JSON content, `{brand-folder-path}` ← the path, `{org-name}` ← the name), applies the sanitization + verify-before-open contract from `render-review-html.md`, writes to the output path, and opens it.
 
-Step 3.4: Clean up the build directory.
+**Step 3.8: Clean up `.build/`.**
 
-Remove `{brand-folder-path}/.build/`. The intermediate extracts and drafts have all been consolidated into the final brand folder files; the build directory was a scratch space and is no longer needed.
+Delete `{brand-folder-path}/.build/` and all its contents. Dossier data has been inlined into `.open-questions.json` so `.build/competitors/` is no longer needed; same for `.build/slices/` (drafts moved in Step 3.5) and `.build/extracts/` (one-shot).
 
-Note: failures earlier in the run would have aborted before reaching this step (the verification gate at PHASE 2 Step 2.4 catches missing drafts; the hard-fail gate at PHASE 1 Step 1.3 catches zero usable sources). So by the time control reaches Step 3.4, the build is known-complete and `.build/` is safe to remove unconditionally.
+Note: failures earlier in the run would have aborted before reaching this step (the verification gate at PHASE 2 Step 2.4 catches missing drafts; the hard-fail gate at PHASE 1 Step 1.3 catches zero usable sources). By the time control reaches Step 3.8, the build is known-complete and `.build/` is safe to remove unconditionally.
 
-Step 3.5: Final report to the user.
+**Step 3.9: Final report.**
 
-Once the agent returns, say:
+Print to the user a 5–10 line summary:
 
-"Done. Wrote `{brand-folder-path}` with {N} slice files plus `CLAUDE.md`, `version.yaml`, `contracts.yaml`.
-
-Confidence distribution: {X} high, {Y} medium, {Z} low.
-
-Logged {M} Open Questions covering: {brief topic summary}. The interactive review document is open in your browser at `{brand-folder-path}/open-questions.html` — type answers in the browser, click 'Copy all answers,' then paste the resulting prompt back into Claude Code (this session or a new one) to apply the answers to the folder.
-
-The canonical Open Questions queue lives in `brand/CLAUDE.md § Open Questions`. The HTML is a view of it — paste-back keeps them in sync."
+- Org name
+- Source count
+- Slice count and GAP slice count
+- Competitor count
+- Behavioral-alternatives count
+- Total OQ count broken down by P0/P1/P2
+- Path to `review.html`
+- One-line invitation to run `/aligned:use-framework {framework-id}` against the highest-priority slice (chosen from the `folders[].framework_dispatches` array sorted by P0 count)
 
 END.
