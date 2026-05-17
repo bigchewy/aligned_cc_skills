@@ -43,7 +43,7 @@ The plan follows the design doc's Build Order. Several tasks modify `frameworks/
 
 ---
 
-### Task 1: Create open-questions schema validation fixtures
+### ✅ Task 1: Create open-questions schema validation fixtures
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/test-fixtures/oq-schema/valid-minimal.json`

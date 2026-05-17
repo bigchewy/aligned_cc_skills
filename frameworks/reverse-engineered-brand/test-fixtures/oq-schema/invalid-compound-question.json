@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.2.0",
+  "folders": [
+    {
+      "id": "strategy",
+      "label": "Strategy",
+      "status": "Strong",
+      "p0_count": 1,
+      "p1_count": 0,
+      "p2_count": 0,
+      "framework_dispatches": [
+        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md"}
+      ]
+    }
+  ],
+  "behavioral_alternatives": [],
+  "competitors": [],
+  "open_questions": [
+    {
+      "id": "Q-strategy-positioning-1",
+      "global_id": "OQ-1",
+      "file": "strategy/positioning.md",
+      "slice": "competitive-alternatives",
+      "framework_slot": "phase-1-competitive-alternatives",
+      "question": "Is the alternative spreadsheets and is the segment mid-market?",
+      "inferred_value": "spreadsheets + manual dispatch",
+      "draft_excerpt": "Best customers were previously cobbling together spreadsheets.",
+      "confidence": "medium",
+      "impact": "P0",
+      "evidence": ["source:#4"],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "Component 1 anchors the positioning frame.",
+      "emitted_at": "2026-05-17T14:32:00Z"
+    }
+  ]
+}
