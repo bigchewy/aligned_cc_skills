@@ -708,7 +708,7 @@ Carry forward all interactivity from the mockup verbatim: tab switching, per-car
 
 Read `docs/mockups/2026-05-16-reverse-engineered-brand-revamp/review-html-design.html` (relevant sections only — the file is 1954 lines, read in chunks of ~300 lines per Read call). Compare your template:
 - Layout structure matches (sections, columns, ordering)
-- All 9 top-level tabs present, in the same order (`Overview`, `Competitive Context`, `strategy`, `language`, `audiences`, `personas`, `market`, `proof`, `design`)
+- All 9 top-level tabs present, in the same order (`Overview`, `Competitive Context`, `Strategy`, `Language`, `Audiences`, `Personas`, `Market`, `Proof`, `Design`)
 - Overview sub-tabs present (`Executive Summary`, `Strengths & Gaps`, `Where to Focus First`)
 - Behavioral-alternatives section renders FIRST on Competitive Context tab (above named-competitor cards) per April critique
 - Job-statement paragraph present on every tab (H7 fix)
