@@ -1233,6 +1233,313 @@
       ta.value = buildPasteBack(folder);
     }
 
+    // ── Data-driven rendering from OPEN_QUESTIONS (DOM-safe, no innerHTML) ──
+    function ce(tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; }
+    function tx(val) { return document.createTextNode(val == null ? '' : String(val)); }
+    function ap(parent) {
+      for (var i = 1; i < arguments.length; i++) {
+        var c = arguments[i];
+        if (c != null) parent.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+      }
+      return parent;
+    }
+    function sa(el, attrs) {
+      for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) el.setAttribute(k, attrs[k]);
+      return el;
+    }
+    function clearEl(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+    function chip(text, cls) { return ap(ce('span', 'chip ' + cls), tx(text)); }
+    function confClass(c) { return c === 'high' ? 'chip-conf-high' : c === 'medium' ? 'chip-conf-med' : 'chip-conf-low'; }
+    function priClass(p) { return p === 'P0' ? 'pri-p0' : p === 'P1' ? 'pri-p1' : 'pri-p2'; }
+    function statusClass(s) {
+      if (!s) return 'status-partial';
+      var sl = s.toLowerCase();
+      return sl === 'strong' ? 'status-strong' : sl === 'weak' ? 'status-weak' : sl === 'gap' ? 'status-gap' : 'status-partial';
+    }
+    function findFolder(id) {
+      var fl = OPEN_QUESTIONS.folders || [];
+      for (var i = 0; i < fl.length; i++) { if (fl[i].id === id) return fl[i]; }
+      return null;
+    }
+
+    function renderExecSnapshot() {
+      var el = document.getElementById('exec-snapshot');
+      if (!el) return;
+      var oqs = OPEN_QUESTIONS.open_questions || [];
+      var comps = OPEN_QUESTIONS.competitors || [];
+      var folders = OPEN_QUESTIONS.folders || [];
+      var tiles = [
+        { num: comps.length, label: 'competitors researched' },
+        { num: oqs.length, label: 'open questions total' },
+        { num: oqs.filter(function(q) { return q.confidence !== 'low'; }).length, label: 'assumptions logged' },
+        { num: oqs.filter(function(q) { return q.confidence === 'low'; }).length, label: 'questions flagged' },
+        { num: folders.filter(function(f) { return f.framework_dispatches && f.framework_dispatches.length; }).length, label: 'frameworks ready to run' }
+      ];
+      var grid = sa(ce('div', 'snapshot-grid'), { role: 'list', 'aria-label': 'Snapshot stats' });
+      tiles.forEach(function(t) {
+        grid.appendChild(ap(sa(ce('div', 'snapshot-tile'), { role: 'listitem' }),
+          ap(ce('div', 'num'), tx(t.num)),
+          ap(ce('div', 'label'), tx(t.label))));
+      });
+      clearEl(el); el.appendChild(grid);
+    }
+
+    function renderExecConfidenceCards() {
+      var el = document.getElementById('exec-confidence-cards');
+      if (!el) return;
+      var oqs = OPEN_QUESTIONS.open_questions || [];
+      var tiers = [
+        { cls: 'conf-high', label: 'HIGH', count: oqs.filter(function(q) { return q.confidence === 'high'; }).length, desc: 'high-confidence assumptions' },
+        { cls: 'conf-med', label: 'MEDIUM', count: oqs.filter(function(q) { return q.confidence === 'medium'; }).length, desc: 'medium-confidence inferences' },
+        { cls: 'conf-low', label: 'LOW', count: oqs.filter(function(q) { return q.confidence === 'low'; }).length, desc: 'low-confidence questions' }
+      ];
+      clearEl(el);
+      tiers.forEach(function(t) {
+        el.appendChild(ap(ce('div', 'conf-card ' + t.cls),
+          ap(ce('span', 'conf-label'), tx(t.label)),
+          ap(ce('div', 'conf-text'), tx(t.count + ' ' + t.desc))));
+      });
+    }
+
+    function renderStrengthsGaps() {
+      var sl = document.getElementById('strengths-list');
+      var gl = document.getElementById('gaps-list');
+      var oqs = OPEN_QUESTIONS.open_questions || [];
+      var folders = OPEN_QUESTIONS.folders || [];
+      if (sl) {
+        clearEl(sl);
+        var strong = oqs.filter(function(q) { return q.confidence === 'high' && q.inferred_value; });
+        if (strong.length) {
+          strong.forEach(function(q) {
+            var li = ce('li');
+            li.appendChild(tx(q.inferred_value));
+            if (q.evidence && q.evidence.length) ap(li, tx(' '), ap(ce('em'), tx('(' + q.evidence.join(', ') + ')')));
+            sl.appendChild(li);
+          });
+        } else {
+          sl.appendChild(ap(sa(ce('li'), { style: 'color:var(--color-dimmed)' }), tx('No high-confidence assertions found.')));
+        }
+      }
+      if (gl) {
+        clearEl(gl);
+        var gapItems = [];
+        folders.filter(function(f) { return f.status === 'GAP'; }).forEach(function(f) {
+          gapItems.push(ap(ce('li'), ap(ce('code'), tx(f.id + '/')), tx(' — GAP folder; no owning framework commissioned yet')));
+        });
+        oqs.filter(function(q) { return q.impact === 'P0' && q.confidence === 'low'; }).forEach(function(q) {
+          var li = ce('li');
+          li.appendChild(tx(q.question || q.inferred_value || ''));
+          if (q.file) ap(li, tx(' '), ap(ce('em'), tx('(' + q.file + ')')));
+          gapItems.push(li);
+        });
+        if (gapItems.length) {
+          gapItems.forEach(function(item) { gl.appendChild(item); });
+        } else {
+          gl.appendChild(ap(sa(ce('li'), { style: 'color:var(--color-dimmed)' }), tx('No gaps found.')));
+        }
+      }
+    }
+
+    function renderBehavioralAlternatives() {
+      var el = document.getElementById('behavioral-alternatives');
+      if (!el) return;
+      clearEl(el);
+      var alts = OPEN_QUESTIONS.behavioral_alternatives || [];
+      if (!alts.length) {
+        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No behavioral alternatives found in source material.')));
+        return;
+      }
+      var ul = ce('ul', 'alt-list');
+      alts.forEach(function(a) {
+        var li = ce('li', 'alt-row');
+        var main = ap(ce('div', 'alt-row-main'), ap(ce('span', 'alt-name'), tx(a.alternative)), chip((a.confidence || '').toUpperCase(), confClass(a.confidence || '')));
+        li.appendChild(main);
+        if (a.evidence_quote) li.appendChild(ap(ce('blockquote', 'alt-quote'), tx(a.evidence_quote)));
+        if (a.source) li.appendChild(chip(a.source, 'chip-file alt-source'));
+        ul.appendChild(li);
+      });
+      el.appendChild(ul);
+    }
+
+    function renderCompetitorCards() {
+      var el = document.getElementById('competitor-cards');
+      if (!el) return;
+      clearEl(el);
+      var comps = OPEN_QUESTIONS.competitors || [];
+      if (!comps.length) {
+        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No competitor dossiers found.')));
+        return;
+      }
+      var row = ce('div', 'comp-row');
+      comps.forEach(function(c) {
+        var card = ce('div', 'comp-card');
+        card.appendChild(ap(ce('h4'), tx(c.name)));
+        var dl = ce('dl');
+        function addDd(label, val) {
+          if (!val) return;
+          dl.appendChild(ap(ce('dt'), tx(label)));
+          dl.appendChild(ap(ce('dd'), tx(val)));
+        }
+        addDd('Positioning', c.positioning_one_liner);
+        addDd('ICP', c.icp_one_liner);
+        addDd('Pricing', c.pricing_signal);
+        if (c.voice_traits && c.voice_traits.length) addDd('Voice', c.voice_traits.join(', '));
+        card.appendChild(dl);
+        row.appendChild(card);
+      });
+      el.appendChild(row);
+    }
+
+    function renderFocusTable() {
+      var tbody = document.getElementById('where-to-focus-first');
+      if (!tbody) return;
+      clearEl(tbody);
+      var folders = OPEN_QUESTIONS.folders || [];
+      var rank = 1;
+      folders.forEach(function(f) {
+        if (!f.framework_dispatches || !f.framework_dispatches.length) return;
+        f.framework_dispatches.forEach(function(d) {
+          var tr = ce('tr');
+          function addTd(cls, child) { var td = ce('td'); if (cls) td.className = cls; if (child) td.appendChild(child); tr.appendChild(td); }
+          addTd('num', tx(rank++));
+          addTd(null, ap(ce('code'), tx('/aligned:use-framework ' + d.framework_id)));
+          addTd('fills', tx(d.fills));
+          addTd(null, ap(ce('span', 'pri ' + priClass('P0')), tx(f.p0_count || 0)));
+          addTd(null, ap(ce('span', 'pri ' + priClass('P1')), tx(f.p1_count || 0)));
+          addTd(null, ap(ce('span', 'pri ' + priClass('P2')), tx(f.p2_count || 0)));
+          addTd(null, null);
+          var btn = sa(ap(ce('button', 'btn-mini'), tx('Copy command')), { 'data-target': 'pasteback-' + f.id });
+          addTd(null, btn);
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function renderSectionsAtAGlance() {
+      var el = document.getElementById('sections-at-a-glance');
+      if (!el) return;
+      clearEl(el);
+      var folders = OPEN_QUESTIONS.folders || [];
+      if (!folders.length) {
+        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No folders found.')));
+        return;
+      }
+      var ul = ce('ul', 'section-list');
+      folders.forEach(function(f) {
+        var sc = statusClass(f.status);
+        var badge = f.status === 'GAP' ? 'GAP — no owning framework' :
+          (f.status + (f.p0_count ? ' — ' + f.p0_count + ' P0 open' : ''));
+        var li = ce('li');
+        li.appendChild(ap(ce('span', 'label'), tx(f.label || f.id)));
+        li.appendChild(ap(ce('span', 'status-badge ' + sc), tx(badge)));
+        if (f.framework_dispatches && f.framework_dispatches.length) {
+          var sub = ce('ul');
+          f.framework_dispatches.forEach(function(d) {
+            var fname = d.fills.replace(/^.*\//, '').replace(/\.md$/, '');
+            fname = fname.charAt(0).toUpperCase() + fname.slice(1);
+            sub.appendChild(ap(ce('li'), ap(ce('span', 'label'), tx(fname)), ap(ce('span', 'status-badge ' + sc), tx(f.status || ''))));
+          });
+          li.appendChild(sub);
+        }
+        ul.appendChild(li);
+      });
+      el.appendChild(ul);
+    }
+
+    function renderOQCard(q, folderId) {
+      var kind = q.confidence === 'low' ? 'question' : 'assumption';
+      var impact = q.impact || 'P2';
+      var confLabel = (q.confidence || 'low').toUpperCase().replace('MEDIUM', 'MED');
+      var bodyText = kind === 'assumption' ? (q.inferred_value || q.question || '') : (q.question || q.inferred_value || '');
+      var card = sa(ce('div', 'oq-card'), { 'data-id': q.global_id || q.id, 'data-folder': folderId, 'data-kind': kind });
+      var hdr = ce('div', 'oq-card-header');
+      hdr.appendChild(ap(ce('span', 'oq-id'), tx(q.global_id || q.id)));
+      hdr.appendChild(chip(impact, 'pri ' + priClass(impact)));
+      hdr.appendChild(chip('conf: ' + confLabel, confClass(q.confidence || 'low')));
+      hdr.appendChild(chip(q.file || '', 'chip-file'));
+      card.appendChild(hdr);
+      card.appendChild(ap(ce('p', 'oq-body'), tx(bodyText)));
+      if (kind === 'question' && q.inferred_value) {
+        card.appendChild(ap(ce('div', 'oq-best-guess'), ap(ce('strong'), tx('Best guess: ')), tx(q.inferred_value)));
+      }
+      if (q.evidence && q.evidence.length) {
+        card.appendChild(ap(ce('p', 'oq-evidence'), ap(ce('strong'), tx('Evidence: ')), tx(q.evidence.join(', '))));
+      }
+      var actions = ce('div', 'oq-actions');
+      if (kind === 'assumption') {
+        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-approve'), tx('Approve')), { onclick: "setAssumptionState(this,'approved')" }));
+        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-reject'), tx('Reject')), { onclick: "setAssumptionState(this,'rejected')" }));
+      } else {
+        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-answer'), tx("I'll answer here")), { onclick: "setQuestionState(this,'answered')" }));
+        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-skip'), tx('Skip')), { onclick: "setQuestionState(this,'skipped')" }));
+        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-leave'), tx('Leave for framework')), { onclick: "setQuestionState(this,'leave')" }));
+      }
+      card.appendChild(actions);
+      var inputCls = kind === 'assumption' ? 'oq-inline-input input-correction' : 'oq-inline-input input-answer';
+      var inputLbl = kind === 'assumption' ? "What's the correction?" : 'Your answer';
+      card.appendChild(ap(ce('div', inputCls), ap(ce('label'), tx(inputLbl)), ce('textarea')));
+      var details = ce('details', 'oq-context');
+      details.appendChild(ap(ce('summary'), tx('Context')));
+      if (q.deepen_with || q.framework_slot) {
+        var meta = ce('div', 'oq-context-meta');
+        if (q.deepen_with) meta.appendChild(chip('deepen: ' + q.deepen_with, 'chip-deepen'));
+        if (q.framework_slot) meta.appendChild(chip('slot: ' + q.framework_slot, 'chip-slot'));
+        details.appendChild(meta);
+      }
+      if (q.why_it_matters) details.appendChild(ap(ce('p'), tx(q.why_it_matters)));
+      card.appendChild(details);
+      return card;
+    }
+
+    function renderFolderPanel(folderId) {
+      var el = document.getElementById('panel-' + folderId + '-content');
+      if (!el) return;
+      clearEl(el);
+      var folder = findFolder(folderId);
+      var oqs = (OPEN_QUESTIONS.open_questions || []).filter(function(q) {
+        return q.file && q.file.indexOf(folderId + '/') === 0;
+      });
+      if (folder && folder.status === 'GAP') {
+        var needed = folder.gap_frameworks_needed || [];
+        var stub = ce('div', 'empty-stub');
+        var p1 = ce('p'); p1.appendChild(tx('GAP — no owning framework for ')); p1.appendChild(ap(ce('code'), tx(folderId + '/'))); stub.appendChild(p1);
+        if (needed.length) {
+          var p2 = ce('p'); p2.appendChild(tx('Commission: '));
+          needed.forEach(function(f, i) { if (i > 0) p2.appendChild(tx(', ')); p2.appendChild(ap(ce('code'), tx(f))); });
+          stub.appendChild(p2);
+        }
+        el.appendChild(stub); return;
+      }
+      var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
+      var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
+      function makeSection(heading, descText, cards) {
+        var sec = ce('div', 'section');
+        var h2 = ce('h2', 'anchor-target');
+        h2.appendChild(tx(heading + ' '));
+        h2.appendChild(ap(ce('span', 'status-badge status-partial'), tx(String(cards.length))));
+        sec.appendChild(h2);
+        sec.appendChild(ap(ce('p', 'description'), tx(descText)));
+        cards.forEach(function(q) { sec.appendChild(renderOQCard(q, folderId)); });
+        return sec;
+      }
+      if (assumptions.length) el.appendChild(makeSection('Assumptions to confirm', 'High-confidence inferences from ingested sources. Approve to lock them in. Reject to mark for revision.', assumptions));
+      if (questions.length) el.appendChild(makeSection('Questions to resolve', 'LOW confidence inferences worth verifying before the framework runs interactively.', questions));
+      if (!assumptions.length && !questions.length) el.appendChild(ap(ce('div', 'empty-stub'), tx('No open questions for this folder.')));
+    }
+
+    function renderAll() {
+      renderExecSnapshot();
+      renderExecConfidenceCards();
+      renderStrengthsGaps();
+      renderBehavioralAlternatives();
+      renderCompetitorCards();
+      renderFocusTable();
+      renderSectionsAtAGlance();
+      ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
+        renderFolderPanel(id);
+      });
+    }
+
     // ── H7(c): Add tooltips to visible priority + confidence chips ──
     function addChipTooltips() {
       document.querySelectorAll('.oq-card-header .pri').forEach(function(el) {
@@ -1281,6 +1588,7 @@
 
     // Initial paste-back build and setup
     document.addEventListener('DOMContentLoaded', function() {
+      renderAll();
       addChipTooltips();
       moveJargonChipsIntoContext();
       syncInitialSelectedStates();
@@ -1308,6 +1616,7 @@
 
     // Already loaded? Run now (covers cases where DOMContentLoaded already fired)
     if (document.readyState !== 'loading') {
+      renderAll();
       addChipTooltips();
       moveJargonChipsIntoContext();
       syncInitialSelectedStates();
