@@ -1,0 +1,41 @@
+{
+  "_fixture_scenario": "Source extract names 'DispatchTrack'. Web fetch returns the canonical DispatchTrack site with matching product domain (last-mile delivery management). Expected: identity matched, no OQ.",
+  "_expected_identity_verification": "matched",
+  "_expected_oq_count": 0,
+  "scenario_input": {
+    "name_from_extract": "DispatchTrack",
+    "context_from_extract": "mentioned as a named competitor — 'we see DispatchTrack in most enterprise deals'",
+    "simulated_web_results": [
+      {
+        "url": "https://www.dispatchtrack.com",
+        "title": "DispatchTrack — Last-Mile Delivery Management Software",
+        "snippet": "DispatchTrack gives retailers and distributors real-time delivery visibility, route optimization, and proof of delivery at enterprise scale."
+      }
+    ]
+  },
+  "expected_dossier_output": {
+    "slug": "dispatchtrack",
+    "name": "DispatchTrack",
+    "url": "https://www.dispatchtrack.com",
+    "identity_verification": "matched",
+    "identity_notes": "Canonical match — single authoritative result with matching product domain (last-mile delivery management) and no naming ambiguity.",
+    "positioning_one_liner": "The delivery management platform that gives you real-time visibility and proof of delivery at enterprise scale.",
+    "icp_one_liner": "Enterprise and upper-mid-market distributors running high-volume delivery operations across multiple depots.",
+    "differentiated_attributes": [
+      "End-to-end delivery management with native mobile driver app",
+      "Real-time customer notifications and live tracking links",
+      "Proof of delivery with signature and photo capture",
+      "Multi-depot routing and territory optimization"
+    ],
+    "who_they_say_they_beat": ["spreadsheets", "manual phone dispatch", "legacy ERP delivery modules"],
+    "pricing_signal": "enterprise",
+    "voice_traits": ["enterprise-formal", "feature-forward", "ROI-focused"],
+    "narrative_one_liner": "Enterprise delivery teams deserve the same real-time intelligence that consumer logistics companies have.",
+    "evidence_quotes": [
+      "Give your customers the Amazon experience they expect.",
+      "Reduce failed deliveries and customer calls with proactive notifications."
+    ],
+    "sources": ["https://www.dispatchtrack.com"],
+    "open_questions": []
+  }
+}

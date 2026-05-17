@@ -1,0 +1,48 @@
+{
+  "_fixture_scenario": "Source extract names 'OldCorp'. Web fetch returns 'NewCorp (formerly OldCorp)' — a recent rebrand. Expected: identity matched, both names captured, evidence_quote cites rebrand notice. No OQ emitted.",
+  "_expected_identity_verification": "matched",
+  "_expected_oq_count": 0,
+  "scenario_input": {
+    "name_from_extract": "OldCorp",
+    "context_from_extract": "mentioned as a direct competitor — 'our customers frequently evaluate OldCorp before choosing us'",
+    "simulated_web_results": [
+      {
+        "url": "https://www.newcorp.com",
+        "title": "NewCorp — formerly OldCorp | Route Optimization for Field Service Teams",
+        "snippet": "NewCorp (formerly OldCorp) helps field service organizations reduce drive time and optimize technician scheduling."
+      },
+      {
+        "url": "https://www.newcorp.com/blog/rebrand-announcement",
+        "title": "We're NewCorp Now — A New Name for the Same Mission",
+        "snippet": "OldCorp is now NewCorp. Our product, team, and mission haven't changed — just our name and brand."
+      }
+    ]
+  },
+  "expected_dossier_output": {
+    "slug": "newcorp",
+    "name": "NewCorp",
+    "formerly_known_as": "OldCorp",
+    "url": "https://www.newcorp.com",
+    "identity_verification": "matched",
+    "identity_notes": "Source names 'OldCorp'. Web results confirm this company rebranded to 'NewCorp'. Both names captured; rebrand notice found at newcorp.com/blog/rebrand-announcement.",
+    "positioning_one_liner": "Route optimization for field service teams that need to reduce drive time and maximize technician utilization.",
+    "icp_one_liner": "Mid-market field service organizations managing distributed technician workforces.",
+    "differentiated_attributes": [
+      "Route optimization purpose-built for field service (not last-mile delivery)",
+      "Technician scheduling integration",
+      "Same product continuity through rebrand"
+    ],
+    "who_they_say_they_beat": ["manual scheduling", "generic route planners", "legacy FSM platforms"],
+    "pricing_signal": null,
+    "voice_traits": ["continuity-focused", "field-service-specialist"],
+    "narrative_one_liner": "Field service teams deserve route intelligence built for their workflows, not repurposed from delivery logistics.",
+    "evidence_quotes": [
+      "OldCorp is now NewCorp. Our product, team, and mission haven't changed — just our name and brand."
+    ],
+    "sources": [
+      "https://www.newcorp.com",
+      "https://www.newcorp.com/blog/rebrand-announcement"
+    ],
+    "open_questions": []
+  }
+}

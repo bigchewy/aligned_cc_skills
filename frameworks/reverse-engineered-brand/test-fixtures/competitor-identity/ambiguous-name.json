@@ -1,0 +1,60 @@
+{
+  "_fixture_scenario": "Two companies share the name 'Apex' — one in logistics, one in HR software. Source extract mentions Apex in a delivery/logistics context. Sub-agent fetches web results and finds both. Expected: mismatch_flagged with a P0 open question.",
+  "_expected_identity_verification": "mismatch_flagged",
+  "_expected_oq_count": 1,
+  "_expected_oq_impact": "P0",
+  "_expected_oq_confidence": "low",
+  "scenario_input": {
+    "name_from_extract": "Apex",
+    "context_from_extract": "mentioned in a last-mile logistics context — 'Apex handles all our depot routing'",
+    "simulated_web_results": [
+      {
+        "url": "https://www.apexlogistics.com",
+        "title": "Apex Logistics — Depot Routing & Last-Mile Delivery Software",
+        "snippet": "Apex helps distribution teams optimize depot routing and reduce last-mile delivery costs."
+      },
+      {
+        "url": "https://www.apexhr.com",
+        "title": "Apex HR — Workforce Management & Payroll Software",
+        "snippet": "Apex HR simplifies payroll, scheduling, and compliance for teams of any size."
+      }
+    ]
+  },
+  "expected_dossier_output": {
+    "slug": "apex-logistics",
+    "name": "Apex",
+    "url": null,
+    "identity_verification": "mismatch_flagged",
+    "identity_notes": "Two companies share the name 'Apex': one in last-mile logistics (apexlogistics.com) and one in HR software (apexhr.com). Source context suggests logistics, but cannot confirm without user clarification.",
+    "positioning_one_liner": null,
+    "icp_one_liner": null,
+    "differentiated_attributes": [],
+    "who_they_say_they_beat": [],
+    "pricing_signal": null,
+    "voice_traits": [],
+    "narrative_one_liner": null,
+    "evidence_quotes": [],
+    "sources": [
+      "https://www.apexlogistics.com",
+      "https://www.apexhr.com"
+    ],
+    "open_questions": [
+      {
+        "id": "OQ-identity-apex-1",
+        "slice": "competitor-identity",
+        "question": "Which 'Apex' is the intended competitor — Apex Logistics (last-mile routing) or Apex HR (workforce management)?",
+        "inferred_value": "Apex Logistics (last-mile routing) — based on source context",
+        "draft_excerpt": "Source mentions 'Apex handles all our depot routing' in a logistics context, but two companies share the name.",
+        "confidence": "low",
+        "impact": "P0",
+        "evidence": ["scenario_input.context_from_extract"],
+        "alternatives": [
+          "Apex Logistics — apexlogistics.com (logistics domain match)",
+          "Apex HR — apexhr.com (name match only, domain mismatch)"
+        ],
+        "why_it_matters": "Dossier content will be entirely wrong if the incorrect Apex is profiled.",
+        "emitted_at": "2026-05-17T00:00:00Z"
+      }
+    ]
+  }
+}
