@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand-folder review — {Org Name}</title>
+  <style>
+    html { scroll-behavior: smooth; }
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      color: var(--color-foreground);
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin: 0 0 4px 0; }
+    .job-statement { font-size: 0.82rem; color: var(--color-dimmed); margin: 0 0 6px 0; line-height: 1.5; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin: 0 0 4px 0; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin: 0 0 24px 0; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    /* Top-level tabs */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--color-muted);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Sub-tabs */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--color-muted);
+      padding-left: 4px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Sections */
+    .section {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--color-foreground);
+      margin: 0 0 8px 0;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin: 16px 0 8px 0;
+    }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+
+    /* Focus table */
+    .focus-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .focus-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--color-foreground);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .focus-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-muted);
+      color: var(--color-foreground);
+      vertical-align: top;
+    }
+    .focus-table .num { color: var(--color-dimmed); font-feature-settings: 'tnum'; }
+    .focus-table code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: var(--color-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .focus-table .fills {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+    }
+    .pri {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-feature-settings: 'tnum';
+      min-width: 18px;
+      text-align: center;
+    }
+    .pri-p0 { background: #fef2f2; color: #b91c1c; }
+    .pri-p1 { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .pri-p2 { background: var(--color-surface); color: var(--color-dimmed); }
+
+    /* Folder tree */
+    .folder-tree {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 18px 22px;
+      color: var(--color-foreground);
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .folder-tree .badge { font-family: var(--font-sans); }
+
+    /* Section list — friendly nested labels with right-aligned status badges */
+    .section-list {
+      list-style: none;
+      margin: 0;
+      padding: 14px 18px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+    }
+    .section-list ul {
+      list-style: none;
+      margin: 0;
+      padding-left: 22px;
+    }
+    .section-list li {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 5px 0;
+      border-bottom: 1px dotted transparent;
+    }
+    .section-list > li { font-weight: 600; }
+    .section-list ul li { font-weight: 400; color: var(--color-foreground); }
+    .section-list .label { flex: 1 1 auto; min-width: 0; }
+    .section-list .status-badge { margin-left: 0; flex: 0 0 auto; }
+
+    /* Inline status badges */
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+      margin-left: 6px;
+    }
+    .status-strong { background: #ecfdf5; color: #047857; }
+    .status-partial { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-weak { background: #fef2f2; color: #b91c1c; }
+    .status-gap { background: var(--color-surface); color: var(--color-dimmed); border: 1px dashed var(--color-border); }
+
+    /* Right-rail copy command button (inside focus table) */
+    .btn-mini {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--color-border);
+      background: var(--color-muted);
+      color: var(--color-foreground);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .btn-mini:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-accent); }
+    .btn-mini.copied { background: #047857; color: white; border-color: #047857; }
+    .btn-mini.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+    /* Bullet lists */
+    .findings-list {
+      font-size: 0.88rem;
+      color: var(--color-foreground);
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.7;
+    }
+    .findings-list li { margin-bottom: 8px; }
+    .findings-list em { color: var(--color-dimmed); font-style: italic; font-size: 0.82rem; }
+
+    /* Behavioral alternatives section (Competitive Context tab) */
+    .alt-section-heading {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin: 18px 0 6px 0;
+      padding-top: 4px;
+    }
+    .alt-section-heading-secondary {
+      margin-top: 32px;
+      color: var(--color-secondary);
+    }
+    .alt-list {
+      list-style: none;
+      margin: 8px 0 0 0;
+      padding: 0;
+    }
+    .alt-row {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-left: 3px solid var(--color-accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+    .alt-row-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .alt-row .alt-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--color-foreground);
+    }
+    .alt-row .alt-quote {
+      font-style: italic;
+      color: var(--color-secondary);
+      font-size: 0.86rem;
+      line-height: 1.5;
+      margin: 4px 0 8px 0;
+      padding: 0;
+      border: none;
+    }
+    .alt-row .alt-source {
+      display: inline-block;
+    }
+
+    /* Competitor row */
+    .comp-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .comp-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.82rem;
+    }
+    .comp-card h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: var(--color-foreground);
+    }
+    .comp-card dl { margin: 0; font-size: 0.78rem; line-height: 1.5; }
+    .comp-card dt { color: var(--color-dimmed); font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem; }
+    .comp-card dd { margin: 0; color: var(--color-foreground); }
+
+    /* Q cards */
+    .oq-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      transition: border-color 150ms, background 150ms;
+    }
+    .oq-card[data-state="approved"] { border-color: #047857; background: #ecfdf5; }
+    .oq-card[data-state="rejected"] { border-color: #b91c1c; background: #fef2f2; }
+    .oq-card[data-state="answered"] { border-color: var(--color-accent); background: var(--color-accent-subtle); }
+    .oq-card[data-state="skipped"] { opacity: 0.55; }
+    .oq-card[data-state="leave"] { border-style: dashed; }
+
+    .oq-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .oq-id {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      margin-right: 6px;
+    }
+    .chip {
+      display: inline-block;
+      font-size: 0.68rem;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+    }
+    .chip-file { background: var(--color-surface); color: var(--color-secondary); font-family: var(--font-mono); }
+    .chip-deepen { background: var(--color-muted); color: var(--color-foreground); font-family: var(--font-mono); }
+    .chip-slot { background: var(--color-muted); color: var(--color-dimmed); font-family: var(--font-mono); font-style: italic; }
+
+    /* Hide jargon chips in the header — they're moved into the Context disclosure */
+    .oq-card-header .chip-slot,
+    .oq-card-header .chip-deepen { display: none; }
+
+    /* Meta chip strip rendered inside the Context block at load time */
+    .oq-context .oq-context-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed var(--color-border);
+    }
+    .chip-conf-high { background: #ecfdf5; color: #047857; }
+    .chip-conf-med { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .chip-conf-low { background: #fef2f2; color: #b91c1c; }
+
+    .oq-body {
+      font-size: 0.92rem;
+      color: var(--color-foreground);
+      font-weight: 500;
+      margin: 4px 0 10px 0;
+      line-height: 1.5;
+    }
+    .oq-evidence {
+      font-size: 0.78rem;
+      color: var(--color-dimmed);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .oq-evidence strong { color: var(--color-secondary); font-weight: 600; }
+
+    .oq-best-guess {
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      background: var(--color-surface);
+      border-left: 3px solid var(--color-border);
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 0 6px 6px 0;
+    }
+    .oq-best-guess strong { color: var(--color-foreground); }
+
+    .oq-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .oq-btn {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--color-border);
+      background: white;
+      color: var(--color-foreground);
+      font-weight: 500;
+      transition: all 120ms;
+    }
+    .oq-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .oq-btn.btn-approve.selected { background: #047857; color: white; border-color: #047857; }
+    .oq-btn.btn-reject.selected { background: #b91c1c; color: white; border-color: #b91c1c; }
+    .oq-btn.btn-answer.selected { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .oq-btn.btn-skip.selected { background: var(--color-dimmed); color: white; border-color: var(--color-dimmed); }
+    .oq-btn.btn-leave.selected { background: var(--color-surface); color: var(--color-foreground); border-color: var(--color-foreground); }
+
+    .oq-inline-input {
+      display: none;
+      margin-top: 12px;
+    }
+    .oq-card[data-state="rejected"] .oq-inline-input.input-correction,
+    .oq-card[data-state="answered"] .oq-inline-input.input-answer { display: block; }
+
+    .oq-inline-input label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .oq-inline-input textarea {
+      width: 100%;
+      min-height: 60px;
+      padding: 8px 10px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .oq-inline-input textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+
+    /* oq-context-toggle kept for backward compat — new cards use <details> */
+    .oq-context-toggle {
+      background: none;
+      border: none;
+      color: var(--color-dimmed);
+      font-size: 0.78rem;
+      cursor: pointer;
+      padding: 4px 0 0 0;
+      margin-left: auto;
+      font-family: inherit;
+    }
+    .oq-context-toggle:hover { color: var(--color-accent); }
+    .oq-context {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--color-border);
+      font-size: 0.8rem;
+      color: var(--color-secondary);
+      line-height: 1.6;
+    }
+    .oq-card.context-open .oq-context { display: block; }
+
+    /* <details>-based context disclosure for JS-rendered cards */
+    details.oq-context {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--color-border);
+      font-size: 0.8rem;
+      color: var(--color-secondary);
+      line-height: 1.6;
+    }
+    details.oq-context summary {
+      color: var(--color-dimmed);
+      font-size: 0.78rem;
+      cursor: pointer;
+      padding: 4px 0 0 0;
+      font-family: inherit;
+    }
+    details.oq-context summary:hover { color: var(--color-accent); }
+    details.oq-context[open] { display: block; }
+
+    /* Anchor offset so sticky nav doesn't cover the section heading */
+    .anchor-target { scroll-margin-top: 64px; }
+
+    /* Executive summary narrative */
+    .exec-summary p {
+      font-size: 0.95rem;
+      color: var(--color-foreground);
+      line-height: 1.7;
+      margin: 0 0 14px 0;
+    }
+    .exec-summary p:last-child { margin-bottom: 0; }
+    .exec-summary p strong { color: var(--color-foreground); font-weight: 600; }
+
+    /* Executive summary — Snapshot mini-grid */
+    .snapshot-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 4px 0 28px 0;
+    }
+    .snapshot-tile {
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+      position: relative;
+    }
+    .snapshot-tile::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--color-accent);
+      border-radius: 10px 10px 0 0;
+    }
+    .snapshot-tile .num {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      line-height: 1.1;
+      font-feature-settings: 'tnum';
+    }
+    .snapshot-tile .label {
+      font-size: 0.72rem;
+      color: var(--color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+    @media (max-width: 880px) {
+      .snapshot-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Executive summary — labeled sections */
+    .exec-section {
+      padding: 14px 18px 14px 18px;
+      border-left: 3px solid var(--color-accent);
+      background: var(--color-background);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 18px;
+    }
+    .exec-section:last-child { margin-bottom: 0; }
+    .exec-section h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 10px 0;
+    }
+    .exec-section p {
+      font-size: 0.95rem;
+      color: var(--color-foreground);
+      line-height: 1.7;
+      margin: 0;
+    }
+    .exec-divider {
+      height: 1px;
+      background: var(--color-border);
+      border: none;
+      margin: 18px 0;
+    }
+
+    /* Confidence chip row */
+    .conf-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .conf-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .conf-card .conf-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 9px;
+      border-radius: 9999px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .conf-card.conf-high .conf-label { background: #ecfdf5; color: #047857; }
+    .conf-card.conf-med .conf-label { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .conf-card.conf-low .conf-label { background: #fef2f2; color: #b91c1c; }
+    .conf-card .conf-text {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      line-height: 1.5;
+    }
+    @media (max-width: 760px) {
+      .conf-row { grid-template-columns: 1fr; }
+    }
+
+    /* Intro paragraph above a list/grid inside an Overview sub-panel */
+    .intro-p {
+      font-size: 0.9rem;
+      color: var(--color-secondary);
+      line-height: 1.6;
+      margin: 0 0 14px 0;
+    }
+
+    /* Sub-tab counters */
+    .sub-tab-btn .count {
+      background: var(--color-muted);
+      color: var(--color-dimmed);
+      font-size: 0.65rem;
+      padding: 0 6px;
+      border-radius: 9999px;
+      margin-left: 4px;
+      font-weight: 600;
+    }
+    .sub-tab-btn.active .count { background: var(--color-accent-subtle); color: var(--color-accent); }
+
+    /* Paste-back widget */
+    .paste-back {
+      background: var(--color-accent-subtle);
+      border-radius: 12px;
+      padding: 24px 26px 28px;
+      margin-top: 28px;
+      border: 1px solid var(--color-accent);
+      border-style: solid;
+    }
+    .paste-back-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .paste-back h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0;
+    }
+    .paste-back .framework-name {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+    .paste-back .sub {
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      margin: 0 0 12px 0;
+    }
+    .paste-back textarea {
+      width: 100%;
+      min-height: 240px;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--color-foreground);
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .paste-back textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px white; }
+    .paste-back-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: flex-end;
+    }
+    .btn {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--color-border);
+      background: white;
+      color: var(--color-foreground);
+      font-weight: 500;
+    }
+    .btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: white; }
+    .btn.copied { background: #047857; color: white; border-color: #047857; }
+    .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+    /* Empty stub */
+    .empty-stub {
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--color-dimmed);
+      font-size: 0.92rem;
+      background: white;
+      border: 1px dashed var(--color-border);
+      border-radius: 12px;
+    }
+    .empty-stub code { font-family: var(--font-mono); font-size: 0.82rem; }
+
+    /* Sources panel (sub-tab) */
+    .source-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.85rem;
+    }
+    .source-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-muted);
+      display: grid;
+      grid-template-columns: 60px 1fr 160px;
+      gap: 12px;
+      align-items: baseline;
+    }
+    .source-list .src-id { font-family: var(--font-mono); color: var(--color-accent); font-weight: 600; }
+    .source-list .src-title { color: var(--color-foreground); }
+    .source-list .src-meta { color: var(--color-dimmed); font-size: 0.78rem; text-align: right; }
+  </style>
+</head>
+<body>
+
+  <h1>Brand-folder review — {Org Name}</h1>
+  <p class="job-statement">Review the auto-generated brand folder. Toggle Approve/Reject on assumptions, answer questions, then copy the per-folder paste-back to Claude Code.</p>
+  <p class="subtitle">{org-name}</p>
+  <p class="context">Auto-generated brand folder review. Folder: <code>{brand-folder-path}</code>.</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('competitive')">Competitive Context</button>
+    <button class="tab-btn" onclick="switchTab('strategy')">strategy</button>
+    <button class="tab-btn" onclick="switchTab('language')">language</button>
+    <button class="tab-btn" onclick="switchTab('audiences')">audiences</button>
+    <button class="tab-btn" onclick="switchTab('personas')">personas</button>
+    <button class="tab-btn" onclick="switchTab('market')">market</button>
+    <button class="tab-btn" onclick="switchTab('proof')">proof</button>
+    <button class="tab-btn" onclick="switchTab('design')">design</button>
+  </div>
+
+  <!-- ========= OVERVIEW ========= -->
+  <div id="panel-overview" class="tab-panel active">
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-focus')">Where to Focus First</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-summary')">Executive Summary</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-strengths-gaps')">Strengths &amp; Gaps</button>
+    </div>
+
+    <!-- Overview / Executive Summary -->
+    <div id="sub-overview-summary" class="sub-panel">
+      <div class="section exec-summary" id="exec-narrative">
+        <h2>Executive summary</h2>
+        <p class="description">Narrative assessment of how effective the ingested raw material and primary research were at understanding the brand. Use this to calibrate trust in the drafts under each folder tab.</p>
+
+        <div id="exec-snapshot"></div>
+
+        <div class="exec-section">
+          <h3>Raw material</h3>
+          <p id="exec-raw-material"></p>
+        </div>
+
+        <hr class="exec-divider" />
+
+        <div class="exec-section">
+          <h3>Primary research</h3>
+          <p id="exec-primary-research"></p>
+        </div>
+
+        <hr class="exec-divider" />
+
+        <div class="exec-section">
+          <h3>Confidence by area</h3>
+          <p id="exec-confidence-intro"></p>
+          <div class="conf-row" id="exec-confidence-cards"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview / Strengths & Gaps -->
+    <div id="sub-overview-strengths-gaps" class="sub-panel">
+      <div class="section">
+        <h2>What the source material strongly supports</h2>
+        <p class="description">HIGH-confidence assertions backed by two or more independent sources. These are safe to build on without re-asking.</p>
+        <ul class="findings-list" id="strengths-list"></ul>
+      </div>
+
+      <div class="section">
+        <h2>What the source material doesn't yet tell us</h2>
+        <p class="description">Areas where the ingested sources are silent, thin, or contradictory. These are gaps in the evidence, not judgments about the company. Each links to the open question driving the doubt.</p>
+        <ul class="findings-list" id="gaps-list"></ul>
+      </div>
+    </div>
+
+    <!-- Overview / Where to Focus First -->
+    <div id="sub-overview-focus" class="sub-panel active">
+      <div class="section">
+        <h2>Where to focus first</h2>
+        <p class="description">Frameworks ranked by aggregate downstream impact. Each row's "Copy command" button puts the full paste-back prompt (with current toggle state from this session) on your clipboard. Run them in this order.</p>
+        <table class="focus-table">
+          <thead>
+            <tr>
+              <th style="width: 32px;">#</th>
+              <th>Run this framework</th>
+              <th>Fills</th>
+              <th style="width: 36px;">P0</th>
+              <th style="width: 36px;">P1</th>
+              <th style="width: 36px;">P2</th>
+              <th>Why first</th>
+              <th style="width: 130px;"></th>
+            </tr>
+          </thead>
+          <tbody id="where-to-focus-first"></tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Sections at a glance</h2>
+        <p class="description">Status badges reflect aggregate confidence + open question counts. Click any folder tab above to drill in.</p>
+        <div id="sections-at-a-glance"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========= COMPETITIVE CONTEXT ========= -->
+  <div id="panel-competitive" class="tab-panel">
+    <div class="section">
+      <h2>Competitive context</h2>
+      <p class="intro-p">Competitors identified via cross-source mention frequency; behavioral alternatives extracted from source material. Behavioral alternatives often turn out to be the more honest competitive frame — what customers actually do today (without you) usually matters more than the named SaaS in the same category.</p>
+
+      <h3 class="alt-section-heading">What customers do today (without you)</h3>
+      <p class="description">Non-product alternatives surfaced from sales calls, decks, and research notes. These are the real defaults your product displaces. Per April Dunford: these matter MORE than named competitors.</p>
+      <div id="behavioral-alternatives"></div>
+
+      <h3 class="alt-section-heading alt-section-heading-secondary">Named competitors</h3>
+      <p class="description">Named alternatives appearing across the ingested sources. Each dossier was assembled from public sources (homepage, About, alternatives page, recent press). If a competitor here is wrong, edit <code>.build/competitors/</code> and rerun the framework. Full battle cards live under the <code>market/</code> tab once the competitive-battle-card framework is run.</p>
+      <div id="competitor-cards"></div>
+    </div>
+  </div>
+
+  <!-- ========= STRATEGY ========= -->
+  <div id="panel-strategy" class="tab-panel">
+    <div id="panel-strategy-content"></div>
+    <div class="paste-back">
+      <div class="paste-back-header">
+        <h3>Paste-back to Claude Code</h3>
+      </div>
+      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
+      <textarea id="pasteback-strategy" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" onclick="copyPasteback('strategy')">Copy</button>
+        <button class="btn btn-primary" onclick="regeneratePasteback('strategy')">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= LANGUAGE ========= -->
+  <div id="panel-language" class="tab-panel">
+    <div id="panel-language-content"></div>
+    <div class="paste-back">
+      <div class="paste-back-header">
+        <h3>Paste-back to Claude Code</h3>
+      </div>
+      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
+      <textarea id="pasteback-language" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" onclick="copyPasteback('language')">Copy</button>
+        <button class="btn btn-primary" onclick="regeneratePasteback('language')">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= AUDIENCES ========= -->
+  <div id="panel-audiences" class="tab-panel">
+    <div id="panel-audiences-content"></div>
+    <div class="paste-back">
+      <div class="paste-back-header">
+        <h3>Paste-back to Claude Code</h3>
+      </div>
+      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
+      <textarea id="pasteback-audiences" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" onclick="copyPasteback('audiences')">Copy</button>
+        <button class="btn btn-primary" onclick="regeneratePasteback('audiences')">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= PERSONAS ========= -->
+  <div id="panel-personas" class="tab-panel">
+    <div id="panel-personas-content"></div>
+    <div class="paste-back">
+      <div class="paste-back-header">
+        <h3>Paste-back to Claude Code</h3>
+      </div>
+      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
+      <textarea id="pasteback-personas" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" onclick="copyPasteback('personas')">Copy</button>
+        <button class="btn btn-primary" onclick="regeneratePasteback('personas')">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= MARKET ========= -->
+  <div id="panel-market" class="tab-panel">
+    <div id="panel-market-content"></div>
+    <div class="paste-back">
+      <div class="paste-back-header">
+        <h3>Paste-back to Claude Code</h3>
+      </div>
+      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
+      <textarea id="pasteback-market" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" onclick="copyPasteback('market')">Copy</button>
+        <button class="btn btn-primary" onclick="regeneratePasteback('market')">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= PROOF ========= -->
+  <div id="panel-proof" class="tab-panel">
+    <div id="panel-proof-content"></div>
+    <div class="paste-back">
+      <div class="paste-back-header">
+        <h3>Paste-back to Claude Code</h3>
+      </div>
+      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
+      <textarea id="pasteback-proof" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" onclick="copyPasteback('proof')">Copy</button>
+        <button class="btn btn-primary" onclick="regeneratePasteback('proof')">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= DESIGN ========= -->
+  <div id="panel-design" class="tab-panel">
+    <div id="panel-design-content"></div>
+    <div class="paste-back">
+      <div class="paste-back-header">
+        <h3>Paste-back to Claude Code</h3>
+      </div>
+      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
+      <textarea id="pasteback-design" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" onclick="copyPasteback('design')">Copy</button>
+        <button class="btn btn-primary" onclick="regeneratePasteback('design')">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const OPEN_QUESTIONS = {open-questions-json};
+    const BRAND_FOLDER_PATH = "{brand-folder-path}";
+    const ORG_NAME = "{org-name}";
+
+    // ── Tab + sub-tab switching ──────────────────────────────
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = document.querySelector('#main-tabs [onclick*="\'' + tabId + '\'"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = parent.querySelector('[onclick*="\'' + subId + '\'"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) sub.classList.add('active');
+    }
+
+    // ── Context toggle on each card (kept for backward compat) ──
+    function toggleContext(btn) {
+      var card = btn.closest('.oq-card');
+      if (!card) return;
+      card.classList.toggle('context-open');
+      btn.textContent = card.classList.contains('context-open') ? 'Hide context' : 'Context';
+    }
+
+    // ── Per-card state setters (Assumption + Question) ───────
+    function clearSelected(card) {
+      card.querySelectorAll('.oq-btn').forEach(function(b) { b.classList.remove('selected'); });
+    }
+    function setAssumptionState(btn, state) {
+      var card = btn.closest('.oq-card');
+      if (!card) return;
+      var current = card.getAttribute('data-state');
+      if (current === state) {
+        // Toggle off
+        card.removeAttribute('data-state');
+        clearSelected(card);
+      } else {
+        clearSelected(card);
+        btn.classList.add('selected');
+        card.setAttribute('data-state', state);
+      }
+      rebuildPasteBack(card.getAttribute('data-folder'));
+    }
+    function setQuestionState(btn, state) {
+      var card = btn.closest('.oq-card');
+      if (!card) return;
+      var current = card.getAttribute('data-state');
+      if (current === state) {
+        card.removeAttribute('data-state');
+        clearSelected(card);
+      } else {
+        clearSelected(card);
+        btn.classList.add('selected');
+        card.setAttribute('data-state', state);
+      }
+      rebuildPasteBack(card.getAttribute('data-folder'));
+    }
+
+    // ── Clipboard helper (file:// safe) ──────────────────────
+    function copyToClipboard(text, btn) {
+      var originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = originalLabel;
+      function showSuccess() {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+        }, 1800);
+      }
+      function showFailure() {
+        btn.textContent = 'Copy failed — select & Cmd-C';
+        btn.classList.add('btn-error');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('btn-error');
+        }, 3000);
+      }
+      if (!navigator.clipboard || !window.isSecureContext) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        if (ok) showSuccess(); else showFailure();
+        return;
+      }
+      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
+    }
+
+    // ── copyPasteback / regeneratePasteback (called from paste-back buttons) ──
+    function copyPasteback(folder) {
+      var ta = document.getElementById('pasteback-' + folder);
+      if (!ta) return;
+      copyToClipboard(ta.value, document.querySelector('[onclick*="copyPasteback(\'' + folder + '\')"]') || document.createElement('button'));
+    }
+    function regeneratePasteback(folder) {
+      var ta = document.getElementById('pasteback-' + folder);
+      if (!ta) return;
+      ta.dataset.dirty = 'false';
+      ta.value = buildPasteBack(folder);
+    }
+
+    // ── Per-folder paste-back builder ────────────────────────
+    var FRAMEWORK_BY_FOLDER = {
+      strategy: '5-components-positioning',
+      language: 'brand-voice',
+      audiences: 'audience-segmentation',
+      personas: 'buyer-persona',
+      market: 'competitive-battle-card',
+      proof: 'proof-points-audit',
+      design: 'design-principles'
+    };
+    var FRAMEWORK_TARGET = {
+      strategy: BRAND_FOLDER_PATH + '/strategy/positioning.md',
+      language: BRAND_FOLDER_PATH + '/language/',
+      audiences: BRAND_FOLDER_PATH + '/audiences/',
+      personas: BRAND_FOLDER_PATH + '/personas/',
+      market: BRAND_FOLDER_PATH + '/market/competitive.md',
+      proof: BRAND_FOLDER_PATH + '/proof/',
+      design: BRAND_FOLDER_PATH + '/design/'
+    };
+    var FRAMEWORK_NOTE = {};
+
+    function getCorrectionText(card) {
+      var ta = card.querySelector('.oq-inline-input.input-correction textarea');
+      return ta ? (ta.value || '').trim() : '';
+    }
+    function getAnswerText(card) {
+      var ta = card.querySelector('.oq-inline-input.input-answer textarea');
+      return ta ? (ta.value || '').trim() : '';
+    }
+    function cardTitle(card) {
+      var body = card.querySelector('.oq-body');
+      return body ? body.textContent.trim() : '';
+    }
+    function cardPriority(card) {
+      var p = card.querySelector('.oq-card-header .pri');
+      return p ? p.textContent.trim() : '';
+    }
+    function cardConfidence(card) {
+      var c = card.querySelector('.oq-card-header .chip-conf-high, .oq-card-header .chip-conf-med, .oq-card-header .chip-conf-low');
+      if (!c) return '';
+      var t = c.textContent.trim();
+      return t.replace(/^conf:\s*/i, '');
+    }
+    function cardId(card) { return card.getAttribute('data-id') || '?'; }
+
+    function buildPasteBack(folder) {
+      var framework = FRAMEWORK_BY_FOLDER[folder] || folder;
+      var target = FRAMEWORK_TARGET[folder] || BRAND_FOLDER_PATH + '/' + folder + '/';
+      var note = FRAMEWORK_NOTE[folder] || '';
+      var cards = document.querySelectorAll('.oq-card[data-folder="' + folder + '"]');
+      var approved = [], rejected = [], answered = [], skipped = [], leave = [];
+      cards.forEach(function(card) {
+        var state = card.getAttribute('data-state');
+        var kind = card.getAttribute('data-kind');
+        var item = {
+          id: cardId(card),
+          title: cardTitle(card),
+          pri: cardPriority(card),
+          conf: cardConfidence(card),
+          correction: getCorrectionText(card),
+          answer: getAnswerText(card)
+        };
+        if (kind === 'assumption') {
+          if (state === 'approved') approved.push(item);
+          else if (state === 'rejected') rejected.push(item);
+        } else if (kind === 'question') {
+          if (state === 'answered') answered.push(item);
+          else if (state === 'skipped') skipped.push(item);
+          else if (state === 'leave') leave.push(item);
+        }
+      });
+
+      var lines = [];
+      lines.push('Run /aligned:use-framework ' + framework + ' in regular mode' + note + ' with');
+      lines.push('this executive pre-review applied to the existing auto-mode draft at');
+      lines.push(target + '.');
+      lines.push('');
+
+      if (approved.length) {
+        lines.push('APPROVED ASSUMPTIONS (do not revisit):');
+        approved.forEach(function(a) {
+          lines.push('- Q-' + a.id + ' (' + a.pri + ', ' + a.conf + '): ' + a.title);
+        });
+        lines.push('');
+      }
+
+      if (rejected.length) {
+        lines.push('REJECTED ASSUMPTIONS (please reconsider with correction):');
+        rejected.forEach(function(r) {
+          var correction = r.correction ? r.correction : '<correction pending — user did not type one>';
+          lines.push('- Q-' + r.id + ' (' + r.pri + ', ' + r.conf + ') — corrected to: "' + correction + '"');
+        });
+        lines.push('');
+      }
+
+      if (answered.length) {
+        lines.push('ANSWERED QUESTIONS (use these answers verbatim):');
+        answered.forEach(function(q) {
+          var ans = q.answer ? q.answer : '<answer pending — user did not type one>';
+          lines.push('- Q-' + q.id + ' (' + q.pri + '): "' + ans + '"');
+        });
+        lines.push('');
+      }
+
+      if (skipped.length) {
+        lines.push('SKIPPED QUESTIONS (drop from list — not relevant):');
+        skipped.forEach(function(q) {
+          lines.push('- Q-' + q.id);
+        });
+        lines.push('');
+      }
+
+      if (leave.length) {
+        lines.push('REMAINING QUESTIONS (please ask interactively, P0 → P1 → P2):');
+        var ids = leave.map(function(q) { return 'Q-' + q.id; }).join(', ');
+        lines.push('- ' + ids);
+        lines.push('');
+      }
+
+      if (!approved.length && !rejected.length && !answered.length && !skipped.length && !leave.length) {
+        lines.push('(No assumptions or questions triaged yet. Toggle Approve/Reject on assumptions and Answer/Skip/Leave on questions above, then Regenerate.)');
+        lines.push('');
+      }
+
+      lines.push("Resume the framework's WAIT-gated interactive flow from this state.");
+      return lines.join('\n');
+    }
+
+    function rebuildPasteBack(folder) {
+      if (!folder) return;
+      var ta = document.getElementById('pasteback-' + folder);
+      if (!ta) return;
+      if (ta.dataset.dirty === 'true') return; // user edits survive
+      ta.value = buildPasteBack(folder);
+    }
+
+    // ── H7(c): Add tooltips to visible priority + confidence chips ──
+    function addChipTooltips() {
+      document.querySelectorAll('.oq-card-header .pri').forEach(function(el) {
+        if (!el.hasAttribute('title')) el.setAttribute('title', 'Impact on downstream framework run');
+      });
+      document.querySelectorAll('.oq-card-header .chip-conf-high, .oq-card-header .chip-conf-med, .oq-card-header .chip-conf-low').forEach(function(el) {
+        if (!el.hasAttribute('title')) el.setAttribute('title', 'Strength of evidence behind the guess');
+      });
+    }
+
+    // ── H7(c): Move slot + deepen chips out of header, into Context block ──
+    function moveJargonChipsIntoContext() {
+      document.querySelectorAll('.oq-card').forEach(function(card) {
+        var header = card.querySelector('.oq-card-header');
+        var context = card.querySelector('.oq-context');
+        if (!header || !context) return;
+        if (context.querySelector('.oq-context-meta')) return; // already done
+        var jargon = header.querySelectorAll('.chip-slot, .chip-deepen');
+        if (!jargon.length) return;
+        var meta = document.createElement('div');
+        meta.className = 'oq-context-meta';
+        jargon.forEach(function(chip) {
+          meta.appendChild(chip.cloneNode(true));
+        });
+        context.insertBefore(meta, context.firstChild);
+      });
+    }
+
+    // ── Sync initial selected button state from data-state ───
+    function syncInitialSelectedStates() {
+      document.querySelectorAll('.oq-card[data-state]').forEach(function(card) {
+        var state = card.getAttribute('data-state');
+        var btnClass = {
+          approved: 'btn-approve',
+          rejected: 'btn-reject',
+          answered: 'btn-answer',
+          skipped: 'btn-skip',
+          leave: 'btn-leave'
+        }[state];
+        if (!btnClass) return;
+        clearSelected(card);
+        var b = card.querySelector('.oq-btn.' + btnClass);
+        if (b) b.classList.add('selected');
+      });
+    }
+
+    // Initial paste-back build and setup
+    document.addEventListener('DOMContentLoaded', function() {
+      addChipTooltips();
+      moveJargonChipsIntoContext();
+      syncInitialSelectedStates();
+      // Wire inline input edits so paste-back stays current
+      document.querySelectorAll('.oq-inline-input textarea').forEach(function(ta) {
+        ta.addEventListener('input', function() {
+          var card = ta.closest('.oq-card');
+          if (card) rebuildPasteBack(card.getAttribute('data-folder'));
+        });
+      });
+      // Mark paste-back textareas dirty on user input so auto-rebuild doesn't clobber edits
+      document.querySelectorAll('.paste-back textarea').forEach(function(ta) {
+        ta.addEventListener('input', function() { ta.dataset.dirty = 'true'; });
+      });
+      // Wire Overview "Copy command" buttons
+      document.querySelectorAll('.focus-table .btn-mini[data-target]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var targetId = btn.dataset.target;
+          var ta = document.getElementById(targetId);
+          if (!ta) return;
+          copyToClipboard(ta.value, btn);
+        });
+      });
+    });
+
+    // Already loaded? Run now (covers cases where DOMContentLoaded already fired)
+    if (document.readyState !== 'loading') {
+      addChipTooltips();
+      moveJargonChipsIntoContext();
+      syncInitialSelectedStates();
+    }
+  </script>
+
+</body>
+</html>
