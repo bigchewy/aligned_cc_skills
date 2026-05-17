@@ -1,0 +1,77 @@
+[
+  {
+    "id": "#1",
+    "path": "source-docs/customer-interview-metro-fresh-2025.md",
+    "type": "transcript",
+    "used": "yes",
+    "signal_tags": ["competitive", "customer-voice", "persona", "audience", "positioning"],
+    "summary": "Customer interview transcript with the operations director at Metro Fresh, a regional grocery distributor running 120–200 daily deliveries. Rich source for behavioral alternatives (spreadsheet dispatch), ICP role and trigger, and proof claims. Primary signal for competitive alternatives and audience framing.",
+    "key_quotes": [
+      "Before FixtureCo we were just throwing it together in spreadsheets every morning — one dispatcher, sixty routes, total chaos.",
+      "Half our customers had just given up on the same-day promise. We were that bad.",
+      "The dispatchers are the ones who own this. If they don't trust the routing, they override it, and then you've lost everything.",
+      "We looked at DispatchTrack but it felt like it was built for enterprise fleets, not for a 12-person ops team.",
+      "We're not trying to be Amazon. We're trying to not lose the wholesale contracts we already have."
+    ],
+    "entities": {
+      "people": [
+        {"name": "Sandra Okafor", "role": "Director of Operations, Metro Fresh"}
+      ],
+      "competitors": [
+        {"name": "DispatchTrack", "role": "evaluated but rejected — perceived as enterprise-only"}
+      ],
+      "audiences": [
+        "grocery distributors",
+        "mid-market operations directors",
+        "12-person ops teams coordinating regional last-mile"
+      ],
+      "claims": [
+        "120–200 daily deliveries per location",
+        "Wholesale contract retention was primary success metric"
+      ]
+    },
+    "slice_relevance": {
+      "strategy/positioning.md": "Component 1 — describes spreadsheet + phone-call alternative state in explicit customer language",
+      "brand/voice.md": "Operations-director voice, informal but precise — 'throwing it together', 'total chaos'"
+    },
+    "concerns": []
+  },
+  {
+    "id": "#2",
+    "path": "source-docs/founder-positioning-narrative-2024.md",
+    "type": "markdown",
+    "used": "yes",
+    "signal_tags": ["positioning", "narrative", "founder-story", "competitive", "audience", "proof-points"],
+    "summary": "Founder-authored narrative document framing FixtureCo's positioning against the manual-coordination status quo. Establishes market category as 'last-mile delivery intelligence' distinct from generic route optimization. Key source for Component 3 (value), Component 4 (ICP), and Component 5 (market category).",
+    "key_quotes": [
+      "The problem isn't that there's no routing software. It's that none of it was built for the dispatcher who also handles customer calls.",
+      "Our customers win on reliability, not on speed. That's the category we're in: predictable last-mile, not fast last-mile.",
+      "The real alternative is not DispatchTrack or Onfleet. The real alternative is the whiteboard and the group text.",
+      "When we say 50–500 deliveries, we mean the band where automation starts paying but enterprise software is still overkill.",
+      "A 3PL coordinator managing 8 clients doesn't have time to run a routing algorithm. They need a system that thinks for them."
+    ],
+    "entities": {
+      "people": [
+        {"name": "Jordan Mercer", "role": "Founder/CEO, FixtureCo"}
+      ],
+      "competitors": [
+        {"name": "DispatchTrack", "role": "named as enterprise-tier benchmark"},
+        {"name": "Onfleet", "role": "named as SMB-tier benchmark"}
+      ],
+      "audiences": [
+        "3PL coordinators managing multiple clients",
+        "mid-market retail distributors",
+        "operations leaders at 50–500 deliveries/day scale"
+      ],
+      "claims": [
+        "50–500 deliveries/day is the ICP band",
+        "Automation ROI threshold starts at this scale"
+      ]
+    },
+    "slice_relevance": {
+      "strategy/positioning.md": "Components 3–5 — value is 'predictable last-mile', ICP is 50–500 deliveries/day ops leaders, category is 'last-mile delivery intelligence'",
+      "brand/messaging.md": "Founder language gives category naming candidates and ICP-resonant phrasing"
+    },
+    "concerns": []
+  }
+]

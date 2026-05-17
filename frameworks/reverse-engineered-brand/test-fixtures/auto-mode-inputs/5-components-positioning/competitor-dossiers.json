@@ -1,0 +1,49 @@
+[
+  {
+    "slug": "dispatchtrack",
+    "name": "DispatchTrack",
+    "url": "https://www.dispatchtrack.com",
+    "positioning_one_liner": "The delivery management platform that gives you real-time visibility and proof of delivery at enterprise scale.",
+    "icp_one_liner": "Enterprise and upper-mid-market distributors running high-volume delivery operations across multiple depots.",
+    "differentiated_attributes": [
+      "End-to-end delivery management with native mobile driver app",
+      "Real-time customer notifications and live tracking links",
+      "Proof of delivery with signature and photo capture",
+      "Multi-depot routing and territory optimization"
+    ],
+    "who_they_say_they_beat": ["spreadsheets", "manual phone dispatch", "legacy ERP delivery modules"],
+    "pricing_signal": "enterprise",
+    "recent_positioning_shift": "Expanded from transportation management into 'delivery experience' framing post-2023.",
+    "voice_traits": ["enterprise-formal", "feature-forward", "ROI-focused"],
+    "narrative_one_liner": "Enterprise delivery teams deserve the same real-time intelligence that consumer logistics companies have.",
+    "evidence_quotes": [
+      "Give your customers the Amazon experience they expect.",
+      "Reduce failed deliveries and customer calls with proactive notifications."
+    ],
+    "identity_verification": "matched",
+    "sources": ["https://www.dispatchtrack.com"]
+  },
+  {
+    "slug": "onfleet",
+    "name": "Onfleet",
+    "url": "https://onfleet.com",
+    "positioning_one_liner": "Onfleet makes it easy to manage and analyze last-mile delivery operations.",
+    "icp_one_liner": "Small to mid-sized delivery businesses and logistics operators needing a quick-to-deploy routing and tracking solution.",
+    "differentiated_attributes": [
+      "Simple setup with no onboarding fee",
+      "Real-time driver tracking and customer notifications",
+      "API-first platform for custom integrations",
+      "Automatic route optimization"
+    ],
+    "who_they_say_they_beat": ["spreadsheets", "pen and paper", "consumer GPS apps"],
+    "pricing_signal": "per-seat",
+    "voice_traits": ["approachable", "developer-friendly", "startup-lean"],
+    "narrative_one_liner": "Delivery operations shouldn't require an IT department.",
+    "evidence_quotes": [
+      "Get up and running in hours, not weeks.",
+      "Built for operations teams who move fast and need software that keeps up."
+    ],
+    "identity_verification": "matched",
+    "sources": ["https://onfleet.com"]
+  }
+]

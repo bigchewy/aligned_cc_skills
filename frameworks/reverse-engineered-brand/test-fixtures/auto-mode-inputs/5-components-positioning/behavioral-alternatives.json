@@ -1,0 +1,4 @@
+[
+  {"id": "BA-1", "alternative": "Excel + manual dispatch", "evidence_quote": "Before [us] we were just throwing it together in spreadsheets every morning.", "source": "source:#1", "confidence": "high"},
+  {"id": "BA-2", "alternative": "Do nothing — accept late deliveries", "evidence_quote": "Half our customers had just given up on the same-day promise.", "source": "source:#2", "confidence": "medium"}
+]
