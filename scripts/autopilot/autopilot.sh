@@ -151,7 +151,17 @@ run_phase() {
     3) report_stage "$n" "$total" "$name" skipped; return 3 ;;
     *)
       report_stage "$n" "$total" "$name" failed
-      # Phase crashed (non-2 non-3 non-zero); write halt if no other halt exists
+      # Distinguish transient external failures from real phase crashes.
+      # The autopilot is already resumable via sentinel/status files, so a
+      # transient API/network error should not require manual halt cleanup
+      # — a plain re-run is enough. Real crashes still write a halt with
+      # phase_crashed so the user gets stderr context.
+      if is_transient_error "$LOG"; then
+        echo ""
+        echo "Transient API/network error detected — no halt written." >&2
+        echo "Re-run the same command to retry from this phase." >&2
+        exit 1
+      fi
       if [ ! -f "$HALT_PATH" ]; then
         write_halt phase_crashed "$name" "Phase exited with code $exit_code"
       fi

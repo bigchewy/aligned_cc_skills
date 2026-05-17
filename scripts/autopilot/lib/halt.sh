@@ -43,6 +43,24 @@ read_halt() {
   cat "$path"
 }
 
+# is_transient_error <log-path>
+# Returns 0 (true) if the tail of the log shows a transient external error
+# that resolves on re-run — Anthropic API stream timeouts, 5xx responses,
+# upstream overload, network blips, OAuth refresh races. The orchestrator
+# uses this to decide whether a non-zero phase exit should write a
+# phase_crashed halt: transient errors skip the halt so a plain re-run
+# resumes from sentinel-tracked state with no manual cleanup.
+#
+# Pattern selection is conservative: only signatures the Anthropic CLI
+# emits on transient infrastructure failures. Application-side stack
+# traces and shell-script crashes still fall through to phase_crashed.
+is_transient_error() {
+  local log="${1:-}"
+  [ -n "$log" ] && [ -f "$log" ] || return 1
+  tail -100 "$log" 2>/dev/null | grep -qE \
+    'API Error:.*(Stream idle timeout|Overloaded|overloaded|50[234]|Connection error|fetch failed|ECONNRESET|ETIMEDOUT|socket hang up|EAI_AGAIN)|Bedrock.*ThrottlingException|Request timed out'
+}
+
 # format_halt <reason>
 # Echoes the canonical fix-instructions for the reason. Add cases here when
 # adding new reasons (and update skills/_shared/autopilot-halt-format.md).

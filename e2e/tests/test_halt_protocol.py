@@ -79,6 +79,72 @@ def test_format_halt_echoes_canonical_fix(reason, needle, tmp_path):
     )
 
 
+@pytest.mark.parametrize("log_tail", [
+    "API Error: Stream idle timeout - partial response received",
+    "API Error: 503 service unavailable",
+    "API Error: 502 Bad Gateway",
+    "API Error: Overloaded",
+    "API Error: Connection error",
+    "API Error: fetch failed",
+    "Bedrock invocation failed: ThrottlingException",
+    "Request timed out after 30s",
+])
+def test_is_transient_error_detects_known_signatures(tmp_path, log_tail):
+    """Patterns the Anthropic CLI emits on transient infrastructure
+    failures must be classified as transient so the orchestrator skips
+    the phase_crashed halt and lets a plain re-run recover."""
+    log = tmp_path / "autopilot.log"
+    log.write_text(f"some earlier output\n[heartbeat] ...\n{log_tail}\n")
+    r = _bash(f'is_transient_error "{log}"', cwd=tmp_path)
+    assert r.returncode == 0, (
+        f"expected transient classification for tail {log_tail!r}; "
+        f"got rc={r.returncode}, stderr={r.stderr}")
+
+
+@pytest.mark.parametrize("log_tail", [
+    "TypeError: cannot read property 'x' of undefined",
+    "ERROR: Plan file does not exist: /tmp/missing.md",
+    "permission denied",
+    "",
+])
+def test_is_transient_error_rejects_real_crashes(tmp_path, log_tail):
+    """Non-transient errors (application bugs, missing files, permission
+    errors) must NOT be misclassified as transient — they need the halt
+    sentinel so the user investigates rather than reruns blindly."""
+    log = tmp_path / "autopilot.log"
+    log.write_text(f"some earlier output\n{log_tail}\n")
+    r = _bash(f'is_transient_error "{log}"', cwd=tmp_path)
+    assert r.returncode == 1, (
+        f"expected non-transient for tail {log_tail!r}; "
+        f"got rc={r.returncode}, stdout={r.stdout}")
+
+
+def test_is_transient_error_handles_missing_log(tmp_path):
+    """Defensive: a missing log path must return non-transient rather than
+    crashing — we'd rather write a halt than swallow a real failure."""
+    r = _bash(f'is_transient_error "{tmp_path}/nonexistent.log"', cwd=tmp_path)
+    assert r.returncode == 1
+
+
+def test_autopilot_run_phase_skips_halt_on_transient():
+    """autopilot.sh's run_phase catch-all must call is_transient_error and
+    skip the write_halt when it returns true. This is the structural
+    guarantee that transient API errors don't require manual halt deletion."""
+    autopilot = REPO_ROOT / "scripts" / "autopilot" / "autopilot.sh"
+    text = autopilot.read_text(encoding="utf-8")
+    # The is_transient_error check must appear in run_phase before the
+    # write_halt phase_crashed callsite — otherwise transient errors
+    # still write the halt and the fix is dead.
+    transient_idx = text.find("is_transient_error")
+    crashed_idx = text.find("write_halt phase_crashed")
+    assert transient_idx != -1, \
+        "autopilot.sh must check is_transient_error in run_phase"
+    assert crashed_idx != -1, \
+        "autopilot.sh must still write_halt phase_crashed for real crashes"
+    assert transient_idx < crashed_idx, \
+        "is_transient_error check must precede write_halt phase_crashed"
+
+
 def test_phase_verify_emits_halt_on_failure():
     verify = REPO_ROOT / "scripts" / "autopilot" / "phases" / "verify.sh"
     text = verify.read_text(encoding="utf-8")
