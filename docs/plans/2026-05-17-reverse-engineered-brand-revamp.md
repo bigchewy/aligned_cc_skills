@@ -1392,7 +1392,7 @@ git commit -m "docs(reverse-engineered-brand): update examples.md for AUTO_MODE 
 
 ---
 
-### Task 24: Rewrite anti-examples.md sections
+### ✅ Task 24: Rewrite anti-examples.md sections
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/anti-examples.md` (rewrite lines 67–95; update line 105 reference; add compound-question anti-example)

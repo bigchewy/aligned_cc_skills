@@ -78,21 +78,21 @@
 
 **Wrong:** Advisor synthesizes `audiences/channels/employer.md` with whatever structure seems natural, sets `confidence: medium`, and proceeds as if it had an owning framework like the other slices.
 
-**Right:** Advisor synthesizes the GAP slice ad-hoc, sets `synthesis_method: ad_hoc` in the slice's frontmatter, sets `owning_framework: null`, and raises a meta-Open-Question saying "No framework currently owns the `audiences/channels/` slice. Synthesis was ad-hoc. Do you want to commission a `channel-strategy` framework, or accept ad-hoc synthesis going forward?"
+**Right:** Advisor synthesizes the GAP slice ad-hoc, sets `synthesis_method: ad_hoc` in the slice's frontmatter, sets `owning_framework: null`, and raises exactly one P0 meta-Open-Question *per missing framework* (not per GAP slice instance): "No framework currently owns the `audiences/channels/` slice. Synthesis was ad-hoc. Do you want to commission a `channel-strategy` framework, or accept ad-hoc synthesis going forward?" PHASE 3.1 deduplicates these: if three GAP slices share the same missing framework, one meta-OQ surfaces — not three.
 
-> GAP slices are a known weakness — making them invisible means future improvements happen ad-hoc too. Surfacing the gap as a meta-question lets the user decide whether to build a framework for it.
+> GAP slices are a known weakness — making them invisible means future improvements happen ad-hoc too. Surfacing the gap as a deduplicated meta-question lets the user decide whether to build a framework for it. Duplicating the meta-OQ per-slice floods the HTML with redundant prompts and defeats the deduplication logic.
 
 ---
 
-### Running sub-frameworks at runtime instead of synthesizing their output shape
+### Synthesizing a slice's shape without dispatching its owning framework
 
 **User:** [the prompt says "compose 5-components-positioning"]
 
-**Wrong:** Advisor loads `frameworks/5-components-positioning/prompt.md` and runs its interactive WAIT-gated phases inside the orchestrator. This re-introduces the WAIT-point problem the new design eliminated — sub-framework WAITs bleed into the orchestrator flow.
+**Wrong (old design, now superseded):** Orchestrator reads what `5-components-positioning` *produces* (the 5-component output shape) and synthesizes that shape directly from the Source Registry. Causes structural drift — the synthesizer's "5-component-like" output is structurally similar but vocabulary-inconsistent with what the framework actually produces.
 
-**Right:** Advisor reads what `5-components-positioning` *produces* (the 5-component output shape) and synthesizes that shape directly from the Source Registry. The sub-framework is a reference for what the slice should look like, not a runtime call. Sub-frameworks remain interactive when run standalone via `/aligned:use-framework` — not when composed inside the orchestrator.
+**Right:** Orchestrator dispatches the owning framework in AUTO_MODE with the auto-mode-preamble injected, overriding every WAIT. The sub-agent runs the framework's full methodology end-to-end and emits a draft + OQ JSON. The orchestrator collects those outputs — it does not manufacture the slice itself.
 
-> The orchestrator owns the autofill behavior. Sub-frameworks own the deepening behavior. They share output shape but not invocation mode.
+> AUTO_MODE dispatch replaced the old "synthesize the output shape" pattern. The preamble turns interactive WAIT-gated frameworks into single-shot machines. The slice content comes from the framework's methodology, not from the orchestrator's inference.
 
 ---
 
@@ -100,9 +100,9 @@
 
 **User:** [the build is done]
 
-**Wrong:** Advisor writes the brand folder and ends without producing `brand/open-questions.html`, telling the user "review the Open Questions section of CLAUDE.md when you have time."
+**Wrong:** Advisor writes the brand folder and ends without producing `brand/review.html`, telling the user "review the Open Questions section of CLAUDE.md when you have time."
 
-**Right:** Advisor writes `brand/.open-questions.json`, dispatches a sub-agent using the `render-review-html.md` prompt template, and waits for it to write and open `brand/open-questions.html` in the browser. The HTML is part of the deliverable, not optional.
+**Right:** Advisor writes `brand/.open-questions.json`, dispatches a sub-agent using the `render-review-html.md` prompt template, and waits for it to write and open `brand/review.html` in the browser. The HTML is part of the deliverable, not optional.
 
 > The interactive HTML is the review surface the user expects to see at the end of a run. Producing the JSON but not the HTML breaks the handoff.
 
@@ -117,3 +117,29 @@
 **Right:** Each slice has a native frame. When synthesizing narrative, think in Raskin's terms. When synthesizing positioning, think in Dunford's. The orchestrator's outer voice is April Dunford; the per-slice frame matches the slice's source sub-framework.
 
 > The orchestrator narrates as Dunford. The slice content respects the slice's native frame. Leaking one frame into another produces muddled output.
+
+---
+
+### Compound open questions (PHASE 2.4 warning)
+
+**User:** [silent, PHASE 2 Transform emitting OQs]
+
+**Wrong:** Sub-agent emits an OQ with `question: "Is the alternative spreadsheets and is the segment mid-market?"` — two separate predicates joined by `and`. PHASE 2.4 regex flags this as compound; it cannot be routed to a single calibration answer.
+
+**Right:** Split into two atomic OQs: `"Is the primary competitive alternative spreadsheets?"` and `"Is the primary customer segment mid-market?"` — one predicate each. Each can be answered independently in the HTML review.
+
+**Edge case (not compound):** `"Is the pricing model per-member, per-transport, or hybrid?"` — `or` inside a comma-separated alternatives list is not a compound question. The regex correctly does NOT flag this; the single OQ stands.
+
+> PHASE 2.4 validates OQ structure before Load. A compound question that slips through produces an HTML prompt the user cannot answer with a single calibration — splitting it is cheaper than post-hoc repair.
+
+---
+
+### Fabricating verification evidence in AUTO_MODE
+
+**User:** [proof-points-audit sub-agent running in AUTO_MODE]
+
+**Wrong:** Sub-agent writes "Industry studies show 73% reduction in delivery time" in a proof-point draft without an evidence anchor. No source citation, no confidence tag — the claim reads as verified fact.
+
+**Right:** Same situation, no source available → emit an OQ: `confidence: low`, `impact: P0`, `inferred_value: null`, `why_it_matters: "Claim implies verified industry benchmark; no source found in Source Registry. Provide a citation or remove the claim before publishing."` Do NOT write a draft sentence that implies the claim was verified.
+
+> VERIFICATION-STYLE FRAMEWORKS (proof-points-audit, competitive-battle-card) run with elevated fabrication risk in AUTO_MODE because their purpose is to validate claims — not invent them. When evidence is absent, the correct output is an OQ flagging the gap, not a plausible-sounding sentence filling it.
