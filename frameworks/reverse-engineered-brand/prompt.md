@@ -127,11 +127,11 @@ Hold the Source Registry and slice→sources index in memory. Proceed to Transfo
 
 ---
 
-### PHASE 2: Transform — Sub-agent synthesis per slice (silent)
+### PHASE 2: Auto-Framework Dispatch (silent)
 
-**Context-bloat guard:** The orchestrator MUST NOT read source extracts or framework prompts into its own context. Each slice's synthesis happens in a sub-agent dispatched with the `synthesize.md` prompt template — it reads the relevant extracts from disk, reads the owning framework spec from disk, and writes the slice draft + open questions JSON to disk. The orchestrator only sees a compact status response per slice.
+**Context-bloat guard:** The orchestrator MUST NOT read source extracts, framework prompts, or canonical pre-synthesis blob bodies into its own context. Each slice's framework runs in a sub-agent dispatched with the owning framework's full prompt + the AUTO_MODE preamble + the slice's filtered inputs.
 
-**Every slice has an owning framework.** The synthesize sub-agent reads `frameworks/{owning-framework-id}/prompt.md` and synthesizes the slice's content *as that framework would produce it* — same output shape, same analytical method, same vocabulary — substituting LLM inference for what would normally be human WAIT-input. The sub-agent MUST NOT invent a novel structure for any slice that has an owning framework. Where a slice has no owning framework (marked GAP in the table), the synthesis is explicitly ad-hoc; this is flagged in the slice's frontmatter AND raised as a meta-Open-Question so the user can decide whether to build a framework for that slice.
+**Every slice has an owning framework.** Each framework sub-agent runs the framework's PHASES end-to-end in AUTO_MODE, substituting LLM inference for what would normally be human WAIT-input. The sub-agent MUST NOT invent a novel structure for any slice that has an owning framework. Where a slice has no owning framework (marked GAP in the table), no framework is dispatched; a meta-Open-Question is raised so the user can decide whether to build a framework for that slice.
 
 This binding matters downstream: every Open Question carries the owning framework's id, and `brand/CLAUDE.md § Next Steps to Deepen` lists `/aligned:use-framework {id}` per slice so the user always has a documented method for going deeper. Improvements are never improvised — they go through the named framework.
 
@@ -158,34 +158,32 @@ Inspect the Source Registry to decide which slice instances to produce. For exam
 - `audiences/channels/{channel}.md` — instantiate one per channel mentioned
 - Conditional slices (`clinical-evidence`, `compliance`, `design-principles`) — only instantiate if the org's domain or registry signal warrants it
 
-Decisions about which roles/channels/segments to instantiate happen here in the orchestrator (cheap, just metadata) — the synthesizer sub-agents only see the slices the orchestrator asks for.
+Decisions about which roles/channels/segments to instantiate happen here in the orchestrator (cheap, just metadata) — the framework sub-agents only see the slices the orchestrator asks for.
 
-**Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a synthesizer for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice). This prevents synthesizers from fabricating content from nothing — the same failure class as the zero-usable-sources gate at the build level.
+**Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a framework for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice).
 
-**Step 2.2: Dispatch synthesizers in parallel.**
+**Step 2.2: Build the canonical pre-synthesis blob.**
 
-Read `frameworks/reverse-engineered-brand/synthesize.md` once (it's the prompt template). For each slice instance that was NOT skipped in Step 2.1, dispatch a Task with `subagent_type: general-purpose` and a prompt built by substituting these placeholders into the template:
+The orchestrator authors a 1-paragraph `canonical-pre-synthesis-blob.md` in `{brand-folder-path}/.build/` from the Source Registry: org-name, brief positioning hypothesis (extracted from PHASE 1 aggregated signal), brief ICP hypothesis. This blob is identical content passed to every framework dispatch so they share a baseline view of "what the company is".
 
-- `{slice-id}` — slice path (e.g., `strategy/positioning.md`)
-- `{owning-framework-id}` — framework id from the mapping table above, or JSON `null` for GAP slices
-- `{owning-framework-path}` — absolute path to `frameworks/{owning-framework-id}/prompt.md`, or empty string for GAP slices
-- `{brand-folder-spec-path}` — absolute path to `docs/brand-folder-spec.md`
-- `{extract-json-paths}` — JSON array of absolute paths to source extracts filtered by the slice→signal_tags lookup from PHASE 1 (must be non-empty per Step 2.1's skip rule)
-- `{output-draft-path}` — `{brand-folder-path}/.build/drafts/{slice-id}` (slashes preserved — create parent dirs as needed)
-- `{output-open-questions-path}` — `{brand-folder-path}/.build/open-questions/{slice-id-without-extension}.json` (slashes preserved — e.g., `strategy/positioning.json`)
-- `{org-name}` — org name from PHASE 0
-- `{context-blurb}` — same as the extractor's input
+**Step 2.3: Dispatch frameworks in parallel.**
 
-Synthesizers emit Open Questions with local string ids (`local-1`, `local-2`, …); the orchestrator assigns global `OQ-1..N` ids during aggregation in PHASE 3 Step 3.1. No upfront ID coordination needed.
+For each non-skipped slice instance:
+- Look up `owning-framework-id` from the slice mapping table.
+- If owning framework is `null` (GAP slice — `audiences/channels/*`, `audiences/segments/*`): do NOT dispatch a framework. Emit one P0 meta-OQ per missing framework (deduplicated at PHASE 3.1, so emit one per GAP slice instance; PHASE 3 deduplicates by `gap_frameworks_needed`).
+- Otherwise, read `frameworks/{owning-framework-id}/prompt.md` and `frameworks/reverse-engineered-brand/auto-mode-preamble.md`. Concatenate: preamble + ORIGINAL framework prompt. Dispatch a Task with `subagent_type: general-purpose` and substituted placeholders:
+  - `{slice-id}` — the slice path (e.g., `strategy/positioning.md`)
+  - `{output-draft-path}` — `{brand-folder-path}/.build/slices/{slice-id}.draft.md`
+  - `{output-open-questions-path}` — `{brand-folder-path}/.build/slices/{slice-id}.oq.json`
+  - `{extract-json-paths}` — JSON array of absolute paths to source extracts (filtered by slice→signal_tags)
+  - `{competitor-dossier-paths}` — JSON array of paths to `{brand-folder-path}/.build/competitors/*.json` (for competitive-adjacent slices: `strategy/positioning.md`, `market/competitive.md`, `market/alternatives.md`)
+  - `{behavioral-alternatives-path}` — `{brand-folder-path}/.build/behavioral-alternatives.json` (for `market/alternatives.md` specifically; ignored by other slices)
+  - `{canonical-pre-synthesis-blob-path}` — absolute path to the blob written in Step 2.2
+  - `{org-name}` — org name from PHASE 0
 
-**Dispatch:** issue all slice synthesizers in a single message (multiple Task tool calls in one message — they run in parallel). Slice count is bounded (typically 8-15), so a single batch is fine. Slices are independent — order doesn't matter; cross-slice incoherence (if any) becomes an Open Question for human resolution.
+**Dispatch contract:** Issue all framework dispatches in a SINGLE assistant message (multiple Task tool calls in one message — parallel execution). Slice count is bounded (typically 8–15). Per `auto-mode-preamble.md`, each sub-agent runs the framework's PHASES end-to-end without WAITing.
 
-**Step 2.3: Collect status responses.**
-
-Each synthesizer returns:
-- `SLICE`, `DRAFT` path, `OPEN_QUESTIONS_FILE` path, `OPEN_QUESTIONS_COUNT`, `CONFIDENCE_DIST`, `OWNING_FRAMEWORK`, `NOTES`
-
-Collect into an in-memory slice index (small — one record per slice). Do NOT read the slice drafts back into orchestrator context. The drafts sit on disk; PHASE 3 consolidates them.
+**Cross-framework ordering caveat** (per Architect M1): `competitive-battle-card`'s prompt names positioning as its canonical source. Battle-card dispatch receives the positioning DRAFT — a placeholder note in the dispatch prompt explains the upstream slice may not be finalized; the framework's AUTO_MODE behavior is to tag any positioning-dependent OQ with `confidence: low`, `impact: P0`, `why_it_matters` noting the upstream dependency.
 
 **Step 2.4: Ready-to-load verification gate.**
 
