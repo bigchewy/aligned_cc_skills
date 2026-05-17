@@ -415,7 +415,7 @@ git commit -m "refactor(buyer-persona): remove mode-detection WAITs + orphan PHA
 
 ---
 
-### Task 6: Remove mode-detection from brand-voice framework
+### ✅ Task 6: Remove mode-detection from brand-voice framework
 
 **Files:**
 - Modify: `frameworks/brand-voice/prompt.md` (delete mode-detection block at lines 25 + 35; simplify PHASE 8 hand-off contract)

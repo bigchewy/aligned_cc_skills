@@ -22,19 +22,15 @@ Each WAIT point is a hard stop. The specificity we build comes from your materia
 
 **IMPORTANT: This framework is interactive. Every WAIT point must pause for user input before the session continues.**
 
-**Mode detection:** At PHASE 1, confirm whether you are running standalone or as a sub-framework invoked by `reverse-engineered-brand`. This changes what PHASE 8 does. Ask the user once — do not assume.
-
 ---
 
 ### PHASE 1: Sample intake
 
 Say:
 
-"Before we name anything, I need to read what you've actually written. Two inputs:
+"Before we name anything, I need to read what you've actually written.
 
-**First — standalone or orchestrated?** Are you running this as a standalone session (I'll write the file directly to `brand/language/voice.md` at the end), or is this being invoked as part of a `reverse-engineered-brand` session (I'll hand the assembled content back to the orchestrator)?
-
-**Second — samples.** Give me 3–10 pieces of existing copy. These can be:
+**Samples.** Give me 3–10 pieces of existing copy. These can be:
 
 - Homepage sections (hero, subhero, features, about)
 - Blog post excerpts (especially ones that performed well)
@@ -350,8 +346,6 @@ summary: "Brand voice for [org name]: [one sentence summarizing the dominant ton
 6. `## Glossary` — definition list format, each term bold followed by definition
 7. `## Competitor Naming` — posture, rule, rationale in plain prose
 
-**Hand-off:**
-- **Standalone mode:** Write the complete file to `brand/language/voice.md`. Confirm the path to the user and note any sections that should be revisited once more copy exists.
-- **Orchestrated mode:** Yield the complete assembled markdown back to the `reverse-engineered-brand` orchestrator. Do not write the file directly.
+**Hand-off:** Write the complete file to `brand/language/voice.md`. Confirm the path to the user and note any sections that should be revisited once more copy exists.
 
 WAIT for user response before continuing.
