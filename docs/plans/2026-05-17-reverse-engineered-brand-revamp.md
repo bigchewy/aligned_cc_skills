@@ -1219,7 +1219,7 @@ git commit -m "refactor(reverse-engineered-brand): update prompt.md intro, intak
 
 ---
 
-### Task 21: Replace render-review-html.md with new schema-reader
+### ✅ Task 21: Replace render-review-html.md with new schema-reader
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/render-review-html.md` (full replacement)
