@@ -28,15 +28,167 @@ Running example: **Fieldline** — a B2B SaaS company that helps mid-market fiel
 
 The Extract phase is fully silent. No user interaction. The advisor reads every URL page and local file, classifies them, and holds the Source Registry in memory until the Load phase writes it into `brand/CLAUDE.md § Source Registry`.
 
+### Entity extraction with role field (new schema)
+
+Each entity in the flat `entities` array carries a `role` field that classifies its strategic position:
+
+```json
+{
+  "entities": [
+    {
+      "name": "Fieldline",
+      "role": "subject",
+      "type": "company",
+      "sources": [1, 2, 4]
+    },
+    {
+      "name": "DispatchTrack",
+      "role": "competitor",
+      "type": "company",
+      "slug": "dispatchtrack",
+      "sources": [3, 6]
+    },
+    {
+      "name": "spreadsheets + manual dispatch",
+      "role": "alternative",
+      "type": "behavior",
+      "sources": [5, 7]
+    },
+    {
+      "name": "VP of Operations",
+      "role": "persona",
+      "type": "person",
+      "sources": [2, 4]
+    }
+  ]
+}
+```
+
+> PHASE 1.5a runs next, aggregating competitor entities and extracting behavioral alternatives.
+
 ---
 
-## PHASE 2: Transform (silent — no advisor narration to the user)
+## PHASE 1.5: Competitor research and behavioral alternatives (silent)
 
-The Transform phase is fully silent. The advisor produces all slice drafts in memory with confidence tagging, logs every gap and inference as an Open Question, and proceeds straight to Load.
+### PHASE 1.5 example — competitor research
+
+After Extract completes, the orchestrator writes `behavioral-alternatives.json` and dispatches competitor-dossier sub-agents in a single parallel batch.
+
+**Behavioral alternatives write (compact 3-entry array):**
+
+```json
+[
+  {
+    "id": "alt-1",
+    "label": "spreadsheets + manual dispatch",
+    "type": "behavior",
+    "evidence": "5 of 8 interview transcripts reference prior state"
+  },
+  {
+    "id": "alt-2",
+    "label": "DispatchTrack (legacy incumbent)",
+    "type": "competitor",
+    "evidence": "3 win/loss mentions; pricing comparison in sales deck"
+  },
+  {
+    "id": "alt-3",
+    "label": "custom Airtable build",
+    "type": "behavior",
+    "evidence": "2 transcripts; one prospect still mid-migration"
+  }
+]
+```
+
+**Competitor dossier dispatch (single batch — 2 sub-agents in parallel):**
+
+Each competitor entity with `role: "competitor"` triggers a sub-agent call to the `competitor-dossier` prompt template. Dispatched together in one message:
+
+- Sub-agent A: slug `dispatchtrack` → reads fieldline.io competitive page, DispatchTrack public pricing, 3 win/loss excerpts → writes `brand/competitors/dispatchtrack.md`
+- Sub-agent B: slug `routemaster` → reads public site + 1 transcript mention → writes `brand/competitors/routemaster.md`
+
+**Resulting dossier files (one per slug):**
+
+```
+brand/competitors/
+  dispatchtrack.md   ← full dossier: positioning, pricing, strengths, gaps, Fieldline wedge
+  routemaster.md     ← partial dossier: limited evidence; confidence tagged low
+```
+
+---
+
+## PHASE 2: Transform — auto-framework dispatch (silent)
+
+The Transform phase dispatches all owning frameworks as parallel sub-agents. No slice-by-slice narration. The orchestrator builds a canonical pre-synthesis blob, attaches the AUTO_MODE preamble, and fires all frameworks in a single batch.
+
+### Auto-framework dispatch narrative
+
+**Orchestrator builds pre-synthesis blob:**
+
+```json
+{
+  "org": "Fieldline",
+  "sources": ["fieldline.io", "~/Documents/fieldline-research"],
+  "entities": [...],
+  "behavioral_alternatives": [...],
+  "raw_evidence": {...}
+}
+```
+
+The AUTO_MODE preamble (see `auto-mode-preamble.md`) is prepended to every sub-agent prompt. It instructs each framework to skip all WAIT points, fill all slots from evidence, and emit `draft.md` + `oq.json` without user interaction.
+
+**Parallel batch dispatch (single message, 4 sub-agents):**
+
+- Sub-agent A: `5-components-positioning` with AUTO_MODE preamble → writes `brand/strategy/positioning.md` + `brand/.oq/positioning.json`
+- Sub-agent B: `strategic-narrative` with AUTO_MODE preamble → writes `brand/strategy/narrative.md` + `brand/.oq/narrative.json`
+- Sub-agent C: `messaging-distillation` with AUTO_MODE preamble → writes `brand/language/messaging.md` + `brand/.oq/messaging.json`
+- Sub-agent D: `buyer-persona` with AUTO_MODE preamble → writes `brand/personas/vp-ops.md` + `brand/.oq/buyer-persona.json`
+
+Each sub-agent emits a `draft.md` (the slice content) and an `oq.json` (open questions found during that framework's work).
+
+**PHASE 2.4 ready-to-load gate (success path — no validation failures):**
+
+Orchestrator runs schema validation and slot validator after all sub-agents complete:
+- All 4 `oq.json` files pass schema (required fields present, no compound OQs flagged)
+- All required slots in each slice are populated (confidence tagged, sources cited)
+- AUTO_MODE heuristics confirm sufficient evidence density for all frameworks
+- Result: gate passes, proceed to PHASE 3
 
 ---
 
 ## PHASE 3: Load and final report
+
+### Aggregation and render
+
+PHASE 3 aggregates sub-agent outputs, deduplicates open questions, inlines competitor dossiers, and dispatches the renderer.
+
+**Aggregation produces:**
+
+```json
+{
+  "folders": [
+    {"path": "brand/strategy/positioning.md", "framework": "5-components-positioning", "confidence": "high"},
+    {"path": "brand/strategy/narrative.md", "framework": "strategic-narrative", "confidence": "medium"},
+    {"path": "brand/language/messaging.md", "framework": "messaging-distillation", "confidence": "medium"},
+    {"path": "brand/personas/vp-ops.md", "framework": "buyer-persona", "confidence": "high"},
+    {"path": "brand/market/competitive.md", "framework": "competitive-battle-card", "confidence": "medium"},
+    {"path": "brand/market/alternatives.md", "framework": "5-components-positioning", "confidence": "medium"},
+    {"path": "brand/audiences/channels/employer.md", "framework": null, "confidence": "low", "gap": true}
+  ],
+  "global_oq_ids": ["oq-1", "oq-2", "oq-3", "oq-4", "oq-5", "oq-6", "oq-7"],
+  "deduped_gap_entries": [
+    {"id": "gap-1", "description": "employer channel strategy", "owning_framework": null}
+  ],
+  "competitor_dossiers": ["brand/competitors/dispatchtrack.md", "brand/competitors/routemaster.md"]
+}
+```
+
+Global OQ ids are deduplicated across all `oq.json` files — an OQ surfaced by two frameworks appears once in the merged queue.
+
+GAP entries (slices with no owning framework) are collected once regardless of how many frameworks flagged the gap.
+
+**Renderer dispatch:**
+
+Orchestrator passes the aggregated blob to the `render-review-html` schema-reader, which reads `review-template.html` and writes `brand/open-questions.html`.
 
 ### Advisor's end-of-run report
 
@@ -52,9 +204,9 @@ The canonical Open Questions queue lives in `brand/CLAUDE.md § Open Questions`.
 
 ---
 
-## Open Question shape (what the advisor writes during Transform)
+## Open Question shape (what sub-agents write during Transform)
 
-Every Open Question in the queue (both in `brand/CLAUDE.md § Open Questions` and `brand/.open-questions.json`) has the same shape:
+Every Open Question in the queue (both in `brand/CLAUDE.md § Open Questions` and `brand/.oq/<framework>.json`) has the same shape:
 
 ```markdown
 ### OQ-1: Primary competitive alternative
@@ -69,6 +221,37 @@ Every Open Question in the queue (both in `brand/CLAUDE.md § Open Questions` an
 ```
 
 > The Open Question is a self-contained card: file/anchor, current draft, the calibration question, the downstream consequence, the owning framework for deeper work, and source provenance. The HTML renders each one as an answer-textarea card; the markdown form is the canonical record.
+
+---
+
+## Atomic vs compound open questions
+
+The PHASE 2.4 validator flags compound OQs (two predicates joined by `and` or `or` in a way that creates two independent questions). Examples:
+
+**❌ Bad — compound (flagged by validator):**
+
+```
+"Is the alternative spreadsheets and is the segment mid-market?"
+```
+
+Two predicates joined by `and`. The validator's compound regex matches. A warning is surfaced and the OQ is split before Load.
+
+**✅ Good — split into two atomic OQs:**
+
+```
+"Is the alternative spreadsheets-plus-manual-dispatch?"
+"Is the primary segment mid-market retail?"
+```
+
+Each question has exactly one predicate. Validator passes.
+
+**✅ Also good — `or` inside alternatives list, not joining predicates:**
+
+```
+"Is the pricing model per-member, per-transport, or hybrid?"
+```
+
+The `or` enumerates options for a single predicate (pricing model). The compound regex does NOT match. Validator passes.
 
 ---
 
