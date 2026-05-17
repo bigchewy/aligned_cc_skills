@@ -170,3 +170,10 @@ class TestFrameworkRegistrySchema:
         assert entry["advisor"] == expected_advisor, (
             f"Framework {slug}: expected advisor '{expected_advisor}', got '{entry['advisor']}'"
         )
+
+    def test_registry_documents_deliverable_type_taxonomy(self):
+        with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+            head = f.read(2000)
+        for tag in ["content", "decision", "plan", "analysis"]:
+            assert tag in head, f"deliverable_type taxonomy must document tag: {tag}"
+        assert "deliverable_type" in head, "missing taxonomy doc block"

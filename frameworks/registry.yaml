@@ -1,5 +1,18 @@
 # Framework Registry — source of truth for all decision frameworks
 # Skills use this for discovery, routing, and selection.
+#
+# Schema: each entry MUST have id, name, advisor, purpose, category, domains, use_when.
+# Optional: required_documents, helpful_documents, deliverable_type, default_critic_advisors,
+#           follow_on_frameworks.
+#
+# deliverable_type taxonomy (mandatory for all entries; pick the closing-phase output type):
+#   content   — artifact humans consume (positioning canvas, landing page copy, exercise sequence)
+#   decision  — a choice made (RCA verdict, fear-setting outcome, the-work turnaround)
+#   plan      — sequenced actions (6-step output, kernel-of-good-strategy, OKR set)
+#   analysis  — structured understanding of a situation (jobs-to-be-done, finding-the-crux)
+#
+# Tiebreaker: the closing phase's output determines the type, not intermediate phases.
+#
 
 frameworks:
   - id: 100-percent-responsibility

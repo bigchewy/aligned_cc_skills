@@ -545,7 +545,7 @@ git commit -m "refactor(use-advisor): delegate persona protocol to _shared/advis
 
 ---
 
-### Task 6: Add `deliverable_type` taxonomy doc + validate against 10-15 ambiguous frameworks
+### ✅ Task 6: Add `deliverable_type` taxonomy doc + validate against 10-15 ambiguous frameworks
 
 The `deliverable_type` field is one of four values: `content`, `decision`, `plan`, `analysis`. Document the taxonomy at the top of `frameworks/registry.yaml` and validate the primary-tag rule by classifying 10-15 frameworks that produce multiple deliverable types before bulk-classifying.
 
