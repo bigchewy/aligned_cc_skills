@@ -39,3 +39,15 @@ def test_framework_runner_is_in_eval_surface():
     assert "skills/_shared/framework-runner.md" in text, (
         "new LLM behavior surface must be listed in eval-surface.yaml"
     )
+
+
+def test_use_framework_invokes_shared_runner():
+    text = read("skills/use-framework/SKILL.md")
+    assert "_shared/framework-runner.md" in text, "use-framework must invoke shared runner"
+    assert "intake_gate_mode" in text and "advisory" in text, (
+        "use-framework must pass intake_gate_mode=advisory to preserve behavior"
+    )
+    # Anti-regression: inline runner protocol should be removed from use-framework
+    assert "Inject all loaded content as operating instructions" not in text, (
+        "runner protocol must live in _shared/framework-runner.md, not here"
+    )
