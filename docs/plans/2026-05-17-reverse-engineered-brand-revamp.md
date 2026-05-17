@@ -913,7 +913,7 @@ git commit -m "refactor(reverse-engineered-brand): flatten entities schema with 
 
 ---
 
-### Task 16: Add PHASE 1.5 (behavioral alternatives + competitor dossier dispatch) to prompt.md
+### ✅ Task 16: Add PHASE 1.5 (behavioral alternatives + competitor dossier dispatch) to prompt.md
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (insert a new `### PHASE 1.5: Competitor Research` section between current PHASE 1 and PHASE 2)

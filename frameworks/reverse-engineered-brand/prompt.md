@@ -107,6 +107,26 @@ Hold the Source Registry and slice→sources index in memory. Proceed to Transfo
 
 ---
 
+### PHASE 1.5: Competitor Research — Behavioral alternatives + dossier dispatch (silent)
+
+**Step 1.5a — Orchestrator-side aggregation (cheap, no sub-agents):**
+
+- Read all source extracts produced in PHASE 1.
+- **Behavioral-alternatives extraction:** scan each extract's `key_quotes` for non-product alternative phrases ("spreadsheets," "manual coordination," "do nothing," "hiring temps," ad-hoc phone calls). For each match, record: `id` (BA-N), `alternative` (atomic phrase), `evidence_quote` (verbatim), `source` (typed-prefix), `confidence` (HIGH if multiple sources, MEDIUM if one, LOW if inferred).
+- **Competitor aggregation:** filter every extract's `entities` array for `role: competitor`. Aggregate by `name` (case-insensitive). Count mentions across all extracts. Combine with user-supplied competitor names from PHASE 0 (user-supplied take priority — never dropped, always make the final list).
+- **Rank and cap:** sort competitors by `mention_count` descending. Tie-break by alphabetical order of slug for determinism. Cap at 5 competitors total (or 3 minimum if fewer surfaced). The extract schema carries `name` + `role` + optional `verbatim_quote` per entity but does NOT carry per-mention provenance (e.g., "customer quote" vs. "product page"), so signal-strength weighting is not possible at this layer — mention-count ranking is the deterministic proxy. If finer ranking is needed in the future, extend `extract.md` to record per-mention provenance.
+- Write `{brand-folder-path}/.build/behavioral-alternatives.json` (the array of behavioral-alternative entries).
+- Write `{brand-folder-path}/.build/competitor-list.json` (the array of `{slug, name, mention_count, source_ids}` records to dispatch).
+
+**Step 1.5b — Sub-agent dossier dispatch (parallel):**
+
+- Read `frameworks/reverse-engineered-brand/competitor-dossier.md` once (the prompt template).
+- For each competitor in the competitor-list (≤5), dispatch a Task with `subagent_type: general-purpose` and substituted placeholders: `{competitor-name}`, `{competitor-slug}`, `{source-extracts-paths}` (filtered to extracts that mention this competitor — JSON array of absolute paths), `{output-json-path}` = `{brand-folder-path}/.build/competitors/{slug}.json`, `{context-blurb}`.
+- Dispatch all dossier sub-agents in a single message (multiple Task tool calls in one assistant message — parallel execution). Competitor count is bounded (≤5) so a single batch is fine.
+- **Soft-fail on zero competitors:** if PHASE 0 yielded no user-supplied names AND PHASE 1.5a aggregated zero competitor entities, emit a single meta-OQ at PHASE 3 aggregation time (`why_it_matters: "No competitor signal in source material — recommend manual addition"`) and continue. Do NOT hard-fail.
+
+---
+
 ### PHASE 2: Transform — Sub-agent synthesis per slice (silent)
 
 **Context-bloat guard:** The orchestrator MUST NOT read source extracts or framework prompts into its own context. Each slice's synthesis happens in a sub-agent dispatched with the `synthesize.md` prompt template — it reads the relevant extracts from disk, reads the owning framework spec from disk, and writes the slice draft + open questions JSON to disk. The orchestrator only sees a compact status response per slice.
