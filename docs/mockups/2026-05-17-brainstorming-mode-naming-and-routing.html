@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainstorming Mode Naming and Routing</title>
+  <!-- Mermaid for diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Tailwind for utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: 'var(--color-accent)', hover: 'var(--color-accent-hover)', subtle: 'var(--color-accent-subtle)' },
+            surface: 'var(--color-surface)',
+            muted: 'var(--color-muted)',
+            foreground: 'var(--color-foreground)',
+            secondary: 'var(--color-secondary)',
+            dimmed: 'var(--color-dimmed)',
+            border: 'var(--color-border)'
+          },
+          fontFamily: {
+            sans: ['var(--font-sans)'],
+            mono: ['var(--font-mono)']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid var(--color-muted); margin-bottom: 24px; }
+    .tab-btn { padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: var(--color-dimmed); background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    .sub-tab-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--color-muted); padding-left: 16px; background: var(--color-background); margin-bottom: 16px; }
+    .sub-tab-btn { padding: 8px 14px; font-size: 0.78rem; font-weight: 500; color: var(--color-dimmed); background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color 150ms, border-color 150ms; font-family: inherit; }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    .section { background: white; border: 1px solid var(--color-border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 8px; }
+    .badge { font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: var(--color-accent-subtle); color: var(--color-accent); font-weight: 500; margin-left: 8px; vertical-align: middle; }
+    .badge-deferred { font-size: 0.7rem; padding: 1px 6px; border-radius: 9999px; background: var(--color-surface); color: var(--color-dimmed); font-weight: 500; margin-left: 8px; vertical-align: middle; }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: var(--color-foreground); margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+
+    .change-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .change-table th { text-align: left; padding: 10px 12px; font-weight: 600; color: var(--color-foreground); background: var(--color-surface); border-bottom: 1px solid var(--color-border); }
+    .change-table td { padding: 10px 12px; border-bottom: 1px solid var(--color-muted); color: var(--color-foreground); vertical-align: top; }
+    .change-table .file-path { font-family: Menlo, Consolas, monospace; font-size: 0.78rem; color: var(--color-secondary); }
+    .status-badge { display: inline-block; font-size: 0.7rem; padding: 1px 8px; border-radius: 9999px; font-weight: 500; }
+    .status-modified { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-unchanged { background: var(--color-surface); color: var(--color-dimmed); }
+    .status-new { background: #ecfdf5; color: #047857; }
+
+    .test-category { background: white; border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .test-category h3 { font-size: 0.95rem; font-weight: 600; color: var(--color-foreground); margin-bottom: 8px; }
+    .test-items { font-size: 0.85rem; color: var(--color-foreground); padding-left: 20px; margin: 0; }
+    .test-items li { margin-bottom: 6px; line-height: 1.5; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: white; border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
+    .card h3 { font-size: 0.95rem; font-weight: 600; color: var(--color-foreground); margin-bottom: 8px; }
+    .card p { font-size: 0.85rem; color: var(--color-secondary); line-height: 1.5; margin: 0; }
+
+    .compare-grid { display: grid; gap: 16px; margin-bottom: 24px; }
+    .compare-2col { grid-template-columns: repeat(2, 1fr); }
+    .compare-3col { grid-template-columns: repeat(3, 1fr); }
+    .compare-grid .col { background: white; border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
+    .compare-grid .col h3 { font-size: 0.95rem; font-weight: 600; color: var(--color-foreground); margin-bottom: 8px; }
+    .compare-grid .pro { color: #047857; font-size: 0.85rem; }
+    .compare-grid .con { color: #b91c1c; font-size: 0.85rem; }
+
+    .callout { padding: 16px 20px; border-radius: 8px; font-size: 0.85rem; border-left: 4px solid; margin-bottom: 16px; line-height: 1.5; }
+    .callout-decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .callout-constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: var(--color-foreground); }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: var(--color-foreground); }
+    .callout strong { display: block; font-weight: 600; margin-bottom: 4px; }
+
+    pre.picker-render { background: var(--color-muted); color: var(--color-foreground); padding: 16px 20px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.55; overflow-x: auto; border: 1px solid var(--color-border); }
+  </style>
+  <!-- WIDGETS-CSS-START -->
+<style>
+  .interactive-section { background: var(--color-accent-subtle); border-radius: 12px; padding: 24px 28px 32px; margin: 32px -28px; }
+  .interactive-banner { display: flex; gap: 12px; align-items: flex-start; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--color-foreground); }
+  .interactive-banner .icon { color: var(--color-accent); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  table.interactive td { vertical-align: middle; }
+  table.interactive .decision-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; }
+  table.interactive .decision-title { font-weight: 500; color: var(--color-foreground); }
+  table.interactive td.decision-desc { font-size: 13px; color: var(--color-secondary); line-height: 1.5; }
+
+  select.dropdown { font-family: var(--font-sans); font-size: 13px; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-surface); color: var(--color-foreground); cursor: pointer; min-width: 110px; }
+  select.dropdown:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  select.dropdown.reject, select.dropdown.include { color: var(--color-accent); font-weight: 500; border-color: var(--color-accent); background: var(--color-accent-subtle); }
+  select.dropdown.q-reject { color: #b91c1c; font-weight: 500; border-color: #b91c1c; background: #fef2f2; }
+
+  tr.row-active td { background: var(--color-accent-subtle) !important; }
+  tr.row-rejected td { background: #fef2f2 !important; }
+  tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; }
+
+  tr.section-divider td { background: var(--color-muted); color: var(--color-foreground); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .prompt-box { margin-top: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
+  .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .prompt-box-label { font-size: 13px; font-weight: 600; color: var(--color-foreground); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn { font-family: var(--font-sans); font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--color-border); background: var(--color-muted); color: var(--color-foreground); font-weight: 500; }
+  .btn:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); }
+  .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+  .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .btn.copied { background: #047857; color: white; border-color: #047857; }
+  .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+  textarea.prompt-textarea { width: 100%; min-height: 160px; padding: 14px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--color-foreground); background: var(--color-muted); border: 1px solid var(--color-border); border-radius: 8px; resize: vertical; }
+  textarea.prompt-textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  .prompt-hint { margin-top: 8px; font-size: 12px; color: var(--color-dimmed); font-style: italic; }
+</style>
+<!-- WIDGETS-CSS-END -->
+</head>
+<body>
+  <h1>Brainstorming Mode Naming and Routing</h1>
+  <p class="subtitle">Eliminate silent mis-routes; collapse Business+Authoring into Authoring; rename Planning&rarr;Roadmap</p>
+  <p class="context">Composes with docs/plans/2026-05-09-framework-runner-refactor-design.md. Post-critique revision: 5 HIGH + 7 MEDIUM + fact-check corrections applied. Design doc: docs/plans/2026-05-17-brainstorming-mode-naming-and-routing-design.md</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('authoring')">Authoring Fallback</button>
+    <button class="tab-btn" onclick="switchTab('routing')">Routing Fix</button>
+    <button class="tab-btn" onclick="switchTab('keywords')">Keywords</button>
+    <button class="tab-btn" onclick="switchTab('migration')">Migration</button>
+    <button class="tab-btn" onclick="switchTab('tests')">Tests</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+    <button class="tab-btn" onclick="switchTab('questions')">Open Questions</button>
+  </div>
+
+  <div id="panel-overview" class="tab-panel active">
+    <div class="section">
+      <h2>Goal</h2>
+      <p class="description">Eliminate the silent auto-routing failure that sent a deck-building workflow to Planning mode (wrong) when Authoring mode (right) was sitting one mode away. The user could not see, much less correct, the routing choice &mdash; the brainstorm just began in the wrong mode and produced a too-high-level deliverable.</p>
+      <ul class="bullet-list">
+        <li>Collapse the Business+Authoring overlap that hid Authoring's existence (extending the May 9 plan) &mdash; name the result <code>authoring</code> rather than <code>strategy</code> for discoverability.</li>
+        <li>Rename Planning &rarr; Roadmap so it stops colliding with all the other "planning" activity in the skill ecosystem.</li>
+        <li>Always-ask routing discipline so the router never silently commits to a mode without user confirmation.</li>
+        <li>Keyword expansion for both Authoring (deck/pitch/memo/presentation) and Roadmap (big-idea/break-down/decompose).</li>
+        <li>Authoring's no-framework fallback uses Software-mode-style structured Q&amp;A &mdash; not "advisor-led free exploration."</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Final Mode Shape &mdash; 4 Modes</h2>
+      <p class="description">The four modes after this design ships. Software unchanged; Business + Authoring collapse into Authoring; Research unchanged; Planning renamed to Roadmap.</p>
+      <div class="card-grid">
+        <div class="card">
+          <h3>software</h3>
+          <p><strong>Unchanged.</strong> Designs runtime/code changes via Architect-led structured Q&amp;A &rarr; design doc &rarr; writing-plans.</p>
+        </div>
+        <div class="card">
+          <h3>authoring</h3>
+          <p><strong>Replaces business + authoring.</strong> Authors any document &mdash; memos, decision docs, decks, positioning briefs &mdash; via framework-runner dispatch with deliverable-type-driven post-engine routing.</p>
+        </div>
+        <div class="card">
+          <h3>research</h3>
+          <p><strong>Unchanged.</strong> Synthesizes external evidence into a ranked recommendation memo.</p>
+        </div>
+        <div class="card">
+          <h3>roadmap</h3>
+          <p><strong>Renamed from planning.</strong> Sequences multi-feature portfolios into a roadmap + spawn-list portfolio for future brainstorms.</p>
+        </div>
+      </div>
+      <div class="callout callout-note">
+        <strong>Pattern unification</strong>
+        The Software-mode Q&amp;A pattern becomes a generalized "structured Q&amp;A with auto-consulted topic advisor." Software mode is the specific case where the topic advisor is The Architect; Authoring's no-framework path uses the highest-scoring domain advisor (or Wise Eric as default).
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Discoverability Check &mdash; Test Prompts</h2>
+      <p class="description">All 6 test prompts route correctly based on label/signal match alone &mdash; this is the unit test for the routing fix.</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>Test prompt</th><th>Routes to</th><th>Match basis</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>"I need to build a deck for a client"</td><td><span class="status-badge status-new">authoring</span></td><td>"deck" in signal list</td></tr>
+          <tr><td>"what should we ship next quarter"</td><td><span class="status-badge status-new">roadmap</span></td><td>"ship next" + multi-feature shape</td></tr>
+          <tr><td>"compare three vendor frameworks"</td><td><span class="status-badge status-modified">research</span></td><td>"compare" + corpus signal</td></tr>
+          <tr><td>"design the auth refactor"</td><td><span class="status-badge status-unchanged">software</span></td><td>"design" + code keyword</td></tr>
+          <tr><td>"I have this big idea I want to break down"</td><td><span class="status-badge status-new">roadmap</span></td><td>"big idea" + "break down"</td></tr>
+          <tr><td>"why isn't our sales pipeline working"</td><td><span class="status-badge status-new">authoring</span></td><td>"why isn't X working" (inherited from Business)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="panel-authoring" class="tab-panel">
+    <div class="section">
+      <h2>Engine Selection &mdash; Revised Fallback Ladder</h2>
+      <p class="description">Authoring mode's engine selection ladder. Steps 2&ndash;4 are the key revision to the May 9 plan: they previously fell through to "advisor-led free exploration." That regression is replaced with structured Q&amp;A so framework-less content work gets the same structure Software mode delivers for code.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+flowchart TD
+  start([User begins Authoring session]) --> step1{Step 1:<br/>High-confidence<br/>framework match?}
+  step1 -- yes --> fw[Invoke framework-runner<br/>with framework-tagged advisor<br/>in consultative seat]
+  step1 -- no --> step2{Step 2:<br/>High-confidence<br/>advisor match?}
+  step2 -- yes --> adv[Structured Q&amp;A<br/>matched advisor in<br/>Architect's proxy seat]
+  step2 -- no --> step3{Step 3:<br/>Any topic signal?}
+  step3 -- yes --> top[Structured Q&amp;A<br/>highest-scoring topic<br/>advisor as proxy]
+  step3 -- no --> step4[Step 4:<br/>Structured Q&amp;A<br/>Wise Eric as default proxy]
+  fw --> dd[Design doc]
+  adv --> dd
+  top --> dd
+  step4 --> dd
+  dd --> wp[/aligned:writing-plans/]
+  wp --> done([Execution])
+        </pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Cross-Mode Role Table</h2>
+      <p class="description">The structured Q&amp;A pattern reappears in three places. Implementation note: pattern is <strong>duplicated</strong> (not extracted to a shared runner) so the copies are free to diverge as Software and Authoring evolve differently.</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>Mode / Path</th><th>Engine</th><th>Topic advisor (Architect proxy)</th><th>Output</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Software</strong></td>
+            <td>Structured Q&amp;A</td>
+            <td>The Architect (always)</td>
+            <td>Design doc &rarr; writing-plans</td>
+          </tr>
+          <tr>
+            <td><strong>Authoring</strong> &mdash; framework path</td>
+            <td>framework-runner</td>
+            <td>Framework-tagged advisor (consultative seat)</td>
+            <td>Framework artifact + deliverable</td>
+          </tr>
+          <tr>
+            <td><strong>Authoring</strong> &mdash; no-framework path</td>
+            <td>Structured Q&amp;A (duplicated from Software)</td>
+            <td>Highest-scoring topic advisor (or Wise Eric default)</td>
+            <td>Design doc &rarr; writing-plans</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout callout-decision">
+        <strong>Duplicate, don't extract</strong>
+        Pre-extraction would couple Software and Authoring artificially. Duplication ships with two divergence-management mechanisms: (a) marker comments at the top of both Q&amp;A blocks noting "DUPLICATED FROM/TO {file}; the Architect-as-proxy dispatch template is the stable surface", and (b) the new <code>test_qa_pattern_parity.py</code> e2e test that asserts both files contain the same dispatch-template structure.
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-routing" class="tab-panel">
+    <div class="section">
+      <h2>Always-Ask Discipline</h2>
+      <p class="description">The router never silently commits to a mode. Session-scoped: ask on first invocation; skip on subsequent same-mode invocations within the conversation. Four sub-tabs below detail (a) the always-ask spec with error handling, (b) the picker label format rendered as it appears to the user, (c) the session-marker fallback rule, and (d) before/after flowcharts.</p>
+
+      <div class="sub-tab-bar">
+        <button class="sub-tab-btn active" onclick="switchSubTab('routing','spec')">Always-ask spec</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('routing','picker')">Picker label format</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('routing','fallback')">Session-marker fallback</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('routing','flow')">Before / After</button>
+      </div>
+
+      <div id="sub-spec" class="sub-panel active">
+        <p class="description">The Step 1 contract: always present the 4-mode question on first invocation; skip only on subsequent same-mode invocations within the conversation, or when an explicit <code>--mode</code> arg is passed.</p>
+        <ul class="bullet-list">
+          <li><strong>First invocation:</strong> Step 1 always presents the 4-mode question with the auto-detected mode pre-selected as default. One-tap to confirm, one-tap to pick another.</li>
+          <li><strong>Subsequent same-mode:</strong> skip the confirmation if the auto-detected mode matches the previous brainstorm's mode in this conversation.</li>
+          <li><strong>Subsequent different-mode:</strong> re-ask. Signal drift means the user moved to a new task surface.</li>
+          <li><strong>Mode explanation block:</strong> moves into the question prompt itself (inline option descriptions) so users see what each mode does as they pick. "Why:" line dropped (M8 &mdash; happy talk). Build &amp; ship / Diagnose / Sequence grouping dropped (M8 &mdash; 4-mode flat list).</li>
+        </ul>
+
+        <h2 style="margin-top:24px;">One Skip Condition</h2>
+        <p class="description">One condition bypasses the confirmation even on first invocation, representing pre-disambiguated input.</p>
+        <div class="card-grid">
+          <div class="card">
+            <h3>1. Explicit mode arg</h3>
+            <p><code>/aligned:brainstorming --mode software "topic"</code> &mdash; the user has already chosen.</p>
+          </div>
+        </div>
+        <div class="callout callout-note">
+          <strong>Future work: structural spawn-brief marker</strong>
+          A literal <code>[spawn-brief target=X]</code> prefix that the spawn-brief template generates would enable safe pre-disambiguation. The verb-prefix heuristic (e.g. "design...", "compose a roadmap for...") was rejected: it would fire on free-form user prompts like "design the auth refactor", re-introducing the silent mis-route this redesign eliminates. <code>spawn-brief-template.md</code> L25&ndash;27 explicitly states the router uses topic-keyword signal detection on the paragraph prose, and <code>target_mode</code> is not consumed by any parsing layer.
+        </div>
+
+        <h2 style="margin-top:24px;">Error Handling</h2>
+        <p class="description">Four edge cases for the always-ask question.</p>
+        <ul class="bullet-list">
+          <li><strong>No answer (timeout):</strong> default to the pre-selected mode after a 60-second wait (standard AskUserQuestion default-on-timeout behavior).</li>
+          <li><strong>Non-mode answer or "Other":</strong> surface a one-line follow-up &mdash; "Describe in one sentence what you're trying to produce &mdash; a document, code change, evidence synthesis, or multi-piece breakdown." Apply signal detection to the free-text answer; if still ambiguous, route to Authoring (which absorbs Business's diagnostic functions post-collapse, including the prior "I'm not sure" handling).</li>
+          <li><strong>Mid-brainstorm re-ask:</strong> if the user explicitly says "wrong mode" or "switch modes," re-fire the always-ask question with no pre-selection.</li>
+          <li><strong>Post-collapse fallback for "I'm not sure":</strong> the current SKILL.md L105 "I'm not sure" &rarr; Business route MUST be updated to "I'm not sure" &rarr; Authoring as part of the rename (Business doesn't exist post-collapse).</li>
+        </ul>
+
+        <h2 style="margin-top:24px;">SKILL.md Step 1 Restructure</h2>
+        <ul class="bullet-list">
+          <li>Current 2-branch logic (signals-clear vs signals-mixed) collapses into a single always-present-the-question branch.</li>
+          <li>Disambiguation rules at L74&ndash;99 collapse from 5-mode to 4-mode: Software vs Authoring rules survive; Authoring vs Research rules survive; Business vs Planning rules retire (Business is gone); Business vs Authoring rules retire (collapsed); Planning becomes Roadmap.</li>
+          <li>Refusal handling (current L105 "I'm not sure" &rarr; Business) updates to route to Authoring.</li>
+          <li>Mode-explanation block (currently 27 lines at L113&ndash;133) moves into the AskUserQuestion prompt itself as inline option descriptions.</li>
+          <li>Update <code>test_skill_md_has_disambiguation_rules</code> to assert the new shape.</li>
+        </ul>
+      </div>
+
+      <div id="sub-picker" class="sub-panel">
+        <p class="description">The AskUserQuestion prompt renders with deliverable-phrase labels, not mode IDs. Mode IDs (<code>software</code>/<code>authoring</code>/<code>research</code>/<code>roadmap</code>) stay internal &mdash; never surface to users. Steve Krug's M6 finding (task vocabulary &gt; category vocabulary) is the canonical reference.</p>
+
+        <h2>Rendered Example</h2>
+        <pre class="picker-render">Which best describes what you're producing?
+
+[1] Write a document
+    (deck, memo, brief, positioning, sales pitch,
+     curriculum, RCA write-up)
+
+[2] Design a code change
+    (feature, refactor, integration, schema)
+
+[3] Synthesize research
+    (compare frameworks, literature review, prior art)
+
+[4] Break a big initiative into smaller pieces
+    (roadmap, multi-feature breakdown)
+
+Pre-selected: [N]   (auto-detected from your prompt)</pre>
+
+        <div class="callout callout-decision">
+          <strong>Implementation</strong>
+          AskUserQuestion option <code>label</code> carries the deliverable phrase; option <code>description</code> carries the parenthetical examples; the internal mode ID is captured in <code>metadata</code> or resolved post-selection from option index.
+        </div>
+
+        <table class="change-table">
+          <thead>
+            <tr><th>Internal ID</th><th>User-facing label</th><th>Description (inline examples)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>authoring</code></td><td>Write a document</td><td>deck, memo, brief, positioning, sales pitch, curriculum, RCA write-up</td></tr>
+            <tr><td><code>software</code></td><td>Design a code change</td><td>feature, refactor, integration, schema</td></tr>
+            <tr><td><code>research</code></td><td>Synthesize research</td><td>compare frameworks, literature review, prior art</td></tr>
+            <tr><td><code>roadmap</code></td><td>Break a big initiative into smaller pieces</td><td>roadmap, multi-feature breakdown</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="sub-fallback" class="sub-panel">
+        <p class="description">The session-marker optimization is best-effort, not load-bearing. It degrades gracefully to always-ask under uncertainty rather than to silent false-skip.</p>
+
+        <div class="callout callout-decision">
+          <strong>Rule</strong>
+          If the model cannot confidently recall the prior brainstorm's mode from conversation context &mdash; e.g., after context compaction, sub-agent invocations, parallel/forked conversations, or any uncertainty &mdash; fall through to always-ask.
+        </div>
+
+        <h2 style="margin-top:24px;">Why this matters</h2>
+        <p class="description">The session-marker detection is purely model-side: the model checks its own conversation context &mdash; "have I already routed a brainstorm in this conversation?" There are no <code>/tmp</code> files, no env vars, no external state. Under model uncertainty, the safe default is to always-ask, NOT to guess and silently skip the confirmation. Silent-skip on uncertainty would re-introduce the failure mode this redesign eliminates.</p>
+
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+flowchart TD
+  invoke([User invokes /aligned:brainstorming<br/>second+ time in this conversation]) --> recall{Model can confidently<br/>recall prior brainstorm's<br/>mode from context?}
+  recall -- yes, recalled --> sameAuto{Auto-detected mode<br/>matches prior?}
+  recall -- no / uncertain<br/>after compaction etc --> ask([Always-ask:<br/>4-mode question])
+  sameAuto -- yes --> skipAsk[Skip confirmation,<br/>route to same mode]
+  sameAuto -- no --> ask
+  skipAsk --> begin([Brainstorm begins])
+  ask --> begin
+          </pre>
+        </div>
+
+        <ul class="bullet-list">
+          <li><strong>Compaction:</strong> after context window pruning, prior-mode recall is no longer guaranteed &mdash; always-ask.</li>
+          <li><strong>Sub-agent invocations:</strong> if a sub-agent fired the prior brainstorm, the main model may not have that turn in scope &mdash; always-ask.</li>
+          <li><strong>Parallel/forked:</strong> branched conversations may diverge from a shared parent's prior brainstorm &mdash; always-ask.</li>
+          <li><strong>Any uncertainty:</strong> default is always-ask. Friction (one extra confirmation) is cheaper than mis-route (silent wrong mode).</li>
+        </ul>
+      </div>
+
+      <div id="sub-flow" class="sub-panel">
+        <p class="description">Before / after flowcharts for the routing logic.</p>
+
+        <h2>Current (silent auto-route)</h2>
+        <p class="description">Per <code>skills/brainstorming/SKILL.md</code> L82&ndash;93. The silent-auto-route branch is what mis-routed the original deck-building failure to Planning.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+flowchart TD
+  in([User invokes /aligned:brainstorming &quot;topic&quot;]) --> sig{Signals clear?}
+  sig -- yes --> route1[Auto-route silently<br/>to detected mode]
+  sig -- no --> disam{Disambiguation<br/>rules resolve?}
+  disam -- yes, one mode --> route2[Auto-route silently<br/>to disambiguated mode]
+  disam -- still ambiguous --> ask([Ask user])
+  route1 --> bad[Failure case:<br/>deck &rarr; planning]
+  route2 --> bad
+          </pre>
+        </div>
+
+        <h2 style="margin-top:24px;">New (always-ask, session-scoped, with one skip condition)</h2>
+        <p class="description">Always-ask flow with one skip condition (<code>--mode</code> arg) for pre-disambiguated invocations and session-scoping for subsequent same-mode invocations.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+flowchart TD
+  in([User invokes /aligned:brainstorming &quot;topic&quot;]) --> skip{Skip condition:<br/>--mode arg passed?}
+  skip -- yes --> direct[Route directly]
+  skip -- no --> sess{Same conversation,<br/>recalled prior mode<br/>matches auto-detected?}
+  sess -- yes, confident --> skipask[Skip confirmation,<br/>route to that mode]
+  sess -- no / uncertain --> ask([Always-ask:<br/>4-mode question with<br/>auto-detected pre-selected])
+  ask --> user{User picks}
+  user --> route[Route to chosen mode]
+  direct --> route
+  skipask --> route
+  route --> good[Brainstorm begins<br/>in correct mode]
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-keywords" class="tab-panel">
+    <div class="section">
+      <h2>Authoring Mode Signals &mdash; Post-Collapse Union</h2>
+      <p class="description">The Authoring mode's signal list unions current Business + current Authoring signals, plus new keywords for the deck-failure case.</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>Source</th><th>Signals carried forward</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Current Business</strong></td>
+            <td>"why isn't this working", RCA, diagnosis, "what should we do about X", stakeholder conflict, pricing/proposal review, meeting prep for a decision, sales/marketing/positioning <em>issues to resolve</em></td>
+          </tr>
+          <tr>
+            <td><strong>Current Authoring</strong></td>
+            <td>curriculum, program design, sequence content, exercise sequencing, content design, framework prompt authoring, voice migration, competitive analysis, positioning brief, strategy memo, market analysis, GTM doc, sales pitch, battle card, one-pager</td>
+          </tr>
+          <tr>
+            <td><span class="status-badge status-new">NEW for failure case</span></td>
+            <td><strong>deck, presentation, slides, pitch deck, client deliverable, prospect-specific, memo, report, brief, executive summary, talking points, narrative</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout callout-note">
+        <strong>Research vs Authoring disambiguation</strong>
+        Router disambiguates research-as-deliverable (Research mode) from research-as-prerequisite (Authoring mode) by the trailing-output verb: "...into a deck/memo/brief" &rarr; Authoring; "...synthesize the literature" &rarr; Research.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Roadmap Mode Signals &mdash; Rename + Expansion</h2>
+      <p class="description">Roadmap inherits all current Planning mode signals plus new big-idea framing keywords.</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>Source</th><th>Signals</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Current Planning</strong></td>
+            <td>roadmap, prioritization, portfolio, "what to build next", milestone, sequence features, multi-feature build, project plan, "too big for one brainstorm"</td>
+          </tr>
+          <tr>
+            <td><span class="status-badge status-new">NEW for big-idea framing</span></td>
+            <td><strong>break X down, decompose, components of, big idea, large initiative, smaller pieces, spawn list, brainstorm queue</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Discoverability Test Prompts</h2>
+      <p class="description">Six prompts that each route to a single mode based on label/signal match. Becomes the regression test surface (<code>e2e/scenarios/use-skill/deck-routing.yaml</code> + others).</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>Test prompt</th><th>Routes to</th><th>Match basis</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>"I need to build a deck for a client"</td><td><span class="status-badge status-new">authoring</span></td><td>"deck" in signal list</td></tr>
+          <tr><td>"what should we ship next quarter"</td><td><span class="status-badge status-new">roadmap</span></td><td>"ship next" + multi-feature shape</td></tr>
+          <tr><td>"compare three vendor frameworks"</td><td><span class="status-badge status-modified">research</span></td><td>"compare" + corpus signal</td></tr>
+          <tr><td>"design the auth refactor"</td><td><span class="status-badge status-unchanged">software</span></td><td>"design" + code keyword</td></tr>
+          <tr><td>"I have this big idea I want to break down"</td><td><span class="status-badge status-new">roadmap</span></td><td>"big idea" + "break down"</td></tr>
+          <tr><td>"why isn't our sales pipeline working"</td><td><span class="status-badge status-new">authoring</span></td><td>"why isn't X working" (inherited from Business)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="panel-migration" class="tab-panel">
+    <div class="section">
+      <h2>Two-Pile Split</h2>
+      <p class="description">Amendments to the May 9 plan vs follow-up commit. This avoids editing the same files twice.</p>
+      <div class="compare-grid compare-2col">
+        <div class="col">
+          <h3>Amendments to the May 9 plan</h3>
+          <p class="description">Edits go directly into <code>docs/plans/2026-05-09-framework-runner-refactor-design.md</code> so the plan-of-record matches what gets implemented.</p>
+          <ul class="bullet-list">
+            <li><strong>Decision 1:</strong> collapsed mode name = <code>authoring</code> (not <code>strategy</code>)</li>
+            <li><strong>Decision 4:</strong> resolves L253 Open Question</li>
+            <li><strong>Decision 5:</strong> full rewrite of items 2&ndash;3 &mdash; structured Q&amp;A replaces "advisor-led free exploration"</li>
+            <li><strong>Components section:</strong> rename <code>strategy.md</code> &rarr; <code>authoring.md</code> (delete-then-recreate, not simple rename); same for critique-checklist + template. The existing <code>modes/authoring.md</code> 7-phase content arrangement is deleted; a new <code>modes/authoring.md</code> with the framework-runner-dispatch + no-framework structured-Q&amp;A fallback is created at the same path.</li>
+            <li><strong>Migration Sequencing Step 4:</strong> updated for new name + new <code>e2e/trigger-map.yaml</code> L48&ndash;49 row.</li>
+            <li><strong>test_authoring_mode_file_structure</strong> (test_brainstorming_files.py L88&ndash;117) must be rewritten to assert the new shape.</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Follow-up commit (after May 9 Steps 0&ndash;4 ship)</h3>
+          <p class="description">Layered rename + always-ask routing + keyword expansion. Lands after the framework-runner refactor is in.</p>
+          <ul class="bullet-list">
+            <li>SKILL.md Step 1 restructure (always-ask)</li>
+            <li>Authoring + Roadmap signal block expansions</li>
+            <li>Rename <code>planning</code> &rarr; <code>roadmap</code> across all 20+ touchpoints</li>
+            <li>Update spawn-brief enum to include Roadmap</li>
+            <li>Update docs/ HTML files for 4-mode router copy</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Cross-Doc Back-References &mdash; AMENDED-BY Marker Convention</h2>
+      <div class="callout callout-decision">
+        <strong>Convention</strong>
+        Each in-place edit to the May 9 plan gets an inline marker immediately above the edited section:
+        <pre style="margin-top:8px; background:var(--color-muted); padding:10px 14px; border-radius:6px; font-family:var(--font-mono); font-size:0.8rem;">&lt;!-- AMENDED-BY: docs/plans/2026-05-17-brainstorming-mode-naming-and-routing-design.md --&gt;</pre>
+        Preserves auditability when a maintainer reads the May 9 plan six months later and needs to trace where its decisions were amended.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Files Touched &mdash; Follow-up Commit</h2>
+      <p class="description">Every file the post-May-9 follow-up commit changes. Renames are status "renamed" since the path moves; new content carries "new"; signals-only updates are "modified."</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>File</th><th>Change</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="file-path">skills/brainstorming/SKILL.md</td>
+            <td>Step 1 restructure (always-ask); Authoring + Roadmap signal expansions; planning&rarr;roadmap refs (L18, L79, L83, L91, L100, L102, L119, L133, L157, L173); frontmatter <code>description</code> (L3); Overview list (L11&ndash;18); mode list (L21)</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/references/shared-rules.md L1</td>
+            <td>Update mode list comment</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/references/brainstorm-components.md L74</td>
+            <td>Update mode list in prose</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/modes/planning.md</td>
+            <td>Rename to <code>modes/roadmap.md</code>; update internal self-references</td>
+            <td><span class="status-badge status-modified">renamed</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/planning-critique-checklist.md</td>
+            <td>Rename to <code>roadmap-critique-checklist.md</code></td>
+            <td><span class="status-badge status-modified">renamed</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/references/templates/planning-template.html</td>
+            <td>Rename to <code>roadmap-template.html</code></td>
+            <td><span class="status-badge status-modified">renamed</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/references/shared-rules.md L19</td>
+            <td>Update mode list</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/references/visualization-protocol.md L1</td>
+            <td>Update mode list</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/references/brainstorm-components.md L76&ndash;83</td>
+            <td>Update template table</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/brainstorming/references/spawn-brief-template.md L12, L34</td>
+            <td>Enum from <code>{Software | Authoring | Research}</code> to <code>{Software | Authoring | Research | Roadmap}</code> (Roadmap can spawn other Roadmap sessions for recursive breakdown)</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/_shared/critique-panel-orchestration.md L18, L60, L104</td>
+            <td>"Planning mode" &rarr; "Roadmap mode" (L104 is the <code>Mode:</code> enum line)</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">skills/kickstart/SKILL.md L196</td>
+            <td>Update 4-mode list with correct names</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">README.md L36, L69, L80, L222</td>
+            <td>L36 "strategy problem" mention; L69 "auto-detects your domain"; L80 stale two-mode claim &rarr; 4-mode shape; L222 CHANGELOG entry on business-brainstorming merge</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">docs/skill-orchestration.html L338, L346&ndash;348, L359, L446, L450</td>
+            <td>L338 additional reference; L346&ndash;348 4-mode signal bullets; L359 Mermaid node; L446 <code>&lt;h3&gt;Planning Mode&lt;/h3&gt;</code>; L450 <code>planning-critique-checklist</code></td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">docs/workflow.html L408, L411&ndash;449</td>
+            <td>4-mode router copy</td>
+            <td><span class="status-badge status-modified">modified</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">e2e/scenarios/use-skill/brainstorming-five-modes.yaml</td>
+            <td>Rename to <code>brainstorming-four-modes.yaml</code>; update <code>test_five_modes_eval_fixture_lists_15_briefs</code> (rename + label/count updates for 4-mode shape)</td>
+            <td><span class="status-badge status-modified">renamed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Post-Commit Verify Step</h2>
+      <div class="callout callout-constraint">
+        <strong>Gate</strong>
+        After the rename commit, run <code>grep -r 'planning' skills/brainstorming/</code> and assert the only remaining hits are intentional (references to <code>/aligned:writing-plans</code> or historical context). <strong>Expected count after rename: &le;2 hits.</strong> Document the gate as a one-line check in the commit message.
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-tests" class="tab-panel">
+    <div class="section">
+      <h2>Test Strategy</h2>
+      <p class="description">Per the TDD rule, error-path tests are included alongside happy-path tests. Updates to existing tests + four new files.</p>
+    </div>
+
+    <div class="test-category">
+      <h3>e2e/tests/test_brainstorming_files.py <span class="badge">update</span></h3>
+      <ul class="test-items">
+        <li>Update all label assertions (L147&ndash;211) for new mode names.</li>
+        <li>Assert <code>modes/roadmap.md</code> exists and <code>modes/planning.md</code> does not.</li>
+        <li>Assert Authoring signal list contains the new keywords (deck, pitch deck, presentation, memo, brief).</li>
+        <li>Assert Roadmap signal list contains the new keywords (big idea, break down, decompose).</li>
+        <li>Assert Step 1's structure presents the 4-mode question on first invocation.</li>
+        <li><strong>Sweep:</strong> ~12 test functions in this file currently hardcode the 5-mode shape or <code>business</code>/<code>planning</code> labels (incl. <code>test_kickstart_marketing_copy_mentions_five_modes</code>, <code>test_authoring_mode_file_structure</code> per M3, <code>test_five_modes_eval_fixture_lists_15_briefs</code> per M4, and ~9 others); each must be renamed/updated to the 4-mode shape.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>e2e/fixtures/skill-prompts/brainstorming-five-modes.md <span class="badge">rename</span></h3>
+      <ul class="test-items">
+        <li>Rename to <code>brainstorming-four-modes.md</code>.</li>
+        <li>Update content for 4-mode shape.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>e2e/trigger-map.yaml &amp; e2e/eval-surface.yaml <span class="badge">update</span></h3>
+      <ul class="test-items">
+        <li><code>e2e/trigger-map.yaml</code> L49: <code>business.md</code> reference resolved by the May 9 plan; add <code>modes/roadmap.md</code> if needed; update entries to reference new scenario paths under <code>e2e/scenarios/use-skill/</code>.</li>
+        <li><code>e2e/eval-surface.yaml</code> L17&ndash;18: update to 4-mode shape post-rename.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>NEW: e2e/scenarios/use-skill/always-ask-routing.yaml <span class="badge">new</span></h3>
+      <ul class="test-items">
+        <li>(a) First invocation always asks.</li>
+        <li>(b) Subsequent same-mode invocation skips.</li>
+        <li>(c) Subsequent different-mode invocation re-asks.</li>
+        <li>(d) Explicit <code>--mode</code> arg skips.</li>
+        <li>(e) Session-marker uncertainty (after compaction) falls through to always-ask.</li>
+        <li>(f) <strong>Error path:</strong> user picks wrong mode then immediately re-invokes &mdash; re-asks without session-marker collision.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>NEW: e2e/scenarios/use-skill/deck-routing.yaml <span class="badge">new</span></h3>
+      <ul class="test-items">
+        <li>Given prompt "I need to build a deck for a client", router presents 4-mode question with <code>authoring</code> pre-selected.</li>
+        <li>The original failure case as a regression test.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>NEW: e2e/scenarios/use-skill/authoring-no-framework-fallback.yaml <span class="badge">new</span></h3>
+      <ul class="test-items">
+        <li>(a) No-framework topic falls to structured Q&amp;A with topic advisor.</li>
+        <li>(b) Q&amp;A produces a design doc.</li>
+        <li>(c) Design doc feeds <code>/aligned:writing-plans</code>.</li>
+        <li>Verifies the fallback ladder revision works end-to-end.</li>
+      </ul>
+    </div>
+
+    <div class="test-category">
+      <h3>NEW: e2e/tests/test_qa_pattern_parity.py <span class="badge">new</span></h3>
+      <ul class="test-items">
+        <li>Asserts the Architect-as-proxy dispatch template is structurally consistent across <code>modes/software.md</code> and <code>modes/authoring.md</code>.</li>
+        <li>Checks: sub-agent dispatch shape, sub-agent prompt shape, output format.</li>
+        <li>If divergence becomes intentional, the test is updated with an explicit divergence note explaining what diverged and why &mdash; not silenced.</li>
+        <li>Companion mechanism to the marker comments at the top of both Q&amp;A blocks ("DUPLICATED FROM/TO {file}"). Together these are the two divergence-management mechanisms shipping with Decision #5.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="panel-decisions" class="tab-panel">
+    <div class="section">
+      <h2>Decision Log</h2>
+      <p class="description">Seven decisions taken during this brainstorm. Use the dropdowns to Approve (default) or Reject. The prompt textarea auto-builds as you toggle.</p>
+
+      <div class="interactive-section">
+        <div class="interactive-banner">
+          <span class="icon">&#9679;</span>
+          <div><strong>Two options per decision.</strong> <em>Approve</em> (default) means you accept it. <em>Reject</em> queues it for revision. The prompt textarea below auto-updates as you toggle dropdowns.</div>
+        </div>
+        <table class="interactive" id="decisions-table">
+          <thead><tr><th class="num">#</th><th style="width: 22%">Decision</th><th>Description</th><th style="width: 130px">Status</th></tr></thead>
+          <tbody>
+            <tr data-id="1" data-title="Compose with May 9 plan vs supersede">
+              <td class="decision-num">1</td>
+              <td class="decision-title">Compose with May 9 plan</td>
+              <td class="decision-desc">Compose: amend May 9 plan where this brainstorm reaches different conclusions; layer the rename+keywords+routing fix on top as a follow-up commit. May 9 plan is in active draft with substantial Architect review; rewriting from scratch wastes that work. <em>Confidence: 0.9</em></td>
+              <td><select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="2" data-title="Final mode shape: 4 modes (software/authoring/research/roadmap)">
+              <td class="decision-num">2</td>
+              <td class="decision-title">Final mode shape: 4 modes</td>
+              <td class="decision-desc">4 modes: software / authoring / research / roadmap. May 9 plan's rationale for Business+Authoring collapse stands; rejected verb-based renaming of all 5 (collisions per Architect review); rejected hyphenated multi-word IDs (breaks single-token convention used in 19/19 mode-ID locations). <em>Confidence: 0.85</em></td>
+              <td><select class="dropdown" data-id="2"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="3" data-title="Collapsed mode name: authoring (not strategy)">
+              <td class="decision-num">3</td>
+              <td class="decision-title">Collapsed mode name: <code>authoring</code></td>
+              <td class="decision-desc">Authoring (not strategy). May 9 plan working name was confidence 0.6 (its own Open Question L253). <code>authoring</code> is more discoverable for the failure case (deck/pitch/memo work) and descriptively accurate for both subsumed modes &mdash; Business and Authoring both produce authored documents. <em>Confidence: 0.85</em></td>
+              <td><select class="dropdown" data-id="3"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="4" data-title="Authoring's no-framework fallback: Software-mode-style structured Q&A">
+              <td class="decision-num">4</td>
+              <td class="decision-title">No-framework fallback = structured Q&amp;A</td>
+              <td class="decision-desc">Software-mode-style structured Q&amp;A with topic advisor in The Architect's proxy seat. User contribution. Eliminates the regression where framework-less content work would have less structure than the same work in current Software mode. <em>Confidence: 0.8</em></td>
+              <td><select class="dropdown" data-id="4"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="5" data-title="Q&A pattern reuse: duplicate, don't extract">
+              <td class="decision-num">5</td>
+              <td class="decision-title">Q&amp;A pattern: duplicate</td>
+              <td class="decision-desc">Duplicate (don't extract to shared runner). User judgment that the two copies will diverge over time as Software and Authoring evolve differently. Software's Q&amp;A pattern has been stable for a long time, but Authoring's is new and may need different pacing/gates. <strong>Operational consequence: duplication ships with two divergence-management mechanisms:</strong> (a) marker comments at the top of both <code>modes/software.md</code> Q&amp;A block and <code>modes/authoring.md</code> no-framework Q&amp;A block noting "DUPLICATED FROM/TO {file}; the Architect-as-proxy dispatch template is the stable surface &mdash; sync changes there or document divergence in the marker comment." (b) An e2e parity test (<code>test_qa_pattern_dispatch_template_parity</code>) that asserts both files contain the same Architect-as-proxy dispatch template structure (sub-agent dispatch, sub-agent prompt shape, output format). If divergence is intentional, the test updates with a one-line note explaining what diverged and why. <em>Confidence: 0.75</em></td>
+              <td><select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="6" data-title="Routing fix: always-ask, session-scoped, with explicit mode-arg skip">
+              <td class="decision-num">6</td>
+              <td class="decision-title">Routing fix: always-ask</td>
+              <td class="decision-desc">Always-ask, session-scoped, with <strong>one</strong> skip condition (explicit <code>--mode</code> arg). Eliminates silent mis-routes entirely. Session-scoping (skip subsequent same-mode invocations) handles the friction case the Architect flagged. The explicit <code>--mode</code> flag handles the pre-disambiguated CLI case. <strong>Spawn-brief paste-back skip was rejected</strong> &mdash; verb-prefix heuristic would silently re-route free-form user prompts and the cited <code>spawn-brief-template.md</code> L25&ndash;27 says <code>target_mode</code> is not consumed by any parsing layer. <em>Confidence: 0.85</em></td>
+              <td><select class="dropdown" data-id="6"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="7" data-title="Roadmap scope: rename + keywords only">
+              <td class="decision-num">7</td>
+              <td class="decision-title">Roadmap scope: rename + keywords only</td>
+              <td class="decision-desc">Rename + keyword expansion only; defer process simplification to a follow-up brainstorm. User confirmed scope. Process redesign would substantially grow this design doc and ship date. <em>Confidence: 0.9</em></td>
+              <td><select class="dropdown" data-id="7"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="prompt-box">
+          <div class="prompt-box-header">
+            <span class="prompt-box-label">Prompt to send back</span>
+            <div class="prompt-actions">
+              <button class="btn" id="regenerate-decisions" type="button">Regenerate</button>
+              <button class="btn btn-primary" id="copy-decisions" type="button">Copy</button>
+            </div>
+          </div>
+          <textarea class="prompt-textarea" id="decisions-prompt" spellcheck="false"></textarea>
+          <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-questions" class="tab-panel">
+    <div class="section">
+      <h2>Open Questions</h2>
+      <p class="description">Four open questions deferred from this brainstorm. Defer (default) keeps them on the list; Include queues them for interactive resolution now; Reject drops them entirely.</p>
+
+      <div class="interactive-section">
+        <div class="interactive-banner">
+          <span class="icon">&#9679;</span>
+          <div><strong>Three options per question.</strong> <em>Defer</em> (default) keeps it on the list for later. <em>Include</em> queues it for me to ask you interactively now. <em>Reject</em> removes it from the list entirely &mdash; not worth asking now or later. The prompt below auto-updates as you change dropdowns.</div>
+        </div>
+        <table class="interactive" id="questions-table">
+          <thead><tr><th class="num">#</th><th style="width: 35%">Question</th><th>Trigger that would resolve it</th><th style="width: 130px">Status</th></tr></thead>
+          <tbody>
+            <tr data-id="1" data-title="Simplify Roadmap mode's process">
+              <td class="decision-num">1</td>
+              <td class="decision-title">Simplify Roadmap mode's process</td>
+              <td class="decision-desc">Current Planning mode has 5 phases with strategy advisor panel, capacity reconciliation, dependency mapping. User's intent ("simple, high-level breakdown of a big idea into N component pieces") suggests this is heavier than needed. <em>Trigger: user runs &ge;2 Roadmap sessions and flags which phases felt like overkill. Resolve via follow-up Authoring-mode brainstorm.</em></td>
+              <td><select class="dropdown q-dropdown" data-id="1"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="2" data-title="Advisor-as-user-proxy automation">
+              <td class="decision-num">2</td>
+              <td class="decision-title">Advisor-as-user-proxy automation</td>
+              <td class="decision-desc">Future capability where downstream brainstorms (spawned from a Roadmap session's portfolio) run without human input, with an advisor persona answering questions in the user's seat. <em>Trigger: user wants to execute a portfolio with &gt;3 entries and finds the per-entry human-driven brainstorm cost prohibitive. Resolve via a fresh Software-mode brainstorm.</em></td>
+              <td><select class="dropdown q-dropdown" data-id="2"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="3" data-title="Spawn-brief enum inclusion of Roadmap">
+              <td class="decision-num">3</td>
+              <td class="decision-title">Spawn-brief enum inclusion of Roadmap</td>
+              <td class="decision-desc"><code>spawn-brief-template.md</code> L12 currently enumerates <code>{Software | Authoring | Research}</code> as target modes. This design adds Roadmap to allow recursive breakdown (Roadmap &rarr; Roadmap for sub-portfolios). <em>Trigger: a real portfolio entry needs further decomposition before brainstorming. Tentative: include but document as rare.</em></td>
+              <td><select class="dropdown q-dropdown" data-id="3"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+            </tr>
+            <tr data-id="4" data-title="Topic-advisor selection for Authoring's no-framework fallback">
+              <td class="decision-num">4</td>
+              <td class="decision-title">Topic-advisor selection for Authoring fallback</td>
+              <td class="decision-desc">When Authoring's structured-Q&amp;A path runs, which advisor sits in The Architect's proxy seat? The May 9 plan's contextual-recommendation multi-entity scoring should handle this, but the threshold calibration is unresolved. <em>Trigger: writing-plans implementation phase encounters the calibration question; resolve there with eval scenarios.</em></td>
+              <td><select class="dropdown q-dropdown" data-id="4"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="prompt-box">
+          <div class="prompt-box-header">
+            <span class="prompt-box-label">Prompt to send back</span>
+            <div class="prompt-actions">
+              <button class="btn" id="regenerate-questions" type="button">Regenerate</button>
+              <button class="btn btn-primary" id="copy-questions" type="button">Copy</button>
+            </div>
+          </div>
+          <textarea class="prompt-textarea" id="questions-prompt" spellcheck="false"></textarea>
+          <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var __rs = getComputedStyle(document.documentElement);
+    function __tok(name, fallback) {
+      var v = __rs.getPropertyValue(name).trim();
+      return v || fallback;
+    }
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: __tok('--font-sans', 'system-ui, -apple-system, sans-serif'),
+        fontSize: '14px',
+        lineColor: __tok('--color-border', '#e5e7eb'),
+        primaryColor: __tok('--color-muted', '#f0eeeb'),
+        primaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        primaryBorderColor: __tok('--color-border', '#e5e7eb'),
+        secondaryColor: __tok('--color-accent-subtle', '#fff7ed'),
+        secondaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        secondaryBorderColor: __tok('--color-accent', '#ff6900'),
+        tertiaryColor: __tok('--color-surface', '#f5f3ef'),
+        tertiaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        tertiaryBorderColor: __tok('--color-secondary', '#555555')
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+<!-- WIDGETS-SCRIPT-START -->
+<script>
+  (function() {
+    'use strict';
+
+    function copyToClipboard(text, btn) {
+      var originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = originalLabel;
+      var showSuccess = function() {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+        }, 1800);
+      };
+      var showFailure = function() {
+        btn.textContent = 'Copy failed - select & Cmd-C';
+        btn.classList.add('btn-error');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('btn-error');
+        }, 3000);
+      };
+      if (!navigator.clipboard || !window.isSecureContext) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        if (ok) showSuccess(); else showFailure();
+        return;
+      }
+      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
+    }
+
+    function markDirtyOnInput(textarea) {
+      textarea.addEventListener('input', function() {
+        textarea.dataset.dirty = 'true';
+      });
+    }
+
+    (function decisionLogWidget() {
+      if (!document.getElementById('decisions-table')) return;
+      var table = document.getElementById('decisions-table');
+      var prompt = document.getElementById('decisions-prompt');
+      var copyBtn = document.getElementById('copy-decisions');
+      var regenBtn = document.getElementById('regenerate-decisions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function rows() {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allRows = rows();
+        if (allRows.length === 0) {
+          return 'No decisions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var rejected = allRows
+          .filter(function(tr) { var sel = tr.querySelector('select'); return sel && sel.value === 'reject'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        if (rejected.length === 0) {
+          return 'All decisions approved.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.';
+        }
+        var lines = ["I've reviewed this design and I'm rejecting the following decisions:", ''];
+        rejected.forEach(function(d) {
+          lines.push('  - Decision #' + d.num + ' - ' + d.title);
+          lines.push('    Reason: <add your reason here>');
+          lines.push('');
+        });
+        lines.push('Please revise the design to address these rejections and re-present.');
+        lines.push('');
+        lines.push('If you have an alternative recommendation for any of these, propose it before I commit to a replacement.');
+        return lines.join('\n');
+      }
+
+      function updateRow(select) {
+        var tr = select.closest('tr');
+        if (!tr) return;
+        if (select.value === 'reject') {
+          select.classList.add('reject');
+          tr.classList.add('row-active');
+        } else {
+          select.classList.remove('reject');
+          tr.classList.remove('row-active');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;
+        prompt.value = buildPrompt();
+      }
+
+      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateRow(sel);
+          refresh();
+        });
+        updateRow(sel);
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+
+    (function openQuestionsWidget() {
+      if (!document.getElementById('questions-table')) return;
+      var table = document.getElementById('questions-table');
+      var prompt = document.getElementById('questions-prompt');
+      var copyBtn = document.getElementById('copy-questions');
+      var regenBtn = document.getElementById('regenerate-questions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function rows() {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allRows = rows();
+        if (allRows.length === 0) {
+          return 'No open questions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var included = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'include'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        var rejected = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'reject'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        if (included.length === 0 && rejected.length === 0) {
+          return 'All open questions deferred.\n\nProceed with the design as-is; we will resolve these as the named triggers fire.';
+        }
+        var lines = ['Open-questions review:', ''];
+        if (included.length > 0) {
+          lines.push('ASK ME NOW (resolve interactively, one at a time):');
+          included.forEach(function(q) { lines.push('  - Question #' + q.num + ' - ' + q.title); });
+          lines.push('');
+          lines.push("For these: please ask me one at a time. Use multiple-choice options when reasonable. Don't assume answers - wait for my response before moving to the next.");
+          lines.push('');
+        }
+        if (rejected.length > 0) {
+          lines.push('REJECT (remove from open-questions list entirely - not worth asking now or later):');
+          rejected.forEach(function(q) {
+            lines.push('  - Question #' + q.num + ' - ' + q.title);
+            lines.push('    Reason: <add your reason here, or leave blank>');
+          });
+          lines.push('');
+          lines.push("For these: drop them from the design's Open Questions section. Update the design doc and HTML to reflect their removal.");
+          lines.push('');
+        }
+        if (included.length > 0 && rejected.length > 0) {
+          lines.push('Handle the REJECT items first (housekeeping), then start the ASK ME NOW questions.');
+        }
+        return lines.join('\n');
+      }
+
+      function updateRow(select) {
+        var tr = select.closest('tr');
+        if (!tr) return;
+        select.classList.remove('include', 'q-reject');
+        tr.classList.remove('row-active', 'row-rejected');
+        if (select.value === 'include') {
+          select.classList.add('include');
+          tr.classList.add('row-active');
+        } else if (select.value === 'reject') {
+          select.classList.add('q-reject');
+          tr.classList.add('row-rejected');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;
+        prompt.value = buildPrompt();
+      }
+
+      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateRow(sel);
+          refresh();
+        });
+        updateRow(sel);
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+  })();
+</script>
+<!-- WIDGETS-SCRIPT-END -->
+</body>
+</html>

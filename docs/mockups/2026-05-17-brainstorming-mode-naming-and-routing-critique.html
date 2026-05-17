@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainstorming Mode Naming and Routing — Critique Decisions</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      color: #1a1a1a;
+      margin: 0 auto;
+      padding: 40px 40px 120px;
+      max-width: 960px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 4px; }
+    .subtitle { font-size: 0.95rem; color: #555; margin: 0 0 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin: 0 0 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
+    .tab-count {
+      display: inline-block; background: #f5f3ef; color: #555;
+      font-size: 0.75rem; padding: 1px 7px; border-radius: 9999px;
+      margin-left: 6px; font-weight: 500;
+    }
+    .tab-btn.active .tab-count { background: #fff7ed; color: #e8762b; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .finding {
+      background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 18px 20px; margin-bottom: 12px;
+      display: flex; gap: 16px; align-items: flex-start;
+      transition: opacity 150ms, border-color 150ms;
+    }
+    .finding.rejected { opacity: 0.5; border-color: #f0eeeb; background: #fafafa; }
+    .finding-toggle { flex-shrink: 0; padding-top: 2px; }
+    .toggle-switch {
+      position: relative; width: 44px; height: 24px;
+      background: #d1d5db; border-radius: 9999px; cursor: pointer;
+      transition: background 150ms;
+    }
+    .toggle-switch.on { background: #6b8e4e; }
+    .toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; background: white; border-radius: 9999px;
+      transition: transform 150ms; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(20px); }
+    .toggle-label {
+      font-size: 0.72rem; color: #6b7280; text-align: center; margin-top: 4px;
+      font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .finding-body { flex: 1; min-width: 0; }
+    .finding-critics { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .critic-tag {
+      font-size: 0.72rem; padding: 1px 8px; border-radius: 9999px;
+      background: #fff7ed; color: #e8762b; font-weight: 500;
+    }
+    .finding-text { font-size: 0.92rem; line-height: 1.5; color: #1a1a1a; margin-bottom: 6px; }
+    .finding-action { font-size: 0.85rem; color: #555; line-height: 1.5; }
+    .finding-action strong { color: #1a1a1a; font-weight: 500; }
+
+    .fact-check {
+      background: white; border: 1px solid #e5e7eb; border-left: 3px solid #6b8e4e;
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+    }
+    .fact-check-claim { font-size: 0.85rem; color: #6b7280; text-decoration: line-through; margin-bottom: 4px; }
+    .fact-check-correction { font-size: 0.92rem; color: #1a1a1a; line-height: 1.5; }
+    .fact-check-critic { font-size: 0.72rem; color: #e8762b; font-weight: 500; margin-top: 6px; }
+    .auto-apply-notice {
+      font-size: 0.82rem; color: #6b7280; background: #f5f3ef;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;
+    }
+
+    .modify-notes { margin-top: 24px; padding-top: 20px; border-top: 1px dashed #e5e7eb; }
+    .modify-notes label {
+      display: block; font-size: 0.85rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px;
+    }
+    .modify-notes textarea {
+      width: 100%; min-height: 80px; padding: 10px 12px;
+      font-family: inherit; font-size: 0.88rem;
+      border: 1px solid #e5e7eb; border-radius: 8px; resize: vertical; background: white;
+    }
+    .modify-notes textarea:focus { outline: none; border-color: #e8762b; }
+
+    .empty {
+      font-size: 0.88rem; color: #6b7280; padding: 24px; text-align: center;
+      background: #f5f3ef; border-radius: 8px;
+    }
+
+    .action-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.04); z-index: 10;
+    }
+    .summary { font-size: 0.88rem; color: #555; }
+    .summary strong { color: #1a1a1a; }
+    .copy-btn {
+      padding: 10px 20px; font-size: 0.88rem; font-weight: 500; color: white;
+      background: #e8762b; border: none; border-radius: 8px; cursor: pointer;
+      transition: background 150ms; font-family: inherit;
+    }
+    .copy-btn:hover { background: #cc6725; }
+    .copy-btn.copied { background: #6b8e4e; }
+  </style>
+</head>
+<body>
+  <h1>Brainstorming Mode Naming and Routing</h1>
+  <p class="subtitle">Brainstorming session · software mode</p>
+  <p class="context">Critique decisions. Toggle findings to accept or reject, add modify notes per tab if needed, then copy the follow-up prompt back into Claude Code.</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="high">High <span class="tab-count">5</span></button>
+    <button class="tab-btn" data-tab="medium">Medium <span class="tab-count">14</span></button>
+    <button class="tab-btn" data-tab="low">Low <span class="tab-count">9</span></button>
+    <button class="tab-btn" data-tab="facts">Fact-checks <span class="tab-count">10</span></button>
+  </div>
+
+  <div class="tab-panel active" id="panel-high">
+    <div class="finding" data-id="h-1" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">The Architect</span>
+          <span class="critic-tag">Steve Krug</span>
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Spawn-brief paste-back skip condition fabricates a capability and will silently mis-route ordinary user prompts. Verb-prefix heuristic (&#39;design...&#39;, &#39;sequence...&#39;, &#39;compose a roadmap for...&#39;, &#39;diagnose...&#39;, &#39;author...&#39;) will fire on the design&#39;s own Software-mode test prompt &#39;design the auth refactor&#39; — exactly the silent mis-route the redesign is meant to eliminate. Cited source (spawn-brief-template.md L25) says the opposite of what design claims.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Delete the spawn-brief skip condition entirely (the --mode arg handles pre-disambiguated cases and one-tap confirmation is cheap), OR specify a structural marker (e.g., literal `[spawn-brief target=X]` prefix the template generates) — verb-prefix heuristic must go.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-2" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Session-marker detection (&#39;the model checks its own conversation context&#39;) is a wish, not a mechanism. Unspecified for: context compaction, resumed sessions, sub-agent invocations, mis-remembered mode, user-overridden vs auto-detected mode (which is the anchor?), parallel invocations, forked conversations. Without spec, degrades to pure always-ask (friction returns) or silent false-skip (silent mis-route returns).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either (a) add explicit fallback rule &#39;if model cannot confidently recall prior mode → fall through to always-ask&#39; and admit best-effort; OR (b) use a deterministic marker (`/tmp/brainstorm-context-{conversation-id}/` file or CLAUDE.md scratch line) and accept the cost.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-3" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Migration sequencing risk: e2e/trigger-map.yaml will point at a deleted file between May 9 ship and follow-up. May 9 plan deletes modes/business.md; trigger-map.yaml L48-49 still references it; May 9 plan does NOT list trigger-map.yaml in its modified files. Design&#39;s claim &#39;resolved by the May 9 plan&#39; is false. test_trigger_map_paths.py will fail in the staging window.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add trigger-map.yaml L48-49 update to the May 9 plan&#39;s modified-files list as an amendment, OR move it into this design&#39;s follow-up commit and acknowledge the staging window.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-4" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">No error handling for the new always-ask question itself. Unspecified: user doesn&#39;t answer (idle/abandoned), user types non-mode answer (&#39;I don&#39;t know&#39; / &#39;skip&#39; / &#39;back&#39;), &#39;Other&#39; option presence, mid-brainstorm re-ask. Current SKILL.md L105 has elaborate refusal handling for the existing 5-way question — design is silent on whether always-ask inherits, modifies, or replaces. Current &#39;I&#39;m not sure&#39; routes to Business, which won&#39;t exist post-collapse.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Explicitly inherit (or modify) the existing disambiguation-refusal handling. State timeout default, non-mode-answer handling, &#39;Other&#39; option, mid-brainstorm re-ask path, and post-collapse fallback for &#39;I&#39;m not sure&#39;.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-5" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Duplicated Q&amp;A pattern (~113 lines from modes/software.md L22-134) has no divergence-management plan. Decision Log defends the choice to duplicate but not the operational consequence: no marker comments, no parity test on the stable parts (Architect-as-proxy dispatch, scan-gate), no review trigger. Six-month bug pipeline — fix one copy, forget the other.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Ship one of: (a) HEADER comment in both files (&#39;&lt;!-- DUPLICATED PATTERN: mirrored in modes/&lt;other&gt;.md ... --&gt;&#39;), (b) parity test that flags drift on shared structural sections, (c) carve the smallest stable surface (~30 lines: Architect/proxy dispatch block) into _shared/qa-runner.md and duplicate only mode-specific framing.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-high">Modify notes for High severity (optional)</label>
+      <textarea id="notes-high" placeholder="Anything you want to add, override, or annotate for high-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-medium">
+    <div class="finding" data-id="m-1" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Migration table undercounts touchpoints by 7+ files. Missing: SKILL.md L3 (frontmatter description), L11-18 (Overview), L21, L83, L91, L105 (&#39;all 5 modes&#39; + &#39;I&#39;m not sure&#39; → Business route), L117-119 (mode grouping); shared-rules.md L1; brainstorm-components.md L74 prose; skill-orchestration.html L338 + L450; ~12 tests in test_brainstorming_files.py that hardcode 5-mode shape or business/planning labels.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Expand migration table to include the missed files; explicitly list every test function in test_brainstorming_files.py that needs updating (test_kickstart_marketing_copy_mentions_five_modes, test_skill_md_has_disambiguation_rules, test_authoring_mode_file_structure, test_five_modes_eval_fixture_lists_15_briefs, and the ~9 others).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-2" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">e2e/scenarios/ subdirectory convention violated. Design places three new scenarios (always-ask-routing.yaml, deck-routing.yaml, authoring-no-framework-fallback.yaml) as loose YAML directly under e2e/scenarios/. Convention: all scenarios live in subdirectories. Existing brainstorming scenarios are at e2e/scenarios/use-skill/.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Move all three new scenarios under e2e/scenarios/use-skill/; update trigger-map.yaml entries.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-3" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Delete-then-recreate-with-different-contents for authoring.md. May 9 deletes existing authoring.md (with phases like Population &amp; constraints, Corpus scan, Architect audit); this design recreates authoring.md with framework-runner-dispatch shape — same filename, completely different semantics, same git step. test_authoring_mode_file_structure (test_brainstorming_files.py L88-117) asserts current phases that won&#39;t survive.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Make the file-path collision explicit in migration; rewrite test_authoring_mode_file_structure phase assertions for the new file&#39;s actual phases (engine selection ladder, framework-runner invocation).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-4" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Parallel YAML scenario brainstorming-five-modes.yaml not in rename plan. test_five_modes_eval_fixture_lists_15_briefs asserts ≥15 briefs across 5 modes including &#39;business&#39; and &#39;planning&#39; labels — breaks under 5→4 collapse.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add e2e/scenarios/use-skill/brainstorming-five-modes.yaml to migration: rename to brainstorming-four-modes.yaml, drop business/planning rows, ensure 12+ briefs across 4 modes. Update the test (rename + assertions).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-5" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Step 1 rewrite under-specified. SKILL.md Step 1 has 6 interleaved components (classification, branches, disambiguation rules, refusal handling, mode-explanation block). Design doesn&#39;t address: Does the post-route block stay/move/disappear? Which disambiguation rules survive when Business is gone? Where does &#39;I&#39;m not sure&#39; route post-collapse? test_skill_md_has_disambiguation_rules will fail with current assertions (&#39;Software vs Authoring&#39;, &#39;Authoring vs Research&#39;, &#39;Business vs Planning&#39;).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Spell out the §Routing Fix section as a Step-1 rewrite, not a one-liner: specify post-route block fate, surviving disambiguation rules, refusal-handling composition, and the post-collapse fallback for &#39;I&#39;m not sure&#39;. Update test_skill_md_has_disambiguation_rules and test_skill_md_step1_has_five_signal_sets with new assertions.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-6" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-6', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Mode labels &#39;authoring&#39; and &#39;roadmap&#39; make users translate. &#39;Authoring&#39; is internal vocabulary covering 6 deliverable shapes (curriculum, memo, decision doc, action plan, deck, positioning brief); user with &#39;build a deck&#39; pauses. &#39;Roadmap&#39; is PM vocabulary; user typing &#39;break this big idea down&#39; doesn&#39;t think &#39;roadmap&#39;. Picker asks &#39;which category is your work in?&#39; — users think &#39;I have a thing to do.&#39;</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Render picker with plain-English deliverable phrases (&#39;Write a document — deck, memo, brief, positioning&#39;; &#39;Break a big initiative into smaller pieces&#39;); keep mode IDs internal. Better still: render confirmation in user&#39;s task vocabulary (&#39;Sounds like a deck. I&#39;ll set up a document-authoring brainstorm.&#39;) rather than category vocabulary.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-7" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-7', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Pre-selected default UX unspecified for a CLI prompt. &#39;One-tap to confirm&#39; promises a UI affordance that doesn&#39;t exist in text chat. No rendered example of the prompt anywhere in design or mockup. Without it, design ships an unverified UI.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Specify the rendered prompt text. Example: &#39;I&#39;ll start in `authoring` mode (best match for deck for a client). Type a different mode to switch — software / research / roadmap — or send anything to continue.&#39; One example tells you whether default is visible, confirmation is one-tap, switching is friction-free.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-8" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-8', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">&#39;Why:&#39; line and mode grouping are noise. The model&#39;s justification of its own guess is happy talk — user has already decided what they want. The &#39;Build &amp; ship / Diagnose &amp; decide / Sequence work&#39; grouping made sense for 5 modes; for 4 it adds question marks (authoring now spans diagnose-and-decide too, so grouping breaks).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Drop the &#39;Why:&#39; line and the Build &amp; ship / Diagnose &amp; decide / Sequence work grouping. Use a flat list of four modes with plain-English descriptions.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-9" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-9', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Discoverability test prompt #3 (&#39;compare three vendor frameworks&#39; → research) is ambiguous. &#39;compare&#39; + &#39;frameworks&#39; straddles Research and Authoring (competitive analysis territory). &#39;corpus signal&#39; that resolves it is environment context, not in the prompt. Universal claim &#39;all 6 route correctly based on label/signal match alone&#39; is overclaimed.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either revise the test prompt to be unambiguous (&#39;synthesize the literature on three vendor frameworks&#39; → research) OR drop the universal claim and acknowledge 5/6 route on label/signal, 6th relies on environment.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-10" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-10', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Authoring&#39;s no-framework fallback composition with use-framework / use-advisor / framework-runner is unspecified. Does ladder item 1 go through use-framework&#39;s composability rule (no greeting, straight to Phase 1)? Do items 2-4 use advisor-runner or a new pattern? Software&#39;s Architect-as-proxy is a fresh sub-agent returning a structured decision — not persona adoption in main thread. &#39;Equivalent to Software mode&#39; understates the cross-skill spec gap.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add &#39;Cross-skill composition&#39; subsection under Authoring&#39;s Engine Selection. For each rung: name which shared runner is invoked, which existing skill&#39;s contract carries through, what changes vs the existing contract. Two sentences per rung.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-11" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-11', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Amendment vs follow-up sequencing has no cross-doc back-references or verify-gates. May 9 plan gets edited in-place with no &#39;amended-by&#39; markers — reader can&#39;t tell which decisions came from where. No commit-ordering verify step. Six-month maintainer is stranded.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add inline &#39;amended-by&#39; notes to May 9 plan in-place edits (&#39;Decision 5 amended 2026-05-17 — see &lt;follow-up-design&gt;&#39;). Specify single rename commit with a post-commit verify step (e.g., `grep planning` in skills/brainstorming/ and e2e/ expected count: 0 outside completed plans).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-12" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-12', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">New test scenarios listed without assertions. All three new YAMLs name scenarios but don&#39;t specify input prompts, expected outputs, preconditions. &#39;Design doc feeds writing-plans&#39; (case c) is not an assertion. Error path (f) tests a collision in a marker scheme that has no spec. No coverage for proxy advisor mid-flow framework recommendation, user-rejected proxy, low-confidence proxy. Session-marker drift test (c) doesn&#39;t specify whether anchor is user-confirmed or auto-detected mode.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Each new scenario YAML must specify input prompts, expected pre-selected mode, expected mode-question presence/absence, conversation preconditions. Replace &#39;design doc feeds writing-plans&#39; with concrete file-existence + content-shape assertion or follow-up writing-plans invocation. Add scenario authoring-proxy-mismatch.yaml for low-confidence proxy, mid-flow framework recommendation, and user-rejected proxy edge cases. Specify session marker is user-confirmed mode and test against that.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-13" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-13', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Power-user friction: no &#39;trust me&#39; mode for multi-brainstorm sessions. Session-scoping only skips when same mode repeats. A maintainer running 5-10 different-mode brainstorms in a row (e.g., kanban-resolve sweep) gets re-asked every time. No session-level opt-out.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add a third skip condition: explicit session flag the user can set (&#39;for this conversation, auto-route without confirmation; I&#39;ll catch wrong routes myself&#39;); document next to the --mode arg.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-14" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-14', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Skip-condition collision unspecified. `/aligned:brainstorming --mode software &#39;compose a roadmap for X&#39;` — --mode says software, verb prefix says roadmap. Which wins? Untested.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Specify precedence (almost certainly --mode wins); add one-line test in always-ask-routing.yaml asserting it.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-medium">Modify notes for Medium severity (optional)</label>
+      <textarea id="notes-medium" placeholder="Anything you want to add, override, or annotate for medium-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-low">
+    <div class="finding" data-id="l-1" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Kickstart narrative rewrite not specified. Design says &#39;update 4-mode list with correct names&#39; at L196 only; fresh installer will see &#39;four modes (software, authoring, research, roadmap)&#39; with no explanation. &#39;Roadmap&#39; alone is less self-explanatory than &#39;planning&#39;.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Sharpen migration entry: &#39;Replace 5-mode list with 4-mode list AND add the one-line descriptions used in the mode-explanation block, so a fresh installer can predict which mode their topic routes to.&#39; OR explicitly defer with acknowledgment.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-2" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Mode-explanation block restructuring not actually specified. Design L62: &#39;block moves into the question prompt itself&#39; — but current block is 27 lines, AskUserQuestion has length limits, and design provides no example of the new shape.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Show a sketch of the new prompt shape (option labels with one-line descriptions) OR move to an Open Question with concrete trigger (&#39;resolve during implementation when first AskUserQuestion render is being authored&#39;).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-3" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">eval-surface.yaml needs more than &#39;4-mode shape update&#39;. L17-18 are specific file paths (software.md, business.md). Post-collapse: remove modes/business.md, add modes/authoring.md (new behavior surface), modes/research.md, modes/roadmap.md.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Rewrite eval-surface entry: add modes/authoring.md, modes/research.md, modes/roadmap.md; remove modes/business.md.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-4" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">e2e harness multi-invocation support not verified. always-ask-routing scenario (b), (c) are multi-invocation within one conversation. If harness is single-prompt-single-response today, tests can&#39;t land and routing ships without regression coverage.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add &#39;Harness check&#39; item before the test additions: verify harness supports multi-invocation conversational scenarios; if not, extension comes first. Cite existing pattern if one exists.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-5" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Open Question #3 (spawn-brief Roadmap enum) is decided, not open. Migration table row 8 already commits to the change; Open Questions item 3 calls it &#39;Tentative&#39;. Contradiction.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Remove Open Question #3 — Migration table already commits. File as Kanban follow-up if &#39;Roadmap as recursive spawn target&#39; deserves separate tracking.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-6" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-6', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Open Question #4 trigger is vague. &#39;Encounters the calibration question&#39; is not observable — implementer-judgment trigger, no surface signal. Three of four open questions have concrete triggers; this one is &#39;we&#39;ll know it when we hit it&#39;.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Rewrite trigger to name an observable: &#39;When an Authoring no-framework session has 2+ topic-advisor candidates within 0.1 confidence, scenarios must include a multi-candidate variant with deterministic tiebreak&#39; OR &#39;eval scenarios show &gt;X% disagreement on advisor selection&#39; OR &#39;user reports the topic-advisor was the wrong fit&#39;.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-7" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-7', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Composed-from open questions not propagated. May 9 plan has 4 open questions (L253-256); only the strategy-name one is resolved here. The other three (deliverable-type edge cases, multi-entity calibration, follow-on chains) silently disappear from scope.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add &#39;Composed-from open questions&#39; sub-section under Open Questions explicitly inheriting May 9&#39;s three unresolved questions.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-8" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-8', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Always-ask test scenario (f) is YAGNI. Tests a collision that the rule (keys on auto-detected mode) precludes — would only fire if implementer introduces a specific bug (marker stores user-picked instead of auto-detected). Hypothetical regression in an implementation choice that hasn&#39;t been made.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Cut test scenario (f). Encode the &#39;marker stores auto-detected, not user-picked&#39; invariant as an implementation comment, not an E2E scenario.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="l-9" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-9', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Decision #6 (always-ask, session-scoped) confidence 0.85 is overstated given the load-bearing session-marker mechanism (h-2) is unspecified.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Lower Decision #6 confidence to ~0.65; add rollback condition to Decision Log: &#39;if session-marker detection proves unreliable in first N sessions post-ship, fall back to pure always-ask&#39;.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-low">Modify notes for Low severity (optional)</label>
+      <textarea id="notes-low" placeholder="Anything you want to add, override, or annotate for low-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-facts">
+    <div class="auto-apply-notice">
+      Fact-check corrections are applied automatically per the critique-panel protocol. Use the modify notes below if you want to override or annotate a specific correction.
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">spawn-brief-template.md L25 already calls out that spawn-briefs are router-consumed (design L61)</div>
+      <div class="fact-check-correction">→ L25-27 says the router runs normal topic-keyword signal detection on the paragraph prose, and L27 explicitly states `target_mode` is &#39;not consumed by the router (no parsing layer exists).&#39; The verb-prefix paste-back skip condition rests on a capability that does not exist.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">SKILL.md planning-rename touchpoints are L79, L100, L102, L133, L173 (migration table L114)</div>
+      <div class="fact-check-correction">→ Misses L18 (Overview bullet), L83 (env tiebreaker), L91 (5-way question), L119 (Sequence work line), L157 (Project Scan table) — five additional touchpoints inside SKILL.md alone.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">skills/_shared/critique-panel-orchestration.md Planning refs are at L18, L60 (migration table L122)</div>
+      <div class="fact-check-correction">→ Also L104: `Mode: {mode} (one of: software | business | research | authoring | planning ...)` — the enum at L104 must change. Three locations, not two.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">README.md L80 is the stale two-mode claim to replace (migration table L124)</div>
+      <div class="fact-check-correction">→ L80 confirmed stale, but also stale: L36 (&#39;strategy problem&#39;), L69 (&#39;auto-detects your domain&#39;), L222 (CHANGELOG entry on business-brainstorming merge). At minimum L36 and L69 must also update.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">docs/skill-orchestration.html L342-346 has the 4-mode signal bullets (migration table L125)</div>
+      <div class="fact-check-correction">→ Relevant Planning content runs L346-348 (not L342-346) and also L359 (Mermaid `PlanMode` node), L446 (`&lt;h3&gt;Planning Mode&lt;/h3&gt;`), L450 (`planning-critique-checklist`), and L347 (disambiguation bullet). At least 6 lines affected, design lists 4.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">19/19 mode-ID locations use single-token convention (Decision Log #2)</div>
+      <div class="fact-check-correction">→ UNVERIFIABLE — no source for the count of 19 anywhere in the repo. Single-token observation true at checked locations; the count is hand-wave-as-number.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">May 9 plan Decision 4 contains the L253 Open Question this design resolves (amendment table L105)</div>
+      <div class="fact-check-correction">→ May 9 plan Decision 4 (L55-73) is about `deliverable_type` metadata location — unrelated to the strategy-vs-authoring name. The L253 Open Question about the mode name is a standalone Open Question, not part of Decision 4.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">trigger-map.yaml&#39;s business.md reference is resolved by the May 9 plan (design L134)</div>
+      <div class="fact-check-correction">→ May 9 plan does NOT list trigger-map.yaml in its modified or deleted files. Between May 9 ship and this follow-up commit, trigger-map.yaml L48-49 has a dangling reference to deleted business.md; test_trigger_map_paths.py will fail.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Test plan covers e2e/tests/test_brainstorming_files.py L147-211 label assertions</div>
+      <div class="fact-check-correction">→ Design ignores test_kickstart_marketing_copy_mentions_five_modes (L307-312) which literally requires the string &#39;five modes&#39; or &#39;5 modes&#39;, plus ~12 other tests that hardcode the 5-mode shape or reference business/planning mode files (L120, L131, L140-164, L167-197, L200-213, L216-230, L233-246, L249-295, L307-312, L342-350, L363-374).</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Test plan covers all rename touchpoints for the brainstorming-five-modes fixture</div>
+      <div class="fact-check-correction">→ Design renames the fixture file but omits the parallel scenario file `e2e/scenarios/use-skill/brainstorming-five-modes.yaml`, which is asserted on by `test_five_modes_eval_fixture_lists_15_briefs` (≥15 briefs across 5 modes including business/planning labels). Will fail post-collapse.</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-facts">Override or annotate fact-checks (optional)</label>
+      <textarea id="notes-facts" placeholder="Anything to override or annotate..."></textarea>
+    </div>
+  </div>
+
+  <div class="action-footer">
+    <div class="summary"><strong id="accept-count">0</strong> accepted · <strong id="reject-count">0</strong> rejected</div>
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy follow-up prompt</button>
+  </div>
+
+  <script>
+    const FINDINGS = [
+      {"id":"h-1","severity":"high","text":"Spawn-brief paste-back skip condition fabricates a capability and will silently mis-route ordinary user prompts. Verb-prefix heuristic ('design...', 'sequence...', 'compose a roadmap for...', 'diagnose...', 'author...') will fire on the design's own Software-mode test prompt 'design the auth refactor' — exactly the silent mis-route the redesign is meant to eliminate. Cited source (spawn-brief-template.md L25) says the opposite of what design claims.","action":"Delete the spawn-brief skip condition entirely (the --mode arg handles pre-disambiguated cases and one-tap confirmation is cheap), OR specify a structural marker (e.g., literal `[spawn-brief target=X]` prefix the template generates) — verb-prefix heuristic must go.","critics":["The QA Engineer","The Architect","Steve Krug","The DevEx Engineer"],"accepted":true},
+      {"id":"h-2","severity":"high","text":"Session-marker detection ('the model checks its own conversation context') is a wish, not a mechanism. Unspecified for: context compaction, resumed sessions, sub-agent invocations, mis-remembered mode, user-overridden vs auto-detected mode (which is the anchor?), parallel invocations, forked conversations. Without spec, degrades to pure always-ask (friction returns) or silent false-skip (silent mis-route returns).","action":"Either (a) add explicit fallback rule 'if model cannot confidently recall prior mode → fall through to always-ask' and admit best-effort; OR (b) use a deterministic marker (`/tmp/brainstorm-context-{conversation-id}/` file or CLAUDE.md scratch line) and accept the cost.","critics":["The QA Engineer"],"accepted":true},
+      {"id":"h-3","severity":"high","text":"Migration sequencing risk: e2e/trigger-map.yaml will point at a deleted file between May 9 ship and follow-up. May 9 plan deletes modes/business.md; trigger-map.yaml L48-49 still references it; May 9 plan does NOT list trigger-map.yaml in its modified files. Design's claim 'resolved by the May 9 plan' is false. test_trigger_map_paths.py will fail in the staging window.","action":"Add trigger-map.yaml L48-49 update to the May 9 plan's modified-files list as an amendment, OR move it into this design's follow-up commit and acknowledge the staging window.","critics":["The QA Engineer"],"accepted":true},
+      {"id":"h-4","severity":"high","text":"No error handling for the new always-ask question itself. Unspecified: user doesn't answer (idle/abandoned), user types non-mode answer ('I don't know' / 'skip' / 'back'), 'Other' option presence, mid-brainstorm re-ask. Current SKILL.md L105 has elaborate refusal handling for the existing 5-way question — design is silent on whether always-ask inherits, modifies, or replaces. Current 'I'm not sure' routes to Business, which won't exist post-collapse.","action":"Explicitly inherit (or modify) the existing disambiguation-refusal handling. State timeout default, non-mode-answer handling, 'Other' option, mid-brainstorm re-ask path, and post-collapse fallback for 'I'm not sure'.","critics":["The QA Engineer"],"accepted":true},
+      {"id":"h-5","severity":"high","text":"Duplicated Q&A pattern (~113 lines from modes/software.md L22-134) has no divergence-management plan. Decision Log defends the choice to duplicate but not the operational consequence: no marker comments, no parity test on the stable parts (Architect-as-proxy dispatch, scan-gate), no review trigger. Six-month bug pipeline — fix one copy, forget the other.","action":"Ship one of: (a) HEADER comment in both files ('<!-- DUPLICATED PATTERN: mirrored in modes/<other>.md ... -->'), (b) parity test that flags drift on shared structural sections, (c) carve the smallest stable surface (~30 lines: Architect/proxy dispatch block) into _shared/qa-runner.md and duplicate only mode-specific framing.","critics":["The DevEx Engineer","The QA Engineer","The Architect"],"accepted":true},
+      {"id":"m-1","severity":"medium","text":"Migration table undercounts touchpoints by 7+ files. Missing: SKILL.md L3 (frontmatter description), L11-18 (Overview), L21, L83, L91, L105 ('all 5 modes' + 'I'm not sure' → Business route), L117-119 (mode grouping); shared-rules.md L1; brainstorm-components.md L74 prose; skill-orchestration.html L338 + L450; ~12 tests in test_brainstorming_files.py that hardcode 5-mode shape or business/planning labels.","action":"Expand migration table to include the missed files; explicitly list every test function in test_brainstorming_files.py that needs updating (test_kickstart_marketing_copy_mentions_five_modes, test_skill_md_has_disambiguation_rules, test_authoring_mode_file_structure, test_five_modes_eval_fixture_lists_15_briefs, and the ~9 others).","critics":["The Architect","The QA Engineer"],"accepted":true},
+      {"id":"m-2","severity":"medium","text":"e2e/scenarios/ subdirectory convention violated. Design places three new scenarios (always-ask-routing.yaml, deck-routing.yaml, authoring-no-framework-fallback.yaml) as loose YAML directly under e2e/scenarios/. Convention: all scenarios live in subdirectories. Existing brainstorming scenarios are at e2e/scenarios/use-skill/.","action":"Move all three new scenarios under e2e/scenarios/use-skill/; update trigger-map.yaml entries.","critics":["The Architect"],"accepted":true},
+      {"id":"m-3","severity":"medium","text":"Delete-then-recreate-with-different-contents for authoring.md. May 9 deletes existing authoring.md (with phases like Population & constraints, Corpus scan, Architect audit); this design recreates authoring.md with framework-runner-dispatch shape — same filename, completely different semantics, same git step. test_authoring_mode_file_structure (test_brainstorming_files.py L88-117) asserts current phases that won't survive.","action":"Make the file-path collision explicit in migration; rewrite test_authoring_mode_file_structure phase assertions for the new file's actual phases (engine selection ladder, framework-runner invocation).","critics":["The Architect"],"accepted":true},
+      {"id":"m-4","severity":"medium","text":"Parallel YAML scenario brainstorming-five-modes.yaml not in rename plan. test_five_modes_eval_fixture_lists_15_briefs asserts ≥15 briefs across 5 modes including 'business' and 'planning' labels — breaks under 5→4 collapse.","action":"Add e2e/scenarios/use-skill/brainstorming-five-modes.yaml to migration: rename to brainstorming-four-modes.yaml, drop business/planning rows, ensure 12+ briefs across 4 modes. Update the test (rename + assertions).","critics":["The Architect"],"accepted":true},
+      {"id":"m-5","severity":"medium","text":"Step 1 rewrite under-specified. SKILL.md Step 1 has 6 interleaved components (classification, branches, disambiguation rules, refusal handling, mode-explanation block). Design doesn't address: Does the post-route block stay/move/disappear? Which disambiguation rules survive when Business is gone? Where does 'I'm not sure' route post-collapse? test_skill_md_has_disambiguation_rules will fail with current assertions ('Software vs Authoring', 'Authoring vs Research', 'Business vs Planning').","action":"Spell out the §Routing Fix section as a Step-1 rewrite, not a one-liner: specify post-route block fate, surviving disambiguation rules, refusal-handling composition, and the post-collapse fallback for 'I'm not sure'. Update test_skill_md_has_disambiguation_rules and test_skill_md_step1_has_five_signal_sets with new assertions.","critics":["The Architect"],"accepted":true},
+      {"id":"m-6","severity":"medium","text":"Mode labels 'authoring' and 'roadmap' make users translate. 'Authoring' is internal vocabulary covering 6 deliverable shapes (curriculum, memo, decision doc, action plan, deck, positioning brief); user with 'build a deck' pauses. 'Roadmap' is PM vocabulary; user typing 'break this big idea down' doesn't think 'roadmap'. Picker asks 'which category is your work in?' — users think 'I have a thing to do.'","action":"Render picker with plain-English deliverable phrases ('Write a document — deck, memo, brief, positioning'; 'Break a big initiative into smaller pieces'); keep mode IDs internal. Better still: render confirmation in user's task vocabulary ('Sounds like a deck. I'll set up a document-authoring brainstorm.') rather than category vocabulary.","critics":["Steve Krug"],"accepted":true},
+      {"id":"m-7","severity":"medium","text":"Pre-selected default UX unspecified for a CLI prompt. 'One-tap to confirm' promises a UI affordance that doesn't exist in text chat. No rendered example of the prompt anywhere in design or mockup. Without it, design ships an unverified UI.","action":"Specify the rendered prompt text. Example: 'I'll start in `authoring` mode (best match for deck for a client). Type a different mode to switch — software / research / roadmap — or send anything to continue.' One example tells you whether default is visible, confirmation is one-tap, switching is friction-free.","critics":["Steve Krug"],"accepted":true},
+      {"id":"m-8","severity":"medium","text":"'Why:' line and mode grouping are noise. The model's justification of its own guess is happy talk — user has already decided what they want. The 'Build & ship / Diagnose & decide / Sequence work' grouping made sense for 5 modes; for 4 it adds question marks (authoring now spans diagnose-and-decide too, so grouping breaks).","action":"Drop the 'Why:' line and the Build & ship / Diagnose & decide / Sequence work grouping. Use a flat list of four modes with plain-English descriptions.","critics":["Steve Krug"],"accepted":true},
+      {"id":"m-9","severity":"medium","text":"Discoverability test prompt #3 ('compare three vendor frameworks' → research) is ambiguous. 'compare' + 'frameworks' straddles Research and Authoring (competitive analysis territory). 'corpus signal' that resolves it is environment context, not in the prompt. Universal claim 'all 6 route correctly based on label/signal match alone' is overclaimed.","action":"Either revise the test prompt to be unambiguous ('synthesize the literature on three vendor frameworks' → research) OR drop the universal claim and acknowledge 5/6 route on label/signal, 6th relies on environment.","critics":["Steve Krug"],"accepted":true},
+      {"id":"m-10","severity":"medium","text":"Authoring's no-framework fallback composition with use-framework / use-advisor / framework-runner is unspecified. Does ladder item 1 go through use-framework's composability rule (no greeting, straight to Phase 1)? Do items 2-4 use advisor-runner or a new pattern? Software's Architect-as-proxy is a fresh sub-agent returning a structured decision — not persona adoption in main thread. 'Equivalent to Software mode' understates the cross-skill spec gap.","action":"Add 'Cross-skill composition' subsection under Authoring's Engine Selection. For each rung: name which shared runner is invoked, which existing skill's contract carries through, what changes vs the existing contract. Two sentences per rung.","critics":["The DevEx Engineer"],"accepted":true},
+      {"id":"m-11","severity":"medium","text":"Amendment vs follow-up sequencing has no cross-doc back-references or verify-gates. May 9 plan gets edited in-place with no 'amended-by' markers — reader can't tell which decisions came from where. No commit-ordering verify step. Six-month maintainer is stranded.","action":"Add inline 'amended-by' notes to May 9 plan in-place edits ('Decision 5 amended 2026-05-17 — see <follow-up-design>'). Specify single rename commit with a post-commit verify step (e.g., `grep planning` in skills/brainstorming/ and e2e/ expected count: 0 outside completed plans).","critics":["The DevEx Engineer"],"accepted":true},
+      {"id":"m-12","severity":"medium","text":"New test scenarios listed without assertions. All three new YAMLs name scenarios but don't specify input prompts, expected outputs, preconditions. 'Design doc feeds writing-plans' (case c) is not an assertion. Error path (f) tests a collision in a marker scheme that has no spec. No coverage for proxy advisor mid-flow framework recommendation, user-rejected proxy, low-confidence proxy. Session-marker drift test (c) doesn't specify whether anchor is user-confirmed or auto-detected mode.","action":"Each new scenario YAML must specify input prompts, expected pre-selected mode, expected mode-question presence/absence, conversation preconditions. Replace 'design doc feeds writing-plans' with concrete file-existence + content-shape assertion or follow-up writing-plans invocation. Add scenario authoring-proxy-mismatch.yaml for low-confidence proxy, mid-flow framework recommendation, and user-rejected proxy edge cases. Specify session marker is user-confirmed mode and test against that.","critics":["The QA Engineer"],"accepted":true},
+      {"id":"m-13","severity":"medium","text":"Power-user friction: no 'trust me' mode for multi-brainstorm sessions. Session-scoping only skips when same mode repeats. A maintainer running 5-10 different-mode brainstorms in a row (e.g., kanban-resolve sweep) gets re-asked every time. No session-level opt-out.","action":"Add a third skip condition: explicit session flag the user can set ('for this conversation, auto-route without confirmation; I'll catch wrong routes myself'); document next to the --mode arg.","critics":["The DevEx Engineer"],"accepted":true},
+      {"id":"m-14","severity":"medium","text":"Skip-condition collision unspecified. `/aligned:brainstorming --mode software 'compose a roadmap for X'` — --mode says software, verb prefix says roadmap. Which wins? Untested.","action":"Specify precedence (almost certainly --mode wins); add one-line test in always-ask-routing.yaml asserting it.","critics":["The QA Engineer"],"accepted":true},
+      {"id":"l-1","severity":"low","text":"Kickstart narrative rewrite not specified. Design says 'update 4-mode list with correct names' at L196 only; fresh installer will see 'four modes (software, authoring, research, roadmap)' with no explanation. 'Roadmap' alone is less self-explanatory than 'planning'.","action":"Sharpen migration entry: 'Replace 5-mode list with 4-mode list AND add the one-line descriptions used in the mode-explanation block, so a fresh installer can predict which mode their topic routes to.' OR explicitly defer with acknowledgment.","critics":["The DevEx Engineer"],"accepted":false},
+      {"id":"l-2","severity":"low","text":"Mode-explanation block restructuring not actually specified. Design L62: 'block moves into the question prompt itself' — but current block is 27 lines, AskUserQuestion has length limits, and design provides no example of the new shape.","action":"Show a sketch of the new prompt shape (option labels with one-line descriptions) OR move to an Open Question with concrete trigger ('resolve during implementation when first AskUserQuestion render is being authored').","critics":["The DevEx Engineer"],"accepted":false},
+      {"id":"l-3","severity":"low","text":"eval-surface.yaml needs more than '4-mode shape update'. L17-18 are specific file paths (software.md, business.md). Post-collapse: remove modes/business.md, add modes/authoring.md (new behavior surface), modes/research.md, modes/roadmap.md.","action":"Rewrite eval-surface entry: add modes/authoring.md, modes/research.md, modes/roadmap.md; remove modes/business.md.","critics":["The Architect"],"accepted":false},
+      {"id":"l-4","severity":"low","text":"e2e harness multi-invocation support not verified. always-ask-routing scenario (b), (c) are multi-invocation within one conversation. If harness is single-prompt-single-response today, tests can't land and routing ships without regression coverage.","action":"Add 'Harness check' item before the test additions: verify harness supports multi-invocation conversational scenarios; if not, extension comes first. Cite existing pattern if one exists.","critics":["The DevEx Engineer"],"accepted":false},
+      {"id":"l-5","severity":"low","text":"Open Question #3 (spawn-brief Roadmap enum) is decided, not open. Migration table row 8 already commits to the change; Open Questions item 3 calls it 'Tentative'. Contradiction.","action":"Remove Open Question #3 — Migration table already commits. File as Kanban follow-up if 'Roadmap as recursive spawn target' deserves separate tracking.","critics":["The Architect","The QA Engineer"],"accepted":false},
+      {"id":"l-6","severity":"low","text":"Open Question #4 trigger is vague. 'Encounters the calibration question' is not observable — implementer-judgment trigger, no surface signal. Three of four open questions have concrete triggers; this one is 'we'll know it when we hit it'.","action":"Rewrite trigger to name an observable: 'When an Authoring no-framework session has 2+ topic-advisor candidates within 0.1 confidence, scenarios must include a multi-candidate variant with deterministic tiebreak' OR 'eval scenarios show >X% disagreement on advisor selection' OR 'user reports the topic-advisor was the wrong fit'.","critics":["The QA Engineer","Steve Krug"],"accepted":false},
+      {"id":"l-7","severity":"low","text":"Composed-from open questions not propagated. May 9 plan has 4 open questions (L253-256); only the strategy-name one is resolved here. The other three (deliverable-type edge cases, multi-entity calibration, follow-on chains) silently disappear from scope.","action":"Add 'Composed-from open questions' sub-section under Open Questions explicitly inheriting May 9's three unresolved questions.","critics":["The QA Engineer"],"accepted":false},
+      {"id":"l-8","severity":"low","text":"Always-ask test scenario (f) is YAGNI. Tests a collision that the rule (keys on auto-detected mode) precludes — would only fire if implementer introduces a specific bug (marker stores user-picked instead of auto-detected). Hypothetical regression in an implementation choice that hasn't been made.","action":"Cut test scenario (f). Encode the 'marker stores auto-detected, not user-picked' invariant as an implementation comment, not an E2E scenario.","critics":["The Architect"],"accepted":false},
+      {"id":"l-9","severity":"low","text":"Decision #6 (always-ask, session-scoped) confidence 0.85 is overstated given the load-bearing session-marker mechanism (h-2) is unspecified.","action":"Lower Decision #6 confidence to ~0.65; add rollback condition to Decision Log: 'if session-marker detection proves unreliable in first N sessions post-ship, fall back to pure always-ask'.","critics":["The QA Engineer"],"accepted":false}
+    ];
+    const FACT_CHECKS = [
+      {"id":"fc-1","claim":"spawn-brief-template.md L25 already calls out that spawn-briefs are router-consumed (design L61)","correction":"L25-27 says the router runs normal topic-keyword signal detection on the paragraph prose, and L27 explicitly states `target_mode` is 'not consumed by the router (no parsing layer exists).' The verb-prefix paste-back skip condition rests on a capability that does not exist.","critic":"The QA Engineer"},
+      {"id":"fc-2","claim":"SKILL.md planning-rename touchpoints are L79, L100, L102, L133, L173 (migration table L114)","correction":"Misses L18 (Overview bullet), L83 (env tiebreaker), L91 (5-way question), L119 (Sequence work line), L157 (Project Scan table) — five additional touchpoints inside SKILL.md alone.","critic":"The QA Engineer"},
+      {"id":"fc-3","claim":"skills/_shared/critique-panel-orchestration.md Planning refs are at L18, L60 (migration table L122)","correction":"Also L104: `Mode: {mode} (one of: software | business | research | authoring | planning ...)` — the enum at L104 must change. Three locations, not two.","critic":"The QA Engineer"},
+      {"id":"fc-4","claim":"README.md L80 is the stale two-mode claim to replace (migration table L124)","correction":"L80 confirmed stale, but also stale: L36 ('strategy problem'), L69 ('auto-detects your domain'), L222 (CHANGELOG entry on business-brainstorming merge). At minimum L36 and L69 must also update.","critic":"The QA Engineer"},
+      {"id":"fc-5","claim":"docs/skill-orchestration.html L342-346 has the 4-mode signal bullets (migration table L125)","correction":"Relevant Planning content runs L346-348 (not L342-346) and also L359 (Mermaid `PlanMode` node), L446 (`<h3>Planning Mode<\/h3>`), L450 (`planning-critique-checklist`), and L347 (disambiguation bullet). At least 6 lines affected, design lists 4.","critic":"The QA Engineer"},
+      {"id":"fc-6","claim":"19/19 mode-ID locations use single-token convention (Decision Log #2)","correction":"UNVERIFIABLE — no source for the count of 19 anywhere in the repo. Single-token observation true at checked locations; the count is hand-wave-as-number.","critic":"The QA Engineer"},
+      {"id":"fc-7","claim":"May 9 plan Decision 4 contains the L253 Open Question this design resolves (amendment table L105)","correction":"May 9 plan Decision 4 (L55-73) is about `deliverable_type` metadata location — unrelated to the strategy-vs-authoring name. The L253 Open Question about the mode name is a standalone Open Question, not part of Decision 4.","critic":"The QA Engineer"},
+      {"id":"fc-8","claim":"trigger-map.yaml's business.md reference is resolved by the May 9 plan (design L134)","correction":"May 9 plan does NOT list trigger-map.yaml in its modified or deleted files. Between May 9 ship and this follow-up commit, trigger-map.yaml L48-49 has a dangling reference to deleted business.md; test_trigger_map_paths.py will fail.","critic":"The QA Engineer"},
+      {"id":"fc-9","claim":"Test plan covers e2e/tests/test_brainstorming_files.py L147-211 label assertions","correction":"Design ignores test_kickstart_marketing_copy_mentions_five_modes (L307-312) which literally requires the string 'five modes' or '5 modes', plus ~12 other tests that hardcode the 5-mode shape or reference business/planning mode files (L120, L131, L140-164, L167-197, L200-213, L216-230, L233-246, L249-295, L307-312, L342-350, L363-374).","critic":"The Architect"},
+      {"id":"fc-10","claim":"Test plan covers all rename touchpoints for the brainstorming-five-modes fixture","correction":"Design renames the fixture file but omits the parallel scenario file `e2e/scenarios/use-skill/brainstorming-five-modes.yaml`, which is asserted on by `test_five_modes_eval_fixture_lists_15_briefs` (≥15 briefs across 5 modes including business/planning labels). Will fail post-collapse.","critic":"The Architect"}
+    ];
+    const SESSION = {
+      name: "2026-05-17-brainstorming-mode-naming-and-routing",
+      mode: "software",
+      designPath: "/Users/ericpage/software/aligned_cc_skills/docs/plans/2026-05-17-brainstorming-mode-naming-and-routing-design.md"
+    };
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    function toggleFinding(id, el) {
+      const finding = FINDINGS.find(f => f.id === id);
+      if (!finding) return;
+      finding.accepted = !finding.accepted;
+      el.classList.toggle('on');
+      const card = el.closest('.finding');
+      const label = el.parentElement.querySelector('.toggle-label');
+      if (finding.accepted) {
+        card.classList.remove('rejected');
+        label.textContent = 'accept';
+      } else {
+        card.classList.add('rejected');
+        label.textContent = 'reject';
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const accepted = FINDINGS.filter(f => f.accepted).length;
+      const rejected = FINDINGS.filter(f => !f.accepted).length;
+      document.getElementById('accept-count').textContent = accepted;
+      document.getElementById('reject-count').textContent = rejected;
+    }
+
+    function buildPrompt() {
+      const accept = FINDINGS.filter(f => f.accepted);
+      const reject = FINDINGS.filter(f => !f.accepted);
+
+      const formatFinding = f => {
+        const critics = f.critics && f.critics.length ? '[' + f.critics.join(', ') + '] ' : '';
+        return '- ' + critics + f.text;
+      };
+
+      const notes = {
+        high:   document.getElementById('notes-high').value.trim()   || '(none)',
+        medium: document.getElementById('notes-medium').value.trim() || '(none)',
+        low:    document.getElementById('notes-low').value.trim()    || '(none)',
+        facts:  document.getElementById('notes-facts').value.trim()  || '(none)'
+      };
+
+      const factLines = FACT_CHECKS.length
+        ? FACT_CHECKS.map(fc => '- ' + fc.claim + ' → ' + fc.correction).join('\n')
+        : '(none)';
+
+      return [
+        'Resume brainstorming session "' + SESSION.name + '" (' + SESSION.mode + ' mode) at `' + SESSION.designPath + '`.',
+        'Critique decisions from interactive review:',
+        '',
+        'ACCEPT (apply these):',
+        accept.length ? accept.map(formatFinding).join('\n') : '(none)',
+        '',
+        'REJECT (skip these):',
+        reject.length ? reject.map(formatFinding).join('\n') : '(none)',
+        '',
+        'FACT-CHECKS (auto-applied):',
+        factLines,
+        '',
+        'MODIFY NOTES:',
+        '- High severity: '   + notes.high,
+        '- Medium severity: ' + notes.medium,
+        '- Low severity: '    + notes.low,
+        '- Fact-checks: '     + notes.facts,
+        '',
+        'Apply the accepted findings and any modify notes, skip the rejected ones, regenerate the design doc, then refresh the session visualization per the post-critique checklist in the mode file.'
+      ].join('\n');
+    }
+
+    function copyPrompt(btn) {
+      const text = buildPrompt();
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied — paste in Claude Code';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2400);
+      }).catch(err => {
+        btn.textContent = 'Copy failed — see console';
+        console.error('Clipboard write failed:', err);
+      });
+    }
+
+    updateSummary();
+  </script>
+</body>
+</html>
