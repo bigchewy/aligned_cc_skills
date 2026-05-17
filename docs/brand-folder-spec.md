@@ -85,8 +85,8 @@ clients/
 | `proof/compliance.md` | HIPAA, SOC 2, HITRUST, FDA QSR, ISO, accessibility, audit readiness status. | Clinical efficacy — that lives in `proof/clinical-evidence.md` |
 | `market/competitive.md` | Deep battle-card view of named competitors. Must declare `depends_on: [strategy/positioning#competitive-alternatives]` — every competitor here must be in positioning Component 1. | The canonical competitor list (short, reasoning-grade) — that lives in `strategy/positioning.md#competitive-alternatives` |
 | `market/alternatives.md` | Status quo, build-in-house, do-nothing alternatives. Broad "what else could they do?" | Direct named competitors — those live in `market/competitive.md` |
-| `audiences/channels/{channel}.md` | Channel-specific procurement context: employer, payer, provider, pharma. | Role-specific buyer profiles — those live in `personas/` |
-| `audiences/segments/{segment}.md` | Segment-specific context: commercial, medicaid, MA, ACO, dual, pediatric. | Channel context — that composes separately from `audiences/channels/` |
+| `audiences/channels/{channel}.md` | Channel-specific procurement context. **Canonical channel list:** see `frameworks/reverse-engineered-brand/audience-taxonomy.md` (employer, payer, provider, pharma, direct-to-consumer, broker-consultant, aggregator). | Role-specific buyer profiles — those live in `personas/` |
+| `audiences/segments/{segment}.md` | Segment-specific context. **Canonical segment list:** see `frameworks/reverse-engineered-brand/audience-taxonomy.md` (commercial, medicaid, medicare-advantage, aco, dual-eligible, pediatric, self-funded-employer, tricare-va, aca-exchange, direct-consumer). | Channel context — that composes separately from `audiences/channels/` |
 | `personas/{role}.md` | Buyer/user role profile: responsibilities, pain points, decision criteria, objections. Composes with audience dimensions at generation time. | Market segmentation — that lives in `audiences/` |
 | `design/design-principles.md` | The WHY of the visual system: principles that explain design choices. | The design tokens (CSS variables) — those live in `design/tokens.css` |
 | `design/tokens.css` | CSS custom properties: colors, type scale, spacing, radius, shadow. | Rationale for design choices — that lives in `design/design-principles.md` |
@@ -129,6 +129,21 @@ tags: [positioning, dunford]
 summary: > 5-component positioning chain.
 ---
 ```
+
+## Synthesis methods: framework dispatch vs. classification
+
+Two distinct mechanisms produce content for the brand folder. Every slice file's frontmatter must declare which method produced it via `synthesis_method`:
+
+| Method | When used | Mechanism | Slices |
+|--------|-----------|-----------|--------|
+| `framework` (default) | The slice represents content that must be *discovered* (positioning, narrative, voice, persona, competitive analysis, proof points, design principles). | An owning framework runs in AUTO_MODE per `frameworks/reverse-engineered-brand/auto-mode-preamble.md`. The framework's PHASES execute end-to-end without human WAIT-gates, emitting a draft + OQ JSON. | `strategy/`, `language/`, `personas/`, `market/`, `proof/`, `design/` |
+| `classification` | The slice represents content that is *exogenously defined* by the regulatory or procurement landscape and only needs to be classified against a known list. | The orchestrator reads `frameworks/reverse-engineered-brand/audience-taxonomy.md` and matches source-material signal against the canonical taxonomy of payer segments and procurement channels. No framework is dispatched. | `audiences/segments/`, `audiences/channels/` |
+
+**Why this matters:** In digital health, payer segments (commercial, Medicaid, MA, ACO, etc.) and procurement channels (employer, payer, provider, pharma) are not *invented* by a brand — they are imposed by CMS regulation, state administration, and the payer landscape. Running a 5-phase WAIT-gated discovery framework against an exogenous list wastes orchestrator capacity and produces fabricated content when source material is thin. Classification surfaces the right confidence signal: "we found evidence for this segment/channel" or "we didn't" — both useful, neither fabricated.
+
+The `audience-taxonomy.md` file is the canonical source of truth for the segment and channel lists. To extend the taxonomy (e.g., to add `school-districts` as a new procurement channel), edit that file — the orchestrator picks up changes on the next run.
+
+---
 
 ## Provenance & confidence model
 

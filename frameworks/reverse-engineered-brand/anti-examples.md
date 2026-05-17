@@ -72,15 +72,15 @@
 
 ---
 
-### Synthesizing GAP slices without flagging the absence of a framework
+### Synthesizing audience slices via framework dispatch instead of classification
 
 **User:** [silent, during PHASE 2 Transform]
 
-**Wrong:** Advisor synthesizes `audiences/channels/employer.md` with whatever structure seems natural, sets `confidence: medium`, and proceeds as if it had an owning framework like the other slices.
+**Wrong:** Advisor dispatches a "framework" for `audiences/segments/medicaid.md` — either invoking a phantom `audience-segmentation` framework that doesn't exist in the registry, or improvising a 5-phase WAIT-style synthesis as if Medicaid were a category to be discovered.
 
-**Right:** Advisor synthesizes the GAP slice ad-hoc, sets `synthesis_method: ad_hoc` in the slice's frontmatter, sets `owning_framework: null`, and raises exactly one P0 meta-Open-Question *per missing framework* (not per GAP slice instance): "No framework currently owns the `audiences/channels/` slice. Synthesis was ad-hoc. Do you want to commission a `channel-strategy` framework, or accept ad-hoc synthesis going forward?" PHASE 3.1 deduplicates these: if three GAP slices share the same missing framework, one meta-OQ surfaces — not three.
+**Right:** Advisor recognizes that payer segments and procurement channels in digital health are exogenously defined and runs the Step 2.3a classification path instead — reading `audience-taxonomy.md`, scanning source extracts for the "Typical signals in source material" phrases, and instantiating slice files only for segments/channels with actual signal. Slice frontmatter declares `synthesis_method: classification`. OQs surface for low-confidence classifications ("Source mentions ACO once but not consistently — confirm or correct") and for signals that don't map to the canonical taxonomy ("Source references school districts as a customer — extend taxonomy or fold in?").
 
-> GAP slices are a known weakness — making them invisible means future improvements happen ad-hoc too. Surfacing the gap as a deduplicated meta-question lets the user decide whether to build a framework for it. Duplicating the meta-OQ per-slice floods the HTML with redundant prompts and defeats the deduplication logic.
+> Audience segments and channels are *taxonomic* categories in digital health, not *discoverable* axes. Running a WAIT-gated discovery framework against an exogenous list wastes orchestrator capacity and produces fabricated content when source material is thin. Classification surfaces the right confidence signal: "we found evidence for X" or "we didn't" — both useful, neither fabricated.
 
 ---
 

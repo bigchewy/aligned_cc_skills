@@ -151,13 +151,13 @@ Slice → owning framework mapping (authoritative):
 | `strategy/narrative.md` | Raskin 5-element arc: world, change, losers/winners, promised land, evidence | `strategic-narrative` |
 | `language/messaging.md` | Category name, tagline candidates, elevator variants, vp×persona map | `messaging-distillation` |
 | `language/voice.md` | Tone principles, register, dos/don'ts, banned phrases/terms, glossary | `brand-voice` |
-| `personas/{role}.md` (one per identified role) | Role overview, evaluation criteria, skepticism triggers, language resonance, common objections | `buyer-persona` |
+| `personas/{role}.md` (one per identified role) | Role overview, evaluation criteria, skepticism triggers, language resonance, common objections | `buyer-persona` (primary auto-mode dispatch). **Deepen further:** `jobs-to-be-done` — for the Moesta-flavored "what job is this role hiring our product to do" motivation lens. Surface as the "Deepen with" framework in CLAUDE.md § Next Steps to Deepen for every persona slice. |
 | `market/competitive.md` | Per-competitor head-to-head, objections, trap questions | `competitive-battle-card` |
 | `market/alternatives.md` | Status quo, build-in-house, do-nothing | `5-components-positioning` (Component 1 — competitive alternatives — is the canonical source; this slice is the long-form view) |
 | `proof/proof-points.md` | Each quantitative claim with source + date + confidence | `proof-points-audit` |
 | `proof/clinical-evidence.md`, `proof/compliance.md` | (conditional — only if the org is healthcare/regulated) | `proof-points-audit` (healthcare extension — same method, healthcare-specific evidence types) |
 | `design/design-principles.md` | (conditional — skip unless source material has visual identity signal) | `design-principles` |
-| `audiences/channels/{channel}.md`, `audiences/segments/{segment}.md` | Channel/segment procurement context | **GAP — no framework owns this slice.** Synthesis is ad-hoc. Slice frontmatter must include `synthesis_method: ad_hoc` and the orchestrator must raise a meta-Open-Question recommending the user build a framework for this slice. |
+| `audiences/channels/{channel}.md`, `audiences/segments/{segment}.md` | Channel/segment procurement context | **Classification, not framework dispatch.** In digital health these categories are exogenously defined (payer/regulatory); the orchestrator classifies the brand against the canonical taxonomy at `frameworks/reverse-engineered-brand/audience-taxonomy.md` rather than dispatching a framework. Slice frontmatter sets `synthesis_method: classification`. See Step 2.3a below. |
 
 **Step 2.1: Determine the slice list.**
 
@@ -178,7 +178,8 @@ The orchestrator authors a 1-paragraph `canonical-pre-synthesis-blob.md` in `{br
 
 For each non-skipped slice instance:
 - Look up `owning-framework-id` from the slice mapping table.
-- If owning framework is `null` (GAP slice — `audiences/channels/*`, `audiences/segments/*`): do NOT dispatch a framework. Emit one P0 meta-OQ per missing framework (deduplicated at PHASE 3.1, so emit one per GAP slice instance; PHASE 3 deduplicates by `gap_frameworks_needed`).
+- If the slice is `audiences/channels/*` or `audiences/segments/*`: do NOT dispatch a framework — handle via Step 2.3a (classification) instead.
+- If owning framework is `null` for any OTHER reason (rare; only if a slice mapping row is genuinely unowned): do NOT dispatch a framework. Emit one P0 meta-OQ recommending the user commission a framework for that slice.
 - Otherwise, read `frameworks/{owning-framework-id}/prompt.md` and `frameworks/reverse-engineered-brand/auto-mode-preamble.md`. Concatenate: preamble + ORIGINAL framework prompt. Dispatch a Task with `subagent_type: general-purpose` and substituted placeholders:
   - `{slice-id}` — the slice path (e.g., `strategy/positioning.md`)
   - `{output-draft-path}` — `{brand-folder-path}/.build/slices/{slice-id}.draft.md`
@@ -190,6 +191,27 @@ For each non-skipped slice instance:
   - `{org-name}` — org name from PHASE 0
 
 **Dispatch contract:** Issue all framework dispatches in a SINGLE assistant message (multiple Task tool calls in one message — parallel execution). Slice count is bounded (typically 8–15). Per `auto-mode-preamble.md`, each sub-agent runs the framework's PHASES end-to-end without WAITing.
+
+**Step 2.3a: Audience classification (special case — not a framework dispatch).**
+
+The `audiences/` folder is populated via classification against a canonical taxonomy, not via framework dispatch. Read `frameworks/reverse-engineered-brand/audience-taxonomy.md` once at PHASE 2 start.
+
+Dispatch a single sub-agent (Task, `subagent_type: general-purpose`) with these inputs:
+- The taxonomy file content (segments + channels tables)
+- The full source-extract list (JSON paths filtered to extracts with `audience`, `pricing`, or `competitive` signal tags)
+- The canonical pre-synthesis blob
+
+The sub-agent's job:
+1. For each segment in the taxonomy: scan the source extracts for the "Typical signals in source material" phrases (substring or close match). If found, instantiate `{brand-folder-path}/.build/slices/audiences/segments/{segment-id}.md` with the segment's display name, a 2-3 sentence description of how this brand engages that segment, a list of evidence excerpts (source IDs + quoted phrases), and a confidence tag (`high` if 2+ independent sources confirm, `medium` if 1 source, `low` if inference-only).
+2. Same procedure for channels → `{brand-folder-path}/.build/slices/audiences/channels/{channel-id}.md`.
+3. Do NOT instantiate a slice file if no signal exists for that segment/channel. Absence is signal.
+4. Write a single OQ JSON at `{brand-folder-path}/.build/slices/audiences.oq.json` containing:
+   - One OQ per low-confidence classification ("We inferred this brand serves Medicaid but only one source mentions it — confirm or correct"). `framework_slot: null`, `deepen_with: null`, `synthesis_method: classification`.
+   - One OQ per signal that didn't map to the canonical taxonomy ("Source material references {phrase}; no canonical segment/channel matches — add to taxonomy or fold into existing?"). Impact `P1`.
+
+Slice frontmatter on each generated file: `synthesis_method: classification` (NOT `framework`). This distinguishes classification-derived slices from framework-derived slices for downstream auditors.
+
+**Why classification, not framework dispatch:** In digital health, payer segments (commercial, Medicaid, MA, ACO, etc.) and procurement channels (employer, payer, provider, pharma) are imposed by the regulatory and procurement landscape, not invented by the brand. A 5-phase WAIT-gated framework is the wrong tool — there's nothing to discover, only to classify. See the rationale block at the top of `audience-taxonomy.md`.
 
 **Cross-framework ordering caveat** (per Architect M1): `competitive-battle-card`'s prompt names positioning as its canonical source. Battle-card dispatch receives the positioning DRAFT — a placeholder note in the dispatch prompt explains the upstream slice may not be finalized; the framework's AUTO_MODE behavior is to tag any positioning-dependent OQ with `confidence: low`, `impact: P0`, `why_it_matters` noting the upstream dependency.
 
@@ -209,9 +231,11 @@ For each `.oq.json` file, attempt to parse as JSON.
 
 **Check 3 — Schema validate (hard-fail).**
 For each parsed OQ, validate every entry against the required-at-emission rules in `open-questions-schema.md`:
-- Required fields present: `id, file, framework_slot, confidence, impact, evidence, deepen_with`.
+- Required fields present: `id, file, framework_slot, confidence, impact, evidence, deepen_with, why_it_matters, rationale`.
 - Literal `null` allowed for `framework_slot` and `deepen_with` only on GAP slices (i.e., the slice mapping table has no owning framework for this slice).
 - At least one of `question` or `inferred_value` must be present.
+- When `inferred_value` is present (non-null), it must be a complete declarative sentence — minimum 6 words, must contain a verb. Fragments like `"spreadsheets"` are a violation.
+- `why_it_matters` and `rationale` must each contain at least 2 sentences (count by `[.!?]` terminators that are followed by whitespace + capital letter, or end of string). Single-sentence values are a violation — the executive needs enough context to decide Approve/Reject without re-reading sources.
 - `confidence` must be one of: `high`, `medium`, `low`.
 - `impact` must be one of: `P0`, `P1`, `P2`.
 - Validation failure → hard-fail: `slice: {slice-id}, field: {field-name}, value: {bad-value}`.
@@ -265,7 +289,7 @@ Read every `.build/slices/{slice-id}.oq.json` file (Glob `{brand-folder-path}/.b
 1. Take only the `open_questions` array from each file; discard the wrapper.
 2. Concatenate all arrays in slice order. Assign global `OQ-N` ids: `global_id: "OQ-{N}"` where N is 1-indexed across the concatenation.
 
-**GAP-dedupe rule:** For OQs from GAP slices (`framework_slot: null`, `deepen_with: null`), deduplicate by `gap_frameworks_needed` value — emit one P0 meta-OQ per *missing framework* (not per slice instance). If `audiences/channels/employer.md` and `audiences/channels/wholesale.md` both emit a meta-OQ pointing to `channel-strategy`, keep one entry recommending `/aligned:add-framework channel-strategy` and list both slice paths in `why_it_matters`.
+**GAP-dedupe rule:** For OQs from genuinely unowned slices (`framework_slot: null`, `deepen_with: null`, AND `synthesis_method: ad_hoc`), deduplicate by `gap_frameworks_needed` value — emit one P0 meta-OQ per *missing framework* (not per slice instance). Audience classification OQs (`synthesis_method: classification`) are NOT GAP OQs and are not subject to this dedupe rule; they surface as classification confirmations, not framework-commissioning recommendations.
 
 **Field-rename mapping (v0.1 → v0.2 schema):** Rename any v0.1 fields the sub-agents may have emitted:
 - `best_guess` → `inferred_value`
@@ -281,7 +305,9 @@ For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences
 - Determine `status`: `Strong` (≥1 slice with HIGH-confidence OQs and 0 P0 OQs), `Partial` (≥1 slice present, some P0 OQs), `Weak` (slice present but mostly LOW confidence), `GAP` (no owning framework).
 - Count `p0_count`, `p1_count`, `p2_count` from the slices in this folder.
 - Build `framework_dispatches`: array of `{framework_id, fills}` entries for each dispatched framework.
-- For GAP folders (e.g., `audiences`): set `gap_frameworks_needed: ["channel-strategy", "audience-segmentation"]` (values derived from the slice-level GAP OQs in that folder).
+- For folders populated via classification (`audiences`): set `synthesis_method: classification` on the folder summary; do NOT set `gap_frameworks_needed`. The folder's status reflects classification confidence (Strong/Partial/Weak), not framework presence.
+- For genuinely unowned slices (if any remain after the audiences rewiring): set `gap_frameworks_needed: [...]` with the missing framework ids derived from slice-level GAP OQs.
+- **Write `summary`** (1-3 sentences, brand-specific). Read the slice drafts in this folder and the OQ list, then write a brief executive summary of what the build *learned about this specific brand* in this area. Surface where confidence is high (e.g., "Tone signal converges across the marketing site and three sales decks"), where it's thin (e.g., "The headline metric has one source and no controlled benchmark"), and the single most-load-bearing open question. **Do not write a generic definition of the area** (e.g., "Strategy is how the brand is positioned") — the reader already knows what the area means. The summary is for skim-comprehension of *this brand's current state in this area*. Length: 1-3 sentences max.
 
 **Step 3.3: Aggregate competitor dossiers.**
 
@@ -308,7 +334,7 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
 3. **Next Steps to Deepen** — one line per slice, e.g.:
    ```
    - `strategy/positioning.md` → run `/aligned:use-framework 5-components-positioning` for a deeper, interactive pass
-   - `audiences/channels/employer.md` → GAP — no framework owns this slice. Consider `/aligned:add-framework channel-strategy`.
+   - `audiences/channels/employer.md` → Classified from source material against `audience-taxonomy.md`. Confidence: {high|medium|low}.
    ```
 
 **`{brand-folder-path}/version.yaml`** — `schema_version: "0.2.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.

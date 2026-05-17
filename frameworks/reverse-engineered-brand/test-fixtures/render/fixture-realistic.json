@@ -10,8 +10,13 @@
       "p1_count": 3,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md", "why_first": "Anchors downstream messaging and competitive framing"}
-      ]
+        {
+          "framework_id": "5-components-positioning",
+          "fills": "strategy/positioning.md",
+          "why_first": "Anchors downstream messaging and competitive framing"
+        }
+      ],
+      "summary": "Strong working hypothesis that Marley competes against manual spreadsheet dispatch (Component 1), not against named SaaS \u2014 three converging sources support this. The lead-attribute question (real-time visibility vs automated re-routing) is open and forces a homepage tradeoff. Market-category framing is the weakest sub-area."
     },
     {
       "id": "language",
@@ -21,18 +26,24 @@
       "p1_count": 2,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "brand-voice", "fills": "language/brand-voice.md", "why_first": "Shapes all written content tone"}
-      ]
+        {
+          "framework_id": "brand-voice",
+          "fills": "language/brand-voice.md",
+          "why_first": "Shapes all written content tone"
+        }
+      ],
+      "summary": "Tone signal converges across the marketing site and three sales decks \u2014 direct, outcome-first, low-jargon. The main open question is whether to anchor on 'operations' or 'logistics' as the primary category noun. Voice work is mature enough to move forward."
     },
     {
       "id": "audiences",
       "label": "Audiences",
-      "status": "GAP",
-      "p0_count": 2,
-      "p1_count": 0,
+      "status": "Partial",
+      "p0_count": 1,
+      "p1_count": 2,
       "p2_count": 0,
       "framework_dispatches": [],
-      "gap_frameworks_needed": ["channel-strategy", "audience-segmentation"]
+      "synthesis_method": "classification",
+      "summary": "Three payer segments classify confidently from source material: commercial, Medicaid, and Medicare Advantage. ACO and direct-to-consumer are flagged as low-confidence \u2014 one mention each, neither corroborated. The employer procurement channel dominates the sales motion; payer-direct is mentioned but unconfirmed."
     },
     {
       "id": "personas",
@@ -42,8 +53,13 @@
       "p1_count": 2,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "buyer-persona", "fills": "personas/head-of-ops.md", "why_first": "Persona feeds messaging and sales pitch"}
-      ]
+        {
+          "framework_id": "buyer-persona",
+          "fills": "personas/head-of-ops.md",
+          "why_first": "Persona feeds messaging and sales pitch"
+        }
+      ],
+      "summary": "Head of Operations is the dominant persona, surfaced across eight sales transcripts. CFO appears in deal mentions but the role profile is thin. The largest gap: no source material from the actual user (the dispatcher) \u2014 all signal comes from buyers above them, which risks a polished buyer story with a hollow user story."
     },
     {
       "id": "market",
@@ -53,8 +69,13 @@
       "p1_count": 2,
       "p2_count": 1,
       "framework_dispatches": [
-        {"framework_id": "strategic-narrative", "fills": "market/narrative.md", "why_first": "Required by sales enablement and competitive context"}
-      ]
+        {
+          "framework_id": "strategic-narrative",
+          "fills": "market/narrative.md",
+          "why_first": "Required by sales enablement and competitive context"
+        }
+      ],
+      "summary": "DispatchTrack has the strongest evidence as a named competitor (positioning deck + two competitor pages). Roundtrip and Kaizen Health appear once each \u2014 likely watchlist rather than active competitive set. Behavioral alternatives (spreadsheets, in-house dispatcher, no formal routing) have stronger evidence than any named-competitor field."
     },
     {
       "id": "proof",
@@ -64,8 +85,13 @@
       "p1_count": 2,
       "p2_count": 1,
       "framework_dispatches": [
-        {"framework_id": "proof-points-audit", "fills": "proof/claims.md", "why_first": "Validates claims before going to market"}
-      ]
+        {
+          "framework_id": "proof-points-audit",
+          "fills": "proof/claims.md",
+          "why_first": "Validates claims before going to market"
+        }
+      ],
+      "summary": "The weakest folder in this build. The headline '15-minute routing' stat has one source and no controlled benchmark. Compliance posture (HIPAA, SOC 2) is named but unsupported by evidence in the ingested set. Three P0 questions need answers before this folder can support sales conversations."
     },
     {
       "id": "design",
@@ -75,13 +101,18 @@
       "p1_count": 2,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "design-principles", "fills": "design/principles.md", "why_first": "Sets visual standards across all assets"}
-      ]
+        {
+          "framework_id": "design-principles",
+          "fills": "design/principles.md",
+          "why_first": "Sets visual standards across all assets"
+        }
+      ],
+      "summary": "Visual identity exists in Figma but no Storybook or token library is declared. The marketing site looks visually consistent, but the underlying system is undocumented. Two P0 questions about whether to formalize a real design system or leave current ad-hoc styling in place."
     }
   ],
   "exec_summary": {
-    "raw_material": "We received 11 sources spanning a pitch deck, three sales call transcripts, the public marketing site, two competitor-alternatives pages, a partnership announcement, and an internal Slack export of positioning debate. Decks gave strong signal on category framing; transcripts revealed the buyer committee; the website was scarce on positioning — most copy is feature-led, not buyer-problem-led.",
-    "primary_research": "We identified 3 likely competitors from cross-source mention frequency and pulled public dossiers on each. The dossiers gave strong category-shape signal — every named competitor sells to integrated health systems, every one anchors on transport reliability or outcomes. Marley's specific differentiator within that category is less clear from public sources alone.",
+    "raw_material": "We received 11 sources spanning a pitch deck, three sales call transcripts, the public marketing site, two competitor-alternatives pages, a partnership announcement, and an internal Slack export of positioning debate. Decks gave strong signal on category framing; transcripts revealed the buyer committee; the website was scarce on positioning \u2014 most copy is feature-led, not buyer-problem-led.",
+    "primary_research": "We identified 3 likely competitors from cross-source mention frequency and pulled public dossiers on each. The dossiers gave strong category-shape signal \u2014 every named competitor sells to integrated health systems, every one anchors on transport reliability or outcomes. Marley's specific differentiator within that category is less clear from public sources alone.",
     "confidence_intro": "The strategy/positioning and personas drafts have the highest density of open questions and warrant first review."
   },
   "behavioral_alternatives": [
@@ -108,7 +139,7 @@
     },
     {
       "id": "BA-4",
-      "alternative": "No formal routing — drivers self-organize via group text",
+      "alternative": "No formal routing \u2014 drivers self-organize via group text",
       "evidence_quote": "Honestly the drivers just sorted it out themselves on a WhatsApp group.",
       "source": "source:#11",
       "confidence": "low"
@@ -121,13 +152,29 @@
       "url": "https://dispatchtrack.com",
       "positioning_one_liner": "End-to-end last-mile delivery management for mid-market retailers.",
       "icp_one_liner": "Mid-market retail and wholesale distribution with existing delivery fleets.",
-      "differentiated_attributes": ["Driver mobile app with proof-of-delivery", "Real-time customer notifications", "ERP integrations"],
-      "who_they_say_they_beat": ["spreadsheets", "legacy TMS", "in-house tools"],
+      "differentiated_attributes": [
+        "Driver mobile app with proof-of-delivery",
+        "Real-time customer notifications",
+        "ERP integrations"
+      ],
+      "who_they_say_they_beat": [
+        "spreadsheets",
+        "legacy TMS",
+        "in-house tools"
+      ],
       "pricing_signal": "per-seat",
-      "voice_traits": ["operational", "metrics-driven", "enterprise-safe"],
-      "evidence_quotes": ["Reduce failed deliveries by up to 40%."],
+      "voice_traits": [
+        "operational",
+        "metrics-driven",
+        "enterprise-safe"
+      ],
+      "evidence_quotes": [
+        "Reduce failed deliveries by up to 40%."
+      ],
       "identity_verification": "matched",
-      "sources": ["https://dispatchtrack.com/about"]
+      "sources": [
+        "https://dispatchtrack.com/about"
+      ]
     },
     {
       "slug": "route4me",
@@ -135,13 +182,28 @@
       "url": "https://route4me.com",
       "positioning_one_liner": "Route optimization for field service and delivery teams of any size.",
       "icp_one_liner": "SMB-to-enterprise field service, HVAC, pest control, and last-mile delivery.",
-      "differentiated_attributes": ["Any-size-team positioning", "400+ integrations", "Dynamic re-routing"],
-      "who_they_say_they_beat": ["Google Maps", "manual planning", "legacy routing software"],
+      "differentiated_attributes": [
+        "Any-size-team positioning",
+        "400+ integrations",
+        "Dynamic re-routing"
+      ],
+      "who_they_say_they_beat": [
+        "Google Maps",
+        "manual planning",
+        "legacy routing software"
+      ],
       "pricing_signal": "per-seat",
-      "voice_traits": ["accessible", "feature-list-heavy"],
-      "evidence_quotes": ["The world's first and only Dynamic Route Optimization Platform."],
+      "voice_traits": [
+        "accessible",
+        "feature-list-heavy"
+      ],
+      "evidence_quotes": [
+        "The world's first and only Dynamic Route Optimization Platform."
+      ],
       "identity_verification": "matched",
-      "sources": ["https://route4me.com"]
+      "sources": [
+        "https://route4me.com"
+      ]
     },
     {
       "slug": "onfleet",
@@ -149,13 +211,28 @@
       "url": "https://onfleet.com",
       "positioning_one_liner": "Delivery management software built for modern logistics operations.",
       "icp_one_liner": "SMB delivery operations in food, grocery, retail, and pharmacy.",
-      "differentiated_attributes": ["Consumer-grade driver app", "Automated dispatch", "Analytics dashboard"],
-      "who_they_say_they_beat": ["manual dispatch", "spreadsheets"],
+      "differentiated_attributes": [
+        "Consumer-grade driver app",
+        "Automated dispatch",
+        "Analytics dashboard"
+      ],
+      "who_they_say_they_beat": [
+        "manual dispatch",
+        "spreadsheets"
+      ],
       "pricing_signal": "usage-based",
-      "voice_traits": ["modern", "design-forward", "developer-friendly"],
-      "evidence_quotes": ["Thousands of the world's most innovative companies use Onfleet."],
+      "voice_traits": [
+        "modern",
+        "design-forward",
+        "developer-friendly"
+      ],
+      "evidence_quotes": [
+        "Thousands of the world's most innovative companies use Onfleet."
+      ],
       "identity_verification": "matched",
-      "sources": ["https://onfleet.com"]
+      "sources": [
+        "https://onfleet.com"
+      ]
     }
   ],
   "open_questions": [
@@ -166,14 +243,18 @@
       "slice": "competitive-alternatives",
       "framework_slot": "phase-1-competitive-alternatives",
       "question": "Is the primary named alternative manual dispatch via spreadsheets?",
-      "inferred_value": "spreadsheets + manual phone dispatch",
+      "inferred_value": "The brand's working assumption for this slice is: spreadsheets + manual phone dispatch (inferred from source material, pending executive confirmation).",
       "draft_excerpt": "Best customers were previously managing routes in Excel every morning.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#2", "source:#5"],
+      "evidence": [
+        "source:#2",
+        "source:#5"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Component 1 of positioning anchors the entire competitive frame.",
-      "emitted_at": "2026-05-17T09:00:00Z"
+      "why_it_matters": "Component 1 of positioning anchors the entire competitive frame. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:00:00Z",
+      "rationale": "Synthesized from source:#2, source:#5, the strongest convergent signal across the ingested source set. The competitive-alternatives slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-strategy-positioning-2",
@@ -186,11 +267,19 @@
       "draft_excerpt": "Customers mention real-time driver visibility and dynamic re-routing in the same breath.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#3", "source:#7"],
-      "alternatives": ["real-time driver visibility", "automated re-routing", "proof-of-delivery capture"],
+      "evidence": [
+        "source:#3",
+        "source:#7"
+      ],
+      "alternatives": [
+        "real-time driver visibility",
+        "automated re-routing",
+        "proof-of-delivery capture"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Lead attribute drives the headline on the homepage and the first demo screen.",
-      "emitted_at": "2026-05-17T09:01:00Z"
+      "why_it_matters": "Lead attribute drives the headline on the homepage and the first demo screen. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:01:00Z",
+      "rationale": "Synthesized from source:#3, source:#7, the strongest convergent signal across the ingested source set. The unique-attributes slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-strategy-value-1",
@@ -203,11 +292,18 @@
       "draft_excerpt": "We cut our routing time from two hours to fifteen minutes.",
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#1"],
-      "alternatives": ["time-savings (hours recovered per route)", "cost-reduction (headcount avoided)", "reliability (fewer failed deliveries)"],
+      "evidence": [
+        "source:#1"
+      ],
+      "alternatives": [
+        "time-savings (hours recovered per route)",
+        "cost-reduction (headcount avoided)",
+        "reliability (fewer failed deliveries)"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Value framing controls headline hierarchy and pricing narrative.",
-      "emitted_at": "2026-05-17T09:02:00Z"
+      "why_it_matters": "Value framing controls headline hierarchy and pricing narrative. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:02:00Z",
+      "rationale": "Synthesized from source:#1, the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-strategy-icp-1",
@@ -220,11 +316,18 @@
       "draft_excerpt": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#4"],
-      "alternatives": ["mid-market 3PL (50–500 routes/day)", "SMB distribution (<50 routes/day)", "enterprise retail fleet"],
+      "evidence": [
+        "source:#4"
+      ],
+      "alternatives": [
+        "mid-market 3PL (50\u2013500 routes/day)",
+        "SMB distribution (<50 routes/day)",
+        "enterprise retail fleet"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "ICP specificity controls which proof points lead on the site.",
-      "emitted_at": "2026-05-17T09:03:00Z"
+      "why_it_matters": "ICP specificity controls which proof points lead on the site. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:03:00Z",
+      "rationale": "Synthesized from source:#4, the strongest convergent signal across the ingested source set. The target-customers slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-strategy-category-1",
@@ -238,10 +341,15 @@
       "confidence": "low",
       "impact": "P1",
       "evidence": [],
-      "alternatives": ["last-mile delivery software (existing category)", "route intelligence platform (new category claim)", "delivery operations platform (umbrella)"],
+      "alternatives": [
+        "last-mile delivery software (existing category)",
+        "route intelligence platform (new category claim)",
+        "delivery operations platform (umbrella)"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Category framing determines competitive set in buyer searches.",
-      "emitted_at": "2026-05-17T09:04:00Z"
+      "why_it_matters": "Category framing determines competitive set in buyer searches. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:04:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The market-category slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-strategy-alts-2",
@@ -254,10 +362,14 @@
       "draft_excerpt": "Source docs mention DispatchTrack by name in two win stories.",
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#9", "source:#10"],
+      "evidence": [
+        "source:#9",
+        "source:#10"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Naming a competitor explicitly shifts tone from educational to competitive.",
-      "emitted_at": "2026-05-17T09:05:00Z"
+      "why_it_matters": "Naming a competitor explicitly shifts tone from educational to competitive. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:05:00Z",
+      "rationale": "Synthesized from source:#9, source:#10, the strongest convergent signal across the ingested source set. The competitive-alternatives slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-strategy-value-2",
@@ -266,14 +378,18 @@
       "slice": "value",
       "framework_slot": "phase-3-value",
       "question": "Does the '15-minute routing' claim hold across all customer segments?",
-      "inferred_value": "yes — confirmed for routes under 40 stops",
+      "inferred_value": "yes \u2014 confirmed for routes under 40 stops",
       "draft_excerpt": "Fifteen minutes is for smaller fleets; larger ones quote 45 minutes.",
       "confidence": "high",
       "impact": "P2",
-      "evidence": ["source:#1", "source:#6"],
+      "evidence": [
+        "source:#1",
+        "source:#6"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Overclaiming the stat in headlines will trigger skepticism from enterprise buyers.",
-      "emitted_at": "2026-05-17T09:06:00Z"
+      "why_it_matters": "Overclaiming the stat in headlines will trigger skepticism from enterprise buyers. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:06:00Z",
+      "rationale": "Synthesized from source:#1, source:#6, the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-strategy-attrs-2",
@@ -287,10 +403,15 @@
       "confidence": "low",
       "impact": "P2",
       "evidence": [],
-      "alternatives": ["differentiator — competitors lack public APIs", "table stakes — all major players have APIs", "partial differentiator — API quality varies"],
+      "alternatives": [
+        "differentiator \u2014 competitors lack public APIs",
+        "table stakes \u2014 all major players have APIs",
+        "partial differentiator \u2014 API quality varies"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "If table stakes, remove from differentiator list to avoid diluting the claim.",
-      "emitted_at": "2026-05-17T09:07:00Z"
+      "why_it_matters": "If table stakes, remove from differentiator list to avoid diluting the claim. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:07:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The unique-attributes slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-language-voice-1",
@@ -299,14 +420,17 @@
       "slice": "sample-intake",
       "framework_slot": "phase-1-sample-intake",
       "question": "Which of the 5 existing writing samples best represents the intended voice?",
-      "inferred_value": "the win story from source:#3 — direct, outcome-first, no jargon",
+      "inferred_value": "The brand's primary win-story tone is direct and outcome-first, drawn from source:#3, with deliberate avoidance of vendor jargon.",
       "draft_excerpt": "Driver got home two hours earlier. That's what we built it for.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "brand-voice",
-      "why_it_matters": "The anchor sample sets the tonal baseline for all generated copy.",
-      "emitted_at": "2026-05-17T09:08:00Z"
+      "why_it_matters": "The anchor sample sets the tonal baseline for all generated copy. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:08:00Z",
+      "rationale": "Synthesized from source:#3, the strongest convergent signal across the ingested source set. The sample-intake slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-language-tone-1",
@@ -319,11 +443,19 @@
       "draft_excerpt": "The founder's emails are direct; the website copy is warm.",
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#3", "source:#12"],
-      "alternatives": ["operational confidence — direct, data-first", "empathetic problem-solver — customer-story-first", "hybrid — operational in headlines, empathetic in body"],
+      "evidence": [
+        "source:#3",
+        "source:#12"
+      ],
+      "alternatives": [
+        "operational confidence \u2014 direct, data-first",
+        "empathetic problem-solver \u2014 customer-story-first",
+        "hybrid \u2014 operational in headlines, empathetic in body"
+      ],
       "deepen_with": "brand-voice",
-      "why_it_matters": "Tone choice determines whether copy leads with stats or stories.",
-      "emitted_at": "2026-05-17T09:09:00Z"
+      "why_it_matters": "Tone choice determines whether copy leads with stats or stories. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:09:00Z",
+      "rationale": "Synthesized from source:#3, source:#12, the strongest convergent signal across the ingested source set. The tone-principles slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-language-register-1",
@@ -331,15 +463,16 @@
       "file": "language/brand-voice.md",
       "slice": "register-table",
       "framework_slot": "phase-3-register-table",
-      "question": "Which registers need explicit entries — website, sales deck, in-product, support?",
+      "question": "Which registers need explicit entries \u2014 website, sales deck, in-product, support?",
       "inferred_value": null,
       "draft_excerpt": null,
       "confidence": "medium",
       "impact": "P1",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "why_it_matters": "Register mismatches between product and marketing are a common trust-breaker.",
-      "emitted_at": "2026-05-17T09:10:00Z"
+      "why_it_matters": "Register mismatches between product and marketing are a common trust-breaker. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:10:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The register-table slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-language-donts-1",
@@ -354,8 +487,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "why_it_matters": "Brand differentiation requires avoiding the linguistic fingerprints of direct competitors.",
-      "emitted_at": "2026-05-17T09:11:00Z"
+      "why_it_matters": "Brand differentiation requires avoiding the linguistic fingerprints of direct competitors. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:11:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The dos-and-don-ts slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-language-banned-1",
@@ -364,14 +498,15 @@
       "slice": "banned-phrases",
       "framework_slot": "phase-5-banned-phrases",
       "question": "Should 'seamless' and 'streamline' be on the banned list?",
-      "inferred_value": "yes — both appear in competitor copy verbatim",
+      "inferred_value": "yes \u2014 both appear in competitor copy verbatim",
       "draft_excerpt": null,
       "confidence": "medium",
       "impact": "P2",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "why_it_matters": "Banned phrase lists prevent writers from defaulting to industry filler.",
-      "emitted_at": "2026-05-17T09:12:00Z"
+      "why_it_matters": "Banned phrase lists prevent writers from defaulting to industry filler. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:12:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The banned-phrases slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-language-tone-2",
@@ -385,10 +520,15 @@
       "confidence": "low",
       "impact": "P2",
       "evidence": [],
-      "alternatives": ["yes — founder uses humor in LinkedIn posts", "no — keep formal for enterprise buyers", "conditional — humor OK for SMB audience only"],
+      "alternatives": [
+        "yes \u2014 founder uses humor in LinkedIn posts",
+        "no \u2014 keep formal for enterprise buyers",
+        "conditional \u2014 humor OK for SMB audience only"
+      ],
       "deepen_with": "brand-voice",
-      "why_it_matters": "Undefined humor guidelines produce tone inconsistency across channels.",
-      "emitted_at": "2026-05-17T09:13:00Z"
+      "why_it_matters": "Undefined humor guidelines produce tone inconsistency across channels. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:13:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The tone-principles slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-audiences-channels-1",
@@ -404,7 +544,8 @@
       "evidence": [],
       "deepen_with": null,
       "why_it_matters": "No framework owns the audiences/channels/ slice. Run `/aligned:add-framework channel-strategy` to fill this GAP before proceeding.",
-      "emitted_at": "2026-05-17T09:14:00Z"
+      "emitted_at": "2026-05-17T09:14:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The  slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-audiences-segments-1",
@@ -420,7 +561,8 @@
       "evidence": [],
       "deepen_with": null,
       "why_it_matters": "No framework owns the audiences/segments/ slice. Run `/aligned:add-framework audience-segmentation` to fill this GAP before proceeding.",
-      "emitted_at": "2026-05-17T09:15:00Z"
+      "emitted_at": "2026-05-17T09:15:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The  slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-personas-role-1",
@@ -429,14 +571,19 @@
       "slice": "role-anchoring",
       "framework_slot": "phase-1-role-anchoring",
       "question": "Is the primary buyer the Head of Operations or the VP of Logistics?",
-      "inferred_value": "Head of Operations at companies with 10–50 drivers",
+      "inferred_value": "The primary persona is Head of Operations at companies running 10\u201350 drivers, typically reporting to the COO or owner-operator.",
       "draft_excerpt": "Every person we closed had 'Operations' in their title.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#4", "source:#6", "source:#9"],
+      "evidence": [
+        "source:#4",
+        "source:#6",
+        "source:#9"
+      ],
       "deepen_with": "buyer-persona",
-      "why_it_matters": "Persona anchoring controls who the homepage speaks to and who attends the demo.",
-      "emitted_at": "2026-05-17T09:16:00Z"
+      "why_it_matters": "Persona anchoring controls who the homepage speaks to and who attends the demo. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:16:00Z",
+      "rationale": "Synthesized from source:#4, source:#6, source:#9, the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-personas-eval-1",
@@ -449,11 +596,18 @@
       "draft_excerpt": "They always ask about how long it takes to get going.",
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#7"],
-      "alternatives": ["implementation speed (time-to-value)", "total cost of ownership", "driver adoption rate"],
+      "evidence": [
+        "source:#7"
+      ],
+      "alternatives": [
+        "implementation speed (time-to-value)",
+        "total cost of ownership",
+        "driver adoption rate"
+      ],
       "deepen_with": "buyer-persona",
-      "why_it_matters": "Evaluation criteria drive what proof points go in the proposal template.",
-      "emitted_at": "2026-05-17T09:17:00Z"
+      "why_it_matters": "Evaluation criteria drive what proof points go in the proposal template. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:17:00Z",
+      "rationale": "Synthesized from source:#7, the strongest convergent signal across the ingested source set. The evaluation-criteria slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-personas-skepticism-1",
@@ -466,11 +620,18 @@
       "draft_excerpt": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#13"],
-      "alternatives": ["IT security review blocks deployment", "driver union concerns about tracking", "budget approval cycle length"],
+      "evidence": [
+        "source:#13"
+      ],
+      "alternatives": [
+        "IT security review blocks deployment",
+        "driver union concerns about tracking",
+        "budget approval cycle length"
+      ],
       "deepen_with": "buyer-persona",
-      "why_it_matters": "Known stall points inform the objection-handling section of the sales deck.",
-      "emitted_at": "2026-05-17T09:18:00Z"
+      "why_it_matters": "Known stall points inform the objection-handling section of the sales deck. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:18:00Z",
+      "rationale": "Synthesized from source:#13, the strongest convergent signal across the ingested source set. The skepticism-triggers slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-personas-language-1",
@@ -484,10 +645,15 @@
       "confidence": "low",
       "impact": "P1",
       "evidence": [],
-      "alternatives": ["route optimization (engineering-adjacent)", "dispatch automation (ops-adjacent)", "delivery management (generic but understood)"],
+      "alternatives": [
+        "route optimization (engineering-adjacent)",
+        "dispatch automation (ops-adjacent)",
+        "delivery management (generic but understood)"
+      ],
       "deepen_with": "buyer-persona",
-      "why_it_matters": "Language resonance determines copy vocabulary in ads and email subject lines.",
-      "emitted_at": "2026-05-17T09:19:00Z"
+      "why_it_matters": "Language resonance determines copy vocabulary in ads and email subject lines. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:19:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The language-resonance slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-personas-objections-1",
@@ -496,14 +662,17 @@
       "slice": "common-objections",
       "framework_slot": "phase-5-common-objections",
       "question": "Is 'our drivers won't adopt it' the most common objection?",
-      "inferred_value": "yes — appears in 70% of stalled deals",
+      "inferred_value": "yes \u2014 appears in 70% of stalled deals",
       "draft_excerpt": "The drivers are old school, they don't want to deal with another app.",
       "confidence": "medium",
       "impact": "P2",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "buyer-persona",
-      "why_it_matters": "The lead objection needs a named rebuttal in every sales touchpoint.",
-      "emitted_at": "2026-05-17T09:20:00Z"
+      "why_it_matters": "The lead objection needs a named rebuttal in every sales touchpoint. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:20:00Z",
+      "rationale": "Synthesized from source:#14, the strongest convergent signal across the ingested source set. The common-objections slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-personas-assembly-1",
@@ -517,10 +686,15 @@
       "confidence": "low",
       "impact": "P2",
       "evidence": [],
-      "alternatives": ["yes — fleet manager is a distinct evaluator", "no — bundle into head-of-ops persona", "later — only if enterprise segment grows"],
+      "alternatives": [
+        "yes \u2014 fleet manager is a distinct evaluator",
+        "no \u2014 bundle into head-of-ops persona",
+        "later \u2014 only if enterprise segment grows"
+      ],
       "deepen_with": "buyer-persona",
-      "why_it_matters": "Two personas require two distinct messaging tracks and demo flows.",
-      "emitted_at": "2026-05-17T09:21:00Z"
+      "why_it_matters": "Two personas require two distinct messaging tracks and demo flows. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:21:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-market-old-game-1",
@@ -529,14 +703,19 @@
       "slice": "old-game",
       "framework_slot": "element-1-name-the-undeniable-change-the-old-game",
       "question": "Is the old game 'manual routing by a dedicated dispatcher'?",
-      "inferred_value": "yes — confirmed by 8 of 12 win stories",
+      "inferred_value": "yes \u2014 confirmed by 8 of 12 win stories",
       "draft_excerpt": "Every company we talked to started with a person doing this by hand.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#2", "source:#5", "source:#8"],
+      "evidence": [
+        "source:#2",
+        "source:#5",
+        "source:#8"
+      ],
       "deepen_with": "strategic-narrative",
-      "why_it_matters": "Naming the old game makes the change feel inevitable, not just convenient.",
-      "emitted_at": "2026-05-17T09:22:00Z"
+      "why_it_matters": "Naming the old game makes the change feel inevitable, not just convenient. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:22:00Z",
+      "rationale": "Synthesized from source:#2, source:#5, source:#8, the strongest convergent signal across the ingested source set. The old-game slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-market-stakes-1",
@@ -545,15 +724,22 @@
       "slice": "stakes",
       "framework_slot": "element-2-name-the-stakes-winners-and-losers",
       "question": "Are the stakes framed as delivery SLA compliance or driver retention?",
-      "inferred_value": "per-seat pricing or per-route\n\\\"volume discount available\"",
+      "inferred_value": "Pricing is structured as per-seat or per-route with volume discounts available above a threshold the source material does not specify.",
       "draft_excerpt": "Companies that solved this are hitting 99% on-time; those that didn't are losing contracts.",
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#15"],
-      "alternatives": ["delivery SLA compliance (operational risk)", "driver retention (people risk)", "customer churn (revenue risk)"],
+      "evidence": [
+        "source:#15"
+      ],
+      "alternatives": [
+        "delivery SLA compliance (operational risk)",
+        "driver retention (people risk)",
+        "customer churn (revenue risk)"
+      ],
       "deepen_with": "strategic-narrative",
-      "why_it_matters": "Stakes framing drives urgency messaging in outbound sequences.",
-      "emitted_at": "2026-05-17T09:23:00Z"
+      "why_it_matters": "Stakes framing drives urgency messaging in outbound sequences. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:23:00Z",
+      "rationale": "Synthesized from source:#15, the strongest convergent signal across the ingested source set. The stakes slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-market-promised-land-1",
@@ -566,11 +752,18 @@
       "draft_excerpt": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#16"],
-      "alternatives": ["same-day delivery without a dispatcher", "a fleet that runs itself", "zero failed deliveries"],
+      "evidence": [
+        "source:#16"
+      ],
+      "alternatives": [
+        "same-day delivery without a dispatcher",
+        "a fleet that runs itself",
+        "zero failed deliveries"
+      ],
       "deepen_with": "strategic-narrative",
-      "why_it_matters": "The promised land phrase becomes the campaign hero statement.",
-      "emitted_at": "2026-05-17T09:24:00Z"
+      "why_it_matters": "The promised land phrase becomes the campaign hero statement. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:24:00Z",
+      "rationale": "Synthesized from source:#16, the strongest convergent signal across the ingested source set. The promised-land slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-market-obstacles-1",
@@ -585,8 +778,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "strategic-narrative",
-      "why_it_matters": "Obstacle ordering determines the sequence of problem-agitation in the narrative.",
-      "emitted_at": "2026-05-17T09:25:00Z"
+      "why_it_matters": "Obstacle ordering determines the sequence of problem-agitation in the narrative. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:25:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The obstacles slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-market-gifts-1",
@@ -600,10 +794,15 @@
       "confidence": "low",
       "impact": "P2",
       "evidence": [],
-      "alternatives": ["real-time re-routing (operational sophistication)", "driver app simplicity (adoption unlock)", "API flexibility (integration moat)"],
+      "alternatives": [
+        "real-time re-routing (operational sophistication)",
+        "driver app simplicity (adoption unlock)",
+        "API flexibility (integration moat)"
+      ],
       "deepen_with": "strategic-narrative",
-      "why_it_matters": "The magic gift is the product's moment of revelation in the demo.",
-      "emitted_at": "2026-05-17T09:26:00Z"
+      "why_it_matters": "The magic gift is the product's moment of revelation in the demo. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:26:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The magic-gifts slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-proof-claims-1",
@@ -616,10 +815,13 @@
       "draft_excerpt": "We've seen 40% fewer failed deliveries across accounts.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#17"],
+      "evidence": [
+        "source:#17"
+      ],
       "deepen_with": "proof-points-audit",
-      "why_it_matters": "Single-customer stats require attribution; aggregate stats require methodology disclosure.",
-      "emitted_at": "2026-05-17T09:27:00Z"
+      "why_it_matters": "Single-customer stats require attribution; aggregate stats require methodology disclosure. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:27:00Z",
+      "rationale": "Synthesized from source:#17, the strongest convergent signal across the ingested source set. The claim-extraction slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-proof-source-1",
@@ -628,14 +830,17 @@
       "slice": "source-identification",
       "framework_slot": "phase-2-source-identification",
       "question": "Is the 15-minute routing claim sourced from a controlled test or from a customer quote?",
-      "inferred_value": "customer quote from source:#1, not a controlled benchmark",
+      "inferred_value": "The headline metric appears in a customer quote from source:#1 and is not yet supported by a controlled benchmark.",
       "draft_excerpt": "Routing time dropped from two hours to fifteen minutes per their ops manager.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#1"],
+      "evidence": [
+        "source:#1"
+      ],
       "deepen_with": "proof-points-audit",
-      "why_it_matters": "Unattributed benchmarks attract legal scrutiny from enterprise procurement.",
-      "emitted_at": "2026-05-17T09:28:00Z"
+      "why_it_matters": "Unattributed benchmarks attract legal scrutiny from enterprise procurement. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:28:00Z",
+      "rationale": "Synthesized from source:#1, the strongest convergent signal across the ingested source set. The source-identification slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-proof-date-1",
@@ -648,10 +853,13 @@
       "draft_excerpt": "Case study dated 2022; major re-architecture shipped in 2023.",
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#18"],
+      "evidence": [
+        "source:#18"
+      ],
       "deepen_with": "proof-points-audit",
-      "why_it_matters": "Stale stats built on a deprecated architecture undermine credibility.",
-      "emitted_at": "2026-05-17T09:29:00Z"
+      "why_it_matters": "Stale stats built on a deprecated architecture undermine credibility. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:29:00Z",
+      "rationale": "Synthesized from source:#18, the strongest convergent signal across the ingested source set. The date-verification slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-proof-confidence-1",
@@ -665,10 +873,15 @@
       "confidence": "medium",
       "impact": "P1",
       "evidence": [],
-      "alternatives": ["estimated — accurate but hedged", "typical — implies real data backing", "up to — maximizes upside framing"],
+      "alternatives": [
+        "estimated \u2014 accurate but hedged",
+        "typical \u2014 implies real data backing",
+        "up to \u2014 maximizes upside framing"
+      ],
       "deepen_with": "proof-points-audit",
-      "why_it_matters": "Label choice affects legal review and buyer trust simultaneously.",
-      "emitted_at": "2026-05-17T09:30:00Z"
+      "why_it_matters": "Label choice affects legal review and buyer trust simultaneously. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:30:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The confidence-labeling slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-proof-gap-1",
@@ -683,8 +896,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "why_it_matters": "Enterprise buyers require vertical-specific proof before legal review.",
-      "emitted_at": "2026-05-17T09:31:00Z"
+      "why_it_matters": "Enterprise buyers require vertical-specific proof before legal review. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:31:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The gap-report slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-proof-assembly-1",
@@ -699,8 +913,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "why_it_matters": "Audience-split proofs allow sales to pull the right stat for each deal.",
-      "emitted_at": "2026-05-17T09:32:00Z"
+      "why_it_matters": "Audience-split proofs allow sales to pull the right stat for each deal. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:32:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-design-context-1",
@@ -709,14 +924,17 @@
       "slice": "review-context",
       "framework_slot": "phase-1-review-context",
       "question": "Is the current design system Figma-based or Storybook-based?",
-      "inferred_value": "Figma — no Storybook component library exists yet",
+      "inferred_value": "Figma \u2014 no Storybook component library exists yet",
       "draft_excerpt": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#19"],
+      "evidence": [
+        "source:#19"
+      ],
       "deepen_with": "design-principles",
-      "why_it_matters": "Design system source-of-truth determines which artifacts are authoritative.",
-      "emitted_at": "2026-05-17T09:33:00Z"
+      "why_it_matters": "Design system source-of-truth determines which artifacts are authoritative. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:33:00Z",
+      "rationale": "Synthesized from source:#19, the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-design-direction-1",
@@ -726,13 +944,16 @@
       "framework_slot": "phase-2-design-direction",
       "question": "Does the embed snippet in the onboarding guide end with </script> or with a deferred async variant?",
       "inferred_value": null,
-      "draft_excerpt": "See onboarding-guide.html — the current snippet closes with </script> in line 42.",
+      "draft_excerpt": "See onboarding-guide.html \u2014 the current snippet closes with </script> in line 42.",
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#20"],
+      "evidence": [
+        "source:#20"
+      ],
       "deepen_with": "design-principles",
-      "why_it_matters": "Incorrect snippet type causes blocking load behavior on the product homepage.",
-      "emitted_at": "2026-05-17T09:34:00Z"
+      "why_it_matters": "Incorrect snippet type causes blocking load behavior on the product homepage. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:34:00Z",
+      "rationale": "Synthesized from source:#20, the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-design-produce-1",
@@ -747,8 +968,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "design-principles",
-      "why_it_matters": "Accessibility gaps in the design spec create rework cycles during QA.",
-      "emitted_at": "2026-05-17T09:35:00Z"
+      "why_it_matters": "Accessibility gaps in the design spec create rework cycles during QA. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:35:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-design-context-2",
@@ -762,10 +984,15 @@
       "confidence": "low",
       "impact": "P1",
       "evidence": [],
-      "alternatives": ["yes — unified design system", "no — separate systems, occasional drift", "partially — shared tokens, different components"],
+      "alternatives": [
+        "yes \u2014 unified design system",
+        "no \u2014 separate systems, occasional drift",
+        "partially \u2014 shared tokens, different components"
+      ],
       "deepen_with": "design-principles",
-      "why_it_matters": "Separate systems require dual-maintenance of any brand update.",
-      "emitted_at": "2026-05-17T09:36:00Z"
+      "why_it_matters": "Separate systems require dual-maintenance of any brand update. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:36:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-design-direction-2",
@@ -780,8 +1007,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "design-principles",
-      "why_it_matters": "WCAG failures require remediation before any enterprise compliance audit.",
-      "emitted_at": "2026-05-17T09:37:00Z"
+      "why_it_matters": "WCAG failures require remediation before any enterprise compliance audit. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:37:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
     },
     {
       "id": "Q-design-produce-2",
@@ -795,10 +1023,100 @@
       "confidence": "medium",
       "impact": "P2",
       "evidence": [],
-      "alternatives": ["yes — animation tone is brand-differentiating", "no — defer to v2 after core principles are stable", "minimal — only loading state animations"],
+      "alternatives": [
+        "yes \u2014 animation tone is brand-differentiating",
+        "no \u2014 defer to v2 after core principles are stable",
+        "minimal \u2014 only loading state animations"
+      ],
       "deepen_with": "design-principles",
-      "why_it_matters": "Motion inconsistency across product and marketing is a subtle trust signal.",
-      "emitted_at": "2026-05-17T09:38:00Z"
+      "why_it_matters": "Motion inconsistency across product and marketing is a subtle trust signal. Downstream surfaces (homepage, deck cover, sales pitch) inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. The cost of confirming is one executive sentence; the cost of being wrong is days of misaligned downstream content.",
+      "emitted_at": "2026-05-17T09:38:00Z",
+      "rationale": "Synthesized from no direct source, the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, though specifics around wording and edge cases vary. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern in this category \u2014 flagging as a low-confidence inference if no source corroborates."
+    },
+    {
+      "id": "Q-audiences-segments-medicaid-1",
+      "global_id": "OQ-40",
+      "file": "audiences/segments/medicaid.md",
+      "slice": "segments-medicaid",
+      "framework_slot": null,
+      "question": null,
+      "inferred_value": "The brand serves the Medicaid segment via state-level managed care organization (MCO) contracts, with current customer concentration in the Southeast.",
+      "confidence": "high",
+      "impact": "P1",
+      "evidence": [
+        "source:#1",
+        "source:#4",
+        "source:#8"
+      ],
+      "alternatives": [],
+      "deepen_with": null,
+      "why_it_matters": "Medicaid coverage shapes regulatory posture (HIPAA + state-level rules), pricing model (PMPM vs case rate), and the proof-points expected in sales conversations. Misclassifying Medicaid presence affects compliance.md, proof/clinical-evidence.md, and persona objection handling. Cost of confirming is low (one-line check); cost of being wrong cascades through five other slices.",
+      "rationale": "Three independent sources mention Medicaid contracts: the Q4 board deck explicitly names two state MCOs, the closed-won analysis tags Medicaid as 60% of pipeline value, and the Geisinger call transcript references Medicaid risk-adjustment workflows. The signals converge on managed-care contracting rather than direct state contracts. Bridge assumption: we inferred Southeast concentration from customer logos rather than explicit geographic claims."
+    },
+    {
+      "id": "Q-audiences-segments-aco-1",
+      "global_id": "OQ-41",
+      "file": "audiences/segments/aco.md",
+      "slice": "segments-aco",
+      "framework_slot": null,
+      "question": "Source material references ACO REACH twice but doesn't make clear whether ACO is an active customer segment or a planned expansion. Is ACO an active segment today?",
+      "inferred_value": null,
+      "confidence": "low",
+      "impact": "P0",
+      "evidence": [
+        "source:#3"
+      ],
+      "alternatives": [
+        "Active customer segment today",
+        "Planned expansion, not yet sold",
+        "Mentioned for thought-leadership only \u2014 no commercial intent"
+      ],
+      "deepen_with": null,
+      "why_it_matters": "ACO is a load-bearing segment for digital health positioning \u2014 it shapes value framing (shared savings vs fee-for-service), proof-points (Medicare quality measures), and which procurement channel (provider vs payer) leads the sale. Getting this wrong sends the brand into a sales motion that doesn't match the actual buyer. Two days of executive review beats six months of misaligned go-to-market.",
+      "rationale": "Only one source (the product roadmap doc, source:#3) mentions ACO REACH, and the reference is forward-looking (\"H2 2025 expansion target\"). The closed-won analysis and sales-call transcripts contain zero ACO mentions. Bridge assumption: a single roadmap mention is not strong enough evidence of an active commercial segment; flagging as low-confidence pending executive confirmation."
+    },
+    {
+      "id": "Q-audiences-channels-employer-1",
+      "global_id": "OQ-42",
+      "file": "audiences/channels/employer.md",
+      "slice": "channels-employer",
+      "framework_slot": null,
+      "question": null,
+      "inferred_value": "The brand goes to market through the employer channel, with benefits brokers as a secondary distribution path that surfaces in sales call transcripts.",
+      "confidence": "high",
+      "impact": "P1",
+      "evidence": [
+        "source:#2",
+        "source:#6",
+        "source:#7",
+        "source:#11"
+      ],
+      "alternatives": [],
+      "deepen_with": null,
+      "why_it_matters": "Channel determines who the actual buyer is \u2014 benefits VP at an employer, plan medical director at a payer, IT at a health system \u2014 and each requires a fundamentally different sales motion and proof. Misclassifying the channel makes the buyer-persona work in personas/ produce the wrong role profile. Cost to confirm is one sentence from the executive; cost of being wrong is mis-targeted demo decks and battle cards.",
+      "rationale": "Four independent sources reference employer-side sales: the Q4 sales review deck explicitly lists \"top 10 employer customers,\" both Geisinger and Intermountain call transcripts discuss employer benefits team workflows, and the unstructured Slack export contains debate about whether to deprioritize the employer channel in favor of payer-direct. Convergent signal across deck + transcripts + internal debate. Bridge assumption: benefits-broker mentions are weighted as secondary distribution because the explicit \"customer logos\" in source:#6 are all direct-employer."
+    },
+    {
+      "id": "Q-audiences-channels-dtc-1",
+      "global_id": "OQ-43",
+      "file": "audiences/channels/direct-consumer.md",
+      "slice": "channels-direct-consumer",
+      "framework_slot": null,
+      "question": "Source material contains one ambiguous reference to \"consumer pilot\" without further context. Is direct-to-consumer an active channel, or noise?",
+      "inferred_value": null,
+      "confidence": "low",
+      "impact": "P1",
+      "evidence": [
+        "source:#10"
+      ],
+      "alternatives": [
+        "Active DTC channel",
+        "One-off pilot, not strategic",
+        "Marketing experiment with no procurement model behind it"
+      ],
+      "deepen_with": null,
+      "why_it_matters": "DTC at a B2B-leaning digital-health brand usually signals either a strategic pivot or marketing-only activity that shouldn't shape positioning. If DTC is real, it expands the persona set (consumers, not just benefits VPs) and demands a different proof model (consumer reviews, app store ratings). Worth surfacing before downstream slices inherit a phantom channel.",
+      "rationale": "A single source (the 2023 partnership announcement) mentions \"consumer pilot\" without naming a payer, a price point, or a buyer type. No corroboration in sales decks, transcripts, or closed-won data. Bridge assumption: one ambiguous mention is more likely noise than a real channel, but it deserves explicit user input rather than silent classification."
     }
   ]
 }

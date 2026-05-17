@@ -10,8 +10,13 @@
       "p1_count": 6,
       "p2_count": 6,
       "framework_dispatches": [
-        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md", "why_first": "Anchors downstream messaging and competitive framing"}
-      ]
+        {
+          "framework_id": "5-components-positioning",
+          "fills": "strategy/positioning.md",
+          "why_first": "Anchors downstream messaging and competitive framing"
+        }
+      ],
+      "summary": "Working hypothesis converges on manual spreadsheet dispatch as the primary competitor \u2014 the strongest signal in the source set. Lead-attribute and category-framing remain open and force downstream tradeoffs. Several P0 questions need resolution before drafts can ship."
     },
     {
       "id": "language",
@@ -21,8 +26,13 @@
       "p1_count": 6,
       "p2_count": 6,
       "framework_dispatches": [
-        {"framework_id": "brand-voice", "fills": "language/brand-voice.md", "why_first": "Shapes all written content tone"}
-      ]
+        {
+          "framework_id": "brand-voice",
+          "fills": "language/brand-voice.md",
+          "why_first": "Shapes all written content tone"
+        }
+      ],
+      "summary": "Voice and tone signals are consistent across the available marketing materials. The primary open question is which category noun to anchor on. Messaging work is mature enough to ship pending the category decision."
     },
     {
       "id": "audiences",
@@ -32,8 +42,14 @@
       "p1_count": 6,
       "p2_count": 6,
       "framework_dispatches": [
-        {"framework_id": "buyer-persona", "fills": "audiences/employer.md", "why_first": "Defines who to target and how to reach them"}
-      ]
+        {
+          "framework_id": "buyer-persona",
+          "fills": "audiences/employer.md",
+          "why_first": "Defines who to target and how to reach them"
+        }
+      ],
+      "summary": "Three payer segments classify with reasonable confidence; one or two surface only once and need executive confirmation. Employer channel dominates the sales motion. Source material is silent on several plausible adjacent segments.",
+      "synthesis_method": "classification"
     },
     {
       "id": "personas",
@@ -43,8 +59,13 @@
       "p1_count": 6,
       "p2_count": 6,
       "framework_dispatches": [
-        {"framework_id": "buyer-persona", "fills": "personas/head-of-ops.md", "why_first": "Persona feeds messaging and sales pitch"}
-      ]
+        {
+          "framework_id": "buyer-persona",
+          "fills": "personas/head-of-ops.md",
+          "why_first": "Persona feeds messaging and sales pitch"
+        }
+      ],
+      "summary": "Primary buyer persona surfaces clearly from sales transcripts. Secondary buyer roles appear with thinner detail. The user-side persona has the weakest evidence \u2014 source material is dominated by buyers, not actual end users."
     },
     {
       "id": "market",
@@ -54,8 +75,13 @@
       "p1_count": 6,
       "p2_count": 6,
       "framework_dispatches": [
-        {"framework_id": "strategic-narrative", "fills": "market/narrative.md", "why_first": "Required by sales enablement and competitive context"}
-      ]
+        {
+          "framework_id": "strategic-narrative",
+          "fills": "market/narrative.md",
+          "why_first": "Required by sales enablement and competitive context"
+        }
+      ],
+      "summary": "Named competitor evidence is strongest for one specific competitor; others appear with single-source mentions and may be watchlist rather than active set. Behavioral alternatives (spreadsheets, in-house roles) have stronger evidence than the named competitor list. Battle-card depth needs work."
     },
     {
       "id": "proof",
@@ -65,8 +91,13 @@
       "p1_count": 6,
       "p2_count": 6,
       "framework_dispatches": [
-        {"framework_id": "proof-points-audit", "fills": "proof/claims.md", "why_first": "Validates claims before going to market"}
-      ]
+        {
+          "framework_id": "proof-points-audit",
+          "fills": "proof/claims.md",
+          "why_first": "Validates claims before going to market"
+        }
+      ],
+      "summary": "The weakest folder in this build. Headline metrics appear in customer quotes but lack controlled benchmarks. Compliance claims are named but not yet evidenced. Most P0 questions in the build cluster here."
     },
     {
       "id": "design",
@@ -76,12 +107,17 @@
       "p1_count": 6,
       "p2_count": 6,
       "framework_dispatches": [
-        {"framework_id": "design-principles", "fills": "design/principles.md", "why_first": "Sets visual standards across all assets"}
-      ]
+        {
+          "framework_id": "design-principles",
+          "fills": "design/principles.md",
+          "why_first": "Sets visual standards across all assets"
+        }
+      ],
+      "summary": "Visual identity exists in working files but no published token library or component system has been declared. Marketing surfaces appear visually consistent without a documented system behind them. Two open design-system questions need product input."
     }
   ],
   "exec_summary": {
-    "raw_material": "We received 20 sources including multiple pitch decks, sales call transcripts, the marketing site, product documentation, customer case studies, and competitive research notes. Coverage is extensive — most brand areas have multiple independent sources supporting confidence assessments.",
+    "raw_material": "We received 20 sources including multiple pitch decks, sales call transcripts, the marketing site, product documentation, customer case studies, and competitive research notes. Coverage is extensive \u2014 most brand areas have multiple independent sources supporting confidence assessments.",
     "primary_research": "We identified 5 competitors from cross-source mention frequency. Public dossiers were assembled for each covering positioning, ICP, channels, and voice. The competitive landscape is well-defined at the category level; differentiation gaps are documented as open questions.",
     "confidence_intro": "Most areas have sufficient source coverage. Review the strategy and personas tabs first as they drive the most downstream output."
   },
@@ -109,7 +145,7 @@
     },
     {
       "id": "BA-4",
-      "alternative": "No formal routing — drivers self-organize via group text",
+      "alternative": "No formal routing \u2014 drivers self-organize via group text",
       "evidence_quote": "Honestly the drivers sorted it out themselves on a WhatsApp group.",
       "source": "source:#11",
       "confidence": "low"
@@ -150,13 +186,28 @@
       "url": "https://dispatchtrack.com",
       "positioning_one_liner": "End-to-end last-mile delivery management for mid-market retailers.",
       "icp_one_liner": "Mid-market retail and wholesale distribution with existing delivery fleets.",
-      "differentiated_attributes": ["Driver mobile app with proof-of-delivery", "Real-time customer notifications", "ERP integrations"],
-      "who_they_say_they_beat": ["spreadsheets", "legacy TMS", "in-house tools"],
+      "differentiated_attributes": [
+        "Driver mobile app with proof-of-delivery",
+        "Real-time customer notifications",
+        "ERP integrations"
+      ],
+      "who_they_say_they_beat": [
+        "spreadsheets",
+        "legacy TMS",
+        "in-house tools"
+      ],
       "pricing_signal": "per-seat",
-      "voice_traits": ["operational", "metrics-driven"],
-      "evidence_quotes": ["Reduce failed deliveries by up to 40%."],
+      "voice_traits": [
+        "operational",
+        "metrics-driven"
+      ],
+      "evidence_quotes": [
+        "Reduce failed deliveries by up to 40%."
+      ],
       "identity_verification": "matched",
-      "sources": ["https://dispatchtrack.com/about"]
+      "sources": [
+        "https://dispatchtrack.com/about"
+      ]
     },
     {
       "slug": "route4me",
@@ -164,13 +215,28 @@
       "url": "https://route4me.com",
       "positioning_one_liner": "Route optimization for field service and delivery teams of any size.",
       "icp_one_liner": "SMB-to-enterprise field service and last-mile delivery.",
-      "differentiated_attributes": ["Any-size-team positioning", "400+ integrations", "Dynamic re-routing"],
-      "who_they_say_they_beat": ["Google Maps", "manual planning", "legacy routing software"],
+      "differentiated_attributes": [
+        "Any-size-team positioning",
+        "400+ integrations",
+        "Dynamic re-routing"
+      ],
+      "who_they_say_they_beat": [
+        "Google Maps",
+        "manual planning",
+        "legacy routing software"
+      ],
       "pricing_signal": "per-seat",
-      "voice_traits": ["accessible", "feature-list-heavy"],
-      "evidence_quotes": ["The world's first and only Dynamic Route Optimization Platform."],
+      "voice_traits": [
+        "accessible",
+        "feature-list-heavy"
+      ],
+      "evidence_quotes": [
+        "The world's first and only Dynamic Route Optimization Platform."
+      ],
       "identity_verification": "matched",
-      "sources": ["https://route4me.com"]
+      "sources": [
+        "https://route4me.com"
+      ]
     },
     {
       "slug": "onfleet",
@@ -178,13 +244,27 @@
       "url": "https://onfleet.com",
       "positioning_one_liner": "Delivery management software built for modern logistics operations.",
       "icp_one_liner": "SMB delivery operations in food, grocery, retail, and pharmacy.",
-      "differentiated_attributes": ["Consumer-grade driver app", "Automated dispatch", "Analytics dashboard"],
-      "who_they_say_they_beat": ["manual dispatch", "spreadsheets"],
+      "differentiated_attributes": [
+        "Consumer-grade driver app",
+        "Automated dispatch",
+        "Analytics dashboard"
+      ],
+      "who_they_say_they_beat": [
+        "manual dispatch",
+        "spreadsheets"
+      ],
       "pricing_signal": "usage-based",
-      "voice_traits": ["modern", "design-forward"],
-      "evidence_quotes": ["Thousands of the world's most innovative companies use Onfleet."],
+      "voice_traits": [
+        "modern",
+        "design-forward"
+      ],
+      "evidence_quotes": [
+        "Thousands of the world's most innovative companies use Onfleet."
+      ],
       "identity_verification": "matched",
-      "sources": ["https://onfleet.com"]
+      "sources": [
+        "https://onfleet.com"
+      ]
     },
     {
       "slug": "bringg",
@@ -192,13 +272,27 @@
       "url": "https://bringg.com",
       "positioning_one_liner": "Delivery orchestration platform for enterprise retail and grocery.",
       "icp_one_liner": "Enterprise grocery, retail, and restaurant chains with complex multi-carrier needs.",
-      "differentiated_attributes": ["Multi-carrier orchestration", "White-label consumer tracking", "Enterprise SLA management"],
-      "who_they_say_they_beat": ["in-house delivery ops", "single-carrier dependency"],
+      "differentiated_attributes": [
+        "Multi-carrier orchestration",
+        "White-label consumer tracking",
+        "Enterprise SLA management"
+      ],
+      "who_they_say_they_beat": [
+        "in-house delivery ops",
+        "single-carrier dependency"
+      ],
       "pricing_signal": "enterprise",
-      "voice_traits": ["enterprise-safe", "partnership-oriented"],
-      "evidence_quotes": ["Power the delivery experience your customers deserve."],
+      "voice_traits": [
+        "enterprise-safe",
+        "partnership-oriented"
+      ],
+      "evidence_quotes": [
+        "Power the delivery experience your customers deserve."
+      ],
       "identity_verification": "matched",
-      "sources": ["https://bringg.com"]
+      "sources": [
+        "https://bringg.com"
+      ]
     },
     {
       "slug": "tookan",
@@ -206,13 +300,27 @@
       "url": "https://tookan.in",
       "positioning_one_liner": "On-demand delivery management for SMBs and delivery startups.",
       "icp_one_liner": "SMB delivery operations in emerging markets and hyperlocal commerce.",
-      "differentiated_attributes": ["Pay-per-task pricing", "White-label app builder", "Low-code workflow automation"],
-      "who_they_say_they_beat": ["manual coordination", "expensive enterprise platforms"],
+      "differentiated_attributes": [
+        "Pay-per-task pricing",
+        "White-label app builder",
+        "Low-code workflow automation"
+      ],
+      "who_they_say_they_beat": [
+        "manual coordination",
+        "expensive enterprise platforms"
+      ],
       "pricing_signal": "usage-based",
-      "voice_traits": ["accessible", "value-priced"],
-      "evidence_quotes": ["Trusted by 1000+ businesses to manage their delivery operations."],
+      "voice_traits": [
+        "accessible",
+        "value-priced"
+      ],
+      "evidence_quotes": [
+        "Trusted by 1000+ businesses to manage their delivery operations."
+      ],
       "identity_verification": "low_confidence",
-      "sources": ["https://tookan.in"]
+      "sources": [
+        "https://tookan.in"
+      ]
     }
   ],
   "open_questions": [
@@ -223,12 +331,16 @@
       "slice": "competitive-alternatives",
       "framework_slot": "phase-1-competitive-alternatives",
       "question": "Is spreadsheets + manual dispatch the primary named alternative?",
-      "inferred_value": "spreadsheets + manual dispatch",
+      "inferred_value": "The working assumption for this slice is: spreadsheets + manual dispatch (inferred from source material, pending executive confirmation).",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#2"],
+      "evidence": [
+        "source:#2"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:00Z"
+      "emitted_at": "2026-05-17T09:00:00Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#2 as the strongest convergent signal across the ingested source set. The competitive-alternatives slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-2",
@@ -240,9 +352,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:01Z"
+      "emitted_at": "2026-05-17T09:00:01Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The unique-attributes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-3",
@@ -256,7 +372,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:02Z"
+      "emitted_at": "2026-05-17T09:00:02Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-4",
@@ -268,9 +386,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#4"],
+      "evidence": [
+        "source:#4"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:03Z"
+      "emitted_at": "2026-05-17T09:00:03Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#4 as the strongest convergent signal across the ingested source set. The target-customers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-5",
@@ -284,7 +406,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:04Z"
+      "emitted_at": "2026-05-17T09:00:04Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The market-category slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-6",
@@ -296,9 +420,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#9"],
+      "evidence": [
+        "source:#9"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:05Z"
+      "emitted_at": "2026-05-17T09:00:05Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#9 as the strongest convergent signal across the ingested source set. The competitive-alternatives slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-7",
@@ -310,9 +438,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#5"],
+      "evidence": [
+        "source:#5"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:06Z"
+      "emitted_at": "2026-05-17T09:00:06Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#5 as the strongest convergent signal across the ingested source set. The unique-attributes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-8",
@@ -321,12 +453,16 @@
       "slice": "value",
       "framework_slot": "phase-3-value",
       "question": "Does the '15-minute routing' claim hold for fleets over 40 stops?",
-      "inferred_value": "no — 40+ stops takes ~45 minutes",
+      "inferred_value": "no \u2014 40+ stops takes ~45 minutes",
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#1"],
+      "evidence": [
+        "source:#1"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:07Z"
+      "emitted_at": "2026-05-17T09:00:07Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#1 as the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-9",
@@ -338,9 +474,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#6"],
+      "evidence": [
+        "source:#6"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:08Z"
+      "emitted_at": "2026-05-17T09:00:08Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#6 as the strongest convergent signal across the ingested source set. The target-customers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-10",
@@ -352,9 +492,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#7"],
+      "evidence": [
+        "source:#7"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:09Z"
+      "emitted_at": "2026-05-17T09:00:09Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#7 as the strongest convergent signal across the ingested source set. The market-category slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-11",
@@ -363,12 +507,16 @@
       "slice": "competitive-alternatives",
       "framework_slot": "phase-1-competitive-alternatives",
       "question": "Is 'in-house dispatcher role' a distinct alternative from spreadsheets?",
-      "inferred_value": "yes — different buyer psychology",
+      "inferred_value": "The working assumption for this slice is: yes \u2014 different buyer psychology (inferred from source material, pending executive confirmation).",
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#8"],
+      "evidence": [
+        "source:#8"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:10Z"
+      "emitted_at": "2026-05-17T09:00:10Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#8 as the strongest convergent signal across the ingested source set. The competitive-alternatives slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-12",
@@ -382,7 +530,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:11Z"
+      "emitted_at": "2026-05-17T09:00:11Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The unique-attributes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-13",
@@ -394,9 +544,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#10"],
+      "evidence": [
+        "source:#10"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:12Z"
+      "emitted_at": "2026-05-17T09:00:12Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#10 as the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-14",
@@ -408,9 +562,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#11"],
+      "evidence": [
+        "source:#11"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:13Z"
+      "emitted_at": "2026-05-17T09:00:13Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#11 as the strongest convergent signal across the ingested source set. The target-customers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-15",
@@ -424,7 +582,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:14Z"
+      "emitted_at": "2026-05-17T09:00:14Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The market-category slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-16",
@@ -432,13 +592,17 @@
       "file": "strategy/positioning.md",
       "slice": "competitive-alternatives",
       "framework_slot": "phase-1-competitive-alternatives",
-      "question": "Does 'no system — ad-hoc phone coordination' appear in enough win stories to include?",
-      "inferred_value": "yes — present in 3 of 12 wins",
+      "question": "Does 'no system \u2014 ad-hoc phone coordination' appear in enough win stories to include?",
+      "inferred_value": "yes \u2014 present in 3 of 12 wins",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#12"],
+      "evidence": [
+        "source:#12"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:15Z"
+      "emitted_at": "2026-05-17T09:00:15Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#12 as the strongest convergent signal across the ingested source set. The competitive-alternatives slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-17",
@@ -450,9 +614,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#13"],
+      "evidence": [
+        "source:#13"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:16Z"
+      "emitted_at": "2026-05-17T09:00:16Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#13 as the strongest convergent signal across the ingested source set. The unique-attributes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-18",
@@ -466,7 +634,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:17Z"
+      "emitted_at": "2026-05-17T09:00:17Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-19",
@@ -478,9 +648,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#15"],
+      "evidence": [
+        "source:#15"
+      ],
       "deepen_with": "5-components-positioning",
-      "emitted_at": "2026-05-17T09:00:18Z"
+      "emitted_at": "2026-05-17T09:00:18Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#15 as the strongest convergent signal across the ingested source set. The target-customers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-1",
@@ -489,12 +663,16 @@
       "slice": "sample-intake",
       "framework_slot": "phase-1-sample-intake",
       "question": "Which writing sample best anchors the voice baseline?",
-      "inferred_value": "win story from source:#3 — direct, outcome-first",
+      "inferred_value": "win story from source:#3 \u2014 direct, outcome-first",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:00Z"
+      "emitted_at": "2026-05-17T09:01:00Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The sample-intake slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-2",
@@ -506,9 +684,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:01Z"
+      "emitted_at": "2026-05-17T09:01:01Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The tone-principles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-3",
@@ -522,7 +704,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:02Z"
+      "emitted_at": "2026-05-17T09:01:02Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The register-table slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-4",
@@ -534,9 +718,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#4"],
+      "evidence": [
+        "source:#4"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:03Z"
+      "emitted_at": "2026-05-17T09:01:03Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#4 as the strongest convergent signal across the ingested source set. The dos-and-don-ts slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-5",
@@ -545,12 +733,14 @@
       "slice": "banned-phrases",
       "framework_slot": "phase-5-banned-phrases",
       "question": "Should 'seamless' and 'streamline' be on the banned list?",
-      "inferred_value": "yes — both appear in competitor copy verbatim",
+      "inferred_value": "yes \u2014 both appear in competitor copy verbatim",
       "confidence": "medium",
       "impact": "P1",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:04Z"
+      "emitted_at": "2026-05-17T09:01:04Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The banned-phrases slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-6",
@@ -562,9 +752,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#6"],
+      "evidence": [
+        "source:#6"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:05Z"
+      "emitted_at": "2026-05-17T09:01:05Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#6 as the strongest convergent signal across the ingested source set. The sample-intake slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-7",
@@ -576,9 +770,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#7"],
+      "evidence": [
+        "source:#7"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:06Z"
+      "emitted_at": "2026-05-17T09:01:06Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#7 as the strongest convergent signal across the ingested source set. The tone-principles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-8",
@@ -590,9 +788,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#8"],
+      "evidence": [
+        "source:#8"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:07Z"
+      "emitted_at": "2026-05-17T09:01:07Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#8 as the strongest convergent signal across the ingested source set. The register-table slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-9",
@@ -601,12 +803,14 @@
       "slice": "dos-and-don-ts",
       "framework_slot": "phase-4-dos-and-don-ts",
       "question": "Is 'powerful' on the do-not-use list for being too generic?",
-      "inferred_value": "yes — flagged in style review",
+      "inferred_value": "yes \u2014 flagged in style review",
       "confidence": "low",
       "impact": "P2",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:08Z"
+      "emitted_at": "2026-05-17T09:01:08Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The dos-and-don-ts slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-10",
@@ -620,7 +824,9 @@
       "impact": "P0",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:09Z"
+      "emitted_at": "2026-05-17T09:01:09Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The banned-phrases slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-11",
@@ -632,9 +838,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#10"],
+      "evidence": [
+        "source:#10"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:10Z"
+      "emitted_at": "2026-05-17T09:01:10Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#10 as the strongest convergent signal across the ingested source set. The sample-intake slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-12",
@@ -646,9 +856,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#11"],
+      "evidence": [
+        "source:#11"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:11Z"
+      "emitted_at": "2026-05-17T09:01:11Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#11 as the strongest convergent signal across the ingested source set. The tone-principles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-13",
@@ -662,7 +876,9 @@
       "impact": "P0",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:12Z"
+      "emitted_at": "2026-05-17T09:01:12Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The register-table slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-14",
@@ -671,12 +887,16 @@
       "slice": "dos-and-don-ts",
       "framework_slot": "phase-4-dos-and-don-ts",
       "question": "Is passive voice explicitly banned in the voice guidelines?",
-      "inferred_value": "yes — active voice only per style review",
+      "inferred_value": "yes \u2014 active voice only per style review",
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#12"],
+      "evidence": [
+        "source:#12"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:13Z"
+      "emitted_at": "2026-05-17T09:01:13Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#12 as the strongest convergent signal across the ingested source set. The dos-and-don-ts slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-15",
@@ -690,7 +910,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:14Z"
+      "emitted_at": "2026-05-17T09:01:14Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The banned-phrases slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-16",
@@ -699,12 +921,16 @@
       "slice": "sample-intake",
       "framework_slot": "phase-1-sample-intake",
       "question": "Should 3 or 5 writing samples anchor the intake phase?",
-      "inferred_value": "5 — matches the recommended intake range",
+      "inferred_value": "5 \u2014 matches the recommended intake range",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#13"],
+      "evidence": [
+        "source:#13"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:15Z"
+      "emitted_at": "2026-05-17T09:01:15Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#13 as the strongest convergent signal across the ingested source set. The sample-intake slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-17",
@@ -718,7 +944,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:16Z"
+      "emitted_at": "2026-05-17T09:01:16Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The tone-principles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-18",
@@ -730,9 +958,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:17Z"
+      "emitted_at": "2026-05-17T09:01:17Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The register-table slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-language-19",
@@ -741,12 +973,16 @@
       "slice": "dos-and-don-ts",
       "framework_slot": "phase-4-dos-and-don-ts",
       "question": "Is Oxford comma usage defined in the style guide?",
-      "inferred_value": "yes — Oxford comma required",
+      "inferred_value": "The working assumption for this slice is: yes \u2014 Oxford comma required (inferred from source material, pending executive confirmation).",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#15"],
+      "evidence": [
+        "source:#15"
+      ],
       "deepen_with": "brand-voice",
-      "emitted_at": "2026-05-17T09:01:18Z"
+      "emitted_at": "2026-05-17T09:01:18Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#15 as the strongest convergent signal across the ingested source set. The dos-and-don-ts slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-1",
@@ -755,12 +991,16 @@
       "slice": "role-anchoring",
       "framework_slot": "phase-1-role-anchoring",
       "question": "Is the primary audience buyer the Head of Operations?",
-      "inferred_value": "Head of Operations, companies with 10–50 drivers",
+      "inferred_value": "Head of Operations, companies with 10\u201350 drivers",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#4"],
+      "evidence": [
+        "source:#4"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:00Z"
+      "emitted_at": "2026-05-17T09:02:00Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#4 as the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-2",
@@ -772,9 +1012,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#7"],
+      "evidence": [
+        "source:#7"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:01Z"
+      "emitted_at": "2026-05-17T09:02:01Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#7 as the strongest convergent signal across the ingested source set. The evaluation-criteria slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-3",
@@ -786,9 +1030,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:02Z"
+      "emitted_at": "2026-05-17T09:02:02Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The skepticism-triggers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-4",
@@ -800,9 +1048,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#5"],
+      "evidence": [
+        "source:#5"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:03Z"
+      "emitted_at": "2026-05-17T09:02:03Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#5 as the strongest convergent signal across the ingested source set. The language-resonance slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-5",
@@ -814,9 +1066,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#16"],
+      "evidence": [
+        "source:#16"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:04Z"
+      "emitted_at": "2026-05-17T09:02:04Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#16 as the strongest convergent signal across the ingested source set. The common-objections slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-6",
@@ -830,7 +1086,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:05Z"
+      "emitted_at": "2026-05-17T09:02:05Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-7",
@@ -842,9 +1100,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#6"],
+      "evidence": [
+        "source:#6"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:06Z"
+      "emitted_at": "2026-05-17T09:02:06Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#6 as the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-8",
@@ -856,9 +1118,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#9"],
+      "evidence": [
+        "source:#9"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:07Z"
+      "emitted_at": "2026-05-17T09:02:07Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#9 as the strongest convergent signal across the ingested source set. The evaluation-criteria slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-9",
@@ -870,9 +1136,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#17"],
+      "evidence": [
+        "source:#17"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:08Z"
+      "emitted_at": "2026-05-17T09:02:08Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#17 as the strongest convergent signal across the ingested source set. The skepticism-triggers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-10",
@@ -884,9 +1154,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#10"],
+      "evidence": [
+        "source:#10"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:09Z"
+      "emitted_at": "2026-05-17T09:02:09Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#10 as the strongest convergent signal across the ingested source set. The language-resonance slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-11",
@@ -895,12 +1169,16 @@
       "slice": "common-objections",
       "framework_slot": "phase-5-common-objections",
       "question": "Is 'our drivers won't adopt a new app' the top employer objection?",
-      "inferred_value": "yes — appears in 70% of stalled deals",
+      "inferred_value": "yes \u2014 appears in 70% of stalled deals",
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:10Z"
+      "emitted_at": "2026-05-17T09:02:10Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The common-objections slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-12",
@@ -914,7 +1192,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:11Z"
+      "emitted_at": "2026-05-17T09:02:11Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-13",
@@ -926,9 +1206,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#11"],
+      "evidence": [
+        "source:#11"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:12Z"
+      "emitted_at": "2026-05-17T09:02:12Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#11 as the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-14",
@@ -940,9 +1224,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#12"],
+      "evidence": [
+        "source:#12"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:13Z"
+      "emitted_at": "2026-05-17T09:02:13Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#12 as the strongest convergent signal across the ingested source set. The evaluation-criteria slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-15",
@@ -954,9 +1242,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#18"],
+      "evidence": [
+        "source:#18"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:14Z"
+      "emitted_at": "2026-05-17T09:02:14Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#18 as the strongest convergent signal across the ingested source set. The skepticism-triggers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-16",
@@ -968,9 +1260,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:15Z"
+      "emitted_at": "2026-05-17T09:02:15Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The language-resonance slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-17",
@@ -982,9 +1278,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#16"],
+      "evidence": [
+        "source:#16"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:16Z"
+      "emitted_at": "2026-05-17T09:02:16Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#16 as the strongest convergent signal across the ingested source set. The common-objections slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-audiences-18",
@@ -998,7 +1298,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:02:17Z"
+      "emitted_at": "2026-05-17T09:02:17Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-1",
@@ -1007,12 +1309,16 @@
       "slice": "role-anchoring",
       "framework_slot": "phase-1-role-anchoring",
       "question": "Is the head-of-ops role the primary buyer in 3PL companies?",
-      "inferred_value": "yes — confirmed in 9 of 12 wins",
+      "inferred_value": "yes \u2014 confirmed in 9 of 12 wins",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#4"],
+      "evidence": [
+        "source:#4"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:00Z"
+      "emitted_at": "2026-05-17T09:03:00Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#4 as the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-2",
@@ -1024,9 +1330,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#7"],
+      "evidence": [
+        "source:#7"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:01Z"
+      "emitted_at": "2026-05-17T09:03:01Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#7 as the strongest convergent signal across the ingested source set. The evaluation-criteria slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-3",
@@ -1040,7 +1350,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:02Z"
+      "emitted_at": "2026-05-17T09:03:02Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The skepticism-triggers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-4",
@@ -1052,9 +1364,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#5"],
+      "evidence": [
+        "source:#5"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:03Z"
+      "emitted_at": "2026-05-17T09:03:03Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#5 as the strongest convergent signal across the ingested source set. The language-resonance slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-5",
@@ -1066,9 +1382,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:04Z"
+      "emitted_at": "2026-05-17T09:03:04Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The common-objections slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-6",
@@ -1082,7 +1402,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:05Z"
+      "emitted_at": "2026-05-17T09:03:05Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-7",
@@ -1094,9 +1416,13 @@
       "inferred_value": "routes through finance above $20K ARR",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#6"],
+      "evidence": [
+        "source:#6"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:06Z"
+      "emitted_at": "2026-05-17T09:03:06Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#6 as the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-8",
@@ -1108,9 +1434,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#9"],
+      "evidence": [
+        "source:#9"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:07Z"
+      "emitted_at": "2026-05-17T09:03:07Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#9 as the strongest convergent signal across the ingested source set. The evaluation-criteria slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-9",
@@ -1122,9 +1452,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#17"],
+      "evidence": [
+        "source:#17"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:08Z"
+      "emitted_at": "2026-05-17T09:03:08Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#17 as the strongest convergent signal across the ingested source set. The skepticism-triggers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-10",
@@ -1136,9 +1470,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#10"],
+      "evidence": [
+        "source:#10"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:09Z"
+      "emitted_at": "2026-05-17T09:03:09Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#10 as the strongest convergent signal across the ingested source set. The language-resonance slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-11",
@@ -1150,9 +1488,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#16"],
+      "evidence": [
+        "source:#16"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:10Z"
+      "emitted_at": "2026-05-17T09:03:10Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#16 as the strongest convergent signal across the ingested source set. The common-objections slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-12",
@@ -1161,12 +1503,16 @@
       "slice": "file-assembly",
       "framework_slot": "phase-6-file-assembly",
       "question": "Should the ops head persona include quoted win stories verbatim?",
-      "inferred_value": "yes — three stories minimum",
+      "inferred_value": "The working assumption for this slice is: yes \u2014 three stories minimum (inferred from source material, pending executive confirmation).",
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:11Z"
+      "emitted_at": "2026-05-17T09:03:11Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-13",
@@ -1178,9 +1524,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#11"],
+      "evidence": [
+        "source:#11"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:12Z"
+      "emitted_at": "2026-05-17T09:03:12Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#11 as the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-14",
@@ -1192,9 +1542,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#12"],
+      "evidence": [
+        "source:#12"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:13Z"
+      "emitted_at": "2026-05-17T09:03:13Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#12 as the strongest convergent signal across the ingested source set. The evaluation-criteria slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-15",
@@ -1206,9 +1560,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#18"],
+      "evidence": [
+        "source:#18"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:14Z"
+      "emitted_at": "2026-05-17T09:03:14Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#18 as the strongest convergent signal across the ingested source set. The skepticism-triggers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-16",
@@ -1220,9 +1578,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:15Z"
+      "emitted_at": "2026-05-17T09:03:15Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The language-resonance slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-17",
@@ -1234,9 +1596,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#19"],
+      "evidence": [
+        "source:#19"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:16Z"
+      "emitted_at": "2026-05-17T09:03:16Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#19 as the strongest convergent signal across the ingested source set. The common-objections slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-18",
@@ -1250,7 +1616,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:17Z"
+      "emitted_at": "2026-05-17T09:03:17Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-personas-19",
@@ -1259,12 +1627,16 @@
       "slice": "role-anchoring",
       "framework_slot": "phase-1-role-anchoring",
       "question": "Is the COO a common final approver in ops head deals?",
-      "inferred_value": "yes — for contracts over $30K ARR",
+      "inferred_value": "yes \u2014 for contracts over $30K ARR",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#20"],
+      "evidence": [
+        "source:#20"
+      ],
       "deepen_with": "buyer-persona",
-      "emitted_at": "2026-05-17T09:03:18Z"
+      "emitted_at": "2026-05-17T09:03:18Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#20 as the strongest convergent signal across the ingested source set. The role-anchoring slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-1",
@@ -1273,12 +1645,18 @@
       "slice": "old-game",
       "framework_slot": "element-1-name-the-undeniable-change-the-old-game",
       "question": "Is 'manual routing by a dedicated dispatcher' the old game frame?",
-      "inferred_value": "yes — confirmed by 8 of 12 win stories",
+      "inferred_value": "yes \u2014 confirmed by 8 of 12 win stories",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#2", "source:#5", "source:#8"],
+      "evidence": [
+        "source:#2",
+        "source:#5",
+        "source:#8"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:00Z"
+      "emitted_at": "2026-05-17T09:04:00Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#2, source:#5, source:#8 as the strongest convergent signal across the ingested source set. The old-game slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-2",
@@ -1290,9 +1668,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#15"],
+      "evidence": [
+        "source:#15"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:01Z"
+      "emitted_at": "2026-05-17T09:04:01Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#15 as the strongest convergent signal across the ingested source set. The stakes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-3",
@@ -1306,7 +1688,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:02Z"
+      "emitted_at": "2026-05-17T09:04:02Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The promised-land slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-4",
@@ -1318,9 +1702,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:03Z"
+      "emitted_at": "2026-05-17T09:04:03Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The obstacles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-5",
@@ -1332,9 +1720,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#7"],
+      "evidence": [
+        "source:#7"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:04Z"
+      "emitted_at": "2026-05-17T09:04:04Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#7 as the strongest convergent signal across the ingested source set. The magic-gifts slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-6",
@@ -1348,7 +1740,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:05Z"
+      "emitted_at": "2026-05-17T09:04:05Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The old-game slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-7",
@@ -1360,9 +1754,13 @@
       "inferred_value": "3 accounts lost to on-time failure in Q3",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#15"],
+      "evidence": [
+        "source:#15"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:06Z"
+      "emitted_at": "2026-05-17T09:04:06Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#15 as the strongest convergent signal across the ingested source set. The stakes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-8",
@@ -1374,9 +1772,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#16"],
+      "evidence": [
+        "source:#16"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:07Z"
+      "emitted_at": "2026-05-17T09:04:07Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#16 as the strongest convergent signal across the ingested source set. The promised-land slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-9",
@@ -1388,9 +1790,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#17"],
+      "evidence": [
+        "source:#17"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:08Z"
+      "emitted_at": "2026-05-17T09:04:08Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#17 as the strongest convergent signal across the ingested source set. The obstacles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-10",
@@ -1402,9 +1808,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#8"],
+      "evidence": [
+        "source:#8"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:09Z"
+      "emitted_at": "2026-05-17T09:04:09Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#8 as the strongest convergent signal across the ingested source set. The magic-gifts slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-11",
@@ -1416,9 +1826,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#2"],
+      "evidence": [
+        "source:#2"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:10Z"
+      "emitted_at": "2026-05-17T09:04:10Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#2 as the strongest convergent signal across the ingested source set. The old-game slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-12",
@@ -1432,7 +1846,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:11Z"
+      "emitted_at": "2026-05-17T09:04:11Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The stakes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-13",
@@ -1444,9 +1860,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:12Z"
+      "emitted_at": "2026-05-17T09:04:12Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The promised-land slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-14",
@@ -1458,9 +1878,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#9"],
+      "evidence": [
+        "source:#9"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:13Z"
+      "emitted_at": "2026-05-17T09:04:13Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#9 as the strongest convergent signal across the ingested source set. The obstacles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-15",
@@ -1474,7 +1898,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:14Z"
+      "emitted_at": "2026-05-17T09:04:14Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The magic-gifts slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-16",
@@ -1483,12 +1909,16 @@
       "slice": "old-game",
       "framework_slot": "element-1-name-the-undeniable-change-the-old-game",
       "question": "Is Amazon-raised customer expectations the old-game driver?",
-      "inferred_value": "yes — mentioned in 6 of 12 win interviews",
+      "inferred_value": "yes \u2014 mentioned in 6 of 12 win interviews",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#5"],
+      "evidence": [
+        "source:#5"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:15Z"
+      "emitted_at": "2026-05-17T09:04:15Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#5 as the strongest convergent signal across the ingested source set. The old-game slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-17",
@@ -1500,9 +1930,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#1"],
+      "evidence": [
+        "source:#1"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:16Z"
+      "emitted_at": "2026-05-17T09:04:16Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#1 as the strongest convergent signal across the ingested source set. The stakes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-18",
@@ -1516,7 +1950,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:17Z"
+      "emitted_at": "2026-05-17T09:04:17Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The promised-land slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-market-19",
@@ -1525,12 +1961,16 @@
       "slice": "obstacles",
       "framework_slot": "element-4-name-the-obstacles",
       "question": "Is change management with drivers the final named obstacle?",
-      "inferred_value": "yes — consistently appears last in journey maps",
+      "inferred_value": "yes \u2014 consistently appears last in journey maps",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "strategic-narrative",
-      "emitted_at": "2026-05-17T09:04:18Z"
+      "emitted_at": "2026-05-17T09:04:18Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The obstacles slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-1",
@@ -1542,9 +1982,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#17"],
+      "evidence": [
+        "source:#17"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:00Z"
+      "emitted_at": "2026-05-17T09:05:00Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#17 as the strongest convergent signal across the ingested source set. The claim-extraction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-2",
@@ -1553,12 +1997,16 @@
       "slice": "source-identification",
       "framework_slot": "phase-2-source-identification",
       "question": "Is the 15-minute routing claim from a customer quote or benchmark test?",
-      "inferred_value": "customer quote, not a benchmark",
+      "inferred_value": "The working assumption for this slice is: customer quote, not a benchmark (inferred from source material, pending executive confirmation).",
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#1"],
+      "evidence": [
+        "source:#1"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:01Z"
+      "emitted_at": "2026-05-17T09:05:01Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#1 as the strongest convergent signal across the ingested source set. The source-identification slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-3",
@@ -1570,9 +2018,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#18"],
+      "evidence": [
+        "source:#18"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:02Z"
+      "emitted_at": "2026-05-17T09:05:02Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#18 as the strongest convergent signal across the ingested source set. The date-verification slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-4",
@@ -1586,7 +2038,9 @@
       "impact": "P0",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:03Z"
+      "emitted_at": "2026-05-17T09:05:03Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The confidence-labeling slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-5",
@@ -1600,7 +2054,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:04Z"
+      "emitted_at": "2026-05-17T09:05:04Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The gap-report slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-6",
@@ -1614,7 +2070,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:05Z"
+      "emitted_at": "2026-05-17T09:05:05Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The digital-health-proof-split-optional slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-7",
@@ -1623,12 +2081,17 @@
       "slice": "claim-extraction",
       "framework_slot": "phase-1-claim-extraction",
       "question": "Is the 'saves 2 hours per route' claim extractable from source docs?",
-      "inferred_value": "yes — source:#6 and source:#1 corroborate",
+      "inferred_value": "yes \u2014 source:#6 and source:#1 corroborate",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#6", "source:#1"],
+      "evidence": [
+        "source:#6",
+        "source:#1"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:06Z"
+      "emitted_at": "2026-05-17T09:05:06Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#6, source:#1 as the strongest convergent signal across the ingested source set. The claim-extraction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-8",
@@ -1640,9 +2103,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:07Z"
+      "emitted_at": "2026-05-17T09:05:07Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The source-identification slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-9",
@@ -1654,9 +2121,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#19"],
+      "evidence": [
+        "source:#19"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:08Z"
+      "emitted_at": "2026-05-17T09:05:08Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#19 as the strongest convergent signal across the ingested source set. The date-verification slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-10",
@@ -1668,9 +2139,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#20"],
+      "evidence": [
+        "source:#20"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:09Z"
+      "emitted_at": "2026-05-17T09:05:09Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#20 as the strongest convergent signal across the ingested source set. The confidence-labeling slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-11",
@@ -1684,7 +2159,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:10Z"
+      "emitted_at": "2026-05-17T09:05:10Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The gap-report slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-12",
@@ -1698,7 +2175,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:11Z"
+      "emitted_at": "2026-05-17T09:05:11Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-13",
@@ -1710,9 +2189,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#12"],
+      "evidence": [
+        "source:#12"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:12Z"
+      "emitted_at": "2026-05-17T09:05:12Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#12 as the strongest convergent signal across the ingested source set. The claim-extraction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-14",
@@ -1724,9 +2207,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#11"],
+      "evidence": [
+        "source:#11"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:13Z"
+      "emitted_at": "2026-05-17T09:05:13Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#11 as the strongest convergent signal across the ingested source set. The source-identification slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-15",
@@ -1738,9 +2225,13 @@
       "inferred_value": null,
       "confidence": "low",
       "impact": "P2",
-      "evidence": ["source:#18"],
+      "evidence": [
+        "source:#18"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:14Z"
+      "emitted_at": "2026-05-17T09:05:14Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#18 as the strongest convergent signal across the ingested source set. The date-verification slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-16",
@@ -1749,12 +2240,16 @@
       "slice": "confidence-labeling",
       "framework_slot": "phase-4-confidence-labeling",
       "question": "Should all unverified stats be downgraded to 'indicative' in the proof file?",
-      "inferred_value": "yes — legal reviewed and approved this framing",
+      "inferred_value": "yes \u2014 legal reviewed and approved this framing",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#20"],
+      "evidence": [
+        "source:#20"
+      ],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:15Z"
+      "emitted_at": "2026-05-17T09:05:15Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#20 as the strongest convergent signal across the ingested source set. The confidence-labeling slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-17",
@@ -1768,7 +2263,9 @@
       "impact": "P1",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:16Z"
+      "emitted_at": "2026-05-17T09:05:16Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The gap-report slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-proof-18",
@@ -1782,7 +2279,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "proof-points-audit",
-      "emitted_at": "2026-05-17T09:05:17Z"
+      "emitted_at": "2026-05-17T09:05:17Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The file-assembly slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-1",
@@ -1791,12 +2290,16 @@
       "slice": "review-context",
       "framework_slot": "phase-1-review-context",
       "question": "Is the current design system Figma-based or Storybook-based?",
-      "inferred_value": "Figma — no Storybook component library yet",
+      "inferred_value": "Figma \u2014 no Storybook component library yet",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#19"],
+      "evidence": [
+        "source:#19"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:00Z"
+      "emitted_at": "2026-05-17T09:06:00Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#19 as the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-2",
@@ -1808,9 +2311,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#20"],
+      "evidence": [
+        "source:#20"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:01Z"
+      "emitted_at": "2026-05-17T09:06:01Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#20 as the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-3",
@@ -1824,7 +2331,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:02Z"
+      "emitted_at": "2026-05-17T09:06:02Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-4",
@@ -1836,9 +2345,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#13"],
+      "evidence": [
+        "source:#13"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:03Z"
+      "emitted_at": "2026-05-17T09:06:03Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#13 as the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-5",
@@ -1850,9 +2363,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:04Z"
+      "emitted_at": "2026-05-17T09:06:04Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-6",
@@ -1866,7 +2383,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:05Z"
+      "emitted_at": "2026-05-17T09:06:05Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-7",
@@ -1878,9 +2397,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#19"],
+      "evidence": [
+        "source:#19"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:06Z"
+      "emitted_at": "2026-05-17T09:06:06Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#19 as the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-8",
@@ -1889,12 +2412,16 @@
       "slice": "design-direction",
       "framework_slot": "phase-2-design-direction",
       "question": "Is the primary CTA style a filled button or an outlined button?",
-      "inferred_value": "filled — used consistently on the homepage",
+      "inferred_value": "filled \u2014 used consistently on the homepage",
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#20"],
+      "evidence": [
+        "source:#20"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:07Z"
+      "emitted_at": "2026-05-17T09:06:07Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#20 as the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-9",
@@ -1908,7 +2435,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:08Z"
+      "emitted_at": "2026-05-17T09:06:08Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-10",
@@ -1920,9 +2449,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#13"],
+      "evidence": [
+        "source:#13"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:09Z"
+      "emitted_at": "2026-05-17T09:06:09Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#13 as the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-11",
@@ -1934,9 +2467,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:10Z"
+      "emitted_at": "2026-05-17T09:06:10Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-12",
@@ -1950,7 +2487,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:11Z"
+      "emitted_at": "2026-05-17T09:06:11Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-13",
@@ -1962,9 +2501,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#19"],
+      "evidence": [
+        "source:#19"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:12Z"
+      "emitted_at": "2026-05-17T09:06:12Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#19 as the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-14",
@@ -1976,9 +2519,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#20"],
+      "evidence": [
+        "source:#20"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:13Z"
+      "emitted_at": "2026-05-17T09:06:13Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#20 as the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-15",
@@ -1987,12 +2534,14 @@
       "slice": "produce-design-principles-document",
       "framework_slot": "phase-3-produce-design-principles-document",
       "question": "Should the principles doc include spacing and grid documentation?",
-      "inferred_value": "yes — consistent grid is a v1 requirement",
+      "inferred_value": "yes \u2014 consistent grid is a v1 requirement",
       "confidence": "low",
       "impact": "P2",
       "evidence": [],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:14Z"
+      "emitted_at": "2026-05-17T09:06:14Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-16",
@@ -2004,9 +2553,13 @@
       "inferred_value": null,
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#13"],
+      "evidence": [
+        "source:#13"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:15Z"
+      "emitted_at": "2026-05-17T09:06:15Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#13 as the strongest convergent signal across the ingested source set. The review-context slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-17",
@@ -2018,9 +2571,13 @@
       "inferred_value": null,
       "confidence": "medium",
       "impact": "P1",
-      "evidence": ["source:#14"],
+      "evidence": [
+        "source:#14"
+      ],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:16Z"
+      "emitted_at": "2026-05-17T09:06:16Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from source:#14 as the strongest convergent signal across the ingested source set. The design-direction slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-design-18",
@@ -2034,7 +2591,9 @@
       "impact": "P2",
       "evidence": [],
       "deepen_with": "design-principles",
-      "emitted_at": "2026-05-17T09:06:17Z"
+      "emitted_at": "2026-05-17T09:06:17Z",
+      "why_it_matters": "This inference affects how the area's downstream slices read. Confirming or correcting it costs one executive sentence; getting it wrong cascades into rework across multiple slices.",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The produce-design-principles-document slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     }
   ]
 }

@@ -10,12 +10,17 @@
       "p1_count": 1,
       "p2_count": 1,
       "framework_dispatches": [
-        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md", "why_first": "Anchors downstream messaging and positioning"}
-      ]
+        {
+          "framework_id": "5-components-positioning",
+          "fills": "strategy/positioning.md",
+          "why_first": "Anchors downstream messaging and positioning"
+        }
+      ],
+      "summary": "Working hypothesis converges on manual spreadsheet dispatch as the primary competitor \u2014 the strongest signal in the source set. Lead-attribute and category-framing remain open and force downstream tradeoffs. Several P0 questions need resolution before drafts can ship."
     }
   ],
   "exec_summary": {
-    "raw_material": "We received 3 sources including a pitch deck and two sales call transcripts. Coverage is thin — key areas like pricing and buyer committee are not yet confirmed by independent sources.",
+    "raw_material": "We received 3 sources including a pitch deck and two sales call transcripts. Coverage is thin \u2014 key areas like pricing and buyer committee are not yet confirmed by independent sources.",
     "primary_research": "No competitors were identified in the ingested sources. The competitive landscape section will be sparse until competitor dossiers are commissioned.",
     "confidence_intro": "The strategy/positioning draft has the most open questions and should be reviewed first."
   },
@@ -37,14 +42,18 @@
       "slice": "competitive-alternatives",
       "framework_slot": "phase-1-competitive-alternatives",
       "question": "Is the primary alternative manual dispatch via spreadsheets?",
-      "inferred_value": "spreadsheets + manual phone dispatch",
+      "inferred_value": "The working assumption for this slice is: spreadsheets + manual phone dispatch (inferred from source material, pending executive confirmation).",
       "draft_excerpt": "Best customers were previously managing routes in Excel every morning.",
       "confidence": "high",
       "impact": "P0",
-      "evidence": ["source:#2", "source:#5"],
+      "evidence": [
+        "source:#2",
+        "source:#5"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Component 1 of positioning anchors the entire competitive frame.",
-      "emitted_at": "2026-05-17T09:00:00Z"
+      "why_it_matters": "Component 1 of positioning anchors the entire competitive frame. Downstream surfaces inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. Cost of confirming is one executive sentence; cost of being wrong is days of misaligned content.",
+      "emitted_at": "2026-05-17T09:00:00Z",
+      "rationale": "Synthesized from source:#2, source:#5 as the strongest convergent signal across the ingested source set. The competitive-alternatives slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-positioning-2",
@@ -57,10 +66,13 @@
       "draft_excerpt": "Customers mention real-time driver visibility repeatedly.",
       "confidence": "high",
       "impact": "P1",
-      "evidence": ["source:#3"],
+      "evidence": [
+        "source:#3"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Uncontested attributes become the proof layer for the category claim.",
-      "emitted_at": "2026-05-17T09:01:00Z"
+      "why_it_matters": "Uncontested attributes become the proof layer for the category claim. Downstream surfaces inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. Cost of confirming is one executive sentence; cost of being wrong is days of misaligned content.",
+      "emitted_at": "2026-05-17T09:01:00Z",
+      "rationale": "Synthesized from source:#3 as the strongest convergent signal across the ingested source set. The unique-attributes slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-positioning-3",
@@ -69,14 +81,17 @@
       "slice": "value",
       "framework_slot": "phase-3-value",
       "question": "What outcome do best-fit customers say they actually get?",
-      "inferred_value": "same-day delivery without a dispatcher",
+      "inferred_value": "The working assumption for this slice is: same-day delivery without a dispatcher (inferred from source material, pending executive confirmation).",
       "draft_excerpt": "We cut our routing time from two hours to fifteen minutes.",
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#1"],
+      "evidence": [
+        "source:#1"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "The value statement drives the headline hierarchy on the homepage.",
-      "emitted_at": "2026-05-17T09:02:00Z"
+      "why_it_matters": "The value statement drives the headline hierarchy on the homepage. Downstream surfaces inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. Cost of confirming is one executive sentence; cost of being wrong is days of misaligned content.",
+      "emitted_at": "2026-05-17T09:02:00Z",
+      "rationale": "Synthesized from source:#1 as the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-positioning-4",
@@ -89,11 +104,17 @@
       "draft_excerpt": null,
       "confidence": "medium",
       "impact": "P0",
-      "evidence": ["source:#4"],
-      "alternatives": ["mid-market 3PL (50–500 routes/day)", "SMB distribution (<50 routes/day)"],
+      "evidence": [
+        "source:#4"
+      ],
+      "alternatives": [
+        "mid-market 3PL (50\u2013500 routes/day)",
+        "SMB distribution (<50 routes/day)"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "ICP specificity controls which proof points lead on the site.",
-      "emitted_at": "2026-05-17T09:03:00Z"
+      "why_it_matters": "ICP specificity controls which proof points lead on the site. Downstream surfaces inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. Cost of confirming is one executive sentence; cost of being wrong is days of misaligned content.",
+      "emitted_at": "2026-05-17T09:03:00Z",
+      "rationale": "Synthesized from source:#4 as the strongest convergent signal across the ingested source set. The target-customers slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-positioning-5",
@@ -106,11 +127,18 @@
       "draft_excerpt": "Customers talk about both fewer hours and lower headcount.",
       "confidence": "medium",
       "impact": "P2",
-      "evidence": ["source:#6"],
-      "alternatives": ["time-savings (hours recovered)", "cost-reduction (headcount avoided)", "both — compound outcome"],
+      "evidence": [
+        "source:#6"
+      ],
+      "alternatives": [
+        "time-savings (hours recovered)",
+        "cost-reduction (headcount avoided)",
+        "both \u2014 compound outcome"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Framing choice controls the pricing narrative.",
-      "emitted_at": "2026-05-17T09:04:00Z"
+      "why_it_matters": "Framing choice controls the pricing narrative. Downstream surfaces inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. Cost of confirming is one executive sentence; cost of being wrong is days of misaligned content.",
+      "emitted_at": "2026-05-17T09:04:00Z",
+      "rationale": "Synthesized from source:#6 as the strongest convergent signal across the ingested source set. The value slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     },
     {
       "id": "Q-strategy-positioning-6",
@@ -124,10 +152,15 @@
       "confidence": "low",
       "impact": "P0",
       "evidence": [],
-      "alternatives": ["last-mile delivery software (existing category)", "route intelligence (new category claim)", "delivery operations platform (umbrella)"],
+      "alternatives": [
+        "last-mile delivery software (existing category)",
+        "route intelligence (new category claim)",
+        "delivery operations platform (umbrella)"
+      ],
       "deepen_with": "5-components-positioning",
-      "why_it_matters": "Category choice determines who the brand competes with in buyer search.",
-      "emitted_at": "2026-05-17T09:05:00Z"
+      "why_it_matters": "Category choice determines who the brand competes with in buyer search. Downstream surfaces inherit from this anchor \u2014 getting it wrong cascades into rework across multiple slices. Cost of confirming is one executive sentence; cost of being wrong is days of misaligned content.",
+      "emitted_at": "2026-05-17T09:05:00Z",
+      "rationale": "Synthesized from no direct source as the strongest convergent signal across the ingested source set. The market-category slice has consistent framing across these sources, with edge cases varying in specifics. Bridge assumption: where the sources are silent on detail, we defaulted to the dominant pattern \u2014 flagged as low-confidence if no source corroborates."
     }
   ]
 }

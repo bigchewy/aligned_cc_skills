@@ -188,16 +188,45 @@
     }
     .section-list li {
       display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 5px 0;
-      border-bottom: 1px dotted transparent;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-muted);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 120ms;
+    }
+    .section-list li:last-child { border-bottom: none; }
+    .section-list li:hover,
+    .section-list li:focus-within {
+      background: var(--color-muted);
+    }
+    .section-list li:hover .label,
+    .section-list li:focus-within .label {
+      color: var(--color-accent);
     }
     .section-list > li { font-weight: 600; }
-    .section-list ul li { font-weight: 400; color: var(--color-foreground); }
-    .section-list .label { flex: 1 1 auto; min-width: 0; }
-    .section-list .status-badge { margin-left: 0; flex: 0 0 auto; }
+    .section-list .section-label-col {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .section-list .label { flex: 0 0 auto; font-size: 0.95rem; transition: color 120ms; }
+    .section-list .section-desc {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: var(--color-secondary);
+      line-height: 1.55;
+    }
+    .section-list .status-badge { margin: 4px 0 0 0; flex: 0 0 auto; align-self: flex-start; }
+    .section-list .label.section-link {
+      color: var(--color-foreground);
+      display: inline-block;
+    }
+    .section-list .label.section-link:focus { outline: none; }
 
     /* Inline status badges */
     .status-badge {
@@ -320,10 +349,32 @@
       background: white;
       border: 1px solid var(--color-border);
       border-radius: 10px;
-      padding: 16px 18px;
+      padding: 18px 20px;
       margin-bottom: 14px;
       transition: border-color 150ms, background 150ms;
     }
+    .oq-why {
+      font-size: 0.86rem;
+      color: var(--color-foreground);
+      background: var(--color-accent-subtle);
+      border-left: 3px solid var(--color-accent);
+      padding: 10px 14px;
+      margin: 4px 0 10px 0;
+      border-radius: 0 6px 6px 0;
+      line-height: 1.6;
+    }
+    .oq-why strong { color: var(--color-foreground); font-weight: 600; margin-right: 4px; }
+    .oq-rationale {
+      font-size: 0.86rem;
+      color: var(--color-secondary);
+      background: var(--color-surface);
+      border-left: 3px solid var(--color-border);
+      padding: 10px 14px;
+      margin: 4px 0 10px 0;
+      border-radius: 0 6px 6px 0;
+      line-height: 1.6;
+    }
+    .oq-rationale strong { color: var(--color-foreground); font-weight: 600; margin-right: 4px; }
     .oq-card[data-state="approved"] { border-color: #047857; background: #ecfdf5; }
     .oq-card[data-state="rejected"] { border-color: #b91c1c; background: #fef2f2; }
     .oq-card[data-state="answered"] { border-color: var(--color-accent); background: var(--color-accent-subtle); }
@@ -753,26 +804,25 @@
   <div class="tab-bar" id="main-tabs">
     <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
     <button class="tab-btn" onclick="switchTab('competitive')">Competitive Context</button>
-    <button class="tab-btn" onclick="switchTab('strategy')">strategy</button>
-    <button class="tab-btn" onclick="switchTab('language')">language</button>
-    <button class="tab-btn" onclick="switchTab('audiences')">audiences</button>
-    <button class="tab-btn" onclick="switchTab('personas')">personas</button>
-    <button class="tab-btn" onclick="switchTab('market')">market</button>
-    <button class="tab-btn" onclick="switchTab('proof')">proof</button>
-    <button class="tab-btn" onclick="switchTab('design')">design</button>
+    <button class="tab-btn" onclick="switchTab('strategy')">Strategy</button>
+    <button class="tab-btn" onclick="switchTab('language')">Language</button>
+    <button class="tab-btn" onclick="switchTab('audiences')">Audiences</button>
+    <button class="tab-btn" onclick="switchTab('personas')">Personas</button>
+    <button class="tab-btn" onclick="switchTab('market')">Market</button>
+    <button class="tab-btn" onclick="switchTab('proof')">Proof</button>
+    <button class="tab-btn" onclick="switchTab('design')">Design</button>
   </div>
 
   <!-- ========= OVERVIEW ========= -->
   <div id="panel-overview" class="tab-panel active">
 
     <div class="sub-tab-bar">
-      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-focus')">Where to Focus First</button>
-      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-summary')">Executive Summary</button>
-      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-strengths-gaps')">Strengths &amp; Gaps</button>
+      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-summary')">Executive Summary</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-focus')">Sections at a Glance</button>
     </div>
 
     <!-- Overview / Executive Summary -->
-    <div id="sub-overview-summary" class="sub-panel">
+    <div id="sub-overview-summary" class="sub-panel active">
       <div class="section exec-summary" id="exec-narrative">
         <h2>Executive summary</h2>
         <p class="description">Narrative assessment of how effective the ingested raw material and primary research were at understanding the brand. Use this to calibrate trust in the drafts under each folder tab.</p>
@@ -801,46 +851,10 @@
       </div>
     </div>
 
-    <!-- Overview / Strengths & Gaps -->
-    <div id="sub-overview-strengths-gaps" class="sub-panel">
+    <!-- Overview / Sections at a Glance -->
+    <div id="sub-overview-focus" class="sub-panel">
       <div class="section">
-        <h2>What the source material strongly supports</h2>
-        <p class="description">HIGH-confidence assertions backed by two or more independent sources. These are safe to build on without re-asking.</p>
-        <ul class="findings-list" id="strengths-list"></ul>
-      </div>
-
-      <div class="section">
-        <h2>What the source material doesn't yet tell us</h2>
-        <p class="description">Areas where the ingested sources are silent, thin, or contradictory. These are gaps in the evidence, not judgments about the company. Each links to the open question driving the doubt.</p>
-        <ul class="findings-list" id="gaps-list"></ul>
-      </div>
-    </div>
-
-    <!-- Overview / Where to Focus First -->
-    <div id="sub-overview-focus" class="sub-panel active">
-      <div class="section">
-        <h2>Where to focus first</h2>
-        <p class="description">Frameworks ranked by aggregate downstream impact. Each row's "Copy command" button puts the full paste-back prompt (with current toggle state from this session) on your clipboard. Run them in this order.</p>
-        <table class="focus-table">
-          <thead>
-            <tr>
-              <th style="width: 32px;">#</th>
-              <th>Run this framework</th>
-              <th>Fills</th>
-              <th style="width: 36px;">P0</th>
-              <th style="width: 36px;">P1</th>
-              <th style="width: 36px;">P2</th>
-              <th>Why first</th>
-              <th style="width: 130px;"></th>
-            </tr>
-          </thead>
-          <tbody id="where-to-focus-first"></tbody>
-        </table>
-      </div>
-
-      <div class="section">
-        <h2>Sections at a glance</h2>
-        <p class="description">Status badges reflect aggregate confidence + open question counts. Click any folder tab above to drill in.</p>
+        <p class="description">Click any area to jump to its tab. Status reflects aggregate confidence across the area's drafts.</p>
         <div id="sections-at-a-glance"></div>
       </div>
     </div>
@@ -869,12 +883,11 @@
     <div class="paste-back">
       <div class="paste-back-header">
         <h3>Paste-back to Claude Code</h3>
-        <span class="framework-name">5-components-positioning</span>
       </div>
       <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
       <textarea id="pasteback-strategy" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
       <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('strategy')">Copy</button>
+        <button class="btn" onclick="copyPasteback('strategy')">Copy prompt</button>
         <button class="btn btn-primary" onclick="regeneratePasteback('strategy')">Regenerate</button>
       </div>
     </div>
@@ -886,12 +899,11 @@
     <div class="paste-back">
       <div class="paste-back-header">
         <h3>Paste-back to Claude Code</h3>
-        <span class="framework-name">brand-voice</span>
       </div>
       <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
       <textarea id="pasteback-language" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
       <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('language')">Copy</button>
+        <button class="btn" onclick="copyPasteback('language')">Copy prompt</button>
         <button class="btn btn-primary" onclick="regeneratePasteback('language')">Regenerate</button>
       </div>
     </div>
@@ -903,12 +915,11 @@
     <div class="paste-back">
       <div class="paste-back-header">
         <h3>Paste-back to Claude Code</h3>
-        <span class="framework-name">audience-segmentation</span>
       </div>
       <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
       <textarea id="pasteback-audiences" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
       <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('audiences')">Copy</button>
+        <button class="btn" onclick="copyPasteback('audiences')">Copy prompt</button>
         <button class="btn btn-primary" onclick="regeneratePasteback('audiences')">Regenerate</button>
       </div>
     </div>
@@ -920,12 +931,11 @@
     <div class="paste-back">
       <div class="paste-back-header">
         <h3>Paste-back to Claude Code</h3>
-        <span class="framework-name">buyer-persona</span>
       </div>
       <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
       <textarea id="pasteback-personas" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
       <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('personas')">Copy</button>
+        <button class="btn" onclick="copyPasteback('personas')">Copy prompt</button>
         <button class="btn btn-primary" onclick="regeneratePasteback('personas')">Regenerate</button>
       </div>
     </div>
@@ -937,12 +947,11 @@
     <div class="paste-back">
       <div class="paste-back-header">
         <h3>Paste-back to Claude Code</h3>
-        <span class="framework-name">competitive-battle-card</span>
       </div>
       <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
       <textarea id="pasteback-market" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
       <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('market')">Copy</button>
+        <button class="btn" onclick="copyPasteback('market')">Copy prompt</button>
         <button class="btn btn-primary" onclick="regeneratePasteback('market')">Regenerate</button>
       </div>
     </div>
@@ -954,12 +963,11 @@
     <div class="paste-back">
       <div class="paste-back-header">
         <h3>Paste-back to Claude Code</h3>
-        <span class="framework-name">proof-points-audit</span>
       </div>
       <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
       <textarea id="pasteback-proof" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
       <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('proof')">Copy</button>
+        <button class="btn" onclick="copyPasteback('proof')">Copy prompt</button>
         <button class="btn btn-primary" onclick="regeneratePasteback('proof')">Regenerate</button>
       </div>
     </div>
@@ -971,12 +979,11 @@
     <div class="paste-back">
       <div class="paste-back-header">
         <h3>Paste-back to Claude Code</h3>
-        <span class="framework-name">design-principles</span>
       </div>
       <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
       <textarea id="pasteback-design" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
       <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('design')">Copy</button>
+        <button class="btn" onclick="copyPasteback('design')">Copy prompt</button>
         <button class="btn btn-primary" onclick="regeneratePasteback('design')">Regenerate</button>
       </div>
     </div>
@@ -1108,11 +1115,14 @@
     var FRAMEWORK_BY_FOLDER = {
       strategy: '5-components-positioning',
       language: 'brand-voice',
-      audiences: 'audience-segmentation',
+      audiences: null, // classification, not framework dispatch — see audience-taxonomy.md
       personas: 'buyer-persona',
       market: 'competitive-battle-card',
       proof: 'proof-points-audit',
       design: 'design-principles'
+    };
+    var DEEPEN_FURTHER_BY_FOLDER = {
+      personas: 'jobs-to-be-done' // Moesta-flavored motivation lens layered on top of buyer-persona
     };
     var FRAMEWORK_TARGET = {
       strategy: BRAND_FOLDER_PATH + '/strategy/positioning.md',
@@ -1150,7 +1160,8 @@
     function cardId(card) { return card.getAttribute('data-id') || '?'; }
 
     function buildPasteBack(folder) {
-      var framework = FRAMEWORK_BY_FOLDER[folder] || folder;
+      var framework = FRAMEWORK_BY_FOLDER[folder];
+      var deepenFurther = DEEPEN_FURTHER_BY_FOLDER[folder];
       var target = FRAMEWORK_TARGET[folder] || BRAND_FOLDER_PATH + '/' + folder + '/';
       var note = FRAMEWORK_NOTE[folder] || '';
       var cards = document.querySelectorAll('.oq-card[data-folder="' + folder + '"]');
@@ -1177,9 +1188,17 @@
       });
 
       var lines = [];
-      lines.push('Run /aligned:use-framework ' + framework + ' in regular mode' + note + ' with');
-      lines.push('this executive pre-review applied to the existing auto-mode draft at');
-      lines.push(target + '.');
+      if (framework) {
+        lines.push('Run /aligned:use-framework ' + framework + ' in regular mode' + note + ' with');
+        lines.push('this executive pre-review applied to the existing auto-mode draft at');
+        lines.push(target + '.');
+      } else {
+        lines.push('Apply this executive pre-review directly to the auto-mode draft at');
+        lines.push(target + '.');
+        lines.push('No framework dispatch — this area is populated via classification against');
+        lines.push('`frameworks/reverse-engineered-brand/audience-taxonomy.md`. Update the slice');
+        lines.push('files directly based on the approved/rejected classifications below.');
+      }
       lines.push('');
 
       if (approved.length) {
@@ -1228,7 +1247,15 @@
         lines.push('');
       }
 
-      lines.push("Resume the framework's WAIT-gated interactive flow from this state.");
+      if (framework) {
+        lines.push("Resume the framework's WAIT-gated interactive flow from this state.");
+      } else {
+        lines.push("Update the slice files in the audiences/ folder to reflect the approved/rejected classifications above. Mark the corresponding OQs resolved in `brand/CLAUDE.md § Open Questions`.");
+      }
+      if (deepenFurther) {
+        lines.push('');
+        lines.push('After this completes, optionally run `/aligned:use-framework ' + deepenFurther + '` to add the Moesta-flavored "what job is each persona hiring this product to do?" lens.');
+      }
       return lines.join('\n');
     }
 
@@ -1432,6 +1459,19 @@
       });
     }
 
+    // Static fallback descriptions — used only when a folder lacks a brand-specific summary.
+    // The orchestrator should populate folders[].summary during PHASE 3 aggregation; these
+    // generic strings exist so the UI degrades gracefully on legacy fixtures.
+    var AREA_DESCRIPTIONS_FALLBACK = {
+      strategy: "How the brand is positioned in the market — its category, point of differentiation, and the core narrative.",
+      language: "The brand's voice, tone, and messaging vocabulary across every customer-facing surface.",
+      audiences: "Which payer segments and procurement channels the brand operates in.",
+      personas: "The specific buyer and user roles inside each audience and the jobs they hire the product to do.",
+      market: "The competitive landscape — named alternatives and the behavioral defaults the brand displaces.",
+      proof: "Case studies, metrics, customer quotes, certifications, clinical evidence, and compliance posture.",
+      design: "The visual system — color palette, typography, layout principles, and design tokens."
+    };
+
     function renderSectionsAtAGlance() {
       var el = document.getElementById('sections-at-a-glance');
       if (!el) return;
@@ -1444,20 +1484,20 @@
       var ul = ce('ul', 'section-list');
       folders.forEach(function(f) {
         var sc = statusClass(f.status);
-        var badge = f.status === 'GAP' ? 'GAP — no owning framework' :
-          (f.status + (f.p0_count ? ' — ' + f.p0_count + ' P0 open' : ''));
-        var li = ce('li');
-        li.appendChild(ap(ce('span', 'label'), tx(f.label || f.id)));
+        var badge = f.status === 'GAP' ? 'No owning framework' : (f.status || '—');
+        var li = sa(ce('li'), { role: 'link', tabindex: '0' });
+        li.addEventListener('click', function() { switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        li.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        });
+        var labelCol = ce('div', 'section-label-col');
+        var labelEl = ce('span', 'label section-link');
+        labelEl.appendChild(tx(f.label || f.id));
+        labelCol.appendChild(labelEl);
+        var summary = f.summary || AREA_DESCRIPTIONS_FALLBACK[f.id];
+        if (summary) labelCol.appendChild(ap(ce('p', 'section-desc'), tx(summary)));
+        li.appendChild(labelCol);
         li.appendChild(ap(ce('span', 'status-badge ' + sc), tx(badge)));
-        if (f.framework_dispatches && f.framework_dispatches.length) {
-          var sub = ce('ul');
-          f.framework_dispatches.forEach(function(d) {
-            var fname = d.fills.replace(/^.*\//, '').replace(/\.md$/, '');
-            fname = fname.charAt(0).toUpperCase() + fname.slice(1);
-            sub.appendChild(ap(ce('li'), ap(ce('span', 'label'), tx(fname)), ap(ce('span', 'status-badge ' + sc), tx(f.status || ''))));
-          });
-          li.appendChild(sub);
-        }
         ul.appendChild(li);
       });
       el.appendChild(ul);
@@ -1468,16 +1508,29 @@
       var impact = q.impact || 'P2';
       var confLabel = (q.confidence || 'low').toUpperCase().replace('MEDIUM', 'MED');
       var bodyText = kind === 'assumption' ? (q.inferred_value || q.question || '') : (q.question || q.inferred_value || '');
-      var card = sa(ce('div', 'oq-card'), { 'data-id': q.global_id || q.id, 'data-folder': folderId, 'data-kind': kind });
+      var cardAttrs = { 'data-id': q.global_id || q.id, 'data-folder': folderId, 'data-kind': kind };
+      if (kind === 'assumption') cardAttrs['data-state'] = 'approved';
+      var card = sa(ce('div', 'oq-card'), cardAttrs);
       var hdr = ce('div', 'oq-card-header');
       hdr.appendChild(ap(ce('span', 'oq-id'), tx(q.global_id || q.id)));
       hdr.appendChild(chip(impact, 'pri ' + priClass(impact)));
       hdr.appendChild(chip('conf: ' + confLabel, confClass(q.confidence || 'low')));
-      hdr.appendChild(chip(q.file || '', 'chip-file'));
       card.appendChild(hdr);
       card.appendChild(ap(ce('p', 'oq-body'), tx(bodyText)));
       if (kind === 'question' && q.inferred_value) {
         card.appendChild(ap(ce('div', 'oq-best-guess'), ap(ce('strong'), tx('Best guess: ')), tx(q.inferred_value)));
+      }
+      if (q.why_it_matters) {
+        card.appendChild(ap(ce('div', 'oq-why'),
+          ap(ce('strong'), tx('Why this matters: ')),
+          tx(q.why_it_matters)
+        ));
+      }
+      if (q.rationale) {
+        card.appendChild(ap(ce('div', 'oq-rationale'),
+          ap(ce('strong'), tx('What the sources show: ')),
+          tx(q.rationale)
+        ));
       }
       if (q.evidence && q.evidence.length) {
         card.appendChild(ap(ce('p', 'oq-evidence'), ap(ce('strong'), tx('Evidence: ')), tx(q.evidence.join(', '))));
@@ -1495,16 +1548,6 @@
       var inputCls = kind === 'assumption' ? 'oq-inline-input input-correction' : 'oq-inline-input input-answer';
       var inputLbl = kind === 'assumption' ? "What's the correction?" : 'Your answer';
       card.appendChild(ap(ce('div', inputCls), ap(ce('label'), tx(inputLbl)), ce('textarea')));
-      var details = ce('details', 'oq-context');
-      details.appendChild(ap(ce('summary'), tx('Context')));
-      if (q.deepen_with || q.framework_slot) {
-        var meta = ce('div', 'oq-context-meta');
-        if (q.deepen_with) meta.appendChild(chip('deepen: ' + q.deepen_with, 'chip-deepen'));
-        if (q.framework_slot) meta.appendChild(chip('slot: ' + q.framework_slot, 'chip-slot'));
-        details.appendChild(meta);
-      }
-      if (q.why_it_matters) details.appendChild(ap(ce('p'), tx(q.why_it_matters)));
-      card.appendChild(details);
       return card;
     }
 
@@ -1548,13 +1591,28 @@
       renderExecNarrative();
       renderExecSnapshot();
       renderExecConfidenceCards();
-      renderStrengthsGaps();
       renderBehavioralAlternatives();
       renderCompetitorCards();
-      renderFocusTable();
       renderSectionsAtAGlance();
       ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
         renderFolderPanel(id);
+      });
+    }
+
+    function attachCardClickToExpand() {
+      document.querySelectorAll('.oq-card').forEach(function(card) {
+        if (card.dataset.clickWired === 'true') return;
+        card.dataset.clickWired = 'true';
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('.oq-actions, .oq-inline-input, button, a, textarea, input, label')) return;
+          card.classList.toggle('context-open');
+        });
+      });
+    }
+
+    function rebuildAllPastebacks() {
+      ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
+        rebuildPasteBack(id);
       });
     }
 
@@ -1608,8 +1666,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       renderAll();
       addChipTooltips();
-      moveJargonChipsIntoContext();
       syncInitialSelectedStates();
+      rebuildAllPastebacks();
       // Wire inline input edits so paste-back stays current
       document.querySelectorAll('.oq-inline-input textarea').forEach(function(ta) {
         ta.addEventListener('input', function() {
@@ -1621,23 +1679,14 @@
       document.querySelectorAll('.paste-back textarea').forEach(function(ta) {
         ta.addEventListener('input', function() { ta.dataset.dirty = 'true'; });
       });
-      // Wire Overview "Copy command" buttons
-      document.querySelectorAll('.focus-table .btn-mini[data-target]').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var targetId = btn.dataset.target;
-          var ta = document.getElementById(targetId);
-          if (!ta) return;
-          copyToClipboard(ta.value, btn);
-        });
-      });
     });
 
     // Already loaded? Run now (covers cases where DOMContentLoaded already fired)
     if (document.readyState !== 'loading') {
       renderAll();
       addChipTooltips();
-      moveJargonChipsIntoContext();
       syncInitialSelectedStates();
+      rebuildAllPastebacks();
     }
   </script>
 

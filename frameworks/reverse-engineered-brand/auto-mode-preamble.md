@@ -33,12 +33,16 @@ For every WAIT gate you skip, you MUST emit an assumption record capturing what 
 | Field | Type | Description |
 |---|---|---|
 | `framework_slot` | string | The slot id of the PHASE this assumption belongs to (see slot vocabulary in `open-questions-schema.md`) |
-| `inferred_value` | string\|null | What value you inferred for the gap; null if no inference is possible |
+| `inferred_value` | string\|null | A **complete declarative sentence** stating what you inferred — e.g. `"The brand's primary competitor is manual spreadsheet dispatch, not a named SaaS product."` Not `"spreadsheets"` or sentence fragments. Null only if no inference is possible. |
 | `confidence` | enum | `high` — strong evidence supports the inference; `medium` — partial evidence, plausible; `low` — insufficient evidence, inference is a guess |
 | `evidence` | array | Typed-prefix references supporting the inference, e.g. `["source:#1", "source:#3"]`. Empty array if no evidence. |
 | `impact` | enum | `P0` — blocks producing a usable draft; `P1` — degrades draft quality; `P2` — cosmetic or low-stakes |
+| `why_it_matters` | string | **2-3 sentences** explaining downstream stakes if this inference is wrong. Cover (a) what specifically breaks downstream, (b) which surfaces propagate the error, (c) the cost of being wrong vs. confirming. **One-sentence rationales are a schema violation.** |
+| `rationale` | string | **2-3 sentences** explaining HOW the inference was derived from the source material. Cover (a) what the sources show, (b) where evidence converges or diverges, (c) what was assumed to bridge gaps. Quote a key phrase from the source when available. **One-sentence rationales are a schema violation.** |
 
 Emit assumption records as the `open_questions` array in the slice's OQ JSON output (see schema reference below).
+
+**Why these are required:** the executive reviewing the auto-mode output makes Approve/Reject decisions on each assumption card without re-reading every source. The card must show enough context — what was inferred, why it was inferred, why it matters — for that decision to be informed. A one-sentence `why_it_matters` plus a fragmentary `inferred_value` does not meet that bar.
 
 ---
 

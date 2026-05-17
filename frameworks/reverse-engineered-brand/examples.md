@@ -266,11 +266,11 @@ After the build, `brand/CLAUDE.md § Next Steps to Deepen` lists every slice wit
 - `strategy/narrative.md` → run `/aligned:use-framework strategic-narrative` for a deeper, interactive pass
 - `language/messaging.md` → run `/aligned:use-framework messaging-distillation` for a deeper, interactive pass
 - `language/voice.md` → run `/aligned:use-framework brand-voice` for a deeper, interactive pass
-- `personas/vp-ops.md` → run `/aligned:use-framework buyer-persona` for a deeper, interactive pass
+- `personas/vp-ops.md` → run `/aligned:use-framework buyer-persona` for a deeper, interactive pass; then `/aligned:use-framework jobs-to-be-done` to add the motivation lens
 - `market/competitive.md` → run `/aligned:use-framework competitive-battle-card` for a deeper, interactive pass
 - `market/alternatives.md` → run `/aligned:use-framework 5-components-positioning` (Component 1 is the canonical source)
 - `proof/proof-points.md` → run `/aligned:use-framework proof-points-audit` for a deeper, interactive pass
-- `audiences/channels/employer.md` → GAP — no framework owns this slice; synthesis is ad-hoc. Consider commissioning a `channel-strategy` framework.
+- `audiences/channels/employer.md`, `audiences/segments/medicaid.md` → Classified against `audience-taxonomy.md` (segments and channels are exogenous in digital health — no framework needed). To revise, edit the canonical taxonomy or confirm/correct the classification OQs in `review.html`.
 ```
 
 > Every slice in the folder appears here. The user never has to guess which framework to run; the mapping is explicit and authoritative.
