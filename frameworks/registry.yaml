@@ -22,6 +22,7 @@ frameworks:
     category: leadership
     domains: [accountability, self-awareness, conscious-leadership]
     use_when: "someone is blaming others or external circumstances for their situation and needs to reclaim agency"
+    deliverable_type: decision
 
   - id: 5-components-positioning
     name: "5 Components of Positioning"
@@ -32,6 +33,7 @@ frameworks:
     use_when: "a business needs to define or refine its market positioning from scratch using a structured methodology"
     required_documents: ["positioning statement"]
     helpful_documents: ["competitive landscape", "customer research"]
+    deliverable_type: content
 
   - id: 5-step-process
     name: "5-Step Process"
@@ -41,6 +43,7 @@ frameworks:
     domains: [goal-setting, problem-solving, personal-development, decision-making]
     use_when: "someone wants a systematic process for setting goals, identifying problems, diagnosing root causes, designing solutions, and executing"
     helpful_documents: ["business goals"]
+    deliverable_type: plan
 
   - id: 6-step-process
     name: "6-Step Process"
@@ -50,6 +53,7 @@ frameworks:
     domains: [goal-setting, problem-solving, operational-planning, mindset]
     use_when: "someone wants a systematic process for setting goals, diagnosing problems, designing solutions, and executing with mindset alignment"
     helpful_documents: ["company strategy", "business goals"]
+    deliverable_type: plan
 
   - id: 8-cs-self-leadership
     name: "8 C's of Self-Leadership"
@@ -58,6 +62,7 @@ frameworks:
     category: psychology
     domains: [self-leadership, internal-family-systems, self-awareness, emotional-regulation]
     use_when: "someone wants to assess their current state of Self energy or check whether they are leading from Self versus a part"
+    deliverable_type: analysis
 
   - id: 80-20-audit
     name: "an 80/20 Audit"
@@ -67,6 +72,7 @@ frameworks:
     domains: [productivity, prioritization, time-management, elimination]
     use_when: "someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results"
     helpful_documents: ["business goals"]
+    deliverable_type: analysis
 
   - id: abcde-reframe
     name: "ABCDE Reframe"
@@ -75,6 +81,7 @@ frameworks:
     category: psychology
     domains: [cognitive-reframing, optimism, resilience, mental-health]
     use_when: "someone is caught in pessimistic thinking patterns and needs a structured method to dispute and reframe negative beliefs"
+    deliverable_type: decision
 
   - id: above-below-the-line
     name: "Above/Below the Line"
@@ -83,6 +90,7 @@ frameworks:
     category: leadership
     domains: [conscious-leadership, self-awareness, emotional-regulation, reactivity]
     use_when: "someone is reactive or defensive and needs to check whether they are operating from above or below the line"
+    deliverable_type: decision
 
   - id: accusation-audit
     name: "an Accusation Audit"
@@ -91,6 +99,7 @@ frameworks:
     category: negotiation
     domains: [negotiation, conflict-resolution, communication, persuasion]
     use_when: "someone is entering a conversation where the other party likely has negative assumptions and needs to preemptively defuse them"
+    deliverable_type: content
 
   - id: act-flexibility
     name: "ACT Flexibility"
@@ -99,6 +108,7 @@ frameworks:
     category: psychology
     domains: [acceptance, mindfulness, values, psychological-flexibility]
     use_when: "someone is stuck in rigid thinking or avoidance patterns and needs to build flexibility through acceptance and committed action"
+    deliverable_type: plan
 
   - id: audience-first-business-model
     name: "the Audience-First Business Model"
@@ -108,6 +118,7 @@ frameworks:
     domains: [course-creation, audience-building, validation, business-model]
     use_when: "someone wants to create a course or digital product and needs to validate demand by building an audience first"
     helpful_documents: ["content strategy", "business goals"]
+    deliverable_type: plan
 
   - id: autonomic-fatigue-vs-training-fatigue
     name: "Autonomic Fatigue vs Training Fatigue"
@@ -116,6 +127,7 @@ frameworks:
     category: health-autonomic
     domains: [autonomic-dysfunction, exercise-physiology, recovery, fatigue-management]
     use_when: "someone with autonomic dysfunction needs to distinguish whether their fatigue is autonomic or training-related to adjust their recovery strategy"
+    deliverable_type: analysis
 
   - id: autonomic-testing-interpretation
     name: "the Autonomic Testing Interpretation framework"
@@ -124,6 +136,7 @@ frameworks:
     category: health-autonomic
     domains: [autonomic-testing, clinical-interpretation, diagnostic-reasoning]
     use_when: "someone has autonomic test results and needs help interpreting what they mean clinically"
+    deliverable_type: analysis
 
   - id: batched-content-system
     name: "the Batched Content Creation System"
@@ -133,6 +146,7 @@ frameworks:
     domains: [content-creation, productivity, social-media, batch-processing]
     use_when: "someone struggles with consistent content creation and needs a system for batching production efficiently"
     helpful_documents: ["content strategy"]
+    deliverable_type: plan
 
   - id: believability-weighted-decision-making
     name: "Believability-Weighted Decision Making"
@@ -141,6 +155,7 @@ frameworks:
     category: strategy
     domains: [decision-making, team-dynamics, meritocracy, collective-intelligence]
     use_when: "a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise"
+    deliverable_type: decision
 
   - id: bio-promise-alignment
     name: "the Bio-Promise Alignment Framework"
@@ -150,6 +165,7 @@ frameworks:
     domains: [instagram, profile-optimization, content-alignment, conversion]
     use_when: "someone's Instagram bio promises one thing but their content delivers another, causing follower drop-off"
     helpful_documents: ["content strategy", "positioning statement"]
+    deliverable_type: analysis
 
   - id: braving-trust-inventory
     name: "BRAVING Trust Inventory"
@@ -158,6 +174,7 @@ frameworks:
     category: leadership
     domains: [trust, relationships, vulnerability, team-culture]
     use_when: "someone needs to assess the state of trust in a relationship or team using a structured framework"
+    deliverable_type: analysis
 
   - id: build-measure-learn
     name: "Build-Measure-Learn"
@@ -167,6 +184,7 @@ frameworks:
     domains: [lean-startup, experimentation, product-development, validated-learning]
     use_when: "a team needs to design a rapid learning cycle for a product initiative to validate assumptions quickly"
     helpful_documents: ["product description", "customer research"]
+    deliverable_type: plan
 
   - id: calibrated-questions
     name: "Calibrated Questions"
@@ -175,6 +193,7 @@ frameworks:
     category: negotiation
     domains: [negotiation, influence, communication, problem-solving]
     use_when: "someone needs to steer a negotiation or conversation by asking how/what questions that shift the problem to the other party"
+    deliverable_type: content
 
   - id: cardiac-deconditioning-model
     name: "Cardiac Deconditioning Model"
@@ -183,6 +202,7 @@ frameworks:
     category: health-autonomic
     domains: [POTS, cardiac-rehabilitation, exercise-prescription, deconditioning]
     use_when: "someone with POTS needs to understand the cardiac deconditioning hypothesis and exercise as a primary treatment pathway"
+    deliverable_type: analysis
 
   - id: cars
     name: "CARs (Controlled Articular Rotations)"
@@ -191,6 +211,7 @@ frameworks:
     category: health-movement
     domains: [joint-health, mobility, daily-practice, movement-maintenance]
     use_when: "someone wants a daily joint maintenance routine to assess and maintain articular health and range of motion"
+    deliverable_type: plan
 
   - id: cec-method
     name: "the CEC Method"
@@ -200,6 +221,7 @@ frameworks:
     domains: [instagram, content-strategy, engagement, conversion]
     use_when: "someone posts on Instagram without a system and needs a content-to-conversion pathway"
     helpful_documents: ["content strategy", "product description"]
+    deliverable_type: plan
 
   - id: choice-point
     name: "Choice Point"
@@ -208,6 +230,7 @@ frameworks:
     category: psychology
     domains: [decision-making, values, mindfulness, behavioral-choice]
     use_when: "someone faces a difficult moment and needs to choose between moving toward their values or away from discomfort"
+    deliverable_type: decision
 
   - id: clearing-model
     name: "The Clearing Model to resolve relationship tensions"
@@ -216,6 +239,7 @@ frameworks:
     category: leadership
     domains: [conflict-resolution, communication, conscious-leadership, relationships]
     use_when: "two people have unresolved tension and need a structured process to clear it without blame"
+    deliverable_type: plan
 
   - id: cognitive-friction-audit
     name: "the Cognitive Friction Audit"
@@ -225,6 +249,7 @@ frameworks:
     domains: [behavioral-science, UX, conversion-optimization, decision-architecture]
     use_when: "a product or page has high drop-off and someone needs to identify and remove cognitive friction points in the user journey"
     helpful_documents: ["customer research", "product description"]
+    deliverable_type: analysis
 
   - id: community-amplification
     name: "the Community Amplification Framework"
@@ -234,6 +259,7 @@ frameworks:
     domains: [community-building, word-of-mouth, audience-engagement, advocacy]
     use_when: "someone has an audience but needs to turn passive consumers into active advocates who share and promote their content"
     helpful_documents: ["content strategy"]
+    deliverable_type: plan
 
   - id: compassionate-inquiry
     name: "Compassionate Inquiry"
@@ -242,6 +268,7 @@ frameworks:
     category: psychology
     domains: [trauma, self-inquiry, emotional-healing, curiosity]
     use_when: "someone presents surface-level distress and needs to explore the deeper emotional patterns underneath with compassion"
+    deliverable_type: analysis
 
   - id: composite-autonomic-severity-score
     name: "the Composite Autonomic Severity Score (CASS) framework"
@@ -250,6 +277,7 @@ frameworks:
     category: health-autonomic
     domains: [autonomic-testing, severity-grading, diagnostic-criteria, clinical-assessment]
     use_when: "a clinician needs to grade autonomic dysfunction severity by integrating multiple test modalities"
+    deliverable_type: analysis
 
   - id: content-inc-model
     name: "the Content Inc"
@@ -258,6 +286,7 @@ frameworks:
     category: content-strategy
     domains: [content-marketing, audience-building, business-model, content-first]
     use_when: "someone wants to build a business by establishing a content platform and audience before creating products"
+    deliverable_type: plan
 
   - id: creator-experimentation-protocol
     name: "the Creator Experimentation Protocol"
@@ -267,6 +296,7 @@ frameworks:
     domains: [experimentation, content-testing, creator-business, metrics]
     use_when: "a creator needs to test content or business ideas systematically before committing resources to scale"
     helpful_documents: ["content strategy", "business goals"]
+    deliverable_type: plan
 
   - id: creator-flywheel
     name: "the Creator Flywheel framework"
@@ -276,6 +306,7 @@ frameworks:
     domains: [creator-business, flywheel-growth, platform-independence, sustainability]
     use_when: "a creator wants to build a self-reinforcing business system that compounds over time and doesn't depend on any single platform"
     helpful_documents: ["content strategy", "business goals"]
+    deliverable_type: plan
 
   - id: dbt-wise-mind
     name: "DBT Wise Mind"
@@ -284,6 +315,7 @@ frameworks:
     category: psychology
     domains: [emotional-regulation, mindfulness, dialectical-thinking, balance]
     use_when: "someone is making decisions from pure emotion or pure logic and needs to find the balance point of wise mind"
+    deliverable_type: decision
 
   - id: dear-man
     name: "DEAR MAN"
@@ -292,6 +324,7 @@ frameworks:
     category: psychology
     domains: [assertiveness, communication, interpersonal-effectiveness, boundaries]
     use_when: "someone needs to prepare for a difficult conversation where they must assert their needs clearly and effectively"
+    deliverable_type: content
 
   - id: depth-over-breadth-strategy
     name: "the Depth Over Breadth Content Strategy"
@@ -301,6 +334,7 @@ frameworks:
     domains: [content-strategy, niche-focus, thought-leadership, shareability]
     use_when: "a creator is spread too thin across topics and needs to go deeper on fewer subjects for more impact"
     helpful_documents: ["content strategy"]
+    deliverable_type: decision
 
   - id: design-principles
     name: "Design Principles"
@@ -309,6 +343,7 @@ frameworks:
     category: strategy
     domains: [product-design, simplicity, user-experience, aesthetics]
     use_when: "someone needs guiding design principles for a product that prioritize simplicity, elegance, and user experience"
+    deliverable_type: content
 
   - id: directional-susceptibility
     name: "Directional Susceptibility to Movement (DSM) assessment"
@@ -317,6 +352,7 @@ frameworks:
     category: health-movement
     domains: [movement-assessment, injury-prevention, pain-patterns, biomechanics]
     use_when: "someone has pain or injury risk related to habitual movement patterns and needs to identify directional susceptibility"
+    deliverable_type: analysis
 
   - id: dm-relationship-cultivation
     name: "the DM Relationship Cultivation System"
@@ -326,6 +362,7 @@ frameworks:
     domains: [instagram, direct-messaging, sales-conversations, relationship-building]
     use_when: "someone wants to convert Instagram engagement into sales conversations through authentic DM outreach"
     helpful_documents: ["content strategy"]
+    deliverable_type: plan
 
   - id: do-things-that-dont-scale
     name: "Do Things That Don't Scale"
@@ -335,6 +372,7 @@ frameworks:
     domains: [early-stage, customer-acquisition, founder-hustle, validation]
     use_when: "a founder is in the earliest stage and needs to identify the unscalable manual things they should be doing to get traction"
     helpful_documents: ["product description", "current user count or traction metrics"]
+    deliverable_type: plan
 
   - id: earbuds-recommendation-model
     name: "the EarBuds Recommendation Model"
@@ -344,6 +382,7 @@ frameworks:
     domains: [podcast-discovery, curation, recommendation-systems, community]
     use_when: "someone wants to build a recommendation-driven content platform using human curation and daily habit formation"
     helpful_documents: ["content strategy"]
+    deliverable_type: plan
 
   - id: earlyvangelists
     name: "Earlyvangelists"
@@ -353,6 +392,7 @@ frameworks:
     domains: [customer-validation, early-adopters, product-market-fit, sales]
     use_when: "a startup needs to distinguish between customers who will actually pay versus those giving polite but uncommitted feedback"
     helpful_documents: ["customer research", "product description"]
+    deliverable_type: analysis
 
   - id: earnestness-filter
     name: "Earnestness Filter"
@@ -362,6 +402,7 @@ frameworks:
     domains: [founder-mindset, authenticity, self-assessment, motivation]
     use_when: "a founder needs to honestly assess whether they are genuinely committed to their startup or just performing the role"
     helpful_documents: ["product description", "founding story or motivation"]
+    deliverable_type: analysis
 
   - id: ears-framework
     name: "the EARS Framework"
@@ -371,6 +412,7 @@ frameworks:
     domains: [podcast-growth, retention, revenue, sustainable-growth]
     use_when: "a podcaster is chasing download numbers and needs to refocus on retention and revenue as growth levers"
     helpful_documents: ["content strategy", "business goals"]
+    deliverable_type: analysis
 
   - id: energy-audit
     name: "Energy Audit"
@@ -379,6 +421,7 @@ frameworks:
     category: psychology
     domains: [energy-management, performance, well-being, holistic-health]
     use_when: "someone feels depleted or imbalanced and needs to assess which energy dimension — physical, emotional, mental, or spiritual — needs attention"
+    deliverable_type: analysis
 
   - id: engagement-pyramid
     name: "the Engagement Pyramid"
@@ -388,6 +431,7 @@ frameworks:
     domains: [audience-engagement, community-building, retention, advocacy]
     use_when: "someone has an audience but most people are passive consumers and they need a strategy to deepen engagement"
     helpful_documents: ["content strategy"]
+    deliverable_type: plan
 
   - id: enneagram-typing
     name: "Enneagram Typing"
@@ -396,6 +440,7 @@ frameworks:
     category: psychology
     domains: [personality-typing, self-awareness, motivational-patterns, enneagram]
     use_when: "someone wants to discover their Enneagram type through a guided conversation exploring their core motivations"
+    deliverable_type: analysis
 
   - id: fear-setting
     name: "Fear-Setting"
@@ -404,6 +449,7 @@ frameworks:
     category: psychology
     domains: [decision-making, fear, stoicism, risk-assessment]
     use_when: "someone is paralyzed by fear about a decision and needs to systematically define, prevent, and repair the worst-case scenarios"
+    deliverable_type: decision
 
   - id: finding-the-crux
     name: "Finding the Crux"
@@ -413,6 +459,7 @@ frameworks:
     domains: [strategic-diagnosis, problem-identification, focus, critical-thinking]
     use_when: "someone faces a complex strategic situation and needs to identify the single most important challenge to address first"
     helpful_documents: ["company strategy"]
+    deliverable_type: analysis
 
   - id: first-principles-thinking
     name: "First Principles Thinking"
@@ -421,6 +468,7 @@ frameworks:
     category: strategy
     domains: [problem-solving, innovation, reasoning, mental-models]
     use_when: "someone is stuck in conventional thinking and needs to decompose a problem to its fundamental truths to find novel solutions"
+    deliverable_type: analysis
 
   - id: first-seven-reels
     name: "the Your First 7 Reels framework"
@@ -430,6 +478,7 @@ frameworks:
     domains: [instagram-reels, customer-journey, video-content, conversion]
     use_when: "someone is starting with Instagram Reels and needs a strategic sequence that maps content to the buyer journey"
     helpful_documents: ["content strategy", "product description"]
+    deliverable_type: plan
 
   - id: flexion-intolerance-assessment
     name: "the Flexion Intolerance Assessment"
@@ -438,6 +487,7 @@ frameworks:
     category: health-movement
     domains: [spine-health, pain-assessment, clinical-protocol, movement-modification]
     use_when: "someone has back pain and needs to determine if flexion is the provocative movement to guide treatment decisions"
+    deliverable_type: analysis
 
   - id: focus-through-saying-no
     name: "Focus Through Saying No"

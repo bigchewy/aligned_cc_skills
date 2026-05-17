@@ -624,7 +624,7 @@ git commit -m "docs(frameworks): document deliverable_type taxonomy and validate
 
 ---
 
-### Task 7: Classify frameworks batch 1 — first 50 entries (alphabetical by `id`)
+### ✅ Task 7: Classify frameworks batch 1 — first 50 entries (alphabetical by `id`)
 
 Add `deliverable_type` field to the first 50 framework entries in `frameworks/registry.yaml`. For each entry, judge based on the closing-phase output rule documented in Task 6.
 
