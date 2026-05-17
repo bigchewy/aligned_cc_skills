@@ -111,7 +111,7 @@ git commit -m "fix(frameworks): cap registry name fields at 60 chars for picker 
 
 ---
 
-### Task 2: Create `skills/_shared/framework-runner.md` with intake-gate parameter
+### ✅ Task 2: Create `skills/_shared/framework-runner.md` with intake-gate parameter
 
 Extract `use-framework/SKILL.md` Steps 4-5 (lines 55-74), Voice rules (76-79), and Composability (81-88) into a shared runner. Add a configurable `intake_gate_mode` parameter — `strict` (gate on missing `required_documents`, prompt user) or `advisory` (note missing, proceed). Default `advisory` preserves existing behavior; brainstorming wrapper will pass `strict`.
 
