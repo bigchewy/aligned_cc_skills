@@ -449,7 +449,7 @@ git commit -m "refactor(brand-voice): remove mode-detection WAITs"
 
 ---
 
-### Task 7: Remove mode-detection from messaging-distillation framework
+### ✅ Task 7: Remove mode-detection from messaging-distillation framework
 
 **Files:**
 - Modify: `frameworks/messaging-distillation/prompt.md` (delete mode-detection block at lines 29 + 39; delete orphan PHASE 11 reference at line 411; simplify PHASE 9 hand-off contract)

@@ -26,19 +26,15 @@ Each WAIT point is load-bearing. Skipping one means we're filling in your custom
 
 **IMPORTANT: This framework is interactive. Every WAIT point must pause for user input before the session continues.**
 
-**Mode detection:** At PHASE 1, confirm whether you are running standalone or as a sub-framework invoked by `reverse-engineered-brand`. This changes what PHASE 9 does. Ask the user once — do not assume.
-
 ---
 
 ### PHASE 1: Anchor in positioning
 
 Say:
 
-"Before we write a word of messaging, two orientation questions:
+"Before we write a word of messaging, one orientation question:
 
-**First — standalone or orchestrated?** Are you running this as a standalone session (I'll write the file directly to `brand/language/messaging.md` at the end), or is this being invoked as part of a `reverse-engineered-brand` session (I'll hand the assembled content back to the orchestrator)?
-
-**Second — let's anchor in your positioning.** Please share your `strategy/positioning.md` — or paste the five-component summary directly here. I'll paraphrase it back to you as the foundation for everything we build today. The five components I'm looking for:
+**Let's anchor in your positioning.** Please share your `strategy/positioning.md` — or paste the five-component summary directly here. I'll paraphrase it back to you as the foundation for everything we build today. The five components I'm looking for:
 
 1. **Target segment** — the specific buying committee or market segment you're positioning for
 2. **Competitive alternatives** — what those buyers currently use instead of you
@@ -407,14 +403,13 @@ depends_on:
 
 **Hand-off contract:**
 
-- **Standalone mode** (user confirmed at PHASE 1): Write the assembled file directly to `brand/language/messaging.md`. Confirm the path to the user. Say: "The messaging file is written to `brand/language/messaging.md`. Review it and flag any value claims where the evidence anchor is weaker than the claim warrants."
-- **Orchestrated mode** (invoked by `reverse-engineered-brand`): Do NOT write the file to disk. Instead, output the complete assembled markdown (frontmatter + body) inline in the conversation so the orchestrator can capture it for the atomic write in its own PHASE 11. Say: "Messaging assembly complete. Handing off to the orchestrator for file write."
+Write the assembled file directly to `brand/language/messaging.md`. Confirm the path to the user. Say: "The messaging file is written to `brand/language/messaging.md`. Review it and flag any value claims where the evidence anchor is weaker than the claim warrants."
 
 WAIT for user response before continuing.
 
 ---
 
-After the user reviews the assembled file (standalone mode) or confirms hand-off (orchestrated mode), offer:
+After the user reviews the assembled file, offer:
 
 "This messaging file is now at medium confidence — built from your positioning and what you've shared in this session. Three things that would raise it to high confidence:
 
