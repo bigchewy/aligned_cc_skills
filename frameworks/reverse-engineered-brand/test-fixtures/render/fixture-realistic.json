@@ -79,6 +79,11 @@
       ]
     }
   ],
+  "exec_summary": {
+    "raw_material": "We received 11 sources spanning a pitch deck, three sales call transcripts, the public marketing site, two competitor-alternatives pages, a partnership announcement, and an internal Slack export of positioning debate. Decks gave strong signal on category framing; transcripts revealed the buyer committee; the website was scarce on positioning — most copy is feature-led, not buyer-problem-led.",
+    "primary_research": "We identified 3 likely competitors from cross-source mention frequency and pulled public dossiers on each. The dossiers gave strong category-shape signal — every named competitor sells to integrated health systems, every one anchors on transport reliability or outcomes. Marley's specific differentiator within that category is less clear from public sources alone.",
+    "confidence_intro": "The strategy/positioning and personas drafts have the highest density of open questions and warrant first review."
+  },
   "behavioral_alternatives": [
     {
       "id": "BA-1",

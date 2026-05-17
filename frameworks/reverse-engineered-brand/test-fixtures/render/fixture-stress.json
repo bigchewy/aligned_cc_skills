@@ -80,6 +80,11 @@
       ]
     }
   ],
+  "exec_summary": {
+    "raw_material": "We received 20 sources including multiple pitch decks, sales call transcripts, the marketing site, product documentation, customer case studies, and competitive research notes. Coverage is extensive — most brand areas have multiple independent sources supporting confidence assessments.",
+    "primary_research": "We identified 5 competitors from cross-source mention frequency. Public dossiers were assembled for each covering positioning, ICP, channels, and voice. The competitive landscape is well-defined at the category level; differentiation gaps are documented as open questions.",
+    "confidence_intro": "Most areas have sufficient source coverage. Review the strategy and personas tabs first as they drive the most downstream output."
+  },
   "behavioral_alternatives": [
     {
       "id": "BA-1",

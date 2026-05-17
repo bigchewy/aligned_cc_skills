@@ -14,6 +14,11 @@
       ]
     }
   ],
+  "exec_summary": {
+    "raw_material": "We received 3 sources including a pitch deck and two sales call transcripts. Coverage is thin — key areas like pricing and buyer committee are not yet confirmed by independent sources.",
+    "primary_research": "No competitors were identified in the ingested sources. The competitive landscape section will be sparse until competitor dossiers are commissioned.",
+    "confidence_intro": "The strategy/positioning draft has the most open questions and should be reviewed first."
+  },
   "behavioral_alternatives": [
     {
       "id": "BA-1",
