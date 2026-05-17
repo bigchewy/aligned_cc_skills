@@ -1269,8 +1269,8 @@
       var comps = OPEN_QUESTIONS.competitors || [];
       var folders = OPEN_QUESTIONS.folders || [];
       var tiles = [
+        { num: OPEN_QUESTIONS.source_count != null ? OPEN_QUESTIONS.source_count : '—', label: 'sources mined' },
         { num: comps.length, label: 'competitors researched' },
-        { num: oqs.length, label: 'open questions total' },
         { num: oqs.filter(function(q) { return q.confidence !== 'low'; }).length, label: 'assumptions logged' },
         { num: oqs.filter(function(q) { return q.confidence === 'low'; }).length, label: 'questions flagged' },
         { num: folders.filter(function(f) { return f.framework_dispatches && f.framework_dispatches.length; }).length, label: 'frameworks ready to run' }
@@ -1407,7 +1407,7 @@
           addTd(null, ap(ce('span', 'pri ' + priClass('P0')), tx(f.p0_count || 0)));
           addTd(null, ap(ce('span', 'pri ' + priClass('P1')), tx(f.p1_count || 0)));
           addTd(null, ap(ce('span', 'pri ' + priClass('P2')), tx(f.p2_count || 0)));
-          addTd(null, null);
+          addTd(null, d.why_first ? tx(d.why_first) : null);
           var btn = sa(ap(ce('button', 'btn-mini'), tx('Copy command')), { 'data-target': 'pasteback-' + f.id });
           addTd(null, btn);
           tbody.appendChild(tr);

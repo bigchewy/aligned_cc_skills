@@ -1,5 +1,6 @@
 {
   "schema_version": "0.2.0",
+  "source_count": 3,
   "folders": [
     {
       "id": "strategy",
@@ -9,7 +10,7 @@
       "p1_count": 1,
       "p2_count": 1,
       "framework_dispatches": [
-        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md"}
+        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md", "why_first": "Anchors downstream messaging and positioning"}
       ]
     }
   ],

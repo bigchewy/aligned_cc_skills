@@ -1,5 +1,6 @@
 {
   "schema_version": "0.2.0",
+  "source_count": 11,
   "folders": [
     {
       "id": "strategy",
@@ -9,7 +10,7 @@
       "p1_count": 3,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md"}
+        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md", "why_first": "Anchors downstream messaging and competitive framing"}
       ]
     },
     {
@@ -20,7 +21,7 @@
       "p1_count": 2,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "brand-voice", "fills": "language/brand-voice.md"}
+        {"framework_id": "brand-voice", "fills": "language/brand-voice.md", "why_first": "Shapes all written content tone"}
       ]
     },
     {
@@ -41,7 +42,7 @@
       "p1_count": 2,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "buyer-persona", "fills": "personas/head-of-ops.md"}
+        {"framework_id": "buyer-persona", "fills": "personas/head-of-ops.md", "why_first": "Persona feeds messaging and sales pitch"}
       ]
     },
     {
@@ -52,7 +53,7 @@
       "p1_count": 2,
       "p2_count": 1,
       "framework_dispatches": [
-        {"framework_id": "strategic-narrative", "fills": "market/narrative.md"}
+        {"framework_id": "strategic-narrative", "fills": "market/narrative.md", "why_first": "Required by sales enablement and competitive context"}
       ]
     },
     {
@@ -63,7 +64,7 @@
       "p1_count": 2,
       "p2_count": 1,
       "framework_dispatches": [
-        {"framework_id": "proof-points-audit", "fills": "proof/claims.md"}
+        {"framework_id": "proof-points-audit", "fills": "proof/claims.md", "why_first": "Validates claims before going to market"}
       ]
     },
     {
@@ -74,7 +75,7 @@
       "p1_count": 2,
       "p2_count": 2,
       "framework_dispatches": [
-        {"framework_id": "design-principles", "fills": "design/principles.md"}
+        {"framework_id": "design-principles", "fills": "design/principles.md", "why_first": "Sets visual standards across all assets"}
       ]
     }
   ],
