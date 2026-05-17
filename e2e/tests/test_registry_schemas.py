@@ -171,13 +171,13 @@ class TestFrameworkRegistrySchema:
             f"Framework {slug}: expected advisor '{expected_advisor}', got '{entry['advisor']}'"
         )
 
-    def test_at_least_50_frameworks_have_deliverable_type(self):
+    def test_at_least_100_frameworks_have_deliverable_type(self):
         valid = {"content", "decision", "plan", "analysis"}
         with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
             data = yaml.safe_load(f)
         typed = [e for e in data["frameworks"] if "deliverable_type" in e]
-        assert len(typed) >= 50, f"only {len(typed)} entries have deliverable_type yet"
-        for e in typed[:50]:
+        assert len(typed) >= 100, f"only {len(typed)} entries have deliverable_type yet"
+        for e in typed[:100]:
             assert e["deliverable_type"] in valid, (
                 f"{e['id']} has invalid deliverable_type: {e['deliverable_type']}"
             )

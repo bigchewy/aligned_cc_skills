@@ -497,6 +497,7 @@ frameworks:
     domains: [focus, prioritization, elimination, discipline]
     use_when: "someone has too many projects or commitments and needs to ruthlessly cut to focus on what truly matters"
     helpful_documents: ["business goals"]
+    deliverable_type: decision
 
   - id: forever-promise
     name: "the Forever Promise Framework"
@@ -506,6 +507,7 @@ frameworks:
     domains: [subscription, membership, retention, value-proposition]
     use_when: "someone is building a subscription or membership business and needs to articulate the ongoing value commitment that keeps members"
     helpful_documents: ["strategy", "positioning"]
+    deliverable_type: content
 
   - id: four-market-types
     name: "Four Market Types"
@@ -515,6 +517,7 @@ frameworks:
     domains: [market-analysis, startup-strategy, competitive-positioning, market-entry]
     use_when: "a startup needs to identify whether they are entering an existing, resegmented, new, or clone market to set the right strategy"
     helpful_documents: ["competitive landscape", "market research"]
+    deliverable_type: analysis
 
   - id: four-neighborhoods
     name: "the Four Neighborhoods Framework"
@@ -524,6 +527,7 @@ frameworks:
     domains: [instagram, content-formats, platform-strategy, audience-behavior]
     use_when: "someone needs to understand how different Instagram formats serve different purposes and audiences"
     helpful_documents: ["content strategy"]
+    deliverable_type: analysis
 
   - id: four-quadrant-focus
     name: "Four-Quadrant Focus"
@@ -533,6 +537,7 @@ frameworks:
     domains: [product-strategy, portfolio-management, simplification, focus]
     use_when: "someone has a bloated product line and needs a 2x2 grid to simplify down to the essential offerings"
     helpful_documents: ["product description"]
+    deliverable_type: analysis
 
   - id: growth-hacking-process
     name: "the Growth Hacking Process"
@@ -542,6 +547,7 @@ frameworks:
     domains: [growth-hacking, experimentation, metrics, systematic-growth]
     use_when: "a product team needs a repeatable process for generating, prioritizing, testing, and scaling growth experiments"
     helpful_documents: ["product description", "business metrics"]
+    deliverable_type: plan
 
   - id: heart-rate-reserve-training-zones
     name: "establishing their Heart Rate Reserve training zones"
@@ -550,6 +556,7 @@ frameworks:
     category: health-autonomic
     domains: [exercise-prescription, heart-rate-training, autonomic-recovery, intensity-dosing]
     use_when: "someone with autonomic dysfunction needs personalized heart rate training zones for safe and effective exercise"
+    deliverable_type: plan
 
   - id: homer-vs-spock
     name: "the Homer vs Spock Framework"
@@ -559,6 +566,7 @@ frameworks:
     domains: [behavioral-science, decision-making, marketing-psychology, persuasion]
     use_when: "someone's marketing leads with features and logic and they need to understand why emotional appeal must come first"
     helpful_documents: ["customer research", "sales materials"]
+    deliverable_type: analysis
 
   - id: ice-prioritization
     name: "ICE Prioritization"
@@ -568,6 +576,7 @@ frameworks:
     domains: [prioritization, experimentation, growth, decision-making]
     use_when: "a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones"
     helpful_documents: ["business goals"]
+    deliverable_type: decision
 
   - id: idiot-index
     name: "the Idiot Index to identify cost reduction opportunities"
@@ -577,6 +586,7 @@ frameworks:
     domains: [cost-optimization, manufacturing, first-principles, efficiency]
     use_when: "someone needs to identify cost reduction opportunities by comparing current costs to theoretical minimums"
     helpful_documents: ["product description"]
+    deliverable_type: analysis
 
   - id: ifs-parts-work
     name: "IFS Parts Work"
@@ -585,6 +595,7 @@ frameworks:
     category: psychology
     domains: [internal-family-systems, parts-work, inner-conflict, self-therapy]
     use_when: "someone has conflicting internal voices or impulses and wants to understand and work with their parts"
+    deliverable_type: decision
 
   - id: integrative-piloting-process
     name: "the Integrative Piloting Process"
@@ -594,6 +605,7 @@ frameworks:
     domains: [course-creation, iterative-development, student-feedback, lean-education]
     use_when: "someone is building a course and wants to develop and deliver simultaneously using real student feedback"
     helpful_documents: ["product description", "customer research"]
+    deliverable_type: plan
 
   - id: jk5-content-pillars
     name: "the JK5 Content Pillars Method"
@@ -603,6 +615,7 @@ frameworks:
     domains: [content-pillars, social-media, brand-building, sales-content]
     use_when: "someone needs to define their core content topics to balance audience connection with revenue generation"
     helpful_documents: ["content strategy", "positioning statement"]
+    deliverable_type: content
 
   - id: jobs-to-be-done
     name: "Jobs to Be Done"
@@ -612,6 +625,7 @@ frameworks:
     domains: [customer-research, product-strategy, innovation, demand-analysis]
     use_when: "someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features"
     helpful_documents: ["customer research", "product description"]
+    deliverable_type: analysis
 
   - id: jolt-effect
     name: "the JOLT Effect"
@@ -621,6 +635,7 @@ frameworks:
     domains: [b2b-sales, enterprise-deals, deal-strategy, customer-indecision, late-stage-deals]
     use_when: "a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy"
     helpful_documents: ["deal notes", "stakeholder map", "discovery call transcripts"]
+    deliverable_type: plan
 
   - id: mobilizer-taxonomy
     name: "the Mobilizer Taxonomy"
@@ -630,6 +645,7 @@ frameworks:
     domains: [b2b-sales, enterprise-deals, stakeholder-mapping, discovery]
     use_when: "a complex B2B deal has multiple stakeholders and the rep needs to distinguish real consensus-builders from accessible-but-inert stakeholders, especially when a 'champion' feels responsive but the deal isn't advancing"
     helpful_documents: ["stakeholder map", "deal notes", "discovery call transcripts", "email threads with the buying committee"]
+    deliverable_type: analysis
 
   - id: kernel-of-good-strategy
     name: "building a complete strategy using the kernel"
@@ -639,6 +655,7 @@ frameworks:
     domains: [strategic-planning, diagnosis, guiding-policy, coherent-action]
     use_when: "someone's strategy is really just a list of goals and they need to build a real strategy with diagnosis, policy, and actions"
     helpful_documents: ["company strategy", "business goals"]
+    deliverable_type: plan
 
   - id: kinesiopathologic-model
     name: "the Kinesiopathologic Model (KPM)"
@@ -647,6 +664,7 @@ frameworks:
     category: health-movement
     domains: [movement-dysfunction, tissue-damage, repetitive-strain, biomechanics]
     use_when: "someone has chronic pain from repetitive movement and needs to understand how their habitual patterns cause tissue damage"
+    deliverable_type: analysis
 
   - id: landing-page-assembly
     name: "Landing Page Assembly"
@@ -655,6 +673,7 @@ frameworks:
     category: conversion
     domains: [landing-pages, conversion-optimization, copywriting, web-design]
     use_when: "someone needs to build or improve a landing page using a structured stage-by-stage assembly process"
+    deliverable_type: content
 
   - id: leadership-pipeline-passages
     name: "the Leadership Pipeline Passages"
@@ -663,6 +682,7 @@ frameworks:
     category: leadership
     domains: [leadership-development, career-transitions, management, organizational-design]
     use_when: "a leader is struggling at a new level and needs to understand what skills, time allocation, and values must shift"
+    deliverable_type: analysis
 
   - id: leap-of-faith-assumptions
     name: "Leap of Faith Assumptions"
@@ -672,6 +692,7 @@ frameworks:
     domains: [assumption-testing, validation, risk-reduction, lean-startup]
     use_when: "a startup needs to identify which untested assumptions are most critical to their business and design experiments to test them"
     helpful_documents: ["product description", "customer research"]
+    deliverable_type: plan
 
   - id: leopard-movement-hierarchy
     name: "the Leopard Movement Hierarchy"
@@ -680,6 +701,7 @@ frameworks:
     category: health-movement
     domains: [movement-progression, position-mechanics, athletic-performance, injury-prevention]
     use_when: "someone is adding speed or load to movement without proper position foundations and needs to reset their progression"
+    deliverable_type: plan
 
   - id: leveraged-learning
     name: "the Leveraged Learning framework"
@@ -689,6 +711,7 @@ frameworks:
     domains: [course-design, learning-outcomes, transformation, instructional-design]
     use_when: "someone is designing a course and needs to ensure it drives real transformation rather than passive content consumption"
     helpful_documents: ["product description"]
+    deliverable_type: plan
 
   - id: levine-protocol
     name: "the Levine Protocol"
@@ -697,6 +720,7 @@ frameworks:
     category: health-autonomic
     domains: [exercise-protocol, POTS-treatment, cardiovascular-reconditioning, structured-program]
     use_when: "someone with POTS or autonomic dysfunction needs a structured exercise reconditioning program"
+    deliverable_type: plan
 
   - id: living-into-values
     name: "Living Into Values"
@@ -705,6 +729,7 @@ frameworks:
     category: psychology
     domains: [values, self-awareness, behavior-change, authenticity]
     use_when: "someone knows their values abstractly but struggles to live them consistently in daily decisions and behavior"
+    deliverable_type: plan
 
   - id: load-velocity-relationship
     name: "the Load-Velocity Relationship"
@@ -713,6 +738,7 @@ frameworks:
     category: health-movement
     domains: [spine-safety, biomechanics, load-management, injury-prevention]
     use_when: "someone is lifting or moving in ways that combine high load with high velocity and needs to understand the spine safety tradeoff"
+    deliverable_type: analysis
 
   - id: management-level-progression
     name: "the Management Level Progression framework"
@@ -721,6 +747,7 @@ frameworks:
     category: leadership
     domains: [engineering-management, career-growth, leadership-skills, level-progression]
     use_when: "an engineering manager needs to understand what's expected at their current level or prepare for the next one"
+    deliverable_type: analysis
 
   - id: mcgill-big-3
     name: "the McGill Big 3"
@@ -729,6 +756,7 @@ frameworks:
     category: health-fitness
     domains: [core-stability, spine-health, exercise-protocol, motor-control]
     use_when: "someone needs a spine-safe core stability program that builds endurance without compromising spinal health"
+    deliverable_type: plan
 
   - id: message-magic-system
     name: "the Message Magic System"
@@ -738,6 +766,7 @@ frameworks:
     domains: [instagram, DM-automation, sales-funnels, ManyChat]
     use_when: "someone wants to automate Instagram DM conversations to convert engagement into sales using chatbot flows"
     helpful_documents: ["product description"]
+    deliverable_type: plan
 
   - id: movement-system-impairment
     name: "Movement System Impairment assessment"
@@ -746,6 +775,7 @@ frameworks:
     category: health-movement
     domains: [movement-assessment, pain-diagnosis, dysfunction-patterns, clinical-reasoning]
     use_when: "someone has chronic musculoskeletal pain and needs to identify the movement dysfunction pattern causing it"
+    deliverable_type: analysis
 
   - id: multi-system-approach-pots
     name: "Multi-System Approach to POTS"
@@ -754,6 +784,7 @@ frameworks:
     category: health-autonomic
     domains: [POTS, multi-system, diagnostic-assessment, treatment-planning]
     use_when: "someone with POTS needs a comprehensive assessment that goes beyond heart rate to address GI, neurological, and immune involvement"
+    deliverable_type: plan
 
   - id: one-one-one-one-method
     name: "the 1-1-1-1 Method"
@@ -763,6 +794,7 @@ frameworks:
     domains: [instagram, content-templates, simplification, revenue-system]
     use_when: "someone is overwhelmed by Instagram content creation and needs a minimalist system with one template per format"
     helpful_documents: ["content strategy", "product description"]
+    deliverable_type: plan
 
   - id: opposite-action
     name: "Opposite Action"
@@ -771,6 +803,7 @@ frameworks:
     category: psychology
     domains: [emotional-regulation, DBT, behavioral-change, impulse-management]
     use_when: "someone is being driven by an unhelpful emotional urge and needs to deliberately act opposite to it to regulate intensity"
+    deliverable_type: decision
 
   - id: origin-story-interview
     name: "Origin Story Interview"
@@ -779,6 +812,7 @@ frameworks:
     category: positioning
     domains: [positioning, storytelling, founder-narrative, brand-story]
     use_when: "someone needs to extract and articulate their origin story as a foundation for positioning and brand narrative"
+    deliverable_type: content
 
   - id: osmopressor-response
     name: "the Osmopressor Response Protocol"
@@ -787,6 +821,7 @@ frameworks:
     category: health-autonomic
     domains: [blood-pressure, non-pharmacologic, acute-intervention, orthostatic-hypotension]
     use_when: "someone with orthostatic hypotension needs an immediate non-drug intervention to support blood pressure"
+    deliverable_type: plan
 
   - id: pain-plus-reflection
     name: "Pain + Reflection = Progress"
@@ -795,6 +830,7 @@ frameworks:
     category: psychology
     domains: [resilience, learning-from-failure, reflection, personal-growth]
     use_when: "someone has experienced a painful failure and needs a structured way to extract lessons and turn it into growth"
+    deliverable_type: analysis
 
   - id: past-year-review
     name: "the Past Year Review (PYR)"
@@ -803,6 +839,7 @@ frameworks:
     category: strategy
     domains: [annual-review, reflection, goal-setting, life-design]
     use_when: "someone wants to review their past year systematically to make data-driven decisions about the next year"
+    deliverable_type: analysis
 
   - id: performance-standards-by-level
     name: "Performance Standards by Level"
@@ -811,6 +848,7 @@ frameworks:
     category: leadership
     domains: [performance-management, leadership-assessment, development-planning, organizational-design]
     use_when: "a leader's performance doesn't match their level and they need to identify which leadership passage they are actually operating at"
+    deliverable_type: analysis
 
   - id: perma-wellbeing
     name: "PERMA Wellbeing"
@@ -819,6 +857,7 @@ frameworks:
     category: psychology
     domains: [wellbeing, positive-psychology, life-satisfaction, flourishing]
     use_when: "someone wants to assess their overall wellbeing across the five dimensions of flourishing"
+    deliverable_type: analysis
 
   - id: personal-context-intake
     name: "Personal Context Intake"
@@ -827,6 +866,7 @@ frameworks:
     category: psychology
     domains: [intake-assessment, personal-history, context-gathering, coaching]
     use_when: "a new user needs an initial session to share their personal context, history, and goals before working with advisors"
+    deliverable_type: analysis
 
   - id: personal-credo
     name: "Personal Credo"
@@ -835,6 +875,7 @@ frameworks:
     category: psychology
     domains: [mission-statement, values, purpose, identity]
     use_when: "someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose"
+    deliverable_type: content
 
   - id: personal-resource-allocation
     name: "Personal Resource Allocation"
@@ -843,6 +884,7 @@ frameworks:
     category: strategy
     domains: [resource-allocation, priorities, life-strategy, time-management]
     use_when: "someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions"
+    deliverable_type: analysis
 
   - id: pillars-of-integrity
     name: "the Four Pillars of Integrity"
@@ -851,6 +893,7 @@ frameworks:
     category: leadership
     domains: [integrity, conscious-leadership, authenticity, self-assessment]
     use_when: "someone feels fragmented or out of alignment and needs to identify where their integrity is broken"
+    deliverable_type: analysis
 
   - id: pilot-program-methodology
     name: "the Pilot Program Methodology"
@@ -860,6 +903,7 @@ frameworks:
     domains: [course-validation, pilot-testing, demand-validation, lean-education]
     use_when: "someone wants to validate course demand before investing in full production"
     helpful_documents: ["product description", "customer research"]
+    deliverable_type: plan
 
   - id: pivot-or-persevere
     name: "Pivot or Persevere"
@@ -869,6 +913,7 @@ frameworks:
     domains: [pivot-decision, strategic-direction, validated-learning, lean-startup]
     use_when: "a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one"
     helpful_documents: ["product description", "customer research", "business metrics"]
+    deliverable_type: decision
 
   - id: podcast-brand-strategy
     name: "a Podcast Brand Strategy audit"
@@ -878,6 +923,7 @@ frameworks:
     domains: [podcast-branding, positioning, content-strategy, audience-growth]
     use_when: "a podcaster's growth has stalled and they need to audit their brand positioning and content strategy"
     helpful_documents: ["content strategy", "positioning statement"]
+    deliverable_type: analysis
 
   - id: podcast-marketing-systems
     name: "Podcast Marketing Systems"
@@ -887,6 +933,7 @@ frameworks:
     domains: [podcast-marketing, growth-systems, sustainable-growth, infrastructure]
     use_when: "a podcaster is doing one-off promotion per episode and needs sustainable marketing systems that compound"
     helpful_documents: ["content strategy", "business goals"]
+    deliverable_type: plan
 
   - id: polarization-mediator
     name: "Polarization Mediator"
@@ -895,6 +942,7 @@ frameworks:
     category: psychology
     domains: [internal-family-systems, conflict-mediation, parts-work, integration]
     use_when: "someone has two strongly opposing internal parts and needs mediation to find collaboration rather than dominance"
+    deliverable_type: decision
 
   - id: position-priority-principles
     name: "Position Priority Principles"
@@ -903,6 +951,7 @@ frameworks:
     category: health-movement
     domains: [movement-foundations, position-mechanics, longevity, injury-prevention]
     use_when: "someone needs to establish fundamental position standards that protect joints and enable lifelong movement"
+    deliverable_type: plan
 
   - id: positioning-canvas
     name: "Positioning Canvas"
@@ -912,6 +961,7 @@ frameworks:
     domains: [positioning, team-alignment, strategy-documentation, one-pager]
     use_when: "a team has completed positioning work and needs to capture it in a single-page format for alignment and reference"
     helpful_documents: ["positioning statement", "competitive landscape"]
+    deliverable_type: content
 
   - id: pots-subtype-recognition
     name: "POTS Subtype Recognition"

@@ -676,7 +676,7 @@ git commit -m "feat(frameworks): classify deliverable_type for first 50 registry
 
 ---
 
-### Task 8: Classify frameworks batch 2 — entries 51–100
+### ✅ Task 8: Classify frameworks batch 2 — entries 51–100
 
 Continue classification for entries 51–100 (alphabetical by `id`).
 
