@@ -628,6 +628,12 @@ git commit -m "test(reverse-engineered-brand): add render-layer HTML test fixtur
 
 > MOCKUP DEVIATION: Exec summary conf-row replaced with `id="exec-confidence-cards"` placeholder for JS rendering. Strengths & Gaps static list items replaced with `id="strengths-list"` / `id="gaps-list"` placeholders. `oq-context-toggle` CSS kept alongside new `details.oq-context` styles for backward compatibility with any JS-rendered cards using the old button/div pattern.
 
+> MOCKUP DEVIATION: Per-folder "Draft" section omitted from `renderFolderPanel()`. The mockup's static draft content (market category, customer alternatives, unique value, differentiated features per folder) has no corresponding field in the `OPEN_QUESTIONS` schema. A `folder_draft` schema field would be required to render it; current renderer covers assumptions + questions only, which is the full scope the schema supports.
+
+> MOCKUP DEVIATION: "Sources cited in this folder" section omitted from `renderFolderPanel()`. The mockup rendered a per-folder `<ul class="source-list">` listing ingested artifacts by source ID. The `OPEN_QUESTIONS` schema has no per-folder source metadata field; source references appear inline within OQ `evidence` arrays. Rendering a sources section requires adding a per-folder sources field to the schema.
+
+> MOCKUP DEVIATION: Confidence cards in Executive Summary show count-based text (`N high-confidence assumptions`) rather than the mockup's per-tier narrative descriptions. The `exec_summary` schema field has `confidence_intro` (one string) but no per-tier label fields. Count-based rendering is what the current schema supports; narrative per-tier labels would require a schema extension.
+
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/review-template.html`
 
