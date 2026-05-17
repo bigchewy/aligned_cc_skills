@@ -188,7 +188,7 @@ GAP entries (slices with no owning framework) are collected once regardless of h
 
 **Renderer dispatch:**
 
-Orchestrator passes the aggregated blob to the `render-review-html` schema-reader, which reads `review-template.html` and writes `brand/open-questions.html`.
+Orchestrator passes the aggregated blob to the `render-review-html` schema-reader, which reads `review-template.html` and writes `brand/review.html`.
 
 ### Advisor's end-of-run report
 
@@ -196,7 +196,7 @@ Orchestrator passes the aggregated blob to the `render-review-html` schema-reade
 
 Confidence distribution: 3 high, 5 medium, 3 low.
 
-Logged 14 Open Questions covering: primary competitive alternative, owner-operator persona depth, voice register, pricing language, four unverified proof claims, three tagline candidates. The interactive review document is open in your browser at `~/Documents/fieldline-research/brand/open-questions.html` — type answers in the browser, click 'Copy all answers,' then paste the resulting prompt back into Claude Code (this session or a new one) to apply the answers to the folder.
+Logged 14 Open Questions covering: primary competitive alternative, owner-operator persona depth, voice register, pricing language, four unverified proof claims, three tagline candidates. The interactive review document is open in your browser at `~/Documents/fieldline-research/brand/review.html` — type answers in the browser, click 'Copy all answers,' then paste the resulting prompt back into Claude Code (this session or a new one) to apply the answers to the folder.
 
 The canonical Open Questions queue lives in `brand/CLAUDE.md § Open Questions`. The HTML is a view of it — paste-back keeps them in sync."
 
@@ -279,7 +279,7 @@ After the build, `brand/CLAUDE.md § Next Steps to Deepen` lists every slice wit
 
 ## HTML review (offline from this session)
 
-After the framework ends, the user reviews `brand/open-questions.html` in the browser. The HTML has:
+After the framework ends, the user reviews `brand/review.html` in the browser. The HTML has:
 
 - One card per Open Question, with file, confidence, draft, question, why-it-matters, and source provenance
 - A textarea on each card for the user's answer
