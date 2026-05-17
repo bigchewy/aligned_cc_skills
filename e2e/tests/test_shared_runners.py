@@ -62,6 +62,26 @@ def test_advisor_runner_is_in_eval_surface():
     assert "skills/_shared/advisor-runner.md" in text
 
 
+def test_use_advisor_invokes_shared_runner():
+    text = read("skills/use-advisor/SKILL.md")
+    assert "_shared/advisor-runner.md" in text, "use-advisor must invoke shared runner"
+    # Behavior preservation: top-level invocation must explicitly pass greeting_mode=full,
+    # since silent is the new code path introduced by this refactor.
+    assert "greeting_mode" in text and "full" in text, (
+        "use-advisor must pass greeting_mode=full to preserve top-level behavior"
+    )
+    # Behavior preservation: top-level invocation MUST NOT pass greeting_mode=silent,
+    # which would suppress the brief greeting and Core Frameworks listing that
+    # users expect from /aligned:use-advisor.
+    assert "greeting_mode=silent" not in text and "greeting_mode: silent" not in text, (
+        "top-level use-advisor must not pass silent — that path is reserved for runner composition"
+    )
+    # Anti-regression: inline persona protocol should be removed
+    assert "Read the full advisor prompt file" not in text, (
+        "persona adoption protocol must live in _shared/advisor-runner.md"
+    )
+
+
 def test_use_framework_invokes_shared_runner():
     text = read("skills/use-framework/SKILL.md")
     assert "_shared/framework-runner.md" in text, "use-framework must invoke shared runner"

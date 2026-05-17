@@ -475,7 +475,7 @@ git commit -m "feat(_shared): extract advisor-runner.md with configurable greeti
 
 ---
 
-### Task 5: Refactor `skills/use-advisor/SKILL.md` to invoke shared runner
+### ✅ Task 5: Refactor `skills/use-advisor/SKILL.md` to invoke shared runner
 
 Replace Step 4 (L53-61), Switching section (L63-67), Composability (L69-75) with one section invoking `_shared/advisor-runner.md`.
 
