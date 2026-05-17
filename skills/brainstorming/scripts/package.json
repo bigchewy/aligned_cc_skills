@@ -1,0 +1,9 @@
+{
+  "name": "brainstorming-validators",
+  "private": true,
+  "type": "module",
+  "description": "Snapshot validators for the brainstorming skill. Run via `node validate-mermaid.mjs <html-path>`. First use requires `npm install` in this directory.",
+  "dependencies": {
+    "mermaid": "^11.0.0"
+  }
+}

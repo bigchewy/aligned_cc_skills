@@ -255,6 +255,23 @@ graph TD
 
 **Notes:** Use `mermaid` class for diagrams visible on initial load. Use `mermaid-deferred` for diagrams inside hidden tabs — they render automatically when the tab is first activated. The `.diagram-container` provides horizontal scroll for wide diagrams.
 
+#### Label-safety rules
+
+Mermaid reads `<pre>` content via `textContent` and lexes it with a grammar that reserves several characters. Violations render as a bomb icon + "Syntax error in text" in the browser; the validator (see below) catches them before commit.
+
+- **Never embed unescaped `"` inside a node label.** Mermaid lexes `"…"` as a STR token, which the bracketed-label production rejects. If you need to quote a verbatim string inside a label, use single quotes (`'topic'`), smart quotes (`"topic"`), or wrap the whole label in quotes — `node["User invokes /cmd 'topic'"]`. Same rule for `()`/`[]`/`{}` inside their own kind of bracket.
+- **Use HTML-encoded `&lt;br/&gt;` for line breaks inside `<pre class="mermaid">` blocks**, not literal `<br/>`. The browser HTML-parses `<br/>` into an element node whose `textContent` is empty, silently collapsing label line breaks (`Auto-route silently<br/>to detected mode` becomes `Auto-route silentlyto detected mode` by the time mermaid sees it).
+- **Don't write diagrams from memory.** Test risky-looking labels against `scripts/validate-mermaid.mjs` rather than guessing what mermaid accepts.
+
+| Broken | Fixed |
+| --- | --- |
+| `in([User invokes /cmd "topic"])` | `in([User invokes /cmd 'topic'])` |
+| `route1[Auto-route silently<br/>to mode]` | `route1[Auto-route silently&lt;br/&gt;to mode]` |
+
+#### Validation
+
+Every committed snapshot must pass `node scripts/validate-mermaid.mjs <html>` (see the visualization protocol's pre-critique snapshot step). The validator extracts each block as mermaid will see it, parses with the same library version the templates load from CDN, and exits non-zero with the offending block index + caret-pointer error if any fail. First use in this checkout requires `npm install` inside `skills/brainstorming/scripts/`.
+
 ---
 
 ### Section Containers
@@ -293,7 +310,9 @@ Triage UI for the design doc's Decision Log and Open Questions sections. Lets th
 | 1–9      | `WIDGET-HTML: decision-log-flat` | `WIDGET-HTML: open-questions-flat` |
 | 10+      | `WIDGET-HTML: decision-log-categorized` | `WIDGET-HTML: open-questions-categorized` |
 
-The categorized variants add `<tr class="section-divider">` rows grouping entries into themes (A, B, C ...). Below 10 entries, flat tables are clearer.
+The categorized variants add section headers grouping entries into themes (A, B, C ...). Below 10 entries, the flat layout is clearer.
+
+**Two different DOM shapes.** Decision Log entries are `<div class="decision-card">` elements (one per decision) wrapped in `<div id="decisions-table" data-widget-root>`. Open Questions entries are still `<tr>` rows inside `<table id="questions-table">`. The shapes diverged when decisions gained click-to-expand detail; questions kept the compact table layout because the three-state defer/include/reject UI reads better as a grid.
 
 #### Sidecar contract
 
@@ -305,11 +324,19 @@ The model performs three injections during visualization:
 
 #### data-id contract (stable IDs)
 
-Every triage row carries:
+Every triage entry — decision card OR question row — carries:
 - `data-id="N"` — the decision/question number. Stable across reorderings; cross-references in prose (e.g., "see Decision #14") survive categorization.
 - `data-title="..."` — the headline used in the generated prompt text.
 
-Section-divider rows do **not** have `data-id`. The JS selector `tbody tr[data-id]` skips them. Never use bare `tbody tr` — it crashes on dividers.
+Section headers (decisions: `<div class="decision-card-section">`; questions: `<tr class="section-divider">`) do **not** carry `data-id`. The widget JS selects `.decision-card[data-id]` for decisions and `tbody tr[data-id]` for questions, so headers are skipped automatically. Never use bare `tbody tr` or bare `.decision-card` — both will pick up headers.
+
+#### Decision-card extended detail (optional)
+
+A decision card may include a `<div class="decision-card-detail" hidden>` block after the description. When present, the card becomes clickable: clicking anywhere outside the dropdown toggles a `.expanded` class on the card and unhides the detail. Use this for 1–2 short paragraphs of rationale, tradeoff context, or links to specific files that would have overwhelmed the brief description. Omit the block entirely when there is nothing useful to add — the card stays non-interactive, no chevron renders.
+
+#### Widget-root contract (live-refresh persistence)
+
+The decision-card container `<div id="decisions-table" data-widget-root>` carries `data-widget-root` so the `saveState` IIFE can find it (cards aren't inside a `<table>`). The question table `<table id="questions-table">` is found via the `table` half of the same selector. Any future card-style widget MUST set `data-widget-root` on its container or its select state will be lost on the 15s live-refresh.
 
 #### Selector contract (state-composition hook)
 

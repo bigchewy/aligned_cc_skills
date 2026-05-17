@@ -60,6 +60,28 @@
   tr.section-divider .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
   tr.section-divider .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
 
+  .decision-card-list { display: flex; flex-direction: column; gap: 12px; }
+  .decision-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 16px 18px; transition: border-color 150ms, box-shadow 150ms, background 150ms; }
+  .decision-card.decision-card-clickable { cursor: pointer; }
+  .decision-card.decision-card-clickable:hover { border-color: var(--color-accent); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .decision-card.row-active { background: var(--color-accent-subtle) !important; border-color: var(--color-accent); }
+  .decision-card-head { display: flex; align-items: flex-start; gap: 16px; }
+  .decision-card-headline { flex: 1; display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+  .decision-card-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; font-size: 13px; flex-shrink: 0; }
+  .decision-card-title { font-weight: 600; color: var(--color-foreground); font-size: 14px; line-height: 1.4; }
+  .decision-card.row-active .decision-card-title { text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; opacity: 0.7; }
+  .decision-card-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .decision-card-chevron { color: var(--color-dimmed); font-size: 11px; transition: transform 150ms; user-select: none; }
+  .decision-card.expanded .decision-card-chevron { transform: rotate(180deg); }
+  .decision-card-desc { margin-top: 8px; font-size: 13px; color: var(--color-secondary); line-height: 1.55; }
+  .decision-card-detail { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--color-border); font-size: 13px; color: var(--color-foreground); line-height: 1.6; }
+  .decision-card-detail p { margin: 0 0 8px; }
+  .decision-card-detail p:last-child { margin-bottom: 0; }
+  .decision-card-section { padding: 16px 4px 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-foreground); border-top: 1px solid var(--color-border); }
+  .decision-card-section:first-child { border-top: none; padding-top: 4px; }
+  .decision-card-section .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  .decision-card-section .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
   .prompt-box { margin-top: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
   .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .prompt-box-label { font-size: 13px; font-weight: 600; color: var(--color-foreground); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -127,25 +149,25 @@
 
     // ── DECISION LOG ─────────────────────────────────────────────
     (function decisionLogWidget() {
-      if (!document.getElementById('decisions-table')) return;
-      var table = document.getElementById('decisions-table');
+      var container = document.getElementById('decisions-table');
+      if (!container) return;
       var prompt = document.getElementById('decisions-prompt');
       var copyBtn = document.getElementById('copy-decisions');
       var regenBtn = document.getElementById('regenerate-decisions');
       if (!prompt || !copyBtn || !regenBtn) return;
 
-      function rows() {
-        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      function cards() {
+        return Array.prototype.slice.call(container.querySelectorAll('.decision-card[data-id]'));
       }
 
       function buildPrompt() {
-        var allRows = rows();
-        if (allRows.length === 0) {
+        var allCards = cards();
+        if (allCards.length === 0) {
           return 'No decisions captured for this design. Either remove this section or add entries before triaging.';
         }
-        var rejected = allRows
-          .filter(function(tr) { var sel = tr.querySelector('select'); return sel && sel.value === 'reject'; })
-          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        var rejected = allCards
+          .filter(function(card) { var sel = card.querySelector('select'); return sel && sel.value === 'reject'; })
+          .map(function(card) { return { num: card.dataset.id, title: card.dataset.title || '' }; });
         if (rejected.length === 0) {
           return 'All decisions approved.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.';
         }
@@ -161,15 +183,15 @@
         return lines.join('\n');
       }
 
-      function updateRow(select) {
-        var tr = select.closest('tr');
-        if (!tr) return;
+      function updateCard(select) {
+        var card = select.closest('.decision-card');
+        if (!card) return;
         if (select.value === 'reject') {
           select.classList.add('reject');
-          tr.classList.add('row-active');
+          card.classList.add('row-active');
         } else {
           select.classList.remove('reject');
-          tr.classList.remove('row-active');
+          card.classList.remove('row-active');
         }
       }
 
@@ -178,12 +200,27 @@
         prompt.value = buildPrompt();
       }
 
-      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+      container.querySelectorAll('select[data-id]').forEach(function(sel) {
         sel.addEventListener('change', function() {
-          updateRow(sel);
+          updateCard(sel);
           refresh();
         });
-        updateRow(sel);  // sync initial classes for restored state
+        // Clicks inside the dropdown must not toggle card expansion.
+        sel.addEventListener('click', function(e) { e.stopPropagation(); });
+        updateCard(sel);  // sync initial classes for restored state
+      });
+
+      // Click anywhere on a card with a detail block to expand/collapse it.
+      // Cards without detail are non-interactive (no chevron, no cursor).
+      container.querySelectorAll('.decision-card[data-id]').forEach(function(card) {
+        var detail = card.querySelector('.decision-card-detail');
+        if (!detail) return;
+        card.classList.add('decision-card-clickable');
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('select, a, button, input, textarea')) return;
+          var expanded = card.classList.toggle('expanded');
+          detail.hidden = !expanded;
+        });
       });
 
       markDirtyOnInput(prompt);
@@ -290,42 +327,57 @@
 <!-- WIDGET-HTML: decision-log-flat -->
 <!--
   Use when Decision Log has < 10 entries. Drop into the owning <section> in place
-  of the static Decision Log table. Each <tr> needs data-id and data-title.
+  of the static Decision Log table. Each card needs data-id and data-title on the
+  outer .decision-card element. The container MUST keep id="decisions-table" and
+  data-widget-root so the live-refresh state-persistence layer finds it.
 
-  Example row:
-    <tr data-id="1" data-title="Use TypeScript">
-      <td class="decision-num">1</td>
-      <td class="decision-title">Use TypeScript</td>
-      <td class="decision-desc">Description text here.</td>
-      <td><select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select></td>
-    </tr>
+  Optional .decision-card-detail block: if present, the card becomes clickable and
+  expands to reveal extended context (1–2 paragraphs of rationale, tradeoffs, or
+  related concerns that would have overwhelmed the brief description). Omit it
+  when there's nothing useful to add — the card stays non-interactive.
+
+  Example card:
+    <div class="decision-card" data-id="1" data-title="Use TypeScript">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">1</span>
+          <span class="decision-card-title">Use TypeScript</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Brief description with <em>Confidence: 0.85</em>.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Extended paragraph one — rationale, prior-art comparison, or specific tradeoff.</p>
+        <p>Extended paragraph two — risks, follow-ups, or links to source files.</p>
+      </div>
+    </div>
 -->
 <div class="interactive-section">
   <div class="interactive-banner">
     <span class="icon">●</span>
-    <div><strong>Two options per decision.</strong> <em>Approve</em> (default) means you accept it. <em>Reject</em> queues it for revision. The prompt textarea below auto-updates as you toggle dropdowns.</div>
+    <div><strong>Two options per decision.</strong> <em>Approve</em> (default) means you accept it. <em>Reject</em> queues it for revision. Click a card to see additional context. The prompt textarea below auto-updates as you toggle dropdowns.</div>
   </div>
-  <table class="interactive" id="decisions-table">
-    <thead><tr><th class="num">#</th><th style="width: 22%">Decision</th><th>Description</th><th style="width: 130px">Status</th></tr></thead>
-    <tbody>
-      <!-- One <tr data-id="N" data-title="..."> per decision; final <td> contains:
-        <select class="dropdown" data-id="N"><option value="approve">Approve</option><option value="reject">Reject</option></select>
-      -->
-    </tbody>
-  </table>
+  <div class="decision-card-list" id="decisions-table" data-widget-root>
+    <!-- One <div class="decision-card" data-id="N" data-title="..."> per decision.
+         Omit the .decision-card-chevron and .decision-card-detail when there's
+         no extended context to share. -->
+  </div>
   <!-- prompt-box block: see WIDGET-HTML: prompt-box -->
 </div>
 
 <!-- WIDGET-HTML: decision-log-categorized -->
 <!--
   Use when Decision Log has >= 10 entries. Identical to decision-log-flat except
-  the <tbody> contains `<tr class="section-divider">` rows grouping decisions
-  by theme (A, B, C ...). Section-divider rows have NO data-id.
+  the list contains <div class="decision-card-section"> headers grouping cards
+  by theme (A, B, C ...). Section headers have NO data-id.
 
-  Example:
-    <tr class="section-divider">
-      <td colspan="4"><span class="section-letter">A</span>Architecture<span class="section-count">3 decisions</span></td>
-    </tr>
+  Example header:
+    <div class="decision-card-section">
+      <span class="section-letter">A</span>Architecture<span class="section-count">3 decisions</span>
+    </div>
 -->
 
 <!-- WIDGET-HTML: open-questions-flat -->

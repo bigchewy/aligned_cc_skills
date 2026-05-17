@@ -58,9 +58,9 @@
           // persistence (which used to be wrapped only by the outer try/catch).
           try {
             document.querySelectorAll('select.dropdown[data-id]').forEach(function(sel) {
-              var table = sel.closest('table');
-              var tableId = (table && table.id) ? table.id : 'orphan';
-              state.widgets.selects[tableId + ':' + sel.dataset.id] = sel.value;
+              var root = sel.closest('table, [data-widget-root]');
+              var rootId = (root && root.id) ? root.id : 'orphan';
+              state.widgets.selects[rootId + ':' + sel.dataset.id] = sel.value;
             });
             document.querySelectorAll('textarea.prompt-textarea').forEach(function(ta) {
               if (!ta.id) return;

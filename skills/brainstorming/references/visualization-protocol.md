@@ -57,7 +57,7 @@ After the trigger fires, run these five steps before any critique work begins:
 
    b. **WIDGETS-SCRIPT block** — insert once immediately before `</body>`. Copy verbatim between (and including) `<!-- WIDGETS-SCRIPT-START -->` and `<!-- WIDGETS-SCRIPT-END -->`. **The block MUST land outside the `<!-- LIVE-REFRESH-START -->...<!-- LIVE-REFRESH-END -->` delimiters** so the strip-script rule preserves widget JS in committed snapshots.
 
-   c. **WIDGET-HTML blocks** — for the Decision Log section, copy `WIDGET-HTML: decision-log-flat` (if <10 entries) or `WIDGET-HTML: decision-log-categorized` (if >=10 entries) into the Decision Log `<section>`, then append the `WIDGET-HTML: prompt-box` block with `{widget-id}` substituted to `decisions`. For the Open Questions section, mirror the same with `open-questions-*` and `{widget-id}` = `questions`. Every triage row must carry `data-id="N"` and `data-title="..."`; section-divider rows must carry class `section-divider` and no `data-id` (see `brainstorm-components.md` § Interactive Widgets).
+   c. **WIDGET-HTML blocks** — for the Decision Log section, copy `WIDGET-HTML: decision-log-flat` (if <10 entries) or `WIDGET-HTML: decision-log-categorized` (if >=10 entries) into the Decision Log `<section>`, then append the `WIDGET-HTML: prompt-box` block with `{widget-id}` substituted to `decisions`. For the Open Questions section, mirror the same with `open-questions-*` and `{widget-id}` = `questions`. Every triage entry must carry `data-id="N"` and `data-title="..."` (decisions are `<div class="decision-card">`; questions are `<tr>`); section headers carry no `data-id` (see `brainstorm-components.md` § Interactive Widgets).
 
    Do not rewrite the widget code from memory — the file copy is the contract.
 
@@ -67,7 +67,9 @@ Before dispatching the critique panel, copy the live visualization to its perman
 
 1. Copy `/tmp/brainstorm-{topic}-{timestamp}/live.html` to `docs/mockups/{session-name}.html`.
 2. Add `**Mockups:** docs/mockups/{session-name}.html` to the design document header (write AFTER the copy so the file exists at commit time).
-2.5. If the design includes a Decision Log or Open Questions widget, verify that the committed snapshot at `docs/mockups/{session-name}.html` still contains the `<!-- WIDGETS-SCRIPT-START -->` marker and that the widget tables (`id="decisions-table"`, `id="questions-table"`) bind on load (open the file in a browser — the prompt textareas should populate without console errors).
+2.5. **Verify the committed snapshot before continuing.** Two checks; both must pass.
+   - **Mermaid syntax.** Run `node {plugin-root}/skills/brainstorming/scripts/validate-mermaid.mjs docs/mockups/{session-name}.html` (first use in a fresh checkout: `npm install` inside `skills/brainstorming/scripts/`). The script extracts every `<pre class="mermaid"|"mermaid-deferred">` block, decodes entities and elides `<br/>` to match what mermaid sees at runtime, and parses each block with the same library version the templates load from CDN. Exit 0 means all blocks parse. Exit 1 prints the offending block index, the source mermaid receives, and the parser's caret-pointer error — fix the source design doc, regenerate the snapshot (next step), and re-run. Do not proceed past 2.5 until exit is 0.
+   - **Widgets.** If the design includes a Decision Log or Open Questions widget, verify the snapshot still contains the `<!-- WIDGETS-SCRIPT-START -->` marker and that the widget containers (`id="decisions-table"`, `id="questions-table"`) bind on load (open the file in a browser — the prompt textareas should populate without console errors).
 3. The critique panel's `visual-artifacts` config references `docs/mockups/{session-name}.html` — this copy ensures it exists at that path.
 
 ## Post-critique regeneration
