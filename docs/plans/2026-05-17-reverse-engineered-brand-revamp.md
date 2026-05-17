@@ -220,7 +220,7 @@ git commit -m "test(reverse-engineered-brand): add OQ schema validation fixtures
 
 ---
 
-### Task 2: Create open-questions-schema.md reference doc
+### ✅ Task 2: Create open-questions-schema.md reference doc
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/open-questions-schema.md`

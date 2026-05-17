@@ -1,0 +1,235 @@
+# Open Questions Schema v0.2.0
+
+Reference for the JSON structure emitted at PHASE 2.4 of `reverse-engineered-brand`.
+
+---
+
+## Top-level structure
+
+```json
+{
+  "schema_version": "0.2.0",
+  "folders": [...],
+  "behavioral_alternatives": [...],
+  "competitors": [...],
+  "open_questions": [...]
+}
+```
+
+| Field | Type | Notes |
+|---|---|---|
+| `schema_version` | string | Currently `"0.2.0"` |
+| `folders` | array | One entry per brand folder scanned |
+| `behavioral_alternatives` | array | Atomic non-software alternatives extracted at PHASE 1.5 |
+| `competitors` | array | Named software competitors extracted at PHASE 1.5 |
+| `open_questions` | array | Open questions and inferred values |
+
+---
+
+## `folders` entry schema
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `id` | string | yes | Folder identifier (e.g., `"strategy"`) |
+| `label` | string | yes | Human label (e.g., `"Strategy"`) |
+| `status` | enum | yes | `Strong \| Partial \| Weak \| GAP` |
+| `p0_count` | integer | yes | Count of P0-impact OQs for this folder |
+| `p1_count` | integer | yes | Count of P1-impact OQs |
+| `p2_count` | integer | yes | Count of P2-impact OQs |
+| `framework_dispatches` | array | yes | `[{framework_id, fills}]` — frameworks dispatched and the file each fills |
+| `gap_frameworks_needed` | array | no | Only for `status: GAP` — list of framework ids needed |
+
+---
+
+## `behavioral_alternatives` entry schema
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `id` | string | yes | e.g., `"BA-1"` |
+| `alternative` | string | yes | Atomic phrase — single behavior, not a list |
+| `evidence_quote` | string | yes | Verbatim customer quote |
+| `source` | string | yes | Typed-prefix reference: `"source:#N"` |
+| `confidence` | enum | yes | `high \| medium \| low` |
+
+---
+
+## `competitors` entry schema
+
+> **No `channels` field.** Channel data is unreliable from public web research (per April Dunford guidance on OQ-1 inlining decision).
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `slug` | string | yes | kebab-case identifier |
+| `name` | string | yes | Display name |
+| `url` | string | yes | Canonical homepage URL |
+| `positioning_one_liner` | string | yes | One-sentence positioning as they state it |
+| `icp_one_liner` | string | yes | One-sentence ICP as they state it |
+| `differentiated_attributes` | array | yes | Verbatim from their marketing |
+| `who_they_say_they_beat` | array | yes | Alternatives they claim to beat |
+| `pricing_signal` | enum | yes | `per-seat \| enterprise \| freemium \| usage-based \| unknown` |
+| `recent_positioning_shift` | string | no | Notable shift from prior stance |
+| `voice_traits` | array | no | LOW confidence by default — surface-level tone signals only |
+| `narrative_one_liner` | string | no | Strategic narrative if discernible |
+| `evidence_quotes` | array | no | Verbatim quotes from their site/materials |
+| `identity_verification` | enum | yes | `matched \| mismatch_flagged \| low_confidence` |
+| `sources` | array | yes | URLs or typed-prefix refs used |
+
+---
+
+## `open_questions` entry schema
+
+### Required at emission (validated at PHASE 2.4)
+
+`id`, `file`, `framework_slot`, `confidence`, `impact`, `evidence`, `deepen_with`, AND at least one of `question` or `inferred_value`.
+
+For GAP slices, `framework_slot` and `deepen_with` MAY be literal `null`.
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `id` | string | yes | Local ID, e.g., `"Q-strategy-positioning-1"` |
+| `global_id` | string | yes | Sequential `"OQ-N"` across entire output |
+| `file` | string | yes | Relative path to the brand file this OQ addresses |
+| `slice` | string | yes | Human label for the content slice (empty string OK for GAP) |
+| `framework_slot` | string\|null | yes | Must match slot vocabulary table below; null for GAP |
+| `question` | string | conditional | Required if `inferred_value` absent |
+| `inferred_value` | string\|null | conditional | Required if `question` absent; null OK |
+| `draft_excerpt` | string\|null | no | Quote from source file that prompted this OQ |
+| `confidence` | enum | yes | `high \| medium \| low` |
+| `impact` | enum | yes | `P0 \| P1 \| P2` |
+| `evidence` | array | yes | `["source:#N"]` refs; empty array OK for GAP |
+| `alternatives` | array | no | When confidence is low, plausible alternative answers |
+| `deepen_with` | string\|null | yes | Framework id to dispatch; null for GAP |
+| `why_it_matters` | string | no | One-sentence rationale |
+| `emitted_at` | string | no | ISO 8601 timestamp |
+
+### Derived (not persisted)
+
+`type` is computed at render time: `confidence === "low" ? "question" : "assumption"`. Do not store `type` in the JSON.
+
+---
+
+## `framework_slot` slot-validator rule
+
+`framework_slot` must match `phase-{N}-{kebab(heading)}` exactly against the dispatched framework's PHASE headings.
+
+**No slot merging across phases.** Example: for `5-components-positioning`, `"unique-value"` is NOT a valid slot. Valid slots are `"phase-2-unique-attributes"` and `"phase-3-value"` — separate phases, not merged.
+
+### Authoritative kebab algorithm
+
+Given a framework PHASE heading:
+
+1. Identify the numbered prefix. Patterns:
+   - `### PHASE N:` (most frameworks) → prefix `phase-N-`
+   - `### ELEMENT N:` (strategic-narrative) → prefix `element-N-`
+   - `## Phase N:` (design-principles — h2, lowercase "Phase") → prefix `phase-N-`
+2. Take the text after the prefix's colon and space.
+3. Lowercase it.
+4. Strip leading/trailing whitespace.
+5. Replace runs of `[^a-z0-9]+` with a single `-`.
+6. Strip a leading or trailing `-`.
+
+**Examples:**
+
+| Raw heading | slot_id |
+|---|---|
+| `### PHASE 1: Competitive Alternatives` | `phase-1-competitive-alternatives` |
+| `### PHASE 5: Market Category` | `phase-5-market-category` |
+| `### ELEMENT 1: Name the Undeniable Change (The Old Game)` | `element-1-name-the-undeniable-change-the-old-game` |
+| `## Phase 2: Design Direction` | `phase-2-design-direction` |
+| `### PHASE 4: Dos and don'ts` | `phase-4-dos-and-don-ts` |
+
+---
+
+## Authoritative slot vocabulary
+
+Source of truth for the slot validator at PHASE 2.4. Derived from reading each framework's `prompt.md`.
+
+| framework_id | phase_number | heading | slot_id |
+|---|---|---|---|
+| buyer-persona | 1 | PHASE 1: Role anchoring | `phase-1-role-anchoring` |
+| buyer-persona | 2 | PHASE 2: Evaluation criteria | `phase-2-evaluation-criteria` |
+| buyer-persona | 3 | PHASE 3: Skepticism triggers | `phase-3-skepticism-triggers` |
+| buyer-persona | 4 | PHASE 4: Language resonance | `phase-4-language-resonance` |
+| buyer-persona | 5 | PHASE 5: Common objections | `phase-5-common-objections` |
+| buyer-persona | 6 | PHASE 6: File assembly | `phase-6-file-assembly` |
+| brand-voice | 1 | PHASE 1: Sample intake | `phase-1-sample-intake` |
+| brand-voice | 2 | PHASE 2: Tone principles | `phase-2-tone-principles` |
+| brand-voice | 3 | PHASE 3: Register table | `phase-3-register-table` |
+| brand-voice | 4 | PHASE 4: Dos and don'ts | `phase-4-dos-and-don-ts` |
+| brand-voice | 5 | PHASE 5: Banned phrases | `phase-5-banned-phrases` |
+| messaging-distillation | 1 | PHASE 1: Anchor in positioning | `phase-1-anchor-in-positioning` |
+| messaging-distillation | 2 | PHASE 2: Category name string | `phase-2-category-name-string` |
+| messaging-distillation | 3 | PHASE 3: Tagline | `phase-3-tagline` |
+| messaging-distillation | 4 | PHASE 4: Elevator pitch variants (per audience) | `phase-4-elevator-pitch-variants-per-audience` |
+| messaging-distillation | 5 | PHASE 5: Value-prop phrasings | `phase-5-value-prop-phrasings` |
+| competitive-battle-card | 1 | PHASE 1: Load canonical alternatives | `phase-1-load-canonical-alternatives` |
+| competitive-battle-card | 2 | PHASE 2: Competitive landscape narrative | `phase-2-competitive-landscape-narrative` |
+| competitive-battle-card | 3 | PHASE 3: Differentiators per alternative | `phase-3-differentiators-per-alternative` |
+| competitive-battle-card | 4 | PHASE 4: Common objections + responses | `phase-4-common-objections-responses` |
+| competitive-battle-card | 5 | PHASE 5: File assembly | `phase-5-file-assembly` |
+| competitive-battle-card | 6 | PHASE 6: Sync check | `phase-6-sync-check` |
+| proof-points-audit | 1 | PHASE 1: Claim extraction | `phase-1-claim-extraction` |
+| proof-points-audit | 2 | PHASE 2: Source identification | `phase-2-source-identification` |
+| proof-points-audit | 3 | PHASE 3: Date verification | `phase-3-date-verification` |
+| proof-points-audit | 4 | PHASE 4: Confidence labeling | `phase-4-confidence-labeling` |
+| proof-points-audit | 5 | PHASE 5: Gap report | `phase-5-gap-report` |
+| proof-points-audit | 6 | PHASE 6: Digital-health proof split (optional) | `phase-6-digital-health-proof-split-optional` |
+| proof-points-audit | 7 | PHASE 7: File assembly | `phase-7-file-assembly` |
+| 5-components-positioning | 1 | PHASE 1: Competitive Alternatives | `phase-1-competitive-alternatives` |
+| 5-components-positioning | 2 | PHASE 2: Unique Attributes | `phase-2-unique-attributes` |
+| 5-components-positioning | 3 | PHASE 3: Value | `phase-3-value` |
+| 5-components-positioning | 4 | PHASE 4: Target Customers | `phase-4-target-customers` |
+| 5-components-positioning | 5 | PHASE 5: Market Category | `phase-5-market-category` |
+| strategic-narrative | 1 | ELEMENT 1: Name the Undeniable Change (The Old Game) | `element-1-name-the-undeniable-change-the-old-game` |
+| strategic-narrative | 2 | ELEMENT 2: Name the Stakes (Winners and Losers) | `element-2-name-the-stakes-winners-and-losers` |
+| strategic-narrative | 3 | ELEMENT 3: Name the Promised Land (The Buyer's Mission) | `element-3-name-the-promised-land-the-buyer-s-mission` |
+| strategic-narrative | 4 | ELEMENT 4: Name the Obstacles | `element-4-name-the-obstacles` |
+| strategic-narrative | 5 | ELEMENT 5: Magic Gifts (Your Solution) | `element-5-magic-gifts-your-solution` |
+| design-principles | 1 | Phase 1: Review Context | `phase-1-review-context` |
+| design-principles | 2 | Phase 2: Design Direction | `phase-2-design-direction` |
+| design-principles | 3 | Phase 3: Produce Design Principles Document | `phase-3-produce-design-principles-document` |
+
+---
+
+## Compound-question regex
+
+PHASE 2.4 emits a warning (not a block) when a question field matches:
+
+```
+/\b(and|or)\b.*\?|\?.*\?/
+```
+
+**Does NOT match** (acceptable atomic question with alternatives):
+> `"Is pricing per-member, per-transport, or hybrid?"`
+
+**DOES match** (compound — split into two OQs):
+> `"Is spreadsheets the real alternative and is DispatchTrack worth calling out?"`
+
+The regex detects AND/OR between clauses with question marks, or two question marks in one string. Listing atomic alternatives within a single question is fine.
+
+---
+
+## Identity-verification semantics
+
+Used in the `competitors[].identity_verification` field:
+
+| Value | Meaning |
+|---|---|
+| `matched` | Source document and web research agree on competitor identity and positioning |
+| `mismatch_flagged` | Divergence detected between source claims and current web presence; OQ emitted |
+| `low_confidence` | Identity ambiguous (e.g., brand renamed, pivot suspected); OQ recommended |
+
+---
+
+## Test fixtures
+
+Located in `test-fixtures/oq-schema/`:
+
+| File | Purpose |
+|---|---|
+| `valid-minimal.json` | Minimal valid OQ with one folder, one `open_questions` entry |
+| `valid-with-alternatives.json` | Valid OQ with `behavioral_alternatives`, `competitors`, and `alternatives` field |
+| `valid-gap-slice.json` | GAP folder with `framework_slot: null` and `deepen_with: null` |
+| `invalid-missing-impact.json` | Fails validation — `impact` field absent |
+| `invalid-bad-confidence.json` | Fails validation — `confidence` set to `"certain"` (not in enum) |
+| `invalid-compound-question.json` | Fails warning check — question string matches compound regex |
