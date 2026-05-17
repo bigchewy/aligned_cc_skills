@@ -849,7 +849,7 @@ git commit -m "test(reverse-engineered-brand): add competitor-identity verificat
 
 ---
 
-### Task 15: Extend extract.md with entities.role field
+### ✅ Task 15: Extend extract.md with entities.role field
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/extract.md` (entities schema; the existing schema uses separate sub-arrays for `people`/`competitors`/`audiences`/`claims`)

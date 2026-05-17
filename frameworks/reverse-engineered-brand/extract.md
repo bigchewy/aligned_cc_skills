@@ -42,11 +42,11 @@ Build a structured extract with these fields:
 - `signal_tags` — zero or more from the controlled vocabulary: `positioning`, `narrative`, `messaging`, `voice`, `persona`, `audience`, `competitive`, `proof-points`, `clinical`, `compliance`, `design`, `pricing`, `founder-story`, `customer-voice`, `objections`, `landscape`
 - `summary` — 2 to 4 sentences. What this source contains and why it matters to the brand build (or why it doesn't). This is the part the orchestrator sees in the Source Registry. Be specific and concrete.
 - `key_quotes` — 3 to 10 short verbatim quotes (≤30 words each) that carry brand signal. Include speaker attribution if the source identifies one ("Founder, 2021 narrative deck:"). Quotes survive into slice synthesis as the high-fidelity signal.
-- `entities` — structured lists of named things mentioned in the source:
-  - `people` — names + roles if given
-  - `competitors` — explicitly named competing products/services
-  - `audiences` — segments, personas, channels mentioned
-  - `claims` — quantitative or specific factual claims (e.g., "75% of HTN patients not at goal", "RCT showed 10mmHg reduction")
+- `entities` — flat array of named things mentioned in the source. Each entry has:
+  - `name` — the entity's name (e.g., "DispatchTrack", "VP of Operations", "75% of HTN patients not at goal")
+  - `role` — one of: `competitor` | `customer` | `partner` | `person` | `audience` | `claim` | `other`
+  - `verbatim_quote` — optional 1-line verbatim quote from the source that supports this entity
+  - `notes` — optional context (e.g., "named alongside legacy systems", "mentioned as a target persona")
 - `slice_relevance` — for each brand-folder slice this source is load-bearing for, a one-sentence note on what to extract. Example: `{ "strategy/positioning.md": "Component 1 — describes the 'muddling through' alternative state in detail" }`. Omit slices where the source has no signal.
 - `concerns` — flags for the orchestrator: e.g., `["dated: 2020 — may be pre-rebrand"]`, `["outlier: contradicts other sources on pricing"]`, `["partial: only first 20 pages of a 60-page deck were read"]`. Empty array if no concerns.
 
