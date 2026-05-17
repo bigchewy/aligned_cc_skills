@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand-folder review</title>
+  <style>
+    html { scroll-behavior: smooth; }
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      color: var(--color-foreground);
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin: 0 0 4px 0; }
+    .job-statement { font-size: 0.82rem; color: var(--color-dimmed); margin: 0 0 6px 0; line-height: 1.5; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin: 0 0 4px 0; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin: 0 0 24px 0; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    /* Top-level tabs */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--color-muted);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Sub-tabs */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--color-muted);
+      padding-left: 4px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Sections */
+    .section {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--color-foreground);
+      margin: 0 0 8px 0;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin: 16px 0 8px 0;
+    }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+
+    /* Focus table */
+    .focus-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .focus-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--color-foreground);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .focus-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-muted);
+      color: var(--color-foreground);
+      vertical-align: top;
+    }
+    .focus-table .num { color: var(--color-dimmed); font-feature-settings: 'tnum'; }
+    .focus-table code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: var(--color-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .focus-table .fills {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+    }
+    .pri {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-feature-settings: 'tnum';
+      min-width: 18px;
+      text-align: center;
+    }
+    .pri-p0 { background: #fef2f2; color: #b91c1c; }
+    .pri-p1 { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .pri-p2 { background: var(--color-surface); color: var(--color-dimmed); }
+
+    /* Folder tree */
+    .folder-tree {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 18px 22px;
+      color: var(--color-foreground);
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .folder-tree .badge { font-family: var(--font-sans); }
+
+    /* Section list — friendly nested labels with right-aligned status badges */
+    .section-list {
+      list-style: none;
+      margin: 0;
+      padding: 14px 18px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+    }
+    .section-list ul {
+      list-style: none;
+      margin: 0;
+      padding-left: 22px;
+    }
+    .section-list li {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 5px 0;
+      border-bottom: 1px dotted transparent;
+    }
+    .section-list > li { font-weight: 600; }
+    .section-list ul li { font-weight: 400; color: var(--color-foreground); }
+    .section-list .label { flex: 1 1 auto; min-width: 0; }
+    .section-list .status-badge { margin-left: 0; flex: 0 0 auto; }
+
+    /* Inline status badges */
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+      margin-left: 6px;
+    }
+    .status-strong { background: #ecfdf5; color: #047857; }
+    .status-partial { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-weak { background: #fef2f2; color: #b91c1c; }
+    .status-gap { background: var(--color-surface); color: var(--color-dimmed); border: 1px dashed var(--color-border); }
+
+    /* Right-rail copy command button (inside focus table) */
+    .btn-mini {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--color-border);
+      background: var(--color-muted);
+      color: var(--color-foreground);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .btn-mini:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-accent); }
+    .btn-mini.copied { background: #047857; color: white; border-color: #047857; }
+    .btn-mini.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+    /* Bullet lists */
+    .findings-list {
+      font-size: 0.88rem;
+      color: var(--color-foreground);
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.7;
+    }
+    .findings-list li { margin-bottom: 8px; }
+    .findings-list em { color: var(--color-dimmed); font-style: italic; font-size: 0.82rem; }
+
+    /* Behavioral alternatives section (Competitive Context tab) */
+    .alt-section-heading {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin: 18px 0 6px 0;
+      padding-top: 4px;
+    }
+    .alt-section-heading-secondary {
+      margin-top: 32px;
+      color: var(--color-secondary);
+    }
+    .alt-list {
+      list-style: none;
+      margin: 8px 0 0 0;
+      padding: 0;
+    }
+    .alt-row {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-left: 3px solid var(--color-accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+    .alt-row-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .alt-row .alt-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--color-foreground);
+    }
+    .alt-row .alt-quote {
+      font-style: italic;
+      color: var(--color-secondary);
+      font-size: 0.86rem;
+      line-height: 1.5;
+      margin: 4px 0 8px 0;
+      padding: 0;
+      border: none;
+    }
+    .alt-row .alt-source {
+      display: inline-block;
+    }
+
+    /* Competitor row */
+    .comp-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .comp-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.82rem;
+    }
+    .comp-card h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: var(--color-foreground);
+    }
+    .comp-card dl { margin: 0; font-size: 0.78rem; line-height: 1.5; }
+    .comp-card dt { color: var(--color-dimmed); font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem; }
+    .comp-card dd { margin: 0; color: var(--color-foreground); }
+
+    /* Q cards */
+    .oq-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      transition: border-color 150ms, background 150ms;
+    }
+    .oq-card[data-state="approved"] { border-color: #047857; background: #ecfdf5; }
+    .oq-card[data-state="rejected"] { border-color: #b91c1c; background: #fef2f2; }
+    .oq-card[data-state="answered"] { border-color: var(--color-accent); background: var(--color-accent-subtle); }
+    .oq-card[data-state="skipped"] { opacity: 0.55; }
+    .oq-card[data-state="leave"] { border-style: dashed; }
+
+    .oq-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .oq-id {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      margin-right: 6px;
+    }
+    .chip {
+      display: inline-block;
+      font-size: 0.68rem;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+    }
+    .chip-file { background: var(--color-surface); color: var(--color-secondary); font-family: var(--font-mono); }
+    .chip-deepen { background: var(--color-muted); color: var(--color-foreground); font-family: var(--font-mono); }
+    .chip-slot { background: var(--color-muted); color: var(--color-dimmed); font-family: var(--font-mono); font-style: italic; }
+
+    /* Hide jargon chips in the header — they're moved into the Context disclosure */
+    .oq-card-header .chip-slot,
+    .oq-card-header .chip-deepen { display: none; }
+
+    /* Meta chip strip rendered inside the Context block at load time */
+    .oq-context .oq-context-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed var(--color-border);
+    }
+    .chip-conf-high { background: #ecfdf5; color: #047857; }
+    .chip-conf-med { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .chip-conf-low { background: #fef2f2; color: #b91c1c; }
+
+    .oq-body {
+      font-size: 0.92rem;
+      color: var(--color-foreground);
+      font-weight: 500;
+      margin: 4px 0 10px 0;
+      line-height: 1.5;
+    }
+    .oq-evidence {
+      font-size: 0.78rem;
+      color: var(--color-dimmed);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .oq-evidence strong { color: var(--color-secondary); font-weight: 600; }
+
+    .oq-best-guess {
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      background: var(--color-surface);
+      border-left: 3px solid var(--color-border);
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 0 6px 6px 0;
+    }
+    .oq-best-guess strong { color: var(--color-foreground); }
+
+    .oq-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .oq-btn {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--color-border);
+      background: white;
+      color: var(--color-foreground);
+      font-weight: 500;
+      transition: all 120ms;
+    }
+    .oq-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .oq-btn.btn-approve.selected { background: #047857; color: white; border-color: #047857; }
+    .oq-btn.btn-reject.selected { background: #b91c1c; color: white; border-color: #b91c1c; }
+    .oq-btn.btn-answer.selected { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .oq-btn.btn-skip.selected { background: var(--color-dimmed); color: white; border-color: var(--color-dimmed); }
+    .oq-btn.btn-leave.selected { background: var(--color-surface); color: var(--color-foreground); border-color: var(--color-foreground); }
+
+    .oq-inline-input {
+      display: none;
+      margin-top: 12px;
+    }
+    .oq-card[data-state="rejected"] .oq-inline-input.input-correction,
+    .oq-card[data-state="answered"] .oq-inline-input.input-answer { display: block; }
+
+    .oq-inline-input label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .oq-inline-input textarea {
+      width: 100%;
+      min-height: 60px;
+      padding: 8px 10px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .oq-inline-input textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+
+    .oq-context-toggle {
+      background: none;
+      border: none;
+      color: var(--color-dimmed);
+      font-size: 0.78rem;
+      cursor: pointer;
+      padding: 4px 0 0 0;
+      margin-left: auto;
+      font-family: inherit;
+    }
+    .oq-context-toggle:hover { color: var(--color-accent); }
+    .oq-context {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--color-border);
+      font-size: 0.8rem;
+      color: var(--color-secondary);
+      line-height: 1.6;
+    }
+    .oq-card.context-open .oq-context { display: block; }
+
+    /* Anchor offset so sticky nav doesn't cover the section heading */
+    .anchor-target { scroll-margin-top: 64px; }
+
+    /* Executive summary narrative */
+    .exec-summary p {
+      font-size: 0.95rem;
+      color: var(--color-foreground);
+      line-height: 1.7;
+      margin: 0 0 14px 0;
+    }
+    .exec-summary p:last-child { margin-bottom: 0; }
+    .exec-summary p strong { color: var(--color-foreground); font-weight: 600; }
+
+    /* Executive summary — Snapshot mini-grid */
+    .snapshot-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 4px 0 28px 0;
+    }
+    .snapshot-tile {
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+      position: relative;
+    }
+    .snapshot-tile::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--color-accent);
+      border-radius: 10px 10px 0 0;
+    }
+    .snapshot-tile .num {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      line-height: 1.1;
+      font-feature-settings: 'tnum';
+    }
+    .snapshot-tile .label {
+      font-size: 0.72rem;
+      color: var(--color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+    @media (max-width: 880px) {
+      .snapshot-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Executive summary — labeled sections */
+    .exec-section {
+      padding: 14px 18px 14px 18px;
+      border-left: 3px solid var(--color-accent);
+      background: var(--color-background);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 18px;
+    }
+    .exec-section:last-child { margin-bottom: 0; }
+    .exec-section h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 10px 0;
+    }
+    .exec-section p {
+      font-size: 0.95rem;
+      color: var(--color-foreground);
+      line-height: 1.7;
+      margin: 0;
+    }
+    .exec-divider {
+      height: 1px;
+      background: var(--color-border);
+      border: none;
+      margin: 18px 0;
+    }
+
+    /* Confidence chip row */
+    .conf-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .conf-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .conf-card .conf-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 9px;
+      border-radius: 9999px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .conf-card.conf-high .conf-label { background: #ecfdf5; color: #047857; }
+    .conf-card.conf-med .conf-label { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .conf-card.conf-low .conf-label { background: #fef2f2; color: #b91c1c; }
+    .conf-card .conf-text {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      line-height: 1.5;
+    }
+    @media (max-width: 760px) {
+      .conf-row { grid-template-columns: 1fr; }
+    }
+
+    /* Intro paragraph above a list/grid inside an Overview sub-panel */
+    .intro-p {
+      font-size: 0.9rem;
+      color: var(--color-secondary);
+      line-height: 1.6;
+      margin: 0 0 14px 0;
+    }
+
+    /* Sub-tab counters */
+    .sub-tab-btn .count {
+      background: var(--color-muted);
+      color: var(--color-dimmed);
+      font-size: 0.65rem;
+      padding: 0 6px;
+      border-radius: 9999px;
+      margin-left: 4px;
+      font-weight: 600;
+    }
+    .sub-tab-btn.active .count { background: var(--color-accent-subtle); color: var(--color-accent); }
+
+    /* Paste-back widget */
+    .paste-back {
+      background: var(--color-accent-subtle);
+      border-radius: 12px;
+      padding: 24px 26px 28px;
+      margin-top: 28px;
+      border: 1px solid var(--color-accent);
+      border-style: solid;
+    }
+    .paste-back-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .paste-back h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0;
+    }
+    .paste-back .framework-name {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+    .paste-back .sub {
+      font-size: 0.82rem;
+      color: var(--color-secondary);
+      margin: 0 0 12px 0;
+    }
+    .paste-back textarea {
+      width: 100%;
+      min-height: 240px;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--color-foreground);
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .paste-back textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px white; }
+    .paste-back-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: flex-end;
+    }
+    .btn {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--color-border);
+      background: white;
+      color: var(--color-foreground);
+      font-weight: 500;
+    }
+    .btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: white; }
+    .btn.copied { background: #047857; color: white; border-color: #047857; }
+    .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+    /* Empty stub */
+    .empty-stub {
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--color-dimmed);
+      font-size: 0.92rem;
+      background: white;
+      border: 1px dashed var(--color-border);
+      border-radius: 12px;
+    }
+    .empty-stub code { font-family: var(--font-mono); font-size: 0.82rem; }
+
+    /* Sources panel (sub-tab) */
+    .source-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.85rem;
+    }
+    .source-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-muted);
+      display: grid;
+      grid-template-columns: 60px 1fr 160px;
+      gap: 12px;
+      align-items: baseline;
+    }
+    .source-list .src-id { font-family: var(--font-mono); color: var(--color-accent); font-weight: 600; }
+    .source-list .src-title { color: var(--color-foreground); }
+    .source-list .src-meta { color: var(--color-dimmed); font-size: 0.78rem; text-align: right; }
+  </style>
+</head>
+<body>
+
+  <h1>Brand-folder review surface</h1>
+  <p class="job-statement">Review the auto-generated brand folder. Toggle Approve/Reject on assumptions, answer questions, then copy the per-folder paste-back to Claude Code.</p>
+  <p class="subtitle">Brainstorming session: reverse-engineered-brand-revamp</p>
+  <p class="context">What <code>/aligned:use-framework reverse-engineered-brand</code> produces after the revamp. Replaces today's flat 130-card scrolling list with folder-tabbed triage that pre-builds per-framework paste-back prompts. Marley brand context used throughout for realism.</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('competitive')">Competitive Context</button>
+    <button class="tab-btn" onclick="switchTab('strategy')">strategy</button>
+    <button class="tab-btn" onclick="switchTab('language')">language</button>
+    <button class="tab-btn" onclick="switchTab('audiences')">audiences</button>
+    <button class="tab-btn" onclick="switchTab('personas')">personas</button>
+    <button class="tab-btn" onclick="switchTab('market')">market</button>
+    <button class="tab-btn" onclick="switchTab('proof')">proof</button>
+    <button class="tab-btn" onclick="switchTab('design')">design</button>
+  </div>
+
+  <!-- ========= OVERVIEW ========= -->
+  <div id="panel-overview" class="tab-panel active">
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-focus')">Where to Focus First</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-summary')">Executive Summary</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-strengths-gaps')">Strengths &amp; Gaps</button>
+    </div>
+
+    <!-- Overview / Executive Summary -->
+    <div id="sub-overview-summary" class="sub-panel">
+      <div class="section exec-summary">
+        <h2>Executive summary</h2>
+        <p class="description">Narrative assessment of how effective the ingested raw material and primary research were at understanding Marley's brand. Use this to calibrate trust in the drafts under each folder tab.</p>
+
+        <div class="snapshot-grid" role="list" aria-label="Snapshot stats">
+          <div class="snapshot-tile" role="listitem">
+            <div class="num">11</div>
+            <div class="label">sources mined</div>
+          </div>
+          <div class="snapshot-tile" role="listitem">
+            <div class="num">3</div>
+            <div class="label">competitors researched</div>
+          </div>
+          <div class="snapshot-tile" role="listitem">
+            <div class="num">14</div>
+            <div class="label">assumptions logged</div>
+          </div>
+          <div class="snapshot-tile" role="listitem">
+            <div class="num">9</div>
+            <div class="label">questions flagged</div>
+          </div>
+          <div class="snapshot-tile" role="listitem">
+            <div class="num">6</div>
+            <div class="label">frameworks ready to run</div>
+          </div>
+        </div>
+
+        <div class="exec-section">
+          <h3>Raw material</h3>
+          <p>We received <strong>11 sources</strong> spanning a Q4 2024 investor pitch deck, three sales call transcripts (Q1 2025), the public marketing site, two competitor-alternatives pages, a 2023 partnership announcement, and an unstructured Slack export of internal positioning debate. Decks gave us strong signal on category framing and the product feature surface; transcripts revealed the actual buyer committee but only for 3 of the 5 inferred persona archetypes; the website was scarce on positioning specifics — most copy is feature-led, not buyer-problem-led.</p>
+        </div>
+
+        <hr class="exec-divider" />
+
+        <div class="exec-section">
+          <h3>Primary research</h3>
+          <p>We identified <strong>3 likely competitors</strong> from cross-source mention frequency (DispatchTrack, Roundtrip, Kaizen Health) and pulled public dossiers on each — positioning one-liners, ICP, channels, voice, narrative. The dossiers gave us strong category-shape signal: every named competitor sells to integrated health systems or ACOs, every one anchors on transport reliability or outcomes. What's less clear from the dossiers is Marley's specific differentiator — public competitive context shows the category, not Marley's wedge inside it.</p>
+        </div>
+
+        <hr class="exec-divider" />
+
+        <div class="exec-section">
+          <h3>Confidence by area</h3>
+          <p>The <code>strategy/positioning</code> and <code>personas/director-of-care-management</code> drafts have the highest density of open questions and warrant first review.</p>
+          <div class="conf-row">
+            <div class="conf-card conf-high">
+              <span class="conf-label">HIGH</span>
+              <div class="conf-text">Category &amp; headline value prop — 8 of 11 sources converge</div>
+            </div>
+            <div class="conf-card conf-med">
+              <span class="conf-label">MEDIUM</span>
+              <div class="conf-text">Buyer committee composition &amp; channel motion</div>
+            </div>
+            <div class="conf-card conf-low">
+              <span class="conf-label">LOW</span>
+              <div class="conf-text">Segment-specific sales motion &amp; pricing model</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview / Strengths & Gaps -->
+    <div id="sub-overview-strengths-gaps" class="sub-panel">
+      <div class="section">
+        <h2>What the source material strongly supports</h2>
+        <p class="description">HIGH-confidence assertions backed by two or more independent sources. These are safe to build on without re-asking.</p>
+        <ul class="findings-list">
+          <li>Marley operates in last-mile health logistics, primarily integrated health systems and ACOs <em>(sources #2, #4, #7)</em></li>
+          <li>Primary value proposition: reduces 30-day readmissions via medication adherence + transport coordination <em>(sources #1, #3, competitor:dispatchtrack)</em></li>
+          <li>4 buyer-side roles consistently appear in deals: Director of Care Management, CMIO, CFO, Chief Population Health Officer <em>(sources #5, #8, #9)</em></li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>What the source material doesn't yet tell us</h2>
+        <p class="description">Areas where the ingested sources are silent, thin, or contradictory. These are gaps in the evidence, not judgments about the company. Each links to the open question driving the doubt.</p>
+        <ul class="findings-list">
+          <li>Buying committee composition — sources describe generic digital-health patterns; no Marley-specific signed-deal data on who actually approved <em>(see Q-5)</em></li>
+          <li><code>audiences/channels/</code> and <code>audiences/segments/</code> — no source material owned by these slices; <code>channel-strategy</code> and <code>audience-segmentation</code> frameworks need to be commissioned <em>(see Q-gap-1, Q-gap-2)</em></li>
+          <li>Pricing model — sources disagree (per-member-per-month vs per-transport vs hybrid); no single source resolves the contradiction <em>(see Q-12)</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Overview / Where to Focus First -->
+    <div id="sub-overview-focus" class="sub-panel active">
+      <div class="section">
+        <h2>Where to focus first</h2>
+        <p class="description">Frameworks ranked by aggregate downstream impact. Each row's "Copy command" button puts the full paste-back prompt (with current toggle state from this session) on your clipboard. Run them in this order.</p>
+        <table class="focus-table">
+          <thead>
+            <tr>
+              <th style="width: 32px;">#</th>
+              <th>Run this framework</th>
+              <th>Fills</th>
+              <th style="width: 36px;">P0</th>
+              <th style="width: 36px;">P1</th>
+              <th style="width: 36px;">P2</th>
+              <th>Why first</th>
+              <th style="width: 130px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td><code>/aligned:use-framework 5-components-positioning</code></td>
+              <td class="fills">strategy/positioning.md</td>
+              <td><span class="pri pri-p0">5</span></td>
+              <td><span class="pri pri-p1">3</span></td>
+              <td><span class="pri pri-p2">1</span></td>
+              <td>Anchors downstream messaging + competitive</td>
+              <td><button class="btn-mini" data-target="strategy-prompt">Copy command</button></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td><code>/aligned:use-framework buyer-persona</code> (Director of Care Management)</td>
+              <td class="fills">personas/director-of-care-management.md</td>
+              <td><span class="pri pri-p0">4</span></td>
+              <td><span class="pri pri-p1">6</span></td>
+              <td><span class="pri pri-p2">2</span></td>
+              <td>Persona feeds messaging + sales-pitch</td>
+              <td><button class="btn-mini" data-target="personas-prompt">Copy command</button></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td><code>/aligned:use-framework competitive-battle-card</code></td>
+              <td class="fills">market/competitive.md</td>
+              <td><span class="pri pri-p0">3</span></td>
+              <td><span class="pri pri-p1">2</span></td>
+              <td><span class="pri pri-p2">0</span></td>
+              <td>Required by sales-enablement</td>
+              <td><button class="btn-mini" disabled style="opacity:0.5;cursor:not-allowed;">Copy command</button></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td><code>/aligned:use-framework brand-voice</code></td>
+              <td class="fills">language/voice.md</td>
+              <td><span class="pri pri-p0">1</span></td>
+              <td><span class="pri pri-p1">0</span></td>
+              <td><span class="pri pri-p2">4</span></td>
+              <td>Lowest impact; nuance work</td>
+              <td><button class="btn-mini" disabled style="opacity:0.5;cursor:not-allowed;">Copy command</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Sections at a glance</h2>
+        <p class="description">Status badges reflect aggregate confidence + open question counts. Click any folder tab above to drill in.</p>
+        <ul class="section-list">
+          <li>
+            <span class="label">Strategy</span>
+            <span class="badge status-badge status-partial">Partial — 3 P0 open</span>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <span class="label">Positioning</span>
+                <span class="badge status-badge status-partial">Partial — 5 P0</span>
+              </li>
+              <li>
+                <span class="label">Narrative</span>
+                <span class="badge status-badge status-strong">Strong — 0 P0, 1 P2</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span class="label">Language</span>
+            <span class="badge status-badge status-strong">Strong — 0 P0</span>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <span class="label">Messaging</span>
+                <span class="badge status-badge status-strong">Strong</span>
+              </li>
+              <li>
+                <span class="label">Voice</span>
+                <span class="badge status-badge status-strong">Strong — 1 P2</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span class="label">Audiences</span>
+            <span></span>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <span class="label">Channels</span>
+                <span class="badge status-badge status-gap">GAP — no owning framework</span>
+              </li>
+              <li>
+                <span class="label">Segments</span>
+                <span class="badge status-badge status-gap">GAP — no owning framework</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span class="label">Personas</span>
+            <span class="badge status-badge status-weak">Weak — 4 P0 open</span>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <span class="label">Director of Care Management</span>
+                <span class="badge status-badge status-weak">Weak — 4 P0, 6 P1</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span class="label">Market</span>
+            <span class="badge status-badge status-partial">Partial — 3 P0 open</span>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <span class="label">Competitive landscape</span>
+                <span class="badge status-badge status-partial">Partial — 3 P0</span>
+              </li>
+              <li>
+                <span class="label">Alternatives</span>
+                <span class="badge status-badge status-strong">Strong</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span class="label">Proof</span>
+            <span class="badge status-badge status-partial">Partial</span>
+          </li>
+          <li>
+            <span class="label">Design</span>
+            <span class="badge status-badge status-strong">Strong</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========= COMPETITIVE CONTEXT ========= -->
+  <div id="panel-competitive" class="tab-panel">
+    <div class="section">
+      <h2>Competitive context</h2>
+      <p class="intro-p">Competitors identified via cross-source mention frequency; behavioral alternatives extracted from source material. Behavioral alternatives often turn out to be the more honest competitive frame — what customers actually do today (without you) usually matters more than the named SaaS in the same category.</p>
+
+      <h3 class="alt-section-heading">What customers do today (without you)</h3>
+      <p class="description">Non-product alternatives surfaced from sales calls, decks, and research notes. These are the real defaults Marley displaces. Per April Dunford: these matter MORE than named competitors.</p>
+      <ul class="alt-list">
+        <li class="alt-row">
+          <div class="alt-row-main">
+            <span class="alt-name">Excel + manual dispatch</span>
+            <span class="chip chip-conf-high">HIGH</span>
+          </div>
+          <blockquote class="alt-quote">"Before we found you we were just throwing it together in spreadsheets every morning."</blockquote>
+          <span class="chip chip-file alt-source">source #6 — sales call transcript</span>
+        </li>
+        <li class="alt-row">
+          <div class="alt-row-main">
+            <span class="alt-name">Ad-hoc phone coordination with patient family</span>
+            <span class="chip chip-conf-high">HIGH</span>
+          </div>
+          <blockquote class="alt-quote">"Care coordinators were calling Ubers and family members one at a time."</blockquote>
+          <span class="chip chip-file alt-source">source #4 — Q4 deck</span>
+        </li>
+        <li class="alt-row">
+          <div class="alt-row-main">
+            <span class="alt-name">Hiring per-diem transport coordinators</span>
+            <span class="chip chip-conf-med">MED</span>
+          </div>
+          <blockquote class="alt-quote">"We tried just throwing more headcount at it — it didn't scale past 50 transports a day."</blockquote>
+          <span class="chip chip-file alt-source">source #8 — founder interview</span>
+        </li>
+        <li class="alt-row">
+          <div class="alt-row-main">
+            <span class="alt-name">Doing nothing, accepting readmissions as a cost</span>
+            <span class="chip chip-conf-low">LOW</span>
+          </div>
+          <blockquote class="alt-quote">"For population health contracts where transport wasn't included, most systems just budgeted for the readmission penalties."</blockquote>
+          <span class="chip chip-file alt-source">source #2 — market research notes</span>
+        </li>
+      </ul>
+
+      <h3 class="alt-section-heading alt-section-heading-secondary">Named competitors</h3>
+      <p class="description">Three named alternatives appearing across the ingested sources. Each dossier was assembled from public sources (homepage, About, alternatives page, recent press). If a competitor here is wrong, edit <code>.build/competitors/</code> and rerun the framework. Full battle cards live under the <code>market/</code> tab once the competitive-battle-card framework is run.</p>
+      <div class="comp-row">
+        <div class="comp-card">
+          <h4>DispatchTrack</h4>
+          <dl>
+            <dt>Category</dt><dd>Last-mile logistics for healthcare</dd>
+            <dt>ICP</dt><dd>Integrated health systems</dd>
+            <dt>Voice</dt><dd>Operational / reliability-first</dd>
+          </dl>
+        </div>
+        <div class="comp-card">
+          <h4>Roundtrip</h4>
+          <dl>
+            <dt>Category</dt><dd>Patient transport network</dd>
+            <dt>ICP</dt><dd>ACOs + payers</dd>
+            <dt>Voice</dt><dd>Outcomes / equity-focused</dd>
+          </dl>
+        </div>
+        <div class="comp-card">
+          <h4>Kaizen Health</h4>
+          <dl>
+            <dt>Category</dt><dd>Non-emergency medical transport API</dd>
+            <dt>ICP</dt><dd>Medicaid MCOs + ACOs</dd>
+            <dt>Voice</dt><dd>Developer-friendly</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= STRATEGY ========= -->
+  <div id="panel-strategy" class="tab-panel">
+
+    <!-- Strategy / Draft -->
+    <div>
+      <div class="section">
+        <h2 id="strategy-draft" class="anchor-target">Draft — strategy/positioning.md <span class="status-badge status-partial">Partial draft</span></h2>
+        <p class="description">Auto-generated draft from ingested sources. Triage the assumption and question sub-tabs, then run <code>/aligned:use-framework 5-components-positioning</code> in regular mode with the paste-back below.</p>
+        <h3>Market category</h3>
+        <p class="description">Marley is a <strong>care-coordination platform</strong> for last-mile health logistics — combining patient transport scheduling, medication adherence prompts, and post-discharge follow-up in a single workflow surface.</p>
+        <h3>Customer alternatives</h3>
+        <p class="description">Spreadsheets + manual dispatch (most common), incumbent NEMT brokers (LogistiCare, MTM), and in some cases nothing (post-discharge calls are skipped).</p>
+        <h3>Unique value</h3>
+        <p class="description">EHR-integrated workflow: transport coordinators see the same patient record as the discharge nurse, reducing the inter-departmental handoff that's the #1 cause of missed rides.</p>
+        <h3>Differentiated features</h3>
+        <p class="description">Bi-directional Epic + Cerner integration, real-time transport tracking with ETA push to the care team, automated 72-hour follow-up call queue keyed off discharge.</p>
+      </div>
+    </div>
+
+    <!-- Strategy / Assumptions -->
+    <div>
+      <div class="section">
+        <h2 id="strategy-assumptions" class="anchor-target">Assumptions to confirm <span class="status-badge status-partial">8</span></h2>
+        <p class="description">High-confidence inferences from ingested sources. Approve to lock them in. Reject to mark for revision — a textarea will appear for your correction. State persists into the paste-back at the bottom of the tab.</p>
+
+        <div class="oq-card" data-id="3" data-folder="strategy" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-3</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-high">conf: HIGH</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-1-competitive-alternatives</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Real competitive alternative: spreadsheets + manual dispatch</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #4 (Q4 deck p.12), source #6 (sales call transcript), competitor:dispatchtrack (alternatives page)</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea placeholder="e.g., 'The real alternative is incumbent NEMT brokers, not spreadsheets — spreadsheets are only used by under-50-bed systems.'"></textarea>
+          </div>
+          <div class="oq-context">Pulled from 3 independent sources. Source #4 explicitly names "Excel" as the displaced tool in 7 of 9 deals closed in Q4. Source #6 is a recorded customer call. DispatchTrack's public alternatives page lists spreadsheets as the primary alternative they displace too.</div>
+        </div>
+
+        <div class="oq-card" data-id="9" data-folder="strategy" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-9</span>
+            <span class="chip pri pri-p1">P1</span>
+            <span class="chip chip-conf-med">conf: MED</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-3-value</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Marley's primary differentiator is transport SLA reliability (98% on-time pickup)</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #2 (positioning deck p.4), but source #7 (customer call transcript) emphasizes EHR integration depth as the actual buying trigger — conflicting signal</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea placeholder="e.g., 'Marley's primary differentiator is EHR integration depth, not transport SLA.'">Marley's primary differentiator is EHR integration depth, not transport SLA</textarea>
+          </div>
+          <div class="oq-context">The positioning deck (a marketing artifact) emphasizes the 98% SLA. The customer call transcript (a buying-side signal) names integration first. Marketing positions on the easy-to-measure metric; buyers cite the harder-to-prove one.</div>
+        </div>
+
+        <div class="oq-card" data-id="14" data-folder="strategy" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-14</span>
+            <span class="chip pri pri-p1">P1</span>
+            <span class="chip chip-conf-high">conf: HIGH</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-5-market-category</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Market category framing: "care coordination platform" (broader) rather than "NEMT software" (narrower)</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> sources #1, #2, #5 all use coordination framing; only source #11 (an investor deck from 2023) uses NEMT framing</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">"NEMT software" is the legacy category and how investors classified the company in 2023. The 2025 messaging deliberately moves up-market to "care coordination" — this assumption needs your blessing before downstream messaging inherits it.</div>
+        </div>
+
+        <div class="oq-card" data-id="22" data-folder="strategy" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-22</span>
+            <span class="chip pri pri-p2">P2</span>
+            <span class="chip chip-conf-med">conf: MED</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-2-unique-attributes</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Differentiated feature emphasis: bi-directional EHR write-back (not just read)</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #3 (product roadmap doc), source #8 (Epic marketplace listing)</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">Most competitors are read-only against the EHR. Marley writes ride status and medication-adherence flags back into the patient record. This is a real capability but might not be table-stakes-worthy for sales messaging — flagged P2 because it's nuance.</div>
+        </div>
+
+        <div class="oq-card" data-id="27" data-folder="strategy" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-27</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-med">conf: MED</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-4-target-customers</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">ICP is integrated health systems with 200+ beds AND active population health contracts</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #2 (positioning deck), source #5 (closed-won analysis 2024), but 3 of 11 closed deals fall outside this profile</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">P0 because ICP definition propagates into every downstream framework. The 3 outlier closed deals were all risk-bearing PCP enablers (Aledade pattern) — should those be in-ICP or out-of-ICP? Related to Q-7.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strategy / Questions -->
+    <div>
+      <div class="section">
+        <h2 id="strategy-questions" class="anchor-target">Questions to resolve <span class="status-badge status-partial">5</span></h2>
+        <p class="description">LOW or MED confidence inferences worth verifying before the framework runs interactively. Three options per question: answer here, skip (drop from list), or leave for the framework to ask.</p>
+
+        <div class="oq-card" data-id="7" data-folder="strategy" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-7</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-low">conf: LOW</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-5-market-category</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Which named integrated health-system sub-segment is Marley actually selling to today?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> regional integrated systems with population health contracts (e.g., Geisinger, Intermountain)</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #2 (positioning deck), but call transcripts also mention ACOs (sources #5, #8) — conflicting signal</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea placeholder="e.g., 'Regional integrated systems WITH population health contracts, AND risk-bearing PCP enablers like Aledade.'">Regional integrated systems WITH population health contracts, AND risk-bearing PCP enablers like Aledade.</textarea>
+          </div>
+          <div class="oq-context">The positioning deck names integrated systems exclusively. But the closed-won analysis shows 4 of 11 closed deals were ACO-led, not health-system-led. The category framing needs to either widen or split.</div>
+        </div>
+
+        <div class="oq-card" data-id="11" data-folder="strategy" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-11</span>
+            <span class="chip pri pri-p2">P2</span>
+            <span class="chip chip-conf-low">conf: LOW</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-1-competitive-alternatives</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Does the messaging need to address "build vs buy" as an alternative?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> No — only 1 of 11 closed deals mentioned considering an in-house build, and that was 2022.</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #5 (closed-won analysis), only 1 mention in 11 deals</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer selected" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip selected" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">Mostly relevant for SaaS competitive positioning playbooks. In this category most buyers have given up on building — the regulatory complexity is too high.</div>
+        </div>
+
+        <div class="oq-card" data-id="12" data-folder="strategy" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-12</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-low">conf: LOW</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-3-value</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">What's the pricing model — per-member-per-month, per-transport, or hybrid?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> Hybrid: base PMPM platform fee + per-completed-transport variable fee</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #4 (Q4 deck), source #6 (sales call), source #9 (contract template) — all three describe pricing differently</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave selected" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">Pricing affects unique-value framing (per-outcome vs. per-seat language). Three independent sources literally contradict each other. Best handled live with the framework so the answer can branch on segment.</div>
+        </div>
+
+        <div class="oq-card" data-id="16" data-folder="strategy" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-16</span>
+            <span class="chip pri pri-p1">P1</span>
+            <span class="chip chip-conf-med">conf: MED</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-2-unique-attributes</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Is the 72-hour automated follow-up call queue a differentiated feature, or table stakes?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> Differentiated — DispatchTrack and Roundtrip both lack post-discharge follow-up</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> competitor:dispatchtrack (feature comparison), competitor:roundtrip (no mention on product page)</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">Competitive scan suggests yes, but the question is whether buyers care or treat it as "nice to have." Best answered with one customer call data point you can supply directly.</div>
+        </div>
+
+        <div class="oq-card" data-id="19" data-folder="strategy" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-19</span>
+            <span class="chip pri pri-p1">P1</span>
+            <span class="chip chip-conf-low">conf: LOW</span>
+            <span class="chip chip-file">strategy/positioning.md</span>
+            <span class="chip chip-deepen">deepen: 5-comp</span>
+            <span class="chip chip-slot">slot: phase-4-target-customers</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Should the ICP definition include risk-bearing PCP enablers (Aledade, Privia) explicitly, or treat them as adjacent?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> Include — 3 of 11 closed deals were this profile, and they buy faster</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #5 (closed-won analysis) shows 3 PCP-enabler deals with 60-day average sales cycle vs. 180-day for health systems</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">Related to Q-7 and Q-27. If PCP enablers are in-ICP, the positioning needs to reference value-based-care contracts more prominently. If adjacent, they're a separate go-to-market motion.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strategy / Sources -->
+    <div>
+      <div class="section">
+        <h2 id="strategy-sources" class="anchor-target">Sources cited in this folder</h2>
+        <p class="description">All ingested artifacts that contributed evidence to strategy/* assumptions and questions. Source IDs are referenced inline throughout the sections above.</p>
+        <ul class="source-list">
+          <li><span class="src-id">#1</span><span class="src-title">2024 Q4 board narrative deck</span><span class="src-meta">internal • 28pp • 2024-10</span></li>
+          <li><span class="src-id">#2</span><span class="src-title">Positioning deck v3.2</span><span class="src-meta">marketing • 14pp • 2025-02</span></li>
+          <li><span class="src-id">#3</span><span class="src-title">Product roadmap doc — H2 2025</span><span class="src-meta">product • 2025-04</span></li>
+          <li><span class="src-id">#4</span><span class="src-title">Q4 sales review deck</span><span class="src-meta">sales • 22pp • 2025-01</span></li>
+          <li><span class="src-id">#5</span><span class="src-title">Closed-won analysis 2024</span><span class="src-meta">rev-ops • spreadsheet • 2025-01</span></li>
+          <li><span class="src-id">#6</span><span class="src-title">Sales call transcript — Geisinger</span><span class="src-meta">gong.io export • 2024-11</span></li>
+          <li><span class="src-id">#7</span><span class="src-title">Customer call transcript — Intermountain</span><span class="src-meta">gong.io export • 2025-02</span></li>
+          <li><span class="src-id">#8</span><span class="src-title">Epic marketplace listing copy</span><span class="src-meta">public • 2025-03</span></li>
+          <li><span class="src-id">#11</span><span class="src-title">Investor deck — Series B</span><span class="src-meta">2023-06 • archived</span></li>
+          <li><span class="src-id">competitor:dispatchtrack</span><span class="src-title">DispatchTrack public site + alternatives page</span><span class="src-meta">scraped • 2025-05</span></li>
+          <li><span class="src-id">competitor:roundtrip</span><span class="src-title">Roundtrip public site</span><span class="src-meta">scraped • 2025-05</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Strategy / Paste-back -->
+    <div class="paste-back" id="strategy-pasteback">
+      <div class="paste-back-header">
+        <h3 class="anchor-target">Paste-back to Claude Code</h3>
+        <span class="framework-name">5-components-positioning</span>
+      </div>
+      <p class="sub">Auto-built from your toggle state above. Regenerate to refresh after changes; Copy to put it on your clipboard. Run <code>/aligned:use-framework 5-components-positioning</code>, then paste.</p>
+      <textarea id="strategy-prompt" data-folder="strategy" data-framework="5-components-positioning" spellcheck="false"></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" data-action="regenerate" data-target="strategy-prompt">Regenerate</button>
+        <button class="btn btn-primary" data-action="copy" data-target="strategy-prompt">Copy</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========= LANGUAGE ========= -->
+  <div id="panel-language" class="tab-panel">
+    <div class="empty-stub">Draft rendering not yet generated in this mockup. <br/><br/>Production would show: <code>language/messaging.md</code> + <code>language/voice.md</code> drafts, assumptions/questions sub-tabs, and a paste-back for <code>/aligned:use-framework brand-voice</code>.</div>
+  </div>
+
+  <!-- ========= AUDIENCES ========= -->
+  <div id="panel-audiences" class="tab-panel">
+    <div class="empty-stub">Draft rendering not yet generated in this mockup. <br/><br/><code>audiences/channels/</code> and <code>audiences/segments/</code> are GAP slices — they need <code>channel-strategy</code> and <code>audience-segmentation</code> frameworks commissioned before this tab can render.</div>
+  </div>
+
+  <!-- ========= PERSONAS ========= -->
+  <div id="panel-personas" class="tab-panel">
+
+    <!-- Personas / Draft -->
+    <div>
+      <div class="section">
+        <h2 id="personas-draft" class="anchor-target">Draft — personas/director-of-care-management.md <span class="status-badge status-weak">Weak draft</span></h2>
+        <p class="description">Single-persona draft for the role most frequently cited in closed-won analysis. P0 confidence gaps below — the buying-committee position and ROI threshold are inferred, not validated.</p>
+        <h3>Role summary</h3>
+        <p class="description">Reports to CMO or COO at a 200+ bed integrated health system. Owns care-management staffing, post-discharge programs, and readmission-reduction metrics tied to CMS penalty exposure.</p>
+        <h3>Goals and pressures</h3>
+        <p class="description">Hit the system's 30-day readmission target (CMS penalty floor: 8% for HF, 7% for AMI). Reduce care-management staff overtime. Defend annual budget against finance.</p>
+        <h3>Buying committee position</h3>
+        <p class="description">Economic buyer for clinical-ops tools under $250k ARR. Above that, signs off but doesn't sign — CFO + CMIO joint approval required.</p>
+      </div>
+    </div>
+
+    <!-- Personas / Assumptions -->
+    <div>
+      <div class="section">
+        <h2 id="personas-assumptions" class="anchor-target">Assumptions to confirm <span class="status-badge status-weak">6</span></h2>
+        <p class="description">Persona inferences carry low confidence — they were assembled from generic digital-health buyer patterns plus a few Marley deal notes, not from primary persona research. Triage carefully.</p>
+
+        <div class="oq-card" data-id="31" data-folder="personas" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-31</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-med">conf: MED</span>
+            <span class="chip chip-file">personas/director-of-care-management.md</span>
+            <span class="chip chip-deepen">deepen: buyer-persona</span>
+            <span class="chip chip-slot">slot: phase-1-role-anchoring</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Director of Care Management is the economic buyer below $250k ARR</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #5 (closed-won analysis, 7 of 11 deals), but 4 of those 7 had CFO co-sign on the contract</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea placeholder="e.g., 'The Director of CM is the champion, not the economic buyer. CFO is the economic buyer regardless of ARR.'"></textarea>
+          </div>
+          <div class="oq-context">"Co-sign on the contract" might mean economic-buyer rubber stamp or might mean joint approval — the data doesn't distinguish. Worth a direct ask before the buyer-persona framework runs interactively.</div>
+        </div>
+
+        <div class="oq-card" data-id="34" data-folder="personas" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-34</span>
+            <span class="chip pri pri-p1">P1</span>
+            <span class="chip chip-conf-high">conf: HIGH</span>
+            <span class="chip chip-file">personas/director-of-care-management.md</span>
+            <span class="chip chip-deepen">deepen: buyer-persona</span>
+            <span class="chip chip-slot">slot: phase-2-evaluation-criteria</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Top evaluation criterion is EHR integration depth (Epic specifically)</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> sources #6, #7 (both customer calls), source #8 (Epic marketplace listing engagement metrics)</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve selected" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">Three independent sources name Epic integration as the gating criterion. High confidence.</div>
+        </div>
+
+        <div class="oq-card" data-id="38" data-folder="personas" data-kind="assumption">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-38</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-low">conf: LOW</span>
+            <span class="chip chip-file">personas/director-of-care-management.md</span>
+            <span class="chip chip-deepen">deepen: buyer-persona</span>
+            <span class="chip chip-slot">slot: phase-2-evaluation-criteria</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">ROI threshold: payback within 12 months on CMS readmission penalty avoidance</p>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #4 (Q4 deck ROI calculator slide), but no closed-won data confirms buyers actually used this calc</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-approve" onclick="setAssumptionState(this,'approved')">Approve</button>
+            <button class="oq-btn btn-reject" onclick="setAssumptionState(this,'rejected')">Reject</button>
+          </div>
+          <div class="oq-inline-input input-correction">
+            <label>What's the correction?</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">This is a P0 because it's an internal projection that became part of the messaging without ever being validated against actual buyer behavior. The deck shows what we'd like buyers to weigh, not what they did weigh.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personas / Questions -->
+    <div>
+      <div class="section">
+        <h2 id="personas-questions" class="anchor-target">Questions to resolve <span class="status-badge status-weak">4</span></h2>
+        <p class="description">Persona questions weighted toward "did this actually happen?" rather than "what should it be?" — the gap between aspirational ICP and revealed buying behavior matters here.</p>
+
+        <div class="oq-card" data-id="41" data-folder="personas" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-41</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-low">conf: LOW</span>
+            <span class="chip chip-file">personas/director-of-care-management.md</span>
+            <span class="chip chip-deepen">deepen: buyer-persona</span>
+            <span class="chip chip-slot">slot: phase-1-role-anchoring</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">Has Marley actually closed with a Director of Care Management as primary buyer, or is this inferred from generic digital-health committee patterns?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> Yes, but only in 4 of 11 deals — in the other 7, the actual signer was a VP-level role (VP Population Health, VP Clinical Ops)</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #5 (closed-won analysis title column), but titles are inconsistent across health systems</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea placeholder="e.g., 'Director of CM was champion in all 11. Primary signer was VP-level in 7. Persona should be VP-level + Director as champion.'"></textarea>
+          </div>
+          <div class="oq-context">The title disambiguation matters: Director of CM is a known job title with stable scope, while "VP Population Health" is a newer, less-defined role with different KPIs. If the persona is wrong at the title level, the messaging mis-targets.</div>
+        </div>
+
+        <div class="oq-card" data-id="43" data-folder="personas" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-43</span>
+            <span class="chip pri pri-p0">P0</span>
+            <span class="chip chip-conf-low">conf: LOW</span>
+            <span class="chip chip-file">personas/director-of-care-management.md</span>
+            <span class="chip chip-deepen">deepen: buyer-persona</span>
+            <span class="chip chip-slot">slot: phase-3-skepticism-triggers</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">What's the actual trigger event that gets this persona to buy?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> CMS penalty notification arriving in Q1 — readmission rate crossed threshold the prior year</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> indirect — source #6 mentions "we got the letter" in passing, but no systematic data</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave selected" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">Trigger event drives the timing pitch ("Q1 panic" vs "year-round consideration"). The single mention isn't enough data — best handled interactively where the framework can probe.</div>
+        </div>
+
+        <div class="oq-card" data-id="46" data-folder="personas" data-kind="question">
+          <div class="oq-card-header">
+            <span class="oq-id">Q-46</span>
+            <span class="chip pri pri-p1">P1</span>
+            <span class="chip chip-conf-med">conf: MED</span>
+            <span class="chip chip-file">personas/director-of-care-management.md</span>
+            <span class="chip chip-deepen">deepen: buyer-persona</span>
+            <span class="chip chip-slot">slot: phase-5-common-objections</span>
+            <button class="oq-context-toggle" onclick="toggleContext(this)">Context</button>
+          </div>
+          <p class="oq-body">What's the #1 objection this persona raises late in the sales cycle?</p>
+          <div class="oq-best-guess"><strong>Best guess:</strong> "Our care managers won't adopt another tool" — workflow friction concern</div>
+          <p class="oq-evidence"><strong>Evidence:</strong> source #4 (Q4 sales review deck objection-handling slide)</p>
+          <div class="oq-actions">
+            <button class="oq-btn btn-answer" onclick="setQuestionState(this,'answered')">I'll answer here</button>
+            <button class="oq-btn btn-skip" onclick="setQuestionState(this,'skipped')">Skip</button>
+            <button class="oq-btn btn-leave" onclick="setQuestionState(this,'leave')">Leave for framework</button>
+          </div>
+          <div class="oq-inline-input input-answer">
+            <label>Your answer</label>
+            <textarea></textarea>
+          </div>
+          <div class="oq-context">The objection-handling slide is from sales enablement, not from actual deal-loss interviews. Worth validating from the loss side.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personas / Sources -->
+    <div>
+      <div class="section">
+        <h2 id="personas-sources" class="anchor-target">Sources cited in this folder</h2>
+        <ul class="source-list">
+          <li><span class="src-id">#4</span><span class="src-title">Q4 sales review deck</span><span class="src-meta">sales • 22pp • 2025-01</span></li>
+          <li><span class="src-id">#5</span><span class="src-title">Closed-won analysis 2024</span><span class="src-meta">rev-ops • spreadsheet • 2025-01</span></li>
+          <li><span class="src-id">#6</span><span class="src-title">Sales call transcript — Geisinger</span><span class="src-meta">gong.io export • 2024-11</span></li>
+          <li><span class="src-id">#7</span><span class="src-title">Customer call transcript — Intermountain</span><span class="src-meta">gong.io export • 2025-02</span></li>
+          <li><span class="src-id">#8</span><span class="src-title">Epic marketplace listing copy</span><span class="src-meta">public • 2025-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Personas / Paste-back -->
+    <div class="paste-back" id="personas-pasteback">
+      <div class="paste-back-header">
+        <h3 class="anchor-target">Paste-back to Claude Code</h3>
+        <span class="framework-name">buyer-persona (Director of Care Management)</span>
+      </div>
+      <p class="sub">Auto-built from your toggle state above. Run <code>/aligned:use-framework buyer-persona</code> targeting <code>personas/director-of-care-management.md</code>, then paste.</p>
+      <textarea id="personas-prompt" data-folder="personas" data-framework="buyer-persona" spellcheck="false"></textarea>
+      <div class="paste-back-actions">
+        <button class="btn" data-action="regenerate" data-target="personas-prompt">Regenerate</button>
+        <button class="btn btn-primary" data-action="copy" data-target="personas-prompt">Copy</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========= MARKET ========= -->
+  <div id="panel-market" class="tab-panel">
+    <div class="empty-stub">Draft rendering not yet generated in this mockup. <br/><br/>Production would show: <code>market/competitive.md</code> + <code>market/alternatives.md</code> drafts, assumptions/questions sub-tabs, and a paste-back for <code>/aligned:use-framework competitive-battle-card</code>.</div>
+  </div>
+
+  <!-- ========= PROOF ========= -->
+  <div id="panel-proof" class="tab-panel">
+    <div class="empty-stub">Draft rendering not yet generated in this mockup.</div>
+  </div>
+
+  <!-- ========= DESIGN ========= -->
+  <div id="panel-design" class="tab-panel">
+    <div class="empty-stub">Draft rendering not yet generated in this mockup.</div>
+  </div>
+
+  <script>
+    // ── Tab + sub-tab switching ──────────────────────────────
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = document.querySelector('#main-tabs [onclick*="\'' + tabId + '\'"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = parent.querySelector('[onclick*="\'' + subId + '\'"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) sub.classList.add('active');
+    }
+
+    // ── Context toggle on each card ──────────────────────────
+    function toggleContext(btn) {
+      var card = btn.closest('.oq-card');
+      if (!card) return;
+      card.classList.toggle('context-open');
+      btn.textContent = card.classList.contains('context-open') ? 'Hide context' : 'Context';
+    }
+
+    // ── Per-card state setters (Assumption + Question) ───────
+    function clearSelected(card) {
+      card.querySelectorAll('.oq-btn').forEach(function(b) { b.classList.remove('selected'); });
+    }
+    function setAssumptionState(btn, state) {
+      var card = btn.closest('.oq-card');
+      if (!card) return;
+      var current = card.getAttribute('data-state');
+      if (current === state) {
+        // Toggle off
+        card.removeAttribute('data-state');
+        clearSelected(card);
+      } else {
+        clearSelected(card);
+        btn.classList.add('selected');
+        card.setAttribute('data-state', state);
+      }
+      rebuildPasteBack(card.getAttribute('data-folder'));
+    }
+    function setQuestionState(btn, state) {
+      var card = btn.closest('.oq-card');
+      if (!card) return;
+      var current = card.getAttribute('data-state');
+      if (current === state) {
+        card.removeAttribute('data-state');
+        clearSelected(card);
+      } else {
+        clearSelected(card);
+        btn.classList.add('selected');
+        card.setAttribute('data-state', state);
+      }
+      rebuildPasteBack(card.getAttribute('data-folder'));
+    }
+
+    // ── Clipboard helper (file:// safe, from widgets.html) ───
+    function copyToClipboard(text, btn) {
+      var originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = originalLabel;
+      function showSuccess() {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+        }, 1800);
+      }
+      function showFailure() {
+        btn.textContent = 'Copy failed — select & Cmd-C';
+        btn.classList.add('btn-error');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('btn-error');
+        }, 3000);
+      }
+      if (!navigator.clipboard || !window.isSecureContext) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        if (ok) showSuccess(); else showFailure();
+        return;
+      }
+      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
+    }
+
+    // ── Per-folder paste-back builder ────────────────────────
+    var FRAMEWORK_BY_FOLDER = {
+      strategy: '5-components-positioning',
+      personas: 'buyer-persona'
+    };
+    var FRAMEWORK_TARGET = {
+      strategy: 'brand/strategy/positioning.md',
+      personas: 'brand/personas/director-of-care-management.md'
+    };
+    var FRAMEWORK_NOTE = {
+      personas: ' targeting the Director of Care Management persona'
+    };
+
+    function getCorrectionText(card) {
+      var ta = card.querySelector('.oq-inline-input.input-correction textarea');
+      return ta ? (ta.value || '').trim() : '';
+    }
+    function getAnswerText(card) {
+      var ta = card.querySelector('.oq-inline-input.input-answer textarea');
+      return ta ? (ta.value || '').trim() : '';
+    }
+    function cardTitle(card) {
+      var body = card.querySelector('.oq-body');
+      return body ? body.textContent.trim() : '';
+    }
+    function cardPriority(card) {
+      var p = card.querySelector('.oq-card-header .pri');
+      return p ? p.textContent.trim() : '';
+    }
+    function cardConfidence(card) {
+      var c = card.querySelector('.oq-card-header .chip-conf-high, .oq-card-header .chip-conf-med, .oq-card-header .chip-conf-low');
+      if (!c) return '';
+      // "conf: HIGH" -> "HIGH"
+      var t = c.textContent.trim();
+      return t.replace(/^conf:\s*/i, '');
+    }
+    function cardId(card) { return card.getAttribute('data-id') || '?'; }
+
+    function buildPasteBack(folder) {
+      var framework = FRAMEWORK_BY_FOLDER[folder];
+      var target = FRAMEWORK_TARGET[folder];
+      var note = FRAMEWORK_NOTE[folder] || '';
+      var cards = document.querySelectorAll('.oq-card[data-folder="' + folder + '"]');
+      var approved = [], rejected = [], answered = [], skipped = [], leave = [];
+      cards.forEach(function(card) {
+        var state = card.getAttribute('data-state');
+        var kind = card.getAttribute('data-kind');
+        var item = {
+          id: cardId(card),
+          title: cardTitle(card),
+          pri: cardPriority(card),
+          conf: cardConfidence(card),
+          correction: getCorrectionText(card),
+          answer: getAnswerText(card)
+        };
+        if (kind === 'assumption') {
+          if (state === 'approved') approved.push(item);
+          else if (state === 'rejected') rejected.push(item);
+        } else if (kind === 'question') {
+          if (state === 'answered') answered.push(item);
+          else if (state === 'skipped') skipped.push(item);
+          else if (state === 'leave') leave.push(item);
+        }
+      });
+
+      var lines = [];
+      lines.push('Run /aligned:use-framework ' + framework + ' in regular mode' + note + ' with');
+      lines.push('this executive pre-review applied to the existing auto-mode draft at');
+      lines.push(target + '.');
+      lines.push('');
+
+      if (approved.length) {
+        lines.push('APPROVED ASSUMPTIONS (do not revisit):');
+        approved.forEach(function(a) {
+          lines.push('- Q-' + a.id + ' (' + a.pri + ', ' + a.conf + '): ' + a.title);
+        });
+        lines.push('');
+      }
+
+      if (rejected.length) {
+        lines.push('REJECTED ASSUMPTIONS (please reconsider with correction):');
+        rejected.forEach(function(r) {
+          var correction = r.correction ? r.correction : '<correction pending — user did not type one>';
+          lines.push('- Q-' + r.id + ' (' + r.pri + ', ' + r.conf + ') — corrected to: "' + correction + '"');
+        });
+        lines.push('');
+      }
+
+      if (answered.length) {
+        lines.push('ANSWERED QUESTIONS (use these answers verbatim):');
+        answered.forEach(function(q) {
+          var ans = q.answer ? q.answer : '<answer pending — user did not type one>';
+          lines.push('- Q-' + q.id + ' (' + q.pri + '): "' + ans + '"');
+        });
+        lines.push('');
+      }
+
+      if (skipped.length) {
+        lines.push('SKIPPED QUESTIONS (drop from list — not relevant):');
+        skipped.forEach(function(q) {
+          lines.push('- Q-' + q.id);
+        });
+        lines.push('');
+      }
+
+      if (leave.length) {
+        lines.push('REMAINING QUESTIONS (please ask interactively, P0 → P1 → P2):');
+        var ids = leave.map(function(q) { return 'Q-' + q.id; }).join(', ');
+        lines.push('- ' + ids);
+        lines.push('');
+      }
+
+      if (!approved.length && !rejected.length && !answered.length && !skipped.length && !leave.length) {
+        lines.push('(No assumptions or questions triaged yet. Toggle Approve/Reject on assumptions and Answer/Skip/Leave on questions above, then Regenerate.)');
+        lines.push('');
+      }
+
+      lines.push("Resume the framework's WAIT-gated interactive flow from this state.");
+      return lines.join('\n');
+    }
+
+    function rebuildPasteBack(folder) {
+      if (!folder) return;
+      var ta = document.getElementById(folder + '-prompt');
+      if (!ta) return;
+      if (ta.dataset.dirty === 'true') return; // user edits survive
+      ta.value = buildPasteBack(folder);
+    }
+
+    // Mark textarea dirty on input so auto-rebuild doesn't clobber edits
+    document.querySelectorAll('.paste-back textarea').forEach(function(ta) {
+      ta.addEventListener('input', function() { ta.dataset.dirty = 'true'; });
+    });
+    // Listen for inline input edits (answer/correction) so paste-back stays current
+    document.querySelectorAll('.oq-inline-input textarea').forEach(function(ta) {
+      ta.addEventListener('input', function() {
+        var card = ta.closest('.oq-card');
+        if (card) rebuildPasteBack(card.getAttribute('data-folder'));
+      });
+    });
+
+    // Wire Copy / Regenerate buttons
+    document.querySelectorAll('.paste-back [data-action]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var targetId = btn.dataset.target;
+        var ta = document.getElementById(targetId);
+        if (!ta) return;
+        var folder = ta.dataset.folder;
+        if (btn.dataset.action === 'regenerate') {
+          ta.dataset.dirty = 'false';
+          ta.value = buildPasteBack(folder);
+        } else if (btn.dataset.action === 'copy') {
+          copyToClipboard(ta.value, btn);
+        }
+      });
+    });
+
+    // Overview "Copy command" buttons — navigate to folder tab + copy that paste-back
+    document.querySelectorAll('.focus-table .btn-mini[data-target]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var targetId = btn.dataset.target;
+        var ta = document.getElementById(targetId);
+        if (!ta) return;
+        copyToClipboard(ta.value, btn);
+      });
+    });
+
+    // ── H7(c): Add tooltips to visible priority + confidence chips ──
+    function addChipTooltips() {
+      document.querySelectorAll('.oq-card-header .pri').forEach(function(el) {
+        if (!el.hasAttribute('title')) el.setAttribute('title', 'Impact on downstream framework run');
+      });
+      document.querySelectorAll('.oq-card-header .chip-conf-high, .oq-card-header .chip-conf-med, .oq-card-header .chip-conf-low').forEach(function(el) {
+        if (!el.hasAttribute('title')) el.setAttribute('title', 'Strength of evidence behind the guess');
+      });
+    }
+
+    // ── H7(c): Move slot + deepen chips out of header, into Context block ──
+    function moveJargonChipsIntoContext() {
+      document.querySelectorAll('.oq-card').forEach(function(card) {
+        var header = card.querySelector('.oq-card-header');
+        var context = card.querySelector('.oq-context');
+        if (!header || !context) return;
+        if (context.querySelector('.oq-context-meta')) return; // already done
+        var jargon = header.querySelectorAll('.chip-slot, .chip-deepen');
+        if (!jargon.length) return;
+        var meta = document.createElement('div');
+        meta.className = 'oq-context-meta';
+        jargon.forEach(function(chip) {
+          meta.appendChild(chip.cloneNode(true));
+        });
+        context.insertBefore(meta, context.firstChild);
+      });
+    }
+
+    // ── Sync initial selected button state from data-state ───
+    function syncInitialSelectedStates() {
+      document.querySelectorAll('.oq-card[data-state]').forEach(function(card) {
+        var state = card.getAttribute('data-state');
+        var btnClass = {
+          approved: 'btn-approve',
+          rejected: 'btn-reject',
+          answered: 'btn-answer',
+          skipped: 'btn-skip',
+          leave: 'btn-leave'
+        }[state];
+        if (!btnClass) return;
+        clearSelected(card);
+        var b = card.querySelector('.oq-btn.' + btnClass);
+        if (b) b.classList.add('selected');
+      });
+    }
+
+    // Initial paste-back build
+    document.addEventListener('DOMContentLoaded', function() {
+      addChipTooltips();
+      moveJargonChipsIntoContext();
+      syncInitialSelectedStates();
+      rebuildPasteBack('strategy');
+      rebuildPasteBack('personas');
+    });
+
+    // Already loaded? Run now (covers cases where DOMContentLoaded already fired)
+    if (document.readyState !== 'loading') {
+      addChipTooltips();
+      moveJargonChipsIntoContext();
+      syncInitialSelectedStates();
+      rebuildPasteBack('strategy');
+      rebuildPasteBack('personas');
+    }
+  </script>
+
+</body>
+</html>
