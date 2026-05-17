@@ -624,7 +624,9 @@ git commit -m "test(reverse-engineered-brand): add render-layer HTML test fixtur
 
 ---
 
-### Task 12: Build review-template.html from locked mockup
+### ✅ Task 12: Build review-template.html from locked mockup
+
+> MOCKUP DEVIATION: Exec summary conf-row replaced with `id="exec-confidence-cards"` placeholder for JS rendering. Strengths & Gaps static list items replaced with `id="strengths-list"` / `id="gaps-list"` placeholders. `oq-context-toggle` CSS kept alongside new `details.oq-context` styles for backward compatibility with any JS-rendered cards using the old button/div pattern.
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/review-template.html`
@@ -744,7 +746,7 @@ git commit -m "feat(reverse-engineered-brand): wire JS substitutions, preserve m
 
 ---
 
-### Task 13: Create competitor-dossier.md prompt template
+### ✅ Task 13: Create competitor-dossier.md prompt template
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/competitor-dossier.md`
