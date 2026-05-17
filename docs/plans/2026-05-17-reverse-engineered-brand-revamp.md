@@ -543,7 +543,7 @@ git commit -m "refactor(proof-points-audit): remove mode-detection WAITs"
 
 ---
 
-### Task 10: Clean up buyer-persona/examples.md mode-detection example
+### ✅ Task 10: Clean up buyer-persona/examples.md mode-detection example
 
 **Files:**
 - Modify: `frameworks/buyer-persona/examples.md` (remove the "standalone or orchestrated" example dialogue around line 119)

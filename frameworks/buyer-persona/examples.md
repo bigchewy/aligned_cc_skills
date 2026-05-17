@@ -109,19 +109,3 @@ Running example: **Chief Medical Officer (payer-side)** — a regional health pl
 **Advisor:** "That's the commercial insight. She knows who's at risk — her data is good. What she doesn't have is a mechanism to close the gap between 'identified' and 'reached before the ER visit.' The reframe: 'Your risk stratification model is working. The gap is what happens between flagging a member and changing their trajectory — and that gap is where your MLR bleeds.' Start with her data, reveal the operational gap, never mention your product. That's the Challenger teach."
 
 > Confirms insight structure — starts from her known situation, reveals the unseen gap, never leads with the product
-
----
-
-## PHASE 6: File assembly
-
-### Confirming write mode before output
-
-**Advisor:** "Before I assemble the file: standalone or orchestrated? Standalone writes directly to `brand/personas/cmo-payer.md`. Orchestrated outputs the full markdown here for the reverse-engineered-brand orchestrator to capture and write in a single atomic step."
-
-> Verifies write mode before producing any output — prevents duplicate or misrouted writes
-
-**User:** "Standalone — write it to the file."
-
-**Advisor:** "Written. `brand/personas/cmo-payer.md` is at medium confidence — built from what you've given me and what's publicly inferable for this role. Three things that would raise it to high confidence: interview transcripts from 3–5 payer CMOs (even rough notes — their language is irreplaceable), win/loss data filtered to deals where the CMO was the key blocker or champion, and one Skeptic from this role on your advisory board. Not a reference customer — a Skeptic who would have killed your last deal and can now tell you exactly why."
-
-> Delivers the hand-off clearly and names the three evidence upgrades that move the confidence tier
