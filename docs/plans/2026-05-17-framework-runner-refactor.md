@@ -287,7 +287,7 @@ git commit -m "feat(_shared): extract framework-runner.md with configurable inta
 
 ---
 
-### Task 3: Refactor `skills/use-framework/SKILL.md` to invoke shared runner
+### ✅ Task 3: Refactor `skills/use-framework/SKILL.md` to invoke shared runner
 
 Replace Steps 4-5 (lines 55-74), Voice section (76-79), and Composability section (81-88) with one section invoking `skills/_shared/framework-runner.md` (intake=`advisory`, preserving current behavior).
 
@@ -351,7 +351,7 @@ git commit -m "refactor(use-framework): delegate runner protocol to _shared/fram
 
 ---
 
-### Task 4: Create `skills/_shared/advisor-runner.md`
+### ✅ Task 4: Create `skills/_shared/advisor-runner.md`
 
 Extract `use-advisor/SKILL.md` Step 4 (persona adoption, L53-61), Switching/Ending Persona (L63-67), Composability with use-framework (L69-75), and Avoid Mistakes (L77-83).
 

@@ -41,6 +41,27 @@ def test_framework_runner_is_in_eval_surface():
     )
 
 
+def test_advisor_runner_exists():
+    assert (REPO / "skills/_shared/advisor-runner.md").is_file()
+
+
+def test_advisor_runner_carries_persona_protocol():
+    text = read("skills/_shared/advisor-runner.md")
+    assert "Adopt the Persona" in text or "adopt the persona" in text.lower()
+    assert "Core Frameworks" in text, "missing Core Frameworks reference"
+    assert "Switching" in text and "Ending" in text, "missing persona lifecycle rules"
+    assert "Composability" in text, "missing Composability rule"
+    # Bidirectional dispatch hook
+    assert "framework-runner.md" in text, (
+        "advisor runner should reference framework-runner.md for mid-conversation dispatch"
+    )
+
+
+def test_advisor_runner_is_in_eval_surface():
+    text = read("e2e/eval-surface.yaml")
+    assert "skills/_shared/advisor-runner.md" in text
+
+
 def test_use_framework_invokes_shared_runner():
     text = read("skills/use-framework/SKILL.md")
     assert "_shared/framework-runner.md" in text, "use-framework must invoke shared runner"
