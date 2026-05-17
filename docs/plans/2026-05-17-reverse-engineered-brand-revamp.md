@@ -1458,7 +1458,7 @@ git commit -m "docs(reverse-engineered-brand): rewrite anti-examples for AUTO_MO
 
 ---
 
-### Task 25: Update README.md framework description
+### ✅ Task 25: Update README.md framework description
 
 **Files:**
 - Modify: `README.md` (line 194 — the `reverse-engineered-brand` description in the skill reference table)
