@@ -187,13 +187,62 @@ For each non-skipped slice instance:
 
 **Step 2.4: Ready-to-load verification gate.**
 
-Before proceeding to PHASE 3, stat every expected output file:
-- For each slice in the slice index (excluding skipped slices), check `{output-draft-path}` exists and is non-empty.
-- For each slice, check `{output-open-questions-path}` exists (may legitimately contain an empty `open_questions` array, but the file itself must exist).
+Run checks in the order below. Hard failures abort the run immediately with a named list. Warnings collect and are surfaced at the end of this gate (build continues; they are passed to PHASE 3 for inclusion in `review.html`'s Strengths & Gaps tab as "auto-mode integrity concerns").
 
-If any file is missing or zero-byte, abort the run with a clear list of the missing files and which slices they belong to. Do NOT proceed to the `mv` step in PHASE 3 with a partial build — that would corrupt the brand folder.
+**Check 1 — Stat check (hard-fail).**
+For each non-skipped slice in the slice index:
+- Verify `{output-draft-path}` exists and is non-empty (zero-byte = fail).
+- Verify `{output-open-questions-path}` exists (may legitimately contain an empty `open_questions` array, but the file itself must exist).
+- Missing or zero-byte → hard-fail: `slice: {slice-id}, missing: {draft|oq}`.
 
-This gate catches: synthesizers that crashed mid-write, synthesizers that returned a plausible status but wrote nothing, malformed JSON output paths, and permission failures.
+**Check 2 — JSON parse (hard-fail).**
+For each `.oq.json` file, attempt to parse as JSON.
+- Parse error → hard-fail: `slice: {slice-id}, json_error: {error message}`.
+
+**Check 3 — Schema validate (hard-fail).**
+For each parsed OQ, validate every entry against the required-at-emission rules in `open-questions-schema.md`:
+- Required fields present: `id, file, framework_slot, confidence, impact, evidence, deepen_with`.
+- Literal `null` allowed for `framework_slot` and `deepen_with` only on GAP slices (i.e., the slice mapping table has no owning framework for this slice).
+- At least one of `question` or `inferred_value` must be present.
+- `confidence` must be one of: `high`, `medium`, `low`.
+- `impact` must be one of: `P0`, `P1`, `P2`.
+- Validation failure → hard-fail: `slice: {slice-id}, field: {field-name}, value: {bad-value}`.
+
+**Check 4 — Slot validator (hard-fail).**
+For each OQ with a non-null `framework_slot`:
+- Read the dispatched framework's `prompt.md` and extract all `### PHASE N: <Name>` headings.
+- Kebab-case each name part to form the valid slot set: `phase-{N}-{kebab-name}`.
+- The OQ's `framework_slot` MUST match one of these literally — no slot merging across phases.
+- Mismatch → hard-fail: `slice: {slice-id}, slot: {bad-slot}, valid_slots: {list}`.
+
+**Check 5 — AUTO_MODE-ignored heuristics (warnings, do NOT block).**
+Scan each `.draft.md` for:
+- **Placeholder text:** any occurrence of `[USER WILL PROVIDE]`, `TBD`, `TODO`, `<answer here>`. Match → warning: `slice: {slice-id}, heuristic: placeholder-text, found: {string}`.
+- **Suspiciously short draft:** if draft word count < 200 AND the slice mapping table indicates the framework normally produces 500+ words. Match → warning: `slice: {slice-id}, heuristic: short-draft, word_count: {N}`.
+- **Missing PHASE coverage:** if the OQs in `.oq.json` do not span every PHASE heading of the dispatched framework. Match → warning: `slice: {slice-id}, heuristic: missing-phase-coverage, missing_phases: {list}`.
+
+**Check 6 — Compound-question regex (warning, do NOT block).**
+For each OQ `question` field, apply regex: `/\b(and|or)\b.*\?|\?.*\?/`
+
+Calibration cases:
+- MUST NOT match: `"per-member, per-transport, or hybrid?"` — `or` precedes `?` but is inside a comma-separated list of alternatives, not joining two full predicates. This is a single atomic question and the regex should not flag it.
+- MUST match: `"Is X true and is Y true?"` — two full predicates joined by `and`.
+
+Match → warning: `slice: {slice-id}, question: {text}, heuristic: compound`.
+
+**Outcome.** Any hard-fail aborts with a named list of failures; the user reruns after fixing source material or framework prompts. Warnings collect into a single status block at the end of this gate and are passed to PHASE 3 for `review.html`.
+
+**PHASE 2 Failure Modes**
+
+| Failure Mode | Gate Caught By | Severity | Recovery |
+|---|---|---|---|
+| Sub-agent timeout | Check 1 (missing draft) | Hard-fail | Re-run the timed-out slice; fix context-length or source issues |
+| No `draft.md` produced | Check 1 (missing/zero-byte) | Hard-fail | Inspect sub-agent log; re-run slice with reduced source set |
+| No `oq.json` produced | Check 1 (missing oq file) | Hard-fail | Inspect sub-agent log; re-run slice |
+| Malformed `oq.json` | Check 2 (JSON parse error) | Hard-fail | Fix sub-agent prompt; re-run slice |
+| Sub-agent ignored AUTO_MODE | Check 5 (placeholder heuristic) | Warning | Review draft; re-run slice with explicit AUTO_MODE preamble |
+| Partial crash (some slices written, some not) | Check 1 | Hard-fail | Identify failed slices from error list; re-run those slices only |
+| All sub-agents fail | Check 1 (all slices missing) | Hard-fail | Check source registry (PHASE 1 gate should have caught empty sources); re-run from PHASE 1 |
 
 ---
 

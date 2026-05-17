@@ -955,7 +955,7 @@ git commit -m "feat(reverse-engineered-brand): add PHASE 1.5 competitor research
 
 ---
 
-### Task 17: Replace PHASE 2 with auto-framework dispatch in prompt.md
+### ✅ Task 17: Replace PHASE 2 with auto-framework dispatch in prompt.md
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (replace the existing PHASE 2 Steps 2.1 / 2.2 / 2.3 / status-collection — preserve Step 2.4 verbatim and preserve the PHASE 1.4 signal_tags filter table)
@@ -1034,7 +1034,7 @@ git commit -m "feat(reverse-engineered-brand): replace PHASE 2 with auto-framewo
 
 ---
 
-### Task 18: Extend PHASE 2.4 with JSON schema validation, slot validator, AUTO_MODE heuristics, compound regex
+### ✅ Task 18: Extend PHASE 2.4 with JSON schema validation, slot validator, AUTO_MODE heuristics, compound regex
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (replace the existing Step 2.4 "Ready-to-load verification gate" with the extended gate)
