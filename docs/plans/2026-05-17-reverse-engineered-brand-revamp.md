@@ -379,7 +379,7 @@ git commit -m "test(reverse-engineered-brand): add AUTO_MODE vertical-slice fixt
 
 ---
 
-### Task 5: Remove mode-detection from buyer-persona framework
+### ✅ Task 5: Remove mode-detection from buyer-persona framework
 
 **Files:**
 - Modify: `frameworks/buyer-persona/prompt.md` (delete mode-detection block at lines 24 + 34; delete orphan PHASE 11 reference at line 238; simplify PHASE 6 hand-off contract)

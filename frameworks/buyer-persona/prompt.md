@@ -21,19 +21,15 @@ Each WAIT point is load-bearing. Skipping a WAIT produces a persona that reflect
 
 **IMPORTANT: This framework is interactive. Every WAIT point must pause for user input before the session continues.**
 
-**Mode detection:** At PHASE 1, confirm whether you are running standalone or as a sub-framework invoked by `reverse-engineered-brand`. This changes what PHASE 6 does. Ask the user once — do not assume.
-
 ---
 
 ### PHASE 1: Role anchoring
 
 Say:
 
-"Before we profile this role, two quick orientation questions:
+"Before we profile this role, one orientation question:
 
-**First — standalone or orchestrated?** Are you running this as a standalone session (I'll write the file directly to `brand/personas/{role}.md` at the end), or is this being invoked as part of a `reverse-engineered-brand` session (I'll hand the assembled content back to the orchestrator, which writes all files in a single step)?
-
-**Second — the role.** What is the specific buying-committee role you want to profile? Give me the title, and if you know it, how this role typically positions in the committee: champion, mobilizer, blocker, or approver.
+**The role.** What is the specific buying-committee role you want to profile? Give me the title, and if you know it, how this role typically positions in the committee: champion, mobilizer, blocker, or approver.
 
 I'll say this plainly: if you tell me 'CMO' but this company's CMO is really a brand manager with no P&L ownership, that changes the profile significantly. Be as specific as you can about what this role is actually *accountable for*, not just the title on their card."
 
@@ -234,14 +230,13 @@ summary: One-sentence description of this role's core buying accountability and 
 
 **Hand-off contract:**
 
-- **Standalone mode** (user confirmed at PHASE 1): Write the assembled file directly to `brand/personas/{role-kebab}.md`. Confirm the path to the user. Say: "The persona file is written to `brand/personas/{role-kebab}.md`. Review it and adjust any fields where your evidence is stronger than what I could infer."
-- **Orchestrated mode** (invoked by `reverse-engineered-brand`): Do NOT write the file to disk. Instead, output the complete assembled markdown (frontmatter + body) inline in the conversation so the orchestrator can capture it for the atomic write in its own PHASE 11. Say: "Persona assembly complete. Handing off to the orchestrator for file write."
+Write the assembled file directly to `brand/personas/{role-kebab}.md`. Confirm the path to the user. Say: "The persona file is written to `brand/personas/{role-kebab}.md`. Review it and adjust any fields where your evidence is stronger than what I could infer."
 
 WAIT for user response before continuing.
 
 ---
 
-After the user reviews the assembled file (standalone mode) or confirms hand-off (orchestrated mode), offer:
+After the user reviews the assembled file, offer:
 
 "This persona is now at medium confidence — built from what you've given me and what's publicly inferable. Three things that would raise it to high confidence:
 
