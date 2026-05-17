@@ -148,6 +148,17 @@ class TestFrameworkRegistrySchema:
             f"frameworks/ has {dir_count} directories with prompt.md"
         )
 
+    def test_name_field_is_concise(self, registry):
+        """Framework name fields must be concise (≤60 chars) — they surface to users in pickers."""
+        long_names = [
+            (e["id"], len(e["name"]))
+            for e in registry["frameworks"]
+            if len(e["name"]) > 60
+        ]
+        assert not long_names, (
+            f"{len(long_names)} entries have name > 60 chars: {long_names[:5]}"
+        )
+
     @pytest.mark.parametrize("slug,expected_name,expected_advisor", OUTLIER_PARAMS)
     def test_outlier_frameworks_have_correct_metadata(self, registry, slug, expected_name, expected_advisor):
         """Outlier frameworks (defined in frameworks/_outliers.json) must have correct name and advisor."""

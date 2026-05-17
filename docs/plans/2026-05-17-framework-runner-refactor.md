@@ -47,7 +47,7 @@ Several tasks edit the same files; do not parallelize:
 
 ## Tasks
 
-### Task 1: Clean `name`-field hygiene in `frameworks/registry.yaml`
+### ✅ Task 1: Clean `name`-field hygiene in `frameworks/registry.yaml`
 
 Some registry entries embed purpose-like multi-sentence phrasing in the `name:` field (e.g., `5-components-positioning` line 14: `name: "your 5 Components of Positioning framework. This is the methodology from \"Obviously Awesome\""`). Multi-entity scoring will surface `name` to users; long quoted strings degrade the picker. Cap each `name` at ≤60 characters or add a `display_name` field used by the router.
 

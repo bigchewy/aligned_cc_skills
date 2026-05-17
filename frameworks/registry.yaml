@@ -11,7 +11,7 @@ frameworks:
     use_when: "someone is blaming others or external circumstances for their situation and needs to reclaim agency"
 
   - id: 5-components-positioning
-    name: "your 5 Components of Positioning framework. This is the methodology from \"Obviously Awesome\""
+    name: "5 Components of Positioning"
     advisor: april-dunford
     purpose: "a sequential process that builds differentiated positioning from the ground up"
     category: positioning
@@ -21,7 +21,7 @@ frameworks:
     helpful_documents: ["competitive landscape", "customer research"]
 
   - id: 5-step-process
-    name: "the 5-Step Process to help them achieve what they want in life by systematically addressing problems and evolving"
+    name: "5-Step Process"
     advisor: ray-dalio
     purpose: "a five-step loop for achieving goals by identifying problems, diagnosing root causes, designing plans, and pushing through to results"
     category: strategy
@@ -122,7 +122,7 @@ frameworks:
     helpful_documents: ["content strategy"]
 
   - id: believability-weighted-decision-making
-    name: "Believability-Weighted Decision Making to improve their decision quality by weighting opinions based on track record and expertise"
+    name: "Believability-Weighted Decision Making"
     advisor: ray-dalio
     purpose: "weighting opinions by track record and explanatory logic to improve decision quality"
     category: strategy
@@ -147,7 +147,7 @@ frameworks:
     use_when: "someone needs to assess the state of trust in a relationship or team using a structured framework"
 
   - id: build-measure-learn
-    name: "the Build-Measure-Learn loop to design a learning cycle for their product initiative"
+    name: "Build-Measure-Learn"
     advisor: eric-ries
     purpose: "designing a learning cycle that starts with what you need to learn, then works backward to what to measure and build"
     category: startup
@@ -333,7 +333,7 @@ frameworks:
     helpful_documents: ["content strategy"]
 
   - id: earlyvangelists
-    name: "the Earlyvangelists framework to validate their customer hypothesis"
+    name: "Earlyvangelists"
     advisor: eric-ries
     purpose: "specifically, whether they've identified customers who will actually buy versus those who are simply being polite"
     category: startup
@@ -402,7 +402,7 @@ frameworks:
     helpful_documents: ["company strategy"]
 
   - id: first-principles-thinking
-    name: "first principles thinking to break down a problem to its fundamental truths"
+    name: "First Principles Thinking"
     advisor: elon-musk
     purpose: "breaking a problem down to fundamental truths and reasoning up from there instead of by analogy"
     category: strategy
@@ -445,7 +445,7 @@ frameworks:
     helpful_documents: ["strategy", "positioning"]
 
   - id: four-market-types
-    name: "the Four Market Types framework to help them identify and test their assumptions about which market they're entering"
+    name: "Four Market Types"
     advisor: eric-ries
     purpose: "diagnosing which market type you're entering and aligning your tactics to match"
     category: startup
@@ -542,7 +542,7 @@ frameworks:
     helpful_documents: ["content strategy", "positioning statement"]
 
   - id: jobs-to-be-done
-    name: "a Jobs to Be Done analysis to understand what progress their customer (or they themselves) are trying to make"
+    name: "Jobs to Be Done"
     advisor: clayton-christensen
     purpose: "uncovering the functional, emotional, and social progress a customer is hiring a product to make"
     category: strategy
@@ -602,7 +602,7 @@ frameworks:
     use_when: "a leader is struggling at a new level and needs to understand what skills, time allocation, and values must shift"
 
   - id: leap-of-faith-assumptions
-    name: "the Leap of Faith Assumptions framework to identify and test the critical assumptions underlying their business"
+    name: "Leap of Faith Assumptions"
     advisor: eric-ries
     purpose: "identifying and testing the riskiest assumptions underlying a business before building anything"
     category: startup
@@ -685,7 +685,7 @@ frameworks:
     use_when: "someone has chronic musculoskeletal pain and needs to identify the movement dysfunction pattern causing it"
 
   - id: multi-system-approach-pots
-    name: "a multi-system assessment of their POTS. This framework acknowledges that POTS is not just a heart rate problem"
+    name: "Multi-System Approach to POTS"
     advisor: blair-grubb
     purpose: "a multi-system assessment of POTS that screens cardiovascular, GI, neurological, and immune involvement to build a targeted management plan"
     category: health-autonomic
@@ -726,7 +726,7 @@ frameworks:
     use_when: "someone with orthostatic hypotension needs an immediate non-drug intervention to support blood pressure"
 
   - id: pain-plus-reflection
-    name: "the Pain + Reflection = Progress framework to transform failure and pain into catalysts for growth"
+    name: "Pain + Reflection = Progress"
     advisor: ray-dalio
     purpose: "transforming failure and pain into progress by pausing, diagnosing the lesson, and designing a new approach"
     category: psychology
@@ -774,7 +774,7 @@ frameworks:
     use_when: "someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose"
 
   - id: personal-resource-allocation
-    name: "a Personal Resource Allocation assessment to examine where their time, energy, and attention actually flow versus where they say they want it to go"
+    name: "Personal Resource Allocation"
     advisor: clayton-christensen
     purpose: "exposing the gap between where you say your priorities are and where your time and energy actually go"
     category: strategy
@@ -799,7 +799,7 @@ frameworks:
     helpful_documents: ["product description", "customer research"]
 
   - id: pivot-or-persevere
-    name: "the Pivot or Persevere decision framework to make a structured strategic direction decision"
+    name: "Pivot or Persevere"
     advisor: eric-ries
     purpose: "a structured decision process for determining whether to change strategy, stay the course, or stop entirely"
     category: startup
@@ -935,7 +935,7 @@ frameworks:
     helpful_documents: ["content strategy"]
 
   - id: regret-minimization
-    name: "the Regret Minimization Framework to help them make a major life decision by projecting forward and looking back"
+    name: "Regret Minimization Framework"
     advisor: jeff-bezos
     purpose: "making major life decisions by projecting to age 80 and asking which choice you would regret not taking"
     category: strategy
@@ -951,7 +951,7 @@ frameworks:
     use_when: "someone has compensatory movement patterns and needs to understand how relative tissue stiffness drives motion to the wrong joints"
 
   - id: root-cause-analysis
-    name: "a Root Cause Analysis to diagnose why a problem exists before designing solutions"
+    name: "Root Cause Analysis"
     advisor: wise-eric
     purpose: "a four-phase diagnostic process — Gap → Obstacles → Root Causes → Solutions — that produces a defensible diagnostic document"
     category: strategy
@@ -960,7 +960,7 @@ frameworks:
     helpful_documents: ["prior diagnoses", "relevant data or examples"]
 
   - id: sales-pitch-structure
-    name: "building a sales pitch that translates their positioning into a compelling narrative. This is the methodology from \"Sales Pitch\""
+    name: "Sales Pitch Structure"
     advisor: april-dunford
     purpose: "transforming positioning work into a story that helps buyers make confident decisions"
     category: positioning
@@ -987,7 +987,7 @@ frameworks:
     use_when: "someone has symptoms suggesting small fiber neuropathy and needs systematic diagnostic criteria"
 
   - id: smallest-viable-audience
-    name: "the Smallest Viable Audience framework to find the people who would miss them if they were gone"
+    name: "Smallest Viable Audience"
     advisor: seth-godin
     purpose: "defining the smallest group you could serve so well that they would actively recruit others"
     category: growth
@@ -1030,7 +1030,7 @@ frameworks:
     helpful_documents: ["positioning statement", "brand voice guide", "strategic narrative"]
 
   - id: strategic-narrative
-    name: "your Five-Element Strategic Narrative framework. This is the methodology behind \"The Greatest Sales Deck I've Ever Seen\""
+    name: "Five-Element Strategic Narrative"
     advisor: andy-raskin
     purpose: "the framework that transformed Zuora's positioning and has been used by companies like Gong, Drift, and Salesforce"
     category: positioning
@@ -1088,7 +1088,7 @@ frameworks:
     use_when: "someone needs a quick daily mobility routine they can actually stick to"
 
   - id: the-algorithm
-    name: "the 5-step algorithm to dramatically improve any process or product"
+    name: "The Algorithm"
     advisor: elon-musk
     purpose: "a strict five-step sequence for improving any process: question requirements, delete, simplify, accelerate, then automate"
     category: strategy
@@ -1096,7 +1096,7 @@ frameworks:
     use_when: "someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach"
 
   - id: the-carousel
-    name: "The Carousel to find the emotional truth at the heart of their offering"
+    name: "The Carousel"
     advisor: don-draper
     purpose: "the feeling that makes people lean in, not the feature that makes them nod"
     category: positioning
@@ -1138,7 +1138,7 @@ frameworks:
     helpful_documents: ["content strategy"]
 
   - id: tissue-state-system
-    name: "the Tissue State System to select the right mobilization technique for their specific tissue condition"
+    name: "Tissue State System"
     advisor: kelly-starrett
     purpose: "diagnosing whether tissue is stiff, tight, or adhered and matching the right mobilization technique to the condition"
     category: health-movement
@@ -1146,7 +1146,7 @@ frameworks:
     use_when: "someone needs to select the right mobilization technique based on their specific tissue condition"
 
   - id: type-1-type-2-decisions
-    name: "the Type 1 vs Type 2 decision framework to determine the appropriate speed and rigor for their decision"
+    name: "Type 1 vs Type 2 Decisions"
     advisor: jeff-bezos
     purpose: "classifying decisions as irreversible or reversible and matching the appropriate speed and rigor to each"
     category: strategy
@@ -1154,7 +1154,7 @@ frameworks:
     use_when: "someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices"
 
   - id: upstream-downstream-diagnostic
-    name: "the Upstream/Downstream Diagnostic to find the true source of their pain or movement limitation"
+    name: "Upstream/Downstream Diagnostic"
     advisor: kelly-starrett
     purpose: "tracing pain or movement limitation upstream through the kinetic chain to find the true source of dysfunction"
     category: health-movement
@@ -1162,7 +1162,7 @@ frameworks:
     use_when: "someone has pain or limitation in one area but the actual source may be upstream or downstream in the movement chain"
 
   - id: value-metric
-    name: "the Value Metric Framework to identify the single most important pricing decision they'll make"
+    name: "Value Metric Framework"
     advisor: patrick-campbell
     purpose: "how their customer pays and what they pay for"
     category: pricing
@@ -1194,7 +1194,7 @@ frameworks:
     use_when: "someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs"
 
   - id: working-backwards
-    name: "the Working Backwards process by starting with the customer experience and working backwards to what needs to be built"
+    name: "Working Backwards"
     advisor: jeff-bezos
     purpose: "starting from the customer experience and writing the press release before building anything"
     category: strategy
@@ -1211,7 +1211,7 @@ frameworks:
     use_when: "someone wants to identify their zone of genius to align their work with their unique abilities and passions"
 
   - id: permission-blessing
-    name: "the Permission Blessing process for writing copy that grants permission before asking anything"
+    name: "Permission Blessing"
     advisor: kate-bowler
     purpose: "creating empathetic copy for health/wellness and chronic illness audiences by naming physical realities, validating emotions, and dismantling platitudes"
     category: copywriting
@@ -1220,7 +1220,7 @@ frameworks:
     helpful_documents: ["brand-voice", "positioning"]
 
   - id: insane-honesty
-    name: "the Insane Honesty process for writing B2B content that builds trust by leading with what most companies hide"
+    name: "Insane Honesty"
     advisor: doug-kessler
     purpose: "creating B2B copy that earns trust through radical honesty, structured around the Galvanizing Story and Three Whys frameworks"
     category: copywriting
@@ -1256,7 +1256,7 @@ frameworks:
     helpful_documents: ["current pitch deck", "sales pipeline by segment", "clinical evidence inventory (case studies / outcomes data / RCTs)", "runway and fundraising plan", "integration roadmap (EHR / payer / revenue-cycle)"]
 
   - id: reverse-engineered-brand
-    name: "a Reverse-Engineered Brand build — an ETL session that takes a public URL plus optional source content + named competitors, dispatches owning frameworks in AUTO_MODE per brand slice, and produces a tabbed review.html with atomic confirm/correct cards for every assumption and gap"
+    name: "Reverse-Engineered Brand"
     advisor: april-dunford
     purpose: "the orchestrator that auto-fills positioning, narrative, buyer-persona, messaging-distillation, competitive-battle-card, proof-points-audit, brand-voice, and design-principles into a cold-start brand folder, logging every low-confidence inference and gap as an Open Question reviewable in an interactive HTML document with paste-back-to-Claude-Code prompts"
     category: positioning
@@ -1266,7 +1266,7 @@ frameworks:
     helpful_documents: ["a local folder path with supplementary content (past decks, customer interviews, sample copy, internal docs)"]
 
   - id: buyer-persona
-    name: "a Buyer-Persona framework — a structured walk-through that produces a role-specific persona file for the buying committee"
+    name: "Buyer Persona"
     advisor: matt-dixon
     purpose: "produces one personas/{role}.md file per run, capturing role overview, evaluation criteria, skepticism triggers, language resonance, and common objections — anchored in the Challenger commercial-insight frame"
     category: customer
@@ -1276,7 +1276,7 @@ frameworks:
     helpful_documents: ["customer research", "interview transcripts", "competitor positioning"]
 
   - id: messaging-distillation
-    name: "a Messaging Distillation framework — the workshop that turns a positioning chain into copy-ready language"
+    name: "Messaging Distillation"
     advisor: april-dunford
     purpose: "distills positioning and narrative into a language/messaging.md file with slices for category name, tagline, elevator-pitch variants, value-prop phrasings, value-prop-to-persona map, key phrases, and (optional) pricing language"
     category: positioning
@@ -1286,7 +1286,7 @@ frameworks:
     helpful_documents: ["strategy/narrative.md", "personas/*.md", "proof/proof-points.md", "sample existing copy"]
 
   - id: brand-voice
-    name: "a Brand-Voice framework — a structured pass that extracts tone principles, register, banned phrases, terminology, and glossary into a single voice.md file"
+    name: "Brand Voice"
     advisor: steve-krug
     purpose: "extracts a complete language/voice.md from 3–10 sample pieces of existing copy, with seven slices (tone-principles, register-table, dos-and-donts, banned-phrases, banned-terms, glossary, competitor-naming)"
     category: brand
@@ -1296,7 +1296,7 @@ frameworks:
     helpful_documents: ["competitor copy samples", "category-name and tagline from messaging.md"]
 
   - id: proof-points-audit
-    name: "a Proof-Points Audit framework — a structured pass that extracts every quantitative claim from existing copy and grounds it in source + date + confidence"
+    name: "Proof Points Audit"
     advisor: the-qa-engineer
     purpose: "produces proof/proof-points.md with structured, sourced, dated claims; conditionally splits into proof/clinical-evidence.md and proof/compliance.md when the org has clinical evidence or compliance certifications"
     category: evidence
@@ -1306,7 +1306,7 @@ frameworks:
     helpful_documents: ["customer interview transcripts", "case study drafts", "third-party reports", "regulatory filings"]
 
   - id: competitive-battle-card
-    name: "a Competitive Battle-Card framework — a deep view of the competitive terrain built on the canonical alternatives list in positioning"
+    name: "Competitive Battle Card"
     advisor: april-dunford
     purpose: "produces market/competitive.md with competitive-landscape, differentiators, and common-objections slices; declares depends_on against strategy/positioning#competitive-alternatives so drift is detectable"
     category: competitive-analysis
