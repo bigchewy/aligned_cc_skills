@@ -1,0 +1,127 @@
+{
+  "schema_version": "0.2.0",
+  "folders": [
+    {
+      "id": "strategy",
+      "label": "Strategy",
+      "status": "Strong",
+      "p0_count": 4,
+      "p1_count": 1,
+      "p2_count": 1,
+      "framework_dispatches": [
+        {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md"}
+      ]
+    }
+  ],
+  "behavioral_alternatives": [
+    {
+      "id": "BA-1",
+      "alternative": "Excel spreadsheets + phone coordination",
+      "evidence_quote": "We were just building the route in Excel the night before and calling drivers in the morning.",
+      "source": "source:#2",
+      "confidence": "high"
+    }
+  ],
+  "competitors": [],
+  "open_questions": [
+    {
+      "id": "Q-strategy-positioning-1",
+      "global_id": "OQ-1",
+      "file": "strategy/positioning.md",
+      "slice": "competitive-alternatives",
+      "framework_slot": "phase-1-competitive-alternatives",
+      "question": "Is the primary alternative manual dispatch via spreadsheets?",
+      "inferred_value": "spreadsheets + manual phone dispatch",
+      "draft_excerpt": "Best customers were previously managing routes in Excel every morning.",
+      "confidence": "high",
+      "impact": "P0",
+      "evidence": ["source:#2", "source:#5"],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "Component 1 of positioning anchors the entire competitive frame.",
+      "emitted_at": "2026-05-17T09:00:00Z"
+    },
+    {
+      "id": "Q-strategy-positioning-2",
+      "global_id": "OQ-2",
+      "file": "strategy/positioning.md",
+      "slice": "unique-attributes",
+      "framework_slot": "phase-2-unique-attributes",
+      "question": "Which unique attributes are provably ours and not claimed by alternatives?",
+      "inferred_value": null,
+      "draft_excerpt": "Customers mention real-time driver visibility repeatedly.",
+      "confidence": "high",
+      "impact": "P1",
+      "evidence": ["source:#3"],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "Uncontested attributes become the proof layer for the category claim.",
+      "emitted_at": "2026-05-17T09:01:00Z"
+    },
+    {
+      "id": "Q-strategy-positioning-3",
+      "global_id": "OQ-3",
+      "file": "strategy/positioning.md",
+      "slice": "value",
+      "framework_slot": "phase-3-value",
+      "question": "What outcome do best-fit customers say they actually get?",
+      "inferred_value": "same-day delivery without a dispatcher",
+      "draft_excerpt": "We cut our routing time from two hours to fifteen minutes.",
+      "confidence": "medium",
+      "impact": "P0",
+      "evidence": ["source:#1"],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "The value statement drives the headline hierarchy on the homepage.",
+      "emitted_at": "2026-05-17T09:02:00Z"
+    },
+    {
+      "id": "Q-strategy-positioning-4",
+      "global_id": "OQ-4",
+      "file": "strategy/positioning.md",
+      "slice": "target-customers",
+      "framework_slot": "phase-4-target-customers",
+      "question": "Is the ICP mid-market logistics or SMB distribution?",
+      "inferred_value": null,
+      "draft_excerpt": null,
+      "confidence": "medium",
+      "impact": "P0",
+      "evidence": ["source:#4"],
+      "alternatives": ["mid-market 3PL (50–500 routes/day)", "SMB distribution (<50 routes/day)"],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "ICP specificity controls which proof points lead on the site.",
+      "emitted_at": "2026-05-17T09:03:00Z"
+    },
+    {
+      "id": "Q-strategy-positioning-5",
+      "global_id": "OQ-5",
+      "file": "strategy/positioning.md",
+      "slice": "value",
+      "framework_slot": "phase-3-value",
+      "question": "Is the outcome frame time-savings or cost-reduction?",
+      "inferred_value": null,
+      "draft_excerpt": "Customers talk about both fewer hours and lower headcount.",
+      "confidence": "medium",
+      "impact": "P2",
+      "evidence": ["source:#6"],
+      "alternatives": ["time-savings (hours recovered)", "cost-reduction (headcount avoided)", "both — compound outcome"],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "Framing choice controls the pricing narrative.",
+      "emitted_at": "2026-05-17T09:04:00Z"
+    },
+    {
+      "id": "Q-strategy-positioning-6",
+      "global_id": "OQ-6",
+      "file": "strategy/positioning.md",
+      "slice": "market-category",
+      "framework_slot": "phase-5-market-category",
+      "question": "Should the market category be 'last-mile delivery software' or 'route intelligence'?",
+      "inferred_value": null,
+      "draft_excerpt": null,
+      "confidence": "low",
+      "impact": "P0",
+      "evidence": [],
+      "alternatives": ["last-mile delivery software (existing category)", "route intelligence (new category claim)", "delivery operations platform (umbrella)"],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "Category choice determines who the brand competes with in buyer search.",
+      "emitted_at": "2026-05-17T09:05:00Z"
+    }
+  ]
+}
