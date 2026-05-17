@@ -513,7 +513,7 @@ git commit -m "refactor(competitive-battle-card): remove mode-detection WAITs + 
 
 ---
 
-### Task 9: Remove mode-detection from proof-points-audit framework
+### ✅ Task 9: Remove mode-detection from proof-points-audit framework
 
 **Files:**
 - Modify: `frameworks/proof-points-audit/prompt.md` (delete mode-detection block at lines 27 + 37; simplify PHASE 7 hand-off contract)

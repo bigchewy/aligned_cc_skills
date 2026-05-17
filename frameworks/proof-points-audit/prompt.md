@@ -24,8 +24,6 @@ Each WAIT point is a hard stop. The specificity in the output comes from your ma
 
 **IMPORTANT: This framework is interactive. Every WAIT point must pause for user input before the session continues.**
 
-**Mode detection:** At PHASE 1, confirm whether you are running standalone or as a sub-framework invoked by `reverse-engineered-brand`. This changes what PHASE 7 does. Ask the user once — do not assume.
-
 ---
 
 ### PHASE 1: Claim extraction
@@ -34,9 +32,7 @@ Say:
 
 "Before I audit anything, I need to see what you've written.
 
-**First — standalone or orchestrated?** Are you running this as a standalone session (I'll write the file(s) directly to `brand/proof/` at the end), or is this being invoked as part of a `reverse-engineered-brand` session (I'll hand the assembled content back to the orchestrator)?
-
-**Second — copy.** Paste the customer-facing copy you want me to audit. This should include:
+Paste the customer-facing copy you want me to audit. This should include:
 
 - Homepage (hero, features, social proof sections)
 - Sales deck (any slides with claims, stats, customer logos, or 'trusted by' language)
@@ -226,8 +222,7 @@ Body: structured entries, one per claim, in this format:
 Group claims by category (e.g., Performance, Customer Scale, Certifications, Clinical Evidence). Claims with `confidence: low` and no source get their own section: "Flagged for Follow-Up."
 
 **Hand-off contract:**
-- Standalone mode → write the file(s) to `brand/proof/` in the current repo
-- Orchestrated mode → yield the assembled markdown back to the orchestrator; do not write files directly
+- Write the file(s) to `brand/proof/` in the current repo
 
 Say:
 
