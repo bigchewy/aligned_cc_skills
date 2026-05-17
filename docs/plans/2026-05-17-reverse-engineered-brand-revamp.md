@@ -1161,7 +1161,7 @@ git commit -m "feat(reverse-engineered-brand): rewrite PHASE 3 with folders arra
 
 ---
 
-### Task 20: Update slice mapping table, intake header, top-of-file documentation in prompt.md
+### ✅ Task 20: Update slice mapping table, intake header, top-of-file documentation in prompt.md
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (the file's intro section, the slice mapping table reference if PHASE 2 rewrite preserved it, and any cross-references to `synthesize.md` that need replacing)
