@@ -483,7 +483,7 @@ git commit -m "refactor(messaging-distillation): remove mode-detection WAITs + o
 
 ---
 
-### Task 8: Remove mode-detection from competitive-battle-card framework
+### ✅ Task 8: Remove mode-detection from competitive-battle-card framework
 
 **Files:**
 - Modify: `frameworks/competitive-battle-card/prompt.md` (delete mode-detection block at lines 26 + 36; delete line 169 orchestrated-mode handback; simplify PHASE 5)

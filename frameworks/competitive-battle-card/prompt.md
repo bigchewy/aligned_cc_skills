@@ -23,8 +23,6 @@ Each WAIT point is a hard stop. Competitive intelligence is only useful if it's 
 
 **IMPORTANT: This framework is interactive. Every WAIT point must pause for user input before the session continues.**
 
-**Mode detection:** At PHASE 1, confirm whether you are running standalone or as a sub-framework invoked by `reverse-engineered-brand`. This changes what PHASE 5 does. Ask the user once — do not assume.
-
 ---
 
 ### PHASE 1: Load canonical alternatives
@@ -33,9 +31,7 @@ Say:
 
 "Before we go any further, I need to establish the ground rules for this session.
 
-**First — standalone or orchestrated?** Are you running this as a standalone session (I'll write the file directly to `brand/market/competitive.md` at the end), or is this being invoked as part of a `reverse-engineered-brand` session (I'll hand the assembled content back to the orchestrator)?
-
-**Second — the canonical list.** Open `strategy/positioning.md` and paste the competitive alternatives section here — specifically the named alternatives from Component 1. This list is authoritative. We will not add to it during this session.
+**The canonical list.** Open `strategy/positioning.md` and paste the competitive alternatives section here — specifically the named alternatives from Component 1. This list is authoritative. We will not add to it during this session.
 
 If a competitor comes up during our conversation that isn't on this list, we have two choices: (a) it's not a real alternative — prospects don't actually choose it over you — in which case we ignore it; or (b) it belongs on the list, in which case we stop this session, update positioning, and resume. I will enforce this every time it comes up."
 
@@ -165,8 +161,7 @@ depends_on: [strategy/positioning#competitive-alternatives]
 ```
 
 **Hand-off contract:**
-- **Standalone mode:** Write assembled content to `brand/market/competitive.md`.
-- **Orchestrated mode:** Yield the assembled markdown back to the `reverse-engineered-brand` orchestrator — do not write a file.
+- Write assembled content to `brand/market/competitive.md`.
 
 WAIT for user confirmation before writing or yielding.
 
