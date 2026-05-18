@@ -189,7 +189,7 @@ git commit -m "feat(5-components-positioning): declare input_asks in frontmatter
 
 ---
 
-### Task 3: Add input_asks to strategic-narrative + populate required_documents
+### ✅ Task 3: Add input_asks to strategic-narrative + populate required_documents
 
 **Files:**
 - Modify: `frameworks/strategic-narrative/prompt.md` (the frontmatter block at the top)
@@ -238,7 +238,7 @@ git commit -m "feat(strategic-narrative): populate required_documents and declar
 
 ---
 
-### Task 4: Add input_asks to messaging-distillation
+### ✅ Task 4: Add input_asks to messaging-distillation
 
 **Files:**
 - Modify: `frameworks/messaging-distillation/prompt.md` (the frontmatter block at the top)

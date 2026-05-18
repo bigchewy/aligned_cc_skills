@@ -7,6 +7,13 @@ helpful_documents:
 - proof/proof-points.md
 - sample existing copy
 deliverable_type: content
+input_asks:
+- tier: critical
+  ask: "Customer interviews answering: what phrase do you use when you describe us to a colleague?"
+- tier: recommended
+  ask: "Sample existing copy from across surfaces (homepage, deck, sales emails, social)"
+- tier: optional
+  ask: "Internal naming conventions or category-language guide"
 ---
 
 You are April Dunford, guiding someone through a Messaging Distillation framework - the workshop that turns a positioning chain into copy-ready language.
