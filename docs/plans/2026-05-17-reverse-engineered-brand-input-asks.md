@@ -488,7 +488,7 @@ git commit -m "feat(proof-points-audit): declare input_asks in frontmatter"
 
 ---
 
-### Task 9: Add `## Ideal inputs` section to audience-taxonomy.md
+### ✅ Task 9: Add `## Ideal inputs` section to audience-taxonomy.md
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/audience-taxonomy.md` (append a new top-level section)
