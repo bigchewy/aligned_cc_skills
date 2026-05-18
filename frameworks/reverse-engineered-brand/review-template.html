@@ -2011,6 +2011,128 @@
       syncInitialSelectedStates();
       rebuildAllPastebacks();
     }
+
+    // ── v0.4.0: Inputs Needed (Overview sub-tab) + per-tab callouts ──
+    var FOLDER_LABEL_TO_TAB = {
+      'Strategy': 'strategy',
+      'Language': 'language',
+      'Audiences': 'audiences',
+      'Personas': 'personas',
+      'Market': 'market',
+      'Proof': 'proof',
+      'Design': 'design',
+      'Competitive': 'competitive'
+    };
+    var SINGLE_INSTANCE_FOLDERS = {
+      strategy: true,
+      language: true,
+      market: true,
+      proof: true,
+      design: true,
+      competitive: true
+    };
+    function iaEl(tag, opts) {
+      var node = document.createElement(tag);
+      opts = opts || {};
+      if (opts.className) node.className = opts.className;
+      if (opts.text != null) node.textContent = opts.text;
+      if (opts.style) node.setAttribute('style', opts.style);
+      return node;
+    }
+    function iaMakeTierGroup(tier, label, items) {
+      var heading = iaEl('h3', { className: 'inputs-tier-heading' });
+      var badge = iaEl('span', { className: 'tier-badge tier-' + tier, text: label });
+      var count = iaEl('span', { className: 'inputs-tier-count', text: String(items.length) });
+      heading.appendChild(badge);
+      heading.appendChild(count);
+      var list = iaEl('ul', { className: 'inputs-list' });
+      items.forEach(function(it) {
+        var li = iaEl('li');
+        var link = iaEl('a', { text: it.ask });
+        link.setAttribute('href', 'javascript:void(0)');
+        link.addEventListener('click', function() { switchTab(it.tabId); });
+        var tag = iaEl('span', { className: 'ask-tab-tag', text: it.folderLabel });
+        li.appendChild(link);
+        li.appendChild(tag);
+        list.appendChild(li);
+      });
+      var wrap = document.createDocumentFragment();
+      wrap.appendChild(heading);
+      wrap.appendChild(list);
+      return wrap;
+    }
+    function renderInputAsks() {
+      var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];
+      var byTier = { critical: [], recommended: [], optional: [] };
+      folders.forEach(function(folder) {
+        var asks = folder.input_asks || [];
+        var tabId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
+        asks.forEach(function(a) {
+          if (!a || !a.tier || !a.ask) return;
+          if (!byTier[a.tier]) return;
+          byTier[a.tier].push({ ask: a.ask, folderLabel: folder.label, tabId: tabId });
+        });
+      });
+      var tiers = [
+        ['inputs-needed-critical', 'critical', 'Critical'],
+        ['inputs-needed-recommended', 'recommended', 'Recommended'],
+        ['inputs-needed-optional', 'optional', 'Optional']
+      ];
+      tiers.forEach(function(t) {
+        var container = document.getElementById(t[0]);
+        if (!container) return;
+        while (container.firstChild) container.removeChild(container.firstChild);
+        var items = byTier[t[1]] || [];
+        if (!items.length) return;
+        container.appendChild(iaMakeTierGroup(t[1], t[2], items));
+      });
+    }
+    function renderPerTabCallouts() {
+      var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];
+      folders.forEach(function(folder) {
+        var tabId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
+        if (!SINGLE_INSTANCE_FOLDERS[tabId]) return;
+        var container = document.getElementById('callout-' + tabId);
+        if (!container) return;
+        var provided = folder.provided_summary || '';
+        var asks = folder.input_asks || [];
+        if (!provided && !asks.length) {
+          container.style.display = 'none';
+          return;
+        }
+        while (container.firstChild) container.removeChild(container.firstChild);
+        container.appendChild(iaEl('h3', { text: 'What you provided' }));
+        var providedP = iaEl('p', { className: 'provided' });
+        if (provided) {
+          providedP.textContent = provided;
+        } else {
+          var emp = iaEl('em', { text: 'No source summary available.' });
+          providedP.appendChild(emp);
+        }
+        container.appendChild(providedP);
+        container.appendChild(iaEl('h3', { text: 'What would strengthen this' }));
+        if (asks.length) {
+          var list = iaEl('ul');
+          asks.forEach(function(a) {
+            if (!a || !a.tier || !a.ask) return;
+            var li = iaEl('li');
+            li.appendChild(iaEl('span', { className: 'tier-badge tier-' + a.tier, text: a.tier }));
+            li.appendChild(document.createTextNode(a.ask));
+            list.appendChild(li);
+          });
+          container.appendChild(list);
+        } else {
+          var none = iaEl('p', { className: 'provided' });
+          none.appendChild(iaEl('em', { text: 'This area has no outstanding asks — coverage is sufficient.' }));
+          container.appendChild(none);
+        }
+        container.style.display = '';
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      renderInputAsks();
+      renderPerTabCallouts();
+    });
   </script>
 
 </body>
