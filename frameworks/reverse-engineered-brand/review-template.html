@@ -713,40 +713,6 @@
       margin: 18px 0;
     }
 
-    /* Confidence chip row */
-    .conf-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .conf-card {
-      background: white;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      padding: 12px 14px;
-    }
-    .conf-card .conf-label {
-      display: inline-block;
-      font-size: 0.7rem;
-      padding: 2px 9px;
-      border-radius: 9999px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      margin-bottom: 8px;
-    }
-    .conf-card.conf-high .conf-label { background: #ecfdf5; color: #047857; }
-    .conf-card.conf-med .conf-label { background: var(--color-accent-subtle); color: var(--color-accent); }
-    .conf-card.conf-low .conf-label { background: #fef2f2; color: #b91c1c; }
-    .conf-card .conf-text {
-      font-size: 0.85rem;
-      color: var(--color-foreground);
-      line-height: 1.5;
-    }
-    @media (max-width: 760px) {
-      .conf-row { grid-template-columns: 1fr; }
-    }
-
     /* Intro paragraph above a list/grid inside an Overview sub-panel */
     .intro-p {
       font-size: 0.9rem;
@@ -918,14 +884,6 @@
         <div class="exec-section">
           <h3>Primary research</h3>
           <p id="exec-primary-research"></p>
-        </div>
-
-        <hr class="exec-divider" />
-
-        <div class="exec-section">
-          <h3>Confidence by area</h3>
-          <p id="exec-confidence-intro"></p>
-          <div class="conf-row" id="exec-confidence-cards"></div>
         </div>
       </div>
     </div>
@@ -1377,14 +1335,12 @@
 
     function renderExecNarrative() {
       // v0.3.0: source_narratives.{raw_material,primary_research}
-      // v0.2.0 fallback: exec_summary.{raw_material,primary_research,confidence_intro}
+      // v0.2.0 fallback: exec_summary.{raw_material,primary_research}
       var sn = OPEN_QUESTIONS.source_narratives || OPEN_QUESTIONS.exec_summary || {};
       var rm = document.getElementById('exec-raw-material');
       var pr = document.getElementById('exec-primary-research');
-      var ci = document.getElementById('exec-confidence-intro');
       if (rm) { clearEl(rm); if (sn.raw_material) rm.appendChild(tx(sn.raw_material)); }
       if (pr) { clearEl(pr); if (sn.primary_research) pr.appendChild(tx(sn.primary_research)); }
-      if (ci) { clearEl(ci); if (sn.confidence_intro) ci.appendChild(tx(sn.confidence_intro)); }
     }
 
     function renderExecSnapshot() {
@@ -1411,23 +1367,6 @@
           ap(ce('div', 'label'), tx(t.label))));
       });
       clearEl(el); el.appendChild(grid);
-    }
-
-    function renderExecConfidenceCards() {
-      var el = document.getElementById('exec-confidence-cards');
-      if (!el) return;
-      var oqs = OPEN_QUESTIONS.open_questions || [];
-      var tiers = [
-        { cls: 'conf-high', label: 'HIGH', count: oqs.filter(function(q) { return q.confidence === 'high'; }).length, desc: 'high-confidence assumptions' },
-        { cls: 'conf-med', label: 'MEDIUM', count: oqs.filter(function(q) { return q.confidence === 'medium'; }).length, desc: 'medium-confidence inferences' },
-        { cls: 'conf-low', label: 'LOW', count: oqs.filter(function(q) { return q.confidence === 'low'; }).length, desc: 'low-confidence questions' }
-      ];
-      clearEl(el);
-      tiers.forEach(function(t) {
-        el.appendChild(ap(ce('div', 'conf-card ' + t.cls),
-          ap(ce('span', 'conf-label'), tx(t.label)),
-          ap(ce('div', 'conf-text'), tx(t.count + ' ' + t.desc))));
-      });
     }
 
     function renderStrengthsGaps() {
@@ -1741,7 +1680,6 @@
     function renderAll() {
       renderExecNarrative();
       renderExecSnapshot();
-      renderExecConfidenceCards();
       renderBehavioralAlternatives();
       renderCompetitorCards();
       renderSectionsAtAGlance();
