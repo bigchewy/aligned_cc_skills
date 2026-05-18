@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup: reverse-engineered-brand review.html v0.4.1 — fix</title>
+  <style>
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--color-background); color: var(--color-foreground); margin: 0 auto; padding: 40px; max-width: 1100px; }
+    .frame { background: white; border: 1px solid var(--color-border); border-radius: 12px; padding: 28px; margin-bottom: 28px; }
+    .frame > h2 { font-size: 1rem; font-weight: 700; color: var(--color-dimmed); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 4px 0; }
+    .frame > p.frame-cap { font-size: 0.85rem; color: var(--color-secondary); margin: 0 0 18px 0; }
+
+    h1 { font-size: 1.6rem; font-weight: 500; margin: 0 0 4px 0; }
+    .subtitle { color: var(--color-secondary); font-size: 0.95rem; margin: 0 0 6px 0; }
+    .context { font-size: 0.85rem; color: var(--color-dimmed); margin: 0 0 24px 0; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    /* Mock tab bar */
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid var(--color-muted); margin-bottom: 18px; flex-wrap: wrap; }
+    .tab-btn { padding: 10px 16px; font-size: 0.85rem; font-weight: 500; color: var(--color-dimmed); background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-family: inherit; }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+    .sub-tab-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--color-muted); padding-left: 4px; margin-bottom: 14px; }
+    .sub-tab-btn { padding: 8px 12px; font-size: 0.78rem; font-weight: 500; color: var(--color-dimmed); background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit; }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Grade pill */
+    .grade { display: inline-block; min-width: 36px; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.95rem; text-align: center; font-feature-settings: 'tnum'; }
+    .grade-5 { background: #ecfdf5; color: #047857; }
+    .grade-4 { background: #f0fdf4; color: #16a34a; }
+    .grade-3 { background: #fef3c7; color: #b45309; }
+    .grade-2 { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .grade-1 { background: #fef2f2; color: #b91c1c; }
+
+    /* Section list — 3-column Grade | Area | Bullets */
+    .section-list { width: 100%; border-collapse: collapse; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; }
+    .section-list td { padding: 14px 16px; border-bottom: 1px solid var(--color-muted); vertical-align: top; }
+    .section-list tr:last-child td { border-bottom: none; }
+    .section-list tr { cursor: pointer; }
+    .section-list tr:hover { background: var(--color-muted); }
+    .section-list .grade-cell { width: 80px; text-align: center; }
+    .section-list .area-cell { width: 200px; font-weight: 600; }
+    .section-list .bullets-cell .bullet { font-size: 0.9rem; line-height: 1.55; color: var(--color-foreground); margin: 0 0 4px 0; }
+    .section-list .bullet .b-label { color: var(--color-dimmed); font-weight: 600; }
+    .section-list .bullet:last-child { margin-bottom: 0; }
+
+    /* Folder banner */
+    .folder-banner { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start; background: white; border: 1px solid var(--color-border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+    .banner-grade .grade { font-size: 1.1rem; min-width: 36px; padding: 6px 10px; }
+    .banner-body h2 { font-size: 1.1rem; margin: 0 0 8px 0; }
+    .banner-bullet { font-size: 0.92rem; line-height: 1.55; color: var(--color-foreground); margin: 0 0 6px 0; }
+    .banner-bullet .b-label { color: var(--color-dimmed); font-weight: 600; }
+    .banner-counts { font-size: 0.82rem; color: var(--color-dimmed); margin-top: 8px; }
+    .banner-counts strong { color: var(--color-foreground); }
+
+    /* Per-tab callout */
+    .input-callout { background: var(--color-accent-subtle); border: 1px solid var(--color-accent); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; }
+    .input-callout h3 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 8px 0; }
+    .input-callout .provided { font-size: 0.88rem; color: var(--color-secondary); margin: 0 0 12px 0; }
+    .input-callout ul { list-style: none; padding: 0; margin: 0; }
+    .input-callout li { font-size: 0.9rem; line-height: 1.6; padding: 3px 0; }
+
+    /* Flat inputs needed list (Overview) */
+    .inputs-flat { list-style: none; padding: 0; margin: 0; }
+    .inputs-flat li { padding: 7px 0; font-size: 0.95rem; line-height: 1.5; border-bottom: 1px solid var(--color-muted); }
+    .inputs-flat li:last-child { border-bottom: none; }
+    .inputs-flat li::before { content: "- "; color: var(--color-foreground); font-weight: 500; margin-right: 6px; font-family: var(--font-mono); }
+
+    /* OQ cards (compact) */
+    .oq-card { background: white; border: 1px solid var(--color-border); border-radius: 10px; padding: 16px 18px; margin-bottom: 10px; }
+    .oq-card.assumption { background: #ecfdf5; border-color: #047857; }
+    .oq-card-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+    .oq-id { font-family: var(--font-mono); font-weight: 600; font-size: 0.82rem; margin-right: 4px; }
+    .chip { display: inline-block; font-size: 0.68rem; padding: 1px 7px; border-radius: 9999px; font-weight: 500; }
+    .chip-file { background: var(--color-surface); color: var(--color-secondary); font-family: var(--font-mono); }
+    .chip-p0 { background: #fef2f2; color: #b91c1c; }
+    .chip-p1 { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .oq-body { font-size: 0.92rem; color: var(--color-foreground); margin: 4px 0 8px 0; }
+
+    /* Before/After framing */
+    .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .before-after .col h3 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 8px 0; }
+    .col-before h3 { color: #b91c1c; }
+    .col-after h3 { color: #047857; }
+    .before-box, .after-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 14px; font-size: 0.85rem; line-height: 1.55; }
+    .before-box { background: #fef2f2; border-color: #fecaca; }
+    .after-box { background: #ecfdf5; border-color: #a7f3d0; }
+
+    .doc-frame-label { display: inline-block; background: var(--color-foreground); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+    .legend { font-size: 0.8rem; color: var(--color-dimmed); margin-top: 10px; font-style: italic; }
+  </style>
+</head>
+<body>
+
+  <h1>Mockup — reverse-engineered-brand review.html v0.4.1</h1>
+  <p class="subtitle">What the fixed deliverable looks like (illustrative data: Marley Medical)</p>
+  <p class="context">Design ref: <code>docs/plans/2026-05-18-reverse-engineered-brand-review-fix-design.md</code>. Compare against the current rendered output at <code>~/Documents/Obsidian/marley/brand/review.html</code>.</p>
+
+  <!-- =============================================================== -->
+  <!--  FRAME 1 — New tab bar (5 tabs, CEO vocabulary)                  -->
+  <!-- =============================================================== -->
+  <div class="frame">
+    <h2>Frame 1 — Top nav</h2>
+    <p class="frame-cap">Collapses 9 build-taxonomy tabs (<code>Overview / Competitive Context / Strategy / Language / Audiences / Personas / Market / Proof / Design</code>) into 5 CEO-vocabulary tabs.</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active">Overview</button>
+      <button class="tab-btn">How you show up</button>
+      <button class="tab-btn">Who you sell to</button>
+      <button class="tab-btn">Who you sell against</button>
+      <button class="tab-btn">What you can prove</button>
+    </div>
+
+    <p class="legend">Underlying <code>folders[]</code> structure unchanged. New <code>display_groups[]</code> field maps groups to folder_ids. Design folder content (if any) appears under <em>How you show up</em>. Competitive Context content (behavioral alternatives + competitor cards) appears under <em>Who you sell against</em>.</p>
+  </div>
+
+  <!-- =============================================================== -->
+  <!--  FRAME 2 — Overview / Sections at a Glance                       -->
+  <!-- =============================================================== -->
+  <div class="frame">
+    <h2>Frame 2 — Overview &gt; Sections at a Glance</h2>
+    <p class="frame-cap">4 group rows. Each row: grade + label + two bullets. Reading target: &lt;5 seconds per row.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active">Your brand at a glance</button>
+      <button class="sub-tab-btn">Send us any of these</button>
+    </div>
+
+    <table class="section-list">
+      <tbody>
+        <tr>
+          <td class="grade-cell"><span class="grade grade-3">3/5</span></td>
+          <td class="area-cell">How you show up</td>
+          <td class="bullets-cell">
+            <p class="bullet"><span class="b-label">What we see:</span> a virtual cardiometabolic practice for patients between primary care and specialists.</p>
+            <p class="bullet"><span class="b-label">What we're missing:</span> how you price and where your edge sits vs employer programs.</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="grade-cell"><span class="grade grade-4">4/5</span></td>
+          <td class="area-cell">Who you sell to</td>
+          <td class="bullets-cell">
+            <p class="bullet"><span class="b-label">What we see:</span> employer benefits leaders and clinical heads inside risk-bearing payer orgs.</p>
+            <p class="bullet"><span class="b-label">What we're missing:</span> who actually runs the rollout once a pilot lands.</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="grade-cell"><span class="grade grade-2">2/5</span></td>
+          <td class="area-cell">Who you sell against</td>
+          <td class="bullets-cell">
+            <p class="bullet"><span class="b-label">What we see:</span> few named competitors; main alternative is PCP plus uncoordinated specialist referrals.</p>
+            <p class="bullet"><span class="b-label">What we're missing:</span> recent buyer notes on what else they considered.</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="grade-cell"><span class="grade grade-3">3/5</span></td>
+          <td class="area-cell">What you can prove</td>
+          <td class="bullets-cell">
+            <p class="bullet"><span class="b-label">What we see:</span> 4 outcome claims from internal data, 1 external benchmark.</p>
+            <p class="bullet"><span class="b-label">What we're missing:</span> peer-reviewed citations and customer security correspondence.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details style="margin-top: 16px; font-size: 0.85rem; color: var(--color-secondary);">
+      <summary style="cursor: pointer; color: var(--color-dimmed);">About the source material we received</summary>
+      <p style="margin: 8px 0 0 0;">39 sources total. Raw material: 30 docs (marketing decks, homepage, press). Primary research: 9 (founder essay, 2 case study drafts, partial product brief).</p>
+    </details>
+
+    <div class="before-after" style="margin-top: 20px;">
+      <div class="col col-before">
+        <h3>Before</h3>
+        <div class="before-box">"Late-vintage Marley (Series A onward, Oct 2023 – Jan 2024) converged on 'The Missing Middle' as canonical positioning — a virtual-first medical practice for polychronic cardiometabolic patients who fall between overburdened PCPs and procedure-paid specialists..." (continues for 4 more sentences per row.)</div>
+      </div>
+      <div class="col col-after">
+        <h3>After</h3>
+        <div class="after-box">Two bullets, ≤14 words each. <code>What we see:</code> = the load-bearing claim. <code>What we're missing:</code> = the load-bearing gap. Hard-fail validator on word count.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================== -->
+  <!--  FRAME 3 — Overview / Send us any of these (flat checklist)      -->
+  <!-- =============================================================== -->
+  <div class="frame">
+    <h2>Frame 3 — Overview &gt; Send us any of these</h2>
+    <p class="frame-cap">Flat doc-category checklist. Hyphen bullets (survive copy-paste). No tier headings. No folder-name chips. No happy-talk intro.</p>
+
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn">Your brand at a glance</button>
+      <button class="sub-tab-btn active">Send us any of these</button>
+    </div>
+
+    <h3 style="font-size: 1.05rem; font-weight: 600; margin: 0 0 12px 0;">Send us any of these</h3>
+
+    <ul class="inputs-flat">
+      <li>Past pitch decks or board memos</li>
+      <li>Recorded customer or prospect conversations</li>
+      <li>Notes on deals you lost and why</li>
+      <li>Recent buyer notes on what else they considered</li>
+      <li>Internal dashboards or metric source files</li>
+      <li>Customer security or compliance correspondence</li>
+      <li>Strategy memos or recent all-hands recordings</li>
+      <li>Sample customer-facing copy you like</li>
+      <li>Current certifications and trust-center materials</li>
+      <li>Customer interview transcripts or recordings</li>
+    </ul>
+
+    <div class="before-after" style="margin-top: 20px;">
+      <div class="col col-before">
+        <h3>Before</h3>
+        <div class="before-box">CRITICAL / RECOMMENDED / OPTIONAL tier headings. Each ask reads as a methodology textbook ("Source-attributed metrics with date and method. A number without a date and a method is a guess.") with a folder-name chip ("Strategy") next to it.</div>
+      </div>
+      <div class="col col-after">
+        <h3>After</h3>
+        <div class="after-box">Single flat list. Each ask ≤12 words, noun-form, doc-category. No tier badges. No folder chips. Voice-rewrite sub-agent enforces shape rules at PHASE 3.2b.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================== -->
+  <!--  FRAME 4 — Group tab panel (e.g., "How you show up")             -->
+  <!-- =============================================================== -->
+  <div class="frame">
+    <h2>Frame 4 — Group tab panel</h2>
+    <p class="frame-cap">Sample: <em>How you show up</em> (containing strategy + language + design folders). Group banner → group callout → OQ cards intermixed (with file-origin chips).</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn">Overview</button>
+      <button class="tab-btn active">How you show up</button>
+      <button class="tab-btn">Who you sell to</button>
+      <button class="tab-btn">Who you sell against</button>
+      <button class="tab-btn">What you can prove</button>
+    </div>
+
+    <!-- Group banner (NO bullets — grade + label + counts only) -->
+    <div class="folder-banner">
+      <div class="banner-grade"><span class="grade grade-3">3/5</span></div>
+      <div class="banner-body">
+        <h2>How you show up</h2>
+        <p class="banner-counts"><strong>9</strong> assumptions, <strong>6</strong> questions, <strong>2</strong> high-priority</p>
+      </div>
+    </div>
+
+    <!-- Group callout (one heading, no banner repetition) -->
+    <div class="input-callout">
+      <h3>What we have, what would help</h3>
+      <p class="provided">We received: 3 marketing decks, 1 founder essay, 1 partial product brief. No recorded sales calls.</p>
+      <p style="font-size: 0.88rem; color: var(--color-foreground); margin: 0 0 6px 0; font-weight: 600;">Would help:</p>
+      <ul>
+        <li>- Past pitch decks or board memos</li>
+        <li>- Recorded customer or prospect conversations</li>
+        <li>- Strategy memos or recent all-hands recordings</li>
+        <li>- Sample customer-facing copy you like</li>
+      </ul>
+    </div>
+
+    <!-- OQ cards with CEO-vocabulary area chips, sorted P0 → P1 -->
+    <div class="oq-card assumption">
+      <div class="oq-card-header">
+        <span class="oq-id">OQ-3</span>
+        <span class="chip chip-p0">P0</span>
+        <span class="chip chip-file" style="font-family: var(--font-sans);">Strategy</span>
+      </div>
+      <p class="oq-body">Primary competitive alternative is manual coordination via a PCP plus uncoordinated specialist referrals, not a named SaaS product.</p>
+    </div>
+
+    <div class="oq-card">
+      <div class="oq-card-header">
+        <span class="oq-id">OQ-7</span>
+        <span class="chip chip-p1">P1</span>
+        <span class="chip chip-file" style="font-family: var(--font-sans);">Language</span>
+      </div>
+      <p class="oq-body">Is "continuous care, not episodic visits" the canonical headline, or has the brand moved to a different frame post-Series A?</p>
+    </div>
+
+    <div class="oq-card assumption">
+      <div class="oq-card-header">
+        <span class="oq-id">OQ-12</span>
+        <span class="chip chip-p1">P1</span>
+        <span class="chip chip-file" style="font-family: var(--font-sans);">Language</span>
+      </div>
+      <p class="oq-body">Voice is clinician-led and candid, with high register for clinical claims and conversational register for patient-facing copy.</p>
+    </div>
+
+    <!-- Nested per-folder paste-backs (one per constituent framework) -->
+    <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--color-muted);">
+      <p style="font-size: 0.85rem; color: var(--color-secondary); margin: 0 0 12px 0;">Paste-back prompts (one per framework that produced drafts in this area):</p>
+      <details style="margin-bottom: 8px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px;">
+        <summary style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">Strategy → 5-components-positioning</summary>
+        <textarea style="width: 100%; min-height: 60px; margin-top: 8px; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--color-border); border-radius: 4px; padding: 8px;" readonly>Approve/reject prompt for strategy/positioning.md...</textarea>
+      </details>
+      <details style="margin-bottom: 8px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px;">
+        <summary style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">Language → brand-voice</summary>
+        <textarea style="width: 100%; min-height: 60px; margin-top: 8px; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--color-border); border-radius: 4px; padding: 8px;" readonly>Approve/reject prompt for language/voice.md...</textarea>
+      </details>
+      <details style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px;">
+        <summary style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">Design → design-principles</summary>
+        <textarea style="width: 100%; min-height: 60px; margin-top: 8px; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--color-border); border-radius: 4px; padding: 8px;" readonly>Approve/reject prompt for design/design-principles.md...</textarea>
+      </details>
+    </div>
+
+    <p class="legend">OQ cards: approve/reject/answer buttons omitted here for clarity. Banner now shows grade + counts only (Glance bullets weren't useful when repeated on the group page). Area chips render in CEO vocabulary, not file paths. Per-folder paste-backs nest inside the group so each framework session gets its own prompt.</p>
+  </div>
+
+  <!-- =============================================================== -->
+  <!--  FRAME 5 — Decision Log + Open Questions (design doc artifacts)  -->
+  <!-- =============================================================== -->
+  <div class="frame">
+    <h2>Frame 5 — Decision summary</h2>
+    <p class="frame-cap">17 decisions from the design doc (updated after Round 1 critique). Full table in the design document.</p>
+
+    <ol style="padding-left: 22px; font-size: 0.88rem; line-height: 1.7; color: var(--color-foreground);">
+      <li>Schema bump v0.4.0 → v0.4.1 (additive, with v0.4.0 fallback).</li>
+      <li>Drop <code>folders[].summary</code> from rendering. Add <code>display_groups[].headline_claim</code> + <code>thinnest_gap</code> (≤14 words each). NO folder-level versions — group only.</li>
+      <li>Adopt label pair <code>What we see:</code> / <code>What we're missing:</code> (Kristen Berman's pushback).</li>
+      <li>Introduce <code>display_groups[]</code> — render-time grouping into 4 CEO tabs.</li>
+      <li>Group bullets authored by 4 parallel sub-agents at PHASE 3.2 (honors context-bloat guard).</li>
+      <li>Banner: grade + label + counts only. Per-folder paste-backs nest inside group panels (one per framework).</li>
+      <li>Sections at a Glance renders 4 group rows with N/5 grades and 2-bullet cells.</li>
+      <li>Overview "Send us any of these" flattens to single hyphen-bulleted doc-category checklist.</li>
+      <li>PHASE 3.2c gate extended: Check 4 word caps (14/12/25), Check 5 verb-form rejection + required-non-empty.</li>
+      <li>DO NOT rewrite framework frontmatters. Voice-rewrite sub-agent transforms asks on read; standalone framework UX unchanged.</li>
+      <li>KB-141 em-dash fix at <code>review-template.html:2126</code> piggybacks.</li>
+      <li>Design tab dropped from new nav; Design data folds into <em>How you show up</em>.</li>
+      <li>Competitive Context tab folds into <em>Who you sell against</em>.</li>
+      <li>Grade pill renders as <code>N/5</code>, not bare <code>N</code>.</li>
+      <li>Drop Overview Executive Summary sub-tab; merge to <code>&lt;details&gt;</code> strip below Sections at a Glance.</li>
+      <li><code>legacyFolderAsGroup()</code> fully specified: synthetic id, truncation rule, em-dash strip, data-driven tab nav fallback.</li>
+      <li>Sub-tab labels: "Sections at a Glance" → "Your brand at a glance"; "Inputs Needed" → "Send us any of these".</li>
+    </ol>
+  </div>
+
+  <div class="frame">
+    <h2>Frame 6 — Open questions</h2>
+    <p class="frame-cap">3 entries (down from 4 after critique resolved OQ1) — see design doc's Open Questions section for full rationale + resolution triggers.</p>
+
+    <ol style="padding-left: 22px; font-size: 0.88rem; line-height: 1.7; color: var(--color-foreground);">
+      <li>CEO-vocabulary chip wording — is <code>Strategy</code> the right word for the chip-area label, or should it be <code>Positioning</code>, or something else?</li>
+      <li>Test against the marley corpus — first real validation is re-running on the existing marley source folder and reading the resulting review.html end-to-end.</li>
+      <li>A/B <code>Who you sell against</code> vs <code>Your competition</code> — Krug flagged "sell against" as sales-team vocabulary. Test both with two CEOs before locking.</li>
+    </ol>
+  </div>
+
+</body>
+</html>

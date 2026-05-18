@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026-05-18 Reverse Engineered Brand Review Fix — Critique Decisions</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      color: #1a1a1a;
+      margin: 0 auto;
+      padding: 40px 40px 120px;
+      max-width: 960px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 4px; }
+    .subtitle { font-size: 0.95rem; color: #555; margin: 0 0 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin: 0 0 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
+    .tab-count {
+      display: inline-block; background: #f5f3ef; color: #555;
+      font-size: 0.75rem; padding: 1px 7px; border-radius: 9999px;
+      margin-left: 6px; font-weight: 500;
+    }
+    .tab-btn.active .tab-count { background: #fff7ed; color: #e8762b; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .finding {
+      background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 18px 20px; margin-bottom: 12px;
+      display: flex; gap: 16px; align-items: flex-start;
+      transition: opacity 150ms, border-color 150ms;
+    }
+    .finding.rejected { opacity: 0.5; border-color: #f0eeeb; background: #fafafa; }
+    .finding-toggle { flex-shrink: 0; padding-top: 2px; }
+    .toggle-switch {
+      position: relative; width: 44px; height: 24px;
+      background: #d1d5db; border-radius: 9999px; cursor: pointer;
+      transition: background 150ms;
+    }
+    .toggle-switch.on { background: #6b8e4e; }
+    .toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; background: white; border-radius: 9999px;
+      transition: transform 150ms; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(20px); }
+    .toggle-label {
+      font-size: 0.72rem; color: #6b7280; text-align: center; margin-top: 4px;
+      font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .finding-body { flex: 1; min-width: 0; }
+    .finding-critics { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .critic-tag {
+      font-size: 0.72rem; padding: 1px 8px; border-radius: 9999px;
+      background: #fff7ed; color: #e8762b; font-weight: 500;
+    }
+    .finding-text { font-size: 0.92rem; line-height: 1.5; color: #1a1a1a; margin-bottom: 6px; }
+    .finding-action { font-size: 0.85rem; color: #555; line-height: 1.5; }
+    .finding-action strong { color: #1a1a1a; font-weight: 500; }
+
+    .fact-check {
+      background: white; border: 1px solid #e5e7eb; border-left: 3px solid #6b8e4e;
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+    }
+    .fact-check-claim { font-size: 0.85rem; color: #6b7280; text-decoration: line-through; margin-bottom: 4px; }
+    .fact-check-correction { font-size: 0.92rem; color: #1a1a1a; line-height: 1.5; }
+    .fact-check-critic { font-size: 0.72rem; color: #e8762b; font-weight: 500; margin-top: 6px; }
+    .auto-apply-notice {
+      font-size: 0.82rem; color: #6b7280; background: #f5f3ef;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;
+    }
+
+    .modify-notes { margin-top: 24px; padding-top: 20px; border-top: 1px dashed #e5e7eb; }
+    .modify-notes label {
+      display: block; font-size: 0.85rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px;
+    }
+    .modify-notes textarea {
+      width: 100%; min-height: 80px; padding: 10px 12px;
+      font-family: inherit; font-size: 0.88rem;
+      border: 1px solid #e5e7eb; border-radius: 8px; resize: vertical; background: white;
+    }
+    .modify-notes textarea:focus { outline: none; border-color: #e8762b; }
+
+    .empty {
+      font-size: 0.88rem; color: #6b7280; padding: 24px; text-align: center;
+      background: #f5f3ef; border-radius: 8px;
+    }
+
+    .action-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.04); z-index: 10;
+    }
+    .summary { font-size: 0.88rem; color: #555; }
+    .summary strong { color: #1a1a1a; }
+    .copy-btn {
+      padding: 10px 20px; font-size: 0.88rem; font-weight: 500; color: white;
+      background: #e8762b; border: none; border-radius: 8px; cursor: pointer;
+      transition: background 150ms; font-family: inherit;
+    }
+    .copy-btn:hover { background: #cc6725; }
+    .copy-btn.copied { background: #6b8e4e; }
+  </style>
+</head>
+<body>
+  <h1>2026-05-18 Reverse Engineered Brand Review Fix</h1>
+  <p class="subtitle">Brainstorming session · software mode</p>
+  <p class="context">Critique decisions. Toggle findings to accept or reject, add modify notes per tab if needed, then copy the follow-up prompt back into Claude Code.</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="high">High <span class="tab-count">3</span></button>
+    <button class="tab-btn" data-tab="medium">Medium <span class="tab-count">13</span></button>
+    <button class="tab-btn" data-tab="low">Low <span class="tab-count">12</span></button>
+    <button class="tab-btn" data-tab="facts">Fact-checks <span class="tab-count">2</span></button>
+  </div>
+
+  <div class="tab-panel active" id="panel-high">
+    <div class="finding" data-id="h-1" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">display_groups[] is dual-authored with folders[] despite renderer no longer reading folder-level new fields in default panels — 44 authoring slots for 16 rendered slots; no named downstream consumer for headline_claim/thinnest_gap.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Apply Necessity Test. Drop folder-level headline_claim and thinnest_gap from schema; author only at group level. Survey for actual consumers of folder-level provided_summary / input_asks before keeping them.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-2" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Group paste-back unspecified for the multi-framework case. buildPasteBack at :1363 emits one framework invocation but how-you-show-up spans 3 frameworks (5-components-positioning + brand-voice + design-principles). Open Question 4&#39;s trigger &#39;first reported confusion&#39; is misleading — multi-framework groups are 3 of 4 groups; the failure is the default behavior.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Pick before ship: (a) keep per-folder paste-backs nested inside group panels, or (b) explicitly redesign buildPasteBack for multi-framework groups with new prompt format spec&#39;d (framework names, target paths, user flow).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-3" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Voice-rewrite sub-agent has zero retry budget and the new shape rule (noun-form, doc-category, no conditionals) is enforced ONLY by sub-agent self-discipline — no orchestrator check catches verb-form asks. Group-level field omission isn&#39;t on hard-fail trigger list. Mid-flight timeout re-pays full PHASE 1+1.5+2 cost.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add Check 5 to PHASE 3.2c (regex hard-fail on ^\s*(if|ideally|when|where the buyer)\b). Extend sub-agent hard-fail triggers to require group-level provided_summaries keys. Spec resume-from-.build/ semantics on retry. Add required-non-empty check for headline_claim/thinnest_gap.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-high">Modify notes for High severity (optional)</label>
+      <textarea id="notes-high" placeholder="Anything you want to add, override, or annotate for high-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-medium">
+    <div class="finding" data-id="m-1" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Tab-id rename ripples into 6+ JS data structures (FRAMEWORK_BY_FOLDER, FRAMEWORK_TARGET, rebuildAllPastebacks, [data-folder] filter at :1368, renderAll loop, FOLDER_LABEL_TO_TAB) with no migration spec. Treated as a tab-rename when it&#39;s a folder→group re-keying.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Enumerate the renames explicitly in the renderer-changes section. Decide group-key vs. folder-key for each data structure. Tangles with h-2.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-2" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">legacyFolderAsGroup() fallback is one sentence of spec. Synthetic group id unspecified; first-sentence-of-summary could exceed 20-word cap; legacy-nav decision unspecified; 3 of 3 render fixtures have em-dashes inside folders[].summary so legacy rendering through v0.4.1 produces em-dash bullets — the very offense the design is fixing.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Spec synthetic id (e.g. legacy-{folder-id}). Spec truncation rule on derived headline_claim (first 20 words + ellipsis). Strip em/en dashes inside legacyFolderAsGroup() before assigning. Decide: legacy fixtures render old 9-tab nav OR new 5-button nav with synthetic groups.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-3" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Source-level rewrites in 10 framework files may regress standalone framework UX. The 8 framework input_asks frontmatters were authored for standalone interactive runs; rewriting to noun-form/doc-category strips deliberate methodology guidance. Count is also wrong (9, not 10) per fc-1.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either (a) confirm standalone-framework UX is improved/neutral with framework-owner signoff, or (b) decouple: keep framework-owned input_asks as-is and have voice-rewrite sub-agent transform asks into doc-category form on read. Fix the count.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-4" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Sections-at-a-Glance bullets repeat verbatim on the group tab banner — CEO scans Overview, clicks &#39;How you show up&#39;, lands on same two bullets she just read.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Drop the banner bullets on the group page (grade + label + count is enough), OR replace with an orienting sentence (&#39;The 3 OQs below answer this:&#39;).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-5" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">display_groups[] synthesis violates the orchestrator&#39;s context-bloat guard. PHASE 3.2-NEW asks orchestrator to &#39;pick the most load-bearing claim across constituent folders&#39; — either it re-reads slice drafts (violates iron rule at prompt.md:22-25) or reads already-authored folder-level fields (then synthesis can be deterministic).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Pick (a) dispatch a sub-agent for group synthesis (parallel to voice-rewrite), or (b) make synthesis deterministic (&#39;group claim = constituent folder&#39;s claim with highest grade&#39;). Acknowledge existing summary-authoring crossing at prompt.md:374.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-6" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-6', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Word-count regex &#39;split on \s+&#39; misclassifies whitespace edge cases. Leading-space string returns [&#39;&#39;,&#39;foo&#39;] (length 2). Hyphenated compounds count as 1 word but read as 2 — asymmetric vs. banned-phrase regex.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Spec the split as trim().split(/\s+/).filter(Boolean).length. Add a fixture: &#39;exactly 20 words preceded by a leading space&#39; must PASS.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-7" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-7', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Test fixtures don&#39;t cover every capped field (Check 4 covers 8 distinct fields, design specs only one negative fixture). No dedupe-collision fixture. No legacy-fallback fixture proving v0.4.0 → v0.4.1 path (valid-minimal.json may not have folder.summary at all).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Per-field negative fixtures for Check 4 (x8). One dedupe-collision fixture (two folders with same ask at different tiers; higher tier survives). One legacy-fallback fixture authored with folders[].summary populated and no display_groups[].</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-8" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-8', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Voice-rewrite shape-rule test is conflated. Test claims orchestrator hard-fails on verb-form asks slipping through, but no orchestrator check enforces that (the rule lives in voice-rewrite.md, not PHASE 3.2c).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Drop the conflated test claim. Once h-3&#39;s Check 5 lands, add the corresponding orchestrator-side test.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-9" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-9', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">OQ-zero edge cases inside group panels unspecified. When all constituent folders have zero OQs, what renders? When some constituents are empty, are they reflected in headline_claim/thinnest_gap? Current empty-state copy at :1898 is folder-keyed.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Spec empty-group copy (&#39;Coverage is sufficient across this area.&#39;) and synthesis rule for empty constituents (skip OR surface as sub-bullet in thinnest_gap).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-10" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-10', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Executive Summary sub-tab is named in Overview but never shown in the mockup. Design doc doesn&#39;t say which sub-tab opens by default.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either render Executive Summary in mockup, or kill the sub-tab (make Sections at a Glance the Overview itself with no sub-tabs).</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-11" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-11', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Bullets stay near the 20-word cap; several hit 17-18 words. 20 is the cap, not the target. CEO scans, doesn&#39;t read.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Drop the cap to 14 (or 12). Force the orchestrator to cut. The constraint is the design.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-12" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-12', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">&#39;What we&#39;re missing&#39; bullets still contain build-language (&#39;positions vs employer-channel competitors&#39;; &#39;peer-reviewed citations and named-customer security correspondence&#39; — consultant-speak).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add authoring guard: &#39;Use a phrase the CEO would say to a colleague, not a strategist&#39;s noun-clause.&#39; Two examples in the guide. Enforce in critique sub-agent.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-13" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-13', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">OQ card sort order unspecified — display_groups[i].folder_ids.some(...) filter with no sort spec means a P0 in design folder could land below a P1 in strategy folder.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add one line to renderer spec: &#39;Sort OQ cards within a group by priority (P0 → P1 → P2), then by file order.&#39;</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-medium">Modify notes for Medium severity (optional)</label>
+      <textarea id="notes-medium" placeholder="Anything you want to add, override, or annotate for medium-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-low">
+    <div class="finding rejected" data-id="l-1" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Schema display_groups: [] (empty array) vs. missing — fallback ambiguity. render-review-html.md:35 shape-warning whitelist doesn&#39;t mention display_groups. If orchestrator emits empty array, renderer falls back to folders[] but HTML scaffold is hard-coded to 5 buttons.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Make tab-nav rendering data-driven (build buttons from display_groups[] or fall back to folders[]). OR declare v0.4.0 fixtures unsupported by the new template.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-2" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">§5 source-rewrite file count off-by-one. design-principles/prompt.md has no input_asks frontmatter to rewrite (fc-1). Decision Q5&#39;s &#39;10 + 4 inline blocks&#39; is wrong.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Drop design-principles from §5 (count: 9 files), OR explicitly add a NEW input_asks block to it with tier/ask content specified.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-3" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">The Architect</span>
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Open Question 1 has no future-fire condition. Mockup already approved; OQ is decorative. Flagged by all three critics.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Mark OQ1 resolved before merging, or sharpen the trigger (&#39;If a CEO in user-test #1 asks where&#39;s the per-folder context? in first 2 minutes, reintroduce per-folder banners&#39;).</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-4" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">&#39;Sections at a Glance&#39; is happy-talk label — describes format, not content. The change is supposed to kill build-taxonomy on the front face.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Rename to &#39;Your brand at a glance&#39; or &#39;The four areas&#39;.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-5" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Group callout has two stacked headings (&#39;What you provided&#39; / &#39;What would strengthen this&#39;) where one would do.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Collapse to one heading or one short sentence with inline list (&#39;Based on 3 decks, 1 founder essay — these would help most:&#39;).</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-6" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-6', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Frame 3 (Overview &gt; Inputs Needed) intro is happy talk: &#39;If you&#39;d like to strengthen this picture, send any of these document categories.&#39;</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Kill the sentence. Promote to heading: &#39;Send us any of these.&#39;</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-7" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-7', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Inputs Needed bullet glyph is a middle-dot &#39;·&#39; that doesn&#39;t survive copy-paste into an assistant email (use case from Decision 8).</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Use hyphen &#39;-&#39;, checkbox &#39;☐&#39;, or no glyph at all. Or add a &#39;copy as plain list&#39; button.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-8" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-8', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">&#39;Who you sell against&#39; is borderline CEO vocabulary — &#39;sell against&#39; is sales-team phrase; CEOs say &#39;competitors&#39; / &#39;competition&#39; in conversation. Other three tab labels pass trunk test.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Test &#39;Who you sell against&#39; vs &#39;Your competition&#39; with two CEOs. Pick the one real users use.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-9" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-9', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">chip-file reads as developer artifact (e.g. &#39;strategy/positioning.md&#39; in monospace). Build-taxonomy killed at tab layer, brought back at card layer.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Map folder ids to CEO labels on the chip (&#39;strategy/positioning.md&#39; → &#39;Strategy&#39;). Drop the &#39;.md&#39; and slash.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-10" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-10', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">Steve Krug</span>
+        </div>
+        <div class="finding-text">Sections-at-a-Glance rows have cursor: pointer but no chevron or link styling — clickability isn&#39;t visually signaled.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add a faint &#39;›&#39; on the right or link-style the area label.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-11" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-11', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Decision-2 deprecation timeline unspecified. folders[].summary is &#39;DEPRECATED&#39; but still authored by PHASE 3.2 with no trigger to delete. &#39;One minor-version cycle&#39; is v0.4.2? v0.5.0?</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either remove from PHASE 3.2 now and accept the back-compat break, or specify the deletion trigger.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-12" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-12', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Decision-4 display_groups[] may not need to be a schema field. A static JS mapping (var GROUPS = { &#39;how-you-show-up&#39;: [&#39;strategy&#39;, &#39;language&#39;, &#39;design&#39;], ... }) renders the same tabs without a new schema field.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Apply the Necessity Test on display_groups[] as a JSON field. Does the JSON need to carry this mapping, or can the renderer hardcode it?</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-low">Modify notes for Low severity (optional)</label>
+      <textarea id="notes-low" placeholder="Anything you want to add, override, or annotate for low-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-facts">
+    <div class="auto-apply-notice">
+      Fact-check corrections are applied automatically per the critique-panel protocol. Use the modify notes below if you want to override or annotate a specific correction.
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">§5 lists 8 owning-framework prompt.md files carrying input_asks frontmatters; design body says &#39;10 files&#39; total; Decision Q5 says &#39;10 owning-framework + 4 inline blocks&#39;.</div>
+      <div class="fact-check-correction">→ Only 7 of 8 owning frameworks carry ^input_asks: — frameworks/design-principles/prompt.md returns grep -c 0. Correct source-rewrite count is 9 files (7 framework frontmatters + 2 inline-block files). Decision Q5&#39;s &#39;10 + 4&#39; is off-by-one.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Decision 6 says OQ cards &#39;preserve&#39; the chip-file showing folder origin (design line 209 cites :447 as evidence).</div>
+      <div class="fact-check-correction">→ review-template.html:447 is the CSS rule only. renderOQCard at :1741-1808 does NOT render a chip-file — the chip is only applied at :1590 for behavioral-alternatives. The per-OQ-card file chip is net-new render code, not a preservation.</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-facts">Override or annotate fact-checks (optional)</label>
+      <textarea id="notes-facts" placeholder="Anything to override or annotate..."></textarea>
+    </div>
+  </div>
+
+  <div class="action-footer">
+    <div class="summary"><strong id="accept-count">0</strong> accepted · <strong id="reject-count">0</strong> rejected</div>
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy follow-up prompt</button>
+  </div>
+
+  <script>
+    const FINDINGS = [{"id":"h-1","severity":"high","text":"display_groups[] is dual-authored with folders[] despite renderer no longer reading folder-level new fields in default panels — 44 authoring slots for 16 rendered slots; no named downstream consumer for headline_claim/thinnest_gap.","action":"Apply Necessity Test. Drop folder-level headline_claim and thinnest_gap from schema; author only at group level. Survey for actual consumers of folder-level provided_summary / input_asks before keeping them.","critics":["The Architect"],"accepted":true},{"id":"h-2","severity":"high","text":"Group paste-back unspecified for the multi-framework case. buildPasteBack at :1363 emits one framework invocation but how-you-show-up spans 3 frameworks (5-components-positioning + brand-voice + design-principles). Open Question 4's trigger 'first reported confusion' is misleading — multi-framework groups are 3 of 4 groups; the failure is the default behavior.","action":"Pick before ship: (a) keep per-folder paste-backs nested inside group panels, or (b) explicitly redesign buildPasteBack for multi-framework groups with new prompt format spec'd (framework names, target paths, user flow).","critics":["The QA Engineer","The Architect"],"accepted":true},{"id":"h-3","severity":"high","text":"Voice-rewrite sub-agent has zero retry budget and the new shape rule (noun-form, doc-category, no conditionals) is enforced ONLY by sub-agent self-discipline — no orchestrator check catches verb-form asks. Group-level field omission isn't on hard-fail trigger list. Mid-flight timeout re-pays full PHASE 1+1.5+2 cost.","action":"Add Check 5 to PHASE 3.2c (regex hard-fail on ^\\s*(if|ideally|when|where the buyer)\\b). Extend sub-agent hard-fail triggers to require group-level provided_summaries keys. Spec resume-from-.build/ semantics on retry. Add required-non-empty check for headline_claim/thinnest_gap.","critics":["The QA Engineer"],"accepted":true},{"id":"m-1","severity":"medium","text":"Tab-id rename ripples into 6+ JS data structures (FRAMEWORK_BY_FOLDER, FRAMEWORK_TARGET, rebuildAllPastebacks, [data-folder] filter at :1368, renderAll loop, FOLDER_LABEL_TO_TAB) with no migration spec. Treated as a tab-rename when it's a folder→group re-keying.","action":"Enumerate the renames explicitly in the renderer-changes section. Decide group-key vs. folder-key for each data structure. Tangles with h-2.","critics":["The Architect"],"accepted":true},{"id":"m-2","severity":"medium","text":"legacyFolderAsGroup() fallback is one sentence of spec. Synthetic group id unspecified; first-sentence-of-summary could exceed 20-word cap; legacy-nav decision unspecified; 3 of 3 render fixtures have em-dashes inside folders[].summary so legacy rendering through v0.4.1 produces em-dash bullets — the very offense the design is fixing.","action":"Spec synthetic id (e.g. legacy-{folder-id}). Spec truncation rule on derived headline_claim (first 20 words + ellipsis). Strip em/en dashes inside legacyFolderAsGroup() before assigning. Decide: legacy fixtures render old 9-tab nav OR new 5-button nav with synthetic groups.","critics":["The QA Engineer","The Architect"],"accepted":true},{"id":"m-3","severity":"medium","text":"Source-level rewrites in 10 framework files may regress standalone framework UX. The 8 framework input_asks frontmatters were authored for standalone interactive runs; rewriting to noun-form/doc-category strips deliberate methodology guidance. Count is also wrong (9, not 10) per fc-1.","action":"Either (a) confirm standalone-framework UX is improved/neutral with framework-owner signoff, or (b) decouple: keep framework-owned input_asks as-is and have voice-rewrite sub-agent transform asks into doc-category form on read. Fix the count.","critics":["The Architect","The QA Engineer"],"accepted":true},{"id":"m-4","severity":"medium","text":"Sections-at-a-Glance bullets repeat verbatim on the group tab banner — CEO scans Overview, clicks 'How you show up', lands on same two bullets she just read.","action":"Drop the banner bullets on the group page (grade + label + count is enough), OR replace with an orienting sentence ('The 3 OQs below answer this:').","critics":["Steve Krug"],"accepted":true},{"id":"m-5","severity":"medium","text":"display_groups[] synthesis violates the orchestrator's context-bloat guard. PHASE 3.2-NEW asks orchestrator to 'pick the most load-bearing claim across constituent folders' — either it re-reads slice drafts (violates iron rule at prompt.md:22-25) or reads already-authored folder-level fields (then synthesis can be deterministic).","action":"Pick (a) dispatch a sub-agent for group synthesis (parallel to voice-rewrite), or (b) make synthesis deterministic ('group claim = constituent folder's claim with highest grade'). Acknowledge existing summary-authoring crossing at prompt.md:374.","critics":["The Architect"],"accepted":true},{"id":"m-6","severity":"medium","text":"Word-count regex 'split on \\s+' misclassifies whitespace edge cases. Leading-space string returns ['','foo'] (length 2). Hyphenated compounds count as 1 word but read as 2 — asymmetric vs. banned-phrase regex.","action":"Spec the split as trim().split(/\\s+/).filter(Boolean).length. Add a fixture: 'exactly 20 words preceded by a leading space' must PASS.","critics":["The QA Engineer"],"accepted":true},{"id":"m-7","severity":"medium","text":"Test fixtures don't cover every capped field (Check 4 covers 8 distinct fields, design specs only one negative fixture). No dedupe-collision fixture. No legacy-fallback fixture proving v0.4.0 → v0.4.1 path (valid-minimal.json may not have folder.summary at all).","action":"Per-field negative fixtures for Check 4 (x8). One dedupe-collision fixture (two folders with same ask at different tiers; higher tier survives). One legacy-fallback fixture authored with folders[].summary populated and no display_groups[].","critics":["The QA Engineer"],"accepted":true},{"id":"m-8","severity":"medium","text":"Voice-rewrite shape-rule test is conflated. Test claims orchestrator hard-fails on verb-form asks slipping through, but no orchestrator check enforces that (the rule lives in voice-rewrite.md, not PHASE 3.2c).","action":"Drop the conflated test claim. Once h-3's Check 5 lands, add the corresponding orchestrator-side test.","critics":["The QA Engineer"],"accepted":true},{"id":"m-9","severity":"medium","text":"OQ-zero edge cases inside group panels unspecified. When all constituent folders have zero OQs, what renders? When some constituents are empty, are they reflected in headline_claim/thinnest_gap? Current empty-state copy at :1898 is folder-keyed.","action":"Spec empty-group copy ('Coverage is sufficient across this area.') and synthesis rule for empty constituents (skip OR surface as sub-bullet in thinnest_gap).","critics":["The QA Engineer"],"accepted":true},{"id":"m-10","severity":"medium","text":"Executive Summary sub-tab is named in Overview but never shown in the mockup. Design doc doesn't say which sub-tab opens by default.","action":"Either render Executive Summary in mockup, or kill the sub-tab (make Sections at a Glance the Overview itself with no sub-tabs).","critics":["Steve Krug"],"accepted":true},{"id":"m-11","severity":"medium","text":"Bullets stay near the 20-word cap; several hit 17-18 words. 20 is the cap, not the target. CEO scans, doesn't read.","action":"Drop the cap to 14 (or 12). Force the orchestrator to cut. The constraint is the design.","critics":["Steve Krug"],"accepted":true},{"id":"m-12","severity":"medium","text":"'What we're missing' bullets still contain build-language ('positions vs employer-channel competitors'; 'peer-reviewed citations and named-customer security correspondence' — consultant-speak).","action":"Add authoring guard: 'Use a phrase the CEO would say to a colleague, not a strategist's noun-clause.' Two examples in the guide. Enforce in critique sub-agent.","critics":["Steve Krug"],"accepted":true},{"id":"m-13","severity":"medium","text":"OQ card sort order unspecified — display_groups[i].folder_ids.some(...) filter with no sort spec means a P0 in design folder could land below a P1 in strategy folder.","action":"Add one line to renderer spec: 'Sort OQ cards within a group by priority (P0 → P1 → P2), then by file order.'","critics":["Steve Krug"],"accepted":true},{"id":"l-1","severity":"low","text":"Schema display_groups: [] (empty array) vs. missing — fallback ambiguity. render-review-html.md:35 shape-warning whitelist doesn't mention display_groups. If orchestrator emits empty array, renderer falls back to folders[] but HTML scaffold is hard-coded to 5 buttons.","action":"Make tab-nav rendering data-driven (build buttons from display_groups[] or fall back to folders[]). OR declare v0.4.0 fixtures unsupported by the new template.","critics":["The QA Engineer"],"accepted":false},{"id":"l-2","severity":"low","text":"§5 source-rewrite file count off-by-one. design-principles/prompt.md has no input_asks frontmatter to rewrite (fc-1). Decision Q5's '10 + 4 inline blocks' is wrong.","action":"Drop design-principles from §5 (count: 9 files), OR explicitly add a NEW input_asks block to it with tier/ask content specified.","critics":["The QA Engineer"],"accepted":false},{"id":"l-3","severity":"low","text":"Open Question 1 has no future-fire condition. Mockup already approved; OQ is decorative. Flagged by all three critics.","action":"Mark OQ1 resolved before merging, or sharpen the trigger ('If a CEO in user-test #1 asks where's the per-folder context? in first 2 minutes, reintroduce per-folder banners').","critics":["The QA Engineer","The Architect","Steve Krug"],"accepted":false},{"id":"l-4","severity":"low","text":"'Sections at a Glance' is happy-talk label — describes format, not content. The change is supposed to kill build-taxonomy on the front face.","action":"Rename to 'Your brand at a glance' or 'The four areas'.","critics":["Steve Krug"],"accepted":false},{"id":"l-5","severity":"low","text":"Group callout has two stacked headings ('What you provided' / 'What would strengthen this') where one would do.","action":"Collapse to one heading or one short sentence with inline list ('Based on 3 decks, 1 founder essay — these would help most:').","critics":["Steve Krug"],"accepted":false},{"id":"l-6","severity":"low","text":"Frame 3 (Overview > Inputs Needed) intro is happy talk: 'If you'd like to strengthen this picture, send any of these document categories.'","action":"Kill the sentence. Promote to heading: 'Send us any of these.'","critics":["Steve Krug"],"accepted":false},{"id":"l-7","severity":"low","text":"Inputs Needed bullet glyph is a middle-dot '·' that doesn't survive copy-paste into an assistant email (use case from Decision 8).","action":"Use hyphen '-', checkbox '☐', or no glyph at all. Or add a 'copy as plain list' button.","critics":["Steve Krug"],"accepted":false},{"id":"l-8","severity":"low","text":"'Who you sell against' is borderline CEO vocabulary — 'sell against' is sales-team phrase; CEOs say 'competitors' / 'competition' in conversation. Other three tab labels pass trunk test.","action":"Test 'Who you sell against' vs 'Your competition' with two CEOs. Pick the one real users use.","critics":["Steve Krug"],"accepted":false},{"id":"l-9","severity":"low","text":"chip-file reads as developer artifact (e.g. 'strategy/positioning.md' in monospace). Build-taxonomy killed at tab layer, brought back at card layer.","action":"Map folder ids to CEO labels on the chip ('strategy/positioning.md' → 'Strategy'). Drop the '.md' and slash.","critics":["Steve Krug"],"accepted":false},{"id":"l-10","severity":"low","text":"Sections-at-a-Glance rows have cursor: pointer but no chevron or link styling — clickability isn't visually signaled.","action":"Add a faint '›' on the right or link-style the area label.","critics":["Steve Krug"],"accepted":false},{"id":"l-11","severity":"low","text":"Decision-2 deprecation timeline unspecified. folders[].summary is 'DEPRECATED' but still authored by PHASE 3.2 with no trigger to delete. 'One minor-version cycle' is v0.4.2? v0.5.0?","action":"Either remove from PHASE 3.2 now and accept the back-compat break, or specify the deletion trigger.","critics":["The QA Engineer"],"accepted":false},{"id":"l-12","severity":"low","text":"Decision-4 display_groups[] may not need to be a schema field. A static JS mapping (var GROUPS = { 'how-you-show-up': ['strategy', 'language', 'design'], ... }) renders the same tabs without a new schema field.","action":"Apply the Necessity Test on display_groups[] as a JSON field. Does the JSON need to carry this mapping, or can the renderer hardcode it?","critics":["The Architect"],"accepted":false}];
+    const FACT_CHECKS = [{"id":"fc-1","claim":"§5 lists 8 owning-framework prompt.md files carrying input_asks frontmatters; design body says '10 files' total; Decision Q5 says '10 owning-framework + 4 inline blocks'.","correction":"Only 7 of 8 owning frameworks carry ^input_asks: — frameworks/design-principles/prompt.md returns grep -c 0. Correct source-rewrite count is 9 files (7 framework frontmatters + 2 inline-block files). Decision Q5's '10 + 4' is off-by-one.","critic":"The QA Engineer"},{"id":"fc-2","claim":"Decision 6 says OQ cards 'preserve' the chip-file showing folder origin (design line 209 cites :447 as evidence).","correction":"review-template.html:447 is the CSS rule only. renderOQCard at :1741-1808 does NOT render a chip-file — the chip is only applied at :1590 for behavioral-alternatives. The per-OQ-card file chip is net-new render code, not a preservation.","critic":"The Architect"}];
+    const SESSION = {
+      name: "2026-05-18-reverse-engineered-brand-review-fix",
+      mode: "software",
+      designPath: "/Users/ericpage/software/aligned_cc_skills/docs/plans/2026-05-18-reverse-engineered-brand-review-fix-design.md"
+    };
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    function toggleFinding(id, el) {
+      const finding = FINDINGS.find(f => f.id === id);
+      if (!finding) return;
+      finding.accepted = !finding.accepted;
+      el.classList.toggle('on');
+      const card = el.closest('.finding');
+      const label = el.parentElement.querySelector('.toggle-label');
+      if (finding.accepted) {
+        card.classList.remove('rejected');
+        label.textContent = 'accept';
+      } else {
+        card.classList.add('rejected');
+        label.textContent = 'reject';
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const accepted = FINDINGS.filter(f => f.accepted).length;
+      const rejected = FINDINGS.filter(f => !f.accepted).length;
+      document.getElementById('accept-count').textContent = accepted;
+      document.getElementById('reject-count').textContent = rejected;
+    }
+
+    function buildPrompt() {
+      const accept = FINDINGS.filter(f => f.accepted);
+      const reject = FINDINGS.filter(f => !f.accepted);
+
+      const formatFinding = f => {
+        const critics = f.critics && f.critics.length ? '[' + f.critics.join(', ') + '] ' : '';
+        return '- ' + critics + f.text;
+      };
+
+      const notes = {
+        high:   document.getElementById('notes-high').value.trim()   || '(none)',
+        medium: document.getElementById('notes-medium').value.trim() || '(none)',
+        low:    document.getElementById('notes-low').value.trim()    || '(none)',
+        facts:  document.getElementById('notes-facts').value.trim()  || '(none)'
+      };
+
+      const factLines = FACT_CHECKS.length
+        ? FACT_CHECKS.map(fc => '- ' + fc.claim + ' → ' + fc.correction).join('\n')
+        : '(none)';
+
+      return [
+        'Resume brainstorming session "' + SESSION.name + '" (' + SESSION.mode + ' mode) at `' + SESSION.designPath + '`.',
+        'Critique decisions from interactive review:',
+        '',
+        'ACCEPT (apply these):',
+        accept.length ? accept.map(formatFinding).join('\n') : '(none)',
+        '',
+        'REJECT (skip these):',
+        reject.length ? reject.map(formatFinding).join('\n') : '(none)',
+        '',
+        'FACT-CHECKS (auto-applied):',
+        factLines,
+        '',
+        'MODIFY NOTES:',
+        '- High severity: '   + notes.high,
+        '- Medium severity: ' + notes.medium,
+        '- Low severity: '    + notes.low,
+        '- Fact-checks: '     + notes.facts,
+        '',
+        'Apply the accepted findings and any modify notes, skip the rejected ones, regenerate the design doc, then refresh the session visualization per the post-critique checklist in the mode file.'
+      ].join('\n');
+    }
+
+    function copyPrompt(btn) {
+      const text = buildPrompt();
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied — paste in Claude Code';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2400);
+      }).catch(err => {
+        btn.textContent = 'Copy failed — see console';
+        console.error('Clipboard write failed:', err);
+      });
+    }
+
+    updateSummary();
+  </script>
+</body>
+</html>
