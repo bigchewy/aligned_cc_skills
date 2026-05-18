@@ -372,6 +372,19 @@ For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences
 - For folders populated via classification (`audiences`): set `synthesis_method: classification` on the folder summary; do NOT set `gap_frameworks_needed`. The folder's status reflects classification confidence (Strong/Partial/Weak), not framework presence.
 - For genuinely unowned slices (if any remain after the audiences rewiring): set `gap_frameworks_needed: [...]` with the missing framework ids derived from slice-level GAP OQs.
 - **Write `summary`** (1-3 sentences, brand-specific). Read the slice drafts in this folder and the OQ list, then write a brief executive summary of what the build *learned about this specific brand* in this area. Surface where confidence is high (e.g., "Tone signal converges across the marketing site and three sales decks"), where it's thin (e.g., "The headline metric has one source and no controlled benchmark"), and the single most-load-bearing open question. **Do not write a generic definition of the area** (e.g., "Strategy is how the brand is positioned") — the reader already knows what the area means. The summary is for skim-comprehension of *this brand's current state in this area*. Length: 1-3 sentences max.
+- **Aggregate `input_asks`** (NEW, v0.4.0+). For each folder, build the `input_asks` array by collecting from every slice that contributed to this folder. The orchestrator reads each framework's `prompt.md` frontmatter directly here — this is permitted by the carve-out at `prompt.md` lines 25-26 ("Bounded spec/template files ... are allowed in orchestrator context"). Frontmatter blocks are bounded (≤30 lines each). Read each only once and parse the YAML front-matter for `input_asks`:
+  - Framework-dispatched slices: open `frameworks/{owning-framework-id}/prompt.md`, parse the YAML front-matter, take the `input_asks` array. The `owning-framework-id` for each slice is in the slice-mapping table at PHASE 2 (`prompt.md` lines 150-162). Skip frameworks whose front-matter omits the field.
+  - `audiences` folder: read the `input_asks` YAML block from the `## Ideal inputs` section of `frameworks/reverse-engineered-brand/audience-taxonomy.md`.
+  - `competitive` folder: read the in-memory `competitive_context_input_asks` array from PHASE 1.5a.
+  - Slice-specific overrides (the `market/alternatives.md`, `proof/clinical-evidence.md`, `proof/compliance.md` slices): read the slice-specific inline `input_asks` arrays declared at PHASE 2 by Task 14b (`alternatives_input_asks`, `clinical_evidence_input_asks`, `compliance_input_asks`). Use these INSTEAD of the owning framework's asks for those specific slices (positioning's asks still feed `strategy/positioning.md`; alternatives' asks feed `market/alternatives.md`).
+
+  **Dedupe-by-text merge rule.** Concatenate all asks for the folder, then dedupe by `ask` text using case-insensitive whitespace-trimmed comparison. On collision, the higher tier wins (`critical` > `recommended` > `optional`). Within each tier, preserve first-seen order for determinism.
+
+  **Single-slice folder behavior.** If a folder hosts exactly one framework-dispatched slice, the dedupe step is a no-op and the asks pass through in framework-declared order.
+
+  **Multi-slice folder behavior.** `strategy/` (positioning + narrative), `language/` (messaging + voice), `market/` (competitive + alternatives), and `proof/` (proof-points + clinical + compliance) each collect from multiple frameworks; the dedupe rule keeps the consolidated Overview list clean.
+
+  **Write `provided_summary` placeholder.** Set `provided_summary` to `null` here — the Step 3.2b sub-agent populates it. The verification gate in Step 3.2c hard-fails if any folder still has `provided_summary: null` at JSON-write time.
 
 **Step 3.3: Aggregate competitor dossiers.**
 

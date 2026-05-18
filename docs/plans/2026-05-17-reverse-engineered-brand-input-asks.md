@@ -1012,7 +1012,7 @@ git commit -m "feat(reb): add slice-specific input_asks for alternatives, clinic
 
 ---
 
-### Task 15: Add per-folder input_asks aggregation to PHASE 3.2
+### ✅ Task 15: Add per-folder input_asks aggregation to PHASE 3.2
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (Step 3.2 block under `### PHASE 3: Load`)
