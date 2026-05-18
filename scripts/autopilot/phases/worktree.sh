@@ -92,6 +92,38 @@ done < <(find "$PROJECT" -type l -name '.env*' \
            -not -path "$PROJECT/node_modules/*" -print0 2>/dev/null)
 # === ENV-LINK BLOCK END ===
 
+# === SETTINGS-LINK BLOCK START ===
+# Mirror project-level Claude config (.claude/settings.{local,}json) and MCP
+# config (.mcp.json) from main repo into the worktree so sub-Claudes spawned
+# by later phases (mockup, verify) inherit project-level permissions and MCP
+# server definitions. Without this, `git rev-parse --show-toplevel` in the
+# worktree returns the worktree path, Claude Code treats it as the project
+# root, finds none of these files, and falls back to user-level config only —
+# project allowlist entries like `Bash(pytest *)` and project MCP servers
+# become invisible. The verify gate then halts on an interactive prompt that
+# never resolves under the non-interactive autopilot. Symlinks (not copies)
+# so edits to main during a run propagate. Existing worktree files are left
+# alone — the using-git-worktrees skill writes a narrow Edit-only
+# settings.local.json in human-driven setups and we must not clobber it.
+settings_linked=0
+for settings_rel in .claude/settings.local.json .claude/settings.json .mcp.json; do
+  src="$PROJECT/$settings_rel"
+  dest="$WORKTREE/$settings_rel"
+  if [ -f "$src" ] && [ ! -e "$dest" ]; then
+    mkdir -p "$(dirname "$dest")"
+    ln -s "$src" "$dest"
+    echo "Linked $settings_rel from main repo."
+    settings_linked=$((settings_linked + 1))
+  fi
+done
+if [ "$settings_linked" -eq 0 ] && [ ! -e "$WORKTREE/.claude/settings.local.json" ]; then
+  echo "WARNING: No project-level Claude settings or .mcp.json to mirror from main." >&2
+  echo "         Sub-Claudes will inherit only user-level (~/.claude/) permissions." >&2
+  echo "         The verify gate may halt on permission prompts if your test runner" >&2
+  echo "         (pytest, npm test, etc.) is not in the user-level allowlist." >&2
+fi
+# === SETTINGS-LINK BLOCK END ===
+
 # Merge main so the plan file is available in the worktree.
 # On failure, let git's native diagnostic print to stderr and exit 1;
 # autopilot.sh's run_phase converts that to phase_crashed. Do NOT auto-abort —
