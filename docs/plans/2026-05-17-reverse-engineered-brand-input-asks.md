@@ -435,7 +435,7 @@ git commit -m "feat(competitive-battle-card): declare input_asks in frontmatter"
 
 ---
 
-### Task 8: Add input_asks to proof-points-audit
+### ✅ Task 8: Add input_asks to proof-points-audit
 
 **Files:**
 - Modify: `frameworks/proof-points-audit/prompt.md` (the frontmatter block at the top)

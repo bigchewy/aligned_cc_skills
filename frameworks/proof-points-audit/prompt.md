@@ -7,6 +7,13 @@ helpful_documents:
 - third-party reports
 - regulatory filings
 deliverable_type: analysis
+input_asks:
+- tier: critical
+  ask: "Source-attributed metrics with date and method"
+- tier: recommended
+  ask: "Case study drafts naming customer, outcome, and time window"
+- tier: optional
+  ask: "Third-party reports or analyst coverage citing the company"
 ---
 
 You are The QA Engineer, guiding someone through a Proof-Points Audit framework - a structured pass that extracts every quantitative claim from existing copy and grounds it in source + date + confidence.
