@@ -386,6 +386,30 @@ For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences
 
   **Write `provided_summary` placeholder.** Set `provided_summary` to `null` here — the Step 3.2b sub-agent populates it. The verification gate in Step 3.2c hard-fails if any folder still has `provided_summary: null` at JSON-write time.
 
+**Step 3.2-NEW: Build `display_groups[]` shells + dispatch group-bullets sub-agents.**
+
+After `folders[]` is built, construct the `display_groups[]` array with exactly 4 entries in this order:
+
+1. `id: "how-you-show-up"`, `label: "How you show up"`, `folder_ids: ["strategy", "language", "design"]`
+2. `id: "who-you-sell-to"`, `label: "Who you sell to"`, `folder_ids: ["audiences", "personas"]`
+3. `id: "who-you-sell-against"`, `label: "Who you sell against"`, `folder_ids: ["market", "competitive"]`
+4. `id: "what-you-can-prove"`, `label: "What you can prove"`, `folder_ids: ["proof"]`
+
+If any listed folder is absent from `folders[]` (e.g., `competitive` is a top-level synthetic folder, not a brand-folder subdirectory — gate behavior: include if behavioral_alternatives + competitors arrays are non-empty), filter `folder_ids` to actually-present folders before continuing.
+
+For each group, compute the shell fields:
+- `grade`: rounded mean of constituent folders' `grade` values; cap at 5.
+- `input_asks`: union of constituent folders' `input_asks`, deduped by case-insensitive whitespace-trimmed `ask` text. Higher tier wins on collision (`critical` > `recommended` > `optional`). Within a tier, preserve first-seen order in `display_groups[i].folder_ids` order.
+- `headline_claim`, `thinnest_gap`, `provided_summary`: temporarily set to `""` placeholders; sub-agents populate them next.
+
+**Dispatch 4 sub-agents in PARALLEL** (single assistant message, 4 Task calls). Each uses `subagent_type: general-purpose` and the prompt template at `frameworks/reverse-engineered-brand/group-bullets.md`. Substitute the placeholders per group, including `{output-json-path}` = `{brand-folder-path}/.build/groups/{group-id}.json`.
+
+The `{canonical-pre-synthesis-blob-path}` placeholder resolves to `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md` — the 1-paragraph blob the orchestrator already authored at PHASE 2.2 from the Source Registry (org-name + brief positioning hypothesis + brief ICP hypothesis). The same blob is passed to every framework dispatch, so the group-bullets sub-agents share that baseline view. Sub-agents read it as orienting context; they do not modify it.
+
+**After all 4 return:** Read each `.build/groups/{group-id}.json` file. Validate the JSON parses and contains `headline_claim` + `thinnest_gap` keys. Merge into the in-memory `display_groups[]` by `id`. If any file is missing or malformed: hard-fail with `group: {id}, failure: file_missing|malformed_json|missing_keys`.
+
+**Resume semantics.** If a sub-agent succeeded on a previous run (its `.build/groups/{group-id}.json` is present and parses), skip re-dispatch for that group. This makes PHASE 3.2 idempotent across reruns and avoids re-paying PHASE 1+1.5+2 costs after a single-sub-agent failure.
+
 **Step 3.2b: Brand-voice rewrite + `provided_summary` generation (NEW).**
 
 After Step 3.2 produces `folders[].input_asks` with placeholder `provided_summary: null`, dispatch a single sub-agent (Task, `subagent_type: general-purpose`) using the prompt template at `frameworks/reverse-engineered-brand/voice-rewrite.md`. The sub-agent (a) rewrites every `ask` string in the project's brand voice, and (b) authors one `provided_summary` string per folder from Source Registry metadata.
@@ -476,7 +500,7 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
    - `audiences/channels/employer.md` → Classified from source material against `audience-taxonomy.md`. Confidence: {high|medium|low}.
    ```
 
-**`{brand-folder-path}/version.yaml`** — `schema_version: "0.4.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
+**`{brand-folder-path}/version.yaml`** — `schema_version: "0.4.1"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
 
 **`{brand-folder-path}/contracts.yaml`** — copy canonical contracts from `docs/brand-folder-spec.md § contracts.yaml`.
 
@@ -490,11 +514,11 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
 
 These are required fields in v0.4.0. Compute them from registry metadata only — do not read source bodies (context-bloat guard).
 
-**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.4.0"`:
+**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.4.1"`:
 
 ```json
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.4.1",
   "source_counts": { "total": 39, "raw_material": 30, "primary_research": 9 },
   "source_narratives": {
     "raw_material": "...",
@@ -517,6 +541,20 @@ These are required fields in v0.4.0. Compute them from registry metadata only �
       "input_asks": [
         { "tier": "critical", "ask": "<voice-rewritten ask>" },
         { "tier": "recommended", "ask": "<voice-rewritten ask>" }
+      ]
+    }
+  ],
+  "display_groups": [
+    {
+      "id": "how-you-show-up",
+      "label": "How you show up",
+      "folder_ids": ["strategy", "language", "design"],
+      "grade": 3,
+      "headline_claim": "<≤14 words, brand-specific, declarative>",
+      "thinnest_gap": "<≤14 words, brand-specific, declarative>",
+      "provided_summary": "<≤25 words inventorying group-level source material>",
+      "input_asks": [
+        { "tier": "critical", "ask": "<≤12-word noun-form doc-category>" }
       ]
     }
   ],

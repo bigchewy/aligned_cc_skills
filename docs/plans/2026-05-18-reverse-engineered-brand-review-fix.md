@@ -1265,7 +1265,7 @@ git commit -m "feat(reverse-engineered-brand): add group-bullets sub-agent promp
 
 ---
 
-### Task 12: Update `prompt.md` PHASE 3.2 — group-level synthesis via 4 parallel sub-agents
+### ✅ Task 12: Update `prompt.md` PHASE 3.2 — group-level synthesis via 4 parallel sub-agents
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (extend Step 3.2 with the new group-construction block and the parallel sub-agent dispatch instructions)
