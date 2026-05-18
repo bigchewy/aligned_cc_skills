@@ -942,6 +942,17 @@
     }
     .inputs-list a:hover { color: var(--color-accent); }
 
+    /* Flat inputs list (Send us any of these) */
+    .inputs-flat { list-style: none; padding: 0; margin: 0; }
+    .inputs-flat li { padding: 7px 0; font-size: 0.95rem; line-height: 1.5; border-bottom: 1px solid var(--color-muted); }
+    .inputs-flat li:last-child { border-bottom: none; }
+    .inputs-flat li::before { content: "- "; color: var(--color-foreground); font-weight: 500; margin-right: 6px; font-family: var(--font-mono); }
+
+    /* Expandable source material strip */
+    .overview-source-detail { margin-top: 16px; font-size: 0.85rem; color: var(--color-secondary); border-top: 1px solid var(--color-muted); padding-top: 12px; }
+    .overview-source-detail summary { cursor: pointer; color: var(--color-dimmed); font-weight: 500; }
+    .overview-source-detail .overview-source-body { margin-top: 8px; }
+
     /* Per-tab callout ("What you provided / What would strengthen this") */
     .input-callout {
       background: var(--color-accent-subtle);
@@ -992,49 +1003,38 @@
   <div id="panel-overview" class="tab-panel active">
 
     <div class="sub-tab-bar">
-      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-summary')">Executive Summary</button>
-      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-focus')">Sections at a Glance</button>
-      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-inputs')">Inputs Needed</button>
-    </div>
-
-    <!-- Overview / Executive Summary -->
-    <div id="sub-overview-summary" class="sub-panel active">
-      <div class="section exec-summary" id="exec-narrative">
-        <h2>Executive summary</h2>
-        <p class="description">Narrative assessment of how effective the ingested raw material and primary research were at understanding the brand. Use this to calibrate trust in the drafts under each folder tab.</p>
-
-        <div id="exec-snapshot"></div>
-
-        <div class="exec-section">
-          <h3>Raw material</h3>
-          <p id="exec-raw-material"></p>
-        </div>
-
-        <hr class="exec-divider" />
-
-        <div class="exec-section">
-          <h3>Primary research</h3>
-          <p id="exec-primary-research"></p>
-        </div>
-      </div>
+      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-focus')">Your brand at a glance</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-inputs')">Send us any of these</button>
     </div>
 
     <!-- Overview / Sections at a Glance -->
-    <div id="sub-overview-focus" class="sub-panel">
+    <div id="sub-overview-focus" class="sub-panel active">
       <div class="section">
         <p class="description">Click any area to jump to its tab. Status reflects aggregate confidence across the area's drafts.</p>
         <div id="sections-at-a-glance"></div>
+        <details class="overview-source-detail">
+          <summary>About the source material we received</summary>
+          <div class="overview-source-body">
+            <div id="exec-snapshot"></div>
+            <div class="exec-section">
+              <h4>Raw material</h4>
+              <p id="exec-raw-material"></p>
+            </div>
+            <hr class="exec-divider" />
+            <div class="exec-section">
+              <h4>Primary research</h4>
+              <p id="exec-primary-research"></p>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
 
     <!-- Overview / Inputs Needed -->
     <div id="sub-overview-inputs" class="sub-panel">
       <div class="section">
-        <h2>Inputs Needed</h2>
-        <p class="description">If you'd like to strengthen this report, here's what would help — organized by impact. We pulled what we could from what you sent; this list names categories of raw material that would change the result on the tab noted next to each item.</p>
-        <div id="inputs-needed-critical"></div>
-        <div id="inputs-needed-recommended"></div>
-        <div id="inputs-needed-optional"></div>
+        <h2>Send us any of these</h2>
+        <div id="inputs-needed-flat"></div>
       </div>
     </div>
 
@@ -2068,51 +2068,33 @@
       if (opts.style) node.setAttribute('style', opts.style);
       return node;
     }
-    function iaMakeTierGroup(tier, label, items) {
-      var heading = iaEl('h3', { className: 'inputs-tier-heading' });
-      var badge = iaEl('span', { className: 'tier-badge tier-' + tier, text: label });
-      var count = iaEl('span', { className: 'inputs-tier-count', text: String(items.length) });
-      heading.appendChild(badge);
-      heading.appendChild(count);
-      var list = iaEl('ul', { className: 'inputs-list' });
-      items.forEach(function(it) {
-        var li = iaEl('li');
-        var link = iaEl('a', { text: it.ask });
-        link.setAttribute('href', 'javascript:void(0)');
-        link.addEventListener('click', function() { switchTab(it.tabId); });
-        li.appendChild(link);
-        list.appendChild(li);
-      });
-      var wrap = document.createDocumentFragment();
-      wrap.appendChild(heading);
-      wrap.appendChild(list);
-      return wrap;
-    }
     function renderInputAsks() {
-      var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];
-      var byTier = { critical: [], recommended: [], optional: [] };
-      folders.forEach(function(folder) {
-        var asks = folder.input_asks || [];
-        var tabId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
-        asks.forEach(function(a) {
-          if (!a || !a.tier || !a.ask) return;
-          if (!byTier[a.tier]) return;
-          byTier[a.tier].push({ ask: a.ask, folderLabel: folder.label, tabId: tabId });
+      var container = document.getElementById('inputs-needed-flat');
+      if (!container) return;
+      while (container.firstChild) container.removeChild(container.firstChild);
+      var groups = resolveDisplayGroups();
+      var seen = Object.create(null);
+      var flat = [];
+      groups.forEach(function(g) {
+        (g.input_asks || []).forEach(function(a) {
+          if (!a || !a.ask) return;
+          var key = a.ask.trim().toLowerCase();
+          if (seen[key]) return;
+          seen[key] = true;
+          flat.push(a.ask);
         });
       });
-      var tiers = [
-        ['inputs-needed-critical', 'critical', 'Critical'],
-        ['inputs-needed-recommended', 'recommended', 'Recommended'],
-        ['inputs-needed-optional', 'optional', 'Optional']
-      ];
-      tiers.forEach(function(t) {
-        var container = document.getElementById(t[0]);
-        if (!container) return;
-        while (container.firstChild) container.removeChild(container.firstChild);
-        var items = byTier[t[1]] || [];
-        if (!items.length) return;
-        container.appendChild(iaMakeTierGroup(t[1], t[2], items));
+      if (!flat.length) {
+        var empty = iaEl('p', { className: 'provided', text: 'No additional inputs requested.' });
+        container.appendChild(empty);
+        return;
+      }
+      var ul = iaEl('ul', { className: 'inputs-flat' });
+      flat.forEach(function(ask) {
+        var li = iaEl('li', { text: ask });
+        ul.appendChild(li);
       });
+      container.appendChild(ul);
     }
     function renderPerTabCallouts() {
       var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];

@@ -342,7 +342,7 @@ git commit -m "feat(reverse-engineered-brand): data-driven tab nav with legacyFo
 
 ---
 
-### Task 5: Refactor `renderSectionsAtAGlance` to group rows with N/5 grades and 2 bullets
+### ✅ Task 5: Refactor `renderSectionsAtAGlance` to group rows with N/5 grades and 2 bullets
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `gradePill` function and the `renderSectionsAtAGlance` function; the `.section-list` CSS to add the bullets-cell label styling)
@@ -457,7 +457,7 @@ git commit -m "feat(reverse-engineered-brand): Sections at a Glance renders 4 gr
 
 ---
 
-### Task 6: Flatten Overview Inputs Needed + drop happy-talk intro + sub-tab label changes
+### ✅ Task 6: Flatten Overview Inputs Needed + drop happy-talk intro + sub-tab label changes
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the Overview sub-tab buttons, the `<p class="description">` intro paragraph at the Inputs Needed sub-panel, the `renderInputAsks` function, and the `iaMakeTierGroup` function — drop the latter entirely now that asks are flat)
