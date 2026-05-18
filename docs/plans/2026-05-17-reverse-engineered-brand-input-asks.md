@@ -532,7 +532,7 @@ git commit -m "feat(audience-taxonomy): add Ideal inputs section with input_asks
 
 ---
 
-### Task 10: Bump open-questions-schema to v0.4.0
+### ✅ Task 10: Bump open-questions-schema to v0.4.0
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/open-questions-schema.md` (header version, top-level structure, `folders[]` table, backward-compat paragraph)
