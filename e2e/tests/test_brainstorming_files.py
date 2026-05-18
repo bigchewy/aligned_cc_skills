@@ -225,18 +225,20 @@ def test_roadmap_mode_file_structure():
 def test_skill_md_has_disambiguation_rules():
     text = read("skills/brainstorming/SKILL.md")
     assert "### Disambiguation Rules" in text, "missing Disambiguation Rules subsection"
-    # All three rule pairs must appear
+    # Rule pairs present after 4-mode collapse (Business mode removed)
     for pair in [
         "Software vs Authoring",
         "Authoring vs Research",
-        "Business vs Roadmap",
     ]:
         assert pair in text, f"missing rule: {pair}"
-    # 5-way disambiguation question must appear
-    assert ("Software design" in text and "Business strategy" in text
-            and "Research synthesis" in text and "Content authoring" in text
-            and "Multi-feature roadmap" in text), \
-        "5-way disambiguation question must list all five modes"
+    # 4-mode picker labels must appear in Step 1
+    for label in [
+        "Write a document",
+        "Design a code change",
+        "Synthesize research",
+        "Break a big initiative into smaller pieces",
+    ]:
+        assert label in text, f"missing 4-mode picker label: {label}"
 
 
 def test_skill_md_step2_has_per_mode_emphasis():

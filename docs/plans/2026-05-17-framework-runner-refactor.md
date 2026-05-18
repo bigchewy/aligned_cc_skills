@@ -2284,7 +2284,7 @@ The renamed fixture (brainstorming-five-modes.md) is tracked as a rename automat
 
 ---
 
-### Task 26: Sweep remaining `test_brainstorming_files.py` functions for 4-mode shape
+### ✅ Task 26: Sweep remaining `test_brainstorming_files.py` functions for 4-mode shape
 
 After Tasks 15, 17, 18, 19, 20, 21, 22, 23, 24, 25 have all changed the source, run the full `test_brainstorming_files.py` and update any remaining functions that still hardcode 5-mode or use `business`/`planning` labels.
 
