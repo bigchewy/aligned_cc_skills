@@ -22,7 +22,7 @@ Read `skills/_shared/contextual-recommendation.md` and invoke it with:
 Outcomes (the fallback ladder):
 
 1. **Auto-select fires on a framework** → Phase 2a (framework runner, intake=strict).
-2. **Auto-select fires on an advisor (no framework match)** → Phase 2b (advisor runner).
+2. **Auto-select fires on an advisor (no framework match)** → Phase 2b (structured Q&A with the matched advisor in The Architect's proxy seat).
 3. **Shortlist mode** → present the unified shortlist; user picks an entry; route to 2a or 2b based on entity type.
 4. **No high-confidence match (Stage 1 returns candidates but none auto-select)** → Phase 2c (structured Q&A; top-scoring topic advisor in proxy seat).
 5. **Zero candidates** (both registries returned nothing after domain filter — extremely rare given 154 frameworks + 70 advisors) → Phase 2d (structured Q&A with Wise Eric in proxy seat).
@@ -33,7 +33,7 @@ Path 4 of `contextual-recommendation.md` (the "what problem are you working on?"
 
 ### Phase 2: Engine execution
 
-Four paths based on Phase 1 result:
+Two execution paths based on Phase 1 result (outcomes 2–5 all route to the structured Q&A path):
 
 ### Phase 2a: Framework runner (engine = framework)
 
@@ -43,17 +43,11 @@ Read `skills/_shared/framework-runner.md` and invoke it with:
 
 On framework completion, the runner returns control here. Proceed to Phase 3.
 
-### Phase 2b: Advisor runner (engine = advisor)
-
-Read `skills/_shared/advisor-runner.md` and invoke it with:
-- **Matched advisor path:** from Phase 1
-
-On advisor session completion, the runner returns control here. Proceed to Phase 3.
-
-### Phase 2c/2d: Structured Q&A with topic advisor in proxy seat
+### Phase 2b/2c/2d: Structured Q&A with topic advisor in Architect's proxy seat
 
 The Q&A pattern is duplicated from `modes/software.md` (L22-134). See the parity marker below.
 
+For Phase 2b (matched advisor) — use the matched advisor's prompt in the proxy dispatch.
 For Phase 2c (top-scoring advisor) — use the top-scoring advisor's prompt in the proxy dispatch.
 For Phase 2d (Wise Eric default) — use `advisors/prompts/wise-eric.md`.
 
@@ -218,5 +212,5 @@ Read `{base-directory}/../_shared/critique-panel-orchestration.md`. Config:
 
 - The wrapper owns scaffolding (project scan, intake gates, visualization, critique, commit, handoff). The engine (framework or Q&A) owns the conversation.
 - Always-ask routing means the user has confirmed they want Authoring before this file runs.
-- Fallback ladder paths 2c/2d are structured Q&A — never free exploration.
+- Fallback ladder paths 2b/2c/2d are structured Q&A — never free exploration.
 - Wise Eric is the last-resort default proxy. His prompt handles "I'm not sure what I need" gracefully.

@@ -2355,7 +2355,7 @@ git commit -m "docs(spawn-brief): finalize Roadmap addition to target_mode enum"
 
 ---
 
-### Task 28: Bump plugin version + run full suite
+### ✅ Task 28: Bump plugin version + run full suite
 
 Bump `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` from `0.30.0` → `0.31.0`. Run the full test suite to confirm no regressions.
 
