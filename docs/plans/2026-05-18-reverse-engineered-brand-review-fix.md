@@ -1345,7 +1345,7 @@ git commit -m "feat(reverse-engineered-brand): PHASE 3.2 dispatches 4 parallel g
 
 ---
 
-### Task 13: Update `prompt.md` PHASE 3.2b — group-level voice rewrite + PHASE 3.2c gate extensions
+### ✅ Task 13: Update `prompt.md` PHASE 3.2b — group-level voice rewrite + PHASE 3.2c gate extensions
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (PHASE 3.2b and PHASE 3.2c sections)
