@@ -604,7 +604,7 @@ git commit -m "feat(reverse-engineered-brand): flatten Inputs Needed + drop Exec
 
 ---
 
-### Task 7: Restructure HTML — 4 group panels, nested per-folder paste-backs, FOLDER_LABEL_BY_ID + FOLDER_TO_GROUP_TAB
+### ✅ Task 7: Restructure HTML — 4 group panels, nested per-folder paste-backs, FOLDER_LABEL_BY_ID + FOLDER_TO_GROUP_TAB
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the 8 folder `<div class="tab-panel">` blocks → 4 group panels; introduce `FOLDER_LABEL_BY_ID` and `FOLDER_TO_GROUP_TAB`; refactor `FRAMEWORK_BY_FOLDER` / `FRAMEWORK_TARGET` usage; refactor `renderAll` and `rebuildAllPastebacks`)

@@ -1040,138 +1040,34 @@
 
   </div>
 
-  <!-- ========= COMPETITIVE CONTEXT ========= -->
-  <div id="panel-competitive" class="tab-panel">
-    <div class="input-callout" id="callout-competitive" style="display:none"></div>
-    <div class="section">
-      <h2>Competitive context</h2>
-      <p class="intro-p">Competitors identified via cross-source mention frequency; behavioral alternatives extracted from source material. Behavioral alternatives often turn out to be the more honest competitive frame — what customers actually do today (without you) usually matters more than the named SaaS in the same category.</p>
-
-      <h3 class="alt-section-heading">What customers do today (without you)</h3>
-      <p class="description">Non-product alternatives surfaced from sales calls, decks, and research notes. These are the real defaults your product displaces. Per April Dunford: these matter MORE than named competitors.</p>
-      <div id="behavioral-alternatives"></div>
-
-      <h3 class="alt-section-heading alt-section-heading-secondary">Named competitors</h3>
-      <p class="description">Named alternatives appearing across the ingested sources. Each dossier was assembled from public sources (homepage, About, alternatives page, recent press). If a competitor here is wrong, edit <code>.build/competitors/</code> and rerun the framework. Full battle cards live under the <code>market/</code> tab once the competitive-battle-card framework is run.</p>
-      <div id="competitor-cards"></div>
-    </div>
+  <!-- ========= GROUP PANELS ========= -->
+  <div id="panel-how-you-show-up" class="tab-panel">
+    <div class="folder-banner" id="banner-how-you-show-up"></div>
+    <div class="input-callout" id="callout-how-you-show-up" style="display:none"></div>
+    <div id="panel-how-you-show-up-oqs"></div>
+    <div id="panel-how-you-show-up-pastebacks"></div>
   </div>
-
-  <!-- ========= STRATEGY ========= -->
-  <div id="panel-strategy" class="tab-panel">
-    <div class="input-callout" id="callout-strategy" style="display:none"></div>
-    <div id="panel-strategy-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-strategy" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('strategy')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('strategy')">Regenerate</button>
-      </div>
-    </div>
+  <div id="panel-who-you-sell-to" class="tab-panel">
+    <div class="folder-banner" id="banner-who-you-sell-to"></div>
+    <div class="input-callout" id="callout-who-you-sell-to" style="display:none"></div>
+    <div id="panel-who-you-sell-to-oqs"></div>
+    <div id="panel-who-you-sell-to-pastebacks"></div>
   </div>
-
-  <!-- ========= LANGUAGE ========= -->
-  <div id="panel-language" class="tab-panel">
-    <div class="input-callout" id="callout-language" style="display:none"></div>
-    <div id="panel-language-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-language" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('language')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('language')">Regenerate</button>
-      </div>
-    </div>
+  <div id="panel-who-you-sell-against" class="tab-panel">
+    <div class="folder-banner" id="banner-who-you-sell-against"></div>
+    <div class="input-callout" id="callout-who-you-sell-against" style="display:none"></div>
+    <h3 class="alt-section-heading">What customers do today (without you)</h3>
+    <div id="behavioral-alternatives"></div>
+    <h3 class="alt-section-heading alt-section-heading-secondary">Named competitors</h3>
+    <div id="competitor-cards"></div>
+    <div id="panel-who-you-sell-against-oqs"></div>
+    <div id="panel-who-you-sell-against-pastebacks"></div>
   </div>
-
-  <!-- ========= AUDIENCES ========= -->
-  <div id="panel-audiences" class="tab-panel">
-    <div id="panel-audiences-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-audiences" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('audiences')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('audiences')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= PERSONAS ========= -->
-  <div id="panel-personas" class="tab-panel">
-    <div id="panel-personas-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-personas" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('personas')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('personas')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= MARKET ========= -->
-  <div id="panel-market" class="tab-panel">
-    <div class="input-callout" id="callout-market" style="display:none"></div>
-    <div id="panel-market-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-market" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('market')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('market')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= PROOF ========= -->
-  <div id="panel-proof" class="tab-panel">
-    <div class="input-callout" id="callout-proof" style="display:none"></div>
-    <div id="panel-proof-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-proof" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('proof')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('proof')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= DESIGN ========= -->
-  <div id="panel-design" class="tab-panel">
-    <div class="input-callout" id="callout-design" style="display:none"></div>
-    <div id="panel-design-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-design" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('design')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('design')">Regenerate</button>
-      </div>
-    </div>
+  <div id="panel-what-you-can-prove" class="tab-panel">
+    <div class="folder-banner" id="banner-what-you-can-prove"></div>
+    <div class="input-callout" id="callout-what-you-can-prove" style="display:none"></div>
+    <div id="panel-what-you-can-prove-oqs"></div>
+    <div id="panel-what-you-can-prove-pastebacks"></div>
   </div>
 
   <script>
@@ -1192,6 +1088,28 @@
         bar.appendChild(btn);
       });
       bar.dataset.built = 'true';
+    }
+
+    function buildGroupPanels() {
+      if (OPEN_QUESTIONS.display_groups && OPEN_QUESTIONS.display_groups.length) return;
+      // Legacy fallback: synthesize panel divs for each synthetic group.
+      // Idempotent: re-invocation skips groups whose panel already exists in the DOM.
+      var groups = resolveDisplayGroups();
+      var host = document.querySelector('body');
+      groups.forEach(function(g) {
+        if (document.getElementById('panel-' + g.id)) return;
+        var panel = document.createElement('div');
+        panel.id = 'panel-' + g.id;
+        panel.className = 'tab-panel';
+        ['banner-', 'callout-', 'panel-{id}-oqs', 'panel-{id}-pastebacks'].forEach(function(tmpl) {
+          var d = document.createElement('div');
+          if (tmpl === 'banner-') { d.className = 'folder-banner'; d.id = 'banner-' + g.id; }
+          else if (tmpl === 'callout-') { d.className = 'input-callout'; d.style.display = 'none'; d.id = 'callout-' + g.id; }
+          else { d.id = tmpl.replace('{id}', g.id); }
+          panel.appendChild(d);
+        });
+        host.appendChild(panel);
+      });
     }
 
     // ── Tab + sub-tab switching ──────────────────────────────
@@ -1940,14 +1858,17 @@
 
     function renderAll() {
       buildTabNav();
+      buildGroupPanels();
       assignDisplayIds();
       renderExecNarrative();
       renderExecSnapshot();
       renderBehavioralAlternatives();
       renderCompetitorCards();
       renderSectionsAtAGlance();
+      // Group-panel rendering swaps in at Task 8. For this intermediate commit,
+      // keep the per-folder render loop; group panels are empty containers until then.
       ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
-        renderFolderPanel(id);
+        if (document.getElementById('panel-' + id + '-content')) renderFolderPanel(id);
       });
     }
 
@@ -1963,8 +1884,11 @@
     }
 
     function rebuildAllPastebacks() {
-      ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
-        rebuildPasteBack(id);
+      resolveDisplayGroups().forEach(function(g) {
+        (g.folder_ids || []).forEach(function(fid) {
+          var ta = document.getElementById('pasteback-' + fid);
+          if (ta) rebuildPasteBack(fid);
+        });
       });
     }
 
@@ -2052,6 +1976,25 @@
       'Design': 'design',
       'Competitive': 'competitive'
     };
+    var FOLDER_LABEL_BY_ID = {
+      strategy: 'Strategy',
+      language: 'Language',
+      audiences: 'Audiences',
+      personas: 'Personas',
+      market: 'Market',
+      proof: 'Proof',
+      design: 'Design',
+      competitive: 'Competitive'
+    };
+    function buildFolderToGroupTab() {
+      var map = {};
+      resolveDisplayGroups().forEach(function(g) {
+        (g.folder_ids || []).forEach(function(fid) {
+          map[fid] = g.id;
+        });
+      });
+      return map;
+    }
     var SINGLE_INSTANCE_FOLDERS = {
       strategy: true,
       language: true,
@@ -2098,10 +2041,11 @@
     }
     function renderPerTabCallouts() {
       var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];
+      var folderToGroup = buildFolderToGroupTab();
       folders.forEach(function(folder) {
-        var tabId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
-        if (!SINGLE_INSTANCE_FOLDERS[tabId]) return;
-        var container = document.getElementById('callout-' + tabId);
+        var folderId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
+        var groupId = folderToGroup[folderId] || folderId;
+        var container = document.getElementById('callout-' + groupId);
         if (!container) return;
         var provided = folder.provided_summary || '';
         var asks = folder.input_asks || [];
