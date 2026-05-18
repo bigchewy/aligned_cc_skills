@@ -183,6 +183,36 @@ Decisions about which roles/channels/segments to instantiate happen here in the 
 
 **Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a framework for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice).
 
+**Slice-specific input_asks (inline, NEW v0.4.0+).** For slices whose asks differ from their owning framework's asks, hold the following arrays in memory; PHASE 3.2 reads them when building the `market` and `proof` folder entries (per Task 14b in the implementation plan).
+
+```yaml
+alternatives_input_asks:
+  - tier: critical
+    ask: "Quotes from prospects describing alternatives"
+  - tier: recommended
+    ask: "Cost-of-inaction data: what the status quo costs the buyer"
+  - tier: optional
+    ask: "Pre-purchase research notes from prospects"
+
+clinical_evidence_input_asks:
+  - tier: critical
+    ask: "Peer-reviewed citations with PMID or DOI"
+  - tier: recommended
+    ask: "Internal clinical study summaries naming method, N, and effect size"
+  - tier: optional
+    ask: "Regulatory submission filings or correspondence"
+
+compliance_input_asks:
+  - tier: critical
+    ask: "Active certifications with auditor name, issue date, and expiration"
+  - tier: recommended
+    ask: "Compliance attestation letters from named customers"
+  - tier: optional
+    ask: "Customer-facing compliance one-pager or trust-center URL"
+```
+
+These arrays REPLACE the owning framework's asks when aggregating `market/alternatives.md`, `proof/clinical-evidence.md`, and `proof/compliance.md` respectively. PHASE 3.2 uses the slice-specific array if present; otherwise it falls back to the owning framework's frontmatter asks.
+
 **Step 2.2: Build the canonical pre-synthesis blob.**
 
 The orchestrator authors a 1-paragraph `canonical-pre-synthesis-blob.md` in `{brand-folder-path}/.build/` from the Source Registry: org-name, brief positioning hypothesis (extracted from PHASE 1 aggregated signal), brief ICP hypothesis. This blob is identical content passed to every framework dispatch so they share a baseline view of "what the company is".

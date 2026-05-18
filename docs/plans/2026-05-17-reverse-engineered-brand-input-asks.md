@@ -942,7 +942,7 @@ git commit -m "feat(reb): add competitive_context_input_asks inline in PHASE 1.5
 
 ---
 
-### Task 14b: Add slice-specific inline input_asks for alternatives, clinical-evidence, compliance
+### ✅ Task 14b: Add slice-specific inline input_asks for alternatives, clinical-evidence, compliance
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (insert a new orchestrator-side block at the end of PHASE 2 Step 2.1, where the slice list is determined)
