@@ -1060,7 +1060,7 @@ git commit -m "chore(frameworks): mirror deliverable_type from registry to promp
 
 ---
 
-### Task 13: Add drift-detection test (`test_deliverable_type_frontmatter_matches_registry`)
+### ✅ Task 13: Add drift-detection test (`test_deliverable_type_frontmatter_matches_registry`)
 
 A pytest assertion that registry and prompt.md frontmatter stay in sync. Catches manual edits that bypass the sync script.
 

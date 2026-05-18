@@ -92,3 +92,36 @@ def test_use_framework_invokes_shared_runner():
     assert "Inject all loaded content as operating instructions" not in text, (
         "runner protocol must live in _shared/framework-runner.md, not here"
     )
+
+
+def test_framework_runner_documents_empty_prompt_error_path():
+    """Design L207: framework runner with empty prompt.md."""
+    text = read("skills/_shared/framework-runner.md")
+    # "missing or empty" is the Step 1 contract sentence
+    assert "empty" in text.lower(), "framework-runner must handle empty prompt.md as error"
+    assert "report the error and stop" in text or "STOP" in text
+
+
+def test_framework_runner_documents_broken_advisor_reference_path():
+    """Design L208: framework with broken advisor field reference."""
+    text = read("skills/_shared/framework-runner.md")
+    # The runner must describe what happens when a framework references a non-existent advisor
+    assert "advisor" in text.lower()
+    # Either: the runner documents falling back to generic facilitator,
+    # OR: the runner documents stopping with an error.
+    # Both are acceptable contracts; assert at least one is present.
+    assert (
+        "fallback" in text.lower()
+        or "generic facilitator" in text.lower()
+        or "broken" in text.lower()
+        or "missing advisor" in text.lower()
+    ), "framework-runner must document broken-advisor-reference handling"
+
+
+def test_advisor_runner_documents_missing_prompt_file_path():
+    """Advisor runner must STOP when matched advisor path doesn't exist."""
+    text = read("skills/_shared/advisor-runner.md")
+    assert "STOP" in text or "does not exist" in text
+    assert "Configuration Validation" in text, (
+        "advisor-runner must have a fail-closed validation section"
+    )

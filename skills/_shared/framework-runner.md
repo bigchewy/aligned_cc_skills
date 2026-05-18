@@ -56,6 +56,9 @@ A phase is complete when: (a) the scripted content for that phase has been deliv
 
 - If an advisor persona is active (via `skills/_shared/advisor-runner.md` or `/aligned:use-advisor`): deliver the framework in that advisor's voice.
 - If no advisor is active: follow the framework prompt as-is — it already names an advisor in its opening line, so adopt that advisor's voice as written.
+- If a framework's `prompt.md` references an advisor that cannot be resolved (missing advisor / broken reference): fallback to generic facilitator voice — narrate each phase neutrally without impersonating the missing advisor. Log a Decision Log entry noting the fallback.
+
+<!-- DECISION-LOG conflict="stop vs fallback when a framework references a non-existent advisor" choice="fallback to generic facilitator voice" reason="stopping would break the user's framework session for a missing voice detail; graceful degradation preserves the framework's substance" confidence="0.85" -->
 
 ## Composability
 
