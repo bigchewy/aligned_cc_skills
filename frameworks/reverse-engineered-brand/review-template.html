@@ -588,6 +588,47 @@
     /* Anchor offset so sticky nav doesn't cover the section heading */
     .anchor-target { scroll-margin-top: 64px; }
 
+    /* Per-folder summary banner — top of each tab content area */
+    .folder-banner {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 18px;
+      align-items: start;
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+    }
+    .folder-banner .banner-grade { padding-top: 2px; }
+    .folder-banner .banner-grade .grade {
+      font-size: 1.1rem;
+      min-width: 36px;
+      padding: 6px 10px;
+    }
+    .folder-banner .banner-body { min-width: 0; }
+    .folder-banner h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin: 0 0 6px 0;
+    }
+    .folder-banner .banner-summary {
+      font-size: 0.92rem;
+      color: var(--color-secondary);
+      line-height: 1.6;
+      margin: 0 0 10px 0;
+    }
+    .folder-banner .banner-counts {
+      font-size: 0.82rem;
+      color: var(--color-dimmed);
+      font-feature-settings: 'tnum';
+    }
+    .folder-banner .banner-counts strong {
+      color: var(--color-foreground);
+      font-weight: 600;
+    }
+
     /* Executive summary narrative */
     .exec-summary p {
       font-size: 0.95rem;
@@ -1630,6 +1671,35 @@
       return card;
     }
 
+    function renderFolderBanner(folder, oqs, folderId) {
+      if (!folder) return null;
+      var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
+      var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
+      var highPriority = oqs.filter(function(q) { return q.impact === 'P0'; }).length;
+
+      var banner = ce('div', 'folder-banner');
+      var gradeWrap = ce('div', 'banner-grade');
+      gradeWrap.appendChild(gradePill(folderGrade(folder)));
+      banner.appendChild(gradeWrap);
+
+      var body = ce('div', 'banner-body');
+      body.appendChild(ap(ce('h2'), tx(folder.label || folderId)));
+      var summary = folder.summary || AREA_DESCRIPTIONS_FALLBACK[folderId];
+      if (summary) body.appendChild(ap(ce('p', 'banner-summary'), tx(summary)));
+
+      var counts = ce('p', 'banner-counts');
+      counts.appendChild(ap(ce('strong'), tx(String(assumptions.length))));
+      counts.appendChild(tx(' assumptions, '));
+      counts.appendChild(ap(ce('strong'), tx(String(questions.length))));
+      counts.appendChild(tx(' questions — '));
+      counts.appendChild(ap(ce('strong'), tx(String(highPriority))));
+      counts.appendChild(tx(' high-priority'));
+      body.appendChild(counts);
+
+      banner.appendChild(body);
+      return banner;
+    }
+
     function renderFolderPanel(folderId) {
       var el = document.getElementById('panel-' + folderId + '-content');
       if (!el) return;
@@ -1638,6 +1708,8 @@
       var oqs = (OPEN_QUESTIONS.open_questions || []).filter(function(q) {
         return q.file && q.file.indexOf(folderId + '/') === 0;
       });
+      var banner = renderFolderBanner(folder, oqs, folderId);
+      if (banner) el.appendChild(banner);
       if (folder && folder.status === 'GAP') {
         var needed = folder.gap_frameworks_needed || [];
         var stub = ce('div', 'empty-stub');
