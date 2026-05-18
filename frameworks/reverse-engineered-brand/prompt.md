@@ -334,6 +334,13 @@ Calibration cases:
 | Partial crash (some slices written, some not) | Check 1 | Hard-fail | Identify failed slices from error list; re-run those slices only |
 | All sub-agents fail | Check 1 (all slices missing) | Hard-fail | Check source registry (PHASE 1 gate should have caught empty sources); re-run from PHASE 1 |
 
+**Resume semantics for PHASE 3 sub-agents (added v0.4.1):**
+
+- **PHASE 3.2 group-bullets sub-agents.** Each writes `{brand-folder-path}/.build/groups/{group-id}.json`. On rerun, if the file is present and parses as JSON containing both `headline_claim` and `thinnest_gap` non-empty after trim, skip re-dispatch for that group. To force re-dispatch, delete the file.
+- **PHASE 3.2b voice-rewrite sub-agent.** Writes `{brand-folder-path}/.build/voice-rewrite.json`. On rerun, if the file is present and parses with both `asks` and `provided_summaries` keys, skip re-dispatch. To force re-dispatch, delete the file.
+
+These resume rules avoid re-paying PHASE 1 + 1.5 + 2 costs when a single sub-agent fails. The PHASE 3.2c gate runs unconditionally on the merged output regardless of which path produced it (fresh dispatch vs. resumed cache).
+
 ---
 
 ### PHASE 3: Load — Consolidate drafts, write folder, generate review HTML (silent)
@@ -386,14 +393,38 @@ For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences
 
   **Write `provided_summary` placeholder.** Set `provided_summary` to `null` here — the Step 3.2b sub-agent populates it. The verification gate in Step 3.2c hard-fails if any folder still has `provided_summary: null` at JSON-write time.
 
+**Step 3.2-NEW: Build `display_groups[]` shells + dispatch group-bullets sub-agents.**
+
+After `folders[]` is built, construct the `display_groups[]` array with exactly 4 entries in this order:
+
+1. `id: "how-you-show-up"`, `label: "How you show up"`, `folder_ids: ["strategy", "language", "design"]`
+2. `id: "who-you-sell-to"`, `label: "Who you sell to"`, `folder_ids: ["audiences", "personas"]`
+3. `id: "who-you-sell-against"`, `label: "Who you sell against"`, `folder_ids: ["market", "competitive"]`
+4. `id: "what-you-can-prove"`, `label: "What you can prove"`, `folder_ids: ["proof"]`
+
+If any listed folder is absent from `folders[]` (e.g., `competitive` is a top-level synthetic folder, not a brand-folder subdirectory — gate behavior: include if behavioral_alternatives + competitors arrays are non-empty), filter `folder_ids` to actually-present folders before continuing.
+
+For each group, compute the shell fields:
+- `grade`: rounded mean of constituent folders' `grade` values; cap at 5.
+- `input_asks`: union of constituent folders' `input_asks`, deduped by case-insensitive whitespace-trimmed `ask` text. Higher tier wins on collision (`critical` > `recommended` > `optional`). Within a tier, preserve first-seen order in `display_groups[i].folder_ids` order.
+- `headline_claim`, `thinnest_gap`, `provided_summary`: temporarily set to `""` placeholders; sub-agents populate them next.
+
+**Dispatch 4 sub-agents in PARALLEL** (single assistant message, 4 Task calls). Each uses `subagent_type: general-purpose` and the prompt template at `frameworks/reverse-engineered-brand/group-bullets.md`. Substitute the placeholders per group, including `{output-json-path}` = `{brand-folder-path}/.build/groups/{group-id}.json`.
+
+The `{canonical-pre-synthesis-blob-path}` placeholder resolves to `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md` — the 1-paragraph blob the orchestrator already authored at PHASE 2.2 from the Source Registry (org-name + brief positioning hypothesis + brief ICP hypothesis). The same blob is passed to every framework dispatch, so the group-bullets sub-agents share that baseline view. Sub-agents read it as orienting context; they do not modify it.
+
+**After all 4 return:** Read each `.build/groups/{group-id}.json` file. Validate the JSON parses and contains `headline_claim` + `thinnest_gap` keys. Merge into the in-memory `display_groups[]` by `id`. If any file is missing or malformed: hard-fail with `group: {id}, failure: file_missing|malformed_json|missing_keys`.
+
+**Resume semantics.** If a sub-agent succeeded on a previous run (its `.build/groups/{group-id}.json` is present and parses), skip re-dispatch for that group. This makes PHASE 3.2 idempotent across reruns and avoids re-paying PHASE 1+1.5+2 costs after a single-sub-agent failure.
+
 **Step 3.2b: Brand-voice rewrite + `provided_summary` generation (NEW).**
 
 After Step 3.2 produces `folders[].input_asks` with placeholder `provided_summary: null`, dispatch a single sub-agent (Task, `subagent_type: general-purpose`) using the prompt template at `frameworks/reverse-engineered-brand/voice-rewrite.md`. The sub-agent (a) rewrites every `ask` string in the project's brand voice, and (b) authors one `provided_summary` string per folder from Source Registry metadata.
 
 **Inputs to the sub-agent (orchestrator constructs the prompt body):**
 
-- The flat list of every `ask` string across all folders, tagged by `(folder_id, index, tier)` so the response can be merged back deterministically. The sub-agent MUST echo back each entry's `(folder_id, index)` tuple — those are the merge keys, not array order. Merge by tuple, NOT by position.
-- Per-folder lists of `(source_id, source_type, signal_tags)` tuples from the Source Registry built in PHASE 1. **Registry metadata only — no source bodies.** This preserves the iron context-bloat guard.
+- The flat list of every `ask` string across all groups, tagged by `(group_id, index, tier)` so the response can be merged back deterministically. The sub-agent MUST echo back each entry's `(group_id, index)` tuple — those are the merge keys, not array order. Merge by tuple, NOT by position.
+- Per-group aggregated registry tuples (union across the group's `folder_ids`) of `(source_id, source_type, signal_tags)` from the Source Registry built in PHASE 1. **Registry metadata only — no source bodies.** This preserves the iron context-bloat guard.
 - The path to the brand voice file. **Resolution order at runtime, not authorship time:**
   1. `{brand-folder-path}/guidelines/brand-voice.md` (project-relative; the brand-folder spec puts guidelines inside the brand folder)
   2. `$HOME/.claude/brand-voice.md` (global)
@@ -406,20 +437,17 @@ After Step 3.2 produces `folders[].input_asks` with placeholder `provided_summar
 ```json
 {
   "asks": [
-    {"folder_id": "strategy", "index": 0, "tier": "critical", "ask": "<voice-revised text>"},
-    {"folder_id": "strategy", "index": 1, "tier": "recommended", "ask": "<voice-revised text>"}
+    {"group_id": "how-you-show-up", "index": 0, "tier": "critical", "ask": "<voice-revised, shape-transformed>"}
   ],
   "provided_summaries": {
-    "strategy": "1 founder interview, 2 case study drafts, no recorded sales calls.",
-    "language": "...",
-    "audiences": "..."
+    "how-you-show-up": "3 marketing decks, 1 founder essay; no recorded sales calls."
   }
 }
 ```
 
-The orchestrator merges the response back into `folders[]`:
-- For each ask entry returned by the sub-agent, locate the original by the `(folder_id, index)` tuple — NOT by array position in the response. Replace `folders[folder_id].input_asks[index].ask` with the voice-revised string. Tier is unchanged.
-- For each folder, set `folders[folder_id].provided_summary` to the corresponding string from `provided_summaries`.
+The orchestrator merges the response back into `display_groups[]`:
+- For each ask entry returned by the sub-agent, locate the original by the `(group_id, index)` tuple — NOT by array position in the response. Replace `display_groups[group_id].input_asks[index].ask` with the voice-revised string. Tier is unchanged.
+- For each group, set `display_groups[group_id].provided_summary` to the corresponding string from `provided_summaries`.
 - Any tuple from the input list that has no match in the response is a sub-agent omission — the verification gate in Step 3.2c catches it via Check 1 (array length parity).
 
 **Substitute these placeholders into `voice-rewrite.md` before dispatch:**
@@ -434,15 +462,40 @@ The orchestrator merges the response back into `folders[]`:
 
 Three checks run against the merged `folders[]` array. All three are hard-fail; on any failure, abort the build and print the named failure list. Do NOT proceed to write the JSON.
 
-**Check 1 — Array length parity.** For each folder, the count of `input_asks` after Step 3.2b must equal the count before Step 3.2b. The sub-agent cannot drop or add entries. On mismatch: hard-fail with `folder: {id}, before: {N}, after: {M}`.
+**Check 1 — Array length parity.** For each group, the count of `display_groups[i].input_asks` after Step 3.2b must equal the count before Step 3.2b (the orchestrator-aggregated count, pre-voice-rewrite). The sub-agent cannot drop or add entries. On mismatch: hard-fail with `folder: {id}, before: {N}, after: {M}`.
 
-**Check 2 — Banned-phrase regex.** Apply the following case-insensitive regex set to every post-pass `ask` string AND every `provided_summary` string. On any match, hard-fail with `field: {ask|provided_summary}, folder: {id}, matched: {pattern}, value: {string}`:
+**Check 2 — Banned-phrase regex.** Apply the following case-insensitive regex set to every post-pass `ask` string AND every `provided_summary` string AND every `display_groups[].headline_claim` AND every `display_groups[].thinnest_gap`. On any match, hard-fail with `field: {ask|provided_summary|headline_claim|thinnest_gap}, folder: {id}, matched: {pattern}, value: {string}`:
 
 - Em dash or en dash: `[—–]`
 - "It's not X, it's Y" construction: `\bit'?s not\b[^.!?]+,?\s+(it'?s )?`
 - AI buzzwords (single regex, alternation): `\b(leverage|seamless|unlock|streamline|delve|robust|cutting-edge|transformative|elevate|revolutionize|crucial|essential)\b`
 
-**Check 3 — Tier preservation.** For each folder, walk `input_asks` by index. The `tier` at index `i` post-rewrite must equal the `tier` at index `i` pre-rewrite. On mismatch: hard-fail with `folder: {id}, index: {i}, before: {tier_before}, after: {tier_after}`.
+**Check 3 — Tier preservation.** For each group, walk `display_groups[i].input_asks` by index. The `tier` at index `i` post-rewrite must equal the `tier` at index `i` pre-rewrite. On mismatch: hard-fail with `folder: {id}, index: {i}, before: {tier_before}, after: {tier_after}`.
+
+**Check 4 — Word-count caps (NEW).** Use `trim().split(/\s+/).filter(Boolean).length` to compute the word count for each field below. Hard-fail with `field: {name}, scope: {group_id or folder_id}, count: {n}, cap: {c}, value: {string}` if `count > cap`:
+
+| Field | Scope | Cap |
+|---|---|---|
+| `folders[].provided_summary` | per folder | 25 |
+| `folders[].input_asks[].ask` | per folder, per ask | 12 |
+| `display_groups[].headline_claim` | per group | 14 |
+| `display_groups[].thinnest_gap` | per group | 14 |
+| `display_groups[].provided_summary` | per group | 25 |
+| `display_groups[].input_asks[].ask` | per group, per ask | 12 |
+
+`folders[].headline_claim` and `folders[].thinnest_gap` are NOT capped because they DO NOT EXIST in the schema.
+
+**Check 5 — Shape compliance (NEW).**
+
+a. **Verb-form rejection.** For every `ask` in `display_groups[].input_asks[]` AND `folders[].input_asks[]`, apply the case-insensitive regex `^\s*(if|ideally|when|where the buyer)\b`. On match: hard-fail with `field: input_asks.ask, scope: {group_id|folder_id}, index: {i}, matched: {pattern}, value: {string}`.
+
+b. **Required-non-empty.** For every `display_groups[i]`, verify `headline_claim` and `thinnest_gap` are non-empty after `trim()`. On either empty: hard-fail with `field: {headline_claim|thinnest_gap}, group: {id}, reason: empty_or_whitespace_only`.
+
+c. **Field presence.** For every `display_groups[i]`, verify the keys `id`, `label`, `folder_ids`, `grade`, `headline_claim`, `thinnest_gap`, `provided_summary`, `input_asks` are all present (`folder_ids` and `input_asks` may be empty arrays; the four required strings may NOT). On missing key: hard-fail with `field: {key}, group: {id}, reason: missing`.
+
+Empty-string `thinnest_gap` IS permitted in the legacy-fallback path (`legacyFolderAsGroup()` produces it for v0.4.0 fixtures rendered without authoring). Check 5 is enforced ONLY on authored v0.4.1 output. The detection signal: `display_groups[i].id` does NOT start with `legacy-`. Synthetic legacy ids are generated only by the renderer's `legacyFolderAsGroup()` helper, never by the orchestrator's PHASE 3.2 authoring path. The gate at PHASE 3.2c runs against orchestrator output (in-memory `display_groups[]` immediately before `.open-questions.json` is written) — at that point no legacy ids exist, so the carveout is in practice a documentation safeguard, not a runtime branch.
+
+**Behavior change note (Check 4 caps on `folders[].provided_summary` and `folders[].input_asks[].ask`):** These caps formalize an implicit constraint that already existed in the voice-rewrite sub-agent prompt ("1 sentence ≤25 words", "12-word cap" in Step 0). Existing v0.4.0 brand-folder rebuilds may hit the cap if previous runs produced over-budget text. Operator recovery is to delete the affected folder's `.build/voice-rewrite.json` and rerun PHASE 3.2b. No source-data modification is required.
 
 On any check failure: print all failures (do not stop at the first), then abort. Voice failures should be rare; when they happen, the operator's recovery is "edit the brand-voice file or re-prompt the sub-agent". No silent fallback.
 
@@ -476,7 +529,7 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
    - `audiences/channels/employer.md` → Classified from source material against `audience-taxonomy.md`. Confidence: {high|medium|low}.
    ```
 
-**`{brand-folder-path}/version.yaml`** — `schema_version: "0.4.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
+**`{brand-folder-path}/version.yaml`** — `schema_version: "0.4.1"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
 
 **`{brand-folder-path}/contracts.yaml`** — copy canonical contracts from `docs/brand-folder-spec.md § contracts.yaml`.
 
@@ -490,11 +543,11 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
 
 These are required fields in v0.4.0. Compute them from registry metadata only — do not read source bodies (context-bloat guard).
 
-**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.4.0"`:
+**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.4.1"`:
 
 ```json
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.4.1",
   "source_counts": { "total": 39, "raw_material": 30, "primary_research": 9 },
   "source_narratives": {
     "raw_material": "...",
@@ -517,6 +570,20 @@ These are required fields in v0.4.0. Compute them from registry metadata only �
       "input_asks": [
         { "tier": "critical", "ask": "<voice-rewritten ask>" },
         { "tier": "recommended", "ask": "<voice-rewritten ask>" }
+      ]
+    }
+  ],
+  "display_groups": [
+    {
+      "id": "how-you-show-up",
+      "label": "How you show up",
+      "folder_ids": ["strategy", "language", "design"],
+      "grade": 3,
+      "headline_claim": "<≤14 words, brand-specific, declarative>",
+      "thinnest_gap": "<≤14 words, brand-specific, declarative>",
+      "provided_summary": "<≤25 words inventorying group-level source material>",
+      "input_asks": [
+        { "tier": "critical", "ask": "<≤12-word noun-form doc-category>" }
       ]
     }
   ],

@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.4.1",
+  "source_counts": { "total": 3, "raw_material": 3, "primary_research": 0 },
+  "source_narratives": {
+    "raw_material": "1 pitch deck and 2 sales call transcripts. Coverage is thin — key areas like pricing and buyer committee are not yet confirmed by independent sources.",
+    "primary_research": "No competitor dossiers commissioned. The competitive landscape section will be sparse until primary research is added."
+  },
+  "folders": [
+    {
+      "id": "strategy",
+      "label": "Strategy",
+      "status": "Strong",
+      "grade": 5,
+      "p0_count": 4,
+      "p1_count": 1,
+      "p2_count": 1,
+      "framework_dispatches": [
+        {
+          "framework_id": "5-components-positioning",
+          "fills": "strategy/positioning.md",
+          "why_first": "Anchors downstream messaging and positioning"
+        }
+      ],
+      "summary": "Working hypothesis converges on manual spreadsheet dispatch as the primary competitor — the strongest signal in the source set. Lead-attribute and category-framing remain open and force downstream tradeoffs. Several P0 questions need resolution before drafts can ship.",
+      "provided_summary": "1 pitch deck and 2 sales call transcripts; no customer interviews or competitor dossiers.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" },
+        { "tier": "recommended", "ask": "What category name did your team or investors use when pitching the company last year?" }
+      ]
+    }
+  ],
+  "display_groups": [
+    {
+      "id": "how-you-show-up",
+      "label": "How you show up",
+      "folder_ids": ["strategy"],
+      "grade": 5,
+      "headline_claim": "Manual spreadsheet dispatch is the working competitor; lead-attribute and category framing remain open.",
+      "thinnest_gap": "Recent buyer notes on what they almost chose instead of you.",
+      "provided_summary": "1 pitch deck and 2 sales call transcripts; no customer interviews or competitor dossiers.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Recent buyer notes on what they almost chose instead of you last month." },
+        { "tier": "recommended", "ask": "Past pitch decks or board memos" }
+      ]
+    }
+  ],
+  "behavioral_alternatives": [],
+  "competitors": [],
+  "open_questions": []
+}

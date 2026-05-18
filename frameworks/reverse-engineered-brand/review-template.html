@@ -233,11 +233,15 @@
       color: var(--color-secondary);
       line-height: 1.55;
     }
+    .section-list .bullets-cell .bullet { font-size: 0.9rem; line-height: 1.55; color: var(--color-foreground); margin: 0 0 4px 0; }
+    .section-list .bullet .b-label { color: var(--color-dimmed); font-weight: 600; }
+    .section-list .bullet:last-child { margin-bottom: 0; }
+    .section-list .row-caret { color: var(--color-dimmed); float: right; font-size: 1.1rem; }
 
     /* Grade pills (1-5, color-coded). Used in Sections at a Glance and per-folder banners. */
     .grade {
       display: inline-block;
-      min-width: 28px;
+      min-width: 36px;
       padding: 4px 8px;
       border-radius: 6px;
       font-weight: 700;
@@ -464,6 +468,12 @@
     .chip-conf-high { background: #ecfdf5; color: #047857; }
     .chip-conf-med { background: var(--color-accent-subtle); color: var(--color-accent); }
     .chip-conf-low { background: #fef2f2; color: #b91c1c; }
+    .chip-area { background: var(--color-surface); color: var(--color-secondary); font-family: var(--font-sans); }
+    .empty-group { font-size: 0.9rem; color: var(--color-dimmed); font-style: italic; margin: 12px 0; }
+    .group-pasteback { margin-bottom: 10px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px; }
+    .group-pasteback summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+    .group-pasteback textarea { width: 100%; min-height: 60px; margin-top: 8px; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--color-border); border-radius: 4px; padding: 8px; }
+    .group-pasteback .paste-back-actions { margin-top: 8px; display: flex; gap: 8px; }
 
     .oq-body {
       font-size: 0.92rem;
@@ -910,18 +920,6 @@
     .tier-recommended { background: var(--color-accent-subtle); color: var(--color-accent); }
     .tier-optional { background: var(--color-surface); color: var(--color-dimmed); border: 1px dashed var(--color-border); }
 
-    /* Inline tab-name tag next to each ask in the consolidated list */
-    .ask-tab-tag {
-      display: inline-block;
-      font-size: 0.72rem;
-      padding: 1px 8px;
-      border-radius: 6px;
-      background: var(--color-muted);
-      color: var(--color-dimmed);
-      margin-left: 8px;
-      font-family: var(--font-mono);
-    }
-
     /* Inputs Needed list rows */
     .inputs-tier-heading {
       font-size: 0.95rem;
@@ -949,6 +947,17 @@
       text-decoration: none;
     }
     .inputs-list a:hover { color: var(--color-accent); }
+
+    /* Flat inputs list (Send us any of these) */
+    .inputs-flat { list-style: none; padding: 0; margin: 0; }
+    .inputs-flat li { padding: 7px 0; font-size: 0.95rem; line-height: 1.5; border-bottom: 1px solid var(--color-muted); }
+    .inputs-flat li:last-child { border-bottom: none; }
+    .inputs-flat li::before { content: "- "; color: var(--color-foreground); font-weight: 500; margin-right: 6px; font-family: var(--font-mono); }
+
+    /* Expandable source material strip */
+    .overview-source-detail { margin-top: 16px; font-size: 0.85rem; color: var(--color-secondary); border-top: 1px solid var(--color-muted); padding-top: 12px; }
+    .overview-source-detail summary { cursor: pointer; color: var(--color-dimmed); font-weight: 500; }
+    .overview-source-detail .overview-source-body { margin-top: 8px; }
 
     /* Per-tab callout ("What you provided / What would strengthen this") */
     .input-callout {
@@ -983,6 +992,9 @@
       line-height: 1.6;
       padding: 4px 0;
     }
+    .input-callout .would-help-heading { font-size: 0.88rem; color: var(--color-foreground); margin: 12px 0 6px 0; font-weight: 600; }
+    .input-callout .callout-list { list-style: none; padding: 0; margin: 0; }
+    .input-callout .callout-list li { font-size: 0.9rem; line-height: 1.6; padding: 3px 0; font-family: inherit; }
   </style>
 </head>
 <body>
@@ -994,206 +1006,120 @@
 
   <div class="tab-bar" id="main-tabs">
     <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
-    <button class="tab-btn" onclick="switchTab('competitive')">Competitive Context</button>
-    <button class="tab-btn" onclick="switchTab('strategy')">Strategy</button>
-    <button class="tab-btn" onclick="switchTab('language')">Language</button>
-    <button class="tab-btn" onclick="switchTab('audiences')">Audiences</button>
-    <button class="tab-btn" onclick="switchTab('personas')">Personas</button>
-    <button class="tab-btn" onclick="switchTab('market')">Market</button>
-    <button class="tab-btn" onclick="switchTab('proof')">Proof</button>
-    <button class="tab-btn" onclick="switchTab('design')">Design</button>
   </div>
 
   <!-- ========= OVERVIEW ========= -->
   <div id="panel-overview" class="tab-panel active">
 
     <div class="sub-tab-bar">
-      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-summary')">Executive Summary</button>
-      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-focus')">Sections at a Glance</button>
-      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-inputs')">Inputs Needed</button>
-    </div>
-
-    <!-- Overview / Executive Summary -->
-    <div id="sub-overview-summary" class="sub-panel active">
-      <div class="section exec-summary" id="exec-narrative">
-        <h2>Executive summary</h2>
-        <p class="description">Narrative assessment of how effective the ingested raw material and primary research were at understanding the brand. Use this to calibrate trust in the drafts under each folder tab.</p>
-
-        <div id="exec-snapshot"></div>
-
-        <div class="exec-section">
-          <h3>Raw material</h3>
-          <p id="exec-raw-material"></p>
-        </div>
-
-        <hr class="exec-divider" />
-
-        <div class="exec-section">
-          <h3>Primary research</h3>
-          <p id="exec-primary-research"></p>
-        </div>
-      </div>
+      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-focus')">Your brand at a glance</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-inputs')">Send us any of these</button>
     </div>
 
     <!-- Overview / Sections at a Glance -->
-    <div id="sub-overview-focus" class="sub-panel">
+    <div id="sub-overview-focus" class="sub-panel active">
       <div class="section">
         <p class="description">Click any area to jump to its tab. Status reflects aggregate confidence across the area's drafts.</p>
         <div id="sections-at-a-glance"></div>
+        <details class="overview-source-detail">
+          <summary>About the source material we received</summary>
+          <div class="overview-source-body">
+            <div id="exec-snapshot"></div>
+            <div class="exec-section">
+              <h4>Raw material</h4>
+              <p id="exec-raw-material"></p>
+            </div>
+            <hr class="exec-divider" />
+            <div class="exec-section">
+              <h4>Primary research</h4>
+              <p id="exec-primary-research"></p>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
 
     <!-- Overview / Inputs Needed -->
     <div id="sub-overview-inputs" class="sub-panel">
       <div class="section">
-        <h2>Inputs Needed</h2>
-        <p class="description">If you'd like to strengthen this report, here's what would help — organized by impact. We pulled what we could from what you sent; this list names categories of raw material that would change the result on the tab noted next to each item.</p>
-        <div id="inputs-needed-critical"></div>
-        <div id="inputs-needed-recommended"></div>
-        <div id="inputs-needed-optional"></div>
+        <h2>Send us any of these</h2>
+        <div id="inputs-needed-flat"></div>
       </div>
     </div>
 
   </div>
 
-  <!-- ========= COMPETITIVE CONTEXT ========= -->
-  <div id="panel-competitive" class="tab-panel">
-    <div class="input-callout" id="callout-competitive" style="display:none"></div>
-    <div class="section">
-      <h2>Competitive context</h2>
-      <p class="intro-p">Competitors identified via cross-source mention frequency; behavioral alternatives extracted from source material. Behavioral alternatives often turn out to be the more honest competitive frame — what customers actually do today (without you) usually matters more than the named SaaS in the same category.</p>
-
-      <h3 class="alt-section-heading">What customers do today (without you)</h3>
-      <p class="description">Non-product alternatives surfaced from sales calls, decks, and research notes. These are the real defaults your product displaces. Per April Dunford: these matter MORE than named competitors.</p>
-      <div id="behavioral-alternatives"></div>
-
-      <h3 class="alt-section-heading alt-section-heading-secondary">Named competitors</h3>
-      <p class="description">Named alternatives appearing across the ingested sources. Each dossier was assembled from public sources (homepage, About, alternatives page, recent press). If a competitor here is wrong, edit <code>.build/competitors/</code> and rerun the framework. Full battle cards live under the <code>market/</code> tab once the competitive-battle-card framework is run.</p>
-      <div id="competitor-cards"></div>
-    </div>
+  <!-- ========= GROUP PANELS ========= -->
+  <div id="panel-how-you-show-up" class="tab-panel">
+    <div class="folder-banner" id="banner-how-you-show-up"></div>
+    <div class="input-callout" id="callout-how-you-show-up" style="display:none"></div>
+    <div id="panel-how-you-show-up-oqs"></div>
+    <div id="panel-how-you-show-up-pastebacks"></div>
   </div>
-
-  <!-- ========= STRATEGY ========= -->
-  <div id="panel-strategy" class="tab-panel">
-    <div class="input-callout" id="callout-strategy" style="display:none"></div>
-    <div id="panel-strategy-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-strategy" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('strategy')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('strategy')">Regenerate</button>
-      </div>
-    </div>
+  <div id="panel-who-you-sell-to" class="tab-panel">
+    <div class="folder-banner" id="banner-who-you-sell-to"></div>
+    <div class="input-callout" id="callout-who-you-sell-to" style="display:none"></div>
+    <div id="panel-who-you-sell-to-oqs"></div>
+    <div id="panel-who-you-sell-to-pastebacks"></div>
   </div>
-
-  <!-- ========= LANGUAGE ========= -->
-  <div id="panel-language" class="tab-panel">
-    <div class="input-callout" id="callout-language" style="display:none"></div>
-    <div id="panel-language-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-language" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('language')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('language')">Regenerate</button>
-      </div>
-    </div>
+  <div id="panel-who-you-sell-against" class="tab-panel">
+    <div class="folder-banner" id="banner-who-you-sell-against"></div>
+    <div class="input-callout" id="callout-who-you-sell-against" style="display:none"></div>
+    <h3 class="alt-section-heading">What customers do today (without you)</h3>
+    <div id="behavioral-alternatives"></div>
+    <h3 class="alt-section-heading alt-section-heading-secondary">Named competitors</h3>
+    <div id="competitor-cards"></div>
+    <div id="panel-who-you-sell-against-oqs"></div>
+    <div id="panel-who-you-sell-against-pastebacks"></div>
   </div>
-
-  <!-- ========= AUDIENCES ========= -->
-  <div id="panel-audiences" class="tab-panel">
-    <div id="panel-audiences-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-audiences" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('audiences')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('audiences')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= PERSONAS ========= -->
-  <div id="panel-personas" class="tab-panel">
-    <div id="panel-personas-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-personas" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('personas')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('personas')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= MARKET ========= -->
-  <div id="panel-market" class="tab-panel">
-    <div class="input-callout" id="callout-market" style="display:none"></div>
-    <div id="panel-market-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-market" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('market')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('market')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= PROOF ========= -->
-  <div id="panel-proof" class="tab-panel">
-    <div class="input-callout" id="callout-proof" style="display:none"></div>
-    <div id="panel-proof-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-proof" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('proof')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('proof')">Regenerate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========= DESIGN ========= -->
-  <div id="panel-design" class="tab-panel">
-    <div class="input-callout" id="callout-design" style="display:none"></div>
-    <div id="panel-design-content"></div>
-    <div class="paste-back">
-      <div class="paste-back-header">
-        <h3>Paste-back to Claude Code</h3>
-      </div>
-      <p class="sub">Copy the block below and paste it back into Claude Code as your next prompt in the /aligned:use-framework session.</p>
-      <textarea id="pasteback-design" placeholder="Paste-back prompt will appear here after you triage the cards above..."></textarea>
-      <div class="paste-back-actions">
-        <button class="btn" onclick="copyPasteback('design')">Copy prompt</button>
-        <button class="btn btn-primary" onclick="regeneratePasteback('design')">Regenerate</button>
-      </div>
-    </div>
+  <div id="panel-what-you-can-prove" class="tab-panel">
+    <div class="folder-banner" id="banner-what-you-can-prove"></div>
+    <div class="input-callout" id="callout-what-you-can-prove" style="display:none"></div>
+    <div id="panel-what-you-can-prove-oqs"></div>
+    <div id="panel-what-you-can-prove-pastebacks"></div>
   </div>
 
   <script>
     const OPEN_QUESTIONS = {open-questions-json};
     const BRAND_FOLDER_PATH = "{brand-folder-path}";
     const ORG_NAME = "{org-name}";
+
+    function buildTabNav() {
+      var bar = document.getElementById('main-tabs');
+      if (!bar) return;
+      if (bar.dataset.built === 'true') return; // idempotence: renderAll may fire twice (DOMContentLoaded + readyState fallback)
+      var groups = resolveDisplayGroups();
+      groups.forEach(function(g) {
+        var btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.textContent = g.label;
+        btn.setAttribute('onclick', "switchTab('" + g.id + "')");
+        bar.appendChild(btn);
+      });
+      bar.dataset.built = 'true';
+    }
+
+    function buildGroupPanels() {
+      if (OPEN_QUESTIONS.display_groups && OPEN_QUESTIONS.display_groups.length) return;
+      // Legacy fallback: synthesize panel divs for each synthetic group.
+      // Idempotent: re-invocation skips groups whose panel already exists in the DOM.
+      var groups = resolveDisplayGroups();
+      var host = document.querySelector('body');
+      groups.forEach(function(g) {
+        if (document.getElementById('panel-' + g.id)) return;
+        var panel = document.createElement('div');
+        panel.id = 'panel-' + g.id;
+        panel.className = 'tab-panel';
+        ['banner-', 'callout-', 'panel-{id}-oqs', 'panel-{id}-pastebacks'].forEach(function(tmpl) {
+          var d = document.createElement('div');
+          if (tmpl === 'banner-') { d.className = 'folder-banner'; d.id = 'banner-' + g.id; }
+          else if (tmpl === 'callout-') { d.className = 'input-callout'; d.style.display = 'none'; d.id = 'callout-' + g.id; }
+          else { d.id = tmpl.replace('{id}', g.id); }
+          panel.appendChild(d);
+        });
+        host.appendChild(panel);
+      });
+    }
 
     // ── Tab + sub-tab switching ──────────────────────────────
     function switchTab(tabId) {
@@ -1670,6 +1596,27 @@
       if (s === 'gap') return 1;
       return 3; // Partial or unknown
     }
+    function legacyFolderAsGroup(folder) {
+      var summary = folder.summary || '';
+      var parts = summary.trim().split(/\s+/).filter(Boolean);
+      var headline = parts.length <= 14 ? parts.join(' ') : parts.slice(0, 14).join(' ') + '…';
+      return {
+        id: 'legacy-' + folder.id,
+        label: folder.label || folder.id,
+        folder_ids: [folder.id],
+        grade: folderGrade(folder),
+        headline_claim: headline,
+        thinnest_gap: '',
+        provided_summary: folder.provided_summary || '',
+        input_asks: folder.input_asks || []
+      };
+    }
+    function resolveDisplayGroups() {
+      if (OPEN_QUESTIONS.display_groups && OPEN_QUESTIONS.display_groups.length) {
+        return OPEN_QUESTIONS.display_groups;
+      }
+      return (OPEN_QUESTIONS.folders || []).map(legacyFolderAsGroup);
+    }
     var GRADE_TOOLTIP = {
       5: '5 — Strong: 0 P0 OQs, ≥70% high confidence, ≥3 evidence sources per slice',
       4: '4 — Mostly clear: 0-1 P0 OQs and ≥50% high/medium confidence',
@@ -1680,7 +1627,7 @@
     function gradePill(grade) {
       var el = ce('span', 'grade grade-' + grade);
       el.setAttribute('title', GRADE_TOOLTIP[grade] || ('Grade ' + grade));
-      el.appendChild(tx(String(grade)));
+      el.appendChild(tx(String(grade) + '/5'));
       return el;
     }
 
@@ -1688,38 +1635,46 @@
       var el = document.getElementById('sections-at-a-glance');
       if (!el) return;
       clearEl(el);
-      var folders = OPEN_QUESTIONS.folders || [];
-      if (!folders.length) {
-        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No folders found.')));
+      var groups = resolveDisplayGroups();
+      if (!groups.length) {
+        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No groups found.')));
         return;
       }
       var table = ce('table', 'section-list');
       var tbody = ce('tbody');
-      folders.forEach(function(f) {
-        var sc = statusClass(f.status);
-        var badge = f.status === 'GAP' ? 'No owning framework' : (f.status || '—');
-        var row = sa(ce('tr', 'section-row'), { role: 'link', tabindex: '0', 'data-folder': f.id });
-        row.addEventListener('click', function() { switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      groups.forEach(function(g) {
+        var row = sa(ce('tr', 'section-row'), { role: 'link', tabindex: '0', 'data-group': g.id });
+        row.addEventListener('click', function() { switchTab(g.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
         row.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(g.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         });
 
         var gradeCell = ce('td', 'section-grade-cell');
-        gradeCell.appendChild(gradePill(folderGrade(f)));
+        gradeCell.appendChild(gradePill(g.grade));
 
         var areaCell = ce('td', 'section-area-cell');
-        var labelEl = ce('span', 'label section-link');
-        labelEl.appendChild(tx(f.label || f.id));
-        areaCell.appendChild(labelEl);
-        areaCell.appendChild(ap(ce('span', 'status-badge ' + sc), tx(badge)));
+        areaCell.appendChild(ap(ce('span', 'label section-link'), tx(g.label)));
 
-        var summaryCell = ce('td', 'section-summary-cell');
-        var summary = f.summary || AREA_DESCRIPTIONS_FALLBACK[f.id];
-        if (summary) summaryCell.appendChild(ap(ce('p', 'section-desc'), tx(summary)));
+        var bulletsCell = ce('td', 'section-summary-cell bullets-cell');
+        if (g.headline_claim) {
+          var b1 = ce('p', 'bullet');
+          b1.appendChild(ap(ce('span', 'b-label'), tx('What we see: ')));
+          b1.appendChild(tx(g.headline_claim));
+          bulletsCell.appendChild(b1);
+        }
+        if (g.thinnest_gap) {
+          var b2 = ce('p', 'bullet');
+          b2.appendChild(ap(ce('span', 'b-label'), tx("What we're missing: ")));
+          b2.appendChild(tx(g.thinnest_gap));
+          bulletsCell.appendChild(b2);
+        }
+        var caret = sa(ce('span', 'row-caret'), { 'aria-hidden': 'true' });
+        caret.appendChild(tx(' ›'));
+        bulletsCell.appendChild(caret);
 
         row.appendChild(gradeCell);
         row.appendChild(areaCell);
-        row.appendChild(summaryCell);
+        row.appendChild(bulletsCell);
         tbody.appendChild(row);
       });
       table.appendChild(tbody);
@@ -1757,6 +1712,8 @@
       hdr.appendChild(ap(ce('span', 'oq-id'), tx(displayId)));
       hdr.appendChild(chip(impact, 'pri ' + priClass(impact)));
       hdr.appendChild(chip('conf: ' + confLabel, confClass(q.confidence || 'low')));
+      var areaLabel = FOLDER_LABEL_BY_ID[folderId] || folderId;
+      hdr.appendChild(chip(areaLabel, 'chip-area'));
       card.appendChild(hdr);
       // Summary line (the executive-skim view, shown by default)
       card.appendChild(ap(ce('p', 'oq-body'), tx(summaryText)));
@@ -1807,27 +1764,23 @@
       return card;
     }
 
-    function renderFolderBanner(folder, oqs, folderId) {
-      if (!folder) return null;
+    function renderGroupBanner(group, oqs) {
+      if (!group) return null;
       var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
       var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
       var highPriority = oqs.filter(function(q) { return q.impact === 'P0'; }).length;
 
       var banner = ce('div', 'folder-banner');
-      var gradeWrap = ce('div', 'banner-grade');
-      gradeWrap.appendChild(gradePill(folderGrade(folder)));
-      banner.appendChild(gradeWrap);
+      banner.appendChild(ap(ce('div', 'banner-grade'), gradePill(group.grade)));
 
       var body = ce('div', 'banner-body');
-      body.appendChild(ap(ce('h2'), tx(folder.label || folderId)));
-      var summary = folder.summary || AREA_DESCRIPTIONS_FALLBACK[folderId];
-      if (summary) body.appendChild(ap(ce('p', 'banner-summary'), tx(summary)));
+      body.appendChild(ap(ce('h2'), tx(group.label)));
 
       var counts = ce('p', 'banner-counts');
       counts.appendChild(ap(ce('strong'), tx(String(assumptions.length))));
       counts.appendChild(tx(' assumptions, '));
       counts.appendChild(ap(ce('strong'), tx(String(questions.length))));
-      counts.appendChild(tx(' questions — '));
+      counts.appendChild(tx(' questions, '));
       counts.appendChild(ap(ce('strong'), tx(String(highPriority))));
       counts.appendChild(tx(' high-priority'));
       body.appendChild(counts);
@@ -1836,66 +1789,62 @@
       return banner;
     }
 
-    function renderFolderPanel(folderId) {
-      var el = document.getElementById('panel-' + folderId + '-content');
-      if (!el) return;
-      clearEl(el);
-      var folder = findFolder(folderId);
+    function renderGroupPanel(group) {
+      var bannerEl = document.getElementById('banner-' + group.id);
+      var oqsEl = document.getElementById('panel-' + group.id + '-oqs');
+      var pbEl = document.getElementById('panel-' + group.id + '-pastebacks');
+      if (!bannerEl || !oqsEl || !pbEl) return;
+
       var oqs = (OPEN_QUESTIONS.open_questions || []).filter(function(q) {
-        return q.file && q.file.indexOf(folderId + '/') === 0;
+        return (group.folder_ids || []).some(function(fid) {
+          return q.file && q.file.indexOf(fid + '/') === 0;
+        });
       });
-      var banner = renderFolderBanner(folder, oqs, folderId);
-      if (banner) el.appendChild(banner);
-      if (folder && folder.status === 'GAP') {
-        var needed = folder.gap_frameworks_needed || [];
-        var stub = ce('div', 'empty-stub');
-        var p1 = ce('p'); p1.appendChild(tx('GAP — no owning framework for ')); p1.appendChild(ap(ce('code'), tx(folderId + '/'))); stub.appendChild(p1);
-        if (needed.length) {
-          var p2 = ce('p'); p2.appendChild(tx('Commission: '));
-          needed.forEach(function(f, i) { if (i > 0) p2.appendChild(tx(', ')); p2.appendChild(ap(ce('code'), tx(f))); });
-          stub.appendChild(p2);
-        }
-        el.appendChild(stub); return;
-      }
-      var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
-      var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
 
-      function makePriorityGroup(impact, cards) {
-        if (!cards.length) return null;
-        var label = impact === 'P0' ? 'High priority (P0)'
-                   : impact === 'P1' ? 'Medium priority (P1)'
-                   : 'Low priority (P2)';
-        var det = ce('details', 'oq-group oq-group-' + impact.toLowerCase());
-        if (impact !== 'P2') det.setAttribute('open', '');
-        var summaryEl = ce('summary', 'oq-group-header');
-        summaryEl.appendChild(tx(label));
-        summaryEl.appendChild(ap(ce('span', 'oq-group-count'), tx(String(cards.length))));
-        det.appendChild(summaryEl);
-        cards.forEach(function(q) { det.appendChild(renderOQCard(q, folderId)); });
-        return det;
+      clearEl(bannerEl);
+      var banner = renderGroupBanner(group, oqs);
+      if (banner) bannerEl.appendChild(banner);
+
+      // OQ sort: P0 → P1 → P2, then by file lexically
+      var priOrder = { P0: 0, P1: 1, P2: 2 };
+      oqs.sort(function(a, b) {
+        var pa = priOrder[a.impact] != null ? priOrder[a.impact] : 9;
+        var pb = priOrder[b.impact] != null ? priOrder[b.impact] : 9;
+        if (pa !== pb) return pa - pb;
+        return (a.file || '').localeCompare(b.file || '');
+      });
+
+      clearEl(oqsEl);
+      if (!oqs.length) {
+        oqsEl.appendChild(ap(ce('p', 'empty-group'), tx('Coverage is sufficient across this area.')));
+      } else {
+        oqs.forEach(function(q) {
+          var folderId = (q.file || '').split('/')[0];
+          oqsEl.appendChild(renderOQCard(q, folderId));
+        });
       }
 
-      function makeSection(heading, descText, cards) {
-        var sec = ce('div', 'section');
-        var h2 = ce('h2', 'anchor-target');
-        h2.appendChild(tx(heading + ' '));
-        h2.appendChild(ap(ce('span', 'status-badge status-partial'), tx(String(cards.length))));
-        sec.appendChild(h2);
-        sec.appendChild(ap(ce('p', 'description'), tx(descText)));
-        var byPri = { P0: [], P1: [], P2: [] };
-        cards.forEach(function(q) {
-          var p = (q.impact === 'P0' || q.impact === 'P1' || q.impact === 'P2') ? q.impact : 'P2';
-          byPri[p].push(q);
-        });
-        ['P0', 'P1', 'P2'].forEach(function(p) {
-          var grp = makePriorityGroup(p, byPri[p]);
-          if (grp) sec.appendChild(grp);
-        });
-        return sec;
-      }
-      if (assumptions.length) el.appendChild(makeSection('Assumptions to confirm', 'High-confidence inferences from ingested sources. Approve to lock them in. Reject to mark for revision.', assumptions));
-      if (questions.length) el.appendChild(makeSection('Questions to resolve', 'LOW confidence inferences worth verifying before the framework runs interactively.', questions));
-      if (!assumptions.length && !questions.length) el.appendChild(ap(ce('div', 'empty-stub'), tx('No open questions for this folder.')));
+      // Nested per-folder paste-backs (one <details> per constituent folder).
+      // Skip `competitive`: it has no on-disk slice files (behavioral_alternatives +
+      // competitor_cards render at the top of the group panel; there is no
+      // framework-dispatch paste-back target).
+      clearEl(pbEl);
+      (group.folder_ids || []).filter(function(fid) { return fid !== 'competitive'; }).forEach(function(fid) {
+        var det = ce('details', 'group-pasteback');
+        var sum = ce('summary');
+        var fwid = FRAMEWORK_BY_FOLDER[fid];
+        sum.appendChild(tx((FOLDER_LABEL_BY_ID[fid] || fid) + (fwid ? ' → ' + fwid : '')));
+        det.appendChild(sum);
+        var ta = ce('textarea');
+        ta.id = 'pasteback-' + fid;
+        ta.setAttribute('placeholder', 'Paste-back prompt will appear here after you triage the cards above...');
+        det.appendChild(ta);
+        var actions = ce('div', 'paste-back-actions');
+        actions.appendChild(sa(ap(ce('button', 'btn'), tx('Copy prompt')), { onclick: "copyPasteback('" + fid + "')" }));
+        actions.appendChild(sa(ap(ce('button', 'btn btn-primary'), tx('Regenerate')), { onclick: "regeneratePasteback('" + fid + "')" }));
+        det.appendChild(actions);
+        pbEl.appendChild(det);
+      });
     }
 
     // Assign A-N (assumption) and Q-N (question) display IDs to every OQ.
@@ -1911,15 +1860,17 @@
     }
 
     function renderAll() {
+      buildTabNav();
+      buildGroupPanels();
       assignDisplayIds();
       renderExecNarrative();
       renderExecSnapshot();
       renderBehavioralAlternatives();
       renderCompetitorCards();
       renderSectionsAtAGlance();
-      ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
-        renderFolderPanel(id);
-      });
+      resolveDisplayGroups().forEach(function(g) { renderGroupPanel(g); });
+      renderInputAsks();
+      renderPerTabCallouts();
     }
 
     function attachCardClickToExpand() {
@@ -1934,8 +1885,11 @@
     }
 
     function rebuildAllPastebacks() {
-      ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
-        rebuildPasteBack(id);
+      resolveDisplayGroups().forEach(function(g) {
+        (g.folder_ids || []).forEach(function(fid) {
+          var ta = document.getElementById('pasteback-' + fid);
+          if (ta) rebuildPasteBack(fid);
+        });
       });
     }
 
@@ -2004,14 +1958,6 @@
       });
     });
 
-    // Already loaded? Run now (covers cases where DOMContentLoaded already fired)
-    if (document.readyState !== 'loading') {
-      renderAll();
-      addChipTooltips();
-      syncInitialSelectedStates();
-      rebuildAllPastebacks();
-    }
-
     // ── v0.4.0: Inputs Needed (Overview sub-tab) + per-tab callouts ──
     var FOLDER_LABEL_TO_TAB = {
       'Strategy': 'strategy',
@@ -2023,14 +1969,35 @@
       'Design': 'design',
       'Competitive': 'competitive'
     };
-    var SINGLE_INSTANCE_FOLDERS = {
-      strategy: true,
-      language: true,
-      market: true,
-      proof: true,
-      design: true,
-      competitive: true
+    var FOLDER_LABEL_BY_ID = {
+      strategy: 'Strategy',
+      language: 'Language',
+      audiences: 'Audiences',
+      personas: 'Personas',
+      market: 'Market',
+      proof: 'Proof',
+      design: 'Design',
+      competitive: 'Competitive'
     };
+
+    // Already loaded? Run now (covers cases where DOMContentLoaded already fired).
+    // Must execute AFTER FOLDER_LABEL_BY_ID is assigned — renderAll() reads it via
+    // renderOQCard/renderGroupPanel.
+    if (document.readyState !== 'loading') {
+      renderAll();
+      addChipTooltips();
+      syncInitialSelectedStates();
+      rebuildAllPastebacks();
+    }
+    function buildFolderToGroupTab() {
+      var map = {};
+      resolveDisplayGroups().forEach(function(g) {
+        (g.folder_ids || []).forEach(function(fid) {
+          map[fid] = g.id;
+        });
+      });
+      return map;
+    }
     function iaEl(tag, opts) {
       var node = document.createElement(tag);
       opts = opts || {};
@@ -2039,100 +2006,67 @@
       if (opts.style) node.setAttribute('style', opts.style);
       return node;
     }
-    function iaMakeTierGroup(tier, label, items) {
-      var heading = iaEl('h3', { className: 'inputs-tier-heading' });
-      var badge = iaEl('span', { className: 'tier-badge tier-' + tier, text: label });
-      var count = iaEl('span', { className: 'inputs-tier-count', text: String(items.length) });
-      heading.appendChild(badge);
-      heading.appendChild(count);
-      var list = iaEl('ul', { className: 'inputs-list' });
-      items.forEach(function(it) {
-        var li = iaEl('li');
-        var link = iaEl('a', { text: it.ask });
-        link.setAttribute('href', 'javascript:void(0)');
-        link.addEventListener('click', function() { switchTab(it.tabId); });
-        var tag = iaEl('span', { className: 'ask-tab-tag', text: it.folderLabel });
-        li.appendChild(link);
-        li.appendChild(tag);
-        list.appendChild(li);
-      });
-      var wrap = document.createDocumentFragment();
-      wrap.appendChild(heading);
-      wrap.appendChild(list);
-      return wrap;
-    }
     function renderInputAsks() {
-      var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];
-      var byTier = { critical: [], recommended: [], optional: [] };
-      folders.forEach(function(folder) {
-        var asks = folder.input_asks || [];
-        var tabId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
-        asks.forEach(function(a) {
-          if (!a || !a.tier || !a.ask) return;
-          if (!byTier[a.tier]) return;
-          byTier[a.tier].push({ ask: a.ask, folderLabel: folder.label, tabId: tabId });
+      var container = document.getElementById('inputs-needed-flat');
+      if (!container) return;
+      while (container.firstChild) container.removeChild(container.firstChild);
+      var groups = resolveDisplayGroups();
+      var seen = Object.create(null);
+      var flat = [];
+      groups.forEach(function(g) {
+        (g.input_asks || []).forEach(function(a) {
+          if (!a || !a.ask) return;
+          var key = a.ask.trim().toLowerCase();
+          if (seen[key]) return;
+          seen[key] = true;
+          flat.push(a.ask);
         });
       });
-      var tiers = [
-        ['inputs-needed-critical', 'critical', 'Critical'],
-        ['inputs-needed-recommended', 'recommended', 'Recommended'],
-        ['inputs-needed-optional', 'optional', 'Optional']
-      ];
-      tiers.forEach(function(t) {
-        var container = document.getElementById(t[0]);
-        if (!container) return;
-        while (container.firstChild) container.removeChild(container.firstChild);
-        var items = byTier[t[1]] || [];
-        if (!items.length) return;
-        container.appendChild(iaMakeTierGroup(t[1], t[2], items));
+      if (!flat.length) {
+        var empty = iaEl('p', { className: 'provided', text: 'No additional inputs requested.' });
+        container.appendChild(empty);
+        return;
+      }
+      var ul = iaEl('ul', { className: 'inputs-flat' });
+      flat.forEach(function(ask) {
+        var li = iaEl('li', { text: ask });
+        ul.appendChild(li);
       });
+      container.appendChild(ul);
     }
     function renderPerTabCallouts() {
-      var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];
-      folders.forEach(function(folder) {
-        var tabId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
-        if (!SINGLE_INSTANCE_FOLDERS[tabId]) return;
-        var container = document.getElementById('callout-' + tabId);
+      var groups = resolveDisplayGroups();
+      groups.forEach(function(g) {
+        var container = document.getElementById('callout-' + g.id);
         if (!container) return;
-        var provided = folder.provided_summary || '';
-        var asks = folder.input_asks || [];
+        while (container.firstChild) container.removeChild(container.firstChild);
+        var provided = g.provided_summary || '';
+        var asks = g.input_asks || [];
         if (!provided && !asks.length) {
           container.style.display = 'none';
           return;
         }
-        while (container.firstChild) container.removeChild(container.firstChild);
-        container.appendChild(iaEl('h3', { text: 'What you provided' }));
-        var providedP = iaEl('p', { className: 'provided' });
+        container.appendChild(iaEl('h3', { text: 'What we have, what would help' }));
         if (provided) {
-          providedP.textContent = provided;
-        } else {
-          var emp = iaEl('em', { text: 'No source summary available.' });
-          providedP.appendChild(emp);
+          var p = iaEl('p', { className: 'provided' });
+          p.appendChild(document.createTextNode('We received: ' + provided));
+          container.appendChild(p);
         }
-        container.appendChild(providedP);
-        container.appendChild(iaEl('h3', { text: 'What would strengthen this' }));
         if (asks.length) {
-          var list = iaEl('ul');
+          container.appendChild(iaEl('p', { className: 'provided would-help-heading', text: 'Would help:' }));
+          var list = iaEl('ul', { className: 'callout-list' });
           asks.forEach(function(a) {
-            if (!a || !a.tier || !a.ask) return;
+            if (!a || !a.ask) return;
             var li = iaEl('li');
-            li.appendChild(iaEl('span', { className: 'tier-badge tier-' + a.tier, text: a.tier }));
-            li.appendChild(document.createTextNode(a.ask));
+            // Hyphen bullet for copy-paste survival
+            li.appendChild(document.createTextNode('- ' + a.ask));
             list.appendChild(li);
           });
           container.appendChild(list);
-        } else {
-          var none = iaEl('p', { className: 'provided' });
-          none.appendChild(iaEl('em', { text: 'This area has no outstanding asks — coverage is sufficient.' }));
-          container.appendChild(none);
         }
         container.style.display = '';
       });
     }
-    document.addEventListener('DOMContentLoaded', function() {
-      renderInputAsks();
-      renderPerTabCallouts();
-    });
   </script>
 
 </body>

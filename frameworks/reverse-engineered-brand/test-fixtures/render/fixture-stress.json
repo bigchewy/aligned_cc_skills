@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.4.1",
   "source_counts": { "total": 20, "raw_material": 15, "primary_research": 5 },
   "source_narratives": {
     "raw_material": "15 sources: pitch decks, sales transcripts, the marketing site, competitor-alternatives pages, partnership docs, and an internal Slack export. Broad coverage with significant volume; quality varies across the set.",
@@ -26,7 +26,8 @@
       "input_asks": [
         { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" },
         { "tier": "recommended", "ask": "What category name did your team or investors use when pitching the company last year?" },
-        { "tier": "optional", "ask": "Your three most recent win announcements \u2014 enough to infer the buyer type and use case without a formal case study" }
+        { "tier": "optional", "ask": "Your three most recent win announcements \u2014 enough to infer the buyer type and use case without a formal case study" },
+        { "tier": "critical", "ask": "Recorded customer or prospect conversations from sales or onboarding calls" }
       ]
     },
     {
@@ -48,7 +49,9 @@
       "provided_summary": "Marketing site and sales decks available; no formal brand-voice brief or banned-words list on file.",
       "input_asks": [
         { "tier": "critical", "ask": "Three phrases your best customers use when describing the problem you solve — exact words from email, Slack, or survey responses" },
-        { "tier": "recommended", "ask": "Any words or phrases the team has banned from sales decks or marketing copy, and why" }
+        { "tier": "recommended", "ask": "Any words or phrases the team has banned from sales decks or marketing copy, and why" },
+        { "tier": "recommended", "ask": "Link to your Figma file or brand asset folder — even a locked view is useful for color and type extraction" },
+        { "tier": "recommended", "ask": "recorded customer or prospect conversations from sales or onboarding calls" }
       ]
     },
     {
@@ -94,7 +97,9 @@
       "input_asks": [
         { "tier": "critical", "ask": "The job title and department of the person who signed your last three contracts" },
         { "tier": "critical", "ask": "The job title of whoever uses the product daily \u2014 if different from the buyer" },
-        { "tier": "recommended", "ask": "One sentence each of what the buyer cares about vs. what the daily user cares about, in their own words if possible" }
+        { "tier": "recommended", "ask": "One sentence each of what the buyer cares about vs. what the daily user cares about, in their own words if possible" },
+        { "tier": "recommended", "ask": "List of your top 10 current customers with industry, company size, and which team owns the relationship" },
+        { "tier": "critical", "ask": "Recorded customer or prospect conversations from sales or onboarding calls" }
       ]
     },
     {
@@ -162,6 +167,70 @@
       "input_asks": [
         { "tier": "critical", "ask": "Link to your Figma file or brand asset folder — even a locked view is useful for color and type extraction" },
         { "tier": "recommended", "ask": "Your primary hex color, secondary hex color, and the font name used in headings on the marketing site" }
+      ]
+    }
+  ],
+  "display_groups": [
+    {
+      "id": "how-you-show-up",
+      "label": "How you show up",
+      "folder_ids": ["strategy", "language", "design"],
+      "grade": 4,
+      "headline_claim": "Manual spreadsheet dispatch is primary competitor; category framing and lead-attribute remain open.",
+      "thinnest_gap": "No brand-voice brief, token library, or recorded customer-voice interviews.",
+      "provided_summary": "15 sources, 5 competitor dossiers, marketing site, sales decks; no brief, token library, or interviews.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Recent buyer notes on alternative chosen instead" },
+        { "tier": "critical", "ask": "Recorded customer or prospect conversations" },
+        { "tier": "critical", "ask": "Best customer phrases describing problem in exact words" },
+        { "tier": "critical", "ask": "Figma file or brand asset folder link" },
+        { "tier": "recommended", "ask": "Category name used in last year's investor pitch" },
+        { "tier": "recommended", "ask": "Banned sales-deck or marketing-copy phrases and reasons" },
+        { "tier": "recommended", "ask": "Primary and secondary hex colors and heading font name" },
+        { "tier": "optional", "ask": "Last three win announcements with buyer type and use case" }
+      ]
+    },
+    {
+      "id": "who-you-sell-to",
+      "label": "Who you sell to",
+      "folder_ids": ["audiences", "personas"],
+      "grade": 3,
+      "headline_claim": "Three payer segments classify; head of ops is the dominant buyer persona.",
+      "thinnest_gap": "No dispatcher or end-user interviews; all signal from buyer-side transcripts.",
+      "provided_summary": "Sales transcripts and deal notes only; no buyer or user interviews from any segment.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Top 10 current customers with industry, size, and owner" },
+        { "tier": "critical", "ask": "Job title of last three contract signers" },
+        { "tier": "critical", "ask": "Job title of daily product user if different from buyer" },
+        { "tier": "recommended", "ask": "Segments or verticals explicitly ruled out and why" },
+        { "tier": "recommended", "ask": "Buyer vs. daily user priorities in their own words" }
+      ]
+    },
+    {
+      "id": "who-you-sell-against",
+      "label": "Who you sell against",
+      "folder_ids": ["market"],
+      "grade": 2,
+      "headline_claim": "Behavioral alternatives have stronger evidence than any named competitor.",
+      "thinnest_gap": "No win/loss analysis or direct competitive intel from sales team.",
+      "provided_summary": "5 competitor dossiers from public sources; no win/loss analysis or direct competitive intel.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Battle card competitors with one-line win reasoning per competitor" },
+        { "tier": "recommended", "ask": "Recent lost deal to competitor and buyer's deciding factor" }
+      ]
+    },
+    {
+      "id": "what-you-can-prove",
+      "label": "What you can prove",
+      "folder_ids": ["proof"],
+      "grade": 2,
+      "headline_claim": "Headline metrics appear in customer quotes but lack controlled benchmarks.",
+      "thinnest_gap": "No case study PDFs, controlled benchmarks, or compliance certifications.",
+      "provided_summary": "Customer quote mentions only; no case study PDFs, controlled benchmarks, or compliance certifications.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Best customer result metric with measurement period and verification" },
+        { "tier": "critical", "ask": "Current compliance certifications with last audit dates" },
+        { "tier": "recommended", "ask": "Published case study or customer reference, even draft form" }
       ]
     }
   ],

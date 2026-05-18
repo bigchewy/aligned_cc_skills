@@ -22,7 +22,7 @@ None. Every step is local file editing in this repo. The end-to-end smoke run in
 
 ---
 
-### Task 1: Renderer-only quick wins — drop ask-tab-tag chip, drop CSS, fix KB-141 em-dash
+### ✅ Task 1: Renderer-only quick wins — drop ask-tab-tag chip, drop CSS, fix KB-141 em-dash
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `iaMakeTierGroup` function, the `.ask-tab-tag` CSS rule, and the empty-state copy near the `renderPerTabCallouts` empty-asks branch)
@@ -90,7 +90,7 @@ git commit -m "fix(reverse-engineered-brand): drop ask-tab-tag chip + KB-141 em-
 
 ---
 
-### Task 2: Update open-questions-schema.md to v0.4.1 — document `display_groups[]`
+### ✅ Task 2: Update open-questions-schema.md to v0.4.1 — document `display_groups[]`
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/open-questions-schema.md` (the `# Open Questions Schema v0.4.0` header, the `schema_version` row, the top-level table, and a new `## display_groups entry schema` section)
@@ -148,7 +148,7 @@ git commit -m "docs(reverse-engineered-brand): bump OQ schema doc to v0.4.1"
 
 ---
 
-### Task 3: Add `display_groups[]` to render fixtures + author negative/edge fixtures
+### ✅ Task 3: Add `display_groups[]` to render fixtures + author negative/edge fixtures
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/test-fixtures/render/fixture-tiny.json` (add top-level `display_groups[]`; bump `schema_version`)
@@ -246,7 +246,7 @@ git commit -m "test(reverse-engineered-brand): v0.4.1 render fixtures (positive,
 
 ---
 
-### Task 4: Add `legacyFolderAsGroup()` + data-driven tab nav to renderer
+### ✅ Task 4: Add `legacyFolderAsGroup()` + data-driven tab nav to renderer
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `<div class="tab-bar" id="main-tabs">` block, the `switchTab` function, and a new `legacyFolderAsGroup()` helper near the existing `folderGrade` helper)
@@ -342,7 +342,7 @@ git commit -m "feat(reverse-engineered-brand): data-driven tab nav with legacyFo
 
 ---
 
-### Task 5: Refactor `renderSectionsAtAGlance` to group rows with N/5 grades and 2 bullets
+### ✅ Task 5: Refactor `renderSectionsAtAGlance` to group rows with N/5 grades and 2 bullets
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `gradePill` function and the `renderSectionsAtAGlance` function; the `.section-list` CSS to add the bullets-cell label styling)
@@ -457,7 +457,7 @@ git commit -m "feat(reverse-engineered-brand): Sections at a Glance renders 4 gr
 
 ---
 
-### Task 6: Flatten Overview Inputs Needed + drop happy-talk intro + sub-tab label changes
+### ✅ Task 6: Flatten Overview Inputs Needed + drop happy-talk intro + sub-tab label changes
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the Overview sub-tab buttons, the `<p class="description">` intro paragraph at the Inputs Needed sub-panel, the `renderInputAsks` function, and the `iaMakeTierGroup` function — drop the latter entirely now that asks are flat)
@@ -604,7 +604,7 @@ git commit -m "feat(reverse-engineered-brand): flatten Inputs Needed + drop Exec
 
 ---
 
-### Task 7: Restructure HTML — 4 group panels, nested per-folder paste-backs, FOLDER_LABEL_BY_ID + FOLDER_TO_GROUP_TAB
+### ✅ Task 7: Restructure HTML — 4 group panels, nested per-folder paste-backs, FOLDER_LABEL_BY_ID + FOLDER_TO_GROUP_TAB
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the 8 folder `<div class="tab-panel">` blocks → 4 group panels; introduce `FOLDER_LABEL_BY_ID` and `FOLDER_TO_GROUP_TAB`; refactor `FRAMEWORK_BY_FOLDER` / `FRAMEWORK_TARGET` usage; refactor `renderAll` and `rebuildAllPastebacks`)
@@ -789,7 +789,7 @@ git commit -m "refactor(reverse-engineered-brand): 4 group panels + folder→gro
 
 ---
 
-### Task 8: Implement `renderGroupPanel` — banner without bullets, OQ filter/sort, chip-area, nested per-folder paste-backs
+### ✅ Task 8: Implement `renderGroupPanel` — banner without bullets, OQ filter/sort, chip-area, nested per-folder paste-backs
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (replace `renderFolderPanel` with `renderGroupPanel`; rename `renderFolderBanner` → `renderGroupBanner` and drop bullet rendering; add `chip-area` to `renderOQCard`; add CSS for `chip-area`)
@@ -944,7 +944,7 @@ git commit -m "feat(reverse-engineered-brand): group panel banner + OQ filter/so
 
 ---
 
-### Task 9: Rewrite `renderPerTabCallouts` for group level — single heading, hyphen bullets
+### ✅ Task 9: Rewrite `renderPerTabCallouts` for group level — single heading, hyphen bullets
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `renderPerTabCallouts` function; the `SINGLE_INSTANCE_FOLDERS` constant — delete; the `DOMContentLoaded` listener that calls both `renderInputAsks` and `renderPerTabCallouts`)
@@ -1062,7 +1062,7 @@ git commit -m "feat(reverse-engineered-brand): group-level callout with single h
 
 ---
 
-### Task 10: Update `voice-rewrite.md` — Step 0 shape transformation + group-level provided_summary
+### ✅ Task 10: Update `voice-rewrite.md` — Step 0 shape transformation + group-level provided_summary
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/voice-rewrite.md` (insert Step 0; refactor Step 2 to per-group instead of per-folder; update input table and output JSON example)
@@ -1165,7 +1165,7 @@ git commit -m "feat(reverse-engineered-brand): voice-rewrite Step 0 shape transf
 
 ---
 
-### Task 11: Create `group-bullets.md` sub-agent prompt template
+### ✅ Task 11: Create `group-bullets.md` sub-agent prompt template
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/group-bullets.md`
@@ -1265,7 +1265,7 @@ git commit -m "feat(reverse-engineered-brand): add group-bullets sub-agent promp
 
 ---
 
-### Task 12: Update `prompt.md` PHASE 3.2 — group-level synthesis via 4 parallel sub-agents
+### ✅ Task 12: Update `prompt.md` PHASE 3.2 — group-level synthesis via 4 parallel sub-agents
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (extend Step 3.2 with the new group-construction block and the parallel sub-agent dispatch instructions)
@@ -1345,7 +1345,7 @@ git commit -m "feat(reverse-engineered-brand): PHASE 3.2 dispatches 4 parallel g
 
 ---
 
-### Task 13: Update `prompt.md` PHASE 3.2b — group-level voice rewrite + PHASE 3.2c gate extensions
+### ✅ Task 13: Update `prompt.md` PHASE 3.2b — group-level voice rewrite + PHASE 3.2c gate extensions
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (PHASE 3.2b and PHASE 3.2c sections)
@@ -1445,7 +1445,7 @@ git commit -m "feat(reverse-engineered-brand): PHASE 3.2c gate adds Check 4 (wor
 
 ---
 
-### Task 14: Update PHASE 2.4 outcomes — `.build/` resume semantics for group-bullets and voice-rewrite
+### ✅ Task 14: Update PHASE 2.4 outcomes — `.build/` resume semantics for group-bullets and voice-rewrite
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (PHASE 2.4 outcomes section — add resume-rule entries for the two new sub-agent dispatches)
@@ -1480,7 +1480,9 @@ git commit -m "docs(reverse-engineered-brand): PHASE 2.4 documents .build resume
 
 ---
 
-### Task 15: End-to-end smoke test against existing brand corpus (deferred-skip if absent)
+### ⏭️ Task 15: End-to-end smoke test against existing brand corpus (deferred-skip if absent)
+
+> AUTO-SKIPPED: Step 2 requires an interactive Claude session to run `/aligned:use-framework reverse-engineered-brand`; autopilot cannot invoke it unattended. Brand folder confirmed present at ~/Documents/Obsidian/marley/brand/. Operator must run smoke test manually post-merge. (after 3 consecutive blocks)
 
 **Files:**
 - Read-only: `~/Documents/Obsidian/marley/brand/` (if present); rerun the framework against it

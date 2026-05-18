@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.4.1",
   "source_counts": { "total": 11, "raw_material": 8, "primary_research": 3 },
   "source_narratives": {
     "raw_material": "8 sources: a pitch deck, 3 sales call transcripts, the public marketing site, 2 competitor-alternatives pages, and a partnership announcement. Decks gave strong category-framing signal; transcripts revealed buyer committee shape.",
@@ -156,6 +156,69 @@
       "input_asks": [
         { "tier": "critical", "ask": "Link to your Figma file or brand asset folder — even a locked view is useful for color and type extraction" },
         { "tier": "recommended", "ask": "Your primary hex color, secondary hex color, and the font name used in headings on the marketing site" }
+      ]
+    }
+  ],
+  "display_groups": [
+    {
+      "id": "how-you-show-up",
+      "label": "How you show up",
+      "folder_ids": ["strategy", "language", "design"],
+      "grade": 4,
+      "headline_claim": "Strong competitive hypothesis; lead-attribute and market-category framing remain open.",
+      "thinnest_gap": "No formal brand-voice brief or documented design token library.",
+      "provided_summary": "8 sources plus 3 competitor dossiers, marketing site, 3 sales decks, transcripts; no interviews, brief, or token library.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Recent buyer notes on what they almost chose instead" },
+        { "tier": "critical", "ask": "Best customer phrases describing the problem in exact words" },
+        { "tier": "critical", "ask": "Figma file or brand asset folder link" },
+        { "tier": "recommended", "ask": "Category name used in last year's investor pitch" },
+        { "tier": "recommended", "ask": "Banned sales-deck or marketing-copy phrases and reasons" },
+        { "tier": "recommended", "ask": "Primary and secondary hex colors and heading font name" },
+        { "tier": "optional", "ask": "Last three win announcements with buyer type and use case" }
+      ]
+    },
+    {
+      "id": "who-you-sell-to",
+      "label": "Who you sell to",
+      "folder_ids": ["audiences", "personas"],
+      "grade": 3,
+      "headline_claim": "Three payer segments classify; head of ops is the dominant buyer persona.",
+      "thinnest_gap": "No dispatcher interviews or direct buyer-segment interviews from any segment.",
+      "provided_summary": "Sales transcripts and deal notes only; no buyer or user interviews from any segment.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Top 10 current customers with industry, size, and owner" },
+        { "tier": "critical", "ask": "Job title of last three contract signers" },
+        { "tier": "critical", "ask": "Job title of daily product user if different from buyer" },
+        { "tier": "recommended", "ask": "Segments or verticals explicitly ruled out and why" },
+        { "tier": "recommended", "ask": "Buyer vs. daily user priorities in their own words" }
+      ]
+    },
+    {
+      "id": "who-you-sell-against",
+      "label": "Who you sell against",
+      "folder_ids": ["market"],
+      "grade": 3,
+      "headline_claim": "DispatchTrack is the strongest named competitor; behavioral alternatives have stronger evidence.",
+      "thinnest_gap": "No win/loss analysis or direct competitor intel on file.",
+      "provided_summary": "3 competitor dossiers and 2 competitor-alternatives pages; no win/loss analysis or direct intel.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Battle card competitors with one-line win reasoning per competitor" },
+        { "tier": "recommended", "ask": "Recent lost deal to a competitor and buyer's deciding factor" }
+      ]
+    },
+    {
+      "id": "what-you-can-prove",
+      "label": "What you can prove",
+      "folder_ids": ["proof"],
+      "grade": 2,
+      "headline_claim": "Headline routing-time stat has one source; compliance posture is unsupported by evidence.",
+      "thinnest_gap": "No case study PDFs, benchmarks, or compliance certifications in source set.",
+      "provided_summary": "One customer quote per headline metric; no case study PDFs, benchmarks, or compliance certifications.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Best customer result metric with measurement period and verification" },
+        { "tier": "critical", "ask": "Current compliance certifications with last audit dates" },
+        { "tier": "recommended", "ask": "Published case study or customer reference, even draft form" }
       ]
     }
   ],
