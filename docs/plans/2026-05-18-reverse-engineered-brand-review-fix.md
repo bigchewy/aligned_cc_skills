@@ -1445,7 +1445,7 @@ git commit -m "feat(reverse-engineered-brand): PHASE 3.2c gate adds Check 4 (wor
 
 ---
 
-### Task 14: Update PHASE 2.4 outcomes — `.build/` resume semantics for group-bullets and voice-rewrite
+### ✅ Task 14: Update PHASE 2.4 outcomes — `.build/` resume semantics for group-bullets and voice-rewrite
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (PHASE 2.4 outcomes section — add resume-rule entries for the two new sub-agent dispatches)

@@ -334,6 +334,13 @@ Calibration cases:
 | Partial crash (some slices written, some not) | Check 1 | Hard-fail | Identify failed slices from error list; re-run those slices only |
 | All sub-agents fail | Check 1 (all slices missing) | Hard-fail | Check source registry (PHASE 1 gate should have caught empty sources); re-run from PHASE 1 |
 
+**Resume semantics for PHASE 3 sub-agents (added v0.4.1):**
+
+- **PHASE 3.2 group-bullets sub-agents.** Each writes `{brand-folder-path}/.build/groups/{group-id}.json`. On rerun, if the file is present and parses as JSON containing both `headline_claim` and `thinnest_gap` non-empty after trim, skip re-dispatch for that group. To force re-dispatch, delete the file.
+- **PHASE 3.2b voice-rewrite sub-agent.** Writes `{brand-folder-path}/.build/voice-rewrite.json`. On rerun, if the file is present and parses with both `asks` and `provided_summaries` keys, skip re-dispatch. To force re-dispatch, delete the file.
+
+These resume rules avoid re-paying PHASE 1 + 1.5 + 2 costs when a single sub-agent fails. The PHASE 3.2c gate runs unconditionally on the merged output regardless of which path produced it (fresh dispatch vs. resumed cache).
+
 ---
 
 ### PHASE 3: Load — Consolidate drafts, write folder, generate review HTML (silent)
