@@ -1,41 +1,34 @@
-# Spawn-Brief Template (Roadmap Portfolio Entry Schema)
+# Spawn-Brief Template (Roadmap Spawn-List Entry Schema)
 
-> **v0 schema; provisional.** This 8-field schema is authored before any portfolio.md exists. After 2 portfolio docs ship, audit the schema for fields that were dead-weight or missing in practice — the v1 schema is informed by usage, not specified ahead of it.
-
-Each entry in a Roadmap-mode `portfolio.md` uses this schema verbatim. Multiple entries are stacked under `## ` headings, one per portfolio item.
+Each entry in a Roadmap-mode `spawn-list.md` uses this schema. Multiple entries are stacked under `## ` headings, one per component, in run order.
 
 ## Schema
 
 ```markdown
-## {Item title}
+## {Component title}
 
-**Target mode:** {Software | Authoring | Research | Roadmap}
-**Status:** {pending | brainstorming | planned | in-progress | done}
-**Rough size:** {hours | days | weeks}
-**Prerequisites:** {bulleted list of items in this portfolio that must complete first, or "none"}
-**External dependencies:** {bulleted list of things outside the portfolio's control, or "none"}
-**Why now:** {1-2 sentences on what triggered this and what's lost if deferred}
-**Spawn brief (one paragraph, brainstorm-ready):**
-> {Audience + problem + constraint context for a fresh /aligned:brainstorming session}
-**Success criterion:** {one sentence — what must be true when this item is "done"}
+**Target mode:** {Software | Authoring | Research}
+**Prerequisites:** {bulleted list of components in this spawn-list that must complete first, or "none"}
+**Spawn brief (paste-ready):**
+> {One paragraph the user pastes verbatim into a fresh /aligned:brainstorming session. Must include: what gets produced from this brainstorm, the population/audience it serves, the constraints, and any prior-art the next brainstorm should read. Must contain mode-disambiguating verbs ("design...", "compare...", "write...", "synthesize...") so the brainstorming router auto-routes to the correct mode.}
+**Success criterion:** {one sentence — what artifact exists when this component is "done"}
 ```
 
 ## Consumer contract
 
-A user invoking `/aligned:brainstorming` against an entry pastes the **spawn-brief paragraph** (the `>` blockquote) as the prompt. The brainstorming router runs normal topic-keyword signal detection on the paragraph prose; the spawn-brief is authored to contain explicit mode-disambiguating keywords ("design...", "sequence...", "compare...") so detection routes correctly.
+A user invoking `/aligned:brainstorming` against a component pastes the **spawn-brief paragraph** (the `>` blockquote) as the prompt. The brainstorming router runs topic-keyword signal detection on the paragraph prose; the spawn-brief is authored to contain explicit mode-disambiguating verbs so detection routes correctly.
 
-`target_mode` is **for the human reader and for documentation**, not consumed by the router (no parsing layer exists). If signal detection misses, the always-ask 4-mode confirmation question presents with no pre-selected mode.
+`Target mode` is for the human reader and documentation, not consumed by the router (no parsing layer exists). If signal detection misses, the always-ask 4-mode confirmation question presents with no pre-selected mode — friction, not failure.
 
-`/aligned:writing-plans` is **not** a portfolio.md consumer. The chain is:
-*portfolio item → brainstorming → design doc → writing-plans → implementation plan*
+`/aligned:writing-plans` is **not** a spawn-list consumer. The chain is:
+
+*spawn-list component → /aligned:brainstorming → design doc → /aligned:writing-plans → implementation plan*
+
+(Components targeting Research or some Authoring sub-shapes terminate at the design-doc-equivalent step and don't continue to `/aligned:writing-plans`.)
 
 ## Field semantics
 
-- **Target mode:** Which brainstorming mode this item should route to when its turn comes. Documentation only (router uses signals, not this field). A Roadmap item can target Roadmap (nested roadmap session) when the item is itself a multi-feature portfolio that warrants its own sequencing pass.
-- **Status:** Lifecycle marker. `pending` is the default after creation. Update inline as items move through brainstorming → roadmap → execution.
-- **Rough size:** Order-of-magnitude estimate. Use `hours` (sub-day), `days` (1-5 days), or `weeks` (>1 week). Items in the `weeks` bucket may need to be re-decomposed before they're brainstorm-ready.
-- **Prerequisites:** Items earlier in this same portfolio that must reach `done` before this item is unblocked. List by `## ` heading title.
-- **External dependencies:** Things outside the portfolio author's control — third-party APIs, vendor releases, customer commitments, hiring.
-- **Why now:** The momentum case. What changed in the world (or the org) that makes this the right time? What's the regret cost of not doing it?
-- **Spawn brief:** A single paragraph the user pastes literally into a fresh brainstorming session. Must contain mode-disambiguating keywords.
-- **Success criterion:** A one-sentence test someone could run when the item is claimed-done. Must be observable without further dialog.
+- **Target mode:** Which brainstorming mode this component should route to when its turn comes. Software for build/refactor/integration; Authoring for any named document; Research for evidence synthesis. Documentation only — the router still detects from the paragraph.
+- **Prerequisites:** Components earlier in this same spawn-list that must reach "done" before this component is brainstorm-ready. List by `## ` heading title. Use "none" when independent.
+- **Spawn brief:** A single paragraph pasted literally into a fresh brainstorming session. Mode-disambiguating verbs required. Must carry enough context (population, constraints, prior art, deliverable shape) that the next brainstorm can start cold.
+- **Success criterion:** A one-sentence test someone could run when the component is claimed done. Must be observable without further dialog (e.g., "design doc committed at `docs/plans/YYYY-MM-DD-foo-design.md` with all sections populated").

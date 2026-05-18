@@ -1,4 +1,4 @@
-<!-- Visualization protocol: Read into context by visualizing modes (software, authoring, roadmap) at the start of their Visualization step. Research mode does not generate a live HTML artifact and skips this protocol. Do not add YAML frontmatter. -->
+<!-- Visualization protocol: Read into context by visualizing modes (software, authoring) at the start of their Visualization step. Research and Roadmap modes do not generate a live HTML artifact and skip this protocol. Do not add YAML frontmatter. -->
 
 # Visualization Protocol
 
@@ -11,7 +11,7 @@ The invoking mode supplies these values:
 - `{mode-template-path}` — absolute path to the mode's template, e.g. `{base-directory}/references/templates/software-template.html`. Each visualizing mode owns its own template; templates may diverge over time.
 - `{topic}` — the brainstorm topic slug (kebab-case).
 - `{timestamp}` — epoch seconds (or another collision-resistant value).
-- `{session-name}` — derived as `YYYY-MM-DD-{topic}` using today's date and the topic slug, matching the design document base name (`docs/plans/YYYY-MM-DD-<topic>-design.md`). For example, a brainstorm on `mockup-deviations` on 2026-05-11 yields `{session-name}` = `2026-05-11-mockup-deviations` and a committed mockup at `docs/mockups/2026-05-11-mockup-deviations.html`. Modes that don't write a design document (e.g., Roadmap mode's portfolio/roadmap pair) must still derive this value from `YYYY-MM-DD-{topic}` for consistency.
+- `{session-name}` — derived as `YYYY-MM-DD-{topic}` using today's date and the topic slug, matching the design document base name (`docs/plans/YYYY-MM-DD-<topic>-design.md`). For example, a brainstorm on `mockup-deviations` on 2026-05-11 yields `{session-name}` = `2026-05-11-mockup-deviations` and a committed mockup at `docs/mockups/2026-05-11-mockup-deviations.html`.
 - The validated design sections so far.
 
 ## Live phase

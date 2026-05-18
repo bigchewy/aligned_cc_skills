@@ -1,281 +1,121 @@
 <!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->
 
-# Brainstorming Portfolios Into Roadmaps
+# Brainstorming Decomposition into a Spawn List
 
 ## Contents
 
 - Overview
 - Disambiguation rules
 - The Process
-- After the Roadmap
-- Design Critique
+- After Decomposition
+- Out of scope
 - Key Principles
 
 ## Overview
 
-You are a structured portfolio-sequencing facilitator. Your job is to help the user move from a stated opportunity space to a sequenced, sized roadmap and a spawn-ready portfolio of brainstorm-able items — in that order.
+Roadmap mode is **pure orchestration scaffolding**. The user has an outcome that's too big for one `/aligned:brainstorming` session — a software overhaul with multiple components, a deck that needs research → insights → authoring, a multi-step build. Your job: produce a paste-ready queue of 3–6 brainstorming prompts that, run in order, compose the outcome.
 
-Roadmap mode is for portfolio-shaped work: quarterly roadmaps, multi-feature plan-sets, opportunity-to-bets translation, sequencing across teams. The deliverable is **two coordinated artifacts** — a strategic `roadmap.md` and a `portfolio.md` whose entries each conform to the spawn-brief schema, ready to feed downstream `/aligned:brainstorming` sessions one at a time.
+The single deliverable is `docs/plans/YYYY-MM-DD-<topic>-spawn-list.md`. Each entry conforms to the 5-field schema in `{base-directory}/references/spawn-brief-template.md`. The spawn-brief paragraph from each entry is what the user pastes verbatim into a fresh `/aligned:brainstorming` session to start the next brainstorm.
 
-The process is strictly sequential: **Opportunity space → Candidate inventory → Sizing & dependencies → Sequencing & rationale → Spawn briefs per item.** Never sequence before you've sized, and never size before you've inventoried what's even on the table.
-
-Planning is brainstorm-spawning, not brainstorm-consuming. The portfolio it produces becomes the input queue for future Software / Authoring / Research brainstorms, each of which produces a design doc that `/aligned:writing-plans` later turns into an implementation plan. There is no `/aligned:writing-plans` follow-on against the portfolio itself.
+Roadmap mode does **not** produce a strategic roadmap document, do quarterly planning, reconcile team capacity, or consult strategy advisors. It is decomposition + a paste-ready queue. Nothing more.
 
 ## Disambiguation rules
 
-**Roadmap vs Business:** Both modes can frame a problem and propose paths forward, but the shapes differ. **Business** is RCA-shaped — one goal, diagnose obstacles, find root causes, pick a solution. **Roadmap** is portfolio-shaped — multiple candidate items spanning weeks or quarters, sized and sequenced against capacity, each emerging as its own future brainstorm. If the deliverable is a single design doc for one feature or change, that's Business or Software. If the deliverable is a sequenced list of multiple candidate items each warranting its own future brainstorm, that's Roadmap.
-
-**Roadmap vs Software:** **Software** is single-feature: one design, one plan, one execution. **Roadmap** is multi-feature: a portfolio of items, each of which (when its turn comes) goes through Software / Authoring / Research independently. If the conversation is "design this feature," route to Software. If the conversation is "what should we build next quarter, in what order, against this capacity," route to Roadmap.
-
-**Mixed signals:** Look at the file the user expects to commit at the end. A `docs/plans/YYYY-MM-DD-<topic>-roadmap.md` paired with a `docs/plans/YYYY-MM-DD-<topic>-portfolio.md` (spawn-list) is Roadmap. A single `docs/plans/YYYY-MM-DD-<topic>-design.md` for one feature is Software or Business. A single `docs/plans/YYYY-MM-DD-<topic>-research.md` ranking external candidates is Research.
+- **Roadmap vs Software:** Software is one brainstorm → one design doc → one plan. Roadmap is "this is too big for one brainstorm" → a list of 3–6 brainstorming prompts to run in order. If the user can describe what they want as a single design doc, route to Software.
+- **Roadmap vs Authoring:** Authoring produces a single named document — including any *roadmap-shaped document* (quarterly plan, prioritization memo, portfolio doc for stakeholders). Roadmap mode produces a spawn-list, not a document. If the user wants a roadmap document for humans to read, that's Authoring with a roadmap-shaped framework. If the user wants a queue of brainstorms to run, that's Roadmap.
+- **Mixed signals:** Look at what the user expects to do with the artifact. "I'll paste each entry into a new brainstorming session" = Roadmap. "I'll share this with my team / stakeholders" = Authoring.
 
 ## The Process
 
-You MUST complete each phase before proceeding to the next.
+You MUST complete each phase before proceeding to the next. Ask one question at a time, multiple choice preferred where it fits.
 
-### Phase 1: Opportunity space & constraints
+### Phase 1: Outcome and why it needs decomposition
 
-**The router has already dispatched a roadmap-mode project scan.** Results will be available at `/tmp/brainstorm-context-{topic}/project-scan.md` and emphasize prior plans, deferred backlog items, capacity signals, and existing roadmap artifacts. Do not dispatch a second scan.
+Establish two things:
 
-**Overlap with first scoping question:** Do not wait for the scan to complete before asking your first question. Immediately ask your first opportunity-space question. The scan runs in parallel while the user responds. If the user responds before the scan finishes, ask another scoping question — do not idle. Once the scan completes, incorporate the summary as working context for all subsequent questions.
+- **Outcome:** What's the end-state, in one sentence? ("Ship a prospect-specific sales deck for Dispatch Track." "Land a multi-component refactor of the autopilot pipeline." "Produce a research-grounded blog post on RCA frameworks.")
+- **Why too big for one brainstorm:** What makes this multi-step? Common shapes: research → synthesis → authoring; multi-component build with internal dependencies; design then validate then build.
 
-**Nothing happens without a clear opportunity space and capacity envelope.**
+That's the entire scoping pass. No advisor panels, no capacity envelope, no person-week math.
 
-- Ask questions one at a time. One question per message. Multiple choice preferred.
-- The scoping must answer:
-  - **Goal:** What is the strategic outcome this roadmap is in service of? (one sentence)
-  - **Audience:** Who benefits when the roadmap delivers? (customer segment, internal team, public)
-  - **Time horizon:** What window is the roadmap claiming? (quarter, half, year, multi-year)
-  - **Budget / capacity:** Person-weeks, sprints, FTE allocations — whatever unit makes the math possible.
-  - **Success criteria:** What must be observably true at the end of the horizon for the roadmap to be judged successful?
-  - **Out of scope:** Named exclusions with one-line reasons each.
+**Gate:** Restate the outcome and the reason it needs decomposition. Confirm.
 
-**Gate:** Restate the opportunity space in a short scoping block (Goal, Audience, Horizon, Capacity, Success criteria, Out of scope). Get user confirmation before proceeding.
+### Phase 2: Decompose into 3–6 components
 
-### Phase 2: Candidate inventory
+Propose a decomposition. For each component, list:
 
-**What candidates are even in scope?**
+- **Title** — short, descriptive (e.g., "Research synthesis", "Schema redesign", "Migration plan")
+- **Target brainstorming mode** — Software / Authoring / Research
+- **One-sentence outcome** — what artifact comes out of that brainstorm
 
-The portfolio is built from multiple sources, not just what the user has top-of-mind. Pull from each source explicitly so the inventory is defensible:
+Aim for 3–6 components. Fewer and decomposition isn't earning its keep; more and the orchestration becomes the bottleneck. If a proposed component itself looks like multiple brainstorms wearing one name, decompose it further — every component must fit comfortably in a single brainstorming session.
 
-- **Prior research artifacts:** `docs/plans/*-research.md`, `knowledge/<area>/README.md` files that surface candidates
-- **Customer asks / inbound:** What's in the backlog, support tickets, sales-flagged gaps
-- **Technical debt:** What the team has been deferring; what's causing repeat incidents
-- **Identified opportunities:** New surfaces, adjacent markets, platform shifts the team has flagged
-- **Deferred items from past plans:** Items previously sized as "not now" — surface them again with the original context
+Walk through the list with the user. Adjust, add, remove.
 
-**Probe for hidden candidates:**
-- "What got deferred last quarter that we said we'd revisit?"
-- "What's the team complaining about that hasn't made the backlog?"
-- "If a competitor shipped X tomorrow, what would we wish we'd already started?"
+**Gate:** Present the component list (titles + target modes + one-sentence outcomes). Confirm.
 
-**Coverage gap discipline:** If the user names a candidate you can't find evidence of, mark it `[unverified — user-named]` rather than dropping it. If you find a candidate the user didn't name (deferred from a past plan, in the backlog, surfaced by the project scan), surface it before continuing — silent omissions corrupt the portfolio.
+### Phase 3: Dependencies and run order
 
-**Gate:** Present the categorized candidate inventory with a one-line note per item explaining what it is and why it surfaced. Get user confirmation before proceeding.
+For each component, identify prerequisites — other components in this list that must complete before this one is brainstorm-ready. Cite by component title, not vague pointers ("After Component #2 (Research synthesis)", not "after the research is done").
 
-### Phase 3: Sizing & dependencies
+Most decompositions are mostly linear; not all are. If two components are independent, say so — that's useful when the user has time to run brainstorms in parallel.
 
-**Now size each candidate and map its dependencies.**
+**Gate:** Present the ordered list with dependencies. Confirm.
 
-For each candidate in the inventory, gather:
+### Phase 4: Spawn briefs
 
-- **Rough size:** `hours` (sub-day), `days` (1-5 days), or `weeks` (>1 week). Items in `weeks` may need re-decomposition before they're brainstorm-ready — flag candidates that look like three efforts wearing one name.
-- **Hard prerequisites:** Other candidates in this same portfolio that must complete first. Use item titles, not vague pointers ("after the auth refactor lands" → "after Item #3: Auth refactor").
-- **External dependencies:** Things outside the portfolio's control — third-party APIs, vendor releases, customer commitments, hiring, regulatory.
-- **Risks:** What would invalidate the size or the value? (Unknown integration, unmeasured user demand, novel technical territory.)
+For each component, write the spawn-brief block using the 5-field schema in `{base-directory}/references/spawn-brief-template.md`. **Reference the template; do not duplicate the schema here.** Every field must be substantive — no `TBD`, no one-word placeholders.
 
-**Auto-consult strategy / PM advisors (topic-routed):**
+The spawn-brief paragraph (the `>` blockquote) is what gets pasted verbatim into a fresh `/aligned:brainstorming` invocation. It MUST contain mode-disambiguating verbs ("design...", "compare...", "write...", "synthesize...") so the brainstorming router auto-routes to the correct mode. A generic brief falls through to the always-ask 4-mode confirmation — not a failure, but a friction the spawn-list should be authored to avoid.
 
-For substantive sizing or sequencing decisions, dispatch advisors as consultative voices. Each consultation is a fresh sub-agent. The advisor's prompt file is at `advisors/prompts/{advisor-id}.md`. The pattern follows `{base-directory}/_shared/critique-panel-orchestration.md` for the dispatch shape, but advisors here are advising during the roadmap session, not critiquing afterward.
+Quality bar: could a reader who has never seen this conversation paste the spawn-brief paragraph into a fresh `/aligned:brainstorming` and get a useful brainstorm started? If not, re-author it with the missing population, constraints, or deliverable shape.
 
-**Default panel** (always available — these advisors are required to be in the registry for Roadmap mode to function):
-- Strategy, opportunity-space framing, cutting fluff → Richard Rumelt (`richard-rumelt`) — cite his `frameworks/kernel-of-good-strategy/` as a reference-grade strategy frame
-- Disruption / job-to-be-done thinking → Clayton Christensen (`clayton-christensen`)
-- Validated learning / evidence-driven sequencing → Eric Ries (`eric-ries`)
+Walk the user through each component. For each, present the populated 5-field block, ask if anything's missing, then move to the next.
 
-**Preferred lead when available — Marty Cagan:** Cagan is the canonical product-discovery / opportunity-assessment voice for Roadmap mode. The mode checks for `advisors/prompts/marty-cagan.md` on entry. **If the file exists, Cagan is added as the preferred lead of the strategy panel.** **If the file is absent, the mode silently uses the default panel without surfacing the absence to the user** — this is the silent-default behavior per design §Error paths #5. Do not block, do not warn, do not prompt. Adding Cagan is a launch-time upgrade run via `/aligned:add-advisor`, not a runtime gate.
+**Gate:** Present the full spawn-list (all components with all 5 fields populated). Confirm ready to commit. Move to After Decomposition.
 
-**Topic-conditional additions** (extend per the registry — `advisors/registry.yaml` is authoritative):
-- Customer-obsession / decision-reversibility → Jeff Bezos (`jeff-bezos`) — cite his `frameworks/type-1-type-2-decisions/` as a reference-grade decision frame
-- Founder-mode pragmatism / contrarian sequencing → Paul Graham (`paul-graham`)
-- Early-stage venture sequencing / market timing → Garry Tan (`garry-tan`)
-- Engineering capacity / team-shape constraints → Lara Hogan (`lara-hogan`)
+## After Decomposition
 
-Topic-conditional advisors are added by the dynamic critic selector in `{base-directory}/../_shared/critique-panel-orchestration.md` based on the opportunity-space topic.
+**Documentation (single artifact):**
 
-**Dispatch template** (sub-agent via Task tool, `subagent_type=general-purpose`, `model=opus`):
+Write `docs/plans/YYYY-MM-DD-<topic>-spawn-list.md`. Structure:
 
-   "[Full contents of `advisors/prompts/{advisor-id}.md`]
+- Header: `**Outcome:**` (one sentence) and `**Why decomposed:**` (one sentence on what makes it multi-step)
+- Body: one `## ` heading per component, in run order, each using the 5-field schema
 
-   You are acting as a strategy / PM consultative voice during a roadmap-mode brainstorm. You have access to Glob, Grep, Read, WebSearch, and WebFetch tools. Do not use Bash for searching — use the Grep tool instead. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md`.
+No `roadmap.md` companion artifact. No mockups. No dependency-graph HTML. Markdown only.
 
-   Goal: {one-sentence strategic outcome}
-   Audience: {audience}
-   Horizon / capacity: {horizon} / {capacity}
-   Success criteria: {success criteria}
-   Out of scope: {exclusions}
-   Candidate inventory so far: {item list with current sizes and dependency notes}
+**Lightweight critique pass:**
 
-   Your task:
-   - Validate that the inventory covers the obvious candidates within the stated opportunity space. Name omissions.
-   - For each candidate's size and dependency claims, flag implausible sizing, missed external dependencies, or unstated risks.
-   - Surface trade-offs the inventory hides — items that look independent but are entangled, items sequenced ahead of their actual prerequisites.
+Read `{base-directory}/roadmap-critique-checklist.md` and answer its two questions against the spawn-list you just wrote. This is an inline self-review in the main context — no sub-agents, no advisor panels, no fact-checking pipeline. If the checklist surfaces issues, fix them and re-confirm with the user.
 
-   Output format:
-   - **Inventory coverage:** {missing candidates, or 'complete'}
-   - **Sizing flags:** {per-candidate notes — implausible sizes, undecomposed XL items}
-   - **Dependency flags:** {missed prereqs, unrecognized external deps}
-   - **Risk surfacing:** {unstated risks per candidate}"
+**Commit:**
 
-The Architect joins as a late-audit consultative voice for **codebase-reality dependency check** only — verifying that the technical prerequisites the portfolio claims (e.g., "Item B depends on the new schema from Item A") are actually true against the codebase. This is a single dispatch at the end of Phase 3, not a per-candidate consult. Substantive strategy / sizing expertise comes from the strategy panel above, not from The Architect.
+Commit `docs/plans/YYYY-MM-DD-<topic>-spawn-list.md` to git.
 
-Briefly note each advisor consultation to the user: which advisor, what they flagged, what you incorporated.
+**Next-step affordance:**
 
-**Gate:** Present the sized candidate list with per-item dependencies and risks. Get user confirmation before proceeding.
+Output exactly one affordance:
 
-### Phase 4: Sequencing & rationale
-
-**Now order the sized candidates against capacity and dependencies.**
-
-Lead criteria for sequencing decisions, in priority order:
-
-1. **Dependency unblocking** — items that unblock multiple downstream items go earlier
-2. **Risk reduction** — items that retire the highest-uncertainty risk go earlier so the rest of the roadmap can be sized more confidently
-3. **Value delivery** — among items with similar dependencies and risks, prefer the order that delivers user-visible value sooner
-4. **Momentum** — quick wins that build team velocity and stakeholder confidence are front-loaded when they don't violate the above
-
-Group items into waves (wave 1, wave 2, ...) where each wave's items can run in parallel given dependencies. Justify each wave with rationale: which prereqs unblock it, which risks it retires, what it delivers.
-
-**Capacity vs scope reconciliation:** Sum item sizes against the capacity envelope from Phase 1. If the sum exceeds capacity, the user must explicitly decide what gets cut, parked, or flagged as stretch. Never silently leave the roadmap over-capacity — that's a roadmap that ships nothing.
-
-**Presentation:** Present the sequenced roadmap in 200-300 word sections. Ask after each section whether it looks right so far. Cover: opportunity-space frame → wave-by-wave items with rationale → dependency map → capacity reconciliation → success criteria → out of scope.
-
-**Gate:** Present the sequenced roadmap with rationale per wave and capacity reconciliation. Get user confirmation before proceeding.
-
-### Phase 5: Spawn briefs per item
-
-**Now produce the spawn-ready brief for every portfolio entry.**
-
-Each portfolio entry uses the 8-field schema from `{base-directory}/references/spawn-brief-template.md`. **Reference the template; do not duplicate the schema in this mode file.** All 8 fields must be present and substantive — no `TBD`, no one-word placeholders.
-
-The spawn-brief paragraph (the `>` blockquote) is what a future user pastes verbatim into a fresh `/aligned:brainstorming` session to start the next brainstorm. It must contain mode-disambiguating verbs ("design...", "sequence...", "compare...", "compose a roadmap for...") so the brainstorming router auto-routes correctly. A generic brief — one without mode-disambiguating signals — falls through to the standard 5-way disambiguation question; this is a known failure mode, not silent mis-routing (per design §Error paths #4).
-
-**Quality bar:** Could a reader who has never seen this brainstorm session paste the spawn brief into a fresh `/aligned:brainstorming` invocation and get a useful brainstorm started? If not, the brief is incomplete — re-author it with the missing population, constraints, or deliverable shape.
-
-Walk the user through each entry. For each item, present the populated 8-field block, ask if anything's missing or wrong, then move to the next.
-
-**Gate:** Present the full portfolio (all entries with all 8 fields populated) and confirm the user can proceed to commit. Move to After the Roadmap.
-
-## After the Roadmap
-
-**Documentation (two artifacts):**
-
-- **`docs/plans/YYYY-MM-DD-<topic>-roadmap.md`** — the strategic frame: opportunity space, sequencing rationale, dependency map, capacity reconciliation, success criteria, out of scope. **This is the primary `{design-file-path}` passed to the critique panel.** Sections, in order: Goal → Audience → Horizon → Capacity → Success criteria → Out of scope → Candidate inventory (categorized) → Sizing & dependencies (per-item) → Sequencing & rationale (wave-by-wave) → Decision log.
-- **`docs/plans/YYYY-MM-DD-<topic>-portfolio.md`** — the spawn-list: one entry per portfolio item, each using the 8-field schema from `{base-directory}/references/spawn-brief-template.md`. Entries are stacked under `## ` headings, one per item, in the same order as the roadmap's sequencing. **This file is attached to the critique panel as a supplementary input via the `portfolio-file-path` config field below.**
-
-After visualization artifacts are generated, add a `**Mockups:**` field to the roadmap document header (e.g., `**Mockups:** docs/mockups/{session-name}.html`). This field is consumed by writing-plans and finishing-a-development-branch to locate mockups without guessing. If no visual artifacts were generated, omit the field. The portfolio file does not carry a Mockups field — visuals attach to the roadmap.
-
-**Visualization (conditional — most roadmap brainstorms produce dependency-map / sequencing visualizations):**
-
-When the roadmap has structural complexity (multiple waves, dependency map, capacity bar), run the visualization protocol — typically producing a dependency map and a wave timeline. For pure-prose roadmaps with two or three items and no meaningful dependency graph, skip visualization.
-
-If visualization runs: read `{base-directory}/references/visualization-protocol.md` and follow it end-to-end (Live phase + Pre-critique snapshot). Use `{base-directory}/references/templates/roadmap-template.html` as the template path. The Pre-critique snapshot's `**Mockups:**` field attaches to the roadmap document header (not the portfolio).
-
-**Interactive widgets (conditional, mandatory when triggered):**
-
-If the design produced a Decision Log with >=1 entry OR an Open Questions list with >=1 entry, the visualization protocol's widget-injection step is **mandatory** (not optional). Use the categorized variant of either widget when the corresponding count is >=10; use the flat variant below 10. See `{base-directory}/references/widgets.html` and `{base-directory}/references/brainstorm-components.md` § Interactive Widgets.
-
-**Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
-
-**Critique panel configuration:**
-- Skill name: brainstorming
-- Checklist filename: roadmap-critique-checklist.md
-- Fact-check mode: division-of-labor
-- Fact-check tools: Glob, Grep, Read, WebSearch, WebFetch
-- Aggregation: sub-agent
-- Criteria assignment: yes
-- Visual artifacts: docs/mockups/{session-name}.html
-- Portfolio file: docs/plans/YYYY-MM-DD-<topic>-portfolio.md
-- Critique temp directory: /tmp/brainstorm-critique-{topic}
-
-**Criteria mapping table:**
-
-| Criterion                       | Best-fit domains                                                          |
-| ------------------------------- | ------------------------------------------------------------------------- |
-| 1. Opportunity-space clarity    | strategy, framing, cutting fluff (Rumelt, Christensen)                    |
-| 2. Inventory completeness       | breadth across customer / tech-debt / opportunity (Cagan, Christensen)    |
-| 3. Sizing realism               | engineering capacity, programming reality (Hogan, The Architect)          |
-| 4. Dependency rigor             | codebase-reality, schema and integration knowledge (The Architect)        |
-| 5. Sequencing logic             | validated-learning sequencing, risk retirement (Eric Ries, Tan)           |
-| 6. Capacity vs scope            | scope control, prioritization, founder pragmatism (Rumelt, Graham)        |
-| 7. Spawn-brief quality          | discovery / opportunity assessment (Cagan when present; Eric Ries fallback) |
-| 8. Strategic coherence          | strategy frame, type-1/type-2 decision lens (Rumelt, Bezos)               |
-
-Criterion 9 (Decision quality) goes to **all** critics. Each criterion 1-8 goes to exactly one critic. If no selected critic's domain matches a criterion (e.g., Cagan absent for criterion 7), reassign to the next-best-fit critic in that row, or to the fact-checker as catch-all. Target 2-4 criteria per critic.
-
-**Fact-checker prompt template:**
-
-"[Full contents of the critic's prompt file]
-
-You have access to Glob, Grep, Read, WebSearch, WebFetch, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Read also `{portfolio-file-path}` for the spawn-list — evaluate spawn-brief quality (criterion 7) against it. Also review the visual artifacts at `{visual-artifacts-path}` — open the HTML file with Read and evaluate the visuals (dependency map, wave timeline, capacity bar) alongside the written spec. Your job has two phases:
-**Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the codebase, prior plans, capacity assertions, dependency claims (internal and external), and prior-art references. Verify each using Glob/Grep/Read for in-repo claims and WebSearch/WebFetch for external claims where possible. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
-**Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the roadmap and portfolio against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
-
-**Regular critic prompt template:**
-
-"[Full contents of the critic's prompt file]
-
-You have access to Glob, Grep, Read, WebSearch, WebFetch, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Read also `{portfolio-file-path}` for the spawn-list — evaluate spawn-brief quality (criterion 7) against it. Also review the visual artifacts at `{visual-artifacts-path}` — open the HTML file with Read and evaluate the visuals alongside the written spec.
-**IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of capacity, dependencies, and prior-plan references in parallel. Do not extract and verify every claim — that work is covered.
-Read key project files relevant to your domain expertise (enough to understand the opportunity space, the team's recent work, and the codebase's current shape), then evaluate the roadmap and portfolio against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
-
-Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and follow its process using the configuration and prompt templates above.
-
----
-
-**POST-CRITIQUE CHECKLIST — 3 mandatory steps. Do not skip any. Do not stop after step 2.**
-
-**Step 1 of 3 — Visualization finalization (conditional):**
-
-If a live visualization was started, apply the Post-critique regeneration section of `{base-directory}/references/visualization-protocol.md`, using `{base-directory}/references/templates/roadmap-template.html` as the template path. The protocol covers regeneration, the skip-if-unchanged condition, and the refresh-script strip in one pass. Skip this step entirely if no visualization was produced.
-
-**Step 2 of 3 — Commit:**
-
-Commit the roadmap (`docs/plans/YYYY-MM-DD-<topic>-roadmap.md`), the portfolio (`docs/plans/YYYY-MM-DD-<topic>-portfolio.md`), visual artifacts (`docs/mockups/{session-name}.html` if produced), and `docs/architecture.md` (if updated) to git after critique rounds are complete. Stage all together in one commit. **The session is NOT complete after this step — continue to step 3.**
-
-**Step 3 of 3 — Next step prompt (mandatory):**
-
-Planning mode has no `/aligned:writing-plans` follow-on against the portfolio itself — the portfolio is brainstorm-spawning, not brainstorm-consuming. After committing the roadmap and portfolio, output exactly two affordances:
-
-> **Affordance 1 — Land it where it is.** The roadmap and portfolio are committed at `docs/plans/YYYY-MM-DD-<topic>-roadmap.md` and `docs/plans/YYYY-MM-DD-<topic>-portfolio.md`. No further action required to "ship" the roadmap artifact.
->
-> **Affordance 2 — Pick the first item from the portfolio and run `/aligned:brainstorming` against its spawn brief.** That brainstorm produces a design doc, which `/aligned:writing-plans` then turns into an implementation plan. Repeat per portfolio item as capacity allows. The portfolio is the input queue for future brainstorms, not the input to writing-plans.
+> **Next:** Pick the first component with no remaining prerequisites and run `/aligned:brainstorming` against its spawn-brief paragraph. That brainstorm produces a design doc, which `/aligned:writing-plans` can turn into an implementation plan if the component is build-shaped. Repeat per component until the spawn list is exhausted.
 
 ## Out of scope
 
-Roadmap mode is **not** a WIP-limit / kanban / status-workflow tool. Out of scope:
-- WIP-limit enforcement, swimlanes, in-progress caps
-- Status-workflow automation (auto-transition rules, state machines)
-- Day-to-day execution tracking — that's the team's project tracker, not Roadmap mode
+Roadmap mode is **not** for:
 
-The portfolio's `Status:` field is documentation only — a snapshot of where each item stands at the time of authoring, updated manually as items move through brainstorming → roadmap → execution. Roadmap mode is also distinct from `docs/kanban/` (which holds small auto-found items surfaced by code-simplifier and doc-staleness-detector — those are agent-driven, not user-strategized).
-
-## Design Critique
-
-When critiquing an existing roadmap and portfolio (instead of writing one), use the checklist at `{base-directory}/roadmap-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Critics read both the roadmap (`{design-file-path}`) and the portfolio (`{portfolio-file-path}`) in full. Verify every claim against prior plans, capacity assertions, and the codebase — don't trust dependency claims, sizing, or "ready to spawn" labels without checking.
+- **Stakeholder-facing roadmap documents** — those are Authoring with a roadmap-shaped framework
+- **Quarterly planning, capacity reconciliation, portfolio governance** — this plugin doesn't do those; use the team's planning tool
+- **Status / WIP tracking** — the spawn-list is a queue at authoring time, not a live tracker; `docs/kanban/` holds agent-found work, not user-strategized work
+- **Strategic advisor consultation** — too heavy for "break this into pieces"; if a component itself needs strategic framing, that surfaces inside its own brainstorm
 
 ## Key Principles
 
-- **Opportunity space first, always** — No portfolio work starts without a confirmed opportunity-space frame and capacity envelope
-- **Inventory before sizing** — Build the candidate list across all sources before sizing anything
-- **Sizing before sequencing** — Sequence is meaningless without per-item sizes and dependency claims
-- **Dependencies cite item titles** — "After the auth refactor" is not a dependency; "After Item #3 (Auth refactor)" is
-- **Capacity binds scope** — A roadmap that overflows capacity ships nothing; reconcile explicitly, don't paper over
-- **Spawn briefs are paste-ready** — Each portfolio entry must be brainstorm-ready in isolation; constraints, population, and deliverable shape preserved
-- **Cagan is preferred-when-available, not load-bearing** — Default panel (Christensen + Rumelt + Eric Ries) ships without Cagan; Cagan upgrade is silent (no warning when absent)
-- **The Architect joins for codebase-reality only** — Substantive strategy / sizing comes from the strategy panel; The Architect verifies dependency claims against the codebase, not the strategy
-- **Portfolio is brainstorm-spawning** — There is no `/aligned:writing-plans` follow-on against the portfolio itself; each item brainstorms separately when its turn comes
+- **Pure orchestration scaffolding** — Roadmap mode produces a queue, not a strategy artifact
+- **Single deliverable** — `spawn-list.md`. No companion roadmap document, no mockups, no dependency-graph HTML
+- **3–6 components** — Fewer and decomposition isn't earning its keep; more and the orchestration becomes the bottleneck
+- **Each component fits one brainstorm session** — If a component would itself need decomposition, decompose it now, not later
+- **Spawn briefs are paste-ready** — The paragraph is what gets pasted into the next `/aligned:brainstorming`; mode-disambiguating verbs required
+- **Dependencies cite component titles** — "After Component #2 (Research synthesis)", not "after the research is done"
+- **No advisor panel, no capacity math, no critique panel** — These are deliberately excluded; they belong in the downstream brainstorms, not in the decomposition pass
 
 (Process-wide interaction principles — one question at a time, multiple choice preferred, gates mandatory — live in `references/shared-rules.md` and apply here.)

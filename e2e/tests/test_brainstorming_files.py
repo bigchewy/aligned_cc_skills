@@ -19,20 +19,30 @@ def test_research_mini_protocol_has_required_sections():
     assert "## Recursion forbidden" in text, "missing ## Recursion forbidden section"
 
 
-def test_spawn_brief_template_has_eight_fields():
+def test_spawn_brief_template_has_five_fields():
+    """Roadmap-mode redesign (May 2026): the spawn-brief schema collapsed from
+    8 fields to 5, dropping Status/External dependencies/Why now/Rough size as
+    portfolio-management bookkeeping that decomposition scaffolding doesn't need."""
     text = read("skills/brainstorming/references/spawn-brief-template.md")
     required_fields = [
         "**Target mode:**",
-        "**Status:**",
-        "**Rough size:**",
         "**Prerequisites:**",
-        "**External dependencies:**",
-        "**Why now:**",
-        "**Spawn brief (one paragraph, brainstorm-ready):**",
+        "**Spawn brief (paste-ready):**",
         "**Success criterion:**",
     ]
     missing = [f for f in required_fields if f not in text]
     assert not missing, f"missing fields in spawn-brief template: {missing}"
+    # Component title is the `##` heading line, not a bolded field — assert the
+    # schema documents it as the heading.
+    assert "## {Component title}" in text, "schema must document the ## heading as the title field"
+    # The fields removed in the v1 redesign must not return silently.
+    for retired in [
+        "**Status:**",
+        "**External dependencies:**",
+        "**Why now:**",
+        "**Rough size:**",
+    ]:
+        assert retired not in text, f"retired field came back: {retired}"
 
 
 @pytest.mark.parametrize("path,heading,criteria", [
@@ -53,10 +63,8 @@ def test_spawn_brief_template_has_eight_fields():
     ),
     (
         "skills/brainstorming/roadmap-critique-checklist.md",
-        "# Roadmap Critique Checklist",
-        ["Opportunity-space clarity", "Inventory completeness", "Sizing realism",
-         "Dependency rigor", "Sequencing logic", "Capacity vs scope",
-         "Spawn-brief quality", "Strategic coherence", "Decision quality"],
+        "# Roadmap Spawn-List Critique Checklist",
+        ["Spawn-brief paste-readiness", "Decomposition fit"],
     ),
 ])
 def test_critique_checklist_structure(path, heading, criteria):
@@ -158,8 +166,11 @@ def test_skill_md_step1_has_four_signal_sets_and_always_ask():
         assert gone not in step1, f"retired signal-set still present: {gone}"
     # Always-ask discipline
     assert "always" in step1.lower() and ("ask" in step1.lower() or "present the question" in step1.lower())
-    # Picker label format (task vocabulary, not mode IDs)
-    for label_fragment in ["Write a document", "Design a code change", "Synthesize research", "Break a big initiative"]:
+    # Picker label format (task vocabulary, not mode IDs).
+    # The Roadmap picker label changed from "Break a big initiative into smaller
+    # pieces" to "Break a big intent into a queue of brainstorms" in the
+    # decomposition-scaffolding redesign.
+    for label_fragment in ["Write a document", "Design a code change", "Synthesize research", "Break a big intent"]:
         assert label_fragment in step1, f"missing picker label: {label_fragment}"
 
 
@@ -168,8 +179,10 @@ def test_skill_md_keyword_expansion_includes_deck_and_breakdown_signals():
     # Authoring keyword expansion (May 17 amendment)
     for kw in ["deck", "presentation", "pitch deck", "memo", "battle card"]:
         assert kw in text.lower(), f"authoring missing keyword: {kw}"
-    # Roadmap keyword expansion (May 17 amendment)
-    for kw in ["break", "decompose", "big idea", "smaller pieces", "spawn list"]:
+    # Roadmap keyword expansion (May 2026 decomposition-scaffolding redesign).
+    # "big idea" was retired alongside the long-horizon-planning framing; the
+    # replacements emphasize decomposition shape.
+    for kw in ["break", "decompose", "smaller pieces", "spawn list", "multi-step", "brainstorm queue"]:
         assert kw in text.lower(), f"roadmap missing keyword: {kw}"
 
 
@@ -191,36 +204,41 @@ def test_skill_md_explicit_mode_arg_skips_question():
 
 
 def test_roadmap_mode_file_structure():
+    """Roadmap mode was redesigned in May 2026 from a portfolio-sequencing process
+    (5 phases, 2 artifacts, strategy-advisor panel, full critique pipeline) into
+    pure decomposition scaffolding (4 phases, 1 artifact, no advisor panel, inline
+    self-review). This test pins the new shape."""
     text = read("skills/brainstorming/modes/roadmap.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
     # Anti-regression: extracted to references/shared-rules.md by the
     # visualization-protocol / shared-rules refactor.
     assert "Within this mode file, `{base-directory}` resolves to" not in text, \
         "base-directory note should live only in references/shared-rules.md, not be duplicated in mode files"
-    # 5 process phases
+    # 4 process phases (down from 5)
     for phase in [
-        "Opportunity space",
-        "Candidate inventory",
-        "Sizing & dependencies",
-        "Sequencing & rationale",
-        "Spawn briefs per item",
+        "Outcome and why it needs decomposition",
+        "Decompose into 3",  # "Decompose into 3–6 components" — match prefix to tolerate en-dash
+        "Dependencies and run order",
+        "Spawn briefs",
     ]:
         assert phase in text, f"missing process phase: {phase}"
-    # Two-artifact output
-    assert "-roadmap.md" in text
-    assert "-portfolio.md" in text
-    # Critique panel
-    assert "Fact-check mode: division-of-labor" in text
-    assert "Criteria assignment: yes" in text
+    # Single-artifact output (spawn-list.md only — roadmap.md/portfolio.md were retired)
+    assert "-spawn-list.md" in text
+    assert "-roadmap.md" not in text, "old two-artifact roadmap.md output must be retired"
+    assert "-portfolio.md" not in text, "old two-artifact portfolio.md output must be retired"
+    # The critique panel was replaced with inline self-review.
+    assert "Fact-check mode:" not in text, "critique-panel config block must be removed"
+    assert "Criteria assignment:" not in text, "critique-panel config block must be removed"
+    # The checklist reference survives (now used for inline self-review)
     assert "roadmap-critique-checklist.md" in text
-    # Default panel + Cagan-conditional
-    assert "Christensen" in text and "Rumelt" in text and "Eric Ries" in text, \
-        "missing default launch panel"
-    # Cagan absence-handling must reference the actual prompt-file path, not just the name
-    assert "advisors/prompts/marty-cagan.md" in text, \
-        "Cagan absence-handling must check the actual prompt-file path"
-    # Spawn-brief reference
+    # The strategy-advisor panel was removed wholesale
+    for advisor in ["Christensen", "Rumelt", "Eric Ries", "Marty Cagan", "marty-cagan"]:
+        assert advisor not in text, f"strategy-advisor panel must be removed; still references: {advisor}"
+    # Spawn-brief reference still present
     assert "spawn-brief-template.md" in text
+    # Pure-orchestration framing must be explicit so the redesign intent is preserved
+    assert "orchestration scaffolding" in text.lower(), \
+        "the 'pure orchestration scaffolding' framing must remain explicit"
 
 
 
@@ -238,7 +256,7 @@ def test_skill_md_has_disambiguation_rules():
         "Write a document",
         "Design a code change",
         "Synthesize research",
-        "Break a big initiative into smaller pieces",
+        "Break a big intent into a queue of brainstorms",
     ]:
         assert label in text, f"missing 4-mode picker label: {label}"
 
@@ -248,12 +266,14 @@ def test_skill_md_step2_has_per_mode_emphasis():
     step2_start = text.index("## Step 2")
     step3_start = text.index("## Step 3")
     step2 = text[step2_start:step3_start]
-    # Each of the 4 modes' emphasis tags must be present in the dispatch prompt template
+    # Each of the 4 modes' emphasis tags must be present in the dispatch prompt template.
+    # Roadmap's emphasis shifted from "prior roadmaps + open kanban + customer asks" to
+    # "prior spawn-lists + related design docs" in the decomposition-scaffolding redesign.
     for hint in [
         "code artifacts",
         "literature/KB/registries",
         "document corpus",
-        "prior roadmaps",
+        "prior spawn-lists",
     ]:
         assert hint in step2, f"missing per-mode emphasis hint: {hint}"
     # Business mode must be dropped from the 4-mode shape
@@ -342,16 +362,18 @@ def test_readme_does_not_claim_two_mode_brainstorm():
     assert "software vs business" not in text.lower()
 
 
-def test_orchestration_supports_portfolio_file_path():
+def test_orchestration_does_not_reference_portfolio_file_path():
+    """The portfolio-file-path config field was the only Roadmap-mode-specific
+    hook in critique-panel-orchestration. The May 2026 redesign retired the
+    Roadmap critique panel entirely (replaced with inline self-review), so the
+    hook should be removed to keep the shared orchestration mode-agnostic."""
     text = read("skills/_shared/critique-panel-orchestration.md")
-    # The hardcoded "(e.g., software.md or business.md)" example list should be gone
-    # (replaced with mode-agnostic phrasing per design §What changes)
+    # The hardcoded "(e.g., software.md or business.md)" example list should remain gone
     assert "(e.g., `software.md` or `business.md`)" not in text, \
         "hardcoded mode example list still present"
-    # The optional portfolio-file-path field must be documented
-    assert "portfolio-file-path" in text, "missing optional portfolio-file-path config field"
-    # Must clarify it's optional (Planning-mode only)
-    assert "optional" in text.lower(), "portfolio-file-path must be marked optional"
+    # The portfolio-file-path field must be fully removed
+    assert "portfolio-file-path" not in text, \
+        "portfolio-file-path should be removed; no mode uses it after the Roadmap redesign"
 
 
 def test_software_mode_critique_config_unchanged():
@@ -434,18 +456,19 @@ def test_new_eval_scenario_files_exist_and_parse():
         assert "description" in parsed, f"{name} missing top-level description field"
 
 
-def test_roadmap_mode_handles_cagan_absence():
+def test_roadmap_mode_does_not_reference_strategy_advisor_panel():
+    """The Roadmap-mode strategy-advisor panel (Christensen / Rumelt / Eric Ries /
+    Cagan / Bezos / Graham / Tan / Hogan) was removed in the May 2026 decomposition-
+    scaffolding redesign. Advisor consultation is intentionally out of scope —
+    if a component needs strategic framing, that surfaces inside its own
+    downstream brainstorm, not in the decomposition pass."""
     text = read("skills/brainstorming/modes/roadmap.md")
-    # The mode file must do a file-existence check on the Cagan prompt path
-    assert "advisors/prompts/marty-cagan.md" in text, \
-        "missing Cagan prompt-file existence check"
-    # Default panel without Cagan must be explicitly named
-    for advisor in ["Christensen", "Rumelt", "Eric Ries"]:
-        assert advisor in text, f"default-panel advisor missing: {advisor}"
-    # The mode must say absence is handled silently (no surfaced warning)
-    # per design §Error paths #5
-    assert "silently" in text.lower() or "without surfacing" in text.lower(), \
-        "Cagan-absence handling must be silent (no user-facing warning)"
+    for advisor in [
+        "Christensen", "Rumelt", "Eric Ries", "Marty Cagan",
+        "marty-cagan", "Jeff Bezos", "Paul Graham", "Garry Tan", "Lara Hogan",
+    ]:
+        assert advisor not in text, \
+            f"strategy-advisor panel must remain removed; still references: {advisor}"
 
 
 def test_planning_mode_file_removed_after_rename():
@@ -620,8 +643,20 @@ def test_authoring_templates_share_common_scaffolding():
         assert "<script" in text, f"{name} missing live-refresh script anchor"
 
 
-def test_spawn_brief_target_mode_includes_roadmap():
+def test_spawn_brief_target_mode_excludes_roadmap():
+    """The May 2026 redesign dropped Roadmap as a target_mode for spawn-list entries.
+    Recursive decomposition is intentionally out of scope: if a component is itself
+    too big for a single brainstorm, Phase 2 decomposes it further at authoring time,
+    rather than punting to a nested Roadmap brainstorm later."""
     text = read("skills/brainstorming/references/spawn-brief-template.md")
-    assert "Roadmap" in text, "spawn-brief must include Roadmap in target_mode enum"
-    # Recursive breakdown explanation
-    assert "recursive" in text.lower() or "nested" in text.lower() or "sub-portfolios" in text.lower()
+    # target_mode enum must be exactly the three terminal brainstorming modes
+    assert "{Software | Authoring | Research}" in text, \
+        "target_mode enum must list exactly Software, Authoring, Research"
+    # The enum line must not include Roadmap
+    enum_line = next(
+        (l for l in text.splitlines() if l.strip().startswith("**Target mode:**")),
+        None,
+    )
+    assert enum_line is not None, "schema must declare Target mode field"
+    assert "Roadmap" not in enum_line, \
+        "Roadmap must not appear in target_mode enum — recursive decomposition was retired"

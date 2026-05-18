@@ -8,7 +8,7 @@ A wrapper around either a registered framework or a structured Q&A with a topic 
 
 - **Authoring vs Software:** if the deliverable is content (deck, memo, brief, positioning, curriculum), Authoring. If it's code that runs, Software.
 - **Authoring vs Research:** Authoring produces an arrangement (sequenced document); Research produces an evidence map. Authoring may invoke a Research sub-flow but is not Research.
-- **Authoring vs Roadmap:** Roadmap produces a portfolio + spawn list (multi-feature). Authoring produces a single document.
+- **Authoring vs Roadmap:** Authoring produces a single named document — including any roadmap-shaped document (quarterly plan, prioritization memo, portfolio doc for stakeholders). Roadmap mode produces a spawn-list — a paste-ready queue of 3–6 brainstorming prompts that decompose an intent too big for one session. If the deliverable is a document humans read, that's Authoring. If the deliverable is a queue of brainstorms to run, that's Roadmap.
 
 ## The Process
 

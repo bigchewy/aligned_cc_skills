@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Structures creative and strategic work through guided dialogue across four modes — software design, content authoring, research synthesis, and multi-feature roadmap. Use before any creative, architectural, or strategic work that benefits from structured exploration and expert critique."
+description: "Structures creative and strategic work through guided dialogue across four modes — software design, content authoring, research synthesis, and roadmap-mode decomposition of a big intent into a queue of brainstorms. Use before any creative, architectural, or strategic work that benefits from structured exploration and expert critique."
 ---
 
 # Brainstorming
@@ -14,7 +14,7 @@ working on. Four modes covering distinct shapes of brainstorm work:
 - **Software** — fluid Q&A with Architect auto-consult; deliverable is a design doc.
 - **Authoring** — structured-document arrangement with framework + domain-advisor panel and optional Research sub-phase; deliverable is a sequenced design doc — curricula, framework prompts, exercise programs, strategy memos, competitive analyses, positioning briefs, market analyses, GTM/sales documents, and diagnostic write-ups.
 - **Research** — corpus survey + comparative synthesis with Skeptic Pass; deliverable is a research memo or KB artifact.
-- **Roadmap** — multi-feature portfolio sequencing with strategy advisors; deliverable is a roadmap + spawn-list portfolio.
+- **Roadmap** — decomposition scaffolding for intents too big for one brainstorm; deliverable is a spawn-list of 3–6 paste-ready brainstorming prompts.
 
 ## Step 1: Detect Mode and Confirm with User
 
@@ -67,14 +67,17 @@ Software mode. Environment is a tiebreaker when topic keywords are absent.
 - Environment (tiebreaker): knowledge folders, prior research artifacts,
   or registries are present
 
-**Roadmap mode** — multi-feature roadmap, portfolio sequencing:
-- Topic signals: roadmap, prioritization, portfolio, "what to build next",
-  milestone, sequence features, multi-feature build, project plan,
-  "too big for one brainstorm", break a big idea into smaller pieces,
-  break down, components of, large initiative, smaller pieces,
-  decompose, big idea, spawn list, brainstorm queue
-- Environment (tiebreaker): prior roadmaps, open kanban, or customer asks
-  are present
+**Roadmap mode** — decompose a big intent into a queue of brainstorms:
+- Topic signals: "too big for one brainstorm", break a big intent into
+  smaller pieces, break down, decompose, components of, large initiative,
+  multi-step, multi-phase, multi-stage workflow, spawn list,
+  brainstorm queue, orchestrate multiple brainstorms,
+  "research → insights → deck", "research first then …", multi-component build
+- Environment (tiebreaker): prior spawn-lists (`*-spawn-list.md`) or
+  related design docs the new components might reference are present
+- **Does NOT match:** A request for a roadmap-shaped *document* (quarterly
+  plan, prioritization memo, portfolio doc for stakeholders) — those are
+  Authoring with a roadmap-shaped framework, not Roadmap mode
 
 **Always ask the user to confirm.** Even when signals point cleanly at one mode, present an AskUserQuestion with the auto-detected mode pre-selected. The user confirms with one tap or picks another. Exceptions:
 - Explicit `--mode software|authoring|research|roadmap` arg → skip the question.
@@ -85,7 +88,7 @@ Present the AskUserQuestion with these task-vocabulary picker labels:
 - **Write a document** — deck, memo, brief, positioning, sales pitch, curriculum, RCA write-up, competitive analysis, any named deliverable authored from a framework → *Authoring*
 - **Design a code change** — feature, refactor, integration, schema, architecture decision → *Software*
 - **Synthesize research** — compare frameworks, literature review, prior art survey, evidence map → *Research*
-- **Break a big initiative into smaller pieces** — roadmap, multi-feature breakdown, portfolio sequencing, spawn list → *Roadmap*
+- **Break a big intent into a queue of brainstorms** — when one brainstorm session won't fit it (research → insights → deck, multi-component build, multi-step initiative) → *Roadmap*
 
 Pre-select the option that matches your auto-detected mode. The user confirms or redirects.
 
@@ -96,8 +99,9 @@ Apply these in order when topic signals overlap multiple modes:
 - **Software vs Authoring (content):** If the deliverable is *code that runs*, Software. If the deliverable is *content humans consume* (curriculum, prompts, exercises) even when there's a code seam, Authoring. The canonical test: a brainstorm with a runtime adapter (code) but 70% content-sequencing work routes to Authoring.
 - **Software vs Authoring (diagnostic):** If the work is *designing or building new code* (a feature, refactor, integration, API), that's Software. If the work is *diagnosing why existing code or an existing system isn't behaving as expected* ("why don't I see the new onboarding flow", "why isn't X firing", "this should happen but isn't"), that's Authoring with the `root-cause-analysis` framework. The deliverable test: a code-side bug being diagnosed produces a diagnostic document (Gap → Obstacles → Root Causes → Solutions), not a design doc.
 - **Authoring vs Research:** If the deliverable is *an arrangement* (sequence, registry, curriculum, framework-shaped strategic document), Authoring. If the deliverable is *an evidence map / ranked synthesis* with no arrangement output, Research. Authoring includes Research as an optional sub-phase (file-mediated sub-agent fork — see modes/authoring.md).
+- **Authoring vs Roadmap:** A roadmap-shaped *document* (quarterly plan, prioritization memo, portfolio doc for stakeholders) is Authoring with a roadmap-shaped framework — the deliverable is a single document humans read. Roadmap mode is when the user wants to *run a sequence of brainstorms* against a big intent — the deliverable is a paste-ready queue, not a stakeholder document. Test: "Will the user paste each entry into a new brainstorming session?" → Roadmap. "Will the user share this with their team?" → Authoring.
 
-**Disambiguation refusal handling:** If the user picks "Other" or types a free-form answer that doesn't map to any mode, ask one follow-up: "Could you describe in one sentence what you want as the deliverable — a design doc, a strategic document, an evidence map, a sequenced curriculum, or a multi-feature roadmap?" If still ambiguous after the second question, present an open-text re-prompt: "Describe in your own words what you're trying to produce." Run signal detection on the free-text answer and route to the closest match. If detection still fails, offer a final explicit list (all 4 modes, plus "I'm not sure — let me explore for a few questions first" which routes to Authoring mode since not-knowing-the-shape maps to the broadest container mode).
+**Disambiguation refusal handling:** If the user picks "Other" or types a free-form answer that doesn't map to any mode, ask one follow-up: "Could you describe in one sentence what you want as the deliverable — a design doc, a strategic document, an evidence map, a sequenced curriculum, or a spawn-list of brainstorms to run in sequence?" If still ambiguous after the second question, present an open-text re-prompt: "Describe in your own words what you're trying to produce." Run signal detection on the free-text answer and route to the closest match. If detection still fails, offer a final explicit list (all 4 modes, plus "I'm not sure — let me explore for a few questions first" which routes to Authoring mode since not-knowing-the-shape maps to the broadest container mode).
 
 ## Step 2: Project Scan
 
@@ -120,7 +124,7 @@ accordingly."
 | Software | code artifacts (package.json, src/, architecture.md, recent commits) |
 | Research | literature/KB/registries (`knowledge/`, `frameworks/registry.yaml`, `advisors/registry.yaml`, prior `*-research.md`) |
 | Authoring | document corpus — frameworks, advisors, prior arrangements (`frameworks/`, `advisors/`, exercise/lesson registries, `*-design.md` files, brand voice files; for strategic-document work also surface prior competitive/positioning/market memos and any `clients/<name>/` material on the subject) |
-| Roadmap  | prior roadmaps + open kanban + customer asks (`*-roadmap.md`, `*-portfolio.md`, `docs/kanban/`, `clients/*/`) |
+| Roadmap  | prior spawn-lists and related design docs that components might reference (`*-spawn-list.md`, `*-design.md`) |
 
 Do not wait for the scan to complete before proceeding to Step 3.
 
