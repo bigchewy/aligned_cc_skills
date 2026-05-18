@@ -1419,7 +1419,7 @@ The renamed files (planning.md / planning-critique-checklist.md / planning-templ
 
 ---
 
-### Task 16: Add Q&A parity marker comment to `modes/software.md`
+### ✅ Task 16: Add Q&A parity marker comment to `modes/software.md`
 
 Mark the Architect-as-proxy dispatch template (L80-98) as the stable surface that `modes/authoring.md` will duplicate. The marker is a single comment above the dispatch template; non-functional but visible to a reader.
 
