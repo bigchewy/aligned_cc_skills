@@ -1751,7 +1751,7 @@ git commit -m "test(brainstorming): add error-path tests for authoring mode deli
 
 ---
 
-### Task 18: Create new `skills/brainstorming/authoring-critique-checklist.md`
+### ✅ Task 18: Create new `skills/brainstorming/authoring-critique-checklist.md`
 
 Overwrite the existing checklist with one that has conditional sections per `deliverable_type`.
 

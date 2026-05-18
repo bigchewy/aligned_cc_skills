@@ -498,3 +498,11 @@ def test_authoring_mode_documents_project_scan_failure():
     assert any(s in text.lower() for s in [
         "scan fail", "scan returns empty", "without scan", "scan unavailable",
     ]), "missing project-scan-failure handling"
+
+
+def test_authoring_critique_checklist_has_conditional_sections():
+    text = read("skills/brainstorming/authoring-critique-checklist.md")
+    for tag in ["content", "decision", "plan", "analysis"]:
+        assert tag in text.lower(), f"checklist missing conditional section for {tag}"
+    # Section anchors so the orchestrator can find them
+    assert "## Conditional sections" in text or "### deliverable_type:" in text
