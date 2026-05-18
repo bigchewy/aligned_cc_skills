@@ -1116,7 +1116,7 @@ git commit -m "test(frameworks): assert deliverable_type stays in sync between r
 
 ---
 
-### Task 13b: Add design-mandated error-path tests for shared runners
+### ✅ Task 13b: Add design-mandated error-path tests for shared runners
 
 Per the design doc's `## Testing Strategy` (L206-212) and CLAUDE.md's TDD rule, every error path must have a test. Round 1 critique flagged five error-path tests as missing. Three of those test runner specs (which exist by this point); the remaining two test `modes/authoring.md` and run in Task 17b (after Task 17 rewrites that file).
 
