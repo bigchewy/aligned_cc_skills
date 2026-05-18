@@ -1312,7 +1312,7 @@ git commit -m "feat(reb): bump schema_version to 0.4.0 in PHASE 3.6 templates"
 
 ---
 
-### Task 19: Extend render-review-html.md to consume input_asks and provided_summary
+### ✅ Task 19: Extend render-review-html.md to consume input_asks and provided_summary
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/render-review-html.md` (Step 2 shape-warning list)

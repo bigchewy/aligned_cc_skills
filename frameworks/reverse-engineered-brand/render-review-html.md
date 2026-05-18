@@ -32,14 +32,16 @@ Read `{open-questions-json-path}`. Parse the content as JSON.
 
 If the file cannot be read or parsed (malformed JSON, missing file), abort immediately with `STATUS: verification_failed`, `NOTES: json_parse_error — {error message}`. Do not proceed to substitution.
 
-**Shape warnings (non-blocking).** Inspect the parsed object for v0.3.0+ fields that the template depends on. If any are missing, accumulate a warning (do NOT abort — v0.2.0 files still render). Surface the accumulated warnings in the final `NOTES` field of the return contract:
+**Shape warnings (non-blocking).** Inspect the parsed object for v0.4.0+ fields that the template depends on. If any are missing, accumulate a warning (do NOT abort — v0.2.0 files still render). Surface the accumulated warnings in the final `NOTES` field of the return contract:
 
 - `source_counts` (object) — used by Executive Summary snapshot tiles
 - `source_narratives` (object) — used by Executive Summary "Raw material" / "Primary research" cards
 - `folders[].grade` (integer 1-5) — used by Sections at a Glance grade column and per-folder summary banners
 - `folders[].summary` (string) — used by Sections at a Glance and per-folder summary banners
+- `folders[].provided_summary` (string) — used by the per-tab Inputs Needed callout
+- `folders[].input_asks` (array of `{tier, ask}`) — used by the Overview "Inputs Needed" sub-tab and the per-tab callouts
 
-The renderer should log a warning like `shape_warning: source_narratives missing — exec-summary cards will render empty (legacy v0.2.0 behavior)` for each missing field, then continue.
+The renderer should log a warning like `shape_warning: source_narratives missing — exec-summary cards will render empty (legacy v0.2.0 behavior)` for each missing field, then continue. v0.3.0 files render with empty Inputs Needed sections and a shape-warning in NOTES; no fallback is provided.
 
 ### Step 3: Sanitize string values
 
