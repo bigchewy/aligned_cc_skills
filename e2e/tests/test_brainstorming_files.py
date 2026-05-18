@@ -616,3 +616,10 @@ def test_authoring_templates_share_common_scaffolding():
         # Anchor: every template carries the live-refresh script marker that
         # visualization-protocol.md's strip rule looks for.
         assert "<script" in text, f"{name} missing live-refresh script anchor"
+
+
+def test_spawn_brief_target_mode_includes_roadmap():
+    text = read("skills/brainstorming/references/spawn-brief-template.md")
+    assert "Roadmap" in text, "spawn-brief must include Roadmap in target_mode enum"
+    # Recursive breakdown explanation
+    assert "recursive" in text.lower() or "nested" in text.lower() or "sub-portfolios" in text.lower()

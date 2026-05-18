@@ -2319,7 +2319,7 @@ git commit -m "test(brainstorming): finalize 4-mode test sweep across test_brain
 
 ---
 
-### Task 27: Update `spawn-brief-template.md` to add Roadmap to target_mode enum
+### ✅ Task 27: Update `spawn-brief-template.md` to add Roadmap to target_mode enum
 
 Already partially addressed in Task 15. This task confirms and finalizes the Roadmap enum addition + L34 prose update on recursive Roadmap breakdown.
 
