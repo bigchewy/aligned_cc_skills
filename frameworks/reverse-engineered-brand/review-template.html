@@ -566,6 +566,39 @@
     }
     .oq-card.context-open .oq-context { display: block; }
 
+    /* Priority groups inside a folder panel (P0/P1 open by default, P2 collapsed) */
+    details.oq-group {
+      margin: 0 0 16px 0;
+      padding: 0;
+    }
+    details.oq-group > summary.oq-group-header {
+      list-style: revert;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-foreground);
+      padding: 10px 14px;
+      border-left: 4px solid var(--color-border);
+      background: var(--color-surface);
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 12px;
+    }
+    details.oq-group > summary.oq-group-header:hover { color: var(--color-accent); }
+    details.oq-group.oq-group-p0 > summary.oq-group-header { border-left-color: #b91c1c; }
+    details.oq-group.oq-group-p1 > summary.oq-group-header { border-left-color: var(--color-accent); }
+    details.oq-group.oq-group-p2 > summary.oq-group-header { border-left-color: var(--color-dimmed); }
+    details.oq-group .oq-group-count {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: white;
+      color: var(--color-secondary);
+      border: 1px solid var(--color-border);
+    }
+
     /* Expandable per-card detail disclosure (v0.3.0 — summary is default; detail behind toggle) */
     details.oq-detail {
       margin: 4px 0 12px 0;
@@ -1711,6 +1744,22 @@
       }
       var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
       var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
+
+      function makePriorityGroup(impact, cards) {
+        if (!cards.length) return null;
+        var label = impact === 'P0' ? 'High priority (P0)'
+                   : impact === 'P1' ? 'Medium priority (P1)'
+                   : 'Low priority (P2)';
+        var det = ce('details', 'oq-group oq-group-' + impact.toLowerCase());
+        if (impact !== 'P2') det.setAttribute('open', '');
+        var summaryEl = ce('summary', 'oq-group-header');
+        summaryEl.appendChild(tx(label));
+        summaryEl.appendChild(ap(ce('span', 'oq-group-count'), tx(String(cards.length))));
+        det.appendChild(summaryEl);
+        cards.forEach(function(q) { det.appendChild(renderOQCard(q, folderId)); });
+        return det;
+      }
+
       function makeSection(heading, descText, cards) {
         var sec = ce('div', 'section');
         var h2 = ce('h2', 'anchor-target');
@@ -1718,7 +1767,15 @@
         h2.appendChild(ap(ce('span', 'status-badge status-partial'), tx(String(cards.length))));
         sec.appendChild(h2);
         sec.appendChild(ap(ce('p', 'description'), tx(descText)));
-        cards.forEach(function(q) { sec.appendChild(renderOQCard(q, folderId)); });
+        var byPri = { P0: [], P1: [], P2: [] };
+        cards.forEach(function(q) {
+          var p = (q.impact === 'P0' || q.impact === 'P1' || q.impact === 'P2') ? q.impact : 'P2';
+          byPri[p].push(q);
+        });
+        ['P0', 'P1', 'P2'].forEach(function(p) {
+          var grp = makePriorityGroup(p, byPri[p]);
+          if (grp) sec.appendChild(grp);
+        });
         return sec;
       }
       if (assumptions.length) el.appendChild(makeSection('Assumptions to confirm', 'High-confidence inferences from ingested sources. Approve to lock them in. Reject to mark for revision.', assumptions));
