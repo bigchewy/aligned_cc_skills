@@ -130,7 +130,7 @@ running in the background. Now that mode is known, pass it to the scanner:
 
 "Read `agents/project-scanner.md` for your full workflow.
 Scan the project at `{project-root}` for brainstorm topic `{topic}`.
-Mode: {software|business|research|authoring|roadmap} — emphasize {emphasis-text}
+Mode: {software|research|authoring|roadmap} — emphasize {emphasis-text}
 accordingly."
 
 **Per-mode emphasis text:**
@@ -138,7 +138,6 @@ accordingly."
 | Mode | `{emphasis-text}` |
 |---|---|
 | Software | code artifacts (package.json, src/, architecture.md, recent commits) |
-| Business | domain materials (positioning, meeting notes, prior strategy, stakeholders) |
 | Research | literature/KB/registries (`knowledge/`, `frameworks/registry.yaml`, `advisors/registry.yaml`, prior `*-research.md`) |
 | Authoring | document corpus — frameworks, advisors, prior arrangements (`frameworks/`, `advisors/`, exercise/lesson registries, `*-design.md` files, brand voice files; for strategic-document work also surface prior competitive/positioning/market memos and any `clients/<name>/` material on the subject) |
 | Roadmap  | prior roadmaps + open kanban + customer asks (`*-roadmap.md`, `*-portfolio.md`, `docs/kanban/`, `clients/*/`) |
@@ -154,7 +153,6 @@ Then read the mode file and the critique checklist for the selected mode using t
 | Mode      | Mode file                              | Critique checklist                                  |
 | --------- | -------------------------------------- | --------------------------------------------------- |
 | Software  | `{base-directory}/modes/software.md`   | `{base-directory}/design-critique-checklist.md`     |
-| Business  | `{base-directory}/modes/business.md`   | `{base-directory}/business-critique-checklist.md`   |
 | Research  | `{base-directory}/modes/research.md`   | `{base-directory}/research-critique-checklist.md`   |
 | Authoring | `{base-directory}/modes/authoring.md`  | `{base-directory}/authoring-critique-checklist.md`  |
 | Roadmap   | `{base-directory}/modes/roadmap.md`    | `{base-directory}/roadmap-critique-checklist.md`    |

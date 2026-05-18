@@ -1989,7 +1989,7 @@ git commit -m "feat(brainstorming): collapse to 4-mode always-ask routing with t
 
 ---
 
-### Task 21: Update `SKILL.md` per-mode emphasis table + table-driven handoff for 4 modes
+### ✅ Task 21: Update `SKILL.md` per-mode emphasis table + table-driven handoff for 4 modes
 
 The Step 2 per-mode emphasis table and Step 3 handoff table still list 5 modes. Update to 4.
 

@@ -243,21 +243,25 @@ def test_skill_md_step2_has_per_mode_emphasis():
     step2_start = text.index("## Step 2")
     step3_start = text.index("## Step 3")
     step2 = text[step2_start:step3_start]
-    # Each mode's emphasis tag should be present in the dispatch prompt template
+    # Each of the 4 modes' emphasis tags must be present in the dispatch prompt template
     for hint in [
         "code artifacts",
-        "domain materials",
         "literature/KB/registries",
         "document corpus",
         "prior roadmaps",
     ]:
         assert hint in step2, f"missing per-mode emphasis hint: {hint}"
+    # Business mode must be dropped from the 4-mode shape
+    assert "domain materials" not in step2, \
+        "Business 'domain materials' hint must be removed for 4-mode shape"
+    assert "|business|" not in step2, \
+        "Business must be removed from mode enum in Step 2"
 
 
 def test_skill_md_step3_uses_table_driven_handoff():
     """Step 3 was refactored from five literal '**If <mode> mode:**' branches into a
-    single shared-rules read plus a five-row mode/checklist lookup table. Assert the
-    new structure: shared-rules.md is read once, all five modes appear as rows, and
+    single shared-rules read plus a four-row mode/checklist lookup table. Assert the
+    new structure: shared-rules.md is read once, all four modes appear as rows, and
     each mode's checklist is referenced."""
     text = read("skills/brainstorming/SKILL.md")
     step3_start = text.index("## Step 3")
@@ -278,29 +282,37 @@ def test_skill_md_step3_uses_table_driven_handoff():
         assert old_branch not in step3, \
             f"Step 3 should be table-driven; stale branch still present: {old_branch}"
 
-    # Each mode appears as a labeled row in the lookup table
-    for mode_label in ["Software", "Business", "Research", "Authoring", "Roadmap"]:
+    # Each of the 4 modes appears as a labeled row in the lookup table
+    for mode_label in ["Software", "Research", "Authoring", "Roadmap"]:
         assert mode_label in step3, f"Step 3 table missing mode row: {mode_label}"
+
+    # Business mode must be absent from 4-mode shape
+    assert "Business" not in step3, \
+        "Business mode must be removed from Step 3 for 4-mode shape"
 
     # Each mode's mode file is referenced in the table
     for mode_file in [
         "modes/software.md",
-        "modes/business.md",
         "modes/research.md",
         "modes/authoring.md",
         "modes/roadmap.md",
     ]:
         assert mode_file in step3, f"Step 3 table missing mode file: {mode_file}"
 
+    assert "modes/business.md" not in step3, \
+        "modes/business.md must be removed from Step 3 for 4-mode shape"
+
     # Each mode's critique checklist is referenced in the table
     for checklist in [
         "design-critique-checklist.md",
-        "business-critique-checklist.md",
         "research-critique-checklist.md",
         "authoring-critique-checklist.md",
         "roadmap-critique-checklist.md",
     ]:
         assert checklist in step3, f"missing checklist reference: {checklist}"
+
+    assert "business-critique-checklist.md" not in step3, \
+        "business-critique-checklist.md must be removed from Step 3 for 4-mode shape"
 
 
 def test_shared_rules_owns_base_directory_resolution():
