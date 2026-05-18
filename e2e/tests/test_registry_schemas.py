@@ -213,3 +213,30 @@ class TestFrameworkRegistrySchema:
                     assert fid in framework_ids, f"{e['id']} references unknown framework: {fid}"
 
         assert typed_count >= 5, "fewer than 5 entries got default_critic_advisors — field adds no signal"
+
+
+def test_deliverable_type_frontmatter_matches_registry():
+    """Every framework prompt.md frontmatter must mirror its registry deliverable_type."""
+    import re
+
+    with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+        data = yaml.safe_load(f)
+
+    fm_re = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
+    mismatches = []
+    for e in data["frameworks"]:
+        prompt = REPO_ROOT / "frameworks" / e["id"] / "prompt.md"
+        if not prompt.exists():
+            continue
+        m = fm_re.match(prompt.read_text())
+        fm = yaml.safe_load(m.group(1)) if m else {}
+        registry_value = e["deliverable_type"]
+        prompt_value = (fm or {}).get("deliverable_type")
+        if prompt_value != registry_value:
+            mismatches.append((e["id"], registry_value, prompt_value))
+
+    assert not mismatches, (
+        f"{len(mismatches)} drift(s): "
+        + "\n".join(f"  {i}: registry={r} prompt={p}" for i, r, p in mismatches[:5])
+        + "\nRun: python tools/sync_framework_frontmatter.py"
+    )
