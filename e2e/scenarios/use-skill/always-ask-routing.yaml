@@ -1,0 +1,65 @@
+# e2e/scenarios/use-skill/always-ask-routing.yaml
+# Validates that the brainstorming router always presents the 4-way picker on
+# first invocation, skips it for same-mode repeat, re-asks for mode changes,
+# and respects explicit --mode flags.
+
+description: "Skill: brainstorming always-ask routing discipline"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 1500
+
+prompts:
+  - "{{system_context}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser says: {{user_input}}\n\nHow does the brainstorming router respond?"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ROUTING CORRECTNESS: Given the scenario description,
+        does the response follow the correct always-ask discipline?
+        (a) First invocation → always presents picker = 5
+        (b) Same-mode repeat → skips picker, proceeds = 5
+        (c) Different-mode re-invoke → re-presents picker = 5
+        (d) Explicit --mode flag → skips picker = 5
+        Incorrect behavior for the scenario = 1.
+      weight: 3
+
+tests:
+  - description: "always-ask-a: first invocation always presents picker"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Fresh session, no prior brainstorm context"
+      user_input: "Help me plan out what to build next quarter"
+
+  - description: "always-ask-b: same-mode repeat skips picker"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "User already selected Roadmap mode this session; now adds a follow-up"
+      user_input: "Actually, also add the authentication service to the roadmap"
+
+  - description: "always-ask-c: different-mode re-invoke re-presents picker"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "User was in Roadmap mode; now asks something clearly Software-shaped"
+      user_input: "Let's switch — help me design the auth middleware refactor"
+
+  - description: "always-ask-d: explicit --mode flag skips picker"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "User supplies explicit mode flag"
+      user_input: "--mode software: refactor the auth middleware"
+
+  - description: "always-ask-e: session-marker uncertainty falls through"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Ambiguous session state — prior mode marker not conclusive"
+      user_input: "Let's brainstorm something new"
+
+  - description: "always-ask-f: error path wrong-mode re-invoke"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "User explicitly invokes a retired mode name (business or planning)"
+      user_input: "Start a business mode brainstorm on our pricing strategy"

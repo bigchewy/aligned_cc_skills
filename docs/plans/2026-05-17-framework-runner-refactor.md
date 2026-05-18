@@ -2119,7 +2119,7 @@ git commit -m "docs: sweep kickstart, README, skill-orchestration, workflow for 
 
 ---
 
-### Task 24: Delete old business files + update `e2e/trigger-map.yaml` + `e2e/eval-surface.yaml` (single commit)
+### ✅ Task 24: Delete old business files + update `e2e/trigger-map.yaml` + `e2e/eval-surface.yaml` (single commit)
 
 This is the user-visible cutover commit. Deletes must happen together with the trigger-map/eval-surface updates so the test suite (`test_trigger_map_paths.py`) doesn't fail mid-deploy.
 
@@ -2196,7 +2196,7 @@ The `git rm` calls in Step 3 already stage the deletions.
 
 ---
 
-### Task 25: Rename `brainstorming-five-modes.md` fixture → `brainstorming-four-modes.md` and create new eval scenarios
+### ✅ Task 25: Rename `brainstorming-five-modes.md` fixture → `brainstorming-four-modes.md` and create new eval scenarios
 
 Rename the eval fixture and add the new scenarios required by the design.
 

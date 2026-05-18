@@ -1,0 +1,65 @@
+# e2e/scenarios/use-skill/authoring-mode-engine-selection.yaml
+# Validates authoring mode Phase 1 engine selection ladder:
+# auto-select (1 match) → shortlist (2-3 matches) → fallback Q&A (0 matches).
+# Per design §Phase 1 engine selection ladder.
+
+description: "Skill: authoring mode Phase 1 engine selection ladder"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 1500
+
+prompts:
+  - "{{system_context}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser topic: {{topic}}\n\nDescribe how Phase 1 engine selection proceeds and what engine is selected (or presented)."
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ENGINE SELECTION CORRECTNESS: Given the scenario, does
+        the response correctly follow the engine selection ladder?
+        (1 match → auto-select and state it)
+        (2-3 matches → shortlist and ask user to pick)
+        (0 matches → fall to Q&A fallback)
+        Wrong ladder step = 1. Correct step applied = 5.
+      weight: 3
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CONTEXTUAL-RECOMMENDATION INVOCATION: Does the response
+        indicate it would use contextual-recommendation to find matching
+        frameworks/advisors? No mention of recommendation engine = 2.
+        Clear invocation of contextual-recommendation = 5.
+      weight: 2
+
+tests:
+  - description: "engine-selection-auto: single framework match → auto-select"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Contextual-recommendation finds exactly one high-confidence framework match"
+      topic: "Build a positioning brief using April Dunford's 5-components framework"
+
+  - description: "engine-selection-shortlist: 2-3 matches → present shortlist"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Contextual-recommendation finds 2-3 plausible framework matches at similar confidence"
+      topic: "Write a go-to-market strategy for our new product"
+
+  - description: "engine-selection-fallback: zero matches → Q&A fallback"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Contextual-recommendation finds no matching frameworks"
+      topic: "Design a naming convention for my digital art archive"
+
+  - description: "engine-selection-advisor: advisor match found, no framework"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Contextual-recommendation finds a matching advisor but no framework"
+      topic: "Get revenue architecture advice for our sales motion"
+
+  - description: "engine-selection-error: scan failure fallback"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Project scan fails or returns empty; no signals available"
+      topic: "Write something for our team but I'm not sure what exactly"

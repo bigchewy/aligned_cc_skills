@@ -1,5 +1,6 @@
 """Structural assertions for the brainstorming three-modes implementation."""
 import json
+import yaml
 from pathlib import Path
 
 import pytest
@@ -386,14 +387,47 @@ def test_eval_surface_does_not_reference_business():
     assert "modes/business.md" not in text, "eval-surface still references deleted file"
 
 
-def test_five_modes_eval_fixture_lists_15_briefs():
-    text = read("e2e/scenarios/use-skill/brainstorming-five-modes.yaml")
-    # Smoke check: 5 modes × 3 briefs each = 15 test entries
+def test_four_modes_fixture_exists_and_lists_four_modes():
+    REPO = Path(__file__).resolve().parents[2]
+    assert not (REPO / "e2e/fixtures/skill-prompts/brainstorming-five-modes.md").exists()
+    assert (REPO / "e2e/fixtures/skill-prompts/brainstorming-four-modes.md").exists()
+    text = (REPO / "e2e/fixtures/skill-prompts/brainstorming-four-modes.md").read_text()
+    for label in ["Software", "Authoring", "Research", "Roadmap"]:
+        assert label in text, f"missing mode label: {label}"
+    for retired in ["Business mode", "Planning mode"]:
+        assert retired not in text, f"retired mode still present: {retired}"
+
+
+def test_four_modes_eval_fixture_lists_briefs():
+    text = read("e2e/scenarios/use-skill/brainstorming-four-modes.yaml")
     test_count = text.count("- description:")
-    assert test_count >= 15, f"expected ≥15 test briefs in fixture; found {test_count}"
-    # Each mode appears as a label
-    for mode_label in ["software", "business", "research", "authoring", "planning"]:
+    assert test_count >= 4, f"expected ≥4 test briefs in four-modes fixture; found {test_count}"
+    for mode_label in ["software", "research", "authoring", "roadmap"]:
         assert mode_label in text.lower(), f"missing mode label: {mode_label}"
+    for retired in ["business", "planning"]:
+        assert retired not in text.lower(), f"retired mode still in four-modes fixture: {retired}"
+
+
+def test_new_eval_scenario_files_exist_and_parse():
+    REPO = Path(__file__).resolve().parents[2]
+    base = REPO / "e2e/scenarios/use-skill"
+    scenarios = [
+        "always-ask-routing.yaml",
+        "deck-routing.yaml",
+        "authoring-no-framework-fallback.yaml",
+        "brainstorming-four-modes.yaml",
+        "framework-runner-extraction.yaml",
+        "deliverable-type-dispatch.yaml",
+        "use-framework-backward-compat.yaml",
+        "authoring-mode-engine-selection.yaml",
+    ]
+    for name in scenarios:
+        path = base / name
+        assert path.exists(), f"missing scenario file: {name}"
+        with path.open() as f:
+            parsed = yaml.safe_load(f)
+        assert parsed is not None, f"failed to parse {name}"
+        assert "description" in parsed, f"{name} missing top-level description field"
 
 
 def test_roadmap_mode_handles_cagan_absence():

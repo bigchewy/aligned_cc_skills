@@ -49,6 +49,24 @@ triggers:
       - skills/brainstorming/modes/authoring.md
     scenarios:
       - scenarios/use-skill/brainstorming-positioning.yaml
+      - scenarios/use-skill/brainstorming-four-modes.yaml
+      - scenarios/use-skill/always-ask-routing.yaml
+      - scenarios/use-skill/deck-routing.yaml
+      - scenarios/use-skill/authoring-no-framework-fallback.yaml
+      - scenarios/use-skill/deliverable-type-dispatch.yaml
+      - scenarios/use-skill/authoring-mode-engine-selection.yaml
+
+  - paths:
+      - skills/_shared/framework-runner.md
+    scenarios:
+      - scenarios/use-skill/framework-runner-extraction.yaml
+      - scenarios/use-skill/use-framework-backward-compat.yaml
+
+  - paths:
+      - skills/use-framework/SKILL.md
+    scenarios:
+      - scenarios/use-skill/use-framework-backward-compat.yaml
+      - scenarios/use-skill/framework-runner-extraction.yaml
 
   - paths:
       - skills/_shared/contextual-recommendation.md

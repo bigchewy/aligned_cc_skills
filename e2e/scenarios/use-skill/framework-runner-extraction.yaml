@@ -1,0 +1,39 @@
+# e2e/scenarios/use-skill/framework-runner-extraction.yaml
+# Backward-compat: verifies that use-framework still runs frameworks identically
+# after the framework-runner was extracted to _shared/framework-runner.md.
+# Design §use-framework backward compat: direct invocation must produce identical
+# pre-refactor behavior.
+
+description: "Skill: use-framework backward compat after framework-runner extraction"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2000
+
+prompts:
+  - "{{system_context}}\n\n---\n\nFramework: {{framework_name}}\n\nUser request: {{user_input}}\n\nRun this framework now."
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FRAMEWORK EXECUTION FIDELITY: Does the response follow
+        the framework's structured process with explicit WAIT points and
+        phase-by-phase execution? Skipping WAIT points or collapsing phases = 1.
+        Full phase-by-phase execution with WAIT points = 5.
+      weight: 3
+    - type: llm-rubric
+      value: |
+        Score 1-5 on INTAKE GATE: Does the response begin with an intake gate
+        (strict or soft) to understand the user's situation before diving into
+        the framework? No intake = 1. Clear intake question(s) first = 5.
+      weight: 2
+
+tests:
+  - description: "framework-runner-extraction: positioning framework runs identically"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      framework_name: "5-components-positioning"
+      user_input: "Help me apply the 5 components of positioning to our product"

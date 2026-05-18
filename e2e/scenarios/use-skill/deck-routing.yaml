@@ -1,0 +1,39 @@
+# e2e/scenarios/use-skill/deck-routing.yaml
+# Validates that "deck" keyword triggers Authoring pre-selection in the 4-way picker.
+# Design: "deck", "presentation", "pitch deck", "memo", "battle card" are all
+# Authoring keyword signals per SKILL.md keyword expansion (Task 20 amendment).
+
+description: "Skill: brainstorming deck keyword routes to Authoring"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 1000
+
+prompts:
+  - "{{system_context}}\n\n---\n\nUser says: {{user_input}}\n\nPresent the 4-way picker question and indicate which option best fits this request."
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on AUTHORING PRE-SELECTION: Does the response present
+        the 4-way picker AND indicate that "Write a document" / Authoring
+        is the best fit for this request? Presenting picker without
+        highlighting Authoring = 3. Presenting picker with Authoring
+        highlighted or pre-selected = 5.
+      weight: 3
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PICKER COMPLETENESS: Does the response present all four
+        picker labels ("Write a document", "Design a code change",
+        "Synthesize research", "Break a big initiative")? Missing any = 1.
+        All four present = 5.
+      weight: 2
+
+tests:
+  - description: "deck-routing: deck for client"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      user_input: "I need to build a deck for a client"
