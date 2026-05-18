@@ -99,29 +99,6 @@ Apply these in order when topic signals overlap multiple modes:
 
 **Disambiguation refusal handling:** If the user picks "Other" or types a free-form answer that doesn't map to any mode, ask one follow-up: "Could you describe in one sentence what you want as the deliverable — a design doc, a strategic document, an evidence map, a sequenced curriculum, or a multi-feature roadmap?" If still ambiguous after the second question, present an open-text re-prompt: "Describe in your own words what you're trying to produce." Run signal detection on the free-text answer and route to the closest match. If detection still fails, offer a final explicit list (all 4 modes, plus "I'm not sure — let me explore for a few questions first" which routes to Authoring mode since not-knowing-the-shape maps to the broadest container mode).
 
-### Mode Explanation Block (mandatory on every invocation)
-
-After mode selection, present this block before starting any phase work:
-
-> **Brainstorming** — guided dialogue from idea to validated design with expert critique.
->
-> **Selected: {Mode Name}** — {one-sentence description of the process}
-> *Why:* {brief reason this mode was selected based on topic/environment signals}
->
-> **Other modes:**
-> - **Build & ship:** Software, Authoring
-> - **Synthesize or sequence:** Research, Roadmap
->
-> *To switch modes or skip phases, just say so.*
-
-**Software mode description:** "Fluid Q&A with automatic Architect consultation on technical decisions. Produces a validated design doc."
-
-**Research mode description:** "Corpus survey, comparative synthesis with Skeptic Pass critique, ranked recommendations with caveats. Produces a research memo or KB artifact."
-
-**Authoring mode description:** "Structured-document arrangement with framework + domain-advisor panel; optional Research sub-phase via file-mediated sub-agent fork. Produces a sequenced design doc — curricula, framework prompts, exercises, strategy memos, competitive analyses, positioning briefs, GTM/sales documents, or diagnostic write-ups."
-
-**Roadmap mode description:** "Portfolio sequencing with strategy advisors (Christensen, Rumelt, Eric Ries — plus Cagan when available). Produces a roadmap + spawn-list portfolio whose entries seed future brainstorms."
-
 ## Step 2: Project Scan
 
 **Resolve placeholders before dispatching:**
