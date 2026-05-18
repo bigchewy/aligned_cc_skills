@@ -1701,7 +1701,7 @@ git commit -m "refactor(brainstorming): rewrite authoring.md as engine-dispatch 
 
 ---
 
-### Task 17b: Add design-mandated error-path tests for the new authoring.md
+### ✅ Task 17b: Add design-mandated error-path tests for the new authoring.md
 
 Two error-path tests from the design doc's `## Testing Strategy` apply specifically to the new `modes/authoring.md` written in Task 17 — they couldn't run earlier because the file's old shape was incompatible.
 

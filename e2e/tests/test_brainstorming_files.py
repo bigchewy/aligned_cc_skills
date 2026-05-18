@@ -478,3 +478,23 @@ def test_plugin_version_bumped():
         return tuple(int(x) for x in v.split("."))
     assert parse(plugin_version) > parse("0.26.0"), \
         f"version {plugin_version} not bumped above pre-plan baseline 0.26.0"
+
+
+def test_authoring_mode_documents_missing_deliverable_type_fallback():
+    """Phase 3 must define behavior when registry drift loses deliverable_type."""
+    text = read("skills/brainstorming/modes/authoring.md")
+    assert "missing" in text.lower() and "deliverable_type" in text
+    assert "content" in text.lower(), "fallback to content template must be documented"
+    assert "sync_framework_frontmatter" in text or "re-sync" in text.lower(), (
+        "drift remediation hint must point at the sync script"
+    )
+
+
+def test_authoring_mode_documents_project_scan_failure():
+    """Design L211: authoring mode with project scan failure."""
+    text = read("skills/brainstorming/modes/authoring.md")
+    assert "scan" in text.lower()
+    # Acceptable phrasings: "scan fails", "scan failure", "scan unavailable", "without scan"
+    assert any(s in text.lower() for s in [
+        "scan fail", "scan returns empty", "without scan", "scan unavailable",
+    ]), "missing project-scan-failure handling"
