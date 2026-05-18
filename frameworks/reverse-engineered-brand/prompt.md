@@ -125,6 +125,17 @@ Hold the Source Registry and slice→sources index in memory. Proceed to Transfo
 - **Rank and cap:** sort competitors by `mention_count` descending. Tie-break by alphabetical order of slug for determinism. Cap at 5 competitors total (or 3 minimum if fewer surfaced). The extract schema carries `name` + `role` + optional `verbatim_quote` per entity but does NOT carry per-mention provenance (e.g., "customer quote" vs. "product page"), so signal-strength weighting is not possible at this layer — mention-count ranking is the deterministic proxy. If finer ranking is needed in the future, extend `extract.md` to record per-mention provenance.
 - Write `{brand-folder-path}/.build/behavioral-alternatives.json` (the array of behavioral-alternative entries).
 - Write `{brand-folder-path}/.build/competitor-list.json` (the array of `{slug, name, mention_count, source_ids}` records to dispatch).
+- **Competitive Context input asks (inline):** hold the following array in memory; PHASE 3.2 reads it when building the `competitive` folder entry. This is the single source of truth for the Competitive Context tab's `input_asks` — no separate file, no per-framework fanout (per Decision 4 in the design doc).
+
+  ```yaml
+  competitive_context_input_asks:
+    - tier: critical
+      ask: "Quotes from prospects describing the alternatives they used before considering you"
+    - tier: recommended
+      ask: "Win/loss interviews comparing your offering to non-product alternatives"
+    - tier: optional
+      ask: "Pre-purchase research notes describing how prospects framed the old way"
+  ```
 
 **Step 1.5b — Sub-agent dossier dispatch (parallel):**
 

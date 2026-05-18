@@ -898,7 +898,7 @@ git commit -m "test(render): update render fixtures to v0.4.0 with input_asks an
 
 ---
 
-### Task 14: Add competitive_context_input_asks inline in prompt.md PHASE 1.5a
+### ✅ Task 14: Add competitive_context_input_asks inline in prompt.md PHASE 1.5a
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (Step 1.5a block under `### PHASE 1.5: Competitor Research`)
