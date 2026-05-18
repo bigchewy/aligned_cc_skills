@@ -992,6 +992,9 @@
       line-height: 1.6;
       padding: 4px 0;
     }
+    .input-callout .would-help-heading { font-size: 0.88rem; color: var(--color-foreground); margin: 12px 0 6px 0; font-weight: 600; }
+    .input-callout .callout-list { list-style: none; padding: 0; margin: 0; }
+    .input-callout .callout-list li { font-size: 0.9rem; line-height: 1.6; padding: 3px 0; font-family: inherit; }
   </style>
 </head>
 <body>
@@ -1866,6 +1869,8 @@
       renderCompetitorCards();
       renderSectionsAtAGlance();
       resolveDisplayGroups().forEach(function(g) { renderGroupPanel(g); });
+      renderInputAsks();
+      renderPerTabCallouts();
     }
 
     function attachCardClickToExpand() {
@@ -1991,14 +1996,6 @@
       });
       return map;
     }
-    var SINGLE_INSTANCE_FOLDERS = {
-      strategy: true,
-      language: true,
-      market: true,
-      proof: true,
-      design: true,
-      competitive: true
-    };
     function iaEl(tag, opts) {
       var node = document.createElement(tag);
       opts = opts || {};
@@ -2036,52 +2033,38 @@
       container.appendChild(ul);
     }
     function renderPerTabCallouts() {
-      var folders = (OPEN_QUESTIONS && OPEN_QUESTIONS.folders) || [];
-      var folderToGroup = buildFolderToGroupTab();
-      folders.forEach(function(folder) {
-        var folderId = FOLDER_LABEL_TO_TAB[folder.label] || folder.id;
-        var groupId = folderToGroup[folderId] || folderId;
-        var container = document.getElementById('callout-' + groupId);
+      var groups = resolveDisplayGroups();
+      groups.forEach(function(g) {
+        var container = document.getElementById('callout-' + g.id);
         if (!container) return;
-        var provided = folder.provided_summary || '';
-        var asks = folder.input_asks || [];
+        while (container.firstChild) container.removeChild(container.firstChild);
+        var provided = g.provided_summary || '';
+        var asks = g.input_asks || [];
         if (!provided && !asks.length) {
           container.style.display = 'none';
           return;
         }
-        while (container.firstChild) container.removeChild(container.firstChild);
-        container.appendChild(iaEl('h3', { text: 'What you provided' }));
-        var providedP = iaEl('p', { className: 'provided' });
+        container.appendChild(iaEl('h3', { text: 'What we have, what would help' }));
         if (provided) {
-          providedP.textContent = provided;
-        } else {
-          var emp = iaEl('em', { text: 'No source summary available.' });
-          providedP.appendChild(emp);
+          var p = iaEl('p', { className: 'provided' });
+          p.appendChild(document.createTextNode('We received: ' + provided));
+          container.appendChild(p);
         }
-        container.appendChild(providedP);
-        container.appendChild(iaEl('h3', { text: 'What would strengthen this' }));
         if (asks.length) {
-          var list = iaEl('ul');
+          container.appendChild(iaEl('p', { className: 'provided would-help-heading', text: 'Would help:' }));
+          var list = iaEl('ul', { className: 'callout-list' });
           asks.forEach(function(a) {
-            if (!a || !a.tier || !a.ask) return;
+            if (!a || !a.ask) return;
             var li = iaEl('li');
-            li.appendChild(iaEl('span', { className: 'tier-badge tier-' + a.tier, text: a.tier }));
-            li.appendChild(document.createTextNode(a.ask));
+            // Hyphen bullet for copy-paste survival
+            li.appendChild(document.createTextNode('- ' + a.ask));
             list.appendChild(li);
           });
           container.appendChild(list);
-        } else {
-          var none = iaEl('p', { className: 'provided' });
-          none.appendChild(iaEl('em', { text: 'Coverage is sufficient here.' }));
-          container.appendChild(none);
         }
         container.style.display = '';
       });
     }
-    document.addEventListener('DOMContentLoaded', function() {
-      renderInputAsks();
-      renderPerTabCallouts();
-    });
   </script>
 
 </body>

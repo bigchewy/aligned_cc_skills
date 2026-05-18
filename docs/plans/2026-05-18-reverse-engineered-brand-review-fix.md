@@ -944,7 +944,7 @@ git commit -m "feat(reverse-engineered-brand): group panel banner + OQ filter/so
 
 ---
 
-### Task 9: Rewrite `renderPerTabCallouts` for group level — single heading, hyphen bullets
+### ✅ Task 9: Rewrite `renderPerTabCallouts` for group level — single heading, hyphen bullets
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `renderPerTabCallouts` function; the `SINGLE_INSTANCE_FOLDERS` constant — delete; the `DOMContentLoaded` listener that calls both `renderInputAsks` and `renderPerTabCallouts`)
