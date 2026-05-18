@@ -94,7 +94,7 @@ v0.2.0 JSON files are still renderable. When `source_counts` is absent, the snap
 
 ### Required at emission (validated at PHASE 2.4)
 
-`id`, `file`, `framework_slot`, `confidence`, `impact`, `evidence`, `deepen_with`, `why_it_matters`, `rationale`, AND at least one of `question` or `inferred_value`.
+`id`, `file`, `framework_slot`, `confidence`, `impact`, `evidence`, `deepen_with`, `summary`, `why_it_matters`, `rationale`, AND at least one of `question` or `inferred_value`.
 
 For GAP slices, `framework_slot` and `deepen_with` MAY be literal `null`.
 
@@ -105,16 +105,17 @@ For GAP slices, `framework_slot` and `deepen_with` MAY be literal `null`.
 | `file` | string | yes | Relative path to the brand file this OQ addresses |
 | `slice` | string | yes | Human label for the content slice (empty string OK for GAP) |
 | `framework_slot` | string\|null | yes | Must match slot vocabulary table below; null for GAP |
+| `summary` | string | yes (v0.3.0+) | **One sentence, ≤25 words.** The line an executive sees at a glance. Must stand alone — if reading the summary requires the rationale to make sense, it is not a summary. The renderer shows this by default; `inferred_value` + `why_it_matters` + `rationale` are shown on an expandable detail toggle. v0.2.0 default: omit; the renderer falls back to truncating `inferred_value` (legacy behaviour). |
 | `question` | string | conditional | Required if `inferred_value` absent. Phrase as a complete question the executive can answer yes/no or with a short choice. |
-| `inferred_value` | string\|null | conditional | Required if `question` absent; null OK. When present, write a **complete declarative sentence** (not a sentence fragment or label) — e.g. `"The brand's primary competitor is manual spreadsheet dispatch, not a named SaaS product."` not `"spreadsheets"`. |
+| `inferred_value` | string\|null | conditional | Required if `question` absent; null OK. When present, write a **complete declarative sentence** (not a sentence fragment or label) — e.g. `"The brand's primary competitor is manual spreadsheet dispatch, not a named SaaS product."` not `"spreadsheets"`. **Atomicity:** if the sentence contains two coordinated predicates each with its own subject + verb (joined by "and"/"while"/"but"/"—"), split into two OQs — see compound-declarative rule below. |
 | `draft_excerpt` | string\|null | no | Quote from source file that prompted this OQ |
 | `confidence` | enum | yes | `high \| medium \| low` |
 | `impact` | enum | yes | `P0 \| P1 \| P2` |
 | `evidence` | array | yes | `["source:#N"]` refs; empty array OK for GAP |
 | `alternatives` | array | no | When confidence is low, plausible alternative answers |
 | `deepen_with` | string\|null | yes | Framework id to dispatch; null for GAP |
-| `why_it_matters` | string | yes | **2-3 sentences** explaining the downstream stakes if this inference is wrong. Cover (a) what specifically breaks downstream, (b) which surfaces propagate the error, (c) the cost of being wrong vs. the cost of confirming. Single-sentence rationales are a violation. |
-| `rationale` | string | yes | **2-3 sentences** explaining HOW the inference was derived from the source material. Quote a key phrase if available. Cover (a) what the sources say, (b) where the evidence converges or diverges, (c) what was assumed to bridge gaps. Single-sentence rationales are a violation. |
+| `why_it_matters` | string | yes | **2-3 sentences, ≤60 words total.** Explains the downstream stakes if this inference is wrong. Cover (a) what specifically breaks downstream, (b) which surfaces propagate the error, (c) the cost of being wrong vs. the cost of confirming. Single-sentence rationales are a violation; >60 words is also a violation (rambling). |
+| `rationale` | string | yes | **2-3 sentences, ≤60 words total.** Explains HOW the inference was derived from the source material. Quote a key phrase if available. Cover (a) what the sources say, (b) where the evidence converges or diverges, (c) what was assumed to bridge gaps. Single-sentence rationales are a violation; >60 words is also a violation. |
 | `emitted_at` | string | no | ISO 8601 timestamp |
 
 ### Derived (not persisted)
@@ -221,6 +222,23 @@ PHASE 2.4 emits a warning (not a block) when a question field matches:
 > `"Is spreadsheets the real alternative and is DispatchTrack worth calling out?"`
 
 The regex detects AND/OR between clauses with question marks, or two question marks in one string. Listing atomic alternatives within a single question is fine.
+
+---
+
+## Compound-declarative heuristic (warning)
+
+PHASE 2.4 Check 6 also inspects `inferred_value` for compound declaratives — two coordinated predicates joined by `" and "`, `" while "`, `" but "`, or `" — "` where each side has its own subject + verb and could stand alone as a claim.
+
+The heuristic is imperfect (English coordination is hard to regex). Suggested implementation: split `inferred_value` at each connector; if both halves contain a capitalized noun AND a verb, warn. The intent is to catch run-on inferences like:
+
+> "Chronic disease has become the dominant cost driver in US healthcare **while** the primary care system has been rendered structurally unable to manage it."
+
+Two independent claims with different evidence and different counter-arguments. They should be two OQs.
+
+**Does NOT match** (single claim with a subordinate clause):
+> "The brand's primary competitor is manual spreadsheet dispatch, not a named SaaS product."
+
+A warning is non-blocking, but the AUTO_MODE preamble's ATOMICITY rule is the load-bearing enforcement — the model should split before emission, and Check 6 catches what slipped through.
 
 ---
 

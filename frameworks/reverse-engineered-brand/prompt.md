@@ -233,11 +233,13 @@ For each `.oq.json` file, attempt to parse as JSON.
 
 **Check 3 — Schema validate (hard-fail).**
 For each parsed OQ, validate every entry against the required-at-emission rules in `open-questions-schema.md`:
-- Required fields present: `id, file, framework_slot, confidence, impact, evidence, deepen_with, why_it_matters, rationale`.
+- Required fields present: `id, file, framework_slot, confidence, impact, evidence, deepen_with, summary, why_it_matters, rationale`.
 - Literal `null` allowed for `framework_slot` and `deepen_with` only on GAP slices (i.e., the slice mapping table has no owning framework for this slice).
 - At least one of `question` or `inferred_value` must be present.
 - When `inferred_value` is present (non-null), it must be a complete declarative sentence — minimum 6 words, must contain a verb. Fragments like `"spreadsheets"` are a violation.
+- `summary` must be present, ≤25 words, and contain no `[.!?]` terminator that is followed by whitespace + capital letter (one sentence only). >25 words OR multiple sentences → hard-fail.
 - `why_it_matters` and `rationale` must each contain at least 2 sentences (count by `[.!?]` terminators that are followed by whitespace + capital letter, or end of string). Single-sentence values are a violation — the executive needs enough context to decide Approve/Reject without re-reading sources.
+- `why_it_matters` and `rationale` must each be ≤60 words. >60 words → hard-fail (rambling).
 - `confidence` must be one of: `high`, `medium`, `low`.
 - `impact` must be one of: `P0`, `P1`, `P2`.
 - Validation failure → hard-fail: `slice: {slice-id}, field: {field-name}, value: {bad-value}`.
@@ -255,14 +257,27 @@ Scan each `.draft.md` for:
 - **Suspiciously short draft:** if draft word count < 200 AND the slice mapping table indicates the framework normally produces 500+ words. Match → warning: `slice: {slice-id}, heuristic: short-draft, word_count: {N}`.
 - **Missing PHASE coverage:** if the OQs in `.oq.json` do not span every PHASE heading of the dispatched framework. Match → warning: `slice: {slice-id}, heuristic: missing-phase-coverage, missing_phases: {list}`.
 
-**Check 6 — Compound-question regex (warning, do NOT block).**
-For each OQ `question` field, apply regex: `/\b(and|or)\b.*\?|\?.*\?/`
+**Check 6 — Compound atomicity (warnings, do NOT block).**
+
+Part A — Compound-question regex. For each OQ `question` field, apply regex: `/\b(and|or)\b.*\?|\?.*\?/`
 
 Calibration cases:
 - MUST NOT match: `"per-member, per-transport, or hybrid?"` — `or` precedes `?` but is inside a comma-separated list of alternatives, not joining two full predicates. This is a single atomic question and the regex should not flag it.
 - MUST match: `"Is X true and is Y true?"` — two full predicates joined by `and`.
 
-Match → warning: `slice: {slice-id}, question: {text}, heuristic: compound`.
+Match → warning: `slice: {slice-id}, question: {text}, heuristic: compound-question`.
+
+Part B — Compound-declarative heuristic. For each OQ `inferred_value` field, apply this heuristic:
+- Split the string at each connector: `" and "`, `" while "`, `" but "`, `" however "`, and ` — ` (em-dash with spaces).
+- For each split: count the number of capitalized noun-like tokens (any token starting with an uppercase ASCII letter, excluding sentence-initial position). If both halves contain ≥1 such token AND both halves contain at least one verb-like token (heuristic: a token matching `/\b(is|are|was|were|has|have|had|does|do|did|makes|made|requires|enables|drives|breaks|fails|works|wins|loses|delivers|builds|provides|claims|reduces|increases|costs|measures|tracks|targets|serves|sells|buys|owns|runs|stops|starts|moves|creates|destroys|replaces|displaces|competes|beats|positions|defines|frames)\b/i`), emit a warning.
+
+The heuristic is intentionally lossy — English coordination is hard to regex. False positives are cheap (the model can confirm one OQ was correct). False negatives are the cost of imperfection.
+
+Match → warning: `slice: {slice-id}, field: inferred_value, heuristic: compound-declarative, connector: {string}`.
+
+Calibration cases:
+- MUST NOT match (single claim with subordinate clause): `"The brand's primary competitor is manual spreadsheet dispatch, not a named SaaS product."` — no coordinating connector outside the comma-bound aside.
+- MUST match (compound declarative): `"Chronic disease has become the dominant cost driver while the primary care system has been rendered structurally unable to manage it."` — two predicates with their own subjects joined by `while`.
 
 **Outcome.** Any hard-fail aborts with a named list of failures; the user reruns after fixing source material or framework prompts. Warnings collect into a single status block at the end of this gate and are passed to PHASE 3 for `review.html`.
 

@@ -566,6 +566,28 @@
     }
     .oq-card.context-open .oq-context { display: block; }
 
+    /* Expandable per-card detail disclosure (v0.3.0 — summary is default; detail behind toggle) */
+    details.oq-detail {
+      margin: 4px 0 12px 0;
+      padding: 0;
+    }
+    details.oq-detail > summary.oq-detail-summary {
+      color: var(--color-dimmed);
+      font-size: 0.78rem;
+      cursor: pointer;
+      padding: 4px 0;
+      font-family: inherit;
+      list-style: revert;
+    }
+    details.oq-detail > summary.oq-detail-summary:hover { color: var(--color-accent); }
+    details.oq-detail[open] > summary.oq-detail-summary { margin-bottom: 8px; }
+    details.oq-detail .oq-detail-full {
+      font-size: 0.88rem;
+      color: var(--color-foreground);
+      line-height: 1.55;
+      margin: 6px 0 10px 0;
+    }
+
     /* <details>-based context disclosure for JS-rendered cards */
     details.oq-context {
       margin-top: 12px;
@@ -1562,11 +1584,24 @@
       el.appendChild(table);
     }
 
+    // v0.3.0 summary fallback: if no summary, truncate inferred_value/question to first sentence
+    // up to ~25 words. v0.2.0 fixtures degrade gracefully.
+    function deriveSummary(q) {
+      if (q.summary) return q.summary;
+      var src = q.inferred_value || q.question || '';
+      if (!src) return '';
+      var firstSentence = src.split(/(?<=[.!?])\s+/)[0] || src;
+      var words = firstSentence.split(/\s+/);
+      if (words.length <= 25) return firstSentence;
+      return words.slice(0, 25).join(' ') + '…';
+    }
+
     function renderOQCard(q, folderId) {
       var kind = q.confidence === 'low' ? 'question' : 'assumption';
       var impact = q.impact || 'P2';
       var confLabel = (q.confidence || 'low').toUpperCase().replace('MEDIUM', 'MED');
-      var bodyText = kind === 'assumption' ? (q.inferred_value || q.question || '') : (q.question || q.inferred_value || '');
+      var summaryText = deriveSummary(q);
+      var detailText = kind === 'assumption' ? (q.inferred_value || q.question || '') : (q.question || q.inferred_value || '');
       var cardAttrs = { 'data-id': q.global_id || q.id, 'data-folder': folderId, 'data-kind': kind };
       if (kind === 'assumption') cardAttrs['data-state'] = 'approved';
       var card = sa(ce('div', 'oq-card'), cardAttrs);
@@ -1575,21 +1610,35 @@
       hdr.appendChild(chip(impact, 'pri ' + priClass(impact)));
       hdr.appendChild(chip('conf: ' + confLabel, confClass(q.confidence || 'low')));
       card.appendChild(hdr);
-      card.appendChild(ap(ce('p', 'oq-body'), tx(bodyText)));
-      if (kind === 'question' && q.inferred_value) {
-        card.appendChild(ap(ce('div', 'oq-best-guess'), ap(ce('strong'), tx('Best guess: ')), tx(q.inferred_value)));
-      }
-      if (q.why_it_matters) {
-        card.appendChild(ap(ce('div', 'oq-why'),
-          ap(ce('strong'), tx('Why this matters: ')),
-          tx(q.why_it_matters)
-        ));
-      }
-      if (q.rationale) {
-        card.appendChild(ap(ce('div', 'oq-rationale'),
-          ap(ce('strong'), tx('What the sources show: ')),
-          tx(q.rationale)
-        ));
+      // Summary line (the executive-skim view, shown by default)
+      card.appendChild(ap(ce('p', 'oq-body'), tx(summaryText)));
+
+      // Expandable detail — shown only if the detail adds anything beyond the summary
+      var hasDetailExtras = (detailText && detailText !== summaryText) || q.why_it_matters || q.rationale || (kind === 'question' && q.inferred_value);
+      if (hasDetailExtras) {
+        var details = sa(ce('details', 'oq-detail'), {});
+        var summaryEl = ce('summary', 'oq-detail-summary');
+        summaryEl.appendChild(tx('Show detail'));
+        details.appendChild(summaryEl);
+        if (detailText && detailText !== summaryText) {
+          details.appendChild(ap(ce('p', 'oq-detail-full'), tx(detailText)));
+        }
+        if (kind === 'question' && q.inferred_value) {
+          details.appendChild(ap(ce('div', 'oq-best-guess'), ap(ce('strong'), tx('Best guess: ')), tx(q.inferred_value)));
+        }
+        if (q.why_it_matters) {
+          details.appendChild(ap(ce('div', 'oq-why'),
+            ap(ce('strong'), tx('Why this matters: ')),
+            tx(q.why_it_matters)
+          ));
+        }
+        if (q.rationale) {
+          details.appendChild(ap(ce('div', 'oq-rationale'),
+            ap(ce('strong'), tx('What the sources show: ')),
+            tx(q.rationale)
+          ));
+        }
+        card.appendChild(details);
       }
       if (q.evidence && q.evidence.length) {
         card.appendChild(ap(ce('p', 'oq-evidence'), ap(ce('strong'), tx('Evidence: ')), tx(q.evidence.join(', '))));
