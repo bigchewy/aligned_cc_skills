@@ -148,7 +148,7 @@ git commit -m "docs(reverse-engineered-brand): bump OQ schema doc to v0.4.1"
 
 ---
 
-### Task 3: Add `display_groups[]` to render fixtures + author negative/edge fixtures
+### ✅ Task 3: Add `display_groups[]` to render fixtures + author negative/edge fixtures
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/test-fixtures/render/fixture-tiny.json` (add top-level `display_groups[]`; bump `schema_version`)
