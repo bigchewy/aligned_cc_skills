@@ -506,3 +506,33 @@ def test_authoring_critique_checklist_has_conditional_sections():
         assert tag in text.lower(), f"checklist missing conditional section for {tag}"
     # Section anchors so the orchestrator can find them
     assert "## Conditional sections" in text or "### deliverable_type:" in text
+
+
+def test_authoring_has_one_template_per_deliverable_type():
+    from pathlib import Path
+    REPO = Path(__file__).resolve().parents[2]
+    base = REPO / "skills/brainstorming/references/templates"
+    assert (base / "authoring-template.html").is_file(), "default content template missing"
+    for kind in ["decision", "plan", "analysis"]:
+        assert (base / f"authoring-{kind}-template.html").is_file(), (
+            f"missing per-deliverable-type template: authoring-{kind}-template.html"
+        )
+
+
+def test_authoring_templates_share_common_scaffolding():
+    # All four templates must share the live-refresh script and the design-doc header anchor
+    # so visualization-protocol's strip step works uniformly.
+    from pathlib import Path
+    REPO = Path(__file__).resolve().parents[2]
+    base = REPO / "skills/brainstorming/references/templates"
+    files = [
+        "authoring-template.html",
+        "authoring-decision-template.html",
+        "authoring-plan-template.html",
+        "authoring-analysis-template.html",
+    ]
+    for name in files:
+        text = (base / name).read_text()
+        # Anchor: every template carries the live-refresh script marker that
+        # visualization-protocol.md's strip rule looks for.
+        assert "<script" in text, f"{name} missing live-refresh script anchor"

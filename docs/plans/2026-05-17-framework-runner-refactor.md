@@ -1797,7 +1797,7 @@ git commit -m "feat(brainstorming): rewrite authoring-critique-checklist with de
 
 ---
 
-### Task 19: Create four per-`deliverable_type` HTML templates
+### ✅ Task 19: Create four per-`deliverable_type` HTML templates
 
 The codebase pattern is one HTML file per visualization shape (e.g., `software-template.html`). Following that pattern, this task overwrites the existing `authoring-template.html` and creates three sibling templates — one per deliverable_type. The Phase 3 dispatch table in `modes/authoring.md` selects which template to use; no attribute-conditional rendering is involved (the project has no renderer that interprets `data-deliverable-type`).
 
