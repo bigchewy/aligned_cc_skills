@@ -910,18 +910,6 @@
     .tier-recommended { background: var(--color-accent-subtle); color: var(--color-accent); }
     .tier-optional { background: var(--color-surface); color: var(--color-dimmed); border: 1px dashed var(--color-border); }
 
-    /* Inline tab-name tag next to each ask in the consolidated list */
-    .ask-tab-tag {
-      display: inline-block;
-      font-size: 0.72rem;
-      padding: 1px 8px;
-      border-radius: 6px;
-      background: var(--color-muted);
-      color: var(--color-dimmed);
-      margin-left: 8px;
-      font-family: var(--font-mono);
-    }
-
     /* Inputs Needed list rows */
     .inputs-tier-heading {
       font-size: 0.95rem;
@@ -2051,9 +2039,7 @@
         var link = iaEl('a', { text: it.ask });
         link.setAttribute('href', 'javascript:void(0)');
         link.addEventListener('click', function() { switchTab(it.tabId); });
-        var tag = iaEl('span', { className: 'ask-tab-tag', text: it.folderLabel });
         li.appendChild(link);
-        li.appendChild(tag);
         list.appendChild(li);
       });
       var wrap = document.createDocumentFragment();
@@ -2123,7 +2109,7 @@
           container.appendChild(list);
         } else {
           var none = iaEl('p', { className: 'provided' });
-          none.appendChild(iaEl('em', { text: 'This area has no outstanding asks — coverage is sufficient.' }));
+          none.appendChild(iaEl('em', { text: 'Coverage is sufficient here.' }));
           container.appendChild(none);
         }
         container.style.display = '';

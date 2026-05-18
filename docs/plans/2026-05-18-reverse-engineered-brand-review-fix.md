@@ -22,7 +22,7 @@ None. Every step is local file editing in this repo. The end-to-end smoke run in
 
 ---
 
-### Task 1: Renderer-only quick wins — drop ask-tab-tag chip, drop CSS, fix KB-141 em-dash
+### ✅ Task 1: Renderer-only quick wins — drop ask-tab-tag chip, drop CSS, fix KB-141 em-dash
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `iaMakeTierGroup` function, the `.ask-tab-tag` CSS rule, and the empty-state copy near the `renderPerTabCallouts` empty-asks branch)
