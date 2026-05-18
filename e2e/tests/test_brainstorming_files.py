@@ -126,51 +126,65 @@ def test_authoring_mode_is_in_eval_surface():
     assert "skills/brainstorming/modes/authoring.md" in text
 
 
-def test_skill_md_description_names_five_modes():
+def test_skill_md_description_names_four_modes():
     text = read("skills/brainstorming/SKILL.md")
-    # Find the frontmatter description line
     lines = text.splitlines()
     desc_line = next((l for l in lines[:10] if l.startswith("description:")), None)
-    assert desc_line is not None, "frontmatter description line not found"
-    # Must reference all five modes
-    for mode in ["software", "business", "research", "authoring", "roadmap"]:
+    assert desc_line is not None
+    for mode in ["software", "authoring", "research", "roadmap"]:
         assert mode.lower() in desc_line.lower(), f"description missing mode: {mode}"
+    for gone in ["business", "planning"]:
+        assert gone.lower() not in desc_line.lower(), f"description still mentions retired mode: {gone}"
 
 
-def test_skill_md_overview_describes_five_modes():
+def test_skill_md_overview_describes_four_modes():
     text = read("skills/brainstorming/SKILL.md")
-    overview_start = text.index("## Overview")
-    overview_end = text.index("## Step 1")
-    overview = text[overview_start:overview_end]
-    for mode in ["Software", "Business", "Research", "Authoring", "Roadmap"]:
-        assert mode in overview, f"Overview missing mode: {mode}"
+    overview = text[text.index("## Overview"):text.index("## Step 1")]
+    for mode in ["Software", "Authoring", "Research", "Roadmap"]:
+        assert mode in overview, f"overview missing: {mode}"
+    assert "Business" not in overview, "overview still mentions retired Business mode"
+    assert "Planning" not in overview, "overview still mentions retired Planning mode"
 
 
-def test_skill_md_step1_has_five_signal_sets():
+def test_skill_md_step1_has_four_signal_sets_and_always_ask():
     text = read("skills/brainstorming/SKILL.md")
-    step1_start = text.index("## Step 1")
-    step2_start = text.index("## Step 2")
-    step1 = text[step1_start:step2_start]
-    # All 5 mode names appear as bolded headers
-    for header in [
-        "**Software mode**",
-        "**Business mode**",
-        "**Research mode**",
-        "**Authoring mode**",
-        "**Roadmap mode**",
-    ]:
-        assert header in step1, f"Step 1 missing signal set header: {header}"
-    # 'roadmap' must NOT appear in Business signal set
-    business_idx = step1.index("**Business mode**")
-    research_idx = step1.index("**Research mode**")
-    business_block = step1[business_idx:research_idx]
-    assert "planning" not in business_block.lower() and "roadmap" not in business_block.lower(), \
-        "'roadmap' should be in Roadmap mode signals, not Business"
-    # 'roadmap' MUST appear in Roadmap signal set
-    roadmap_idx = step1.index("**Roadmap mode**")
-    roadmap_block = step1[roadmap_idx:]
-    assert "planning" in roadmap_block.lower() or "roadmap" in roadmap_block.lower(), \
-        "Roadmap signal set missing planning/roadmap keywords"
+    step1 = text[text.index("## Step 1"):text.index("## Step 2")]
+    for h in ["**Software mode**", "**Authoring mode**", "**Research mode**", "**Roadmap mode**"]:
+        assert h in step1, f"missing signal-set header: {h}"
+    for gone in ["**Business mode**", "**Planning mode**"]:
+        assert gone not in step1, f"retired signal-set still present: {gone}"
+    # Always-ask discipline
+    assert "always" in step1.lower() and ("ask" in step1.lower() or "present the question" in step1.lower())
+    # Picker label format (task vocabulary, not mode IDs)
+    for label_fragment in ["Write a document", "Design a code change", "Synthesize research", "Break a big initiative"]:
+        assert label_fragment in step1, f"missing picker label: {label_fragment}"
+
+
+def test_skill_md_keyword_expansion_includes_deck_and_breakdown_signals():
+    text = read("skills/brainstorming/SKILL.md")
+    # Authoring keyword expansion (May 17 amendment)
+    for kw in ["deck", "presentation", "pitch deck", "memo", "battle card"]:
+        assert kw in text.lower(), f"authoring missing keyword: {kw}"
+    # Roadmap keyword expansion (May 17 amendment)
+    for kw in ["break", "decompose", "big idea", "smaller pieces", "spawn list"]:
+        assert kw in text.lower(), f"roadmap missing keyword: {kw}"
+
+
+def test_skill_md_im_not_sure_routes_to_authoring():
+    text = read("skills/brainstorming/SKILL.md")
+    # The post-collapse refusal-handling rule
+    assert "I'm not sure" in text or "not sure" in text.lower()
+    # Find context around "I'm not sure" and assert routes to Authoring
+    idx = text.lower().find("not sure")
+    nearby = text[idx:idx+300].lower()
+    assert "authoring" in nearby, "'I'm not sure' must route to Authoring post-collapse"
+    assert "business" not in nearby, "stale Business reference"
+
+
+def test_skill_md_explicit_mode_arg_skips_question():
+    text = read("skills/brainstorming/SKILL.md")
+    assert "--mode" in text, "missing explicit --mode arg skip condition"
+    assert "session" in text.lower(), "missing session-scoped skip rule"
 
 
 def test_roadmap_mode_file_structure():
@@ -205,21 +219,6 @@ def test_roadmap_mode_file_structure():
     # Spawn-brief reference
     assert "spawn-brief-template.md" in text
 
-
-def test_skill_md_mode_explanation_block_grouped():
-    text = read("skills/brainstorming/SKILL.md")
-    # New grouped headers must appear
-    for group in ["Build & ship", "Diagnose & decide", "Sequence work"]:
-        assert group in text, f"missing group label: {group}"
-    # Each mode must have a description line in SKILL.md
-    for mode in [
-        "Software mode description",
-        "Business mode description",
-        "Research mode description",
-        "Authoring mode description",
-        "Roadmap mode description",
-    ]:
-        assert mode in text, f"missing mode description: {mode}"
 
 
 def test_skill_md_has_disambiguation_rules():

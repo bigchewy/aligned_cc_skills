@@ -1869,7 +1869,7 @@ git commit -m "feat(brainstorming): split authoring template into four per-deliv
 
 ---
 
-### Task 20: Restructure `skills/brainstorming/SKILL.md` Step 1 — 4-mode always-ask routing + picker labels + keyword expansion
+### ✅ Task 20: Restructure `skills/brainstorming/SKILL.md` Step 1 — 4-mode always-ask routing + picker labels + keyword expansion
 
 Collapse the 5-mode classification into 4 (Software / Authoring / Research / Roadmap). Replace the silent-auto-route branch with always-ask. Inline the mode-explanation block into the AskUserQuestion prompt. Expand authoring and roadmap keyword lists per the May 17 amendment. Update "I'm not sure" → Authoring.
 
