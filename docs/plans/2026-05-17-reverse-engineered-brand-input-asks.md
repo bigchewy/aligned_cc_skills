@@ -286,7 +286,7 @@ git commit -m "feat(messaging-distillation): declare input_asks in frontmatter"
 
 ---
 
-### Task 5: Add input_asks to brand-voice
+### ✅ Task 5: Add input_asks to brand-voice
 
 **Files:**
 - Modify: `frameworks/brand-voice/prompt.md` (the frontmatter block at the top)
