@@ -982,14 +982,6 @@
 
   <div class="tab-bar" id="main-tabs">
     <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
-    <button class="tab-btn" onclick="switchTab('competitive')">Competitive Context</button>
-    <button class="tab-btn" onclick="switchTab('strategy')">Strategy</button>
-    <button class="tab-btn" onclick="switchTab('language')">Language</button>
-    <button class="tab-btn" onclick="switchTab('audiences')">Audiences</button>
-    <button class="tab-btn" onclick="switchTab('personas')">Personas</button>
-    <button class="tab-btn" onclick="switchTab('market')">Market</button>
-    <button class="tab-btn" onclick="switchTab('proof')">Proof</button>
-    <button class="tab-btn" onclick="switchTab('design')">Design</button>
   </div>
 
   <!-- ========= OVERVIEW ========= -->
@@ -1182,6 +1174,21 @@
     const OPEN_QUESTIONS = {open-questions-json};
     const BRAND_FOLDER_PATH = "{brand-folder-path}";
     const ORG_NAME = "{org-name}";
+
+    function buildTabNav() {
+      var bar = document.getElementById('main-tabs');
+      if (!bar) return;
+      if (bar.dataset.built === 'true') return; // idempotence: renderAll may fire twice (DOMContentLoaded + readyState fallback)
+      var groups = resolveDisplayGroups();
+      groups.forEach(function(g) {
+        var btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.textContent = g.label;
+        btn.setAttribute('onclick', "switchTab('" + g.id + "')");
+        bar.appendChild(btn);
+      });
+      bar.dataset.built = 'true';
+    }
 
     // ── Tab + sub-tab switching ──────────────────────────────
     function switchTab(tabId) {
@@ -1658,6 +1665,27 @@
       if (s === 'gap') return 1;
       return 3; // Partial or unknown
     }
+    function legacyFolderAsGroup(folder) {
+      var summary = folder.summary || '';
+      var parts = summary.trim().split(/\s+/).filter(Boolean);
+      var headline = parts.length <= 14 ? parts.join(' ') : parts.slice(0, 14).join(' ') + '…';
+      return {
+        id: 'legacy-' + folder.id,
+        label: folder.label || folder.id,
+        folder_ids: [folder.id],
+        grade: folderGrade(folder),
+        headline_claim: headline,
+        thinnest_gap: '',
+        provided_summary: folder.provided_summary || '',
+        input_asks: folder.input_asks || []
+      };
+    }
+    function resolveDisplayGroups() {
+      if (OPEN_QUESTIONS.display_groups && OPEN_QUESTIONS.display_groups.length) {
+        return OPEN_QUESTIONS.display_groups;
+      }
+      return (OPEN_QUESTIONS.folders || []).map(legacyFolderAsGroup);
+    }
     var GRADE_TOOLTIP = {
       5: '5 — Strong: 0 P0 OQs, ≥70% high confidence, ≥3 evidence sources per slice',
       4: '4 — Mostly clear: 0-1 P0 OQs and ≥50% high/medium confidence',
@@ -1899,6 +1927,7 @@
     }
 
     function renderAll() {
+      buildTabNav();
       assignDisplayIds();
       renderExecNarrative();
       renderExecSnapshot();

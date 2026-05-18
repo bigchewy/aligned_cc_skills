@@ -246,7 +246,7 @@ git commit -m "test(reverse-engineered-brand): v0.4.1 render fixtures (positive,
 
 ---
 
-### Task 4: Add `legacyFolderAsGroup()` + data-driven tab nav to renderer
+### ✅ Task 4: Add `legacyFolderAsGroup()` + data-driven tab nav to renderer
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (the `<div class="tab-bar" id="main-tabs">` block, the `switchTab` function, and a new `legacyFolderAsGroup()` helper near the existing `folderGrade` helper)
