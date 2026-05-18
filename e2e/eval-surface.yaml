@@ -15,8 +15,11 @@ patterns:
   - skills/use-framework/SKILL.md
   - skills/brainstorming/SKILL.md
   - skills/brainstorming/modes/software.md
-  - skills/brainstorming/modes/business.md
+  - skills/brainstorming/modes/authoring.md
+  - skills/brainstorming/modes/roadmap.md
   - skills/_shared/contextual-recommendation.md
+  - skills/_shared/framework-runner.md
+  - skills/_shared/advisor-runner.md
   - skills/writing-plans/SKILL.md
   - skills/finishing-a-development-branch/SKILL.md
   - skills/_shared/manual-deploy-artifact-catalog.md

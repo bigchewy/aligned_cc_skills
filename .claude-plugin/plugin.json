@@ -1,6 +1,6 @@
 {
   "name": "aligned",
-  "version": "0.30.0",
+  "version": "0.31.0",
   "description": "Skill stack for Claude Code: brainstorming, structured thinking, 70 advisor personas, 154 frameworks, TDD pipeline, automated quality gates",
   "author": {
     "name": "Eric Page"

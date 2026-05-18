@@ -1,369 +1,216 @@
 <!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->
 
-# Brainstorming Content Into Arrangements
+# Authoring Mode
 
-## Contents
-
-- Overview
-- The Process
-- After the Design
-- Design Critique
-- Key Principles
-
-## Overview
-
-You are a structured authoring facilitator. Your job is to help the user turn structured-document work — curricula, framework prompts, exercise sequences, voice migrations, registry expansions, **strategy memos, competitive analyses, positioning briefs, sales pitches, market-analysis / GTM documents** — into a sequenced, defensible arrangement: a *design* whose deliverable is a document (content or strategy), not code.
-
-Authoring mode covers two flavors of document work: (1) **content design** — pedagogical / curricular / brand-voice arrangements; (2) **strategic-document authoring** — competitive analyses, positioning briefs, market memos, sales pitches, GTM documents authored from a named framework. The process is the same in both flavors; only the corpus and the advisor panel shift. The Architect's role here is narrow and conditional — invoked only at the end, and only if the design touches a code or schema seam. The substantive expertise comes from **domain advisors** (topic-routed from `advisors/registry.yaml` — including Hayes, Loehr, Chapman, Seligman, Sisney, Brown, Maté, Linehan, Levine, Grubb for pedagogy/clinical work AND Dunford, Christensen, Rumelt, Raskin, Voss, etc. for strategic-document work), not from codebase grounding. The process has seven phases: **Population & constraints → Framework + advisor surfacing → Corpus scan → Optional Research sub-phase → Arrangement → Orphan / residual catalog → Architect audit (conditional).**
+A wrapper around either a registered framework or a structured Q&A with a topic advisor in The Architect's proxy seat. Produces a design doc that feeds `/aligned:writing-plans`.
 
 ## Disambiguation rules
 
-**Authoring vs Software:** If the deliverable is *content* (a curriculum, a registry of frameworks, an exercise sequence, a brand-voice migration, a knowledge-base expansion) and the codebase is at most a passive consumer (a registry file the runtime reads, a schema the content fills), this is Authoring. If the deliverable is a *runtime change* — a new code path, a new module boundary, an integration with an external service — that's Software.
-
-**Authoring vs Research:** If the deliverable is a *synthesis or recommendation* drawn from external corpus comparison (literature review, framework shootout, prior-art survey), that's Research. If the deliverable is an *arrangement* of selected content for a specific population — sequence, registry expansion, curriculum, voice rewrite — that's Authoring. Authoring may consume Research as input, but Authoring's output is not a comparison memo; it's a sequenced arrangement.
-
-**Mixed signals:** When in doubt, look at what file the user expects to commit at the end. A `docs/plans/YYYY-MM-DD-<topic>-design.md` listing modules, exercises, advisors, or registry entries is Authoring. A `docs/plans/YYYY-MM-DD-<topic>-research.md` ranking external candidates is Research. A `docs/plans/YYYY-MM-DD-<topic>-design.md` describing components, data flow, and module boundaries is Software.
+- **Authoring vs Software:** if the deliverable is content (deck, memo, brief, positioning, curriculum), Authoring. If it's code that runs, Software.
+- **Authoring vs Research:** Authoring produces an arrangement (sequenced document); Research produces an evidence map. Authoring may invoke a Research sub-flow but is not Research.
+- **Authoring vs Roadmap:** Roadmap produces a portfolio + spawn list (multi-feature). Authoring produces a single document.
 
 ## The Process
 
-You MUST complete each phase before proceeding to the next.
+### Phase 1: Engine selection
 
-### Phase 1: Population & constraints
+Read `skills/_shared/contextual-recommendation.md` and invoke it with:
+- **Entity type:** `framework-or-advisor`
+- **Registries:** `frameworks/registry.yaml`, `advisors/registry.yaml`
+- **Task context:** the user's topic (1-3 sentence summary). **MUST be non-empty.** This is required so contextual-recommendation does not enter Path 4 (No Context Available) and ask the user a second AskUserQuestion immediately after the router asked for mode confirmation in SKILL.md Step 1. If the user's topic is empty (rare — the router should have refused to dispatch), construct one from the prior user message.
 
-**The router has already dispatched an authoring-mode project scan.** Results will be available at `/tmp/brainstorm-context-{topic}/project-scan.md` and emphasize content registries, frameworks, prior curricula, brand voice files, and knowledge bases rather than runtime code paths. Do not dispatch a second scan.
+Outcomes (the fallback ladder):
 
-**Overlap with first scoping question:** Do not wait for the scan to complete before asking your first question. Immediately ask your first population/constraint question. The scan runs in parallel while the user responds. If the user responds before the scan finishes, ask another scoping question — do not idle. Once the scan completes, incorporate the summary as working context.
+1. **Auto-select fires on a framework** → Phase 2a (framework runner, intake=strict).
+2. **Auto-select fires on an advisor (no framework match)** → Phase 2b (structured Q&A with the matched advisor in The Architect's proxy seat).
+3. **Shortlist mode** → present the unified shortlist; user picks an entry; route to 2a or 2b based on entity type.
+4. **No high-confidence match (Stage 1 returns candidates but none auto-select)** → Phase 2c (structured Q&A; top-scoring topic advisor in proxy seat).
+5. **Zero candidates** (both registries returned nothing after domain filter — extremely rare given 154 frameworks + 70 advisors) → Phase 2d (structured Q&A with Wise Eric in proxy seat).
 
-**Nothing happens without an explicit population statement.**
+Path 4 of `contextual-recommendation.md` (the "what problem are you working on?" prompt) is reserved for top-level skill invocations where the user invoked `/aligned:use-advisor` with no args and no conversation context. Authoring mode always has a topic; Path 4 never fires from here.
 
-- Ask questions one at a time. One question per message. Multiple choice preferred.
-- The scoping must answer:
-  - **Population:** Who is this for? (audience, learner cohort, user segment, clinical profile)
-  - **Goal:** What does the arrangement need to do for them? (one-sentence outcome)
-  - **Hard constraints:** Time, budget, voice, prerequisite knowledge, format limits — anything that must hold across every element.
-  - **Core commitments:** Voice/tone (link to the brand voice file), pedagogical principle, ethical/clinical guardrails. These differ from hard constraints in that they shape *how* every element reads, not whether it's allowed.
-  - **What "good enough" looks like:** ship-shape (single arrangement, ranked options, registry diff, etc.).
+**Project scan failure handling:** If `/tmp/brainstorm-context-{topic}/project-scan.md` is missing or empty (scan failed or hadn't completed when Phase 1 ran), proceed without scan context; engine selection runs on topic alone; user is notified ("Scan unavailable — proceeding with topic-only engine selection."). Phase 2 may re-check for the scan and incorporate it when available.
 
-**Gate:** Restate the population, goal, hard constraints, and core commitments in a short scoping block. Get user confirmation before proceeding.
+### Phase 2: Engine execution
 
-### Phase 1.5: Framework + advisor surfacing
+Two execution paths based on Phase 1 result (outcomes 2–5 all route to the structured Q&A path):
 
-After the Phase 1 gate and before Phase 2's corpus scan, surface candidate frameworks and advisors from the registries. This addresses two near-universal authoring questions early: "what structure shapes this document?" and "who should be in the panel?"
+### Phase 2a: Framework runner (engine = framework)
 
-**Read both registries:** `frameworks/registry.yaml` and `advisors/registry.yaml`.
+Read `skills/_shared/framework-runner.md` and invoke it with:
+- **Matched framework path:** from Phase 1
+- **`intake_gate_mode`:** `strict` (brainstorming wrapper gates on `required_documents`)
 
-**Framework candidates:**
-- Filter framework entries by `domains:` overlap with the topic. Examples: competitive analysis → `5-components-positioning`, `four-market-types`, `jobs-to-be-done`, `positioning-canvas`; diagnostic / "why isn't X working" → `root-cause-analysis`, `kernel-of-good-strategy`, `finding-the-crux`, `5-step-process`; trauma curriculum → `compassionate-inquiry`, `act-flexibility`; sales pitch → `sales-pitch-structure`, `5-components-positioning`.
-- Present 2–3 candidates with each one's `purpose:` line and `category:`.
-- Ask the user to confirm one (or pick "first principles — no registered framework fits").
-- The selected framework's structure becomes the scaffold for Phase 4's arrangement (its sections, its sequence, its outputs).
+On framework completion, the runner returns control here. Proceed to Phase 3.
 
-**Advisor panel:**
-- Filter advisor entries by `domains:` overlap with the topic.
-- **Combine with user-named advisors** from the original prompt. If the user named an advisor by surname (e.g., "Dana", "Lyon", "McKeown"), search the registry by both `id:` and `name:` fields and by surname-match. If a named advisor is NOT in the registry, mark it `[user-named — not in registry]` and continue. Do NOT block — note once that `/aligned:add-advisor` will add them after the session.
-- Present the proposed panel (3–6 advisors typical) with each one's `domains:` and a one-line `use_when:` summary.
-- Ask the user to confirm the panel or adjust.
+### Phase 2b/2c/2d: Structured Q&A with topic advisor in Architect's proxy seat
 
-**No-match handling:** If neither a framework nor an advisor matches the topic, surface that explicitly: "no registered framework or advisor matches `{topic}` — we'll arrange from first principles. After this session, run `/aligned:add-framework` or `/aligned:add-advisor` to register what we use." Do not block.
+The Q&A pattern is duplicated from `modes/software.md` (L22-134). See the parity marker below.
 
-**Gate:** Present the selected framework + confirmed advisor panel as a short block. Get user confirmation before proceeding to Phase 2.
+For Phase 2b (matched advisor) — use the matched advisor's prompt in the proxy dispatch.
+For Phase 2c (top-scoring advisor) — use the top-scoring advisor's prompt in the proxy dispatch.
+For Phase 2d (Wise Eric default) — use `advisors/prompts/wise-eric.md`.
 
-### Phase 2: Corpus scan
+<!-- PARITY MARKER: DUPLICATED FROM skills/brainstorming/modes/software.md (Q&A pattern, L22-134).
+     The Architect-as-proxy dispatch template (the sub-agent prompt body below) is the stable surface
+     for the parity test (e2e/tests/test_qa_pattern_parity.py). Sync substantive changes to both files
+     or document the intentional divergence in this marker. See decision 4 in
+     docs/plans/2026-05-09-framework-runner-refactor-design.md. -->
 
-**What content libraries does the design draw from?**
+**Understanding the idea:**
 
-The Phase 2 scan emphasizes content registries and corpora rather than runtime code paths. Pull from the project-scan summary plus targeted reads:
+**MANDATORY: The router has already dispatched a project scan.** Results will be available at `/tmp/brainstorm-context-{topic}/project-scan.md`. Do not dispatch a second scan.
 
-- `frameworks/` and `frameworks/registry.yaml` — decision and pedagogical frameworks already in the plugin
-- `advisors/` and `advisors/registry.yaml` — domain advisor catalog (relevant for Arrangement phase consultation)
-- Prior curricula or sequences in `docs/plans/` (look for prior `*-design.md` files in adjacent topics)
-- Brand voice file: `brand/guidelines/brand-voice.md` (project) or `~/.claude/brand-voice.md` (global default — consult the project file first)
-- Knowledge folders (`knowledge/<area>/README.md`) for durable reference content
-- Topic-specific exercise / instrument / curriculum registries when the project includes them
+**Overlap with first business question:** Do not wait for the scan to complete before starting Q&A. Immediately ask your first business question (about intent, scope, or priorities — see business question criteria below). The scan runs in parallel while the user responds. This eliminates dead wait time without skipping context gathering.
 
-**Probe for hidden candidates:**
-- "What canonical works in this space should be represented?"
-- "Are there competing schools or traditions we should sample from?"
-- "Are there existing curricula or registries already in the repo that overlap with this work?"
+**Scan gate:** Before asking any **content-design** question or dispatching a {topic_advisor} auto-consult, the scan MUST have completed and you MUST have reviewed the summary. If the user responds to the first business question before the scan finishes, ask another business question — do not idle. Once the scan completes, incorporate the summary as working context for all subsequent questions.
 
-**Coverage gap discipline:** If the user names a candidate you can't find evidence of, mark it `[unverified — user-named]` rather than dropping it. If you find a candidate the user didn't name, surface it before continuing.
+**MANDATORY: Ask a minimum of 3 business questions before proposing any approaches or design sections.** Even when the user's request seems fully specified, there are always unstated assumptions about scope, priorities, and constraints. Do not shortcut the Q&A because the problem seems obvious.
 
-**Gate:** Present the corpus map (categorized library list with brief one-line notes on each). Get confirmation before proceeding.
+Ask questions one at a time to refine the idea. Before asking each question, classify it:
 
-### Phase 3: Optional Research sub-phase (Mode-as-sub-flow)
+- **Business questions** (ask the user): See "What stays user-facing" under {topic_advisor} auto-consult below.
+- **Content-design questions** (auto-resolve via {topic_advisor}): See "What counts as content-design" under {topic_advisor} auto-consult below.
 
-This phase is **optional** and **only triggered with explicit user approval**. Use it when an Arrangement-phase decision genuinely depends on external evidence the corpus scan can't surface — e.g., "is the Hayes ACT matrix the right pedagogical scaffold for this adolescent cohort, or does Linehan's biosocial framing fit better?" If the question can be answered from the existing corpus or from a domain advisor's expertise alone, skip this phase.
+**For business questions:** Ask the user directly. Prefer multiple choice when possible. One question per message.
 
-**Trigger gate (no silent auto-dispatch):**
+**For content-design questions:** Do NOT ask the user. Instead, dispatch {topic_advisor} as the user's proxy to answer the question (see "{topic_advisor} as proxy" under auto-consult below). Each content-design question gets its own fresh sub-agent dispatch — the answer comes back to the main thread, you incorporate it, and it shapes what questions come next (which may be business or content-design). Briefly note each decision to the user: what was decided and why (one sentence), plus any constraints flagged — so they have visibility without needing to weigh in.
 
-Before dispatching Research, **ask the user explicitly**: "this needs external evidence — should I dispatch a Research mini-flow? It will run scope → corpus scan → synthesis in a fresh sub-agent and return a synthesis file. Estimated wait: ~5 minutes." Do NOT auto-dispatch. The user's approval is the only path to launch.
+**Gray area:** If a question has both business and content-design dimensions, ask the user the business dimension **first**. Only after the user answers, and only if their answer warrants it, dispatch {topic_advisor} as proxy for the content-design dimension.
 
-**Pattern:** Mode-as-sub-flow. This is NOT the Architect-as-proxy pattern in `modes/software.md`. The full multi-phase Research sub-flow runs inside a single sub-agent dispatch; the parent Authoring session writes a question file, dispatches once, and waits for a synthesis file. The contract is authoritative in `{base-directory}/references/research-mini-protocol.md`.
+**Exploring approaches:**
+- Propose 2-3 different approaches with trade-offs
+- Present options conversationally with your recommendation and reasoning
+- Lead with your recommended option and explain why
 
-**File-mediated handoff:**
+**When options involve layout or structure:** Never use ASCII art in AskUserQuestion markdown previews for comparisons — they are too low-fidelity for the user to evaluate. Instead:
 
-1. Slugify the research question (kebab-case, ~5 words). Call this `{question-slug}`.
-2. Write the question, carried Authoring constraints (population, voice, hard requirements), and an optional corpus hint to:
-   `/tmp/brainstorm-context-{topic}/research-{question-slug}-question.md`
-3. Dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with this prompt:
+1. Draft the approach options as normal.
+2. Classify the options and consult the right advisor:
+   - **Content structure decisions** (sequence, grouping, coverage hierarchy, arrangement) → run the {topic_advisor} auto-consult (below).
+   - **Layout/usability decisions** (scanning, navigation, labeling, user flow, conventions) → consult Steve Krug (`advisors/prompts/steve-krug.md`) using the same auto-consult dispatch pattern, substituting Krug's prompt for {topic_advisor}'s.
+   - **Both apply?** Consult both in parallel.
+3. Dispatch the mockup-generator agent with the advisor-refined options to create a comparison mockup with all options as switchable tabs. Use this dispatch template — replace placeholders with actual values. Uses `subagent_type=general-purpose`.
 
-   "Read `{base-directory}/references/research-mini-protocol.md` in full. Read the question file at `/tmp/brainstorm-context-{topic}/research-{question-slug}-question.md` in full. Follow the protocol to produce a synthesis file at `/tmp/brainstorm-context-{topic}/research-{question-slug}-synthesis.md`. The synthesis MUST include `## Synthesis`, `## Open Questions`, and `## Confidence` headings as specified in the protocol's Output contract. Return only the literal one-line confirmation `Synthesis written to {path}` — no transcript, no preamble.
+   "Read `agents/mockup-generator.md` for your full workflow. Generate a comparison mockup showing {number} approach options for: {brief description of what's being compared}. Project root: `{project-root}`. Brainstorming session topic: `{topic}`. Create a single HTML file at `docs/mockups/{session-name}/approach-comparison.html` with tabbed navigation to switch between options. Each tab should be labeled with the approach name and include a short description of the trade-offs. Open the file in the browser after generating."
 
-   You have access to Glob, Grep, Read, WebSearch, and WebFetch tools. Do not use Bash for searching — use the Grep tool instead. The protocol's `## Recursion forbidden` section lists what you must NOT do (no nested sub-agents, no critique panel, no decision memo). The parent Authoring session will read your synthesis file inline and integrate it."
+4. After the user has reviewed the HTML mockup in the browser, proceed with the approach selection question.
 
-4. Wait for the sub-agent to return. **Timeout: 5 minutes.**
+**{topic_advisor} auto-consult:**
 
-**Validation step (mandatory before integration):**
+Before presenting content-design content to the user — whether it's a question with options or a design section — consult {topic_advisor} first. This applies in every phase: understanding, exploring approaches, and presenting the design.
 
-Read the synthesis file at `/tmp/brainstorm-context-{topic}/research-{question-slug}-synthesis.md`. Verify:
+**Trigger:** Any of these situations:
+- **Q&A phase (proxy mode):** You need to answer a content-design question to continue the brainstorm (routed here instead of asking the user — see question classification above). Use the "{topic_advisor} as proxy" dispatch below.
+- **Presenting options (review mode):** You are about to show the user options that contain content-design alternatives. Use the standard review dispatch below.
+- **Presenting design sections (review mode):** You are about to present a design section that embeds content-design choices as assertions. This case is easy to miss — presenting a design section *is* presenting a content-design decision, even though it looks like a statement rather than a question. Use the standard review dispatch below.
 
-- `## Synthesis` heading is present
-- `## Open Questions` heading is present
-- `## Confidence` heading is present
-- The `## Confidence` line contains a level (high / medium / low) AND a one-line caveat after the level (separated by `—` or `-`)
+**Mode difference:** In proxy mode, {topic_advisor} makes decisions (the "do not propose alternatives" constraint is lifted). In review mode, {topic_advisor} critiques only — it recommends which option fits best but does not override the user's choice. These are different behavioral contracts for the same persona.
 
-If any of these checks fail, treat the synthesis as malformed and surface the failure to the user (see Failure paths below).
+**What counts as content-design:** Arrangement choices, sequencing principles, framework scaffold selection, corpus coverage, audience-fit validation, constraint satisfaction — anything where the answer depends on domain expertise and content patterns rather than user preference.
 
-**Failure paths:**
+**What stays user-facing without consult:** Topic direction, feature scope, success criteria, priorities, UX preferences, target audience, naming/branding, "do you want X or Y element", what problem to solve, what outcome matters, deadlines, trade-off preferences between scope/quality/speed, interaction style choices.
 
-Three handled cases. **No silent retries. No auto-fallback to inline research** — inline fallback would defeat Authoring's context-window discipline.
+**{topic_advisor} as proxy** (Q&A-phase content-design questions):
 
-(a) **Sub-agent crashes / no `Synthesis written to {path}` confirmation within 5 minutes.**
-Surface the failure to the user verbatim and present three options:
-> "Research mini-flow failed (no confirmation within 5 minutes). Three options: **skip** (continue Arrangement without external evidence), **retry** (re-dispatch with the same question), **retarget** (rewrite the question and re-dispatch). Which?"
+The user has delegated content-design decision authority to {topic_advisor}. The brainstorm's iterative back-and-forth rhythm stays the same — but content-design turns go to {topic_advisor} (via fresh sub-agent each time) instead of to the user. Each answer feeds back into the main thread and shapes what comes next, just like a human domain advisor sitting in the session.
 
-(b) **Confirmation arrives but synthesis file is missing or empty.**
-Same three options as (a) — wording adjusted to "synthesis file missing or empty."
+1. Dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with this template:
 
-(c) **Synthesis file fails validation** (a required heading is absent, or `## Confidence` is present but lacks a caveat after the level).
-> "synthesis came back malformed — proceed with partial answer, retry, or skip the research and continue without evidence?"
+   "[Full contents of `advisors/prompts/{topic_advisor}.md`]
 
-**On success:** Read the synthesis inline. Quote citations and confidence verbatim into Arrangement-phase decisions. Do not paraphrase the confidence caveat — preserve it as written.
+   **Role override for this dispatch:** You are acting as the user's proxy for content-design decisions during a brainstorming session. Your normal constraint of 'do not propose alternatives' is suspended — the user has explicitly delegated technical decision-making to you. Investigate the codebase and make a recommendation.
 
-**Gate:** Briefly summarize the integrated synthesis to the user (one paragraph) and confirm before continuing to Arrangement.
+   You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md` — it contains a prior scan of the project structure, patterns, and conventions. Use this as a starting point rather than re-exploring from scratch.
 
-### Phase 4: Arrangement
+   Content-design question to resolve for the project at `{project-root}`:
 
-**Now sequence, group, and tier the corpus against the constraints.**
+   Context: {1-2 sentences on what the user is building and key constraints/decisions established so far}
+   Question: {the content-design question that needs answering}
 
-This is the substantive content-design phase. The output is a sequenced arrangement — modules in order, exercises grouped by phase, registry entries grouped by tier, voice transformations applied across a corpus.
-
-**Auto-consult domain advisors (topic-routed):**
-
-For substantive arrangement decisions, dispatch domain advisors as consultative voices. Each consultation is a fresh sub-agent. The advisor's prompt file is at `advisors/prompts/{advisor-id}.md`. The pattern follows `{base-directory}/_shared/critique-panel-orchestration.md` for the dispatch shape, but advisors here are advising during arrangement, not critiquing afterward.
-
-**Topic routing examples** (extend per the registry — `advisors/registry.yaml` is authoritative):
-
-- ACT, contextual behavioral science, psychological flexibility → Steven Hayes (`steven-hayes`)
-- Performance psychology, motivation, mental skills training → James Loehr (`james-loehr`)
-- Strength training, programming, periodization → Mark Chapman (`mark-chapman`)
-- Positive psychology, well-being, character strengths → Martin Seligman (`martin-seligman`)
-- Organizational design, PSIU / Four Forces → Lex Sisney (`lex-sisney`)
-- Vulnerability, shame, courage, emotional literacy → Brené Brown (`brene-brown`)
-- Trauma, body-mind connection, attachment → Gabor Maté (`gabor-mate`)
-- DBT, emotion regulation, interpersonal effectiveness → Marsha Linehan (`marsha-linehan`)
-- Exercise physiology, cardiovascular adaptation → Benjamin Levine (`benjamin-levine`)
-- Autonomic disorders, dysautonomia, POTS → Blair Grubb (`blair-grubb`)
-
-**Sisney absence handling:** If the topic matches PSIU / Four-Forces keywords and `advisors/prompts/lex-sisney.md` is absent from the registry, note the absence to the user once: *"Lex Sisney would be the canonical PSIU advisor; he is not in the current advisor registry. Proceeding with the remaining domain advisors. To add Sisney, run `/aligned:add-advisor` after this session."* Do NOT block the arrangement on his absence.
-
-**Dispatch template** (sub-agent via Task tool, `subagent_type=general-purpose`, `model=opus`):
-
-   "[Full contents of `advisors/prompts/{advisor-id}.md`]
-
-   You are acting as a domain consultative voice during an authoring-mode brainstorm. You have access to Glob, Grep, Read, WebSearch, and WebFetch tools. Do not use Bash for searching — use the Grep tool instead. For prior content context, first read `/tmp/brainstorm-context-{topic}/project-scan.md`.
-
-   Population: {population}
-   Goal: {one-sentence goal}
-   Hard constraints: {constraints}
-   Core commitments: {voice / pedagogical / ethical commitments}
-   Corpus: {categorized corpus list}
-   Proposed arrangement so far: {sequence / grouping / tiering as it stands}
-
-   Your task:
-   - Validate that the canonical works in your domain are represented in the corpus. Name omissions.
-   - For each arrangement choice within your expertise, flag mismatches with the population, broken prerequisite chains, or violated commitments.
-   - Suggest re-orderings or substitutions that would better fit the population — name the trade-offs.
+   Investigate the existing content and registries. Make a decision grounded in existing patterns, domain knowledge, and content structure. If you identify multiple viable approaches, pick the one that best fits and explain why.
 
    Output format:
-   - **Domain coverage:** {missing canonical works, or 'complete'}
-   - **Arrangement validity:** {per-choice notes — what fits, what breaks}
-   - **Suggested adjustments:** {ordered list of changes with reasoning}"
+   - **Decision:** What to do (one clear answer)
+   - **Reasoning:** Why this fits, citing specific files, patterns, or conventions
+   - **Constraints:** Any preconditions, caveats, or risks that affect the design (e.g., 'requires migrating X first', 'incompatible with planned approach Y')"
 
-Briefly note each advisor consultation to the user: which advisor, what they flagged, what you incorporated.
+2. Incorporate the decision into the brainstorm's working context. {topic_advisor}'s answer will often shape what the next question is — that's the point. Continue the Q&A flow: if the next question is business, ask the user; if content-design, dispatch a fresh {topic_advisor} agent. Each new dispatch includes accumulated context from prior decisions (e.g., "Prior decisions: {list}. New question: {question}").
+3. Briefly note each {topic_advisor} decision to the user: what was decided and why (one sentence), plus any constraints flagged — do not drop caveats that affect the design.
 
-**Sequencing principle:** Name the principle (e.g., "concrete → abstract", "frequency-of-use", "spiral", "narrative arc"). Each item lists its prerequisites; the order obeys them.
+**Standard review workflow** (presenting options or design sections):
 
-**Presentation:** Once the arrangement is structured, present the design in 200–300 word sections. Ask after each section whether it looks right so far. Cover: Why now → Goal → Hard constraints → Core commitments → What changes (the arrangement itself) → Decision log → Out of scope.
+1. Draft the content you're about to present (options, design section, or both)
+2. Before presenting to the user, dispatch a sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`) with {topic_advisor}'s persona to review it. Use this dispatch template — replace placeholders with actual values:
 
-### Phase 5: Orphan / residual catalog
+   "[Full contents of `advisors/prompts/{topic_advisor}.md`]
 
-**What got considered but didn't land in the arrangement?**
+   You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md` — it contains a prior scan of the project structure, patterns, and conventions. Use this as a starting point rather than re-exploring from scratch.
 
-After the arrangement is presented, build the orphan catalog:
+   Review this content-design content before it is presented to the user for the project at `{project-root}`:
 
-- Items in the corpus that were considered but excluded — list each with a one-line reason (out of population scope, redundant with included item, violates a constraint, deferred to v2).
-- Decisions where two viable options existed and one was chosen — record the path not taken and why.
-- Open questions surfaced during arrangement that the user wants to defer — list them with the trigger that would re-open them.
+   Context: {1-2 sentences on what the user is building and key constraints/decisions established so far}
+   Content to review:
+   {the draft question with options OR design section text}
 
-The orphan catalog goes in the design document as a top-level section between `## Out of scope` and `## Tests required`. It is not optional — the catalog is what makes the arrangement defensible.
-
-**Gate:** Present the orphan catalog. Get confirmation before proceeding to Architect audit.
-
-### Phase 6: Architect audit (conditional — code/schema seam only)
-
-**Only run this phase if the design touches a runtime adapter** — e.g., the design adds entries to `advisors/registry.yaml`, modifies `frameworks/registry.yaml`, introduces a new schema field, or expects code that consumes the content. If the design is pure content with no runtime seam (a curriculum delivered as a PDF, a knowledge-base markdown file with no code consumer), **skip this phase entirely**.
-
-**Trigger criteria** (any one):
-- The design adds, removes, or renames a registry entry whose schema is consumed by code
-- The design assumes content fields the runtime doesn't currently understand
-- The design proposes a new file location that would require a code change to read
-
-**If triggered, dispatch The Architect once** to validate the seam:
-
-Sub-agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
-
-   "[Full contents of `advisors/prompts/the-architect.md`]
-
-   You have access to Glob, Grep, and Read tools. Do not use Bash for searching — use the Grep tool instead. For project context, first read `/tmp/brainstorm-context-{topic}/project-scan.md`.
-
-   Audit the code/schema seam between this authoring design and the existing codebase. The design's content lives in {file path or registry path}. The runtime that consumes it lives in {runtime path or 'TBD — flag if missing'}.
-
-   Design content to audit:
-   {the registry diff / new fields / schema additions / file-location changes}
-
-   Investigate the existing code path. Verify:
-   - The runtime's expected schema accommodates the new content without changes (or, if it doesn't, name the runtime change required).
-   - File paths the design references are read by the runtime as claimed.
-   - No content field collides with an existing field name with different semantics.
+   Investigate the existing content and registries. If the content presents options, recommend which best fits current patterns. If the content presents a design, validate it — check for missing elements, broken sequences, wrong assumptions, integration risks. In either case, ground your analysis in specific evidence.
 
    Output format:
-   - **Verdict:** APPROVE / REVISE / RUNTIME CHANGE REQUIRED
-   - **Findings:** Specific schema or path issues with codebase evidence
-   - **If RUNTIME CHANGE REQUIRED:** the minimal runtime edit (file + line + what to change)"
+   - **Verdict:** APPROVE or REVISE
+   - **Recommendation:** What to change and why, citing specific files, patterns, or conventions
+   - **Key findings:** Evidence that informed the review"
 
-Incorporate The Architect's findings into the design's `## Tests required` section (if a runtime change is required, list the test for that change).
+3. Incorporate {topic_advisor}'s findings:
+   - If REVISE: fix the issues before presenting. Note the input briefly (e.g., "The advisor caught a missing section — added.")
+   - If presenting options: lead with the advisor-recommended option and include their domain-grounded reasoning. Still present all options — {topic_advisor} advises, the user decides.
 
-**Gate:** Confirm the seam is sound (or the runtime delta is logged) before moving to After the Design.
+**Presenting the design:**
+The design doc is the deliverable. Save to `{worktree}/docs/plans/YYYY-MM-DD-{topic}-design.md`.
+
+### Phase 3: Post-engine dispatch by `deliverable_type`
+
+Read the engine's `deliverable_type` from the framework registry. If the engine was a Q&A fallback (no framework), prompt the user to pick `content | decision | plan | analysis` once (a single AskUserQuestion in the design-doc-finalization step — this is NOT mid-flow human review; it is the deliverable-type tag that the user must own as part of authoring).
+
+Dispatch table:
+
+| deliverable_type | Template path | Critique checklist sections (passed to orchestrator) | Default critic pool (when registry's `default_critic_advisors` is unset) | Handoff prompt |
+|---|---|---|---|---|
+| content | `references/templates/authoring-template.html` | `["universal", "content"]` | brand-voice advisors + topic advisor | "Run /aligned:writing-plans against this doc to produce an implementation plan." |
+| decision | `references/templates/authoring-decision-template.html` | `["universal", "decision"]` | The Skeptic + topic advisor | "Document the decision; close any open questions." |
+| plan | `references/templates/authoring-plan-template.html` | `["universal", "plan"]` | strategy advisors (Rumelt, Christensen, Ries) | "Run /aligned:writing-plans." |
+| analysis | `references/templates/authoring-analysis-template.html` | `["universal", "analysis"]` | topic advisors + The Skeptic | "Save analysis; surface follow-on actions." |
+
+**Critic pool override:** Before falling back to the default critic pool for the deliverable_type row, check the engine's `default_critic_advisors` field in `frameworks/registry.yaml`. If present and non-empty, use those advisor IDs as the critic pool instead of the defaults. (This is the consumption site for the field added in Task 10 — it is what makes the field load-bearing.)
+
+**Interaction with `critique-panel-orchestration.md`:** That file expects ONE critique checklist with one `criteria-mapping` per calling mode file. The authoring mode supplies the `authoring-critique-checklist.md` file (single checklist) and passes the list of section IDs from the Critique-checklist-sections column above. The orchestrator runs only the listed sections, skipping inapplicable ones. The `authoring-critique-checklist.md` (Task 18) is authored so sections are independently runnable.
+
+**Registry drift fallback:** If the registry entry is missing `deliverable_type` (manual edit drifted from script), fall back to the `content` template + a generic critique pool and append a one-line drift note to the design doc's Decision Log. Suggest running `python tools/sync_framework_frontmatter.py` to re-sync.
 
 ## After the Design
 
-**Documentation:**
-- Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- Sections, in order: **Why now → Goal → Hard constraints → Core commitments → What changes → Decision log → Out of scope → Orphan / residual catalog → Tests required (if code seam)**
-- After visualization artifacts are generated, add a `**Mockups:**` field to the design document header listing the mockup directory path (e.g., `**Mockups:** docs/mockups/{session-name}.html`). This field is consumed by writing-plans and finishing-a-development-branch to locate mockups without guessing. If no visual artifacts were generated, omit the field.
+### Documentation
 
-**Visualization (mandatory for content-with-structure designs; optional for pure prose):**
+Save the design doc to `{worktree}/docs/plans/YYYY-MM-DD-{topic}-design.md`. Use the deliverable-type-specific template chosen in Phase 3.
 
-When the arrangement has structural complexity (sequenced modules, tiered registries, layered curricula, voice transformations across multiple touchpoints), run the visualization protocol. For pure prose deliverables (a single brand-voice rewrite, a single short knowledge-base entry), skip visualization.
+### Visualization
 
-If visualization runs: read `{base-directory}/references/visualization-protocol.md` and follow it end-to-end (Live phase + Pre-critique snapshot). Use `{base-directory}/references/templates/authoring-template.html` as the template path.
+Read `{base-directory}/references/visualization-protocol.md` and follow it.
 
-**Interactive widgets (conditional, mandatory when triggered):**
+### Widgets
 
-If the design produced a Decision Log with >=1 entry OR an Open Questions list with >=1 entry, the visualization protocol's widget-injection step is **mandatory** (not optional). Use the categorized variant of either widget when the corresponding count is >=10; use the flat variant below 10. See `{base-directory}/references/widgets.html` and `{base-directory}/references/brainstorm-components.md` § Interactive Widgets.
+Per `references/brainstorm-components.md` widget table.
 
-**Fact-Check + Critique Panel (mandatory, dynamic selection with division of labor):**
+### Critique Panel
 
-**Critique panel configuration:**
-- Skill name: brainstorming
-- Checklist filename: authoring-critique-checklist.md
-- Fact-check mode: division-of-labor
-- Fact-check tools: Glob, Grep, Read, WebSearch, WebFetch
-- Aggregation: sub-agent
-- Criteria assignment: yes
-- Visual artifacts: docs/mockups/{session-name}.html
-- Critique temp directory: /tmp/brainstorm-critique-{topic}
+Read `{base-directory}/../_shared/critique-panel-orchestration.md`. Config:
 
-**Criteria mapping table:**
-
-| Criterion                       | Best-fit domains                                                    |
-| ------------------------------- | ------------------------------------------------------------------- |
-| 1. Population fit               | clinical / pedagogical / audience expertise (Linehan, Hayes, Loehr) |
-| 2. Constraint preservation      | scope control, focus, prioritization (Rumelt-style critics)         |
-| 3. Sequencing rigor             | pedagogy, programming, periodization (Chapman, Loehr, Hayes)        |
-| 4. Library coverage             | domain breadth, registry/corpus knowledge (topic-matched advisor)   |
-| 5. Voice consistency            | brand voice, communication clarity (Krug for plain language)        |
-| 6. Goal-metric alignment        | strategy, outcome thinking (Rumelt, Christensen, Eric Ries)         |
-| 7. v1/v2 scoping                | scope control, simplicity, YAGNI (Rumelt, Eric Ries)                |
-| 8. Code/schema seam             | codebase alignment, schema fit (The Architect)                      |
-
-Criterion 9 (Decision quality) goes to **all** critics. Each criterion 1-8 goes to exactly one critic. If no selected critic's domain matches a criterion, assign it to the fact-checker as catch-all. Target 2-4 criteria per critic.
-
-**Fact-checker prompt template:**
-
-"[Full contents of the critic's prompt file]
-
-You have access to Glob, Grep, Read, WebSearch, WebFetch, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `{visual-artifacts-path}` — open the HTML file with Read and evaluate the visuals (sequencing diagrams, registry maps, voice samples) alongside the written spec. Your job has two phases:
-**Phase 1 (Fact-check):** You are the SOLE fact-checker — no other critic is verifying claims. Be thorough. Extract every factual claim about the corpus (registry entries, framework attributions, voice-file references, prior curriculum claims, citations, validation outcomes, licensing/cost assertions). Verify each using Glob/Grep/Read for in-repo claims and WebSearch/WebFetch for external claims where possible. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
-**Phase 2 (Critique):** Using the verification data you already gathered (do not re-verify), evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
-
-**Regular critic prompt template:**
-
-"[Full contents of the critic's prompt file]
-
-You have access to Glob, Grep, Read, WebSearch, WebFetch, and Write tools. Do not use Bash for searching — use the Grep tool instead. Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{design-file-path}` in full. Also review the visual artifacts at `{visual-artifacts-path}` — open the HTML file with Read and evaluate the visuals alongside the written spec.
-**IMPORTANT: You do NOT fact-check.** Another critic handles exhaustive verification of registry references, citations, and voice claims in parallel. Do not extract and verify every claim — that work is covered.
-Read key corpus files relevant to your domain expertise (enough to understand the population, the existing arrangement patterns, and the brand voice), then evaluate the design against criteria {criteria-list} and 9 in the checklist through your lens. Also evaluate Decision Log entries if present. Tag every finding with your name.
-Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed. Return only a one-line confirmation: 'Report written to {report-path}'."
-
-Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and follow its process using the configuration and prompt templates above.
-
----
-
-**POST-CRITIQUE CHECKLIST — 3 mandatory steps. Do not skip any. Do not stop after step 2.**
-
-**Step 1 of 3 — Visualization finalization:**
-
-If a visualization was produced, apply the Post-critique regeneration section of `{base-directory}/references/visualization-protocol.md`, using `{base-directory}/references/templates/authoring-template.html` as the template path. The protocol covers regeneration, the skip-if-unchanged condition, and the refresh-script strip in one pass. Skip this step entirely if no visualization was produced.
-
-**Step 2 of 3 — Commit:**
-
-Commit the design document, visual artifacts (`docs/mockups/{session-name}.html`, if produced), and any updated registry or corpus files to git after critique rounds are complete. Stage all together in one commit. **The session is NOT complete after this step — continue to step 3.**
-
-**Step 3 of 3 — Next step prompt (mandatory):**
-
-After committing the design document, present two options. **Resolve the plugin root path first:** compute `{plugin-root}` = `{base-directory}/../..`.
-
-````
-## Next Steps
-
-### Option A: Hands-on (write plan interactively, then choose execution method)
-I'll create a worktree and write the implementation plan now. You'll review the plan and choose how to execute it.
-
-> Ready to proceed? I'll invoke `/aligned:using-git-worktrees` to create the worktree, then `/aligned:writing-plans` to write the plan.
-
-### Option B: Autopilot (fully unattended — plan through verification)
-Run from any terminal. Writes the plan, creates a worktree, executes all tasks via Ralph loop, checks mockup fidelity, and verifies the branch — but does NOT merge:
-```bash
-bash {plugin-root}/scripts/autopilot/autopilot.sh \
-  "{project-root}" \
-  "{design-doc-path}"
-```
-Review the work when it finishes, then merge manually or run `/aligned:finishing-a-development-branch`.
-````
-
-If the user chooses Option A, invoke `/aligned:using-git-worktrees` to create the worktree, then output:
-
-> `cd [worktree-path]` then use `/aligned:writing-plans` to write an implementation plan based on the design document at `docs/plans/YYYY-MM-DD-<topic>-design.md`.
-
-If the user chooses Option B, no further action is needed — the terminal command handles everything.
-
-## Design Critique
-
-When critiquing an existing authoring design (instead of writing one), use the checklist at `{base-directory}/authoring-critique-checklist.md`. Launch fresh sub-agents for critique rounds to ensure independent evaluation. Verify every claim against the actual corpus, registries, and brand voice files — don't trust population claims, framework selections, or sequencing decisions without checking.
+- Fact-check mode: `division-of-labor`
+- Criteria assignment: `yes` (per-section, conditioned on `deliverable_type`)
+- Checklist: `authoring-critique-checklist.md`
 
 ## Key Principles
 
-- **Population first, always** — No corpus work starts without an explicit, confirmed population statement
-- **Constraints bind every choice** — A constraint that never bites is decoration, not a constraint
-- **Sequencing is named** — "Concrete → abstract", "spiral", "frequency-of-use" — name the principle and obey it
-- **Domain advisors lead** — Substantive arrangement expertise comes from Hayes, Loehr, Chapman, Linehan, Brown, Maté, Seligman, Sisney, Levine, Grubb (topic-routed) — not from The Architect
-- **Architect is conditional** — The Architect is invoked only at the end, only if the design touches a code or schema seam
-- **Research is opt-in** — The optional Research sub-phase requires explicit user approval; no silent auto-dispatch
-- **No silent retries** — When the Research sub-flow fails, surface the failure with three options (skip / retry / retarget); never auto-fallback to inline research
-- **Orphan catalog is mandatory** — What got considered and excluded is part of the design, not an afterthought
-- **Voice is verified, not assumed** — Sample prose against the brand voice file before declaring voice consistency
-
-(Process-wide interaction principles — one question at a time, multiple choice preferred, gates mandatory — live in `references/shared-rules.md` and apply here.)
+- The wrapper owns scaffolding (project scan, intake gates, visualization, critique, commit, handoff). The engine (framework or Q&A) owns the conversation.
+- Always-ask routing means the user has confirmed they want Authoring before this file runs.
+- Fallback ladder paths 2b/2c/2d are structured Q&A — never free exploration.
+- Wise Eric is the last-resort default proxy. His prompt handles "I'm not sure what I need" gracefully.

@@ -8,11 +8,15 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[2]
 TEMPLATES_DIR = REPO_ROOT / "skills/brainstorming/references/templates"
 WIDGETS_PARTIAL = REPO_ROOT / "skills/brainstorming/references/widgets.html"
-TEMPLATE_NAMES = [
+CANONICAL_TEMPLATE_NAMES = [
     "software-template.html",
-    "business-template.html",
     "authoring-template.html",
-    "planning-template.html",
+    "roadmap-template.html",
+]
+TEMPLATE_NAMES = CANONICAL_TEMPLATE_NAMES + [
+    "authoring-analysis-template.html",
+    "authoring-decision-template.html",
+    "authoring-plan-template.html",
 ]
 
 
@@ -27,10 +31,10 @@ def test_widgets_partial_exists():
 
 
 def test_template_md5_equality():
-    hashes = {name: _md5(TEMPLATES_DIR / name) for name in TEMPLATE_NAMES}
+    hashes = {name: _md5(TEMPLATES_DIR / name) for name in CANONICAL_TEMPLATE_NAMES}
     distinct = set(hashes.values())
     assert len(distinct) == 1, (
-        f"all four mode templates must share a single md5; got {hashes}"
+        f"canonical mode-scaffold templates must share a single md5; got {hashes}"
     )
 
 
@@ -71,15 +75,21 @@ def test_widget_isolation_guards_present():
     assert "getElementById('questions-table')" in text, (
         "missing questions-table existence check"
     )
-    # Both guards must early-return before touching the table
-    assert re.search(
-        r"if\s*\(\s*!\s*document\.getElementById\(\s*['\"]decisions-table['\"]\s*\)\s*\)\s*return",
-        text,
-    ), "decision-log widget missing `if (!document.getElementById('decisions-table')) return;` guard"
-    assert re.search(
-        r"if\s*\(\s*!\s*document\.getElementById\(\s*['\"]questions-table['\"]\s*\)\s*\)\s*return",
-        text,
-    ), "open-questions widget missing `if (!document.getElementById('questions-table')) return;` guard"
+    # Both guards must early-return before touching the table. The guard may be
+    # expressed inline (`if (!document.getElementById(...)) return`) or via a
+    # captured variable (`var x = document.getElementById(...); if (!x) return`).
+    inline = r"if\s*\(\s*!\s*document\.getElementById\(\s*['\"]{name}['\"]\s*\)\s*\)\s*return"
+    captured = (
+        r"var\s+(\w+)\s*=\s*document\.getElementById\(\s*['\"]{name}['\"]\s*\)\s*;"
+        r"\s*if\s*\(\s*!\s*\1\s*\)\s*return"
+    )
+    for table_id, label in [("decisions-table", "decision-log"), ("questions-table", "open-questions")]:
+        assert re.search(inline.format(name=table_id), text) or re.search(
+            captured.format(name=table_id), text
+        ), (
+            f"{label} widget missing early-return guard for `{table_id}` "
+            f"(neither inline nor captured-variable form found)"
+        )
 
 
 def test_widget_empty_tbody_renders_hint():

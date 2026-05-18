@@ -52,40 +52,21 @@ If no argument was provided, read `skills/_shared/contextual-recommendation.md` 
 
 If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to listing all available frameworks alphabetically.
 
-## Step 4: Load Framework Content
+## Step 4: Run the Framework
 
-Read three files from the matched framework's directory (use the full path from the glob result):
+After matching, hand off to the shared runner.
 
-1. `prompt.md` — the phase-by-phase guide (required)
-2. `examples.md` — calibration examples per phase (read if exists, skip silently if missing)
-3. `anti-examples.md` — failure modes to avoid (read if exists, skip silently if missing)
+**Resolving the absolute framework path.** The runner requires an absolute directory path and fails closed otherwise. Construct it from the matched framework's registry `id`:
 
-If `prompt.md` is missing or empty, report the error and stop. Do not attempt to run a framework without its prompt.
+`<plugin-root>/frameworks/<id>/`
 
-## Step 5: Run the Framework
+Where `<plugin-root>` is the parent of the matched `.claude-plugin/` directory. Resolve it via the procedure in `skills/_shared/resolve-skill-path.md` (Plugin root section). If Step 3 fell back to the project-local glob and produced a full path directly, use that path as-is.
 
-1. Inject all loaded content as operating instructions
-2. Begin Phase 1 immediately with the framework's scripted opening
-3. Complete each phase fully before advancing to the next
-4. **WAIT** for the user's response at each marked pause point — do not continue until they respond
-5. Use examples from `examples.md` to calibrate responses
-6. Actively avoid patterns described in `anti-examples.md`
+Read `skills/_shared/framework-runner.md` and invoke it with:
+- **Matched framework path:** the absolute path constructed above
+- **`intake_gate_mode`:** `advisory` (preserves existing top-level invocation behavior — `required_documents` are noted to the user but execution proceeds)
 
-A phase is complete when: (a) the scripted content for that phase has been delivered, (b) the user has responded to all prompts within the phase, and (c) any reflection or summary the phase calls for has been provided.
-
-## Voice
-
-- If an advisor persona is active (via `/aligned:use-advisor`): deliver the framework in that advisor's voice
-- If no advisor is active: follow the framework prompt as-is — it already names an advisor in its opening line ("You are {Advisor}, guiding someone through..."), so adopt that advisor's voice as written in the prompt
-
-## Composability with /aligned:use-advisor
-
-When both `/aligned:use-advisor` and `/aligned:use-framework` appear in the same prompt (detectable because both skill instructions will be loaded into context simultaneously):
-
-1. Load the advisor prompt (sets the voice)
-2. Load the framework prompt + examples + anti-examples (sets the structure)
-3. Begin Phase 1 immediately in the advisor's voice
-4. No intermediate acknowledgment — straight into the framework
+The runner handles loading content, applying the intake gate, running phases with WAIT discipline, voice rules, and composability with `/aligned:use-advisor`.
 
 ## Avoid These Mistakes
 

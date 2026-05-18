@@ -53,9 +53,6 @@
             var sm = (activeSubBtn.getAttribute('onclick') || '').match(/switchSubTab\('([^']+)',\s*'([^']+)'\)/);
             if (sm) state.subTabs[sm[1]] = sm[2];
           });
-          // Widget state — every triage <select data-id> + every prompt textarea.
-          // Wrap in its own try so a widget-side failure can't disable tab/sub-tab/scrollY
-          // persistence (which used to be wrapped only by the outer try/catch).
           try {
             document.querySelectorAll('select.dropdown[data-id]').forEach(function(sel) {
               var root = sel.closest('table, [data-widget-root]');
@@ -67,7 +64,6 @@
               state.widgets.textareas[ta.id] = { value: ta.value, dirty: ta.dataset.dirty === 'true' };
             });
           } catch (we) {
-            // Widget capture failed — preserve everything else by clearing the partial.
             state.widgets = { selects: {}, textareas: {} };
           }
           sessionStorage.setItem(STATE_KEY, JSON.stringify(state));
@@ -80,10 +76,6 @@
           if (!raw) return;
           var state = JSON.parse(raw);
 
-          // Pre-mark the target sub-tab button so switchTab's "default to first
-          // sub-tab" fallback sees an already-active sub-tab and skips. Without
-          // this, switchTab briefly activates the first sub-panel before
-          // switchSubTab swaps it to the target — a visible flash.
           if (state.tab && state.subTabs && state.subTabs[state.tab]) {
             var parent = document.getElementById('panel-' + state.tab);
             var subId = state.subTabs[state.tab];
@@ -107,7 +99,6 @@
           }
           if (typeof state.scrollY === 'number') window.scrollTo(0, state.scrollY);
           if (state.widgets) {
-            // Inner try/catch so widget restore failure can't disable tab/sub-tab/scrollY restore.
             try {
               if (state.widgets.selects) {
                 Object.keys(state.widgets.selects).forEach(function(key) {
@@ -117,7 +108,6 @@
                   var sel = document.querySelector('#' + tableId + ' select[data-id="' + dataId + '"]');
                   if (sel) {
                     sel.value = state.widgets.selects[key];
-                    // Re-fire change so the widget JS rebuilds row class + prompt textarea.
                     sel.dispatchEvent(new Event('change'));
                   }
                 });
@@ -586,6 +576,7 @@
   <p class="subtitle">{subtitle}</p>
   <p class="context">{context}</p>
 
+  <!-- Decision Quality section: trade-offs, evidence, reversibility -->
   <!-- Tab bar and content panels go here -->
 
   <script>
@@ -619,18 +610,15 @@
     mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
 
     function switchTab(tabId) {
-      // Deactivate all top-level tabs and panels
       document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
       document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
 
-      // Activate selected
       var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
       if (btn) btn.classList.add('active');
       var panel = document.getElementById('panel-' + tabId);
       if (panel) {
         panel.classList.add('active');
 
-        // Lazy-render deferred Mermaid diagrams on first activation
         var deferred = panel.querySelectorAll('.mermaid-deferred');
         deferred.forEach(function(el) {
           el.classList.remove('mermaid-deferred');
@@ -645,7 +633,6 @@
           }
         });
 
-        // If panel has sub-tabs, activate the first one if none active
         var firstSubBtn = panel.querySelector('.sub-tab-btn');
         if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
           firstSubBtn.click();
@@ -664,7 +651,6 @@
       var sub = document.getElementById('sub-' + subId);
       if (sub) {
         sub.classList.add('active');
-        // Lazy-render deferred diagrams in sub-panel
         var deferred = sub.querySelectorAll('.mermaid-deferred');
         deferred.forEach(function(el) {
           el.classList.remove('mermaid-deferred');

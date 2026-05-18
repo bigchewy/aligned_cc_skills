@@ -1,0 +1,40 @@
+# e2e/scenarios/use-skill/use-framework-backward-compat.yaml
+# Validates that direct invocation of /aligned:use-framework produces identical
+# behavior to pre-refactor. The skill now delegates to _shared/framework-runner.md
+# but user-facing behavior must be unchanged.
+
+description: "Skill: use-framework direct invocation backward compat"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2000
+
+prompts:
+  - "{{system_context}}\n\n---\n\nThe user directly invokes: /aligned:use-framework {{framework_name}}\n\nUser context: {{user_context}}\n\nHow does the skill respond?"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIRECT INVOCATION BEHAVIOR: Does the response behave
+        as if the user invoked use-framework directly (not through brainstorming)?
+        It should: (1) run the named framework, (2) start with an intake gate,
+        (3) present WAIT points, (4) NOT present the 4-way brainstorming picker.
+        Presenting the brainstorming picker = 1. Clean direct framework
+        execution = 5.
+      weight: 3
+    - type: llm-rubric
+      value: |
+        Score 1-5 on INTAKE GATE PRESENT: Does the response begin by asking
+        clarifying intake questions before running the framework body?
+        Skipping intake = 2. Intake questions present = 5.
+      weight: 2
+
+tests:
+  - description: "use-framework-direct: positioning framework direct invoke"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      framework_name: "5-components-positioning"
+      user_context: "I want to position my B2B SaaS product for mid-market buyers"

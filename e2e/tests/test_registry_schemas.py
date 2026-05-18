@@ -148,6 +148,17 @@ class TestFrameworkRegistrySchema:
             f"frameworks/ has {dir_count} directories with prompt.md"
         )
 
+    def test_name_field_is_concise(self, registry):
+        """Framework name fields must be concise (≤60 chars) — they surface to users in pickers."""
+        long_names = [
+            (e["id"], len(e["name"]))
+            for e in registry["frameworks"]
+            if len(e["name"]) > 60
+        ]
+        assert not long_names, (
+            f"{len(long_names)} entries have name > 60 chars: {long_names[:5]}"
+        )
+
     @pytest.mark.parametrize("slug,expected_name,expected_advisor", OUTLIER_PARAMS)
     def test_outlier_frameworks_have_correct_metadata(self, registry, slug, expected_name, expected_advisor):
         """Outlier frameworks (defined in frameworks/_outliers.json) must have correct name and advisor."""
@@ -159,3 +170,73 @@ class TestFrameworkRegistrySchema:
         assert entry["advisor"] == expected_advisor, (
             f"Framework {slug}: expected advisor '{expected_advisor}', got '{entry['advisor']}'"
         )
+
+    def test_every_framework_has_valid_deliverable_type(self):
+        import yaml
+        valid = {"content", "decision", "plan", "analysis"}
+        with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+            data = yaml.safe_load(f)
+        missing = [e["id"] for e in data["frameworks"] if "deliverable_type" not in e]
+        assert not missing, f"{len(missing)} frameworks missing deliverable_type: {missing[:5]}"
+        bad = [
+            (e["id"], e["deliverable_type"])
+            for e in data["frameworks"]
+            if e["deliverable_type"] not in valid
+        ]
+        assert not bad, f"invalid deliverable_type values: {bad[:5]}"
+
+    def test_registry_documents_deliverable_type_taxonomy(self):
+        with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+            head = f.read(2000)
+        for tag in ["content", "decision", "plan", "analysis"]:
+            assert tag in head, f"deliverable_type taxonomy must document tag: {tag}"
+        assert "deliverable_type" in head, "missing taxonomy doc block"
+
+    def test_optional_fields_have_correct_shape_when_present(self):
+        with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+            data = yaml.safe_load(f)
+        with open(REPO_ROOT / "advisors" / "registry.yaml") as f:
+            adv = yaml.safe_load(f)
+        advisor_ids = {a["id"] for a in adv["advisors"]}
+        framework_ids = {e["id"] for e in data["frameworks"]}
+
+        typed_count = 0
+        for e in data["frameworks"]:
+            if "default_critic_advisors" in e:
+                assert isinstance(e["default_critic_advisors"], list), e["id"]
+                for aid in e["default_critic_advisors"]:
+                    assert aid in advisor_ids, f"{e['id']} references unknown advisor: {aid}"
+                typed_count += 1
+            if "follow_on_frameworks" in e:
+                assert isinstance(e["follow_on_frameworks"], list), e["id"]
+                for fid in e["follow_on_frameworks"]:
+                    assert fid in framework_ids, f"{e['id']} references unknown framework: {fid}"
+
+        assert typed_count >= 5, "fewer than 5 entries got default_critic_advisors — field adds no signal"
+
+
+def test_deliverable_type_frontmatter_matches_registry():
+    """Every framework prompt.md frontmatter must mirror its registry deliverable_type."""
+    import re
+
+    with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+        data = yaml.safe_load(f)
+
+    fm_re = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
+    mismatches = []
+    for e in data["frameworks"]:
+        prompt = REPO_ROOT / "frameworks" / e["id"] / "prompt.md"
+        if not prompt.exists():
+            continue
+        m = fm_re.match(prompt.read_text())
+        fm = yaml.safe_load(m.group(1)) if m else {}
+        registry_value = e["deliverable_type"]
+        prompt_value = (fm or {}).get("deliverable_type")
+        if prompt_value != registry_value:
+            mismatches.append((e["id"], registry_value, prompt_value))
+
+    assert not mismatches, (
+        f"{len(mismatches)} drift(s): "
+        + "\n".join(f"  {i}: registry={r} prompt={p}" for i, r, p in mismatches[:5])
+        + "\nRun: python tools/sync_framework_frontmatter.py"
+    )

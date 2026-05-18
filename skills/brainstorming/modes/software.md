@@ -73,6 +73,12 @@ Before presenting technical content to the user — whether it's a question with
 
 **What stays user-facing without consult:** Product direction, feature scope, success criteria, priorities, UX preferences, target audience, naming/branding, "do you want X or Y feature", what problem to solve, what outcome matters, deadlines, trade-off preferences between scope/quality/speed, interaction style choices.
 
+<!-- PARITY MARKER: DUPLICATED TO skills/brainstorming/modes/authoring.md (no-framework fallback Q&A).
+     The Architect-as-proxy dispatch template (the sub-agent prompt body below) is the stable surface
+     for the parity test (e2e/tests/test_qa_pattern_parity.py). Sync substantive changes to both files
+     or document the intentional divergence in this marker. See decision 4 in
+     docs/plans/2026-05-09-framework-runner-refactor-design.md. -->
+
 **Architect as proxy** (Q&A-phase technical questions):
 
 The user has delegated technical decision authority to The Architect. The brainstorm's iterative back-and-forth rhythm stays the same — but technical turns go to The Architect (via fresh sub-agent each time) instead of to the user. Each Architect answer feeds back into the main thread and shapes what comes next, just like a human technical advisor sitting in the session.

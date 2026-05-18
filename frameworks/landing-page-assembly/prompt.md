@@ -1,3 +1,6 @@
+---
+deliverable_type: content
+---
 # Landing Page Assembly Framework (6 Stages)
 
 Build a high-converting landing page through structured advisor collaboration. Every copy-producing stage (1, 2, 3a-3e) follows the advisor collaboration protocol. Decisions lock at each stage via the `lock_section_copy` tool and are never revisited.

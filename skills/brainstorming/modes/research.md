@@ -196,7 +196,7 @@ Read `{base-directory}/../_shared/critique-panel-orchestration.md` in full and f
 
 **Step 1 of 3 — Visualization finalization (conditional):**
 
-Research mode does not generate visual artifacts by default — there is no live HTML to finalize. Skip this step entirely unless the user explicitly requested a visualization (e.g., a comparison-table dashboard); in that case, follow the visualization-finalization pattern from `modes/business.md` Step 1, including the refresh-script delimiter check before stripping.
+Research mode does not generate visual artifacts by default — there is no live HTML to finalize. Skip this step entirely unless the user explicitly requested a visualization (e.g., a comparison-table dashboard); in that case, follow the visualization-finalization pattern from `modes/authoring.md` Step 1, including the refresh-script delimiter check before stripping.
 
 **Step 2 of 3 — Commit:**
 

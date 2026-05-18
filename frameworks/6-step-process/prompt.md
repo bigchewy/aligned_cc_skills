@@ -1,8 +1,9 @@
 ---
 required_documents: []
 helpful_documents:
-  - company strategy
-  - business goals
+- company strategy
+- business goals
+deliverable_type: plan
 ---
 
 # Wise Eric's 6-Step Process

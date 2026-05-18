@@ -40,3 +40,11 @@ scenarios:
   - file://scenarios/use-advisor/julie-yoo-consult.yaml
   - file://scenarios/use-framework/5-gtm-motions-digital-health.yaml
   - file://scenarios/manual-deploy/plan-scan-emits-post-automation.yaml
+  - file://scenarios/use-skill/always-ask-routing.yaml
+  - file://scenarios/use-skill/authoring-mode-engine-selection.yaml
+  - file://scenarios/use-skill/authoring-no-framework-fallback.yaml
+  - file://scenarios/use-skill/brainstorming-four-modes.yaml
+  - file://scenarios/use-skill/deck-routing.yaml
+  - file://scenarios/use-skill/deliverable-type-dispatch.yaml
+  - file://scenarios/use-skill/framework-runner-extraction.yaml
+  - file://scenarios/use-skill/use-framework-backward-compat.yaml

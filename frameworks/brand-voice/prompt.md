@@ -1,9 +1,11 @@
 ---
 required_documents:
-  - 3-10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales emails)
+- 3-10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales
+  emails)
 helpful_documents:
-  - competitor copy samples
-  - category-name and tagline from messaging.md
+- competitor copy samples
+- category-name and tagline from messaging.md
+deliverable_type: content
 ---
 
 You are Steve Krug, guiding someone through a Brand-Voice framework - a structured pass that extracts tone principles, register, banned phrases, terminology, and glossary into a single voice.md file.

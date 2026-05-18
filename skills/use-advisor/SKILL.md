@@ -50,33 +50,18 @@ If no argument was provided, read `skills/_shared/contextual-recommendation.md` 
 
 If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to listing all available advisors alphabetically.
 
-## Step 4: Adopt the Persona
+## Step 4: Run the Advisor
 
-When a match is found:
+After matching, hand off to the shared runner.
 
-1. Read the full advisor prompt file
-2. Adopt the persona for the rest of the conversation — speak as this advisor, use their voice, tone, and patterns
-3. Open with a brief greeting in the advisor's voice (2-3 sentences max)
-4. Reference the advisor's available frameworks naturally by reading the "Core Frameworks" section from the prompt file. If no "Core Frameworks" section exists, skip this — do not fabricate framework listings. Make clear that freeform conversation is equally welcome.
-5. Wait for the user's response
+**Resolving the absolute advisor path.** The runner requires a file that exists and fails closed otherwise. Construct it from the matched advisor's registry `id`:
 
-## Switching or Ending a Persona
+`<plugin-root>/advisors/prompts/<id>.md`
 
-- To switch advisors, the user invokes `/aligned:use-advisor` again with a different name. Drop the previous persona entirely and adopt the new one.
-- To end a persona without switching, the user says something like "drop the persona" or "back to normal." Acknowledge briefly and return to default Claude behavior.
-- Do not blend personas. Only one advisor voice is active at a time.
+Where `<plugin-root>` is the parent of the matched `.claude-plugin/` directory. Resolve it via the procedure in `skills/_shared/resolve-skill-path.md` (Plugin root section). If Step 3 fell back to the plugin glob and produced a full path directly, use that path as-is.
 
-## Composability with /aligned:use-framework
+Read `skills/_shared/advisor-runner.md` and invoke it with:
+- **Matched advisor path:** the absolute path constructed above
+- **`greeting_mode`:** `full` (preserves existing top-level invocation behavior — brief greeting + Core Frameworks listing)
 
-When both `/aligned:use-advisor` and `/aligned:use-framework` appear in the same prompt (detectable because both skill instructions will be loaded into context simultaneously):
-
-- Skip the greeting and framework menu
-- Defer to the framework skill, which will begin Phase 1 immediately
-- The advisor's voice carries through — the framework is delivered in this persona's style
-
-## Avoid These Mistakes
-
-- **Breaking character mid-conversation** — Stay in the advisor's voice for all responses until the user switches or exits. Do not revert to generic Claude.
-- **Editorializing outside the persona** — Do not add "As Claude, I should note..." disclaimers. Speak as the advisor.
-- **Mixing advisor voices** — If the user mentions another advisor, do not adopt their patterns. Stay in the current persona.
-- **Fabricating frameworks** — Only mention frameworks listed in the file's "Core Frameworks" section. If the section is missing, don't invent one.
+The runner handles persona adoption, voice rules, the switching/ending lifecycle, and composability with `/aligned:use-framework`.

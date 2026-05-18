@@ -7,14 +7,15 @@ Critique an authoring design for population fit, sequencing rigor, and constrain
 ## Instructions
 
 1. Read the design document at the path provided. If the file cannot be read or is empty, report the error and stop.
-2. For each criterion below, verify against the actual corpus, registries, and project materials:
+2. Identify the `deliverable_type` declared in the design (or inferred from context). This determines which Conditional sections apply.
+3. For each criterion below, verify against the actual corpus, registries, and project materials:
    - **Glob** to confirm referenced framework, advisor, or content files exist
    - **Read** to verify referenced framework prompts, brand voice files, and prior curricula
    - **Grep** to find related prior content and check for inconsistencies
-3. Write a critique to stdout (do NOT rewrite the design)
-4. Output a numbered list of specific issues with severity
+4. Write a critique to stdout (do NOT rewrite the design)
+5. Output a numbered list of specific issues with severity
 
-**Applicability assessment:** After reading the design, quickly assess which of the 9 criteria below apply. If a criterion clearly doesn't apply (e.g., "Code/schema seam" when the design is pure content with no runtime; "v1/v2 scoping" when the design ships in a single arrangement with no phasing), mark it **N/A** with a one-line reason in the Checklist Results table and skip verification for that criterion.
+**Applicability assessment:** After reading the design, quickly assess which of the 9 universal criteria below apply. If a criterion clearly doesn't apply, mark it **N/A** with a one-line reason in the Checklist Results table and skip verification for that criterion.
 
 **When you can't verify:** If the design references a population, study, or external corpus you can't access, flag it as `[UNVERIFIABLE]` with the reason — don't skip it or assume it's correct.
 
@@ -127,6 +128,142 @@ If the design includes a Decision Log or an Open Questions list, evaluate each d
 - BAD: Decision claims "no other framework fits" when an obvious candidate sits in the same registry, unaddressed.
 - GOOD: Decision names the alternatives, the trade-off, and the reason; the choice aligns with population evidence.
 
+## Conditional sections
+
+These sections apply only when the design's `deliverable_type` matches. Skip non-matching sections. The orchestrator selects the applicable section based on the `deliverable_type` field from `frameworks/registry.yaml` (synced via `tools/sync_framework_frontmatter.py`).
+
+### deliverable_type: content
+
+Apply when the framework produces a written artifact (blog post, curriculum module, exercise, brand copy, narrative document).
+
+**C1. Voice/tone**
+
+- Does the written output match the declared voice profile (brand-voice.md, tone guide, or in-document declaration)?
+- Are banned phrases, sentence-length constraints, and register requirements honored?
+- For multi-section content, is voice consistent across sections or do sub-authors produce audible seams?
+
+- BAD: A curriculum module opens in academic register but closes with casual colloquial language, with no declared reason for the shift.
+- GOOD: Voice is consistent throughout; any intentional register shift is labeled and justified.
+
+**C2. Arrangement**
+
+- Is the content organized for the reader's progressive understanding, not the author's production order?
+- Does the opening establish context before diving into specifics?
+- Are transitions between sections explicit and load-bearing, or is the reader expected to infer connections?
+
+- BAD: A three-part article presents the solution in Part 1 before establishing the problem in Part 2.
+- GOOD: Each section builds on the prior; transitions name the logical link.
+
+**C3. Readability**
+
+- Are sentences scannable at the expected audience reading level?
+- Is key information front-loaded (topic sentence first, qualifications after)?
+- Are lists used where enumeration is clearer than prose, and prose used where argument requires it?
+
+- BAD: A 120-word paragraph buries the central claim in sentence 6.
+- GOOD: Each paragraph leads with the claim; supporting evidence follows; lists appear only for genuinely enumerable items.
+
+---
+
+### deliverable_type: decision
+
+Apply when the framework produces a recommendation, option analysis, go/no-go assessment, or trade-off comparison.
+
+**D1. Trade-off rigor**
+
+- Are all plausible options enumerated, or does the analysis present a false binary?
+- For each option, are both the upside and the downside stated?
+- Is the recommended option's downside acknowledged, not suppressed?
+
+- BAD: Decision document lists two options and recommends Option A without naming Option A's risks.
+- GOOD: Each option has a named upside and downside; the recommendation names what is sacrificed to gain the chosen benefit.
+
+**D2. Evidence**
+
+- Is each claim backed by cited data, referenced precedent, or named domain knowledge?
+- Are quantitative claims traceable to a source?
+- Are "obvious" claims the kind that would surprise a skeptic? If so, they need evidence.
+
+- BAD: "Option B is faster" with no benchmark, no precedent, and no named basis.
+- GOOD: "Option B eliminated the queue-drain step (see incident #44), reducing P95 latency from 800ms to 120ms."
+
+**D3. Reversibility**
+
+- Is the reversibility of the recommendation stated explicitly?
+- For irreversible or hard-to-reverse decisions, is the bar of evidence higher?
+- Are reversible decisions clearly labeled so the team knows they can change course later without reopening the full analysis?
+
+- BAD: A one-way door decision (deleting a legacy system) is analyzed with the same rigor as a two-way door setting change.
+- GOOD: The recommendation names its reversibility class; one-way-door decisions list the conditions required to proceed.
+
+---
+
+### deliverable_type: plan
+
+Apply when the framework produces an implementation plan, project plan, sprint plan, or sequenced work breakdown.
+
+**P1. Sequencing**
+
+- Are tasks ordered so that each task's inputs are produced by earlier tasks?
+- Are there implicit dependencies that aren't surfaced as explicit ordering constraints?
+- Is the critical path named, or does the plan treat all tasks as equally deferrable?
+
+- BAD: Task 5 depends on the output of Task 7, but both are listed as parallel.
+- GOOD: The dependency graph is either explicit or the ordering makes dependencies obvious; the critical path is called out.
+
+**P2. Dependencies**
+
+- Are external dependencies (other teams, third-party services, approvals) named and assigned an owner?
+- Is there a contingency for each external dependency that could slip?
+- Are internal dependencies (within the plan) tested — i.e., is there a task that validates each dependency's output before the dependent task begins?
+
+- BAD: Plan assumes design approval by Week 2 but names no owner and includes no contingency for a delayed approval.
+- GOOD: Each external dependency has an owner, a due date, and a contingency row in the risk table.
+
+**P3. Risk identification**
+
+- Are the top 3–5 risks named explicitly?
+- For each risk, is a mitigation or acceptance criterion stated?
+- Is the plan's confidence level calibrated to the risk profile — high-risk plans should have more slack, not less?
+
+- BAD: 18-task plan with no risk section and no slack built into any milestone.
+- GOOD: Risks are named and ranked; high-severity risks have explicit mitigations; schedule includes buffer after high-risk tasks.
+
+---
+
+### deliverable_type: analysis
+
+Apply when the framework produces a research synthesis, landscape assessment, root-cause analysis, or evaluation report.
+
+**A1. Evidence quality**
+
+- Are primary sources cited, or does the analysis rely on secondary summaries?
+- Is each cited source still current (not superseded by newer findings)?
+- Are sources with known methodology weaknesses flagged as such?
+
+- BAD: Analysis cites a 2014 survey as evidence for current market behavior with no acknowledgement of its age.
+- GOOD: Sources are dated; older sources are explicitly noted; the analysis explains why they remain valid or flags the uncertainty.
+
+**A2. Conclusion strength**
+
+- Does each conclusion follow from the cited evidence, or does the analysis over-reach?
+- Are conclusions hedged appropriately when evidence is partial or conflicting?
+- Is the difference between "the data shows X" and "this suggests X" respected throughout?
+
+- BAD: "Therefore, this approach is optimal" when the evidence only shows it outperformed two alternatives in one study.
+- GOOD: Conclusion states "Among the compared approaches, X performed best on Y metric in Z context; generalization beyond this context is uncertain."
+
+**A3. Counter-arguments**
+
+- Does the analysis address the strongest case against its conclusion?
+- Are counter-arguments treated steelmann-style (strongest form) rather than strawman-style?
+- Is the rebuttal evidence-based, not dismissive?
+
+- BAD: The analysis notes "some argue against this" without naming the argument or engaging with it.
+- GOOD: The strongest counter-argument is stated in full, credited to a named proponent or study, and rebutted with specific evidence.
+
+---
+
 ## Critique Output Format
 
 ```markdown
@@ -134,6 +271,7 @@ If the design includes a Decision Log or an Open Questions list, evaluate each d
 
 **Design file:** `docs/plans/{filename}.md`
 **Critiqued:** {date}
+**deliverable_type:** {content | decision | plan | analysis | unknown}
 
 ## Summary
 {1-2 sentence overall assessment}
@@ -161,6 +299,14 @@ If the design includes a Decision Log or an Open Questions list, evaluate each d
 | 7 | v1/v2 scoping | {Pass / N issues found / N/A — reason} |
 | 8 | Code/schema seam | {Pass / N issues found / N/A — reason} |
 | 9 | Decision quality | {Pass / N issues found / N/A — reason} |
+
+### Conditional section results ({deliverable_type})
+
+| # | Criterion | Result |
+|---|-----------|--------|
+| C1/D1/P1/A1 | {criterion name} | {Pass / N issues found / N/A} |
+| C2/D2/P2/A2 | {criterion name} | {Pass / N issues found / N/A} |
+| C3/D3/P3/A3 | {criterion name} | {Pass / N issues found / N/A} |
 ```
 
 ## Important
@@ -171,3 +317,4 @@ If the design includes a Decision Log or an Open Questions list, evaluate each d
 - Do NOT rewrite the design — just identify issues
 - Do NOT suggest additions or enhancements — only flag what is broken, missing, or inconsistent in what the design already proposes
 - Severity guide: **high** = will produce a curriculum/registry/exercise that misfires for the population, **medium** = will cause confusion or rework, **low** = cosmetic or minor inconsistency
+- Run universal criteria (1–9) on every design. Run the matching conditional section only when `deliverable_type` is known. If `deliverable_type` is missing or unrecognized, run universal criteria only and flag the missing type as a medium-severity issue.

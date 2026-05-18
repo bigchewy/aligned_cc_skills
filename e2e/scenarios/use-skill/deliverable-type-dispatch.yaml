@@ -1,0 +1,51 @@
+# e2e/scenarios/use-skill/deliverable-type-dispatch.yaml
+# Validates Phase 3 dispatch in authoring mode based on deliverable_type from
+# the framework registry. Four deliverable_type values (content, decision, plan,
+# analysis) plus a fallback for missing/unknown deliverable_type.
+
+description: "Skill: authoring mode Phase 3 deliverable_type dispatch"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 1500
+
+prompts:
+  - "{{system_context}}\n\n---\n\nThe framework execution is complete. The framework's deliverable_type is: {{deliverable_type}}\n\nDescribe what Phase 3 does next: which template is used, which critique checklist section applies, and what the final output looks like."
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DISPATCH ACCURACY: Does the response correctly describe
+        Phase 3 behavior for the given deliverable_type? Each type has a
+        specific template and checklist section. Wrong template or checklist = 1.
+        Correct template + checklist for the stated type = 5.
+      weight: 3
+
+tests:
+  - description: "deliverable-type-content: uses authoring-template.html"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      deliverable_type: "content"
+
+  - description: "deliverable-type-decision: uses authoring-decision-template.html"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      deliverable_type: "decision"
+
+  - description: "deliverable-type-plan: uses authoring-plan-template.html"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      deliverable_type: "plan"
+
+  - description: "deliverable-type-analysis: uses authoring-analysis-template.html"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      deliverable_type: "analysis"
+
+  - description: "deliverable-type-fallback: missing type falls to content template"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      deliverable_type: "unknown_or_missing"

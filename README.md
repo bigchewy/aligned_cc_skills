@@ -77,7 +77,7 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 
 | Skill | Type | Invocation | Description |
 |-------|------|------------|-------------|
-| brainstorming | Entry Point | `/aligned:brainstorming` | Explore ideas and strategies. Auto-detects software vs business mode |
+| brainstorming | Entry Point | `/aligned:brainstorming` | Explore ideas and strategies. Routes across four modes: software, authoring, research, roadmap |
 | use-advisor | Entry Point | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
 | use-framework | Entry Point | `/aligned:use-framework` | Guide through a framework's phases interactively |
 | add-advisor | Entry Point | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |

@@ -1,0 +1,45 @@
+# e2e/scenarios/use-skill/authoring-no-framework-fallback.yaml
+# Validates that Authoring mode falls back to Q&A with topic advisor when no
+# matching framework is found. Design §Phase 2b: when contextual-recommendation
+# finds no matching framework, route to Q&A with topic advisor in Architect proxy seat.
+
+description: "Skill: authoring mode no-framework Q&A fallback"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2000
+
+prompts:
+  - "{{system_context}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser topic: {{topic}}\n\nDescribe how the authoring mode engine selection and execution proceeds when no matching framework is found."
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FALLBACK CORRECTNESS: Does the response correctly
+        describe the no-framework fallback path? Look for: (1) engine
+        selection fails to find a matching framework, (2) falls back to
+        Q&A with topic advisor / Architect proxy, (3) Q&A produces a
+        structured output. Missing fallback = 1. Correct fallback described = 5.
+      weight: 3
+
+tests:
+  - description: "no-framework-a: topic with no matching framework falls to Q&A"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "User wants to write about an obscure topic with no registered framework"
+      topic: "Design a naming convention system for my photo archive"
+
+  - description: "no-framework-b: Q&A with advisor produces design doc"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Q&A phase with advisor (Architect proxy) has completed; output is a design doc"
+      topic: "We've done Q&A and produced a rough design doc. What format should the output take?"
+
+  - description: "no-framework-c: design doc feeds writing-plans handoff"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      scenario_description: "Design doc is complete; user wants to proceed to an implementation plan"
+      topic: "The design doc is done. How does this feed into writing-plans?"

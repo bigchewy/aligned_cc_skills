@@ -1,8 +1,9 @@
 ---
 required_documents: []
 helpful_documents:
-  - prior diagnoses
-  - relevant data or examples
+- prior diagnoses
+- relevant data or examples
+deliverable_type: analysis
 ---
 
 # Root Cause Analysis

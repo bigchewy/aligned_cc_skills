@@ -47,7 +47,7 @@ Several tasks edit the same files; do not parallelize:
 
 ## Tasks
 
-### Task 1: Clean `name`-field hygiene in `frameworks/registry.yaml`
+### ✅ Task 1: Clean `name`-field hygiene in `frameworks/registry.yaml`
 
 Some registry entries embed purpose-like multi-sentence phrasing in the `name:` field (e.g., `5-components-positioning` line 14: `name: "your 5 Components of Positioning framework. This is the methodology from \"Obviously Awesome\""`). Multi-entity scoring will surface `name` to users; long quoted strings degrade the picker. Cap each `name` at ≤60 characters or add a `display_name` field used by the router.
 
@@ -111,7 +111,7 @@ git commit -m "fix(frameworks): cap registry name fields at 60 chars for picker 
 
 ---
 
-### Task 2: Create `skills/_shared/framework-runner.md` with intake-gate parameter
+### ✅ Task 2: Create `skills/_shared/framework-runner.md` with intake-gate parameter
 
 Extract `use-framework/SKILL.md` Steps 4-5 (lines 55-74), Voice rules (76-79), and Composability (81-88) into a shared runner. Add a configurable `intake_gate_mode` parameter — `strict` (gate on missing `required_documents`, prompt user) or `advisory` (note missing, proceed). Default `advisory` preserves existing behavior; brainstorming wrapper will pass `strict`.
 
@@ -287,7 +287,7 @@ git commit -m "feat(_shared): extract framework-runner.md with configurable inta
 
 ---
 
-### Task 3: Refactor `skills/use-framework/SKILL.md` to invoke shared runner
+### ✅ Task 3: Refactor `skills/use-framework/SKILL.md` to invoke shared runner
 
 Replace Steps 4-5 (lines 55-74), Voice section (76-79), and Composability section (81-88) with one section invoking `skills/_shared/framework-runner.md` (intake=`advisory`, preserving current behavior).
 
@@ -351,7 +351,7 @@ git commit -m "refactor(use-framework): delegate runner protocol to _shared/fram
 
 ---
 
-### Task 4: Create `skills/_shared/advisor-runner.md`
+### ✅ Task 4: Create `skills/_shared/advisor-runner.md`
 
 Extract `use-advisor/SKILL.md` Step 4 (persona adoption, L53-61), Switching/Ending Persona (L63-67), Composability with use-framework (L69-75), and Avoid Mistakes (L77-83).
 
@@ -475,7 +475,7 @@ git commit -m "feat(_shared): extract advisor-runner.md with configurable greeti
 
 ---
 
-### Task 5: Refactor `skills/use-advisor/SKILL.md` to invoke shared runner
+### ✅ Task 5: Refactor `skills/use-advisor/SKILL.md` to invoke shared runner
 
 Replace Step 4 (L53-61), Switching section (L63-67), Composability (L69-75) with one section invoking `_shared/advisor-runner.md`.
 
@@ -545,7 +545,7 @@ git commit -m "refactor(use-advisor): delegate persona protocol to _shared/advis
 
 ---
 
-### Task 6: Add `deliverable_type` taxonomy doc + validate against 10-15 ambiguous frameworks
+### ✅ Task 6: Add `deliverable_type` taxonomy doc + validate against 10-15 ambiguous frameworks
 
 The `deliverable_type` field is one of four values: `content`, `decision`, `plan`, `analysis`. Document the taxonomy at the top of `frameworks/registry.yaml` and validate the primary-tag rule by classifying 10-15 frameworks that produce multiple deliverable types before bulk-classifying.
 
@@ -624,7 +624,7 @@ git commit -m "docs(frameworks): document deliverable_type taxonomy and validate
 
 ---
 
-### Task 7: Classify frameworks batch 1 — first 50 entries (alphabetical by `id`)
+### ✅ Task 7: Classify frameworks batch 1 — first 50 entries (alphabetical by `id`)
 
 Add `deliverable_type` field to the first 50 framework entries in `frameworks/registry.yaml`. For each entry, judge based on the closing-phase output rule documented in Task 6.
 
@@ -676,7 +676,7 @@ git commit -m "feat(frameworks): classify deliverable_type for first 50 registry
 
 ---
 
-### Task 8: Classify frameworks batch 2 — entries 51–100
+### ✅ Task 8: Classify frameworks batch 2 — entries 51–100
 
 Continue classification for entries 51–100 (alphabetical by `id`).
 
@@ -711,7 +711,7 @@ git commit -m "feat(frameworks): classify deliverable_type for entries 51-100 (b
 
 ---
 
-### Task 9: Classify frameworks batch 3 — remaining ~54 entries
+### ✅ Task 9: Classify frameworks batch 3 — remaining ~54 entries
 
 Complete classification for the remaining ~54 entries. After this task, every framework MUST have `deliverable_type`.
 
@@ -762,7 +762,7 @@ git commit -m "feat(frameworks): complete deliverable_type classification for al
 
 ---
 
-### Task 10: Add optional `default_critic_advisors` + `follow_on_frameworks` where applicable
+### ✅ Task 10: Add optional `default_critic_advisors` + `follow_on_frameworks` where applicable
 
 Add the two optional fields to entries with clear domain fits. Not every framework needs them; only add where there is concrete signal. Examples:
 - `5-components-positioning` → `default_critic_advisors: [april-dunford, steve-krug]`, `follow_on_frameworks: [strategic-narrative, landing-page-assembly]`
@@ -820,7 +820,7 @@ git commit -m "feat(frameworks): add default_critic_advisors and follow_on_frame
 
 ---
 
-### Task 11: Create `tools/sync_framework_frontmatter.py` migration script with unit tests
+### ✅ Task 11: Create `tools/sync_framework_frontmatter.py` migration script with unit tests
 
 Idempotent migration script that walks every framework folder, reads the registry entry's `deliverable_type`, and mirrors it into the framework's `prompt.md` YAML frontmatter. Handles missing frontmatter (creates one), existing frontmatter without the field (adds it), and existing field with stale value (updates it). Failure cases: missing `prompt.md` (logs warning, continues); missing registry entry for an existing folder (logs warning, continues).
 
@@ -1024,7 +1024,7 @@ git commit -m "feat(tools): add idempotent sync_framework_frontmatter.py with un
 
 ---
 
-### Task 12: Run sync script on the real repo + commit prompt.md changes
+### ✅ Task 12: Run sync script on the real repo + commit prompt.md changes
 
 Apply the migration to all 154 framework `prompt.md` files.
 
@@ -1060,7 +1060,7 @@ git commit -m "chore(frameworks): mirror deliverable_type from registry to promp
 
 ---
 
-### Task 13: Add drift-detection test (`test_deliverable_type_frontmatter_matches_registry`)
+### ✅ Task 13: Add drift-detection test (`test_deliverable_type_frontmatter_matches_registry`)
 
 A pytest assertion that registry and prompt.md frontmatter stay in sync. Catches manual edits that bypass the sync script.
 
@@ -1116,7 +1116,7 @@ git commit -m "test(frameworks): assert deliverable_type stays in sync between r
 
 ---
 
-### Task 13b: Add design-mandated error-path tests for shared runners
+### ✅ Task 13b: Add design-mandated error-path tests for shared runners
 
 Per the design doc's `## Testing Strategy` (L206-212) and CLAUDE.md's TDD rule, every error path must have a test. Round 1 critique flagged five error-path tests as missing. Three of those test runner specs (which exist by this point); the remaining two test `modes/authoring.md` and run in Task 17b (after Task 17 rewrites that file).
 
@@ -1187,7 +1187,7 @@ git commit -m "test(shared-runners): add design-mandated error-path tests for ru
 
 ---
 
-### Task 14: Extend `_shared/contextual-recommendation.md` with multi-entity scoring
+### ✅ Task 14: Extend `_shared/contextual-recommendation.md` with multi-entity scoring
 
 Add `framework-or-advisor` entity type. Scoring runs Stage 1 + Stage 2 over both registries; results are merged and ranked. Auto-select threshold treats top entry as canonical; shortlist mode presents a unified list when 2+ entries score similarly.
 
@@ -1283,7 +1283,7 @@ git commit -m "feat(_shared): add framework-or-advisor multi-entity scoring mode
 
 ---
 
-### Task 15: Rename planning → roadmap (files + all string references) + post-commit grep gate
+### ✅ Task 15: Rename planning → roadmap (files + all string references) + post-commit grep gate
 
 Rename the planning mode to roadmap across the repo. This is a single atomic commit because the test suite (`test_brainstorming_files.py`) and trigger-map paths cross-reference these names.
 
@@ -1419,7 +1419,7 @@ The renamed files (planning.md / planning-critique-checklist.md / planning-templ
 
 ---
 
-### Task 16: Add Q&A parity marker comment to `modes/software.md`
+### ✅ Task 16: Add Q&A parity marker comment to `modes/software.md`
 
 Mark the Architect-as-proxy dispatch template (L80-98) as the stable surface that `modes/authoring.md` will duplicate. The marker is a single comment above the dispatch template; non-functional but visible to a reader.
 
@@ -1478,7 +1478,7 @@ git commit -m "docs(brainstorming): add parity marker on software.md Q&A dispatc
 
 ---
 
-### Task 17: Create new `skills/brainstorming/modes/authoring.md` (delete-then-recreate)
+### ✅ Task 17: Create new `skills/brainstorming/modes/authoring.md` (delete-then-recreate)
 
 Overwrite the existing `modes/authoring.md` (369-line 7-phase content arrangement) with a new file that dispatches via shared runners and falls back to structured Q&A duplicated from `modes/software.md`. Phases:
 - Phase 1: Engine selection (invokes `_shared/contextual-recommendation.md`, entity=`framework-or-advisor`)
@@ -1701,7 +1701,7 @@ git commit -m "refactor(brainstorming): rewrite authoring.md as engine-dispatch 
 
 ---
 
-### Task 17b: Add design-mandated error-path tests for the new authoring.md
+### ✅ Task 17b: Add design-mandated error-path tests for the new authoring.md
 
 Two error-path tests from the design doc's `## Testing Strategy` apply specifically to the new `modes/authoring.md` written in Task 17 — they couldn't run earlier because the file's old shape was incompatible.
 
@@ -1751,7 +1751,7 @@ git commit -m "test(brainstorming): add error-path tests for authoring mode deli
 
 ---
 
-### Task 18: Create new `skills/brainstorming/authoring-critique-checklist.md`
+### ✅ Task 18: Create new `skills/brainstorming/authoring-critique-checklist.md`
 
 Overwrite the existing checklist with one that has conditional sections per `deliverable_type`.
 
@@ -1797,7 +1797,7 @@ git commit -m "feat(brainstorming): rewrite authoring-critique-checklist with de
 
 ---
 
-### Task 19: Create four per-`deliverable_type` HTML templates
+### ✅ Task 19: Create four per-`deliverable_type` HTML templates
 
 The codebase pattern is one HTML file per visualization shape (e.g., `software-template.html`). Following that pattern, this task overwrites the existing `authoring-template.html` and creates three sibling templates — one per deliverable_type. The Phase 3 dispatch table in `modes/authoring.md` selects which template to use; no attribute-conditional rendering is involved (the project has no renderer that interprets `data-deliverable-type`).
 
@@ -1869,7 +1869,7 @@ git commit -m "feat(brainstorming): split authoring template into four per-deliv
 
 ---
 
-### Task 20: Restructure `skills/brainstorming/SKILL.md` Step 1 — 4-mode always-ask routing + picker labels + keyword expansion
+### ✅ Task 20: Restructure `skills/brainstorming/SKILL.md` Step 1 — 4-mode always-ask routing + picker labels + keyword expansion
 
 Collapse the 5-mode classification into 4 (Software / Authoring / Research / Roadmap). Replace the silent-auto-route branch with always-ask. Inline the mode-explanation block into the AskUserQuestion prompt. Expand authoring and roadmap keyword lists per the May 17 amendment. Update "I'm not sure" → Authoring.
 
@@ -1989,7 +1989,7 @@ git commit -m "feat(brainstorming): collapse to 4-mode always-ask routing with t
 
 ---
 
-### Task 21: Update `SKILL.md` per-mode emphasis table + table-driven handoff for 4 modes
+### ✅ Task 21: Update `SKILL.md` per-mode emphasis table + table-driven handoff for 4 modes
 
 The Step 2 per-mode emphasis table and Step 3 handoff table still list 5 modes. Update to 4.
 
@@ -2022,7 +2022,7 @@ git commit -m "refactor(brainstorming): collapse SKILL.md Step 2-3 tables to 4-m
 
 ---
 
-### Task 22: Update remaining brainstorming references (shared-rules, brainstorm-components, visualization-protocol, critique-panel-orchestration)
+### ✅ Task 22: Update remaining brainstorming references (shared-rules, brainstorm-components, visualization-protocol, critique-panel-orchestration)
 
 Sweep mode-list mentions and template-table rows in supporting reference files.
 
@@ -2075,7 +2075,7 @@ git commit -m "refactor(brainstorming): sweep references for 4-mode shape and ro
 
 ---
 
-### Task 23: Update `kickstart/SKILL.md` marketing copy + remaining doc cross-references
+### ✅ Task 23: Update `kickstart/SKILL.md` marketing copy + remaining doc cross-references
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (L196)
@@ -2119,7 +2119,7 @@ git commit -m "docs: sweep kickstart, README, skill-orchestration, workflow for 
 
 ---
 
-### Task 24: Delete old business files + update `e2e/trigger-map.yaml` + `e2e/eval-surface.yaml` (single commit)
+### ✅ Task 24: Delete old business files + update `e2e/trigger-map.yaml` + `e2e/eval-surface.yaml` (single commit)
 
 This is the user-visible cutover commit. Deletes must happen together with the trigger-map/eval-surface updates so the test suite (`test_trigger_map_paths.py`) doesn't fail mid-deploy.
 
@@ -2196,7 +2196,7 @@ The `git rm` calls in Step 3 already stage the deletions.
 
 ---
 
-### Task 25: Rename `brainstorming-five-modes.md` fixture → `brainstorming-four-modes.md` and create new eval scenarios
+### ✅ Task 25: Rename `brainstorming-five-modes.md` fixture → `brainstorming-four-modes.md` and create new eval scenarios
 
 Rename the eval fixture and add the new scenarios required by the design.
 
@@ -2284,7 +2284,7 @@ The renamed fixture (brainstorming-five-modes.md) is tracked as a rename automat
 
 ---
 
-### Task 26: Sweep remaining `test_brainstorming_files.py` functions for 4-mode shape
+### ✅ Task 26: Sweep remaining `test_brainstorming_files.py` functions for 4-mode shape
 
 After Tasks 15, 17, 18, 19, 20, 21, 22, 23, 24, 25 have all changed the source, run the full `test_brainstorming_files.py` and update any remaining functions that still hardcode 5-mode or use `business`/`planning` labels.
 
@@ -2319,7 +2319,7 @@ git commit -m "test(brainstorming): finalize 4-mode test sweep across test_brain
 
 ---
 
-### Task 27: Update `spawn-brief-template.md` to add Roadmap to target_mode enum
+### ✅ Task 27: Update `spawn-brief-template.md` to add Roadmap to target_mode enum
 
 Already partially addressed in Task 15. This task confirms and finalizes the Roadmap enum addition + L34 prose update on recursive Roadmap breakdown.
 
@@ -2355,7 +2355,7 @@ git commit -m "docs(spawn-brief): finalize Roadmap addition to target_mode enum"
 
 ---
 
-### Task 28: Bump plugin version + run full suite
+### ✅ Task 28: Bump plugin version + run full suite
 
 Bump `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` from `0.30.0` → `0.31.0`. Run the full test suite to confirm no regressions.
 
