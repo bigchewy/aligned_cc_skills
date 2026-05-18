@@ -97,10 +97,12 @@ def test_authoring_mode_file_structure():
     # Engine selection invokes contextual-recommendation
     assert "_shared/contextual-recommendation.md" in text
     assert "framework-or-advisor" in text
-    # Shared runners
+    # Shared runners — only framework-runner is invoked from authoring mode.
+    # Advisor execution in Phase 2b/2c/2d uses the inline software-mode-style
+    # Q&A pattern (Architect-as-proxy), not _shared/advisor-runner.md. See the
+    # PARITY MARKER in authoring.md and Decision 5 in the design doc.
     assert "_shared/framework-runner.md" in text
     assert "intake_gate_mode" in text and "strict" in text
-    assert "_shared/advisor-runner.md" in text
     # Fallback ladder
     assert "Wise Eric" in text, "missing last-resort default advisor"
     assert "structured Q&A" in text or "Architect" in text and "proxy" in text
