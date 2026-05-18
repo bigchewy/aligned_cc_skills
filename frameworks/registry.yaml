@@ -970,6 +970,7 @@ frameworks:
     category: health-autonomic
     domains: [POTS, subtype-diagnosis, treatment-selection, clinical-classification]
     use_when: "someone with POTS needs to identify their subtype to guide treatment decisions"
+    deliverable_type: analysis
 
   - id: presence-check-in
     name: "a Presence Check-In"
@@ -978,6 +979,7 @@ frameworks:
     category: psychology
     domains: [mindfulness, presence, grounding, self-awareness]
     use_when: "someone is distracted or disconnected and needs to arrive fully in the present moment before starting deeper work"
+    deliverable_type: analysis
 
   - id: problem-solver-positioning
     name: "Problem-Solver Positioning"
@@ -987,6 +989,7 @@ frameworks:
     domains: [content-positioning, problem-framing, brand-messaging, audience-connection]
     use_when: "someone describes their business by what they do rather than the problem they solve and it's not resonating"
     helpful_documents: ["positioning statement"]
+    deliverable_type: content
 
   - id: product-market-fit-test
     name: "the Product-Market Fit Test"
@@ -996,6 +999,7 @@ frameworks:
     domains: [product-market-fit, survey-methodology, growth-readiness, user-love]
     use_when: "a startup needs to measure whether they have product-market fit before investing in scaling"
     helpful_documents: ["product description", "customer research"]
+    deliverable_type: decision
 
   - id: professional-context-intake
     name: "Professional Context Intake"
@@ -1004,6 +1008,7 @@ frameworks:
     category: strategy
     domains: [intake-assessment, business-context, professional-history, coaching]
     use_when: "a new user needs an initial session to share their professional and business context before working with business advisors"
+    deliverable_type: analysis
 
   - id: proximate-objectives
     name: "Proximate Objectives"
@@ -1013,6 +1018,7 @@ frameworks:
     domains: [goal-setting, strategic-planning, momentum, achievable-targets]
     use_when: "someone has ambitious goals but no traction and needs to identify achievable near-term objectives that build momentum"
     helpful_documents: ["company strategy", "business goals"]
+    deliverable_type: plan
 
   - id: quadrinity
     name: "Quadrinity Process"
@@ -1021,6 +1027,7 @@ frameworks:
     category: psychology
     domains: [body-mind-integration, emotional-processing, inner-child, wholeness]
     use_when: "someone needs to check in with all four aspects of self — physical, emotional, intellectual, and spiritual"
+    deliverable_type: analysis
 
   - id: quality-of-life-focus
     name: "the Quality of Life Focus framework"
@@ -1029,6 +1036,7 @@ frameworks:
     category: health-autonomic
     domains: [POTS, patient-centered-care, symptom-management, functional-improvement]
     use_when: "someone with POTS is exhausted from chasing a cure and needs to refocus on quality of life and functional improvement"
+    deliverable_type: analysis
 
   - id: radical-acceptance
     name: "Radical Acceptance"
@@ -1037,6 +1045,7 @@ frameworks:
     category: psychology
     domains: [acceptance, suffering-reduction, DBT, mindfulness]
     use_when: "someone is fighting against a reality they cannot change and their resistance is creating additional suffering"
+    deliverable_type: analysis
 
   - id: recommendation-readiness-checklist
     name: "the Recommendation Readiness Checklist"
@@ -1046,6 +1055,7 @@ frameworks:
     domains: [content-quality, recommendation-readiness, audience-growth, quality-audit]
     use_when: "someone wants their content recommended but it may not meet the quality bar needed for word-of-mouth growth"
     helpful_documents: ["content strategy"]
+    deliverable_type: analysis
 
   - id: regret-minimization
     name: "Regret Minimization Framework"
@@ -1054,6 +1064,7 @@ frameworks:
     category: strategy
     domains: [decision-making, life-decisions, long-term-thinking, regret-avoidance]
     use_when: "someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret"
+    deliverable_type: decision
 
   - id: relative-stiffness-principle
     name: "the Relative Stiffness Principle"
@@ -1062,6 +1073,7 @@ frameworks:
     category: health-movement
     domains: [biomechanics, tissue-stiffness, compensation-patterns, movement-dysfunction]
     use_when: "someone has compensatory movement patterns and needs to understand how relative tissue stiffness drives motion to the wrong joints"
+    deliverable_type: analysis
 
   - id: root-cause-analysis
     name: "Root Cause Analysis"
@@ -1071,6 +1083,7 @@ frameworks:
     domains: [diagnosis, problem-solving, root-cause-analysis, strategic-diagnosis, decision-making]
     use_when: "something isn't working and the user needs to diagnose why before proposing fixes; the deliverable is a diagnostic document, not a brainstorm"
     helpful_documents: ["prior diagnoses", "relevant data or examples"]
+    deliverable_type: analysis
 
   - id: sales-pitch-structure
     name: "Sales Pitch Structure"
@@ -1081,6 +1094,7 @@ frameworks:
     use_when: "someone has completed positioning work and needs to translate it into a compelling sales narrative"
     required_documents: ["positioning statement"]
     helpful_documents: ["competitive landscape", "customer research"]
+    deliverable_type: content
 
   - id: science-of-design
     name: "the Science of Design Methodology"
@@ -1090,6 +1104,7 @@ frameworks:
     domains: [behavioral-science, experimentation, customer-decisions, design-methodology]
     use_when: "someone needs a systematic approach to understand and influence how customers make decisions using behavioral science"
     helpful_documents: ["customer research", "product description"]
+    deliverable_type: analysis
 
   - id: small-fiber-neuropathy-diagnostic
     name: "the Small Fiber Neuropathy Diagnostic Criteria"
@@ -1098,6 +1113,7 @@ frameworks:
     category: health-autonomic
     domains: [neuropathy, diagnostic-criteria, small-fiber, clinical-assessment]
     use_when: "someone has symptoms suggesting small fiber neuropathy and needs systematic diagnostic criteria"
+    deliverable_type: analysis
 
   - id: smallest-viable-audience
     name: "Smallest Viable Audience"
@@ -1106,6 +1122,7 @@ frameworks:
     category: growth
     domains: [audience-strategy, niche-focus, marketing-philosophy, minimum-viable-audience]
     use_when: "someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve"
+    deliverable_type: analysis
 
   - id: social-media-queen-method
     name: "the Social Media Queen Method"
@@ -1115,6 +1132,7 @@ frameworks:
     domains: [organic-growth, authority-building, authenticity, social-media-strategy]
     use_when: "someone wants to build social media authority through organic value creation rather than paid ads"
     helpful_documents: ["content strategy", "positioning statement"]
+    deliverable_type: plan
 
   - id: start-with-experience
     name: "Start With Experience"
@@ -1124,6 +1142,7 @@ frameworks:
     domains: [product-design, customer-experience, backwards-design, innovation]
     use_when: "a team is starting with technology and working forward instead of starting with the desired customer experience"
     helpful_documents: ["product description", "customer research"]
+    deliverable_type: plan
 
   - id: stepwise-treatment-algorithm
     name: "the Stepwise Treatment Algorithm for Orthostatic Hypotension"
@@ -1132,6 +1151,7 @@ frameworks:
     category: health-autonomic
     domains: [orthostatic-hypotension, treatment-algorithm, pharmacotherapy, mechanism-based]
     use_when: "someone with orthostatic hypotension needs a stepwise treatment approach matched to their residual autonomic function"
+    deliverable_type: plan
 
   - id: storybrand-homepage
     name: "StoryBrand Homepage Wireframe"
@@ -1141,6 +1161,7 @@ frameworks:
     domains: [homepage, conversion, storytelling, copywriting]
     use_when: "someone needs to build or rewrite a homepage that turns visitors into customers by following story structure"
     helpful_documents: ["positioning statement", "brand voice guide", "strategic narrative"]
+    deliverable_type: content
 
   - id: strategic-narrative
     name: "Five-Element Strategic Narrative"
@@ -1150,6 +1171,7 @@ frameworks:
     domains: [strategic-narrative, sales-deck, storytelling, positioning]
     use_when: "someone needs to build a sales deck or company narrative that opens with a shift in the world, not a product pitch"
     helpful_documents: ["positioning statement", "company strategy"]
+    deliverable_type: content
 
   - id: stress-recovery-oscillation
     name: "Stress-Recovery Oscillation"
@@ -1158,6 +1180,7 @@ frameworks:
     category: psychology
     domains: [energy-management, recovery, performance, resilience]
     use_when: "someone is running on fumes without recovery rituals and needs to design deliberate oscillation between stress and renewal"
+    deliverable_type: analysis
 
   - id: substrate-assessment
     name: "Substrate Assessment"
@@ -1166,6 +1189,7 @@ frameworks:
     category: health-autonomic
     domains: [pharmacology, autonomic-function, drug-selection, mechanism-matching]
     use_when: "a clinician needs to match autonomic medication choices to the patient's residual sympathetic function"
+    deliverable_type: analysis
 
   - id: survivor-guilt-exploration
     name: "an exploration of survivor guilt"
@@ -1174,6 +1198,7 @@ frameworks:
     category: psychology
     domains: [trauma, guilt, emotional-processing, healing]
     use_when: "someone carries guilt about being safe or successful while others they care about suffer"
+    deliverable_type: analysis
 
   - id: tactical-empathy-labeling
     name: "Tactical Empathy & Labeling"
@@ -1182,6 +1207,7 @@ frameworks:
     category: negotiation
     domains: [negotiation, empathy, emotional-intelligence, influence]
     use_when: "someone needs to build rapport and influence by accurately labeling the other person's emotions in a conversation"
+    deliverable_type: plan
 
   - id: teach-tailor-take-control
     name: "Teach-Tailor-Take Control (TTTC)"
@@ -1191,6 +1217,7 @@ frameworks:
     domains: [b2b-sales, sales-methodology, discovery, enterprise-pitch]
     use_when: "a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps"
     helpful_documents: ["account research", "buyer's recent public statements or writing", "pitch deck or meeting agenda", "deal notes"]
+    deliverable_type: plan
 
   - id: ten-minute-mobility-menu
     name: "the 10-Minute Mobility Menu"
@@ -1199,6 +1226,7 @@ frameworks:
     category: health-movement
     domains: [mobility, daily-practice, movement-maintenance, time-efficient]
     use_when: "someone needs a quick daily mobility routine they can actually stick to"
+    deliverable_type: plan
 
   - id: the-algorithm
     name: "The Algorithm"
@@ -1207,6 +1235,7 @@ frameworks:
     category: strategy
     domains: [process-improvement, efficiency, first-principles, optimization]
     use_when: "someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach"
+    deliverable_type: plan
 
   - id: the-carousel
     name: "The Carousel"
@@ -1215,6 +1244,7 @@ frameworks:
     category: positioning
     domains: [emotional-marketing, brand-storytelling, advertising, nostalgia]
     use_when: "someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible"
+    deliverable_type: content
 
   - id: the-story-so-far
     name: "The Story So Far"
@@ -1223,6 +1253,7 @@ frameworks:
     category: psychology
     domains: [reflection, journey-review, progress-tracking, narrative]
     use_when: "a user wants to reflect on their journey and progress with the Virtual Board over time"
+    deliverable_type: content
 
   - id: the-work
     name: "The Work"
@@ -1231,6 +1262,7 @@ frameworks:
     category: psychology
     domains: [self-inquiry, cognitive-reframing, stress-reduction, belief-examination]
     use_when: "someone is suffering from a stressful thought and needs to examine whether it is actually true"
+    deliverable_type: analysis
 
   - id: thirty-minute-daily-instagram
     name: "the 30-Minute Daily Instagram System"
@@ -1240,6 +1272,7 @@ frameworks:
     domains: [instagram, time-management, daily-practice, efficiency]
     use_when: "someone feels Instagram takes too much time and needs a structured 30-minute daily protocol"
     helpful_documents: ["content strategy"]
+    deliverable_type: plan
 
   - id: three-by-three-content-batching
     name: "the 3x3 Content Batching Method"
@@ -1249,6 +1282,7 @@ frameworks:
     domains: [content-batching, productivity, content-creation, modular-production]
     use_when: "someone needs to create months of content efficiently through batching rather than daily creation"
     helpful_documents: ["content strategy"]
+    deliverable_type: plan
 
   - id: tissue-state-system
     name: "Tissue State System"
@@ -1257,6 +1291,7 @@ frameworks:
     category: health-movement
     domains: [tissue-mobilization, soft-tissue, recovery, treatment-selection]
     use_when: "someone needs to select the right mobilization technique based on their specific tissue condition"
+    deliverable_type: analysis
 
   - id: type-1-type-2-decisions
     name: "Type 1 vs Type 2 Decisions"
@@ -1265,6 +1300,7 @@ frameworks:
     category: strategy
     domains: [decision-making, speed-vs-rigor, reversibility, organizational-agility]
     use_when: "someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices"
+    deliverable_type: decision
 
   - id: upstream-downstream-diagnostic
     name: "Upstream/Downstream Diagnostic"
@@ -1273,6 +1309,7 @@ frameworks:
     category: health-movement
     domains: [pain-source, movement-chain, diagnostic, root-cause]
     use_when: "someone has pain or limitation in one area but the actual source may be upstream or downstream in the movement chain"
+    deliverable_type: analysis
 
   - id: value-metric
     name: "Value Metric Framework"
@@ -1281,6 +1318,7 @@ frameworks:
     category: pricing
     domains: [pricing-strategy, value-metric, monetization, customer-value]
     use_when: "someone needs to identify the right value metric for their pricing model — the unit of value customers pay for"
+    deliverable_type: analysis
 
   - id: values-clarification
     name: "Values Clarification"
@@ -1289,6 +1327,7 @@ frameworks:
     category: psychology
     domains: [values, self-discovery, life-domains, ACT]
     use_when: "someone is unclear on their core values and needs a structured exercise to identify what matters most across life domains"
+    deliverable_type: analysis
 
   - id: virtual-surgery-protocol
     name: "the Virtual Surgery Protocol"
@@ -1297,6 +1336,7 @@ frameworks:
     category: health-movement
     domains: [acute-back-pain, behavioral-modification, spine-protection, conservative-treatment]
     use_when: "someone has acute severe back pain and needs a conservative protocol that treats it with the same seriousness as post-surgical recovery"
+    deliverable_type: plan
 
   - id: vulnerability-check
     name: "Vulnerability Check"
@@ -1305,6 +1345,7 @@ frameworks:
     category: psychology
     domains: [vulnerability, shame, courage, emotional-exploration]
     use_when: "someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs"
+    deliverable_type: analysis
 
   - id: working-backwards
     name: "Working Backwards"
@@ -1314,6 +1355,7 @@ frameworks:
     domains: [product-development, customer-centric, press-release, backwards-planning]
     use_when: "a team needs to define a new product or feature by writing the press release first and working backwards to what must be built"
     helpful_documents: ["product description"]
+    deliverable_type: plan
 
   - id: zone-of-genius
     name: "the Zone of Genius discovery process"
@@ -1322,6 +1364,7 @@ frameworks:
     category: psychology
     domains: [self-discovery, strengths, purpose, career-alignment]
     use_when: "someone wants to identify their zone of genius to align their work with their unique abilities and passions"
+    deliverable_type: analysis
 
   - id: permission-blessing
     name: "Permission Blessing"
@@ -1331,6 +1374,7 @@ frameworks:
     domains: [empathetic-copywriting, health-wellness, chronic-illness, onboarding-copy, permission-giving]
     use_when: "writing copy for vulnerable audiences — health apps, chronic illness communities, onboarding flows — where the reader needs to feel seen before being asked to do anything"
     helpful_documents: ["brand-voice", "positioning"]
+    deliverable_type: content
 
   - id: insane-honesty
     name: "Insane Honesty"
@@ -1340,6 +1384,7 @@ frameworks:
     domains: [b2b-copywriting, content-strategy, email-sequences, thought-leadership, sales-enablement]
     use_when: "writing B2B professional services copy — cold emails, thought leadership, landing pages, sales enablement — that needs to stand out from corporate noise"
     helpful_documents: ["positioning", "brand-voice"]
+    deliverable_type: content
 
   - id: bowtie-funnel
     name: "the Bowtie Funnel"
@@ -1349,6 +1394,7 @@ frameworks:
     domains: [revenue-architecture, gtm-strategy, sales-process, customer-success, saas-metrics]
     use_when: "a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math"
     helpful_documents: ["revenue metrics", "customer segmentation"]
+    deliverable_type: analysis
 
   - id: 6-elements-sdr
     name: "the 6 Elements of the Sales Development Playbook"
@@ -1358,6 +1404,7 @@ frameworks:
     domains: [sales-development, sdr-org-design, pipeline-generation, sales-enablement, b2b-sales]
     use_when: "a revenue leader needs to diagnose why their SDR / pipeline-generation function is underperforming — pipeline shortfall, rep churn, scale transition — and wants a structured walk through the six design elements before hiring more reps"
     helpful_documents: ["current SDR org chart", "SDR quota and comp plan", "ramp and tenure data", "last 90 days meetings-held and opportunity conversion"]
+    deliverable_type: plan
 
   - id: 5-gtm-motions-digital-health
     name: "the 5 GTM Motions for Digital Health"
@@ -1367,6 +1414,7 @@ frameworks:
     domains: [digital-health, healthcare-gtm, enterprise-sales, healthcare-product-strategy, payer-provider-sales]
     use_when: "a digital health founder is selecting or refining their go-to-market motion, running multiple motions in parallel with unclear progress, or preparing for a fundraise and needs to commit to a single primary motion backed by matching product, evidence, buyer, and runway assumptions"
     helpful_documents: ["current pitch deck", "sales pipeline by segment", "clinical evidence inventory (case studies / outcomes data / RCTs)", "runway and fundraising plan", "integration roadmap (EHR / payer / revenue-cycle)"]
+    deliverable_type: plan
 
   - id: reverse-engineered-brand
     name: "Reverse-Engineered Brand"
@@ -1377,6 +1425,7 @@ frameworks:
     use_when: "an organization is building its first canonical brand/ folder from a public URL and optional supplementary content"
     required_documents: ["a public URL for the org (homepage or About page)"]
     helpful_documents: ["a local folder path with supplementary content (past decks, customer interviews, sample copy, internal docs)"]
+    deliverable_type: analysis
 
   - id: buyer-persona
     name: "Buyer Persona"
@@ -1387,6 +1436,7 @@ frameworks:
     use_when: "an organization needs to characterize a specific role on the buying committee (champion, mobilizer, blocker, approver)"
     required_documents: ["the role being profiled (e.g., CMO, VP-Ops, Chief People Officer)"]
     helpful_documents: ["customer research", "interview transcripts", "competitor positioning"]
+    deliverable_type: analysis
 
   - id: messaging-distillation
     name: "Messaging Distillation"
@@ -1397,6 +1447,7 @@ frameworks:
     use_when: "positioning and narrative are complete and the org needs copy-ready language for decks, pages, emails, and one-pagers"
     required_documents: ["completed strategy/positioning.md (5-components output)"]
     helpful_documents: ["strategy/narrative.md", "personas/*.md", "proof/proof-points.md", "sample existing copy"]
+    deliverable_type: content
 
   - id: brand-voice
     name: "Brand Voice"
@@ -1407,6 +1458,7 @@ frameworks:
     use_when: "an organization has existing copy and needs to extract a documented brand voice + terminology contract"
     required_documents: ["3–10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales emails)"]
     helpful_documents: ["competitor copy samples", "category-name and tagline from messaging.md"]
+    deliverable_type: content
 
   - id: proof-points-audit
     name: "Proof Points Audit"
@@ -1417,6 +1469,7 @@ frameworks:
     use_when: "an organization needs to inventory and verify every quantitative or proof-shaped claim in its customer-facing copy"
     required_documents: ["existing customer-facing copy (homepage, deck, one-pager)"]
     helpful_documents: ["customer interview transcripts", "case study drafts", "third-party reports", "regulatory filings"]
+    deliverable_type: analysis
 
   - id: competitive-battle-card
     name: "Competitive Battle Card"
@@ -1427,3 +1480,4 @@ frameworks:
     use_when: "positioning and messaging are complete and the org needs a salesperson's working battle card for the named competitors"
     required_documents: ["completed strategy/positioning.md (Component 1: competitive alternatives)", "completed language/messaging.md (value-prop phrasings)"]
     helpful_documents: ["customer win/loss interviews", "competitor public materials"]
+    deliverable_type: content
