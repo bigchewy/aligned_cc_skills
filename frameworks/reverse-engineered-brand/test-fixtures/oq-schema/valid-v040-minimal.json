@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.4.0",
+  "source_counts": { "total": 3, "raw_material": 2, "primary_research": 1 },
+  "source_narratives": {
+    "raw_material": "Two marketing decks. No product specs.",
+    "primary_research": "One founder interview transcript. No buyer interviews."
+  },
+  "folders": [
+    {
+      "id": "strategy",
+      "label": "Strategy",
+      "status": "Partial",
+      "grade": 3,
+      "summary": "Working hypothesis converges on spreadsheets as the primary competitive alternative. Category framing remains open. Two P0 questions need resolution before drafts can ship.",
+      "p0_count": 2,
+      "p1_count": 1,
+      "p2_count": 0,
+      "framework_dispatches": [
+        { "framework_id": "5-components-positioning", "fills": ["strategy/positioning.md"] }
+      ],
+      "provided_summary": "1 founder interview, 2 marketing decks, no recorded sales calls.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" },
+        { "tier": "recommended", "ask": "Win/loss notes from the last 6-12 months" }
+      ]
+    }
+  ],
+  "behavioral_alternatives": [],
+  "competitors": [],
+  "open_questions": []
+}

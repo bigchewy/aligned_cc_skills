@@ -572,7 +572,7 @@ git commit -m "docs(oq-schema): bump to v0.4.0 with input_asks and provided_summ
 
 ---
 
-### Task 11: Add v0.4.0 schema fixture + parser test
+### ✅ Task 11: Add v0.4.0 schema fixture + parser test
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/test-fixtures/oq-schema/valid-v040-minimal.json`
