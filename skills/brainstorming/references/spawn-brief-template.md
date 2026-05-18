@@ -24,7 +24,7 @@ Each entry in a Roadmap-mode `portfolio.md` uses this schema verbatim. Multiple 
 
 A user invoking `/aligned:brainstorming` against an entry pastes the **spawn-brief paragraph** (the `>` blockquote) as the prompt. The brainstorming router runs normal topic-keyword signal detection on the paragraph prose; the spawn-brief is authored to contain explicit mode-disambiguating keywords ("design...", "sequence...", "compare...") so detection routes correctly.
 
-`target_mode` is **for the human reader and for documentation**, not consumed by the router (no parsing layer exists). If signal detection misses, the user gets the standard 5-way disambiguation question.
+`target_mode` is **for the human reader and for documentation**, not consumed by the router (no parsing layer exists). If signal detection misses, the always-ask 4-mode confirmation question presents with no pre-selected mode.
 
 `/aligned:writing-plans` is **not** a portfolio.md consumer. The chain is:
 *portfolio item → brainstorming → design doc → writing-plans → implementation plan*
