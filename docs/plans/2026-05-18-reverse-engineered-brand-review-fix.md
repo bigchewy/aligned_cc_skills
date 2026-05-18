@@ -1165,7 +1165,7 @@ git commit -m "feat(reverse-engineered-brand): voice-rewrite Step 0 shape transf
 
 ---
 
-### Task 11: Create `group-bullets.md` sub-agent prompt template
+### ✅ Task 11: Create `group-bullets.md` sub-agent prompt template
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/group-bullets.md`
