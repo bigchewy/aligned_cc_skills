@@ -1480,7 +1480,9 @@ git commit -m "docs(reverse-engineered-brand): PHASE 2.4 documents .build resume
 
 ---
 
-### Task 15: End-to-end smoke test against existing brand corpus (deferred-skip if absent)
+### 🔄 Task 15: End-to-end smoke test against existing brand corpus (deferred-skip if absent)
+
+> BLOCKED: Step 2 requires an interactive Claude session to run `/aligned:use-framework reverse-engineered-brand`; autopilot cannot invoke it unattended. Brand folder confirmed present at ~/Documents/Obsidian/marley/brand/. Operator must run smoke test manually post-merge.
 
 **Files:**
 - Read-only: `~/Documents/Obsidian/marley/brand/` (if present); rerun the framework against it
