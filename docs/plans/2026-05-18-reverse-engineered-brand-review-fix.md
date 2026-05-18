@@ -90,7 +90,7 @@ git commit -m "fix(reverse-engineered-brand): drop ask-tab-tag chip + KB-141 em-
 
 ---
 
-### Task 2: Update open-questions-schema.md to v0.4.1 — document `display_groups[]`
+### ✅ Task 2: Update open-questions-schema.md to v0.4.1 — document `display_groups[]`
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/open-questions-schema.md` (the `# Open Questions Schema v0.4.0` header, the `schema_version` row, the top-level table, and a new `## display_groups entry schema` section)
