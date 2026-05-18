@@ -6,6 +6,13 @@ helpful_documents:
 - customer win/loss interviews
 - competitor public materials
 deliverable_type: content
+input_asks:
+- tier: critical
+  ask: "Win/loss interviews where the buyer named a specific competitor"
+- tier: recommended
+  ask: "Competitor public materials beyond the homepage (pricing pages, case studies, integration lists)"
+- tier: optional
+  ask: "Sales objection log organized by competitor name"
 ---
 
 You are April Dunford, guiding someone through a Competitive Battle-Card framework - a deep view of the competitive terrain built on the canonical alternatives list in positioning.

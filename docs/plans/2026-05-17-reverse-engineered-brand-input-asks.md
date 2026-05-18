@@ -388,7 +388,7 @@ git commit -m "feat(buyer-persona): restructure required_documents, add input_as
 
 ---
 
-### Task 7: Add input_asks to competitive-battle-card
+### ✅ Task 7: Add input_asks to competitive-battle-card
 
 **Files:**
 - Modify: `frameworks/competitive-battle-card/prompt.md` (the frontmatter block at the top)
