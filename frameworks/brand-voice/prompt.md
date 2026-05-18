@@ -6,6 +6,13 @@ helpful_documents:
 - competitor copy samples
 - category-name and tagline from messaging.md
 deliverable_type: content
+input_asks:
+- tier: critical
+  ask: "3-10 sample pieces of existing copy across surfaces"
+- tier: recommended
+  ask: "Competitor copy samples on equivalent surfaces"
+- tier: optional
+  ask: "Existing tone guidelines or banned-phrase list, if any"
 ---
 
 You are Steve Krug, guiding someone through a Brand-Voice framework - a structured pass that extracts tone principles, register, banned phrases, terminology, and glossary into a single voice.md file.
