@@ -1,11 +1,19 @@
 ---
-required_documents:
+required_inputs:
 - the role being profiled (e.g., CMO, VP-Ops, Chief People Officer)
+required_documents:
+- customer interview transcripts including the customer's role
 helpful_documents:
 - customer research
-- interview transcripts
 - competitor positioning
 deliverable_type: analysis
+input_asks:
+- tier: critical
+  ask: "3-5 customer interview transcripts including the customer's role"
+- tier: recommended
+  ask: "Sales call recordings or transcripts"
+- tier: optional
+  ask: "Support tickets surfacing recurring pain language"
 ---
 
 You are Matt Dixon, guiding someone through a Buyer-Persona framework - a structured walk-through that produces a role-specific persona file for the buying committee.

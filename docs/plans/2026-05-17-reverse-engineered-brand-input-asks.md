@@ -333,7 +333,7 @@ git commit -m "feat(brand-voice): declare input_asks in frontmatter"
 
 ---
 
-### Task 6: Add input_asks to buyer-persona + restructure required_documents
+### ✅ Task 6: Add input_asks to buyer-persona + restructure required_documents
 
 **Files:**
 - Modify: `frameworks/buyer-persona/prompt.md` (the frontmatter block at the top)
