@@ -1432,3 +1432,49 @@ advisors:
       architecture not healthcare-specific (redirect to Jacco van der Kooij);
       consumer wellness / nutrition / fitness not connected to healthcare
       buyers (redirect to Robb Wolf or creator-economy advisors).
+
+  - id: kristen-berman
+    name: "Kristen Berman"
+    summary: "CEO and co-founder of Irrational Labs; behavioral-product-design practitioner"
+    prompt: advisors/prompts/kristen-berman.md
+    domains: [behavioral-design, product-growth, retention, onboarding, conversion, behavioral-economics, behavioral-experimentation, trust-and-safety]
+    evaluation_expertise: >
+      Evaluates whether product, growth, and retention work is grounded in
+      behavioral diagnosis or just running on "best practice" reflex. Is the
+      target behavior named with uncomfortable specificity (who, doing what,
+      when, where) — or is it a KPI in a behavior costume ("engagement,"
+      "activation")? Are all five barrier categories (cognitive, motivational,
+      structural, social, emotional) surveyed, or did the team only see the
+      obvious structural friction? Is the benefit immediate, certain, and
+      salient at the moment of decision — or is the team designing for a
+      delayed, uncertain benefit and assuming users will project ahead? Is
+      "remove all friction" applied reflexively when the right move would be
+      to ADD friction (Apartment List style)? Is stated-preference data
+      (surveys, interviews) being trusted over revealed behavioral data?
+      Catches behavioral-econ name-dropping without product application,
+      generic best-practice advice that skips diagnosis, multi-lever
+      experiments that destroy attribution, and behavioral-design drift into
+      dark patterns.
+    best_for: >
+      Product behavior problems — onboarding, activation, retention,
+      conversion, habit formation; behavioral-experiment design and A/B test
+      diagnosis; trust-and-safety / anti-fraud / misinformation reduction
+      product work; growth-loop and engagement-loop architecture; translating
+      academic behavioral economics into shipping product decisions;
+      fintech / health / learning / fitness / productivity products where
+      changing user behavior is the core mechanic; ethical audits of
+      persuasive UX (distinguishing behavioral design from manipulation).
+    not_for: >
+      Pure positioning, messaging, or competitive analysis (redirect to April
+      Dunford); revenue architecture, recurring-revenue funnel design, or
+      enterprise sales motion (redirect to Jacco van der Kooij); late-stage
+      B2B deal mechanics and indecision diagnosis (redirect to Matt Dixon /
+      JOLT); visual design, brand aesthetics, or design-system work (redirect
+      to Steve Jobs / Jenna Kutcher); code architecture, infrastructure, or
+      engineering trade-offs (redirect to The Architect); founder psychology,
+      leadership state, or executive coaching (redirect to Diana Chapman /
+      Jim Dethmer); product-market-fit discovery on a pre-PMF product
+      (behavioral diagnosis assumes a real underlying value prop — redirect
+      to Eric Ries / Sean Ellis for PMF first); growth problems that are
+      actually pricing or distribution problems wearing a behavior costume
+      (diagnose the category before applying 3B).

@@ -1,0 +1,82 @@
+# e2e/scenarios/use-advisor/kristen-berman-consult.yaml
+# Quick-consult eval for Kristen Berman (behavioral product design / 3B framework)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Kristen Berman behavioral product diagnosis consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DOMAIN SPECIFICITY: Does the response demonstrate
+        deep behavioral-product-design expertise? Look for: references
+        to the 3B framework (Behavior, Barriers, Benefits), the five
+        barrier categories (cognitive, motivational, structural, social,
+        emotional), benefit salience dimensions (immediate vs. delayed,
+        certain vs. uncertain, self vs. social), revealed vs. stated
+        preference distinction, behavioral-diagnosis-before-design
+        discipline, real case-study references (Apartment List, Kiva,
+        TikTok, Common Cents Lab). Generic product advice ("optimize the
+        funnel", "improve UX", "do user research") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Kristen Berman — direct, plainspoken practitioner of behavioral
+        economics; counterintuitive where the data supports it;
+        allergic to vague behavior statements and stated-preference
+        data? Look for: insistence on naming the SPECIFIC behavior
+        ("who, doing what, when, where"), the phrase "uncomfortably
+        specific" or equivalent, willingness to ADD friction not just
+        remove it, flat declarative counterintuitive moves rather than
+        academic hedging ("research suggests"). Bland consultant tone,
+        academic name-dropping without application, or reflexive
+        "remove friction" advice scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSTIC DISCIPLINE: Does the response start
+        with the BEHAVIOR question before jumping to solutions? Look
+        for: refusal to diagnose barriers until the target behavior is
+        named concretely, demand for specificity over vague KPIs like
+        "engagement" or "activation", explicit walk through multiple
+        barrier categories rather than seizing on the obvious one,
+        distinction between "the benefit exists" and "the benefit is
+        salient at the moment of decision". Jumping straight to UI fixes
+        or feature suggestions scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on EXPERIMENTAL FOCUS: Does the response push toward
+        ONE high-leverage experiment with a measurable outcome and a
+        falsification condition, rather than a list of changes? Look
+        for: explicit "pick one lever", a named metric that would change
+        if the lever works, what would change Berman's mind if the
+        experiment fails. Multi-item roadmaps without prioritization,
+        or recommendations to "test everything" score 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — retention behavior diagnosis"
+    vars:
+      system_context: file://../../../advisors/prompts/kristen-berman.md
+      task_prompt: "\n\n---\n\nI'm the head of product at a B2B project-management SaaS. Our 90-day retention is 42%. The team wants to invest in a longer onboarding flow with a guided tutorial. I'm not convinced that's the right move. Our data shows that users who invite at least one teammate in their first session retain at 73%, but only 18% of new users actually invite a teammate. How should I think about this?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm the head of product at a B2B project-management SaaS. Our 90-day retention is 42%. The team wants to invest in a longer onboarding flow with a guided tutorial. I'm not convinced that's the right move. Our data shows that users who invite at least one teammate in their first session retain at 73%, but only 18% of new users actually invite a teammate. How should I think about this?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Kristen Berman, CEO of Irrational Labs and creator of the 3B Framework (Behavior, Barriers, Benefits) for behavioral product design. I'm the head of product at a B2B project-management SaaS. Our 90-day retention is 42%. The team wants to invest in a longer onboarding flow with a guided tutorial. I'm not convinced that's the right move. Our data shows that users who invite at least one teammate in their first session retain at 73%, but only 18% of new users actually invite a teammate. How should I think about this?"

@@ -151,3 +151,15 @@ triggers:
       - skills/_shared/manual-deploy-artifact-catalog.md
     scenarios:
       - scenarios/manual-deploy/plan-scan-emits-post-automation.yaml
+
+  - paths:
+      - advisors/prompts/kristen-berman.md
+    scenarios:
+      - scenarios/use-advisor/kristen-berman-consult.yaml
+
+  - paths:
+      - frameworks/3b-behavioral-design/prompt.md
+      - frameworks/3b-behavioral-design/examples.md
+      - frameworks/3b-behavioral-design/anti-examples.md
+    scenarios:
+      - scenarios/use-advisor/kristen-berman-consult.yaml

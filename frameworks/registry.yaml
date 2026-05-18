@@ -1504,3 +1504,14 @@ frameworks:
     required_documents: ["completed strategy/positioning.md (Component 1: competitive alternatives)", "completed language/messaging.md (value-prop phrasings)"]
     helpful_documents: ["customer win/loss interviews", "competitor public materials"]
     deliverable_type: content
+
+  - id: 3b-behavioral-design
+    name: "3B Framework (Behavior, Barriers, Benefits)"
+    advisor: kristen-berman
+    purpose: "a behavioral-science diagnostic for product behavior problems that names the specific target behavior, audits five categories of barriers, and tests benefit salience to surface the single highest-leverage experiment"
+    category: behavioral-design
+    domains: [behavioral-design, product-growth, retention, onboarding, conversion]
+    use_when: "a product, growth, or CX team faces a 'users aren't doing the thing' problem and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit, or changing the target behavior itself"
+    helpful_documents: ["product analytics", "user research notes", "the specific flow or screen in question"]
+    deliverable_type: analysis
+    default_critic_advisors: [kristen-berman, the-architect]

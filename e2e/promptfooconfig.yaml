@@ -48,3 +48,4 @@ scenarios:
   - file://scenarios/use-skill/deliverable-type-dispatch.yaml
   - file://scenarios/use-skill/framework-runner-extraction.yaml
   - file://scenarios/use-skill/use-framework-backward-compat.yaml
+  - file://scenarios/use-advisor/kristen-berman-consult.yaml
