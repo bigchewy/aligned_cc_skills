@@ -1259,7 +1259,7 @@ git commit -m "feat(reb): add PHASE 3.2c input-ask verification gate"
 
 ---
 
-### Task 18: Bump schema_version to 0.4.0 in PHASE 3.6 JSON template and version.yaml
+### ✅ Task 18: Bump schema_version to 0.4.0 in PHASE 3.6 JSON template and version.yaml
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (Step 3.6 block — the `version.yaml` template and the `.open-questions.json` example)

@@ -476,7 +476,7 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
    - `audiences/channels/employer.md` → Classified from source material against `audience-taxonomy.md`. Confidence: {high|medium|low}.
    ```
 
-**`{brand-folder-path}/version.yaml`** — `schema_version: "0.3.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
+**`{brand-folder-path}/version.yaml`** — `schema_version: "0.4.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
 
 **`{brand-folder-path}/contracts.yaml`** — copy canonical contracts from `docs/brand-folder-spec.md § contracts.yaml`.
 
@@ -488,13 +488,13 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
 4. **`source_narratives.raw_material`** — write a 1-3 sentence narrative naming what's strong and what's thin in the raw-material corpus (which document types dominate, which are absent, what the orchestrator could and could not get signal on). Example shape: "Raw material is dominated by 18 marketing/sales decks and 5 press articles; product specs and internal strategy memos are absent; signal strength is strongest on positioning and weakest on pricing."
 5. **`source_narratives.primary_research`** — same shape for primary research (customer/persona evidence). Name interview counts, whether buyer interviews exist, and which voices are missing.
 
-These are required fields in v0.3.0. Compute them from registry metadata only — do not read source bodies (context-bloat guard).
+These are required fields in v0.4.0. Compute them from registry metadata only — do not read source bodies (context-bloat guard).
 
-**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.3.0"`:
+**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.4.0"`:
 
 ```json
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "source_counts": { "total": 39, "raw_material": 30, "primary_research": 9 },
   "source_narratives": {
     "raw_material": "...",
@@ -512,6 +512,11 @@ These are required fields in v0.3.0. Compute them from registry metadata only �
       "p2_count": 1,
       "framework_dispatches": [
         { "framework_id": "5-components-positioning", "fills": ["strategy/positioning.md"] }
+      ],
+      "provided_summary": "1 founder interview, 2 case study drafts, no recorded sales calls.",
+      "input_asks": [
+        { "tier": "critical", "ask": "<voice-rewritten ask>" },
+        { "tier": "recommended", "ask": "<voice-rewritten ask>" }
       ]
     }
   ],
