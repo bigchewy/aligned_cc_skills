@@ -1249,7 +1249,7 @@
       var t = c.textContent.trim();
       return t.replace(/^conf:\s*/i, '');
     }
-    function cardId(card) { return card.getAttribute('data-id') || '?'; }
+    function cardId(card) { return card.getAttribute('data-display-id') || card.getAttribute('data-id') || '?'; }
 
     function buildPasteBack(folder) {
       var framework = FRAMEWORK_BY_FOLDER[folder];
@@ -1296,7 +1296,7 @@
       if (approved.length) {
         lines.push('APPROVED ASSUMPTIONS (do not revisit):');
         approved.forEach(function(a) {
-          lines.push('- Q-' + a.id + ' (' + a.pri + ', ' + a.conf + '): ' + a.title);
+          lines.push('- ' + a.id + ' (' + a.pri + ', ' + a.conf + '): ' + a.title);
         });
         lines.push('');
       }
@@ -1305,7 +1305,7 @@
         lines.push('REJECTED ASSUMPTIONS (please reconsider with correction):');
         rejected.forEach(function(r) {
           var correction = r.correction ? r.correction : '<correction pending — user did not type one>';
-          lines.push('- Q-' + r.id + ' (' + r.pri + ', ' + r.conf + ') — corrected to: "' + correction + '"');
+          lines.push('- ' + r.id + ' (' + r.pri + ', ' + r.conf + ') — corrected to: "' + correction + '"');
         });
         lines.push('');
       }
@@ -1314,7 +1314,7 @@
         lines.push('ANSWERED QUESTIONS (use these answers verbatim):');
         answered.forEach(function(q) {
           var ans = q.answer ? q.answer : '<answer pending — user did not type one>';
-          lines.push('- Q-' + q.id + ' (' + q.pri + '): "' + ans + '"');
+          lines.push('- ' + q.id + ' (' + q.pri + '): "' + ans + '"');
         });
         lines.push('');
       }
@@ -1322,14 +1322,14 @@
       if (skipped.length) {
         lines.push('SKIPPED QUESTIONS (drop from list — not relevant):');
         skipped.forEach(function(q) {
-          lines.push('- Q-' + q.id);
+          lines.push('- ' + q.id);
         });
         lines.push('');
       }
 
       if (leave.length) {
         lines.push('REMAINING QUESTIONS (please ask interactively, P0 → P1 → P2):');
-        var ids = leave.map(function(q) { return 'Q-' + q.id; }).join(', ');
+        var ids = leave.map(function(q) { return q.id; }).join(', ');
         lines.push('- ' + ids);
         lines.push('');
       }
@@ -1635,11 +1635,17 @@
       var confLabel = (q.confidence || 'low').toUpperCase().replace('MEDIUM', 'MED');
       var summaryText = deriveSummary(q);
       var detailText = kind === 'assumption' ? (q.inferred_value || q.question || '') : (q.question || q.inferred_value || '');
-      var cardAttrs = { 'data-id': q.global_id || q.id, 'data-folder': folderId, 'data-kind': kind };
+      var displayId = q._display_id || q.global_id || q.id;
+      var cardAttrs = {
+        'data-id': q.global_id || q.id,
+        'data-display-id': displayId,
+        'data-folder': folderId,
+        'data-kind': kind
+      };
       if (kind === 'assumption') cardAttrs['data-state'] = 'approved';
       var card = sa(ce('div', 'oq-card'), cardAttrs);
       var hdr = ce('div', 'oq-card-header');
-      hdr.appendChild(ap(ce('span', 'oq-id'), tx(q.global_id || q.id)));
+      hdr.appendChild(ap(ce('span', 'oq-id'), tx(displayId)));
       hdr.appendChild(chip(impact, 'pri ' + priClass(impact)));
       hdr.appendChild(chip('conf: ' + confLabel, confClass(q.confidence || 'low')));
       card.appendChild(hdr);
@@ -1783,7 +1789,20 @@
       if (!assumptions.length && !questions.length) el.appendChild(ap(ce('div', 'empty-stub'), tx('No open questions for this folder.')));
     }
 
+    // Assign A-N (assumption) and Q-N (question) display IDs to every OQ.
+    // Sequences are independent and global across the document. The OQ-N
+    // global_id is preserved on each card via data-id for traceability.
+    function assignDisplayIds() {
+      var oqs = OPEN_QUESTIONS.open_questions || [];
+      var aCount = 0, qCount = 0;
+      oqs.forEach(function(q) {
+        var kind = q.confidence === 'low' ? 'question' : 'assumption';
+        q._display_id = kind === 'assumption' ? ('A-' + (++aCount)) : ('Q-' + (++qCount));
+      });
+    }
+
     function renderAll() {
+      assignDisplayIds();
       renderExecNarrative();
       renderExecSnapshot();
       renderBehavioralAlternatives();
