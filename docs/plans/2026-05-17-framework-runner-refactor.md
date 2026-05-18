@@ -2075,7 +2075,7 @@ git commit -m "refactor(brainstorming): sweep references for 4-mode shape and ro
 
 ---
 
-### Task 23: Update `kickstart/SKILL.md` marketing copy + remaining doc cross-references
+### ✅ Task 23: Update `kickstart/SKILL.md` marketing copy + remaining doc cross-references
 
 **Files:**
 - Modify: `skills/kickstart/SKILL.md` (L196)

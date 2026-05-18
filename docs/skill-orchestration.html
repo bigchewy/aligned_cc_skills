@@ -335,17 +335,16 @@ graph LR
     <div class="sub-panel" id="sub-pl-brainstorming">
       <div class="section">
         <h2>Brainstorming — Mode Detection &amp; Design<span class="badge">Entry Point</span></h2>
-        <p class="description">Every brainstorming session starts with mode detection, dispatches a background project scan, then follows a mode-specific Q&amp;A process. All five modes converge at the post-design phase.</p>
+        <p class="description">Every brainstorming session starts with mode detection, dispatches a background project scan, then follows a mode-specific Q&amp;A process. All four modes converge at the post-design phase.</p>
 
         <h3>Router</h3>
         <ul class="bullet-list">
           <li><strong>Software mode signals:</strong> features, APIs, architecture, code, testing, data models</li>
-          <li><strong>Business mode signals:</strong> strategy, sales, positioning, pricing, decisions, stakeholders, "why isn't this working"</li>
+          <li><strong>Authoring mode signals:</strong> curriculum, program design, sequence content, exercise sequencing, framework prompt authoring, voice migration, strategy, sales, positioning, pricing, decisions, stakeholders, "why isn't this working"</li>
           <li><strong>Research mode signals:</strong> literature review, evidence map, comparative review, instrument selection, framework comparison, KB design</li>
-          <li><strong>Authoring mode signals:</strong> curriculum, program design, sequence content, exercise sequencing, framework prompt authoring, voice migration</li>
-          <li><strong>Planning mode signals:</strong> roadmap, prioritization, portfolio, "what to build next", multi-feature build, "too big for one brainstorm"</li>
-          <li><strong>Disambiguation:</strong> Software vs Authoring on deliverable shape (code vs content); Business vs Planning on stance (diagnostic vs generative); Authoring vs Research on output (arrangement vs evidence map)</li>
-          <li><strong>Tiebreaker:</strong> environment — code repo suggests Software, docs-only suggests Business, knowledge folders suggest Research, content registries suggest Authoring, prior roadmaps suggest Planning</li>
+          <li><strong>Roadmap mode signals:</strong> roadmap, prioritization, portfolio, "what to build next", multi-feature build, "too big for one brainstorm"</li>
+          <li><strong>Disambiguation:</strong> Software vs Authoring on deliverable shape (code vs content); Authoring vs Research on output (arrangement vs evidence map); Authoring vs Roadmap on scope (single deliverable vs multi-feature portfolio)</li>
+          <li><strong>Tiebreaker:</strong> environment — code repo suggests Software, knowledge folders suggest Research, content registries suggest Authoring, prior roadmaps suggest Roadmap</li>
           <li><strong>Project Scanner:</strong> dispatched immediately in background — does not block Q&amp;A</li>
         </ul>
         <div class="diagram-container">
@@ -353,21 +352,19 @@ graph LR
 graph LR
     Start(["User invokes\nbrainstorming"]) --> Classify{Classify\ntopic}
     Classify -->|"Software\nsignals"| SWMode["Software\nmode"]
-    Classify -->|"Business\nsignals"| BizMode["Business\nmode"]
-    Classify -->|"Research\nsignals"| ResMode["Research\nmode"]
     Classify -->|"Authoring\nsignals"| AuthMode["Authoring\nmode"]
-    Classify -->|"Planning\nsignals"| PlanMode["Planning\nmode"]
-    Classify -->|"Mixed"| Ask["Ask 5-way\nclarifying Q"]
+    Classify -->|"Research\nsignals"| ResMode["Research\nmode"]
+    Classify -->|"Roadmap\nsignals"| RoadmapMode["Roadmap\nmode"]
+    Classify -->|"Mixed"| Ask["Ask 4-way\nclarifying Q"]
     Ask --> Classify
     Start --> Scan["Project Scanner\n(background)"]
 
     style Start fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
     style Classify fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
     style SWMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
-    style BizMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
     style ResMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
     style AuthMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
-    style PlanMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
+    style RoadmapMode fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
     style Ask fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
     style Scan fill:#f5f3ef,stroke:#555555,stroke-dasharray:4 2,color:#1a1a1a
           </pre>
@@ -443,11 +440,11 @@ graph LR
           <li><strong>Deliverable:</strong> sequenced design doc (curriculum, framework prompts, exercise programs)</li>
         </ul>
 
-        <h3>Planning Mode</h3>
+        <h3>Roadmap Mode</h3>
         <ul class="bullet-list">
           <li><strong>Strategy advisors:</strong> Christensen, Rumelt, Eric Ries (plus Cagan and Sisney when their advisor files are present — runtime-checked, no hard dependency)</li>
           <li><strong>Two-artifact output:</strong> roadmap + spawn-list portfolio. Each portfolio entry is a "spawn brief" (topic, mode, deliverable, scan emphasis) that seeds a future brainstorm</li>
-          <li><strong>Critique panel:</strong> dispatched against the planning-critique-checklist (9 criteria covering sequencing, dependencies, capacity, and risk)</li>
+          <li><strong>Critique panel:</strong> dispatched against the roadmap-critique-checklist (9 criteria covering sequencing, dependencies, capacity, and risk)</li>
           <li><strong>Deliverable:</strong> roadmap + spawn-list portfolio whose entries seed future single-mode brainstorms</li>
         </ul>
 
