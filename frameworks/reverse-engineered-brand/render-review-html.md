@@ -79,9 +79,12 @@ Read `{output-html-path}`. Assert all of the following:
 2. Both `<script>` opening tags are present
 3. No occurrence of `</script>` exists anywhere in the file except as the closing tag(s) for the script block(s) — the sanitization contract from Step 3 must hold
 4. File ends with `</html>`
-5. No raw token literal `{open-questions-json}`, `{brand-folder-path}`, or `{org-name}` remains (substitution was complete)
+5. No raw token literal `{open-questions-json}`, `{brand-folder-path}`, or `{org-name}` remains (the three substitutions in Step 5 were complete)
+6. **Catch-all token check.** Scan for ANY remaining bracket-delimited token matching the regex `/\{[a-zA-Z][a-zA-Z0-9_-]*\}/`. A match indicates a template token that drifted from the substitution table (e.g., `{Org Name}` Title-Case form, or a newly added template token that no substitution covers). Fail with `NOTES: unsubstituted_token — {matched_string} at byte {N}`.
 
 **Abort-before-open contract:** If any check fails, abort. Return `STATUS: verification_failed` with `NOTES` naming the failed check and the offending byte range. Do NOT call `open` on a malformed file.
+
+**Why Check 6 exists.** The Step 5 substitution table is a whitelist of three known tokens. If the template adds a fourth token (or an existing token's case/format drifts), Step 5 silently does nothing for it and Check 5's literal-string scan misses it. Check 6's regex is the failsafe — it catches drift without anyone having to remember to update Check 5's whitelist.
 
 ### Step 8: Open the file
 
@@ -103,6 +106,6 @@ Return a compact status block of ≤ 80 words:
 STATUS: success | verification_failed
 OUTPUT_PATH: {output-html-path}
 BYTES_WRITTEN: {n}
-VERIFICATION_CHECKS_PASSED: {N}/5
-NOTES: (only on failure — name the failed check + offending byte range)
+VERIFICATION_CHECKS_PASSED: {N}/6
+NOTES: (only on failure — name the failed check + offending byte range. Also surface any non-blocking shape warnings from Step 2 here.)
 ```
