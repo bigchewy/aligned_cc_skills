@@ -51,7 +51,7 @@ Each task lists its own files in detail. This is the union, so the reader knows 
 
 ---
 
-### Task 1: Add input_asks frontmatter coverage test (failing)
+### ✅ Task 1: Add input_asks frontmatter coverage test (failing)
 
 **Files:**
 - Create: `tools/test_input_asks_coverage.py`
