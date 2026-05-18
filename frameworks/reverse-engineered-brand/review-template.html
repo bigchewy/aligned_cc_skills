@@ -233,11 +233,15 @@
       color: var(--color-secondary);
       line-height: 1.55;
     }
+    .section-list .bullets-cell .bullet { font-size: 0.9rem; line-height: 1.55; color: var(--color-foreground); margin: 0 0 4px 0; }
+    .section-list .bullet .b-label { color: var(--color-dimmed); font-weight: 600; }
+    .section-list .bullet:last-child { margin-bottom: 0; }
+    .section-list .row-caret { color: var(--color-dimmed); float: right; font-size: 1.1rem; }
 
     /* Grade pills (1-5, color-coded). Used in Sections at a Glance and per-folder banners. */
     .grade {
       display: inline-block;
-      min-width: 28px;
+      min-width: 36px;
       padding: 4px 8px;
       border-radius: 6px;
       font-weight: 700;
@@ -1696,7 +1700,7 @@
     function gradePill(grade) {
       var el = ce('span', 'grade grade-' + grade);
       el.setAttribute('title', GRADE_TOOLTIP[grade] || ('Grade ' + grade));
-      el.appendChild(tx(String(grade)));
+      el.appendChild(tx(String(grade) + '/5'));
       return el;
     }
 
@@ -1704,38 +1708,46 @@
       var el = document.getElementById('sections-at-a-glance');
       if (!el) return;
       clearEl(el);
-      var folders = OPEN_QUESTIONS.folders || [];
-      if (!folders.length) {
-        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No folders found.')));
+      var groups = resolveDisplayGroups();
+      if (!groups.length) {
+        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No groups found.')));
         return;
       }
       var table = ce('table', 'section-list');
       var tbody = ce('tbody');
-      folders.forEach(function(f) {
-        var sc = statusClass(f.status);
-        var badge = f.status === 'GAP' ? 'No owning framework' : (f.status || '—');
-        var row = sa(ce('tr', 'section-row'), { role: 'link', tabindex: '0', 'data-folder': f.id });
-        row.addEventListener('click', function() { switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      groups.forEach(function(g) {
+        var row = sa(ce('tr', 'section-row'), { role: 'link', tabindex: '0', 'data-group': g.id });
+        row.addEventListener('click', function() { switchTab(g.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
         row.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(g.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         });
 
         var gradeCell = ce('td', 'section-grade-cell');
-        gradeCell.appendChild(gradePill(folderGrade(f)));
+        gradeCell.appendChild(gradePill(g.grade));
 
         var areaCell = ce('td', 'section-area-cell');
-        var labelEl = ce('span', 'label section-link');
-        labelEl.appendChild(tx(f.label || f.id));
-        areaCell.appendChild(labelEl);
-        areaCell.appendChild(ap(ce('span', 'status-badge ' + sc), tx(badge)));
+        areaCell.appendChild(ap(ce('span', 'label section-link'), tx(g.label)));
 
-        var summaryCell = ce('td', 'section-summary-cell');
-        var summary = f.summary || AREA_DESCRIPTIONS_FALLBACK[f.id];
-        if (summary) summaryCell.appendChild(ap(ce('p', 'section-desc'), tx(summary)));
+        var bulletsCell = ce('td', 'section-summary-cell bullets-cell');
+        if (g.headline_claim) {
+          var b1 = ce('p', 'bullet');
+          b1.appendChild(ap(ce('span', 'b-label'), tx('What we see: ')));
+          b1.appendChild(tx(g.headline_claim));
+          bulletsCell.appendChild(b1);
+        }
+        if (g.thinnest_gap) {
+          var b2 = ce('p', 'bullet');
+          b2.appendChild(ap(ce('span', 'b-label'), tx("What we're missing: ")));
+          b2.appendChild(tx(g.thinnest_gap));
+          bulletsCell.appendChild(b2);
+        }
+        var caret = sa(ce('span', 'row-caret'), { 'aria-hidden': 'true' });
+        caret.appendChild(tx(' ›'));
+        bulletsCell.appendChild(caret);
 
         row.appendChild(gradeCell);
         row.appendChild(areaCell);
-        row.appendChild(summaryCell);
+        row.appendChild(bulletsCell);
         tbody.appendChild(row);
       });
       table.appendChild(tbody);
