@@ -143,7 +143,7 @@ git commit -m "test: add input_asks frontmatter coverage test (failing)"
 
 ---
 
-### Task 2: Add input_asks to 5-components-positioning
+### ✅ Task 2: Add input_asks to 5-components-positioning
 
 **Files:**
 - Modify: `frameworks/5-components-positioning/prompt.md` (the frontmatter block at the top)
