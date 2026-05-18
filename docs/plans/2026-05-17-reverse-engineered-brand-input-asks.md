@@ -1519,7 +1519,7 @@ git commit -m "feat(template): add Inputs Needed sub-tab and per-tab callout she
 
 ---
 
-### Task 21: Template — wire JS to populate Inputs Needed list and per-tab callouts
+### ✅ Task 21: Template — wire JS to populate Inputs Needed list and per-tab callouts
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (append a renderer function inside the existing `<script>` block)
@@ -1701,7 +1701,7 @@ git commit -m "feat(template): wire DOM-safe JS for Inputs Needed and per-tab ca
 
 ---
 
-### Task 22: Run full test suite as final verification
+### ✅ Task 22: Run full test suite as final verification
 
 **Files:**
 - None modified.
