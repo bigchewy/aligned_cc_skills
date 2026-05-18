@@ -187,6 +187,7 @@ handle_signal() {
 }
 trap handle_signal INT TERM
 trap cleanup EXIT
+trap '' HUP  # ignore terminal hangup so a closed iTerm tab doesn't orphan an in-progress run
 
 start_system_sampler
 

@@ -111,6 +111,7 @@ handle_signal() {
 }
 trap handle_signal INT TERM
 trap cleanup EXIT
+trap '' HUP  # ignore terminal hangup so a closed iTerm tab doesn't orphan an in-progress run
 
 # --- Worktree-drift breadcrumb (debugs stale-worktree misdiagnoses) ---
 
@@ -217,8 +218,8 @@ write_done_with_summary() {
 
 check_all_settled_and_write_done() {
   local total settled
-  total="$(grep -cE '^### (✅|🔄|⏭️)?[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || echo 0)"
-  settled="$(grep -cE '^### (✅|⏭️)[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || echo 0)"
+  total="$(grep -cE '^### (✅|🔄|⏭️)?[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || true)"
+  settled="$(grep -cE '^### (✅|⏭️)[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || true)"
   if [ "$total" -gt 0 ] && [ "$total" -eq "$settled" ]; then
     write_done_with_summary
   fi

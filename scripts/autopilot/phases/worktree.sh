@@ -106,7 +106,7 @@ done < <(find "$PROJECT" -type l -name '.env*' \
 # alone — the using-git-worktrees skill writes a narrow Edit-only
 # settings.local.json in human-driven setups and we must not clobber it.
 settings_linked=0
-for settings_rel in .claude/settings.local.json .claude/settings.json .mcp.json; do
+for settings_rel in .claude/settings.local.json .claude/settings.json; do
   src="$PROJECT/$settings_rel"
   dest="$WORKTREE/$settings_rel"
   if [ -f "$src" ] && [ ! -e "$dest" ]; then
@@ -116,6 +116,45 @@ for settings_rel in .claude/settings.local.json .claude/settings.json .mcp.json;
     settings_linked=$((settings_linked + 1))
   fi
 done
+
+# .mcp.json is written as a filtered copy, not a symlink. Browser-automation
+# servers (Playwright, Puppeteer, Chromium, …) are stripped: autopilot only
+# performs file I/O and command execution; these runtimes launch Chromium
+# eagerly at every claude spawn, consuming ~3 GB RSS per iteration and
+# causing swap exhaustion. Root cause confirmed via process logs 2026-05-18.
+if [ -f "$PROJECT/.mcp.json" ] && [ ! -e "$WORKTREE/.mcp.json" ]; then
+  python3 - "$PROJECT/.mcp.json" "$WORKTREE/.mcp.json" <<'PYEOF'
+import json, sys, re
+
+BROWSER_PATTERN = re.compile(r'playwright|puppeteer|browser|chromium', re.IGNORECASE)
+
+with open(sys.argv[1]) as f:
+    config = json.load(f)
+
+servers = config.get("mcpServers", {})
+filtered = {
+    k: v for k, v in servers.items()
+    if not (
+        BROWSER_PATTERN.search(k) or
+        any(BROWSER_PATTERN.search(str(a)) for a in v.get("args", []))
+    )
+}
+
+removed = sorted(set(servers) - set(filtered))
+if removed:
+    print("Filtered browser-automation MCP servers from worktree .mcp.json: " + ", ".join(removed))
+
+config["mcpServers"] = filtered
+with open(sys.argv[2], "w") as f:
+    json.dump(config, f, indent=2)
+PYEOF
+  if [ "$?" -ne 0 ]; then
+    echo "WARNING: Could not filter .mcp.json — symlinking as-is." >&2
+    ln -s "$PROJECT/.mcp.json" "$WORKTREE/.mcp.json"
+  fi
+  settings_linked=$((settings_linked + 1))
+fi
+
 if [ "$settings_linked" -eq 0 ] && [ ! -e "$WORKTREE/.claude/settings.local.json" ]; then
   echo "WARNING: No project-level Claude settings or .mcp.json to mirror from main." >&2
   echo "         Sub-Claudes will inherit only user-level (~/.claude/) permissions." >&2
