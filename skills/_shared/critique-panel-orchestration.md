@@ -15,7 +15,7 @@ Before proceeding, verify all required parameters are present in the SKILL.md co
 - `aggregation` must be either "sub-agent" or "inline"
 - `criteria-assignment` must be "yes" (with mapping table provided) or "no"
 - `visual-artifacts` must be a path or "none"
-- `portfolio-file-path` is OPTIONAL — set only by Planning mode for the spawn-list artifact attached alongside `visual-artifacts`. Only **critic** prompt templates may reference `{portfolio-file-path}` and instruct critics to read it for spawn-brief-quality assessment. The **aggregator** does not receive this field (see Scope note under Aggregation). If absent, ignore.
+- `portfolio-file-path` is OPTIONAL — set only by Roadmap mode for the spawn-list artifact attached alongside `visual-artifacts`. Only **critic** prompt templates may reference `{portfolio-file-path}` and instruct critics to read it for spawn-brief-quality assessment. The **aggregator** does not receive this field (see Scope note under Aggregation). If absent, ignore.
 - `critique-temp-directory` must be set
 - At least one critic prompt template must be provided
 
@@ -57,7 +57,7 @@ The checklist is at `{base-directory}/{checklist-filename}`. Verify the path exi
 
 After all critics finish, dispatch one aggregation agent via Task tool (`subagent_type=general-purpose`, `model=opus`):
 
-> **Scope note (Planning mode):** The aggregator does NOT read `{portfolio-file-path}` even when set. Critics already evaluate portfolio-grounded claims (criterion 7) and surface findings in their reports; the aggregator's job is to merge and dedupe those reports, not to re-verify against the portfolio. If you need an independent portfolio-grounded check at aggregation time, escalate by adding a critic — don't expand the aggregator's input set.
+> **Scope note (Roadmap mode):** The aggregator does NOT read `{portfolio-file-path}` even when set. Critics already evaluate portfolio-grounded claims (criterion 7) and surface findings in their reports; the aggregator's job is to merge and dedupe those reports, not to re-verify against the portfolio. If you need an independent portfolio-grounded check at aggregation time, escalate by adding a critic — don't expand the aggregator's input set.
 
 "You are a critique aggregator. You have access to Glob, Read, and Write tools. Do not use Bash for searching. Read all report files in `{critique-temp-directory}/round-1/`. Also read the design document at `{design-file-path}` for context.
 
@@ -101,7 +101,7 @@ After the aggregation step writes `aggregated.md` and `aggregated.json` (both pa
 - Aggregated JSON: `{critique-temp-directory}/round-1/aggregated.json`
 - Design file: `{design-file-path}`
 - Session name: `{session-name}`
-- Mode: `{mode}` (one of: software | business | research | authoring | roadmap — supplied by the calling mode file context)
+- Mode: `{mode}` (one of: software | authoring | research | roadmap — supplied by the calling mode file context)
 - Project root: `{project-root}`"
 
 Then tell the user:

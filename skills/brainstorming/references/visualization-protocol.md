@@ -1,4 +1,4 @@
-<!-- Visualization protocol: Read into context by visualizing modes (software, business, authoring, roadmap) at the start of their Visualization step. Research mode does not generate a live HTML artifact and skips this protocol. Do not add YAML frontmatter. -->
+<!-- Visualization protocol: Read into context by visualizing modes (software, authoring, roadmap) at the start of their Visualization step. Research mode does not generate a live HTML artifact and skips this protocol. Do not add YAML frontmatter. -->
 
 # Visualization Protocol
 

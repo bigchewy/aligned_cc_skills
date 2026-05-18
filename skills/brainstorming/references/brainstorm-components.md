@@ -71,12 +71,11 @@ Once tokens are resolved, populate the `:root` block in the inline `<style>` wit
 
 ## Templates
 
-Each visualizing mode owns its own HTML template file. The four templates start as byte-identical copies; they are independent files going forward, free to diverge as the modes' visual needs differ.
+Each visualizing mode owns its own HTML template file. The three templates start as byte-identical copies; they are independent files going forward, free to diverge as the modes' visual needs differ.
 
 | Mode      | Template path                                                  |
 | --------- | -------------------------------------------------------------- |
 | Software  | `{base-directory}/references/templates/software-template.html`  |
-| Business  | `{base-directory}/references/templates/business-template.html`  |
 | Authoring | `{base-directory}/references/templates/authoring-template.html` |
 | Roadmap   | `{base-directory}/references/templates/roadmap-template.html`   |
 

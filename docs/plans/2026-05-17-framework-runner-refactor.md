@@ -2022,7 +2022,7 @@ git commit -m "refactor(brainstorming): collapse SKILL.md Step 2-3 tables to 4-m
 
 ---
 
-### Task 22: Update remaining brainstorming references (shared-rules, brainstorm-components, visualization-protocol, critique-panel-orchestration)
+### ✅ Task 22: Update remaining brainstorming references (shared-rules, brainstorm-components, visualization-protocol, critique-panel-orchestration)
 
 Sweep mode-list mentions and template-table rows in supporting reference files.
 

@@ -530,6 +530,23 @@ def test_authoring_has_one_template_per_deliverable_type():
         )
 
 
+def test_references_describe_four_modes_post_collapse():
+    for rel in [
+        "skills/brainstorming/references/shared-rules.md",
+        "skills/brainstorming/references/visualization-protocol.md",
+        "skills/brainstorming/references/brainstorm-components.md",
+        "skills/_shared/critique-panel-orchestration.md",
+    ]:
+        text = read(rel)
+        # Must not enumerate business or planning anymore (writing-plans excepted)
+        for retired in [" business,", " planning,", "business |", "planning |"]:
+            assert retired not in text.lower(), f"{rel} still enumerates retired mode: {retired!r}"
+        # Must enumerate Authoring as part of the 4-mode set
+        assert "authoring" in text.lower(), f"{rel} missing authoring"
+        # roadmap or research must be present in any mode enumeration
+        assert "roadmap" in text.lower() or "research" in text.lower()
+
+
 def test_authoring_templates_share_common_scaffolding():
     # All four templates must share the live-refresh script and the design-doc header anchor
     # so visualization-protocol's strip step works uniformly.
