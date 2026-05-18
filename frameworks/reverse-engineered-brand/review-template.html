@@ -1297,13 +1297,15 @@
     }
 
     function renderExecNarrative() {
-      var es = OPEN_QUESTIONS.exec_summary || {};
+      // v0.3.0: source_narratives.{raw_material,primary_research}
+      // v0.2.0 fallback: exec_summary.{raw_material,primary_research,confidence_intro}
+      var sn = OPEN_QUESTIONS.source_narratives || OPEN_QUESTIONS.exec_summary || {};
       var rm = document.getElementById('exec-raw-material');
       var pr = document.getElementById('exec-primary-research');
       var ci = document.getElementById('exec-confidence-intro');
-      if (rm) { clearEl(rm); if (es.raw_material) rm.appendChild(tx(es.raw_material)); }
-      if (pr) { clearEl(pr); if (es.primary_research) pr.appendChild(tx(es.primary_research)); }
-      if (ci) { clearEl(ci); if (es.confidence_intro) ci.appendChild(tx(es.confidence_intro)); }
+      if (rm) { clearEl(rm); if (sn.raw_material) rm.appendChild(tx(sn.raw_material)); }
+      if (pr) { clearEl(pr); if (sn.primary_research) pr.appendChild(tx(sn.primary_research)); }
+      if (ci) { clearEl(ci); if (sn.confidence_intro) ci.appendChild(tx(sn.confidence_intro)); }
     }
 
     function renderExecSnapshot() {
@@ -1312,8 +1314,12 @@
       var oqs = OPEN_QUESTIONS.open_questions || [];
       var comps = OPEN_QUESTIONS.competitors || [];
       var folders = OPEN_QUESTIONS.folders || [];
+      // v0.3.0: source_counts.total. v0.2.0 fallback: source_count (singular).
+      var sc = OPEN_QUESTIONS.source_counts || {};
+      var totalSources = sc.total != null ? sc.total
+        : (OPEN_QUESTIONS.source_count != null ? OPEN_QUESTIONS.source_count : '—');
       var tiles = [
-        { num: OPEN_QUESTIONS.source_count != null ? OPEN_QUESTIONS.source_count : '—', label: 'sources mined' },
+        { num: totalSources, label: 'sources mined' },
         { num: comps.length, label: 'competitors researched' },
         { num: oqs.filter(function(q) { return q.confidence !== 'low'; }).length, label: 'assumptions logged' },
         { num: oqs.filter(function(q) { return q.confidence === 'low'; }).length, label: 'questions flagged' },

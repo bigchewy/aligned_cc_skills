@@ -1,4 +1,4 @@
-# Open Questions Schema v0.2.0
+# Open Questions Schema v0.3.0
 
 Reference for the JSON structure emitted at PHASE 2.4 of `reverse-engineered-brand`.
 
@@ -8,7 +8,12 @@ Reference for the JSON structure emitted at PHASE 2.4 of `reverse-engineered-bra
 
 ```json
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
+  "source_counts": { "total": 39, "raw_material": 30, "primary_research": 9 },
+  "source_narratives": {
+    "raw_material": "1-3 sentence narrative about the raw-material corpus...",
+    "primary_research": "1-3 sentence narrative about the primary-research corpus..."
+  },
   "folders": [...],
   "behavioral_alternatives": [...],
   "competitors": [...],
@@ -18,11 +23,17 @@ Reference for the JSON structure emitted at PHASE 2.4 of `reverse-engineered-bra
 
 | Field | Type | Notes |
 |---|---|---|
-| `schema_version` | string | Currently `"0.2.0"` |
+| `schema_version` | string | Currently `"0.3.0"` |
+| `source_counts` | object | `{total, raw_material, primary_research}` — integer counts. Required in v0.3.0+. v0.2.0 default: omit; renderer falls back to `OPEN_QUESTIONS.source_count` (singular legacy field) or renders `—`. |
+| `source_narratives` | object | `{raw_material, primary_research}` — 1-3 sentence executive-skim narratives. Required in v0.3.0+. v0.2.0 default: omit; the exec-summary cards render empty (legacy behavior). |
 | `folders` | array | One entry per brand folder scanned |
 | `behavioral_alternatives` | array | Atomic non-software alternatives extracted at PHASE 1.5 |
 | `competitors` | array | Named software competitors extracted at PHASE 1.5 |
 | `open_questions` | array | Open questions and inferred values |
+
+### Backward compatibility (v0.2.0 → v0.3.0)
+
+v0.2.0 JSON files are still renderable. When `source_counts` is absent, the snapshot tile labelled "sources mined" falls back to the legacy singular `source_count` field, then to `—`. When `source_narratives` is absent, the Raw material and Primary research exec-summary cards render empty (the pre-fix legacy behaviour). The renderer emits a warning at Step 2 in either case but does NOT fail.
 
 ---
 

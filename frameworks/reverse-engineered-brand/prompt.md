@@ -339,15 +339,30 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
    - `audiences/channels/employer.md` → Classified from source material against `audience-taxonomy.md`. Confidence: {high|medium|low}.
    ```
 
-**`{brand-folder-path}/version.yaml`** — `schema_version: "0.2.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
+**`{brand-folder-path}/version.yaml`** — `schema_version: "0.3.0"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
 
 **`{brand-folder-path}/contracts.yaml`** — copy canonical contracts from `docs/brand-folder-spec.md § contracts.yaml`.
 
-**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.2.0"`:
+**Compute `source_counts` and `source_narratives` (before writing the JSON).** From the in-memory Source Registry assembled in PHASE 1:
+
+1. **`source_counts.total`** = number of entries in the Source Registry (regardless of `used` status — total sources fed to the build).
+2. Bucket each source as `primary_research` if its `signal_tags` array contains `customer-voice` OR `persona`; otherwise bucket as `raw_material`.
+3. **`source_counts.raw_material`** = count of the raw_material bucket. **`source_counts.primary_research`** = count of the primary_research bucket.
+4. **`source_narratives.raw_material`** — write a 1-3 sentence narrative naming what's strong and what's thin in the raw-material corpus (which document types dominate, which are absent, what the orchestrator could and could not get signal on). Example shape: "Raw material is dominated by 18 marketing/sales decks and 5 press articles; product specs and internal strategy memos are absent; signal strength is strongest on positioning and weakest on pricing."
+5. **`source_narratives.primary_research`** — same shape for primary research (customer/persona evidence). Name interview counts, whether buyer interviews exist, and which voices are missing.
+
+These are required fields in v0.3.0. Compute them from registry metadata only — do not read source bodies (context-bloat guard).
+
+**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.3.0"`:
 
 ```json
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
+  "source_counts": { "total": 39, "raw_material": 30, "primary_research": 9 },
+  "source_narratives": {
+    "raw_material": "...",
+    "primary_research": "..."
+  },
   "folders": [
     {
       "id": "strategy",
