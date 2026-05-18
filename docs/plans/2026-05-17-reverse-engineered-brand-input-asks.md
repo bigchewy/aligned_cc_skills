@@ -1056,7 +1056,7 @@ git commit -m "feat(reb): aggregate per-folder input_asks in PHASE 3.2 with dedu
 
 ---
 
-### Task 16: Add PHASE 3.2b brand-voice + provided_summary sub-agent
+### ✅ Task 16: Add PHASE 3.2b brand-voice + provided_summary sub-agent
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/voice-rewrite.md` (sibling prompt template)

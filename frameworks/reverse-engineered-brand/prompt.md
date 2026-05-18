@@ -13,7 +13,7 @@ You are April Dunford, running a Reverse-Engineered Brand build — an ETL sessi
 
 Treat this as an ETL pipeline that runs heavy reads in sub-agents and keeps the orchestrator's context light.
 
-All sub-agents are dispatched via the Task tool with `subagent_type: general-purpose`. Their prompt content lives in framework-internal supporting files (siblings of this prompt) — `extract.md`, `auto-mode-preamble.md`, `competitor-dossier.md`, `render-review-html.md`. These are NOT registered top-level agents; they are prompt templates owned by this framework. The orchestrator reads each supporting file once, substitutes placeholders, and passes the result as the sub-agent's prompt.
+All sub-agents are dispatched via the Task tool with `subagent_type: general-purpose`. Their prompt content lives in framework-internal supporting files (siblings of this prompt) — `extract.md`, `auto-mode-preamble.md`, `competitor-dossier.md`, `render-review-html.md`, `voice-rewrite.md`. These are NOT registered top-level agents; they are prompt templates owned by this framework. The orchestrator reads each supporting file once, substitutes placeholders, and passes the result as the sub-agent's prompt.
 
 - **Extract** — For each source document (URL pages + local files), dispatch a sub-agent in parallel batches using the prompt template in `extract.md`. Each sub-agent reads ONE file in its own disposable context and writes a structured JSON extract to disk. The orchestrator collects compact registry entries only — never raw source bodies.
 - **Competitor Research** — Identify competitors from source material (or user-supplied names) and dispatch one sub-agent per competitor using the prompt template in `competitor-dossier.md`. Each sub-agent writes a structured dossier JSON to `.build/competitors/`. The orchestrator collects compact status responses only.
@@ -385,6 +385,50 @@ For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences
   **Multi-slice folder behavior.** `strategy/` (positioning + narrative), `language/` (messaging + voice), `market/` (competitive + alternatives), and `proof/` (proof-points + clinical + compliance) each collect from multiple frameworks; the dedupe rule keeps the consolidated Overview list clean.
 
   **Write `provided_summary` placeholder.** Set `provided_summary` to `null` here — the Step 3.2b sub-agent populates it. The verification gate in Step 3.2c hard-fails if any folder still has `provided_summary: null` at JSON-write time.
+
+**Step 3.2b: Brand-voice rewrite + `provided_summary` generation (NEW).**
+
+After Step 3.2 produces `folders[].input_asks` with placeholder `provided_summary: null`, dispatch a single sub-agent (Task, `subagent_type: general-purpose`) using the prompt template at `frameworks/reverse-engineered-brand/voice-rewrite.md`. The sub-agent (a) rewrites every `ask` string in the project's brand voice, and (b) authors one `provided_summary` string per folder from Source Registry metadata.
+
+**Inputs to the sub-agent (orchestrator constructs the prompt body):**
+
+- The flat list of every `ask` string across all folders, tagged by `(folder_id, index, tier)` so the response can be merged back deterministically. The sub-agent MUST echo back each entry's `(folder_id, index)` tuple — those are the merge keys, not array order. Merge by tuple, NOT by position.
+- Per-folder lists of `(source_id, source_type, signal_tags)` tuples from the Source Registry built in PHASE 1. **Registry metadata only — no source bodies.** This preserves the iron context-bloat guard.
+- The path to the brand voice file. **Resolution order at runtime, not authorship time:**
+  1. `{brand-folder-path}/guidelines/brand-voice.md` (project-relative; the brand-folder spec puts guidelines inside the brand folder)
+  2. `$HOME/.claude/brand-voice.md` (global)
+  3. Pass-through (neither file exists) — sub-agent returns ask strings unchanged and authors `provided_summary` plainly.
+
+  If the resolved file exists, read it once and include its contents in the sub-agent prompt with the instruction: "Rewrite each ask string to match this voice. Preserve quantification ('3-5'), preserve typed nouns ('interview transcripts'), do not introduce new claims, do not drop or merge entries."
+
+**Sub-agent returns:**
+
+```json
+{
+  "asks": [
+    {"folder_id": "strategy", "index": 0, "tier": "critical", "ask": "<voice-revised text>"},
+    {"folder_id": "strategy", "index": 1, "tier": "recommended", "ask": "<voice-revised text>"}
+  ],
+  "provided_summaries": {
+    "strategy": "1 founder interview, 2 case study drafts, no recorded sales calls.",
+    "language": "...",
+    "audiences": "..."
+  }
+}
+```
+
+The orchestrator merges the response back into `folders[]`:
+- For each ask entry returned by the sub-agent, locate the original by the `(folder_id, index)` tuple — NOT by array position in the response. Replace `folders[folder_id].input_asks[index].ask` with the voice-revised string. Tier is unchanged.
+- For each folder, set `folders[folder_id].provided_summary` to the corresponding string from `provided_summaries`.
+- Any tuple from the input list that has no match in the response is a sub-agent omission — the verification gate in Step 3.2c catches it via Check 1 (array length parity).
+
+**Substitute these placeholders into `voice-rewrite.md` before dispatch:**
+
+- `{ask-list-json}` — the JSON-encoded array described above
+- `{folder-sources-json}` — the JSON-encoded per-folder registry slice
+- `{brand-voice-content}` — the resolved file's contents, or the literal `PASS_THROUGH` string if neither resolved path exists
+
+**On sub-agent dispatch failure** (timeout, malformed JSON return, missing keys): abort the build with a hard-fail message naming the sub-agent and the failure mode. Do NOT silently fall back to pre-rewrite asks — the verification gate in Step 3.2c assumes the rewrite happened.
 
 **Step 3.3: Aggregate competitor dossiers.**
 
