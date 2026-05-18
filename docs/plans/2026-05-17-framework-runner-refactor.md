@@ -1283,7 +1283,7 @@ git commit -m "feat(_shared): add framework-or-advisor multi-entity scoring mode
 
 ---
 
-### Task 15: Rename planning → roadmap (files + all string references) + post-commit grep gate
+### ✅ Task 15: Rename planning → roadmap (files + all string references) + post-commit grep gate
 
 Rename the planning mode to roadmap across the repo. This is a single atomic commit because the test suite (`test_brainstorming_files.py`) and trigger-map paths cross-reference these names.
 

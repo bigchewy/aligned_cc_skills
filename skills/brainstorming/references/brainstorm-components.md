@@ -78,7 +78,7 @@ Each visualizing mode owns its own HTML template file. The four templates start 
 | Software  | `{base-directory}/references/templates/software-template.html`  |
 | Business  | `{base-directory}/references/templates/business-template.html`  |
 | Authoring | `{base-directory}/references/templates/authoring-template.html` |
-| Planning  | `{base-directory}/references/templates/planning-template.html`  |
+| Roadmap   | `{base-directory}/references/templates/roadmap-template.html`   |
 
 Research mode does not generate a live HTML artifact and has no template.
 

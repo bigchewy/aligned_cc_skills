@@ -51,8 +51,8 @@ def test_spawn_brief_template_has_eight_fields():
          "v1/v2 scoping", "Code/schema seam", "Decision quality"],
     ),
     (
-        "skills/brainstorming/planning-critique-checklist.md",
-        "# Planning Critique Checklist",
+        "skills/brainstorming/roadmap-critique-checklist.md",
+        "# Roadmap Critique Checklist",
         ["Opportunity-space clarity", "Inventory completeness", "Sizing realism",
          "Dependency rigor", "Sequencing logic", "Capacity vs scope",
          "Spawn-brief quality", "Strategic coherence", "Decision quality"],
@@ -124,7 +124,7 @@ def test_skill_md_description_names_five_modes():
     desc_line = next((l for l in lines[:10] if l.startswith("description:")), None)
     assert desc_line is not None, "frontmatter description line not found"
     # Must reference all five modes
-    for mode in ["software", "business", "research", "authoring", "planning"]:
+    for mode in ["software", "business", "research", "authoring", "roadmap"]:
         assert mode.lower() in desc_line.lower(), f"description missing mode: {mode}"
 
 
@@ -133,7 +133,7 @@ def test_skill_md_overview_describes_five_modes():
     overview_start = text.index("## Overview")
     overview_end = text.index("## Step 1")
     overview = text[overview_start:overview_end]
-    for mode in ["Software", "Business", "Research", "Authoring", "Planning"]:
+    for mode in ["Software", "Business", "Research", "Authoring", "Roadmap"]:
         assert mode in overview, f"Overview missing mode: {mode}"
 
 
@@ -148,24 +148,24 @@ def test_skill_md_step1_has_five_signal_sets():
         "**Business mode**",
         "**Research mode**",
         "**Authoring mode**",
-        "**Planning mode**",
+        "**Roadmap mode**",
     ]:
         assert header in step1, f"Step 1 missing signal set header: {header}"
-    # 'planning' must NOT appear in Business signal set
+    # 'roadmap' must NOT appear in Business signal set
     business_idx = step1.index("**Business mode**")
     research_idx = step1.index("**Research mode**")
     business_block = step1[business_idx:research_idx]
-    assert "planning" not in business_block.lower(), \
-        "'planning' should be in Planning mode signals, not Business"
-    # 'planning' MUST appear in Planning signal set
-    planning_idx = step1.index("**Planning mode**")
-    planning_block = step1[planning_idx:]
-    assert "planning" in planning_block.lower() or "roadmap" in planning_block.lower(), \
-        "Planning signal set missing planning/roadmap keywords"
+    assert "planning" not in business_block.lower() and "roadmap" not in business_block.lower(), \
+        "'roadmap' should be in Roadmap mode signals, not Business"
+    # 'roadmap' MUST appear in Roadmap signal set
+    roadmap_idx = step1.index("**Roadmap mode**")
+    roadmap_block = step1[roadmap_idx:]
+    assert "planning" in roadmap_block.lower() or "roadmap" in roadmap_block.lower(), \
+        "Roadmap signal set missing planning/roadmap keywords"
 
 
-def test_planning_mode_file_structure():
-    text = read("skills/brainstorming/modes/planning.md")
+def test_roadmap_mode_file_structure():
+    text = read("skills/brainstorming/modes/roadmap.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
     # Anti-regression: extracted to references/shared-rules.md by the
     # visualization-protocol / shared-rules refactor.
@@ -186,7 +186,7 @@ def test_planning_mode_file_structure():
     # Critique panel
     assert "Fact-check mode: division-of-labor" in text
     assert "Criteria assignment: yes" in text
-    assert "planning-critique-checklist.md" in text
+    assert "roadmap-critique-checklist.md" in text
     # Default panel + Cagan-conditional
     assert "Christensen" in text and "Rumelt" in text and "Eric Ries" in text, \
         "missing default launch panel"
@@ -208,7 +208,7 @@ def test_skill_md_mode_explanation_block_grouped():
         "Business mode description",
         "Research mode description",
         "Authoring mode description",
-        "Planning mode description",
+        "Roadmap mode description",
     ]:
         assert mode in text, f"missing mode description: {mode}"
 
@@ -220,13 +220,13 @@ def test_skill_md_has_disambiguation_rules():
     for pair in [
         "Software vs Authoring",
         "Authoring vs Research",
-        "Business vs Planning",
+        "Business vs Roadmap",
     ]:
         assert pair in text, f"missing rule: {pair}"
     # 5-way disambiguation question must appear
     assert ("Software design" in text and "Business strategy" in text
             and "Research synthesis" in text and "Content authoring" in text
-            and "Multi-feature planning" in text), \
+            and "Multi-feature roadmap" in text), \
         "5-way disambiguation question must list all five modes"
 
 
@@ -271,7 +271,7 @@ def test_skill_md_step3_uses_table_driven_handoff():
             f"Step 3 should be table-driven; stale branch still present: {old_branch}"
 
     # Each mode appears as a labeled row in the lookup table
-    for mode_label in ["Software", "Business", "Research", "Authoring", "Planning"]:
+    for mode_label in ["Software", "Business", "Research", "Authoring", "Roadmap"]:
         assert mode_label in step3, f"Step 3 table missing mode row: {mode_label}"
 
     # Each mode's mode file is referenced in the table
@@ -280,7 +280,7 @@ def test_skill_md_step3_uses_table_driven_handoff():
         "modes/business.md",
         "modes/research.md",
         "modes/authoring.md",
-        "modes/planning.md",
+        "modes/roadmap.md",
     ]:
         assert mode_file in step3, f"Step 3 table missing mode file: {mode_file}"
 
@@ -290,7 +290,7 @@ def test_skill_md_step3_uses_table_driven_handoff():
         "business-critique-checklist.md",
         "research-critique-checklist.md",
         "authoring-critique-checklist.md",
-        "planning-critique-checklist.md",
+        "roadmap-critique-checklist.md",
     ]:
         assert checklist in step3, f"missing checklist reference: {checklist}"
 
@@ -360,8 +360,8 @@ def test_five_modes_eval_fixture_lists_15_briefs():
         assert mode_label in text.lower(), f"missing mode label: {mode_label}"
 
 
-def test_planning_mode_handles_cagan_absence():
-    text = read("skills/brainstorming/modes/planning.md")
+def test_roadmap_mode_handles_cagan_absence():
+    text = read("skills/brainstorming/modes/roadmap.md")
     # The mode file must do a file-existence check on the Cagan prompt path
     assert "advisors/prompts/marty-cagan.md" in text, \
         "missing Cagan prompt-file existence check"
@@ -372,6 +372,28 @@ def test_planning_mode_handles_cagan_absence():
     # per design §Error paths #5
     assert "silently" in text.lower() or "without surfacing" in text.lower(), \
         "Cagan-absence handling must be silent (no user-facing warning)"
+
+
+def test_planning_mode_file_removed_after_rename():
+    """Planning → Roadmap rename must be complete; no planning mode file remains."""
+    assert not (REPO_ROOT / "skills/brainstorming/modes/planning.md").exists(), \
+        "modes/planning.md must be renamed to modes/roadmap.md"
+    assert not (REPO_ROOT / "skills/brainstorming/planning-critique-checklist.md").exists()
+    assert not (REPO_ROOT / "skills/brainstorming/references/templates/planning-template.html").exists()
+    assert (REPO_ROOT / "skills/brainstorming/modes/roadmap.md").exists()
+
+
+def test_planning_string_references_purged_from_brainstorming_skill():
+    """Post-rename grep gate: `planning` should appear ≤2 times in skills/brainstorming/
+    (only intentional references to /aligned:writing-plans or historical CHANGELOG context)."""
+    hits = 0
+    for p in (REPO_ROOT / "skills/brainstorming").rglob("*"):
+        if not p.is_file() or p.suffix not in {".md", ".html", ".yaml"}:
+            continue
+        for line in p.read_text().splitlines():
+            if "planning" in line.lower() and "writing-plans" not in line:
+                hits += 1
+    assert hits <= 2, f"too many residual 'planning' references: {hits} (expected ≤2)"
 
 
 def test_authoring_mode_handles_sisney_absence():

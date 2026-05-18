@@ -101,7 +101,7 @@ After the aggregation step writes `aggregated.md` and `aggregated.json` (both pa
 - Aggregated JSON: `{critique-temp-directory}/round-1/aggregated.json`
 - Design file: `{design-file-path}`
 - Session name: `{session-name}`
-- Mode: `{mode}` (one of: software | business | research | authoring | planning — supplied by the calling mode file context)
+- Mode: `{mode}` (one of: software | business | research | authoring | roadmap — supplied by the calling mode file context)
 - Project root: `{project-root}`"
 
 Then tell the user:

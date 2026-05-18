@@ -16,7 +16,7 @@ If a question during the brainstorm requires deeper detail about the project —
 
 ## Stripping the live-refresh script
 
-This rule applies to the four modes that produce a live HTML artifact: software, business, authoring, and planning. Research mode does not generate a live artifact and skips this rule.
+This rule applies to the four modes that produce a live HTML artifact: software, business, authoring, and roadmap. Research mode does not generate a live artifact and skips this rule.
 
 Before committing the snapshot at `docs/mockups/{session-name}.html`, verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in the file. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh.
 
