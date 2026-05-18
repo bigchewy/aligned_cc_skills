@@ -820,7 +820,7 @@ git commit -m "feat(frameworks): add default_critic_advisors and follow_on_frame
 
 ---
 
-### Task 11: Create `tools/sync_framework_frontmatter.py` migration script with unit tests
+### ✅ Task 11: Create `tools/sync_framework_frontmatter.py` migration script with unit tests
 
 Idempotent migration script that walks every framework folder, reads the registry entry's `deliverable_type`, and mirrors it into the framework's `prompt.md` YAML frontmatter. Handles missing frontmatter (creates one), existing frontmatter without the field (adds it), and existing field with stale value (updates it). Failure cases: missing `prompt.md` (logs warning, continues); missing registry entry for an existing folder (logs warning, continues).
 
