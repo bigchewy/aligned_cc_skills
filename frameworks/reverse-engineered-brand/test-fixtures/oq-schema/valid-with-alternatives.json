@@ -1,5 +1,10 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.4.0",
+  "source_counts": { "total": 6, "raw_material": 5, "primary_research": 1 },
+  "source_narratives": {
+    "raw_material": "Five marketing decks. Limited product-spec coverage.",
+    "primary_research": "One customer call. No competitor dossiers commissioned."
+  },
   "folders": [
     {
       "id": "strategy",
@@ -10,6 +15,13 @@
       "p2_count": 0,
       "framework_dispatches": [
         {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md"}
+      ],
+      "grade": 4,
+      "summary": "Working hypothesis converges on spreadsheets as the alternative; differentiated attributes still unconfirmed.",
+      "provided_summary": "5 marketing decks, 1 customer call, no win/loss notes.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" },
+        { "tier": "recommended", "ask": "Win/loss notes from the last 6-12 months" }
       ]
     }
   ],

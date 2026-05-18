@@ -1,24 +1,29 @@
 {
-  "schema_version": "0.2.0",
-  "source_count": 1,
+  "schema_version": "0.4.0",
+  "source_counts": { "total": 1, "raw_material": 1, "primary_research": 0 },
+  "source_narratives": {
+    "raw_material": "One pitch deck. Limited coverage; most areas have no independent corroboration.",
+    "primary_research": "No customer interviews. The customer-voice areas will be sparse."
+  },
   "folders": [
     {
       "id": "strategy",
       "label": "Strategy",
       "status": "Strong",
+      "grade": 5,
+      "summary": "Working hypothesis converges on spreadsheets as the primary competitive alternative; one open question on category framing remains.",
       "p0_count": 1,
       "p1_count": 0,
       "p2_count": 0,
       "framework_dispatches": [
         {"framework_id": "5-components-positioning", "fills": "strategy/positioning.md", "why_first": "Anchors downstream messaging and positioning"}
+      ],
+      "provided_summary": "1 pitch deck, no customer interviews, no recorded sales calls.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" }
       ]
     }
   ],
-  "exec_summary": {
-    "raw_material": "We received 1 source. Limited material — most brand areas have no independent corroboration.",
-    "primary_research": "No competitor dossiers assembled yet.",
-    "confidence_intro": "Review strategy/positioning first; it is the only area with open questions."
-  },
   "behavioral_alternatives": [],
   "competitors": [],
   "open_questions": [
