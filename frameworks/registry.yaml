@@ -34,6 +34,8 @@ frameworks:
     required_documents: ["positioning statement"]
     helpful_documents: ["competitive landscape", "customer research"]
     deliverable_type: content
+    default_critic_advisors: [april-dunford, steve-krug]
+    follow_on_frameworks: [strategic-narrative, landing-page-assembly]
 
   - id: 5-step-process
     name: "5-Step Process"
@@ -44,6 +46,8 @@ frameworks:
     use_when: "someone wants a systematic process for setting goals, identifying problems, diagnosing root causes, designing solutions, and executing"
     helpful_documents: ["business goals"]
     deliverable_type: plan
+    default_critic_advisors: [ray-dalio, richard-rumelt]
+    follow_on_frameworks: [believability-weighted-decision-making, finding-the-crux]
 
   - id: 6-step-process
     name: "6-Step Process"
@@ -185,6 +189,8 @@ frameworks:
     use_when: "a team needs to design a rapid learning cycle for a product initiative to validate assumptions quickly"
     helpful_documents: ["product description", "customer research"]
     deliverable_type: plan
+    default_critic_advisors: [eric-ries, paul-graham]
+    follow_on_frameworks: [earlyvangelists, four-market-types]
 
   - id: calibrated-questions
     name: "Calibrated Questions"
@@ -250,6 +256,8 @@ frameworks:
     use_when: "a product or page has high drop-off and someone needs to identify and remove cognitive friction points in the user journey"
     helpful_documents: ["customer research", "product description"]
     deliverable_type: analysis
+    default_critic_advisors: [shirin-oreizy, steve-krug, oli-gardner]
+    follow_on_frameworks: [landing-page-assembly]
 
   - id: community-amplification
     name: "the Community Amplification Framework"
@@ -287,6 +295,8 @@ frameworks:
     domains: [content-marketing, audience-building, business-model, content-first]
     use_when: "someone wants to build a business by establishing a content platform and audience before creating products"
     deliverable_type: plan
+    default_critic_advisors: [joe-pulizzi, jay-clouse]
+    follow_on_frameworks: [creator-flywheel]
 
   - id: creator-experimentation-protocol
     name: "the Creator Experimentation Protocol"
@@ -450,6 +460,7 @@ frameworks:
     domains: [decision-making, fear, stoicism, risk-assessment]
     use_when: "someone is paralyzed by fear about a decision and needs to systematically define, prevent, and repair the worst-case scenarios"
     deliverable_type: decision
+    default_critic_advisors: [tim-ferriss, diana-chapman]
 
   - id: finding-the-crux
     name: "Finding the Crux"
@@ -460,6 +471,8 @@ frameworks:
     use_when: "someone faces a complex strategic situation and needs to identify the single most important challenge to address first"
     helpful_documents: ["company strategy"]
     deliverable_type: analysis
+    default_critic_advisors: [richard-rumelt, paul-graham]
+    follow_on_frameworks: [5-step-process]
 
   - id: first-principles-thinking
     name: "First Principles Thinking"
@@ -508,6 +521,8 @@ frameworks:
     use_when: "someone is building a subscription or membership business and needs to articulate the ongoing value commitment that keeps members"
     helpful_documents: ["strategy", "positioning"]
     deliverable_type: content
+    default_critic_advisors: [robbie-kellman-baxter, april-dunford]
+    follow_on_frameworks: [5-components-positioning, strategic-narrative]
 
   - id: four-market-types
     name: "Four Market Types"
@@ -548,6 +563,8 @@ frameworks:
     use_when: "a product team needs a repeatable process for generating, prioritizing, testing, and scaling growth experiments"
     helpful_documents: ["product description", "business metrics"]
     deliverable_type: plan
+    default_critic_advisors: [sean-ellis, garry-tan]
+    follow_on_frameworks: [ice-prioritization]
 
   - id: heart-rate-reserve-training-zones
     name: "establishing their Heart Rate Reserve training zones"
@@ -577,6 +594,8 @@ frameworks:
     use_when: "a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones"
     helpful_documents: ["business goals"]
     deliverable_type: decision
+    default_critic_advisors: [sean-ellis]
+    follow_on_frameworks: [growth-hacking-process]
 
   - id: idiot-index
     name: "the Idiot Index to identify cost reduction opportunities"
@@ -674,6 +693,8 @@ frameworks:
     domains: [landing-pages, conversion-optimization, copywriting, web-design]
     use_when: "someone needs to build or improve a landing page using a structured stage-by-stage assembly process"
     deliverable_type: content
+    default_critic_advisors: [oli-gardner, joanna-wiebe, steve-krug]
+    follow_on_frameworks: [cognitive-friction-audit]
 
   - id: leadership-pipeline-passages
     name: "the Leadership Pipeline Passages"
@@ -1172,6 +1193,8 @@ frameworks:
     use_when: "someone needs to build a sales deck or company narrative that opens with a shift in the world, not a product pitch"
     helpful_documents: ["positioning statement", "company strategy"]
     deliverable_type: content
+    default_critic_advisors: [andy-raskin, joanna-wiebe]
+    follow_on_frameworks: [5-components-positioning, landing-page-assembly]
 
   - id: stress-recovery-oscillation
     name: "Stress-Recovery Oscillation"

@@ -191,3 +191,25 @@ class TestFrameworkRegistrySchema:
         for tag in ["content", "decision", "plan", "analysis"]:
             assert tag in head, f"deliverable_type taxonomy must document tag: {tag}"
         assert "deliverable_type" in head, "missing taxonomy doc block"
+
+    def test_optional_fields_have_correct_shape_when_present(self):
+        with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+            data = yaml.safe_load(f)
+        with open(REPO_ROOT / "advisors" / "registry.yaml") as f:
+            adv = yaml.safe_load(f)
+        advisor_ids = {a["id"] for a in adv["advisors"]}
+        framework_ids = {e["id"] for e in data["frameworks"]}
+
+        typed_count = 0
+        for e in data["frameworks"]:
+            if "default_critic_advisors" in e:
+                assert isinstance(e["default_critic_advisors"], list), e["id"]
+                for aid in e["default_critic_advisors"]:
+                    assert aid in advisor_ids, f"{e['id']} references unknown advisor: {aid}"
+                typed_count += 1
+            if "follow_on_frameworks" in e:
+                assert isinstance(e["follow_on_frameworks"], list), e["id"]
+                for fid in e["follow_on_frameworks"]:
+                    assert fid in framework_ids, f"{e['id']} references unknown framework: {fid}"
+
+        assert typed_count >= 5, "fewer than 5 entries got default_critic_advisors — field adds no signal"

@@ -762,7 +762,7 @@ git commit -m "feat(frameworks): complete deliverable_type classification for al
 
 ---
 
-### Task 10: Add optional `default_critic_advisors` + `follow_on_frameworks` where applicable
+### ✅ Task 10: Add optional `default_critic_advisors` + `follow_on_frameworks` where applicable
 
 Add the two optional fields to entries with clear domain fits. Not every framework needs them; only add where there is concrete signal. Examples:
 - `5-components-positioning` → `default_critic_advisors: [april-dunford, steve-krug]`, `follow_on_frameworks: [strategic-narrative, landing-page-assembly]`
