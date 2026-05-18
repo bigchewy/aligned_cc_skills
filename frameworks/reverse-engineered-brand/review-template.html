@@ -894,6 +894,95 @@
     .source-list .src-id { font-family: var(--font-mono); color: var(--color-accent); font-weight: 600; }
     .source-list .src-title { color: var(--color-foreground); }
     .source-list .src-meta { color: var(--color-dimmed); font-size: 0.78rem; text-align: right; }
+
+    /* Tier badges for input_asks (v0.4.0+) */
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 600;
+      margin-right: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tier-critical { background: #fef2f2; color: #b91c1c; }
+    .tier-recommended { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .tier-optional { background: var(--color-surface); color: var(--color-dimmed); border: 1px dashed var(--color-border); }
+
+    /* Inline tab-name tag next to each ask in the consolidated list */
+    .ask-tab-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      padding: 1px 8px;
+      border-radius: 6px;
+      background: var(--color-muted);
+      color: var(--color-dimmed);
+      margin-left: 8px;
+      font-family: var(--font-mono);
+    }
+
+    /* Inputs Needed list rows */
+    .inputs-tier-heading {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 18px 0 8px 0;
+    }
+    .inputs-tier-count {
+      color: var(--color-dimmed);
+      font-weight: 500;
+      font-size: 0.85rem;
+      margin-left: 6px;
+    }
+    .inputs-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .inputs-list li {
+      padding: 6px 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .inputs-list a {
+      color: var(--color-foreground);
+      text-decoration: none;
+    }
+    .inputs-list a:hover { color: var(--color-accent); }
+
+    /* Per-tab callout ("What you provided / What would strengthen this") */
+    .input-callout {
+      background: var(--color-accent-subtle);
+      border: 1px solid var(--color-accent);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .input-callout h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 10px 0;
+    }
+    .input-callout .provided {
+      font-size: 0.88rem;
+      color: var(--color-secondary);
+      margin: 0 0 12px 0;
+      line-height: 1.6;
+    }
+    .input-callout ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .input-callout li {
+      font-size: 0.88rem;
+      color: var(--color-foreground);
+      line-height: 1.6;
+      padding: 4px 0;
+    }
   </style>
 </head>
 <body>
@@ -921,6 +1010,7 @@
     <div class="sub-tab-bar">
       <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-summary')">Executive Summary</button>
       <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-focus')">Sections at a Glance</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-inputs')">Inputs Needed</button>
     </div>
 
     <!-- Overview / Executive Summary -->
@@ -953,10 +1043,22 @@
       </div>
     </div>
 
+    <!-- Overview / Inputs Needed -->
+    <div id="sub-overview-inputs" class="sub-panel">
+      <div class="section">
+        <h2>Inputs Needed</h2>
+        <p class="description">If you'd like to strengthen this report, here's what would help — organized by impact. We pulled what we could from what you sent; this list names categories of raw material that would change the result on the tab noted next to each item.</p>
+        <div id="inputs-needed-critical"></div>
+        <div id="inputs-needed-recommended"></div>
+        <div id="inputs-needed-optional"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ========= COMPETITIVE CONTEXT ========= -->
   <div id="panel-competitive" class="tab-panel">
+    <div class="input-callout" id="callout-competitive" style="display:none"></div>
     <div class="section">
       <h2>Competitive context</h2>
       <p class="intro-p">Competitors identified via cross-source mention frequency; behavioral alternatives extracted from source material. Behavioral alternatives often turn out to be the more honest competitive frame — what customers actually do today (without you) usually matters more than the named SaaS in the same category.</p>
@@ -973,6 +1075,7 @@
 
   <!-- ========= STRATEGY ========= -->
   <div id="panel-strategy" class="tab-panel">
+    <div class="input-callout" id="callout-strategy" style="display:none"></div>
     <div id="panel-strategy-content"></div>
     <div class="paste-back">
       <div class="paste-back-header">
@@ -989,6 +1092,7 @@
 
   <!-- ========= LANGUAGE ========= -->
   <div id="panel-language" class="tab-panel">
+    <div class="input-callout" id="callout-language" style="display:none"></div>
     <div id="panel-language-content"></div>
     <div class="paste-back">
       <div class="paste-back-header">
@@ -1037,6 +1141,7 @@
 
   <!-- ========= MARKET ========= -->
   <div id="panel-market" class="tab-panel">
+    <div class="input-callout" id="callout-market" style="display:none"></div>
     <div id="panel-market-content"></div>
     <div class="paste-back">
       <div class="paste-back-header">
@@ -1053,6 +1158,7 @@
 
   <!-- ========= PROOF ========= -->
   <div id="panel-proof" class="tab-panel">
+    <div class="input-callout" id="callout-proof" style="display:none"></div>
     <div id="panel-proof-content"></div>
     <div class="paste-back">
       <div class="paste-back-header">
@@ -1069,6 +1175,7 @@
 
   <!-- ========= DESIGN ========= -->
   <div id="panel-design" class="tab-panel">
+    <div class="input-callout" id="callout-design" style="display:none"></div>
     <div id="panel-design-content"></div>
     <div class="paste-back">
       <div class="paste-back-header">

@@ -1347,7 +1347,7 @@ git commit -m "docs(render): list input_asks and provided_summary as v0.4.0 shap
 
 ---
 
-### Task 20: Template — add Inputs Needed sub-tab, per-tab callout containers, tier-badge CSS
+### ✅ Task 20: Template — add Inputs Needed sub-tab, per-tab callout containers, tier-badge CSS
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (CSS in `<head>`, Overview sub-tab bar, per-folder content-tab `<div>` containers — no JS in this task; the data binding lands in Task 21)
