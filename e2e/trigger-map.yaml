@@ -46,7 +46,7 @@ triggers:
 
   - paths:
       - skills/brainstorming/SKILL.md
-      - skills/brainstorming/modes/business.md
+      - skills/brainstorming/modes/authoring.md
     scenarios:
       - scenarios/use-skill/brainstorming-positioning.yaml
 

@@ -364,15 +364,26 @@ def test_software_mode_critique_config_unchanged():
     assert "POST-CRITIQUE CHECKLIST — 3 mandatory steps" in text
 
 
-def test_business_mode_critique_config_unchanged():
-    text = read("skills/brainstorming/modes/business.md")
-    assert "Fact-check mode: all-critics" in text
-    assert "Criteria assignment: no" in text
-    assert "Checklist filename: business-critique-checklist.md" in text
-    assert "docs/plans/YYYY-MM-DD-<topic>-design.md" in text
-    assert "/tmp/brainstorm-context-{topic}" in text
-    assert "/tmp/brainstorm-critique-{topic}" in text
-    assert "POST-CRITIQUE CHECKLIST — 3 mandatory steps" in text
+
+def test_business_files_removed_after_collapse():
+    from pathlib import Path
+    REPO = Path(__file__).resolve().parents[2]
+    for rel in [
+        "skills/brainstorming/modes/business.md",
+        "skills/brainstorming/business-critique-checklist.md",
+        "skills/brainstorming/references/templates/business-template.html",
+    ]:
+        assert not (REPO / rel).exists(), f"{rel} must be deleted in mode-collapse cutover"
+
+
+def test_trigger_map_does_not_reference_business():
+    text = read("e2e/trigger-map.yaml")
+    assert "modes/business.md" not in text, "trigger-map still references deleted file"
+
+
+def test_eval_surface_does_not_reference_business():
+    text = read("e2e/eval-surface.yaml")
+    assert "modes/business.md" not in text, "eval-surface still references deleted file"
 
 
 def test_five_modes_eval_fixture_lists_15_briefs():
