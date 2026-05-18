@@ -1478,7 +1478,7 @@ git commit -m "docs(brainstorming): add parity marker on software.md Q&A dispatc
 
 ---
 
-### Task 17: Create new `skills/brainstorming/modes/authoring.md` (delete-then-recreate)
+### ✅ Task 17: Create new `skills/brainstorming/modes/authoring.md` (delete-then-recreate)
 
 Overwrite the existing `modes/authoring.md` (369-line 7-phase content arrangement) with a new file that dispatches via shared runners and falls back to structured Q&A duplicated from `modes/software.md`. Phases:
 - Phase 1: Engine selection (invokes `_shared/contextual-recommendation.md`, entity=`framework-or-advisor`)

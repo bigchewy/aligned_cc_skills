@@ -13,3 +13,15 @@ def test_software_mode_has_parity_marker():
         "software.md Q&A dispatch template must carry a parity marker comment"
     )
     assert "modes/authoring.md" in text, "marker must point at the sibling duplication site"
+
+
+def test_authoring_mode_dispatch_template_matches_software():
+    sw = read("skills/brainstorming/modes/software.md")
+    au = read("skills/brainstorming/modes/authoring.md")
+    # The Architect-as-proxy dispatch sub-agent prompt body should appear in both files.
+    # Stable anchor: the role-override sentence.
+    anchor = "Your normal constraint of 'do not propose alternatives' is suspended"
+    assert anchor in sw, "anchor sentence missing from software.md"
+    assert anchor in au, (
+        "authoring.md's no-framework Q&A must use the same Architect-as-proxy dispatch as software.md"
+    )

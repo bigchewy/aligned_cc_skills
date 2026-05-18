@@ -86,35 +86,44 @@ def test_research_mode_file_structure():
 
 
 def test_authoring_mode_file_structure():
+    """New authoring.md dispatches via shared runners with no-framework Q&A fallback."""
     text = read("skills/brainstorming/modes/authoring.md")
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
-    # Anti-regression: extracted to references/shared-rules.md by the
-    # visualization-protocol / shared-rules refactor.
-    assert "Within this mode file, `{base-directory}` resolves to" not in text, \
-        "base-directory note should live only in references/shared-rules.md, not be duplicated in mode files"
-    # Process phases
-    for phase in [
-        "Population & constraints",
-        "Corpus scan",
-        "Optional Research sub-phase",
-        "Arrangement",
-        "Orphan / residual catalog",
-        "Architect audit",
-    ]:
-        assert phase in text, f"missing process phase: {phase}"
-    # Critique panel config (division-of-labor)
-    assert "Fact-check mode: division-of-labor" in text
-    assert "Criteria assignment: yes" in text
+    # 3-phase dispatch shape
+    assert "Phase 1: Engine selection" in text
+    assert "Phase 2: Engine execution" in text
+    assert "Phase 3:" in text and "deliverable_type" in text
+    # Engine selection invokes contextual-recommendation
+    assert "_shared/contextual-recommendation.md" in text
+    assert "framework-or-advisor" in text
+    # Shared runners
+    assert "_shared/framework-runner.md" in text
+    assert "intake_gate_mode" in text and "strict" in text
+    assert "_shared/advisor-runner.md" in text
+    # Fallback ladder
+    assert "Wise Eric" in text, "missing last-resort default advisor"
+    assert "structured Q&A" in text or "Architect" in text and "proxy" in text
+    # Duplication marker
+    assert "PARITY MARKER" in text or "DUPLICATED FROM" in text
+    assert "modes/software.md" in text
+    # Critique panel config
     assert "authoring-critique-checklist.md" in text
-    # Sub-flow contract pointers
-    assert "research-mini-protocol.md" in text
-    assert "/tmp/brainstorm-context-" in text
-    assert "research-{question-slug}-question.md" in text
-    assert "research-{question-slug}-synthesis.md" in text
-    # Error paths for sub-flow
-    assert "5 minutes" in text or "five minutes" in text, "missing sub-agent timeout"
-    assert "## Synthesis" in text and "## Open Questions" in text and "## Confidence" in text, \
-        "missing required synthesis-file headings in validation step"
+    assert "deliverable_type" in text  # post-engine dispatch
+    # default_critic_advisors must be consumed by Phase 3 (the field added in Task 10
+    # is load-bearing here, not just metadata).
+    assert "default_critic_advisors" in text, (
+        "Phase 3 must consume default_critic_advisors from the registry"
+    )
+    # Path 4 handoff must be documented so contextual-recommendation does not
+    # double-prompt the user.
+    assert "Path 4" in text, (
+        "authoring mode must document how it interacts with contextual-recommendation's Path 4"
+    )
+
+
+def test_authoring_mode_is_in_eval_surface():
+    text = read("e2e/eval-surface.yaml")
+    assert "skills/brainstorming/modes/authoring.md" in text
 
 
 def test_skill_md_description_names_five_modes():
@@ -395,15 +404,6 @@ def test_planning_string_references_purged_from_brainstorming_skill():
                 hits += 1
     assert hits <= 2, f"too many residual 'planning' references: {hits} (expected ≤2)"
 
-
-def test_authoring_mode_handles_sisney_absence():
-    text = read("skills/brainstorming/modes/authoring.md")
-    # Sisney is referenced as PSIU advisor; absence handling must surface once
-    assert "advisors/prompts/lex-sisney.md" in text, \
-        "missing Sisney prompt-file existence check"
-    # Per design §Error paths #5: Authoring notes Sisney absence ONCE for PSIU work
-    assert "PSIU" in text or "Four-Forces" in text or "Four Forces" in text, \
-        "Authoring must reference PSIU/Four-Forces context for Sisney"
 
 
 def test_critique_interactive_html_agent_exists():
