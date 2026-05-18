@@ -1062,7 +1062,7 @@ git commit -m "feat(reverse-engineered-brand): group-level callout with single h
 
 ---
 
-### Task 10: Update `voice-rewrite.md` — Step 0 shape transformation + group-level provided_summary
+### ✅ Task 10: Update `voice-rewrite.md` — Step 0 shape transformation + group-level provided_summary
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/voice-rewrite.md` (insert Step 0; refactor Step 2 to per-group instead of per-folder; update input table and output JSON example)
