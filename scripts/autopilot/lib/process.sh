@@ -93,8 +93,10 @@ snapshot_post_wait() {
   system_claude="$(pgrep -x claude 2>/dev/null | wc -l | tr -d ' ')"
   # All claude processes anywhere on the system, with pgid/sid/ppid/etime
   # so an orphaned sub-agent (ppid=1) or a session-escaped child
-  # (sid != parent pgid) is visible.
-  all_claudes="$(ps -axo pid=,pgid=,ppid=,sid=,rss=,pcpu=,etime=,time=,comm= 2>/dev/null | awk '$9 == "claude" { print }')"
+  # (sid != parent pgid) is visible. macOS `ps -o comm=` returns the full
+  # exec path (e.g. /Users/x/.local/bin/claude) for processes launched
+  # by absolute path, so we extract the basename to match either form.
+  all_claudes="$(ps -axo pid=,pgid=,ppid=,sid=,rss=,pcpu=,etime=,time=,comm= 2>/dev/null | awk '{ n = split($NF, a, "/"); if (a[n] == "claude") print }')"
   {
     echo "==== POST-WAIT [$ts] label=$label pgid=${pgid:-<empty>} exit=$exit_code ===="
     echo "survivors_in_group=$survivors system_claude=$system_claude system_node=$system_node"
@@ -152,12 +154,16 @@ start_system_sampler() {
           echo "--- vm_stat (first 8 lines) ---"
           vm_stat 2>/dev/null | head -8
         fi
-        # Exact-comm match avoids false positives like node_exporter,
-        # chromedriver, etc. comm is the last column (position 8 after
-        # we drop %cpu/etime/time prefix fields).
+        # Basename-extraction match: comm may be either bare ("node") or
+        # a full path ("/Users/x/.local/bin/claude") depending on how the
+        # binary was exec'd. Splitting on "/" and matching the last
+        # segment catches both forms. Without this, paths-launched
+        # binaries (claude on macOS) silently miss and the detail block
+        # under-reports while system_claude/system_node counts (which use
+        # pgrep -x) keep working — a confusing inconsistency.
         echo "--- claude and node processes (pid pgid ppid rss %cpu etime time comm) ---"
         ps -axo pid=,pgid=,ppid=,rss=,pcpu=,etime=,time=,comm= 2>/dev/null \
-          | awk '$8 == "claude" || $8 == "node" { print }' \
+          | awk '{ n = split($NF, a, "/"); name = a[n]; if (name == "claude" || name == "node") print }' \
           | head -60
         echo ""
       } >> "$out" 2>/dev/null

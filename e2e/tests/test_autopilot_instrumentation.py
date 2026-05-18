@@ -147,6 +147,59 @@ def test_snapshot_reports_system_counts_as_integers(tmp_path: Path):
     assert int(m_node.group(1)) >= 0
 
 
+# --- comm-basename matching (regression guard for the full-path bug) ---
+
+
+def test_snapshot_awk_matches_claude_when_comm_is_full_path():
+    """macOS `ps -o comm=` returns the absolute path for processes launched
+    by full path. The snapshot_post_wait awk filter must extract the
+    basename and match either bare 'claude' or '/.../claude'. Before this
+    guard, the all-claude detail block was empty whenever the claude
+    binary was launched from a non-PATH location — system_claude counts
+    kept working (pgrep -x matches basenames) but the per-process rows
+    that identify *which* claudes are alive were silently dropped."""
+    fake_ps = (
+        " 12345 12345 100 12345 350000  5.0 00:01:23 00:00:08 /Users/ericpage/.local/bin/claude\n"
+        " 12346 12346 100 12346 184320  2.1 00:00:42 00:00:00 node\n"
+        " 12347 12347 100 12347  50000  0.0 00:00:01 00:00:00 sshd\n"
+        " 12348 12348 100 12348 100000  1.0 00:00:10 00:00:01 claude\n"
+        " 12349 12349 100 12349  60000  0.0 00:00:30 00:00:00 /opt/homebrew/bin/node\n"
+    )
+    awk = '{ n = split($NF, a, "/"); if (a[n] == "claude") print }'
+    r = subprocess.run(
+        ["awk", awk], input=fake_ps, capture_output=True, text=True, check=True
+    )
+    out = r.stdout
+    assert "12345" in out, "full-path claude row missing"
+    assert "12348" in out, "bare-comm claude row missing"
+    assert "node" not in out, "false positive on node"
+    assert "sshd" not in out, "false positive on sshd"
+
+
+def test_sampler_awk_matches_node_and_claude_with_mixed_comm_forms():
+    """The system sampler's awk must match both 'node' and 'claude'
+    whether their comm column is bare or a full path."""
+    fake_ps = (
+        " 12345 12345 100 350000  5.0 00:01:23 00:00:08 /Users/ericpage/.local/bin/claude\n"
+        " 12346 12346 100 184320  2.1 00:00:42 00:00:00 node\n"
+        " 12347 12347 100  50000  0.0 00:00:01 00:00:00 sshd\n"
+        " 12348 12348 100 100000  1.0 00:00:10 00:00:01 claude\n"
+        " 12349 12349 100  60000  0.0 00:00:30 00:00:00 /opt/homebrew/bin/node\n"
+        " 12350 12350 100  10000  0.0 00:00:05 00:00:00 node_exporter\n"
+    )
+    awk = '{ n = split($NF, a, "/"); name = a[n]; if (name == "claude" || name == "node") print }'
+    r = subprocess.run(
+        ["awk", awk], input=fake_ps, capture_output=True, text=True, check=True
+    )
+    out = r.stdout
+    assert "12345" in out
+    assert "12346" in out
+    assert "12348" in out
+    assert "12349" in out
+    assert "12350" not in out, "node_exporter must not match — basename guard relies on exact 'node'"
+    assert "sshd" not in out
+
+
 # --- log_marker ---
 
 

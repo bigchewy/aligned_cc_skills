@@ -39,6 +39,8 @@ EXECUTE="$SCRIPT_DIR/EXECUTE-PLAN.md"
 
 # shellcheck source=lib/process.sh
 source "$SCRIPT_DIR/lib/process.sh"
+# shellcheck source=lib/blocked-gate.sh
+source "$SCRIPT_DIR/lib/blocked-gate.sh"
 
 if [ ! -f "$EXECUTE" ]; then
   echo "ERROR: EXECUTE-PLAN.md not found at $EXECUTE" >&2
@@ -248,6 +250,29 @@ while :; do
   log_marker "ralph-iter-$ITERATION starting"
   print_worktree_drift_breadcrumb
 
+  # Gate: if all open tasks are BLOCKED with identical reasons to the
+  # previous iteration, skip the spawn. apply_blocked_cap still runs so
+  # the BLOCKED counter increments and auto-skip still fires after
+  # MAX_BLOCKED_ITERATIONS. This prevents back-to-back claude spawns that
+  # produce no new information and thrash memory on a stressed system.
+  if should_skip_blocked_spawn; then
+    echo "  [gate] All open tasks BLOCKED, state unchanged — skipping spawn"
+    apply_blocked_cap
+    snapshot_blocked_state
+    check_all_settled_and_write_done
+    if [ -f .ralph-done ]; then
+      rm .ralph-done
+      echo "=== Ralph Loop Complete ==="
+      echo ""
+      echo "Next step: run /aligned:finishing-a-development-branch to merge, clean up, and archive."
+      break
+    fi
+    echo "No sentinel found, starting next iteration..."
+    echo ""
+    ITERATION=$((ITERATION + 1))
+    continue
+  fi
+
   start_heartbeat "$ITERATION_TIMEOUT" "iteration $ITERATION"
 
   # Run claude in background so we can enforce a timeout.
@@ -318,6 +343,8 @@ while :; do
 
   # Apply wrapper-side BLOCKED cap (rewrites 🔄 → ⏭️ at the cap).
   apply_blocked_cap
+  # Snapshot after cap so the next iteration's gate has the post-rewrite state.
+  snapshot_blocked_state
   # If the cap just settled the last open task, synthesize .ralph-done so
   # the loop terminates cleanly with the AUTO-SKIPPED summary attached.
   check_all_settled_and_write_done
