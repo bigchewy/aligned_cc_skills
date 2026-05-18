@@ -1,11 +1,16 @@
 {
-  "schema_version": "0.2.0",
-  "source_count": 3,
+  "schema_version": "0.4.0",
+  "source_counts": { "total": 3, "raw_material": 3, "primary_research": 0 },
+  "source_narratives": {
+    "raw_material": "1 pitch deck and 2 sales call transcripts. Coverage is thin \u2014 key areas like pricing and buyer committee are not yet confirmed by independent sources.",
+    "primary_research": "No competitor dossiers commissioned. The competitive landscape section will be sparse until primary research is added."
+  },
   "folders": [
     {
       "id": "strategy",
       "label": "Strategy",
       "status": "Strong",
+      "grade": 5,
       "p0_count": 4,
       "p1_count": 1,
       "p2_count": 1,
@@ -16,14 +21,14 @@
           "why_first": "Anchors downstream messaging and positioning"
         }
       ],
-      "summary": "Working hypothesis converges on manual spreadsheet dispatch as the primary competitor \u2014 the strongest signal in the source set. Lead-attribute and category-framing remain open and force downstream tradeoffs. Several P0 questions need resolution before drafts can ship."
+      "summary": "Working hypothesis converges on manual spreadsheet dispatch as the primary competitor \u2014 the strongest signal in the source set. Lead-attribute and category-framing remain open and force downstream tradeoffs. Several P0 questions need resolution before drafts can ship.",
+      "provided_summary": "1 pitch deck and 2 sales call transcripts; no customer interviews or competitor dossiers.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" },
+        { "tier": "recommended", "ask": "What category name did your team or investors use when pitching the company last year?" }
+      ]
     }
   ],
-  "exec_summary": {
-    "raw_material": "We received 3 sources including a pitch deck and two sales call transcripts. Coverage is thin \u2014 key areas like pricing and buyer committee are not yet confirmed by independent sources.",
-    "primary_research": "No competitors were identified in the ingested sources. The competitive landscape section will be sparse until competitor dossiers are commissioned.",
-    "confidence_intro": "The strategy/positioning draft has the most open questions and should be reviewed first."
-  },
   "behavioral_alternatives": [
     {
       "id": "BA-1",

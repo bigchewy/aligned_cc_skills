@@ -1,11 +1,16 @@
 {
-  "schema_version": "0.2.0",
-  "source_count": 11,
+  "schema_version": "0.4.0",
+  "source_counts": { "total": 11, "raw_material": 8, "primary_research": 3 },
+  "source_narratives": {
+    "raw_material": "8 sources: a pitch deck, 3 sales call transcripts, the public marketing site, 2 competitor-alternatives pages, and a partnership announcement. Decks gave strong category-framing signal; transcripts revealed buyer committee shape.",
+    "primary_research": "3 competitor dossiers pulled from public sources. Strong category-shape signal — every named competitor sells to integrated health systems and anchors on transport reliability or outcomes."
+  },
   "folders": [
     {
       "id": "strategy",
       "label": "Strategy",
       "status": "Strong",
+      "grade": 5,
       "p0_count": 3,
       "p1_count": 3,
       "p2_count": 2,
@@ -16,12 +21,19 @@
           "why_first": "Anchors downstream messaging and competitive framing"
         }
       ],
-      "summary": "Strong working hypothesis that Marley competes against manual spreadsheet dispatch (Component 1), not against named SaaS \u2014 three converging sources support this. The lead-attribute question (real-time visibility vs automated re-routing) is open and forces a homepage tradeoff. Market-category framing is the weakest sub-area."
+      "summary": "Strong working hypothesis that Marley competes against manual spreadsheet dispatch (Component 1), not against named SaaS \u2014 three converging sources support this. The lead-attribute question (real-time visibility vs automated re-routing) is open and forces a homepage tradeoff. Market-category framing is the weakest sub-area.",
+      "provided_summary": "8 sources plus 3 competitor dossiers; no customer-voice interviews or win/loss calls.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" },
+        { "tier": "recommended", "ask": "What category name did your team or investors use when pitching the company last year?" },
+        { "tier": "optional", "ask": "Your three most recent win announcements \u2014 enough to infer the buyer type and use case without a formal case study" }
+      ]
     },
     {
       "id": "language",
       "label": "Language",
       "status": "Strong",
+      "grade": 5,
       "p0_count": 2,
       "p1_count": 2,
       "p2_count": 2,
@@ -32,23 +44,35 @@
           "why_first": "Shapes all written content tone"
         }
       ],
-      "summary": "Tone signal converges across the marketing site and three sales decks \u2014 direct, outcome-first, low-jargon. The main open question is whether to anchor on 'operations' or 'logistics' as the primary category noun. Voice work is mature enough to move forward."
+      "summary": "Tone signal converges across the marketing site and three sales decks \u2014 direct, outcome-first, low-jargon. The main open question is whether to anchor on 'operations' or 'logistics' as the primary category noun. Voice work is mature enough to move forward.",
+      "provided_summary": "Marketing site, 3 sales decks, and transcripts available; no formal brand-voice brief on file.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Three phrases your best customers use when describing the problem you solve \u2014 exact words from email, Slack, or survey responses" },
+        { "tier": "recommended", "ask": "Any words or phrases the team has banned from sales decks or marketing copy, and why" }
+      ]
     },
     {
       "id": "audiences",
       "label": "Audiences",
       "status": "Partial",
+      "grade": 3,
       "p0_count": 1,
       "p1_count": 2,
       "p2_count": 0,
       "framework_dispatches": [],
       "synthesis_method": "classification",
-      "summary": "Three payer segments classify confidently from source material: commercial, Medicaid, and Medicare Advantage. ACO and direct-to-consumer are flagged as low-confidence \u2014 one mention each, neither corroborated. The employer procurement channel dominates the sales motion; payer-direct is mentioned but unconfirmed."
+      "summary": "Three payer segments classify confidently from source material: commercial, Medicaid, and Medicare Advantage. ACO and direct-to-consumer are flagged as low-confidence \u2014 one mention each, neither corroborated. The employer procurement channel dominates the sales motion; payer-direct is mentioned but unconfirmed.",
+      "provided_summary": "Sales transcripts and deal notes only; no direct buyer or user interviews from any segment.",
+      "input_asks": [
+        { "tier": "critical", "ask": "List of your top 10 current customers with industry, company size, and which team owns the relationship" },
+        { "tier": "recommended", "ask": "Any segment or vertical your team has explicitly ruled out as a target, and the reason" }
+      ]
     },
     {
       "id": "personas",
       "label": "Personas",
       "status": "Partial",
+      "grade": 3,
       "p0_count": 2,
       "p1_count": 2,
       "p2_count": 2,
@@ -59,12 +83,19 @@
           "why_first": "Persona feeds messaging and sales pitch"
         }
       ],
-      "summary": "Head of Operations is the dominant persona, surfaced across eight sales transcripts. CFO appears in deal mentions but the role profile is thin. The largest gap: no source material from the actual user (the dispatcher) \u2014 all signal comes from buyers above them, which risks a polished buyer story with a hollow user story."
+      "summary": "Head of Operations is the dominant persona, surfaced across eight sales transcripts. CFO appears in deal mentions but the role profile is thin. The largest gap: no source material from the actual user (the dispatcher) \u2014 all signal comes from buyers above them, which risks a polished buyer story with a hollow user story.",
+      "provided_summary": "8 buyer-side sales transcripts; no dispatcher interviews or end-user surveys.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The job title and department of the person who signed your last three contracts" },
+        { "tier": "critical", "ask": "The job title of whoever uses the product daily \u2014 if different from the buyer" },
+        { "tier": "recommended", "ask": "One sentence each of what the buyer cares about vs. what the daily user cares about, in their own words if possible" }
+      ]
     },
     {
       "id": "market",
       "label": "Market",
       "status": "Partial",
+      "grade": 3,
       "p0_count": 2,
       "p1_count": 2,
       "p2_count": 1,
@@ -75,12 +106,18 @@
           "why_first": "Required by sales enablement and competitive context"
         }
       ],
-      "summary": "DispatchTrack has the strongest evidence as a named competitor (positioning deck + two competitor pages). Roundtrip and Kaizen Health appear once each \u2014 likely watchlist rather than active competitive set. Behavioral alternatives (spreadsheets, in-house dispatcher, no formal routing) have stronger evidence than any named-competitor field."
+      "summary": "DispatchTrack has the strongest evidence as a named competitor (positioning deck + two competitor pages). Roundtrip and Kaizen Health appear once each \u2014 likely watchlist rather than active competitive set. Behavioral alternatives (spreadsheets, in-house dispatcher, no formal routing) have stronger evidence than any named-competitor field.",
+      "provided_summary": "3 competitor dossiers and 2 competitor-alternatives pages; no win/loss analysis or direct intel.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The competitors you put on your battle card \u2014 company name and the one-line reason you win against each" },
+        { "tier": "recommended", "ask": "One deal you lost to a competitor in the last 6 months and what the buyer said was the deciding factor" }
+      ]
     },
     {
       "id": "proof",
       "label": "Proof",
       "status": "Weak",
+      "grade": 2,
       "p0_count": 3,
       "p1_count": 2,
       "p2_count": 1,
@@ -91,12 +128,19 @@
           "why_first": "Validates claims before going to market"
         }
       ],
-      "summary": "The weakest folder in this build. The headline '15-minute routing' stat has one source and no controlled benchmark. Compliance posture (HIPAA, SOC 2) is named but unsupported by evidence in the ingested set. Three P0 questions need answers before this folder can support sales conversations."
+      "summary": "The weakest folder in this build. The headline '15-minute routing' stat has one source and no controlled benchmark. Compliance posture (HIPAA, SOC 2) is named but unsupported by evidence in the ingested set. Three P0 questions need answers before this folder can support sales conversations.",
+      "provided_summary": "One customer quote per headline metric; no case study PDFs, benchmarks, or compliance certifications.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The specific metric from your best customer result — number, what was measured, time period, and whether it was self-reported or independently verified" },
+        { "tier": "critical", "ask": "Your current compliance certifications (SOC 2, HIPAA BAA, etc.) with the date last audited" },
+        { "tier": "recommended", "ask": "Any published case study or customer reference you can share, even in draft form" }
+      ]
     },
     {
       "id": "design",
       "label": "Design",
       "status": "Weak",
+      "grade": 2,
       "p0_count": 2,
       "p1_count": 2,
       "p2_count": 2,
@@ -107,14 +151,14 @@
           "why_first": "Sets visual standards across all assets"
         }
       ],
-      "summary": "Visual identity exists in Figma but no Storybook or token library is declared. The marketing site looks visually consistent, but the underlying system is undocumented. Two P0 questions about whether to formalize a real design system or leave current ad-hoc styling in place."
+      "summary": "Visual identity exists in Figma but no Storybook or token library is declared. The marketing site looks visually consistent, but the underlying system is undocumented. Two P0 questions about whether to formalize a real design system or leave current ad-hoc styling in place.",
+      "provided_summary": "Public marketing site and a Figma link; no token library, Storybook, or documented design system.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Link to your Figma file or brand asset folder — even a locked view is useful for color and type extraction" },
+        { "tier": "recommended", "ask": "Your primary hex color, secondary hex color, and the font name used in headings on the marketing site" }
+      ]
     }
   ],
-  "exec_summary": {
-    "raw_material": "We received 11 sources spanning a pitch deck, three sales call transcripts, the public marketing site, two competitor-alternatives pages, a partnership announcement, and an internal Slack export of positioning debate. Decks gave strong signal on category framing; transcripts revealed the buyer committee; the website was scarce on positioning \u2014 most copy is feature-led, not buyer-problem-led.",
-    "primary_research": "We identified 3 likely competitors from cross-source mention frequency and pulled public dossiers on each. The dossiers gave strong category-shape signal \u2014 every named competitor sells to integrated health systems, every one anchors on transport reliability or outcomes. Marley's specific differentiator within that category is less clear from public sources alone.",
-    "confidence_intro": "The strategy/positioning and personas drafts have the highest density of open questions and warrant first review."
-  },
   "behavioral_alternatives": [
     {
       "id": "BA-1",

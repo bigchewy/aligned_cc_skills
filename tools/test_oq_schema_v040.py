@@ -72,3 +72,27 @@ def test_legacy_fixtures_updated_to_v040(fixture_name):
         assert "summary" in folder, f"{fixture_name} folder {folder['id']}: summary missing"
         assert "provided_summary" in folder, f"{fixture_name} folder {folder['id']}: provided_summary missing"
         assert "input_asks" in folder, f"{fixture_name} folder {folder['id']}: input_asks missing"
+
+
+@pytest.mark.parametrize(
+    "fixture_name",
+    ["fixture-tiny.json", "fixture-realistic.json", "fixture-stress.json"],
+)
+def test_render_fixtures_updated_to_v040(fixture_name):
+    """Render fixtures used to spot-check `review-template.html` must carry v0.4.0 fields."""
+    path = (
+        REPO_ROOT
+        / "frameworks/reverse-engineered-brand/test-fixtures/render"
+        / fixture_name
+    )
+    data = json.loads(path.read_text())
+    assert data["schema_version"] == "0.4.0", f"{fixture_name}: not v0.4.0"
+    assert "source_counts" in data, f"{fixture_name}: source_counts missing"
+    assert "source_narratives" in data, f"{fixture_name}: source_narratives missing"
+    assert "source_count" not in data, f"{fixture_name}: legacy singular source_count must be removed"
+    assert "exec_summary" not in data, f"{fixture_name}: legacy exec_summary block must be removed"
+    for folder in data["folders"]:
+        assert "grade" in folder, f"{fixture_name} folder {folder['id']}: grade missing"
+        assert "summary" in folder, f"{fixture_name} folder {folder['id']}: summary missing"
+        assert "provided_summary" in folder, f"{fixture_name} folder {folder['id']}: provided_summary missing"
+        assert "input_asks" in folder, f"{fixture_name} folder {folder['id']}: input_asks missing"

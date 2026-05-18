@@ -1,11 +1,16 @@
 {
-  "schema_version": "0.2.0",
-  "source_count": 20,
+  "schema_version": "0.4.0",
+  "source_counts": { "total": 20, "raw_material": 15, "primary_research": 5 },
+  "source_narratives": {
+    "raw_material": "15 sources: pitch decks, sales transcripts, the marketing site, competitor-alternatives pages, partnership docs, and an internal Slack export. Broad coverage with significant volume; quality varies across the set.",
+    "primary_research": "5 competitor dossiers from public sources. Strong category-shape signal; named competitors cluster around integrated health systems and transport reliability."
+  },
   "folders": [
     {
       "id": "strategy",
       "label": "Strategy",
       "status": "Strong",
+      "grade": 5,
       "p0_count": 7,
       "p1_count": 6,
       "p2_count": 6,
@@ -16,12 +21,19 @@
           "why_first": "Anchors downstream messaging and competitive framing"
         }
       ],
-      "summary": "Working hypothesis converges on manual spreadsheet dispatch as the primary competitor \u2014 the strongest signal in the source set. Lead-attribute and category-framing remain open and force downstream tradeoffs. Several P0 questions need resolution before drafts can ship."
+      "summary": "Working hypothesis converges on manual spreadsheet dispatch as the primary competitor \u2014 the strongest signal in the source set. Lead-attribute and category-framing remain open and force downstream tradeoffs. Several P0 questions need resolution before drafts can ship.",
+      "provided_summary": "15 sources plus 5 competitor dossiers; no recorded customer-voice interviews or win/loss data.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)" },
+        { "tier": "recommended", "ask": "What category name did your team or investors use when pitching the company last year?" },
+        { "tier": "optional", "ask": "Your three most recent win announcements \u2014 enough to infer the buyer type and use case without a formal case study" }
+      ]
     },
     {
       "id": "language",
       "label": "Language",
       "status": "Strong",
+      "grade": 5,
       "p0_count": 7,
       "p1_count": 6,
       "p2_count": 6,
@@ -32,12 +44,18 @@
           "why_first": "Shapes all written content tone"
         }
       ],
-      "summary": "Voice and tone signals are consistent across the available marketing materials. The primary open question is which category noun to anchor on. Messaging work is mature enough to ship pending the category decision."
+      "summary": "Voice and tone signals are consistent across the available marketing materials. The primary open question is which category noun to anchor on. Messaging work is mature enough to ship pending the category decision.",
+      "provided_summary": "Marketing site and sales decks available; no formal brand-voice brief or banned-words list on file.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Three phrases your best customers use when describing the problem you solve — exact words from email, Slack, or survey responses" },
+        { "tier": "recommended", "ask": "Any words or phrases the team has banned from sales decks or marketing copy, and why" }
+      ]
     },
     {
       "id": "audiences",
       "label": "Audiences",
       "status": "Partial",
+      "grade": 3,
       "p0_count": 6,
       "p1_count": 6,
       "p2_count": 6,
@@ -49,12 +67,18 @@
         }
       ],
       "summary": "Three payer segments classify with reasonable confidence; one or two surface only once and need executive confirmation. Employer channel dominates the sales motion. Source material is silent on several plausible adjacent segments.",
-      "synthesis_method": "classification"
+      "synthesis_method": "classification",
+      "provided_summary": "Sales transcripts and deal notes only; no buyer or user interviews from any segment.",
+      "input_asks": [
+        { "tier": "critical", "ask": "List of your top 10 current customers with industry, company size, and which team owns the relationship" },
+        { "tier": "recommended", "ask": "Any segment or vertical your team has explicitly ruled out as a target, and the reason" }
+      ]
     },
     {
       "id": "personas",
       "label": "Personas",
       "status": "Partial",
+      "grade": 3,
       "p0_count": 7,
       "p1_count": 6,
       "p2_count": 6,
@@ -65,12 +89,19 @@
           "why_first": "Persona feeds messaging and sales pitch"
         }
       ],
-      "summary": "Primary buyer persona surfaces clearly from sales transcripts. Secondary buyer roles appear with thinner detail. The user-side persona has the weakest evidence \u2014 source material is dominated by buyers, not actual end users."
+      "summary": "Primary buyer persona surfaces clearly from sales transcripts. Secondary buyer roles appear with thinner detail. The user-side persona has the weakest evidence \u2014 source material is dominated by buyers, not actual end users.",
+      "provided_summary": "Buyer-side transcripts only; no dispatcher interviews or end-user surveys on file.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The job title and department of the person who signed your last three contracts" },
+        { "tier": "critical", "ask": "The job title of whoever uses the product daily \u2014 if different from the buyer" },
+        { "tier": "recommended", "ask": "One sentence each of what the buyer cares about vs. what the daily user cares about, in their own words if possible" }
+      ]
     },
     {
       "id": "market",
       "label": "Market",
       "status": "Weak",
+      "grade": 2,
       "p0_count": 7,
       "p1_count": 6,
       "p2_count": 6,
@@ -81,12 +112,18 @@
           "why_first": "Required by sales enablement and competitive context"
         }
       ],
-      "summary": "Named competitor evidence is strongest for one specific competitor; others appear with single-source mentions and may be watchlist rather than active set. Behavioral alternatives (spreadsheets, in-house roles) have stronger evidence than the named competitor list. Battle-card depth needs work."
+      "summary": "Named competitor evidence is strongest for one specific competitor; others appear with single-source mentions and may be watchlist rather than active set. Behavioral alternatives (spreadsheets, in-house roles) have stronger evidence than the named competitor list. Battle-card depth needs work.",
+      "provided_summary": "5 competitor dossiers from public sources; no win/loss analysis or direct sales-team competitive intel.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The competitors you put on your battle card — company name and the one-line reason you win against each" },
+        { "tier": "recommended", "ask": "One deal you lost to a competitor in the last 6 months and what the buyer said was the deciding factor" }
+      ]
     },
     {
       "id": "proof",
       "label": "Proof",
       "status": "Weak",
+      "grade": 2,
       "p0_count": 6,
       "p1_count": 6,
       "p2_count": 6,
@@ -97,12 +134,19 @@
           "why_first": "Validates claims before going to market"
         }
       ],
-      "summary": "The weakest folder in this build. Headline metrics appear in customer quotes but lack controlled benchmarks. Compliance claims are named but not yet evidenced. Most P0 questions in the build cluster here."
+      "summary": "The weakest folder in this build. Headline metrics appear in customer quotes but lack controlled benchmarks. Compliance claims are named but not yet evidenced. Most P0 questions in the build cluster here.",
+      "provided_summary": "Customer quote mentions only; no case study PDFs, controlled benchmarks, or compliance certifications.",
+      "input_asks": [
+        { "tier": "critical", "ask": "The specific metric from your best customer result — number, what was measured, time period, and whether it was self-reported or independently verified" },
+        { "tier": "critical", "ask": "Your current compliance certifications (SOC 2, HIPAA BAA, etc.) with the date last audited" },
+        { "tier": "recommended", "ask": "Any published case study or customer reference you can share, even in draft form" }
+      ]
     },
     {
       "id": "design",
       "label": "Design",
       "status": "Weak",
+      "grade": 2,
       "p0_count": 6,
       "p1_count": 6,
       "p2_count": 6,
@@ -113,14 +157,14 @@
           "why_first": "Sets visual standards across all assets"
         }
       ],
-      "summary": "Visual identity exists in working files but no published token library or component system has been declared. Marketing surfaces appear visually consistent without a documented system behind them. Two open design-system questions need product input."
+      "summary": "Visual identity exists in working files but no published token library or component system has been declared. Marketing surfaces appear visually consistent without a documented system behind them. Two open design-system questions need product input.",
+      "provided_summary": "Public marketing site available; no Figma link, token library, Storybook, or documented design system.",
+      "input_asks": [
+        { "tier": "critical", "ask": "Link to your Figma file or brand asset folder — even a locked view is useful for color and type extraction" },
+        { "tier": "recommended", "ask": "Your primary hex color, secondary hex color, and the font name used in headings on the marketing site" }
+      ]
     }
   ],
-  "exec_summary": {
-    "raw_material": "We received 20 sources including multiple pitch decks, sales call transcripts, the marketing site, product documentation, customer case studies, and competitive research notes. Coverage is extensive \u2014 most brand areas have multiple independent sources supporting confidence assessments.",
-    "primary_research": "We identified 5 competitors from cross-source mention frequency. Public dossiers were assembled for each covering positioning, ICP, channels, and voice. The competitive landscape is well-defined at the category level; differentiation gaps are documented as open questions.",
-    "confidence_intro": "Most areas have sufficient source coverage. Review the strategy and personas tabs first as they drive the most downstream output."
-  },
   "behavioral_alternatives": [
     {
       "id": "BA-1",
