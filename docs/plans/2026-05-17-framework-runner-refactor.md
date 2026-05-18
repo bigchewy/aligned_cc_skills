@@ -1187,7 +1187,7 @@ git commit -m "test(shared-runners): add design-mandated error-path tests for ru
 
 ---
 
-### Task 14: Extend `_shared/contextual-recommendation.md` with multi-entity scoring
+### ✅ Task 14: Extend `_shared/contextual-recommendation.md` with multi-entity scoring
 
 Add `framework-or-advisor` entity type. Scoring runs Stage 1 + Stage 2 over both registries; results are merged and ranked. Auto-select threshold treats top entry as canonical; shortlist mode presents a unified list when 2+ entries score similarly.
 

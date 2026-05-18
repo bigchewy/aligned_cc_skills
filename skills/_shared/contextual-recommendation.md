@@ -8,7 +8,7 @@ Shared scoring and presentation logic for intent-based advisor and framework sel
 ## Configuration
 
 The calling skill passes:
-- **Entity type:** `advisor` or `framework`
+- **Entity type:** `advisor`, `framework`, or `framework-or-advisor`
 - **Registry path:** `advisors/registry.yaml` or `frameworks/registry.yaml`
 - **Task context:** The user's args (Path 2), extracted conversation context (Path 3), or empty (Path 4)
 
@@ -60,6 +60,31 @@ On the filtered candidate set, apply these priority rules in order:
 3. **Domain depth** — Among remaining entries, those with more domain tag overlap rank higher. Tiebreaker only.
 
 4. **Disambiguation** — When steps 2-3 produce a tie, use finer-grained fields (`evaluation_expertise`/`summary` for advisors, `purpose`/`category` for frameworks) for additional context.
+
+## Multi-Entity Mode (entity type: `framework-or-advisor`)
+
+When the calling skill passes entity type `framework-or-advisor`, run Stages 1-2 against **both** registries and merge the results into a single ranked list.
+
+### Field mapping (merged)
+
+| Scoring role | Source (framework) | Source (advisor) |
+|---|---|---|
+| Primary match | `use_when` | `best_for` |
+| Domain overlap | `domains` | `domains` |
+| Disambiguation | `purpose`, `category` | `evaluation_expertise`, `summary` |
+
+Each entry carries its entity type into the merged list (so the caller knows whether to dispatch the framework runner or the advisor runner).
+
+### Tiebreaker (framework vs advisor at similar confidence)
+
+When a framework and an advisor score similarly in Stage 2:
+1. **Actionable task signal** — if the task contains a clear deliverable ("build a positioning brief", "run an RCA"), prefer the framework. Frameworks structure work that has a known shape.
+2. **Exploratory task signal** — if the task contains "I'm not sure what I need" or "help me think about X", prefer the advisor. Advisors handle ambiguity better than framework prompts.
+3. **No clear signal** — present a shortlist that mixes both.
+
+### Zero-signal handling
+
+If no framework scores AND no advisor scores (both registries empty or zero domain overlap after Stage 1), degrade to Path 4 (No Context Available) per the top of this file.
 
 ## Confidence Test and Presentation
 
