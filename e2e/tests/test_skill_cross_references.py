@@ -52,6 +52,21 @@ REQUIRED_CROSS_REFS = [
         REPO_ROOT / "skills" / "finishing-a-development-branch" / "references" / "deployment-pitfall-catalog.md",
         "skills/_shared/manual-deploy-artifact-catalog.md",
     ),
+    # Shared runners introduced in the framework-runner-refactor — three callers
+    # depend on these paths resolving. Renaming either runner without updating
+    # the callers would silently break invocation at runtime.
+    (
+        REPO_ROOT / "skills" / "use-framework" / "SKILL.md",
+        "skills/_shared/framework-runner.md",
+    ),
+    (
+        REPO_ROOT / "skills" / "use-advisor" / "SKILL.md",
+        "skills/_shared/advisor-runner.md",
+    ),
+    (
+        REPO_ROOT / "skills" / "brainstorming" / "modes" / "authoring.md",
+        "skills/_shared/framework-runner.md",
+    ),
 ]
 
 

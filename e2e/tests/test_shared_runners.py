@@ -62,6 +62,20 @@ def test_advisor_runner_is_in_eval_surface():
     assert "skills/_shared/advisor-runner.md" in text
 
 
+def test_use_advisor_documents_absolute_path_construction():
+    """The advisor-runner fails closed unless given a path to an existing file.
+    use-advisor must tell the model how to construct that absolute path from
+    the registry `id` returned by Step 3."""
+    text = read("skills/use-advisor/SKILL.md")
+    assert "advisors/prompts/<id>.md" in text or "advisors/prompts/<id>" in text, (
+        "use-advisor must document the absolute path pattern "
+        "`<plugin-root>/advisors/prompts/<id>.md` for the runner handoff"
+    )
+    assert "resolve-skill-path.md" in text, (
+        "use-advisor must point at resolve-skill-path.md for plugin root resolution"
+    )
+
+
 def test_use_advisor_invokes_shared_runner():
     text = read("skills/use-advisor/SKILL.md")
     assert "_shared/advisor-runner.md" in text, "use-advisor must invoke shared runner"
@@ -79,6 +93,20 @@ def test_use_advisor_invokes_shared_runner():
     # Anti-regression: inline persona protocol should be removed
     assert "Read the full advisor prompt file" not in text, (
         "persona adoption protocol must live in _shared/advisor-runner.md"
+    )
+
+
+def test_use_framework_documents_absolute_path_construction():
+    """The framework-runner fails closed unless given an absolute directory path.
+    use-framework must tell the model how to construct that absolute path from
+    the registry `id` returned by Step 3."""
+    text = read("skills/use-framework/SKILL.md")
+    assert "frameworks/<id>/" in text or "frameworks/<id>" in text, (
+        "use-framework must document the absolute path pattern "
+        "`<plugin-root>/frameworks/<id>/` for the runner handoff"
+    )
+    assert "resolve-skill-path.md" in text, (
+        "use-framework must point at resolve-skill-path.md for plugin root resolution"
     )
 
 

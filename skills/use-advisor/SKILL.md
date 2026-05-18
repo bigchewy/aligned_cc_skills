@@ -54,8 +54,14 @@ If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to li
 
 After matching, hand off to the shared runner.
 
+**Resolving the absolute advisor path.** The runner requires a file that exists and fails closed otherwise. Construct it from the matched advisor's registry `id`:
+
+`<plugin-root>/advisors/prompts/<id>.md`
+
+Where `<plugin-root>` is the parent of the matched `.claude-plugin/` directory. Resolve it via the procedure in `skills/_shared/resolve-skill-path.md` (Plugin root section). If Step 3 fell back to the plugin glob and produced a full path directly, use that path as-is.
+
 Read `skills/_shared/advisor-runner.md` and invoke it with:
-- **Matched advisor path:** the prompt file for the matched advisor (from Step 3)
+- **Matched advisor path:** the absolute path constructed above
 - **`greeting_mode`:** `full` (preserves existing top-level invocation behavior — brief greeting + Core Frameworks listing)
 
 The runner handles persona adoption, voice rules, the switching/ending lifecycle, and composability with `/aligned:use-framework`.

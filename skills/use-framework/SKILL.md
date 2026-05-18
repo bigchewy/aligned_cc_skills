@@ -56,8 +56,14 @@ If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to li
 
 After matching, hand off to the shared runner.
 
+**Resolving the absolute framework path.** The runner requires an absolute directory path and fails closed otherwise. Construct it from the matched framework's registry `id`:
+
+`<plugin-root>/frameworks/<id>/`
+
+Where `<plugin-root>` is the parent of the matched `.claude-plugin/` directory. Resolve it via the procedure in `skills/_shared/resolve-skill-path.md` (Plugin root section). If Step 3 fell back to the project-local glob and produced a full path directly, use that path as-is.
+
 Read `skills/_shared/framework-runner.md` and invoke it with:
-- **Matched framework path:** the directory of the matched framework (from Step 3)
+- **Matched framework path:** the absolute path constructed above
 - **`intake_gate_mode`:** `advisory` (preserves existing top-level invocation behavior — `required_documents` are noted to the user but execution proceeds)
 
 The runner handles loading content, applying the intake gate, running phases with WAIT discipline, voice rules, and composability with `/aligned:use-advisor`.
