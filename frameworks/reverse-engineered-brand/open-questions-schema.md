@@ -43,7 +43,8 @@ v0.2.0 JSON files are still renderable. When `source_counts` is absent, the snap
 |---|---|---|---|
 | `id` | string | yes | Folder identifier (e.g., `"strategy"`) |
 | `label` | string | yes | Human label (e.g., `"Strategy"`) |
-| `status` | enum | yes | `Strong \| Partial \| Weak \| GAP` |
+| `status` | enum | yes | `Strong \| Partial \| Weak \| GAP` — retained for backward compat. v0.3.0+ surfaces use `grade` as the front-line signal. |
+| `grade` | integer | yes (v0.3.0+) | `1 \| 2 \| 3 \| 4 \| 5` — see grading rubric in `prompt.md` PHASE 3.2. v0.2.0 default: omit; renderer falls back to mapping `status` (`Strong`→5, `Partial`→3, `Weak`→2, `GAP`→1). |
 | `p0_count` | integer | yes | Count of P0-impact OQs for this folder |
 | `p1_count` | integer | yes | Count of P1-impact OQs |
 | `p2_count` | integer | yes | Count of P2-impact OQs |

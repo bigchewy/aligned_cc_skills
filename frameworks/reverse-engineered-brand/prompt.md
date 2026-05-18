@@ -304,7 +304,13 @@ The AUTO_MODE preamble enforces v0.2 field names directly, so this step is a no-
 **Step 3.2: Build the `folders` array.**
 
 For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences`, `personas`, `market`, `proof`, `design`):
-- Determine `status`: `Strong` (≥1 slice with HIGH-confidence OQs and 0 P0 OQs), `Partial` (≥1 slice present, some P0 OQs), `Weak` (slice present but mostly LOW confidence), `GAP` (no owning framework).
+- Determine `status`: `Strong` (≥1 slice with HIGH-confidence OQs and 0 P0 OQs), `Partial` (≥1 slice present, some P0 OQs), `Weak` (slice present but mostly LOW confidence), `GAP` (no owning framework). Retained for backward compat — `grade` is the front-line signal in v0.3.0+ surfaces.
+- **Compute `grade` (1-5 integer).** Four-bucket `status` is too coarse — almost every folder lands in `Partial` and the badge tells the reviewer nothing actionable. The grade lets a reviewer ask "how much should I trust this area before I dig in?" Use this rubric, in order — first matching tier wins:
+  - **5 — Strong:** 0 P0 OQs AND ≥70% of this folder's OQs have `confidence: high` AND each slice in this folder draws on ≥3 evidence sources (count distinct entries across all `evidence` arrays per slice).
+  - **4 — Mostly clear:** 0-1 P0 OQs AND ≥50% of OQs have `confidence: high` OR `medium`.
+  - **3 — Mixed:** 2-4 P0 OQs. (Most folders that previously landed in `Partial` belong here.)
+  - **2 — Thin:** 5+ P0 OQs AND majority of OQs are `confidence: low`.
+  - **1 — Insufficient:** Folder contains a GAP slice OR no usable source signal (folder was instantiated via `skipped_no_signal` paths only).
 - Count `p0_count`, `p1_count`, `p2_count` from the slices in this folder.
 - Build `framework_dispatches`: array of `{framework_id, fills}` entries for each dispatched framework.
 - For folders populated via classification (`audiences`): set `synthesis_method: classification` on the folder summary; do NOT set `gap_frameworks_needed`. The folder's status reflects classification confidence (Strong/Partial/Weak), not framework presence.
@@ -366,7 +372,10 @@ These are required fields in v0.3.0. Compute them from registry metadata only �
   "folders": [
     {
       "id": "strategy",
+      "label": "Strategy",
       "status": "Partial",
+      "grade": 3,
+      "summary": "1-3 sentence brand-specific learnings about this area...",
       "p0_count": 2,
       "p1_count": 3,
       "p2_count": 1,
