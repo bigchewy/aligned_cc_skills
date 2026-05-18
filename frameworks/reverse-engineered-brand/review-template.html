@@ -172,61 +172,99 @@
     }
     .folder-tree .badge { font-family: var(--font-sans); }
 
-    /* Section list — friendly nested labels with right-aligned status badges */
+    /* Section list — 3-column Grade | Area | Summary table */
     .section-list {
-      list-style: none;
-      margin: 0;
-      padding: 14px 18px;
+      max-width: 920px;
+      margin: 0 auto;
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: 8px;
+      overflow: hidden;
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
     }
-    .section-list ul {
-      list-style: none;
-      margin: 0;
-      padding-left: 22px;
-    }
-    .section-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 18px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--color-muted);
+    .section-list tr.section-row {
       cursor: pointer;
-      border-radius: 6px;
       transition: background 120ms;
     }
-    .section-list li:last-child { border-bottom: none; }
-    .section-list li:hover,
-    .section-list li:focus-within {
+    .section-list tr.section-row:hover,
+    .section-list tr.section-row:focus-within {
       background: var(--color-muted);
     }
-    .section-list li:hover .label,
-    .section-list li:focus-within .label {
+    .section-list tr.section-row:hover .label,
+    .section-list tr.section-row:focus-within .label {
       color: var(--color-accent);
     }
-    .section-list > li { font-weight: 600; }
-    .section-list .section-label-col {
-      flex: 1 1 auto;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .section-list td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-muted);
+      vertical-align: top;
     }
-    .section-list .label { flex: 0 0 auto; font-size: 0.95rem; transition: color 120ms; }
+    .section-list tr.section-row:last-child td { border-bottom: none; }
+    .section-list .section-grade-cell {
+      width: 80px;
+      text-align: center;
+    }
+    .section-list .section-area-cell {
+      width: 160px;
+      min-width: 0;
+    }
+    .section-list .section-summary-cell {
+      width: auto;
+    }
+    .section-list .label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      transition: color 120ms;
+    }
+    .section-list .label.section-link:focus { outline: none; }
+    .section-list .section-area-cell .status-badge {
+      margin: 6px 0 0 0;
+    }
     .section-list .section-desc {
       margin: 0;
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       font-weight: 400;
       color: var(--color-secondary);
       line-height: 1.55;
     }
-    .section-list .status-badge { margin: 4px 0 0 0; flex: 0 0 auto; align-self: flex-start; }
-    .section-list .label.section-link {
-      color: var(--color-foreground);
+
+    /* Grade pills (1-5, color-coded). Used in Sections at a Glance and per-folder banners. */
+    .grade {
       display: inline-block;
+      min-width: 28px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      font-feature-settings: 'tnum';
+      line-height: 1.2;
+      text-align: center;
+      cursor: help;
     }
-    .section-list .label.section-link:focus { outline: none; }
+    .grade-5 { background: #ecfdf5; color: #047857; }
+    .grade-4 { background: #f0fdf4; color: #16a34a; }
+    .grade-3 { background: #fef3c7; color: #b45309; }
+    .grade-2 { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .grade-1 { background: #fef2f2; color: #b91c1c; }
+
+    @media (max-width: 760px) {
+      .section-list, .section-list tbody, .section-list tr, .section-list td {
+        display: block;
+        width: auto;
+      }
+      .section-list tr.section-row {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--color-muted);
+      }
+      .section-list tr.section-row:last-child { border-bottom: none; }
+      .section-list td { padding: 4px 0; border: none; }
+      .section-list .section-grade-cell { text-align: left; width: auto; }
+      .section-list .section-area-cell { width: auto; }
+    }
 
     /* Inline status badges */
     .status-badge {
@@ -1478,6 +1516,30 @@
       design: "The visual system — color palette, typography, layout principles, and design tokens."
     };
 
+    // Derive grade (1-5) from folder. Prefers folders[].grade (v0.3.0+); falls
+    // back to mapping status (v0.2.0): Strong=5, Partial=3, Weak=2, GAP=1.
+    function folderGrade(f) {
+      if (f && typeof f.grade === 'number' && f.grade >= 1 && f.grade <= 5) return f.grade;
+      var s = (f && f.status) ? f.status.toLowerCase() : '';
+      if (s === 'strong') return 5;
+      if (s === 'weak') return 2;
+      if (s === 'gap') return 1;
+      return 3; // Partial or unknown
+    }
+    var GRADE_TOOLTIP = {
+      5: '5 — Strong: 0 P0 OQs, ≥70% high confidence, ≥3 evidence sources per slice',
+      4: '4 — Mostly clear: 0-1 P0 OQs and ≥50% high/medium confidence',
+      3: '3 — Mixed: 2-4 P0 OQs (most former-Partial folders)',
+      2: '2 — Thin: 5+ P0 OQs and majority low confidence',
+      1: '1 — Insufficient: GAP slice or no usable source signal'
+    };
+    function gradePill(grade) {
+      var el = ce('span', 'grade grade-' + grade);
+      el.setAttribute('title', GRADE_TOOLTIP[grade] || ('Grade ' + grade));
+      el.appendChild(tx(String(grade)));
+      return el;
+    }
+
     function renderSectionsAtAGlance() {
       var el = document.getElementById('sections-at-a-glance');
       if (!el) return;
@@ -1487,26 +1549,37 @@
         el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No folders found.')));
         return;
       }
-      var ul = ce('ul', 'section-list');
+      var table = ce('table', 'section-list');
+      var tbody = ce('tbody');
       folders.forEach(function(f) {
         var sc = statusClass(f.status);
         var badge = f.status === 'GAP' ? 'No owning framework' : (f.status || '—');
-        var li = sa(ce('li'), { role: 'link', tabindex: '0' });
-        li.addEventListener('click', function() { switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-        li.addEventListener('keydown', function(e) {
+        var row = sa(ce('tr', 'section-row'), { role: 'link', tabindex: '0', 'data-folder': f.id });
+        row.addEventListener('click', function() { switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        row.addEventListener('keydown', function(e) {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(f.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         });
-        var labelCol = ce('div', 'section-label-col');
+
+        var gradeCell = ce('td', 'section-grade-cell');
+        gradeCell.appendChild(gradePill(folderGrade(f)));
+
+        var areaCell = ce('td', 'section-area-cell');
         var labelEl = ce('span', 'label section-link');
         labelEl.appendChild(tx(f.label || f.id));
-        labelCol.appendChild(labelEl);
+        areaCell.appendChild(labelEl);
+        areaCell.appendChild(ap(ce('span', 'status-badge ' + sc), tx(badge)));
+
+        var summaryCell = ce('td', 'section-summary-cell');
         var summary = f.summary || AREA_DESCRIPTIONS_FALLBACK[f.id];
-        if (summary) labelCol.appendChild(ap(ce('p', 'section-desc'), tx(summary)));
-        li.appendChild(labelCol);
-        li.appendChild(ap(ce('span', 'status-badge ' + sc), tx(badge)));
-        ul.appendChild(li);
+        if (summary) summaryCell.appendChild(ap(ce('p', 'section-desc'), tx(summary)));
+
+        row.appendChild(gradeCell);
+        row.appendChild(areaCell);
+        row.appendChild(summaryCell);
+        tbody.appendChild(row);
       });
-      el.appendChild(ul);
+      table.appendChild(tbody);
+      el.appendChild(table);
     }
 
     function renderOQCard(q, folderId) {
