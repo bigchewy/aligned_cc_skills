@@ -396,35 +396,6 @@ graph LR
           </pre>
         </div>
 
-        <h3>Business Mode</h3>
-        <ul class="bullet-list">
-          <li><strong>Phase 1 — Goal:</strong> confirm a single clear goal sentence</li>
-          <li><strong>Complexity gate:</strong> operational (streamlined) vs diagnostic (full 4-phase)</li>
-          <li><strong>Phase 2 — Problems:</strong> obstacles categorized by type</li>
-          <li><strong>Phase 3 — Root causes:</strong> 3-5 levels of "why" per obstacle (skipped for operational)</li>
-          <li><strong>Phase 4 — Solutions:</strong> 2-3 approaches addressing root causes</li>
-        </ul>
-        <div class="diagram-container">
-          <pre class="mermaid-deferred">
-graph LR
-    Ph1["Phase 1:\nGoal"] --> CG{Complexity\ngate}
-    CG -->|"Diagnostic"| Ph2["Phase 2:\nProblems"]
-    CG -->|"Operational"| Ph2s["Phase 2 lite:\nList obstacles"]
-    Ph2 --> Ph3["Phase 3:\nRoot Causes"]
-    Ph3 --> Ph4["Phase 4:\nSolutions"]
-    Ph2s --> Ph4
-    Ph4 --> After(["Post-design"])
-
-    style Ph1 fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
-    style CG fill:#fff7ed,stroke:#ff6900,color:#1a1a1a
-    style Ph2 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
-    style Ph2s fill:#f5f3ef,stroke:#555555,color:#1a1a1a
-    style Ph3 fill:#ffffff,stroke:#e5e7eb,color:#1a1a1a
-    style Ph4 fill:#ff6900,stroke:#e55d00,color:#fff
-    style After fill:#f0eeeb,stroke:#1a1a1a,color:#1a1a1a
-          </pre>
-        </div>
-
         <h3>Research Mode</h3>
         <ul class="bullet-list">
           <li><strong>5-phase process:</strong> scope &amp; question framing → corpus survey → comparative synthesis → Skeptic Pass critique (inline) → ranked recommendations with caveats</li>
@@ -434,10 +405,11 @@ graph LR
 
         <h3>Authoring Mode</h3>
         <ul class="bullet-list">
-          <li><strong>Domain-advisor panel:</strong> selected per content type (curriculum design, framework prompt authoring, exercise sequencing)</li>
-          <li><strong>Optional Research sub-phase:</strong> file-mediated sub-agent fork — Authoring writes a question to <code>/tmp/brainstorm-context-{topic}/research-{slug}-question.md</code>, the Research sub-agent answers via <code>research-{slug}-synthesis.md</code></li>
-          <li><strong>Failure handling:</strong> if synthesis is missing, empty, or lacks confidence/caveat fields, Authoring proceeds without the input rather than blocking</li>
-          <li><strong>Deliverable:</strong> sequenced design doc (curriculum, framework prompts, exercise programs)</li>
+          <li><strong>Replaces Business + Authoring:</strong> authors any document — memos, decision docs, decks, positioning briefs, diagnostic write-ups — via framework-runner dispatch with deliverable-type-driven post-engine routing</li>
+          <li><strong>Engine selection:</strong> contextual-recommendation scores frameworks + advisors together (<code>framework-or-advisor</code> entity type); auto-selects framework or falls back to structured Q&amp;A with topic advisor in Architect's proxy seat</li>
+          <li><strong>Fallback ladder:</strong> high-confidence framework → framework-runner (intake=strict); advisor match → structured Q&amp;A; weak signal → top-scoring topic advisor; no signal → Wise Eric default</li>
+          <li><strong>Post-engine dispatch:</strong> deliverable_type (content / decision / plan / analysis) selects template, critique pool, and handoff prompt</li>
+          <li><strong>Deliverable:</strong> design doc (feeds <code>/aligned:writing-plans</code> for content and plan types)</li>
         </ul>
 
         <h3>Roadmap Mode</h3>
