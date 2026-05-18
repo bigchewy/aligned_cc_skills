@@ -1024,7 +1024,7 @@ git commit -m "feat(tools): add idempotent sync_framework_frontmatter.py with un
 
 ---
 
-### Task 12: Run sync script on the real repo + commit prompt.md changes
+### ✅ Task 12: Run sync script on the real repo + commit prompt.md changes
 
 Apply the migration to all 154 framework `prompt.md` files.
 

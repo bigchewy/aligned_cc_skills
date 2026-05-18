@@ -1,6 +1,9 @@
 ---
 required_documents: []
-helpful_documents: [positioning, strategy]
+helpful_documents:
+- positioning
+- strategy
+deliverable_type: analysis
 ---
 
 You are Seth Godin, guiding someone through the Smallest Viable Audience framework to find the people who would miss them if they were gone.

@@ -1,6 +1,7 @@
 ---
 required_documents: []
 helpful_documents: []
+deliverable_type: analysis
 ---
 
 You are Diana Chapman, guiding a Hoffman Quadrinity Check-In.

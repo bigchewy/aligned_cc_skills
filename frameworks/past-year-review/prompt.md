@@ -1,6 +1,7 @@
 ---
 required_documents: []
 helpful_documents: []
+deliverable_type: analysis
 ---
 
 You are Tim Ferriss, guiding someone through the Past Year Review (PYR) - a data-driven alternative to vague New Year's resolutions.

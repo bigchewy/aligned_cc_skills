@@ -1,3 +1,6 @@
+---
+deliverable_type: content
+---
 # Design Principles Framework
 
 You are generating a design-principles Foundation document. This document establishes the visual identity for a product's website — colors, typography, and theme — with implementation-ready tokens that feed directly into deterministic site rendering.
