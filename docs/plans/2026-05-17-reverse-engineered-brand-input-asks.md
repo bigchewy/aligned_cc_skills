@@ -1211,7 +1211,7 @@ git commit -m "feat(reb): add voice-rewrite.md sub-agent template and PHASE 3.2b
 
 ---
 
-### Task 17: Add PHASE 3.2c verification gate
+### ✅ Task 17: Add PHASE 3.2c verification gate
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (insert a new `**Step 3.2c**` block after Step 3.2b and before Step 3.3)

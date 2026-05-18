@@ -430,6 +430,24 @@ The orchestrator merges the response back into `folders[]`:
 
 **On sub-agent dispatch failure** (timeout, malformed JSON return, missing keys): abort the build with a hard-fail message naming the sub-agent and the failure mode. Do NOT silently fall back to pre-rewrite asks — the verification gate in Step 3.2c assumes the rewrite happened.
 
+**Step 3.2c: Input-ask verification gate (NEW).**
+
+Three checks run against the merged `folders[]` array. All three are hard-fail; on any failure, abort the build and print the named failure list. Do NOT proceed to write the JSON.
+
+**Check 1 — Array length parity.** For each folder, the count of `input_asks` after Step 3.2b must equal the count before Step 3.2b. The sub-agent cannot drop or add entries. On mismatch: hard-fail with `folder: {id}, before: {N}, after: {M}`.
+
+**Check 2 — Banned-phrase regex.** Apply the following case-insensitive regex set to every post-pass `ask` string AND every `provided_summary` string. On any match, hard-fail with `field: {ask|provided_summary}, folder: {id}, matched: {pattern}, value: {string}`:
+
+- Em dash or en dash: `[—–]`
+- "It's not X, it's Y" construction: `\bit'?s not\b[^.!?]+,?\s+(it'?s )?`
+- AI buzzwords (single regex, alternation): `\b(leverage|seamless|unlock|streamline|delve|robust|cutting-edge|transformative|elevate|revolutionize|crucial|essential)\b`
+
+**Check 3 — Tier preservation.** For each folder, walk `input_asks` by index. The `tier` at index `i` post-rewrite must equal the `tier` at index `i` pre-rewrite. On mismatch: hard-fail with `folder: {id}, index: {i}, before: {tier_before}, after: {tier_after}`.
+
+On any check failure: print all failures (do not stop at the first), then abort. Voice failures should be rare; when they happen, the operator's recovery is "edit the brand-voice file or re-prompt the sub-agent". No silent fallback.
+
+If all checks pass, proceed to Step 3.3.
+
 **Step 3.3: Aggregate competitor dossiers.**
 
 Read every `.build/competitors/{slug}.json` file (Glob `{brand-folder-path}/.build/competitors/*.json`). Concatenate into a `competitors` array on the top-level JSON object.
