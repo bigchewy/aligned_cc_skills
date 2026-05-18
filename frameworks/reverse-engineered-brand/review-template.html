@@ -1958,14 +1958,6 @@
       });
     });
 
-    // Already loaded? Run now (covers cases where DOMContentLoaded already fired)
-    if (document.readyState !== 'loading') {
-      renderAll();
-      addChipTooltips();
-      syncInitialSelectedStates();
-      rebuildAllPastebacks();
-    }
-
     // ── v0.4.0: Inputs Needed (Overview sub-tab) + per-tab callouts ──
     var FOLDER_LABEL_TO_TAB = {
       'Strategy': 'strategy',
@@ -1987,6 +1979,16 @@
       design: 'Design',
       competitive: 'Competitive'
     };
+
+    // Already loaded? Run now (covers cases where DOMContentLoaded already fired).
+    // Must execute AFTER FOLDER_LABEL_BY_ID is assigned — renderAll() reads it via
+    // renderOQCard/renderGroupPanel.
+    if (document.readyState !== 'loading') {
+      renderAll();
+      addChipTooltips();
+      syncInitialSelectedStates();
+      rebuildAllPastebacks();
+    }
     function buildFolderToGroupTab() {
       var map = {};
       resolveDisplayGroups().forEach(function(g) {

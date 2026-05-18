@@ -8,7 +8,7 @@ Reference for the JSON structure emitted at PHASE 2.4 of `reverse-engineered-bra
 
 ```json
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.4.1",
   "source_counts": { "total": 39, "raw_material": 30, "primary_research": 9 },
   "source_narratives": {
     "raw_material": "1-3 sentence narrative about the raw-material corpus...",
