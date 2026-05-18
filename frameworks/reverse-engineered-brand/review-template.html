@@ -468,6 +468,12 @@
     .chip-conf-high { background: #ecfdf5; color: #047857; }
     .chip-conf-med { background: var(--color-accent-subtle); color: var(--color-accent); }
     .chip-conf-low { background: #fef2f2; color: #b91c1c; }
+    .chip-area { background: var(--color-surface); color: var(--color-secondary); font-family: var(--font-sans); }
+    .empty-group { font-size: 0.9rem; color: var(--color-dimmed); font-style: italic; margin: 12px 0; }
+    .group-pasteback { margin-bottom: 10px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px; }
+    .group-pasteback summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+    .group-pasteback textarea { width: 100%; min-height: 60px; margin-top: 8px; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--color-border); border-radius: 4px; padding: 8px; }
+    .group-pasteback .paste-back-actions { margin-top: 8px; display: flex; gap: 8px; }
 
     .oq-body {
       font-size: 0.92rem;
@@ -1703,6 +1709,8 @@
       hdr.appendChild(ap(ce('span', 'oq-id'), tx(displayId)));
       hdr.appendChild(chip(impact, 'pri ' + priClass(impact)));
       hdr.appendChild(chip('conf: ' + confLabel, confClass(q.confidence || 'low')));
+      var areaLabel = FOLDER_LABEL_BY_ID[folderId] || folderId;
+      hdr.appendChild(chip(areaLabel, 'chip-area'));
       card.appendChild(hdr);
       // Summary line (the executive-skim view, shown by default)
       card.appendChild(ap(ce('p', 'oq-body'), tx(summaryText)));
@@ -1753,27 +1761,23 @@
       return card;
     }
 
-    function renderFolderBanner(folder, oqs, folderId) {
-      if (!folder) return null;
+    function renderGroupBanner(group, oqs) {
+      if (!group) return null;
       var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
       var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
       var highPriority = oqs.filter(function(q) { return q.impact === 'P0'; }).length;
 
       var banner = ce('div', 'folder-banner');
-      var gradeWrap = ce('div', 'banner-grade');
-      gradeWrap.appendChild(gradePill(folderGrade(folder)));
-      banner.appendChild(gradeWrap);
+      banner.appendChild(ap(ce('div', 'banner-grade'), gradePill(group.grade)));
 
       var body = ce('div', 'banner-body');
-      body.appendChild(ap(ce('h2'), tx(folder.label || folderId)));
-      var summary = folder.summary || AREA_DESCRIPTIONS_FALLBACK[folderId];
-      if (summary) body.appendChild(ap(ce('p', 'banner-summary'), tx(summary)));
+      body.appendChild(ap(ce('h2'), tx(group.label)));
 
       var counts = ce('p', 'banner-counts');
       counts.appendChild(ap(ce('strong'), tx(String(assumptions.length))));
       counts.appendChild(tx(' assumptions, '));
       counts.appendChild(ap(ce('strong'), tx(String(questions.length))));
-      counts.appendChild(tx(' questions — '));
+      counts.appendChild(tx(' questions, '));
       counts.appendChild(ap(ce('strong'), tx(String(highPriority))));
       counts.appendChild(tx(' high-priority'));
       body.appendChild(counts);
@@ -1782,66 +1786,62 @@
       return banner;
     }
 
-    function renderFolderPanel(folderId) {
-      var el = document.getElementById('panel-' + folderId + '-content');
-      if (!el) return;
-      clearEl(el);
-      var folder = findFolder(folderId);
+    function renderGroupPanel(group) {
+      var bannerEl = document.getElementById('banner-' + group.id);
+      var oqsEl = document.getElementById('panel-' + group.id + '-oqs');
+      var pbEl = document.getElementById('panel-' + group.id + '-pastebacks');
+      if (!bannerEl || !oqsEl || !pbEl) return;
+
       var oqs = (OPEN_QUESTIONS.open_questions || []).filter(function(q) {
-        return q.file && q.file.indexOf(folderId + '/') === 0;
+        return (group.folder_ids || []).some(function(fid) {
+          return q.file && q.file.indexOf(fid + '/') === 0;
+        });
       });
-      var banner = renderFolderBanner(folder, oqs, folderId);
-      if (banner) el.appendChild(banner);
-      if (folder && folder.status === 'GAP') {
-        var needed = folder.gap_frameworks_needed || [];
-        var stub = ce('div', 'empty-stub');
-        var p1 = ce('p'); p1.appendChild(tx('GAP — no owning framework for ')); p1.appendChild(ap(ce('code'), tx(folderId + '/'))); stub.appendChild(p1);
-        if (needed.length) {
-          var p2 = ce('p'); p2.appendChild(tx('Commission: '));
-          needed.forEach(function(f, i) { if (i > 0) p2.appendChild(tx(', ')); p2.appendChild(ap(ce('code'), tx(f))); });
-          stub.appendChild(p2);
-        }
-        el.appendChild(stub); return;
-      }
-      var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
-      var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
 
-      function makePriorityGroup(impact, cards) {
-        if (!cards.length) return null;
-        var label = impact === 'P0' ? 'High priority (P0)'
-                   : impact === 'P1' ? 'Medium priority (P1)'
-                   : 'Low priority (P2)';
-        var det = ce('details', 'oq-group oq-group-' + impact.toLowerCase());
-        if (impact !== 'P2') det.setAttribute('open', '');
-        var summaryEl = ce('summary', 'oq-group-header');
-        summaryEl.appendChild(tx(label));
-        summaryEl.appendChild(ap(ce('span', 'oq-group-count'), tx(String(cards.length))));
-        det.appendChild(summaryEl);
-        cards.forEach(function(q) { det.appendChild(renderOQCard(q, folderId)); });
-        return det;
+      clearEl(bannerEl);
+      var banner = renderGroupBanner(group, oqs);
+      if (banner) bannerEl.appendChild(banner);
+
+      // OQ sort: P0 → P1 → P2, then by file lexically
+      var priOrder = { P0: 0, P1: 1, P2: 2 };
+      oqs.sort(function(a, b) {
+        var pa = priOrder[a.impact] != null ? priOrder[a.impact] : 9;
+        var pb = priOrder[b.impact] != null ? priOrder[b.impact] : 9;
+        if (pa !== pb) return pa - pb;
+        return (a.file || '').localeCompare(b.file || '');
+      });
+
+      clearEl(oqsEl);
+      if (!oqs.length) {
+        oqsEl.appendChild(ap(ce('p', 'empty-group'), tx('Coverage is sufficient across this area.')));
+      } else {
+        oqs.forEach(function(q) {
+          var folderId = (q.file || '').split('/')[0];
+          oqsEl.appendChild(renderOQCard(q, folderId));
+        });
       }
 
-      function makeSection(heading, descText, cards) {
-        var sec = ce('div', 'section');
-        var h2 = ce('h2', 'anchor-target');
-        h2.appendChild(tx(heading + ' '));
-        h2.appendChild(ap(ce('span', 'status-badge status-partial'), tx(String(cards.length))));
-        sec.appendChild(h2);
-        sec.appendChild(ap(ce('p', 'description'), tx(descText)));
-        var byPri = { P0: [], P1: [], P2: [] };
-        cards.forEach(function(q) {
-          var p = (q.impact === 'P0' || q.impact === 'P1' || q.impact === 'P2') ? q.impact : 'P2';
-          byPri[p].push(q);
-        });
-        ['P0', 'P1', 'P2'].forEach(function(p) {
-          var grp = makePriorityGroup(p, byPri[p]);
-          if (grp) sec.appendChild(grp);
-        });
-        return sec;
-      }
-      if (assumptions.length) el.appendChild(makeSection('Assumptions to confirm', 'High-confidence inferences from ingested sources. Approve to lock them in. Reject to mark for revision.', assumptions));
-      if (questions.length) el.appendChild(makeSection('Questions to resolve', 'LOW confidence inferences worth verifying before the framework runs interactively.', questions));
-      if (!assumptions.length && !questions.length) el.appendChild(ap(ce('div', 'empty-stub'), tx('No open questions for this folder.')));
+      // Nested per-folder paste-backs (one <details> per constituent folder).
+      // Skip `competitive`: it has no on-disk slice files (behavioral_alternatives +
+      // competitor_cards render at the top of the group panel; there is no
+      // framework-dispatch paste-back target).
+      clearEl(pbEl);
+      (group.folder_ids || []).filter(function(fid) { return fid !== 'competitive'; }).forEach(function(fid) {
+        var det = ce('details', 'group-pasteback');
+        var sum = ce('summary');
+        var fwid = FRAMEWORK_BY_FOLDER[fid];
+        sum.appendChild(tx((FOLDER_LABEL_BY_ID[fid] || fid) + (fwid ? ' → ' + fwid : '')));
+        det.appendChild(sum);
+        var ta = ce('textarea');
+        ta.id = 'pasteback-' + fid;
+        ta.setAttribute('placeholder', 'Paste-back prompt will appear here after you triage the cards above...');
+        det.appendChild(ta);
+        var actions = ce('div', 'paste-back-actions');
+        actions.appendChild(sa(ap(ce('button', 'btn'), tx('Copy prompt')), { onclick: "copyPasteback('" + fid + "')" }));
+        actions.appendChild(sa(ap(ce('button', 'btn btn-primary'), tx('Regenerate')), { onclick: "regeneratePasteback('" + fid + "')" }));
+        det.appendChild(actions);
+        pbEl.appendChild(det);
+      });
     }
 
     // Assign A-N (assumption) and Q-N (question) display IDs to every OQ.
@@ -1865,11 +1865,7 @@
       renderBehavioralAlternatives();
       renderCompetitorCards();
       renderSectionsAtAGlance();
-      // Group-panel rendering swaps in at Task 8. For this intermediate commit,
-      // keep the per-folder render loop; group panels are empty containers until then.
-      ['strategy', 'language', 'audiences', 'personas', 'market', 'proof', 'design'].forEach(function(id) {
-        if (document.getElementById('panel-' + id + '-content')) renderFolderPanel(id);
-      });
+      resolveDisplayGroups().forEach(function(g) { renderGroupPanel(g); });
     }
 
     function attachCardClickToExpand() {

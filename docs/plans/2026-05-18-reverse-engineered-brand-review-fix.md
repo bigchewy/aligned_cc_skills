@@ -789,7 +789,7 @@ git commit -m "refactor(reverse-engineered-brand): 4 group panels + folder→gro
 
 ---
 
-### Task 8: Implement `renderGroupPanel` — banner without bullets, OQ filter/sort, chip-area, nested per-folder paste-backs
+### ✅ Task 8: Implement `renderGroupPanel` — banner without bullets, OQ filter/sort, chip-area, nested per-folder paste-backs
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/review-template.html` (replace `renderFolderPanel` with `renderGroupPanel`; rename `renderFolderBanner` → `renderGroupBanner` and drop bullet rendering; add `chip-area` to `renderOQCard`; add CSS for `chip-area`)
