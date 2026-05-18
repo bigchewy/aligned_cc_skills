@@ -39,7 +39,9 @@ Software mode. Environment is a tiebreaker when topic keywords are absent.
   rewrite for audience, voice migration, framework prompt authoring,
   chapter sequencing, competitive analysis, positioning brief,
   strategy memo, market analysis, go-to-market doc, sales pitch,
-  battle card, one-pager, deck, presentation, pitch deck, memo,
+  battle card, one-pager, deck, presentation, slides, pitch deck, memo,
+  report, brief, executive summary, talking points, narrative,
+  client deliverable, prospect-specific,
   "write a [strategic document]", "build a [framework]-shaped document",
   any request whose deliverable is a named document authored from a framework,
   diagnostic-shaped questions about existing systems — "why isn't X working",
@@ -69,7 +71,8 @@ Software mode. Environment is a tiebreaker when topic keywords are absent.
 - Topic signals: roadmap, prioritization, portfolio, "what to build next",
   milestone, sequence features, multi-feature build, project plan,
   "too big for one brainstorm", break a big idea into smaller pieces,
-  decompose, big idea, spawn list
+  break down, components of, large initiative, smaller pieces,
+  decompose, big idea, spawn list, brainstorm queue
 - Environment (tiebreaker): prior roadmaps, open kanban, or customer asks
   are present
 
