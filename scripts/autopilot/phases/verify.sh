@@ -42,6 +42,8 @@ HEARTBEAT_PID=""
 trap 'rm -f "$PROMPT_FILE" 2>/dev/null; stop_heartbeat; stop_watchdog; kill_claude' EXIT
 
 # --- Skip if previous SUCCESS status is still valid ---
+# Note: autopilot.sh preserves a SUCCESS .finish-status for the finishing-skill's 60-min skip window.
+# A skip here on re-run is expected behavior, not a stale-file bug.
 
 if [ -f "$STATUS" ]; then
   PREV_RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"

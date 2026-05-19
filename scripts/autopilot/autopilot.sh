@@ -146,7 +146,7 @@ wait_for_swap_headroom() {
     local used_mb total_mb pct
     used_mb="$(echo "$swap_line" | awk '{for(i=1;i<=NF;i++) if($i=="used") {v=$(i+2); sub(/M/,"",v); print v}}')"
     total_mb="$(echo "$swap_line" | awk '{for(i=1;i<=NF;i++) if($i=="total") {v=$(i+2); sub(/M/,"",v); print v}}')"
-    [ -z "$used_mb" ] || [ -z "$total_mb" ] && return 0
+    [ -z "$used_mb" ] || [ -z "$total_mb" ] || [ "$total_mb" = "0" ] && return 0
     pct="$(awk "BEGIN {printf \"%d\", ($used_mb / $total_mb) * 100}" 2>/dev/null)"
     [ -z "$pct" ] && return 0
     if [ "$pct" -lt "$warn_pct" ] 2>/dev/null; then

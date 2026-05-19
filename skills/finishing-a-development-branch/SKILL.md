@@ -342,11 +342,7 @@ This happens when the target branch has untracked files that also exist on the f
 
 **If recovery fails:** If step 2 or 3 fails, undo the step-2 commit with `git reset HEAD~1` (mixed reset — files return to untracked, which is their original state), report the error, and ask the user. If step 4 fails during conflict resolution, run `git merge --abort` then `git reset HEAD~1` to also remove the step-2 commit. Report the error and ask the user. Do not leave a phantom commit on the target branch.
 
-Verify tests on merged result:
-
-```bash
-<test command>
-```
+Verify tests on merged result with reduced worker parallelism (≤2 parallel workers) to prevent memory exhaustion. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
 
 Then: Cleanup worktree (Step 5), then archive plan docs (Step 6).
 
