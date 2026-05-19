@@ -131,11 +131,47 @@ if [ -f "$HALT_PATH" ]; then
   exit 0
 fi
 
+# Guard: wait until swap pressure drops before launching a heavy phase.
+# macOS-only (sysctl). Env overrides: SWAP_GUARD_WARN_PCT, SWAP_GUARD_BLOCK_PCT, SWAP_GUARD_MAX_WAIT.
+wait_for_swap_headroom() {
+  if ! command -v sysctl >/dev/null 2>&1; then return 0; fi
+  local max_wait="${SWAP_GUARD_MAX_WAIT:-300}"
+  local warn_pct="${SWAP_GUARD_WARN_PCT:-80}"
+  local block_pct="${SWAP_GUARD_BLOCK_PCT:-90}"
+  local waited=0
+  local interval=15
+  while true; do
+    local swap_line
+    swap_line="$(sysctl -n vm.swapusage 2>/dev/null)" || return 0
+    local used_mb total_mb pct
+    used_mb="$(echo "$swap_line" | awk '{for(i=1;i<=NF;i++) if($i=="used") {v=$(i+2); sub(/M/,"",v); print v}}')"
+    total_mb="$(echo "$swap_line" | awk '{for(i=1;i<=NF;i++) if($i=="total") {v=$(i+2); sub(/M/,"",v); print v}}')"
+    [ -z "$used_mb" ] || [ -z "$total_mb" ] && return 0
+    pct="$(awk "BEGIN {printf \"%d\", ($used_mb / $total_mb) * 100}" 2>/dev/null)"
+    [ -z "$pct" ] && return 0
+    if [ "$pct" -lt "$warn_pct" ] 2>/dev/null; then
+      return 0
+    elif [ "$pct" -lt "$block_pct" ] 2>/dev/null; then
+      echo "WARNING: Swap usage at ${pct}% — proceeding but system under memory pressure." >&2
+      return 0
+    else
+      if [ "$waited" -ge "$max_wait" ]; then
+        echo "WARNING: Swap usage still at ${pct}% after ${max_wait}s — proceeding anyway." >&2
+        return 0
+      fi
+      echo "RESOURCE GUARD: Swap at ${pct}% (>=${block_pct}%). Waiting ${interval}s for pressure to ease (${waited}/${max_wait}s)..." >&2
+      sleep "$interval"
+      waited=$((waited + interval))
+    fi
+  done
+}
+
 # Helper to dispatch on phase exit code per the contract.
 # Used for: preflight, plan, worktree, mockup, verify.
 # NOT used for ralph (it has its own positional-arg signature; see below).
 run_phase() {
   local n="$1" total="$2" name="$3" script="$4"
+  wait_for_swap_headroom
   report_stage "$n" "$total" "$name" running
   local exit_code=0
   bash "$script" || exit_code=$?
@@ -376,6 +412,10 @@ echo "  cd $PROJECT"
 echo "  claude"
 echo "  /aligned:finishing-a-development-branch for $BRANCH at $WORKTREE"
 
-# Clean up sentinel and status
+# Clean up sentinel; preserve SUCCESS .finish-status for finishing-skill skip logic
+# (finishing skill checks verified_at: timestamp to avoid re-running tests within 60 min)
 rm -f "$SENTINEL"
-rm -f "$STATUS"
+FINAL_RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"
+if [ "$FINAL_RESULT" != "SUCCESS" ]; then
+  rm -f "$STATUS"
+fi

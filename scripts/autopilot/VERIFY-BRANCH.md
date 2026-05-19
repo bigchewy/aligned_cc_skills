@@ -15,7 +15,7 @@ Read from the lines appended below this prompt:
 ## Process
 
 Read `skills/finishing-a-development-branch/SKILL.md` and execute exactly:
-- **Step 1: Run the test suite.**
+- **Step 1: Run the test suite.** Run with reduced worker parallelism (≤2 parallel workers) to prevent memory exhaustion when running alongside other processes. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
 - **Step 1a: Run the build command** (if defined; skip with note otherwise).
 - **Step 1b: LLM eval (if surface changed).** Apply the surface gate, scenario scoping, and per-scenario `npx promptfoo eval -c <scenario-path> --no-progress-bar` invocation as documented there.
 
@@ -32,6 +32,7 @@ branch: <feature-branch>
 tests: passed
 build: <passed/skipped>
 eval: <passed/warned/skipped>
+verified_at: <YYYY-MM-DD HH:MM:SS>
 
 # Failure:
 status: FAILED

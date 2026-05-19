@@ -154,11 +154,15 @@ Also capture each file's status letter (A/D/R/M) via `git diff --name-status <ba
 
 ### Step 1: Verify Tests
 
-**Run the project's test suite:**
+**Check for a recent autopilot verify result first.** If a `.finish-status` file exists inside the worktree path (the path given after `at` in the skill invocation, e.g., `/path/to/.worktrees/branch-name/.finish-status`) and it contains `status: SUCCESS` and a `verified_at:` timestamp within the last 60 minutes, skip Step 1 and Step 1a and report:
 
-```bash
-# Run the project's test command
 ```
+Tests and build already verified by autopilot (verified_at: <timestamp>). Skipping Steps 1 and 1a.
+```
+
+Then continue to Step 1b.
+
+**If no recent .finish-status, run the project's test suite with reduced worker parallelism** (≤2 parallel workers) to prevent memory exhaustion when running alongside other processes. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
 
 **If tests fail:**
 ```
