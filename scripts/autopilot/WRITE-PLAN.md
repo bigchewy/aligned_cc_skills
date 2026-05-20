@@ -17,8 +17,9 @@ These override specific sections of the skill:
 3. **Do not pause for user input.** Run to completion autonomously.
 4. **For the Kanban entry format**, the path is specified in Parameters. Do not search for it.
 5. **After committing the plan to main**, if the project has worktrees, merge main forward into any relevant worktree (as the skill instructs). The autopilot handles its own worktree creation separately.
+6. **Skip the "Fact-Check + Critique Panel" section entirely.** The critique panel runs as separate autopilot phases (2b and 2c) after the plan is written and committed. Do not dispatch any Architect or Verifier sub-agents during plan writing.
 
-Everything else in the skill applies as written: codebase exploration, plan structure, TDD task format, critique panel (full 2-round process with sub-agents), verification gate, decision log.
+Everything else in the skill applies as written: codebase exploration, plan structure, TDD task format, verification gate, decision log.
 
 ## Parameters
 
@@ -34,6 +35,5 @@ Read these from the lines appended below this prompt:
 
 - Run to completion without pausing
 - Write plans to the main worktree (as the skill specifies)
-- Run the full critique panel with sub-agents
-- Apply all fixes from critique findings
+- Do NOT run the critique panel (it runs in separate autopilot phases 2b/2c)
 - Write the plan path sentinel before exiting
