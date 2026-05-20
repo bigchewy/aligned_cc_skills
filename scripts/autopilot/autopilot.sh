@@ -442,7 +442,7 @@ echo "  claude"
 echo "  /aligned:finishing-a-development-branch for $BRANCH at $WORKTREE"
 
 # Clean up intermediate flags; preserve SUCCESS .finish-status for finishing-skill skip logic
-# (finishing skill checks verified_at: timestamp to avoid re-running tests within 60 min)
+# (finishing skill checks status: SUCCESS to skip re-running tests, build, and eval)
 rm -f "$SENTINEL" "$CRITIQUE_ROUND1_FLAG" "$CRITIQUE_ROUND2_FLAG"
 FINAL_RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"
 if [ "$FINAL_RESULT" != "SUCCESS" ]; then

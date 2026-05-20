@@ -16,7 +16,7 @@ Extracted from finishing-a-development-branch SKILL.md to keep that file under 5
 
 This step is **non-blocking** — deviations are reported so the user can decide whether to fix them before merge.
 
-1. **Check for an autopilot mockup result first.** If a `.mockup-clean` file exists inside the worktree path, the mockup fidelity loop already ran and found no unannounced deviations. Report:
+1. **Check for an autopilot mockup result first.** The worktree path is the path given after `at` in the skill invocation (same path used in Step 1 for `.finish-status`). If a `.mockup-clean` file exists inside that worktree path, the mockup fidelity loop already ran and found no unannounced deviations. Report:
 
 ```
 Mockup fidelity already verified by autopilot. Skipping Steps 1f and 1g.

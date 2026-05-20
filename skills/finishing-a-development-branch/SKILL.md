@@ -154,23 +154,13 @@ Also capture each file's status letter (A/D/R/M) via `git diff --name-status <ba
 
 ### Step 1: Verify Tests
 
-**Check for an autopilot verify result first.** If a `.finish-status` file exists inside the worktree path (the path given after `at` in the skill invocation, e.g., `/path/to/.worktrees/branch-name/.finish-status`) and it contains `status: SUCCESS`, skip the verification steps autopilot already ran:
-
-- If `eval:` is `passed` or `skipped`, skip Steps 1, 1a, and 1b and report:
+**Check for an autopilot verify result first.** If a `.finish-status` file exists inside the worktree path (the path given after `at` in the skill invocation, e.g., `/path/to/.worktrees/branch-name/.finish-status`) and it contains `status: SUCCESS`, skip Steps 1, 1a, and 1b and report:
 
 ```
-Tests, build, and eval already verified by autopilot (verified_at: <timestamp>). Skipping Steps 1, 1a, and 1b.
+Tests, build, and eval already verified by autopilot (verified_at: <timestamp>, eval: <eval value from file>). Skipping Steps 1, 1a, and 1b.
 ```
 
 Then continue to Step 1c.
-
-- If `eval:` is missing or `warned`, skip Steps 1 and 1a only and report:
-
-```
-Tests and build already verified by autopilot (verified_at: <timestamp>). Skipping Steps 1 and 1a.
-```
-
-Then continue to Step 1b.
 
 **If no recent .finish-status, run the project's test suite with reduced worker parallelism** (≤2 parallel workers) to prevent memory exhaustion when running alongside other processes. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
 
@@ -466,14 +456,14 @@ Then present:
 |------|--------|
 | Deployment audit | <Clean / N critical, N high findings> |
 | Manual deploy notice | <N file(s) flagged / No matches> |
-| Tests | <N/N passing> |
-| Build | <Passed / Failed> |
-| LLM eval | <Passed / Warned / Skipped — reason> |
+| Tests | <N/N passing / Skipped — autopilot verified> |
+| Build | <Passed / Failed / Skipped — autopilot verified> |
+| LLM eval | <Passed / Warned / Skipped — reason / Skipped — autopilot verified (eval: <value>)> |
 | Architecture doc | <Updated / Skipped> |
 | Code review | <Clean / N CRITICAL, N Important, N Suggestions> |
 | Code simplification | <N findings filed / Clean> |
-| Mockup fidelity | <N matches, N deviations / No mockups / Skipped> |
-| Deviation fixes | <N fixed (root causes) / Skipped / Accepted as-is> |
+| Mockup fidelity | <N matches, N deviations / No mockups / Skipped / Skipped — autopilot verified> |
+| Deviation fixes | <N fixed (root causes) / Skipped / Accepted as-is / Skipped — autopilot verified> |
 | Integration | <Option chosen + outcome, e.g., "Merged feature/x → main"> |
 | Worktree | <Removed / Kept> |
 | Plan archive | <Archived N files / No plans found / Skipped> |
@@ -487,14 +477,14 @@ Then present:
 |------|--------|--------------------|
 | 0. Deployment audit | Scan for deployment pitfalls | CRITICAL: yes, HIGH: no |
 | 0.5. Manual deploy notice | Scan diff against artifact catalog; print non-blocking notice | Only on M-status migration mods |
-| 1. Verify tests | Run test suite | Yes |
-| 1a. Verify build | Run build command | Yes |
-| 1b. LLM eval | Run eval command if surface changed | Yes (fail), No (warn/pass) |
+| 1. Verify tests | Run test suite (skipped if `.finish-status` SUCCESS) | Yes |
+| 1a. Verify build | Run build command (skipped if `.finish-status` SUCCESS) | Yes |
+| 1b. LLM eval | Run eval if surface changed (skipped if `.finish-status` SUCCESS) | Yes (fail), No (warn/pass) |
 | 1c. Architecture doc | Update `docs/architecture.md` if structure changed | No |
 | 1d. Code review | Spawn code-reviewer agent, fix CRITICAL issues | Yes (CRITICAL) |
 | 1e. Simplification scan | Spawn code-simplifier agent, file Kanban entries | No |
-| 1f. Mockup fidelity | Compare implementation against brainstorming mockups | No |
-| 1g. Fix deviations | Root-cause diagnose and fix unannounced mockup deviations (user-directed) | No |
+| 1f. Mockup fidelity | Compare implementation against brainstorming mockups (skipped if `.mockup-clean` exists) | No |
+| 1g. Fix deviations | Root-cause diagnose and fix unannounced mockup deviations (skipped if `.mockup-clean` exists) | No |
 | 2. Base branch | Determine merge target | No |
 | 3. Present options | Show 4 choices | No |
 | 4. Execute | Run chosen workflow | N/A |
