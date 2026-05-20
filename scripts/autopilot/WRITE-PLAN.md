@@ -18,6 +18,7 @@ These override specific sections of the skill:
 4. **For the Kanban entry format**, the path is specified in Parameters. Do not search for it.
 5. **After committing the plan to main**, if the project has worktrees, merge main forward into any relevant worktree (as the skill instructs). The autopilot handles its own worktree creation separately.
 6. **Skip the "Fact-Check + Critique Panel" section entirely.** The critique panel runs as separate autopilot phases (2b and 2c) after the plan is written and committed. Do not dispatch any Architect or Verifier sub-agents during plan writing.
+7. **Do not create a "final verification" task.** A task whose entire purpose is running the full test suite, building the project, or linting the codebase is a category error — that is Phase 9's job (the verify phase that runs automatically after the ralph loop). Do not create tasks titled "Final full-suite verification", "End-to-end verification", "Full build check", or any equivalent. The last plan task must be an implementation task with a scoped test command, not a verification sweep. This is not optional.
 
 Everything else in the skill applies as written: codebase exploration, plan structure, TDD task format, verification gate, decision log.
 

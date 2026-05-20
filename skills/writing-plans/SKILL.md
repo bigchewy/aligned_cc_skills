@@ -273,11 +273,18 @@ npm test          # runs the full suite — belongs in Phase 9, not task bodies
 npx jest          # same — no file path = full suite
 vitest run        # same
 pytest            # same
+npm run build     # full production build — Phase 9 only; spawns 8–10 webpack workers (catastrophic RAM)
+next build        # same
+tsc               # whole-project typecheck — Phase 9 only
+npm run lint      # whole-codebase lint — Phase 9 only
+eslint .          # same
 ```
 
 A task should be verifiable by running only the test files it creates or modifies. If proving the task correct requires the full suite, the task is too large — split it.
 
 The full suite runs in Phase 9 (verify). Not in task bodies.
+
+**Do not create a "final verification" task.** A task whose entire purpose is running the full test suite, building the project, or linting the codebase is not a plan task — it is Phase 9. Tasks named "Final full-suite verification", "End-to-end verification", "Full build check", or any equivalent are a category error. Phase 9 (the verify phase that runs after the ralph loop) already runs `npm test`, `npm run build`, and lint. Duplicating this inside the plan causes the full build to run twice and crashes the system under memory pressure.
 
 ## Mockup Verification in UI Tasks
 

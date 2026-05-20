@@ -53,6 +53,13 @@ Say "All tasks settled!" and exit. (✅ = completed; ⏭️ = auto-skipped by wr
    If a plan step says `npm test` or `vitest run` with no file path, scope it to the modified file instead.
    Examples: `npm test -- path/to/foo.test.ts`, `npx jest path/to/foo.test.ts`, `npx vitest run path/to/foo.test.ts`.
    The full suite runs in Phase 9 only.
+   If a plan step says `npm run build`, `next build`, `tsc` (whole-project typecheck), or `npm run lint` (whole-codebase),
+   skip that step entirely — these are full-project operations that Phase 9 already runs. Note the skip in your
+   completion message. Do NOT run them; they spawn large worker pools and duplicate Phase 9.
+   If a task's ENTIRE PURPOSE is running the full suite, building, or linting (e.g., titled "Final full-suite
+   verification", "End-to-end verification", "Full build check"): mark it ✅ immediately with the message
+   "Task N complete. Skipped — this is Phase 9 scope (full suite, build, lint). Phase 9 will run these."
+   Do not execute any commands in it.
 5. If the task spec includes a mockup verification step, perform it now —
    read the referenced mockup HTML and compare against your implementation.
    If you intentionally deviate, add `> MOCKUP DEVIATION: [what and why]` below the task heading.

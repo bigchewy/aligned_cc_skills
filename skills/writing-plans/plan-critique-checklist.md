@@ -185,6 +185,9 @@ For each Task, scan the body text for any of these signals. Any match → flag H
 - "OAuth consent" / "browser flow" / "click in [vendor] dashboard"
 - "manual confirmation" / "user must verify" / "wait for human"
 - Steps that require pasting from an external UI into a committed file
+- `npm test` / `npx jest` / `vitest run` / `pytest` with NO file path (bare full-suite invocation — belongs in Phase 9)
+- `npm run build` / `next build` / `tsc` (whole-project) / `npm run lint` / `eslint .` — full-project operations that Phase 9 already runs; spawning a webpack/tsc worker pool inside ralph causes catastrophic memory pressure
+- A task whose heading or body is labeled "Final verification", "Full-suite verification", "End-to-end verification", "Final full-suite check", or any variant — these are Phase 9 scope masquerading as plan tasks; the entire task should be removed and its intent noted under `## Manual Steps (Post-Automation)` if needed
 
 Per `skills/writing-plans/SKILL.md` "Manual Steps Policy", these MUST live in `## Prerequisites` (before Task 1) or `## Manual Steps (Post-Automation)` (after the last task). Mid-task manual steps cause autonomous Ralph loops to spin or improvise non-deterministically (the iter-3 agent in the originating incident added a 🔄 marker + lying "Task N complete" commit message).
 
