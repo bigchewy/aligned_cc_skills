@@ -33,6 +33,8 @@ MAX_BLOCKED_ITERATIONS="${MAX_BLOCKED_ITERATIONS:-3}"
 # "for daily coding tasks" — this is the canonical use case.
 export ANTHROPIC_MODEL="${RALPH_MODEL:-sonnet}"
 export CLAUDE_CODE_SUBAGENT_MODEL="${RALPH_SUBAGENT_MODEL:-sonnet}"
+export JEST_MAX_WORKERS="${JEST_MAX_WORKERS:-2}"
+export VITEST_MAX_THREADS="${VITEST_MAX_THREADS:-2}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EXECUTE="$SCRIPT_DIR/EXECUTE-PLAN.md"

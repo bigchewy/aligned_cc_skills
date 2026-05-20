@@ -248,6 +248,37 @@ git commit -m "feat: add specific feature"
 ```
 ```
 
+## Test Command Rules
+
+When writing test steps in a task body, always specify the exact test file path. Never write a bare test runner invocation without a file path.
+
+**Required pattern:**
+
+```bash
+# Jest / Next.js
+npm test -- path/to/foo.test.ts
+# or: npx jest path/to/foo.test.ts
+
+# Vitest
+npx vitest run path/to/foo.test.ts
+
+# pytest
+pytest tests/path/test_foo.py::test_name -v
+```
+
+**Never write:**
+
+```bash
+npm test          # runs the full suite — belongs in Phase 9, not task bodies
+npx jest          # same — no file path = full suite
+vitest run        # same
+pytest            # same
+```
+
+A task should be verifiable by running only the test files it creates or modifies. If proving the task correct requires the full suite, the task is too large — split it.
+
+The full suite runs in Phase 9 (verify). Not in task bodies.
+
 ## Mockup Verification in UI Tasks
 
 When the source design doc references mockups (in `docs/mockups/{session}/`) and a task involves UI changes (creating or modifying pages, components, or layouts), add a **mockup verification step** to that task — between "verify tests pass" and "commit."

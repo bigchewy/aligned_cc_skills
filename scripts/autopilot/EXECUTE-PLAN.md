@@ -49,7 +49,10 @@ Say "All tasks settled!" and exit. (✅ = completed; ⏭️ = auto-skipped by wr
 1. Change to the worktree directory specified below
 2. Read ONLY the current task section (you already have it from Step 1)
 3. Follow TDD: write failing test first, then implement, then verify
-4. Run the specific test file to confirm it passes
+4. Run only the test file(s) you created or modified in this task — never the full suite.
+   If a plan step says `npm test` or `vitest run` with no file path, scope it to the modified file instead.
+   Examples: `npm test -- path/to/foo.test.ts`, `npx jest path/to/foo.test.ts`, `npx vitest run path/to/foo.test.ts`.
+   The full suite runs in Phase 9 only.
 5. If the task spec includes a mockup verification step, perform it now —
    read the referenced mockup HTML and compare against your implementation.
    If you intentionally deviate, add `> MOCKUP DEVIATION: [what and why]` below the task heading.
