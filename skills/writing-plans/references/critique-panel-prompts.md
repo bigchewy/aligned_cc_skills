@@ -37,6 +37,9 @@ For each task, file, decision, or abstraction in the plan, ask: *what specifical
 
 **You MAY recommend deleting tasks.** The "no-merge" rule at `plan-critique-checklist.md:15` remains — granular tasks execute more reliably. The "no-delete" rule does not exist. Deletion ≠ merging.
 
+**Solo-developer YAGNI constraint — severity discipline:**
+This is a solo-developer codebase with a known, fixed workflow. Do NOT recommend: guards for multi-user scenarios, defensive code for failure modes that cannot occur in this workflow, abstractions for hypothetical future requirements, or complexity for scenarios outside the stated use case. Distinguish clearly: "this is broken or incorrect" = CRITICAL or IMPORTANT. "This would be useful if the use case were different" = SUGGESTION with an explicit disclaimer "outside the current use case" — not CRITICAL or IMPORTANT.
+
 **IMPORTANT — You do NOT do exhaustive fact-checking.** The Verifier agent handles that in parallel. Your job is architectural critique, not line-number verification. You SHOULD read key codebase files to understand existing patterns (e.g., read a few route handlers to see error handling patterns, read the module the plan extends to check boundaries), but you do NOT need to verify every file path, line number, or code snippet in the plan.
 
 **Gap analysis (criterion 10):** After reviewing the plan's architecture, perform a gap analysis. Ask: What assumptions does this plan make that haven't been validated? Look for: environment/service assumptions not listed in Prerequisites, implicit task ordering dependencies, failure modes no task handles, and undocumented conventions the plan relies on. Example: 'This plan assumes Redis is available but no task checks for connection failure or lists Redis in Prerequisites.'
@@ -84,6 +87,9 @@ You have access to Glob, Grep, Read, and Write tools for verifying claims. Do no
 - **Criterion 10 — mid-flow human review row:** Walk every Task body and scan (case-insensitive) for: "human review", "user verifies", "review the UI", "review the interface", "review the mockup", "review the output", "wait for user", "confirm with user", "before proceeding ask", "user signs off", "get user approval". Any match inside a Task body block is HIGH severity — cite task number, exact step text, and recommend "relocate to Manual Steps (Post-Automation) or remove." Exempt: Prerequisites, Manual Steps (Post-Automation), and Decision Log sections.
 - **Across all criteria:** Focus on whether plan tasks map to design requirements and whether all claims are factually correct. Evaluate Decision Log entries if present.
 
+**Solo-developer YAGNI constraint — severity discipline:**
+This is a solo-developer codebase with a known, fixed workflow. When evaluating fidelity and criteria, flag only what is factually wrong or genuinely absent from the design. Do NOT flag as errors: missing guards for multi-user scenarios, absent defensive code for failure modes that cannot occur, missing abstractions for hypothetical requirements, or omitted complexity for out-of-scope scenarios. Severity discipline: "factually incorrect or missing from the design" = CRITICAL/IMPORTANT. "Would add value if the use case were different" = SUGGESTION with disclaimer "outside the current use case."
+
 Write your complete report to `{report-path}` using the Write tool — fact-check summary at the top, then design fidelity table, then critique in the checklist output format. Return only a one-line confirmation: 'Report written to {report-path}'."
 
 ## Round 1: Aggregation prompt
@@ -122,6 +128,8 @@ You have access to Glob, Grep, Read, and Write tools. Do not use Bash for search
 
 Do NOT re-review unchanged sections. Do NOT re-run the full checklist. Tag findings with [Architect].
 
+**Solo-developer YAGNI constraint — severity discipline:** This is a solo-developer codebase with a known, fixed workflow. Do NOT recommend: guards for multi-user scenarios, defensive code for failure modes that cannot occur in this workflow, abstractions for hypothetical future requirements, or complexity for scenarios outside the stated use case. Severity discipline: "this is broken or incorrect" = CRITICAL/IMPORTANT. "This would be useful if the use case were different" = SUGGESTION with explicit disclaimer "outside the current use case."
+
 Changes since Round 1:
 {summary-of-changes}
 
@@ -137,6 +145,8 @@ You have access to Glob, Grep, Read, and Write tools. Do not use Bash for search
 3. Are there any new factual errors introduced by the fixes?
 
 Do NOT re-verify claims that were [CONFIRMED] in Round 1 and weren't touched by fixes. Tag findings with [Verifier].
+
+**Solo-developer YAGNI constraint — severity discipline:** This is a solo-developer codebase with a known, fixed workflow. Flag only what is factually wrong or genuinely absent from the design in the changed sections. Do NOT flag: missing multi-user guards, absent defensive code for impossible failure modes, missing abstractions for hypothetical requirements. Severity discipline: "factually incorrect or missing from the design" = CRITICAL/IMPORTANT. "Would add value if the use case were different" = SUGGESTION with disclaimer "outside the current use case."
 
 Changes since Round 1:
 {summary-of-changes}
