@@ -154,7 +154,17 @@ Also capture each file's status letter (A/D/R/M) via `git diff --name-status <ba
 
 ### Step 1: Verify Tests
 
-**Check for a recent autopilot verify result first.** If a `.finish-status` file exists inside the worktree path (the path given after `at` in the skill invocation, e.g., `/path/to/.worktrees/branch-name/.finish-status`) and it contains `status: SUCCESS` and a `verified_at:` timestamp within the last 60 minutes, skip Step 1 and Step 1a and report:
+**Check for an autopilot verify result first.** If a `.finish-status` file exists inside the worktree path (the path given after `at` in the skill invocation, e.g., `/path/to/.worktrees/branch-name/.finish-status`) and it contains `status: SUCCESS`, skip the verification steps autopilot already ran:
+
+- If `eval:` is `passed` or `skipped`, skip Steps 1, 1a, and 1b and report:
+
+```
+Tests, build, and eval already verified by autopilot (verified_at: <timestamp>). Skipping Steps 1, 1a, and 1b.
+```
+
+Then continue to Step 1c.
+
+- If `eval:` is missing or `warned`, skip Steps 1 and 1a only and report:
 
 ```
 Tests and build already verified by autopilot (verified_at: <timestamp>). Skipping Steps 1 and 1a.
@@ -250,6 +260,7 @@ See `{base-directory}/references/code-review-scan.md` for the full workflow. Sum
 
 See `{base-directory}/references/mockup-fidelity-check.md` for the full workflow (covers Step 1f and Step 1g). Summary:
 
+- Skip Steps 1f and 1g if `.mockup-clean` exists in the worktree (autopilot already ran the fidelity loop)
 - Locate the plan's `**Mockups:**` directory; skip silently if the branch has no mockups
 - Dispatch a general-purpose sub-agent to compare mockup HTML against implementation source files
 - Produce a drift report and hand off to Step 1g if unannounced deviations exist

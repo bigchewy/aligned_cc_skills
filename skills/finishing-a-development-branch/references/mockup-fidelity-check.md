@@ -16,11 +16,19 @@ Extracted from finishing-a-development-branch SKILL.md to keep that file under 5
 
 This step is **non-blocking** — deviations are reported so the user can decide whether to fix them before merge.
 
-1. **Find the plan file:** Scan both `docs/plans/*.md` and `docs/plans/completed/*.md` for the plan associated with this branch (match by branch name pattern). The plan may already be in `completed/` if executing-plans archived it. Read the plan header's `**Mockups:**` field for the mockups directory path. If the plan has no `**Mockups:**` field, fall back to the `**Source Design Doc:**` field and check that design doc for a `**Mockups:**` field.
+1. **Check for an autopilot mockup result first.** If a `.mockup-clean` file exists inside the worktree path, the mockup fidelity loop already ran and found no unannounced deviations. Report:
 
-2. **Check for mockups:** If a mockups path was found, verify the directory exists. If no mockups path was found or the directory doesn't exist, skip silently — not all features have UI components.
+```
+Mockup fidelity already verified by autopilot. Skipping Steps 1f and 1g.
+```
 
-3. **If mockups exist, dispatch a fidelity check agent** via Task tool (`subagent_type=general-purpose`, `model=sonnet`):
+Continue to Step 2.
+
+2. **Find the plan file:** Scan both `docs/plans/*.md` and `docs/plans/completed/*.md` for the plan associated with this branch (match by branch name pattern). The plan may already be in `completed/` if executing-plans archived it. Read the plan header's `**Mockups:**` field for the mockups directory path. If the plan has no `**Mockups:**` field, fall back to the `**Source Design Doc:**` field and check that design doc for a `**Mockups:**` field.
+
+3. **Check for mockups:** If a mockups path was found, verify the directory exists. If no mockups path was found or the directory doesn't exist, skip silently — not all features have UI components.
+
+4. **If mockups exist, dispatch a fidelity check agent** via Task tool (`subagent_type=general-purpose`, `model=sonnet`):
 
    ```
    "You are a mockup fidelity checker. Compare the brainstorming mockups against
@@ -68,7 +76,7 @@ This step is **non-blocking** — deviations are reported so the user can decide
    Downstream steps depend on this field."
    ```
 
-4. **Report findings:**
+5. **Report findings:**
 
 ```
 ## Mockup Fidelity Check
