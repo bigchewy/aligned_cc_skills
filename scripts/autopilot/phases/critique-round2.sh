@@ -48,7 +48,8 @@ fi
 
 if [ -f "$CRITIQUE_ROUND2_FLAG" ]; then
   FLAG_DESIGN_DOC="$(grep '^design-doc:' "$CRITIQUE_ROUND2_FLAG" 2>/dev/null | sed 's/^design-doc: //')"
-  if [ "$FLAG_DESIGN_DOC" = "$DESIGN_DOC" ]; then
+  FLAG_PLAN_PATH="$(grep '^plan-path:' "$CRITIQUE_ROUND2_FLAG" 2>/dev/null | sed 's/^plan-path: //')"
+  if [ "$FLAG_DESIGN_DOC" = "$DESIGN_DOC" ] && [ "$FLAG_PLAN_PATH" = "$PLAN_FILE" ]; then
     echo "Round 2 critique already complete — skipping."
     echo "  Flag: $CRITIQUE_ROUND2_FLAG"
     exit 3
@@ -88,6 +89,14 @@ fi
 stop_heartbeat
 rm -f "$PROMPT_FILE"
 PROMPT_FILE=""
+
+# Verify the flag file was written
+if [ ! -f "$CRITIQUE_ROUND2_FLAG" ]; then
+  echo "ERROR: Round 2 flag file not written: $CRITIQUE_ROUND2_FLAG" >&2
+  echo "Claude may have failed to complete the critique phase." >&2
+  [ -n "$LOG" ] && echo "Check the log at $LOG for details." >&2
+  exit 1
+fi
 
 echo ""
 echo "Round 2 critique complete."

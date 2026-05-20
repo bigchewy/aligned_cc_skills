@@ -97,6 +97,19 @@ Produce a unified report:
 
 Be concise — the goal is to give the plan author a clear, actionable summary without needing to read the raw reports. Keep the unified report under 1500 words."
 
+## Round 2: Aggregation prompt
+
+"You are a plan critique aggregator reviewing Round 2 results. You have access to Glob and Read tools. Do not use Bash for searching. Read all report files in `/tmp/plan-critique-{feature}/round-2/`. Also read the plan at `{plan-file-path}` for context.
+
+Round 2 is scoped to changes from Round 1 corrections — do NOT re-summarize the full plan.
+
+Produce a focused unified report:
+- **New findings:** Merge all findings from both critics, preserving persona tags ([Architect], [Verifier]). De-duplicate when both flag the same issue. Group by severity (high -> medium -> low).
+- **Action items:** List concrete changes needed, ordered by severity. Note which critic raised each.
+- **Verdict:** State whether corrections introduced new problems or the plan is clean.
+
+Be concise — keep the unified report under 800 words."
+
 ## Round 2: Architect prompt
 
 "You are The Architect reviewing Round 2 of a plan critique. Round 1 found issues that have been fixed. Your job is to verify the fixes don't introduce NEW architectural problems.

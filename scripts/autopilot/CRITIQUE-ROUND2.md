@@ -24,7 +24,7 @@ Create directory: `/tmp/plan-critique-{feature-slug}/round-2/`
 
 ## Step 4: Aggregate
 
-After both critics return, dispatch a single aggregation agent via Task tool (`subagent_type=general-purpose`, `model=haiku`) using the "Round 1: Aggregation prompt" from the critique panel prompts file (the aggregation format works for both rounds). Substitute `{plan-file-path}` and `{feature}` = `{feature-slug}`, and read reports from `/tmp/plan-critique-{feature-slug}/round-2/`.
+After both critics return, dispatch a single aggregation agent via Task tool (`subagent_type=general-purpose`, `model=haiku`) using the **"Round 2: Aggregation prompt"** from the critique panel prompts file. Substitute `{plan-file-path}` and `{feature}` = `{feature-slug}`.
 
 ## Step 5: Apply corrections
 
