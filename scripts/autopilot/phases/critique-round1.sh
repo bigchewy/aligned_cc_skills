@@ -73,9 +73,9 @@ PROMPT_EOF
 
 cd "$PROJECT"
 
-start_heartbeat "$PHASE_TIMEOUT" "critique round 1"
+start_heartbeat "$PHASE_TIMEOUT" "critique-r1"
 
-if ! run_claude_phase "Phase 2b (critique round 1)" "$PHASE_TIMEOUT"; then
+if ! run_claude_phase "Phase 4 (critique-r1)" "$PHASE_TIMEOUT"; then
   stop_heartbeat
   exit 1
 fi

@@ -9,15 +9,15 @@ set -u
 # Usage: autopilot.sh <project-path> <design-doc-path> [branch-name]
 #
 # Phases:
-#   1.   Preflight (pre-plan env checks)
-#   2.   Write implementation plan (claude -p with writing-plans skill)
-#   1.5. Preflight (post-plan manifest validation)
-#   2b.  Critique Round 1 (parallel Architect + Verifier on sonnet; apply corrections)
-#   2c.  Critique Round 2 (conditional — only if Round 1 found HIGH/MEDIUM; haiku critics)
-#   3.   Create worktree + setup
-#   4.   Ralph loop (execute plan tasks one at a time)
-#   3.5. Mockup fidelity loop
-#   5.   Verify branch (tests, build, eval — no merge)
+#   1. Preflight (pre-plan env checks)
+#   2. Plan (write implementation plan)
+#   3. Validate (post-plan manifest validation)
+#   4. Critique-r1 (parallel Architect + Verifier on sonnet; apply corrections)
+#   5. Critique-r2 (conditional — only if Round 1 found HIGH/MEDIUM; haiku critics)
+#   6. Worktree (create + setup)
+#   7. Ralph (execute plan tasks one at a time)
+#   8. Mockup (fidelity loop)
+#   9. Verify (tests, build, eval — no merge)
 #
 # The script stops after verification. The branch is NOT merged.
 # Review the work, then merge manually or run the full finishing skill.
@@ -260,13 +260,13 @@ export PROJECT DESIGN_DOC SENTINEL LOG PHASE_TIMEOUT
 export WRITE_PLAN_PROMPT SKILL_FILE CHECKLIST_FILE KANBAN_FORMAT
 export PLAN_FILE  # may be empty pre-Phase-2; preflight handles
 
-run_phase 1 8 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
+run_phase 1 9 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
 
 # ============================================================
-# Phase 2: Write implementation plan
+# Phase 2: Plan
 # ============================================================
 
-run_phase 2 8 plan "$SCRIPT_DIR/phases/plan.sh" || true
+run_phase 2 9 plan "$SCRIPT_DIR/phases/plan.sh" || true
 
 # Re-read PLAN_FILE from sentinel (phase wrote it)
 if [ -f "$SENTINEL" ]; then
@@ -281,32 +281,31 @@ export PLAN_FILE
 echo ""
 
 # ============================================================
-# Phase 1.5: Preflight (post-plan) — full manifest validation
-# Re-run preflight now that PLAN_FILE exists; banner labels this as
-# phase 1.5 so it's distinguishable from the pre-plan invocation.
+# Phase 3: Validate — post-plan manifest validation
+# Re-runs preflight now that PLAN_FILE exists to check the plan manifest.
 # ============================================================
 
-run_phase 1.5 8 preflight "$SCRIPT_DIR/phases/preflight.sh" || true
+run_phase 3 9 validate "$SCRIPT_DIR/phases/preflight.sh" || true
 echo ""
 
 # ============================================================
-# Phase 2b: Critique Round 1
+# Phase 4: Critique-r1
 # ============================================================
 
 export CRITIQUE_ROUND1_PROMPT CHECKLIST_FILE CRITIQUE_PANEL_PROMPTS CRITIQUE_ROUND1_FLAG PLAN_FILE
-run_phase 3 8 "critique-round-1" "$SCRIPT_DIR/phases/critique-round1.sh" || true
+run_phase 4 9 "critique-r1" "$SCRIPT_DIR/phases/critique-round1.sh" || true
 echo ""
 
 # ============================================================
-# Phase 2c: Critique Round 2 (conditional)
+# Phase 5: Critique-r2 (conditional)
 # ============================================================
 
 export CRITIQUE_ROUND2_PROMPT CRITIQUE_ROUND1_FLAG CRITIQUE_ROUND2_FLAG
-run_phase 4 8 "critique-round-2" "$SCRIPT_DIR/phases/critique-round2.sh" || true
+run_phase 5 9 "critique-r2" "$SCRIPT_DIR/phases/critique-round2.sh" || true
 echo ""
 
 # ============================================================
-# Phase 3: Create worktree
+# Phase 6: Worktree
 # ============================================================
 
 # Derive branch name from plan file if not provided
@@ -323,7 +322,7 @@ fi
 WORKTREE_DIR="$PROJECT/.worktrees/$(echo "$BRANCH" | sed 's|^feature/||')"
 export PROJECT BRANCH PLAN_FILE WORKTREE_DIR
 
-run_phase 5 8 worktree "$SCRIPT_DIR/phases/worktree.sh"
+run_phase 6 9 worktree "$SCRIPT_DIR/phases/worktree.sh"
 
 WORKTREE="$WORKTREE_DIR"
 STATUS="$WORKTREE/.finish-status"
@@ -335,10 +334,10 @@ export HALT_PATH
 echo ""
 
 # ============================================================
-# Phase 3: Ralph loop
+# Phase 7: Ralph
 # ============================================================
 
-report_stage 6 8 ralph running
+report_stage 7 9 ralph running
 
 # Check if all tasks are already complete
 TOTAL_TASKS=0
@@ -355,7 +354,7 @@ fi
 
 if [ "$TOTAL_TASKS" -gt 0 ] && [ "$TOTAL_TASKS" -eq "$DONE_TASKS" ]; then
   echo "All $TOTAL_TASKS tasks already complete — skipping Ralph loop."
-  report_stage 6 8 ralph skipped
+  report_stage 7 9 ralph skipped
   echo ""
 else
   if [ "$TOTAL_TASKS" -gt 0 ]; then
@@ -373,7 +372,7 @@ else
   bash "$RALPH_SCRIPT" "$WORKTREE" "$PLAN_IN_WORKTREE" || RALPH_EXIT=$?
 
   if [ "$RALPH_EXIT" -ne 0 ]; then
-    report_stage 6 8 ralph failed
+    report_stage 7 9 ralph failed
     echo ""
     echo "ERROR: Ralph loop failed (exit code $RALPH_EXIT)." >&2
     echo "Progress is preserved — completed tasks are committed." >&2
@@ -383,24 +382,24 @@ else
   fi
 
   echo ""
-  report_stage 6 8 ralph passed
+  report_stage 7 9 ralph passed
   echo ""
 fi
 
 # ============================================================
-# Phase 3.5: Mockup fidelity loop
+# Phase 8: Mockup
 # ============================================================
 
 export WORKTREE PLAN_IN_WORKTREE MOCKUP_PROMPT MAX_MOCKUP_ITERATIONS MOCKUP_TIMEOUT
-run_phase 7 8 mockup "$SCRIPT_DIR/phases/mockup.sh" || true  # mockup never halts
+run_phase 8 9 mockup "$SCRIPT_DIR/phases/mockup.sh" || true  # mockup never halts
 echo ""
 
 # ============================================================
-# Phase 4: Verify branch
+# Phase 9: Verify
 # ============================================================
 
 export BRANCH WORKTREE PLAN_IN_WORKTREE PROJECT VERIFY_PROMPT PHASE_TIMEOUT STATUS
-run_phase 8 8 verify "$SCRIPT_DIR/phases/verify.sh"
+run_phase 9 9 verify "$SCRIPT_DIR/phases/verify.sh"
 echo ""
 
 # ============================================================

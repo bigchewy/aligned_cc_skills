@@ -80,9 +80,9 @@ PROMPT_EOF
 
 cd "$PROJECT"
 
-start_heartbeat "$PHASE_TIMEOUT" "critique round 2"
+start_heartbeat "$PHASE_TIMEOUT" "critique-r2"
 
-if ! run_claude_phase "Phase 2c (critique round 2)" "$PHASE_TIMEOUT"; then
+if ! run_claude_phase "Phase 5 (critique-r2)" "$PHASE_TIMEOUT"; then
   stop_heartbeat
   exit 1
 fi
