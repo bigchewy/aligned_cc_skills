@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reverse-Engineered Brand: Per-Tab Input Asks</title>
+  <!-- Mermaid for diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Tailwind for utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: 'var(--color-accent)', hover: 'var(--color-accent-hover)', subtle: 'var(--color-accent-subtle)' },
+            surface: 'var(--color-surface)',
+            muted: 'var(--color-muted)',
+            foreground: 'var(--color-foreground)',
+            secondary: 'var(--color-secondary)',
+            dimmed: 'var(--color-dimmed)',
+            border: 'var(--color-border)'
+          },
+          fontFamily: {
+            sans: ['var(--font-sans)'],
+            mono: ['var(--font-mono)']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* --- Brand tokens --- */
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--color-muted);
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--color-muted);
+      padding-left: 16px;
+      background: var(--color-background);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    .section {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-accent-subtle);
+      color: var(--color-accent);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-deferred {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-surface);
+      color: var(--color-dimmed);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: var(--color-foreground); margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+
+    .change-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .change-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--color-foreground);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .change-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-muted);
+      color: var(--color-foreground);
+      vertical-align: top;
+    }
+    .change-table .file-path {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    .status-modified { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-unchanged { background: var(--color-surface); color: var(--color-dimmed); }
+    .status-new { background: #ecfdf5; color: #047857; }
+
+    .criteria-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .criteria-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-muted);
+      align-items: flex-start;
+    }
+    .criteria-item:last-child { border-bottom: none; }
+    .criteria-num {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+    .criteria-text {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      line-height: 1.5;
+    }
+    .criteria-text strong { font-weight: 600; }
+
+    .compare-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .compare-2col { grid-template-columns: repeat(2, 1fr); }
+    .compare-3col { grid-template-columns: repeat(3, 1fr); }
+    .compare-grid .col {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .compare-grid .col h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      border-left: 4px solid;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .callout-decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .callout-constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: var(--color-foreground); }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: var(--color-foreground); }
+    .callout strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    pre.code-block {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+  </style>
+<!-- WIDGETS-CSS-START -->
+<style>
+  .interactive-section {
+    background: var(--color-accent-subtle);
+    border-radius: 12px;
+    padding: 24px 28px 32px;
+    margin: 32px -28px;
+  }
+  .interactive-banner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--color-foreground);
+  }
+  .interactive-banner .icon { color: var(--color-accent); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  table.interactive td { vertical-align: middle; }
+  table.interactive .decision-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; }
+  table.interactive .decision-title { font-weight: 500; color: var(--color-foreground); }
+  table.interactive td.decision-desc { font-size: 13px; color: var(--color-secondary); line-height: 1.5; }
+
+  select.dropdown { font-family: var(--font-sans); font-size: 13px; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-surface); color: var(--color-foreground); cursor: pointer; min-width: 110px; }
+  select.dropdown:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  select.dropdown.reject, select.dropdown.include { color: var(--color-accent); font-weight: 500; border-color: var(--color-accent); background: var(--color-accent-subtle); }
+  select.dropdown.q-reject { color: #b91c1c; font-weight: 500; border-color: #b91c1c; background: #fef2f2; }
+
+  tr.row-active td { background: var(--color-accent-subtle) !important; }
+  tr.row-rejected td { background: #fef2f2 !important; }
+  tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; }
+
+  tr.section-divider td { background: var(--color-muted); color: var(--color-foreground); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .decision-card-list { display: flex; flex-direction: column; gap: 12px; }
+  .decision-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 16px 18px; transition: border-color 150ms, box-shadow 150ms, background 150ms; }
+  .decision-card.decision-card-clickable { cursor: pointer; }
+  .decision-card.decision-card-clickable:hover { border-color: var(--color-accent); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .decision-card.row-active { background: var(--color-accent-subtle) !important; border-color: var(--color-accent); }
+  .decision-card-head { display: flex; align-items: flex-start; gap: 16px; }
+  .decision-card-headline { flex: 1; display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+  .decision-card-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; font-size: 13px; flex-shrink: 0; }
+  .decision-card-title { font-weight: 600; color: var(--color-foreground); font-size: 14px; line-height: 1.4; }
+  .decision-card.row-active .decision-card-title { text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; opacity: 0.7; }
+  .decision-card-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .decision-card-chevron { color: var(--color-dimmed); font-size: 11px; transition: transform 150ms; user-select: none; }
+  .decision-card.expanded .decision-card-chevron { transform: rotate(180deg); }
+  .decision-card-desc { margin-top: 8px; font-size: 13px; color: var(--color-secondary); line-height: 1.55; }
+  .decision-card-detail { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--color-border); font-size: 13px; color: var(--color-foreground); line-height: 1.6; }
+  .decision-card-detail p { margin: 0 0 8px; }
+  .decision-card-detail p:last-child { margin-bottom: 0; }
+  .decision-card-section { padding: 16px 4px 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-foreground); border-top: 1px solid var(--color-border); }
+  .decision-card-section:first-child { border-top: none; padding-top: 4px; }
+  .decision-card-section .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  .decision-card-section .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .prompt-box { margin-top: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
+  .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .prompt-box-label { font-size: 13px; font-weight: 600; color: var(--color-foreground); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn { font-family: var(--font-sans); font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--color-border); background: var(--color-muted); color: var(--color-foreground); font-weight: 500; }
+  .btn:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); }
+  .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+  .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .btn.copied { background: #047857; color: white; border-color: #047857; }
+  .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+  textarea.prompt-textarea { width: 100%; min-height: 160px; padding: 14px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--color-foreground); background: var(--color-muted); border: 1px solid var(--color-border); border-radius: 8px; resize: vertical; }
+  textarea.prompt-textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  .prompt-hint { margin-top: 8px; font-size: 12px; color: var(--color-dimmed); font-style: italic; }
+</style>
+<!-- WIDGETS-CSS-END -->
+</head>
+<body>
+  <h1>Reverse-Engineered Brand: Per-Tab Input Asks</h1>
+  <p class="subtitle">What we still need from you, named per tab</p>
+  <p class="context">Design for adding per-tab 'inputs needed' guidance to the <code>reverse-engineered-brand</code> framework's review.html artifact. Shipped back to prospects and clients alongside the build.</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="switchTab('foundation')">Foundation Work</button>
+    <button class="tab-btn" onclick="switchTab('catalog')">Per-Tab Catalog</button>
+    <button class="tab-btn" onclick="switchTab('seam')">Code/Schema Seam</button>
+    <button class="tab-btn" onclick="switchTab('boundary')">v1 Boundary</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decision Log</button>
+    <button class="tab-btn" onclick="switchTab('questions')">Open Questions</button>
+  </div>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <div id="panel-overview" class="tab-panel active">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('overview','goal')">Goal</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','constraints')">Hard Constraints</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','commitments')">Core Commitments</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','reader')">Population Fit</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','metrics')">Goal-Metric Alignment</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('overview','scope')">Out of Scope</button>
+    </div>
+
+    <div id="sub-goal" class="sub-panel active">
+      <div class="section">
+        <h2>Goal</h2>
+        <p class="description">Make the <code>review.html</code> artifact name, in writing, what raw material would strengthen each tab. The reader is the prospect or client who already handed us their source material. The deliverable answers one question for them: <em>"What else should I send you to make this report stronger?"</em></p>
+        <p class="description">Today the framework knows when a tab has thin signal (it tags <code>confidence: low</code>, raises P0 OQs, drops the folder grade). It does not tell the client what category of artifact would have changed the result. The client reads "grade 2" without a path to grade 4.</p>
+        <div class="diagram-container">
+          <pre class="mermaid">
+graph LR
+  src[Client source folder] --> build[reverse-engineered-brand build]
+  build --> report[review.html]
+  report --> reader[Client reads report]
+  reader -.confused.-> email["What did you mean by X?"]
+  report --> inputs[Inputs Needed surface NEW]
+  inputs --> gather[Client gathers material]
+  gather --> rebuild[Stronger next build]
+  style inputs fill:#fff7ed,stroke:#ff6900,stroke-width:2px
+  style email fill:#fef2f2,stroke:#b91c1c
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-constraints" class="sub-panel">
+      <div class="section">
+        <h2>Hard Constraints</h2>
+        <ol class="bullet-list">
+          <li><strong>No PHASE 0 intake change.</strong> The build runs end-to-end on whatever the client already provided. Asks surface in the output, not the intake.</li>
+          <li><strong>Single source of truth per slice.</strong> Per-tab input asks live next to the slice's synthesis logic (each owning framework's frontmatter, or each non-framework slice's canonical reference). No parallel catalog.</li>
+          <li><strong>Context-bloat guard preserved.</strong> The orchestrator does not read slice draft bodies or source bodies. New computations operate over Source Registry metadata and pre-computed JSON only.</li>
+          <li><strong>Brand-voice review fires before the JSON is written.</strong> Client-facing copy passes the same voice gate as any other client deliverable.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="sub-commitments" class="sub-panel">
+      <div class="section">
+        <h2>Core Commitments</h2>
+        <p class="description">Decided in brainstorm; these set the shape before architecture.</p>
+        <table class="change-table">
+          <thead>
+            <tr><th>Decision</th><th>Choice</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Surface timing</td><td>Post-build only</td><td>Client already sent us everything they had. Reactive surface is enough, and it costs nothing at intake.</td></tr>
+            <tr><td>Placement</td><td>Consolidated tiered list on Overview, plus per-tab callouts</td><td>One forwardable artifact, with local context for any tab the client wants to dig into.</td></tr>
+            <tr><td>Specificity</td><td>Medium-prescriptive, not finicky</td><td>Quantified ("3-5") and typed ("interview transcripts"). Stops short of demanding what each interview must contain.</td></tr>
+            <tr><td>Curation</td><td>All gaps, tiered Critical / Recommended / Optional</td><td>No item dropped. Visual tiering does the curation.</td></tr>
+            <tr><td>Framing</td><td>Paired "what you provided / what would strengthen this" per tab</td><td>Positions the deliverable as a snapshot of the engagement, not a homework list.</td></tr>
+            <tr><td>Consolidated list grouping</td><td>By tier across all tabs (Critical first, then Recommended, then Optional)</td><td>Optimizes for operator and client triage. The tab name appears inline with each ask.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="sub-reader" class="sub-panel">
+      <div class="section">
+        <h2>Population Fit</h2>
+        <p class="description"><strong>Reader:</strong> A prospect or client who has engaged the brand team for positioning work. They handed over whatever source material they had. They know the brand intimately and they do not know our framework's internals. They will skim the artifact once, gather what they can, and send it back.</p>
+        <div class="compare-grid compare-2col">
+          <div class="col">
+            <h3>What the reader needs</h3>
+            <ul class="bullet-list">
+              <li>A short, scannable list of what to gather (Critical first)</li>
+              <li>Confidence that we read what they sent. Acknowledgement before asking.</li>
+              <li>Specificity enough to delegate gathering to an assistant without a follow-up email</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h3>What the reader does not need</h3>
+            <ul class="bullet-list">
+              <li>Framework jargon (slice, OQ, signal_tag, dispatch)</li>
+              <li>Build-time provenance (which sub-agent computed what)</li>
+              <li>Over-prescriptive shopping lists. Asking for "interviews where the buyer named the alternative AND raised the top 2 objections" buries the artifact under conditions a client will not screen for.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-metrics" class="sub-panel">
+      <div class="section">
+        <h2>Goal-Metric Alignment</h2>
+        <p class="description"><strong>Goal:</strong> Convert <code>review.html</code> from a static delivery into a self-serve gather-list. The observable proxy: reduce follow-up "what did you mean by X?" emails after we ship a build to a client.</p>
+        <ul class="criteria-list">
+          <li class="criteria-item">
+            <span class="criteria-num">1</span>
+            <span class="criteria-text"><strong>Coverage:</strong> Every content tab in every build either shows zero Critical asks remaining, or shows at least one. No tab sits silently at grade 2 without a path to improvement.</span>
+          </li>
+          <li class="criteria-item">
+            <span class="criteria-num">2</span>
+            <span class="criteria-text"><strong>Specificity:</strong> Spot-check three real builds. Every Critical ask is quantified or typed, scannable in one line, and can be acted on without a follow-up email.</span>
+          </li>
+          <li class="criteria-item">
+            <span class="criteria-num">3</span>
+            <span class="criteria-text"><strong>Voice:</strong> Step 3.2c logs zero verification-gate failures on the first three real builds. The banned-phrase regex catches anything the sub-agent introduces.</span>
+          </li>
+        </ul>
+        <p class="description">These are observable from the build output. Track them on the next three real-client builds.</p>
+      </div>
+    </div>
+
+    <div id="sub-scope" class="sub-panel">
+      <div class="section">
+        <h2>Out of Scope</h2>
+        <ul class="bullet-list">
+          <li><strong>Eric-facing internal QA.</strong> This design assumes the artifact is sent to clients, not used as internal scaffolding.</li>
+          <li><strong>Auto-gathering from the client.</strong> The artifact names what is missing. Gathering the missing material remains a manual handoff.</li>
+          <li><strong>Per-slice grading rubric changes.</strong> The existing grade rubric in <code>prompt.md</code> Step 3.2 is untouched.</li>
+          <li><strong>The Open Questions schema itself.</strong> Input-type asks live on <code>folders[]</code>, not on individual OQs. The OQ schema is unchanged.</li>
+          <li><strong>The brainstorming skill's duplicated triage surfaces</strong> (live.html widgets vs. critique HTML). Tracked separately as a kanban entry, not folded into this design.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ARCHITECTURE ===================== -->
+  <div id="panel-architecture" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('architecture','truth')">Source of Truth</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','flow')">Data Flow</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','schema')">Schema v0.4.0</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','merge')">Multi-slice Merge</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','renderer')">Renderer</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('architecture','voice')">Brand-Voice Sub-Step</button>
+    </div>
+
+    <div id="sub-truth" class="sub-panel active">
+      <div class="section">
+        <h2>Source of Truth</h2>
+        <p class="description">Each owning framework declares its inputs in its own frontmatter via a new structured field, <code>input_asks</code>:</p>
+        <pre class="code-block">input_asks:
+  - tier: critical          # critical | recommended | optional
+    ask: "3-5 customer interview transcripts including the customer's role"
+  - tier: recommended
+    ask: "Sales call recordings or transcripts"
+  - tier: optional
+    ask: "Support tickets surfacing recurring pain language"</pre>
+        <p class="description"><code>tier</code> drives which section of the consolidated list the ask appears in. <code>ask</code> is the medium-prescriptive client-facing copy. The schema is intentionally minimal. No <code>satisfied_by_tag</code>. No per-ask <code>fulfilled</code> boolean. The "what was provided" surface lives at the folder level, not per-ask.</p>
+        <p class="description">The two non-framework slices keep the same shape:</p>
+        <ul class="bullet-list">
+          <li><code>frameworks/reverse-engineered-brand/audience-taxonomy.md</code> gets a new <code>## Ideal inputs</code> section with <code>input_asks</code> blocks for the segments/channels surface.</li>
+          <li>The Competitive Context tab's input asks live inline in <code>frameworks/reverse-engineered-brand/prompt.md</code> PHASE 1.5a where the orchestrator already aggregates that data. One small string array in the framework prompt. No new file.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="sub-flow" class="sub-panel">
+      <div class="section">
+        <h2>Data Flow</h2>
+        <p class="description">New computation hooks (marked NEW) attach to PHASE 3.2 folder build. The orchestrator stays out of slice bodies.</p>
+        <div class="diagram-container">
+          <pre class="mermaid-deferred">
+graph TD
+  P1[PHASE 1 extraction] --> SR[Source Registry with signal_tags per source]
+  SR --> IDX[slice to sources index Step 1.4]
+  IDX --> P2[PHASE 2 framework dispatch unchanged]
+  P2 --> P32[PHASE 3.2 folder build]
+  P32 --> IA[copy input_asks from owning frameworks per folder NEW]
+  IA --> DD[dedupe by ask text tier-wins on collision NEW]
+  DD --> BV[Step 3.2b brand-voice and provided_summary sub-agent NEW]
+  BV --> VG[Step 3.2c verification gate NEW]
+  VG --> P36[Step 3.6 writes open-questions.json v0.4.0]
+  P36 --> R[Renderer Inputs Needed sub-tab plus per-tab callouts]
+  style IA fill:#fff7ed,stroke:#ff6900
+  style DD fill:#fff7ed,stroke:#ff6900
+  style BV fill:#fff7ed,stroke:#ff6900
+  style VG fill:#fff7ed,stroke:#ff6900
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-schema" class="sub-panel">
+      <div class="section">
+        <h2>Schema v0.4.0</h2>
+        <p class="description">Two new fields on <code>folders[]</code>. No new top-level fields. The consolidated list on Overview is a render-time flatten of <code>folders[].input_asks</code> grouped by tier (Critical first across all folders, then Recommended, then Optional). Each ask renders with its tab name inline.</p>
+        <pre class="code-block">{
+  "schema_version": "0.4.0",
+  "source_counts": { /* unchanged */ },
+  "source_narratives": { /* unchanged */ },
+  "folders": [
+    {
+      "id": "personas",
+      "label": "Personas",
+      "status": "Partial",
+      "grade": 3,
+      "summary": "...",
+      "p0_count": 2,
+      "p1_count": 1,
+      "p2_count": 0,
+      "framework_dispatches": [ /* unchanged */ ],
+      "provided_summary": "1 founder interview, 2 case study drafts, no recorded sales calls.",
+      "input_asks": [
+        { "tier": "critical",   "ask": "3-5 customer interview transcripts including the customer's role" },
+        { "tier": "recommended", "ask": "Sales call recordings or transcripts" }
+      ]
+    }
+  ],
+  /* unchanged: behavioral_alternatives, competitors, open_questions */
+}</pre>
+        <div class="callout callout-risk">
+          <strong>Breaking schema bump</strong>
+          v0.3.0 JSON files do not render under the new template. The prior plan's backward-compat fallback is removed. The framework regenerates JSON on every build; no installed base survives a re-run.
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-merge" class="sub-panel">
+      <div class="section">
+        <h2>Multi-slice Folder Merge Rule</h2>
+        <p class="description">Several folders host more than one slice. <code>strategy/</code> has positioning and narrative. <code>language/</code> has messaging and voice. <code>market/</code> has competitive and alternatives. <code>proof/</code> has proof-points, optional clinical-evidence, and optional compliance.</p>
+        <p class="description">PHASE 3.2 aggregates <code>input_asks</code> across all slices that contributed to each folder, then dedupes by ask text (case-insensitive trim match). When two slices produce identical asks, the higher tier wins (critical beats recommended beats optional). Final order within each tier: deterministic by first-seen.</p>
+      </div>
+    </div>
+
+    <div id="sub-renderer" class="sub-panel">
+      <div class="section">
+        <h2>Renderer</h2>
+        <p class="description"><code>review-template.html</code> changes:</p>
+        <ol class="bullet-list">
+          <li><strong>Add a third Overview sub-tab.</strong> The Overview tab already has two sub-tabs (Executive Summary, Sections at a Glance) wired through <code>switchSubTab('overview', ...)</code>. Add <strong>Inputs Needed</strong> as the third. Same CSS, same JS hook.</li>
+          <li><strong>Render the consolidated list</strong> inside the new sub-tab, grouped by tier (Critical, Recommended, Optional). Each item shows the ask plus the tab name as an inline tag. Item rows are anchor links into the per-tab callouts.</li>
+          <li><strong>Render per-tab callouts</strong> under the existing per-folder summary banner on each single-instance content tab (Strategy, Language, Market, Proof, Design when present). Callout content: this tab's <code>provided_summary</code> paired with this tab's <code>input_asks</code>.</li>
+          <li><strong>Multi-instance folders skip the per-tab callout.</strong> Personas, audiences/segments, audiences/channels can have many sub-files; collapsing per-role evidence into one merged callout loses signal. v1 ships the consolidated Overview list for these. Per-instance callouts are deferred (see Open Questions).</li>
+        </ol>
+        <p class="description"><code>render-review-html.md</code> extends to consume <code>folders[].input_asks</code> and <code>folders[].provided_summary</code>. No new sub-agent.</p>
+      </div>
+    </div>
+
+    <div id="sub-voice" class="sub-panel">
+      <div class="section">
+        <h2>Brand-Voice and provided_summary Sub-Step</h2>
+        <p class="description">PHASE 3 gains two steps between 3.2 (build folders) and 3.6 (write JSON):</p>
+        <div class="callout callout-decision">
+          <strong>Step 3.2b: Brand-voice rewrite + provided_summary generation</strong>
+          Dispatch one sub-agent (<code>subagent_type: general-purpose</code>) with these inputs: (a) the array of all <code>ask</code> strings across all folders; (b) per-folder lists of <code>(source-id, source-type, signal_tags)</code> tuples from the Source Registry (registry metadata only, no source bodies); (c) the path to the brand voice file. Resolution order: <code>brand/guidelines/brand-voice.md</code> relative to the <code>{brand-folder-path}</code> first; <code>~/.claude/brand-voice.md</code> second; pass-through if neither exists. Pass-through means: keep the source strings unchanged. The voice file path resolves at runtime, not at framework authorship time, which fixes the portability issue. The sub-agent returns: the voice-revised <code>ask</code> strings, and one <code>provided_summary</code> string per folder, generated from the registry tuples and capped at 25 words. The orchestrator merges both back into the <code>folders[]</code> structure.
+        </div>
+        <div class="callout callout-constraint">
+          <strong>Step 3.2c: Verification gate</strong>
+          Three checks, all hard-fail.
+          <ol class="bullet-list" style="margin-top: 8px;">
+            <li><strong>Array length.</strong> Count of asks in = count of asks out. The sub-agent cannot drop or add entries.</li>
+            <li><strong>Banned-phrase regex</strong> on every post-pass <code>ask</code> and <code>provided_summary</code> string. Patterns: em dashes, "It's not X, it's Y" construction, AI buzzwords (<code>leverage</code>, <code>seamless</code>, <code>unlock</code>, <code>streamline</code>, <code>delve</code>, <code>robust</code>, <code>cutting-edge</code>, <code>transformative</code>, <code>elevate</code>, <code>revolutionize</code>, <code>crucial</code>, <code>essential</code>). On a match, fail with the offending string and the pattern.</li>
+            <li><strong>Tier preservation.</strong> Each ask's tier value in the output array equals its tier in the input array, by index.</li>
+          </ol>
+        </div>
+        <p class="description">On any failure: abort the build with a named failure list. Voice failures should be rare; when they happen, the message is "the voice file produced a phrase that violates the banned list — review the file or the sub-agent prompt." No silent fallback.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FOUNDATION WORK ===================== -->
+  <div id="panel-foundation" class="tab-panel">
+    <div class="section">
+      <h2>Foundation Work</h2>
+      <p class="description">Three frontmatters need enrichment to populate the new <code>input_asks</code> field. Each is additive and small.</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>Target</th><th>Current state</th><th>Required state</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="file-path">frameworks/strategic-narrative/prompt.md</td>
+            <td><code>required_documents: []</code></td>
+            <td>Populate <code>required_documents</code> with what the framework actually consumes: an internal strategy memo, talk transcript, or sales conversation describing the market shift. Add <code>input_asks</code>.</td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/buyer-persona/prompt.md</td>
+            <td><code>required_documents: ["the role being profiled"]</code> (a parameter, not a document)</td>
+            <td>Move "the role being profiled" out of <code>required_documents</code> and into <code>required_inputs</code>. Populate <code>required_documents</code> with customer interview transcripts. Add <code>input_asks</code>.</td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/reverse-engineered-brand/audience-taxonomy.md</td>
+            <td>Names segments and channels with classification signals. No section on what raw material best evidences classification.</td>
+            <td>Add <code>## Ideal inputs</code> section with <code>input_asks</code> blocks keyed to procurement signals.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="description">Other owning frameworks (<code>5-components-positioning</code>, <code>messaging-distillation</code>, <code>brand-voice</code>, <code>competitive-battle-card</code>, <code>proof-points-audit</code>) get an additive <code>input_asks</code> field. Their existing <code>required_documents</code> and <code>helpful_documents</code> are sufficient and untouched.</p>
+      <p class="description">The <code>frameworks/design-principles/</code> framework is intentionally excluded from this design. See Open Questions.</p>
+    </div>
+  </div>
+
+  <!-- ===================== PER-TAB CATALOG ===================== -->
+  <div id="panel-catalog" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('catalog','strategy-pos')">Strategy: Positioning</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','strategy-narr')">Strategy: Narrative</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','lang-msg')">Language: Messaging</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','lang-voice')">Language: Voice</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','personas')">Personas</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','market-comp')">Market: Competitive</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','market-alt')">Market: Alternatives</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','proof-points')">Proof: Proof Points</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','proof-clinical')">Proof: Clinical</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','proof-compliance')">Proof: Compliance</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','design-deferred')">Design: Deferred</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','audiences')">Audiences</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('catalog','competitive')">Competitive Context</button>
+    </div>
+
+    <div id="sub-strategy-pos" class="sub-panel active">
+      <div class="section">
+        <h2>Strategy: <code>5-components-positioning</code> <span class="badge">strategy/positioning.md</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "The alternative each recent buyer almost chose instead of you (one line per buyer, from email, survey, or sales-call note)"
+  - tier: recommended
+    ask: "Win/loss notes from the last 6-12 months"
+  - tier: optional
+    ask: "Internal positioning memo or sales pitch deck"</pre>
+      </div>
+    </div>
+
+    <div id="sub-strategy-narr" class="sub-panel">
+      <div class="section">
+        <h2>Strategy: <code>strategic-narrative</code> <span class="badge">strategy/narrative.md</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "An internal strategy memo, talk transcript, or sales conversation describing the market shift you see"
+  - tier: recommended
+    ask: "Customer quotes describing the old way of doing things they are tired of"
+  - tier: optional
+    ask: "Analyst reports or industry data on the market shift"</pre>
+      </div>
+    </div>
+
+    <div id="sub-lang-msg" class="sub-panel">
+      <div class="section">
+        <h2>Language: <code>messaging-distillation</code> <span class="badge">language/messaging.md</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "Customer interviews answering: what phrase do you use when you describe us to a colleague?"
+  - tier: recommended
+    ask: "Sample existing copy from across surfaces (homepage, deck, sales emails, social)"
+  - tier: optional
+    ask: "Internal naming conventions or category-language guide"</pre>
+      </div>
+    </div>
+
+    <div id="sub-lang-voice" class="sub-panel">
+      <div class="section">
+        <h2>Language: <code>brand-voice</code> <span class="badge">language/voice.md</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "3-10 sample pieces of existing copy across surfaces"
+  - tier: recommended
+    ask: "Competitor copy samples on equivalent surfaces"
+  - tier: optional
+    ask: "Existing tone guidelines or banned-phrase list, if any"</pre>
+      </div>
+    </div>
+
+    <div id="sub-personas" class="sub-panel">
+      <div class="section">
+        <h2>Personas: <code>buyer-persona</code> <span class="badge">personas/{role}.md</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "3-5 customer interview transcripts including the customer's role"
+  - tier: recommended
+    ask: "Sales call recordings or transcripts"
+  - tier: optional
+    ask: "Support tickets surfacing recurring pain language"</pre>
+      </div>
+    </div>
+
+    <div id="sub-market-comp" class="sub-panel">
+      <div class="section">
+        <h2>Market: <code>competitive-battle-card</code> <span class="badge">market/competitive.md</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "Win/loss interviews where the buyer named a specific competitor"
+  - tier: recommended
+    ask: "Competitor public materials beyond the homepage (pricing pages, case studies, integration lists)"
+  - tier: optional
+    ask: "Sales objection log organized by competitor name"</pre>
+      </div>
+    </div>
+
+    <div id="sub-market-alt" class="sub-panel">
+      <div class="section">
+        <h2>Market: alternatives <span class="badge">market/alternatives.md</span></h2>
+        <p class="description">Owned by <code>5-components-positioning</code> Component 1.</p>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "Quotes from prospects describing alternatives"
+  - tier: recommended
+    ask: "Cost-of-inaction data: what the status quo costs the buyer"
+  - tier: optional
+    ask: "Pre-purchase research notes from prospects"</pre>
+      </div>
+    </div>
+
+    <div id="sub-proof-points" class="sub-panel">
+      <div class="section">
+        <h2>Proof: <code>proof-points-audit</code> <span class="badge">proof/proof-points.md</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "Source-attributed metrics with date and method"
+  - tier: recommended
+    ask: "Case study drafts naming customer, outcome, and time window"
+  - tier: optional
+    ask: "Third-party reports or analyst coverage citing the company"</pre>
+      </div>
+    </div>
+
+    <div id="sub-proof-clinical" class="sub-panel">
+      <div class="section">
+        <h2>Proof: <code>clinical-evidence</code> <span class="badge">proof/clinical-evidence.md</span> <span class="badge-deferred">healthcare only</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "Peer-reviewed citations with PMID or DOI"
+  - tier: recommended
+    ask: "Internal clinical study summaries naming method, N, and effect size"
+  - tier: optional
+    ask: "Regulatory submission filings or correspondence"</pre>
+      </div>
+    </div>
+
+    <div id="sub-proof-compliance" class="sub-panel">
+      <div class="section">
+        <h2>Proof: <code>compliance</code> <span class="badge">proof/compliance.md</span> <span class="badge-deferred">regulated industries</span></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "Active certifications with auditor name, issue date, and expiration"
+  - tier: recommended
+    ask: "Compliance attestation letters from named customers"
+  - tier: optional
+    ask: "Customer-facing compliance one-pager or trust-center URL"</pre>
+      </div>
+    </div>
+
+    <div id="sub-design-deferred" class="sub-panel">
+      <div class="section">
+        <h2>Design <span class="badge-deferred">deferred</span></h2>
+        <p class="description">The <code>design/design-principles.md</code> slice's input asks are deferred pending the framework-vs-skill question (see Open Questions). The slice is conditional in <code>reverse-engineered-brand</code> already, only instantiated when source material has visual identity signal, so most builds will skip it.</p>
+      </div>
+    </div>
+
+    <div id="sub-audiences" class="sub-panel">
+      <div class="section">
+        <h2>Audiences: classification against <code>audience-taxonomy.md</code></h2>
+        <pre class="code-block">input_asks:
+  - tier: critical
+    ask: "Documents naming each segment served (signed agreements, BAAs, segment-specific case studies)"
+  - tier: recommended
+    ask: "Pricing models broken out by channel or segment"
+  - tier: optional
+    ask: "Sales notes describing channel-specific buying criteria"</pre>
+      </div>
+    </div>
+
+    <div id="sub-competitive" class="sub-panel">
+      <div class="section">
+        <h2>Competitive Context: inline in <code>prompt.md</code> PHASE 1.5a</h2>
+        <pre class="code-block"># inline array in the orchestrator's PHASE 1.5a step, after behavioral-alternatives extraction
+competitive_context_input_asks:
+  - tier: critical
+    ask: "Quotes from prospects describing the alternatives they used before considering you"
+  - tier: recommended
+    ask: "Win/loss interviews comparing your offering to non-product alternatives"
+  - tier: optional
+    ask: "Pre-purchase research notes describing how prospects framed the old way"</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CODE/SCHEMA SEAM ===================== -->
+  <div id="panel-seam" class="tab-panel">
+    <div class="section">
+      <h2>Code / Schema Seam</h2>
+      <p class="description">Total blast radius: 13 files. All additive or scoped to additions in existing files.</p>
+      <table class="change-table">
+        <thead>
+          <tr><th>Touched file</th><th>Change</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="file-path">frameworks/reverse-engineered-brand/open-questions-schema.md</td>
+            <td>Bump to v0.4.0; document <code>folders[].input_asks</code> and <code>folders[].provided_summary</code>; remove the v0.3-fallback paragraph</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/reverse-engineered-brand/prompt.md PHASE 3.2</td>
+            <td>Add per-folder <code>input_asks</code> aggregation with dedupe-by-text and tier-wins; add Step 3.2b (brand-voice + provided_summary sub-agent); add Step 3.2c (verification gate)</td>
+            <td><span class="status-badge status-modified">Medium</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/reverse-engineered-brand/prompt.md PHASE 1.5a</td>
+            <td>Inline <code>competitive_context_input_asks</code> array; pipe into Competitive Context folder at PHASE 3.2</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/reverse-engineered-brand/review-template.html</td>
+            <td>Add third Overview sub-tab; add per-folder callout block for single-instance folders; CSS for tier badges</td>
+            <td><span class="status-badge status-modified">Medium</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/reverse-engineered-brand/render-review-html.md</td>
+            <td>Consume new fields; emit Inputs Needed sub-tab and per-tab callouts</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/reverse-engineered-brand/audience-taxonomy.md</td>
+            <td>Add <code>## Ideal inputs</code> section</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/5-components-positioning/prompt.md</td>
+            <td>Add <code>input_asks</code> to frontmatter</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/strategic-narrative/prompt.md</td>
+            <td>Populate <code>required_documents</code> + add <code>input_asks</code></td>
+            <td><span class="status-badge status-modified">Medium</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/messaging-distillation/prompt.md</td>
+            <td>Add <code>input_asks</code> to frontmatter</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/brand-voice/prompt.md</td>
+            <td>Add <code>input_asks</code> to frontmatter</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/buyer-persona/prompt.md</td>
+            <td>Restructure <code>required_documents</code>, add <code>required_inputs</code>; add <code>input_asks</code></td>
+            <td><span class="status-badge status-modified">Medium</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/competitive-battle-card/prompt.md</td>
+            <td>Add <code>input_asks</code> to frontmatter</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/proof-points-audit/prompt.md</td>
+            <td>Add <code>input_asks</code> to frontmatter</td>
+            <td><span class="status-badge status-modified">Low</span></td>
+          </tr>
+          <tr>
+            <td class="file-path">frameworks/registry.yaml + tools/sync_framework_frontmatter.py</td>
+            <td>Not extended. <code>input_asks</code> is sole-source-of-truth in per-framework frontmatter. The sync tool continues to mirror only <code>deliverable_type</code>. Drift between registry and frontmatter on this field is not a concern because the registry does not carry it.</td>
+            <td><span class="status-badge status-unchanged">No change</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== v1 BOUNDARY ===================== -->
+  <div id="panel-boundary" class="tab-panel">
+    <div class="section">
+      <h2>v1 Boundary</h2>
+      <div class="compare-grid compare-2col">
+        <div class="col">
+          <h3>In v1</h3>
+          <ul class="bullet-list">
+            <li>Schema v0.4.0 with two new fields on <code>folders[]</code></li>
+            <li>Per-tab catalog populated for the 8 content tabs (excluding Design, which is deferred)</li>
+            <li>Foundation enrichment on <code>strategic-narrative</code>, <code>buyer-persona</code>, and <code>audience-taxonomy.md</code></li>
+            <li>Renderer Inputs Needed sub-tab and per-tab callouts on single-instance folders</li>
+            <li>Brand-voice + provided_summary sub-step and verification gate in PHASE 3</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Deferred (v2 candidates, named here so they do not leak in)</h3>
+          <ul class="bullet-list">
+            <li>PHASE 0 intake redesign with per-tab solicitation</li>
+            <li>Per-instance callouts for multi-instance folders (personas, segments, channels)</li>
+            <li>Resolution of the <code>frameworks/design-principles/</code> framework-vs-skill question (Open Question 1)</li>
+            <li>Per-ask <code>fulfilled</code> checkmark. v1 does not show check marks per ask. The "what you provided" surface is the folder-level <code>provided_summary</code> line.</li>
+            <li>A "Send this back to us" button or copy-as-email feature</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DECISION LOG ===================== -->
+  <div id="panel-decisions" class="tab-panel">
+    <div class="section">
+      <h2>Decision Log</h2>
+      <p class="description">Ten decisions taken during the brainstorm and post-critique revisions. Toggle <em>Reject</em> on any card whose direction you want to reopen; the prompt textarea below auto-builds a forward-to-Claude message.</p>
+<div class="interactive-section">
+  <div class="interactive-banner">
+    <span class="icon">●</span>
+    <div><strong>Two options per decision.</strong> <em>Approve</em> (default) means you accept it. <em>Reject</em> queues it for revision. Click a card to see additional context. The prompt textarea below auto-updates as you toggle dropdowns.</div>
+  </div>
+  <div class="decision-card-list" id="decisions-table" data-widget-root>
+    <div class="decision-card" data-id="1" data-title="Single source of truth in each owning framework's frontmatter, via new input_asks field">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">1</span>
+          <span class="decision-card-title">Single source of truth in each owning framework's frontmatter, via new <code>input_asks</code> field</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: parallel catalog file; inline in <code>prompt.md</code> PHASE 3 strings.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Fix-the-source rule. Frontmatter is where each framework already declares its inputs. A parallel catalog drifts.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="2" data-title="Schema v0.4.0 adds folders[].input_asks and folders[].provided_summary; no new top-level field">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">2</span>
+          <span class="decision-card-title">Schema v0.4.0 adds <code>folders[].input_asks</code> and <code>folders[].provided_summary</code>. No new top-level field.</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="2"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: top-level <code>input_asks</code> array; per-slice <code>framework_dispatches[].input_asks</code>.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Per-slice was over-engineered. Folder-level with a dedupe-by-text merge rule is simpler and gives the renderer one consistent atom to read.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="3" data-title="Breaking schema bump; no v0.3 backward-compat fallback">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">3</span>
+          <span class="decision-card-title">Breaking schema bump; no v0.3 backward-compat fallback</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="3"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: optional fields with backward-compat path.</div>
+      <div class="decision-card-detail" hidden>
+        <p>The framework regenerates the JSON on every build. There is no installed base of v0.3 JSON that survives a re-run. Backward compat was carrying weight that does not exist.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="4" data-title="Competitive Context input asks inline in prompt.md PHASE 1.5a">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">4</span>
+          <span class="decision-card-title">Competitive Context input asks inline in <code>prompt.md</code> PHASE 1.5a</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="4"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: new sibling file <code>competitive-context-inputs.md</code>.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Three lines of YAML do not justify a new reference file. Inline in the step that already aggregates the data.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="5" data-title="Inputs Needed as a third Overview sub-tab, not a 10th top-level tab; not a banner">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">5</span>
+          <span class="decision-card-title">Inputs Needed as a third Overview sub-tab, not a 10th top-level tab; not a banner at the top of Overview</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: new top-level tab; always-visible banner under the Overview header.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Sub-tab pattern is already wired. A banner-always-visible alternative was considered for "acknowledgement before asking" but loses scannability when the list is long. The Inputs Needed sub-tab plus per-tab callouts hits the same beat without the noise.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="6" data-title="Brand-voice + provided_summary fire in one PHASE 3.2b sub-agent, followed by 3.2c verification gate">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">6</span>
+          <span class="decision-card-title">Brand-voice + provided_summary fire in one PHASE 3.2b sub-agent, followed by a Step 3.2c verification gate</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="6"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: inline in orchestrator; post-renderer on the HTML.</div>
+      <div class="decision-card-detail" hidden>
+        <p>JSON is the canonical text. Editing HTML mixes copy review with template debugging. The verification gate catches voice drift and array-shape errors deterministically.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="7" data-title="Tier comes from frontmatter author at framework-authorship time, not derived from OQ P0/P1/P2">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">7</span>
+          <span class="decision-card-title">Tier comes from frontmatter author at framework-authorship time, not derived from OQ P0/P1/P2</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="7"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: map P0 to Critical, P1 to Recommended, P2 to Optional.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Per-OQ impact and per-tab input criticality are different atoms. Static tier is stable, explicit, auditable.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="8" data-title="No satisfied_by_tag, no per-ask fulfilled checkmark in v1">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">8</span>
+          <span class="decision-card-title">No <code>satisfied_by_tag</code> field, no per-ask <code>fulfilled</code> checkmark in v1</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="8"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: per-ask fulfilled boolean computed from Source Registry tag presence.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Single-tag emission was too noisy a signal to drive a checkmark ("3-5 transcripts" satisfied by one tag is a lie). Folder-level <code>provided_summary</code> carries the "what you sent" signal in prose, which is harder to game. Revisit in v2 with a count-based gate if needed.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="9" data-title="Multi-slice folders dedupe by ask text, higher tier wins">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">9</span>
+          <span class="decision-card-title">Multi-slice folders dedupe by ask text, higher tier wins</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="9"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: concat without dedupe; per-slice carrying its own asks.</div>
+      <div class="decision-card-detail" hidden>
+        <p>Folders/strategy hosts positioning and narrative; both will name interview-style inputs. Dedupe-by-text keeps the consolidated list clean. Higher tier wins matches reader intuition.</p>
+      </div>
+    </div>
+
+    <div class="decision-card" data-id="10" data-title="design-principles foundation work deferred">
+      <div class="decision-card-head">
+        <div class="decision-card-headline">
+          <span class="decision-card-num">10</span>
+          <span class="decision-card-title"><code>design-principles</code> foundation work deferred</span>
+        </div>
+        <div class="decision-card-controls">
+          <select class="dropdown" data-id="10"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+          <span class="decision-card-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="decision-card-desc">Alternatives considered: enrich the framework now alongside the others.</div>
+      <div class="decision-card-detail" hidden>
+        <p>The framework's frontmatter is bare, the plugin also ships an <code>aligned:create-design-principles</code> skill, and the user's personal <code>~/.claude/skills/create-design-principles/</code> works well. Three overlapping things. Investigating before enriching. Open Question 1.</p>
+      </div>
+    </div>
+  </div>
+  <div class="prompt-box">
+    <div class="prompt-box-header">
+      <span class="prompt-box-label">Prompt to send back</span>
+      <div class="prompt-actions">
+        <button class="btn" id="regenerate-decisions" type="button">Regenerate</button>
+        <button class="btn btn-primary" id="copy-decisions" type="button">Copy</button>
+      </div>
+    </div>
+    <textarea class="prompt-textarea" id="decisions-prompt" spellcheck="false"></textarea>
+    <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+  </div>
+</div>
+    </div>
+  </div>
+
+  <!-- ===================== OPEN QUESTIONS ===================== -->
+  <div id="panel-questions" class="tab-panel">
+    <div class="section">
+      <h2>Open Questions</h2>
+      <p class="description">Five questions still open after the design pass. Each one has a named trigger that would resolve it. Toggle <em>Include</em> to queue a question for interactive resolution; <em>Reject</em> drops it from the list.</p>
+<div class="interactive-section">
+  <div class="interactive-banner">
+    <span class="icon">●</span>
+    <div><strong>Three options per question.</strong> <em>Defer</em> (default) keeps it on the list for later. <em>Include</em> queues it for me to ask you interactively now. <em>Reject</em> removes it from the list entirely — not worth asking now or later. The prompt below auto-updates as you change dropdowns.</div>
+  </div>
+  <table class="interactive" id="questions-table">
+    <thead><tr><th class="num">#</th><th style="width: 35%">Question</th><th>Trigger that would resolve it</th><th style="width: 130px">Status</th></tr></thead>
+    <tbody>
+      <tr data-id="1" data-title="Route design/design-principles.md slice through /aligned:create-design-principles skill instead of frameworks/design-principles framework?">
+        <td class="decision-num">1</td>
+        <td class="decision-title">Should <code>reverse-engineered-brand</code> route the <code>design/design-principles.md</code> slice through <code>/aligned:create-design-principles</code> (skill) instead of <code>frameworks/design-principles/</code> (framework)? The framework's frontmatter is bare and the skill has track record. Possible action: delete the framework, update the slice mapping table in <code>reverse-engineered-brand/prompt.md:161</code> to call the skill via the framework runner.</td>
+        <td class="decision-desc">Audit the framework's actual usage. If <code>frameworks/design-principles/</code> is referenced only by <code>reverse-engineered-brand</code>, it can be deleted and the slice routed through the skill.</td>
+        <td>
+          <select class="dropdown q-dropdown" data-id="1">
+            <option value="defer">Defer</option>
+            <option value="include">Include</option>
+            <option value="reject">Reject</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-id="2" data-title="Does the brand-voice sub-agent preserve quantification through the rewrite, or drift toward voicier prose that drops numerics?">
+        <td class="decision-num">2</td>
+        <td class="decision-title">Does the brand-voice sub-agent preserve quantification ("3-5") through the rewrite, or drift toward voicier prose that drops numerics?</td>
+        <td class="decision-desc">First three real-client builds. Diff the input array against the output array. If numeric tokens drop by more than 10%, tighten the sub-agent prompt to preserve digit tokens.</td>
+        <td>
+          <select class="dropdown q-dropdown" data-id="2">
+            <option value="defer">Defer</option>
+            <option value="include">Include</option>
+            <option value="reject">Reject</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-id="3" data-title="When do multi-instance folders (personas, segments, channels) need per-instance callouts?">
+        <td class="decision-num">3</td>
+        <td class="decision-title">When do multi-instance folders (personas, segments, channels) need per-instance callouts? v1 ships them with the consolidated list only.</td>
+        <td class="decision-desc">First three real-client builds with 3+ personas or 3+ segments. If clients return per-role material rather than batch, build per-instance callouts in v2. Threshold: more than 50% of returned material is per-role rather than mixed-bag.</td>
+        <td>
+          <select class="dropdown q-dropdown" data-id="3">
+            <option value="defer">Defer</option>
+            <option value="include">Include</option>
+            <option value="reject">Reject</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-id="4" data-title="Keep the founder-story tag in the controlled vocabulary, or remove it?">
+        <td class="decision-num">4</td>
+        <td class="decision-title">Should the controlled vocabulary at <code>frameworks/reverse-engineered-brand/extract.md:42</code> keep the <code>founder-story</code> tag at all? It is no longer used by any prescribed <code>input_ask</code>. Keeping it allows opportunistic tagging when sources contain one; removing it prevents the tag from re-leaking into prescribed asks.</td>
+        <td class="decision-desc">First three real-client builds. If <code>founder-story</code> tag never appears on any extract, remove it from the vocabulary.</td>
+        <td>
+          <select class="dropdown q-dropdown" data-id="4">
+            <option value="defer">Defer</option>
+            <option value="include">Include</option>
+            <option value="reject">Reject</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-id="5" data-title="Show 'no inputs needed' success state when every folder's asks are empty?">
+        <td class="decision-num">5</td>
+        <td class="decision-title">Should the Inputs Needed sub-tab show a "no inputs needed" success state when every folder's asks are empty (which would happen when <code>input_asks</code> aggregates to zero across all folders)?</td>
+        <td class="decision-desc">Inspect the first build with high input coverage. If absence of the section confuses the client, add an explicit success state.</td>
+        <td>
+          <select class="dropdown q-dropdown" data-id="5">
+            <option value="defer">Defer</option>
+            <option value="include">Include</option>
+            <option value="reject">Reject</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="prompt-box">
+    <div class="prompt-box-header">
+      <span class="prompt-box-label">Prompt to send back</span>
+      <div class="prompt-actions">
+        <button class="btn" id="regenerate-questions" type="button">Regenerate</button>
+        <button class="btn btn-primary" id="copy-questions" type="button">Copy</button>
+      </div>
+    </div>
+    <textarea class="prompt-textarea" id="questions-prompt" spellcheck="false"></textarea>
+    <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+  </div>
+</div>
+    </div>
+  </div>
+
+  <script>
+    var __rs = getComputedStyle(document.documentElement);
+    function __tok(name, fallback) {
+      var v = __rs.getPropertyValue(name).trim();
+      return v || fallback;
+    }
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: __tok('--font-sans', 'system-ui, -apple-system, sans-serif'),
+        fontSize: '14px',
+        lineColor: __tok('--color-border', '#e5e7eb'),
+        primaryColor: __tok('--color-muted', '#f0eeeb'),
+        primaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        primaryBorderColor: __tok('--color-border', '#e5e7eb'),
+        secondaryColor: __tok('--color-accent-subtle', '#fff7ed'),
+        secondaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        secondaryBorderColor: __tok('--color-accent', '#ff6900'),
+        tertiaryColor: __tok('--color-surface', '#f5f3ef'),
+        tertiaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        tertiaryBorderColor: __tok('--color-secondary', '#555555')
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+<!-- WIDGETS-SCRIPT-START -->
+<script>
+  (function() {
+    'use strict';
+
+    function copyToClipboard(text, btn) {
+      var originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = originalLabel;
+      var showSuccess = function() {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+        }, 1800);
+      };
+      var showFailure = function() {
+        btn.textContent = 'Copy failed — select & Cmd-C';
+        btn.classList.add('btn-error');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('btn-error');
+        }, 3000);
+      };
+      if (!navigator.clipboard || !window.isSecureContext) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        if (ok) showSuccess(); else showFailure();
+        return;
+      }
+      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
+    }
+
+    function markDirtyOnInput(textarea) {
+      textarea.addEventListener('input', function() {
+        textarea.dataset.dirty = 'true';
+      });
+    }
+
+    (function decisionLogWidget() {
+      var container = document.getElementById('decisions-table');
+      if (!container) return;
+      var prompt = document.getElementById('decisions-prompt');
+      var copyBtn = document.getElementById('copy-decisions');
+      var regenBtn = document.getElementById('regenerate-decisions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function cards() {
+        return Array.prototype.slice.call(container.querySelectorAll('.decision-card[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allCards = cards();
+        if (allCards.length === 0) {
+          return 'No decisions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var rejected = allCards
+          .filter(function(card) { var sel = card.querySelector('select'); return sel && sel.value === 'reject'; })
+          .map(function(card) { return { num: card.dataset.id, title: card.dataset.title || '' }; });
+        if (rejected.length === 0) {
+          return 'All decisions approved.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.';
+        }
+        var lines = ["I've reviewed this design and I'm rejecting the following decisions:", ''];
+        rejected.forEach(function(d) {
+          lines.push('  • Decision #' + d.num + ' — ' + d.title);
+          lines.push('    Reason: <add your reason here>');
+          lines.push('');
+        });
+        lines.push('Please revise the design to address these rejections and re-present.');
+        lines.push('');
+        lines.push('If you have an alternative recommendation for any of these, propose it before I commit to a replacement.');
+        return lines.join('\n');
+      }
+
+      function updateCard(select) {
+        var card = select.closest('.decision-card');
+        if (!card) return;
+        if (select.value === 'reject') {
+          select.classList.add('reject');
+          card.classList.add('row-active');
+        } else {
+          select.classList.remove('reject');
+          card.classList.remove('row-active');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;
+        prompt.value = buildPrompt();
+      }
+
+      container.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateCard(sel);
+          refresh();
+        });
+        sel.addEventListener('click', function(e) { e.stopPropagation(); });
+        updateCard(sel);
+      });
+
+      container.querySelectorAll('.decision-card[data-id]').forEach(function(card) {
+        var detail = card.querySelector('.decision-card-detail');
+        if (!detail) return;
+        card.classList.add('decision-card-clickable');
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('select, a, button, input, textarea')) return;
+          var expanded = card.classList.toggle('expanded');
+          detail.hidden = !expanded;
+        });
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+
+    (function openQuestionsWidget() {
+      if (!document.getElementById('questions-table')) return;
+      var table = document.getElementById('questions-table');
+      var prompt = document.getElementById('questions-prompt');
+      var copyBtn = document.getElementById('copy-questions');
+      var regenBtn = document.getElementById('regenerate-questions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function rows() {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allRows = rows();
+        if (allRows.length === 0) {
+          return 'No open questions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var included = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'include'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        var rejected = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'reject'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        if (included.length === 0 && rejected.length === 0) {
+          return 'All open questions deferred.\n\nProceed with the design as-is; we will resolve these as the named triggers fire.';
+        }
+        var lines = ['Open-questions review:', ''];
+        if (included.length > 0) {
+          lines.push('ASK ME NOW (resolve interactively, one at a time):');
+          included.forEach(function(q) { lines.push('  • Question #' + q.num + ' — ' + q.title); });
+          lines.push('');
+          lines.push("For these: please ask me one at a time. Use multiple-choice options when reasonable. Don't assume answers — wait for my response before moving to the next.");
+          lines.push('');
+        }
+        if (rejected.length > 0) {
+          lines.push('REJECT (remove from open-questions list entirely — not worth asking now or later):');
+          rejected.forEach(function(q) {
+            lines.push('  • Question #' + q.num + ' — ' + q.title);
+            lines.push('    Reason: <add your reason here, or leave blank>');
+          });
+          lines.push('');
+          lines.push("For these: drop them from the design's Open Questions section. Update the design doc and HTML to reflect their removal.");
+          lines.push('');
+        }
+        if (included.length > 0 && rejected.length > 0) {
+          lines.push('Handle the REJECT items first (housekeeping), then start the ASK ME NOW questions.');
+        }
+        return lines.join('\n');
+      }
+
+      function updateRow(select) {
+        var tr = select.closest('tr');
+        if (!tr) return;
+        select.classList.remove('include', 'q-reject');
+        tr.classList.remove('row-active', 'row-rejected');
+        if (select.value === 'include') {
+          select.classList.add('include');
+          tr.classList.add('row-active');
+        } else if (select.value === 'reject') {
+          select.classList.add('q-reject');
+          tr.classList.add('row-rejected');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;
+        prompt.value = buildPrompt();
+      }
+
+      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateRow(sel);
+          refresh();
+        });
+        updateRow(sel);
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+  })();
+</script>
+<!-- WIDGETS-SCRIPT-END -->
+</body>
+</html>

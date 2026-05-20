@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 05 17 Reverse Engineered Brand Input Asks — Critique Decisions</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      color: #1a1a1a;
+      margin: 0 auto;
+      padding: 40px 40px 120px;
+      max-width: 960px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 4px; }
+    .subtitle { font-size: 0.95rem; color: #555; margin: 0 0 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin: 0 0 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
+    .tab-count {
+      display: inline-block; background: #f5f3ef; color: #555;
+      font-size: 0.75rem; padding: 1px 7px; border-radius: 9999px;
+      margin-left: 6px; font-weight: 500;
+    }
+    .tab-btn.active .tab-count { background: #fff7ed; color: #e8762b; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .finding {
+      background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 18px 20px; margin-bottom: 12px;
+      display: flex; gap: 16px; align-items: flex-start;
+      transition: opacity 150ms, border-color 150ms;
+    }
+    .finding.rejected { opacity: 0.5; border-color: #f0eeeb; background: #fafafa; }
+    .finding-toggle { flex-shrink: 0; padding-top: 2px; }
+    .toggle-switch {
+      position: relative; width: 44px; height: 24px;
+      background: #d1d5db; border-radius: 9999px; cursor: pointer;
+      transition: background 150ms;
+    }
+    .toggle-switch.on { background: #6b8e4e; }
+    .toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; background: white; border-radius: 9999px;
+      transition: transform 150ms; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(20px); }
+    .toggle-label {
+      font-size: 0.72rem; color: #6b7280; text-align: center; margin-top: 4px;
+      font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .finding-body { flex: 1; min-width: 0; }
+    .finding-critics { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .critic-tag {
+      font-size: 0.72rem; padding: 1px 8px; border-radius: 9999px;
+      background: #fff7ed; color: #e8762b; font-weight: 500;
+    }
+    .finding-text { font-size: 0.92rem; line-height: 1.5; color: #1a1a1a; margin-bottom: 6px; }
+    .finding-action { font-size: 0.85rem; color: #555; line-height: 1.5; }
+    .finding-action strong { color: #1a1a1a; font-weight: 500; }
+
+    .fact-check {
+      background: white; border: 1px solid #e5e7eb; border-left: 3px solid #6b8e4e;
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+    }
+    .fact-check-claim { font-size: 0.85rem; color: #6b7280; text-decoration: line-through; margin-bottom: 4px; }
+    .fact-check-correction { font-size: 0.92rem; color: #1a1a1a; line-height: 1.5; }
+    .fact-check-critic { font-size: 0.72rem; color: #e8762b; font-weight: 500; margin-top: 6px; }
+    .auto-apply-notice {
+      font-size: 0.82rem; color: #6b7280; background: #f5f3ef;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;
+    }
+
+    .modify-notes { margin-top: 24px; padding-top: 20px; border-top: 1px dashed #e5e7eb; }
+    .modify-notes label {
+      display: block; font-size: 0.85rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px;
+    }
+    .modify-notes textarea {
+      width: 100%; min-height: 80px; padding: 10px 12px;
+      font-family: inherit; font-size: 0.88rem;
+      border: 1px solid #e5e7eb; border-radius: 8px; resize: vertical; background: white;
+    }
+    .modify-notes textarea:focus { outline: none; border-color: #e8762b; }
+
+    .empty {
+      font-size: 0.88rem; color: #6b7280; padding: 24px; text-align: center;
+      background: #f5f3ef; border-radius: 8px;
+    }
+
+    .action-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.04); z-index: 10;
+    }
+    .summary { font-size: 0.88rem; color: #555; }
+    .summary strong { color: #1a1a1a; }
+    .copy-btn {
+      padding: 10px 20px; font-size: 0.88rem; font-weight: 500; color: white;
+      background: #e8762b; border: none; border-radius: 8px; cursor: pointer;
+      transition: background 150ms; font-family: inherit;
+    }
+    .copy-btn:hover { background: #cc6725; }
+    .copy-btn.copied { background: #6b8e4e; }
+  </style>
+</head>
+<body>
+  <h1>2026 05 17 Reverse Engineered Brand Input Asks</h1>
+  <p class="subtitle">Brainstorming session · authoring mode</p>
+  <p class="context">Critique decisions. Toggle findings to accept or reject, add modify notes per tab if needed, then copy the follow-up prompt back into Claude Code.</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="high">High <span class="tab-count">4</span></button>
+    <button class="tab-btn" data-tab="medium">Medium <span class="tab-count">8</span></button>
+    <button class="tab-btn" data-tab="low">Low <span class="tab-count">10</span></button>
+    <button class="tab-btn" data-tab="facts">Fact-checks <span class="tab-count">0</span></button>
+  </div>
+
+  <div class="tab-panel active" id="panel-high">
+    <div class="finding" data-id="h-1" data-severity="high">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('h-1', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The Architect</span><span class="critic-tag">April Dunford</span>
+    </div>
+    <div class="finding-text">Multi-framework folders have no merge spec for input_asks. Schema places input_asks on folders[] but strategy/, language/, market/, proof/ each host 2+ owning frameworks. Design says &#039;copy input_asks from owning framework&#039; (singular). No concat/dedupe/tier-wins rule specified. Dunford confirms overlapping Critical asks across slices (e.g., both positioning and buyer-persona want customer interview transcripts) will either double-display or silently dedupe.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Specify the merge algorithm in Architecture section (concat-then-dedupe by satisfied_by_tag is cheapest deterministic rule), OR move input_asks to folders[].framework_dispatches[].input_asks so each dispatched framework owns its own asks. Add Decision Log entry naming the rule.</div>
+  </div>
+</div>
+<div class="finding" data-id="h-2" data-severity="high">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('h-2', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">April Dunford</span>
+    </div>
+    <div class="finding-text">Strategy/positioning Critical ask buries the load-bearing artifact. &#039;3-5 customer interview transcripts naming the alternative the buyer almost chose&#039; makes the transcript the artifact and the alternative-naming a property. Clients will send transcripts that contain no alternatives. Market/alternatives ask on line 258 already models the correct phrasing (leads with substance).</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Rewrite to lead with the alternative: &#039;Direct answers from 3-5 recent buyers to one question: what would you have done if our product didn&#039;t exist? Transcripts, email replies, or sales-call notes all work.&#039;</div>
+  </div>
+</div>
+<div class="finding" data-id="h-3" data-severity="high">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('h-3', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">April Dunford</span>
+    </div>
+    <div class="finding-text">strategic-narrative Critical ask is unsatisfiable for most prospects. &#039;Founder essay, origin doc, or recorded company story (15+ min)&#039; — most prospects don&#039;t have a 15-min recorded story. Critical will fire on every build, collapsing tier signal and making Goal observable #1 structurally unreachable.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Lower the artifact floor: &#039;Any artifact where the founder explains why this company exists and what shift in the market made it necessary: a memo, a recent investor update, a podcast clip, a 20-min recorded conversation.&#039;</div>
+  </div>
+</div>
+<div class="finding" data-id="h-4" data-severity="high">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('h-4', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The Architect</span>
+    </div>
+    <div class="finding-text">Registry/sync-tool relationship for input_asks is unspecified. tools/sync_framework_frontmatter.py currently mirrors only deliverable_type from registry.yaml to per-framework prompt.md. Design adds input_asks to frontmatter without saying whether registry mirrors, whether sync extends, or authoritative side on drift. Code/schema seam table omits both registry and sync tool.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Add a row to the Code/schema seam table: either (a) extend sync_framework_frontmatter.py to mirror input_asks registry→frontmatter, or (b) declare per-framework prompt.md frontmatter as sole source of truth and update CLAUDE.md&#039;s Registries section to scope its claim to existing fields.</div>
+  </div>
+</div>
+    <div class="modify-notes">
+      <label for="notes-high">Modify notes for High severity (optional)</label>
+      <textarea id="notes-high" placeholder="Anything you want to add, override, or annotate for high-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-medium">
+    <div class="finding" data-id="m-1" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-1', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">Step 3.2b has no failure path. Brand-voice sub-agent dispatch has only happy path — no spec for timeout, malformed array, length mismatch, silent drop, or banned-phrase regression. PHASE 2 has an elaborate verification gate; Step 3.2b inherits none. Success criterion &#039;zero violations from the banned-phrase list&#039; is unmeasurable without a verification gate.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Add Step 3.2c verification gate: (a) confirm array length matches input length, (b) run brand-voice banned-phrase regex against post-pass strings and hard-fail or fall back to pre-pass strings, (c) define timeout behavior (e.g., &#039;if sub-agent doesn&#039;t return within N seconds, use pre-pass strings and emit build-integrity warning&#039;).</div>
+  </div>
+</div>
+<div class="finding" data-id="m-2" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-2', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The Architect</span>
+    </div>
+    <div class="finding-text">Brand-voice sub-step is portability-fragile. Step 3.2b points at ~/.claude/brand-voice.md (or local override). Fresh installs have neither file; aligned_cc_skills/brand/ doesn&#039;t exist. Violates project Portability Rule (CLAUDE.md lines 75-80).</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Specify Step 3.2b behavior when no voice file is found: pass-through (skip rewrite, keep author copy), OR ship a minimal default voice file in this repo. One-sentence addition.</div>
+  </div>
+</div>
+<div class="finding" data-id="m-3" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-3', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">fulfilled computation is a stale snapshot. Three failure modes: (a) sources marked used:&#039;no&#039; (unparseable) treated as &#039;client did not provide&#039; rather than &#039;we couldn&#039;t read it&#039;; (b) one throwaway tag emission flips Critical to fulfilled; (c) multi-source asks (&#039;3-5 transcripts&#039;) satisfied by a single tag emission. Checkmark can lie, attacking Specificity success criterion.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Either (a) tighten with used:&#039;yes&#039; filter and a count threshold (ask declares min-count, boolean flips true only when count met), OR (b) drop the fulfilled checkmark entirely in v1 and let asks list read as-is.</div>
+  </div>
+</div>
+<div class="finding" data-id="m-4" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-4', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The Architect</span>
+    </div>
+    <div class="finding-text">provided_summary computation algorithm is unspecified. Output is shown (&#039;1 founder interview, 2 case study drafts&#039;) but registry carries per-source type and signal_tags, not &#039;founder interview&#039; or &#039;case study.&#039; Needs explicit synthesis rules or LLM inference (with context/voice cost).</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Either specify the algorithm in Step 3.2 (e.g., &#039;for each folder, list each source&#039;s type and one descriptor token from signal_tags, joined into a single sentence&#039;), OR push synthesis into Step 3.2b (and acknowledge sub-step is doing two jobs).</div>
+  </div>
+</div>
+<div class="finding" data-id="m-5" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-5', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The Architect</span>
+    </div>
+    <div class="finding-text">v1 leaks per-instance ambiguity into multi-instance folders. Per-tab callouts are per-folder, but personas/, audiences/segments/, audiences/channels/ instantiate per-instance. A persona tab with 4 personas shows one merged callout collapsing 4 role-specific evidence sets. Open Question #3 names the issue but v1 ships the surface that exposes it.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Either (a) constrain v1&#039;s per-tab callout to folders with single-instance slices and defer multi-instance callout-rendering to v2, OR (b) document in the v1 boundary that multi-instance folders show one merged callout per folder and log role-specific drift in Open Question #3.</div>
+  </div>
+</div>
+<div class="finding" data-id="m-6" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-6', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">Backward-compat path not specified where it bites. Two unaddressed v0.4.0 states: (a) mixed presence — some folders have input_asks, others don&#039;t; (b) folder with input_asks populated but provided_summary missing. Renderer behavior unspecified.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> State explicitly: &#039;Schema v0.4.0 treats each folder independently — a folder missing input_asks hides its per-tab callout; a folder missing provided_summary renders the callout with input_asks only and no paired summary.&#039;</div>
+  </div>
+</div>
+<div class="finding" data-id="m-7" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-7', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">April Dunford</span>
+    </div>
+    <div class="finding-text">Consolidated Overview list grouped by tier loses per-tab context. Grouping by tier optimizes for global triage (operator&#039;s job), not the client&#039;s per-area gathering pattern. The natural cognitive frame is &#039;what am I missing on Personas.&#039; Per-tab callouts partly solve but the Inputs Needed sub-tab is the forwardable artifact.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Either flip primary grouping (group by tab, sort items within tab by tier with Critical first), OR keep both views and let user toggle. Per-tab grouping matches how clients actually gather.</div>
+  </div>
+</div>
+<div class="finding" data-id="m-8" data-severity="medium">
+  <div class="finding-toggle">
+    <div class="toggle-switch on" onclick="toggleFinding('m-8', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">accept</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">April Dunford</span>
+    </div>
+    <div class="finding-text">Decision #2 has hidden duplication risk not named in Decision Log. Same root cause as H-1 — Strategy/Language/Market folders host multiple slices each with own input_asks. Two slices may both ask for &#039;customer interview transcripts&#039; with different qualifiers; merged list will read like a checklist of three nearly identical asks, or silently dedupe.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Add a Decision Log entry naming the merge/dedup rule: keep duplicates and let qualifier distinguish them, OR dedupe by satisfied_by_tag and surface qualifier in the merged ask. State which.</div>
+  </div>
+</div>
+    <div class="modify-notes">
+      <label for="notes-medium">Modify notes for Medium severity (optional)</label>
+      <textarea id="notes-medium" placeholder="Anything you want to add, override, or annotate for medium-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-low">
+    <div class="finding rejected" data-id="l-1" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-1', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">buyer-persona is deliverable_type: analysis, not content. Design treats it analogously to content-type frameworks. If brand-voice sub-agent treats analysis differently from content, per-persona asks could pass under different rules.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> State that brand-voice pass at Step 3.2b is deliverable_type-agnostic (processes ask strings as client-facing copy regardless of host framework&#039;s deliverable_type), OR change buyer-persona deliverable_type to content. Pick one.</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-2" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-2', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">Decision 4 (Inputs Needed as sub-tab) under-considered alternatives. Banner-at-top-of-Overview (above both existing sub-tabs) serves &#039;acknowledgement before asking&#039; more directly than click-to-reveal sub-tab.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Add a third row to Decision 4 alternatives: &#039;Banner at top of Overview tab, above both existing sub-tabs.&#039; Explain why sub-tab wins over always-visible banner.</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-3" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-3', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">Open Question 3 scope is too narrow. Limits static-tier calibration to multi-instance slices, but same dynamic (tier doesn&#039;t track this build&#039;s actual severity) applies to single-instance slices too.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Broaden Open Question 3 from &#039;multi-instance slices&#039; to &#039;any slice where the static tier doesn&#039;t track this build&#039;s actual severity.&#039;</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-4" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-4', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">Open Question 1 trigger is vague. &#039;Run the build on a real client with design assets&#039; — undefined who/when/what counts as design assets.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Replace trigger with: &#039;Next client build where source folder contains at least one identifiably-visual asset (brand book, identity guide, surface samples). If design tag absent from all extracts of those files, nudge extract.md prompt.&#039;</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-5" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-5', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">April Dunford</span><span class="critic-tag">The Architect</span>
+    </div>
+    <div class="finding-text">Open Question 3 + 4 triggers are vague. OQ#3 (&#039;watch whether clients return per-role material&#039;) names no threshold or owner; OQ#4 (&#039;if absence of section confuses the client&#039;) has no defined channel for confusion to reach Eric.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Rewrite OQ#3 with threshold: &#039;if &gt;50% of returned material on persona-heavy builds is per-role rather than batch, extend input_asks to take role-aware overrides&#039; + owner. Rewrite OQ#4: &#039;On first build where all folders[].input_asks are fulfilled:true, verify Inputs Needed sub-tab renders a success state; if empty, add explicit success message in v2.&#039;</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-6" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-6', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span><span class="critic-tag">April Dunford</span>
+    </div>
+    <div class="finding-text">Per-tab catalog reads inconsistently against the Specificity success criterion. Personas Critical (line 58) packs quantification + typing tightly; Design Critical (line 315) &#039;Existing brand book, visual identity guide, or token spec, if any&#039; is bare and the phrase &#039;if any&#039; specifically undercuts medium-prescriptive bar.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Either tighten the design Critical ask to match the bar (e.g., &#039;Brand book PDF, identity guide, or design tokens file. If none exist, three highest-fidelity surface samples — homepage screenshot, deck PDF, primary product UI screenshot — at minimum 1200px wide&#039;), OR document the asymmetry as a v1 acceptance.</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-7" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-7', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">April Dunford</span>
+    </div>
+    <div class="finding-text">Design Critical ask uses internal-flavored jargon (&#039;token spec&#039;). Stated population is founder/marketing lead, not designer — a founder doesn&#039;t know what a design token is.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Drop &#039;or token spec&#039; or rephrase to &#039;Existing brand book, visual identity guide, or any designer-handoff documents you have, if any.&#039;</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-8" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-8', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The Architect</span>
+    </div>
+    <div class="finding-text">provided_summary is a YAGNI candidate. Build-level source_narratives already carries comparable provenance signal at lower cost. Not a clean cut — different scope/bucketing — but the design didn&#039;t evaluate the alternative of computing per-tab &#039;what you provided&#039; at render-time from slice→sources index + registry summaries.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Add Open Question: &#039;If the first 3 real builds show provided_summary is redundant with source_narratives at the executive-skim level, collapse to a single field.&#039; Keeps the option open without litigating now.</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-9" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-9', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The Architect</span>
+    </div>
+    <div class="finding-text">Step 3.2 frontmatter read cost not specified. Reading up to 7 frameworks&#039; prompt.md files could violate Hard Constraint #3 (context-bloat guard). Design doesn&#039;t say frontmatter-only vs. full-file vs. cached.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Add to Step 3.2: &#039;Read only the YAML frontmatter block of each owning framework&#039;s prompt.md (parse via existing YAML loader; do not read prompt body). Cache parsed frontmatter from PHASE 2 dispatch if already loaded.&#039;</div>
+  </div>
+</div>
+<div class="finding rejected" data-id="l-10" data-severity="low">
+  <div class="finding-toggle">
+    <div class="toggle-switch" onclick="toggleFinding('l-10', this)">
+      <div class="toggle-knob"></div>
+    </div>
+    <div class="toggle-label">reject</div>
+  </div>
+  <div class="finding-body">
+    <div class="finding-critics">
+      <span class="critic-tag">The QA Engineer</span>
+    </div>
+    <div class="finding-text">Goal sentence on line 374 is a run-on joining a metric-of-effort (&#039;reduce emails&#039;) and an intent (&#039;convert build artifact into self-serve gather-list&#039;) with a semicolon. A reader parsing &#039;what is the goal&#039; has to do extra work.</div>
+    <div class="finding-action"><strong>Suggested action:</strong> Split: &#039;Goal: convert review.html from a static delivery into a self-serve gather-list. Observable proxy: reduce follow-up &quot;what did you mean by X?&quot; emails after delivery.&#039;</div>
+  </div>
+</div>
+    <div class="modify-notes">
+      <label for="notes-low">Modify notes for Low severity (optional)</label>
+      <textarea id="notes-low" placeholder="Anything you want to add, override, or annotate for low-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-facts">
+    <div class="auto-apply-notice">
+      Fact-check corrections are applied automatically per the critique-panel protocol. Use the modify notes below if you want to override or annotate a specific correction.
+    </div>
+    <div class="empty">No items in this category.</div>
+    <div class="modify-notes">
+      <label for="notes-facts">Override or annotate fact-checks (optional)</label>
+      <textarea id="notes-facts" placeholder="Anything to override or annotate..."></textarea>
+    </div>
+  </div>
+
+  <div class="action-footer">
+    <div class="summary"><strong id="accept-count">0</strong> accepted · <strong id="reject-count">0</strong> rejected</div>
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy follow-up prompt</button>
+  </div>
+
+  <script>
+    const FINDINGS = [
+      {"id":"h-1","severity":"high","text":"Multi-framework folders have no merge spec for input_asks. Schema places input_asks on folders[] but strategy/, language/, market/, proof/ each host 2+ owning frameworks. Design says 'copy input_asks from owning framework' (singular). No concat/dedupe/tier-wins rule specified. Dunford confirms overlapping Critical asks across slices (e.g., both positioning and buyer-persona want customer interview transcripts) will either double-display or silently dedupe.","action":"Specify the merge algorithm in Architecture section (concat-then-dedupe by satisfied_by_tag is cheapest deterministic rule), OR move input_asks to folders[].framework_dispatches[].input_asks so each dispatched framework owns its own asks. Add Decision Log entry naming the rule.","critics":["The Architect","April Dunford"],"accepted":true},
+      {"id":"h-2","severity":"high","text":"Strategy/positioning Critical ask buries the load-bearing artifact. '3-5 customer interview transcripts naming the alternative the buyer almost chose' makes the transcript the artifact and the alternative-naming a property. Clients will send transcripts that contain no alternatives. Market/alternatives ask on line 258 already models the correct phrasing (leads with substance).","action":"Rewrite to lead with the alternative: 'Direct answers from 3-5 recent buyers to one question: what would you have done if our product didn't exist? Transcripts, email replies, or sales-call notes all work.'","critics":["April Dunford"],"accepted":true},
+      {"id":"h-3","severity":"high","text":"strategic-narrative Critical ask is unsatisfiable for most prospects. 'Founder essay, origin doc, or recorded company story (15+ min)' — most prospects don't have a 15-min recorded story. Critical will fire on every build, collapsing tier signal and making Goal observable #1 structurally unreachable.","action":"Lower the artifact floor: 'Any artifact where the founder explains why this company exists and what shift in the market made it necessary: a memo, a recent investor update, a podcast clip, a 20-min recorded conversation.'","critics":["April Dunford"],"accepted":true},
+      {"id":"h-4","severity":"high","text":"Registry/sync-tool relationship for input_asks is unspecified. tools/sync_framework_frontmatter.py currently mirrors only deliverable_type from registry.yaml to per-framework prompt.md. Design adds input_asks to frontmatter without saying whether registry mirrors, whether sync extends, or authoritative side on drift. Code/schema seam table omits both registry and sync tool.","action":"Add a row to the Code/schema seam table: either (a) extend sync_framework_frontmatter.py to mirror input_asks registry→frontmatter, or (b) declare per-framework prompt.md frontmatter as sole source of truth and update CLAUDE.md's Registries section to scope its claim to existing fields.","critics":["The Architect"],"accepted":true},
+      {"id":"m-1","severity":"medium","text":"Step 3.2b has no failure path. Brand-voice sub-agent dispatch has only happy path — no spec for timeout, malformed array, length mismatch, silent drop, or banned-phrase regression. PHASE 2 has an elaborate verification gate; Step 3.2b inherits none. Success criterion 'zero violations from the banned-phrase list' is unmeasurable without a verification gate.","action":"Add Step 3.2c verification gate: (a) confirm array length matches input length, (b) run brand-voice banned-phrase regex against post-pass strings and hard-fail or fall back to pre-pass strings, (c) define timeout behavior (e.g., 'if sub-agent doesn't return within N seconds, use pre-pass strings and emit build-integrity warning').","critics":["The QA Engineer"],"accepted":true},
+      {"id":"m-2","severity":"medium","text":"Brand-voice sub-step is portability-fragile. Step 3.2b points at ~/.claude/brand-voice.md (or local override). Fresh installs have neither file; aligned_cc_skills/brand/ doesn't exist. Violates project Portability Rule (CLAUDE.md lines 75-80).","action":"Specify Step 3.2b behavior when no voice file is found: pass-through (skip rewrite, keep author copy), OR ship a minimal default voice file in this repo. One-sentence addition.","critics":["The Architect"],"accepted":true},
+      {"id":"m-3","severity":"medium","text":"fulfilled computation is a stale snapshot. Three failure modes: (a) sources marked used:'no' (unparseable) treated as 'client did not provide' rather than 'we couldn't read it'; (b) one throwaway tag emission flips Critical to fulfilled; (c) multi-source asks ('3-5 transcripts') satisfied by a single tag emission. Checkmark can lie, attacking Specificity success criterion.","action":"Either (a) tighten with used:'yes' filter and a count threshold (ask declares min-count, boolean flips true only when count met), OR (b) drop the fulfilled checkmark entirely in v1 and let asks list read as-is.","critics":["The QA Engineer"],"accepted":true},
+      {"id":"m-4","severity":"medium","text":"provided_summary computation algorithm is unspecified. Output is shown ('1 founder interview, 2 case study drafts') but registry carries per-source type and signal_tags, not 'founder interview' or 'case study.' Needs explicit synthesis rules or LLM inference (with context/voice cost).","action":"Either specify the algorithm in Step 3.2 (e.g., 'for each folder, list each source's type and one descriptor token from signal_tags, joined into a single sentence'), OR push synthesis into Step 3.2b (and acknowledge sub-step is doing two jobs).","critics":["The Architect"],"accepted":true},
+      {"id":"m-5","severity":"medium","text":"v1 leaks per-instance ambiguity into multi-instance folders. Per-tab callouts are per-folder, but personas/, audiences/segments/, audiences/channels/ instantiate per-instance. A persona tab with 4 personas shows one merged callout collapsing 4 role-specific evidence sets. Open Question #3 names the issue but v1 ships the surface that exposes it.","action":"Either (a) constrain v1's per-tab callout to folders with single-instance slices and defer multi-instance callout-rendering to v2, OR (b) document in the v1 boundary that multi-instance folders show one merged callout per folder and log role-specific drift in Open Question #3.","critics":["The Architect"],"accepted":true},
+      {"id":"m-6","severity":"medium","text":"Backward-compat path not specified where it bites. Two unaddressed v0.4.0 states: (a) mixed presence — some folders have input_asks, others don't; (b) folder with input_asks populated but provided_summary missing. Renderer behavior unspecified.","action":"State explicitly: 'Schema v0.4.0 treats each folder independently — a folder missing input_asks hides its per-tab callout; a folder missing provided_summary renders the callout with input_asks only and no paired summary.'","critics":["The QA Engineer"],"accepted":true},
+      {"id":"m-7","severity":"medium","text":"Consolidated Overview list grouped by tier loses per-tab context. Grouping by tier optimizes for global triage (operator's job), not the client's per-area gathering pattern. The natural cognitive frame is 'what am I missing on Personas.' Per-tab callouts partly solve but the Inputs Needed sub-tab is the forwardable artifact.","action":"Either flip primary grouping (group by tab, sort items within tab by tier with Critical first), OR keep both views and let user toggle. Per-tab grouping matches how clients actually gather.","critics":["April Dunford"],"accepted":true},
+      {"id":"m-8","severity":"medium","text":"Decision #2 has hidden duplication risk not named in Decision Log. Same root cause as H-1 — Strategy/Language/Market folders host multiple slices each with own input_asks. Two slices may both ask for 'customer interview transcripts' with different qualifiers; merged list will read like a checklist of three nearly identical asks, or silently dedupe.","action":"Add a Decision Log entry naming the merge/dedup rule: keep duplicates and let qualifier distinguish them, OR dedupe by satisfied_by_tag and surface qualifier in the merged ask. State which.","critics":["April Dunford"],"accepted":true},
+      {"id":"l-1","severity":"low","text":"buyer-persona is deliverable_type: analysis, not content. Design treats it analogously to content-type frameworks. If brand-voice sub-agent treats analysis differently from content, per-persona asks could pass under different rules.","action":"State that brand-voice pass at Step 3.2b is deliverable_type-agnostic (processes ask strings as client-facing copy regardless of host framework's deliverable_type), OR change buyer-persona deliverable_type to content. Pick one.","critics":["The QA Engineer"],"accepted":false},
+      {"id":"l-2","severity":"low","text":"Decision 4 (Inputs Needed as sub-tab) under-considered alternatives. Banner-at-top-of-Overview (above both existing sub-tabs) serves 'acknowledgement before asking' more directly than click-to-reveal sub-tab.","action":"Add a third row to Decision 4 alternatives: 'Banner at top of Overview tab, above both existing sub-tabs.' Explain why sub-tab wins over always-visible banner.","critics":["The QA Engineer"],"accepted":false},
+      {"id":"l-3","severity":"low","text":"Open Question 3 scope is too narrow. Limits static-tier calibration to multi-instance slices, but same dynamic (tier doesn't track this build's actual severity) applies to single-instance slices too.","action":"Broaden Open Question 3 from 'multi-instance slices' to 'any slice where the static tier doesn't track this build's actual severity.'","critics":["The QA Engineer"],"accepted":false},
+      {"id":"l-4","severity":"low","text":"Open Question 1 trigger is vague. 'Run the build on a real client with design assets' — undefined who/when/what counts as design assets.","action":"Replace trigger with: 'Next client build where source folder contains at least one identifiably-visual asset (brand book, identity guide, surface samples). If design tag absent from all extracts of those files, nudge extract.md prompt.'","critics":["The QA Engineer"],"accepted":false},
+      {"id":"l-5","severity":"low","text":"Open Question 3 + 4 triggers are vague. OQ#3 ('watch whether clients return per-role material') names no threshold or owner; OQ#4 ('if absence of section confuses the client') has no defined channel for confusion to reach Eric.","action":"Rewrite OQ#3 with threshold: 'if >50% of returned material on persona-heavy builds is per-role rather than batch, extend input_asks to take role-aware overrides' + owner. Rewrite OQ#4: 'On first build where all folders[].input_asks are fulfilled:true, verify Inputs Needed sub-tab renders a success state; if empty, add explicit success message in v2.'","critics":["April Dunford","The Architect"],"accepted":false},
+      {"id":"l-6","severity":"low","text":"Per-tab catalog reads inconsistently against the Specificity success criterion. Personas Critical (line 58) packs quantification + typing tightly; Design Critical (line 315) 'Existing brand book, visual identity guide, or token spec, if any' is bare and the phrase 'if any' specifically undercuts medium-prescriptive bar.","action":"Either tighten the design Critical ask to match the bar (e.g., 'Brand book PDF, identity guide, or design tokens file. If none exist, three highest-fidelity surface samples — homepage screenshot, deck PDF, primary product UI screenshot — at minimum 1200px wide'), OR document the asymmetry as a v1 acceptance.","critics":["The QA Engineer","April Dunford"],"accepted":false},
+      {"id":"l-7","severity":"low","text":"Design Critical ask uses internal-flavored jargon ('token spec'). Stated population is founder/marketing lead, not designer — a founder doesn't know what a design token is.","action":"Drop 'or token spec' or rephrase to 'Existing brand book, visual identity guide, or any designer-handoff documents you have, if any.'","critics":["April Dunford"],"accepted":false},
+      {"id":"l-8","severity":"low","text":"provided_summary is a YAGNI candidate. Build-level source_narratives already carries comparable provenance signal at lower cost. Not a clean cut — different scope/bucketing — but the design didn't evaluate the alternative of computing per-tab 'what you provided' at render-time from slice→sources index + registry summaries.","action":"Add Open Question: 'If the first 3 real builds show provided_summary is redundant with source_narratives at the executive-skim level, collapse to a single field.' Keeps the option open without litigating now.","critics":["The Architect"],"accepted":false},
+      {"id":"l-9","severity":"low","text":"Step 3.2 frontmatter read cost not specified. Reading up to 7 frameworks' prompt.md files could violate Hard Constraint #3 (context-bloat guard). Design doesn't say frontmatter-only vs. full-file vs. cached.","action":"Add to Step 3.2: 'Read only the YAML frontmatter block of each owning framework's prompt.md (parse via existing YAML loader; do not read prompt body). Cache parsed frontmatter from PHASE 2 dispatch if already loaded.'","critics":["The Architect"],"accepted":false},
+      {"id":"l-10","severity":"low","text":"Goal sentence on line 374 is a run-on joining a metric-of-effort ('reduce emails') and an intent ('convert build artifact into self-serve gather-list') with a semicolon. A reader parsing 'what is the goal' has to do extra work.","action":"Split: 'Goal: convert review.html from a static delivery into a self-serve gather-list. Observable proxy: reduce follow-up \"what did you mean by X?\" emails after delivery.'","critics":["The QA Engineer"],"accepted":false}
+    ];
+    const FACT_CHECKS = [];
+    const SESSION = {
+      name: "2026-05-17-reverse-engineered-brand-input-asks",
+      mode: "authoring",
+      designPath: "/Users/ericpage/software/aligned_cc_skills/docs/plans/2026-05-17-reverse-engineered-brand-input-asks-design.md"
+    };
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    function toggleFinding(id, el) {
+      const finding = FINDINGS.find(f => f.id === id);
+      if (!finding) return;
+      finding.accepted = !finding.accepted;
+      el.classList.toggle('on');
+      const card = el.closest('.finding');
+      const label = el.parentElement.querySelector('.toggle-label');
+      if (finding.accepted) {
+        card.classList.remove('rejected');
+        label.textContent = 'accept';
+      } else {
+        card.classList.add('rejected');
+        label.textContent = 'reject';
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const accepted = FINDINGS.filter(f => f.accepted).length;
+      const rejected = FINDINGS.filter(f => !f.accepted).length;
+      document.getElementById('accept-count').textContent = accepted;
+      document.getElementById('reject-count').textContent = rejected;
+    }
+
+    function buildPrompt() {
+      const accept = FINDINGS.filter(f => f.accepted);
+      const reject = FINDINGS.filter(f => !f.accepted);
+
+      const formatFinding = f => {
+        const critics = f.critics && f.critics.length ? '[' + f.critics.join(', ') + '] ' : '';
+        return '- ' + critics + f.text;
+      };
+
+      const notes = {
+        high:   document.getElementById('notes-high').value.trim()   || '(none)',
+        medium: document.getElementById('notes-medium').value.trim() || '(none)',
+        low:    document.getElementById('notes-low').value.trim()    || '(none)',
+        facts:  document.getElementById('notes-facts').value.trim()  || '(none)'
+      };
+
+      const factLines = FACT_CHECKS.length
+        ? FACT_CHECKS.map(fc => '- ' + fc.claim + ' → ' + fc.correction).join('\n')
+        : '(none)';
+
+      return [
+        'Resume brainstorming session "' + SESSION.name + '" (' + SESSION.mode + ' mode) at `' + SESSION.designPath + '`.',
+        'Critique decisions from interactive review:',
+        '',
+        'ACCEPT (apply these):',
+        accept.length ? accept.map(formatFinding).join('\n') : '(none)',
+        '',
+        'REJECT (skip these):',
+        reject.length ? reject.map(formatFinding).join('\n') : '(none)',
+        '',
+        'FACT-CHECKS (auto-applied):',
+        factLines,
+        '',
+        'MODIFY NOTES:',
+        '- High severity: '   + notes.high,
+        '- Medium severity: ' + notes.medium,
+        '- Low severity: '    + notes.low,
+        '- Fact-checks: '     + notes.facts,
+        '',
+        'Apply the accepted findings and any modify notes, skip the rejected ones, regenerate the design doc, then refresh the session visualization per the post-critique checklist in the mode file.'
+      ].join('\n');
+    }
+
+    function copyPrompt(btn) {
+      const text = buildPrompt();
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied — paste in Claude Code';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2400);
+      }).catch(err => {
+        btn.textContent = 'Copy failed — see console';
+        console.error('Clipboard write failed:', err);
+      });
+    }
+
+    updateSummary();
+  </script>
+</body>
+</html>

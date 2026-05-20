@@ -236,6 +236,28 @@ advisors:
       Technical architecture, visual design, SEO, enterprise sales strategy,
       content that doesn't involve teaching or education.
 
+  - id: deb-dana
+    name: "Deb Dana"
+    summary: "LCSW and primary translator of Polyvagal Theory into practice"
+    prompt: advisors/prompts/deb-dana.md
+    domains: [polyvagal-theory, nervous-system-regulation, somatic-awareness, autonomic-states, co-regulation, chronic-illness]
+    evaluation_expertise: >
+      Evaluates whether approaches to stress, burnout, or healing honor the
+      autonomic nervous system rather than bypassing it. Is the person being
+      pushed to regulate before their state is named? Is sympathetic activation
+      being treated as a moral failure rather than a protective response? Is
+      co-regulation available and being used? Catches "push through" advice,
+      pathologizing of normal autonomic states, and cognitive insight being
+      mistaken for nervous-system change.
+    best_for: >
+      Nervous-system state awareness, polyvagal-informed design or coaching,
+      chronic illness and autonomic dysregulation contexts, burnout recovery
+      that must honor physiology. Any work where the body's current state
+      matters before advice can land.
+    not_for: >
+      Business strategy, marketing, technical architecture, financial planning,
+      content strategy, performance optimization divorced from physiology.
+
   - id: diana-chapman
     name: "Diana Chapman"
     summary: "Co-founder of the Conscious Leadership Group"
@@ -365,6 +387,27 @@ advisors:
     not_for: >
       Detailed go-to-market execution, pricing/monetization strategy, post-PMF
       scaling operations, team management, deep strategic analysis.
+
+  - id: irene-lyon
+    name: "Irene Lyon"
+    summary: "MSc, Somatic Experiencing practitioner and founder of SmartBody SmartMind"
+    prompt: advisors/prompts/irene-lyon.md
+    domains: [somatic-healing, capacity-building, trauma-recovery, nervous-system-education, foundational-sequencing]
+    evaluation_expertise: >
+      Evaluates whether healing or recovery plans are properly sequenced and
+      dose-appropriate. Is capacity being built before discharge is attempted?
+      Is the person doing foundational work or skipping to the exciting parts?
+      Is "calm" being confused with regulation? Catches premature discharge work,
+      big-breakthrough approaches that re-traumatize, and endless biology-learning
+      that substitutes for actual practice.
+    best_for: >
+      Somatic healing plans, nervous-system education, recovery sequencing for
+      chronic illness or trauma, any work requiring capacity to be built before
+      intensity is introduced. Especially useful when someone wants to move
+      faster than their system can support.
+    not_for: >
+      Business strategy, marketing, technical architecture, acute crisis
+      intervention, content that does not involve body or nervous-system work.
 
   - id: italo-biaggioni
     name: "Dr. Italo Biaggioni"
@@ -709,6 +752,27 @@ advisors:
       monetization decisions, free-to-paid conversion.
     not_for: >
       Brand voice, content quality, SEO strategy, visual design, health claims.
+
+  - id: patrick-mckeown
+    name: "Patrick McKeown"
+    summary: "Buteyko-trained breath coach and founder of Oxygen Advantage"
+    prompt: advisors/prompts/patrick-mckeown.md
+    domains: [functional-breathing, CO2-tolerance, breathwork, respiratory-training, autonomic-balance]
+    evaluation_expertise: >
+      Evaluates whether breathing advice is physiologically accurate and
+      trainable versus vague or counterproductive. Is over-breathing being
+      addressed? Is nasal breathing the default? Is there a measurable baseline
+      (BOLT score) before prescribing practice? Catches "take a deep breath"
+      advice that worsens over-breathing, hyperventilation techniques dressed
+      as healing, and breathwork recommendations with no measurable outcome.
+    best_for: >
+      Functional breathing assessment, CO₂ tolerance training, breathing-pattern
+      correction for anxiety or chronic illness, sleep-disordered breathing
+      evaluation, protocol selection for breath training.
+    not_for: >
+      Acute trauma states requiring somatic regulation first, business strategy,
+      marketing, technical architecture, content not involving respiratory
+      physiology.
 
   - id: paul-graham
     name: "Paul Graham"

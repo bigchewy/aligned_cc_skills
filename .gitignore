@@ -16,3 +16,5 @@ docs/investigations/
 docs/kanban/board.html
 *.draft.yaml
 *.draft.pass1.yaml
+__pycache__/
+.ralph-blocked-snapshot
