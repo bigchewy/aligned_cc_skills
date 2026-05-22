@@ -1,6 +1,6 @@
 ---
 name: code-simplifier
-description: Analyzes recently changed code for simplification opportunities. Returns findings as JSON. Invoked by finishing-a-development-branch (Step 1d), which files them to docs/kanban/todo/. Never edits code directly.
+description: Analyzes recently changed code for simplification opportunities. Returns findings as JSON. Invoked by finishing-a-development-branch (Step 8), which files them to docs/kanban/todo/. Never edits code directly.
 model: sonnet
 ---
 

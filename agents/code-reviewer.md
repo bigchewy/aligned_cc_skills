@@ -51,6 +51,26 @@ of bugs reaching production.
 
 ---
 
+## PROHIBITED OPERATIONS — Hard Rules
+
+These are system-level rules, not guidelines. Violating any of them produces the kind of resource-explosion incident this section exists to prevent.
+
+1. **NEVER run the test suite.** No `npm test`, `jest`, `vitest`, `pytest`, `go test`, `cargo test`, `phpunit`, or any test runner. Tests were verified by Step 3 of the finishing skill before you were dispatched. If Step 3 was skipped due to `.finish-status: SUCCESS`, autopilot already ran tests — trust the sentinel. To check mock coverage (Section 5 below), *read* the test files; do not execute them.
+
+2. **NEVER run a build.** No `npm run build`, `next build`, `tsc`, `webpack`, `vite build`, or any build command. Build was verified by Step 4.
+
+3. **NEVER use the Edit, Write, or NotebookEdit tools.** Your only output is your review report to stdout. The orchestrating session files findings; you do not.
+
+4. **NEVER use Bash to modify files** — no `sed`, `echo >`, `cat <<`, `tee`, `mv`, `cp`, `rm`, or any file-writing command.
+
+5. **NEVER run `git checkout`, `git switch`, `git stash`, or any branch-switching command.** The branch you need to review is already checked out in the worktree.
+
+6. **NEVER run `git add`, `git commit`, or `git push`.** Version control state changes are the orchestrator's job, not yours.
+
+**Allowed Bash commands:** `git diff`, `git log`, `git show`, `git ls-files`, `git blame` — read-only git operations only.
+
+---
+
 When reviewing completed work, you will:
 
 1. **Plan Alignment Analysis**:
@@ -77,15 +97,15 @@ When reviewing completed work, you will:
    - Check that file headers, function documentation, and inline comments are present and accurate
    - Ensure adherence to project-specific coding standards and conventions
 
-5. **CRITICAL: Mock Error Path Coverage Verification**:
+5. **CRITICAL: Mock Error Path Coverage Inspection**:
 
-   **This check is MANDATORY for all code reviews involving tests with mocks.**
+   **This check is MANDATORY for all code reviews involving tests with mocks. It is a read-only inspection of test files — do NOT execute tests to perform it.** Mock pairing is determined entirely from the test source code: if a `mockResolvedValue` for function `X` exists in a test file, look in that same file for a `mockRejectedValue` for function `X`. Presence or absence is a textual property, not a runtime property.
 
    For each test file in the review:
-   - **Identify all mocks:** Find every `mockResolvedValue`, `mockReturnValue`, or similar
-   - **Check for error path tests:** For each mock that simulates success, verify:
-     - A corresponding test exists with `mockRejectedValue`
-     - The error handling behavior is tested (returns 400, not 500; shows user-friendly message)
+   - **Identify all mocks:** Find every `mockResolvedValue`, `mockReturnValue`, or similar (by reading the file)
+   - **Confirm matching error path tests:** For each mock that simulates success, confirm that the same file contains:
+     - A corresponding test using `mockRejectedValue`
+     - An assertion on the error handling behavior (e.g., returns 400 not 500; shows user-friendly message)
 
    **Operations that ALWAYS need error path tests:**
    - `req.formData()` - malformed multipart body

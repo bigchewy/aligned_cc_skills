@@ -4,13 +4,13 @@ Extracted from finishing-a-development-branch SKILL.md to keep that file under 5
 
 ## Contents
 
-- Step 1f: Mockup Fidelity Check
-- Step 1g: Fix Mockup Deviations (user-directed)
-  - Step 1g-i: Root-cause diagnosis
-  - Step 1g-ii: Synthesize and fix
-  - Step 1g-iii: Re-verify
+- Step 9: Mockup Fidelity Check
+- Step 10: Fix Mockup Deviations (user-directed)
+  - Step 10a: Root-cause diagnosis
+  - Step 10b: Synthesize and fix
+  - Step 10c: Re-verify
 
-### Step 1f: Mockup Fidelity Check
+### Step 9: Mockup Fidelity Check
 
 **After all verification and scans, check if the branch's design has associated mockups.**
 
@@ -22,7 +22,7 @@ This step is **non-blocking** — deviations are reported so the user can decide
 Mockup fidelity already verified by autopilot. Skipping Steps 1f and 1g.
 ```
 
-Continue to Step 2.
+Continue to Step 11.
 
 2. **Find the plan file:** Scan both `docs/plans/*.md` and `docs/plans/completed/*.md` for the plan associated with this branch (match by branch name pattern). The plan may already be in `completed/` if executing-plans archived it. Read the plan header's `**Mockups:**` field for the mockups directory path. If the plan has no `**Mockups:**` field, fall back to the `**Source Design Doc:**` field and check that design doc for a `**Mockups:**` field.
 
@@ -90,15 +90,15 @@ Mockups checked: N
 - [mockup file]: [element] — [missing|changed|added]
 ```
 
-**If no unannounced deviations:** Report clean, continue to Step 1g.
+**If no unannounced deviations:** Report clean, continue to Step 10.
 
-**If unannounced deviations exist:** Show them, continue to Step 1g.
+**If unannounced deviations exist:** Show them, continue to Step 10.
 
-**If no mockups found:** Skip silently, continue to Step 1g.
+**If no mockups found:** Skip silently, continue to Step 10.
 
-### Step 1g: Fix Mockup Deviations (user-directed)
+### Step 10: Fix Mockup Deviations (user-directed)
 
-**If Step 1f found no unannounced deviations (or was skipped):** Skip silently, continue to Step 2.
+**If Step 9 found no unannounced deviations (or was skipped):** Skip silently, continue to Step 11.
 
 **If unannounced deviations exist**, present:
 
@@ -114,11 +114,11 @@ Would you like to fix any of these before proceeding?
 Which option?
 ```
 
-**If skip:** Continue to Step 2.
+**If skip:** Continue to Step 11.
 
 **If fix all or fix specific:**
 
-**Step 1g-i: Root-cause diagnosis.** For each selected deviation, spawn a sub-agent in parallel (`subagent_type=general-purpose`, `model=sonnet`). Each agent receives:
+**Step 10a: Root-cause diagnosis.** For each selected deviation, spawn a sub-agent in parallel (`subagent_type=general-purpose`, `model=sonnet`). Each agent receives:
 
 ```
 You are a mockup deviation analyst. Determine the root cause of this deviation
@@ -128,7 +128,7 @@ Deviation: {deviation summary}
 Mockup file: {mockup file path}
 Element: {element description}
 Type: {missing|changed|added}
-Implementation file(s): {source file paths from Step 1f agent report}
+Implementation file(s): {source file paths from Step 9 agent report}
 
 You are READ-ONLY. Do not use Edit, Write, NotebookEdit, or any file-modifying
 Bash commands. Use Read for files, Grep/Glob for searching.
@@ -162,7 +162,7 @@ Return a JSON object:
 
 If any sub-agent fails or returns unparseable output, report which deviations could not be analyzed and ask the user whether to attempt those fixes without root-cause analysis or skip them.
 
-**Step 1g-ii: Synthesize and fix.** Collect all successful agent reports. Present:
+**Step 10b: Synthesize and fix.** Collect all successful agent reports. Present:
 
 ```
 ## Deviation Root Causes
@@ -195,12 +195,12 @@ git -C <worktree-path> commit -m "fix: resolve mockup deviations"
 
 This gives each fix cycle a clean rollback point.
 
-**Step 1g-iii: Re-verify.** After committing fixes:
-1. Re-run tests (Step 1) and build (Step 1a)
-2. If any fixed files match LLM behavior surface patterns, also re-run Step 1b (LLM eval)
-3. Re-run the mockup fidelity check (Step 1f) to confirm deviations are resolved
+**Step 10c: Re-verify.** After committing fixes:
+1. Re-run tests (Step 3) and build (Step 4)
+2. If any fixed files match LLM behavior surface patterns, also re-run Step 5 (LLM eval)
+3. Re-run the mockup fidelity check (Step 9) to confirm deviations are resolved
 
 **Cycle limit:** Track the number of completed fix-then-verify cycles. Keep iterating until all unannounced deviations are resolved or the user chooses to skip.
 
 - **After each cycle:** If unannounced deviations remain, present them and ask the user: fix or accept?
-- **After cycle 5:** If deviations still remain after 5 fix cycles, present them as informational. Do NOT offer to fix again — the deviations likely require manual intervention or a design decision. Continue to Step 2.
+- **After cycle 5:** If deviations still remain after 5 fix cycles, present them as informational. Do NOT offer to fix again — the deviations likely require manual intervention or a design decision. Continue to Step 11.

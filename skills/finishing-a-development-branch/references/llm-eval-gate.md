@@ -4,13 +4,13 @@ Extracted from finishing-a-development-branch SKILL.md. Runs the eval suite when
 
 ## Contents
 
-- Step 1b: LLM Eval (auto-run if surface changed)
+- Step 5: LLM Eval (auto-run if surface changed)
   - Surface-pattern matching rules
   - Scenario scoping via trigger-map.yaml
   - Coverage summary
   - Scoped eval execution
 
-## Step 1b: LLM Eval (auto-run if surface changed)
+## Step 5: LLM Eval (auto-run if surface changed)
 
 **After tests pass, check if LLM behavior surface files were changed on this branch.**
 
@@ -20,9 +20,9 @@ Extracted from finishing-a-development-branch SKILL.md. Runs the eval suite when
 printenv ANTHROPIC_API_KEY
 ```
 
-If not set, report: "ANTHROPIC_API_KEY not set — skipping LLM eval." Continue to Step 1c. Non-blocking.
+If not set, report: "ANTHROPIC_API_KEY not set — skipping LLM eval." Continue to Step 6. Non-blocking.
 
-**2. Config guard.** Read `e2e/eval-surface.yaml` and `e2e/trigger-map.yaml`. If either file is missing or empty, report: "Eval config missing — skipping LLM eval. Expected `e2e/eval-surface.yaml` and `e2e/trigger-map.yaml`." Continue to Step 1c. Non-blocking.
+**2. Config guard.** Read `e2e/eval-surface.yaml` and `e2e/trigger-map.yaml`. If either file is missing or empty, report: "Eval config missing — skipping LLM eval. Expected `e2e/eval-surface.yaml` and `e2e/trigger-map.yaml`." Continue to Step 6. Non-blocking.
 
 **3. Surface gate.** Get changed files:
 
@@ -35,9 +35,9 @@ Match each changed file against the surface patterns in `e2e/eval-surface.yaml`.
 - **Wildcard-in-path patterns** (e.g., `frameworks/*/prompt.md`): match paths like `frameworks/X/prompt.md` where `X` is any single directory component
 - **Specific-file patterns** (e.g., `skills/persona-panel/SKILL.md`): exact string match
 
-If no changed files match any surface pattern, skip silently. Continue to Step 1c.
+If no changed files match any surface pattern, skip silently. Continue to Step 6.
 
-> **Behavior change:** The old Step 1b was vague about pattern matching. These three explicit rules (directory prefix, wildcard-in-path, exact match) are new specified behavior. They approximate recursive glob expansion for the current pattern set but may differ from true glob semantics if new patterns with complex wildcards are added. If a future pattern needs true glob matching, update these rules or add a glob-expansion utility.
+> **Behavior change:** The old Step 5 was vague about pattern matching. These three explicit rules (directory prefix, wildcard-in-path, exact match) are new specified behavior. They approximate recursive glob expansion for the current pattern set but may differ from true glob semantics if new patterns with complex wildcards are added. If a future pattern needs true glob matching, update these rules or add a glob-expansion utility.
 
 **4. Scenario scoping.** For each changed surface file, look up matching trigger entries in `e2e/trigger-map.yaml`. A trigger entry matches if the changed file path exactly equals any path in the entry's `paths` array. Collect the deduplicated set of scenarios to run.
 
@@ -66,4 +66,4 @@ Run from the `e2e/` directory (use the Bash tool's working directory, not `cd e2
 | Failure | `Failed — [scenario name]` |
 | Config/API key missing | `Skipped — [reason]` |
 
-**If no surface files changed:** Skip silently, continue to Step 1c.
+**If no surface files changed:** Skip silently, continue to Step 6.

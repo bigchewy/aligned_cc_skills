@@ -27,7 +27,7 @@ Running from inside a worktree causes cascading failures:
 - `git mv` for plan archival operates on wrong git index
 - Test runners may pick up duplicate test files from other worktrees
 
-**Step 0 (before anything else):** Verify CWD is the main repo, not a worktree.
+**Step 1 (before anything else):** Verify CWD is the main repo, not a worktree.
 
 ```bash
 pwd
@@ -43,7 +43,7 @@ When the user invokes this skill, they should specify which branch/worktree to f
 
 ## The Process
 
-### Step 0: Deployment Platform Audit
+### Step 1: Deployment Platform Audit
 
 **Before running tests, check for deployment pitfalls that tests cannot catch.**
 
@@ -94,27 +94,27 @@ Load `references/deployment-pitfall-catalog.md` for detection patterns and false
 CRITICAL deployment issues found. These will fail silently in production.
 Must fix before proceeding.
 ```
-Stop. Don't proceed to Step 1.
+Stop. Don't proceed to Step 3.
 
-**If only HIGH or lower:** Show findings as warnings, continue to Step 1.
+**If only HIGH or lower:** Show findings as warnings, continue to Step 3.
 
-**If no findings:** Report clean, continue to Step 1.
+**If no findings:** Report clean, continue to Step 3.
 
 **Scope:** The default audit runs CRITICAL + HIGH checks. MEDIUM and LOW categories (timeouts, edge runtime, writable filesystem) are documented in the catalog for manual review but not checked automatically.
 
-### Step 0.5: Manual Deploy Artifact Notice
+### Step 2: Manual Deploy Artifact Notice
 
 **Purpose:** Surface a non-blocking reminder when the branch touches files in a "manual-deploy artifact" class (per `skills/_shared/manual-deploy-artifact-catalog.md`) — so the user doesn't ship code that depends on a forgotten manual production step. This is a notice, not a gate; nothing here demands the user paste proof.
 
 **Catalog:** Read `skills/_shared/manual-deploy-artifact-catalog.md` for the artifact classes and their `detector_glob` / `detector_grep` patterns.
 
-**Diff source:** Reuse the diff already computed in Step 0's "Module-Level Mutable State (HIGH)" sub-check:
+**Diff source:** Reuse the diff already computed in Step 1's "Module-Level Mutable State (HIGH)" sub-check:
 
 ```bash
 git diff --name-only <base-branch>...HEAD
 ```
 
-Also capture each file's status letter (A/D/R/M) via `git diff --name-status <base-branch>...HEAD`. Do NOT re-run Step 1c's diff — that step has not executed yet.
+Also capture each file's status letter (A/D/R/M) via `git diff --name-status <base-branch>...HEAD`. Do NOT re-run Step 6's diff — that step has not executed yet.
 
 **Procedure:**
 
@@ -128,7 +128,7 @@ Also capture each file's status letter (A/D/R/M) via `git diff --name-status <ba
    new migration instead. Do not merge until resolved.
    ```
 
-   This is the one case Step 0.5 still blocks on — modifying an applied migration is a correctness bug, not a forgotten step.
+   This is the one case Step 2 still blocks on — modifying an applied migration is a correctness bug, not a forgotten step.
 
 3. **Emit notice.** If any matches remain (after exemption filtering and the M-status block above), print:
 
@@ -142,17 +142,17 @@ Also capture each file's status letter (A/D/R/M) via `git diff --name-status <ba
 
    Prod step: <from catalog entry's "Prod step (for the plan entry)">
 
-   Make sure this step is done after the deploy. Continuing to Step 1.
+   Make sure this step is done after the deploy. Continuing to Step 3.
    ```
 
    Cap each class list at 10 entries with a truncation note "(+ N more)".
 
-4. **If no catalog matches:** Print "Manual-deploy notice: no catalog matches detected." Continue to Step 1.
+4. **If no catalog matches:** Print "Manual-deploy notice: no catalog matches detected." Continue to Step 3.
 
-**Non-blocking:** Step 0.5 NEVER prompts the user, NEVER edits the plan, NEVER demands evidence. After printing the notice, immediately continue to Step 1.
+**Non-blocking:** Step 2 NEVER prompts the user, NEVER edits the plan, NEVER demands evidence. After printing the notice, immediately continue to Step 3.
 
 
-### Step 1: Verify Tests
+### Step 3: Verify Tests
 
 **Check for an autopilot verify result first.** If a `.finish-status` file exists inside the worktree path (the path given after `at` in the skill invocation, e.g., `/path/to/.worktrees/branch-name/.finish-status`) and it contains `status: SUCCESS`, skip Steps 1, 1a, and 1b and report:
 
@@ -160,7 +160,7 @@ Also capture each file's status letter (A/D/R/M) via `git diff --name-status <ba
 Tests, build, and eval already verified by autopilot (verified_at: <timestamp>, eval: <eval value from file>). Skipping Steps 1, 1a, and 1b.
 ```
 
-Then continue to Step 1c.
+Then continue to Step 6.
 
 **If no recent .finish-status, run the project's test suite with reduced worker parallelism** (≤2 parallel workers) to prevent memory exhaustion when running alongside other processes. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
 
@@ -173,11 +173,11 @@ Tests failing (<N> failures). Must fix before completing:
 Cannot proceed with merge/PR until tests pass.
 ```
 
-Stop. Don't proceed to Step 2.
+Stop. Don't proceed to Step 11.
 
-**If tests pass:** Continue to Step 1a.
+**If tests pass:** Continue to Step 4.
 
-### Step 1a: Verify Build
+### Step 4: Verify Build
 
 **Run the production build to catch issues that tests miss.**
 
@@ -196,11 +196,11 @@ Build failing. Must fix before completing:
 Cannot proceed with merge/PR until build passes.
 ```
 
-Stop. Don't proceed to Step 1b.
+Stop. Don't proceed to Step 5.
 
-**If build passes:** Continue to Step 1b.
+**If build passes:** Continue to Step 5.
 
-### Step 1b: LLM Eval (auto-run if surface changed)
+### Step 5: LLM Eval (auto-run if surface changed)
 
 See `{base-directory}/references/llm-eval-gate.md` for the full workflow. Summary:
 
@@ -209,53 +209,52 @@ See `{base-directory}/references/llm-eval-gate.md` for the full workflow. Summar
 - Run scoped `promptfoo eval` scenarios from the trigger map; any exit 1 is a hard stop
 - Record result for the completion summary (Passed / Partial / Skipped / Failed)
 
-### Step 1c: Architecture Doc Update
+### Step 6: Architecture Doc Notice
 
-**After all verification passes, check if the work changed system architecture.**
-
-Compare the branch changes against architecture-relevant patterns:
+**After all verification passes, check if the work changed architecture-relevant files.**
 
 ```bash
 git diff --name-only <base-branch>...HEAD
 ```
 
-If changed files include any of: architecture-relevant paths as defined in the project's `CLAUDE.md` or detected from framework conventions (e.g., `src/app/api/` for Next.js, `src/routes/` for SvelteKit, `app/` for Rails), new pages, new lib modules, database schema changes, new hooks, or new external service integrations — the architecture doc likely needs updating.
+Architecture-relevant patterns include framework convention paths (e.g., `src/app/api/` for Next.js, `src/routes/` for SvelteKit, `app/` for Rails), new pages, new lib modules, database schema changes, new hooks, and new external service integrations. The project's `CLAUDE.md` may extend or override this list.
 
-**If architecture-relevant changes detected:**
+**If architecture-relevant changes detected:** File one Kanban entry (`skills/_shared/kanban-entry-format.md`) with category `architecture-doc-update-needed`, listing the changed paths in the body. Then print:
 
-1. Read `docs/architecture.md` (or the project's equivalent)
-2. **Verify diagrams affected by this branch** — architecture docs may be stale. For the specific diagrams you're updating, check if they accurately reflect the current code (not just your changes). The actual source files are always the source of truth. If you find discrepancies in the diagrams you're editing, file bugs (see `skills/_shared/kanban-entry-format.md`) with category `architecture-discrepancy`. Do NOT audit unrelated diagrams.
-3. Update the affected diagrams to reflect the new state
-4. Commit the update (including any bug board entries) to the feature branch before proceeding
+```
+Architecture-relevant files changed (N paths). Kanban entry filed for follow-up. Continuing to Step 7.
+```
 
-**If no architecture-relevant changes:** Skip silently, continue to Step 1d.
+Continue to Step 7. Do NOT update `docs/architecture.md` inline — the diagram work happens during Kanban triage (where it gets proper attention), not on the merge path (where it gets rushed or skipped).
 
-### Step 1d: Code Review
+**If no architecture-relevant changes:** Skip silently, continue to Step 7.
 
-See `{base-directory}/references/code-review-scan.md` for the full workflow (covers Step 1d and Step 1e). Summary:
+### Step 7: Code Review
+
+See `{base-directory}/references/code-review-scan.md` for the full workflow (covers Step 7 and Step 8). Summary:
 
 - Dispatch the `aligned:code-reviewer` sub-agent with branch, base, worktree, and plan file
 - CRITICAL findings block the merge — fix, re-run tests/build, re-dispatch
 - Important findings are filed to the Kanban board (shared entry format); Suggestions are shown as context
 
-### Step 1e: Code Simplification Scan
+### Step 8: Code Simplification Scan
 
 See `{base-directory}/references/code-review-scan.md` for the full workflow. Summary:
 
 - Dispatch the `aligned:code-simplifier` sub-agent in READ-ONLY mode
 - File any returned findings to the Kanban board as `simplification` entries
-- Non-blocking — always continue to Step 1f
+- Non-blocking — always continue to Step 9
 
-### Step 1f: Mockup Fidelity Check
+### Step 9: Mockup Fidelity Check
 
-See `{base-directory}/references/mockup-fidelity-check.md` for the full workflow (covers Step 1f and Step 1g). Summary:
+See `{base-directory}/references/mockup-fidelity-check.md` for the full workflow (covers Step 9 and Step 10). Summary:
 
 - Skip Steps 1f and 1g if `.mockup-clean` exists in the worktree (autopilot already ran the fidelity loop)
 - Locate the plan's `**Mockups:**` directory; skip silently if the branch has no mockups
 - Dispatch a general-purpose sub-agent to compare mockup HTML against implementation source files
-- Produce a drift report and hand off to Step 1g if unannounced deviations exist
+- Produce a drift report and hand off to Step 10 if unannounced deviations exist
 
-### Step 1g: Fix Mockup Deviations (user-directed)
+### Step 10: Fix Mockup Deviations (user-directed)
 
 See `{base-directory}/references/mockup-fidelity-check.md` for the full workflow. Summary:
 
@@ -264,7 +263,7 @@ See `{base-directory}/references/mockup-fidelity-check.md` for the full workflow
 - Apply fixes, commit, re-verify (tests, build, optional eval, re-run fidelity check)
 - Cycle up to 5 times; after that, present remaining deviations as informational
 
-### Step 2: Determine Base Branch
+### Step 11: Determine Base Branch
 
 Try `main` first, then fall back to `master`. Run each command separately (do NOT combine with `||`):
 
@@ -280,7 +279,7 @@ git merge-base HEAD master
 
 Or ask: "This branch split from main - is that correct?"
 
-### Step 3: Present Options
+### Step 12: Present Options
 
 Present exactly these 4 options:
 
@@ -297,7 +296,7 @@ Which option?
 
 **Don't add explanation** - keep options concise.
 
-### Step 4: Execute Choice
+### Step 13: Execute Choice
 
 #### Option 1: Merge Locally
 
@@ -345,17 +344,17 @@ This happens when the target branch has untracked files that also exist on the f
 
 Verify tests on merged result with reduced worker parallelism (≤2 parallel workers) to prevent memory exhaustion. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
 
-Then: Cleanup worktree (Step 5), then archive plan docs (Step 6).
+Then: Cleanup worktree (Step 14), then archive plan docs (Step 15).
 
 #### Option 2: Deploy to Production + Smoke Test
 
 See `{base-directory}/references/deploy-smoke-test.md` for the full workflow. Summary:
 
 - Parse scope (QUICK default, FULL on explicit request), then merge + push to remote like Option 1
-- Run worktree cleanup (Step 5) before waiting for the deployment
+- Run worktree cleanup (Step 14) before waiting for the deployment
 - Wait for deployment via Vercel MCP (Path A, when `.claude/deployment.json` sets `vercelMcpAccess: true`) or timed wait + URL probe (Path B)
 - Run Playwright smoke flows from `e2e/smoke-test-flows.md`; auth profiles come from `smokeTestProfiles` in `.claude/deployment.json`
-- Report results (smoke failures are non-blocking — code is already deployed), then archive plan docs (Step 6)
+- Report results (smoke failures are non-blocking — code is already deployed), then archive plan docs (Step 15)
 
 #### Option 3: Keep As-Is
 
@@ -383,9 +382,9 @@ git checkout <base-branch>
 git branch -D <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
+Then: Cleanup worktree (Step 14)
 
-### Step 5: Cleanup Worktree
+### Step 14: Cleanup Worktree
 
 **For Options 1, 2, 4:**
 
@@ -393,19 +392,19 @@ Since CWD is always the main repo (see "CRITICAL" section), worktree cleanup is 
 
 **IMPORTANT: Only remove the worktree being finished.** Do NOT touch other worktrees — they may have active Ralph loops or other work in progress. Check `git worktree list` and only operate on the specific worktree for this branch.
 
-**Step 5a: Remove worktree:**
+**Step 14a: Remove worktree:**
 ```bash
 git worktree remove <worktree-path> --force
 ```
 
-**Step 5b: Delete branch:**
+**Step 14b: Delete branch:**
 ```bash
 git branch -d <feature-branch>
 ```
 
 **For Option 3:** Keep worktree.
 
-### Step 6: Archive Plan Documents
+### Step 15: Archive Plan Documents
 
 **For Options 1 and 2 only.** After merge and cleanup, move completed plan and design documents to `docs/plans/completed/`.
 
@@ -435,9 +434,9 @@ git branch -d <feature-branch>
 
 **If no plan files found:** Report: "No plan documents found to archive." and continue.
 
-### Step 7: Completion Summary
+### Step 16: Completion Summary
 
-**After all steps complete, present a completion summary.**
+**After all steps complete, present a headline-first summary.**
 
 Analyze the branch's commit history to understand what was built:
 
@@ -450,47 +449,46 @@ Then present:
 ```
 ## Completion Summary
 
-<1-3 sentence overview of the features or changes implemented on this branch.>
+<Integration outcome + one-line overview, e.g., "Merged feature/x → main. <one sentence on what changed.>">
 
-| Step | Result |
-|------|--------|
-| Deployment audit | <Clean / N critical, N high findings> |
-| Manual deploy notice | <N file(s) flagged / No matches> |
-| Tests | <N/N passing / Skipped — autopilot verified> |
-| Build | <Passed / Failed / Skipped — autopilot verified> |
-| LLM eval | <Passed / Warned / Skipped — reason / Skipped — autopilot verified (eval: <value>)> |
-| Architecture doc | <Updated / Skipped> |
-| Code review | <Clean / N CRITICAL, N Important, N Suggestions> |
-| Code simplification | <N findings filed / Clean> |
-| Mockup fidelity | <N matches, N deviations / No mockups / Skipped / Skipped — autopilot verified> |
-| Deviation fixes | <N fixed (root causes) / Skipped / Accepted as-is / Skipped — autopilot verified> |
-| Integration | <Option chosen + outcome, e.g., "Merged feature/x → main"> |
-| Worktree | <Removed / Kept> |
-| Plan archive | <Archived N files / No plans found / Skipped> |
+<Status line: gates that fired and their result, e.g., "Tests/build verified. Code review clean. 2 simplification findings filed.">
 ```
 
-**Populate each row from the actual results of the preceding steps.** Omit rows for steps that were not applicable (e.g., no worktree involved → omit Worktree row).
+**If at least one gate failed, blocked, or surfaced findings**, append a fired-gates table below the status line:
+
+```
+| Gate | Result |
+|------|--------|
+| <one row per gate that fired AND produced output worth surfacing> |
+```
+
+**Rules:**
+- Always show the integration outcome and status line
+- Show the table ONLY when a gate failed, blocked, or surfaced findings; if everything was clean, the status line alone is the summary
+- "Skipped — autopilot verified" rows are NOT noteworthy — the sentinel records them, do not enumerate
+- "Not applicable" rows (e.g., Worktree when there's no worktree, Mockup fidelity when there are no mockups) are NEVER shown
+- The Kanban-findings count is part of the status line, not a separate row
 
 ## Quick Reference
 
 | Step | Action | Blocks on failure? |
 |------|--------|--------------------|
-| 0. Deployment audit | Scan for deployment pitfalls | CRITICAL: yes, HIGH: no |
-| 0.5. Manual deploy notice | Scan diff against artifact catalog; print non-blocking notice | Only on M-status migration mods |
-| 1. Verify tests | Run test suite (skipped if `.finish-status` SUCCESS) | Yes |
-| 1a. Verify build | Run build command (skipped if `.finish-status` SUCCESS) | Yes |
-| 1b. LLM eval | Run eval if surface changed (skipped if `.finish-status` SUCCESS) | Yes (fail), No (warn/pass) |
-| 1c. Architecture doc | Update `docs/architecture.md` if structure changed | No |
-| 1d. Code review | Spawn code-reviewer agent, fix CRITICAL issues | Yes (CRITICAL) |
-| 1e. Simplification scan | Spawn code-simplifier agent, file Kanban entries | No |
-| 1f. Mockup fidelity | Compare implementation against brainstorming mockups (skipped if `.mockup-clean` exists) | No |
-| 1g. Fix deviations | Root-cause diagnose and fix unannounced mockup deviations (skipped if `.mockup-clean` exists) | No |
-| 2. Base branch | Determine merge target | No |
-| 3. Present options | Show 4 choices | No |
-| 4. Execute | Run chosen workflow | N/A |
-| 5. Cleanup | Remove worktree if applicable | N/A |
-| 6. Archive plans | Move plan/design docs to completed/ | No |
-| 7. Completion summary | Present changes overview + results table | No |
+| 1. Deployment audit | Scan for deployment pitfalls | CRITICAL: yes, HIGH: no |
+| 2. Manual deploy notice | Scan diff against artifact catalog; print non-blocking notice | Only on M-status migration mods |
+| 3. Verify tests | Run test suite (skipped if `.finish-status` SUCCESS) | Yes |
+| 4. Verify build | Run build command (skipped if `.finish-status` SUCCESS) | Yes |
+| 5. LLM eval | Run eval if surface changed (skipped if `.finish-status` SUCCESS) | Yes (fail), No (warn/pass) |
+| 6. Architecture doc notice | File Kanban entry if architecture-relevant files changed | No |
+| 7. Code review | Spawn code-reviewer agent, fix CRITICAL issues | Yes (CRITICAL) |
+| 8. Simplification scan | Spawn code-simplifier agent, file Kanban entries | No |
+| 9. Mockup fidelity | Compare implementation against brainstorming mockups (skipped if `.mockup-clean` exists) | No |
+| 10. Fix deviations | Root-cause diagnose and fix unannounced mockup deviations (skipped if `.mockup-clean` exists) | No |
+| 11. Base branch | Determine merge target | No |
+| 12. Present options | Show 4 choices | No |
+| 13. Execute | Run chosen workflow | N/A |
+| 14. Cleanup | Remove worktree if applicable | N/A |
+| 15. Archive plans | Move plan/design docs to completed/ | No |
+| 16. Completion summary | Present changes overview + results table | No |
 
 | Option | Merge | Push | Smoke Test | Keep Worktree | Cleanup Branch | Archive Plans |
 |--------|-------|------|------------|---------------|----------------|---------------|

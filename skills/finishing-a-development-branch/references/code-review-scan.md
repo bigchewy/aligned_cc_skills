@@ -4,10 +4,10 @@ Extracted from finishing-a-development-branch SKILL.md. Orchestrates the code-re
 
 ## Contents
 
-- Step 1d: Code Review
-- Step 1e: Code Simplification Scan
+- Step 7: Code Review
+- Step 8: Code Simplification Scan
 
-### Step 1d: Code Review
+### Step 7: Code Review
 
 **After all verification passes, dispatch a comprehensive code review against the plan.**
 
@@ -30,7 +30,11 @@ prompt: "Review the branch changes for this feature against the implementation p
   Pay special attention to Section 5 (Mock Error Path Coverage).
 
   Write your report as structured output to stdout.
-  Use Read for files, Grep/Glob for searching. Do not use Bash for searching."
+  Use Read for files, Grep/Glob for searching. Do not use Bash to run anything
+  beyond the read-only git operations whitelisted in your agent prompt's
+  PROHIBITED OPERATIONS section (no npm/jest/vitest/pytest, no builds, no file
+  modifications). Tests and build were already verified by Steps 3 and 4; do
+  not re-verify."
 ```
 
 **If CRITICAL issues found:**
@@ -41,13 +45,13 @@ Code review found CRITICAL issues. Must fix before proceeding:
 
 Cannot proceed until critical issues are resolved.
 ```
-Stop. Fix the issues in the worktree, commit, re-run tests (Step 1) and build (Step 1a), then re-dispatch the code reviewer.
+Stop. Fix the issues in the worktree, commit, re-run tests (Step 3) and build (Step 4), then re-dispatch the code reviewer.
 
-**If only Important or Suggestions:** Show findings as context, continue to Step 1e. File Important findings to Kanban board using the standard entry format.
+**If only Important or Suggestions:** Show findings as context, continue to Step 8. File Important findings to Kanban board using the standard entry format.
 
-**If clean review:** Report clean, continue to Step 1e.
+**If clean review:** Report clean, continue to Step 8.
 
-### Step 1e: Code Simplification Scan
+### Step 8: Code Simplification Scan
 
 **After all verification and doc updates, scan branch changes for simplification opportunities.**
 
@@ -89,4 +93,4 @@ Code simplification scan: N opportunities filed to Kanban board.
 Code simplification scan: clean.
 ```
 
-Continue to Step 1f.
+Continue to Step 9.

@@ -1,15 +1,15 @@
 # Deploy to Production + Smoke Test — Workflow Reference
 
-Extracted from finishing-a-development-branch SKILL.md. Invoked from Step 4 Option 2.
+Extracted from finishing-a-development-branch SKILL.md. Invoked from Step 13 Option 2.
 
 ## Contents
 
-- Step 4a: Merge to main
-- Step 4b: Push to remote
-- Step 4c: Worktree cleanup
-- Step 4d: Wait for deployment
-- Step 4e: Run smoke tests
-- Step 4f: Report results
+- Step 13a: Merge to main
+- Step 13b: Push to remote
+- Step 13c: Worktree cleanup
+- Step 13d: Wait for deployment
+- Step 13e: Run smoke tests
+- Step 13f: Report results
 
 ---
 
@@ -17,13 +17,13 @@ Extracted from finishing-a-development-branch SKILL.md. Invoked from Step 4 Opti
 
 **Parse scope:** If the user said "full smoke tests" or similar, set scope to FULL. Otherwise default to QUICK.
 
-**Step 4a: Merge to main** — Same as Option 1's full merge logic (checkout, pull, merge, including untracked-file error recovery).
+**Step 13a: Merge to main** — Same as Option 1's full merge logic (checkout, pull, merge, including untracked-file error recovery).
 
-**Step 4b: Push to remote** — `git push origin <base-branch>`. Record push timestamp for deployment matching.
+**Step 13b: Push to remote** — `git push origin <base-branch>`. Record push timestamp for deployment matching.
 
-**Step 4c: Worktree cleanup** — Run Step 5 now.
+**Step 13c: Worktree cleanup** — Run Step 14 now.
 
-**Step 4d: Wait for deployment**
+**Step 13d: Wait for deployment**
 
 First, read `.claude/deployment.json` from the project root. This file configures per-project deployment behavior:
 
@@ -72,7 +72,7 @@ Verified API response fields: `created` (number, ms), `state` ("READY"/"ERROR"),
 
 No Vercel API available. Wait `deployWaitSeconds` (default 120s) for auto-deploy, then check if production URL responds (Playwright navigate, expect 2xx). If no response or no `productionUrl` configured, report and skip smoke tests.
 
-**Step 4e: Run smoke tests**
+**Step 13e: Run smoke tests**
 
 Read `e2e/smoke-test-flows.md` for the flow definitions. The production URL comes from `productionUrl` in `.claude/deployment.json` (Path B) or the Vercel deployment URL (Path A).
 
@@ -82,4 +82,4 @@ Before each Playwright session, kill stale Chrome: run `pkill -f mcp-chrome` (ig
 
 **If `smokeTestProfiles` has entries:** For each profile, navigate with that profile's Playwright MCP connection. If redirected to `/login`, report auth expired and skip that profile. Otherwise run flows based on scope. Kill stale Chrome between profiles.
 
-**Step 4f: Report results** — Show deployment info (commit, URL, verification method) and PASS/FAIL per flow with failure details. Smoke test failures are non-blocking — code is already deployed. Then: Archive plan docs (Step 6).
+**Step 13f: Report results** — Show deployment info (commit, URL, verification method) and PASS/FAIL per flow with failure details. Smoke test failures are non-blocking — code is already deployed. Then: Archive plan docs (Step 15).

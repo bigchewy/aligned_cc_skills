@@ -15,9 +15,9 @@ Read from the lines appended below this prompt:
 ## Process
 
 Read `skills/finishing-a-development-branch/SKILL.md` and execute exactly:
-- **Step 1: Run the test suite.** Run with reduced worker parallelism (≤2 parallel workers) to prevent memory exhaustion when running alongside other processes. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
-- **Step 1a: Run the build command** (if defined; skip with note otherwise).
-- **Step 1b: LLM eval (if surface changed).** Apply the surface gate, scenario scoping, and per-scenario `npx promptfoo eval -c <scenario-path> --no-progress-bar` invocation as documented there.
+- **Step 3: Run the test suite.** Run with reduced worker parallelism (≤2 parallel workers) to prevent memory exhaustion when running alongside other processes. For Jest: `npm test -- --maxWorkers=2`. For Vitest: `npx vitest run --pool=threads --maxWorkers=2`. For other runners, use the equivalent flag.
+- **Step 4: Run the build command** (if defined; skip with note otherwise).
+- **Step 5: LLM eval (if surface changed).** Apply the surface gate, scenario scoping, and per-scenario `npx promptfoo eval -c <scenario-path> --no-progress-bar` invocation as documented there.
 
 Skip every other step in the finishing skill (deployment audit, manual-deploy notice, merge, cleanup, archival, simplification, architecture updates).
 
@@ -47,7 +47,7 @@ detail: <one-line error summary>
 - Do NOT merge to any branch.
 - Do NOT clean up worktrees.
 - Do NOT archive plan documents.
-- Do NOT run deployment audit (Step 0 in the finishing skill).
+- Do NOT run deployment audit (Step 1 in the finishing skill).
 - Do NOT run code simplification scan (merge time).
 - Do NOT update architecture docs (requires judgment).
 - Write `.finish-status` on every exit path.
