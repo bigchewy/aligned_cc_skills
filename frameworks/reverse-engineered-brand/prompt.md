@@ -110,6 +110,8 @@ Slice → signal_tags lookup (use this to filter):
 | `proof/clinical-evidence.md` | `clinical`, `proof-points` |
 | `proof/compliance.md` | `compliance` |
 | `design/design-principles.md` | `design` |
+| `design/layouts.md` | `design` |
+| `design/slide-patterns.md` | `design` |
 
 Hold the Source Registry and slice→sources index in memory. Proceed to Transform.
 
@@ -170,6 +172,8 @@ Slice → owning framework mapping (authoritative):
 | `proof/proof-points.md` | Each quantitative claim with source + date + confidence | `proof-points-audit` |
 | `proof/clinical-evidence.md`, `proof/compliance.md` | (conditional — only if the org is healthcare/regulated) | `proof-points-audit` (healthcare extension — same method, healthcare-specific evidence types) |
 | `design/design-principles.md` | (conditional — skip unless source material has visual identity signal) | `design-principles` |
+| `design/layouts.md` | Named presentation layout taxonomy from source templates: layout name, composition, and appropriate slide content types | **Framework-internal visual-structure synthesis.** Dispatch only when source material includes presentation templates, slide masters, or deck files with reusable layout metadata. |
+| `design/slide-patterns.md` | Recurring deck composition patterns: pattern name, element count, asset role, surface tendencies, and dropped/replaced-pattern notes | **Framework-internal visual-structure synthesis.** Dispatch only when source material includes multiple decks, presentation templates, or dated deck variants that reveal repeated composition systems. |
 | `audiences/channels/{channel}.md`, `audiences/segments/{segment}.md` | Channel/segment procurement context | **Classification, not framework dispatch.** In digital health these categories are exogenously defined (payer/regulatory); the orchestrator classifies the brand against the canonical taxonomy at `frameworks/reverse-engineered-brand/audience-taxonomy.md` rather than dispatching a framework. Slice frontmatter sets `synthesis_method: classification`. See Step 2.3a below. |
 
 **Step 2.1: Determine the slice list.**
@@ -178,6 +182,7 @@ Inspect the Source Registry to decide which slice instances to produce. For exam
 - `personas/{role}.md` — instantiate one per role surfaced in extracts (e.g., `personas/vp-ops.md`, `personas/owner-operator.md`)
 - `audiences/channels/{channel}.md` — instantiate one per channel mentioned
 - Conditional slices (`clinical-evidence`, `compliance`, `design-principles`) — only instantiate if the org's domain or registry signal warrants it
+- Conditional visual-structure slices (`design/layouts.md`, `design/slide-patterns.md`) — instantiate only if design-tagged extracts include slide masters, presentation templates, reusable deck layouts, or repeated composition patterns across decks
 
 Decisions about which roles/channels/segments to instantiate happen here in the orchestrator (cheap, just metadata) — the framework sub-agents only see the slices the orchestrator asks for.
 
@@ -222,6 +227,7 @@ The orchestrator authors a 1-paragraph `canonical-pre-synthesis-blob.md` in `{br
 For each non-skipped slice instance:
 - Look up `owning-framework-id` from the slice mapping table.
 - If the slice is `audiences/channels/*` or `audiences/segments/*`: do NOT dispatch a framework — handle via Step 2.3a (classification) instead.
+- If the slice is `design/layouts.md` or `design/slide-patterns.md`: do NOT dispatch the generic `design-principles` framework — handle via Step 2.3b (visual-structure synthesis) instead.
 - If owning framework is `null` for any OTHER reason (rare; only if a slice mapping row is genuinely unowned): do NOT dispatch a framework. Emit one P0 meta-OQ recommending the user commission a framework for that slice.
 - Otherwise, read `frameworks/{owning-framework-id}/prompt.md` and `frameworks/reverse-engineered-brand/auto-mode-preamble.md`. Concatenate: preamble + ORIGINAL framework prompt. Dispatch a Task with `subagent_type: general-purpose` and substituted placeholders:
   - `{slice-id}` — the slice path (e.g., `strategy/positioning.md`)
@@ -255,6 +261,38 @@ The sub-agent's job:
 Slice frontmatter on each generated file: `synthesis_method: classification` (NOT `framework`). This distinguishes classification-derived slices from framework-derived slices for downstream auditors.
 
 **Why classification, not framework dispatch:** In digital health, payer segments (commercial, Medicaid, MA, ACO, etc.) and procurement channels (employer, payer, provider, pharma) are imposed by the regulatory and procurement landscape, not invented by the brand. A 5-phase WAIT-gated framework is the wrong tool — there's nothing to discover, only to classify. See the rationale block at the top of `audience-taxonomy.md`.
+
+**Step 2.3b: Visual-structure synthesis (special case — not generic design-principles dispatch).**
+
+The `design/layouts.md` and `design/slide-patterns.md` files capture presentation architecture, not website visual identity. Do not ask the `design-principles` framework to infer these slices; its contract is colors, typography, theme, contrast, and broad visual direction.
+
+Dispatch one visual-structure sub-agent (Task, `subagent_type: general-purpose`) when design-tagged extracts include PowerPoint templates, slide masters, payer decks, sales decks, or dated deck variants. Provide:
+- The full design-tagged source-extract path list.
+- Any `.pptx` source paths from the Source Registry.
+- Any dated deck source paths that can reveal deprecated or replaced patterns.
+- `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md`.
+- Output paths:
+  - `{brand-folder-path}/.build/slices/design/layouts.md.draft.md`
+  - `{brand-folder-path}/.build/slices/design/layouts.md.oq.json`
+  - `{brand-folder-path}/.build/slices/design/slide-patterns.md.draft.md`
+  - `{brand-folder-path}/.build/slices/design/slide-patterns.md.oq.json`
+
+The sub-agent's job:
+1. Inspect the design extracts first. If the source is a `.pptx`, inspect the Open XML package where possible: `ppt/slideMasters/*`, `ppt/slideLayouts/*`, `ppt/slides/*`, `ppt/theme/theme*.xml`, and related relationship files. Do not stop at rendered slide text.
+2. For `design/layouts.md`, produce one section per named layout. Each section must include: `Name`, `Composition`, `Appropriate for`, and `Evidence`.
+3. For `design/slide-patterns.md`, produce approximately 10-20 recurring patterns when enough signal exists. Each pattern must include: `Name`, `Element count`, `Asset role`, `Surface tendencies`, `Replaces / dropped patterns`, and `Evidence`.
+4. When dated decks show a redesign or pattern retirement, explicitly record which older pattern was dropped or replaced. If the relationship is inferred, tag confidence and explain the basis.
+5. If named layouts or recurring patterns are absent from the source material, write an atomic Open Question instead of inventing them.
+
+Slice frontmatter:
+- `design/layouts.md`: `synthesis_method: visual-structure`, `owning_framework: reverse-engineered-brand`, `confidence: low|medium|high`
+- `design/slide-patterns.md`: `synthesis_method: visual-structure`, `owning_framework: reverse-engineered-brand`, `confidence: low|medium|high`
+
+**Color library extraction requirement.** When source material includes `.cclibs`, `.ase`, `.ai`, `.svg`, or `.pptx` theme color definitions, the design pass must attempt to decode canonical RGB/HEX values before logging a color OQ. Preferred order:
+1. Extract explicit HEX/RGB values from SVG, CSS-like text, XML, JSON, and PowerPoint theme files.
+2. Inspect `.pptx` theme XML for `srgbClr`, `schemeClr`, and brand theme mappings.
+3. For proprietary binaries such as `.cclibs`, try safe structured inspection first (`strings`, archive listing, XML/JSON plist detection, or available local parsers). If values cannot be decoded, log the exact file path and method attempted in the OQ.
+4. If canonical values are found, write them into `design/design-principles.md` and do not leave a generic "color libraries not decoded" gap.
 
 **Cross-framework ordering caveat** (per Architect M1): `competitive-battle-card`'s prompt names positioning as its canonical source. Battle-card dispatch receives the positioning DRAFT — a placeholder note in the dispatch prompt explains the upstream slice may not be finalized; the framework's AUTO_MODE behavior is to tag any positioning-dependent OQ with `confidence: low`, `impact: P0`, `why_it_matters` noting the upstream dependency.
 

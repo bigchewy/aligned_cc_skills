@@ -84,6 +84,18 @@
 
 ---
 
+### Stopping visual extraction at colors and typography when a PPT master exists
+
+**User:** [source folder includes a presentation master template and several dated sales decks]
+
+**Wrong:** Advisor writes `design/design-principles.md` with color, font, logo, and image-style notes, then logs a vague color-library Open Question. It never inspects slide masters, named layouts, recurring deck compositions, or redesign-era changes.
+
+**Right:** Advisor treats the presentation template as structural source material. It inspects slide masters, slide layouts, theme XML, and recurring deck slides; writes `design/layouts.md` with named layout types; writes `design/slide-patterns.md` with repeated composition systems; and attempts to decode theme/color-library values before logging any color OQ.
+
+> Brand design is not only visual tokens. For presentation-heavy brands, the reusable layout and composition system is part of the brand interface. A pass that captures colors and typography but misses deck structure is incomplete.
+
+---
+
 ### Synthesizing a slice's shape without dispatching its owning framework
 
 **User:** [the prompt says "compose 5-components-positioning"]

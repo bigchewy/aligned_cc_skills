@@ -26,7 +26,14 @@ If `{source-path}` is a URL: use WebFetch to retrieve the page content.
 If `{source-path}` is a local file:
 - `.md`, `.txt`, `.html`, `.rtf`, `.org` — use Read
 - `.pdf` — use Read (it supports PDFs; pass `pages` argument for large PDFs >10 pages, reading in 20-page chunks if needed)
-- `.docx`, `.pptx` — use Read if supported; otherwise mark `used: "no"` and `summary: "binary format not parseable in this run"`
+- `.docx` — use Read if supported; otherwise inspect package text where possible; if still unreadable mark `used: "no"` and `summary: "binary format not parseable in this run"`
+- `.pptx` — treat as a design-bearing source, not just a binary deck. Use Read if supported, and inspect the Open XML package where possible:
+  - `ppt/slideMasters/*` and `ppt/slideLayouts/*` for named layout taxonomy, placeholders, and master-level geometry
+  - `ppt/slides/*` for recurring composition patterns, object counts, and content roles
+  - `ppt/theme/theme*.xml` for theme colors, fonts, and `srgbClr`/`schemeClr` mappings
+  - relationship files for slide-to-layout and layout-to-master mapping
+  If none of those routes are available, mark `used: "partial"` when the file clearly carries design signal but cannot be fully parsed, and record the limitation in `concerns`.
+- `.cclibs`, `.ase`, `.ai`, `.svg` — inspect for color, logo, and vector design signal. For proprietary binaries, try safe structured inspection first (archive listing, XML/JSON/plist detection, `strings`-style text extraction, or available local parsers). If canonical color values cannot be decoded, record the exact file and method attempted in `concerns`.
 - Image formats — Read can describe images for `png`/`jpg`/`gif`; otherwise mark `used: "no"`
 
 If the file is unreadable or fetch fails, write a minimal JSON with `used: "no"` and an error in `summary`, then return.
@@ -48,6 +55,13 @@ Build a structured extract with these fields:
   - `verbatim_quote` — optional 1-line verbatim quote from the source that supports this entity
   - `notes` — optional context (e.g., "named alongside legacy systems", "mentioned as a target persona")
 - `slice_relevance` — for each brand-folder slice this source is load-bearing for, a one-sentence note on what to extract. Example: `{ "strategy/positioning.md": "Component 1 — describes the 'muddling through' alternative state in detail" }`. Omit slices where the source has no signal.
+- `design_system` — optional object, present only for visual/design sources. Include any fields with signal:
+  - `colors`: array of `{name, hex, rgb, source_location, confidence}`. Use 6-digit uppercase HEX when known.
+  - `fonts`: array of `{name, role, source_location, confidence}`.
+  - `named_layouts`: array of `{name, composition, appropriate_for, source_location, confidence}`.
+  - `composition_patterns`: array of `{name, element_count, asset_role, surface_tendencies, replaces_or_drops, source_location, confidence}`.
+  - `template_metadata`: object with `{masters, layouts, slide_count, theme_files}` when available.
+  - `decode_notes`: array of attempted methods and limitations, especially for proprietary color-library files.
 - `concerns` — flags for the orchestrator: e.g., `["dated: 2020 — may be pre-rebrand"]`, `["outlier: contradicts other sources on pricing"]`, `["partial: only first 20 pages of a 60-page deck were read"]`. Empty array if no concerns.
 
 **Length budget:** The full extract JSON should be 500-1500 words. Long enough to capture the key signal; short enough that the orchestrator can load 30+ extracts without context bloat. Resist the urge to summarize the entire document — focus on what's load-bearing for brand synthesis.
