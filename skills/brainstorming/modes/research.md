@@ -72,7 +72,7 @@ You MUST complete each phase before proceeding to the next.
 
 **Auto-consult domain advisors (topic-routed):**
 
-When a candidate or comparison axis falls within a domain advisor's expertise, dispatch that advisor as a consultative voice — analogous to the Architect auto-consult in `modes/software.md`, but routed by topic rather than by codebase ownership. Each consultation is a fresh sub-agent. The advisor's prompt file is at `advisors/prompts/{advisor-id}.md`.
+When a candidate or comparison axis falls within a domain advisor's expertise, dispatch that advisor as a consultative voice — analogous to the Architect auto-consult in `modes/software.md`, but routed by topic rather than by codebase ownership. Each consultation is a fresh sub-agent. Resolve the advisor's prompt file path through `skills/_shared/resolve-advisor-source.md`: match `{advisor-id}` in the resolver's returned `advisors` list and use that entry's `absolute_prompt_path`. This finds advisors in the plugin OR the project-local repo — required because health/therapy advisors now live in the user's personal repo, not the plugin. The `advisors/registry.yaml` is authoritative for topic routing; extend the routing examples per the merged set.
 
 **Topic routing examples** (extend per the registry — `advisors/registry.yaml` is authoritative):
 - ACT and contextual behavioral science → Steven Hayes (`steven-hayes`)
@@ -84,7 +84,7 @@ When a candidate or comparison axis falls within a domain advisor's expertise, d
 
 **Dispatch template** (sub-agent via Task tool, `subagent_type=general-purpose`, `model=opus`):
 
-   "[Full contents of `advisors/prompts/{advisor-id}.md`]
+   "[Full contents of the advisor prompt file at the resolved `absolute_prompt_path`]
 
    You are acting as a domain consultative voice during a research-mode brainstorm. You have access to Glob, Grep, Read, WebSearch, and WebFetch tools. Do not use Bash for searching — use the Grep tool instead. For prior-research context, first read `/tmp/brainstorm-context-{topic}/project-scan.md`.
 
@@ -115,7 +115,7 @@ The Skeptic Pass is the default committed path for Research mode. It runs an inl
 
 **Inline Skeptic role prompt** (sub-agent via Task tool, `subagent_type=general-purpose`, `model=opus`):
 
-   "[Full contents of `advisors/prompts/{skeptic-advisor-id}.md`]
+   "[Full contents of the advisor prompt file at the resolved `absolute_prompt_path` for `{skeptic-advisor-id}`]
 
    **Role override for this dispatch:** You are the inline Skeptic for a research-mode brainstorm. Your job is narrow: pressure-test the synthesis below for citation integrity, missing counter-evidence, and unsourced licensing or cost claims. You are NOT writing the recommendation. You are NOT proposing alternatives. You are ONLY surfacing evidence problems.
 

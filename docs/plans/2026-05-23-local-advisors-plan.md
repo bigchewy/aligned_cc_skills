@@ -530,7 +530,7 @@ git commit -m "feat: critique-panel reads advisors + selection_guidelines via re
 
 ---
 
-### Task 6: Route the research-mode advisor dispatch through the resolver
+### ✅ Task 6: Route the research-mode advisor dispatch through the resolver
 
 **Files:**
 - Modify: `skills/brainstorming/modes/research.md` (Phase 3 auto-consult + Phase 4 Skeptic dispatch templates)
