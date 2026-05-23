@@ -976,7 +976,7 @@ git commit -m "test: validate project-local advisor registry against schema (fix
 > **Derive frameworks from the LIVE registry, never from memory or the stale README.** For each
 > advisor `<id>`, its frameworks are the entries where `advisor: <id>` in `frameworks/registry.yaml`.
 
-### Task 12: Create the personal-repo skeleton
+### ✅ Task 12: Create the personal-repo skeleton
 
 **Files (all outside the plugin — plain file writes, no git):**
 - Create: `~/.claude/advisors/registry.yaml`
