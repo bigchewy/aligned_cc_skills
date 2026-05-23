@@ -30,9 +30,21 @@ The checklist is at `{base-directory}/{checklist-filename}`. Verify the path exi
 
 ## Round 1
 
-1. Read `advisors/registry.yaml`. Parse the `advisors` list — each entry has: `id`, `name`, `prompt`, `domains` (list), `evaluation_expertise`, `best_for`, `not_for`. Read the `selection_guidelines` section for count rules, hard-exclude logic, and diversity preferences. If the YAML file doesn't exist or fails to parse, fall back to globbing `advisors/prompts/*.md` and parsing first lines for name/domain extraction.
+1. Read `skills/_shared/resolve-advisor-source.md` and follow its procedure. Take the `advisors`
+   list (each entry carries `id`, `name`, `domains`, `evaluation_expertise`, `best_for`, `not_for`,
+   `absolute_prompt_path`, `source`) **and** the `selection_guidelines` block from its return — the
+   resolver returns `selection_guidelines` as a plugin-canonical sibling of `advisors`. Use
+   `selection_guidelines` for count rules, hard-exclude logic, and diversity preferences. If the
+   resolver cannot be read, fall back to globbing `advisors/prompts/*.md` and parsing first lines
+   for name/domain extraction (selection guidelines then default to: 2-3 critics, hard-exclude on
+   `not_for`, prefer lens diversity). **Behavior note: this fallback path is intentionally
+   plugin-only — after migration it will not surface local advisors. It fires only when the
+   resolver file itself is unreadable (a plugin installation failure), not for absent or malformed
+   local registries (those are handled by the resolver's own error paths).**
 2. Based on the design document's content, select 1-4 critics following the registry's selection guidelines. Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
-3. Read each selected critic's full prompt file (the path listed in the registry entry).
+3. Read each selected critic's full prompt file using that entry's `absolute_prompt_path` from the
+   resolver (NOT the registry `prompt:` field, which is plugin-relative and mis-resolves local
+   critics).
 
 **If `fact-check-mode` is "division-of-labor":**
 

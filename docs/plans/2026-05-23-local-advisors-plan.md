@@ -435,7 +435,7 @@ git commit -m "feat: route use-advisor discovery and path resolution through mer
 
 ---
 
-### Task 5: Rewire critique-panel-orchestration to the resolver
+### ✅ Task 5: Rewire critique-panel-orchestration to the resolver
 
 **Files:**
 - Modify: `skills/_shared/critique-panel-orchestration.md` (Round 1, steps 1 and 3)
