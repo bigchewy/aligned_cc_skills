@@ -240,7 +240,7 @@ git commit -m "feat: add resolve-advisor-source shared merge procedure"
 
 ---
 
-### Task 3: Make contextual-recommendation Stage 1 dual-contract
+### ✅ Task 3: Make contextual-recommendation Stage 1 dual-contract
 
 **Files:**
 - Modify: `skills/_shared/contextual-recommendation.md` (Stage 1: Domain Filter)

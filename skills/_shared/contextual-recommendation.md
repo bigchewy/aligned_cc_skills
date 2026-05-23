@@ -9,7 +9,10 @@ Shared scoring and presentation logic for intent-based advisor and framework sel
 
 The calling skill passes:
 - **Entity type:** `advisor`, `framework`, or `framework-or-advisor`
-- **Registry path:** `advisors/registry.yaml` or `frameworks/registry.yaml`
+- **Input (framework callers):** a registry YAML path (`frameworks/registry.yaml`)
+- **Input (advisor callers):** either a registry YAML path (`advisors/registry.yaml`, plugin-only
+  scope) or a pre-merged advisor entry list from `skills/_shared/resolve-advisor-source.md`
+  (plugin + local, deduped, local-wins)
 - **Task context:** The user's args (Path 2), extracted conversation context (Path 3), or empty (Path 4)
 
 ## Path 4: No Context Available
@@ -26,7 +29,15 @@ Do NOT proceed with scoring. Wait for the user's response, then re-enter this fi
 
 ## Stage 1: Domain Filter
 
-Read the registry YAML file (path provided by calling skill). Parse all entries.
+**Stage 1 input is dual-contract.** The calling skill passes ONE of:
+- **A registry YAML path** (framework callers, and any advisor caller that wants plugin-only
+  scope) — read and parse all entries.
+- **A pre-merged advisor entry list** (advisor callers that already merged plugin + local via
+  `skills/_shared/resolve-advisor-source.md`) — use the list as-is; do NOT re-read a registry.
+
+Framework callers always use the path branch. Advisor callers that must surface project-local
+advisors use the pre-merged-list branch — otherwise local advisors are invisible to contextual
+recommendation.
 
 **Scoring eligibility filter (advisors only):** Exclude entries where `domains` is empty (`domains: []`). These are unprofiled advisors — they lack the metadata needed for meaningful scoring. They remain accessible via named invocation (Path 1) but are invisible to contextual recommendation.
 
