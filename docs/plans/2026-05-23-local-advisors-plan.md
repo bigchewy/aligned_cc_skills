@@ -1153,7 +1153,7 @@ git commit -m "feat: migrate autonomic + long-COVID advisors + frameworks out of
 
 ---
 
-### Task 15: Migrate the movement / body cluster
+### ✅ Task 15: Migrate the movement / body cluster
 
 **Advisors (7):** `andreo-spina`, `kelly-starrett`, `shirley-sahrmann`, `stuart-mcgill`, `patrick-mckeown`, `deb-dana`, `irene-lyon`
 

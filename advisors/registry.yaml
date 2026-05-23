@@ -1,29 +1,4 @@
 advisors:
-- best_for: 'Mobility programming, joint health protocols, movement practice design,
-    rehabilitation plans, content making claims about flexibility or mobility.
-
-    '
-  domains:
-  - mobility
-  - joint-health
-  - tissue-adaptation
-  - movement-science
-  - rehabilitation
-  evaluation_expertise: 'Evaluates whether movement and mobility protocols are grounded
-    in cellular biology and progressive force application. Are tissue adaptation timelines
-    realistic? Is the program building neurological ownership of range, or just temporary
-    passive deformation? Catches vague flexibility language, quick-fix claims, and
-    muscle-focused thinking that ignores joints as the limiting factor.
-
-    '
-  id: andreo-spina
-  name: Dr. Andreo Spina
-  not_for: 'Business strategy, marketing, software architecture, content strategy,
-    speed or power training.
-
-    '
-  prompt: advisors/prompts/andreo-spina.md
-  summary: Creator of FRC and founder of Functional Anatomy Seminars
 - best_for: 'Blog posts, long-form content, pitch decks, brand narratives. Content
     that needs a compelling story arc.
 
@@ -199,35 +174,6 @@ advisors:
     '
   prompt: advisors/prompts/danny-iny.md
   summary: Founder of Mirasee, creator of Course Builder's Laboratory
-- best_for: 'Nervous-system state awareness, polyvagal-informed design or coaching,
-    chronic illness and autonomic dysregulation contexts, burnout recovery that must
-    honor physiology. Any work where the body''s current state matters before advice
-    can land.
-
-    '
-  domains:
-  - polyvagal-theory
-  - nervous-system-regulation
-  - somatic-awareness
-  - autonomic-states
-  - co-regulation
-  - chronic-illness
-  evaluation_expertise: 'Evaluates whether approaches to stress, burnout, or healing
-    honor the autonomic nervous system rather than bypassing it. Is the person being
-    pushed to regulate before their state is named? Is sympathetic activation being
-    treated as a moral failure rather than a protective response? Is co-regulation
-    available and being used? Catches "push through" advice, pathologizing of normal
-    autonomic states, and cognitive insight being mistaken for nervous-system change.
-
-    '
-  id: deb-dana
-  name: Deb Dana
-  not_for: 'Business strategy, marketing, technical architecture, financial planning,
-    content strategy, performance optimization divorced from physiology.
-
-    '
-  prompt: advisors/prompts/deb-dana.md
-  summary: LCSW and primary translator of Polyvagal Theory into practice
 - best_for: 'Leadership development content, team culture docs, founder reflections,
     conflict resolution plans, organizational values. Work that requires emotional
     honesty and self-awareness.
@@ -399,34 +345,6 @@ advisors:
   prompt: advisors/prompts/garry-tan.md
   summary: CEO of YC, designer-engineer-founder who leads with earnestness and product
     taste
-- best_for: 'Somatic healing plans, nervous-system education, recovery sequencing
-    for chronic illness or trauma, any work requiring capacity to be built before
-    intensity is introduced. Especially useful when someone wants to move faster than
-    their system can support.
-
-    '
-  domains:
-  - somatic-healing
-  - capacity-building
-  - trauma-recovery
-  - nervous-system-education
-  - foundational-sequencing
-  evaluation_expertise: 'Evaluates whether healing or recovery plans are properly
-    sequenced and dose-appropriate. Is capacity being built before discharge is attempted?
-    Is the person doing foundational work or skipping to the exciting parts? Is "calm"
-    being confused with regulation? Catches premature discharge work, big-breakthrough
-    approaches that re-traumatize, and endless biology-learning that substitutes for
-    actual practice.
-
-    '
-  id: irene-lyon
-  name: Irene Lyon
-  not_for: 'Business strategy, marketing, technical architecture, acute crisis intervention,
-    content that does not involve body or nervous-system work.
-
-    '
-  prompt: advisors/prompts/irene-lyon.md
-  summary: MSc, Somatic Experiencing practitioner and founder of SmartBody SmartMind
 - best_for: 'Service businesses converting through relationship — photographers, coaches,
     consultants. DM engagement systems, content calendars that solve audience problems,
     Instagram strategy built on showing up.
@@ -676,32 +594,6 @@ advisors:
     '
   prompt: advisors/prompts/julian-shapiro.md
   summary: Founder of Demand Curve and Bell Curve
-- best_for: 'Daily mobility routines, desk-worker body maintenance, movement assessments,
-    upstream pain diagnostics, recovery protocols for high-performers.
-
-    '
-  domains:
-  - mobility
-  - movement-mechanics
-  - physical-maintenance
-  - injury-prevention
-  - biomechanics
-  evaluation_expertise: 'Evaluates whether movement and recovery plans target positions
-    and tissue quality rather than muscles and random stretching. Is there a test-retest
-    protocol, or is it mobility theater? Are symptoms being chased downstream when
-    the source is upstream? Catches vague "stretch more" advice, time-wasting routines
-    without measurable outcomes, and over-reliance on flexibility framing when the
-    real issue is tissue stiffness or motor control.
-
-    '
-  id: kelly-starrett
-  name: Dr. Kelly Starrett
-  not_for: 'Marketing strategy, content creation, business strategy, clinical pathology
-    requiring imaging or surgical evaluation.
-
-    '
-  prompt: advisors/prompts/kelly-starrett.md
-  summary: Physical therapist, movement coach, founder of The Ready State
 - best_for: 'Engineering management transitions, team friction during reorgs, coaching
     first-time managers, diagnosing why a technical leader is struggling in a new
     role, navigating skip-level dynamics.
@@ -804,33 +696,6 @@ advisors:
     '
   prompt: advisors/prompts/patrick-campbell.md
   summary: Founder of ProfitWell (acquired by Paddle for $200M)
-- best_for: 'Functional breathing assessment, CO₂ tolerance training, breathing-pattern
-    correction for anxiety or chronic illness, sleep-disordered breathing evaluation,
-    protocol selection for breath training.
-
-    '
-  domains:
-  - functional-breathing
-  - CO2-tolerance
-  - breathwork
-  - respiratory-training
-  - autonomic-balance
-  evaluation_expertise: 'Evaluates whether breathing advice is physiologically accurate
-    and trainable versus vague or counterproductive. Is over-breathing being addressed?
-    Is nasal breathing the default? Is there a measurable baseline (BOLT score) before
-    prescribing practice? Catches "take a deep breath" advice that worsens over-breathing,
-    hyperventilation techniques dressed as healing, and breathwork recommendations
-    with no measurable outcome.
-
-    '
-  id: patrick-mckeown
-  name: Patrick McKeown
-  not_for: 'Acute trauma states requiring somatic regulation first, business strategy,
-    marketing, technical architecture, content not involving respiratory physiology.
-
-    '
-  prompt: advisors/prompts/patrick-mckeown.md
-  summary: Buteyko-trained breath coach and founder of Oxygen Advantage
 - best_for: 'Idea validation, "should I build this?" decisions, growth diagnosis,
     identifying tarpit ideas, intellectual honesty about traction.
 
@@ -1125,30 +990,6 @@ advisors:
     '
   prompt: advisors/prompts/shirin-oreizy.md
   summary: Founder of Next Step, a behavioral design agency
-- best_for: 'Movement assessment plans, rehab program design, exercise programming
-    that must address compensatory patterns, musculoskeletal pain analysis.
-
-    '
-  domains:
-  - movement-dysfunction
-  - motor-control
-  - biomechanics
-  - rehabilitation
-  evaluation_expertise: 'Evaluates whether a movement or rehab approach addresses
-    the pattern or just the symptom. Is the actual movement dysfunction identified,
-    or is treatment aimed at the pain site? Is motor control being assessed before
-    mobility is prescribed? Catches stretching-first solutions, symptom-site fixation,
-    and mobility prescribed where control is the real deficit.
-
-    '
-  id: shirley-sahrmann
-  name: Dr. Shirley Sahrmann
-  not_for: 'Business strategy, marketing, product design, high-performance athletic
-    programming where calculated risk is required.
-
-    '
-  prompt: advisors/prompts/shirley-sahrmann.md
-  summary: Physical therapist and researcher on movement dysfunction
 - best_for: 'Designs with user-facing components where simplicity and focus matter.
     Product vision decisions. Feature prioritization.
 
@@ -1200,31 +1041,6 @@ advisors:
     '
   prompt: advisors/prompts/steve-krug.md
   summary: Usability expert, author of Don't Make Me Think
-- best_for: 'Back pain assessment protocols, spine-safe exercise programming, rehab
-    program review, training program audit for spine risk.
-
-    '
-  domains:
-  - spine-biomechanics
-  - injury-prevention
-  - rehabilitation
-  - load-management
-  evaluation_expertise: 'Evaluates whether a movement or training approach respects
-    spine biomechanics and cumulative load tolerance. Are pain triggers identified
-    through provocative testing before exercise is prescribed? Is flexion, extension,
-    or load intolerance assessed? Are exercises matched to the individual''s mechanical
-    profile? Catches guru-driven programming without evidence, reckless spine loading,
-    and generic "core work" that ignores individual tolerance.
-
-    '
-  id: stuart-mcgill
-  name: Dr. Stuart McGill
-  not_for: 'Business strategy, marketing, product design, psychological coaching,
-    upper-extremity or non-spine musculoskeletal issues.
-
-    '
-  prompt: advisors/prompts/stuart-mcgill.md
-  summary: Spine biomechanist, 32 years of research at University of Waterloo
 - best_for: 'Comprehensive Instagram presence across all four content formats, bio-promise
     alignment audits, profile optimization, engagement system design for service-based
     entrepreneurs.

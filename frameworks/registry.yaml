@@ -235,19 +235,6 @@ frameworks:
     other person solve your problem
   use_when: someone needs to steer a negotiation or conversation by asking how/what
     questions that shift the problem to the other party
-- advisor: andreo-spina
-  category: health-movement
-  deliverable_type: plan
-  domains:
-  - joint-health
-  - mobility
-  - daily-practice
-  - movement-maintenance
-  id: cars
-  name: CARs (Controlled Articular Rotations)
-  purpose: a daily joint health maintenance practice
-  use_when: someone wants a daily joint maintenance routine to assess and maintain
-    articular health and range of motion
 - advisor: sue-b-zimmerman
   category: social-media
   deliverable_type: plan
@@ -403,20 +390,6 @@ frameworks:
     for colors, typography, and theme
   use_when: someone needs guiding design principles for a product that prioritize
     simplicity, elegance, and user experience
-- advisor: shirley-sahrmann
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - movement-assessment
-  - injury-prevention
-  - pain-patterns
-  - biomechanics
-  id: directional-susceptibility
-  name: Directional Susceptibility to Movement (DSM) assessment
-  purpose: a framework for predicting injury risk and understanding pain patterns
-    based on habitual movement directions
-  use_when: someone has pain or injury risk related to habitual movement patterns
-    and needs to identify directional susceptibility
 - advisor: jasmine-star
   category: social-media
   deliverable_type: plan
@@ -618,20 +591,6 @@ frameworks:
     sales
   use_when: someone is starting with Instagram Reels and needs a strategic sequence
     that maps content to the buyer journey
-- advisor: stuart-mcgill
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - spine-health
-  - pain-assessment
-  - clinical-protocol
-  - movement-modification
-  id: flexion-intolerance-assessment
-  name: the Flexion Intolerance Assessment
-  purpose: a clinical protocol to identify whether back pain is triggered by flexion,
-    guiding treatment and activity modification
-  use_when: someone has back pain and needs to determine if flexion is the provocative
-    movement to guide treatment decisions
 - advisor: steve-jobs
   category: strategy
   deliverable_type: decision
@@ -910,20 +869,6 @@ frameworks:
     dressed up as strategy
   use_when: someone's strategy is really just a list of goals and they need to build
     a real strategy with diagnosis, policy, and actions
-- advisor: shirley-sahrmann
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - movement-dysfunction
-  - tissue-damage
-  - repetitive-strain
-  - biomechanics
-  id: kinesiopathologic-model
-  name: the Kinesiopathologic Model (KPM)
-  purpose: a framework for understanding how repetitive movement patterns and sustained
-    positions create tissue damage over time
-  use_when: someone has chronic pain from repetitive movement and needs to understand
-    how their habitual patterns cause tissue damage
 - advisor: oli-gardner
   category: conversion
   default_critic_advisors:
@@ -975,20 +920,6 @@ frameworks:
     before building anything
   use_when: a startup needs to identify which untested assumptions are most critical
     to their business and design experiments to test them
-- advisor: kelly-starrett
-  category: health-movement
-  deliverable_type: plan
-  domains:
-  - movement-progression
-  - position-mechanics
-  - athletic-performance
-  - injury-prevention
-  id: leopard-movement-hierarchy
-  name: the Leopard Movement Hierarchy
-  purpose: a Position → Movement → Speed framework for safe progression. From "Becoming
-    a Supple Leopard" pages 28-45
-  use_when: someone is adding speed or load to movement without proper position foundations
-    and needs to reset their progression
 - advisor: danny-iny
   category: onboarding
   deliverable_type: plan
@@ -1018,21 +949,6 @@ frameworks:
   purpose: identifying two core values and operationalizing them into daily behavior
   use_when: someone knows their values abstractly but struggles to live them consistently
     in daily decisions and behavior
-- advisor: stuart-mcgill
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - spine-safety
-  - biomechanics
-  - load-management
-  - injury-prevention
-  id: load-velocity-relationship
-  name: the Load-Velocity Relationship
-  purpose: a fundamental biomechanical principle for spine protection. This framework
-    teaches the inverse relationship between load and velocity that governs spine
-    safety
-  use_when: someone is lifting or moving in ways that combine high load with high
-    velocity and needs to understand the spine safety tradeoff
 - advisor: lara-hogan
   category: leadership
   deliverable_type: analysis
@@ -1047,20 +963,6 @@ frameworks:
     needs to shift to succeed at their current (or next) level
   use_when: an engineering manager needs to understand what's expected at their current
     level or prepare for the next one
-- advisor: stuart-mcgill
-  category: health-fitness
-  deliverable_type: plan
-  domains:
-  - core-stability
-  - spine-health
-  - exercise-protocol
-  - motor-control
-  id: mcgill-big-3
-  name: the McGill Big 3
-  purpose: a core stability protocol designed to build endurance and motor control
-    without stressing the spine
-  use_when: someone needs a spine-safe core stability program that builds endurance
-    without compromising spinal health
 - advisor: elise-darma
   category: social-media
   deliverable_type: plan
@@ -1077,20 +979,6 @@ frameworks:
     into sales conversations automatically, 24/7
   use_when: someone wants to automate Instagram DM conversations to convert engagement
     into sales using chatbot flows
-- advisor: shirley-sahrmann
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - movement-assessment
-  - pain-diagnosis
-  - dysfunction-patterns
-  - clinical-reasoning
-  id: movement-system-impairment
-  name: Movement System Impairment assessment
-  purpose: a diagnostic framework that identifies movement dysfunction patterns to
-    address the cause of pain, not just the symptoms
-  use_when: someone has chronic musculoskeletal pain and needs to identify the movement
-    dysfunction pattern causing it
 - advisor: elise-darma
   category: social-media
   deliverable_type: plan
@@ -1284,19 +1172,6 @@ frameworks:
     of chasing downloads episode by episode
   use_when: a podcaster is doing one-off promotion per episode and needs sustainable
     marketing systems that compound
-- advisor: kelly-starrett
-  category: health-movement
-  deliverable_type: plan
-  domains:
-  - movement-foundations
-  - position-mechanics
-  - longevity
-  - injury-prevention
-  id: position-priority-principles
-  name: Position Priority Principles
-  purpose: establishing the non-negotiable positions for movement longevity
-  use_when: someone needs to establish fundamental position standards that protect
-    joints and enable lifelong movement
 - advisor: april-dunford
   category: positioning
   deliverable_type: content
@@ -1433,20 +1308,6 @@ frameworks:
     you would regret not taking
   use_when: someone faces a major irreversible life decision and needs to project
     to age 80 to evaluate which choice minimizes regret
-- advisor: shirley-sahrmann
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - biomechanics
-  - tissue-stiffness
-  - compensation-patterns
-  - movement-dysfunction
-  id: relative-stiffness-principle
-  name: the Relative Stiffness Principle
-  purpose: understanding how tissue stiffness relationships drive movement patterns
-    and why compensation occurs at specific joints
-  use_when: someone has compensatory movement patterns and needs to understand how
-    relative tissue stiffness drives motion to the wrong joints
 - advisor: wise-eric
   category: strategy
   deliverable_type: analysis
@@ -1637,19 +1498,6 @@ frameworks:
     or advancement meeting and needs to pressure-test whether they have a real insight,
     whether it's adapted to this buyer, and whether they have a plan for holding commercial
     ground around pricing and next steps
-- advisor: kelly-starrett
-  category: health-movement
-  deliverable_type: plan
-  domains:
-  - mobility
-  - daily-practice
-  - movement-maintenance
-  - time-efficient
-  id: ten-minute-mobility-menu
-  name: the 10-Minute Mobility Menu
-  purpose: a practical daily maintenance protocol that delivers results in minimal
-    time
-  use_when: someone needs a quick daily mobility routine they can actually stick to
 - advisor: elon-musk
   category: strategy
   deliverable_type: plan
@@ -1724,20 +1572,6 @@ frameworks:
     planning and modular production
   use_when: someone needs to create months of content efficiently through batching
     rather than daily creation
-- advisor: kelly-starrett
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - tissue-mobilization
-  - soft-tissue
-  - recovery
-  - treatment-selection
-  id: tissue-state-system
-  name: Tissue State System
-  purpose: diagnosing whether tissue is stiff, tight, or adhered and matching the
-    right mobilization technique to the condition
-  use_when: someone needs to select the right mobilization technique based on their
-    specific tissue condition
 - advisor: jeff-bezos
   category: strategy
   deliverable_type: decision
@@ -1752,20 +1586,6 @@ frameworks:
     speed and rigor to each
   use_when: someone is applying the same heavyweight decision process to every decision
     and needs to distinguish reversible from irreversible choices
-- advisor: kelly-starrett
-  category: health-movement
-  deliverable_type: analysis
-  domains:
-  - pain-source
-  - movement-chain
-  - diagnostic
-  - root-cause
-  id: upstream-downstream-diagnostic
-  name: Upstream/Downstream Diagnostic
-  purpose: tracing pain or movement limitation upstream through the kinetic chain
-    to find the true source of dysfunction
-  use_when: someone has pain or limitation in one area but the actual source may be
-    upstream or downstream in the movement chain
 - advisor: patrick-campbell
   category: pricing
   deliverable_type: analysis
@@ -1779,19 +1599,6 @@ frameworks:
   purpose: how their customer pays and what they pay for
   use_when: someone needs to identify the right value metric for their pricing model
     — the unit of value customers pay for
-- advisor: stuart-mcgill
-  category: health-movement
-  deliverable_type: plan
-  domains:
-  - acute-back-pain
-  - behavioral-modification
-  - spine-protection
-  - conservative-treatment
-  id: virtual-surgery-protocol
-  name: the Virtual Surgery Protocol
-  purpose: behavioral modification mimicking post-surgical care for acute back pain
-  use_when: someone has acute severe back pain and needs a conservative protocol that
-    treats it with the same seriousness as post-surgical recovery
 - advisor: brene-brown
   category: psychology
   deliverable_type: analysis
