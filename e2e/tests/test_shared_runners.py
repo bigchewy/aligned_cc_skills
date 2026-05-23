@@ -153,3 +153,22 @@ def test_advisor_runner_documents_missing_prompt_file_path():
     assert "Configuration Validation" in text, (
         "advisor-runner must have a fail-closed validation section"
     )
+
+
+def test_use_advisor_routes_through_resolver():
+    text = read("skills/use-advisor/SKILL.md")
+    assert "resolve-advisor-source.md" in text, (
+        "use-advisor must route discovery through the merged resolver"
+    )
+    # Preserve plugin-root resolution for plugin advisors
+    assert "resolve-skill-path.md" in text
+
+
+def test_use_advisor_listing_text_no_longer_claims_flat_directory():
+    text = read("skills/use-advisor/SKILL.md")
+    assert "single flat directory" not in text, (
+        "the 'single flat directory' claim is false once local advisors merge"
+    )
+    assert "(local)" in text, (
+        "use-advisor must annotate local advisors using the resolver's source field"
+    )

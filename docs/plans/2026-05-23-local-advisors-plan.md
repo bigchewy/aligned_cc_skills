@@ -339,7 +339,7 @@ git commit -m "feat: contextual-recommendation Stage 1 accepts pre-merged adviso
 
 ---
 
-### Task 4: Rewire use-advisor to the merged advisor source
+### ✅ Task 4: Rewire use-advisor to the merged advisor source
 
 **Files:**
 - Modify: `skills/use-advisor/SKILL.md` (Step 1a/1b, Step 2 listing text, Step 3, Step 4)

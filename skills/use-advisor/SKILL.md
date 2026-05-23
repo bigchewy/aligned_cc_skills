@@ -14,17 +14,17 @@ Adopt an advisor's persona for the current conversation.
 
 ## Step 1: Discover Available Advisors
 
-Discover all advisors from the plugin's flat directory.
+**Step 1a: Resolve the merged advisor set**
 
-**Step 1a: Read the advisor registry (`advisors/registry.yaml`)**
+Read `skills/_shared/resolve-advisor-source.md` (plugin-relative path) and follow its procedure
+to obtain the merged advisor set (plugin global + project-local, deduped, local-wins). Use the
+returned `advisors` list as the listing source — each entry carries `id`, `name`, `summary`,
+`domains`, `absolute_prompt_path`, and `source`.
 
-Read the file `advisors/registry.yaml` (plugin-relative). Parse the `advisors` list — each entry has `id`, `name`, `domains` (list), and `summary`. Use this as the primary listing source.
-
-If `advisors/registry.yaml` does not exist or fails to parse, fall back to Step 1b.
-
-**Step 1b: Plugin glob fallback (`advisors/prompts/`)**
-
-Glob `advisors/prompts/*.md`. Each file is one advisor (slug = filename minus `.md`). Read the first line of each file to extract the display name and summary.
+> The resolver's own error paths already handle degradation (absent local registry → plugin-only
+> result; malformed local YAML → degrade + warn). No additional fallback is needed here — a
+> resolver file that cannot be read indicates a plugin installation failure, which is a distinct
+> failure mode and not something `use-advisor` should silently paper over.
 
 ## Step 2: Extract Advisor Names
 
@@ -32,7 +32,9 @@ Read the first line of each file. All files follow the format: "You are [Name], 
 
 If a file doesn't match this format, skip it and continue. Do not fail the entire listing because one file is malformed.
 
-List advisors alphabetically by display name. Do not group by repo — all advisors live in a single flat directory.
+List advisors alphabetically by display name. When both scopes contribute (the resolver returned
+entries with `source: "local"` as well as `source: "plugin"`), annotate each local advisor with a
+trailing `(local)` marker so the user can tell repo-specific advisors from global ones.
 
 ## Step 3: Match User Input
 
@@ -42,11 +44,11 @@ If the user provided an advisor name argument:
 2. Use case-insensitive substring matching
 3. **Single match:** Use it
 4. **Multiple matches:** Ask the user which one they meant
-5. **No match → contextual recommendation:** The args didn't match any entry name, so treat them as task context. Read `skills/_shared/contextual-recommendation.md` (plugin-relative path) and follow its process. Pass entity type: `advisor`, registry path: `advisors/registry.yaml`, task context: the user's original args.
+5. **No match → contextual recommendation:** The args didn't match any entry name, so treat them as task context. Read `skills/_shared/contextual-recommendation.md` (plugin-relative path) and follow its process. Pass entity type: `advisor`, advisors: the pre-merged list from Step 1a, task context: the user's original args.
 
 **Important:** Match ONLY against the slug (filename) and display name (extracted from first line). Do not match against descriptions, framework names, or other content in the file.
 
-If no argument was provided, read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `advisor`, registry path: `advisors/registry.yaml`, task context: empty (the shared file will check conversation context and decide whether to score or prompt — see its Path 3/4 boundary logic).
+If no argument was provided, read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `advisor`, advisors: the pre-merged list from Step 1a, task context: empty (the shared file will check conversation context and decide whether to score or prompt — see its Path 3/4 boundary logic).
 
 If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to listing all available advisors alphabetically.
 
@@ -54,11 +56,8 @@ If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to li
 
 After matching, hand off to the shared runner.
 
-**Resolving the absolute advisor path.** The runner requires a file that exists and fails closed otherwise. Construct it from the matched advisor's registry `id`:
-
-`<plugin-root>/advisors/prompts/<id>.md`
-
-Where `<plugin-root>` is the parent of the matched `.claude-plugin/` directory. Resolve it via the procedure in `skills/_shared/resolve-skill-path.md` (Plugin root section). If Step 3 fell back to the plugin glob and produced a full path directly, use that path as-is.
+**Resolving the absolute advisor path.** The runner requires a file that exists and fails closed otherwise. Use the matched advisor's `absolute_prompt_path` returned by the resolver in Step 1a
+(it already anchors plugin advisors on plugin-root via `skills/_shared/resolve-skill-path.md` and local advisors on project-cwd). Plugin advisor paths follow the pattern `<plugin-root>/advisors/prompts/<id>.md`.
 
 Read `skills/_shared/advisor-runner.md` and invoke it with:
 - **Matched advisor path:** the absolute path constructed above
