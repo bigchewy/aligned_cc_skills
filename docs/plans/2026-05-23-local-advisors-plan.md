@@ -1035,7 +1035,7 @@ git commit -m "chore: scaffold personal-repo advisor/framework registries for mi
 
 ---
 
-### Task 13: Migrate the therapy / mental-health cluster
+### ✅ Task 13: Migrate the therapy / mental-health cluster
 
 **Advisors (6):** `byron-katie`, `gabor-mate`, `marsha-linehan`, `martin-seligman`, `richard-schwartz`, `steven-hayes`
 
