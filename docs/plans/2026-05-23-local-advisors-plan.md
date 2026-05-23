@@ -131,7 +131,7 @@ git commit -m "test: add failing assertions for resolve-advisor-source procedure
 
 ---
 
-### Task 2: Create the resolver procedure + register the eval surface
+### ✅ Task 2: Create the resolver procedure + register the eval surface
 
 **Files:**
 - Create: `skills/_shared/resolve-advisor-source.md`
