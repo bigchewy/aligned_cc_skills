@@ -85,7 +85,7 @@ def test_resolver_documents_prompt_dir_override_and_default():
 
 def test_resolver_documents_ignore_prompt_field():
     text = read("skills/_shared/resolve-advisor-source.md").lower()
-    assert "ignored for resolution" in text or "ignore" in text and "prompt:" in text
+    assert "ignored for resolution" in text
 
 
 def test_resolver_documents_selection_guidelines_plugin_canonical():
@@ -211,6 +211,11 @@ Return a single object. Callers couple to this shape — do not vary it.
 - **Prompt-dir CLAUDE.md override absent** → use the default `<scope-root>/advisors/prompts/<id>.md`.
 - **Resolved prompt file missing** → the resolver does NOT error. `advisor-runner.md`
   fail-closes at use time (preserved behavior).
+- **Resolver file itself unreadable** → this is outside the resolver's own error contract.
+  It indicates a plugin installation failure, not a merge failure. The resolver cannot handle
+  its own non-existence; each call site handles it independently. `use-advisor` does NOT degrade
+  silently — an unreadable resolver signals a broken plugin install, not a recoverable condition.
+  `critique-panel-orchestration` falls back to the glob path (plugin-only; documented in Task 5).
 ```
 
 **Step 2: Add the surface to `e2e/eval-surface.yaml`**
@@ -262,6 +267,18 @@ def test_stage1_documents_which_branch_each_entity_uses():
     # framework callers pass a path; advisor callers pass the merged list
     assert "framework" in text and "path" in text
     assert "advisor" in text and ("list" in text or "entries" in text)
+
+
+def test_configuration_documents_advisor_input_variants():
+    text = read("skills/_shared/contextual-recommendation.md")
+    # After the dual-contract change, ## Configuration must document both input branches by name.
+    # The old single "Registry path:" bullet must be updated to cover advisor callers explicitly.
+    assert "advisor callers" in text.lower(), (
+        "## Configuration must document the advisor-callers input variant by name"
+    )
+    assert "framework callers" in text.lower(), (
+        "## Configuration must document the framework-callers input variant by name"
+    )
 ```
 
 (Use the same `read()` helper already defined at the top of `test_contextual_recommendation.py`.)
@@ -273,7 +290,22 @@ Expected: FAIL — `test_stage1_accepts_premerged_advisor_list` and the branch t
 
 **Step 3: Edit the procedure**
 
-In `skills/_shared/contextual-recommendation.md`, under `## Configuration`, change the **Task context** bullet area and the `## Stage 1: Domain Filter` opening. Replace the Stage 1 opening line:
+In `skills/_shared/contextual-recommendation.md`, make two edits:
+
+**3a. Update the `## Configuration` section.** Replace the `**Registry path:**` bullet:
+
+> - **Registry path:** `advisors/registry.yaml` or `frameworks/registry.yaml`
+
+with:
+
+```markdown
+- **Input (framework callers):** a registry YAML path (`frameworks/registry.yaml`)
+- **Input (advisor callers):** either a registry YAML path (`advisors/registry.yaml`, plugin-only
+  scope) or a pre-merged advisor entry list from `skills/_shared/resolve-advisor-source.md`
+  (plugin + local, deduped, local-wins)
+```
+
+**3b. Update the `## Stage 1: Domain Filter` opening.** Replace the Stage 1 opening line:
 
 > Read the registry YAML file (path provided by calling skill). Parse all entries.
 
@@ -356,8 +388,10 @@ to obtain the merged advisor set (plugin global + project-local, deduped, local-
 returned `advisors` list as the listing source — each entry carries `id`, `name`, `summary`,
 `domains`, `absolute_prompt_path`, and `source`.
 
-If the resolver cannot be read, fall back to reading the plugin `advisors/registry.yaml` directly;
-if that also fails, glob `advisors/prompts/*.md` and parse first lines for name/summary.
+> The resolver's own error paths already handle degradation (absent local registry → plugin-only
+> result; malformed local YAML → degrade + warn). No additional fallback is needed here — a
+> resolver file that cannot be read indicates a plugin installation failure, which is a distinct
+> failure mode and not something `use-advisor` should silently paper over.
 ```
 
 2. **Step 2 (Extract Advisor Names), final paragraph.** Replace:
@@ -380,8 +414,7 @@ trailing `(local)` marker so the user can tell repo-specific advisors from globa
 **Resolving the absolute advisor path.** The runner requires a file that exists and fails closed
 otherwise. Use the matched advisor's `absolute_prompt_path` returned by the resolver in Step 1a
 (it already anchors plugin advisors on plugin-root and local advisors on project-cwd, per
-`skills/_shared/resolve-skill-path.md` for the plugin-root case). If Step 1a fell back to the glob
-and produced a full path directly, use that path as-is.
+`skills/_shared/resolve-skill-path.md` for the plugin-root case).
 ```
 
 Keep the `advisors/prompts/<id>.md` pattern mentioned (the cross-reference test and
@@ -465,7 +498,10 @@ with:
    `selection_guidelines` for count rules, hard-exclude logic, and diversity preferences. If the
    resolver cannot be read, fall back to globbing `advisors/prompts/*.md` and parsing first lines
    for name/domain extraction (selection guidelines then default to: 2-3 critics, hard-exclude on
-   `not_for`, prefer lens diversity).
+   `not_for`, prefer lens diversity). **Behavior note: this fallback path is intentionally
+   plugin-only — after migration it will not surface local advisors. It fires only when the
+   resolver file itself is unreadable (a plugin installation failure), not for absent or malformed
+   local registries (those are handled by the resolver's own error paths).**
 ```
 
 Then replace step 3:
@@ -712,8 +748,7 @@ def test_add_advisor_documents_two_file_convention():
 
 
 def test_add_advisor_notes_prompt_field_ignored_on_read():
-    text = read("skills/add-advisor/SKILL.md").lower()
-    assert "ignored" in text and "prompt:" in read("skills/add-advisor/SKILL.md"), (
+    assert "ignored by the read side" in read("skills/add-advisor/SKILL.md"), (
         "add-advisor must note the read side ignores the prompt: field (it is metadata only)"
     )
 ```
@@ -1015,7 +1050,20 @@ git commit -m "chore: scaffold personal-repo advisor/framework registries for mi
 
 For each of the 6 advisors, find owned frameworks:
 
-Run: `grep -n "advisor: <id>" frameworks/registry.yaml` for each id (e.g., `richard-schwartz` owns `8-cs-self-leadership`, `enneagram-typing`, `ifs-parts-work`, `polarization-mediator`). Build the complete framework-id list for the cluster. Note that `enneagram-typing` (richard-schwartz) is the one cluster framework also listed in `frameworks/_outliers.json`.
+For each of the 6 advisor IDs, identify owned frameworks using the **Grep tool** (NOT `Bash grep` — `Bash(grep *)` is blocked by the loop's permission system). Use:
+
+```python
+python3 -c "
+import yaml
+ids = ['byron-katie','gabor-mate','marsha-linehan','martin-seligman','richard-schwartz','steven-hayes']
+fw = yaml.safe_load(open('frameworks/registry.yaml'))
+for aid in ids:
+    owned = [e['id'] for e in fw['frameworks'] if e['advisor'] == aid]
+    print(aid, '->', owned)
+"
+```
+
+(e.g., `richard-schwartz` owns `8-cs-self-leadership`, `enneagram-typing`, `ifs-parts-work`, `polarization-mediator`). Build the complete framework-id list for the cluster. Note that `enneagram-typing` (richard-schwartz) is the one cluster framework also listed in `frameworks/_outliers.json`.
 
 **Step 2: Land to the personal repo (file writes only)**
 
@@ -1064,7 +1112,20 @@ git commit -m "feat: migrate therapy/mental-health advisors + frameworks out of 
 
 **Step 1: Identify this cluster's frameworks from the live registry**
 
-`grep -n "advisor: <id>" frameworks/registry.yaml` for each id. (e.g., `blair-grubb` owns `multi-system-approach-pots`, `pots-subtype-recognition`, `quality-of-life-focus`; `roy-freeman` and `italo-biaggioni` own autonomic frameworks; the three long-COVID advisors own none.)
+Use the Grep tool or python3 one-liner (NOT `Bash grep`) for each of the 6 advisor IDs:
+
+```python
+python3 -c "
+import yaml
+ids = ['blair-grubb','italo-biaggioni','roy-freeman','akiko-iwasaki','david-putrino','david-systrom']
+fw = yaml.safe_load(open('frameworks/registry.yaml'))
+for aid in ids:
+    owned = [e['id'] for e in fw['frameworks'] if e['advisor'] == aid]
+    print(aid, '->', owned)
+"
+```
+
+(e.g., `blair-grubb` owns `multi-system-approach-pots`, `pots-subtype-recognition`, `quality-of-life-focus`; `roy-freeman` and `italo-biaggioni` own autonomic frameworks; the three long-COVID advisors own none.)
 
 **Step 2: Land to the personal repo (file writes only)** — same procedure as Task 13 Step 2.
 
@@ -1100,7 +1161,18 @@ git commit -m "feat: migrate autonomic + long-COVID advisors + frameworks out of
 
 **Files:** same shape as Task 13 (personal land; plugin removal). No `_outliers.json` change.
 
-**Step 1: Identify this cluster's frameworks from the live registry** — `grep -n "advisor: <id>" frameworks/registry.yaml` for each of the 7 ids.
+**Step 1: Identify this cluster's frameworks from the live registry** — Use the Grep tool or python3 one-liner (NOT `Bash grep`) for each of the 7 advisor IDs:
+
+```python
+python3 -c "
+import yaml
+ids = ['andreo-spina','kelly-starrett','shirley-sahrmann','stuart-mcgill','patrick-mckeown','deb-dana','irene-lyon']
+fw = yaml.safe_load(open('frameworks/registry.yaml'))
+for aid in ids:
+    owned = [e['id'] for e in fw['frameworks'] if e['advisor'] == aid]
+    print(aid, '->', owned)
+"
+```
 
 **Step 2: Land to the personal repo (file writes only)** — same procedure as Task 13 Step 2.
 
@@ -1193,6 +1265,9 @@ GONE_IDS = [
     "deb-dana", "irene-lyon", "akiko-iwasaki", "david-putrino", "david-systrom",
     "byron-katie", "gabor-mate", "marsha-linehan", "martin-seligman",
     "richard-schwartz", "steven-hayes",
+    # phantom framework IDs — benjamin-levine's 4 frameworks (folders already absent, still in README)
+    "autonomic-fatigue-vs-training-fatigue", "cardiac-deconditioning-model",
+    "heart-rate-reserve-training-zones", "levine-protocol",
 ]
 
 
