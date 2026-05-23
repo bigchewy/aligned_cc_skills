@@ -137,19 +137,6 @@ frameworks:
     audience before products and validate through engagement before building
   use_when: someone wants to create a course or digital product and needs to validate
     demand by building an audience first
-- advisor: roy-freeman
-  category: health-autonomic
-  deliverable_type: analysis
-  domains:
-  - autonomic-testing
-  - clinical-interpretation
-  - diagnostic-reasoning
-  id: autonomic-testing-interpretation
-  name: the Autonomic Testing Interpretation framework
-  purpose: a systematic approach to understanding what autonomic tests actually measure,
-    their limitations, and how to synthesize results into clinical meaning
-  use_when: someone has autonomic test results and needs help interpreting what they
-    mean clinically
 - advisor: jasmine-star
   category: content-strategy
   deliverable_type: plan
@@ -332,21 +319,6 @@ frameworks:
     share your content
   use_when: someone has an audience but needs to turn passive consumers into active
     advocates who share and promote their content
-- advisor: roy-freeman
-  category: health-autonomic
-  deliverable_type: analysis
-  domains:
-  - autonomic-testing
-  - severity-grading
-  - diagnostic-criteria
-  - clinical-assessment
-  id: composite-autonomic-severity-score
-  name: the Composite Autonomic Severity Score (CASS) framework
-  purpose: a systematic approach to grading and localizing autonomic deficits by integrating
-    cardiovagal, adrenergic, and sudomotor testing. This framework is based on the
-    Clin Neurophysiol 2021 consensus statement
-  use_when: a clinician needs to grade autonomic dysfunction severity by integrating
-    multiple test modalities
 - advisor: joe-pulizzi
   category: content-strategy
   default_critic_advisors:
@@ -1119,20 +1091,6 @@ frameworks:
     address the cause of pain, not just the symptoms
   use_when: someone has chronic musculoskeletal pain and needs to identify the movement
     dysfunction pattern causing it
-- advisor: blair-grubb
-  category: health-autonomic
-  deliverable_type: plan
-  domains:
-  - POTS
-  - multi-system
-  - diagnostic-assessment
-  - treatment-planning
-  id: multi-system-approach-pots
-  name: Multi-System Approach to POTS
-  purpose: a multi-system assessment of POTS that screens cardiovascular, GI, neurological,
-    and immune involvement to build a targeted management plan
-  use_when: someone with POTS needs a comprehensive assessment that goes beyond heart
-    rate to address GI, neurological, and immune involvement
 - advisor: elise-darma
   category: social-media
   deliverable_type: plan
@@ -1163,20 +1121,6 @@ frameworks:
   purpose: extracting a founder's origin story and use cases for positioning
   use_when: someone needs to extract and articulate their origin story as a foundation
     for positioning and brand narrative
-- advisor: italo-biaggioni
-  category: health-autonomic
-  deliverable_type: plan
-  domains:
-  - blood-pressure
-  - non-pharmacologic
-  - acute-intervention
-  - orthostatic-hypotension
-  id: osmopressor-response
-  name: the Osmopressor Response Protocol
-  purpose: a non-pharmacologic intervention for acute BP support using the pressor
-    effect of rapid water ingestion
-  use_when: someone with orthostatic hypotension needs an immediate non-drug intervention
-    to support blood pressure
 - advisor: ray-dalio
   category: psychology
   deliverable_type: analysis
@@ -1369,19 +1313,6 @@ frameworks:
   purpose: capturing positioning work in a one-page canvas for team alignment
   use_when: a team has completed positioning work and needs to capture it in a single-page
     format for alignment and reference
-- advisor: blair-grubb
-  category: health-autonomic
-  deliverable_type: analysis
-  domains:
-  - POTS
-  - subtype-diagnosis
-  - treatment-selection
-  - clinical-classification
-  id: pots-subtype-recognition
-  name: POTS Subtype Recognition
-  purpose: a diagnostic framework to identify which type of POTS they likely have
-    and how that shapes treatment
-  use_when: someone with POTS needs to identify their subtype to guide treatment decisions
 - advisor: matt-chapman
   category: psychology
   deliverable_type: analysis
@@ -1473,21 +1404,6 @@ frameworks:
     and spiritual selves in turn
   use_when: someone needs to check in with all four aspects of self — physical, emotional,
     intellectual, and spiritual
-- advisor: blair-grubb
-  category: health-autonomic
-  deliverable_type: analysis
-  domains:
-  - POTS
-  - patient-centered-care
-  - symptom-management
-  - functional-improvement
-  id: quality-of-life-focus
-  name: the Quality of Life Focus framework
-  purpose: a patient-centered approach to POTS management that prioritizes symptom
-    management, functional improvement, and psychological validation over chasing
-    a cure
-  use_when: someone with POTS is exhausted from chasing a cure and needs to refocus
-    on quality of life and functional improvement
 - advisor: arielle-nissenblatt
   category: content-strategy
   deliverable_type: analysis
@@ -1585,20 +1501,6 @@ frameworks:
     customer decisions through systematic experimentation
   use_when: someone needs a systematic approach to understand and influence how customers
     make decisions using behavioral science
-- advisor: roy-freeman
-  category: health-autonomic
-  deliverable_type: analysis
-  domains:
-  - neuropathy
-  - diagnostic-criteria
-  - small-fiber
-  - clinical-assessment
-  id: small-fiber-neuropathy-diagnostic
-  name: the Small Fiber Neuropathy Diagnostic Criteria
-  purpose: a systematic approach to diagnosing idiopathic small fiber neuropathy (iSFN),
-    which affects both pain sensation and autonomic function
-  use_when: someone has symptoms suggesting small fiber neuropathy and needs systematic
-    diagnostic criteria
 - advisor: seth-godin
   category: growth
   deliverable_type: analysis
@@ -1646,20 +1548,6 @@ frameworks:
   purpose: designing products by starting with customer experience and working backwards
   use_when: a team is starting with technology and working forward instead of starting
     with the desired customer experience
-- advisor: italo-biaggioni
-  category: health-autonomic
-  deliverable_type: plan
-  domains:
-  - orthostatic-hypotension
-  - treatment-algorithm
-  - pharmacotherapy
-  - mechanism-based
-  id: stepwise-treatment-algorithm
-  name: the Stepwise Treatment Algorithm for Orthostatic Hypotension
-  purpose: a mechanism-based approach to treatment that matches interventions to residual
-    autonomic function
-  use_when: someone with orthostatic hypotension needs a stepwise treatment approach
-    matched to their residual autonomic function
 - advisor: donald-miller
   category: marketing
   deliverable_type: content
@@ -1713,19 +1601,6 @@ frameworks:
   purpose: designing recovery rituals to oscillate between stress and renewal
   use_when: someone is running on fumes without recovery rituals and needs to design
     deliberate oscillation between stress and renewal
-- advisor: italo-biaggioni
-  category: health-autonomic
-  deliverable_type: analysis
-  domains:
-  - pharmacology
-  - autonomic-function
-  - drug-selection
-  - mechanism-matching
-  id: substrate-assessment
-  name: Substrate Assessment
-  purpose: matching autonomic drug mechanisms to residual sympathetic function
-  use_when: a clinician needs to match autonomic medication choices to the patient's
-    residual sympathetic function
 - advisor: chris-voss
   category: negotiation
   deliverable_type: plan

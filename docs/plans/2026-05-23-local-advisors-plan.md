@@ -1102,7 +1102,7 @@ git commit -m "feat: migrate therapy/mental-health advisors + frameworks out of 
 
 ---
 
-### Task 14: Migrate the health-autonomic + long-COVID cluster
+### ✅ Task 14: Migrate the health-autonomic + long-COVID cluster
 
 **Advisors (6):** `blair-grubb`, `italo-biaggioni`, `roy-freeman`, `akiko-iwasaki`, `david-putrino`, `david-systrom`
 
