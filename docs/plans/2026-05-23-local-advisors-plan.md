@@ -1239,7 +1239,7 @@ git commit -m "chore: regenerate catalogs and update counts to 57 advisors / 112
 
 ---
 
-### Task 17: Regenerate the markdown READMEs from the post-migration registries
+### ✅ Task 17: Regenerate the markdown READMEs from the post-migration registries
 
 **Files:**
 - Modify: `advisors/README.md`, `frameworks/README.md`
