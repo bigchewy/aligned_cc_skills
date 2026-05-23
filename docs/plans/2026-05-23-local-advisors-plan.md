@@ -32,7 +32,7 @@
 
 # Part 1 — The Mechanism (plugin repo)
 
-### Task 1: Failing test for the resolver procedure
+### ✅ Task 1: Failing test for the resolver procedure
 
 **Files:**
 - Create: `e2e/tests/test_resolve_advisor_source.py`
