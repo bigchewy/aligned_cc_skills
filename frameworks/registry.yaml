@@ -124,15 +124,6 @@ frameworks:
     helpful_documents: ["content strategy", "business goals"]
     deliverable_type: plan
 
-  - id: autonomic-fatigue-vs-training-fatigue
-    name: "Autonomic Fatigue vs Training Fatigue"
-    advisor: benjamin-levine
-    purpose: "distinguishing between CNS-mediated autonomic fatigue and normal peripheral training fatigue to optimize recovery"
-    category: health-autonomic
-    domains: [autonomic-dysfunction, exercise-physiology, recovery, fatigue-management]
-    use_when: "someone with autonomic dysfunction needs to distinguish whether their fatigue is autonomic or training-related to adjust their recovery strategy"
-    deliverable_type: analysis
-
   - id: autonomic-testing-interpretation
     name: "the Autonomic Testing Interpretation framework"
     advisor: roy-freeman
@@ -200,15 +191,6 @@ frameworks:
     domains: [negotiation, influence, communication, problem-solving]
     use_when: "someone needs to steer a negotiation or conversation by asking how/what questions that shift the problem to the other party"
     deliverable_type: content
-
-  - id: cardiac-deconditioning-model
-    name: "Cardiac Deconditioning Model"
-    advisor: benjamin-levine
-    purpose: "understanding POTS as secondary to cardiac atrophy and reduced blood volume, with exercise as primary intervention"
-    category: health-autonomic
-    domains: [POTS, cardiac-rehabilitation, exercise-prescription, deconditioning]
-    use_when: "someone with POTS needs to understand the cardiac deconditioning hypothesis and exercise as a primary treatment pathway"
-    deliverable_type: analysis
 
   - id: cars
     name: "CARs (Controlled Articular Rotations)"
@@ -566,15 +548,6 @@ frameworks:
     default_critic_advisors: [sean-ellis, garry-tan]
     follow_on_frameworks: [ice-prioritization]
 
-  - id: heart-rate-reserve-training-zones
-    name: "establishing their Heart Rate Reserve training zones"
-    advisor: benjamin-levine
-    purpose: "a personalized zone-based system for precisely dosing exercise intensity during autonomic dysfunction recovery"
-    category: health-autonomic
-    domains: [exercise-prescription, heart-rate-training, autonomic-recovery, intensity-dosing]
-    use_when: "someone with autonomic dysfunction needs personalized heart rate training zones for safe and effective exercise"
-    deliverable_type: plan
-
   - id: homer-vs-spock
     name: "the Homer vs Spock Framework"
     advisor: shirin-oreizy
@@ -732,15 +705,6 @@ frameworks:
     domains: [course-design, learning-outcomes, transformation, instructional-design]
     use_when: "someone is designing a course and needs to ensure it drives real transformation rather than passive content consumption"
     helpful_documents: ["product description"]
-    deliverable_type: plan
-
-  - id: levine-protocol
-    name: "the Levine Protocol"
-    advisor: benjamin-levine
-    purpose: "a structured 3-month cardiovascular reconditioning program for autonomic dysfunction recovery"
-    category: health-autonomic
-    domains: [exercise-protocol, POTS-treatment, cardiovascular-reconditioning, structured-program]
-    use_when: "someone with POTS or autonomic dysfunction needs a structured exercise reconditioning program"
     deliverable_type: plan
 
   - id: living-into-values

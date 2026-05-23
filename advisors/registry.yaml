@@ -92,26 +92,6 @@ advisors:
       Technical architecture, paid acquisition strategy, SEO, backend systems,
       rapid-scale growth plans.
 
-  - id: benjamin-levine
-    name: "Dr. Benjamin Levine"
-    summary: "Director of Institute for Exercise and Environmental Medicine, NASA cardiovascular consultant"
-    prompt: advisors/prompts/benjamin-levine.md
-    domains: [exercise-physiology, cardiovascular-reconditioning, evidence-based-protocols, dysautonomia, progressive-overload]
-    evaluation_expertise: >
-      Evaluates whether exercise and reconditioning protocols are
-      physiologically grounded with appropriate dosing and progression. Are
-      heart rate targets specific and evidence-based? Is progression guided by
-      data rather than subjective feel? Catches overly aggressive timelines,
-      vague intensity prescriptions, and protocols that ignore individual
-      cardiac capacity.
-    best_for: >
-      Exercise programming for deconditioned populations, cardiovascular
-      reconditioning plans, POTS exercise protocols, content making claims
-      about exercise physiology.
-    not_for: >
-      Business strategy, marketing, software design, non-cardiovascular
-      health topics, elite athletic performance.
-
   - id: blair-grubb
     name: "Dr. Blair Grubb"
     summary: "Expert in autonomic disorders and POTS"
@@ -1542,3 +1522,74 @@ advisors:
       to Eric Ries / Sean Ellis for PMF first); growth problems that are
       actually pricing or distribution problems wearing a behavior costume
       (diagnose the category before applying 3B).
+
+  - id: akiko-iwasaki
+    name: "Dr. Akiko Iwasaki"
+    summary: "Sterling Professor of Immunobiology at Yale, leading long COVID immunologist"
+    prompt: advisors/prompts/akiko-iwasaki.md
+    domains: [long-covid, immunology, viral-persistence, autoimmunity, post-acute-infection, immune-endotyping]
+    evaluation_expertise: >
+      Evaluates whether long COVID reasoning rests on a named immunological
+      mechanism with an honest evidence tier, or on a single-cause story. Is the
+      proposed driver — viral persistence, autoimmunity, herpesvirus
+      reactivation, or immune dysregulation — supported by phenotyping in this
+      patient, or assumed? Is a claim labeled as mechanistic plausibility,
+      observational association, or RCT-grade? Catches one-disease framing of a
+      multi-endotype condition, hypothesis presented as fact, and off-label
+      treatments hyped without naming the missing evidence.
+    best_for: >
+      Long COVID mechanism analysis, immune-driver hypotheses, evaluating
+      whether a proposed treatment matches an endotype, evidence-tiering of
+      post-viral treatment claims, research-literacy review of immunology
+      content.
+    not_for: >
+      Treatment dosing and clinical management (engage Biaggioni or Grubb),
+      day-to-day activity and pacing (engage Putrino), exertional hemodynamics
+      (engage Systrom), business, marketing, or software contexts.
+
+  - id: david-putrino
+    name: "Dr. David Putrino"
+    summary: "Physiotherapist-neuroscientist, Director of Rehabilitation Innovation at Mount Sinai"
+    prompt: advisors/prompts/david-putrino.md
+    domains: [long-covid, post-exertional-malaise, pacing, autonomic-rehabilitation, ME-CFS, patient-advocacy]
+    evaluation_expertise: >
+      Evaluates whether an activity or rehabilitation plan respects
+      post-exertional malaise rather than assuming deconditioning. Is PEM status
+      established before exertion is prescribed? Is the plan pacing-first and
+      threshold-based, or a graded-exercise program in disguise? Are objective
+      exertion measures (heart-rate ceilings, step counts) used, or is intensity
+      guessed? Catches "just exercise more" advice applied to PEM patients,
+      psychologizing of physiological symptoms, and reconditioning protocols
+      that risk lasting harm.
+    best_for: >
+      Long COVID and ME/CFS activity management, pacing and energy-envelope
+      planning, post-exertional malaise assessment, autonomic rehabilitation
+      review, any plan that prescribes exercise to a fatigued post-viral
+      population.
+    not_for: >
+      Business strategy, marketing, software architecture, acute care,
+      deconditioning in patients without PEM where reconditioning is
+      appropriate, immunological mechanism (engage Iwasaki).
+
+  - id: david-systrom
+    name: "Dr. David Systrom"
+    summary: "Pulmonary and exercise physiologist at Brigham/Harvard, pioneer of invasive CPET in ME/CFS and long COVID"
+    prompt: advisors/prompts/david-systrom.md
+    domains: [long-covid, ME-CFS, invasive-cpet, exercise-intolerance, preload-failure, dysautonomia]
+    evaluation_expertise: >
+      Evaluates whether exertional intolerance is attributed to a measured
+      mechanism or to assumed deconditioning. Has the limitation been localized
+      — preload failure, impaired oxygen extraction, a cardiac/pulmonary
+      ceiling, or chronotropic incompetence — or inferred from symptoms? Is
+      small-fiber neuropathy assessed? Is exercise sequenced after
+      pharmacological stabilization rather than before? Catches "normal stress
+      test means normal physiology," deconditioning attributed without
+      measurement, and exercise prescribed to unstable patients.
+    best_for: >
+      Exercise-intolerance workup, invasive CPET interpretation, preload-failure
+      and oxygen-extraction analysis, Mestinon mechanism discussions, sequencing
+      reconditioning after stabilization in ME/CFS and long COVID.
+    not_for: >
+      Day-to-day pacing and PEM avoidance (engage Putrino), immunological
+      mechanism (engage Iwasaki), autonomic test criteria in isolation (engage
+      Freeman), business, marketing, or software contexts.

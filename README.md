@@ -130,7 +130,7 @@ This plugin is distributed to many users. It intentionally does not ship anythin
 
 ### Advisors
 
-71 advisor prompts ship with the plugin in `advisors/prompts/`.
+76 advisor prompts ship with the plugin in `advisors/prompts/`.
 
 Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.yaml` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 

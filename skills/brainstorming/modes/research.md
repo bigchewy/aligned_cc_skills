@@ -76,7 +76,9 @@ When a candidate or comparison axis falls within a domain advisor's expertise, d
 
 **Topic routing examples** (extend per the registry — `advisors/registry.yaml` is authoritative):
 - ACT and contextual behavioral science → Steven Hayes (`steven-hayes`)
-- Exercise physiology, cardiovascular adaptation → Benjamin Levine (`benjamin-levine`)
+- Long COVID immunology, viral persistence, immune endotyping → Akiko Iwasaki (`akiko-iwasaki`)
+- Post-exertional malaise, pacing, ME/CFS activity management → David Putrino (`david-putrino`)
+- Exercise intolerance, invasive CPET, preload failure → David Systrom (`david-systrom`)
 - Autonomic disorders, dysautonomia, POTS → Blair Grubb (`blair-grubb`)
 - Strategy, opportunity-space framing, cutting fluff → Richard Rumelt (`richard-rumelt`)
 
