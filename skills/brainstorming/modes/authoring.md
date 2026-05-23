@@ -16,7 +16,11 @@ A wrapper around either a registered framework or a structured Q&A with a topic 
 
 Read `skills/_shared/contextual-recommendation.md` and invoke it with:
 - **Entity type:** `framework-or-advisor`
-- **Registries:** `frameworks/registry.yaml`, `advisors/registry.yaml`
+- **Frameworks input:** the registry path `frameworks/registry.yaml`.
+- **Advisors input:** the **pre-merged advisor list** from `skills/_shared/resolve-advisor-source.md`
+  (plugin global + project-local, deduped, local-wins) — passed via contextual-recommendation's
+  dual-contract list branch. Passing the plugin registry path here would make project-local
+  advisors invisible to engine selection.
 - **Task context:** the user's topic (1-3 sentence summary). **MUST be non-empty.** This is required so contextual-recommendation does not enter Path 4 (No Context Available) and ask the user a second AskUserQuestion immediately after the router asked for mode confirmation in SKILL.md Step 1. If the user's topic is empty (rare — the router should have refused to dispatch), construct one from the prior user message.
 
 Outcomes (the fallback ladder):

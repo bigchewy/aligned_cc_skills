@@ -604,7 +604,7 @@ git commit -m "feat: research-mode advisor dispatch resolves prompts via merged 
 
 ---
 
-### Task 7: Make authoring-mode engine selection use the merged advisor list
+### ✅ Task 7: Make authoring-mode engine selection use the merged advisor list
 
 **Files:**
 - Modify: `skills/brainstorming/modes/authoring.md` (Phase 1: Engine selection)
