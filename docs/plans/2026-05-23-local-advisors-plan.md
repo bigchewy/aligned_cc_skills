@@ -871,7 +871,7 @@ git commit -m "test: add framework->advisor dangling-reference guard for migrati
 
 ---
 
-### Task 11: Validate a project-local advisor registry against the schema
+### ✅ Task 11: Validate a project-local advisor registry against the schema
 
 **Files:**
 - Create: `e2e/fixtures/local-advisor-repo/advisors/registry.yaml`

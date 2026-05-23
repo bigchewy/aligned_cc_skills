@@ -1,0 +1,7 @@
+advisors:
+  - id: example-local-advisor
+    name: "Example Local Advisor"
+    summary: "A fixture advisor that exists only in a project-local repo."
+    prompt: advisors/prompts/example-local-advisor.md
+    domains: [fixture, local-merge]
+selection_guidelines: "Plugin-canonical in production; present here only to mirror schema shape."

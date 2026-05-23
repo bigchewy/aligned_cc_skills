@@ -215,6 +215,43 @@ class TestFrameworkRegistrySchema:
         assert typed_count >= 5, "fewer than 5 entries got default_critic_advisors — field adds no signal"
 
 
+class TestLocalAdvisorRegistrySchema:
+    """A project-local advisor registry must satisfy the same required-fields schema,
+    with prompt paths resolved against its OWN root (not REPO_ROOT)."""
+
+    FIXTURE_ROOT = REPO_ROOT / "e2e" / "fixtures" / "local-advisor-repo"
+
+    @pytest.fixture
+    def registry(self):
+        path = self.FIXTURE_ROOT / "advisors" / "registry.yaml"
+        assert path.exists(), f"Local advisor fixture registry not found at {path}"
+        with open(path) as f:
+            data = yaml.safe_load(f)
+        assert data is not None and "advisors" in data
+        return data
+
+    def test_local_entries_have_required_fields(self, registry):
+        for i, entry in enumerate(registry["advisors"]):
+            missing = ADVISOR_REQUIRED_FIELDS - set(entry.keys())
+            assert not missing, f"Local advisor entry {i} missing: {missing}"
+
+    def test_local_prompt_paths_resolve_against_fixture_root(self, registry):
+        for entry in registry["advisors"]:
+            prompt_path = self.FIXTURE_ROOT / entry["prompt"]
+            assert prompt_path.exists(), (
+                f"Local advisor {entry['id']}: prompt not found at {entry['prompt']} "
+                f"(resolved against fixture root, not REPO_ROOT)"
+            )
+
+    def test_local_entry_count_matches_prompts(self, registry):
+        prompt_dir = self.FIXTURE_ROOT / "advisors" / "prompts"
+        prompt_files = list(prompt_dir.glob("*.md"))
+        assert len(registry["advisors"]) == len(prompt_files), (
+            f"Local registry has {len(registry['advisors'])} entries but "
+            f"{len(prompt_files)} prompt files"
+        )
+
+
 def test_deliverable_type_frontmatter_matches_registry():
     """Every framework prompt.md frontmatter must mirror its registry deliverable_type."""
     import re
