@@ -276,6 +276,23 @@ advisors:
       Analytical frameworks, positioning strategy, data-driven marketing,
       technical documentation, competitive analysis.
 
+  - id: donald-miller
+    name: "Donald Miller"
+    summary: "StoryBrand creator, clarifies marketing messages through story structure"
+    prompt: advisors/prompts/donald-miller.md
+    domains: [storybrand, homepage-conversion, messaging-clarity, storytelling, copywriting]
+    evaluation_expertise: >
+      Evaluates whether the brand is positioned as the guide (not the hero),
+      the customer's problem is clearly stated, a simple plan is visible, and
+      the call to action is unambiguous. Checks the "grunt test" — can a
+      cave person understand what you offer and why it matters in 5 seconds?
+    best_for: >
+      Homepages, landing pages, email nurture sequences, brand one-liners,
+      sales scripts. Any content where message clarity drives conversion.
+    not_for: >
+      Deep technical documentation, internal tooling, data-driven analytics
+      content, or content where story structure would feel forced.
+
   - id: elise-darma
     name: "Elise Darma"
     summary: "Instagram strategist"

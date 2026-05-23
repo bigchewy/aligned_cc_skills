@@ -796,7 +796,7 @@ git commit -m "docs: document two-file local-advisor convention in add-advisor"
 
 These tests exist BEFORE the data migration so they catch a half-finished move. The framework→advisor reference guard is the real portability guarantee — no existing test scans it.
 
-### Task 10: Framework→advisor dangling-reference guard
+### ✅ Task 10: Framework→advisor dangling-reference guard
 
 **Files:**
 - Create: `e2e/tests/test_framework_advisor_references.py`
