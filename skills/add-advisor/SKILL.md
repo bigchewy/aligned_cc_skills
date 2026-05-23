@@ -188,6 +188,8 @@ Append one entry to the `advisors` list in `advisors/registry.yaml`:
     note: "Not yet profiled with evaluation expertise."
 ```
 
+> **Read-side note:** The `prompt:` field is written for human readability but is ignored by the read side — `skills/_shared/resolve-advisor-source.md` derives the prompt path from `id` + scope + the configured prompt-dir. Do not rely on `prompt:` to point the resolver anywhere.
+
 Where:
 - **slug:** The advisor's kebab-case filename (without `.md`)
 - **display-name:** The advisor's full name
@@ -219,3 +221,8 @@ Commit all changes with message: `feat: add {advisor-name} advisor`
 
 - All new advisors are created with `enabled: false` - they won't appear in the front-end until explicitly enabled
 - Review created prompt files to verify voice authenticity
+- **Local advisors require two files.** Advisors have no glob fallback (unlike frameworks): a prompt
+  file with no `advisors/registry.yaml` entry is a silent no-op — it will never appear in listings,
+  panels, or contextual recommendation. When adding an advisor to a project-local repo, you MUST
+  write both `advisors/registry.yaml` (full-schema entry) and `advisors/prompts/<id>.md`. This skill
+  writes both; if you hand-author, do the same.

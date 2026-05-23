@@ -728,7 +728,7 @@ git commit -m "feat: remove avatar generation from add-advisor"
 
 ---
 
-### Task 9: Document the two-file local-advisor convention in add-advisor
+### ✅ Task 9: Document the two-file local-advisor convention in add-advisor
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (Notes section + the registry step)
