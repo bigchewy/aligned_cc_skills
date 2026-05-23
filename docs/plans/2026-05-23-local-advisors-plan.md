@@ -1206,7 +1206,7 @@ git commit -m "feat: migrate movement/body advisors + frameworks out of plugin"
 
 # Part 5 — Plugin metadata cleanup
 
-### Task 16: Regenerate HTML catalogs and correct published counts
+### ✅ Task 16: Regenerate HTML catalogs and correct published counts
 
 **Files:**
 - Modify: `docs/advisor-catalog.html`, `docs/framework-catalog.html` (regenerated)
