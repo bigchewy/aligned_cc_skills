@@ -28,9 +28,8 @@ Before any advisor work, detect what infrastructure exists in the current repo.
 | Marker | Check | Enables |
 |--------|-------|---------|
 | Advisor registry file | Check CLAUDE.md or Grep for `advisors/registry.yaml` | Registry entry (Step 3) |
-| Framework registry file | Check for `frameworks/registry.yaml` | Framework registry entry (Step 6) |
-| Avatar generation | Check for avatar directory + generation script in package.json | Avatar generation (Step 5) |
-| Eval infrastructure | Check for eval scenarios directory + eval script in package.json | Eval scenario (Step 7) |
+| Framework registry file | Check for `frameworks/registry.yaml` | Framework registry entry (Step 5) |
+| Eval infrastructure | Check for eval scenarios directory + eval script in package.json | Eval scenario (Step 6) |
 
 **Print summary:**
 ```
@@ -38,7 +37,6 @@ Environment Detection:
   Prompt path:       {detected path}           → {found / will create}
   Advisor registry:  {registry path}           → {found (full mode) / not found (lightweight mode)}
   Framework registry: frameworks/registry.yaml → {found / not found (skipping)}
-  Avatars:           {avatar dir}              → {found / not found (skipping)}
   Evals:             {eval dir}               → {found / not found (skipping)}
 ```
 
@@ -157,26 +155,13 @@ You are [Name], [role]. [One sentence core philosophy.]
 4. **Missing constraints** - No "what NOT to do" section
 5. **No failure modes** - Pretending the approach always works
 
-### 5. Generate Avatar
-
-> **Conditional:** Only run this step if the project uses avatar images (detected in Step 0). If not found, print: "Skipping avatar generation — no avatar infrastructure found."
-
-If the project has an avatar generation script, run it per the project's conventions.
-
-**File naming:** Avatar filenames typically use snake_case (e.g., `kelly_starrett.png`), while prompt filenames use kebab-case (e.g., `kelly-starrett.md`).
-
-**If generation fails:**
-- Try a different source photo (clearer headshot, different angle)
-- Note that avatar needs manual creation if all approaches fail
-- Continue with step 6 (non-blocking)
-
-### 6. Add First Framework
+### 5. Add First Framework
 
 Use the `/aligned:add-framework` skill to implement the top-ranked framework.
 
 > **Critical:** The add-framework skill updates `frameworks/registry.yaml` as part of its registry-entry step. If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to `frameworks/registry.yaml` with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
 
-### 7. Create Eval Scenario
+### 6. Create Eval Scenario
 
 > **Conditional:** Only run this step if the project has an eval infrastructure (e.g., `e2e/` directory, detected in Step 0). If not found, print: "Skipping eval scenario — no eval infrastructure found."
 
@@ -190,7 +175,7 @@ Minimum scenario should include:
 
 Run the scenario to verify baseline quality. If it fails, classify the failure (prompt issue, eval calibration, or model variance) and fix before continuing. First-run failures are common and usually eval calibration — adjust keywords and fingerprints before changing the voice prompt.
 
-### 8. Update the Registry
+### 7. Update the Registry
 
 Append one entry to the `advisors` list in `advisors/registry.yaml`:
 
@@ -213,7 +198,7 @@ Where:
 
 If `advisors/registry.yaml` does not exist, skip this step silently (lightweight mode — the add-advisor skill works without a registry).
 
-### 9. Update Advisor and Framework Counts
+### 8. Update Advisor and Framework Counts
 
 Count the actual advisors and frameworks in the plugin directory and update all references so metadata stays in sync:
 
@@ -226,12 +211,11 @@ Count the actual advisors and frameworks in the plugin directory and update all 
 
 The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
 
-### 10. Commit
+### 9. Commit
 
 Commit all changes with message: `feat: add {advisor-name} advisor`
 
 ## Notes
 
 - All new advisors are created with `enabled: false` - they won't appear in the front-end until explicitly enabled
-- Review generated avatars for likeness - the person should be clearly recognizable
 - Review created prompt files to verify voice authenticity

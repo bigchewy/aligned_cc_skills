@@ -668,7 +668,7 @@ git commit -m "feat: authoring engine selection uses merged advisor list"
 
 # Part 2 — add-advisor: avatar removal + local-advisor DX
 
-### Task 8: Remove avatar generation from add-advisor
+### ✅ Task 8: Remove avatar generation from add-advisor
 
 **Files:**
 - Modify: `skills/add-advisor/SKILL.md` (Step 0 detection row + dashboard line, Step 5, Notes line, step renumbering)
