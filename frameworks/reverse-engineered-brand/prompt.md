@@ -296,6 +296,32 @@ Slice frontmatter:
 3. For proprietary binaries such as `.cclibs`, try safe structured inspection first (`strings`, archive listing, XML/JSON plist detection, or available local parsers). If values cannot be decoded, log the exact file path and method attempted in the OQ.
 4. If canonical values are found, write them into `design/design-principles.md` and do not leave a generic "color libraries not decoded" gap.
 
+**Theme manifest emission.** After completing visual-structure synthesis and the color library extraction step, the design pass must emit `{brand-folder-path}/.build/theme.json` with the following structure:
+
+```jsonc
+{
+  "palette": { /* 17 vars: ink, muted, paper, panel, line, line_strong, primary,
+     primary_deep, accent, peach, cream, blush, sky, ice, good, warn, risk —
+     decoded from public-web CSS / source assets; OMIT a var only if undecodable
+     (render_review.py supplies the neutral default for any missing var) */ },
+  "fonts": {
+    "heading": { "family": "...", "faces": [{ "weight": 500, "style": "normal",
+      "src_woff2": "assets/fonts/<file>.woff2", "src_woff": null }],
+      "cdn": null, "fallback": "Georgia, serif" },
+    "body": { "family": "...", "faces": [], "cdn": null,
+      "fallback": "ui-sans-serif, system-ui, sans-serif" }
+  },
+  "logo": { "src": "assets/<logo-file>", "wordmark_text": "<org>" }
+}
+```
+
+Degradation rules (the design sub-agent must apply these explicitly):
+- **Palette:** decode every var possible from public-web CSS / source theme files; leave undecodable vars out of the emitted JSON (the renderer fills neutral defaults). Palette is decodable even with no local files.
+- **Fonts:** identify families; download local font files into `{brand-folder-path}/assets/fonts/` and record a **relative** `src_woff2`/`src_woff`. Drop a face with no obtainable source. Undecodable family ⇒ set `family` to the fallback stack's lead token (never an empty string). If all faces drop and no `cdn`, emit no faces — rely on `fallback`.
+- **Logo:** download the site logo into `{brand-folder-path}/assets/` and record a relative `src`. Fetch is bounded (~10s); on timeout OR failure ⇒ set `src: null` and rely on `wordmark_text`. Never hang the build; never record a remote URL or `../` path.
+
+Offline-safety contract: Every emitted `theme` asset src MUST be relative AND resolve inside the brand folder (no `http(s):`, no `../`). `render_review.py` re-asserts this and aborts the render if violated.
+
 **Cross-framework ordering caveat** (per Architect M1): `competitive-battle-card`'s prompt names positioning as its canonical source. Battle-card dispatch receives the positioning DRAFT — a placeholder note in the dispatch prompt explains the upstream slice may not be finalized; the framework's AUTO_MODE behavior is to tag any positioning-dependent OQ with `confidence: low`, `impact: P0`, `why_it_matters` noting the upstream dependency.
 
 **Step 2.4: Ready-to-load verification gate.**

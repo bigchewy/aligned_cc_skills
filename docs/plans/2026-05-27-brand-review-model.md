@@ -851,7 +851,7 @@ git commit -m "feat(reb): exempt 5 always-on slices from skip-no-signal + GAP pa
 
 ---
 
-### Task 8: `prompt.md` PHASE 2.3b — emit the `theme` manifest (palette / fonts / logo)
+### ✅ Task 8: `prompt.md` PHASE 2.3b — emit the `theme` manifest (palette / fonts / logo)
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (§"Step 2.3b: Visual-structure synthesis" and §"Color library extraction requirement")
