@@ -384,7 +384,7 @@ git commit -m "feat(reb): deterministic curate_open_questions.py with owner-auth
 
 ---
 
-### Task 4: Replace `review-template.html` with the Marley self-theming shell
+### ✅ Task 4: Replace `review-template.html` with the Marley self-theming shell
 
 **Files:**
 - Modify (full replacement): `frameworks/reverse-engineered-brand/review-template.html`
