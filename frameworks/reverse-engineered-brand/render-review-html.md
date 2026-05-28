@@ -27,7 +27,7 @@ python3 frameworks/reverse-engineered-brand/scripts/render_review.py \
   "{review-data-json-path}" "{template-path}" "{output-html-path}" "{org-name}" "{brand-folder-path}"
 ```
 
-The script validates the data (grade range, OQ ≤ 15, offline-safety of font/logo srcs), emits theme CSS + server-side panels + the sanitized inline `REVIEW_DATA` snapshot, runs the verify-before-open checks (DOCTYPE, `<script>` present, no unsanitized `</script>`, closing `</html>`, no unsubstituted `{TOKEN}`), and writes the file ONLY if all checks pass.
+The script validates the data (grade range, OQ ≤ 15, offline-safety of font/logo srcs), emits theme CSS + server-side panels, runs the verify-before-open checks (DOCTYPE, `<script>` present, no unsanitized `</script>`, closing `</html>`, no unsubstituted `{TOKEN}`), and writes the file ONLY if all checks pass.
 
 **Shape warnings (non-blocking, R5).** Before invoking the script, inspect `{review-data-json-path}` and emit a warning for each missing key. These are pre-flight warnings only — the Python validator is the hard gate:
 

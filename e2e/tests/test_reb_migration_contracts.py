@@ -13,7 +13,7 @@ def _read(rel):
 
 @pytest.mark.parametrize("token", [
     "display_groups", "provided_summary", "source_narratives",
-    "group-bullets", "voice-rewrite",
+    "group-bullets", "voice-rewrite", "input_asks",
 ])
 def test_removed_machinery_absent_from_prompt(token):
     assert token not in _read("prompt.md"), f"{token} must be gone from prompt.md"

@@ -29,14 +29,15 @@ def _render(fixture):
 # ---- success paths ----
 def test_palette_vars_emitted_from_theme():
     html = _render("valid-tiny.json")
-    assert "--primary:" in html and "--ink:" in html
+    assert "--primary:" in html and "--background:" in html
     assert "{PALETTE_VARS_CSS}" not in html  # token substituted
 
 def test_neutral_default_palette_when_empty():
     html = _render("valid-no-palette-uses-default.json")
-    # All 17 vars present even with theme.palette == {}
-    for var in ("--ink:", "--paper:", "--panel:", "--primary:", "--accent:",
-                "--good:", "--warn:", "--risk:"):
+    # All 9 vars present even with theme.palette == {}
+    for var in ("--background:", "--surface:", "--border:", "--divider:",
+                "--text-primary:", "--text-secondary:", "--text-muted:",
+                "--primary:", "--accent:"):
         assert var in html
 
 def test_fontface_emitted_for_relative_src():
@@ -55,11 +56,10 @@ def test_one_panel_per_section():
     html = m.render(data, TEMPLATE.read_text(), brand_folder=str(FIXTURES))
     assert html.count('<section class="panel"') == len(data["sections"])
 
-def test_script_tags_sanitized():
+def test_user_content_html_escaped():
     html = _render("valid-realistic.json")
-    # the </script> inside a why_it_matters string must be escaped in the inline snapshot
-    assert "<\\/script>" in html
-    # only the real closing tags remain unescaped
+    # the </script> inside a why_it_matters string must be html-escaped before injection
+    assert "&lt;/script&gt;" in html
     assert html.count("</script>") <= html.count("<script")
 
 def test_no_unsubstituted_tokens():

@@ -2,9 +2,9 @@
 """Render a self-themed review.html from review-data.json + a token-slot template.
 
 Deterministic, stdlib-only. Validates the data, emits theme CSS + server-side
-panels, embeds a sanitized REVIEW_DATA snapshot for paste-back, runs the
-verify-before-open checks, and aborts (writes nothing) on any failure.
-Invoked by render-review-html.md (PHASE 3.7); render() is unit-tested directly.
+panels, runs the verify-before-open checks, and aborts (writes nothing) on any
+failure. Invoked by render-review-html.md (PHASE 3.7); render() is unit-tested
+directly.
 """
 from __future__ import annotations
 
@@ -15,15 +15,14 @@ import sys
 from pathlib import Path
 
 CAP = 15
-PALETTE_VARS = ["ink", "muted", "paper", "panel", "line", "line_strong",
-                "primary", "primary_deep", "accent", "peach", "cream", "blush",
-                "sky", "ice", "good", "warn", "risk"]
+PALETTE_VARS = ["background", "surface", "border", "divider",
+                "text-primary", "text-secondary", "text-muted",
+                "primary", "accent"]
 DEFAULT_PALETTE = {  # warm-neutral literal default (R3 h-6a) for public-web-only builds
-    "ink": "#1a1a1a", "muted": "#6b7280", "paper": "#faf9f7", "panel": "#ffffff",
-    "line": "#e5e7eb", "line_strong": "#d8c7bd", "primary": "#33312e",
-    "primary_deep": "#1a1a1a", "accent": "#ff6900", "peach": "#ffe7d6",
-    "cream": "#faf9f7", "blush": "#fff5f5", "sky": "#c9e5fc", "ice": "#edf7ff",
-    "good": "#047857", "warn": "#a46716", "risk": "#b91c1c",
+    "background": "#faf9f7", "surface": "#f5f3ef",
+    "border": "#e5e7eb", "divider": "#e5e7eb",
+    "text-primary": "#1a1a1a", "text-secondary": "#555555", "text-muted": "#6b7280",
+    "primary": "#1e1b4b", "accent": "#ff6900",
 }
 
 
@@ -61,7 +60,7 @@ def _palette_css(theme: dict) -> str:
     palette = (theme.get("palette") or {})
     lines = []
     for var in PALETTE_VARS:
-        value = palette.get(var) or DEFAULT_PALETTE[var]
+        value = palette.get(var) or palette.get(var.replace("-", "_")) or DEFAULT_PALETTE[var]
         lines.append(f"      --{var}: {value};")
     return "\n".join(lines)
 
@@ -183,16 +182,13 @@ def render(data: dict, template: str, brand_folder: str, org: str | None = None)
     theme = data.get("theme") or {}
     sections = data.get("sections", [])
     oqs = data.get("open_questions", [])
-    # Serialize first, then sanitize the JSON text so </script> can't close the tag
-    snapshot = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     out = (template
            .replace("{FONT_FACES_CSS}", _fontface_css(theme))
            .replace("{PALETTE_VARS_CSS}", _palette_css(theme))
            .replace("{HEADER_BRAND}", _header_brand(theme, org))
            .replace("{NAV_TABS}", _nav_tabs(sections))
            .replace("{SECTION_PANELS}", "\n".join(_panel(s, oqs) for s in sections))
-           .replace("{ORG_NAME}", html.escape(org))
-           .replace("{REVIEW_DATA_JSON}", snapshot))
+           .replace("{ORG_NAME}", html.escape(org)))
     _verify(out)
     return out
 

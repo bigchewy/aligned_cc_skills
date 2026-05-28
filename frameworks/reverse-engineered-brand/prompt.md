@@ -127,17 +127,6 @@ Hold the Source Registry and slice→sources index in memory. Proceed to Transfo
 - **Rank and cap:** sort competitors by `mention_count` descending. Tie-break by alphabetical order of slug for determinism. Cap at 5 competitors total (or 3 minimum if fewer surfaced). The extract schema carries `name` + `role` + optional `verbatim_quote` per entity but does NOT carry per-mention provenance (e.g., "customer quote" vs. "product page"), so signal-strength weighting is not possible at this layer — mention-count ranking is the deterministic proxy. If finer ranking is needed in the future, extend `extract.md` to record per-mention provenance.
 - Write `{brand-folder-path}/.build/behavioral-alternatives.json` (the array of behavioral-alternative entries).
 - Write `{brand-folder-path}/.build/competitor-list.json` (the array of `{slug, name, mention_count, source_ids}` records to dispatch).
-- **Competitive Context input asks (inline):** hold the following array in memory; PHASE 3.2 reads it when building the `competitive` folder entry. This is the single source of truth for the Competitive Context tab's `input_asks` — no separate file, no per-framework fanout (per Decision 4 in the design doc).
-
-  ```yaml
-  competitive_context_input_asks:
-    - tier: critical
-      ask: "Quotes from prospects describing the alternatives they used before considering you"
-    - tier: recommended
-      ask: "Win/loss interviews comparing your offering to non-product alternatives"
-    - tier: optional
-      ask: "Pre-purchase research notes describing how prospects framed the old way"
-  ```
 
 **Step 1.5b — Sub-agent dossier dispatch (parallel):**
 
@@ -190,36 +179,6 @@ Decisions about which roles/channels/segments to instantiate happen here in the 
 **Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a framework for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice). Always-on slices (see list above) are never skipped — if their filtered extract list is empty, dispatch/produce them anyway and let the stub contract handle thinness.
 
 **Always-on slices (NEW — Marley model).** The following five slices are ALWAYS produced regardless of signal: `source-map.md` (root), `strategy/context.md`, `strategy/operating-principles.md`, `language/copy-bank.md`, `proof/claims-ledger.md`. They are EXEMPT from the skip-no-signal rule above AND from the GAP meta-OQ path (Step 2.3 / Step 3.1). When a producer finds thin or no signal, it writes a **minimum stub** — a one-line statement of what the slice would hold plus a `## Needed inputs` list (the same items that populate the section's `needed[]`). A stub is graded 1–2 with a populated `needed[]`; it clears PHASE 2.4 Check 1 (non-zero-byte) and is exempt from Check 5's short-draft (<200 words) warning. Existing conditional slices (`clinical-evidence`, `compliance`, `design/layouts`, `design/slide-patterns`) remain conditional on domain/source-type.
-
-**Slice-specific input_asks (inline, NEW v0.4.0+).** For slices whose asks differ from their owning framework's asks, hold the following arrays in memory; PHASE 3.2 reads them when building the `market` and `proof` folder entries (per Task 14b in the implementation plan).
-
-```yaml
-alternatives_input_asks:
-  - tier: critical
-    ask: "Quotes from prospects describing alternatives"
-  - tier: recommended
-    ask: "Cost-of-inaction data: what the status quo costs the buyer"
-  - tier: optional
-    ask: "Pre-purchase research notes from prospects"
-
-clinical_evidence_input_asks:
-  - tier: critical
-    ask: "Peer-reviewed citations with PMID or DOI"
-  - tier: recommended
-    ask: "Internal clinical study summaries naming method, N, and effect size"
-  - tier: optional
-    ask: "Regulatory submission filings or correspondence"
-
-compliance_input_asks:
-  - tier: critical
-    ask: "Active certifications with auditor name, issue date, and expiration"
-  - tier: recommended
-    ask: "Compliance attestation letters from named customers"
-  - tier: optional
-    ask: "Customer-facing compliance one-pager or trust-center URL"
-```
-
-These arrays REPLACE the owning framework's asks when aggregating `market/alternatives.md`, `proof/clinical-evidence.md`, and `proof/compliance.md` respectively. PHASE 3.2 uses the slice-specific array if present; otherwise it falls back to the owning framework's frontmatter asks.
 
 **Step 2.2: Build the canonical pre-synthesis blob.**
 
@@ -534,7 +493,7 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
 **Build the `theme` block.** Read `{brand-folder-path}/.build/theme.json` (written by PHASE 2 Step 2.6 if a design pass ran). If absent, use:
 
 ```json
-{ "palette": {}, "fonts": { "primary": null, "secondary": null, "accent": null }, "logo": { "src": null, "wordmark_text": "{org-name}" } }
+{ "palette": {}, "fonts": { "heading": null, "body": null }, "logo": { "src": null, "wordmark_text": "{org-name}" } }
 ```
 
 **Write `{brand-folder-path}/review-data.json`** — the full envelope:
@@ -558,7 +517,7 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
     "4": "Mostly clear",
     "5": "Strong"
   },
-  "theme": { "palette": {}, "fonts": { "primary": null, "secondary": null, "accent": null }, "logo": { "src": null, "wordmark_text": "Acme" } },
+  "theme": { "palette": {}, "fonts": { "heading": null, "body": null }, "logo": { "src": null, "wordmark_text": "Acme" } },
   "sections": [
     {
       "id": "overview",
@@ -588,16 +547,10 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
   "open_questions": [
     {
       "id": "OQ-1",
-      "file": "strategy/positioning.md",
-      "framework_slot": "phase-2-competitive-alternatives",
-      "confidence": "low",
+      "slice": "strategy/positioning.md",
       "impact": "P0",
-      "inferred_value": "...",
-      "draft_excerpt": "...",
       "question": "...",
-      "why_it_matters": "...",
-      "deepen_with": "5-components-positioning",
-      "evidence": ["#4", "#6"]
+      "why_it_matters": "..."
     }
   ]
 }
