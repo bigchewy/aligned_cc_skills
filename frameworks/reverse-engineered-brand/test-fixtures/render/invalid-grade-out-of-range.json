@@ -1,0 +1,202 @@
+{
+  "org": "The Knot",
+  "generated_at": "2026-05-27",
+  "brand_folder": "/tmp/the-knot-brand",
+  "source_counts": {
+    "total_sources": 3,
+    "usable_sources": 3,
+    "canonical_markdown_files": 8,
+    "review_sections": 8,
+    "open_questions": 6
+  },
+  "grade_scale": {
+    "5": "Ready to use with minor edits",
+    "4": "Solid draft — one or two gaps",
+    "3": "Partial — usable but missing key signal",
+    "2": "Thin — mostly speculative",
+    "1": "Missing or too speculative"
+  },
+  "theme": {
+    "palette": {
+      "primary": "#c9a96e",
+      "primary_dark": "#a67c45",
+      "primary_light": "#e8d5b0",
+      "secondary": "#2d2d2d",
+      "secondary_dark": "#1a1a1a",
+      "secondary_light": "#4a4a4a",
+      "accent": "#e8b4b8",
+      "background": "#faf9f7",
+      "surface": "#ffffff",
+      "surface_alt": "#f5f3ef",
+      "text_primary": "#1a1a1a",
+      "text_secondary": "#4a4a4a",
+      "text_muted": "#888888",
+      "border": "#e0dbd4",
+      "divider": "#ede8e2",
+      "success": "#4caf50",
+      "error": "#e53935"
+    },
+    "fonts": {
+      "heading": {
+        "family": "Playfair Display",
+        "faces": [
+          { "weight": 400, "style": "normal", "src_woff2": "fonts/PlayfairDisplay-Regular.woff2", "src_woff": null }
+        ],
+        "cdn": null,
+        "fallback": "Georgia, serif"
+      },
+      "body": {
+        "family": "Lato",
+        "faces": [
+          { "weight": 400, "style": "normal", "src_woff2": "fonts/Lato-Regular.woff2", "src_woff": null }
+        ],
+        "cdn": null,
+        "fallback": "Arial, sans-serif"
+      }
+    },
+    "logo": {
+      "src": "assets/the-knot-logo.svg",
+      "wordmark_text": "The Knot"
+    }
+  },
+  "sections": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "grade": 4,
+      "confidence": "medium-high",
+      "status": "Strong",
+      "summary": "The Knot presents a consistent wedding-planning brand with strong visual identity.",
+      "provided": ["Brand guidelines PDF"],
+      "needed": ["Customer interviews"],
+      "files": ["overview.md"],
+      "readout": {
+        "brand_system": "Marketplace-first brand with warm visual language.",
+        "main_risk": "Category overlap with Zola and The Bash.",
+        "decisions_needed": "Choose between marketplace utility and emotional aspiration as the lead angle."
+      },
+      "recent_update": null
+    },
+    {
+      "id": "strategy",
+      "label": "Strategy",
+      "grade": 7,
+      "confidence": "high",
+      "status": "Strong",
+      "summary": "This section has a grade of 7, which is out of the 1–5 range — renderer must reject.",
+      "provided": ["Brand guidelines"],
+      "needed": [],
+      "files": ["strategy/positioning.md"]
+    },
+    {
+      "id": "language",
+      "label": "Language",
+      "grade": 3,
+      "confidence": "medium",
+      "status": "Partial",
+      "summary": "Voice is warm but inconsistent.",
+      "provided": ["Homepage copy"],
+      "needed": ["Voice guide"],
+      "files": ["language/voice.md"]
+    },
+    {
+      "id": "personas",
+      "label": "Personas",
+      "grade": 3,
+      "confidence": "medium",
+      "status": "Partial",
+      "summary": "Persona is implicit, not documented.",
+      "provided": [],
+      "needed": ["Persona docs"],
+      "files": ["personas/couples.md"]
+    },
+    {
+      "id": "audiences",
+      "label": "Audiences",
+      "grade": 4,
+      "confidence": "high",
+      "status": "Strong",
+      "summary": "Primary audience consistently targeted.",
+      "provided": ["Ad targeting docs"],
+      "needed": [],
+      "files": ["audiences/primary.md"]
+    },
+    {
+      "id": "market",
+      "label": "Market",
+      "grade": 2,
+      "confidence": "low",
+      "status": "GAP",
+      "summary": "No competitive landscape document.",
+      "provided": [],
+      "needed": ["Competitive dossier"],
+      "files": ["market/competitive.md"]
+    },
+    {
+      "id": "proof",
+      "label": "Proof",
+      "grade": 4,
+      "confidence": "high",
+      "status": "Strong",
+      "summary": "Testimonials are plentiful.",
+      "provided": ["Review aggregates"],
+      "needed": [],
+      "files": ["proof/claims.md"]
+    },
+    {
+      "id": "design",
+      "label": "Design",
+      "grade": 5,
+      "confidence": "high",
+      "status": "Strong",
+      "summary": "Visual identity is well-documented.",
+      "provided": ["Brand guidelines", "Design tokens"],
+      "needed": [],
+      "files": ["design/visual-identity.md"]
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "OQ-001",
+      "slice": "strategy/positioning.md",
+      "impact": "P0",
+      "question": "Is the primary competitive alternative The Bash or Zola?",
+      "why_it_matters": "Category frame depends on the true alternative-of-record."
+    },
+    {
+      "id": "OQ-002",
+      "slice": "language/voice.md",
+      "impact": "P1",
+      "question": "Which tone register should lead on product pages?",
+      "why_it_matters": "Voice inconsistency creates trust gaps at acquisition."
+    },
+    {
+      "id": "OQ-003",
+      "slice": "personas/couples.md",
+      "impact": "P1",
+      "question": "Is the primary persona the first-time bride or the co-planning couple?",
+      "why_it_matters": "Photography and copy hierarchy diverge depending on this answer."
+    },
+    {
+      "id": "OQ-004",
+      "slice": "market/competitive.md",
+      "impact": "P0",
+      "question": "What market category does The Knot own?",
+      "why_it_matters": "Category choice determines search posture."
+    },
+    {
+      "id": "OQ-005",
+      "slice": "proof/claims.md",
+      "impact": "P2",
+      "question": "Are editorial awards being actively promoted?",
+      "why_it_matters": "Proof hierarchy must be consistent across surfaces."
+    },
+    {
+      "id": "OQ-006",
+      "slice": "design/visual-identity.md",
+      "impact": "P2",
+      "question": "Is the gold-and-blush palette scoped to wedding surfaces only?",
+      "why_it_matters": "Palette scope affects vendor products and market extensions."
+    }
+  ]
+}

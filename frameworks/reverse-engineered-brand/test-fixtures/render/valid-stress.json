@@ -1,0 +1,344 @@
+{
+  "org": "Marley & Co",
+  "generated_at": "2026-05-27",
+  "brand_folder": "/tmp/marley-brand",
+  "source_counts": {
+    "total_sources": 24,
+    "usable_sources": 18,
+    "canonical_markdown_files": 8,
+    "review_sections": 8,
+    "open_questions": 15
+  },
+  "grade_scale": {
+    "5": "Ready to use with minor edits",
+    "4": "Solid draft — one or two gaps",
+    "3": "Partial — usable but missing key signal",
+    "2": "Thin — mostly speculative",
+    "1": "Missing or too speculative"
+  },
+  "theme": {
+    "palette": {
+      "primary": "#1b4332",
+      "primary_dark": "#081c15",
+      "primary_light": "#40916c",
+      "secondary": "#d4a017",
+      "secondary_dark": "#a07800",
+      "secondary_light": "#e9c46a",
+      "accent": "#f4a261",
+      "background": "#f8f5f0",
+      "surface": "#ffffff",
+      "surface_alt": "#f0ebe3",
+      "text_primary": "#1a1a1a",
+      "text_secondary": "#3d3d3d",
+      "text_muted": "#7a7a7a",
+      "border": "#d6cfc5",
+      "divider": "#e8e2d9",
+      "success": "#2d6a4f",
+      "error": "#c1121f"
+    },
+    "fonts": {
+      "heading": {
+        "family": "Canela",
+        "faces": [
+          { "weight": 300, "style": "normal", "src_woff2": "fonts/Canela-Light.woff2", "src_woff": null },
+          { "weight": 400, "style": "normal", "src_woff2": "fonts/Canela-Regular.woff2", "src_woff": null },
+          { "weight": 300, "style": "italic", "src_woff2": "fonts/Canela-LightItalic.woff2", "src_woff": null }
+        ],
+        "cdn": null,
+        "fallback": "Georgia, serif"
+      },
+      "body": {
+        "family": "Söhne",
+        "faces": [
+          { "weight": 400, "style": "normal", "src_woff2": "fonts/Soehne-Buch.woff2", "src_woff": null },
+          { "weight": 500, "style": "normal", "src_woff2": "fonts/Soehne-Kraftig.woff2", "src_woff": null },
+          { "weight": 700, "style": "normal", "src_woff2": "fonts/Soehne-Halbfett.woff2", "src_woff": null }
+        ],
+        "cdn": null,
+        "fallback": "system-ui, sans-serif"
+      }
+    },
+    "logo": {
+      "src": "assets/marley-logo-lockup.svg",
+      "wordmark_text": "Marley & Co"
+    }
+  },
+  "sections": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "grade": 3,
+      "confidence": "medium",
+      "status": "Partial",
+      "summary": "Marley & Co has strong design assets and emerging strategy work, but persona documentation, competitive framing, and proof are thin across the board. The brand system is coherent visually but lacks the narrative infrastructure to support autonomous content creation.",
+      "provided": [
+        "Brand identity system PDF",
+        "Website copy (homepage + about)",
+        "Three sales decks (Q3 2025, Q4 2025, Q1 2026)",
+        "Social media creative library (120 assets)",
+        "Email welcome series",
+        "One customer case study (Thornfield Hotels)",
+        "Press release archive (8 releases)",
+        "Founding team bios",
+        "Product one-pager",
+        "Investor pitch deck (Series A, redacted)"
+      ],
+      "needed": [
+        "Voice and tone guide",
+        "Persona documentation",
+        "Competitive dossier",
+        "Win/loss data",
+        "Additional case studies",
+        "Category positioning brief"
+      ],
+      "files": ["overview.md"],
+      "readout": {
+        "brand_system": "Marley & Co has a distinctive visual identity anchored in deep forest green and warm gold — but the brand narrative that would animate it is still being constructed. The visual system is ahead of the verbal system by about 12–18 months of development.",
+        "main_risk": "Without a clear competitive alternative named in positioning materials, the brand cannot run challenger-frame campaigns and risks being positioned by default as 'premium generalist' — a category with no strong claim.",
+        "decisions_needed": "Two decisions are blocking downstream content: (1) which competitor is the primary alternative-of-record, and (2) whether the category claim is a new category play or a repositioning within an existing one."
+      },
+      "recent_update": "2026-01-22"
+    },
+    {
+      "id": "strategy",
+      "label": "Strategy",
+      "grade": 3,
+      "confidence": "medium",
+      "status": "Partial",
+      "summary": "Positioning direction is implied by sales deck structure (challenger frame, premium outcome) but no formal positioning statement exists. The founding story provides narrative seed material but hasn't been processed into a brand positioning framework.",
+      "provided": [
+        "Sales decks (Q3 2025, Q4 2025, Q1 2026)",
+        "Investor pitch deck (redacted Series A)",
+        "Homepage headline and subhead",
+        "Product one-pager"
+      ],
+      "needed": [
+        "Formal positioning statement",
+        "Competitive alternative documentation",
+        "Category naming decision",
+        "Win/loss interview summaries"
+      ],
+      "files": ["strategy/positioning.md", "strategy/narrative.md"]
+    },
+    {
+      "id": "language",
+      "label": "Language",
+      "grade": 3,
+      "confidence": "medium",
+      "status": "Partial",
+      "summary": "Voice is confident and editorial in long-form content but shifts to feature-list mode in product pages and one-pagers. No style guide or voice documentation exists. The email welcome series has the strongest voice signal of all assets reviewed.",
+      "provided": [
+        "Email welcome series (5 messages)",
+        "Homepage copy",
+        "About page copy",
+        "Sales deck narrative sections"
+      ],
+      "needed": [
+        "Brand voice guide",
+        "Do/don't tone examples",
+        "Copy review framework for vendors"
+      ],
+      "files": ["language/voice.md"]
+    },
+    {
+      "id": "personas",
+      "label": "Personas",
+      "grade": 2,
+      "confidence": "low",
+      "status": "Thin",
+      "summary": "No persona documentation exists. Implied buyer characteristics can be reconstructed from sales deck ICP slides: 'VP of Marketing at a mid-market B2B SaaS company, 100–500 employees.' But this is not validated by research and has not been formalized.",
+      "provided": [
+        "Sales deck ICP slide (single slide)",
+        "One testimonial from named customer"
+      ],
+      "needed": [
+        "Formal persona documents (minimum 2)",
+        "Customer interview summaries",
+        "ICP validation data",
+        "Job-to-be-done analysis"
+      ],
+      "files": ["personas/icp.md"]
+    },
+    {
+      "id": "audiences",
+      "label": "Audiences",
+      "grade": 3,
+      "confidence": "medium",
+      "status": "Partial",
+      "summary": "Ad targeting documentation shows a consistent audience (B2B decision-makers, 35–50, tech-adjacent industries). Organic content appears to target a broader 'creative professional' frame. The two audience strategies are not explicitly reconciled.",
+      "provided": [
+        "LinkedIn ad targeting docs",
+        "Google Ads audience parameters",
+        "Social creative library metadata"
+      ],
+      "needed": [
+        "Audience strategy document reconciling paid vs. organic",
+        "Lifecycle stage mapping",
+        "Audience overlap and exclusion logic"
+      ],
+      "files": ["audiences/primary.md"]
+    },
+    {
+      "id": "market",
+      "label": "Market",
+      "grade": 1,
+      "confidence": "low",
+      "status": "GAP",
+      "summary": "No competitive landscape document exists in any form. Competitors are not named in any brand asset. The 'before Marley' state implied in sales decks (fragmented agencies, spreadsheet-driven coordination) is the only competitive frame available.",
+      "provided": [],
+      "needed": [
+        "Competitive dossier (minimum 3 named alternatives)",
+        "Market sizing document",
+        "Category definition and entry point analysis",
+        "Buyer alternatives data from win/loss"
+      ],
+      "files": ["market/competitive.md"]
+    },
+    {
+      "id": "proof",
+      "label": "Proof",
+      "grade": 2,
+      "confidence": "low",
+      "status": "Thin",
+      "summary": "One named case study exists (Thornfield Hotels). Several testimonial quotes appear in sales decks but are unattributed. No quantified outcomes data is present in any reviewed asset.",
+      "provided": [
+        "Thornfield Hotels case study",
+        "Sales deck testimonial quotes (unattributed)",
+        "Press release archive"
+      ],
+      "needed": [
+        "Minimum 3 attributed case studies with outcomes data",
+        "Quantified proof metrics (time saved, revenue impact, etc.)",
+        "Third-party analyst or press endorsements",
+        "Reference customer program"
+      ],
+      "files": ["proof/claims.md"]
+    },
+    {
+      "id": "design",
+      "label": "Design",
+      "grade": 5,
+      "confidence": "high",
+      "status": "Strong",
+      "summary": "The brand identity system is the strongest element in the entire asset set. Full typography specifications (Canela + Söhne), palette (forest green + warm gold), logo system, illustration style, and motion guidelines are documented and internally consistent.",
+      "provided": [
+        "Brand identity system PDF (complete)",
+        "Logo asset library (SVG, PNG, all colorways)",
+        "Typography specimen and usage guide",
+        "Color palette with accessibility contrast ratios",
+        "Illustration style guide with examples",
+        "Motion principles document",
+        "Design token export (JSON)"
+      ],
+      "needed": [],
+      "files": ["design/visual-identity.md", "design/tokens.md", "design/motion.md"]
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "OQ-001",
+      "slice": "strategy/positioning.md",
+      "impact": "P0",
+      "question": "Which competitor is the primary alternative-of-record in buyer consideration?",
+      "why_it_matters": "Without a named alternative, every positioning claim is uncalibrated. The challenger frame implied in sales decks has no anchor, and all downstream differentiation copy is floating."
+    },
+    {
+      "id": "OQ-002",
+      "slice": "strategy/positioning.md",
+      "impact": "P0",
+      "question": "Is Marley & Co creating a new category or repositioning within an existing one?",
+      "why_it_matters": "New category plays require different proof and education budgets than repositioning plays. The entire content strategy pivots on this decision."
+    },
+    {
+      "id": "OQ-003",
+      "slice": "strategy/narrative.md",
+      "impact": "P1",
+      "question": "What is the founding insight that drove Marley & Co into existence?",
+      "why_it_matters": "Founding insight is the most defensible positioning anchor — it's the one thing no competitor can copy. Without it, the brand competes on table-stakes claims."
+    },
+    {
+      "id": "OQ-004",
+      "slice": "language/voice.md",
+      "impact": "P1",
+      "question": "What is the voice register for product pages — editorial or feature-utility?",
+      "why_it_matters": "The current asset set has both registers active on different surfaces. Standardizing unblocks every copywriter and vendor producing content on behalf of the brand."
+    },
+    {
+      "id": "OQ-005",
+      "slice": "language/voice.md",
+      "impact": "P1",
+      "question": "Does the brand use humor, and if so, where is the line?",
+      "why_it_matters": "The email welcome series has light wit that doesn't appear elsewhere. Clarifying whether this is intentional or accidental determines whether it should be codified or removed."
+    },
+    {
+      "id": "OQ-006",
+      "slice": "personas/icp.md",
+      "impact": "P0",
+      "question": "Is the primary buyer a VP of Marketing or a Chief Marketing Officer?",
+      "why_it_matters": "VP-buyers and CMO-buyers have different proof requirements, different approval processes, and different objections. The wrong persona leads to proof assets that don't close."
+    },
+    {
+      "id": "OQ-007",
+      "slice": "personas/icp.md",
+      "impact": "P1",
+      "question": "Is there a distinct champion persona (the person who runs the internal evaluation) separate from the economic buyer?",
+      "why_it_matters": "B2B buying committees typically have 6–10 stakeholders. If the champion persona is different from the economic buyer, content strategy needs to address both journeys separately."
+    },
+    {
+      "id": "OQ-008",
+      "slice": "audiences/primary.md",
+      "impact": "P1",
+      "question": "Are paid and organic audiences intentionally different, or is this an unresolved contradiction?",
+      "why_it_matters": "Audiences that diverge across channels create brand confusion at the consideration stage when buyers do cross-channel research. An intentional divergence needs documentation; an accidental one needs correction."
+    },
+    {
+      "id": "OQ-009",
+      "slice": "market/competitive.md",
+      "impact": "P0",
+      "question": "What do buyers who chose a competitor over Marley & Co cite as the reason?",
+      "why_it_matters": "Loss reasons are the most direct input to positioning and proof strategy. Every month without this data is a month of positioning decisions made on assumption."
+    },
+    {
+      "id": "OQ-010",
+      "slice": "market/competitive.md",
+      "impact": "P1",
+      "question": "Is the 'before state' (fragmented agencies + spreadsheets) the accurate competitive frame, or is there a SaaS competitor that better represents the alternative?",
+      "why_it_matters": "If a SaaS competitor is the real alternative, the competitive frame and proof strategy need to change from 'vs. status quo' to 'vs. [named competitor]' — these are structurally different positioning plays."
+    },
+    {
+      "id": "OQ-011",
+      "slice": "proof/claims.md",
+      "impact": "P0",
+      "question": "What quantified outcome did Thornfield Hotels achieve with Marley & Co?",
+      "why_it_matters": "The Thornfield case study is the only named proof asset and it has no outcome data. A case study without a number is a testimonial, not proof. One number would make it defensible."
+    },
+    {
+      "id": "OQ-012",
+      "slice": "proof/claims.md",
+      "impact": "P1",
+      "question": "Are the unattributed testimonials in the sales decks real, and can they be attributed?",
+      "why_it_matters": "Unattributed testimonials are treated as made-up by sophisticated buyers. If these are real customers, attribution would significantly increase their proof value."
+    },
+    {
+      "id": "OQ-013",
+      "slice": "proof/claims.md",
+      "impact": "P1",
+      "question": "What is the single most impressive outcome metric across all current customers?",
+      "why_it_matters": "Every proof hierarchy needs a headline number. Without one, the brand cannot run performance campaigns anchored to a claim. Finding and verifying this number is the highest-leverage proof task."
+    },
+    {
+      "id": "OQ-014",
+      "slice": "design/tokens.md",
+      "impact": "P2",
+      "question": "Is the forest green primary color intended to evoke a specific brand meaning, and if so, what?",
+      "why_it_matters": "Semantic intent behind palette choices determines how far the palette can flex in campaign work. If green = 'growth' or 'trust,' that constrains how green is used in error states and warning contexts."
+    },
+    {
+      "id": "OQ-015",
+      "slice": "design/motion.md",
+      "impact": "P2",
+      "question": "Are the motion guidelines currently implemented in the product or aspirational only?",
+      "why_it_matters": "Motion guidelines that aren't implemented create a gap between brand promise and product experience at the moment of highest engagement. Knowing the implementation status prevents false brand claims in product marketing."
+    }
+  ]
+}

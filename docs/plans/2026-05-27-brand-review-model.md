@@ -428,7 +428,7 @@ git commit -m "feat(reb): replace template with Marley self-theming token-slot s
 
 ---
 
-### Task 5: Rebuild render fixtures (`review-data.json`-shaped) + theme fixtures
+### ✅ Task 5: Rebuild render fixtures (`review-data.json`-shaped) + theme fixtures
 
 **Files:**
 - Modify (rewrite): `frameworks/reverse-engineered-brand/test-fixtures/render/README.md`
