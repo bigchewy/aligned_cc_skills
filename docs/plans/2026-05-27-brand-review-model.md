@@ -1112,7 +1112,7 @@ git commit -m "feat(reb): delete group-bullets + voice-rewrite sub-agents (2 rev
 
 ---
 
-### Task 15: `brand-folder-spec.md` — add the 5 always-on slices + synthesis methods
+### ✅ Task 15: `brand-folder-spec.md` — add the 5 always-on slices + synthesis methods
 
 **Files:**
 - Modify: `docs/brand-folder-spec.md` (directory tree, per-file purpose table, §"Synthesis methods")

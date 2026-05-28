@@ -18,19 +18,24 @@ The canonical folder layout. Every digital-health org installs this same shape. 
 brand/
 ├── CLAUDE.md                       # manifest + slice index + "deepen next" queue
 ├── version.yaml                    # semver, generator provenance, git_sha
+├── source-map.md                   # traceable source IDs → path → best-use
 │
 ├── strategy/                       # the WHY — slow-moving thesis
 │   ├── positioning.md              # 5-component Dunford chain
-│   └── narrative.md                # Raskin 5-element arc
+│   ├── narrative.md                # Raskin 5-element arc
+│   ├── context.md                  # org facts: stage, headcount, markets, funding, products
+│   └── operating-principles.md    # non-negotiables and how-we-work tenets
 │
 ├── language/                       # the WORDS — distilled copy + audience map
 │   ├── messaging.md                # category, tagline, elevator variants, vp×persona map, pricing language (optional slice)
 │   ├── voice.md                    # tone, register, dos/don'ts, banned phrases/terms, glossary
+│   ├── copy-bank.md                # reusable copy fragments: headlines, CTAs, boilerplate
 │   └── voices/                     # OPTIONAL named spokespeople
 │       └── {name}.md
 │
 ├── proof/                          # the EVIDENCE — facts with sources + dates
 │   ├── proof-points.md             # verifiable business metrics
+│   ├── claims-ledger.md            # traceable proof claims: claim → source → confidence → date
 │   ├── case-studies.md             # customer outcome stories
 │   ├── awards-press.md             # third-party validation
 │   ├── clinical-evidence.md        # RCTs, peer-reviewed pubs, RWE, FDA clearances, validation studies
@@ -75,10 +80,14 @@ clients/
 |------|-------------|----------------------|
 | `strategy/positioning.md` | 5-component Dunford chain: competitive alternatives, unique attributes, value for best-fit customers, target customers, category. Internal-facing reasoning thesis. Changes ~2× per year. | Taglines, copy strings, messaging variants — those live in `language/messaging.md` |
 | `strategy/narrative.md` | Raskin 5-element arc: the world, the change, the losers/winners, the promised land, evidence/magic. Changes when strategy shifts. | Competitor analysis — that lives in `market/competitive.md` |
+| `strategy/context.md` | Org facts: stage, headcount, active markets, funding state, products. Produced by the orchestrator at PHASE 3 from registry/blob metadata. Read by generators needing org context without a full positioning read. | Strategic thesis — that lives in `strategy/positioning.md`. Forward-looking claims — those live in `strategy/narrative.md`. |
+| `strategy/operating-principles.md` | Non-negotiables and how-we-work tenets (e.g., "clinical evidence before product claims", "no vanity metrics"). Distilled by a framework-internal synthesis sub-agent from tagged source extracts. | Positioning logic — that lives in `strategy/positioning.md`. Voice rules — those live in `language/voice.md`. |
 | `language/messaging.md` | Category name, tagline, elevator variants, value-prop-to-persona map, pricing language (optional slice). Copy-ready strings for slides and generators. | Reasoning that defends the positioning — that lives in `strategy/positioning.md` |
 | `language/voice.md` | Tone principles, register rules, dos/don'ts, banned phrases, banned terms, glossary. Institutional voice. Slices: `#tone`, `#register`, `#dos-and-donts`, `#banned-phrases`, `#banned-terms`, `#glossary` | Named spokesperson voices — those live in `language/voices/{name}.md` |
+| `language/copy-bank.md` | Reusable copy fragments distilled from source material: headlines, CTAs, boilerplate sentences, social-proof snippets. Produced by a framework-internal synthesis sub-agent. Generators pull fragments by tag without re-synthesizing. | Voice rules — those live in `language/voice.md`. Source-level copy — that stays in the source docs. Messaging strategy — that lives in `language/messaging.md`. |
 | `language/voices/{name}.md` | Named spokesperson voice profile (optional). Founder-led blogs compose institutional `voice.md` + spokesperson overlay. | Brand-wide voice — that lives in `language/voice.md` |
 | `proof/proof-points.md` | Verifiable business metrics with sources and dates. Quantitative claims generators can cite. | Customer narrative stories — those live in `proof/case-studies.md` |
+| `proof/claims-ledger.md` | Traceable proof claims: each entry has a claim text, source reference, confidence level, and date. Produced by the `proof-points-audit` framework via the `framework` synthesis method. Lets generators cite claims with full provenance without reading every proof file. | The underlying evidence itself — that lives in `proof/proof-points.md`, `proof/case-studies.md`, etc. Forward-looking claims — those belong in `strategy/narrative.md`. |
 | `proof/case-studies.md` | Customer outcome stories with context, challenge, solution, result. | Raw metrics without narrative — those live in `proof/proof-points.md` |
 | `proof/awards-press.md` | Third-party validation: awards, press coverage, analyst mentions, certifications. | Self-asserted claims — those go in proof-points or positioning |
 | `proof/clinical-evidence.md` | RCTs, peer-reviewed publications, real-world evidence, FDA clearances, validation studies. Digital health specific. | General proof points or press — those live in their respective files |
@@ -95,6 +104,7 @@ clients/
 | `contracts.yaml` | Composition contract: which generators require which slices, optional slices, min_confidence thresholds, persona × channel × segment overlay rule. | Content itself — that lives in the brand files |
 | `CLAUDE.md` | Manifest: every file, every slice, every status/confidence, composition contract summary, "Next Steps to Deepen" framework queue. Auto-loaded by Claude Code — the front door every generator reads first. | Authoritative brand content — that lives in the brand files themselves |
 | `version.yaml` | Semver, generator provenance (`generated_by`), `git_sha`, optional sources. | File-level provenance — that lives in each file's `updated:` frontmatter |
+| `source-map.md` | Traceable index of every source consumed during brand production: source ID, path or URL, best-use annotation, confidence. Produced once by the orchestrator at PHASE 3 from registry/blob metadata. | The content itself — that lives in the brand files. Summaries or excerpts of source material. |
 | `eval/` | Eval scenarios that verify on-brand output. Ship in consumer's brand folder, NOT in this plugin. | The eval framework definitions — those ship in the plugin |
 | `clients/{prospect-name}.md` | Per-deal prospect context: org, deal, stakeholders, signals. Transient lifecycle. Lives in sibling `clients/` tree, NOT inside `brand/`. | Durable brand content — that lives in `brand/` |
 
@@ -138,6 +148,8 @@ Two distinct mechanisms produce content for the brand folder. Every slice file's
 |--------|-----------|-----------|--------|
 | `framework` (default) | The slice represents content that must be *discovered* (positioning, narrative, voice, persona, competitive analysis, proof points, design principles). | An owning framework runs in AUTO_MODE per `frameworks/reverse-engineered-brand/auto-mode-preamble.md`. The framework's PHASES execute end-to-end without human WAIT-gates, emitting a draft + OQ JSON. | `strategy/`, `language/`, `personas/`, `market/`, `proof/`, `design/` |
 | `classification` | The slice represents content that is *exogenously defined* by the regulatory or procurement landscape and only needs to be classified against a known list. | The orchestrator reads `frameworks/reverse-engineered-brand/audience-taxonomy.md` and matches source-material signal against the canonical taxonomy of payer segments and procurement channels. No framework is dispatched. | `audiences/segments/`, `audiences/channels/` |
+| `orchestrator_inline` | The slice contains structural metadata or org facts that the orchestrator can assemble directly from the registry and blob manifest — no body reads, no sub-agent required. | The orchestrator emits the file at PHASE 3 as an inline write, reading only registry/blob metadata already in context. No framework is dispatched; no additional source reads occur. | `source-map.md`, `strategy/context.md` |
+| `framework_internal` | The slice contains synthesized content (operating tenets, copy fragments) that requires reading source body text but must not bloat the orchestrator's main context. | A framework-internal synthesis sub-agent reads tagged source extracts in a disposable child context, synthesizes the slice, and writes it. The result is returned to the orchestrator without the source text remaining in context. Preserves the context-bloat guard. | `strategy/operating-principles.md`, `language/copy-bank.md`, `design/layouts.md`, `design/slide-patterns.md` (note: `proof/claims-ledger.md` uses `framework` via the `proof-points-audit` owning framework) |
 
 **Why this matters:** In digital health, payer segments (commercial, Medicaid, MA, ACO, etc.) and procurement channels (employer, payer, provider, pharma) are not *invented* by a brand — they are imposed by CMS regulation, state administration, and the payer landscape. Running a 5-phase WAIT-gated discovery framework against an exogenous list wastes orchestrator capacity and produces fabricated content when source material is thin. Classification surfaces the right confidence signal: "we found evidence for this segment/channel" or "we didn't" — both useful, neither fabricated.
 
