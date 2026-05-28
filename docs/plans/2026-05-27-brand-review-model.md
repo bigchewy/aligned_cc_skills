@@ -1140,7 +1140,7 @@ git commit -m "docs: add 5 always-on slices + orchestrator_inline/framework_inte
 
 ---
 
-### Task 16: `audience-taxonomy.md` — delete the `## Ideal inputs` section
+### ✅ Task 16: `audience-taxonomy.md` — delete the `## Ideal inputs` section
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/audience-taxonomy.md` (delete §"Ideal inputs")
