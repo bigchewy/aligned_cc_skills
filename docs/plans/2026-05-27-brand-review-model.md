@@ -10,7 +10,7 @@
 
 **Mockups:** `docs/mockups/2026-05-27-brand-review-model.html` (design-rationale artifact; the *target render structure* is the Marley reference build at `/Users/ericpage/Documents/marley/brand/review.html`, mapped in the Decision Log)
 
-**Architecture:** Two new stdlib-only Python modules under `frameworks/reverse-engineered-brand/scripts/` carry the deterministic core — `curate_open_questions.py` (owner-authority filter → impact-rank backfill → cap-15 → thin-shape reshape, with stable `OQ-NNN` ids) and `render_review.py` (self-theming HTML emission from `review-data.json` + a token-slot template, with sanitize/verify-before-open). The orchestrator (`prompt.md`) invokes both via Bash — no new sub-agents; 3 review-stage sub-agents (`group-bullets`, `voice-rewrite`) drop to 0. The ETL/synthesis/2.4-gate layer is untouched.
+**Architecture:** Two new stdlib-only Python modules under `frameworks/reverse-engineered-brand/scripts/` carry the deterministic core — `curate_open_questions.py` (owner-authority filter → impact-rank backfill → cap-15 → thin-shape reshape, with stable `OQ-NNN` ids) and `render_review.py` (self-theming HTML emission from `review-data.json` + a token-slot template, with sanitize/verify-before-open). The orchestrator (`prompt.md`) invokes both via Bash — no new sub-agents; 2 review-stage sub-agents (`group-bullets`, `voice-rewrite`) drop to 0. The ETL/synthesis/2.4-gate layer is untouched.
 
 **Tech Stack:** Python 3 (stdlib only — `json`, `re`, `glob`, `html`, `pathlib`, `urllib`), pytest (existing `e2e/tests/` suite, run via `npm test` = `pytest tests/ -v` from `e2e/`), promptfoo (eval), Markdown/YAML/HTML framework assets.
 
@@ -64,7 +64,7 @@ Title becomes `# Review Data Schema (Marley model)`. Document the canonical `rev
 - **Rich internal emission shape (UNCHANGED, validated at PHASE 2.4, lives only in `.build/slices/*.oq.json`)** — preserve the existing field table verbatim (`id`, `global_id`, `file`, `slice`, `framework_slot`, `summary`, `question`, `inferred_value`, `draft_excerpt`, `confidence`, `impact`, `evidence`, `alternatives`, `deepen_with`, `why_it_matters`, `rationale`, `emitted_at`) and the slot-validator rule + authoritative slot vocabulary table (copy them forward — `auto-mode-preamble.md` still emits this shape and PHASE 2.4 still validates it).
 - **Thin persisted curated shape (NEW, written into `review-data.json` by `curate_open_questions.py`)** — exactly 5 fields: `id` (`"OQ-001"`, zero-padded), `slice` (the brand file path, e.g. `"strategy/positioning.md"`), `impact` (`P0|P1|P2`), `question` (string), `why_it_matters` (string). No other fields persist.
 
-**Step 3: Document `sections[]`.** Each entry: `id`, `label`, `grade` (integer 1–5), `confidence` (**freeform string** at section level — e.g. `"medium-high"`; NOT the strict per-slice enum), `status` (short eyebrow string), `summary` (1–3 sentences), `provided` (string array), `needed` (string array), `files` (string array). The `overview` section ALSO carries `readout` (`{brand_system, main_risk, decisions_needed}`) and `recent_update` (`null` on first build) — no other section has these.
+**Step 3: Document `sections[]`.** Each entry: `id` (**bare folder token** — MUST be one of `overview`, `strategy`, `language`, `personas`, `audiences`, `market`, `proof`, `design`; the renderer routes open questions to section panels by `oq["slice"].startswith(section_id + "/")` — any other value silently drops all OQs for that section), `label`, `grade` (integer 1–5), `confidence` (**freeform string** at section level — e.g. `"medium-high"`; NOT the strict per-slice enum), `status` (short eyebrow string), `summary` (1–3 sentences), `provided` (string array), `needed` (string array), `files` (string array). The `overview` section ALSO carries `readout` (`{brand_system, main_risk, decisions_needed}`) and `recent_update` (`null` on first build) — no other section has these.
 
 **Step 4: Document `theme`, `source_counts`, `grade_scale`** per the design doc §"Data model" (17 palette vars; `fonts.{heading,body}` each `{family, faces[], cdn, fallback}` where a face is `{weight, style, src_woff2, src_woff}`; `logo` `{src, wordmark_text}`). Note `section.confidence` is **derived** (modal per-slice enum; compound string only on an even split — see R4) and that `behavioral_alternatives[]` / `competitors[]` are NOT persisted (they live in `.build/`, summarized into the market section's `provided[]`).
 
@@ -75,6 +75,34 @@ Title becomes `# Review Data Schema (Marley model)`. Document the canonical `rev
 ```bash
 git add frameworks/reverse-engineered-brand/open-questions-schema.md
 git commit -m "docs(reb): rewrite schema to Marley review-data model (sections, theme, thin OQ)"
+```
+
+---
+
+### Task 1b: Rebuild `test-fixtures/oq-schema/` — delete v0.4.1 fixtures, create rich-shape replacements
+
+**Files:**
+- Delete: all existing files in `frameworks/reverse-engineered-brand/test-fixtures/oq-schema/` (8 files: `valid-v040-minimal.json` and others referencing `input_asks`/`provided_summary`)
+- Create: `frameworks/reverse-engineered-brand/test-fixtures/oq-schema/valid-rich-shape-minimal.json`
+- Create: `frameworks/reverse-engineered-brand/test-fixtures/oq-schema/README.md`
+
+The existing `oq-schema/` fixtures reference the v0.4.1 `input_asks`/`provided_summary`/`display_groups` envelope. They must be replaced with fixtures that match the rich internal emission shape defined in Task 1's schema doc (the 18-field shape: `id`, `global_id`, `file`, `slice`, `framework_slot`, `summary`, `question`, `inferred_value`, `draft_excerpt`, `confidence`, `impact`, `evidence`, `alternatives`, `deepen_with`, `why_it_matters`, `rationale`, `emitted_at`, and the slot-validator fields). These are reference examples for schema validation during framework development — not consumed by any automated test runner.
+
+**Step 1: Delete all v0.4.1 `oq-schema/` fixtures.**
+
+```bash
+git rm frameworks/reverse-engineered-brand/test-fixtures/oq-schema/
+```
+
+**Step 2: Author `valid-rich-shape-minimal.json`** — a single `open_questions` array with 2 entries in the full rich internal emission shape. Use realistic, brand-decision-shaped strings (not `"test"`/`"foo"`). Mirror the field table from the updated `open-questions-schema.md`.
+
+**Step 3: Author `README.md`** — a one-line description of each fixture and a note that these are schema reference examples, not automated test inputs (automated tests consume `test-fixtures/curation/` and `test-fixtures/render/`).
+
+**Step 4: Commit.**
+
+```bash
+git add frameworks/reverse-engineered-brand/test-fixtures/oq-schema/
+git commit -m "test(reb): rebuild oq-schema fixtures to rich-shape (drop v0.4.1 input_asks/provided_summary)"
 ```
 
 ---
@@ -322,6 +350,24 @@ def main(argv) -> int:
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
 ```
+
+> **Also add `modal_confidence`** alongside `curate_to_thin` — required by the Task 18 R4 derivation tests:
+> ```python
+> def modal_confidence(levels: list) -> str:
+>     """Return modal confidence level; even 2-way tie between adjacent levels → compound string."""
+>     if not levels:
+>         return "medium"
+>     order = ["low", "medium", "high"]
+>     counts = {l: levels.count(l) for l in order}
+>     max_count = max(counts.values())
+>     winners = [l for l in order if counts[l] == max_count]
+>     if len(winners) == 1:
+>         return winners[0]
+>     # Even split between two adjacent levels → compound (e.g., "medium-high")
+>     if len(winners) == 2 and order.index(winners[1]) - order.index(winners[0]) == 1:
+>         return f"{winners[0]}-{winners[1]}"
+>     return winners[0]  # fallback: lowest of tied levels
+> ```
 
 **Step 4: Run to verify they pass.**
 
@@ -927,7 +973,8 @@ This is the core orchestrator rewrite. Delete the `display_groups` / `input_asks
 **Step 2: Rewrite Step 3.2** as **"Build the 7 area sections inline"**:
 
 > For each of the 7 area folders (`strategy`, `language`, `personas`, `audiences`, `market`, `proof`, `design`), the orchestrator authors a `sections[]` entry directly (no sub-agent — the OQ queue and Slice Index are already in-context metadata):
-> - `id`, `label` (display name).
+> - `id` (bare folder token — MUST be one of `overview`, `strategy`, `language`, `personas`, `audiences`, `market`, `proof`, `design`; the renderer routes OQs by `oq["slice"].startswith(section_id + "/")` — any other value silently drops all OQs for that section).
+> - `label` (display name).
 > - `grade` (1–5) per the existing rubric (keep the rubric block — it already lives in this PHASE).
 > - `confidence`: **derived** (R4) — the modal per-slice `low|medium|high` across the folder's slices; widen to a compound string ("medium-high") ONLY when slices split evenly between two adjacent levels.
 > - `status`: a short eyebrow string (e.g., "Default category recommended").
@@ -1060,7 +1107,7 @@ Run: `grep -rn "group-bullets\|voice-rewrite" frameworks/reverse-engineered-bran
 **Step 3: Commit.**
 
 ```bash
-git commit -m "feat(reb): delete group-bullets + voice-rewrite sub-agents (3 review sub-agents -> 0)"
+git commit -m "feat(reb): delete group-bullets + voice-rewrite sub-agents (2 review sub-agents -> 0)"
 ```
 
 ---
@@ -1201,7 +1248,34 @@ def test_scripts_exist():
 def test_no_standalone_open_questions_json_authoring():
     # The single source of truth is review-data.json; the dotfile authoring is gone.
     assert ".open-questions.json" not in _read("prompt.md")
+
+
+# R4 confidence derivation: modal per-slice enum, even-split → compound string.
+# These are pure unit tests against helper logic; the derivation algorithm is
+# authored inline in prompt.md Task 11 Step 2 — no Python module to import, so
+# we test the contract via a documented helper function in curate_open_questions.py.
+def test_r4_modal_confidence_returns_dominant_level():
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("curate_oq",
+        REPO_ROOT / "frameworks/reverse-engineered-brand/scripts/curate_open_questions.py")
+    _mod = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_mod)
+    # modal_confidence(["low", "low", "medium"]) → "low"
+    assert _mod.modal_confidence(["low", "low", "medium"]) == "low"
+    # modal_confidence(["high", "high", "high"]) → "high"
+    assert _mod.modal_confidence(["high", "high", "high"]) == "high"
+
+
+def test_r4_even_split_produces_compound_string():
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("curate_oq",
+        REPO_ROOT / "frameworks/reverse-engineered-brand/scripts/curate_open_questions.py")
+    _mod = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_mod)
+    # even split between two adjacent levels → compound "level1-level2" (lower first)
+    assert _mod.modal_confidence(["medium", "high"]) == "medium-high"
+    assert _mod.modal_confidence(["low", "medium"]) == "low-medium"
 ```
+
+> **Note for implementer:** These tests require `modal_confidence(levels: list[str]) -> str` to be exported from `curate_open_questions.py`. Add it alongside `curate_to_thin` in Task 3 Step 3 — it is pure logic (sort by CONFIDENCE_RANK, return modal; on even 2-way tie between adjacent levels, return `"{lower}-{higher}"`).
 
 **Step 2: Run to verify it passes.**
 
@@ -1225,6 +1299,8 @@ git commit -m "test(reb): migration-guard locks v0.4.1->Marley cutover"
 
 The framework is on the declared eval surface (`eval-surface.yaml`: `frameworks/*/prompt.md`) but has zero scenario coverage — `eval-audit` flags surface-without-scenario (criterion 5 / T8). Add an LLM-graded scenario plus the registration that `test_trigger_map_scenarios.py` enforces.
 
+> **Ordering within this task:** Complete Step 1 (author the scenario file) **before** Step 2 (edit `trigger-map.yaml`). `test_trigger_map_scenarios.py` asserts that every trigger-map scenario file exists — editing the map before the file is written will cause a mid-task test failure if the suite is run between steps.
+
 **Step 1: Author `e2e/scenarios/use-framework/reverse-engineered-brand.yaml`** following the `5-components-positioning.yaml` shape — a `description`, a sonnet provider (`temperature: 0`), a `{{system_context}}{{task_prompt}}` prompt, and `llm-rubric` asserts scoped to the Marley model. Rubrics should score: (a) produces an 8-section structure (overview + 7 areas) with `N/5` grades; (b) curated owner-authority OQ list (≤15, decision-shaped), not a 150-item log; (c) preserves the sub-agent ETL contract (does not fabricate; flags low-confidence as OQs). Use `system_context: file://../../../frameworks/reverse-engineered-brand/prompt.md` and a brand-build task prompt; reuse `fixtures/company-briefs/b2b-saas-startup.md` as the source stand-in.
 
 **Step 2: Append a trigger to `e2e/trigger-map.yaml`** (after the last entry):
@@ -1238,6 +1314,13 @@ The framework is on the declared eval surface (`eval-surface.yaml`: `frameworks/
       - scenarios/use-framework/reverse-engineered-brand.yaml
 ```
 
+**Step 2b: Add surface patterns to `e2e/eval-surface.yaml`.** `test_trigger_path_matches_surface_pattern` enforces that every trigger-map path matches at least one eval-surface glob pattern. `render-review-html.md` (sub-agent prompt) and `open-questions-schema.md` (schema reference) are not covered by the existing `frameworks/*/prompt.md` pattern. Append two patterns under the `patterns:` key:
+
+```yaml
+  - frameworks/*/render-review-html.md
+  - frameworks/*/open-questions-schema.md
+```
+
 **Step 3: Register the scenario in `e2e/promptfooconfig.yaml`** — append to the `scenarios:` list:
 
 ```yaml
@@ -1246,13 +1329,13 @@ The framework is on the declared eval surface (`eval-surface.yaml`: `frameworks/
 
 **Step 4: Verify registration (scoped test).**
 
-Run: `pytest e2e/tests/test_trigger_map_scenarios.py e2e/tests/test_trigger_map_paths.py -v` (expected: PASS — the new scenario is registered and its trigger paths exist).
+Run: `pytest e2e/tests/test_trigger_map_scenarios.py e2e/tests/test_trigger_map_paths.py -v` (expected: PASS — the new scenario is registered, its trigger paths exist, and all paths match eval-surface patterns).
 
 **Step 5: Commit.**
 
 ```bash
-git add e2e/scenarios/use-framework/reverse-engineered-brand.yaml e2e/trigger-map.yaml e2e/promptfooconfig.yaml
-git commit -m "test(reb): add eval scenario + trigger-map entry + promptfoo registration"
+git add e2e/scenarios/use-framework/reverse-engineered-brand.yaml e2e/trigger-map.yaml e2e/promptfooconfig.yaml e2e/eval-surface.yaml
+git commit -m "test(reb): add eval scenario + trigger-map entry + promptfoo registration + eval-surface patterns"
 ```
 
 ---
