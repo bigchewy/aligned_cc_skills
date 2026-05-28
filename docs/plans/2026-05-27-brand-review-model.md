@@ -107,7 +107,7 @@ git commit -m "test(reb): rebuild oq-schema fixtures to rich-shape (drop v0.4.1 
 
 ---
 
-### Task 2: Create curation input fixtures (rich-shape `.oq.json` sets)
+### ✅ Task 2: Create curation input fixtures (rich-shape `.oq.json` sets)
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/test-fixtures/curation/README.md`
