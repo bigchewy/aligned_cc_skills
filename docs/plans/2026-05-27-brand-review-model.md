@@ -472,7 +472,7 @@ git commit -m "test(reb): rebuild render fixtures to review-data.json shape + th
 
 ---
 
-### Task 6: Implement `render_review.py` (TDD)
+### ✅ Task 6: Implement `render_review.py` (TDD)
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/scripts/render_review.py`
