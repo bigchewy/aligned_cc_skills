@@ -956,7 +956,7 @@ git commit -m "feat(reb): add producers + synthesis_method for 4 always-on slice
 
 ---
 
-### Task 11: `prompt.md` PHASE 3 rewrite — curate → sections → overview → counts → write → render → cleanup
+### ✅ Task 11: `prompt.md` PHASE 3 rewrite — curate → sections → overview → counts → write → render → cleanup
 
 **Files:**
 - Modify (heavy edit): `frameworks/reverse-engineered-brand/prompt.md` (replace §"Step 3.2" through §"Step 3.8", and the §"Resume semantics for PHASE 3 sub-agents" block)
