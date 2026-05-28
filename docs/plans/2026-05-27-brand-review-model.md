@@ -1086,7 +1086,7 @@ git commit -m "feat(reb): render-review-html.md invokes render_review.py; rewrit
 
 ---
 
-### Task 14: Delete `group-bullets.md` and `voice-rewrite.md`
+### ✅ Task 14: Delete `group-bullets.md` and `voice-rewrite.md`
 
 **Files:**
 - Delete: `frameworks/reverse-engineered-brand/group-bullets.md`
