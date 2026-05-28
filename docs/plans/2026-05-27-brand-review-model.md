@@ -1290,7 +1290,7 @@ git commit -m "test(reb): migration-guard locks v0.4.1->Marley cutover"
 
 ---
 
-### Task 19: Add the eval scenario + trigger-map entry + promptfoo registration
+### ✅ Task 19: Add the eval scenario + trigger-map entry + promptfoo registration
 
 **Files:**
 - Create: `e2e/scenarios/use-framework/reverse-engineered-brand.yaml`

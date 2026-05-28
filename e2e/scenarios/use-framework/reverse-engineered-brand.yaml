@@ -1,0 +1,81 @@
+# e2e/scenarios/use-framework/reverse-engineered-brand.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Reverse-Engineered Brand build (Marley model)"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STRUCTURE: Does the output describe or produce a
+        brand review with an 8-section structure — one overview section
+        plus 7 area sections (strategy, language, proof, market, audiences,
+        personas, design)? Each section should include an N/5 confidence
+        grade. Score 1 if fewer than 4 sections or no grading is present,
+        score 5 if all 8 sections are addressed with explicit grades.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on OQ CURATION: Does the output produce a curated open
+        questions list (≤15 items) shaped as owner-authority decisions
+        ("What should X be?") rather than a raw log of every inference?
+        Score 1 if OQs are absent, exceed 15 unprioritized items, or read
+        as a dump of all gaps. Score 5 if ≤15 decision-framed OQs are
+        present, prioritized (P0/P1/P2 or similar), and tied to specific
+        brand areas.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ETL CONTRACT: Does the output preserve the anti-
+        fabrication contract — making inferences from the supplied source
+        material rather than inventing facts, and flagging low-confidence
+        claims as open questions rather than asserting them? Score 1 if
+        the model invents metrics, customer quotes, or competitive claims
+        not present in the brief. Score 5 if every inference is traceable
+        to the supplied material and unsupported guesses are tagged as OQs.
+      weight: 2
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/reverse-engineered-brand/prompt.md
+      task_prompt: |
+
+        ---
+
+        [INTAKE RESPONSE]
+        1. No public URL — use the company brief below as the only source material.
+        2. No local folder.
+        3. Write target: /tmp/dataforge-brand/
+        4. Org name: DataForge
+        5. Competitors: Dagster, Prefect, Astronomer
+
+        From the source material, complete the brand build — Extract, Transform, Load — and produce the final brand review output: an 8-section structure (overview + the 7 brand areas) with N/5 confidence grades per section, followed by a curated open questions list (≤15 owner-authority decisions, prioritized P0/P1/P2). Do not fabricate facts not present in the brief; flag any unsupported inferences as open questions.
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Reverse engineer this company's brand and produce a review of their brand across key areas:"
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "aware-but-unaided (knows ETL approach, not Marley model)"
+    vars:
+      system_context: ""
+      task_prompt: |
+        Using an ETL approach, extract signals from the company brief below, synthesize
+        a brand review across strategy, language, proof, market, audiences, personas,
+        and design, then produce a list of open questions where the data is insufficient.
+        Rate each section by confidence.
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md

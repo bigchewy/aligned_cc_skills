@@ -163,3 +163,10 @@ triggers:
       - frameworks/3b-behavioral-design/anti-examples.md
     scenarios:
       - scenarios/use-advisor/kristen-berman-consult.yaml
+
+  - paths:
+      - frameworks/reverse-engineered-brand/prompt.md
+      - frameworks/reverse-engineered-brand/render-review-html.md
+      - frameworks/reverse-engineered-brand/open-questions-schema.md
+    scenarios:
+      - scenarios/use-framework/reverse-engineered-brand.yaml
