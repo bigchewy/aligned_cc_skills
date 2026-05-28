@@ -140,7 +140,7 @@ git commit -m "test(reb): add curation input fixtures (rich-shape OQ queues)"
 
 ---
 
-### Task 3: Implement `curate_open_questions.py` (TDD)
+### ✅ Task 3: Implement `curate_open_questions.py` (TDD)
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/scripts/curate_open_questions.py`
