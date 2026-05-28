@@ -8,3 +8,4 @@
 - **Why out of scope:** Plan tasks 11-13 specified the schema bump and fixture updates but did not scope the word-count test to render fixtures. Adding it now is a coverage tightening, not a plan deliverable.
 - **Severity:** LOW
 - **Created:** 2026-05-18
+- **Closed:** 2026-05-28 — obsolete. The `provided_summary` field and `tools/test_oq_schema_v040.py` were removed in the v0.4.1→Marley cutover on feature/brand-review-model (commit 78f3ea7). The constraint this item tracked no longer has a target.
