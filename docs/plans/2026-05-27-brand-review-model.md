@@ -1162,7 +1162,7 @@ git commit -m "docs(reb): drop orphaned Ideal inputs section from audience-taxon
 
 ---
 
-### Task 17: `frameworks/registry.yaml` — reconcile `required_documents`
+### ✅ Task 17: `frameworks/registry.yaml` — reconcile `required_documents`
 
 **Files:**
 - Modify: `frameworks/registry.yaml` (the `reverse-engineered-brand` entry's `required_documents`)
