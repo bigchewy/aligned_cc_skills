@@ -1189,7 +1189,7 @@ git commit -m "docs(reb): registry required_documents accepts URL or local folde
 
 ---
 
-### Task 18: Migration-guard test — lock the v0.4.1→Marley cutover
+### ✅ Task 18: Migration-guard test — lock the v0.4.1→Marley cutover
 
 **Files:**
 - Create: `e2e/tests/test_reb_migration_contracts.py`
