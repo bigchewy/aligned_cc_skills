@@ -32,7 +32,7 @@
 
 ---
 
-### Task 1: Rewrite the data-shape contract — `open-questions-schema.md`
+### ✅ Task 1: Rewrite the data-shape contract — `open-questions-schema.md`
 
 **Files:**
 - Modify (full rewrite): `frameworks/reverse-engineered-brand/open-questions-schema.md`
