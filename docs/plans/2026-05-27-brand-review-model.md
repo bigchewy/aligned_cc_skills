@@ -923,7 +923,7 @@ git commit -m "feat(reb): proof dispatch emits proof/claims-ledger.md (always-on
 
 ---
 
-### Task 10: `prompt.md` — producers for the 4 orchestrator/internal always-on slices
+### ✅ Task 10: `prompt.md` — producers for the 4 orchestrator/internal always-on slices
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (Step 2.3 / Step 2.3b region + slice mapping table)

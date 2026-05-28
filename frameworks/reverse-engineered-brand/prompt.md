@@ -231,6 +231,7 @@ For each non-skipped slice instance:
 - Look up `owning-framework-id` from the slice mapping table.
 - If the slice is `audiences/channels/*` or `audiences/segments/*`: do NOT dispatch a framework — handle via Step 2.3a (classification) instead.
 - If the slice is `design/layouts.md` or `design/slide-patterns.md`: do NOT dispatch the generic `design-principles` framework — handle via Step 2.3b (visual-structure synthesis) instead.
+- If the slice is `strategy/operating-principles.md` or `language/copy-bank.md`: do NOT dispatch a generic framework — handle via Step 2.3c (framework-internal synthesis) instead.
 - If owning framework is `null` for any OTHER reason (rare; only if a slice mapping row is genuinely unowned): do NOT dispatch a framework. Emit one P0 meta-OQ recommending the user commission a framework for that slice.
 - Otherwise, read `frameworks/{owning-framework-id}/prompt.md` and `frameworks/reverse-engineered-brand/auto-mode-preamble.md`. Concatenate: preamble + ORIGINAL framework prompt. Dispatch a Task with `subagent_type: general-purpose` and substituted placeholders:
   - `{slice-id}` — the slice path (e.g., `strategy/positioning.md`)
@@ -326,6 +327,37 @@ Degradation rules (the design sub-agent must apply these explicitly):
 Offline-safety contract: Every emitted `theme` asset src MUST be relative AND resolve inside the brand folder (no `http(s):`, no `../`). `render_review.py` re-asserts this and aborts the render if violated.
 
 **Cross-framework ordering caveat** (per Architect M1): `competitive-battle-card`'s prompt names positioning as its canonical source. Battle-card dispatch receives the positioning DRAFT — a placeholder note in the dispatch prompt explains the upstream slice may not be finalized; the framework's AUTO_MODE behavior is to tag any positioning-dependent OQ with `confidence: low`, `impact: P0`, `why_it_matters` noting the upstream dependency.
+
+**Step 2.3c: Framework-internal synthesis (producers for always-on slices).**
+
+The following always-on slices have explicit producers and are EXEMPT from generic framework dispatch AND from the GAP meta-OQ path. Slices with `synthesis_method` in {`classification`, `orchestrator_inline`, `framework_internal`} never fire a GAP meta-OQ.
+
+| Slice | Producer | `synthesis_method` | Reads bodies? |
+|-------|----------|--------------------|---------------|
+| `source-map.md` (root) | Orchestrator-inline at PHASE 3 — renders the Source Registry as an ID → path → best-use traceability table. Never enters PHASE 2 dispatch. | `orchestrator_inline` | No (registry metadata only) |
+| `strategy/context.md` | Orchestrator-inline from `canonical-pre-synthesis-blob.md` (Step 2.2, bounded) + aggregated registry signal. | `orchestrator_inline` | No |
+| `strategy/operating-principles.md` | Framework-internal synthesis sub-agent reading strategy/narrative-tagged extracts (mirrors the Step 2.3b visual-structure pattern; disposable context preserves the guard). | `framework_internal` | Yes (in sub-agent) |
+| `language/copy-bank.md` | Framework-internal synthesis sub-agent reading voice/messaging-tagged extracts. | `framework_internal` | Yes (in sub-agent) |
+
+The two orchestrator-inline producers (`source-map.md`, `strategy/context.md`) are authored in PHASE 3, not dispatched here.
+
+**Dispatch the two `framework_internal` sub-agents** (operating-principles + copy-bank) in the same parallel batch as the other PHASE 2 framework dispatches (Step 2.3). Issue both as Task tool calls in a single assistant message alongside the other slice dispatches.
+
+For `strategy/operating-principles.md` sub-agent:
+- Provide: all source extracts with `strategy` or `narrative` signal tags (JSON paths).
+- Provide: `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md`.
+- Output draft: `{brand-folder-path}/.build/slices/strategy/operating-principles.md.draft.md`
+- Output OQs: `{brand-folder-path}/.build/slices/strategy/operating-principles.md.oq.json`
+- Slice frontmatter: `synthesis_method: framework_internal`, `owning_framework: reverse-engineered-brand`
+
+For `language/copy-bank.md` sub-agent:
+- Provide: all source extracts with `voice` or `messaging` signal tags (JSON paths).
+- Provide: `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md`.
+- Output draft: `{brand-folder-path}/.build/slices/language/copy-bank.md.draft.md`
+- Output OQs: `{brand-folder-path}/.build/slices/language/copy-bank.md.oq.json`
+- Slice frontmatter: `synthesis_method: framework_internal`, `owning_framework: reverse-engineered-brand`
+
+Both sub-agents apply the always-on stub contract: if signal is thin, write a one-line statement of what the slice holds plus a `## Needed inputs` list. A stub clears PHASE 2.4 Check 1 and is exempt from Check 5's short-draft warning.
 
 **Step 2.4: Ready-to-load verification gate.**
 
@@ -423,7 +455,7 @@ Read every `.build/slices/{slice-id}.oq.json` file (Glob `{brand-folder-path}/.b
 1. Take only the `open_questions` array from each file; discard the wrapper.
 2. Concatenate all arrays in slice order. Assign global `OQ-N` ids: `global_id: "OQ-{N}"` where N is 1-indexed across the concatenation.
 
-**GAP-dedupe rule:** For OQs from genuinely unowned slices (`framework_slot: null`, `deepen_with: null`, AND `synthesis_method: ad_hoc`), deduplicate by `gap_frameworks_needed` value — emit one P0 meta-OQ per *missing framework* (not per slice instance). Audience classification OQs (`synthesis_method: classification`) are NOT GAP OQs and are not subject to this dedupe rule; they surface as classification confirmations, not framework-commissioning recommendations.
+**GAP-dedupe rule:** For OQs from genuinely unowned slices (`framework_slot: null`, `deepen_with: null`, AND `synthesis_method: ad_hoc`), deduplicate by `gap_frameworks_needed` value — emit one P0 meta-OQ per *missing framework* (not per slice instance). OQs from slices with `synthesis_method` in {`classification`, `orchestrator_inline`, `framework_internal`} are NOT GAP OQs and are not subject to this dedupe rule: classification OQs surface as classification confirmations; orchestrator_inline and framework_internal OQs surface as standard slice OQs under their producing framework.
 
 **Field-rename mapping (v0.1 → v0.2 schema):** Rename any v0.1 fields the sub-agents may have emitted:
 - `best_guess` → `inferred_value`
