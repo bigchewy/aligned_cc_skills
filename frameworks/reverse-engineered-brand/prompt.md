@@ -170,6 +170,7 @@ Slice → owning framework mapping (authoritative):
 | `market/competitive.md` | Per-competitor head-to-head, objections, trap questions | `competitive-battle-card` |
 | `market/alternatives.md` | Status quo, build-in-house, do-nothing | `5-components-positioning` (Component 1 — competitive alternatives — is the canonical source; this slice is the long-form view) |
 | `proof/proof-points.md` | Each quantitative claim with source + date + confidence | `proof-points-audit` |
+| `proof/claims-ledger.md` | Claims approval queue (claim, source, date, confidence, status) | `proof-points-audit` |
 | `proof/clinical-evidence.md`, `proof/compliance.md` | (conditional — only if the org is healthcare/regulated) | `proof-points-audit` (healthcare extension — same method, healthcare-specific evidence types) |
 | `design/design-principles.md` | (conditional — skip unless source material has visual identity signal) | `design-principles` |
 | `design/layouts.md` | Named presentation layout taxonomy from source templates: layout name, composition, and appropriate slide content types | **Framework-internal visual-structure synthesis.** Dispatch only when source material includes presentation templates, slide masters, or deck files with reusable layout metadata. |
@@ -240,6 +241,8 @@ For each non-skipped slice instance:
   - `{behavioral-alternatives-path}` — `{brand-folder-path}/.build/behavioral-alternatives.json` (for `market/alternatives.md` specifically; ignored by other slices)
   - `{canonical-pre-synthesis-blob-path}` — absolute path to the blob written in Step 2.2
   - `{org-name}` — org name from PHASE 0
+
+**Proof dispatch — claims ledger (NEW).** When dispatching `proof-points-audit` for the `proof/` folder, instruct the sub-agent to ALSO emit `{brand-folder-path}/.build/slices/proof/claims-ledger.md.draft.md` — an approval queue of every clinical / economic / GTM claim it extracted, each row tagged `status: approval_required` with source + date + confidence (reuse its PHASE 1 claim extraction + PHASE 3 dates + PHASE 4 confidence; no new analysis). Frontmatter `synthesis_method: framework`, `owning_framework: proof-points-audit`. If no claims surface, write the thin stub (Task 7 contract). This is an additive output instruction in the dispatch prompt — `proof-points-audit/prompt.md` is NOT modified.
 
 **Dispatch contract:** Issue all framework dispatches in a SINGLE assistant message (multiple Task tool calls in one message — parallel execution). Slice count is bounded (typically 8–15). Per `auto-mode-preamble.md`, each sub-agent runs the framework's PHASES end-to-end without WAITing.
 

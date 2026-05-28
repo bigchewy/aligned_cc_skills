@@ -897,7 +897,7 @@ git commit -m "feat(reb): emit structured theme manifest (palette/fonts/logo) in
 
 ---
 
-### Task 9: `prompt.md` — proof dispatch emits `proof/claims-ledger.md`
+### ✅ Task 9: `prompt.md` — proof dispatch emits `proof/claims-ledger.md`
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (§"Step 2.3" dispatch + the slice mapping table row for `proof/proof-points.md`)
