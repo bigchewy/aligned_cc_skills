@@ -186,7 +186,9 @@ Inspect the Source Registry to decide which slice instances to produce. For exam
 
 Decisions about which roles/channels/segments to instantiate happen here in the orchestrator (cheap, just metadata) — the framework sub-agents only see the slices the orchestrator asks for.
 
-**Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a framework for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice).
+**Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a framework for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice). Always-on slices (see list above) are never skipped — if their filtered extract list is empty, dispatch/produce them anyway and let the stub contract handle thinness.
+
+**Always-on slices (NEW — Marley model).** The following five slices are ALWAYS produced regardless of signal: `source-map.md` (root), `strategy/context.md`, `strategy/operating-principles.md`, `language/copy-bank.md`, `proof/claims-ledger.md`. They are EXEMPT from the skip-no-signal rule above AND from the GAP meta-OQ path (Step 2.3 / Step 3.1). When a producer finds thin or no signal, it writes a **minimum stub** — a one-line statement of what the slice would hold plus a `## Needed inputs` list (the same items that populate the section's `needed[]`). A stub is graded 1–2 with a populated `needed[]`; it clears PHASE 2.4 Check 1 (non-zero-byte) and is exempt from Check 5's short-draft (<200 words) warning. Existing conditional slices (`clinical-evidence`, `compliance`, `design/layouts`, `design/slide-patterns`) remain conditional on domain/source-type.
 
 **Slice-specific input_asks (inline, NEW v0.4.0+).** For slices whose asks differ from their owning framework's asks, hold the following arrays in memory; PHASE 3.2 reads them when building the `market` and `proof` folder entries (per Task 14b in the implementation plan).
 
@@ -333,7 +335,7 @@ For each OQ with a non-null `framework_slot`:
 **Check 5 — AUTO_MODE-ignored heuristics (warnings, do NOT block).**
 Scan each `.draft.md` for:
 - **Placeholder text:** any occurrence of `[USER WILL PROVIDE]`, `TBD`, `TODO`, `<answer here>`. Match → warning: `slice: {slice-id}, heuristic: placeholder-text, found: {string}`.
-- **Suspiciously short draft:** if draft word count < 200 AND the slice mapping table indicates the framework normally produces 500+ words. Match → warning: `slice: {slice-id}, heuristic: short-draft, word_count: {N}`.
+- **Suspiciously short draft:** if draft word count < 200 AND the slice mapping table indicates the framework normally produces 500+ words. Match → warning: `slice: {slice-id}, heuristic: short-draft, word_count: {N}`. EXEMPT: always-on slices (`source-map.md`, `strategy/context.md`, `strategy/operating-principles.md`, `language/copy-bank.md`, `proof/claims-ledger.md`) when their draft is a legitimate thin stub — do not warn.
 - **Missing PHASE coverage:** if the OQs in `.oq.json` do not span every PHASE heading of the dispatched framework. Match → warning: `slice: {slice-id}, heuristic: missing-phase-coverage, missing_phases: {list}`.
 
 **Check 6 — Compound atomicity (warnings, do NOT block).**

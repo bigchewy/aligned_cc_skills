@@ -821,7 +821,7 @@ git commit -m "feat(reb): self-theming render_review.py with degradation + verif
 
 ---
 
-### Task 7: `prompt.md` PHASE 2.1 — exempt the 5 always-on slices + stub contract
+### ✅ Task 7: `prompt.md` PHASE 2.1 — exempt the 5 always-on slices + stub contract
 
 > **Ordering:** Tasks 7–12 all edit `frameworks/reverse-engineered-brand/prompt.md`. Run in order.
 
