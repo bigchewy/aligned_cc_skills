@@ -1772,7 +1772,7 @@ frameworks:
     inference and gap as an Open Question reviewable in an interactive HTML document
     with paste-back-to-Claude-Code prompts
   required_documents:
-  - a public URL for the org (homepage or About page)
+  - a public URL for the org (homepage or About page) OR a local folder of source material
   use_when: an organization is building its first canonical brand/ folder from a public
     URL and optional supplementary content
 - advisor: matt-dixon

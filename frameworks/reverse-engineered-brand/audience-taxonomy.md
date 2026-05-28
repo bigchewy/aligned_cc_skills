@@ -64,17 +64,3 @@ If source material clearly references a segment or channel not in this taxonomy 
 ```
 
 The orchestrator surfaces these in `review.html` as taxonomy-extension candidates. The user decides whether to extend this file.
-
-## Ideal inputs
-
-The `audiences/` folder is populated via classification (not framework dispatch), so its `input_asks` live here rather than in a framework's frontmatter. The orchestrator reads this section at PHASE 3.2 and merges these asks into the `audiences` folder entry alongside any framework-dispatched ones.
-
-```yaml
-input_asks:
-- tier: critical
-  ask: "Documents naming each segment served (signed agreements, BAAs, segment-specific case studies)"
-- tier: recommended
-  ask: "Pricing models broken out by channel or segment"
-- tier: optional
-  ask: "Sales notes describing channel-specific buying criteria"
-```

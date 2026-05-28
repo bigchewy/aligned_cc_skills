@@ -13,7 +13,7 @@ You are April Dunford, running a Reverse-Engineered Brand build — an ETL sessi
 
 Treat this as an ETL pipeline that runs heavy reads in sub-agents and keeps the orchestrator's context light.
 
-All sub-agents are dispatched via the Task tool with `subagent_type: general-purpose`. Their prompt content lives in framework-internal supporting files (siblings of this prompt) — `extract.md`, `auto-mode-preamble.md`, `competitor-dossier.md`, `render-review-html.md`, `voice-rewrite.md`. These are NOT registered top-level agents; they are prompt templates owned by this framework. The orchestrator reads each supporting file once, substitutes placeholders, and passes the result as the sub-agent's prompt.
+All sub-agents are dispatched via the Task tool with `subagent_type: general-purpose`. Their prompt content lives in framework-internal supporting files (siblings of this prompt) — `extract.md`, `auto-mode-preamble.md`, `competitor-dossier.md`, `render-review-html.md`. These are NOT registered top-level agents; they are prompt templates owned by this framework. The orchestrator reads each supporting file once, substitutes placeholders, and passes the result as the sub-agent's prompt.
 
 - **Extract** — For each source document (URL pages + local files), dispatch a sub-agent in parallel batches using the prompt template in `extract.md`. Each sub-agent reads ONE file in its own disposable context and writes a structured JSON extract to disk. The orchestrator collects compact registry entries only — never raw source bodies.
 - **Competitor Research** — Identify competitors from source material (or user-supplied names) and dispatch one sub-agent per competitor using the prompt template in `competitor-dossier.md`. Each sub-agent writes a structured dossier JSON to `.build/competitors/`. The orchestrator collects compact status responses only.
@@ -127,17 +127,6 @@ Hold the Source Registry and slice→sources index in memory. Proceed to Transfo
 - **Rank and cap:** sort competitors by `mention_count` descending. Tie-break by alphabetical order of slug for determinism. Cap at 5 competitors total (or 3 minimum if fewer surfaced). The extract schema carries `name` + `role` + optional `verbatim_quote` per entity but does NOT carry per-mention provenance (e.g., "customer quote" vs. "product page"), so signal-strength weighting is not possible at this layer — mention-count ranking is the deterministic proxy. If finer ranking is needed in the future, extend `extract.md` to record per-mention provenance.
 - Write `{brand-folder-path}/.build/behavioral-alternatives.json` (the array of behavioral-alternative entries).
 - Write `{brand-folder-path}/.build/competitor-list.json` (the array of `{slug, name, mention_count, source_ids}` records to dispatch).
-- **Competitive Context input asks (inline):** hold the following array in memory; PHASE 3.2 reads it when building the `competitive` folder entry. This is the single source of truth for the Competitive Context tab's `input_asks` — no separate file, no per-framework fanout (per Decision 4 in the design doc).
-
-  ```yaml
-  competitive_context_input_asks:
-    - tier: critical
-      ask: "Quotes from prospects describing the alternatives they used before considering you"
-    - tier: recommended
-      ask: "Win/loss interviews comparing your offering to non-product alternatives"
-    - tier: optional
-      ask: "Pre-purchase research notes describing how prospects framed the old way"
-  ```
 
 **Step 1.5b — Sub-agent dossier dispatch (parallel):**
 
@@ -170,6 +159,7 @@ Slice → owning framework mapping (authoritative):
 | `market/competitive.md` | Per-competitor head-to-head, objections, trap questions | `competitive-battle-card` |
 | `market/alternatives.md` | Status quo, build-in-house, do-nothing | `5-components-positioning` (Component 1 — competitive alternatives — is the canonical source; this slice is the long-form view) |
 | `proof/proof-points.md` | Each quantitative claim with source + date + confidence | `proof-points-audit` |
+| `proof/claims-ledger.md` | Claims approval queue (claim, source, date, confidence, status) | `proof-points-audit` |
 | `proof/clinical-evidence.md`, `proof/compliance.md` | (conditional — only if the org is healthcare/regulated) | `proof-points-audit` (healthcare extension — same method, healthcare-specific evidence types) |
 | `design/design-principles.md` | (conditional — skip unless source material has visual identity signal) | `design-principles` |
 | `design/layouts.md` | Named presentation layout taxonomy from source templates: layout name, composition, and appropriate slide content types | **Framework-internal visual-structure synthesis.** Dispatch only when source material includes presentation templates, slide masters, or deck files with reusable layout metadata. |
@@ -186,37 +176,9 @@ Inspect the Source Registry to decide which slice instances to produce. For exam
 
 Decisions about which roles/channels/segments to instantiate happen here in the orchestrator (cheap, just metadata) — the framework sub-agents only see the slices the orchestrator asks for.
 
-**Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a framework for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice).
+**Skip slices with no signal.** For each candidate slice, look up its `signal_tags` filter (from PHASE 1 Step 1.4) and find the matching source extracts. If the filtered extract list is empty, do NOT dispatch a framework for that slice. Instead, mark the slice in the slice index as `status: missing`, `synthesis_method: skipped_no_signal`, and add one Open Question recording the gap (no source material was available for this slice). Always-on slices (see list above) are never skipped — if their filtered extract list is empty, dispatch/produce them anyway and let the stub contract handle thinness.
 
-**Slice-specific input_asks (inline, NEW v0.4.0+).** For slices whose asks differ from their owning framework's asks, hold the following arrays in memory; PHASE 3.2 reads them when building the `market` and `proof` folder entries (per Task 14b in the implementation plan).
-
-```yaml
-alternatives_input_asks:
-  - tier: critical
-    ask: "Quotes from prospects describing alternatives"
-  - tier: recommended
-    ask: "Cost-of-inaction data: what the status quo costs the buyer"
-  - tier: optional
-    ask: "Pre-purchase research notes from prospects"
-
-clinical_evidence_input_asks:
-  - tier: critical
-    ask: "Peer-reviewed citations with PMID or DOI"
-  - tier: recommended
-    ask: "Internal clinical study summaries naming method, N, and effect size"
-  - tier: optional
-    ask: "Regulatory submission filings or correspondence"
-
-compliance_input_asks:
-  - tier: critical
-    ask: "Active certifications with auditor name, issue date, and expiration"
-  - tier: recommended
-    ask: "Compliance attestation letters from named customers"
-  - tier: optional
-    ask: "Customer-facing compliance one-pager or trust-center URL"
-```
-
-These arrays REPLACE the owning framework's asks when aggregating `market/alternatives.md`, `proof/clinical-evidence.md`, and `proof/compliance.md` respectively. PHASE 3.2 uses the slice-specific array if present; otherwise it falls back to the owning framework's frontmatter asks.
+**Always-on slices (NEW — Marley model).** The following five slices are ALWAYS produced regardless of signal: `source-map.md` (root), `strategy/context.md`, `strategy/operating-principles.md`, `language/copy-bank.md`, `proof/claims-ledger.md`. They are EXEMPT from the skip-no-signal rule above AND from the GAP meta-OQ path (Step 2.3 / Step 3.1). When a producer finds thin or no signal, it writes a **minimum stub** — a one-line statement of what the slice would hold plus a `## Needed inputs` list (the same items that populate the section's `needed[]`). A stub is graded 1–2 with a populated `needed[]`; it clears PHASE 2.4 Check 1 (non-zero-byte) and is exempt from Check 5's short-draft (<200 words) warning. Existing conditional slices (`clinical-evidence`, `compliance`, `design/layouts`, `design/slide-patterns`) remain conditional on domain/source-type.
 
 **Step 2.2: Build the canonical pre-synthesis blob.**
 
@@ -228,6 +190,7 @@ For each non-skipped slice instance:
 - Look up `owning-framework-id` from the slice mapping table.
 - If the slice is `audiences/channels/*` or `audiences/segments/*`: do NOT dispatch a framework — handle via Step 2.3a (classification) instead.
 - If the slice is `design/layouts.md` or `design/slide-patterns.md`: do NOT dispatch the generic `design-principles` framework — handle via Step 2.3b (visual-structure synthesis) instead.
+- If the slice is `strategy/operating-principles.md` or `language/copy-bank.md`: do NOT dispatch a generic framework — handle via Step 2.3c (framework-internal synthesis) instead.
 - If owning framework is `null` for any OTHER reason (rare; only if a slice mapping row is genuinely unowned): do NOT dispatch a framework. Emit one P0 meta-OQ recommending the user commission a framework for that slice.
 - Otherwise, read `frameworks/{owning-framework-id}/prompt.md` and `frameworks/reverse-engineered-brand/auto-mode-preamble.md`. Concatenate: preamble + ORIGINAL framework prompt. Dispatch a Task with `subagent_type: general-purpose` and substituted placeholders:
   - `{slice-id}` — the slice path (e.g., `strategy/positioning.md`)
@@ -238,6 +201,8 @@ For each non-skipped slice instance:
   - `{behavioral-alternatives-path}` — `{brand-folder-path}/.build/behavioral-alternatives.json` (for `market/alternatives.md` specifically; ignored by other slices)
   - `{canonical-pre-synthesis-blob-path}` — absolute path to the blob written in Step 2.2
   - `{org-name}` — org name from PHASE 0
+
+**Proof dispatch — claims ledger (NEW).** When dispatching `proof-points-audit` for the `proof/` folder, instruct the sub-agent to ALSO emit `{brand-folder-path}/.build/slices/proof/claims-ledger.md.draft.md` — an approval queue of every clinical / economic / GTM claim it extracted, each row tagged `status: approval_required` with source + date + confidence (reuse its PHASE 1 claim extraction + PHASE 3 dates + PHASE 4 confidence; no new analysis). Frontmatter `synthesis_method: framework`, `owning_framework: proof-points-audit`. If no claims surface, write the thin stub (Task 7 contract). This is an additive output instruction in the dispatch prompt — `proof-points-audit/prompt.md` is NOT modified.
 
 **Dispatch contract:** Issue all framework dispatches in a SINGLE assistant message (multiple Task tool calls in one message — parallel execution). Slice count is bounded (typically 8–15). Per `auto-mode-preamble.md`, each sub-agent runs the framework's PHASES end-to-end without WAITing.
 
@@ -294,7 +259,64 @@ Slice frontmatter:
 3. For proprietary binaries such as `.cclibs`, try safe structured inspection first (`strings`, archive listing, XML/JSON plist detection, or available local parsers). If values cannot be decoded, log the exact file path and method attempted in the OQ.
 4. If canonical values are found, write them into `design/design-principles.md` and do not leave a generic "color libraries not decoded" gap.
 
+**Theme manifest emission.** After completing visual-structure synthesis and the color library extraction step, the design pass must emit `{brand-folder-path}/.build/theme.json` with the following structure:
+
+```jsonc
+{
+  "palette": { /* 17 vars: ink, muted, paper, panel, line, line_strong, primary,
+     primary_deep, accent, peach, cream, blush, sky, ice, good, warn, risk —
+     decoded from public-web CSS / source assets; OMIT a var only if undecodable
+     (render_review.py supplies the neutral default for any missing var) */ },
+  "fonts": {
+    "heading": { "family": "...", "faces": [{ "weight": 500, "style": "normal",
+      "src_woff2": "assets/fonts/<file>.woff2", "src_woff": null }],
+      "cdn": null, "fallback": "Georgia, serif" },
+    "body": { "family": "...", "faces": [], "cdn": null,
+      "fallback": "ui-sans-serif, system-ui, sans-serif" }
+  },
+  "logo": { "src": "assets/<logo-file>", "wordmark_text": "<org>" }
+}
+```
+
+Degradation rules (the design sub-agent must apply these explicitly):
+- **Palette:** decode every var possible from public-web CSS / source theme files; leave undecodable vars out of the emitted JSON (the renderer fills neutral defaults). Palette is decodable even with no local files.
+- **Fonts:** identify families; download local font files into `{brand-folder-path}/assets/fonts/` and record a **relative** `src_woff2`/`src_woff`. Drop a face with no obtainable source. Undecodable family ⇒ set `family` to the fallback stack's lead token (never an empty string). If all faces drop and no `cdn`, emit no faces — rely on `fallback`.
+- **Logo:** download the site logo into `{brand-folder-path}/assets/` and record a relative `src`. Fetch is bounded (~10s); on timeout OR failure ⇒ set `src: null` and rely on `wordmark_text`. Never hang the build; never record a remote URL or `../` path.
+
+Offline-safety contract: Every emitted `theme` asset src MUST be relative AND resolve inside the brand folder (no `http(s):`, no `../`). `render_review.py` re-asserts this and aborts the render if violated.
+
 **Cross-framework ordering caveat** (per Architect M1): `competitive-battle-card`'s prompt names positioning as its canonical source. Battle-card dispatch receives the positioning DRAFT — a placeholder note in the dispatch prompt explains the upstream slice may not be finalized; the framework's AUTO_MODE behavior is to tag any positioning-dependent OQ with `confidence: low`, `impact: P0`, `why_it_matters` noting the upstream dependency.
+
+**Step 2.3c: Framework-internal synthesis (producers for always-on slices).**
+
+The following always-on slices have explicit producers and are EXEMPT from generic framework dispatch AND from the GAP meta-OQ path. Slices with `synthesis_method` in {`classification`, `orchestrator_inline`, `framework_internal`} never fire a GAP meta-OQ.
+
+| Slice | Producer | `synthesis_method` | Reads bodies? |
+|-------|----------|--------------------|---------------|
+| `source-map.md` (root) | Orchestrator-inline at PHASE 3 — renders the Source Registry as an ID → path → best-use traceability table. Never enters PHASE 2 dispatch. | `orchestrator_inline` | No (registry metadata only) |
+| `strategy/context.md` | Orchestrator-inline from `canonical-pre-synthesis-blob.md` (Step 2.2, bounded) + aggregated registry signal. | `orchestrator_inline` | No |
+| `strategy/operating-principles.md` | Framework-internal synthesis sub-agent reading strategy/narrative-tagged extracts (mirrors the Step 2.3b visual-structure pattern; disposable context preserves the guard). | `framework_internal` | Yes (in sub-agent) |
+| `language/copy-bank.md` | Framework-internal synthesis sub-agent reading voice/messaging-tagged extracts. | `framework_internal` | Yes (in sub-agent) |
+
+The two orchestrator-inline producers (`source-map.md`, `strategy/context.md`) are authored in PHASE 3, not dispatched here.
+
+**Dispatch the two `framework_internal` sub-agents** (operating-principles + copy-bank) in the same parallel batch as the other PHASE 2 framework dispatches (Step 2.3). Issue both as Task tool calls in a single assistant message alongside the other slice dispatches.
+
+For `strategy/operating-principles.md` sub-agent:
+- Provide: all source extracts with `strategy` or `narrative` signal tags (JSON paths).
+- Provide: `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md`.
+- Output draft: `{brand-folder-path}/.build/slices/strategy/operating-principles.md.draft.md`
+- Output OQs: `{brand-folder-path}/.build/slices/strategy/operating-principles.md.oq.json`
+- Slice frontmatter: `synthesis_method: framework_internal`, `owning_framework: reverse-engineered-brand`
+
+For `language/copy-bank.md` sub-agent:
+- Provide: all source extracts with `voice` or `messaging` signal tags (JSON paths).
+- Provide: `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md`.
+- Output draft: `{brand-folder-path}/.build/slices/language/copy-bank.md.draft.md`
+- Output OQs: `{brand-folder-path}/.build/slices/language/copy-bank.md.oq.json`
+- Slice frontmatter: `synthesis_method: framework_internal`, `owning_framework: reverse-engineered-brand`
+
+Both sub-agents apply the always-on stub contract: if signal is thin, write a one-line statement of what the slice holds plus a `## Needed inputs` list. A stub clears PHASE 2.4 Check 1 and is exempt from Check 5's short-draft warning.
 
 **Step 2.4: Ready-to-load verification gate.**
 
@@ -333,7 +355,7 @@ For each OQ with a non-null `framework_slot`:
 **Check 5 — AUTO_MODE-ignored heuristics (warnings, do NOT block).**
 Scan each `.draft.md` for:
 - **Placeholder text:** any occurrence of `[USER WILL PROVIDE]`, `TBD`, `TODO`, `<answer here>`. Match → warning: `slice: {slice-id}, heuristic: placeholder-text, found: {string}`.
-- **Suspiciously short draft:** if draft word count < 200 AND the slice mapping table indicates the framework normally produces 500+ words. Match → warning: `slice: {slice-id}, heuristic: short-draft, word_count: {N}`.
+- **Suspiciously short draft:** if draft word count < 200 AND the slice mapping table indicates the framework normally produces 500+ words. Match → warning: `slice: {slice-id}, heuristic: short-draft, word_count: {N}`. EXEMPT: always-on slices (`source-map.md`, `strategy/context.md`, `strategy/operating-principles.md`, `language/copy-bank.md`, `proof/claims-ledger.md`) when their draft is a legitimate thin stub — do not warn.
 - **Missing PHASE coverage:** if the OQs in `.oq.json` do not span every PHASE heading of the dispatched framework. Match → warning: `slice: {slice-id}, heuristic: missing-phase-coverage, missing_phases: {list}`.
 
 **Check 6 — Compound atomicity (warnings, do NOT block).**
@@ -372,13 +394,6 @@ Calibration cases:
 | Partial crash (some slices written, some not) | Check 1 | Hard-fail | Identify failed slices from error list; re-run those slices only |
 | All sub-agents fail | Check 1 (all slices missing) | Hard-fail | Check source registry (PHASE 1 gate should have caught empty sources); re-run from PHASE 1 |
 
-**Resume semantics for PHASE 3 sub-agents (added v0.4.1):**
-
-- **PHASE 3.2 group-bullets sub-agents.** Each writes `{brand-folder-path}/.build/groups/{group-id}.json`. On rerun, if the file is present and parses as JSON containing both `headline_claim` and `thinnest_gap` non-empty after trim, skip re-dispatch for that group. To force re-dispatch, delete the file.
-- **PHASE 3.2b voice-rewrite sub-agent.** Writes `{brand-folder-path}/.build/voice-rewrite.json`. On rerun, if the file is present and parses with both `asks` and `provided_summaries` keys, skip re-dispatch. To force re-dispatch, delete the file.
-
-These resume rules avoid re-paying PHASE 1 + 1.5 + 2 costs when a single sub-agent fails. The PHASE 3.2c gate runs unconditionally on the merged output regardless of which path produced it (fresh dispatch vs. resumed cache).
-
 ---
 
 ### PHASE 3: Load — Consolidate drafts, write folder, generate review HTML (silent)
@@ -392,7 +407,7 @@ Read every `.build/slices/{slice-id}.oq.json` file (Glob `{brand-folder-path}/.b
 1. Take only the `open_questions` array from each file; discard the wrapper.
 2. Concatenate all arrays in slice order. Assign global `OQ-N` ids: `global_id: "OQ-{N}"` where N is 1-indexed across the concatenation.
 
-**GAP-dedupe rule:** For OQs from genuinely unowned slices (`framework_slot: null`, `deepen_with: null`, AND `synthesis_method: ad_hoc`), deduplicate by `gap_frameworks_needed` value — emit one P0 meta-OQ per *missing framework* (not per slice instance). Audience classification OQs (`synthesis_method: classification`) are NOT GAP OQs and are not subject to this dedupe rule; they surface as classification confirmations, not framework-commissioning recommendations.
+**GAP-dedupe rule:** For OQs from genuinely unowned slices (`framework_slot: null`, `deepen_with: null`, AND `synthesis_method: ad_hoc`), deduplicate by `gap_frameworks_needed` value — emit one P0 meta-OQ per *missing framework* (not per slice instance). OQs from slices with `synthesis_method` in {`classification`, `orchestrator_inline`, `framework_internal`} are NOT GAP OQs and are not subject to this dedupe rule: classification OQs surface as classification confirmations; orchestrator_inline and framework_internal OQs surface as standard slice OQs under their producing framework.
 
 **Field-rename mapping (v0.1 → v0.2 schema):** Rename any v0.1 fields the sub-agents may have emitted:
 - `best_guess` → `inferred_value`
@@ -402,142 +417,47 @@ Read every `.build/slices/{slice-id}.oq.json` file (Glob `{brand-folder-path}/.b
 
 The AUTO_MODE preamble enforces v0.2 field names directly, so this step is a no-op for compliant sub-agents. Log a warning if any v0.1 rename was actually applied.
 
-**Step 3.2: Build the `folders` array.**
+**Step 3.1.5: Curate open questions.**
 
-For each top-level brand-folder subdirectory (`strategy`, `language`, `audiences`, `personas`, `market`, `proof`, `design`):
-- Determine `status`: `Strong` (≥1 slice with HIGH-confidence OQs and 0 P0 OQs), `Partial` (≥1 slice present, some P0 OQs), `Weak` (slice present but mostly LOW confidence), `GAP` (no owning framework). Retained for backward compat — `grade` is the front-line signal in v0.3.0+ surfaces.
-- **Compute `grade` (1-5 integer).** Four-bucket `status` is too coarse — almost every folder lands in `Partial` and the badge tells the reviewer nothing actionable. The grade lets a reviewer ask "how much should I trust this area before I dig in?" Use this rubric, in order — first matching tier wins:
-  - **5 — Strong:** 0 P0 OQs AND ≥70% of this folder's OQs have `confidence: high` AND each slice in this folder draws on ≥3 evidence sources (count distinct entries across all `evidence` arrays per slice).
-  - **4 — Mostly clear:** 0-1 P0 OQs AND ≥50% of OQs have `confidence: high` OR `medium`.
-  - **3 — Mixed:** 2-4 P0 OQs. (Most folders that previously landed in `Partial` belong here.)
-  - **2 — Thin:** 5+ P0 OQs AND majority of OQs are `confidence: low`.
-  - **1 — Insufficient:** Folder contains a GAP slice OR no usable source signal (folder was instantiated via `skipped_no_signal` paths only).
-- Count `p0_count`, `p1_count`, `p2_count` from the slices in this folder.
-- Build `framework_dispatches`: array of `{framework_id, fills}` entries for each dispatched framework.
-- For folders populated via classification (`audiences`): set `synthesis_method: classification` on the folder summary; do NOT set `gap_frameworks_needed`. The folder's status reflects classification confidence (Strong/Partial/Weak), not framework presence.
-- For genuinely unowned slices (if any remain after the audiences rewiring): set `gap_frameworks_needed: [...]` with the missing framework ids derived from slice-level GAP OQs.
-- **Write `summary`** (1-3 sentences, brand-specific). Read the slice drafts in this folder and the OQ list, then write a brief executive summary of what the build *learned about this specific brand* in this area. Surface where confidence is high (e.g., "Tone signal converges across the marketing site and three sales decks"), where it's thin (e.g., "The headline metric has one source and no controlled benchmark"), and the single most-load-bearing open question. **Do not write a generic definition of the area** (e.g., "Strategy is how the brand is positioned") — the reader already knows what the area means. The summary is for skim-comprehension of *this brand's current state in this area*. Length: 1-3 sentences max.
-- **Aggregate `input_asks`** (NEW, v0.4.0+). For each folder, build the `input_asks` array by collecting from every slice that contributed to this folder. The orchestrator reads each framework's `prompt.md` frontmatter directly here — this is permitted by the carve-out at `prompt.md` lines 25-26 ("Bounded spec/template files ... are allowed in orchestrator context"). Frontmatter blocks are bounded (≤30 lines each). Read each only once and parse the YAML front-matter for `input_asks`:
-  - Framework-dispatched slices: open `frameworks/{owning-framework-id}/prompt.md`, parse the YAML front-matter, take the `input_asks` array. The `owning-framework-id` for each slice is in the slice-mapping table at PHASE 2 (`prompt.md` lines 150-162). Skip frameworks whose front-matter omits the field.
-  - `audiences` folder: read the `input_asks` YAML block from the `## Ideal inputs` section of `frameworks/reverse-engineered-brand/audience-taxonomy.md`.
-  - `competitive` folder: read the in-memory `competitive_context_input_asks` array from PHASE 1.5a.
-  - Slice-specific overrides (the `market/alternatives.md`, `proof/clinical-evidence.md`, `proof/compliance.md` slices): read the slice-specific inline `input_asks` arrays declared at PHASE 2 by Task 14b (`alternatives_input_asks`, `clinical_evidence_input_asks`, `compliance_input_asks`). Use these INSTEAD of the owning framework's asks for those specific slices (positioning's asks still feed `strategy/positioning.md`; alternatives' asks feed `market/alternatives.md`).
+Invoke the deterministic curator (no sub-agent, no LLM):
 
-  **Dedupe-by-text merge rule.** Concatenate all asks for the folder, then dedupe by `ask` text using case-insensitive whitespace-trimmed comparison. On collision, the higher tier wins (`critical` > `recommended` > `optional`). Within each tier, preserve first-seen order for determinism.
-
-  **Single-slice folder behavior.** If a folder hosts exactly one framework-dispatched slice, the dedupe step is a no-op and the asks pass through in framework-declared order.
-
-  **Multi-slice folder behavior.** `strategy/` (positioning + narrative), `language/` (messaging + voice), `market/` (competitive + alternatives), and `proof/` (proof-points + clinical + compliance) each collect from multiple frameworks; the dedupe rule keeps the consolidated Overview list clean.
-
-  **Write `provided_summary` placeholder.** Set `provided_summary` to `null` here — the Step 3.2b sub-agent populates it. The verification gate in Step 3.2c hard-fails if any folder still has `provided_summary: null` at JSON-write time.
-
-**Step 3.2-NEW: Build `display_groups[]` shells + dispatch group-bullets sub-agents.**
-
-After `folders[]` is built, construct the `display_groups[]` array with exactly 4 entries in this order:
-
-1. `id: "how-you-show-up"`, `label: "How you show up"`, `folder_ids: ["strategy", "language", "design"]`
-2. `id: "who-you-sell-to"`, `label: "Who you sell to"`, `folder_ids: ["audiences", "personas"]`
-3. `id: "who-you-sell-against"`, `label: "Who you sell against"`, `folder_ids: ["market", "competitive"]`
-4. `id: "what-you-can-prove"`, `label: "What you can prove"`, `folder_ids: ["proof"]`
-
-If any listed folder is absent from `folders[]` (e.g., `competitive` is a top-level synthetic folder, not a brand-folder subdirectory — gate behavior: include if behavioral_alternatives + competitors arrays are non-empty), filter `folder_ids` to actually-present folders before continuing.
-
-For each group, compute the shell fields:
-- `grade`: rounded mean of constituent folders' `grade` values; cap at 5.
-- `input_asks`: union of constituent folders' `input_asks`, deduped by case-insensitive whitespace-trimmed `ask` text. Higher tier wins on collision (`critical` > `recommended` > `optional`). Within a tier, preserve first-seen order in `display_groups[i].folder_ids` order.
-- `headline_claim`, `thinnest_gap`, `provided_summary`: temporarily set to `""` placeholders; sub-agents populate them next.
-
-**Dispatch 4 sub-agents in PARALLEL** (single assistant message, 4 Task calls). Each uses `subagent_type: general-purpose` and the prompt template at `frameworks/reverse-engineered-brand/group-bullets.md`. Substitute the placeholders per group, including `{output-json-path}` = `{brand-folder-path}/.build/groups/{group-id}.json`.
-
-The `{canonical-pre-synthesis-blob-path}` placeholder resolves to `{brand-folder-path}/.build/canonical-pre-synthesis-blob.md` — the 1-paragraph blob the orchestrator already authored at PHASE 2.2 from the Source Registry (org-name + brief positioning hypothesis + brief ICP hypothesis). The same blob is passed to every framework dispatch, so the group-bullets sub-agents share that baseline view. Sub-agents read it as orienting context; they do not modify it.
-
-**After all 4 return:** Read each `.build/groups/{group-id}.json` file. Validate the JSON parses and contains `headline_claim` + `thinnest_gap` keys. Merge into the in-memory `display_groups[]` by `id`. If any file is missing or malformed: hard-fail with `group: {id}, failure: file_missing|malformed_json|missing_keys`.
-
-**Resume semantics.** If a sub-agent succeeded on a previous run (its `.build/groups/{group-id}.json` is present and parses), skip re-dispatch for that group. This makes PHASE 3.2 idempotent across reruns and avoids re-paying PHASE 1+1.5+2 costs after a single-sub-agent failure.
-
-**Step 3.2b: Brand-voice rewrite + `provided_summary` generation (NEW).**
-
-After Step 3.2 produces `folders[].input_asks` with placeholder `provided_summary: null`, dispatch a single sub-agent (Task, `subagent_type: general-purpose`) using the prompt template at `frameworks/reverse-engineered-brand/voice-rewrite.md`. The sub-agent (a) rewrites every `ask` string in the project's brand voice, and (b) authors one `provided_summary` string per folder from Source Registry metadata.
-
-**Inputs to the sub-agent (orchestrator constructs the prompt body):**
-
-- The flat list of every `ask` string across all groups, tagged by `(group_id, index, tier)` so the response can be merged back deterministically. The sub-agent MUST echo back each entry's `(group_id, index)` tuple — those are the merge keys, not array order. Merge by tuple, NOT by position.
-- Per-group aggregated registry tuples (union across the group's `folder_ids`) of `(source_id, source_type, signal_tags)` from the Source Registry built in PHASE 1. **Registry metadata only — no source bodies.** This preserves the iron context-bloat guard.
-- The path to the brand voice file. **Resolution order at runtime, not authorship time:**
-  1. `{brand-folder-path}/guidelines/brand-voice.md` (project-relative; the brand-folder spec puts guidelines inside the brand folder)
-  2. `$HOME/.claude/brand-voice.md` (global)
-  3. Pass-through (neither file exists) — sub-agent returns ask strings unchanged and authors `provided_summary` plainly.
-
-  If the resolved file exists, read it once and include its contents in the sub-agent prompt with the instruction: "Rewrite each ask string to match this voice. Preserve quantification ('3-5'), preserve typed nouns ('interview transcripts'), do not introduce new claims, do not drop or merge entries."
-
-**Sub-agent returns:**
-
-```json
-{
-  "asks": [
-    {"group_id": "how-you-show-up", "index": 0, "tier": "critical", "ask": "<voice-revised, shape-transformed>"}
-  ],
-  "provided_summaries": {
-    "how-you-show-up": "3 marketing decks, 1 founder essay; no recorded sales calls."
-  }
-}
+```bash
+python3 frameworks/reverse-engineered-brand/scripts/curate_open_questions.py \
+  "{brand-folder-path}/.build/slices" > "{brand-folder-path}/.build/curated-oq.json"
 ```
 
-The orchestrator merges the response back into `display_groups[]`:
-- For each ask entry returned by the sub-agent, locate the original by the `(group_id, index)` tuple — NOT by array position in the response. Replace `display_groups[group_id].input_asks[index].ask` with the voice-revised string. Tier is unchanged.
-- For each group, set `display_groups[group_id].provided_summary` to the corresponding string from `provided_summaries`.
-- Any tuple from the input list that has no match in the response is a sub-agent omission — the verification gate in Step 3.2c catches it via Check 1 (array length parity).
+`curated-oq.json` is the thin persisted shape (5 fields, `OQ-NNN` ids) — owner-authority decisions first, impact-rank backfill to a floor of 5, hard cap 15. This is the ONLY OQ set persisted to `review-data.json`; the full per-slice queue stays in `.build/` and is deleted at cleanup.
 
-**Substitute these placeholders into `voice-rewrite.md` before dispatch:**
+**Step 3.2: Build the 7 area sections inline.**
 
-- `{ask-list-json}` — the JSON-encoded array described above
-- `{folder-sources-json}` — the JSON-encoded per-folder registry slice
-- `{brand-voice-content}` — the resolved file's contents, or the literal `PASS_THROUGH` string if neither resolved path exists
+For each of the 7 area folders (`strategy`, `language`, `personas`, `audiences`, `market`, `proof`, `design`), the orchestrator authors a `sections[]` entry directly (no sub-agent — the OQ queue and Slice Index are already in-context metadata):
 
-**On sub-agent dispatch failure** (timeout, malformed JSON return, missing keys): abort the build with a hard-fail message naming the sub-agent and the failure mode. Do NOT silently fall back to pre-rewrite asks — the verification gate in Step 3.2c assumes the rewrite happened.
+- `id` (bare folder token — MUST be one of `overview`, `strategy`, `language`, `personas`, `audiences`, `market`, `proof`, `design`; the renderer routes OQs by `oq["slice"].startswith(section_id + "/")` — any other value silently drops all OQs for that section).
+- `label` (display name).
+- `grade` (1–5) per the existing rubric, first matching tier wins:
+  - **5 — Strong:** 0 P0 OQs AND ≥70% of this folder's OQs have `confidence: high` AND each slice in this folder draws on ≥3 evidence sources (count distinct entries across all `evidence` arrays per slice).
+  - **4 — Mostly clear:** 0-1 P0 OQs AND ≥50% of OQs have `confidence: high` OR `medium`.
+  - **3 — Mixed:** 2-4 P0 OQs.
+  - **2 — Thin:** 5+ P0 OQs AND majority of OQs are `confidence: low`.
+  - **1 — Insufficient:** Folder contains a GAP slice OR no usable source signal (folder was instantiated via `skipped_no_signal` paths only).
+- `confidence`: **derived** (R4) — the modal per-slice `low|medium|high` across the folder's slices; widen to a compound string ("medium-high") ONLY when slices split evenly between two adjacent levels.
+- `status`: a short eyebrow string (e.g., "Default category recommended").
+- `summary`: 1–3 brand-specific sentences. Read the slice drafts in this folder and the OQ list, then write a brief executive summary of what the build *learned about this specific brand* in this area. Surface where confidence is high, where it's thin, and the single most-load-bearing open question. **Do not write a generic definition of the area** — the reader already knows what the area means.
+- `provided[]`: plain bullet list of what the build has. For `market`, summarize the in-`.build/` `competitors[]`/`behavioral_alternatives[]` here.
+- `needed[]`: plain bullet list of missing inputs. For always-on stub slices this mirrors the stub's `## Needed inputs`.
+- `files[]`: the brand file paths this section covers.
 
-**Step 3.2c: Input-ask verification gate (NEW).**
+**Step 3.2.5: Build the overview section.**
 
-Three checks run against the merged `folders[]` array. All three are hard-fail; on any failure, abort the build and print the named failure list. Do NOT proceed to write the JSON.
+The orchestrator computes the synthetic `overview` section from the 7 area sections:
 
-**Check 1 — Array length parity.** For each group, the count of `display_groups[i].input_asks` after Step 3.2b must equal the count before Step 3.2b (the orchestrator-aggregated count, pre-voice-rewrite). The sub-agent cannot drop or add entries. On mismatch: hard-fail with `folder: {id}, before: {N}, after: {M}`.
-
-**Check 2 — Banned-phrase regex.** Apply the following case-insensitive regex set to every post-pass `ask` string AND every `provided_summary` string AND every `display_groups[].headline_claim` AND every `display_groups[].thinnest_gap`. On any match, hard-fail with `field: {ask|provided_summary|headline_claim|thinnest_gap}, folder: {id}, matched: {pattern}, value: {string}`:
-
-- Em dash or en dash: `[—–]`
-- "It's not X, it's Y" construction: `\bit'?s not\b[^.!?]+,?\s+(it'?s )?`
-- AI buzzwords (single regex, alternation): `\b(leverage|seamless|unlock|streamline|delve|robust|cutting-edge|transformative|elevate|revolutionize|crucial|essential)\b`
-
-**Check 3 — Tier preservation.** For each group, walk `display_groups[i].input_asks` by index. The `tier` at index `i` post-rewrite must equal the `tier` at index `i` pre-rewrite. On mismatch: hard-fail with `folder: {id}, index: {i}, before: {tier_before}, after: {tier_after}`.
-
-**Check 4 — Word-count caps (NEW).** Use `trim().split(/\s+/).filter(Boolean).length` to compute the word count for each field below. Hard-fail with `field: {name}, scope: {group_id or folder_id}, count: {n}, cap: {c}, value: {string}` if `count > cap`:
-
-| Field | Scope | Cap |
-|---|---|---|
-| `folders[].provided_summary` | per folder | 25 |
-| `folders[].input_asks[].ask` | per folder, per ask | 12 |
-| `display_groups[].headline_claim` | per group | 14 |
-| `display_groups[].thinnest_gap` | per group | 14 |
-| `display_groups[].provided_summary` | per group | 25 |
-| `display_groups[].input_asks[].ask` | per group, per ask | 12 |
-
-`folders[].headline_claim` and `folders[].thinnest_gap` are NOT capped because they DO NOT EXIST in the schema.
-
-**Check 5 — Shape compliance (NEW).**
-
-a. **Verb-form rejection.** For every `ask` in `display_groups[].input_asks[]` AND `folders[].input_asks[]`, apply the case-insensitive regex `^\s*(if|ideally|when|where the buyer)\b`. On match: hard-fail with `field: input_asks.ask, scope: {group_id|folder_id}, index: {i}, matched: {pattern}, value: {string}`.
-
-b. **Required-non-empty.** For every `display_groups[i]`, verify `headline_claim` and `thinnest_gap` are non-empty after `trim()`. On either empty: hard-fail with `field: {headline_claim|thinnest_gap}, group: {id}, reason: empty_or_whitespace_only`.
-
-c. **Field presence.** For every `display_groups[i]`, verify the keys `id`, `label`, `folder_ids`, `grade`, `headline_claim`, `thinnest_gap`, `provided_summary`, `input_asks` are all present (`folder_ids` and `input_asks` may be empty arrays; the four required strings may NOT). On missing key: hard-fail with `field: {key}, group: {id}, reason: missing`.
-
-Empty-string `thinnest_gap` IS permitted in the legacy-fallback path (`legacyFolderAsGroup()` produces it for v0.4.0 fixtures rendered without authoring). Check 5 is enforced ONLY on authored v0.4.1 output. The detection signal: `display_groups[i].id` does NOT start with `legacy-`. Synthetic legacy ids are generated only by the renderer's `legacyFolderAsGroup()` helper, never by the orchestrator's PHASE 3.2 authoring path. The gate at PHASE 3.2c runs against orchestrator output (in-memory `display_groups[]` immediately before `.open-questions.json` is written) — at that point no legacy ids exist, so the carveout is in practice a documentation safeguard, not a runtime branch.
-
-**Behavior change note (Check 4 caps on `folders[].provided_summary` and `folders[].input_asks[].ask`):** These caps formalize an implicit constraint that already existed in the voice-rewrite sub-agent prompt ("1 sentence ≤25 words", "12-word cap" in Step 0). Existing v0.4.0 brand-folder rebuilds may hit the cap if previous runs produced over-budget text. Operator recovery is to delete the affected folder's `.build/voice-rewrite.json` and rerun PHASE 3.2b. No source-data modification is required.
-
-On any check failure: print all failures (do not stop at the first), then abort. Voice failures should be rare; when they happen, the operator's recovery is "edit the brand-voice file or re-prompt the sub-agent". No silent fallback.
-
-If all checks pass, proceed to Step 3.3.
+- `id`: `"overview"`, `label`: `"Overview"`.
+- `grade`: editorial, **seeded by the rounded mean** of the 7 area grades (the author may adjust ±1 with a one-line justification in `summary`; default to the rounded mean).
+- `confidence`: derived — modal `low|medium|high` across all 7 sections.
+- `readout`: `{brand_system, main_risk, decisions_needed}` (3 short strings synthesized from the 7 sections; `decisions_needed` reads `"No owner decisions outstanding."` when the curated OQ list is empty).
+- `recent_update`: **`null`** on first build (the diff machinery is unbuilt — YAGNI; no re-run workflow in scope).
+- `provided[]`/`needed[]`: the highest-signal items rolled up from the 7 sections.
+- `summary`: 1–3 sentences synthesizing the overall brand build state.
 
 **Step 3.3: Aggregate competitor dossiers.**
 
@@ -556,110 +476,120 @@ For each entry in the slice index from PHASE 2:
 
 This is a filesystem move, not a read — drafts never re-enter orchestrator context.
 
-**Step 3.6: Write top-level brand-folder files.**
+**Step 3.6: Write orchestrator-inline brand files and `review-data.json`.**
 
-**`{brand-folder-path}/CLAUDE.md`** — brand-folder manifest per `docs/brand-folder-spec.md § CLAUDE.md template`, plus:
-1. **Source Registry** — the registry from PHASE 1, written as a table.
-2. **Slice Index** — every file with status + confidence + owning framework + one-line summary.
-3. **Next Steps to Deepen** — one line per slice, e.g.:
-   ```
-   - `strategy/positioning.md` → run `/aligned:use-framework 5-components-positioning` for a deeper, interactive pass
-   - `audiences/channels/employer.md` → Classified from source material against `audience-taxonomy.md`. Confidence: {high|medium|low}.
-   ```
+**Author `{brand-folder-path}/source-map.md`** inline from the Source Registry assembled in PHASE 1: a table with columns `(source_id, path, best-use)` — one row per registry entry.
 
-**`{brand-folder-path}/version.yaml`** — `schema_version: "0.4.1"`, `generated_by: reverse-engineered-brand`, `build_timestamp: {ISO-8601}`, `git_sha` if available, `sources: [list of registry entry IDs]`.
+**Author `{brand-folder-path}/strategy/context.md`** inline from the pre-synthesis blob (`{brand-folder-path}/.build/canonical-pre-synthesis-blob.md`) and Source Registry. This is the `orchestrator_inline` brand-context stub for the strategy area.
 
-**`{brand-folder-path}/contracts.yaml`** — copy canonical contracts from `docs/brand-folder-spec.md § contracts.yaml`.
+**Compute `source_counts`.** From the in-memory Source Registry and slice index:
 
-**Compute `source_counts` and `source_narratives` (before writing the JSON).** From the in-memory Source Registry assembled in PHASE 1:
+1. **`total_sources`** = number of entries in the Source Registry (PHASE 1 Step 1.3 total count).
+2. **`usable_sources`** = count of registry entries with `used: true` (contributed signal to at least one slice).
+3. **`canonical_markdown_files`** = count of `.md` files under `{brand-folder-path}/` after the Step 3.5 move. Use Glob `{brand-folder-path}/**/*.md`.
+4. **`review_sections`** = 8 (always: 7 area sections + 1 overview).
+5. **`open_questions`** = length of the curated OQ array from `{brand-folder-path}/.build/curated-oq.json`.
 
-1. **`source_counts.total`** = number of entries in the Source Registry (regardless of `used` status — total sources fed to the build).
-2. Bucket each source as `primary_research` if its `signal_tags` array contains `customer-voice` OR `persona`; otherwise bucket as `raw_material`.
-3. **`source_counts.raw_material`** = count of the raw_material bucket. **`source_counts.primary_research`** = count of the primary_research bucket.
-4. **`source_narratives.raw_material`** — write a 1-3 sentence narrative naming what's strong and what's thin in the raw-material corpus (which document types dominate, which are absent, what the orchestrator could and could not get signal on). Example shape: "Raw material is dominated by 18 marketing/sales decks and 5 press articles; product specs and internal strategy memos are absent; signal strength is strongest on positioning and weakest on pricing."
-5. **`source_narratives.primary_research`** — same shape for primary research (customer/persona evidence). Name interview counts, whether buyer interviews exist, and which voices are missing.
+**Build the `theme` block.** Read `{brand-folder-path}/.build/theme.json` (written by PHASE 2 Step 2.6 if a design pass ran). If absent, use:
 
-These are required fields in v0.4.0. Compute them from registry metadata only — do not read source bodies (context-bloat guard).
+```json
+{ "palette": {}, "fonts": { "heading": null, "body": null }, "logo": { "src": null, "wordmark_text": "{org-name}" } }
+```
 
-**`{brand-folder-path}/.open-questions.json`** — the full aggregated JSON with `schema_version: "0.4.1"`:
+**Write `{brand-folder-path}/review-data.json`** — the full envelope:
 
 ```json
 {
-  "schema_version": "0.4.1",
-  "source_counts": { "total": 39, "raw_material": 30, "primary_research": 9 },
-  "source_narratives": {
-    "raw_material": "...",
-    "primary_research": "..."
+  "org": "{org-name}",
+  "generated_at": "{ISO-8601 timestamp}",
+  "brand_folder": "{brand-folder-path}",
+  "source_counts": {
+    "total_sources": 39,
+    "usable_sources": 32,
+    "canonical_markdown_files": 14,
+    "review_sections": 8,
+    "open_questions": 12
   },
-  "folders": [
+  "grade_scale": {
+    "1": "Insufficient",
+    "2": "Thin",
+    "3": "Mixed",
+    "4": "Mostly clear",
+    "5": "Strong"
+  },
+  "theme": { "palette": {}, "fonts": { "heading": null, "body": null }, "logo": { "src": null, "wordmark_text": "Acme" } },
+  "sections": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "grade": 3,
+      "confidence": "medium",
+      "status": "Review ready",
+      "readout": { "brand_system": "...", "main_risk": "...", "decisions_needed": "..." },
+      "recent_update": null,
+      "summary": "1-3 sentences...",
+      "provided": ["..."],
+      "needed": ["..."],
+      "files": []
+    },
     {
       "id": "strategy",
       "label": "Strategy",
+      "grade": 3,
+      "confidence": "medium",
       "status": "Partial",
-      "grade": 3,
-      "summary": "1-3 sentence brand-specific learnings about this area...",
-      "p0_count": 2,
-      "p1_count": 3,
-      "p2_count": 1,
-      "framework_dispatches": [
-        { "framework_id": "5-components-positioning", "fills": ["strategy/positioning.md"] }
-      ],
-      "provided_summary": "1 founder interview, 2 case study drafts, no recorded sales calls.",
-      "input_asks": [
-        { "tier": "critical", "ask": "<voice-rewritten ask>" },
-        { "tier": "recommended", "ask": "<voice-rewritten ask>" }
-      ]
+      "summary": "1-3 sentences...",
+      "provided": ["..."],
+      "needed": ["..."],
+      "files": ["strategy/positioning.md", "strategy/narrative.md"]
     }
   ],
-  "display_groups": [
-    {
-      "id": "how-you-show-up",
-      "label": "How you show up",
-      "folder_ids": ["strategy", "language", "design"],
-      "grade": 3,
-      "headline_claim": "<≤14 words, brand-specific, declarative>",
-      "thinnest_gap": "<≤14 words, brand-specific, declarative>",
-      "provided_summary": "<≤25 words inventorying group-level source material>",
-      "input_asks": [
-        { "tier": "critical", "ask": "<≤12-word noun-form doc-category>" }
-      ]
-    }
-  ],
-  "behavioral_alternatives": [],
-  "competitors": [],
   "open_questions": [
     {
       "id": "OQ-1",
-      "file": "strategy/positioning.md",
-      "framework_slot": "phase-2-competitive-alternatives",
-      "confidence": "low",
+      "slice": "strategy/positioning.md",
       "impact": "P0",
-      "inferred_value": "...",
-      "draft_excerpt": "...",
       "question": "...",
-      "why_it_matters": "...",
-      "deepen_with": "5-components-positioning",
-      "evidence": ["#4", "#6"]
+      "why_it_matters": "..."
     }
   ]
 }
 ```
 
+**Author `{brand-folder-path}/version.yaml`** inline (Marley-shaped):
+
+```yaml
+brand_name: "{org-name}"
+generated_at: "{ISO-8601 timestamp}"
+framework: reverse-engineered-brand
+source_root: "{brand-folder-path}"
+status: first_draft
+confidence: "{modal confidence across the 7 area sections}"
+notes: "First draft from reverse-engineered-brand. Open questions logged in review-data.json."
+```
+
+**Author `{brand-folder-path}/CLAUDE.md`** inline using the manifest template from `docs/brand-folder-spec.md § CLAUDE.md manifest template`. Populate:
+- **File inventory:** every slice in the Slice Index. The 5 always-on slices (`source-map.md`, `strategy/context.md`, `strategy/operating-principles.md`, `language/copy-bank.md`, `proof/claims-ledger.md`) are always present; area slices appear when the Slice Index has a non-stub entry for that path.
+- **Composition contract summary:** reference `contracts.yaml`; no inline expansion needed.
+- **Next Steps to Deepen:** framework IDs taken from each area `sections[]` entry, ordered by grade (lowest first). Use the `/aligned:use-framework {framework-id}` invocation pattern per the spec template.
+
+**Author `{brand-folder-path}/contracts.yaml`** inline using the composition contract schema from `docs/brand-folder-spec.md § Composition contract`. Add a `reverse-engineered-brand.produces` list enumerating all Slice Index entries — always-on slices first, then area slices by folder order.
+
 **Step 3.7: Dispatch the renderer.**
 
 Read `frameworks/reverse-engineered-brand/render-review-html.md` once. Dispatch a Task with `subagent_type: general-purpose` and a prompt built by substituting these placeholders into the template:
 
+- `{review-data-json-path}` — absolute path to `{brand-folder-path}/review-data.json`
 - `{template-path}` — absolute path to `frameworks/reverse-engineered-brand/review-template.html`
-- `{open-questions-json-path}` — absolute path to `{brand-folder-path}/.open-questions.json`
 - `{output-html-path}` — `{brand-folder-path}/review.html`
-- `{brand-folder-path}` — absolute path to the brand folder
 - `{org-name}` — org name from PHASE 0
+- `{brand-folder-path}` — absolute path to the brand folder
 
-The renderer reads the template, substitutes the three tokens (`{open-questions-json}` ← the JSON content, `{brand-folder-path}` ← the path, `{org-name}` ← the name), applies the sanitization + verify-before-open contract from `render-review-html.md`, writes to the output path, and opens it.
+The renderer reads `review-data.json`, injects it into the template, applies the sanitization + verify-before-open contract from `render-review-html.md`, writes to the output path, and opens it.
 
 **Step 3.8: Clean up `.build/`.**
 
-Delete `{brand-folder-path}/.build/` and all its contents. Dossier data has been inlined into `.open-questions.json` so `.build/competitors/` is no longer needed; same for `.build/slices/` (drafts moved in Step 3.5) and `.build/extracts/` (one-shot).
+Delete `{brand-folder-path}/.build/` and all its contents. All brand content has been written to canonical paths (`.md` files via Step 3.5, `review-data.json` via Step 3.6, `review.html` via Step 3.7); `.build/slices/`, `.build/competitors/`, `.build/extracts/`, `.build/theme.json`, and `.build/curated-oq.json` are no longer needed.
 
 Note: failures earlier in the run would have aborted before reaching this step (the verification gate at PHASE 2 Step 2.4 catches missing drafts; the hard-fail gate at PHASE 1 Step 1.3 catches zero usable sources). By the time control reaches Step 3.8, the build is known-complete and `.build/` is safe to remove unconditionally.
 
@@ -668,12 +598,11 @@ Note: failures earlier in the run would have aborted before reaching this step (
 Print to the user a 5–10 line summary:
 
 - Org name
-- Source count
-- Slice count and GAP slice count
-- Competitor count
-- Behavioral-alternatives count
-- Total OQ count broken down by P0/P1/P2
+- `source_counts.total_sources` and `source_counts.usable_sources`
+- `source_counts.canonical_markdown_files` (markdown files generated)
+- `source_counts.review_sections` = 8
+- `source_counts.open_questions` total broken down by P0/P1/P2 (from the curated OQ list)
 - Path to `review.html`
-- One-line invitation to run `/aligned:use-framework {framework-id}` against the highest-priority slice (chosen from the `folders[].framework_dispatches` array sorted by P0 count)
+- One-line invitation to run `/aligned:use-framework {framework-id}` against the highest-priority area section (chosen by lowest grade + highest P0 count)
 
 END.

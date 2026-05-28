@@ -32,7 +32,7 @@
 
 ---
 
-### Task 1: Rewrite the data-shape contract — `open-questions-schema.md`
+### ✅ Task 1: Rewrite the data-shape contract — `open-questions-schema.md`
 
 **Files:**
 - Modify (full rewrite): `frameworks/reverse-engineered-brand/open-questions-schema.md`
@@ -79,7 +79,7 @@ git commit -m "docs(reb): rewrite schema to Marley review-data model (sections, 
 
 ---
 
-### Task 1b: Rebuild `test-fixtures/oq-schema/` — delete v0.4.1 fixtures, create rich-shape replacements
+### ✅ Task 1b: Rebuild `test-fixtures/oq-schema/` — delete v0.4.1 fixtures, create rich-shape replacements
 
 **Files:**
 - Delete: all existing files in `frameworks/reverse-engineered-brand/test-fixtures/oq-schema/` (8 files: `valid-v040-minimal.json` and others referencing `input_asks`/`provided_summary`)
@@ -107,7 +107,7 @@ git commit -m "test(reb): rebuild oq-schema fixtures to rich-shape (drop v0.4.1 
 
 ---
 
-### Task 2: Create curation input fixtures (rich-shape `.oq.json` sets)
+### ✅ Task 2: Create curation input fixtures (rich-shape `.oq.json` sets)
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/test-fixtures/curation/README.md`
@@ -140,7 +140,7 @@ git commit -m "test(reb): add curation input fixtures (rich-shape OQ queues)"
 
 ---
 
-### Task 3: Implement `curate_open_questions.py` (TDD)
+### ✅ Task 3: Implement `curate_open_questions.py` (TDD)
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/scripts/curate_open_questions.py`
@@ -384,7 +384,7 @@ git commit -m "feat(reb): deterministic curate_open_questions.py with owner-auth
 
 ---
 
-### Task 4: Replace `review-template.html` with the Marley self-theming shell
+### ✅ Task 4: Replace `review-template.html` with the Marley self-theming shell
 
 **Files:**
 - Modify (full replacement): `frameworks/reverse-engineered-brand/review-template.html`
@@ -428,7 +428,7 @@ git commit -m "feat(reb): replace template with Marley self-theming token-slot s
 
 ---
 
-### Task 5: Rebuild render fixtures (`review-data.json`-shaped) + theme fixtures
+### ✅ Task 5: Rebuild render fixtures (`review-data.json`-shaped) + theme fixtures
 
 **Files:**
 - Modify (rewrite): `frameworks/reverse-engineered-brand/test-fixtures/render/README.md`
@@ -472,7 +472,7 @@ git commit -m "test(reb): rebuild render fixtures to review-data.json shape + th
 
 ---
 
-### Task 6: Implement `render_review.py` (TDD)
+### ✅ Task 6: Implement `render_review.py` (TDD)
 
 **Files:**
 - Create: `frameworks/reverse-engineered-brand/scripts/render_review.py`
@@ -821,7 +821,7 @@ git commit -m "feat(reb): self-theming render_review.py with degradation + verif
 
 ---
 
-### Task 7: `prompt.md` PHASE 2.1 — exempt the 5 always-on slices + stub contract
+### ✅ Task 7: `prompt.md` PHASE 2.1 — exempt the 5 always-on slices + stub contract
 
 > **Ordering:** Tasks 7–12 all edit `frameworks/reverse-engineered-brand/prompt.md`. Run in order.
 
@@ -851,7 +851,7 @@ git commit -m "feat(reb): exempt 5 always-on slices from skip-no-signal + GAP pa
 
 ---
 
-### Task 8: `prompt.md` PHASE 2.3b — emit the `theme` manifest (palette / fonts / logo)
+### ✅ Task 8: `prompt.md` PHASE 2.3b — emit the `theme` manifest (palette / fonts / logo)
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (§"Step 2.3b: Visual-structure synthesis" and §"Color library extraction requirement")
@@ -897,7 +897,7 @@ git commit -m "feat(reb): emit structured theme manifest (palette/fonts/logo) in
 
 ---
 
-### Task 9: `prompt.md` — proof dispatch emits `proof/claims-ledger.md`
+### ✅ Task 9: `prompt.md` — proof dispatch emits `proof/claims-ledger.md`
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (§"Step 2.3" dispatch + the slice mapping table row for `proof/proof-points.md`)
@@ -923,7 +923,7 @@ git commit -m "feat(reb): proof dispatch emits proof/claims-ledger.md (always-on
 
 ---
 
-### Task 10: `prompt.md` — producers for the 4 orchestrator/internal always-on slices
+### ✅ Task 10: `prompt.md` — producers for the 4 orchestrator/internal always-on slices
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (Step 2.3 / Step 2.3b region + slice mapping table)
@@ -956,7 +956,7 @@ git commit -m "feat(reb): add producers + synthesis_method for 4 always-on slice
 
 ---
 
-### Task 11: `prompt.md` PHASE 3 rewrite — curate → sections → overview → counts → write → render → cleanup
+### ✅ Task 11: `prompt.md` PHASE 3 rewrite — curate → sections → overview → counts → write → render → cleanup
 
 **Files:**
 - Modify (heavy edit): `frameworks/reverse-engineered-brand/prompt.md` (replace §"Step 3.2" through §"Step 3.8", and the §"Resume semantics for PHASE 3 sub-agents" block)
@@ -1024,7 +1024,7 @@ git commit -m "feat(reb): rewrite PHASE 3 to Marley model (curate, inline sectio
 
 ---
 
-### Task 12: `prompt.md` PHASE 3.6 — `version.yaml` / `contracts.yaml` / `CLAUDE.md` authoring
+### ✅ Task 12: `prompt.md` PHASE 3.6 — `version.yaml` / `contracts.yaml` / `CLAUDE.md` authoring
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (§"Step 3.6: Write top-level brand-folder files")
@@ -1050,7 +1050,7 @@ git commit -m "feat(reb): drop schema_version; author Marley-shaped version.yaml
 
 ---
 
-### Task 13: Rewrite `render-review-html.md` — invoke `render_review.py` + verify-before-open
+### ✅ Task 13: Rewrite `render-review-html.md` — invoke `render_review.py` + verify-before-open
 
 **Files:**
 - Modify (rewrite): `frameworks/reverse-engineered-brand/render-review-html.md`
@@ -1086,7 +1086,7 @@ git commit -m "feat(reb): render-review-html.md invokes render_review.py; rewrit
 
 ---
 
-### Task 14: Delete `group-bullets.md` and `voice-rewrite.md`
+### ✅ Task 14: Delete `group-bullets.md` and `voice-rewrite.md`
 
 **Files:**
 - Delete: `frameworks/reverse-engineered-brand/group-bullets.md`
@@ -1112,7 +1112,7 @@ git commit -m "feat(reb): delete group-bullets + voice-rewrite sub-agents (2 rev
 
 ---
 
-### Task 15: `brand-folder-spec.md` — add the 5 always-on slices + synthesis methods
+### ✅ Task 15: `brand-folder-spec.md` — add the 5 always-on slices + synthesis methods
 
 **Files:**
 - Modify: `docs/brand-folder-spec.md` (directory tree, per-file purpose table, §"Synthesis methods")
@@ -1140,7 +1140,7 @@ git commit -m "docs: add 5 always-on slices + orchestrator_inline/framework_inte
 
 ---
 
-### Task 16: `audience-taxonomy.md` — delete the `## Ideal inputs` section
+### ✅ Task 16: `audience-taxonomy.md` — delete the `## Ideal inputs` section
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/audience-taxonomy.md` (delete §"Ideal inputs")
@@ -1162,7 +1162,7 @@ git commit -m "docs(reb): drop orphaned Ideal inputs section from audience-taxon
 
 ---
 
-### Task 17: `frameworks/registry.yaml` — reconcile `required_documents`
+### ✅ Task 17: `frameworks/registry.yaml` — reconcile `required_documents`
 
 **Files:**
 - Modify: `frameworks/registry.yaml` (the `reverse-engineered-brand` entry's `required_documents`)
@@ -1189,7 +1189,7 @@ git commit -m "docs(reb): registry required_documents accepts URL or local folde
 
 ---
 
-### Task 18: Migration-guard test — lock the v0.4.1→Marley cutover
+### ✅ Task 18: Migration-guard test — lock the v0.4.1→Marley cutover
 
 **Files:**
 - Create: `e2e/tests/test_reb_migration_contracts.py`
@@ -1290,7 +1290,7 @@ git commit -m "test(reb): migration-guard locks v0.4.1->Marley cutover"
 
 ---
 
-### Task 19: Add the eval scenario + trigger-map entry + promptfoo registration
+### ✅ Task 19: Add the eval scenario + trigger-map entry + promptfoo registration
 
 **Files:**
 - Create: `e2e/scenarios/use-framework/reverse-engineered-brand.yaml`

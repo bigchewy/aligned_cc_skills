@@ -3,2071 +3,272 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brand-folder review — {org-name}</title>
+  <title>{ORG_NAME} — Brand Review</title>
   <style>
-    html { scroll-behavior: smooth; }
+    /* THEME — emitted by render_review.py from review-data.json theme.palette/fonts */
+    {FONT_FACES_CSS}
     :root {
-      --color-background: #faf9f7;
-      --color-surface: #f5f3ef;
-      --color-muted: #f0eeeb;
-      --color-foreground: #1a1a1a;
-      --color-secondary: #555555;
-      --color-dimmed: #6b7280;
-      --color-border: #e5e7eb;
-      --color-accent: #ff6900;
-      --color-accent-hover: #e55d00;
-      --color-accent-subtle: #fff7ed;
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+{PALETTE_VARS_CSS}
     }
-    body {
-      font-family: var(--font-sans);
-      background: var(--color-background);
-      color: var(--color-foreground);
-      margin: 0 auto;
-      padding: 40px;
-      max-width: 1000px;
-      box-sizing: border-box;
-    }
-    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin: 0 0 4px 0; }
-    .job-statement { font-size: 0.82rem; color: var(--color-dimmed); margin: 0 0 6px 0; line-height: 1.5; }
-    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin: 0 0 4px 0; }
-    .context { font-size: 0.88rem; color: var(--color-dimmed); margin: 0 0 24px 0; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
 
-    /* Top-level tabs */
-    .tab-bar {
-      display: flex;
-      gap: 2px;
-      border-bottom: 2px solid var(--color-muted);
-      margin-bottom: 24px;
-      flex-wrap: wrap;
+    /* ── Reset / base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body, system-ui, -apple-system, "Segoe UI", sans-serif);
+      background: var(--background, #faf9f7);
+      color: var(--text-primary, #1a1a1a);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
     }
-    .tab-btn {
-      padding: 10px 18px;
-      font-size: 0.85rem;
+
+    /* ── Site header ── */
+    .site-header {
+      background: var(--primary, #1e1b4b);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 32px;
+    }
+    .site-header img.logo { height: 34px; width: auto; object-fit: contain; }
+    .wordmark { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em; }
+    .header-org {
+      font-size: 0.9rem;
+      opacity: 0.65;
+      margin-left: auto;
+      font-weight: 400;
+    }
+
+    /* ── Sticky area nav ── */
+    .area-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--surface, #f5f3ef);
+      border-bottom: 2px solid var(--border, #e5e7eb);
+      display: flex;
+      overflow-x: auto;
+      padding: 0 24px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .area-nav::-webkit-scrollbar { height: 4px; }
+    .area-nav::-webkit-scrollbar-track { background: transparent; }
+    .area-nav::-webkit-scrollbar-thumb { background: var(--border, #e5e7eb); border-radius: 2px; }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      font-size: 0.84rem;
       font-weight: 500;
-      color: var(--color-dimmed);
+      color: var(--text-secondary, #555);
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
       margin-bottom: -2px;
       cursor: pointer;
-      transition: color 150ms, border-color 150ms;
+      white-space: nowrap;
       font-family: inherit;
+      transition: color 120ms, border-color 120ms;
     }
-    .tab-btn:hover { color: var(--color-foreground); }
-    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+    .nav-btn:hover { color: var(--text-primary, #1a1a1a); }
+    .nav-btn.active { color: var(--accent, #ff6900); border-bottom-color: var(--accent, #ff6900); }
 
-    /* Sub-tabs */
-    .sub-tab-bar {
+    /* Grade chips in nav */
+    .grade-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 99px;
+      font-feature-settings: 'tnum';
+      min-width: 32px;
+    }
+    .g1 { background: #fef2f2; color: #b91c1c; }
+    .g2 { background: #fff7ed; color: #c2410c; }
+    .g3 { background: #fef9c3; color: #a16207; }
+    .g4 { background: #f0fdf4; color: #16a34a; }
+    .g5 { background: #ecfdf5; color: #047857; }
+
+    /* ── Panel container ── */
+    .panels { padding: 32px; max-width: 900px; margin: 0 auto; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Section header ── */
+    .section-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-muted, #6b7280);
+      margin: 0 0 8px;
+    }
+    .section-head {
       display: flex;
-      gap: 2px;
-      border-bottom: 1px solid var(--color-muted);
-      padding-left: 4px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
     }
-    .sub-tab-btn {
-      padding: 8px 14px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--color-dimmed);
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      transition: color 150ms, border-color 150ms;
-      font-family: inherit;
+    .section-head h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+      line-height: 1.2;
     }
-    .sub-tab-btn:hover { color: var(--color-foreground); }
-    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+    .grade-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-feature-settings: 'tnum';
+    }
+    .grade-badge.g1 { background: #fef2f2; color: #b91c1c; }
+    .grade-badge.g2 { background: #fff7ed; color: #c2410c; }
+    .grade-badge.g3 { background: #fef9c3; color: #a16207; }
+    .grade-badge.g4 { background: #f0fdf4; color: #16a34a; }
+    .grade-badge.g5 { background: #ecfdf5; color: #047857; }
 
-    .tab-panel { display: none; max-width: 920px; margin: 0 auto; }
-    .tab-panel.active { display: block; }
-    .sub-panel { display: none; }
-    .sub-panel.active { display: block; }
+    .section-summary {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-secondary, #555);
+      margin: 0 0 24px;
+      max-width: 680px;
+    }
 
-    /* Sections */
-    .section {
-      background: white;
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      padding: 24px;
+    /* ── Overview — readout cards ── */
+    .readout-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 640px) {
+      .readout-grid { grid-template-columns: 1fr; }
+    }
+    .readout-card {
+      background: var(--surface, #f5f3ef);
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .rc-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted, #6b7280);
+      margin: 0 0 6px;
+    }
+    .readout-card p { font-size: 0.88rem; margin: 0; line-height: 1.6; }
+
+    /* ── Provided / Needed columns ── */
+    .signal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
       margin-bottom: 24px;
     }
-    .section h2 {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--color-foreground);
-      margin: 0 0 8px 0;
+    @media (max-width: 540px) {
+      .signal-grid { grid-template-columns: 1fr; }
     }
-    .section h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--color-foreground);
-      margin: 16px 0 8px 0;
+    .signal-card {
+      background: var(--surface, #f5f3ef);
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 8px;
+      padding: 14px 16px;
     }
-    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
-
-    /* Focus table */
-    .focus-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-    .focus-table th {
-      text-align: left;
-      padding: 10px 12px;
-      font-weight: 600;
-      color: var(--color-foreground);
-      background: var(--color-surface);
-      border-bottom: 1px solid var(--color-border);
-      font-size: 0.78rem;
+    .sc-label {
+      font-size: 0.68rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
+      color: var(--text-muted, #6b7280);
+      margin: 0 0 8px;
     }
-    .focus-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--color-muted);
-      color: var(--color-foreground);
-      vertical-align: top;
+    .signal-card ul { margin: 0; padding-left: 16px; }
+    .signal-card li { font-size: 0.87rem; line-height: 1.55; margin-bottom: 3px; color: var(--text-primary, #1a1a1a); }
+
+    /* ── Open questions ── */
+    .oq-section-heading {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted, #6b7280);
+      margin: 0 0 10px;
     }
-    .focus-table .num { color: var(--color-dimmed); font-feature-settings: 'tnum'; }
-    .focus-table code {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      background: var(--color-surface);
+    .oq-list { list-style: none; padding: 0; margin: 0 0 28px; }
+    .oq-item {
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      background: var(--surface, #f5f3ef);
+    }
+    .oq-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 7px; flex-wrap: wrap; }
+    .oq-id {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted, #6b7280);
+      font-family: var(--font-mono, Menlo, monospace);
+    }
+    .oq-impact {
+      font-size: 0.7rem;
+      font-weight: 700;
       padding: 2px 6px;
       border-radius: 4px;
     }
-    .focus-table .fills {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--color-secondary);
-    }
-    .pri {
-      display: inline-block;
-      font-size: 0.7rem;
-      padding: 1px 7px;
-      border-radius: 9999px;
-      font-weight: 600;
-      font-feature-settings: 'tnum';
-      min-width: 18px;
-      text-align: center;
-    }
-    .pri-p0 { background: #fef2f2; color: #b91c1c; }
-    .pri-p1 { background: var(--color-accent-subtle); color: var(--color-accent); }
-    .pri-p2 { background: var(--color-surface); color: var(--color-dimmed); }
+    .p0 { background: #fef2f2; color: #b91c1c; }
+    .p1 { background: #fff7ed; color: #c2410c; }
+    .p2 { background: #f0f9ff; color: #0369a1; }
+    .oq-question { font-size: 0.9rem; font-weight: 500; margin: 0 0 5px; line-height: 1.5; }
+    .oq-why { font-size: 0.82rem; color: var(--text-secondary, #555); margin: 0; line-height: 1.55; }
 
-    /* Folder tree */
-    .folder-tree {
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      line-height: 1.7;
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      padding: 18px 22px;
-      color: var(--color-foreground);
-      white-space: pre;
-      overflow-x: auto;
-    }
-    .folder-tree .badge { font-family: var(--font-sans); }
-
-    /* Section list — 3-column Grade | Area | Summary table */
-    .section-list {
-      max-width: 920px;
-      margin: 0 auto;
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      overflow: hidden;
-      border-collapse: collapse;
-      width: 100%;
-      table-layout: fixed;
-    }
-    .section-list tr.section-row {
-      cursor: pointer;
-      transition: background 120ms;
-    }
-    .section-list tr.section-row:hover,
-    .section-list tr.section-row:focus-within {
-      background: var(--color-muted);
-    }
-    .section-list tr.section-row:hover .label,
-    .section-list tr.section-row:focus-within .label {
-      color: var(--color-accent);
-    }
-    .section-list td {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--color-muted);
-      vertical-align: top;
-    }
-    .section-list tr.section-row:last-child td { border-bottom: none; }
-    .section-list .section-grade-cell {
-      width: 80px;
-      text-align: center;
-    }
-    .section-list .section-area-cell {
-      width: 160px;
-      min-width: 0;
-    }
-    .section-list .section-summary-cell {
-      width: auto;
-    }
-    .section-list .label {
-      display: block;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--color-foreground);
-      transition: color 120ms;
-    }
-    .section-list .label.section-link:focus { outline: none; }
-    .section-list .section-area-cell .status-badge {
-      margin: 6px 0 0 0;
-    }
-    .section-list .section-desc {
-      margin: 0;
-      font-size: 0.88rem;
-      font-weight: 400;
-      color: var(--color-secondary);
-      line-height: 1.55;
-    }
-    .section-list .bullets-cell .bullet { font-size: 0.9rem; line-height: 1.55; color: var(--color-foreground); margin: 0 0 4px 0; }
-    .section-list .bullet .b-label { color: var(--color-dimmed); font-weight: 600; }
-    .section-list .bullet:last-child { margin-bottom: 0; }
-    .section-list .row-caret { color: var(--color-dimmed); float: right; font-size: 1.1rem; }
-
-    /* Grade pills (1-5, color-coded). Used in Sections at a Glance and per-folder banners. */
-    .grade {
-      display: inline-block;
-      min-width: 36px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      font-feature-settings: 'tnum';
-      line-height: 1.2;
-      text-align: center;
-      cursor: help;
-    }
-    .grade-5 { background: #ecfdf5; color: #047857; }
-    .grade-4 { background: #f0fdf4; color: #16a34a; }
-    .grade-3 { background: #fef3c7; color: #b45309; }
-    .grade-2 { background: var(--color-accent-subtle); color: var(--color-accent); }
-    .grade-1 { background: #fef2f2; color: #b91c1c; }
-
-    @media (max-width: 760px) {
-      .section-list, .section-list tbody, .section-list tr, .section-list td {
-        display: block;
-        width: auto;
-      }
-      .section-list tr.section-row {
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--color-muted);
-      }
-      .section-list tr.section-row:last-child { border-bottom: none; }
-      .section-list td { padding: 4px 0; border: none; }
-      .section-list .section-grade-cell { text-align: left; width: auto; }
-      .section-list .section-area-cell { width: auto; }
-    }
-
-    /* Inline status badges */
-    .status-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      padding: 1px 8px;
-      border-radius: 9999px;
-      font-weight: 500;
-      margin-left: 6px;
-    }
-    .status-strong { background: #ecfdf5; color: #047857; }
-    .status-partial { background: var(--color-accent-subtle); color: var(--color-accent); }
-    .status-weak { background: #fef2f2; color: #b91c1c; }
-    .status-gap { background: var(--color-surface); color: var(--color-dimmed); border: 1px dashed var(--color-border); }
-
-    /* Right-rail copy command button (inside focus table) */
-    .btn-mini {
-      font-family: var(--font-sans);
-      font-size: 0.72rem;
-      padding: 4px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid var(--color-border);
-      background: var(--color-muted);
-      color: var(--color-foreground);
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    .btn-mini:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-accent); }
-    .btn-mini.copied { background: #047857; color: white; border-color: #047857; }
-    .btn-mini.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
-
-    /* Bullet lists */
-    .findings-list {
-      font-size: 0.88rem;
-      color: var(--color-foreground);
-      margin: 0;
-      padding-left: 20px;
-      line-height: 1.7;
-    }
-    .findings-list li { margin-bottom: 8px; }
-    .findings-list em { color: var(--color-dimmed); font-style: italic; font-size: 0.82rem; }
-
-    /* Behavioral alternatives section (Competitive Context tab) */
-    .alt-section-heading {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--color-foreground);
-      margin: 18px 0 6px 0;
-      padding-top: 4px;
-    }
-    .alt-section-heading-secondary {
-      margin-top: 32px;
-      color: var(--color-secondary);
-    }
-    .alt-list {
-      list-style: none;
-      margin: 8px 0 0 0;
-      padding: 0;
-    }
-    .alt-row {
-      background: white;
-      border: 1px solid var(--color-border);
-      border-left: 3px solid var(--color-accent);
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-    }
-    .alt-row-main {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
-    .alt-row .alt-name {
-      font-weight: 600;
-      font-size: 0.92rem;
-      color: var(--color-foreground);
-    }
-    .alt-row .alt-quote {
-      font-style: italic;
-      color: var(--color-secondary);
-      font-size: 0.86rem;
-      line-height: 1.5;
-      margin: 4px 0 8px 0;
-      padding: 0;
-      border: none;
-    }
-    .alt-row .alt-source {
-      display: inline-block;
-    }
-
-    /* Competitor row */
-    .comp-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 12px;
-    }
-    .comp-card {
-      background: white;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      padding: 14px 16px;
-      font-size: 0.82rem;
-    }
-    .comp-card h4 {
-      font-size: 0.92rem;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-      color: var(--color-foreground);
-    }
-    .comp-card dl { margin: 0; font-size: 0.78rem; line-height: 1.5; }
-    .comp-card dt { color: var(--color-dimmed); font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem; }
-    .comp-card dd { margin: 0; color: var(--color-foreground); }
-
-    /* Q cards */
-    .oq-card {
-      background: white;
-      border: 1px solid var(--color-border);
-      border-radius: 10px;
-      padding: 18px 20px;
-      margin-bottom: 14px;
-      transition: border-color 150ms, background 150ms;
-    }
-    .oq-why {
-      font-size: 0.86rem;
-      color: var(--color-foreground);
-      background: var(--color-accent-subtle);
-      border-left: 3px solid var(--color-accent);
-      padding: 10px 14px;
-      margin: 4px 0 10px 0;
-      border-radius: 0 6px 6px 0;
-      line-height: 1.6;
-    }
-    .oq-why strong { color: var(--color-foreground); font-weight: 600; margin-right: 4px; }
-    .oq-rationale {
-      font-size: 0.86rem;
-      color: var(--color-secondary);
-      background: var(--color-surface);
-      border-left: 3px solid var(--color-border);
-      padding: 10px 14px;
-      margin: 4px 0 10px 0;
-      border-radius: 0 6px 6px 0;
-      line-height: 1.6;
-    }
-    .oq-rationale strong { color: var(--color-foreground); font-weight: 600; margin-right: 4px; }
-    .oq-card[data-state="approved"] { border-color: #047857; background: #ecfdf5; }
-    .oq-card[data-state="rejected"] { border-color: #b91c1c; background: #fef2f2; }
-    .oq-card[data-state="answered"] { border-color: var(--color-accent); background: var(--color-accent-subtle); }
-    .oq-card[data-state="skipped"] { opacity: 0.55; }
-    .oq-card[data-state="leave"] { border-style: dashed; }
-
-    .oq-card-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-    .oq-id {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: 0.85rem;
-      color: var(--color-foreground);
-      margin-right: 6px;
-    }
-    .chip {
-      display: inline-block;
-      font-size: 0.68rem;
-      padding: 1px 7px;
-      border-radius: 9999px;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      border: 1px solid transparent;
-    }
-    .chip-file { background: var(--color-surface); color: var(--color-secondary); font-family: var(--font-mono); }
-    .chip-deepen { background: var(--color-muted); color: var(--color-foreground); font-family: var(--font-mono); }
-    .chip-slot { background: var(--color-muted); color: var(--color-dimmed); font-family: var(--font-mono); font-style: italic; }
-
-    /* Hide jargon chips in the header — they're moved into the Context disclosure */
-    .oq-card-header .chip-slot,
-    .oq-card-header .chip-deepen { display: none; }
-
-    /* Meta chip strip rendered inside the Context block at load time */
-    .oq-context .oq-context-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-      border-bottom: 1px dashed var(--color-border);
-    }
-    .chip-conf-high { background: #ecfdf5; color: #047857; }
-    .chip-conf-med { background: var(--color-accent-subtle); color: var(--color-accent); }
-    .chip-conf-low { background: #fef2f2; color: #b91c1c; }
-    .chip-area { background: var(--color-surface); color: var(--color-secondary); font-family: var(--font-sans); }
-    .empty-group { font-size: 0.9rem; color: var(--color-dimmed); font-style: italic; margin: 12px 0; }
-    .group-pasteback { margin-bottom: 10px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px; }
-    .group-pasteback summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; }
-    .group-pasteback textarea { width: 100%; min-height: 60px; margin-top: 8px; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--color-border); border-radius: 4px; padding: 8px; }
-    .group-pasteback .paste-back-actions { margin-top: 8px; display: flex; gap: 8px; }
-
-    .oq-body {
-      font-size: 0.92rem;
-      color: var(--color-foreground);
-      font-weight: 500;
-      margin: 4px 0 10px 0;
-      line-height: 1.5;
-    }
-    .oq-evidence {
-      font-size: 0.78rem;
-      color: var(--color-dimmed);
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-    .oq-evidence strong { color: var(--color-secondary); font-weight: 600; }
-
-    .oq-best-guess {
-      font-size: 0.82rem;
-      color: var(--color-secondary);
-      background: var(--color-surface);
-      border-left: 3px solid var(--color-border);
-      padding: 8px 12px;
-      margin-bottom: 10px;
-      border-radius: 0 6px 6px 0;
-    }
-    .oq-best-guess strong { color: var(--color-foreground); }
-
-    .oq-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
-    .oq-btn {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      padding: 5px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid var(--color-border);
-      background: white;
-      color: var(--color-foreground);
-      font-weight: 500;
-      transition: all 120ms;
-    }
-    .oq-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
-    .oq-btn.btn-approve.selected { background: #047857; color: white; border-color: #047857; }
-    .oq-btn.btn-reject.selected { background: #b91c1c; color: white; border-color: #b91c1c; }
-    .oq-btn.btn-answer.selected { background: var(--color-accent); color: white; border-color: var(--color-accent); }
-    .oq-btn.btn-skip.selected { background: var(--color-dimmed); color: white; border-color: var(--color-dimmed); }
-    .oq-btn.btn-leave.selected { background: var(--color-surface); color: var(--color-foreground); border-color: var(--color-foreground); }
-
-    .oq-inline-input {
-      display: none;
-      margin-top: 12px;
-    }
-    .oq-card[data-state="rejected"] .oq-inline-input.input-correction,
-    .oq-card[data-state="answered"] .oq-inline-input.input-answer { display: block; }
-
-    .oq-inline-input label {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--color-secondary);
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .oq-inline-input textarea {
-      width: 100%;
-      min-height: 60px;
-      padding: 8px 10px;
-      font-family: var(--font-sans);
-      font-size: 0.85rem;
-      color: var(--color-foreground);
-      background: white;
-      border: 1px solid var(--color-border);
-      border-radius: 6px;
-      resize: vertical;
-      box-sizing: border-box;
-    }
-    .oq-inline-input textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
-
-    /* oq-context-toggle kept for backward compat — new cards use <details> */
-    .oq-context-toggle {
-      background: none;
-      border: none;
-      color: var(--color-dimmed);
-      font-size: 0.78rem;
-      cursor: pointer;
-      padding: 4px 0 0 0;
-      margin-left: auto;
-      font-family: inherit;
-    }
-    .oq-context-toggle:hover { color: var(--color-accent); }
-    .oq-context {
-      display: none;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--color-border);
-      font-size: 0.8rem;
-      color: var(--color-secondary);
-      line-height: 1.6;
-    }
-    .oq-card.context-open .oq-context { display: block; }
-
-    /* Priority groups inside a folder panel (P0/P1 open by default, P2 collapsed) */
-    details.oq-group {
-      margin: 0 0 16px 0;
-      padding: 0;
-    }
-    details.oq-group > summary.oq-group-header {
-      list-style: revert;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--color-foreground);
-      padding: 10px 14px;
-      border-left: 4px solid var(--color-border);
-      background: var(--color-surface);
-      border-radius: 0 6px 6px 0;
-      margin-bottom: 12px;
-    }
-    details.oq-group > summary.oq-group-header:hover { color: var(--color-accent); }
-    details.oq-group.oq-group-p0 > summary.oq-group-header { border-left-color: #b91c1c; }
-    details.oq-group.oq-group-p1 > summary.oq-group-header { border-left-color: var(--color-accent); }
-    details.oq-group.oq-group-p2 > summary.oq-group-header { border-left-color: var(--color-dimmed); }
-    details.oq-group .oq-group-count {
-      display: inline-block;
-      margin-left: 8px;
-      padding: 1px 8px;
-      border-radius: 9999px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      background: white;
-      color: var(--color-secondary);
-      border: 1px solid var(--color-border);
-    }
-
-    /* Expandable per-card detail disclosure (v0.3.0 — summary is default; detail behind toggle) */
-    details.oq-detail {
-      margin: 4px 0 12px 0;
-      padding: 0;
-    }
-    details.oq-detail > summary.oq-detail-summary {
-      color: var(--color-dimmed);
-      font-size: 0.78rem;
-      cursor: pointer;
-      padding: 4px 0;
-      font-family: inherit;
-      list-style: revert;
-    }
-    details.oq-detail > summary.oq-detail-summary:hover { color: var(--color-accent); }
-    details.oq-detail[open] > summary.oq-detail-summary { margin-bottom: 8px; }
-    details.oq-detail .oq-detail-full {
-      font-size: 0.88rem;
-      color: var(--color-foreground);
-      line-height: 1.55;
-      margin: 6px 0 10px 0;
-    }
-
-    /* <details>-based context disclosure for JS-rendered cards */
-    details.oq-context {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--color-border);
-      font-size: 0.8rem;
-      color: var(--color-secondary);
-      line-height: 1.6;
-    }
-    details.oq-context summary {
-      color: var(--color-dimmed);
-      font-size: 0.78rem;
-      cursor: pointer;
-      padding: 4px 0 0 0;
-      font-family: inherit;
-    }
-    details.oq-context summary:hover { color: var(--color-accent); }
-    details.oq-context[open] { display: block; }
-
-    /* Anchor offset so sticky nav doesn't cover the section heading */
-    .anchor-target { scroll-margin-top: 64px; }
-
-    /* Per-folder summary banner — top of each tab content area */
-    .folder-banner {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 18px;
-      align-items: start;
-      background: white;
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-bottom: 18px;
-    }
-    .folder-banner .banner-grade { padding-top: 2px; }
-    .folder-banner .banner-grade .grade {
-      font-size: 1.1rem;
-      min-width: 36px;
-      padding: 6px 10px;
-    }
-    .folder-banner .banner-body { min-width: 0; }
-    .folder-banner h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--color-foreground);
-      margin: 0 0 6px 0;
-    }
-    .folder-banner .banner-summary {
-      font-size: 0.92rem;
-      color: var(--color-secondary);
-      line-height: 1.6;
-      margin: 0 0 10px 0;
-    }
-    .folder-banner .banner-counts {
-      font-size: 0.82rem;
-      color: var(--color-dimmed);
-      font-feature-settings: 'tnum';
-    }
-    .folder-banner .banner-counts strong {
-      color: var(--color-foreground);
-      font-weight: 600;
-    }
-
-    /* Executive summary narrative */
-    .exec-summary p {
-      font-size: 0.95rem;
-      color: var(--color-foreground);
-      line-height: 1.7;
-      margin: 0 0 14px 0;
-    }
-    .exec-summary p:last-child { margin-bottom: 0; }
-    .exec-summary p strong { color: var(--color-foreground); font-weight: 600; }
-
-    /* Executive summary — Snapshot mini-grid */
-    .snapshot-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-      margin: 4px 0 28px 0;
-    }
-    .snapshot-tile {
-      background: var(--color-background);
-      border: 1px solid var(--color-border);
-      border-radius: 10px;
-      padding: 18px 16px;
-      text-align: center;
-      position: relative;
-    }
-    .snapshot-tile::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: var(--color-accent);
-      border-radius: 10px 10px 0 0;
-    }
-    .snapshot-tile .num {
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--color-foreground);
-      line-height: 1.1;
-      font-feature-settings: 'tnum';
-    }
-    .snapshot-tile .label {
-      font-size: 0.72rem;
-      color: var(--color-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 6px;
-      line-height: 1.35;
-    }
-    @media (max-width: 880px) {
-      .snapshot-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    /* Executive summary — labeled sections */
-    .exec-section {
-      padding: 14px 18px 14px 18px;
-      border-left: 3px solid var(--color-accent);
-      background: var(--color-background);
-      border-radius: 0 8px 8px 0;
-      margin-bottom: 18px;
-    }
-    .exec-section:last-child { margin-bottom: 0; }
-    .exec-section h3 {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--color-accent);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 0 0 10px 0;
-    }
-    .exec-section p {
-      font-size: 0.95rem;
-      color: var(--color-foreground);
-      line-height: 1.7;
-      margin: 0;
-    }
-    .exec-divider {
-      height: 1px;
-      background: var(--color-border);
-      border: none;
-      margin: 18px 0;
-    }
-
-    /* Intro paragraph above a list/grid inside an Overview sub-panel */
-    .intro-p {
-      font-size: 0.9rem;
-      color: var(--color-secondary);
-      line-height: 1.6;
-      margin: 0 0 14px 0;
-    }
-
-    /* Sub-tab counters */
-    .sub-tab-btn .count {
-      background: var(--color-muted);
-      color: var(--color-dimmed);
-      font-size: 0.65rem;
-      padding: 0 6px;
-      border-radius: 9999px;
-      margin-left: 4px;
-      font-weight: 600;
-    }
-    .sub-tab-btn.active .count { background: var(--color-accent-subtle); color: var(--color-accent); }
-
-    /* Paste-back widget */
-    .paste-back {
-      background: var(--color-accent-subtle);
-      border-radius: 12px;
-      padding: 24px 26px 28px;
-      margin-top: 28px;
-      border: 1px solid var(--color-accent);
-      border-style: solid;
-    }
-    .paste-back-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-    }
-    .paste-back h3 {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--color-foreground);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 0;
-    }
-    .paste-back .framework-name {
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      color: var(--color-accent);
-      font-weight: 600;
-    }
-    .paste-back .sub {
-      font-size: 0.82rem;
-      color: var(--color-secondary);
-      margin: 0 0 12px 0;
-    }
-    .paste-back textarea {
-      width: 100%;
-      min-height: 240px;
-      padding: 14px 16px;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      line-height: 1.6;
-      color: var(--color-foreground);
-      background: white;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      resize: vertical;
-      box-sizing: border-box;
-    }
-    .paste-back textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px white; }
-    .paste-back-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      justify-content: flex-end;
-    }
-    .btn {
-      font-family: var(--font-sans);
-      font-size: 0.78rem;
-      padding: 7px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid var(--color-border);
-      background: white;
-      color: var(--color-foreground);
-      font-weight: 500;
-    }
-    .btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
-    .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
-    .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: white; }
-    .btn.copied { background: #047857; color: white; border-color: #047857; }
-    .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
-
-    /* Empty stub */
-    .empty-stub {
-      padding: 40px 24px;
-      text-align: center;
-      color: var(--color-dimmed);
-      font-size: 0.92rem;
-      background: white;
-      border: 1px dashed var(--color-border);
-      border-radius: 12px;
-    }
-    .empty-stub code { font-family: var(--font-mono); font-size: 0.82rem; }
-
-    /* Sources panel (sub-tab) */
-    .source-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      font-size: 0.85rem;
-    }
-    .source-list li {
-      padding: 10px 0;
-      border-bottom: 1px solid var(--color-muted);
-      display: grid;
-      grid-template-columns: 60px 1fr 160px;
-      gap: 12px;
-      align-items: baseline;
-    }
-    .source-list .src-id { font-family: var(--font-mono); color: var(--color-accent); font-weight: 600; }
-    .source-list .src-title { color: var(--color-foreground); }
-    .source-list .src-meta { color: var(--color-dimmed); font-size: 0.78rem; text-align: right; }
-
-    /* Tier badges for input_asks (v0.4.0+) */
-    .tier-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      padding: 1px 8px;
-      border-radius: 9999px;
-      font-weight: 600;
-      margin-right: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .tier-critical { background: #fef2f2; color: #b91c1c; }
-    .tier-recommended { background: var(--color-accent-subtle); color: var(--color-accent); }
-    .tier-optional { background: var(--color-surface); color: var(--color-dimmed); border: 1px dashed var(--color-border); }
-
-    /* Inputs Needed list rows */
-    .inputs-tier-heading {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin: 18px 0 8px 0;
-    }
-    .inputs-tier-count {
-      color: var(--color-dimmed);
-      font-weight: 500;
-      font-size: 0.85rem;
-      margin-left: 6px;
-    }
-    .inputs-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .inputs-list li {
-      padding: 6px 0;
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-    .inputs-list a {
-      color: var(--color-foreground);
-      text-decoration: none;
-    }
-    .inputs-list a:hover { color: var(--color-accent); }
-
-    /* Flat inputs list (Send us any of these) */
-    .inputs-flat { list-style: none; padding: 0; margin: 0; }
-    .inputs-flat li { padding: 7px 0; font-size: 0.95rem; line-height: 1.5; border-bottom: 1px solid var(--color-muted); }
-    .inputs-flat li:last-child { border-bottom: none; }
-    .inputs-flat li::before { content: "- "; color: var(--color-foreground); font-weight: 500; margin-right: 6px; font-family: var(--font-mono); }
-
-    /* Expandable source material strip */
-    .overview-source-detail { margin-top: 16px; font-size: 0.85rem; color: var(--color-secondary); border-top: 1px solid var(--color-muted); padding-top: 12px; }
-    .overview-source-detail summary { cursor: pointer; color: var(--color-dimmed); font-weight: 500; }
-    .overview-source-detail .overview-source-body { margin-top: 8px; }
-
-    /* Per-tab callout ("What you provided / What would strengthen this") */
-    .input-callout {
-      background: var(--color-accent-subtle);
-      border: 1px solid var(--color-accent);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
-    }
-    .input-callout h3 {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--color-foreground);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin: 0 0 10px 0;
-    }
-    .input-callout .provided {
-      font-size: 0.88rem;
-      color: var(--color-secondary);
-      margin: 0 0 12px 0;
-      line-height: 1.6;
-    }
-    .input-callout ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .input-callout li {
-      font-size: 0.88rem;
-      color: var(--color-foreground);
-      line-height: 1.6;
-      padding: 4px 0;
-    }
-    .input-callout .would-help-heading { font-size: 0.88rem; color: var(--color-foreground); margin: 12px 0 6px 0; font-weight: 600; }
-    .input-callout .callout-list { list-style: none; padding: 0; margin: 0; }
-    .input-callout .callout-list li { font-size: 0.9rem; line-height: 1.6; padding: 3px 0; font-family: inherit; }
+    /* ── Divider ── */
+    .panel-divider { border: none; border-top: 1px solid var(--divider, #e5e7eb); margin: 24px 0; }
   </style>
 </head>
 <body>
 
-  <h1>Brand-folder review — {org-name}</h1>
-  <p class="job-statement">Review the auto-generated brand folder. Toggle Approve/Reject on assumptions, answer questions, then copy the per-folder paste-back to Claude Code.</p>
-  <p class="subtitle">{org-name}</p>
-  <p class="context">Auto-generated brand folder review. Folder: <code>{brand-folder-path}</code>.</p>
-
-  <div class="tab-bar" id="main-tabs">
-    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
-  </div>
-
-  <!-- ========= OVERVIEW ========= -->
-  <div id="panel-overview" class="tab-panel active">
-
-    <div class="sub-tab-bar">
-      <button class="sub-tab-btn active" onclick="switchSubTab('overview','overview-focus')">Your brand at a glance</button>
-      <button class="sub-tab-btn" onclick="switchSubTab('overview','overview-inputs')">Send us any of these</button>
-    </div>
-
-    <!-- Overview / Sections at a Glance -->
-    <div id="sub-overview-focus" class="sub-panel active">
-      <div class="section">
-        <p class="description">Click any area to jump to its tab. Status reflects aggregate confidence across the area's drafts.</p>
-        <div id="sections-at-a-glance"></div>
-        <details class="overview-source-detail">
-          <summary>About the source material we received</summary>
-          <div class="overview-source-body">
-            <div id="exec-snapshot"></div>
-            <div class="exec-section">
-              <h4>Raw material</h4>
-              <p id="exec-raw-material"></p>
-            </div>
-            <hr class="exec-divider" />
-            <div class="exec-section">
-              <h4>Primary research</h4>
-              <p id="exec-primary-research"></p>
-            </div>
-          </div>
-        </details>
-      </div>
-    </div>
-
-    <!-- Overview / Inputs Needed -->
-    <div id="sub-overview-inputs" class="sub-panel">
-      <div class="section">
-        <h2>Send us any of these</h2>
-        <div id="inputs-needed-flat"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ========= GROUP PANELS ========= -->
-  <div id="panel-how-you-show-up" class="tab-panel">
-    <div class="folder-banner" id="banner-how-you-show-up"></div>
-    <div class="input-callout" id="callout-how-you-show-up" style="display:none"></div>
-    <div id="panel-how-you-show-up-oqs"></div>
-    <div id="panel-how-you-show-up-pastebacks"></div>
-  </div>
-  <div id="panel-who-you-sell-to" class="tab-panel">
-    <div class="folder-banner" id="banner-who-you-sell-to"></div>
-    <div class="input-callout" id="callout-who-you-sell-to" style="display:none"></div>
-    <div id="panel-who-you-sell-to-oqs"></div>
-    <div id="panel-who-you-sell-to-pastebacks"></div>
-  </div>
-  <div id="panel-who-you-sell-against" class="tab-panel">
-    <div class="folder-banner" id="banner-who-you-sell-against"></div>
-    <div class="input-callout" id="callout-who-you-sell-against" style="display:none"></div>
-    <h3 class="alt-section-heading">What customers do today (without you)</h3>
-    <div id="behavioral-alternatives"></div>
-    <h3 class="alt-section-heading alt-section-heading-secondary">Named competitors</h3>
-    <div id="competitor-cards"></div>
-    <div id="panel-who-you-sell-against-oqs"></div>
-    <div id="panel-who-you-sell-against-pastebacks"></div>
-  </div>
-  <div id="panel-what-you-can-prove" class="tab-panel">
-    <div class="folder-banner" id="banner-what-you-can-prove"></div>
-    <div class="input-callout" id="callout-what-you-can-prove" style="display:none"></div>
-    <div id="panel-what-you-can-prove-oqs"></div>
-    <div id="panel-what-you-can-prove-pastebacks"></div>
-  </div>
-
-  <script>
-    const OPEN_QUESTIONS = {open-questions-json};
-    const BRAND_FOLDER_PATH = "{brand-folder-path}";
-    const ORG_NAME = "{org-name}";
-
-    function buildTabNav() {
-      var bar = document.getElementById('main-tabs');
-      if (!bar) return;
-      if (bar.dataset.built === 'true') return; // idempotence: renderAll may fire twice (DOMContentLoaded + readyState fallback)
-      var groups = resolveDisplayGroups();
-      groups.forEach(function(g) {
-        var btn = document.createElement('button');
-        btn.className = 'tab-btn';
-        btn.textContent = g.label;
-        btn.setAttribute('onclick', "switchTab('" + g.id + "')");
-        bar.appendChild(btn);
-      });
-      bar.dataset.built = 'true';
-    }
-
-    function buildGroupPanels() {
-      if (OPEN_QUESTIONS.display_groups && OPEN_QUESTIONS.display_groups.length) return;
-      // Legacy fallback: synthesize panel divs for each synthetic group.
-      // Idempotent: re-invocation skips groups whose panel already exists in the DOM.
-      var groups = resolveDisplayGroups();
-      var host = document.querySelector('body');
-      groups.forEach(function(g) {
-        if (document.getElementById('panel-' + g.id)) return;
-        var panel = document.createElement('div');
-        panel.id = 'panel-' + g.id;
-        panel.className = 'tab-panel';
-        ['banner-', 'callout-', 'panel-{id}-oqs', 'panel-{id}-pastebacks'].forEach(function(tmpl) {
-          var d = document.createElement('div');
-          if (tmpl === 'banner-') { d.className = 'folder-banner'; d.id = 'banner-' + g.id; }
-          else if (tmpl === 'callout-') { d.className = 'input-callout'; d.style.display = 'none'; d.id = 'callout-' + g.id; }
-          else { d.id = tmpl.replace('{id}', g.id); }
-          panel.appendChild(d);
-        });
-        host.appendChild(panel);
-      });
-    }
-
-    // ── Tab + sub-tab switching ──────────────────────────────
-    function switchTab(tabId) {
-      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-      var btn = document.querySelector('#main-tabs [onclick*="\'' + tabId + '\'"]');
-      if (btn) btn.classList.add('active');
-      var panel = document.getElementById('panel-' + tabId);
-      if (panel) {
-        panel.classList.add('active');
-        var firstSubBtn = panel.querySelector('.sub-tab-btn');
-        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
-          firstSubBtn.click();
-        }
-      }
-    }
-    function switchSubTab(parentId, subId) {
-      var parent = document.getElementById('panel-' + parentId);
-      if (!parent) return;
-      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
-      var btn = parent.querySelector('[onclick*="\'' + subId + '\'"]');
-      if (btn) btn.classList.add('active');
-      var sub = document.getElementById('sub-' + subId);
-      if (sub) sub.classList.add('active');
-    }
-
-    // ── Context toggle on each card (kept for backward compat) ──
-    function toggleContext(btn) {
-      var card = btn.closest('.oq-card');
-      if (!card) return;
-      card.classList.toggle('context-open');
-      btn.textContent = card.classList.contains('context-open') ? 'Hide context' : 'Context';
-    }
-
-    // ── Per-card state setters (Assumption + Question) ───────
-    function clearSelected(card) {
-      card.querySelectorAll('.oq-btn').forEach(function(b) { b.classList.remove('selected'); });
-    }
-    function setAssumptionState(btn, state) {
-      var card = btn.closest('.oq-card');
-      if (!card) return;
-      var current = card.getAttribute('data-state');
-      if (current === state) {
-        // Toggle off
-        card.removeAttribute('data-state');
-        clearSelected(card);
-      } else {
-        clearSelected(card);
-        btn.classList.add('selected');
-        card.setAttribute('data-state', state);
-      }
-      rebuildPasteBack(card.getAttribute('data-folder'));
-    }
-    function setQuestionState(btn, state) {
-      var card = btn.closest('.oq-card');
-      if (!card) return;
-      var current = card.getAttribute('data-state');
-      if (current === state) {
-        card.removeAttribute('data-state');
-        clearSelected(card);
-      } else {
-        clearSelected(card);
-        btn.classList.add('selected');
-        card.setAttribute('data-state', state);
-      }
-      rebuildPasteBack(card.getAttribute('data-folder'));
-    }
-
-    // ── Clipboard helper (file:// safe) ──────────────────────
-    function copyToClipboard(text, btn) {
-      var originalLabel = btn.dataset.originalLabel || btn.textContent;
-      btn.dataset.originalLabel = originalLabel;
-      function showSuccess() {
-        btn.textContent = 'Copied ✓';
-        btn.classList.add('copied');
-        setTimeout(function() {
-          btn.textContent = originalLabel;
-          btn.classList.remove('copied');
-        }, 1800);
-      }
-      function showFailure() {
-        btn.textContent = 'Copy failed — select & Cmd-C';
-        btn.classList.add('btn-error');
-        setTimeout(function() {
-          btn.textContent = originalLabel;
-          btn.classList.remove('btn-error');
-        }, 3000);
-      }
-      if (!navigator.clipboard || !window.isSecureContext) {
-        var ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.select();
-        var ok = false;
-        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-        document.body.removeChild(ta);
-        if (ok) showSuccess(); else showFailure();
-        return;
-      }
-      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
-    }
-
-    // ── copyPasteback / regeneratePasteback (called from paste-back buttons) ──
-    function copyPasteback(folder) {
-      var ta = document.getElementById('pasteback-' + folder);
-      if (!ta) return;
-      copyToClipboard(ta.value, document.querySelector('[onclick*="copyPasteback(\'' + folder + '\')"]') || document.createElement('button'));
-    }
-    function regeneratePasteback(folder) {
-      var ta = document.getElementById('pasteback-' + folder);
-      if (!ta) return;
-      ta.dataset.dirty = 'false';
-      ta.value = buildPasteBack(folder);
-    }
-
-    // ── Per-folder paste-back builder ────────────────────────
-    var FRAMEWORK_BY_FOLDER = {
-      strategy: '5-components-positioning',
-      language: 'brand-voice',
-      audiences: null, // classification, not framework dispatch — see audience-taxonomy.md
-      personas: 'buyer-persona',
-      market: 'competitive-battle-card',
-      proof: 'proof-points-audit',
-      design: 'design-principles'
-    };
-    var DEEPEN_FURTHER_BY_FOLDER = {
-      personas: 'jobs-to-be-done' // Moesta-flavored motivation lens layered on top of buyer-persona
-    };
-    var FRAMEWORK_TARGET = {
-      strategy: BRAND_FOLDER_PATH + '/strategy/positioning.md',
-      language: BRAND_FOLDER_PATH + '/language/',
-      audiences: BRAND_FOLDER_PATH + '/audiences/',
-      personas: BRAND_FOLDER_PATH + '/personas/',
-      market: BRAND_FOLDER_PATH + '/market/competitive.md',
-      proof: BRAND_FOLDER_PATH + '/proof/',
-      design: BRAND_FOLDER_PATH + '/design/'
-    };
-    var FRAMEWORK_NOTE = {};
-
-    function getCorrectionText(card) {
-      var ta = card.querySelector('.oq-inline-input.input-correction textarea');
-      return ta ? (ta.value || '').trim() : '';
-    }
-    function getAnswerText(card) {
-      var ta = card.querySelector('.oq-inline-input.input-answer textarea');
-      return ta ? (ta.value || '').trim() : '';
-    }
-    function cardTitle(card) {
-      var body = card.querySelector('.oq-body');
-      return body ? body.textContent.trim() : '';
-    }
-    function cardPriority(card) {
-      var p = card.querySelector('.oq-card-header .pri');
-      return p ? p.textContent.trim() : '';
-    }
-    function cardConfidence(card) {
-      var c = card.querySelector('.oq-card-header .chip-conf-high, .oq-card-header .chip-conf-med, .oq-card-header .chip-conf-low');
-      if (!c) return '';
-      var t = c.textContent.trim();
-      return t.replace(/^conf:\s*/i, '');
-    }
-    function cardId(card) { return card.getAttribute('data-display-id') || card.getAttribute('data-id') || '?'; }
-
-    function buildPasteBack(folder) {
-      var framework = FRAMEWORK_BY_FOLDER[folder];
-      var deepenFurther = DEEPEN_FURTHER_BY_FOLDER[folder];
-      var target = FRAMEWORK_TARGET[folder] || BRAND_FOLDER_PATH + '/' + folder + '/';
-      var note = FRAMEWORK_NOTE[folder] || '';
-      var cards = document.querySelectorAll('.oq-card[data-folder="' + folder + '"]');
-      var approved = [], rejected = [], answered = [], skipped = [], leave = [];
-      cards.forEach(function(card) {
-        var state = card.getAttribute('data-state');
-        var kind = card.getAttribute('data-kind');
-        var item = {
-          id: cardId(card),
-          title: cardTitle(card),
-          pri: cardPriority(card),
-          conf: cardConfidence(card),
-          correction: getCorrectionText(card),
-          answer: getAnswerText(card)
-        };
-        if (kind === 'assumption') {
-          if (state === 'approved') approved.push(item);
-          else if (state === 'rejected') rejected.push(item);
-        } else if (kind === 'question') {
-          if (state === 'answered') answered.push(item);
-          else if (state === 'skipped') skipped.push(item);
-          else if (state === 'leave') leave.push(item);
-        }
-      });
-
-      var lines = [];
-      if (framework) {
-        lines.push('Run /aligned:use-framework ' + framework + ' in regular mode' + note + ' with');
-        lines.push('this executive pre-review applied to the existing auto-mode draft at');
-        lines.push(target + '.');
-      } else {
-        lines.push('Apply this executive pre-review directly to the auto-mode draft at');
-        lines.push(target + '.');
-        lines.push('No framework dispatch — this area is populated via classification against');
-        lines.push('`frameworks/reverse-engineered-brand/audience-taxonomy.md`. Update the slice');
-        lines.push('files directly based on the approved/rejected classifications below.');
-      }
-      lines.push('');
-
-      if (approved.length) {
-        lines.push('APPROVED ASSUMPTIONS (do not revisit):');
-        approved.forEach(function(a) {
-          lines.push('- ' + a.id + ' (' + a.pri + ', ' + a.conf + '): ' + a.title);
-        });
-        lines.push('');
-      }
-
-      if (rejected.length) {
-        lines.push('REJECTED ASSUMPTIONS (please reconsider with correction):');
-        rejected.forEach(function(r) {
-          var correction = r.correction ? r.correction : '<correction pending — user did not type one>';
-          lines.push('- ' + r.id + ' (' + r.pri + ', ' + r.conf + ') — corrected to: "' + correction + '"');
-        });
-        lines.push('');
-      }
-
-      if (answered.length) {
-        lines.push('ANSWERED QUESTIONS (use these answers verbatim):');
-        answered.forEach(function(q) {
-          var ans = q.answer ? q.answer : '<answer pending — user did not type one>';
-          lines.push('- ' + q.id + ' (' + q.pri + '): "' + ans + '"');
-        });
-        lines.push('');
-      }
-
-      if (skipped.length) {
-        lines.push('SKIPPED QUESTIONS (drop from list — not relevant):');
-        skipped.forEach(function(q) {
-          lines.push('- ' + q.id);
-        });
-        lines.push('');
-      }
-
-      if (leave.length) {
-        lines.push('REMAINING QUESTIONS (please ask interactively, P0 → P1 → P2):');
-        var ids = leave.map(function(q) { return q.id; }).join(', ');
-        lines.push('- ' + ids);
-        lines.push('');
-      }
-
-      if (!approved.length && !rejected.length && !answered.length && !skipped.length && !leave.length) {
-        lines.push('(No assumptions or questions triaged yet. Toggle Approve/Reject on assumptions and Answer/Skip/Leave on questions above, then Regenerate.)');
-        lines.push('');
-      }
-
-      if (framework) {
-        lines.push("Resume the framework's WAIT-gated interactive flow from this state.");
-      } else {
-        lines.push("Update the slice files in the audiences/ folder to reflect the approved/rejected classifications above. Mark the corresponding OQs resolved in `brand/CLAUDE.md § Open Questions`.");
-      }
-      if (deepenFurther) {
-        lines.push('');
-        lines.push('After this completes, optionally run `/aligned:use-framework ' + deepenFurther + '` to add the Moesta-flavored "what job is each persona hiring this product to do?" lens.');
-      }
-      return lines.join('\n');
-    }
-
-    function rebuildPasteBack(folder) {
-      if (!folder) return;
-      var ta = document.getElementById('pasteback-' + folder);
-      if (!ta) return;
-      if (ta.dataset.dirty === 'true') return; // user edits survive
-      ta.value = buildPasteBack(folder);
-    }
-
-    // ── Data-driven rendering from OPEN_QUESTIONS (DOM-safe, no innerHTML) ──
-    function ce(tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; }
-    function tx(val) { return document.createTextNode(val == null ? '' : String(val)); }
-    function ap(parent) {
-      for (var i = 1; i < arguments.length; i++) {
-        var c = arguments[i];
-        if (c != null) parent.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
-      }
-      return parent;
-    }
-    function sa(el, attrs) {
-      for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) el.setAttribute(k, attrs[k]);
-      return el;
-    }
-    function clearEl(el) { while (el.firstChild) el.removeChild(el.firstChild); }
-    function chip(text, cls) { return ap(ce('span', 'chip ' + cls), tx(text)); }
-    function confClass(c) { return c === 'high' ? 'chip-conf-high' : c === 'medium' ? 'chip-conf-med' : 'chip-conf-low'; }
-    function priClass(p) { return p === 'P0' ? 'pri-p0' : p === 'P1' ? 'pri-p1' : 'pri-p2'; }
-    function statusClass(s) {
-      if (!s) return 'status-partial';
-      var sl = s.toLowerCase();
-      return sl === 'strong' ? 'status-strong' : sl === 'weak' ? 'status-weak' : sl === 'gap' ? 'status-gap' : 'status-partial';
-    }
-    function findFolder(id) {
-      var fl = OPEN_QUESTIONS.folders || [];
-      for (var i = 0; i < fl.length; i++) { if (fl[i].id === id) return fl[i]; }
-      return null;
-    }
-
-    function renderExecNarrative() {
-      // v0.3.0: source_narratives.{raw_material,primary_research}
-      // v0.2.0 fallback: exec_summary.{raw_material,primary_research}
-      var sn = OPEN_QUESTIONS.source_narratives || OPEN_QUESTIONS.exec_summary || {};
-      var rm = document.getElementById('exec-raw-material');
-      var pr = document.getElementById('exec-primary-research');
-      if (rm) { clearEl(rm); if (sn.raw_material) rm.appendChild(tx(sn.raw_material)); }
-      if (pr) { clearEl(pr); if (sn.primary_research) pr.appendChild(tx(sn.primary_research)); }
-    }
-
-    function renderExecSnapshot() {
-      var el = document.getElementById('exec-snapshot');
-      if (!el) return;
-      var oqs = OPEN_QUESTIONS.open_questions || [];
-      var comps = OPEN_QUESTIONS.competitors || [];
-      var folders = OPEN_QUESTIONS.folders || [];
-      // v0.3.0: source_counts.total. v0.2.0 fallback: source_count (singular).
-      var sc = OPEN_QUESTIONS.source_counts || {};
-      var totalSources = sc.total != null ? sc.total
-        : (OPEN_QUESTIONS.source_count != null ? OPEN_QUESTIONS.source_count : '—');
-      var tiles = [
-        { num: totalSources, label: 'sources mined' },
-        { num: comps.length, label: 'competitors researched' },
-        { num: oqs.filter(function(q) { return q.confidence !== 'low'; }).length, label: 'assumptions logged' },
-        { num: oqs.filter(function(q) { return q.confidence === 'low'; }).length, label: 'questions flagged' },
-        { num: folders.filter(function(f) { return f.framework_dispatches && f.framework_dispatches.length; }).length, label: 'frameworks ready to run' }
-      ];
-      var grid = sa(ce('div', 'snapshot-grid'), { role: 'list', 'aria-label': 'Snapshot stats' });
-      tiles.forEach(function(t) {
-        grid.appendChild(ap(sa(ce('div', 'snapshot-tile'), { role: 'listitem' }),
-          ap(ce('div', 'num'), tx(t.num)),
-          ap(ce('div', 'label'), tx(t.label))));
-      });
-      clearEl(el); el.appendChild(grid);
-    }
-
-    function renderStrengthsGaps() {
-      var sl = document.getElementById('strengths-list');
-      var gl = document.getElementById('gaps-list');
-      var oqs = OPEN_QUESTIONS.open_questions || [];
-      var folders = OPEN_QUESTIONS.folders || [];
-      if (sl) {
-        clearEl(sl);
-        var strong = oqs.filter(function(q) { return q.confidence === 'high' && q.inferred_value; });
-        if (strong.length) {
-          strong.forEach(function(q) {
-            var li = ce('li');
-            li.appendChild(tx(q.inferred_value));
-            if (q.evidence && q.evidence.length) ap(li, tx(' '), ap(ce('em'), tx('(' + q.evidence.join(', ') + ')')));
-            sl.appendChild(li);
-          });
-        } else {
-          sl.appendChild(ap(sa(ce('li'), { style: 'color:var(--color-dimmed)' }), tx('No high-confidence assertions found.')));
-        }
-      }
-      if (gl) {
-        clearEl(gl);
-        var gapItems = [];
-        folders.filter(function(f) { return f.status === 'GAP'; }).forEach(function(f) {
-          gapItems.push(ap(ce('li'), ap(ce('code'), tx(f.id + '/')), tx(' — GAP folder; no owning framework commissioned yet')));
-        });
-        oqs.filter(function(q) { return q.impact === 'P0' && q.confidence === 'low'; }).forEach(function(q) {
-          var li = ce('li');
-          li.appendChild(tx(q.question || q.inferred_value || ''));
-          if (q.file) ap(li, tx(' '), ap(ce('em'), tx('(' + q.file + ')')));
-          gapItems.push(li);
-        });
-        if (gapItems.length) {
-          gapItems.forEach(function(item) { gl.appendChild(item); });
-        } else {
-          gl.appendChild(ap(sa(ce('li'), { style: 'color:var(--color-dimmed)' }), tx('No gaps found.')));
-        }
-      }
-    }
-
-    function renderBehavioralAlternatives() {
-      var el = document.getElementById('behavioral-alternatives');
-      if (!el) return;
-      clearEl(el);
-      var alts = OPEN_QUESTIONS.behavioral_alternatives || [];
-      if (!alts.length) {
-        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No behavioral alternatives found in source material.')));
-        return;
-      }
-      var ul = ce('ul', 'alt-list');
-      alts.forEach(function(a) {
-        var li = ce('li', 'alt-row');
-        var main = ap(ce('div', 'alt-row-main'), ap(ce('span', 'alt-name'), tx(a.alternative)), chip((a.confidence || '').toUpperCase(), confClass(a.confidence || '')));
-        li.appendChild(main);
-        if (a.evidence_quote) li.appendChild(ap(ce('blockquote', 'alt-quote'), tx(a.evidence_quote)));
-        if (a.source) li.appendChild(chip(a.source, 'chip-file alt-source'));
-        ul.appendChild(li);
-      });
-      el.appendChild(ul);
-    }
-
-    function renderCompetitorCards() {
-      var el = document.getElementById('competitor-cards');
-      if (!el) return;
-      clearEl(el);
-      var comps = OPEN_QUESTIONS.competitors || [];
-      if (!comps.length) {
-        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No competitor dossiers found.')));
-        return;
-      }
-      var row = ce('div', 'comp-row');
-      comps.forEach(function(c) {
-        var card = ce('div', 'comp-card');
-        card.appendChild(ap(ce('h4'), tx(c.name)));
-        var dl = ce('dl');
-        function addDd(label, val) {
-          if (!val) return;
-          dl.appendChild(ap(ce('dt'), tx(label)));
-          dl.appendChild(ap(ce('dd'), tx(val)));
-        }
-        addDd('Positioning', c.positioning_one_liner);
-        addDd('ICP', c.icp_one_liner);
-        addDd('Pricing', c.pricing_signal);
-        if (c.voice_traits && c.voice_traits.length) addDd('Voice', c.voice_traits.join(', '));
-        card.appendChild(dl);
-        row.appendChild(card);
-      });
-      el.appendChild(row);
-    }
-
-    function renderFocusTable() {
-      var tbody = document.getElementById('where-to-focus-first');
-      if (!tbody) return;
-      clearEl(tbody);
-      var folders = OPEN_QUESTIONS.folders || [];
-      var rank = 1;
-      folders.forEach(function(f) {
-        if (!f.framework_dispatches || !f.framework_dispatches.length) return;
-        f.framework_dispatches.forEach(function(d) {
-          var tr = ce('tr');
-          function addTd(cls, child) { var td = ce('td'); if (cls) td.className = cls; if (child) td.appendChild(child); tr.appendChild(td); }
-          addTd('num', tx(rank++));
-          addTd(null, ap(ce('code'), tx('/aligned:use-framework ' + d.framework_id)));
-          addTd('fills', tx(d.fills));
-          addTd(null, ap(ce('span', 'pri ' + priClass('P0')), tx(f.p0_count || 0)));
-          addTd(null, ap(ce('span', 'pri ' + priClass('P1')), tx(f.p1_count || 0)));
-          addTd(null, ap(ce('span', 'pri ' + priClass('P2')), tx(f.p2_count || 0)));
-          addTd(null, d.why_first ? tx(d.why_first) : null);
-          var btn = sa(ap(ce('button', 'btn-mini'), tx('Copy command')), { 'data-target': 'pasteback-' + f.id });
-          addTd(null, btn);
-          tbody.appendChild(tr);
-        });
-      });
-    }
-
-    // Static fallback descriptions — used only when a folder lacks a brand-specific summary.
-    // The orchestrator should populate folders[].summary during PHASE 3 aggregation; these
-    // generic strings exist so the UI degrades gracefully on legacy fixtures.
-    var AREA_DESCRIPTIONS_FALLBACK = {
-      strategy: "How the brand is positioned in the market — its category, point of differentiation, and the core narrative.",
-      language: "The brand's voice, tone, and messaging vocabulary across every customer-facing surface.",
-      audiences: "Which payer segments and procurement channels the brand operates in.",
-      personas: "The specific buyer and user roles inside each audience and the jobs they hire the product to do.",
-      market: "The competitive landscape — named alternatives and the behavioral defaults the brand displaces.",
-      proof: "Case studies, metrics, customer quotes, certifications, clinical evidence, and compliance posture.",
-      design: "The visual system — color palette, typography, layout principles, and design tokens."
-    };
-
-    // Derive grade (1-5) from folder. Prefers folders[].grade (v0.3.0+); falls
-    // back to mapping status (v0.2.0): Strong=5, Partial=3, Weak=2, GAP=1.
-    function folderGrade(f) {
-      if (f && typeof f.grade === 'number' && f.grade >= 1 && f.grade <= 5) return f.grade;
-      var s = (f && f.status) ? f.status.toLowerCase() : '';
-      if (s === 'strong') return 5;
-      if (s === 'weak') return 2;
-      if (s === 'gap') return 1;
-      return 3; // Partial or unknown
-    }
-    function legacyFolderAsGroup(folder) {
-      var summary = folder.summary || '';
-      var parts = summary.trim().split(/\s+/).filter(Boolean);
-      var headline = parts.length <= 14 ? parts.join(' ') : parts.slice(0, 14).join(' ') + '…';
-      return {
-        id: 'legacy-' + folder.id,
-        label: folder.label || folder.id,
-        folder_ids: [folder.id],
-        grade: folderGrade(folder),
-        headline_claim: headline,
-        thinnest_gap: '',
-        provided_summary: folder.provided_summary || '',
-        input_asks: folder.input_asks || []
-      };
-    }
-    function resolveDisplayGroups() {
-      if (OPEN_QUESTIONS.display_groups && OPEN_QUESTIONS.display_groups.length) {
-        return OPEN_QUESTIONS.display_groups;
-      }
-      return (OPEN_QUESTIONS.folders || []).map(legacyFolderAsGroup);
-    }
-    var GRADE_TOOLTIP = {
-      5: '5 — Strong: 0 P0 OQs, ≥70% high confidence, ≥3 evidence sources per slice',
-      4: '4 — Mostly clear: 0-1 P0 OQs and ≥50% high/medium confidence',
-      3: '3 — Mixed: 2-4 P0 OQs (most former-Partial folders)',
-      2: '2 — Thin: 5+ P0 OQs and majority low confidence',
-      1: '1 — Insufficient: GAP slice or no usable source signal'
-    };
-    function gradePill(grade) {
-      var el = ce('span', 'grade grade-' + grade);
-      el.setAttribute('title', GRADE_TOOLTIP[grade] || ('Grade ' + grade));
-      el.appendChild(tx(String(grade) + '/5'));
-      return el;
-    }
-
-    function renderSectionsAtAGlance() {
-      var el = document.getElementById('sections-at-a-glance');
-      if (!el) return;
-      clearEl(el);
-      var groups = resolveDisplayGroups();
-      if (!groups.length) {
-        el.appendChild(ap(sa(ce('p', 'description'), { style: 'color:var(--color-dimmed)' }), tx('No groups found.')));
-        return;
-      }
-      var table = ce('table', 'section-list');
-      var tbody = ce('tbody');
-      groups.forEach(function(g) {
-        var row = sa(ce('tr', 'section-row'), { role: 'link', tabindex: '0', 'data-group': g.id });
-        row.addEventListener('click', function() { switchTab(g.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-        row.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(g.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        });
-
-        var gradeCell = ce('td', 'section-grade-cell');
-        gradeCell.appendChild(gradePill(g.grade));
-
-        var areaCell = ce('td', 'section-area-cell');
-        areaCell.appendChild(ap(ce('span', 'label section-link'), tx(g.label)));
-
-        var bulletsCell = ce('td', 'section-summary-cell bullets-cell');
-        if (g.headline_claim) {
-          var b1 = ce('p', 'bullet');
-          b1.appendChild(ap(ce('span', 'b-label'), tx('What we see: ')));
-          b1.appendChild(tx(g.headline_claim));
-          bulletsCell.appendChild(b1);
-        }
-        if (g.thinnest_gap) {
-          var b2 = ce('p', 'bullet');
-          b2.appendChild(ap(ce('span', 'b-label'), tx("What we're missing: ")));
-          b2.appendChild(tx(g.thinnest_gap));
-          bulletsCell.appendChild(b2);
-        }
-        var caret = sa(ce('span', 'row-caret'), { 'aria-hidden': 'true' });
-        caret.appendChild(tx(' ›'));
-        bulletsCell.appendChild(caret);
-
-        row.appendChild(gradeCell);
-        row.appendChild(areaCell);
-        row.appendChild(bulletsCell);
-        tbody.appendChild(row);
-      });
-      table.appendChild(tbody);
-      el.appendChild(table);
-    }
-
-    // v0.3.0 summary fallback: if no summary, truncate inferred_value/question to first sentence
-    // up to ~25 words. v0.2.0 fixtures degrade gracefully.
-    function deriveSummary(q) {
-      if (q.summary) return q.summary;
-      var src = q.inferred_value || q.question || '';
-      if (!src) return '';
-      var firstSentence = src.split(/(?<=[.!?])\s+/)[0] || src;
-      var words = firstSentence.split(/\s+/);
-      if (words.length <= 25) return firstSentence;
-      return words.slice(0, 25).join(' ') + '…';
-    }
-
-    function renderOQCard(q, folderId) {
-      var kind = q.confidence === 'low' ? 'question' : 'assumption';
-      var impact = q.impact || 'P2';
-      var confLabel = (q.confidence || 'low').toUpperCase().replace('MEDIUM', 'MED');
-      var summaryText = deriveSummary(q);
-      var detailText = kind === 'assumption' ? (q.inferred_value || q.question || '') : (q.question || q.inferred_value || '');
-      var displayId = q._display_id || q.global_id || q.id;
-      var cardAttrs = {
-        'data-id': q.global_id || q.id,
-        'data-display-id': displayId,
-        'data-folder': folderId,
-        'data-kind': kind
-      };
-      if (kind === 'assumption') cardAttrs['data-state'] = 'approved';
-      var card = sa(ce('div', 'oq-card'), cardAttrs);
-      var hdr = ce('div', 'oq-card-header');
-      hdr.appendChild(ap(ce('span', 'oq-id'), tx(displayId)));
-      hdr.appendChild(chip(impact, 'pri ' + priClass(impact)));
-      hdr.appendChild(chip('conf: ' + confLabel, confClass(q.confidence || 'low')));
-      var areaLabel = FOLDER_LABEL_BY_ID[folderId] || folderId;
-      hdr.appendChild(chip(areaLabel, 'chip-area'));
-      card.appendChild(hdr);
-      // Summary line (the executive-skim view, shown by default)
-      card.appendChild(ap(ce('p', 'oq-body'), tx(summaryText)));
-
-      // Expandable detail — shown only if the detail adds anything beyond the summary
-      var hasDetailExtras = (detailText && detailText !== summaryText) || q.why_it_matters || q.rationale || (kind === 'question' && q.inferred_value);
-      if (hasDetailExtras) {
-        var details = sa(ce('details', 'oq-detail'), {});
-        var summaryEl = ce('summary', 'oq-detail-summary');
-        summaryEl.appendChild(tx('Show detail'));
-        details.appendChild(summaryEl);
-        if (detailText && detailText !== summaryText) {
-          details.appendChild(ap(ce('p', 'oq-detail-full'), tx(detailText)));
-        }
-        if (kind === 'question' && q.inferred_value) {
-          details.appendChild(ap(ce('div', 'oq-best-guess'), ap(ce('strong'), tx('Best guess: ')), tx(q.inferred_value)));
-        }
-        if (q.why_it_matters) {
-          details.appendChild(ap(ce('div', 'oq-why'),
-            ap(ce('strong'), tx('Why this matters: ')),
-            tx(q.why_it_matters)
-          ));
-        }
-        if (q.rationale) {
-          details.appendChild(ap(ce('div', 'oq-rationale'),
-            ap(ce('strong'), tx('What the sources show: ')),
-            tx(q.rationale)
-          ));
-        }
-        card.appendChild(details);
-      }
-      if (q.evidence && q.evidence.length) {
-        card.appendChild(ap(ce('p', 'oq-evidence'), ap(ce('strong'), tx('Evidence: ')), tx(q.evidence.join(', '))));
-      }
-      var actions = ce('div', 'oq-actions');
-      if (kind === 'assumption') {
-        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-approve'), tx('Approve')), { onclick: "setAssumptionState(this,'approved')" }));
-        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-reject'), tx('Reject')), { onclick: "setAssumptionState(this,'rejected')" }));
-      } else {
-        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-answer'), tx("I'll answer here")), { onclick: "setQuestionState(this,'answered')" }));
-        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-skip'), tx('Skip')), { onclick: "setQuestionState(this,'skipped')" }));
-        actions.appendChild(sa(ap(ce('button', 'oq-btn btn-leave'), tx('Leave for framework')), { onclick: "setQuestionState(this,'leave')" }));
-      }
-      card.appendChild(actions);
-      var inputCls = kind === 'assumption' ? 'oq-inline-input input-correction' : 'oq-inline-input input-answer';
-      var inputLbl = kind === 'assumption' ? "What's the correction?" : 'Your answer';
-      card.appendChild(ap(ce('div', inputCls), ap(ce('label'), tx(inputLbl)), ce('textarea')));
-      return card;
-    }
-
-    function renderGroupBanner(group, oqs) {
-      if (!group) return null;
-      var assumptions = oqs.filter(function(q) { return q.confidence !== 'low'; });
-      var questions = oqs.filter(function(q) { return q.confidence === 'low'; });
-      var highPriority = oqs.filter(function(q) { return q.impact === 'P0'; }).length;
-
-      var banner = ce('div', 'folder-banner');
-      banner.appendChild(ap(ce('div', 'banner-grade'), gradePill(group.grade)));
-
-      var body = ce('div', 'banner-body');
-      body.appendChild(ap(ce('h2'), tx(group.label)));
-
-      var counts = ce('p', 'banner-counts');
-      counts.appendChild(ap(ce('strong'), tx(String(assumptions.length))));
-      counts.appendChild(tx(' assumptions, '));
-      counts.appendChild(ap(ce('strong'), tx(String(questions.length))));
-      counts.appendChild(tx(' questions, '));
-      counts.appendChild(ap(ce('strong'), tx(String(highPriority))));
-      counts.appendChild(tx(' high-priority'));
-      body.appendChild(counts);
-
-      banner.appendChild(body);
-      return banner;
-    }
-
-    function renderGroupPanel(group) {
-      var bannerEl = document.getElementById('banner-' + group.id);
-      var oqsEl = document.getElementById('panel-' + group.id + '-oqs');
-      var pbEl = document.getElementById('panel-' + group.id + '-pastebacks');
-      if (!bannerEl || !oqsEl || !pbEl) return;
-
-      var oqs = (OPEN_QUESTIONS.open_questions || []).filter(function(q) {
-        return (group.folder_ids || []).some(function(fid) {
-          return q.file && q.file.indexOf(fid + '/') === 0;
-        });
-      });
-
-      clearEl(bannerEl);
-      var banner = renderGroupBanner(group, oqs);
-      if (banner) bannerEl.appendChild(banner);
-
-      // OQ sort: P0 → P1 → P2, then by file lexically
-      var priOrder = { P0: 0, P1: 1, P2: 2 };
-      oqs.sort(function(a, b) {
-        var pa = priOrder[a.impact] != null ? priOrder[a.impact] : 9;
-        var pb = priOrder[b.impact] != null ? priOrder[b.impact] : 9;
-        if (pa !== pb) return pa - pb;
-        return (a.file || '').localeCompare(b.file || '');
-      });
-
-      clearEl(oqsEl);
-      if (!oqs.length) {
-        oqsEl.appendChild(ap(ce('p', 'empty-group'), tx('Coverage is sufficient across this area.')));
-      } else {
-        oqs.forEach(function(q) {
-          var folderId = (q.file || '').split('/')[0];
-          oqsEl.appendChild(renderOQCard(q, folderId));
-        });
-      }
-
-      // Nested per-folder paste-backs (one <details> per constituent folder).
-      // Skip `competitive`: it has no on-disk slice files (behavioral_alternatives +
-      // competitor_cards render at the top of the group panel; there is no
-      // framework-dispatch paste-back target).
-      clearEl(pbEl);
-      (group.folder_ids || []).filter(function(fid) { return fid !== 'competitive'; }).forEach(function(fid) {
-        var det = ce('details', 'group-pasteback');
-        var sum = ce('summary');
-        var fwid = FRAMEWORK_BY_FOLDER[fid];
-        sum.appendChild(tx((FOLDER_LABEL_BY_ID[fid] || fid) + (fwid ? ' → ' + fwid : '')));
-        det.appendChild(sum);
-        var ta = ce('textarea');
-        ta.id = 'pasteback-' + fid;
-        ta.setAttribute('placeholder', 'Paste-back prompt will appear here after you triage the cards above...');
-        det.appendChild(ta);
-        var actions = ce('div', 'paste-back-actions');
-        actions.appendChild(sa(ap(ce('button', 'btn'), tx('Copy prompt')), { onclick: "copyPasteback('" + fid + "')" }));
-        actions.appendChild(sa(ap(ce('button', 'btn btn-primary'), tx('Regenerate')), { onclick: "regeneratePasteback('" + fid + "')" }));
-        det.appendChild(actions);
-        pbEl.appendChild(det);
-      });
-    }
-
-    // Assign A-N (assumption) and Q-N (question) display IDs to every OQ.
-    // Sequences are independent and global across the document. The OQ-N
-    // global_id is preserved on each card via data-id for traceability.
-    function assignDisplayIds() {
-      var oqs = OPEN_QUESTIONS.open_questions || [];
-      var aCount = 0, qCount = 0;
-      oqs.forEach(function(q) {
-        var kind = q.confidence === 'low' ? 'question' : 'assumption';
-        q._display_id = kind === 'assumption' ? ('A-' + (++aCount)) : ('Q-' + (++qCount));
-      });
-    }
-
-    function renderAll() {
-      buildTabNav();
-      buildGroupPanels();
-      assignDisplayIds();
-      renderExecNarrative();
-      renderExecSnapshot();
-      renderBehavioralAlternatives();
-      renderCompetitorCards();
-      renderSectionsAtAGlance();
-      resolveDisplayGroups().forEach(function(g) { renderGroupPanel(g); });
-      renderInputAsks();
-      renderPerTabCallouts();
-    }
-
-    function attachCardClickToExpand() {
-      document.querySelectorAll('.oq-card').forEach(function(card) {
-        if (card.dataset.clickWired === 'true') return;
-        card.dataset.clickWired = 'true';
-        card.addEventListener('click', function(e) {
-          if (e.target.closest('.oq-actions, .oq-inline-input, button, a, textarea, input, label')) return;
-          card.classList.toggle('context-open');
-        });
-      });
-    }
-
-    function rebuildAllPastebacks() {
-      resolveDisplayGroups().forEach(function(g) {
-        (g.folder_ids || []).forEach(function(fid) {
-          var ta = document.getElementById('pasteback-' + fid);
-          if (ta) rebuildPasteBack(fid);
-        });
-      });
-    }
-
-    // ── H7(c): Add tooltips to visible priority + confidence chips ──
-    function addChipTooltips() {
-      document.querySelectorAll('.oq-card-header .pri').forEach(function(el) {
-        if (!el.hasAttribute('title')) el.setAttribute('title', 'Impact on downstream framework run');
-      });
-      document.querySelectorAll('.oq-card-header .chip-conf-high, .oq-card-header .chip-conf-med, .oq-card-header .chip-conf-low').forEach(function(el) {
-        if (!el.hasAttribute('title')) el.setAttribute('title', 'Strength of evidence behind the guess');
-      });
-    }
-
-    // ── H7(c): Move slot + deepen chips out of header, into Context block ──
-    function moveJargonChipsIntoContext() {
-      document.querySelectorAll('.oq-card').forEach(function(card) {
-        var header = card.querySelector('.oq-card-header');
-        var context = card.querySelector('.oq-context');
-        if (!header || !context) return;
-        if (context.querySelector('.oq-context-meta')) return; // already done
-        var jargon = header.querySelectorAll('.chip-slot, .chip-deepen');
-        if (!jargon.length) return;
-        var meta = document.createElement('div');
-        meta.className = 'oq-context-meta';
-        jargon.forEach(function(chip) {
-          meta.appendChild(chip.cloneNode(true));
-        });
-        context.insertBefore(meta, context.firstChild);
-      });
-    }
-
-    // ── Sync initial selected button state from data-state ───
-    function syncInitialSelectedStates() {
-      document.querySelectorAll('.oq-card[data-state]').forEach(function(card) {
-        var state = card.getAttribute('data-state');
-        var btnClass = {
-          approved: 'btn-approve',
-          rejected: 'btn-reject',
-          answered: 'btn-answer',
-          skipped: 'btn-skip',
-          leave: 'btn-leave'
-        }[state];
-        if (!btnClass) return;
-        clearSelected(card);
-        var b = card.querySelector('.oq-btn.' + btnClass);
-        if (b) b.classList.add('selected');
-      });
-    }
-
-    // Initial paste-back build and setup
-    document.addEventListener('DOMContentLoaded', function() {
-      renderAll();
-      addChipTooltips();
-      syncInitialSelectedStates();
-      rebuildAllPastebacks();
-      // Wire inline input edits so paste-back stays current
-      document.querySelectorAll('.oq-inline-input textarea').forEach(function(ta) {
-        ta.addEventListener('input', function() {
-          var card = ta.closest('.oq-card');
-          if (card) rebuildPasteBack(card.getAttribute('data-folder'));
-        });
-      });
-      // Mark paste-back textareas dirty on user input so auto-rebuild doesn't clobber edits
-      document.querySelectorAll('.paste-back textarea').forEach(function(ta) {
-        ta.addEventListener('input', function() { ta.dataset.dirty = 'true'; });
-      });
-    });
-
-    // ── v0.4.0: Inputs Needed (Overview sub-tab) + per-tab callouts ──
-    var FOLDER_LABEL_TO_TAB = {
-      'Strategy': 'strategy',
-      'Language': 'language',
-      'Audiences': 'audiences',
-      'Personas': 'personas',
-      'Market': 'market',
-      'Proof': 'proof',
-      'Design': 'design',
-      'Competitive': 'competitive'
-    };
-    var FOLDER_LABEL_BY_ID = {
-      strategy: 'Strategy',
-      language: 'Language',
-      audiences: 'Audiences',
-      personas: 'Personas',
-      market: 'Market',
-      proof: 'Proof',
-      design: 'Design',
-      competitive: 'Competitive'
-    };
-
-    // Already loaded? Run now (covers cases where DOMContentLoaded already fired).
-    // Must execute AFTER FOLDER_LABEL_BY_ID is assigned — renderAll() reads it via
-    // renderOQCard/renderGroupPanel.
-    if (document.readyState !== 'loading') {
-      renderAll();
-      addChipTooltips();
-      syncInitialSelectedStates();
-      rebuildAllPastebacks();
-    }
-    function buildFolderToGroupTab() {
-      var map = {};
-      resolveDisplayGroups().forEach(function(g) {
-        (g.folder_ids || []).forEach(function(fid) {
-          map[fid] = g.id;
-        });
-      });
-      return map;
-    }
-    function iaEl(tag, opts) {
-      var node = document.createElement(tag);
-      opts = opts || {};
-      if (opts.className) node.className = opts.className;
-      if (opts.text != null) node.textContent = opts.text;
-      if (opts.style) node.setAttribute('style', opts.style);
-      return node;
-    }
-    function renderInputAsks() {
-      var container = document.getElementById('inputs-needed-flat');
-      if (!container) return;
-      while (container.firstChild) container.removeChild(container.firstChild);
-      var groups = resolveDisplayGroups();
-      var seen = Object.create(null);
-      var flat = [];
-      groups.forEach(function(g) {
-        (g.input_asks || []).forEach(function(a) {
-          if (!a || !a.ask) return;
-          var key = a.ask.trim().toLowerCase();
-          if (seen[key]) return;
-          seen[key] = true;
-          flat.push(a.ask);
-        });
-      });
-      if (!flat.length) {
-        var empty = iaEl('p', { className: 'provided', text: 'No additional inputs requested.' });
-        container.appendChild(empty);
-        return;
-      }
-      var ul = iaEl('ul', { className: 'inputs-flat' });
-      flat.forEach(function(ask) {
-        var li = iaEl('li', { text: ask });
-        ul.appendChild(li);
-      });
-      container.appendChild(ul);
-    }
-    function renderPerTabCallouts() {
-      var groups = resolveDisplayGroups();
-      groups.forEach(function(g) {
-        var container = document.getElementById('callout-' + g.id);
-        if (!container) return;
-        while (container.firstChild) container.removeChild(container.firstChild);
-        var provided = g.provided_summary || '';
-        var asks = g.input_asks || [];
-        if (!provided && !asks.length) {
-          container.style.display = 'none';
-          return;
-        }
-        container.appendChild(iaEl('h3', { text: 'What we have, what would help' }));
-        if (provided) {
-          var p = iaEl('p', { className: 'provided' });
-          p.appendChild(document.createTextNode('We received: ' + provided));
-          container.appendChild(p);
-        }
-        if (asks.length) {
-          container.appendChild(iaEl('p', { className: 'provided would-help-heading', text: 'Would help:' }));
-          var list = iaEl('ul', { className: 'callout-list' });
-          asks.forEach(function(a) {
-            if (!a || !a.ask) return;
-            var li = iaEl('li');
-            // Hyphen bullet for copy-paste survival
-            li.appendChild(document.createTextNode('- ' + a.ask));
-            list.appendChild(li);
-          });
-          container.appendChild(list);
-        }
-        container.style.display = '';
-      });
-    }
-  </script>
-
+<header class="site-header">
+  {HEADER_BRAND}
+  <span class="header-org">{ORG_NAME} — Brand Review</span>
+</header>
+
+<nav class="area-nav" role="navigation" aria-label="Brand areas">
+  {NAV_TABS}
+</nav>
+
+<main class="panels" id="panels">
+  {SECTION_PANELS}
+</main>
+
+<script>
+(function () {
+  var panels = document.querySelectorAll('.panel');
+  var navBtns = document.querySelectorAll('.nav-btn');
+
+  function activate(id) {
+    panels.forEach(function (p) { p.classList.toggle('active', p.dataset.section === id); });
+    navBtns.forEach(function (b) { b.classList.toggle('active', b.dataset.section === id); });
+    history.replaceState(null, '', '#' + id);
+  }
+
+  navBtns.forEach(function (b) {
+    b.addEventListener('click', function () { activate(b.dataset.section); });
+  });
+
+  var hash = location.hash.slice(1);
+  var firstId = navBtns[0] ? navBtns[0].dataset.section : '';
+  var hasPanel = hash && document.querySelector('.panel[data-section="' + hash + '"]');
+  activate(hasPanel ? hash : firstId);
+})();
+</script>
 </body>
 </html>

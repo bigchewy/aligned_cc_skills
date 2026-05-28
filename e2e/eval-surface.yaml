@@ -24,3 +24,5 @@ patterns:
   - skills/writing-plans/SKILL.md
   - skills/finishing-a-development-branch/SKILL.md
   - skills/_shared/manual-deploy-artifact-catalog.md
+  - frameworks/*/render-review-html.md
+  - frameworks/*/open-questions-schema.md
