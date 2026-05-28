@@ -1024,7 +1024,7 @@ git commit -m "feat(reb): rewrite PHASE 3 to Marley model (curate, inline sectio
 
 ---
 
-### Task 12: `prompt.md` PHASE 3.6 — `version.yaml` / `contracts.yaml` / `CLAUDE.md` authoring
+### ✅ Task 12: `prompt.md` PHASE 3.6 — `version.yaml` / `contracts.yaml` / `CLAUDE.md` authoring
 
 **Files:**
 - Modify: `frameworks/reverse-engineered-brand/prompt.md` (§"Step 3.6: Write top-level brand-folder files")

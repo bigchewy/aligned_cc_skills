@@ -603,7 +603,24 @@ This is a filesystem move, not a read — drafts never re-enter orchestrator con
 }
 ```
 
-**Do NOT write `.open-questions.json`** — `review-data.json` is the single source of truth.
+**Author `{brand-folder-path}/version.yaml`** inline (Marley-shaped):
+
+```yaml
+brand_name: "{org-name}"
+generated_at: "{ISO-8601 timestamp}"
+framework: reverse-engineered-brand
+source_root: "{brand-folder-path}"
+status: first_draft
+confidence: "{modal confidence across the 7 area sections}"
+notes: "First draft from reverse-engineered-brand. Open questions logged in review-data.json."
+```
+
+**Author `{brand-folder-path}/CLAUDE.md`** inline using the manifest template from `docs/brand-folder-spec.md § CLAUDE.md manifest template`. Populate:
+- **File inventory:** every slice in the Slice Index. The 5 always-on slices (`source-map.md`, `strategy/context.md`, `strategy/operating-principles.md`, `language/copy-bank.md`, `proof/claims-ledger.md`) are always present; area slices appear when the Slice Index has a non-stub entry for that path.
+- **Composition contract summary:** reference `contracts.yaml`; no inline expansion needed.
+- **Next Steps to Deepen:** framework IDs taken from each area `sections[]` entry, ordered by grade (lowest first). Use the `/aligned:use-framework {framework-id}` invocation pattern per the spec template.
+
+**Author `{brand-folder-path}/contracts.yaml`** inline using the composition contract schema from `docs/brand-folder-spec.md § Composition contract`. Add a `reverse-engineered-brand.produces` list enumerating all Slice Index entries — always-on slices first, then area slices by folder order.
 
 **Step 3.7: Dispatch the renderer.**
 
