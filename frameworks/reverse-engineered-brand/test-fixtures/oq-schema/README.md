@@ -1,16 +1,9 @@
-# OQ Schema Fixtures (Layer 1)
+# oq-schema fixtures
 
-These JSON fixtures exercise the PHASE 2.4 ready-to-load gate's schema validator. They
-are read manually during framework development — there is no automated runner.
+Schema reference examples for the rich internal OQ emission shape (`open-questions-schema.md` §"Rich internal emission shape"). These are not automated test inputs — automated tests consume `test-fixtures/curation/` and `test-fixtures/render/`.
 
-| Fixture | Expected gate behavior |
+## Fixtures
+
+| File | Description |
 |---|---|
-| `valid-minimal.json` | Pass |
-| `valid-with-alternatives.json` | Pass |
-| `valid-gap-slice.json` | Pass (GAP entries allow `null` for `framework_slot` + `deepen_with`) |
-| `valid-v040-minimal.json` | Pass (v0.4.0 schema with `input_asks` + `provided_summary`) |
-| `invalid-missing-impact.json` | Hard-fail (`field: impact` missing) |
-| `invalid-bad-confidence.json` | Hard-fail (`field: confidence` not in enum) |
-| `invalid-compound-question.json` | WARNING — compound-question regex match; does NOT block |
-
-Schema reference: `frameworks/reverse-engineered-brand/open-questions-schema.md`.
+| `valid-rich-shape-minimal.json` | Two-entry `open_questions` array covering the full 18-field rich shape: one question-type OQ (confidence=medium, question present, inferred_value null) and one assumption-type OQ (confidence=high, inferred_value present, question null). Both entries use realistic brand-decision-shaped content. |

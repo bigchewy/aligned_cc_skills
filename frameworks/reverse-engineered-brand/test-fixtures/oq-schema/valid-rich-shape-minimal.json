@@ -1,0 +1,44 @@
+{
+  "open_questions": [
+    {
+      "id": "Q-strategy-positioning-1",
+      "global_id": "OQ-1",
+      "file": "strategy/positioning.md",
+      "slice": "strategy/competitive-alternatives",
+      "framework_slot": "phase-1-competitive-alternatives",
+      "summary": "Positioning depends on which alternative buyers most often rejected before switching.",
+      "question": "Is manual spreadsheet dispatch the primary alternative buyers rejected before choosing this product?",
+      "inferred_value": null,
+      "draft_excerpt": "Before they found us, most customers were cobbling together spreadsheets and phone calls.",
+      "confidence": "medium",
+      "impact": "P0",
+      "evidence": ["source:#2", "source:#4"],
+      "alternatives": [
+        "Buyers rejected a named SaaS competitor, not spreadsheets",
+        "No dominant alternative — buyers came from a fragmented mix of tools"
+      ],
+      "deepen_with": "5-components-positioning",
+      "why_it_matters": "Component 1 of the 5-component positioning frame anchors every downstream claim. If the real alternative is a named SaaS product, messaging optimized against spreadsheets misfires in competitive deals and confuses buyers who already tried the real alternative.",
+      "rationale": "Two marketing decks describe spreadsheets as the status quo with no mention of a named competitor. No sales-call transcripts or win/loss notes were provided to corroborate. The inference is likely correct but unverified against direct buyer evidence.",
+      "emitted_at": "2026-05-27T09:14:00Z"
+    },
+    {
+      "id": "Q-language-voice-1",
+      "global_id": "OQ-2",
+      "file": "language/brand-voice.md",
+      "slice": "language/tone-principles",
+      "framework_slot": "phase-2-tone-principles",
+      "summary": "Brand voice skews authoritative and clinical, written for procurement teams not operators.",
+      "question": null,
+      "inferred_value": "The brand voice is authoritative and clinical, optimized for procurement-side buyers rather than the frontline operators who use the product daily.",
+      "draft_excerpt": "Our platform gives logistics teams the control and visibility they need to meet service commitments.",
+      "confidence": "high",
+      "impact": "P1",
+      "evidence": ["source:#1", "source:#3"],
+      "deepen_with": "brand-voice",
+      "why_it_matters": "If copy targets procurement but the champion is an operations manager, the brand sounds like it's talking past the actual user. Voice calibrated to the wrong audience reduces conversion at the bottom of the funnel where operators self-qualify.",
+      "rationale": "All three reviewed assets use governance language: 'control,' 'visibility,' 'compliance.' No copy addresses the dispatcher or driver by role. The pattern is consistent enough across sources to treat as deliberate, not accidental.",
+      "emitted_at": "2026-05-27T09:14:05Z"
+    }
+  ]
+}

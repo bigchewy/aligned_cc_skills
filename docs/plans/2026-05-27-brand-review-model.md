@@ -79,7 +79,7 @@ git commit -m "docs(reb): rewrite schema to Marley review-data model (sections, 
 
 ---
 
-### Task 1b: Rebuild `test-fixtures/oq-schema/` — delete v0.4.1 fixtures, create rich-shape replacements
+### ✅ Task 1b: Rebuild `test-fixtures/oq-schema/` — delete v0.4.1 fixtures, create rich-shape replacements
 
 **Files:**
 - Delete: all existing files in `frameworks/reverse-engineered-brand/test-fixtures/oq-schema/` (8 files: `valid-v040-minimal.json` and others referencing `input_asks`/`provided_summary`)
