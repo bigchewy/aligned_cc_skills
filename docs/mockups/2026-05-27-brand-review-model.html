@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reverse-Engineered Brand — Review Model Redesign</title>
+  <!-- Mermaid for diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Tailwind for utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: 'var(--color-accent)', hover: 'var(--color-accent-hover)', subtle: 'var(--color-accent-subtle)' },
+            surface: 'var(--color-surface)',
+            muted: 'var(--color-muted)',
+            foreground: 'var(--color-foreground)',
+            secondary: 'var(--color-secondary)',
+            dimmed: 'var(--color-dimmed)',
+            border: 'var(--color-border)'
+          },
+          fontFamily: {
+            sans: ['var(--font-sans)'],
+            mono: ['var(--font-mono)']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* --- Brand tokens ---
+       Populated by the brainstorming skill from the project's
+       docs/design/design-principles.md (or the global fallback at
+       ~/.claude/docs/design/design-principles.md). Defaults below match
+       the aligned plugin's own brand and apply when no design-principles
+       file is found. The whole inline <style> block, the Tailwind config
+       above, and the Mermaid theme below all read from these vars — so
+       changing values here is the only edit needed to rebrand the artifact. */
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--color-muted);
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--color-muted);
+      padding-left: 16px;
+      background: var(--color-background);
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-accent-subtle);
+      color: var(--color-accent);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-deferred {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-surface);
+      color: var(--color-dimmed);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: var(--color-foreground); margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: var(--color-accent);
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--color-secondary); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Component cards */
+    .component-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .component-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 4px;
+    }
+    .component-card .use-case {
+      font-size: 0.82rem;
+      color: var(--color-dimmed);
+      margin-bottom: 12px;
+    }
+    .component-card code {
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 0.78rem;
+      background: var(--color-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--color-foreground);
+    }
+    .component-preview {
+      background: var(--color-background);
+      border: 1px solid var(--color-muted);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    /* Phase tracker */
+    .mini-phase-tracker {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+    .mini-phase-item {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-right: none;
+    }
+    .mini-phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .mini-phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
+    .mini-phase-item.current {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    /* Card grid */
+    .mini-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .mini-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.75rem;
+      color: var(--color-foreground);
+    }
+    .mini-card strong { font-weight: 600; display: block; margin-bottom: 2px; }
+    .mini-card span { color: var(--color-dimmed); font-size: 0.7rem; }
+
+    /* Compare grid */
+    .mini-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .mini-compare-col {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.72rem;
+    }
+    .mini-compare-col h4 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-foreground);
+    }
+    .mini-compare-col .pro { color: #047857; }
+    .mini-compare-col .con { color: #b91c1c; }
+
+    /* Callouts */
+    .mini-callout {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      border-left: 3px solid;
+      margin-bottom: 6px;
+    }
+    .mini-callout.decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .mini-callout.constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .mini-callout.risk { background: #fef2f2; border-color: #b91c1c; color: #b91c1c; }
+
+    /* Change table */
+    .change-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .change-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--color-foreground);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .change-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-muted);
+      color: var(--color-foreground);
+      vertical-align: top;
+    }
+    .change-table .file-path {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    .status-modified { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-unchanged { background: var(--color-surface); color: var(--color-dimmed); }
+    .status-new { background: #ecfdf5; color: #047857; }
+
+    /* Success criteria */
+    .criteria-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .criteria-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-muted);
+      align-items: flex-start;
+    }
+    .criteria-item:last-child { border-bottom: none; }
+    .criteria-num {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+    .criteria-text {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      line-height: 1.5;
+    }
+    .criteria-text strong { font-weight: 600; }
+
+    /* Test strategy */
+    .test-category {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .test-category h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .test-items {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      padding-left: 20px;
+      margin: 0;
+    }
+    .test-items li {
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    /* Phase tracker */
+    .phase-tracker {
+      display: flex;
+      gap: 0;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .phase-item {
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-right: none;
+    }
+    .phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
+    .phase-current {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    /* Card grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 0.85rem;
+      color: var(--color-secondary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Comparison grid */
+    .compare-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .compare-2col { grid-template-columns: repeat(2, 1fr); }
+    .compare-3col { grid-template-columns: repeat(3, 1fr); }
+    .compare-grid .col {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .compare-grid .col h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .compare-grid .pro { color: #047857; font-size: 0.85rem; }
+    .compare-grid .con { color: #b91c1c; font-size: 0.85rem; }
+
+    /* Callout boxes */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      border-left: 4px solid;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .callout-decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .callout-constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: var(--color-foreground); }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: var(--color-foreground); }
+    .callout strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+  </style>
+<!-- WIDGETS-CSS-START -->
+<style>
+  .interactive-section {
+    background: var(--color-accent-subtle);
+    border-radius: 12px;
+    padding: 24px 28px 32px;
+    margin: 32px -28px;
+  }
+  .interactive-banner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--color-foreground);
+  }
+  .interactive-banner .icon { color: var(--color-accent); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  table.interactive td { vertical-align: middle; }
+  table.interactive .decision-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; }
+  table.interactive .decision-title { font-weight: 500; color: var(--color-foreground); }
+  table.interactive td.decision-desc { font-size: 13px; color: var(--color-secondary); line-height: 1.5; }
+
+  select.dropdown { font-family: var(--font-sans); font-size: 13px; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-surface); color: var(--color-foreground); cursor: pointer; min-width: 110px; }
+  select.dropdown:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  select.dropdown.reject, select.dropdown.include { color: var(--color-accent); font-weight: 500; border-color: var(--color-accent); background: var(--color-accent-subtle); }
+  select.dropdown.q-reject { color: #b91c1c; font-weight: 500; border-color: #b91c1c; background: #fef2f2; }
+
+  tr.row-active td { background: var(--color-accent-subtle) !important; }
+  tr.row-rejected td { background: #fef2f2 !important; }
+  tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; }
+
+  tr.section-divider td { background: var(--color-muted); color: var(--color-foreground); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .decision-card-list { display: flex; flex-direction: column; gap: 12px; }
+  .decision-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 16px 18px; transition: border-color 150ms, box-shadow 150ms, background 150ms; }
+  .decision-card.decision-card-clickable { cursor: pointer; }
+  .decision-card.decision-card-clickable:hover { border-color: var(--color-accent); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .decision-card.row-active { background: var(--color-accent-subtle) !important; border-color: var(--color-accent); }
+  .decision-card-head { display: flex; align-items: flex-start; gap: 16px; }
+  .decision-card-headline { flex: 1; display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+  .decision-card-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; font-size: 13px; flex-shrink: 0; }
+  .decision-card-title { font-weight: 600; color: var(--color-foreground); font-size: 14px; line-height: 1.4; }
+  .decision-card.row-active .decision-card-title { text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; opacity: 0.7; }
+  .decision-card-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .decision-card-chevron { color: var(--color-dimmed); font-size: 11px; transition: transform 150ms; user-select: none; }
+  .decision-card.expanded .decision-card-chevron { transform: rotate(180deg); }
+  .decision-card-desc { margin-top: 8px; font-size: 13px; color: var(--color-secondary); line-height: 1.55; }
+  .decision-card-detail { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--color-border); font-size: 13px; color: var(--color-foreground); line-height: 1.6; }
+  .decision-card-detail p { margin: 0 0 8px; }
+  .decision-card-detail p:last-child { margin-bottom: 0; }
+  .decision-card-section { padding: 16px 4px 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-foreground); border-top: 1px solid var(--color-border); }
+  .decision-card-section:first-child { border-top: none; padding-top: 4px; }
+  .decision-card-section .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  .decision-card-section .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .prompt-box { margin-top: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
+  .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .prompt-box-label { font-size: 13px; font-weight: 600; color: var(--color-foreground); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn { font-family: var(--font-sans); font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--color-border); background: var(--color-muted); color: var(--color-foreground); font-weight: 500; }
+  .btn:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); }
+  .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+  .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .btn.copied { background: #047857; color: white; border-color: #047857; }
+  .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+  textarea.prompt-textarea { width: 100%; min-height: 160px; padding: 14px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--color-foreground); background: var(--color-muted); border: 1px solid var(--color-border); border-radius: 8px; resize: vertical; }
+  textarea.prompt-textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  .prompt-hint { margin-top: 8px; font-size: 12px; color: var(--color-dimmed); font-style: italic; }
+</style>
+<!-- WIDGETS-CSS-END -->
+</head>
+<body>
+  <h1>Reverse-Engineered Brand — Review Model Redesign</h1>
+  <p class="subtitle">Reverting the v0.4.1 CEO-tab / voice-rewrite layer to a self-themed, executive-facing "Marley model" review</p>
+  <p class="context">Software-design brainstorm · 2026-05-27 · feeds /aligned:writing-plans → /aligned:executing-plans</p>
+
+  <div class="phase-tracker">
+    <div class="phase-item">Problem Space</div>
+    <div class="phase-item">Decisions Locked</div>
+    <div class="phase-item">Design</div>
+    <div class="phase-item phase-current">Architecture</div>
+  </div>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('datamodel')">Data Model</button>
+    <button class="tab-btn" onclick="switchTab('pipeline')">Pipeline</button>
+    <button class="tab-btn" onclick="switchTab('renderer')">Renderer</button>
+    <button class="tab-btn" onclick="switchTab('testing')">Testing</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+    <button class="tab-btn" onclick="switchTab('questions')">Open Questions</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="panel-overview" class="tab-panel active">
+    <div class="section">
+      <h2>What this redesign does</h2>
+      <p class="description">Replace the drifted v0.4.1 review output (a 4-tab CEO-vocabulary <code>display_groups</code> nav, a generic 2073-line locked template, ~151 granular open questions, fed by two extra sub-agents) with the older <strong>Marley model</strong>: 8 folder/area tabs, a self-themed HTML rendered in the prospect's own decoded brand, per-section grade + working/attention grid + a short decision-shaped question list, and ~5–15 curated owner-authority questions.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  src[Sources<br/>URL or local folder] --> ext[Extract<br/>sub-agents]
+  ext --> syn[Per-slice synthesis<br/>+ design theme decode]
+  syn --> cur[Curate OQs<br/>5-15 owner-decisions]
+  cur --> sec[Build 8 sections<br/>inline]
+  sec --> rev[Self-themed<br/>review.html]
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Success criteria</h2>
+      <ul class="criteria-list">
+        <li class="criteria-item"><span class="criteria-num">1</span><span class="criteria-text">Self-themed <strong>review.html</strong> matching Marley's structure: logo/wordmark header, sticky 8-tab nav with <strong>N / 5</strong> grade chips, per-section eyebrow + grade badge + summary + decision callout + working/attention grid + short OQ list.</span></li>
+        <li class="criteria-item"><span class="criteria-num">2</span><span class="criteria-text">Renders in the prospect's own decoded brand (@font-face, :root palette, logo) and <strong>degrades gracefully</strong> on a public-web-only build.</span></li>
+        <li class="criteria-item"><span class="criteria-num">3</span><span class="criteria-text">Exactly one canonical data file (<strong>review-data.json</strong>) + inline snapshot in review.html. No 150-item log. ~5–15 curated questions.</span></li>
+        <li class="criteria-item"><span class="criteria-num">4</span><span class="criteria-text">Sub-agent ETL, context-bloat guard, confidence tags, slot validation, and the PHASE 2.4 gate all preserved.</span></li>
+        <li class="criteria-item"><span class="criteria-num">5</span><span class="criteria-text">Eval coverage exists (currently zero): a scenario + trigger-map entry.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DATA MODEL -->
+  <div id="panel-datamodel" class="tab-panel">
+    <div class="section">
+      <h2>Before → after</h2>
+      <div class="compare-grid compare-2col">
+        <div class="col">
+          <h3>v0.4.1 (drop)</h3>
+          <p class="con">- <code>folders[]</code> + 4-entry <code>display_groups[]</code> CEO-vocab tabs</p>
+          <p class="con">- <code>source_narratives</code>, tiered <code>input_asks[]</code>, <code>provided_summary</code></p>
+          <p class="con">- ~151 OQs persisted in <code>.open-questions.json</code> dotfile</p>
+          <p class="con">- 2 extra sub-agents (group-bullets, voice-rewrite)</p>
+        </div>
+        <div class="col">
+          <h3>Marley model (target)</h3>
+          <p class="pro">+ <code>sections[]</code> (overview + 7 areas), plain <code>provided[]</code>/<code>needed[]</code></p>
+          <p class="pro">+ <code>theme{}</code> palette/fonts/logo, <code>grade_scale{1..5}</code></p>
+          <p class="pro">+ ~5–15 curated OQs in one visible <code>review-data.json</code></p>
+          <p class="pro">+ 0 review sub-agents (authored inline)</p>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Canonical review-data.json</h2>
+      <ul class="bullet-list">
+        <li><strong>top:</strong> org, generated_at, brand_folder</li>
+        <li><strong>source_counts:</strong> total_sources, usable_sources, canonical_markdown_files, review_sections, open_questions</li>
+        <li><strong>grade_scale:</strong> 1..5 labels (Missing → Ready to use)</li>
+        <li><strong>theme:</strong> palette{17 hex vars}, fonts{heading,body}, logo{src|null, wordmark_text}</li>
+        <li><strong>sections[]:</strong> id, label, grade(1-5), confidence(freeform str), status(eyebrow), summary, provided[], needed[], files[]; <em>overview adds</em> readout + recent_update(null first build)</li>
+        <li><strong>open_questions[]:</strong> id, slice, impact, question, why_it_matters (thin Marley shape)</li>
+      </ul>
+      <div class="callout callout-note"><strong>Note</strong>Marley's own folder ships a standalone <code>open-questions.json</code> already drifted out of sync with its <code>review-data.json</code> (OQ-001 old vs ratified phrasing). We persist one file to kill that drift surface; <code>competitors[]</code>/<code>behavioral_alternatives[]</code> stay in <code>.build/</code>, summarized into the market section.</div>
+    </div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div id="panel-pipeline" class="tab-panel">
+    <div class="section">
+      <h2>PHASE 3 ordering (curate → sections → overview → counts → write → render)</h2>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph TD
+  agg[Aggregate per-slice OQs] --> cur[Curate: owner-authority filter<br/>then impact-rank backfill<br/>cap 15]
+  cur --> s7[Build 7 content sections inline<br/>grade, summary, provided, needed]
+  s7 --> ov[Build Overview<br/>readout + grade mean]
+  ov --> sc[Compute source_counts]
+  sc --> wr[Write review-data.json]
+  wr --> rnd[Dispatch renderer<br/>self-themed review.html]
+  rnd --> cln[Delete .build]
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Deletions (3 sub-agents → 0)</h2>
+      <table class="change-table">
+        <thead><tr><th>What</th><th>Where</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>group-bullets.md</td><td class="file-path">framework root; PHASE 3.2-NEW</td><td><span class="status-badge status-modified">delete</span></td></tr>
+          <tr><td>voice-rewrite.md</td><td class="file-path">framework root; PHASE 3.2b</td><td><span class="status-badge status-modified">delete</span></td></tr>
+          <tr><td>display_groups + 3.2c gate + resume semantics</td><td class="file-path">prompt.md:434-540, 375-380</td><td><span class="status-badge status-modified">delete</span></td></tr>
+          <tr><td>source_narratives + *_input_asks arrays</td><td class="file-path">prompt.md:131-140,193-217,574-582</td><td><span class="status-badge status-modified">delete</span></td></tr>
+          <tr><td>ETL + synthesis + 2.4 gate</td><td class="file-path">extract/competitor-dossier/auto-mode-preamble</td><td><span class="status-badge status-unchanged">keep</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-risk"><strong>Risk</strong>The 5 always-on slices must be EXEMPTED from the PHASE 2.1 "skip slices with no signal" path, or a thin build silently drops them. <code>source-map.md</code> (root) has no owning framework — guard against the GAP meta-OQ firing.</div>
+    </div>
+  </div>
+
+  <!-- RENDERER -->
+  <div id="panel-renderer" class="tab-panel">
+    <div class="section">
+      <h2>Self-theming, per-asset graceful degradation</h2>
+      <p class="description">The design pass emits a <code>theme</code> manifest; the renderer wires each field independently. Palette always emits from decoded hex (works from public-web CSS); fonts and logo degrade per-asset. The review works offline.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph TD
+  t[theme manifest] --> p[palette: always<br/>decoded hex]
+  t --> f[fonts]
+  t --> l[logo]
+  f --> f1[local @font-face if files]
+  f --> f2[else CDN link if identifiable]
+  f --> f3[else system stack<br/>brand family first]
+  l --> l1[local file if present]
+  l --> l2[else download into assets]
+  l --> l3[else text wordmark]
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Renderer contract</h2>
+      <ul class="bullet-list">
+        <li>Render the 8 section panels <strong>server-side</strong> as static HTML (the Marley split); inline <code>REVIEW_DATA</code> only powers the paste-back JS.</li>
+        <li>Keep sanitize-before-serialize, JSON.stringify discipline, 6-check verify-before-open, abort-before-open.</li>
+        <li>Add asserts: null logo ⇒ a <code>.wordmark</code> span must exist; any emitted @font-face src must be relative (no http) — offline-safety.</li>
+        <li>Token set shrinks to <code>{REVIEW_DATA_JSON}</code>, <code>{ORG_NAME}</code> + theme-driven CSS emission; catch-all token regex stays as failsafe.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TESTING -->
+  <div id="panel-testing" class="tab-panel">
+    <div class="section">
+      <h2>TDD strategy</h2>
+      <div class="test-category">
+        <h3>Fixtures (rebuild)</h3>
+        <ul class="test-items">
+          <li><code>test-fixtures/render/*</code> → review-data.json-shaped: tiny / realistic / stress (valid); invalids — grade out of 1–5, missing theme.palette, OQ count &gt; 15, null-logo→wordmark, remote-font-src→reject.</li>
+          <li><code>test-fixtures/oq-schema/*</code> → thin curated shape + rich internal emission shape; drop display_groups/input_asks fixtures.</li>
+          <li>Keep <code>auto-mode-inputs/</code>, <code>competitor-identity/</code> (PHASE 2 synthesis) — verify, don't assume.</li>
+        </ul>
+      </div>
+      <div class="test-category">
+        <h3>Logic + eval</h3>
+        <ul class="test-items">
+          <li>Curation: owner-authority selects decision-shaped P0/P1; backfill fills to floor; cap truncates by rank. Error paths: empty queue, all-P2 queue.</li>
+          <li>Renderer behavior + error-path tests (malformed theme, over-cap OQs, degradation).</li>
+          <li>ADD <code>e2e/scenarios/use-framework/reverse-engineered-brand.yaml</code> + a <code>trigger-map.yaml</code> entry — currently zero coverage; eval-audit flags surface-without-scenario.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECISIONS -->
+  <div id="panel-decisions" class="tab-panel">
+    <div class="section">
+      <h2>Decision Log <span class="badge">12</span></h2>
+      <div class="interactive-section">
+        <div class="interactive-banner">
+          <span class="icon">●</span>
+          <div><strong>Two options per decision.</strong> <em>Approve</em> (default) means you accept it. <em>Reject</em> queues it for revision. Click a card for additional context. The prompt textarea below auto-updates as you toggle dropdowns.</div>
+        </div>
+        <div class="decision-card-list" id="decisions-table" data-widget-root>
+          <div class="decision-card-section"><span class="section-letter">A</span>Business decisions (user-locked)<span class="section-count">4 decisions</span></div>
+
+          <div class="decision-card" data-id="1" data-title="Collapse to one curated OQ set (5–15); no 150-item log">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">1</span><span class="decision-card-title">Collapse to one curated OQ set (5–15); no 150-item log</span></div><div class="decision-card-controls"><select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select><span class="decision-card-chevron" aria-hidden="true">▾</span></div></div>
+            <div class="decision-card-desc">Per-slice OQ generation still runs as a quality mechanism; only the curated subset persists.</div>
+            <div class="decision-card-detail" hidden><p>This overrides the written task line "keep the FULL 151-style log" — a deliberate reversal per your live answer: "I don't need 150 inference log questions… it's built for an executive-level person."</p></div>
+          </div>
+
+          <div class="decision-card" data-id="2" data-title="Curation = owner-authority filter, then impact-rank backfill, cap 15">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">2</span><span class="decision-card-title">Curation = owner-authority filter, then impact-rank backfill, cap 15</span></div><div class="decision-card-controls"><select class="dropdown" data-id="2"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">Owner-authority decisions (ratify/approve/name/confirm-currency) first; backfill by impact-rank to ~5–8 so a thin public-web build is never empty.</div>
+          </div>
+
+          <div class="decision-card" data-id="3" data-title="Self-theming = per-asset graceful degradation; offline-safe">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">3</span><span class="decision-card-title">Self-theming = per-asset graceful degradation; offline-safe</span></div><div class="decision-card-controls"><select class="dropdown" data-id="3"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">Palette decodes from public-web CSS even with no local files; fonts/logo degrade independently. Never a remote URL.</div>
+          </div>
+
+          <div class="decision-card" data-id="4" data-title="All five new slices always-on (stub + low grade when thin)">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">4</span><span class="decision-card-title">All five new slices always-on (stub + low grade when thin)</span></div><div class="decision-card-controls"><select class="dropdown" data-id="4"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">source-map, strategy/context, strategy/operating-principles, language/copy-bank, proof/claims-ledger always written. Existing conditional slices unchanged. Keeps the tab set stable at 8.</div>
+          </div>
+
+          <div class="decision-card-section"><span class="section-letter">B</span>Technical decisions (Architect, codebase-grounded)<span class="section-count">8 decisions</span></div>
+
+          <div class="decision-card" data-id="5" data-title="One canonical review-data.json; drop standalone open-questions.json">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">5</span><span class="decision-card-title">One canonical review-data.json; drop standalone open-questions.json</span></div><div class="decision-card-controls"><select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select><span class="decision-card-chevron" aria-hidden="true">▾</span></div></div>
+            <div class="decision-card-desc">Rename the current .open-questions.json dotfile to the visible review-data.json and reshape. review.html embeds a render-time snapshot.</div>
+            <div class="decision-card-detail" hidden><p>Marley's standalone open-questions.json:6 has drifted from review-data.json:224 / review.html:474. Nothing consumes the standalone (paste-back JS reads the inline embed). One file = no drift. You confirmed this in Section 1.</p></div>
+          </div>
+
+          <div class="decision-card" data-id="6" data-title="sections[] authored inline; delete group-bullets + voice-rewrite + display_groups">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">6</span><span class="decision-card-title">sections[] authored inline; delete the display_groups/input_asks machinery</span></div><div class="decision-card-controls"><select class="dropdown" data-id="6"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">Orchestrator already holds the OQ queue + Slice Index as metadata. provided[]/needed[] are plain bullet lists. 3 sub-agents → 0.</div>
+          </div>
+
+          <div class="decision-card" data-id="7" data-title="Curation runs inline in the orchestrator (no sub-agent)">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">7</span><span class="decision-card-title">Curation runs inline in the orchestrator (no sub-agent)</span></div><div class="decision-card-controls"><select class="dropdown" data-id="7"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">The aggregated OQ queue is in-context metadata; curation is a filter+rank over data in hand. Owner-authority signal is lexically obvious; a miss is benign.</div>
+          </div>
+
+          <div class="decision-card" data-id="8" data-title="theme block decoded in design pass, stored in review-data.json; logo downloaded">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">8</span><span class="decision-card-title">theme block decoded in the design pass, stored in review-data.json</span></div><div class="decision-card-controls"><select class="dropdown" data-id="8"><option value="approve">Approve</option><option value="reject">Reject</option></select><span class="decision-card-chevron" aria-hidden="true">▾</span></div></div>
+            <div class="decision-card-desc">Step 2.3b already decodes hex; extend it to emit a structured manifest and download the site logo into the brand folder for public-web builds.</div>
+            <div class="decision-card-detail" hidden><p>theme travels with the data it themes — no separate theme.json drift surface. Offline-safety ⇒ download or degrade, never a remote URL.</p></div>
+          </div>
+
+          <div class="decision-card" data-id="9" data-title="Overview synthetic from 7 sections; omit recent-update on first build">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">9</span><span class="decision-card-title">Overview synthetic from 7 sections; omit recent-update on first build</span></div><div class="decision-card-controls"><select class="dropdown" data-id="9"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">Marley's "what changed recently" banner is a re-run diff artifact. Add the field, set null on first build, leave the diff machinery unbuilt (YAGNI).</div>
+          </div>
+
+          <div class="decision-card" data-id="10" data-title="New source_counts semantics (total/usable/canonical-md/sections/oqs)">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">10</span><span class="decision-card-title">New source_counts semantics</span></div><div class="decision-card-controls"><select class="dropdown" data-id="10"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">{total_sources, usable_sources, canonical_markdown_files, review_sections, open_questions}; replaces {total, raw_material, primary_research}.</div>
+          </div>
+
+          <div class="decision-card" data-id="11" data-title="Renderer rewritten; panels server-side; inline REVIEW_DATA for paste-back only">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">11</span><span class="decision-card-title">Renderer rewritten; panels server-side; inline REVIEW_DATA for paste-back only</span></div><div class="decision-card-controls"><select class="dropdown" data-id="11"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">Replace the 2073-line generic template with a ~512-line Marley self-theming template; keep the sanitize/verify-before-open contract + add offline-safety asserts.</div>
+          </div>
+
+          <div class="decision-card" data-id="12" data-title="Add eval scenario + trigger-map (currently zero coverage)">
+            <div class="decision-card-head"><div class="decision-card-headline"><span class="decision-card-num">12</span><span class="decision-card-title">Add eval scenario + trigger-map (currently zero coverage)</span></div><div class="decision-card-controls"><select class="dropdown" data-id="12"><option value="approve">Approve</option><option value="reject">Reject</option></select></div></div>
+            <div class="decision-card-desc">Framework is on the declared eval surface but has no scenario; eval-audit flags it on merge.</div>
+          </div>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-box-header">
+            <span class="prompt-box-label">Prompt to send back</span>
+            <div class="prompt-actions">
+              <button class="btn" id="regenerate-decisions" type="button">Regenerate</button>
+              <button class="btn btn-primary" id="copy-decisions" type="button">Copy</button>
+            </div>
+          </div>
+          <textarea class="prompt-textarea" id="decisions-prompt" spellcheck="false"></textarea>
+          <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPEN QUESTIONS -->
+  <div id="panel-questions" class="tab-panel">
+    <div class="section">
+      <h2>Open Questions <span class="badge">2</span></h2>
+      <div class="interactive-section">
+        <div class="interactive-banner">
+          <span class="icon">●</span>
+          <div><strong>Three options per question.</strong> <em>Defer</em> (default) keeps it for later. <em>Include</em> queues it for me to ask interactively now. <em>Reject</em> removes it entirely. The prompt below auto-updates.</div>
+        </div>
+        <table class="interactive" id="questions-table">
+          <thead><tr><th class="num">#</th><th style="width: 35%">Question</th><th>Trigger that would resolve it</th><th style="width: 130px">Status</th></tr></thead>
+          <tbody>
+            <tr data-id="1" data-title="New schema_version string, or drop it (Marley has none)?"><td class="decision-num">1</td><td class="decision-title">New schema_version string, or drop it (Marley's version.yaml has none, uses status: first_draft)?</td><td class="decision-desc">writing-plans, when rewriting version.yaml authoring + the renderer shape-warning list</td><td><select class="dropdown q-dropdown" data-id="1"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td></tr>
+            <tr data-id="2" data-title="overview.grade: editorially adjustable (seeded by rounded mean) vs strict mean?"><td class="decision-num">2</td><td class="decision-title">overview.grade: editorially adjustable (seeded by the rounded mean), or a strict mean of the 7 sections?</td><td class="decision-desc">writing-plans; default flipped to editorial (Marley authored 4 vs a 3.28 section mean)</td><td><select class="dropdown q-dropdown" data-id="2"><option value="defer">Defer</option><option value="include">Include</option><option value="reject">Reject</option></select></td></tr>
+          </tbody>
+        </table>
+        <div class="prompt-box">
+          <div class="prompt-box-header">
+            <span class="prompt-box-label">Prompt to send back</span>
+            <div class="prompt-actions">
+              <button class="btn" id="regenerate-questions" type="button">Regenerate</button>
+              <button class="btn btn-primary" id="copy-questions" type="button">Copy</button>
+            </div>
+          </div>
+          <textarea class="prompt-textarea" id="questions-prompt" spellcheck="false"></textarea>
+          <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var __rs = getComputedStyle(document.documentElement);
+    function __tok(name, fallback) {
+      var v = __rs.getPropertyValue(name).trim();
+      return v || fallback;
+    }
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: __tok('--font-sans', 'system-ui, -apple-system, sans-serif'),
+        fontSize: '14px',
+        lineColor: __tok('--color-border', '#e5e7eb'),
+        primaryColor: __tok('--color-muted', '#f0eeeb'),
+        primaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        primaryBorderColor: __tok('--color-border', '#e5e7eb'),
+        secondaryColor: __tok('--color-accent-subtle', '#fff7ed'),
+        secondaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        secondaryBorderColor: __tok('--color-accent', '#ff6900'),
+        tertiaryColor: __tok('--color-surface', '#f5f3ef'),
+        tertiaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        tertiaryBorderColor: __tok('--color-secondary', '#555555')
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render diagrams with class="mermaid" on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one if none active
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+<!-- WIDGETS-SCRIPT-START -->
+<script>
+  (function() {
+    'use strict';
+
+    // Clipboard helper with file:// / non-secure-context fallback.
+    function copyToClipboard(text, btn) {
+      var originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = originalLabel;
+      var showSuccess = function() {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+        }, 1800);
+      };
+      var showFailure = function() {
+        btn.textContent = 'Copy failed — select & Cmd-C';
+        btn.classList.add('btn-error');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('btn-error');
+        }, 3000);
+      };
+      if (!navigator.clipboard || !window.isSecureContext) {
+        // Synchronous fallback for file:// origins and Safari/Firefox non-HTTPS.
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        if (ok) showSuccess(); else showFailure();
+        return;
+      }
+      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
+    }
+
+    function markDirtyOnInput(textarea) {
+      textarea.addEventListener('input', function() {
+        textarea.dataset.dirty = 'true';
+      });
+    }
+
+    // ── DECISION LOG ─────────────────────────────────────────────
+    (function decisionLogWidget() {
+      var container = document.getElementById('decisions-table');
+      if (!container) return;
+      var prompt = document.getElementById('decisions-prompt');
+      var copyBtn = document.getElementById('copy-decisions');
+      var regenBtn = document.getElementById('regenerate-decisions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function cards() {
+        return Array.prototype.slice.call(container.querySelectorAll('.decision-card[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allCards = cards();
+        if (allCards.length === 0) {
+          return 'No decisions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var rejected = allCards
+          .filter(function(card) { var sel = card.querySelector('select'); return sel && sel.value === 'reject'; })
+          .map(function(card) { return { num: card.dataset.id, title: card.dataset.title || '' }; });
+        if (rejected.length === 0) {
+          return 'All decisions approved.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.';
+        }
+        var lines = ["I've reviewed this design and I'm rejecting the following decisions:", ''];
+        rejected.forEach(function(d) {
+          lines.push('  • Decision #' + d.num + ' — ' + d.title);
+          lines.push('    Reason: <add your reason here>');
+          lines.push('');
+        });
+        lines.push('Please revise the design to address these rejections and re-present.');
+        lines.push('');
+        lines.push('If you have an alternative recommendation for any of these, propose it before I commit to a replacement.');
+        return lines.join('\n');
+      }
+
+      function updateCard(select) {
+        var card = select.closest('.decision-card');
+        if (!card) return;
+        if (select.value === 'reject') {
+          select.classList.add('reject');
+          card.classList.add('row-active');
+        } else {
+          select.classList.remove('reject');
+          card.classList.remove('row-active');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;  // user edits survive
+        prompt.value = buildPrompt();
+      }
+
+      container.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateCard(sel);
+          refresh();
+        });
+        // Clicks inside the dropdown must not toggle card expansion.
+        sel.addEventListener('click', function(e) { e.stopPropagation(); });
+        updateCard(sel);  // sync initial classes for restored state
+      });
+
+      // Click anywhere on a card with a detail block to expand/collapse it.
+      // Cards without detail are non-interactive (no chevron, no cursor).
+      container.querySelectorAll('.decision-card[data-id]').forEach(function(card) {
+        var detail = card.querySelector('.decision-card-detail');
+        if (!detail) return;
+        card.classList.add('decision-card-clickable');
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('select, a, button, input, textarea')) return;
+          var expanded = card.classList.toggle('expanded');
+          detail.hidden = !expanded;
+        });
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+
+    // ── OPEN QUESTIONS ───────────────────────────────────────────
+    (function openQuestionsWidget() {
+      if (!document.getElementById('questions-table')) return;
+      var table = document.getElementById('questions-table');
+      var prompt = document.getElementById('questions-prompt');
+      var copyBtn = document.getElementById('copy-questions');
+      var regenBtn = document.getElementById('regenerate-questions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function rows() {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allRows = rows();
+        if (allRows.length === 0) {
+          return 'No open questions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var included = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'include'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        var rejected = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'reject'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        if (included.length === 0 && rejected.length === 0) {
+          return 'All open questions deferred.\n\nProceed with the design as-is; we will resolve these as the named triggers fire.';
+        }
+        var lines = ['Open-questions review:', ''];
+        if (included.length > 0) {
+          lines.push('ASK ME NOW (resolve interactively, one at a time):');
+          included.forEach(function(q) { lines.push('  • Question #' + q.num + ' — ' + q.title); });
+          lines.push('');
+          lines.push("For these: please ask me one at a time. Use multiple-choice options when reasonable. Don't assume answers — wait for my response before moving to the next.");
+          lines.push('');
+        }
+        if (rejected.length > 0) {
+          lines.push('REJECT (remove from open-questions list entirely — not worth asking now or later):');
+          rejected.forEach(function(q) {
+            lines.push('  • Question #' + q.num + ' — ' + q.title);
+            lines.push('    Reason: <add your reason here, or leave blank>');
+          });
+          lines.push('');
+          lines.push("For these: drop them from the design's Open Questions section. Update the design doc and HTML to reflect their removal.");
+          lines.push('');
+        }
+        if (included.length > 0 && rejected.length > 0) {
+          lines.push('Handle the REJECT items first (housekeeping), then start the ASK ME NOW questions.');
+        }
+        return lines.join('\n');
+      }
+
+      function updateRow(select) {
+        var tr = select.closest('tr');
+        if (!tr) return;
+        select.classList.remove('include', 'q-reject');
+        tr.classList.remove('row-active', 'row-rejected');
+        if (select.value === 'include') {
+          select.classList.add('include');
+          tr.classList.add('row-active');
+        } else if (select.value === 'reject') {
+          select.classList.add('q-reject');
+          tr.classList.add('row-rejected');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;
+        prompt.value = buildPrompt();
+      }
+
+      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateRow(sel);
+          refresh();
+        });
+        updateRow(sel);
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+  })();
+</script>
+<!-- WIDGETS-SCRIPT-END -->
+</body>
+</html>
