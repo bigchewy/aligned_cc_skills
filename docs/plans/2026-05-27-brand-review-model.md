@@ -1050,7 +1050,7 @@ git commit -m "feat(reb): drop schema_version; author Marley-shaped version.yaml
 
 ---
 
-### Task 13: Rewrite `render-review-html.md` — invoke `render_review.py` + verify-before-open
+### ✅ Task 13: Rewrite `render-review-html.md` — invoke `render_review.py` + verify-before-open
 
 **Files:**
 - Modify (rewrite): `frameworks/reverse-engineered-brand/render-review-html.md`
