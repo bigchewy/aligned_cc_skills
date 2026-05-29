@@ -28,6 +28,16 @@ You MUST use the Task tool to launch fresh sub-agents for every critique round. 
 
 The checklist is at `{base-directory}/{checklist-filename}`. Verify the path exists with Read. **If the checklist cannot be found, STOP and tell the user — do not proceed with the critique panel without it.** Use the verified absolute path as `{checklist-path}` in the sub-agent prompts below.
 
+## Competition Framing
+
+When 2 or more critics are launched in parallel, append the block below to **each** critic's prompt (after its tooling paragraph, before its per-criteria instructions). With a single critic there is no competition — omit it entirely.
+
+> **🍪 Competition — you are not the only reviewer.** Other critics are reviewing this same design in parallel right now. Two prizes are on the table:
+> - **One cookie** for whoever surfaces the most genuinely serious, *valid* issues. Judged on real defects, not volume — inflated severity, padded counts, or findings that don't survive scrutiny disqualify you. A false positive costs you more than a missed nitpick. Be right, not loud.
+> - **Two cookies** for whoever identifies the most justified *cuts* — extraneous scope, speculative abstractions, over-engineering, or anything that fails the test "what specifically breaks if this is removed?" In this solo-developer codebase with a fixed workflow, deleting unneeded work is worth more than adding caveats. The same severity discipline applies: a cut you can't justify with a concrete "this is never used / never reached" doesn't count.
+>
+> Play to win on both axes.
+
 ## Round 1
 
 1. Read `skills/_shared/resolve-advisor-source.md` and follow its procedure. Take the `advisors`
@@ -56,11 +66,11 @@ The checklist is at `{base-directory}/{checklist-filename}`. Verify the path exi
 
    State the full assignment table before launching agents.
 
-5. Create temp directory: `{critique-temp-directory}/round-1/`. Launch all critics in parallel (single message, multiple Task tool calls, `subagent_type=general-purpose`, `model=opus`). Use the fact-checker prompt template for the designated fact-checker, regular critic prompt template for others. Each critic writes their report to `{critique-temp-directory}/round-1/{critic-slug}-report.md` and returns only a one-line confirmation.
+5. Create temp directory: `{critique-temp-directory}/round-1/`. Launch all critics in parallel (single message, multiple Task tool calls, `subagent_type=general-purpose`, `model=opus`). Use the fact-checker prompt template for the designated fact-checker, regular critic prompt template for others. If 2+ critics are being launched, append the Competition Framing block to each critic's prompt. Each critic writes their report to `{critique-temp-directory}/round-1/{critic-slug}-report.md` and returns only a one-line confirmation.
 
 **If `fact-check-mode` is "all-critics":**
 
-4. Create temp directory: `{critique-temp-directory}/round-1/`. Launch all critics in parallel using the universal critic prompt template. Each critic writes their report to `{critique-temp-directory}/round-1/{critic-slug}-report.md` and returns only a one-line confirmation.
+4. Create temp directory: `{critique-temp-directory}/round-1/`. Launch all critics in parallel using the universal critic prompt template. If 2+ critics are being launched, append the Competition Framing block to each critic's prompt. Each critic writes their report to `{critique-temp-directory}/round-1/{critic-slug}-report.md` and returns only a one-line confirmation.
 
 **Aggregation:**
 
@@ -125,7 +135,7 @@ Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/hi
 
 ## Round 2 (conditional)
 
-Only run if Round 1 found medium or high severity issues AND fixes were applied (at least one correction applied to the design document). Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Write to `{critique-temp-directory}/round-2/`.
+Only run if Round 1 found medium or high severity issues AND fixes were applied (at least one correction applied to the design document). Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Keep the Competition Framing block on each prompt when 2+ critics are launched, same as Round 1. Write to `{critique-temp-directory}/round-2/`.
 
 Prepare a brief summary of what changed since Round 1 and pass it to each agent. Scope to changes only:
 - If division-of-labor: the fact-checker re-verifies only changed claims. Other critics re-evaluate only changed sections against their assigned criteria.

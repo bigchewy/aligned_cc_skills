@@ -46,6 +46,12 @@ This is a solo-developer codebase with a known, fixed workflow. Do NOT recommend
 
 You have access to Glob, Grep, Read, and Write tools. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{plan-file-path}` in full. Then read key source files that the plan modifies or depends on — enough to understand existing patterns and module boundaries.
 
+**🍪 Competition — you are not the only reviewer.** The Verifier is reviewing this same plan in parallel right now. Two prizes are on the table:
+- **One cookie** for whoever surfaces the most genuinely serious, *valid* issues. Judged on real defects, not volume — inflated severity, padded counts, or findings that don't survive scrutiny disqualify you. A false positive costs you more than a missed nitpick. Be right, not loud.
+- **Two cookies** for whoever identifies the most justified *cuts* — extraneous tasks, speculative abstractions, over-engineering, or scope that fails the Necessity Test (what specifically breaks if this is removed?). In this solo-developer codebase with a fixed workflow, deleting unneeded work is worth more than adding caveats. The same severity discipline applies: a cut you can't justify with a concrete "this is never used / never reached" doesn't count.
+
+Play to win on both axes.
+
 Evaluate the plan against checklist criteria 1 (architectural assumptions only — not line-number accuracy), 3, 5, 6, 7, 9, 10, and 11 through your codebase-alignment lens. Skip criteria 2, 4, 8 (the Verifier covers those). Focus on: Does the plan follow existing patterns? Are module boundaries respected? Are there hidden dependency risks? Are behavioral changes acknowledged? Are there unvalidated assumptions? Also evaluate Decision Log entries if present. Tag every finding with [Architect].
 
 Write your complete report to `{report-path}` using the Write tool — use the checklist output format. No fact-check summary section needed — the Verifier provides that. Return only a one-line confirmation: 'Report written to {report-path}'."
@@ -69,7 +75,15 @@ You do NOT evaluate architectural quality, suggest better approaches, skip verif
 
 **Efficiency tip:** Batch your file reads. When multiple claims reference the same file, read it once and verify all claims from that file together. Prefer reading whole files over individual line reads when a file has 3+ claims.
 
-You have access to Glob, Grep, Read, and Write tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{plan-file-path}` in full. Your job has three phases:
+You have access to Glob, Grep, Read, and Write tools for verifying claims. Do not use Bash for searching — use the Grep tool instead (with output_mode 'count' when counting matches). Bash grep triggers security prompts that halt execution. Read `{checklist-path}` in full, then read `{plan-file-path}` in full.
+
+**🍪 Competition — you are not the only reviewer.** The Architect is reviewing this same plan in parallel right now. Two prizes are on the table:
+- **One cookie** for whoever surfaces the most genuinely serious, *valid* issues. Judged on real defects, not volume — inflated severity, padded counts, or findings that don't survive scrutiny disqualify you. A false positive costs you more than a missed nitpick. Be right, not loud.
+- **Two cookies** for whoever identifies the most justified *cuts* — extraneous tasks, speculative abstractions, over-engineering, or scope that fails the test "what specifically breaks if this is removed?" In this solo-developer codebase with a fixed workflow, deleting unneeded work is worth more than adding caveats. The same severity discipline applies: a cut you can't justify with a concrete "this is never used / never reached" doesn't count.
+
+Play to win on both axes.
+
+Your job has three phases:
 
 **Phase 1 (Fact-check):** Extract every factual claim about the codebase (file paths, function names, imports, data flows, config references). Verify each using Glob/Grep/Read. Mark claims as [CONFIRMED], [INCORRECT] with correction, or [UNVERIFIABLE]. Report accuracy percentage.
 
@@ -130,6 +144,12 @@ Do NOT re-review unchanged sections. Do NOT re-run the full checklist. Tag findi
 
 **Solo-developer YAGNI constraint — severity discipline:** This is a solo-developer codebase with a known, fixed workflow. Do NOT recommend: guards for multi-user scenarios, defensive code for failure modes that cannot occur in this workflow, abstractions for hypothetical future requirements, or complexity for scenarios outside the stated use case. Severity discipline: "this is broken or incorrect" = CRITICAL/IMPORTANT. "This would be useful if the use case were different" = SUGGESTION with explicit disclaimer "outside the current use case."
 
+**🍪 Competition — you are not the only reviewer.** The Verifier is reviewing these same fixes in parallel right now. Two prizes are on the table:
+- **One cookie** for whoever surfaces the most genuinely serious, *valid* issues. Judged on real defects, not volume — inflated severity, padded counts, or findings that don't survive scrutiny disqualify you. A false positive costs you more than a missed nitpick. Be right, not loud.
+- **Two cookies** for whoever identifies the most justified *cuts* — extraneous tasks, speculative abstractions, or over-engineering introduced by the fixes that fails the Necessity Test (what specifically breaks if this is removed?). In this solo-developer codebase, deleting unneeded work is worth more than adding caveats. The same severity discipline applies: a cut you can't justify with a concrete "this is never used / never reached" doesn't count.
+
+Play to win on both axes.
+
 Changes since Round 1:
 {summary-of-changes}
 
@@ -147,6 +167,12 @@ You have access to Glob, Grep, Read, and Write tools. Do not use Bash for search
 Do NOT re-verify claims that were [CONFIRMED] in Round 1 and weren't touched by fixes. Tag findings with [Verifier].
 
 **Solo-developer YAGNI constraint — severity discipline:** This is a solo-developer codebase with a known, fixed workflow. Flag only what is factually wrong or genuinely absent from the design in the changed sections. Do NOT flag: missing multi-user guards, absent defensive code for impossible failure modes, missing abstractions for hypothetical requirements. Severity discipline: "factually incorrect or missing from the design" = CRITICAL/IMPORTANT. "Would add value if the use case were different" = SUGGESTION with disclaimer "outside the current use case."
+
+**🍪 Competition — you are not the only reviewer.** The Architect is reviewing these same fixes in parallel right now. Two prizes are on the table:
+- **One cookie** for whoever surfaces the most genuinely serious, *valid* issues. Judged on real defects, not volume — inflated severity, padded counts, or findings that don't survive scrutiny disqualify you. A false positive costs you more than a missed nitpick. Be right, not loud.
+- **Two cookies** for whoever identifies the most justified *cuts* — extraneous tasks, speculative abstractions, or over-engineering introduced by the fixes that fails the test "what specifically breaks if this is removed?" In this solo-developer codebase, deleting unneeded work is worth more than adding caveats. The same severity discipline applies: a cut you can't justify with a concrete "this is never used / never reached" doesn't count.
+
+Play to win on both axes.
 
 Changes since Round 1:
 {summary-of-changes}
