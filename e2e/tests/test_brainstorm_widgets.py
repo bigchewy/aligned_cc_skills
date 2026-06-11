@@ -1,5 +1,4 @@
 """Structural and lint tests for the brainstorming interactive-widgets sidecar."""
-import hashlib
 import re
 from pathlib import Path
 
@@ -20,21 +19,9 @@ TEMPLATE_NAMES = CANONICAL_TEMPLATE_NAMES + [
 ]
 
 
-def _md5(path: Path) -> str:
-    return hashlib.md5(path.read_bytes()).hexdigest()
-
-
 def test_widgets_partial_exists():
     assert WIDGETS_PARTIAL.exists(), (
         f"widgets sidecar partial must exist at {WIDGETS_PARTIAL.relative_to(REPO_ROOT)}"
-    )
-
-
-def test_template_md5_equality():
-    hashes = {name: _md5(TEMPLATES_DIR / name) for name in CANONICAL_TEMPLATE_NAMES}
-    distinct = set(hashes.values())
-    assert len(distinct) == 1, (
-        f"canonical mode-scaffold templates must share a single md5; got {hashes}"
     )
 
 

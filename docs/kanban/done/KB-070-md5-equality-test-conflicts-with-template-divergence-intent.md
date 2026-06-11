@@ -8,3 +8,4 @@
 - **Why out of scope:** Removing the test is a repo-level decision about test intent, not a local fix. Filing to track the future cleanup.
 - **Severity:** MEDIUM
 - **Created:** 2026-05-15
+- **Resolved:** 2026-06-11 — Removed `test_template_md5_equality` (and its now-orphaned `_md5` helper + `hashlib` import) from `e2e/tests/test_brainstorm_widgets.py`. The test fired on the first intended divergence exactly as predicted: Task 11 of the visualization-runner-extraction plan baked the Overview scaffold into the five visualizing templates, intentionally excluding roadmap-template.html. Per-template coverage remains via `test_templates_compose_widget_state` and `test_visualizing_templates_share_overview_scaffold`.
