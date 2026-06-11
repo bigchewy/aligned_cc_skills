@@ -840,7 +840,7 @@ git commit -m "feat(viz): add standalone visualize-design skill"
 
 ---
 
-## Task 13: Guard the visualize-design→runner cross-reference
+## ✅ Task 13: Guard the visualize-design→runner cross-reference
 
 **Files:**
 - Modify: `e2e/tests/test_skill_cross_references.py` (`REQUIRED_CROSS_REFS`)
