@@ -208,3 +208,12 @@ def test_visualization_runner_has_anti_shortcut_contract():
     assert "even when that seems faster" in text or "even when it seems faster" in text, (
         "anti-shortcut contract must address the speed temptation"
     )
+
+
+def test_visualization_runner_browser_open_unconditional():
+    text = read("skills/_shared/visualization-runner.md")
+    assert "xdg-open" in text, "browser-open command must be present"
+    lower = text.lower()
+    assert "unconditional" in lower or "do not skip" in lower or "always open" in lower, (
+        "browser-open must be marked as a mandatory, non-skippable step (KB-085)"
+    )

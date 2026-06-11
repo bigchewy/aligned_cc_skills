@@ -513,7 +513,7 @@ git commit -m "feat(viz): restate anti-shortcut contract in the brainstorming wr
 
 ---
 
-## Task 9: Make the runner's browser-open an unconditional numbered step
+## ✅ Task 9: Make the runner's browser-open an unconditional numbered step
 
 **Files:**
 - Modify: `skills/_shared/visualization-runner.md` (Step 4)

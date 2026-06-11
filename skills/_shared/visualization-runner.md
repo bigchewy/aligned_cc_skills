@@ -59,13 +59,13 @@ Do not rewrite the template from memory — the file copy is the contract.
 
 **Anti-shortcut contract.** Copy `{template-path}` with a file-copy/Write command and patch it. NEVER hand-write or "compactly rewrite" the artifact HTML from memory, even when that seems faster. The compact-direct-write shortcut is the root cause of KB-085/086 — it bypasses the template, the widgets, the browser-open step, and the Overview gate.
 
-## Step 4: Open the artifact in the browser
+## Step 4: Open the artifact in the browser (unconditional — do not skip)
 
-Open the artifact using a platform-aware pattern (separate Bash call — no `&&` chaining):
+This step is mandatory and runs every render. Open the artifact with a platform-aware command (separate Bash call, no `&&` chaining):
 
 `open {output-path} || xdg-open {output-path}`
 
-If both commands fail (headless environment), log a warning and continue — the artifact still gets written.
+Only a headless environment (both commands fail) exempts this step — log the warning and continue. There is no other condition under which the browser-open is skipped.
 
 ## Step 5: Inject interactive widgets (conditional)
 
