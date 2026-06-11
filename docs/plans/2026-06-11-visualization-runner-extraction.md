@@ -301,7 +301,7 @@ git commit -m "test(viz): guard visualization-protocol -> runner cross-reference
 
 ---
 
-## Task 5: Leave a pointer in shared-rules.md to the relocated strip rule
+## ✅ Task 5: Leave a pointer in shared-rules.md to the relocated strip rule
 
 **Files:**
 - Modify: `skills/brainstorming/references/shared-rules.md` (§ "Stripping the live-refresh script")

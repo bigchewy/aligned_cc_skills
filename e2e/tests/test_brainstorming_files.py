@@ -674,3 +674,11 @@ def test_visualization_protocol_delegates_to_runner():
     # Delegation appears early — within the first ~40 lines, not buried in prose
     head = "\n".join(text.splitlines()[:40])
     assert "skills/_shared/visualization-runner.md" in head, "delegation must be the first actionable line, not buried"
+
+
+def test_shared_rules_strip_rule_points_to_runner():
+    text = read("skills/brainstorming/references/shared-rules.md")
+    # The section still exists so existing reads resolve...
+    assert "## Stripping the live-refresh script" in text
+    # ...but now points at the canonical text in the runner instead of restating it.
+    assert "skills/_shared/visualization-runner.md" in text, "strip rule must point to the runner"
