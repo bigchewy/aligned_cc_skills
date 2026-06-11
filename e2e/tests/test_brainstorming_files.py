@@ -682,3 +682,15 @@ def test_shared_rules_strip_rule_points_to_runner():
     assert "## Stripping the live-refresh script" in text
     # ...but now points at the canonical text in the runner instead of restating it.
     assert "skills/_shared/visualization-runner.md" in text, "strip rule must point to the runner"
+
+
+def test_software_mode_nested_subtabs_reference():
+    text = read("skills/brainstorming/modes/software.md")
+    # The rule is no longer "defined in the protocol" — it moved to the runner.
+    assert "Nested sub-tabs rule defined in the protocol" not in text, (
+        "stale reference: nested sub-tabs rule moved to the runner"
+    )
+    assert "Nested sub-tabs" in text, "the rule reference must still be present"
+    assert "visualization runner" in text.lower() or "visualization-runner.md" in text, (
+        "reference must point at the runner that now defines the rule"
+    )

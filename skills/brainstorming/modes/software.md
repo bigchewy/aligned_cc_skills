@@ -149,7 +149,7 @@ The user has delegated technical decision authority to The Architect. The brains
 
 Every brainstorm produces a live visual artifact. After writing the design document and BEFORE the critique round, run the visualization protocol.
 
-Read `{base-directory}/references/visualization-protocol.md` and follow it end-to-end (Live phase + Pre-critique snapshot). Use `{base-directory}/references/templates/software-template.html` as the template path. The Nested sub-tabs rule defined in the protocol also applies to any HTML produced by the mockup-generator dispatch in the "Exploring approaches" section above.
+Read `{base-directory}/references/visualization-protocol.md` and follow it end-to-end (Live phase + Pre-critique snapshot). Use `{base-directory}/references/templates/software-template.html` as the template path. The Nested sub-tabs rule (defined in the visualization runner, applied via the protocol) also applies to any HTML produced by the mockup-generator dispatch in the "Exploring approaches" section above.
 
 **Interactive widgets (conditional, mandatory when triggered):**
 

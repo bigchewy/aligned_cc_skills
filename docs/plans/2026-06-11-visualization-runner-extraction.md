@@ -353,7 +353,7 @@ git commit -m "refactor(viz): point shared-rules strip rule at the runner"
 
 ---
 
-## Task 6: Update the modes/software.md nested sub-tabs reference
+## ✅ Task 6: Update the modes/software.md nested sub-tabs reference
 
 **Files:**
 - Modify: `skills/brainstorming/modes/software.md` (the "Nested sub-tabs rule defined in the protocol" sentence)
