@@ -67,6 +67,10 @@ REQUIRED_CROSS_REFS = [
         REPO_ROOT / "skills" / "brainstorming" / "modes" / "authoring.md",
         "skills/_shared/framework-runner.md",
     ),
+    (
+        REPO_ROOT / "skills" / "brainstorming" / "references" / "visualization-protocol.md",
+        "skills/_shared/visualization-runner.md",
+    ),
 ]
 
 

@@ -271,7 +271,7 @@ git commit -m "refactor(viz): slim visualization-protocol to a runner-delegating
 
 ---
 
-## Task 4: Guard the wrapper→runner cross-reference
+## ✅ Task 4: Guard the wrapper→runner cross-reference
 
 **Files:**
 - Modify: `e2e/tests/test_skill_cross_references.py` (`REQUIRED_CROSS_REFS`)
