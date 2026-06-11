@@ -57,6 +57,8 @@ Read `{template-path}` and Write its contents verbatim to the working artifact l
 
 Do not rewrite the template from memory — the file copy is the contract.
 
+**Anti-shortcut contract.** Copy `{template-path}` with a file-copy/Write command and patch it. NEVER hand-write or "compactly rewrite" the artifact HTML from memory, even when that seems faster. The compact-direct-write shortcut is the root cause of KB-085/086 — it bypasses the template, the widgets, the browser-open step, and the Overview gate.
+
 ## Step 4: Open the artifact in the browser
 
 Open the artifact using a platform-aware pattern (separate Bash call — no `&&` chaining):
@@ -101,6 +103,7 @@ The check: if a tab contains multiple diagrams, subgraphs, or sections that each
 
 ## Avoid These Mistakes
 
+- **The compact-direct-write shortcut** — hand-writing tighter HTML directly instead of copying the template. Forbidden: it skips every gate below. Always copy the file.
 - **Rewriting the template or widgets from memory** — always copy the file and patch it.
 - **Skipping the browser-open or mermaid gate** — both are unconditional numbered steps.
 - **Injecting the widget script inside the LIVE-REFRESH delimiters** — it must land outside them or the strip rule removes it.

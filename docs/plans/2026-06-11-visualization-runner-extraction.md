@@ -407,7 +407,7 @@ git commit -m "refactor(viz): point software mode nested-subtabs ref at the runn
 
 ---
 
-## Task 7: Add the anti-shortcut contract to the runner
+## ✅ Task 7: Add the anti-shortcut contract to the runner
 
 **Files:**
 - Modify: `skills/_shared/visualization-runner.md` (Step 3 + "Avoid These Mistakes")

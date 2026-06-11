@@ -195,3 +195,16 @@ def test_visualization_runner_is_in_eval_surface():
     assert "skills/_shared/visualization-runner.md" in text, (
         "new LLM behavior surface must be listed in eval-surface.yaml"
     )
+
+
+def test_visualization_runner_has_anti_shortcut_contract():
+    text = read("skills/_shared/visualization-runner.md").lower()
+    assert "never hand-write" in text or "do not hand-write" in text, (
+        "runner must forbid hand-writing the artifact HTML"
+    )
+    assert "compactly rewrite" in text, (
+        "the compact-direct-write shortcut must be named as a forbidden move"
+    )
+    assert "even when that seems faster" in text or "even when it seems faster" in text, (
+        "anti-shortcut contract must address the speed temptation"
+    )
