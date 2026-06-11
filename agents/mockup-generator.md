@@ -20,13 +20,7 @@ Generate self-contained HTML mockup files for visualizing UI designs during brai
 
 **Step 1: Read design principles**
 
-Read `docs/design/design-principles.md` from the project root. If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`. Extract:
-- Color tokens (hex values and names)
-- Typography (font families, weights, sizes)
-- Spacing scale
-- Border radius system
-- Shadow/depth approach
-- Component patterns (buttons, cards, inputs, etc.)
+Resolve the project's design tokens using the ladder in `skills/_shared/visualization-runner.md` § "Step 2: Resolve the project's design tokens" (project root → monorepo `apps/*`/`packages/*` glob → global fallback, with the placeholder heuristic). Extract color tokens and semantic diagram colors from the resolved file and apply them to the template below.
 
 If neither file exists, ask the user for design direction before proceeding.
 

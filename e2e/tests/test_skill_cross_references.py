@@ -73,6 +73,12 @@ REQUIRED_CROSS_REFS = [
     ),
     (REPO_ROOT / "skills" / "visualize-design" / "SKILL.md",
      "skills/_shared/visualization-runner.md"),
+    (REPO_ROOT / "agents" / "flowchart-generator.md",
+     "skills/_shared/visualization-runner.md"),
+    (REPO_ROOT / "agents" / "architecture-diagram-generator.md",
+     "skills/_shared/visualization-runner.md"),
+    (REPO_ROOT / "agents" / "mockup-generator.md",
+     "skills/_shared/visualization-runner.md"),
 ]
 
 

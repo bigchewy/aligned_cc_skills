@@ -925,7 +925,7 @@ git commit -m "docs(viz): add visualize-design to README and bump to 0.32.0"
 
 ---
 
-## Task 15: Point the diagram agents at the runner's token-resolution section (optional dedup)
+## ✅ Task 15: Point the diagram agents at the runner's token-resolution section (optional dedup)
 
 **Files:**
 - Modify: `agents/flowchart-generator.md` (the token-resolution paragraph)

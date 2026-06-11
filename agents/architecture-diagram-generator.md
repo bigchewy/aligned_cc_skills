@@ -23,7 +23,7 @@ This agent produces up to two artifacts:
 
 ## Step 1: Read Context
 
-1. **Read design principles** — check `docs/design/design-principles.md` in the project root first. If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`. Extract color tokens, typography, spacing, and semantic diagram colors. **Do not proceed without design tokens.**
+1. **Read design principles** — resolve the project's design tokens using the ladder in `skills/_shared/visualization-runner.md` § "Step 2: Resolve the project's design tokens" (project root → monorepo `apps/*`/`packages/*` glob → global fallback, with the placeholder heuristic). Extract color tokens and semantic diagram colors from the resolved file. **Do not proceed without design tokens.**
 2. Read the design document at the provided path
 3. Read `docs/architecture.md` if it exists — note which diagrams exist and their current state
 4. Identify what architectural changes the design introduces (new modules, changed data flows, new services, restructured boundaries)

@@ -19,7 +19,7 @@ Uses **Mermaid.js** for diagram rendering. You declare the graph structure; Merm
 
 ## Step 0: Read Design Principles (REQUIRED)
 
-Before generating any flowchart, read `docs/design/design-principles.md` in the project root. If not found, read the global fallback at `~/.claude/docs/design/design-principles.md`. Extract color tokens and semantic diagram colors. All colors in the template below are examples from the global design system — replace with actual values from whichever design-principles file you load.
+Resolve the project's design tokens using the ladder in `skills/_shared/visualization-runner.md` § "Step 2: Resolve the project's design tokens" (project root → monorepo `apps/*`/`packages/*` glob → global fallback, with the placeholder heuristic). Extract color tokens and semantic diagram colors from the resolved file and apply them to the template below.
 
 **Do not proceed without design tokens.**
 
