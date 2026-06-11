@@ -660,3 +660,17 @@ def test_spawn_brief_target_mode_excludes_roadmap():
     assert enum_line is not None, "schema must declare Target mode field"
     assert "Roadmap" not in enum_line, \
         "Roadmap must not appear in target_mode enum — recursive decomposition was retired"
+
+
+def test_visualization_protocol_delegates_to_runner():
+    text = read("skills/brainstorming/references/visualization-protocol.md")
+    # Still readable at its e2e-pinned path, still no YAML frontmatter
+    assert not text.lstrip().startswith("---")
+    # Delegates the engine to the shared runner
+    assert "skills/_shared/visualization-runner.md" in text, "wrapper must delegate to the runner"
+    # Brainstorming-specific lifecycle stays in the wrapper
+    assert "docs/mockups/" in text, "pre-critique snapshot path must stay in the wrapper"
+    assert "**Mockups:**" in text, "Mockups header field is brainstorming-specific"
+    # Delegation appears early — within the first ~40 lines, not buried in prose
+    head = "\n".join(text.splitlines()[:40])
+    assert "skills/_shared/visualization-runner.md" in head, "delegation must be the first actionable line, not buried"

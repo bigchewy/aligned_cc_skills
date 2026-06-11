@@ -211,7 +211,7 @@ git commit -m "test(viz): add visualization-runner to eval surface"
 
 ---
 
-## Task 3: Slim the protocol to a brainstorming wrapper that delegates to the runner
+## ✅ Task 3: Slim the protocol to a brainstorming wrapper that delegates to the runner
 
 **Files:**
 - Modify: `skills/brainstorming/references/visualization-protocol.md` (replace the engine steps with lifecycle + delegation)
