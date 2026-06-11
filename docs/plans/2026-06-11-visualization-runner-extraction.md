@@ -719,7 +719,7 @@ git commit -m "feat(viz): bake Overview-tab scaffold into the five visualizing t
 
 ---
 
-## Task 12: Create the `visualize-design` standalone skill
+## ✅ Task 12: Create the `visualize-design` standalone skill
 
 **Files:**
 - Create: `skills/visualize-design/SKILL.md`
