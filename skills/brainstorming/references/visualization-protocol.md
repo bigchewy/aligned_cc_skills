@@ -88,6 +88,14 @@ Skip regeneration if the design document is unchanged (all critique verdicts wer
 
 After regeneration (or if no regeneration was needed), apply the strip-script rule from `{base-directory}/references/shared-rules.md` to `docs/mockups/{session-name}.html`.
 
+## Audience contract (hard precondition)
+
+Every visualization artifact is built for one fixed audience: **an executive who understands details.** This is not configurable per session and must not be re-asked. It resolves the density question before drawing begins:
+
+- **Overview (top level / first tab):** summary-level only — the high-level flow, key inputs, outputs, and decision points. No file-level or implementation detail here.
+- **Tabs and sub-tabs:** detail is allowed and welcome. An executive who understands details will drill in — give them real depth (file paths, schemas, sequencing) behind progressive disclosure, never on the surface.
+- **Before simplifying any draft,** list the must-keep inputs/outputs from the design document and treat that list as non-negotiable. Simplification means pushing detail down into sub-tabs, never dropping a must-keep element.
+
 ## Nested sub-tabs
 
 When a tabbed HTML document is generated (live visualization or any auxiliary mockup), use nested sub-tabs (progressive disclosure) whenever a single tab contains more detail than can be scanned in one view. Do not flatten into many top-level tabs or cram everything into one scrollable panel. The pattern is:

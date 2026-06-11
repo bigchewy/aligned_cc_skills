@@ -21,8 +21,8 @@
 set -u
 
 # --- Model selection (override via PLAN_MODEL / PLAN_SUBAGENT_MODEL) ---
-export ANTHROPIC_MODEL="${PLAN_MODEL:-opus}"
-export CLAUDE_CODE_SUBAGENT_MODEL="${PLAN_SUBAGENT_MODEL:-opus}"
+export ANTHROPIC_MODEL="${PLAN_MODEL:-sonnet}"
+export CLAUDE_CODE_SUBAGENT_MODEL="${PLAN_SUBAGENT_MODEL:-sonnet}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 RALPH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"

@@ -31,6 +31,22 @@ Two YAML registries track all advisors and frameworks. Skills use these for disc
 - **`advisors/registry.yaml`** — All advisor personas. Used by use-advisor, code-reviewer, persona-panel, and contextual recommendation.
 - **`frameworks/registry.yaml`** — All decision frameworks. Used by use-framework and contextual recommendation.
 
+## Framework Prompts Are Interactive Scripts
+
+Framework files (`frameworks/*/prompt.md`) contain explicit WAIT points where the user must respond before continuing. The framework IS the process; skipping WAIT points defeats the purpose.
+
+Anti-patterns to refuse:
+- Reading a `prompt.md` file and answering all its questions in one shot
+- Using existing positioning docs to fill in framework elements without user input
+- Treating WAIT points as optional pauses rather than hard stops
+- Skipping `/aligned:use-framework` because "I already know what the framework says"
+
+## Testing
+
+**Always use TDD.** When planning or implementing features, always include test updates. Every design document and implementation plan must specify which test files need to be created, renamed, or updated. Do not ask whether tests should be included - they always should be.
+
+**CRITICAL: Error Path Tests for Mocks.** When tests use mocks (mockResolvedValue, mockReturnValue), you MUST also write tests for error paths (mockRejectedValue). Every async operation that can fail in production must have both success AND error tests.
+
 ## Cross-References
 
 Skills reference each other by path and by `/aligned:<name>` invocation. Before renaming or moving any `.md` file, grep all `skills/**/*.md` for the old path — breakage is silent.
