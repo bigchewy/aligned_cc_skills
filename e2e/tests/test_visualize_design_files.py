@@ -39,3 +39,9 @@ def test_visualize_design_excludes_brainstorming_scaffolding():
     text = read("skills/visualize-design/SKILL.md")
     assert "critique panel" not in text.lower(), "general visualizer excludes the critique panel"
     assert "**Mockups:**" not in text, "general visualizer excludes the Mockups header field"
+
+
+def test_readme_lists_visualize_design():
+    text = read("README.md")
+    assert "visualize-design" in text, "README skill table must list visualize-design"
+    assert "/aligned:visualize-design" in text, "README must show the invocation"

@@ -870,7 +870,7 @@ git commit -m "test(viz): guard visualize-design -> runner cross-reference"
 
 ---
 
-## Task 14: Add the README skill-table row and bump the plugin version
+## ✅ Task 14: Add the README skill-table row and bump the plugin version
 
 **Files:**
 - Modify: `README.md` (skill reference table)
