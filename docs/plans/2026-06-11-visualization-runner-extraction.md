@@ -40,7 +40,7 @@ These tasks share files; execute in numeric order. The dependencies are:
 
 ---
 
-## Task 1: Create the visualization-runner engine
+## ✅ Task 1: Create the visualization-runner engine
 
 **Files:**
 - Create: `skills/_shared/visualization-runner.md`

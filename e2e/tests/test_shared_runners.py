@@ -172,3 +172,19 @@ def test_use_advisor_listing_text_no_longer_claims_flat_directory():
     assert "(local)" in text, (
         "use-advisor must annotate local advisors using the resolver's source field"
     )
+
+
+def test_visualization_runner_well_formed():
+    text = read("skills/_shared/visualization-runner.md")
+    # House rule: _shared/ runners carry no YAML frontmatter (mirrors framework-runner.md)
+    assert not text.lstrip().startswith("---"), "runner must not have YAML frontmatter"
+    # House-style sections, mirroring framework-runner.md
+    assert "## Configuration" in text
+    assert "## Configuration Validation (fail-closed)" in text
+    assert "## Avoid These Mistakes" in text
+    # Engine content relocated from visualization-protocol.md
+    assert "design-principles.md" in text, "token-resolution ladder must live in the runner"
+    assert "the file copy is the contract" in text, "template copy-patch contract must be present"
+    assert "LIVE-REFRESH-START" in text, "strip-script rule (canonical) must live in the runner"
+    assert "sub-tab" in text.lower(), "nested sub-tabs rule must live in the runner"
+    assert "validate-mermaid.mjs" in text, "mermaid validation gate must live in the runner"
