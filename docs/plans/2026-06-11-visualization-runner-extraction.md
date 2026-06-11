@@ -280,7 +280,7 @@ The protocol now hard-references the runner path. Add a guard tuple so the link 
 
 **Step 1: Add the guard tuple**
 
-In `e2e/tests/test_skill_cross_references.py`, append to `REQUIRED_CROSS_REFS` (mirroring the existing `(source_path, expected_target_substring)` tuple format):
+In `e2e/tests/test_skill_cross_references.py`, insert the tuple inside `REQUIRED_CROSS_REFS` — before the closing `]` of the list (currently at line 70; line numbers shift as tasks execute). Mirror the existing `(source_path, expected_target_substring)` tuple format:
 
 ```python
     (REPO_ROOT / "skills" / "brainstorming" / "references" / "visualization-protocol.md",
@@ -644,7 +644,7 @@ The Overview structure becomes template-guaranteed: a verbatim copy carries it a
 
 > Resolving the design's `panel-overview active` shorthand: `switchTab` builds panel ids as `'panel-' + tabId` (`software-template.html` ~line 629), so the Overview panel is `<div class="tab-panel active" id="panel-overview">`. The literal contiguous string `panel-overview active` cannot exist; the test asserts the two real substrings `id="panel-overview"` and `class="tab-panel active"` instead (Decision Log #5).
 
-**Step 1: Rewrite the failing test**
+**Step 1: Replace the existing (currently passing) scaffolding test with a stronger failing test**
 
 In `e2e/tests/test_brainstorming_files.py`, replace `test_authoring_templates_share_common_scaffolding` (currently iterates the 4 authoring templates and asserts only `"<script" in text`) with:
 
@@ -670,9 +670,11 @@ def test_visualizing_templates_share_overview_scaffold():
         assert "{goal}" in text, f"{name} missing {{goal}} slot"
         assert "{why-it-matters}" in text, f"{name} missing {{why-it-matters}} slot"
         assert "{outcome}" in text, f"{name} missing {{outcome}} slot"
+        # Retain the live-refresh guard from the replaced test: the strip rule requires this marker
+        assert "LIVE-REFRESH-START" in text, f"{name} must carry the live-refresh delimiters (strip rule precondition)"
 ```
 
-**Step 2: Run test to verify it fails**
+**Step 2: Run new test to verify it fails — the templates lack the Overview scaffold**
 
 Run: `python3 -m pytest e2e/tests/test_brainstorming_files.py::test_visualizing_templates_share_overview_scaffold -q`
 Expected: FAIL — templates have no Overview scaffold yet (`AssertionError: ... missing Overview panel`).
@@ -847,7 +849,7 @@ Retroactive guard — the reference was added in Task 12.
 
 **Step 1: Add the guard tuple**
 
-Append to `REQUIRED_CROSS_REFS`:
+Insert the tuple inside `REQUIRED_CROSS_REFS` — before the closing `]` of the list (line numbers shift as tasks execute; locate the `]` by searching for it after the last existing tuple):
 
 ```python
     (REPO_ROOT / "skills" / "visualize-design" / "SKILL.md",
@@ -934,10 +936,12 @@ git commit -m "docs(viz): add visualize-design to README and bump to 0.32.0"
 Optional cleanup, sequenced last so it cannot block the core work. Each agent currently restates a simplified project→global token lookup (e.g. `flowchart-generator.md:22`). Point them at the runner's fuller ladder instead.
 
 > Behavior change: these agents currently read only `docs/design-principles.md` → global fallback. The runner's Step 2 adds the monorepo `apps/*` / `packages/*` glob and the placeholder heuristic. After this task the agents inherit that fuller resolution — a deliberate dedup, not a regression.
+>
+> Coupling note: the diagram agents are not runner callers — they reference `visualization-runner.md § "Step 2"` as a standalone read. Any future edits to Step 2 that add runner-specific context (e.g., references to Configuration Validation state) will silently affect the agents. Keep Step 2 self-contained and ladder-only.
 
 **Step 1: Add the guard tuples**
 
-Append three tuples to `REQUIRED_CROSS_REFS` in `e2e/tests/test_skill_cross_references.py`:
+Insert three tuples inside `REQUIRED_CROSS_REFS` in `e2e/tests/test_skill_cross_references.py` — before the closing `]` of the list (line numbers shift as tasks execute; locate the `]` by searching for it after the last existing tuple):
 
 ```python
     (REPO_ROOT / "agents" / "flowchart-generator.md",
@@ -996,6 +1000,7 @@ None.
 | 4 | Overview scaffold scope | Five templates (software + 4 authoring), roadmap excluded | All six templates |
 | 5 | `panel-overview active` shorthand resolution | Assert `id="panel-overview"` + `class="tab-panel active"` (two substrings) | Force a contiguous `panel-overview active` token, breaking `switchTab`'s id convention |
 | 6 | Agent token-ladder dedup (Task 15) included | Included as the last, optional task | Drop it from the plan as out-of-scope |
+| 7 | `{validate-mermaid-script}` as a runner Configuration input vs. hardcoded path | Caller-supplied (Configuration input) | Hardcoded absolute path inside the runner |
 
 ### Appendix: Decision Details
 
@@ -1034,4 +1039,10 @@ None.
 **Why:** The design lists it as commit 4. It is real implementation work with a scoped verification (the parametrized cross-ref test), not a verification sweep — so it is a valid final task. Sequenced last, it cannot block the core extraction/skill work, and if execution stops early the first three commits still deliver the full feature.
 **Alternatives rejected:**
 - Drop it: the token-ladder duplication across four files (the three agents + the runner) is exactly the kind of restatement the design consolidates; deferring indefinitely leaves the agents on a thinner ladder than the runner.
+
+#### Decision 7: `{validate-mermaid-script}` as a caller-supplied Configuration input
+**Chose:** Expose `{validate-mermaid-script}` as a ninth Configuration input (the caller passes the absolute path).
+**Why:** `skills/_shared/` runners cannot self-resolve paths (per `skills/_shared/resolve-skill-path.md`). The mermaid validator lives under `skills/brainstorming/scripts/`, not under `_shared/`, so the runner cannot derive the path without knowing the plugin root — which only the caller knows. Caller-supplied is the correct pattern; it also makes the runner testable with a substitute validator path. The design's Runner Contract table lists only 8 inputs; this ninth input was implied by the portability rule but not made explicit.
+**Alternatives rejected:**
+- Hardcode the path: would make the runner author-environment-specific and break for any user with a different plugin installation path. Violates the portability rule.
 
