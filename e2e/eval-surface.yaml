@@ -20,6 +20,7 @@ patterns:
   - skills/_shared/contextual-recommendation.md
   - skills/_shared/framework-runner.md
   - skills/_shared/advisor-runner.md
+  - skills/_shared/visualization-runner.md
   - skills/_shared/resolve-advisor-source.md
   - skills/writing-plans/SKILL.md
   - skills/finishing-a-development-branch/SKILL.md

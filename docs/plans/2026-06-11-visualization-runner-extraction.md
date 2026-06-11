@@ -164,7 +164,7 @@ git commit -m "feat(viz): extract visualization engine into _shared/visualizatio
 
 ---
 
-## Task 2: Register the runner in the eval surface
+## ✅ Task 2: Register the runner in the eval surface
 
 **Files:**
 - Modify: `e2e/eval-surface.yaml` (the `patterns:` list, alongside `framework-runner.md` / `advisor-runner.md`)

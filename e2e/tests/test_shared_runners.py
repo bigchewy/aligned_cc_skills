@@ -188,3 +188,10 @@ def test_visualization_runner_well_formed():
     assert "LIVE-REFRESH-START" in text, "strip-script rule (canonical) must live in the runner"
     assert "sub-tab" in text.lower(), "nested sub-tabs rule must live in the runner"
     assert "validate-mermaid.mjs" in text, "mermaid validation gate must live in the runner"
+
+
+def test_visualization_runner_is_in_eval_surface():
+    text = read("e2e/eval-surface.yaml")
+    assert "skills/_shared/visualization-runner.md" in text, (
+        "new LLM behavior surface must be listed in eval-surface.yaml"
+    )
