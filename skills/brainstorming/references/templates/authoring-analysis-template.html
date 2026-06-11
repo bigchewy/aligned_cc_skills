@@ -577,7 +577,18 @@
   <p class="context">{context}</p>
 
   <!-- Analysis Depth section: evidence quality, conclusions, counter-arguments -->
-  <!-- Tab bar and content panels go here -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <!-- Additional tab buttons appended by the generating agent -->
+  </div>
+
+  <div class="tab-panel active" id="panel-overview">
+    <div class="callout callout-note"><strong>What this is</strong>{goal}</div>
+    <div class="callout callout-note"><strong>Why it matters</strong>{why-it-matters}</div>
+    <div class="callout callout-note"><strong>Outcome</strong>{outcome}</div>
+  </div>
+
+  <!-- Additional tab panels appended by the generating agent -->
 
   <script>
     var __rs = getComputedStyle(document.documentElement);

@@ -628,7 +628,7 @@ git commit -m "feat(viz): add executive-overview verify gate to the runner (KB-0
 
 ---
 
-## Task 11: Bake the Overview-tab scaffold into the five visualizing templates
+## ✅ Task 11: Bake the Overview-tab scaffold into the five visualizing templates
 
 **Files:**
 - Modify: `skills/brainstorming/references/templates/software-template.html`

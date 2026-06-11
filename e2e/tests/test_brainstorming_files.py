@@ -624,13 +624,15 @@ def test_references_describe_four_modes_post_collapse():
         assert "roadmap" in text.lower() or "research" in text.lower()
 
 
-def test_authoring_templates_share_common_scaffolding():
-    # All four templates must share the live-refresh script and the design-doc header anchor
-    # so visualization-protocol's strip step works uniformly.
+def test_visualizing_templates_share_overview_scaffold():
+    # All FIVE visualizing templates (software + four authoring variants) ship a baked-in
+    # Overview tab so a verbatim copy carries the executive-altitude structure (KB-086).
+    # roadmap-template.html is excluded — roadmap mode produces no live design artifact.
     from pathlib import Path
     REPO = Path(__file__).resolve().parents[2]
     base = REPO / "skills/brainstorming/references/templates"
     files = [
+        "software-template.html",
         "authoring-template.html",
         "authoring-decision-template.html",
         "authoring-plan-template.html",
@@ -638,9 +640,13 @@ def test_authoring_templates_share_common_scaffolding():
     ]
     for name in files:
         text = (base / name).read_text()
-        # Anchor: every template carries the live-refresh script marker that
-        # visualization-protocol.md's strip rule looks for.
-        assert "<script" in text, f"{name} missing live-refresh script anchor"
+        assert 'id="panel-overview"' in text, f"{name} missing Overview panel"
+        assert 'class="tab-panel active"' in text, f"{name} Overview panel must be the active tab"
+        assert "{goal}" in text, f"{name} missing {{goal}} slot"
+        assert "{why-it-matters}" in text, f"{name} missing {{why-it-matters}} slot"
+        assert "{outcome}" in text, f"{name} missing {{outcome}} slot"
+        # Retain the live-refresh guard from the replaced test: the strip rule requires this marker
+        assert "LIVE-REFRESH-START" in text, f"{name} must carry the live-refresh delimiters (strip rule precondition)"
 
 
 def test_spawn_brief_target_mode_excludes_roadmap():
