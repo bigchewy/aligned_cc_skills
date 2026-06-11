@@ -20,6 +20,8 @@ The invoking mode supplies these values to the shared runner (all absolute paths
 
 Follow `skills/_shared/visualization-runner.md` end-to-end with the Configuration above.
 
+> Copy the template file and patch it — NEVER hand-write or compactly rewrite the artifact HTML, even when that seems faster. See the runner's anti-shortcut contract.
+
 ## Live phase
 
 Call the runner once after the trigger fires, before any critique work begins. As each subsequent design section is validated, call the runner again to update the live artifact (the runner's Step 5 handles the incremental write; preserve the `:root` block as written in the first call).

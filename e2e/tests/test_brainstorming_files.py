@@ -694,3 +694,10 @@ def test_software_mode_nested_subtabs_reference():
     assert "visualization runner" in text.lower() or "visualization-runner.md" in text, (
         "reference must point at the runner that now defines the rule"
     )
+
+
+def test_protocol_dispatch_states_anti_shortcut():
+    text = read("skills/brainstorming/references/visualization-protocol.md").lower()
+    assert "never hand-write" in text or "do not hand-write" in text, (
+        "wrapper dispatch must restate the anti-shortcut contract"
+    )

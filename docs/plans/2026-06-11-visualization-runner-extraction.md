@@ -466,7 +466,7 @@ git commit -m "feat(viz): add anti-shortcut contract to the runner (KB-085/086)"
 
 ---
 
-## Task 8: Add the anti-shortcut dispatch line to the protocol wrapper
+## ✅ Task 8: Add the anti-shortcut dispatch line to the protocol wrapper
 
 **Files:**
 - Modify: `skills/brainstorming/references/visualization-protocol.md` (the delegation line)
