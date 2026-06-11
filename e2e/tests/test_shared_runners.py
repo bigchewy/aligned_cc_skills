@@ -217,3 +217,17 @@ def test_visualization_runner_browser_open_unconditional():
     assert "unconditional" in lower or "do not skip" in lower or "always open" in lower, (
         "browser-open must be marked as a mandatory, non-skippable step (KB-085)"
     )
+
+
+def test_visualization_runner_overview_gate():
+    text = read("skills/_shared/visualization-runner.md")
+    lower = text.lower()
+    # Mechanical sub-check: zero mermaid blocks + zero file-path spans in the Overview panel
+    assert "panel-overview" in text, "gate must reference the Overview panel"
+    assert "mechanical" in lower, "gate must label the mechanical sub-check"
+    assert "file-path" in lower or ".file-path" in text, "mechanical check inspects file-path spans"
+    # Semantic self-check: one retry, never blocks, write anyway on second failure
+    assert "semantic" in lower, "gate must label the semantic self-check"
+    assert "write the artifact anyway" in lower or "write anyway" in lower, (
+        "semantic check must never hold output hostage on second failure"
+    )

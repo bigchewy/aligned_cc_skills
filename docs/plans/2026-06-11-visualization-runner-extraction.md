@@ -568,7 +568,7 @@ git commit -m "fix(viz): make runner browser-open an unconditional numbered step
 
 ---
 
-## Task 10: Add the executive-overview verify gate to the runner
+## ✅ Task 10: Add the executive-overview verify gate to the runner
 
 **Files:**
 - Modify: `skills/_shared/visualization-runner.md` (new "Executive-overview gate" section before the strip rule)

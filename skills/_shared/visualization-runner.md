@@ -85,6 +85,14 @@ Do not rewrite the widget code from memory — the file copy is the contract.
 
 Run `node {validate-mermaid-script} {output-path}`. Exit 0 means all Mermaid blocks parse and the runner may continue. Exit 1 prints the offending block index, the source Mermaid receives, and the parser's caret-pointer error — fix the source, re-run the relevant steps, and re-run this gate. Do not proceed past Step 6 until exit is 0.
 
+## Executive-overview gate (before any snapshot is written)
+
+The Overview tab is the first thing a non-engineer sees. Two checks gate it.
+
+**Mechanical sub-check (assertable, fail-closed):** the `panel-overview` panel must contain zero `<pre class="mermaid">` / `<pre class="mermaid-deferred">` blocks and zero `.file-path` spans. This is a grep with the same pass/fail contract as the mermaid gate: nonzero match → rewrite the Overview before any snapshot is written.
+
+**Semantic self-check (not unit-testable, never blocks):** is the goal stated in the first two sentences? Is the language plain (no implementation vocabulary)? Does it fit one screen? This is an LLM judgment with no mechanical assertion — it does NOT have parity with the mermaid exit-code gate. On failure, rewrite the Overview and re-check once. **On a second failure, write the artifact anyway** and tell the user in one line which check failed and where the lever is (e.g., "Overview still leads with implementation detail — committed as-is; edit the Overview tab's `{goal}` slot to fix"). A soft semantic judgment never holds the user's output hostage; only the mechanical checks block.
+
 ## Stripping the live-refresh script
 
 Before committing the snapshot, verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in the file. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh.
