@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026-06-11 Visualization Skill — Critique Decisions</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #faf9f7;
+      color: #1a1a1a;
+      margin: 0 auto;
+      padding: 40px 40px 120px;
+      max-width: 960px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 4px; }
+    .subtitle { font-size: 0.95rem; color: #555; margin: 0 0 4px; }
+    .context { font-size: 0.88rem; color: #6b7280; margin: 0 0 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+
+    .tab-bar { display: flex; gap: 2px; border-bottom: 2px solid #f0eeeb; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 18px; font-size: 0.85rem; font-weight: 500; color: #6b7280;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #e8762b; border-bottom-color: #e8762b; }
+    .tab-count {
+      display: inline-block; background: #f5f3ef; color: #555;
+      font-size: 0.75rem; padding: 1px 7px; border-radius: 9999px;
+      margin-left: 6px; font-weight: 500;
+    }
+    .tab-btn.active .tab-count { background: #fff7ed; color: #e8762b; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .finding {
+      background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 18px 20px; margin-bottom: 12px;
+      display: flex; gap: 16px; align-items: flex-start;
+      transition: opacity 150ms, border-color 150ms;
+    }
+    .finding.rejected { opacity: 0.5; border-color: #f0eeeb; background: #fafafa; }
+    .finding-toggle { flex-shrink: 0; padding-top: 2px; }
+    .toggle-switch {
+      position: relative; width: 44px; height: 24px;
+      background: #d1d5db; border-radius: 9999px; cursor: pointer;
+      transition: background 150ms;
+    }
+    .toggle-switch.on { background: #6b8e4e; }
+    .toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; background: white; border-radius: 9999px;
+      transition: transform 150ms; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(20px); }
+    .toggle-label {
+      font-size: 0.72rem; color: #6b7280; text-align: center; margin-top: 4px;
+      font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .finding-body { flex: 1; min-width: 0; }
+    .finding-critics { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .critic-tag {
+      font-size: 0.72rem; padding: 1px 8px; border-radius: 9999px;
+      background: #fff7ed; color: #e8762b; font-weight: 500;
+    }
+    .finding-text { font-size: 0.92rem; line-height: 1.5; color: #1a1a1a; margin-bottom: 6px; }
+    .finding-action { font-size: 0.85rem; color: #555; line-height: 1.5; }
+    .finding-action strong { color: #1a1a1a; font-weight: 500; }
+
+    .fact-check {
+      background: white; border: 1px solid #e5e7eb; border-left: 3px solid #6b8e4e;
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+    }
+    .fact-check-claim { font-size: 0.85rem; color: #6b7280; text-decoration: line-through; margin-bottom: 4px; }
+    .fact-check-correction { font-size: 0.92rem; color: #1a1a1a; line-height: 1.5; }
+    .fact-check-critic { font-size: 0.72rem; color: #e8762b; font-weight: 500; margin-top: 6px; }
+    .auto-apply-notice {
+      font-size: 0.82rem; color: #6b7280; background: #f5f3ef;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;
+    }
+
+    .modify-notes { margin-top: 24px; padding-top: 20px; border-top: 1px dashed #e5e7eb; }
+    .modify-notes label {
+      display: block; font-size: 0.85rem; font-weight: 500; color: #1a1a1a; margin-bottom: 8px;
+    }
+    .modify-notes textarea {
+      width: 100%; min-height: 80px; padding: 10px 12px;
+      font-family: inherit; font-size: 0.88rem;
+      border: 1px solid #e5e7eb; border-radius: 8px; resize: vertical; background: white;
+    }
+    .modify-notes textarea:focus { outline: none; border-color: #e8762b; }
+
+    .empty {
+      font-size: 0.88rem; color: #6b7280; padding: 24px; text-align: center;
+      background: #f5f3ef; border-radius: 8px;
+    }
+
+    .action-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.04); z-index: 10;
+    }
+    .summary { font-size: 0.88rem; color: #555; }
+    .summary strong { color: #1a1a1a; }
+    .copy-btn {
+      padding: 10px 20px; font-size: 0.88rem; font-weight: 500; color: white;
+      background: #e8762b; border: none; border-radius: 8px; cursor: pointer;
+      transition: background 150ms; font-family: inherit;
+    }
+    .copy-btn:hover { background: #cc6725; }
+    .copy-btn.copied { background: #6b8e4e; }
+  </style>
+</head>
+<body>
+  <h1>2026-06-11 Visualization Skill</h1>
+  <p class="subtitle">Brainstorming session · software mode</p>
+  <p class="context">Critique decisions. Toggle findings to accept or reject, add modify notes per tab if needed, then copy the follow-up prompt back into Claude Code.</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="high">High <span class="tab-count">2</span></button>
+    <button class="tab-btn" data-tab="medium">Medium <span class="tab-count">6</span></button>
+    <button class="tab-btn" data-tab="low">Low <span class="tab-count">4</span></button>
+    <button class="tab-btn" data-tab="facts">Fact-checks <span class="tab-count">5</span></button>
+  </div>
+
+  <div class="tab-panel active" id="panel-high">
+    <div class="finding" data-id="h-1" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">The eval-surface &quot;fail-closed&quot; guard does not exist — Commit 1's claimed auto-enforcement is imaginary. The runner is an LLM-behavior surface; if omitted from eval-surface, eval-audit and finishing-a-development-branch silently stop covering it and nothing turns red.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add an explicit test_visualization_runner_is_in_eval_surface assertion in Commit 1 (or a generic &quot;every _shared/*.md runner appears in eval-surface&quot; test). State the guard must be authored, not inherited.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="h-2" data-severity="high">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('h-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">Root-cause story is half-right; the primary documented failure mode is unaddressed. Baking the Overview tab into the template (Decision 6) only helps if the agent copies the template, but KB-085/086 document that the agent reliably takes the compact-direct-write shortcut and never reaches the template, protocol, or verify gate. &quot;The file copy is the contract&quot; is only binding if the copy happens.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> State what forces template-copy / runner-invocation. Either (a) add a hard &quot;you must invoke the runner; do not hand-write the artifact&quot; gate to the mode files, or (b) acknowledge the shortcut as a known residual failure and stop claiming KB-085/086 are closed.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-high">Modify notes for High severity (optional)</label>
+      <textarea id="notes-high" placeholder="Anything you want to add, override, or annotate for high-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-medium">
+    <div class="finding" data-id="m-1" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Scaffolding test is mis-scoped and the Commit 2 claim is overstated. &quot;Update the test to assert the scaffold across five templates&quot; is really add a fifth file plus replace the trivial &quot;&lt;script&quot; check with real assertions. software-template.html (the one visualize-design reuses and KB-086 faulted) is currently absent and has zero scaffolding coverage; the &quot;authoring&quot; function name would mislead.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> In Commit 2: add software-template.html to the file list, replace the &quot;&lt;script&quot; check with panel-overview active + three-slot ({goal}/{why-it-matters}/{outcome}) assertions, and rename the function. Describe as a rewrite, not a one-line update.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-2" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">No error-path test for the executive-overview verify gate; the gate is an unverifiable LLM self-check with no mechanical assertion, unlike the deterministic mermaid exit-code gate the design rhetorically pairs it with. The only hard guarantee is &quot;an empty scaffold exists&quot; — not &quot;the scaffold was filled at executive altitude,&quot; which is KB-086's complaint. The &quot;rewrite, re-check, proceed&quot; loop is unbounded with no test that it fires.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> State explicitly that the verify gate is semantic and cannot be unit-tested; stop implying parity with the mermaid gate. Optionally add one mechanical sub-check (Overview panel contains zero &lt;pre class=&quot;mermaid&quot;&gt; and zero .file-path spans) and assert it.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-3" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">Moving the Nested sub-tabs rule into the runner falsifies a claim in a file marked &quot;unchanged.&quot; modes/software.md:152 says the rule is &quot;defined in the protocol&quot;; after the move it lives in the runner, reachable only via a delegation pointer. The &quot;byte-equivalent brainstorming behavior&quot; claim for Commit 1 doesn't hold unless the protocol re-exports the rule or software.md:152 is edited (which contradicts unchanged-modes). The strip-script move is a second unframed content relocation.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Decide and state in Commit 1: does the protocol re-host the Nested sub-tabs rule verbatim, or does software.md:152 get a one-word edit? Don't leave it implied by &quot;byte-equivalent.&quot; Frame the strip-script move as the second content relocation.</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-4" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Re-running visualize-design on the same doc the same day silently resolves to the identical output path (session name YYYY-MM-DD-&lt;topic-slug&gt;) — the most common repeated workflow (render, tweak, re-render). Overwrite vs prompt vs version is undefined.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add one line to the Finish step: &quot;If {output-path} already exists, overwrite it — re-rendering is the expected workflow.&quot; (Or whichever behavior is intended — decide it.)</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-5" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-5', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">Bare /aligned:visualize-design with no doc and no renderable conversation: the error path is named (&quot;ask one question&quot;) but not shaped — what question, with what options? The sibling use-framework handles bare invocation by listing frameworks; visualize-design has no equivalent, so the message varies run to run.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Specify the one question's content, e.g.: &quot;No document path given and the conversation has no validated design content yet — paste a doc path or tell me what to visualize.&quot;</div>
+      </div>
+    </div>
+    <div class="finding" data-id="m-6" data-severity="medium">
+      <div class="finding-toggle">
+        <div class="toggle-switch on" onclick="toggleFinding('m-6', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">accept</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">The cross-skill template-path resolution — the single load-bearing coupling — is asserted as &quot;absolute path&quot; but the walk from visualize-design into skills/brainstorming/references/templates/ is never shown. Brainstorming resolves it relative to its own base directory, which won't work from visualize-design; the design doesn't cite resolve-skill-path.md for this reach.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> State the resolution explicitly: &quot;Resolve plugin root per skills/_shared/resolve-skill-path.md, then {plugin-root}/skills/brainstorming/references/templates/software-template.html.&quot;</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-medium">Modify notes for Medium severity (optional)</label>
+      <textarea id="notes-medium" placeholder="Anything you want to add, override, or annotate for medium-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-low">
+    <div class="finding rejected" data-id="l-1" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-1', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">visualize-design finish-path mermaid-fail behavior is unspecified. If the mermaid gate fails at finish (user said &quot;done&quot; but a diagram doesn't parse), the design doesn't say whether finish aborts and keeps the user in the live session or writes a broken artifact. The brainstorming protocol specifies this loop; the standalone skill doesn't.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Add: &quot;If the mermaid gate fails at finish, report the offending block and remain in the live session — do not write the committed copy.&quot;</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-2" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-2', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The QA Engineer</span>
+        </div>
+        <div class="finding-text">The strip-script relocation (Decision 7) may drop its guards. The rule in shared-rules.md:21-23 is three paragraphs carrying a delimiter-existence STOP and a widget-survival check, not a one-liner. The design doesn't confirm both guards relocate; dropping them could ship a committed artifact with a live-refresh script.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> State in Commit 1 that the full strip rule (delimiter-existence STOP + widget-survival check) moves to the runner, with a test asserting the delimiter-check language is present (not just the word &quot;strip&quot;).</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-3" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-3', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The Architect</span>
+        </div>
+        <div class="finding-text">roadmap-template.html exclusion from the scaffold is asserted by omission, not stated. It carries the same .tab-bar/.tab-panel CSS and empty body as the others; nothing structural distinguishes it. The exclusion rests on an out-of-band fact (roadmap generates no live artifact) a future editor won't see in the template.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> One sentence in Commit 2 naming roadmap-template.html as the deliberately-excluded sixth template, citing the no-artifact reason.</div>
+      </div>
+    </div>
+    <div class="finding rejected" data-id="l-4" data-severity="low">
+      <div class="finding-toggle">
+        <div class="toggle-switch" onclick="toggleFinding('l-4', this)">
+          <div class="toggle-knob"></div>
+        </div>
+        <div class="toggle-label">reject</div>
+      </div>
+      <div class="finding-body">
+        <div class="finding-critics">
+          <span class="critic-tag">The DevEx Engineer</span>
+        </div>
+        <div class="finding-text">The {live-session} yes/no Configuration input has no documented caller that sets it to &quot;no&quot; — both callers run live, so the &quot;off&quot; branch is dead config. Live-default may also add ceremony (30-min self-refresh, browser tab, confirm-done) for a &quot;render once, give me the file&quot; use the design also names.</div>
+        <div class="finding-action"><strong>Suggested action:</strong> Either wire {live-session} to a documented one-shot invocation (and document that path) or cut it as speculative configurability.</div>
+      </div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-low">Modify notes for Low severity (optional)</label>
+      <textarea id="notes-low" placeholder="Anything you want to add, override, or annotate for low-severity findings..."></textarea>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-facts">
+    <div class="auto-apply-notice">
+      Fact-check corrections are applied automatically per the critique-panel protocol. Use the modify notes below if you want to override or annotate a specific correction.
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Runner listed in eval-surface.yaml, enforced by existing test_shared_runners.py; both tests fail closed the moment the runner file exists.</div>
+      <div class="fact-check-correction">→ test_shared_runners.py has no generic enforcement — it only asserts framework-runner.md and advisor-runner.md (named files) appear in eval-surface (lines 37-42, 60-62). eval-surface.yaml lists files explicitly with no glob, so creating visualization-runner.md and omitting the eval-surface line passes every test green. (The Architect adds: no file named test_shared_runners.py exists in e2e/tests/ at all; the real assertions live in test_skill_cross_references.py.)</div>
+      <div class="fact-check-critic">The QA Engineer (also flagged by The Architect)</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">test_authoring_templates_share_common_scaffolding covers the five visualizing templates.</div>
+      <div class="fact-check-correction">→ The test's files list (lines 633-638) contains only the 4 authoring templates; software-template.html is absent. Its sole assertion is &quot;&lt;script&quot; in text — it asserts no tab/overview structure.</div>
+      <div class="fact-check-critic">The QA Engineer (also flagged by The Architect)</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">KB-085 and KB-086 share one root cause: protocol steps written as skippable prose.</div>
+      <div class="fact-check-correction">→ PARTIALLY INCORRECT. Both KBs name the agent's compact-direct-write shortcut (writing tighter HTML directly, bypassing the template) as the PRIMARY cause; skippable prose is only the secondary contributing cause.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">Decision 5 cites KB-036 as fixing a duplication problem.</div>
+      <div class="fact-check-correction">→ UNVERIFIABLE — no KB-036 file located this session (may be archived). The claim's anti-duplication logic is sound regardless.</div>
+      <div class="fact-check-critic">The QA Engineer</div>
+    </div>
+    <div class="fact-check">
+      <div class="fact-check-claim">The cross-ref tuple fails closed &quot;the moment the runner file exists.&quot;</div>
+      <div class="fact-check-correction">→ The cross-ref test fails closed when the slimmed WRAPPER lacks the reference, not when the runner file exists. A runner file with no wrapper reference and no tuple passes everything. The trigger description is wrong even for the working half.</div>
+      <div class="fact-check-critic">The Architect</div>
+    </div>
+    <div class="modify-notes">
+      <label for="notes-facts">Override or annotate fact-checks (optional)</label>
+      <textarea id="notes-facts" placeholder="Anything to override or annotate..."></textarea>
+    </div>
+  </div>
+
+  <div class="action-footer">
+    <div class="summary"><strong id="accept-count">0</strong> accepted · <strong id="reject-count">0</strong> rejected</div>
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy follow-up prompt</button>
+  </div>
+
+  <script>
+    const FINDINGS = [
+      {
+        "id": "h-1",
+        "severity": "high",
+        "text": "The eval-surface 'fail-closed' guard does not exist — Commit 1's claimed auto-enforcement is imaginary. The runner is an LLM-behavior surface; if omitted from eval-surface, eval-audit and finishing-a-development-branch silently stop covering it and nothing turns red.",
+        "action": "Add an explicit test_visualization_runner_is_in_eval_surface assertion in Commit 1 (or a generic 'every _shared/*.md runner appears in eval-surface' test). State the guard must be authored, not inherited.",
+        "critics": ["The QA Engineer", "The Architect"],
+        "accepted": true
+      },
+      {
+        "id": "h-2",
+        "severity": "high",
+        "text": "Root-cause story is half-right; the primary documented failure mode is unaddressed. Baking the Overview tab into the template (Decision 6) only helps if the agent copies the template, but KB-085/086 document that the agent reliably takes the compact-direct-write shortcut and never reaches the template, protocol, or verify gate. 'The file copy is the contract' is only binding if the copy happens.",
+        "action": "State what forces template-copy / runner-invocation. Either (a) add a hard 'you must invoke the runner; do not hand-write the artifact' gate to the mode files, or (b) acknowledge the shortcut as a known residual failure and stop claiming KB-085/086 are closed.",
+        "critics": ["The QA Engineer"],
+        "accepted": true
+      },
+      {
+        "id": "m-1",
+        "severity": "medium",
+        "text": "Scaffolding test is mis-scoped and the Commit 2 claim is overstated. 'Update the test to assert the scaffold across five templates' is really add a fifth file plus replace the trivial '<script' check with real assertions. software-template.html (the one visualize-design reuses and KB-086 faulted) is currently absent and has zero scaffolding coverage; the 'authoring' function name would mislead.",
+        "action": "In Commit 2: add software-template.html to the file list, replace the '<script' check with panel-overview active + three-slot ({goal}/{why-it-matters}/{outcome}) assertions, and rename the function. Describe as a rewrite, not a one-line update.",
+        "critics": ["The QA Engineer", "The Architect"],
+        "accepted": true
+      },
+      {
+        "id": "m-2",
+        "severity": "medium",
+        "text": "No error-path test for the executive-overview verify gate; the gate is an unverifiable LLM self-check with no mechanical assertion, unlike the deterministic mermaid exit-code gate the design rhetorically pairs it with. The only hard guarantee is 'an empty scaffold exists' — not 'the scaffold was filled at executive altitude,' which is KB-086's complaint. The 'rewrite, re-check, proceed' loop is unbounded with no test that it fires.",
+        "action": "State explicitly that the verify gate is semantic and cannot be unit-tested; stop implying parity with the mermaid gate. Optionally add one mechanical sub-check (Overview panel contains zero <pre class=\"mermaid\"> and zero .file-path spans) and assert it.",
+        "critics": ["The QA Engineer"],
+        "accepted": true
+      },
+      {
+        "id": "m-3",
+        "severity": "medium",
+        "text": "Moving the Nested sub-tabs rule into the runner falsifies a claim in a file marked 'unchanged.' modes/software.md:152 says the rule is 'defined in the protocol'; after the move it lives in the runner, reachable only via a delegation pointer. The 'byte-equivalent brainstorming behavior' claim for Commit 1 doesn't hold unless the protocol re-exports the rule or software.md:152 is edited (which contradicts unchanged-modes). The strip-script move is a second unframed content relocation.",
+        "action": "Decide and state in Commit 1: does the protocol re-host the Nested sub-tabs rule verbatim, or does software.md:152 get a one-word edit? Don't leave it implied by 'byte-equivalent.' Frame the strip-script move as the second content relocation.",
+        "critics": ["The Architect"],
+        "accepted": true
+      },
+      {
+        "id": "m-4",
+        "severity": "medium",
+        "text": "Re-running visualize-design on the same doc the same day silently resolves to the identical output path (session name YYYY-MM-DD-<topic-slug>) — the most common repeated workflow (render, tweak, re-render). Overwrite vs prompt vs version is undefined.",
+        "action": "Add one line to the Finish step: 'If {output-path} already exists, overwrite it — re-rendering is the expected workflow.' (Or whichever behavior is intended — decide it.)",
+        "critics": ["The DevEx Engineer"],
+        "accepted": true
+      },
+      {
+        "id": "m-5",
+        "severity": "medium",
+        "text": "Bare /aligned:visualize-design with no doc and no renderable conversation: the error path is named ('ask one question') but not shaped — what question, with what options? The sibling use-framework handles bare invocation by listing frameworks; visualize-design has no equivalent, so the message varies run to run.",
+        "action": "Specify the one question's content, e.g.: 'No document path given and the conversation has no validated design content yet — paste a doc path or tell me what to visualize.'",
+        "critics": ["The DevEx Engineer"],
+        "accepted": true
+      },
+      {
+        "id": "m-6",
+        "severity": "medium",
+        "text": "The cross-skill template-path resolution — the single load-bearing coupling — is asserted as 'absolute path' but the walk from visualize-design into skills/brainstorming/references/templates/ is never shown. Brainstorming resolves it relative to its own base directory, which won't work from visualize-design; the design doesn't cite resolve-skill-path.md for this reach.",
+        "action": "State the resolution explicitly: 'Resolve plugin root per skills/_shared/resolve-skill-path.md, then {plugin-root}/skills/brainstorming/references/templates/software-template.html.'",
+        "critics": ["The DevEx Engineer"],
+        "accepted": true
+      },
+      {
+        "id": "l-1",
+        "severity": "low",
+        "text": "visualize-design finish-path mermaid-fail behavior is unspecified. If the mermaid gate fails at finish (user said 'done' but a diagram doesn't parse), the design doesn't say whether finish aborts and keeps the user in the live session or writes a broken artifact. The brainstorming protocol specifies this loop; the standalone skill doesn't.",
+        "action": "Add: 'If the mermaid gate fails at finish, report the offending block and remain in the live session — do not write the committed copy.'",
+        "critics": ["The QA Engineer"],
+        "accepted": false
+      },
+      {
+        "id": "l-2",
+        "severity": "low",
+        "text": "The strip-script relocation (Decision 7) may drop its guards. The rule in shared-rules.md:21-23 is three paragraphs carrying a delimiter-existence STOP and a widget-survival check, not a one-liner. The design doesn't confirm both guards relocate; dropping them could ship a committed artifact with a live-refresh script.",
+        "action": "State in Commit 1 that the full strip rule (delimiter-existence STOP + widget-survival check) moves to the runner, with a test asserting the delimiter-check language is present (not just the word 'strip').",
+        "critics": ["The QA Engineer"],
+        "accepted": false
+      },
+      {
+        "id": "l-3",
+        "severity": "low",
+        "text": "roadmap-template.html exclusion from the scaffold is asserted by omission, not stated. It carries the same .tab-bar/.tab-panel CSS and empty body as the others; nothing structural distinguishes it. The exclusion rests on an out-of-band fact (roadmap generates no live artifact) a future editor won't see in the template.",
+        "action": "One sentence in Commit 2 naming roadmap-template.html as the deliberately-excluded sixth template, citing the no-artifact reason.",
+        "critics": ["The Architect"],
+        "accepted": false
+      },
+      {
+        "id": "l-4",
+        "severity": "low",
+        "text": "The {live-session} yes/no Configuration input has no documented caller that sets it to 'no' — both callers run live, so the 'off' branch is dead config. Live-default may also add ceremony (30-min self-refresh, browser tab, confirm-done) for a 'render once, give me the file' use the design also names.",
+        "action": "Either wire {live-session} to a documented one-shot invocation (and document that path) or cut it as speculative configurability.",
+        "critics": ["The DevEx Engineer"],
+        "accepted": false
+      }
+    ];
+    const FACT_CHECKS = [
+      {
+        "id": "fc-1",
+        "claim": "Runner listed in eval-surface.yaml, enforced by existing test_shared_runners.py; both tests fail closed the moment the runner file exists.",
+        "correction": "test_shared_runners.py has no generic enforcement — it only asserts framework-runner.md and advisor-runner.md (named files) appear in eval-surface (lines 37-42, 60-62). eval-surface.yaml lists files explicitly with no glob, so creating visualization-runner.md and omitting the eval-surface line passes every test green. (The Architect adds: no file named test_shared_runners.py exists in e2e/tests/ at all; the real assertions live in test_skill_cross_references.py.)",
+        "critic": "The QA Engineer (also flagged by The Architect)"
+      },
+      {
+        "id": "fc-2",
+        "claim": "test_authoring_templates_share_common_scaffolding covers the five visualizing templates.",
+        "correction": "The test's files list (lines 633-638) contains only the 4 authoring templates; software-template.html is absent. Its sole assertion is '<script' in text — it asserts no tab/overview structure.",
+        "critic": "The QA Engineer (also flagged by The Architect)"
+      },
+      {
+        "id": "fc-3",
+        "claim": "KB-085 and KB-086 share one root cause: protocol steps written as skippable prose.",
+        "correction": "PARTIALLY INCORRECT. Both KBs name the agent's compact-direct-write shortcut (writing tighter HTML directly, bypassing the template) as the PRIMARY cause; skippable prose is only the secondary contributing cause.",
+        "critic": "The QA Engineer"
+      },
+      {
+        "id": "fc-4",
+        "claim": "Decision 5 cites KB-036 as fixing a duplication problem.",
+        "correction": "UNVERIFIABLE — no KB-036 file located this session (may be archived). The claim's anti-duplication logic is sound regardless.",
+        "critic": "The QA Engineer"
+      },
+      {
+        "id": "fc-5",
+        "claim": "The cross-ref tuple fails closed 'the moment the runner file exists.'",
+        "correction": "The cross-ref test fails closed when the slimmed WRAPPER lacks the reference, not when the runner file exists. A runner file with no wrapper reference and no tuple passes everything. The trigger description is wrong even for the working half.",
+        "critic": "The Architect"
+      }
+    ];
+    const SESSION = {
+      name: "2026-06-11-visualization-skill",
+      mode: "software",
+      designPath: "/Users/ericpage/software/aligned_cc_skills/docs/plans/2026-06-11-visualization-skill-design.md"
+    };
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    function toggleFinding(id, el) {
+      const finding = FINDINGS.find(f => f.id === id);
+      if (!finding) return;
+      finding.accepted = !finding.accepted;
+      el.classList.toggle('on');
+      const card = el.closest('.finding');
+      const label = el.parentElement.querySelector('.toggle-label');
+      if (finding.accepted) {
+        card.classList.remove('rejected');
+        label.textContent = 'accept';
+      } else {
+        card.classList.add('rejected');
+        label.textContent = 'reject';
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const accepted = FINDINGS.filter(f => f.accepted).length;
+      const rejected = FINDINGS.filter(f => !f.accepted).length;
+      document.getElementById('accept-count').textContent = accepted;
+      document.getElementById('reject-count').textContent = rejected;
+    }
+
+    function buildPrompt() {
+      const accept = FINDINGS.filter(f => f.accepted);
+      const reject = FINDINGS.filter(f => !f.accepted);
+
+      const formatFinding = f => {
+        const critics = f.critics && f.critics.length ? '[' + f.critics.join(', ') + '] ' : '';
+        return '- ' + critics + f.text;
+      };
+
+      const notes = {
+        high:   document.getElementById('notes-high').value.trim()   || '(none)',
+        medium: document.getElementById('notes-medium').value.trim() || '(none)',
+        low:    document.getElementById('notes-low').value.trim()    || '(none)',
+        facts:  document.getElementById('notes-facts').value.trim()  || '(none)'
+      };
+
+      const factLines = FACT_CHECKS.length
+        ? FACT_CHECKS.map(fc => '- ' + fc.claim + ' → ' + fc.correction).join('\n')
+        : '(none)';
+
+      return [
+        'Resume brainstorming session "' + SESSION.name + '" (' + SESSION.mode + ' mode) at `' + SESSION.designPath + '`.',
+        'Critique decisions from interactive review:',
+        '',
+        'ACCEPT (apply these):',
+        accept.length ? accept.map(formatFinding).join('\n') : '(none)',
+        '',
+        'REJECT (skip these):',
+        reject.length ? reject.map(formatFinding).join('\n') : '(none)',
+        '',
+        'FACT-CHECKS (auto-applied):',
+        factLines,
+        '',
+        'MODIFY NOTES:',
+        '- High severity: '   + notes.high,
+        '- Medium severity: ' + notes.medium,
+        '- Low severity: '    + notes.low,
+        '- Fact-checks: '     + notes.facts,
+        '',
+        'Apply the accepted findings and any modify notes, skip the rejected ones, regenerate the design doc, then refresh the session visualization per the post-critique checklist in the mode file.'
+      ].join('\n');
+    }
+
+    function copyPrompt(btn) {
+      const text = buildPrompt();
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied — paste in Claude Code';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2400);
+      }).catch(err => {
+        btn.textContent = 'Copy failed — see console';
+        console.error('Clipboard write failed:', err);
+      });
+    }
+
+    updateSummary();
+  </script>
+</body>
+</html>

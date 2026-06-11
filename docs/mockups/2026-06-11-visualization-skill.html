@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualization Runner Extraction + visualize-design Skill</title>
+  <!-- Mermaid for diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Tailwind for utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: 'var(--color-accent)', hover: 'var(--color-accent-hover)', subtle: 'var(--color-accent-subtle)' },
+            surface: 'var(--color-surface)',
+            muted: 'var(--color-muted)',
+            foreground: 'var(--color-foreground)',
+            secondary: 'var(--color-secondary)',
+            dimmed: 'var(--color-dimmed)',
+            border: 'var(--color-border)'
+          },
+          fontFamily: {
+            sans: ['var(--font-sans)'],
+            mono: ['var(--font-mono)']
+          },
+          borderRadius: {
+            sm: '6px',
+            md: '12px',
+            full: '9999px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* --- Brand tokens ---
+       Populated by the brainstorming skill from the project's
+       docs/design/design-principles.md (or the global fallback at
+       ~/.claude/docs/design/design-principles.md). Defaults below match
+       the aligned plugin's own brand and apply when no design-principles
+       file is found. The whole inline <style> block, the Tailwind config
+       above, and the Mermaid theme below all read from these vars — so
+       changing values here is the only edit needed to rebrand the artifact. */
+    :root {
+      --color-background: #faf9f7;
+      --color-surface: #f5f3ef;
+      --color-muted: #f0eeeb;
+      --color-foreground: #1a1a1a;
+      --color-secondary: #555555;
+      --color-dimmed: #6b7280;
+      --color-border: #e5e7eb;
+      --color-accent: #ff6900;
+      --color-accent-hover: #e55d00;
+      --color-accent-subtle: #fff7ed;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: Menlo, Consolas, Monaco, "Courier New", monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background);
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--color-foreground); margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 4px; }
+    .context { font-size: 0.88rem; color: var(--color-dimmed); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--color-muted);
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--color-foreground); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Sub-tab bar */
+    .sub-tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--color-muted);
+      padding-left: 16px;
+      background: var(--color-background);
+      margin-bottom: 16px;
+    }
+    .sub-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      font-family: inherit;
+    }
+    .sub-tab-btn:hover { color: var(--color-foreground); }
+    .sub-tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Content sections */
+    .section {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-accent-subtle);
+      color: var(--color-accent);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-deferred {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: var(--color-surface);
+      color: var(--color-dimmed);
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .description { font-size: 0.88rem; color: var(--color-secondary); margin-bottom: 12px; line-height: 1.6; }
+    .bullet-list { font-size: 0.85rem; color: var(--color-foreground); margin-bottom: 16px; padding-left: 20px; }
+    .bullet-list li { margin-bottom: 6px; line-height: 1.5; }
+    .diagram-container { overflow-x: auto; }
+    .back-link {
+      font-size: 0.82rem;
+      color: var(--color-accent);
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Legend */
+    .legend { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--color-secondary); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Component cards */
+    .component-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .component-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 4px;
+    }
+    .component-card .use-case {
+      font-size: 0.82rem;
+      color: var(--color-dimmed);
+      margin-bottom: 12px;
+    }
+    .component-card code {
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 0.78rem;
+      background: var(--color-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--color-foreground);
+    }
+    .component-preview {
+      background: var(--color-background);
+      border: 1px solid var(--color-muted);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    /* Phase tracker */
+    .mini-phase-tracker {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+    .mini-phase-item {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-right: none;
+    }
+    .mini-phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .mini-phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
+    .mini-phase-item.current {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    /* Card grid */
+    .mini-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .mini-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.75rem;
+      color: var(--color-foreground);
+    }
+    .mini-card strong { font-weight: 600; display: block; margin-bottom: 2px; }
+    .mini-card span { color: var(--color-dimmed); font-size: 0.7rem; }
+
+    /* Compare grid */
+    .mini-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .mini-compare-col {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.72rem;
+    }
+    .mini-compare-col h4 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-foreground);
+    }
+    .mini-compare-col .pro { color: #047857; }
+    .mini-compare-col .con { color: #b91c1c; }
+
+    /* Callouts */
+    .mini-callout {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      border-left: 3px solid;
+      margin-bottom: 6px;
+    }
+    .mini-callout.decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .mini-callout.constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .mini-callout.risk { background: #fef2f2; border-color: #b91c1c; color: #b91c1c; }
+
+    /* Change table */
+    .change-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .change-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--color-foreground);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .change-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-muted);
+      color: var(--color-foreground);
+      vertical-align: top;
+    }
+    .change-table .file-path {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    .status-modified { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .status-unchanged { background: var(--color-surface); color: var(--color-dimmed); }
+    .status-new { background: #ecfdf5; color: #047857; }
+
+    /* Success criteria */
+    .criteria-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .criteria-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-muted);
+      align-items: flex-start;
+    }
+    .criteria-item:last-child { border-bottom: none; }
+    .criteria-num {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+    .criteria-text {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      line-height: 1.5;
+    }
+    .criteria-text strong { font-weight: 600; }
+
+    /* Test strategy */
+    .test-category {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .test-category h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .test-items {
+      font-size: 0.85rem;
+      color: var(--color-foreground);
+      padding-left: 20px;
+      margin: 0;
+    }
+    .test-items li {
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    /* Phase tracker */
+    .phase-tracker {
+      display: flex;
+      gap: 0;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .phase-item {
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--color-dimmed);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-right: none;
+    }
+    .phase-item:first-child { border-radius: 6px 0 0 6px; }
+    .phase-item:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--color-border); }
+    .phase-current {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    /* Card grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 0.85rem;
+      color: var(--color-secondary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Comparison grid */
+    .compare-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .compare-2col { grid-template-columns: repeat(2, 1fr); }
+    .compare-3col { grid-template-columns: repeat(3, 1fr); }
+    .compare-grid .col {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .compare-grid .col h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .compare-grid .pro { color: #047857; font-size: 0.85rem; }
+    .compare-grid .con { color: #b91c1c; font-size: 0.85rem; }
+
+    /* Callout boxes */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      border-left: 4px solid;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .callout-decision { background: var(--color-accent-subtle); border-color: var(--color-accent); color: var(--color-foreground); }
+    .callout-constraint { background: var(--color-surface); border-color: var(--color-secondary); color: var(--color-foreground); }
+    .callout-risk { background: #fef2f2; border-color: #b91c1c; color: var(--color-foreground); }
+    .callout-note { background: #f0f9ff; border-color: #0284c7; color: var(--color-foreground); }
+    .callout strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+  </style>
+<!-- WIDGETS-CSS-START -->
+<style>
+  .interactive-section {
+    background: var(--color-accent-subtle);
+    border-radius: 12px;
+    padding: 24px 28px 32px;
+    margin: 32px -28px;
+  }
+  .interactive-banner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--color-foreground);
+  }
+  .interactive-banner .icon { color: var(--color-accent); font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  table.interactive td { vertical-align: middle; }
+  table.interactive .decision-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; font-size: 13px; }
+  table.interactive .decision-title { font-weight: 500; color: var(--color-foreground); font-size: 13px; }
+  table.interactive td.decision-desc { font-size: 13px; color: var(--color-secondary); line-height: 1.5; }
+
+  select.dropdown { font-family: var(--font-sans); font-size: 13px; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-surface); color: var(--color-foreground); cursor: pointer; min-width: 110px; }
+  select.dropdown:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  select.dropdown.reject, select.dropdown.include { color: var(--color-accent); font-weight: 500; border-color: var(--color-accent); background: var(--color-accent-subtle); }
+  select.dropdown.q-reject { color: #b91c1c; font-weight: 500; border-color: #b91c1c; background: #fef2f2; }
+
+  tr.row-active td { background: var(--color-accent-subtle) !important; }
+  tr.row-rejected td { background: #fef2f2 !important; }
+  tr.row-rejected td.decision-title, tr.row-rejected td:nth-child(2) { opacity: 0.7; text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; }
+
+  tr.section-divider td { background: var(--color-muted); color: var(--color-foreground); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 14px 16px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  tr.section-divider:first-child td { border-top: none; }
+  tr.section-divider .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  tr.section-divider .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .decision-card-list { display: flex; flex-direction: column; gap: 12px; }
+  .decision-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 16px 18px; transition: border-color 150ms, box-shadow 150ms, background 150ms; }
+  .decision-card.decision-card-clickable { cursor: pointer; }
+  .decision-card.decision-card-clickable:hover { border-color: var(--color-accent); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .decision-card.row-active { background: var(--color-accent-subtle) !important; border-color: var(--color-accent); }
+  .decision-card-head { display: flex; align-items: flex-start; gap: 16px; }
+  .decision-card-headline { flex: 1; display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+  .decision-card-num { font-feature-settings: 'tnum'; color: var(--color-dimmed); font-weight: 500; font-size: 13px; flex-shrink: 0; }
+  .decision-card-title { font-weight: 600; color: var(--color-foreground); font-size: 14px; line-height: 1.4; }
+  .decision-card.row-active .decision-card-title { text-decoration: line-through; text-decoration-color: #b91c1c; text-decoration-thickness: 1px; opacity: 0.7; }
+  .decision-card-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .decision-card-chevron { color: var(--color-dimmed); font-size: 11px; transition: transform 150ms; user-select: none; }
+  .decision-card.expanded .decision-card-chevron { transform: rotate(180deg); }
+  .decision-card-desc { margin-top: 8px; font-size: 13px; color: var(--color-secondary); line-height: 1.55; }
+  .decision-card-detail { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--color-border); font-size: 13px; color: var(--color-foreground); line-height: 1.6; }
+  .decision-card-detail p { margin: 0 0 8px; }
+  .decision-card-detail p:last-child { margin-bottom: 0; }
+  .decision-card-section { padding: 16px 4px 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-foreground); border-top: 1px solid var(--color-border); }
+  .decision-card-section:first-child { border-top: none; padding-top: 4px; }
+  .decision-card-section .section-letter { color: var(--color-accent); font-weight: 700; margin-right: 10px; }
+  .decision-card-section .section-count { color: var(--color-dimmed); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+
+  .prompt-box { margin-top: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; }
+  .prompt-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .prompt-box-label { font-size: 13px; font-weight: 600; color: var(--color-foreground); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn { font-family: var(--font-sans); font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--color-border); background: var(--color-muted); color: var(--color-foreground); font-weight: 500; }
+  .btn:hover { background: var(--color-accent-subtle); border-color: var(--color-accent); }
+  .btn-primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+  .btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .btn.copied { background: #047857; color: white; border-color: #047857; }
+  .btn.btn-error { background: #b91c1c; color: white; border-color: #b91c1c; }
+
+  textarea.prompt-textarea { width: 100%; min-height: 160px; padding: 14px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--color-foreground); background: var(--color-muted); border: 1px solid var(--color-border); border-radius: 8px; resize: vertical; }
+  textarea.prompt-textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  .prompt-hint { margin-top: 8px; font-size: 12px; color: var(--color-dimmed); font-style: italic; }
+</style>
+<!-- WIDGETS-CSS-END -->
+</head>
+<body>
+  <h1>Visualization Runner Extraction + visualize-design Skill</h1>
+  <p class="subtitle">One shared engine for design-doc visualizations — used by brainstorming and a new standalone command</p>
+  <p class="context">Software brainstorm · 2026-06-11 · aligned plugin · Design doc: docs/plans/2026-06-11-visualization-skill-design.md</p>
+
+  <div class="tab-bar" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab-btn" onclick="switchTab('runner')">Runner Contract</button>
+    <button class="tab-btn" onclick="switchTab('skill')">visualize-design</button>
+    <button class="tab-btn" onclick="switchTab('migration')">Migration</button>
+    <button class="tab-btn" onclick="switchTab('testing')">Testing</button>
+    <button class="tab-btn" onclick="switchTab('decisions')">Decisions</button>
+  </div>
+
+  <div id="panel-overview" class="tab-panel active">
+    <div class="section">
+      <h2>Goal</h2>
+      <p class="description">The polished, on-brand visualization you get at the end of a brainstorm is currently locked inside the brainstorming skill. This work frees it: the machinery moves into one shared engine, and a new command — <strong>/aligned:visualize-design</strong> — lets you produce the same artifact for any document or working thread, anytime. Brainstorming keeps working exactly as it does today, running on the same engine.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>What changes</h3>
+        <p>One engine, two callers. The visualization procedure lives in a single shared playbook instead of being buried in brainstorming. A new command renders any markdown doc or conversation thread as a live, on-brand visualization.</p>
+      </div>
+      <div class="card">
+        <h3>Why it matters</h3>
+        <p>Two long-standing annoyances get fixed at the source: the browser now always opens automatically, and every visualization must lead with a plain-language executive overview — no more opening into a wall of implementation detail.</p>
+      </div>
+      <div class="card">
+        <h3>The outcome</h3>
+        <p>Run the new command, watch a self-refreshing visualization build in your browser as you iterate, and get a final polished copy saved to the project when you say it's done. Same look, same quality, no brainstorm required.</p>
+      </div>
+    </div>
+    <div class="section">
+      <h2>The shape of it</h2>
+      <p class="description">Click a node to jump to its detail tab.</p>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+  brainstorm[Brainstorming sessions] --> engine[Shared visualization engine]
+  skill[New command:&lt;br/&gt;visualize-design] --> engine
+  engine --> artifact[Executive-first&lt;br/&gt;on-brand HTML artifact]
+  click brainstorm "javascript:switchTab('architecture')"
+  click skill "javascript:switchTab('skill')"
+  click engine "javascript:switchTab('runner')"
+  click artifact "javascript:switchTab('runner')"
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-architecture" class="tab-panel">
+    <div class="section">
+      <h2>The three-piece split <span class="badge">follows framework-runner precedent</span></h2>
+      <p class="description">The extraction mirrors the May 2026 framework-runner refactor: caller-independent procedure moves to <code>skills/_shared/</code>; callers stay thin and own only what is specific to them.</p>
+      <div class="card-grid">
+        <div class="card">
+          <h3>1 · The engine (new)</h3>
+          <p><span class="file-path">skills/_shared/visualization-runner.md</span> — token resolution ladder, verbatim copy-and-patch contract, executive-overview rule, widget injection, unconditional browser-open, mermaid gate, strip-script rule, nested sub-tabs rule. Framework-runner house style: Configuration block, fail-closed validation, numbered steps.</p>
+        </div>
+        <div class="card">
+          <h3>2 · The standalone skill (new)</h3>
+          <p><span class="file-path">skills/visualize-design/SKILL.md</span> — thin caller. Source resolution (doc path or conversation), session naming, live-session wiring, output to <span class="file-path">docs/design-visualizations/</span>.</p>
+        </div>
+        <div class="card">
+          <h3>3 · The brainstorming wrapper (slimmed)</h3>
+          <p><span class="file-path">skills/brainstorming/references/visualization-protocol.md</span> — stays at its test-pinned path. Keeps only the brainstorming lifecycle: live-update-per-section loop, pre-critique snapshot, post-critique regeneration. Delegates everything else to the engine.</p>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Who calls what</h2>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph TD
+  sw[modes/software.md] --> proto[visualization-protocol.md&lt;br/&gt;brainstorming wrapper]
+  au[modes/authoring.md] --> proto
+  proto --> runner[_shared/visualization-runner.md&lt;br/&gt;the engine]
+  vd[visualize-design/SKILL.md] --> runner
+  runner --> assets[templates · widgets.html&lt;br/&gt;components doc · validate-mermaid.mjs]
+  proto --> outA[docs/mockups/]
+  vd --> outB[docs/design-visualizations/]
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>What stays physically where it is</h2>
+      <p class="description">Templates, <span class="file-path">widgets.html</span>, <span class="file-path">brainstorm-components.md</span>, and <span class="file-path">validate-mermaid.mjs</span> (plus its npm dependency) all remain under <span class="file-path">skills/brainstorming/</span>. The engine takes their locations as configuration inputs. Moving the npm-dependency directory would be blast radius for zero functional gain.</p>
+      <div class="callout callout-constraint">
+        <strong>Hard pin</strong>
+        The literal path <span class="file-path">skills/brainstorming/references/visualization-protocol.md</span> is asserted by an e2e test and consumed by both visualizing modes. It must remain a readable file — it becomes the wrapper rather than moving.
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-runner" class="tab-panel">
+    <div class="sub-tab-bar">
+      <button class="sub-tab-btn active" onclick="switchSubTab('runner','config')">Configuration</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('runner','execrule')">Executive-Overview Rule</button>
+    </div>
+    <div id="sub-config" class="sub-panel active">
+      <div class="section">
+        <h2>Configuration inputs <span class="badge">fail-closed</span></h2>
+        <p class="description">All paths are absolute and resolved by the caller — the brainstorming wrapper resolves its own relative paths; visualize-design resolves from the plugin root. Shared files never self-resolve. Missing or unresolvable config halts with a named error instead of improvising.</p>
+        <table class="change-table">
+          <tr><th>Input</th><th>Meaning</th></tr>
+          <tr><td class="file-path">{template-path}</td><td>The HTML template to copy verbatim</td></tr>
+          <tr><td class="file-path">{widgets-path}</td><td>widgets.html — widget CSS, JS, and HTML blocks</td></tr>
+          <tr><td class="file-path">{components-path}</td><td>brainstorm-components.md — token contract and component classes</td></tr>
+          <tr><td class="file-path">{source-content}</td><td>Validated sections or document body to render</td></tr>
+          <tr><td class="file-path">{title} / {subtitle} / {context}</td><td>Header values patched into the template</td></tr>
+          <tr><td class="file-path">{output-path}</td><td>Final committed artifact location</td></tr>
+          <tr><td class="file-path">{live-session}</td><td>yes/no — self-refreshing /tmp artifact vs one-shot render</td></tr>
+          <tr><td class="file-path">{project-root}</td><td>Root for the design-token resolution ladder</td></tr>
+        </table>
+      </div>
+      <div class="section">
+        <h2>Why fail-closed</h2>
+        <p class="description">Two kanban findings (KB-085: browser-open silently skipped; KB-086: goal buried under detail) name two co-equal causes: the agent's compact-direct-write shortcut (hand-writing HTML and never touching the template or protocol) and protocol steps written as skippable prose. The runner answers both — an explicit anti-shortcut contract at every entry point ("copy the file; never hand-write the artifact"), and numbered steps with hard gates that make skipping visible. The browser-open step becomes unconditional and numbered, inherited by every caller from one file. The design claims mitigation of these KBs, not closure — closure is confirmed by observing subsequent sessions.</p>
+      </div>
+    </div>
+    <div id="sub-execrule" class="sub-panel">
+      <div class="section">
+        <h2>Produce, then verify</h2>
+        <p class="description">The first tab of every artifact must read at executive altitude: what this is, why it matters, what outcome it produces — plain language a non-engineer scans in under a minute.</p>
+        <div class="callout callout-decision">
+          <strong>1 · Produce — template-guaranteed after commit 2</strong>
+          Today the templates ship an empty skeleton; commit 2 bakes in a pre-built tab bar whose first tab is Overview, with placeholder slots for goal, why-it-matters, and outcome. From then on a verbatim copy carries the structure — fillable, not omittable. No Mermaid, no file paths, no implementation vocabulary on that tab; roughly one screen. Applies from the first live render. This guarantee holds only on the copy path — it is a mitigation complementary to the anti-shortcut contract, not a closed loop.
+        </div>
+        <div class="callout callout-decision">
+          <strong>2 · Verify — pre-snapshot gate, two parts</strong>
+          Mechanical sub-check (fail-closed): the Overview panel contains zero mermaid blocks and zero file-path spans — a grep with the same pass/fail contract as the mermaid gate; a match blocks the snapshot until fixed. Semantic self-check (never blocks): altitude and length judged by the LLM with one retry; on a second failure the artifact is written anyway with a one-line message naming the failed check and the slot to edit. A soft judgment never holds the output hostage.
+        </div>
+        <div class="callout callout-note">
+          <strong>Scope</strong>
+          The ban on file paths and diagrams applies to the Overview tab only — detail tabs keep their change tables, file paths, and diagrams.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-skill" class="tab-panel">
+    <div class="section">
+      <h2>/aligned:visualize-design <span class="badge">new skill</span></h2>
+      <p class="description">Invoked with an optional markdown file path. With a path: renders that document. Without: renders the validated content of the current conversation. If neither yields enough content, it asks one question rather than improvising.</p>
+      <div class="diagram-container">
+        <pre class="mermaid-deferred">
+graph LR
+  invoke([Invoke command]) --> src{Source?}
+  src -->|doc path| doc[Read document]
+  src -->|no argument| conv[Use conversation content]
+  doc --> live[Live /tmp artifact&lt;br/&gt;opens in browser]
+  conv --> live
+  live --> iterate[Iterate with user]
+  iterate --> gates[Gates: mermaid parse +&lt;br/&gt;executive overview]
+  gates --> final[Committed copy in&lt;br/&gt;docs/design-visualizations/]
+        </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Session behavior</h2>
+      <ul class="bullet-list">
+        <li><strong>Live by default</strong> — same rhythm as brainstorming: self-refreshing /tmp artifact, opened immediately, updated as you iterate.</li>
+        <li><strong>Same brand resolution</strong> — project design-principles file, monorepo glob, then global fallback; placeholder files surfaced with a warning.</li>
+        <li><strong>Same template</strong> — reuses brainstorming's software template by absolute path (deliberate coupling, Decision 5; divergence deferred until needed).</li>
+        <li><strong>Diagrams</strong> — dispatches the same flowchart-generator / architecture-diagram-generator agents brainstorming uses.</li>
+        <li><strong>Finish</strong> — on your confirmation: mermaid gate, executive-overview check, write to <span class="file-path">docs/design-visualizations/{session-name}.html</span> (directory created if missing; an existing file is overwritten — re-rendering is the expected workflow), strip the live-refresh script, open the committed copy.</li>
+        <li><strong>Widgets</strong> — injected only when the content actually has a Decision Log or Open Questions section; same flat/categorized thresholds.</li>
+        <li><strong>Not included</strong> — critique panel and the Mockups header field; those are brainstorming scaffolding.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="panel-migration" class="tab-panel">
+    <div class="section">
+      <h2>Four commits, no-behavior-change first</h2>
+      <div class="phase-tracker">
+        <div class="phase-item phase-current">1 · Extract</div>
+        <div class="phase-item">2 · Fix KB-085/086</div>
+        <div class="phase-item">3 · Add skill</div>
+        <div class="phase-item">4 · Agent dedup (optional)</div>
+      </div>
+      <ul class="bullet-list">
+        <li><strong>Commit 1 — Extract.</strong> Create the runner; slim the protocol to the wrapper; three named content relocations (strip rule, nested sub-tabs rule, engine steps) plus a one-line reference edit in <span class="file-path">modes/software.md:152</span>. Guards are hand-authored, none inherited — two files, two guards: an eval-surface assertion in <span class="file-path">test_shared_runners.py</span> (mirroring the framework-runner/advisor-runner assertions) and wrapper→runner tuples in <span class="file-path">test_skill_cross_references.py</span>. Brainstorming behavior-equivalent, not byte-equivalent.</li>
+        <li><strong>Commit 2 — Fix KB-085/086 in the engine.</strong> Anti-shortcut contract text in runner and both callers; unconditional browser-open; Overview-tab scaffold baked into the five visualizing templates with goal / why-it-matters / outcome slots; two-part verify gate; scaffolding e2e test rewritten in the same commit (add software-template.html, real assertions, rename).</li>
+        <li><strong>Commit 3 — Add visualize-design.</strong> New SKILL.md calling the runner; README skill-table row; version bump in both plugin manifests; structural e2e test mirroring the brainstorming-files pattern.</li>
+        <li><strong>Commit 4 — Optional cleanup.</strong> Point the three diagram/mockup agents at the runner's token-resolution section instead of each restating the ladder. Sequenced last so it cannot block the core work.</li>
+      </ul>
+      <div class="callout callout-constraint">
+        <strong>Pre-commit-1 housekeeping</strong>
+        Land or stash the uncommitted widgets.html edit; grep e2e/trigger-map.yaml to confirm no path reference to the protocol (expected absent — verify, don't assume).
+      </div>
+    </div>
+    <div class="section">
+      <h2>Files touched</h2>
+      <table class="change-table">
+        <tr><th>File</th><th>Status</th><th>Commit</th></tr>
+        <tr><td class="file-path">skills/_shared/visualization-runner.md</td><td><span class="status-badge status-new">new</span></td><td>1</td></tr>
+        <tr><td class="file-path">skills/brainstorming/references/visualization-protocol.md</td><td><span class="status-badge status-modified">slimmed</span></td><td>1</td></tr>
+        <tr><td class="file-path">skills/brainstorming/references/shared-rules.md</td><td><span class="status-badge status-modified">pointer</span></td><td>1</td></tr>
+        <tr><td class="file-path">e2e/eval-surface.yaml · test_skill_cross_references.py</td><td><span class="status-badge status-modified">modified</span></td><td>1</td></tr>
+        <tr><td class="file-path">templates/*.html (5 visualizing) · scaffolding test</td><td><span class="status-badge status-modified">modified</span></td><td>2</td></tr>
+        <tr><td class="file-path">skills/visualize-design/SKILL.md</td><td><span class="status-badge status-new">new</span></td><td>3</td></tr>
+        <tr><td class="file-path">README.md · plugin.json · marketplace.json</td><td><span class="status-badge status-modified">modified</span></td><td>3</td></tr>
+        <tr><td class="file-path">agents/flowchart-generator.md · architecture-diagram-generator.md · mockup-generator.md</td><td><span class="status-badge status-modified">modified</span></td><td>4</td></tr>
+        <tr><td class="file-path">skills/brainstorming/modes/software.md · authoring.md</td><td><span class="status-badge status-unchanged">unchanged</span></td><td>—</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="panel-testing" class="tab-panel">
+    <div class="section">
+      <h2>Tests land in the commit that creates what they pin</h2>
+      <div class="test-category">
+        <h3>Commit 1 — extraction guards</h3>
+        <ul class="test-items">
+          <li>New hand-written test_visualization_runner_is_in_eval_surface in test_shared_runners.py — no generic enforcement exists to inherit</li>
+          <li>Cross-reference tuple: wrapper → runner in test_skill_cross_references.py REQUIRED_CROSS_REFS</li>
+          <li>Slimmed protocol still readable at its pinned path and references the runner</li>
+          <li>Strip-rule pointer present in shared-rules.md</li>
+          <li>Runner doc carries no YAML frontmatter (house rule for _shared/)</li>
+        </ul>
+      </div>
+      <div class="test-category">
+        <h3>Commit 2 — template scaffold</h3>
+        <ul class="test-items">
+          <li>Scaffolding test rewritten, not updated: software-template.html added to the file list (currently absent), the trivial script-presence assertion replaced with panel-overview active + three-slot assertions, and the function renamed since it no longer covers only authoring templates</li>
+        </ul>
+      </div>
+      <div class="test-category">
+        <h3>Commit 3 — new skill structure</h3>
+        <ul class="test-items">
+          <li>Structural test mirroring test_brainstorming_files.py: SKILL.md exists, frontmatter name matches directory, references the runner</li>
+          <li>Cross-reference tuple: visualize-design → runner</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-decisions" class="tab-panel">
+    <div class="section">
+      <h2>Decision Log <span class="badge">14 decisions</span></h2>
+      <p class="description">Toggle any decision to Reject and the prompt below builds itself — copy it back into the conversation to request revisions.</p>
+      <div class="interactive-section">
+        <div class="interactive-banner">
+          <span class="icon">●</span>
+          <div><strong>Two options per decision.</strong> <em>Approve</em> (default) means you accept it. <em>Reject</em> queues it for revision. Click a card to see additional context. The prompt textarea below auto-updates as you toggle dropdowns.</div>
+        </div>
+        <div class="decision-card-list" id="decisions-table" data-widget-root>
+          <div class="decision-card-section">
+            <span class="section-letter">A</span>Where things live<span class="section-count">5 decisions</span>
+          </div>
+          <div class="decision-card" data-id="1" data-title="Engine lives in skills/_shared/visualization-runner.md">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">1</span>
+                <span class="decision-card-title">Engine lives in skills/_shared/visualization-runner.md</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="1"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+                <span class="decision-card-chevron" aria-hidden="true">▾</span>
+              </div>
+            </div>
+            <div class="decision-card-desc">Follows the framework-runner precedent; two skill callers plus three agents make it plugin-wide, not skill-local.</div>
+            <div class="decision-card-detail" hidden>
+              <p>The _shared/ directory already holds 13 caller-independent protocol docs, including framework-runner.md and advisor-runner.md — both extracted from skills for exactly this multi-caller reason. Putting the engine inside the new skill instead would invert ownership the same way the agents-vs-framework-helpers rule warns against.</p>
+            </div>
+          </div>
+          <div class="decision-card" data-id="7" data-title="Strip-script rule relocates to the runner">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">7</span>
+                <span class="decision-card-title">Strip-script rule relocates to the runner</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="7"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Both callers need it; shared-rules.md keeps a one-line pointer so brainstorming's existing read still resolves. The only cross-file behavior move in commit 1.</div>
+          </div>
+          <div class="decision-card" data-id="8" data-title="Templates, widgets, components, mermaid script stay in brainstorming">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">8</span>
+                <span class="decision-card-title">Templates, widgets, components, mermaid script stay in brainstorming</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="8"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">The runner takes their paths as config; moving the npm-dependency directory is unnecessary blast radius.</div>
+          </div>
+          <div class="decision-card" data-id="9" data-title="visualization-protocol.md keeps its exact path">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">9</span>
+                <span class="decision-card-title">visualization-protocol.md keeps its exact path</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="9"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Hard-pinned by an e2e test; it becomes the brainstorming wrapper rather than moving.</div>
+          </div>
+          <div class="decision-card" data-id="13" data-title="Commit 1 is behavior-equivalent, not byte-equivalent">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">13</span>
+                <span class="decision-card-title">Commit 1 is behavior-equivalent, not byte-equivalent</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="13"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Three named content relocations plus a one-line reference edit in software.md:152; all test guards hand-authored in the same commit — eval-surface assertion in test_shared_runners.py, cross-ref tuples in test_skill_cross_references.py.</div>
+          </div>
+          <div class="decision-card-section">
+            <span class="section-letter">B</span>Executive overview &amp; gates<span class="section-count">3 decisions</span>
+          </div>
+          <div class="decision-card" data-id="2" data-title="Executive-overview rule applies to all callers">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">2</span>
+                <span class="decision-card-title">Executive-overview rule applies to all callers</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="2"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Baked into the shared engine and templates, so brainstorming visualizations and standalone renders both lead with a plain-language overview.</div>
+          </div>
+          <div class="decision-card" data-id="6" data-title="Overview tab is baked into the templates (produce + verify)">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">6</span>
+                <span class="decision-card-title">Overview tab is baked into the templates by commit 2 (produce + verify)</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="6"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+                <span class="decision-card-chevron" aria-hidden="true">▾</span>
+              </div>
+            </div>
+            <div class="decision-card-desc">Once commit 2 bakes the scaffold in, template-guaranteed structure cannot be skipped when the template is copied; the compact-direct-write shortcut is a co-equal cause the scaffold cannot reach, so the anti-shortcut contract pairs with it. Mitigation, not closure.</div>
+            <div class="decision-card-detail" hidden>
+              <p>The Architect review caught that the current template has no overview tab at all — the agent builds the tab structure from scratch each render, so a rule that merely checks the overview can be skipped or gamed. Baking the scaffold into the template files makes the file-copy contract carry the guarantee — but only on the copy path; an agent that hand-writes the artifact never sees the scaffold, which is why the runner and both callers also carry explicit anti-shortcut text.</p>
+            </div>
+          </div>
+          <div class="decision-card" data-id="12" data-title="Executive-overview check is a step gate, not Configuration Validation">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">12</span>
+                <span class="decision-card-title">Executive-overview check splits into a mechanical sub-check and a semantic self-check</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="12"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">The mechanical half (zero mermaid / zero file-path spans in the Overview panel) is grep-assertable and blocks the snapshot; the semantic half (altitude, length) gets one retry and never blocks — on second failure the artifact is written with a one-line message naming the fix.</div>
+          </div>
+          <div class="decision-card-section">
+            <span class="section-letter">C</span>The visualize-design skill<span class="section-count">6 decisions</span>
+          </div>
+          <div class="decision-card" data-id="3" data-title="Standalone output goes to docs/design-visualizations/">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">3</span>
+                <span class="decision-card-title">Standalone output goes to docs/design-visualizations/</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="3"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Brainstorming keeps docs/mockups/ — that path is pinned by e2e tests and consumed by downstream skills.</div>
+          </div>
+          <div class="decision-card" data-id="4" data-title="Standalone defaults to a live self-refreshing session">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">4</span>
+                <span class="decision-card-title">Standalone defaults to a live self-refreshing session</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="4"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Same rhythm as brainstorming; the final stripped copy is written when you confirm the session is done.</div>
+          </div>
+          <div class="decision-card" data-id="5" data-title="visualize-design reuses brainstorming's software template by absolute path">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">5</span>
+                <span class="decision-card-title">visualize-design reuses brainstorming's software template by absolute path</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="5"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+                <span class="decision-card-chevron" aria-hidden="true">▾</span>
+              </div>
+            </div>
+            <div class="decision-card-desc">Deliberate cross-skill coupling: any brainstorming edit to the template changes visualize-design output. Divergence deferred until actually needed.</div>
+            <div class="decision-card-detail" hidden>
+              <p>The alternative — shipping a copy of the template inside the new skill — recreates the duplication problem KB-036 fixed. The coupling is named here so a future divergence is a deliberate decision, not drift.</p>
+            </div>
+          </div>
+          <div class="decision-card" data-id="10" data-title="Skill name: visualize-design">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">10</span>
+                <span class="decision-card-title">Skill name: visualize-design</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="10"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Invoked as /aligned:visualize-design; user-selected over the shorter visualize.</div>
+          </div>
+          <div class="decision-card" data-id="11" data-title="Input is doc path or conversation content">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">11</span>
+                <span class="decision-card-title">Input is doc path or conversation content</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="11"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">A path argument renders that file; no argument renders the current thread's validated content; neither sufficient triggers one clarifying question with fixed wording, so the bare-invocation experience is identical run to run.</div>
+          </div>
+          <div class="decision-card" data-id="14" data-title="Same-day re-renders overwrite silently">
+            <div class="decision-card-head">
+              <div class="decision-card-headline">
+                <span class="decision-card-num">14</span>
+                <span class="decision-card-title">Same-day re-renders overwrite silently</span>
+              </div>
+              <div class="decision-card-controls">
+                <select class="dropdown" data-id="14"><option value="approve">Approve</option><option value="reject">Reject</option></select>
+              </div>
+            </div>
+            <div class="decision-card-desc">Render, tweak, re-render is the expected workflow; a confirmation prompt on every re-run would be compounding ceremony.</div>
+          </div>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-box-header">
+            <span class="prompt-box-label">Prompt to send back</span>
+            <div class="prompt-actions">
+              <button class="btn" id="regenerate-decisions" type="button">Regenerate</button>
+              <button class="btn btn-primary" id="copy-decisions" type="button">Copy</button>
+            </div>
+          </div>
+          <textarea class="prompt-textarea" id="decisions-prompt" spellcheck="false"></textarea>
+          <p class="prompt-hint">Textarea auto-updates when you change a dropdown. Edit freely before copying.</p>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Open Questions</h2>
+      <p class="description">None blocking. Two items deferred by design: template divergence for visualize-design (Decision 5) and the agent token-ladder dedup (commit 4, optional).</p>
+    </div>
+  </div>
+
+  <script>
+    var __rs = getComputedStyle(document.documentElement);
+    function __tok(name, fallback) {
+      var v = __rs.getPropertyValue(name).trim();
+      return v || fallback;
+    }
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: __tok('--font-sans', 'system-ui, -apple-system, sans-serif'),
+        fontSize: '14px',
+        lineColor: __tok('--color-border', '#e5e7eb'),
+        primaryColor: __tok('--color-muted', '#f0eeeb'),
+        primaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        primaryBorderColor: __tok('--color-border', '#e5e7eb'),
+        secondaryColor: __tok('--color-accent-subtle', '#fff7ed'),
+        secondaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        secondaryBorderColor: __tok('--color-accent', '#ff6900'),
+        tertiaryColor: __tok('--color-surface', '#f5f3ef'),
+        tertiaryTextColor: __tok('--color-foreground', '#1a1a1a'),
+        tertiaryBorderColor: __tok('--color-secondary', '#555555')
+      },
+      flowchart: { curve: 'basis', padding: 20, nodeSpacing: 50, rankSpacing: 60 }
+    });
+
+    // Render diagrams with class="mermaid" on load
+    mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+
+    function switchTab(tabId) {
+      // Deactivate all top-level tabs and panels
+      document.querySelectorAll('#main-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      // Activate selected
+      var btn = document.querySelector('#main-tabs [onclick*="' + tabId + '"]');
+      if (btn) btn.classList.add('active');
+      var panel = document.getElementById('panel-' + tabId);
+      if (panel) {
+        panel.classList.add('active');
+
+        // Lazy-render deferred Mermaid diagrams on first activation
+        var deferred = panel.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+
+        // If panel has sub-tabs, activate the first one if none active
+        var firstSubBtn = panel.querySelector('.sub-tab-btn');
+        if (firstSubBtn && !panel.querySelector('.sub-tab-btn.active')) {
+          firstSubBtn.click();
+        }
+      }
+    }
+
+    function switchSubTab(parentId, subId) {
+      var parent = document.getElementById('panel-' + parentId);
+      if (!parent) return;
+      parent.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      parent.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      var btn = parent.querySelector('[onclick*="' + subId + '"]');
+      if (btn) btn.classList.add('active');
+      var sub = document.getElementById('sub-' + subId);
+      if (sub) {
+        sub.classList.add('active');
+        // Lazy-render deferred diagrams in sub-panel
+        var deferred = sub.querySelectorAll('.mermaid-deferred');
+        deferred.forEach(function(el) {
+          el.classList.remove('mermaid-deferred');
+          el.classList.add('mermaid');
+          try {
+            mermaid.run({ nodes: [el] });
+          } catch (e) {
+            var errMsg = document.createElement('p');
+            errMsg.style.cssText = 'color:#b91c1c;font-size:0.85rem;';
+            errMsg.textContent = 'Diagram rendering failed: ' + e.message;
+            el.replaceWith(errMsg);
+          }
+        });
+      }
+    }
+  </script>
+<!-- WIDGETS-SCRIPT-START -->
+<script>
+  (function() {
+    'use strict';
+
+    // Clipboard helper with file:// / non-secure-context fallback.
+    function copyToClipboard(text, btn) {
+      var originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = originalLabel;
+      var showSuccess = function() {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('copied');
+        }, 1800);
+      };
+      var showFailure = function() {
+        btn.textContent = 'Copy failed — select & Cmd-C';
+        btn.classList.add('btn-error');
+        setTimeout(function() {
+          btn.textContent = originalLabel;
+          btn.classList.remove('btn-error');
+        }, 3000);
+      };
+      if (!navigator.clipboard || !window.isSecureContext) {
+        // Synchronous fallback for file:// origins and Safari/Firefox non-HTTPS.
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        if (ok) showSuccess(); else showFailure();
+        return;
+      }
+      navigator.clipboard.writeText(text).then(showSuccess).catch(showFailure);
+    }
+
+    function markDirtyOnInput(textarea) {
+      textarea.addEventListener('input', function() {
+        textarea.dataset.dirty = 'true';
+      });
+    }
+
+    // ── DECISION LOG ─────────────────────────────────────────────
+    (function decisionLogWidget() {
+      var container = document.getElementById('decisions-table');
+      if (!container) return;
+      var prompt = document.getElementById('decisions-prompt');
+      var copyBtn = document.getElementById('copy-decisions');
+      var regenBtn = document.getElementById('regenerate-decisions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function cards() {
+        return Array.prototype.slice.call(container.querySelectorAll('.decision-card[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allCards = cards();
+        if (allCards.length === 0) {
+          return 'No decisions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var rejected = allCards
+          .filter(function(card) { var sel = card.querySelector('select'); return sel && sel.value === 'reject'; })
+          .map(function(card) { return { num: card.dataset.id, title: card.dataset.title || '' }; });
+        if (rejected.length === 0) {
+          return 'All decisions approved.\n\nProceed to the implementation plan or wait for me to flag remaining concerns.';
+        }
+        var lines = ["I've reviewed this design and I'm rejecting the following decisions:", ''];
+        rejected.forEach(function(d) {
+          lines.push('  • Decision #' + d.num + ' — ' + d.title);
+          lines.push('    Reason: <add your reason here>');
+          lines.push('');
+        });
+        lines.push('Please revise the design to address these rejections and re-present.');
+        lines.push('');
+        lines.push('If you have an alternative recommendation for any of these, propose it before I commit to a replacement.');
+        return lines.join('\n');
+      }
+
+      function updateCard(select) {
+        var card = select.closest('.decision-card');
+        if (!card) return;
+        if (select.value === 'reject') {
+          select.classList.add('reject');
+          card.classList.add('row-active');
+        } else {
+          select.classList.remove('reject');
+          card.classList.remove('row-active');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;  // user edits survive
+        prompt.value = buildPrompt();
+      }
+
+      container.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateCard(sel);
+          refresh();
+        });
+        // Clicks inside the dropdown must not toggle card expansion.
+        sel.addEventListener('click', function(e) { e.stopPropagation(); });
+        updateCard(sel);  // sync initial classes for restored state
+      });
+
+      // Click anywhere on a card with a detail block to expand/collapse it.
+      // Cards without detail are non-interactive (no chevron, no cursor).
+      container.querySelectorAll('.decision-card[data-id]').forEach(function(card) {
+        var detail = card.querySelector('.decision-card-detail');
+        if (!detail) return;
+        card.classList.add('decision-card-clickable');
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('select, a, button, input, textarea')) return;
+          var expanded = card.classList.toggle('expanded');
+          detail.hidden = !expanded;
+        });
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+
+    // ── OPEN QUESTIONS ───────────────────────────────────────────
+    (function openQuestionsWidget() {
+      if (!document.getElementById('questions-table')) return;
+      var table = document.getElementById('questions-table');
+      var prompt = document.getElementById('questions-prompt');
+      var copyBtn = document.getElementById('copy-questions');
+      var regenBtn = document.getElementById('regenerate-questions');
+      if (!prompt || !copyBtn || !regenBtn) return;
+
+      function rows() {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody tr[data-id]'));
+      }
+
+      function buildPrompt() {
+        var allRows = rows();
+        if (allRows.length === 0) {
+          return 'No open questions captured for this design. Either remove this section or add entries before triaging.';
+        }
+        var included = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'include'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        var rejected = allRows
+          .filter(function(tr) { var s = tr.querySelector('select'); return s && s.value === 'reject'; })
+          .map(function(tr) { return { num: tr.dataset.id, title: tr.dataset.title || '' }; });
+        if (included.length === 0 && rejected.length === 0) {
+          return 'All open questions deferred.\n\nProceed with the design as-is; we will resolve these as the named triggers fire.';
+        }
+        var lines = ['Open-questions review:', ''];
+        if (included.length > 0) {
+          lines.push('ASK ME NOW (resolve interactively, one at a time):');
+          included.forEach(function(q) { lines.push('  • Question #' + q.num + ' — ' + q.title); });
+          lines.push('');
+          lines.push("For these: please ask me one at a time. Use multiple-choice options when reasonable. Don't assume answers — wait for my response before moving to the next.");
+          lines.push('');
+        }
+        if (rejected.length > 0) {
+          lines.push('REJECT (remove from open-questions list entirely — not worth asking now or later):');
+          rejected.forEach(function(q) {
+            lines.push('  • Question #' + q.num + ' — ' + q.title);
+            lines.push('    Reason: <add your reason here, or leave blank>');
+          });
+          lines.push('');
+          lines.push("For these: drop them from the design's Open Questions section. Update the design doc and HTML to reflect their removal.");
+          lines.push('');
+        }
+        if (included.length > 0 && rejected.length > 0) {
+          lines.push('Handle the REJECT items first (housekeeping), then start the ASK ME NOW questions.');
+        }
+        return lines.join('\n');
+      }
+
+      function updateRow(select) {
+        var tr = select.closest('tr');
+        if (!tr) return;
+        select.classList.remove('include', 'q-reject');
+        tr.classList.remove('row-active', 'row-rejected');
+        if (select.value === 'include') {
+          select.classList.add('include');
+          tr.classList.add('row-active');
+        } else if (select.value === 'reject') {
+          select.classList.add('q-reject');
+          tr.classList.add('row-rejected');
+        }
+      }
+
+      function refresh() {
+        if (prompt.dataset.dirty === 'true') return;
+        prompt.value = buildPrompt();
+      }
+
+      table.querySelectorAll('select[data-id]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateRow(sel);
+          refresh();
+        });
+        updateRow(sel);
+      });
+
+      markDirtyOnInput(prompt);
+      regenBtn.addEventListener('click', function() {
+        prompt.dataset.dirty = 'false';
+        refresh();
+      });
+      copyBtn.addEventListener('click', function() { copyToClipboard(prompt.value, copyBtn); });
+
+      refresh();
+    })();
+  })();
+</script>
+<!-- WIDGETS-SCRIPT-END -->
+</body>
+</html>
