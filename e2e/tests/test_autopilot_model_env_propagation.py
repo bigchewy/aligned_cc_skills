@@ -105,14 +105,15 @@ def _run_phase_with_stub(phase_script: Path, env_overrides: dict) -> tuple:
         return env_parsed, args_parsed
 
 
-def test_plan_phase_propagates_opus_to_claude():
+def test_plan_phase_propagates_sonnet_to_claude():
+    # Default downshifted opus -> sonnet in b390a1d (token-efficiency pass).
     env, _ = _run_phase_with_stub(RALPH_DIR / "phases" / "plan.sh", {})
-    assert env.get("ANTHROPIC_MODEL") == "opus", (
-        f"plan.sh should propagate ANTHROPIC_MODEL=opus to claude; got "
+    assert env.get("ANTHROPIC_MODEL") == "sonnet", (
+        f"plan.sh should propagate ANTHROPIC_MODEL=sonnet to claude; got "
         f"{env.get('ANTHROPIC_MODEL')!r}"
     )
-    assert env.get("CLAUDE_CODE_SUBAGENT_MODEL") == "opus", (
-        f"plan.sh should propagate CLAUDE_CODE_SUBAGENT_MODEL=opus; got "
+    assert env.get("CLAUDE_CODE_SUBAGENT_MODEL") == "sonnet", (
+        f"plan.sh should propagate CLAUDE_CODE_SUBAGENT_MODEL=sonnet; got "
         f"{env.get('CLAUDE_CODE_SUBAGENT_MODEL')!r}"
     )
 
@@ -130,12 +131,14 @@ def test_verify_phase_propagates_sonnet_to_claude():
 
 
 def test_plan_phase_respects_plan_model_override():
+    # Override value must differ from the sonnet default, or this test
+    # passes even when the override plumbing is broken.
     env, _ = _run_phase_with_stub(
         RALPH_DIR / "phases" / "plan.sh",
-        {"PLAN_MODEL": "sonnet"},
+        {"PLAN_MODEL": "opus"},
     )
-    assert env.get("ANTHROPIC_MODEL") == "sonnet", (
-        "PLAN_MODEL=sonnet override must propagate to ANTHROPIC_MODEL"
+    assert env.get("ANTHROPIC_MODEL") == "opus", (
+        "PLAN_MODEL=opus override must propagate to ANTHROPIC_MODEL"
     )
 
 

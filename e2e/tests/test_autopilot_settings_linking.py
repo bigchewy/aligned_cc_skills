@@ -2,8 +2,9 @@
 
 Verifies that the autopilot mirrors `.claude/settings.local.json` (and
 `.claude/settings.json` if present) from the main repo into the worktree
-via symlink, so sub-Claudes spawned in the worktree (verify, mockup,
-ralph) inherit project-level Bash/MCP permissions. Without this the sub-
+via symlink — and `.mcp.json` as a filtered copy that strips
+browser-automation servers — so sub-Claudes spawned in the worktree
+(verify, mockup, ralph) inherit project-level Bash/MCP permissions. Without this the sub-
 Claude only sees `~/.claude/` user-level settings and project allowlist
 entries (e.g. `Bash(pytest *)`) are invisible — verify halts on
 interactive permission prompts that never resolve.
@@ -130,7 +131,10 @@ def _make_fixture(tmp_path: Path, with_local: bool = True,
         )
     if with_mcp:
         (project / ".mcp.json").write_text(
-            '{"mcpServers": {"foo": {"command": "foo-bin"}}}\n'
+            '{"mcpServers": {'
+            '"foo": {"command": "foo-bin"}, '
+            '"playwright": {"command": "npx", '
+            '"args": ["@playwright/mcp@latest"]}}}\n'
         )
     return project, worktree
 
@@ -217,7 +221,14 @@ def test_behavioral_warning_suppressed_when_worktree_has_local_settings(
     assert "WARNING" not in result.stderr
 
 
-def test_behavioral_mcp_config_linked(tmp_path):
+def test_behavioral_mcp_config_filtered_copy(tmp_path):
+    """`.mcp.json` is mirrored as a filtered COPY, not a symlink (changed
+    in 80682bd): browser-automation servers launch Chromium eagerly at
+    every claude spawn (~3 GB RSS per iteration) and caused swap
+    exhaustion, so they are stripped from the worktree copy. A symlink
+    can't filter — and must not be reintroduced."""
+    import json
+
     project, worktree = _make_fixture(
         tmp_path, with_local=False, with_mcp=True
     )
@@ -225,8 +236,18 @@ def test_behavioral_mcp_config_linked(tmp_path):
     assert result.returncode == 0, f"Block failed: {result.stderr}"
 
     dest = worktree / ".mcp.json"
-    assert dest.is_symlink(), "Expected .mcp.json to be a symlink"
-    assert dest.resolve() == (project / ".mcp.json").resolve()
+    assert dest.is_file(), "Expected .mcp.json to exist in the worktree"
+    assert not dest.is_symlink(), (
+        "Expected .mcp.json to be a filtered copy, not a symlink — a "
+        "symlink would reintroduce browser-automation servers (swap "
+        "exhaustion, see worktree.sh SETTINGS-LINK block)"
+    )
+    servers = json.loads(dest.read_text(encoding="utf-8"))["mcpServers"]
+    assert "foo" in servers, "Non-browser MCP servers must be preserved"
+    assert "playwright" not in servers, (
+        "Browser-automation MCP servers must be stripped from the "
+        "worktree copy"
+    )
 
 
 def test_behavioral_mcp_config_not_overwritten(tmp_path):

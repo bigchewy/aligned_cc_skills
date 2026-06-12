@@ -34,19 +34,21 @@ def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def test_plan_phase_exports_anthropic_model_opus():
+def test_plan_phase_exports_anthropic_model_sonnet():
+    # Default downshifted opus -> sonnet in b390a1d (token-efficiency pass):
+    # plan was the last opus phase and the largest headless cost line.
     text = _read(PHASES_DIR / "plan.sh")
-    assert 'export ANTHROPIC_MODEL="${PLAN_MODEL:-opus}"' in text, (
+    assert 'export ANTHROPIC_MODEL="${PLAN_MODEL:-sonnet}"' in text, (
         "phases/plan.sh must export ANTHROPIC_MODEL with PLAN_MODEL override "
-        "defaulting to opus"
+        "defaulting to sonnet"
     )
 
 
-def test_plan_phase_exports_subagent_model_opus():
+def test_plan_phase_exports_subagent_model_sonnet():
     text = _read(PHASES_DIR / "plan.sh")
-    assert 'export CLAUDE_CODE_SUBAGENT_MODEL="${PLAN_SUBAGENT_MODEL:-opus}"' in text, (
+    assert 'export CLAUDE_CODE_SUBAGENT_MODEL="${PLAN_SUBAGENT_MODEL:-sonnet}"' in text, (
         "phases/plan.sh must export CLAUDE_CODE_SUBAGENT_MODEL with "
-        "PLAN_SUBAGENT_MODEL override defaulting to opus"
+        "PLAN_SUBAGENT_MODEL override defaulting to sonnet"
     )
 
 
