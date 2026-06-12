@@ -24,7 +24,7 @@ Critique an implementation plan for correctness, completeness, and executability
 3. Write a critique to stdout (do NOT rewrite the plan)
 4. Output a numbered list of specific issues with severity
 
-**Applicability assessment:** After reading the plan, quickly assess which of the 11 criteria below are relevant to its scope. If a criterion clearly doesn't apply (e.g., "Missing coverage" when the plan doesn't claim to address "all" of anything; "Behavioral changes" when no code replacements change observable behavior; "Dependency conflicts" when all tasks touch different files), mark it **N/A** with a one-line reason in the Checklist Results table and skip codebase verification for that criterion.
+**Applicability assessment:** After reading the plan, quickly assess which of the 12 criteria below are relevant to its scope. If a criterion clearly doesn't apply (e.g., "Missing coverage" when the plan doesn't claim to address "all" of anything; "Behavioral changes" when no code replacements change observable behavior; "Dependency conflicts" when all tasks touch different files), mark it **N/A** with a one-line reason in the Checklist Results table and skip codebase verification for that criterion.
 
 **When you can't verify:** If a source file has been deleted, moved, or the plan references something you can't locate, flag it as `[UNVERIFIABLE]` with the reason — don't skip it or assume it's correct.
 
@@ -212,6 +212,23 @@ For every task, file, and decision, ask: what specifically breaks if this is rem
 
 **Routing:** This criterion is owned by The Architect, who carries explicit deletion authority and a Necessity Test in its prompt template (see `references/critique-panel-prompts.md` Round 1 Architect). It does NOT fall to the fact-checker catch-all when no domain match exists.
 
+### 12. Build & type-safety constraints
+
+Defects in this class pass the full Jest suite and surface only when `next build` / `tsc` runs at the end of the pipeline — hours after plan time. Four real incidents since 2026-05-16, one prescribed by the plan itself. Walk every `Create:` / `Modify:` code snippet in the plan; each match below is a **high** severity (blocking) finding.
+
+| Check | What to look for |
+|---|---|
+| Page/layout exports | Any snippet for an `app/**/page.tsx` or `layout.tsx` path exporting a named value outside the Next.js whitelist: `default`, `metadata`, `generateMetadata`, `generateStaticParams`, `generateViewport`, `viewport`, `dynamic`, `dynamicParams`, `revalidate`, `fetchCache`, `runtime`, `preferredRegion`, `maxDuration`, `experimental_ppr`. Next.js 16 rejects all others at build time. |
+| Client/server boundary | Any snippet beginning with `'use client'` that imports an engine module touching `fs`/`path` — `registry-loader`, `registry-schema`, `package-root`, `prompt-loader`, and peers. `jest.mock` hides the coupling; webpack fails with "Can't resolve 'fs'". Load server-side and pass props instead. |
+| Mocked-signature drift | Any task changing the arguments at a call site of a function the plan's tests `jest.mock`, without updating the function's declared parameter type in the SAME task. Mocks strip types; only `tsc` at build compares call site to declaration. |
+
+- BAD: `export function toExerciseCard(...)` in `app/dev/exercises/page.tsx` "so tests can import it" (2026-06-11 incident — plan Decision 3; passed 3002 tests, failed the build)
+- BAD: `'use client'` component importing `@planted/engine/lib/exercises/registry-loader` to validate a slug (2026-05-16 and 2026-05-20 incidents)
+- GOOD: helper extracted to a sibling non-route module (`exercise-card.ts`), imported by both `page.tsx` and tests
+- GOOD: server component loads the registry, passes a plain array/Set as a prop; the client validates in memory
+
+**Routing:** This criterion is owned by The Verifier — the checks are mechanical and snippet-verifiable (see `references/critique-panel-prompts.md` Verifier Phase 3).
+
 ## Critique Output Format
 
 ```markdown
@@ -248,6 +265,7 @@ For every task, file, and decision, ask: what specifically breaks if this is rem
 | 9 | Decision quality | {Pass / N issues found / N/A — reason} |
 | 10 | Gap analysis | {Pass / N issues found / N/A — reason} |
 | 11 | Scope necessity | {Pass / N issues found / N/A — reason} |
+| 12 | Build & type-safety constraints | {Pass / N issues found / N/A — reason} |
 ```
 
 ## Important
