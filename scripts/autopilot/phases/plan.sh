@@ -16,6 +16,7 @@
 # EXIT CODES:
 #   0 — plan written; PLAN_FILE readable from sentinel
 #   1 — claude -p failed, sentinel missing, or plan file missing
+#   2 — halted (executed_worktree_exists: fresh write would clobber executed work)
 #   3 — plan already exists for THIS design doc (sentinel match, skip)
 
 set -u
@@ -29,6 +30,8 @@ RALPH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # shellcheck source=../lib/process.sh
 source "$RALPH_DIR/lib/process.sh"
+# shellcheck source=../lib/halt.sh
+source "$RALPH_DIR/lib/halt.sh"
 
 # Locals required by lib/process.sh — already defaulted there, but
 # declared here for clarity since this script runs in a child shell.
@@ -57,10 +60,32 @@ if [ -f "$SENTINEL" ]; then
   else
     if [ "$SENTINEL_DESIGN_DOC_ABS" != "$DESIGN_DOC" ]; then
       echo "NOTE: Sentinel is for a different design doc. Starting fresh."
+      _RM_REASON="design-doc-mismatch"
     else
       echo "WARNING: Sentinel points to missing file: $SENTINEL_PLAN_PATH"
+      _RM_REASON="plan-file-missing"
     fi
+    echo "[sentinel] removing $SENTINEL (reason: $_RM_REASON, was: $(tr '\n' ' ' < "$SENTINEL"))" >&2
     rm -f "$SENTINEL"
+  fi
+fi
+
+# --- Integrity guard: never fresh-write over an executed worktree (KB-068) ---
+# Reaching here means no valid sentinel exists for this design doc. If a
+# worktree for the predicted branch already has commits ahead of main, the
+# resume state was lost (not absent) — a fresh plan-write would clobber
+# executed work. Prediction mirrors autopilot.sh's branch derivation (strip
+# date prefix, strip -design suffix); if it misses, the guard fails open.
+
+_GUARD_SLUG="$(basename "$DESIGN_DOC" .md | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}-//')"
+_GUARD_SLUG="${_GUARD_SLUG%-design}"
+_GUARD_WT="$PROJECT/.worktrees/$_GUARD_SLUG"
+if [ -d "$_GUARD_WT" ]; then
+  _GUARD_AHEAD="$(git -C "$_GUARD_WT" rev-list --count main..HEAD 2>/dev/null || true)"
+  if [ "${_GUARD_AHEAD:-0}" -gt 0 ] 2>/dev/null; then
+    write_halt executed_worktree_exists plan \
+      "worktree $_GUARD_WT has $_GUARD_AHEAD commit(s) ahead of main; expected sentinel: $SENTINEL (line 1 = design-doc path, line 2 = plan path)"
+    exit 2
   fi
 fi
 

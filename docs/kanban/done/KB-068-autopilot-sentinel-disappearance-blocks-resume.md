@@ -40,3 +40,5 @@
 - **Severity:** HIGH — silent data-loss vector. The user must catch the clobber within the plan-phase window (typically 60-120 seconds before claude begins streaming changes to the plan file) or risk losing an executed plan. The script gives no warning that the resume-skip failed; it just starts writing.
 
 - **Created:** 2026-05-15
+
+- **Resolved:** 2026-06-12 — Recurred this morning (the opco-rollup run's completion cleanup deleted the halted exercise-test-page run's sentinel; the re-run began replanning and was caught in ~90s — sub-case (ii) cross-run interference confirmed). Shipped: item 3 (sentinel namespaced per design-doc slug, `.autopilot-plan-path-<slug>`, autopilot.sh), item 1 (both `rm` sites log `[sentinel] removing ... (reason: ..., was: ...)`), item 4 (`executed_worktree_exists` halt in plan.sh before any fresh write when the predicted worktree has commits ahead of main). Item 2 moot after namespacing — each run deletes only its own sentinel. Pinned by `e2e/tests/test_autopilot_sentinel_namespacing.py`.

@@ -19,6 +19,7 @@ EXPECTED_REASONS = [
     "manifest_malformed",
     "verify_failed",
     "phase_crashed",
+    "executed_worktree_exists",
 ]
 
 
@@ -69,6 +70,7 @@ def test_write_halt_creates_sentinel():
     ("mcp_tool_not_allowlisted", ".claude/settings.local.json allowlist"),
     ("manifest_malformed", "must start with `---`"),
     ("verify_failed", ".finish-status"),
+    ("executed_worktree_exists", "recreate the plan-path sentinel"),
 ])
 def test_format_halt_echoes_canonical_fix(reason, needle, tmp_path):
     r = _bash(f"format_halt {reason}", cwd=tmp_path)

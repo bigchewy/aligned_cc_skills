@@ -40,6 +40,7 @@ Required fields: `reason`, `phase`, `log`, `next-action`. Optional: `fix-instruc
 | `verify_failed` | verify | Tests / build / eval failed |
 | `phase_crashed` | any | Phase script exited unexpectedly; `details:` carries last 10 lines of stderr. **Skipped for transient external errors** (API stream timeouts, 5xx, network blips) so a plain re-run recovers without manual halt cleanup — see `is_transient_error` in `lib/halt.sh`. |
 | `headless_auth_incompat` | preflight | A headless `claude` call site uses `--bare`, which restricts auth to API-key only and breaks Max-plan OAuth users |
+| `executed_worktree_exists` | plan | Fresh plan-write requested, but a worktree for the predicted branch has commits ahead of main (resume sentinel lost) — writing a new plan would clobber executed work |
 
 ## Centralized fix-instructions (DevEx M7)
 

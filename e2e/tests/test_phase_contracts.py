@@ -162,7 +162,7 @@ def test_phase_worktree_exists_and_conforms():
 # source lib/halt.sh and emit halts via write_halt — never via an inline
 # heredoc. C1 (worktree.sh emitting malformed halts) regressed without
 # tripping the older "uncommitted_main in text" check.
-@pytest.mark.parametrize("phase_name", ["preflight", "verify"])
+@pytest.mark.parametrize("phase_name", ["preflight", "verify", "plan"])
 def test_halt_emitting_phase_sources_lib_halt(phase_name):
     p = PHASES_DIR / f"{phase_name}.sh"
     text = _read(p)

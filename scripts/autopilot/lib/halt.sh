@@ -143,6 +143,21 @@ for the original incident and the upstream-feedback gap (no per-flag
 opt-out exists for --bare's non-auth benefits).
 EOF
       ;;
+    executed_worktree_exists)
+      cat <<'EOF'
+A fresh plan-write was requested, but a worktree for this design doc's
+predicted branch already has commits ahead of main. Writing a new plan
+would clobber executed work (KB-068) — the resume sentinel is missing.
+
+Fix one of:
+  1. To RESUME the existing run: recreate the plan-path sentinel named
+     in the details: field — line 1 = design-doc path, line 2 = plan
+     path — then delete .autopilot-halt and re-run autopilot.sh.
+  2. To intentionally REPLAN from scratch: remove the worktree and
+     branch (git worktree remove <path>; git branch -D <branch>),
+     delete .autopilot-halt, then re-run.
+EOF
+      ;;
     *)
       echo "Unknown halt reason: $reason"
       echo "Add a case to lib/halt.sh format_halt() and update"

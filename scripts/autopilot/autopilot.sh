@@ -111,8 +111,11 @@ if [ ! -f "$DESIGN_DOC" ]; then
 fi
 
 LOG="$PROJECT/.autopilot-log"
-SENTINEL="$PROJECT/.autopilot-plan-path"
 _DESIGN_DOC_SLUG="$(basename "$DESIGN_DOC" .md)"
+# Namespaced per design doc (like the critique flags below) so concurrent or
+# interleaved runs in the same project cannot clobber each other's resume
+# state (KB-068).
+SENTINEL="$PROJECT/.autopilot-plan-path-${_DESIGN_DOC_SLUG}"
 CRITIQUE_ROUND1_FLAG="$PROJECT/.autopilot-critique-round1-${_DESIGN_DOC_SLUG}"
 CRITIQUE_ROUND2_FLAG="$PROJECT/.autopilot-critique-round2-${_DESIGN_DOC_SLUG}"
 # STATUS is set after WORKTREE is known (Phase 2) so it lands inside the
@@ -443,6 +446,9 @@ echo "  /aligned:finishing-a-development-branch for $BRANCH at $WORKTREE"
 
 # Clean up intermediate flags; preserve SUCCESS .finish-status for finishing-skill skip logic
 # (finishing skill checks status: SUCCESS to skip re-running tests, build, and eval)
+if [ -f "$SENTINEL" ]; then
+  echo "[sentinel] removing $SENTINEL (reason: run-complete, was: $(tr '\n' ' ' < "$SENTINEL"))" >&2
+fi
 rm -f "$SENTINEL" "$CRITIQUE_ROUND1_FLAG" "$CRITIQUE_ROUND2_FLAG"
 FINAL_RESULT="$(grep '^status:' "$STATUS" 2>/dev/null | awk '{print $2}')"
 if [ "$FINAL_RESULT" != "SUCCESS" ]; then
