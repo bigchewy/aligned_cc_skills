@@ -60,13 +60,17 @@ Say "All tasks settled!" and exit. (✅ = completed; ⏭️ = auto-skipped by wr
    verification", "End-to-end verification", "Full build check"): mark it ✅ immediately with the message
    "Task N complete. Skipped — this is Phase 9 scope (full suite, build, lint). Phase 9 will run these."
    Do not execute any commands in it.
-5. If the task spec includes a mockup verification step, perform it now —
+5. If the project's package.json defines a `lint:guard` script, run it scoped to the
+   files you created or modified in this task: `npm run lint:guard -- <changed files>`.
+   Fix any violation before committing. This scoped guard check is NOT the forbidden
+   whole-codebase lint above — `npm run lint` remains Phase 9-only.
+6. If the task spec includes a mockup verification step, perform it now —
    read the referenced mockup HTML and compare against your implementation.
    If you intentionally deviate, add `> MOCKUP DEVIATION: [what and why]` below the task heading.
-6. If the task involves LLM behavior surface files (prompts, prompt builders),
+7. If the task involves LLM behavior surface files (prompts, prompt builders),
    run the project's eval command and verify it passes
-7. Mark the task with ✅ in the plan file (replace the task heading prefix)
-8. Commit: `git add [changed files] && git commit -m "task N: [description]"`
+8. Mark the task with ✅ in the plan file (replace the task heading prefix)
+9. Commit: `git add [changed files] && git commit -m "task N: [description]"`
 
 ## Step 4: STOP — your invocation is finished
 
