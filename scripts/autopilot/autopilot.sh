@@ -17,7 +17,7 @@ set -u
 #   6. Worktree (create + setup)
 #   7. Ralph (execute plan tasks one at a time)
 #   8. Mockup (fidelity loop)
-#   9. Verify (tests, build, eval — no merge)
+#   9. Verify (tests, lint, build, eval — no merge)
 #
 # The script stops after verification. The branch is NOT merged.
 # Review the work, then merge manually or run the full finishing skill.
@@ -445,7 +445,7 @@ echo "  claude"
 echo "  /aligned:finishing-a-development-branch for $BRANCH at $WORKTREE"
 
 # Clean up intermediate flags; preserve SUCCESS .finish-status for finishing-skill skip logic
-# (finishing skill checks status: SUCCESS to skip re-running tests, build, and eval)
+# (finishing skill checks status: SUCCESS to skip re-running tests, lint, build, and eval)
 if [ -f "$SENTINEL" ]; then
   echo "[sentinel] removing $SENTINEL (reason: run-complete, was: $(tr '\n' ' ' < "$SENTINEL"))" >&2
 fi

@@ -107,7 +107,7 @@ EOF
       ;;
     verify_failed)
       cat <<'EOF'
-Verification failed (tests, build, or LLM eval).
+Verification failed (tests, lint, build, or LLM eval).
 
 Fix:
   Read .finish-status in the worktree for the failure category, fix the
