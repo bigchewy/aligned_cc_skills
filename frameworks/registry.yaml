@@ -1926,3 +1926,24 @@ frameworks:
   use_when: a leadership team or manager-report pair is running status-heavy meetings
     with no written record of commitments or decisions, or needs to establish a repeatable
     operating rhythm tied to OKRs
+- advisor: claire-hughes-johnson
+  category: operating-cadence
+  deliverable_type: decision
+  domains:
+  - operating-cadence
+  - meeting-design
+  - management-infrastructure
+  - decision-making
+  - written-communication
+  helpful_documents:
+  - existing operating review agenda or meeting format
+  - current metrics or scorecard
+  - OKRs or quarterly priorities
+  id: chj-operating-review
+  name: Operating Review Design
+  purpose: transform a status-presentation meeting into a decision-focused operating
+    review through pre-reads, discussion-only meeting norms, decision logs, and
+    strategy-connected metrics
+  use_when: a leadership team is running operating reviews (monthly, quarterly) that
+    produce presentations but not decisions, or where decisions made in the meeting
+    get relitigated because nothing was written down

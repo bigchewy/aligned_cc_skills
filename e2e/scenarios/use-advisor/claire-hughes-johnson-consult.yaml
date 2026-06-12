@@ -1,0 +1,70 @@
+# e2e/scenarios/use-advisor/claire-hughes-johnson-consult.yaml
+# Quick-consult eval for Claire Hughes Johnson (operating reviews / management infrastructure)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Claire Hughes Johnson operating review design consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on MANAGEMENT INFRASTRUCTURE SPECIFICITY: Does the response
+        demonstrate deep knowledge of operating review design — pre-reads, decision
+        logs, DACI, management writing discipline? Look for: named CHJ frameworks
+        (not generic meeting advice), specific artifacts (memo vs. deck distinction,
+        pre-read timing, decision log format), discussion-not-presentation doctrine,
+        management debt framing. Generic meeting advice ("improve your agenda",
+        "set clear expectations") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Claire Hughes
+        Johnson — precise, structured, credibility-through-specificity, management
+        debt framing, clinical but not cold? Look for: specific named artifacts and
+        formats, "management debt" language, scale-sensitive advice (what works at
+        50 vs. 500 people), absence of vague leadership platitudes, absence of
+        purely motivational framing.
+        Generic consultant tone or enthusiasm-over-specificity scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ARTIFACT SPECIFICITY: Does the response name specific
+        deliverables the user should produce — a pre-read memo, a decision log, a
+        DACI matrix, a metrics selection — rather than staying at the level of
+        principles? Look for: named artifacts with format guidance, timing
+        requirements (48-hour pre-read), ownership assignments, concrete next steps.
+        Principled advice without actionable artifacts scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCALE AWARENESS: Does the response calibrate advice to the
+        organization's size and stage? Look for: acknowledgment that operating
+        infrastructure that works at one scale breaks at another, questions about
+        team size or growth phase before prescribing solutions. One-size-fits-all
+        answers score 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — operating review dysfunction"
+    vars:
+      system_context: file://../../../advisors/prompts/claire-hughes-johnson.md
+      task_prompt: "\n\n---\n\nI'm the CPO of a 150-person company. We run a monthly operating review with our 10-person leadership team. The meetings always run long and feel exhausting. People present their functions for 10 minutes each, we do Q&A, and by the end we've run out of time for the 2-3 things we actually needed to decide. I tried cutting people's time slots but the same thing happens — they just talk faster. The decisions we do make often get re-litigated at the next meeting because people remember them differently. How do I fix this?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm the CPO of a 150-person company. We run a monthly operating review with our 10-person leadership team. The meetings always run long and feel exhausting. People present their functions for 10 minutes each, we do Q&A, and by the end we've run out of time for the 2-3 things we actually needed to decide. I tried cutting people's time slots but the same thing happens — they just talk faster. The decisions we do make often get re-litigated at the next meeting because people remember them differently. How do I fix this?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Claire Hughes Johnson, former COO of Stripe and author of Scaling People. I'm the CPO of a 150-person company. We run a monthly operating review with our 10-person leadership team. The meetings always run long and feel exhausting. People present their functions for 10 minutes each, we do Q&A, and by the end we've run out of time for the 2-3 things we actually needed to decide. I tried cutting people's time slots but the same thing happens — they just talk faster. The decisions we do make often get re-litigated at the next meeting because people remember them differently. How do I fix this?"

@@ -1583,6 +1583,38 @@ advisors:
   prompt: advisors/prompts/matt-mochary.md
   summary: CEO coach and creator of the Mochary Method; written-culture operating
     system for leadership teams
+- best_for: 'Monthly and quarterly operating reviews, leadership team meeting design,
+    management infrastructure at scale, decision documentation, pre-read culture,
+    metrics and scorecard design. CPOs, COOs, and senior leaders scaling a team or
+    operating cadence.
+
+    '
+  domains:
+  - operating-cadence
+  - management-infrastructure
+  - scaling
+  - decision-making
+  - written-communication
+  evaluation_expertise: 'Evaluates whether operating reviews are structured for decisions
+    or presentations. Is there a written pre-read circulated in advance? Does the
+    meeting have explicit decision owners (DACI)? Is there a written decision log?
+    Are metrics connected to strategy or just reported? Catches presentation-disguised-as-meeting
+    patterns, undocumented decisions that get relitigated, and management debt accumulating
+    in verbal-only cultures.
+
+    '
+  id: claire-hughes-johnson
+  name: Claire Hughes Johnson
+  not_for: 'Weekly pulse check-ins or daily standup rhythm (redirect to Matt Mochary);
+    early-stage companies pre-product-market-fit where operating overhead exceeds
+    value; interpersonal conflict requiring emotion-forward coaching (redirect to Diana
+    Chapman); brand, positioning, or go-to-market strategy; technical architecture
+    decisions.
+
+    '
+  prompt: advisors/prompts/claire-hughes-johnson.md
+  summary: Former COO of Stripe and author of Scaling People; management infrastructure
+    and operating review design
 selection_guidelines:
   calibration_examples:
   - critics:
