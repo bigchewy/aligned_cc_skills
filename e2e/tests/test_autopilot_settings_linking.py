@@ -88,11 +88,14 @@ def test_block_emits_warning_when_no_sources_present():
     assert "WARNING" in block
 
 
-def test_block_uses_symlink_not_copy():
+def test_block_uses_symlink_for_settings_and_filtered_copy_for_mcp():
     block = _extract_block()
-    # Symlink keeps the worktree in sync with main edits.
+    # Settings files are symlinked so the worktree stays in sync with
+    # main edits. `.mcp.json` is deliberately NOT symlinked — it is a
+    # python3-filtered copy that strips browser-automation servers
+    # (80682bd, swap exhaustion). A raw `cp` would reintroduce them.
     assert "ln -s" in block
-    # Defensively: should not blindly copy settings (would drift).
+    assert "python3" in block
     assert "cp " not in block
 
 
