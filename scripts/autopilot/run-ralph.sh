@@ -204,7 +204,8 @@ apply_blocked_cap() {
 
 write_done_with_summary() {
   local skipped_count
-  skipped_count="$(grep -cE '^### ⏭️[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || echo 0)"
+  skipped_count="$(grep -cE '^### ⏭️[[:space:]]*Task[[:space:]]*[0-9]+' "$PLAN" 2>/dev/null || true)"
+  skipped_count="${skipped_count:-0}"
   {
     echo "All tasks settled."
     if [ "$skipped_count" -gt 0 ]; then
