@@ -1907,3 +1907,22 @@ frameworks:
   use_when: a product, growth, or CX team faces a 'users aren't doing the thing' problem
     and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit,
     or changing the target behavior itself
+- advisor: matt-mochary
+  category: operating-cadence
+  deliverable_type: decision
+  domains:
+  - operating-cadence
+  - meeting-design
+  - written-communication
+  - okrs
+  - executive-coaching
+  helpful_documents:
+  - existing meeting agenda or team operating cadence
+  - OKRs or quarterly goals
+  id: mochary-weekly-check-in
+  name: The Weekly Check-In
+  purpose: replace status meetings with an async written update covering emotional
+    state, single top priority, commitment review, and issues with proposed solutions
+  use_when: a leadership team or manager-report pair is running status-heavy meetings
+    with no written record of commitments or decisions, or needs to establish a repeatable
+    operating rhythm tied to OKRs

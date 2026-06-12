@@ -1,0 +1,68 @@
+# e2e/scenarios/use-advisor/matt-mochary-consult.yaml
+# Quick-consult eval for Matt Mochary (operating cadence / written culture)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Matt Mochary operating cadence consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on OPERATING SYSTEM SPECIFICITY: Does the response demonstrate
+        deep knowledge of the Mochary Method — the Weekly Check-In, Top Goal,
+        1-3-1, FAJG, written culture doctrine? Look for: named Mochary frameworks
+        (not generic OKR or meeting advice), specific protocol steps, numbered
+        structure, emphasis on async written communication over meetings.
+        Generic leadership advice ("improve communication", "set priorities")
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Matt Mochary
+        — direct, numbered, protocol-first, short sentences, no coaching-speak?
+        Look for: numbered lists, specific action steps, "write it down" / "if it's
+        not written it didn't happen" type directives, absence of vague advice,
+        absence of "it depends on your culture" hedging.
+        Generic consultant tone or hedged advice scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PROTOCOL OVER PRINCIPLE: Does the response give a specific
+        protocol (template, named steps, concrete action) rather than a principle
+        ("clarity is important", "communication matters")? Look for: named doc
+        template, numbered steps, specific meeting format, concrete next action
+        with owner and date. Pure motivational or theoretical advice scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ROOT CAUSE DIAGNOSIS: Does the response identify the actual
+        dysfunction — missing written culture, undocumented commitments, agenda-less
+        meetings, no single Top Goal — rather than treating the symptom?
+        Symptom-only advice ("make better agendas") without identifying the
+        underlying operating system gap scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — WBR/status meeting dysfunction"
+    vars:
+      system_context: file://../../../advisors/prompts/matt-mochary.md
+      task_prompt: "\n\n---\n\nI'm the CPO of a 150-person company. Every Monday we have a 90-minute leadership sync with my 8 direct reports. It's supposed to be a weekly business review but it always turns into a status update where everyone reports out what they did last week. By the time we get to decisions, we have 10 minutes left and half the team is checked out. I've tried shortening it and cutting agenda items but the same thing happens. What's broken and how do I fix it?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm the CPO of a 150-person company. Every Monday we have a 90-minute leadership sync with my 8 direct reports. It's supposed to be a weekly business review but it always turns into a status update where everyone reports out what they did last week. By the time we get to decisions, we have 10 minutes left and half the team is checked out. I've tried shortening it and cutting agenda items but the same thing happens. What's broken and how do I fix it?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Matt Mochary, CEO coach and author of The Great CEO Within. I'm the CPO of a 150-person company. Every Monday we have a 90-minute leadership sync with my 8 direct reports. It's supposed to be a weekly business review but it always turns into a status update where everyone reports out what they did last week. By the time we get to decisions, we have 10 minutes left and half the team is checked out. I've tried shortening it and cutting agenda items but the same thing happens. What's broken and how do I fix it?"

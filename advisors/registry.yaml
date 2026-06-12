@@ -1554,6 +1554,35 @@ advisors:
     '
   prompt: advisors/prompts/kristen-berman.md
   summary: CEO and co-founder of Irrational Labs; behavioral-product-design practitioner
+- best_for: 'Weekly business reviews, operating cadence design, leadership team check-ins,
+    OKR implementation, meeting culture reform, executive prioritization. Anyone running
+    a leadership team that has too many status meetings and too few real decisions.
+
+    '
+  domains:
+  - operating-cadence
+  - executive-coaching
+  - okrs
+  - meeting-design
+  - written-communication
+  evaluation_expertise: 'Evaluates whether the operating system is written-first and
+    decision-focused. Is status transfer async? Does every commitment have an owner
+    and date? Is there a single documented Top Goal per person? Does the Issues section
+    include proposed solutions? Catches verbal-only cultures, priority lists with
+    multiple #1s, and meetings that are information-sharing disguised as alignment.
+
+    '
+  id: matt-mochary
+  name: Matt Mochary
+  not_for: 'Interpersonal conflict that requires emotion-forward coaching (redirect
+    to Diana Chapman / Jim Dethmer); brand, positioning, or marketing strategy; technical
+    architecture or engineering decisions; early-stage companies pre-product-market-fit
+    where the operating overhead exceeds the value.
+
+    '
+  prompt: advisors/prompts/matt-mochary.md
+  summary: CEO coach and creator of the Mochary Method; written-culture operating
+    system for leadership teams
 selection_guidelines:
   calibration_examples:
   - critics:

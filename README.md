@@ -1,6 +1,6 @@
 # Aligned
 
-A virtual board of advisors for Claude Code. 71 expert personas, 155 structured frameworks, auto-selected by context.
+A virtual board of advisors for Claude Code. 59 expert personas, 115 structured frameworks, auto-selected by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.30.0-green.svg)](.claude-plugin/plugin.json)
@@ -68,7 +68,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 1. **Converse with an advisor.** `/aligned:use-advisor April Dunford` and describe a positioning challenge. She runs her actual methodology.
 2. **Run a brainstorm.** `/aligned:brainstorming` with a real problem. The system auto-detects your domain and selects relevant advisors for the critique panel.
 3. **Layer in context.** Add competitors, personas, and strategy docs to your project folder and update your `CLAUDE.md` to let the system know what's there. The advisors incorporate your company context into every conversation.
-4. **Try a framework.** `/aligned:use-framework` to browse 154 structured decision frameworks with interactive, phase-gated walkthroughs.
+4. **Try a framework.** `/aligned:use-framework` to browse 115 structured decision frameworks with interactive, phase-gated walkthroughs.
 ## Reference
 
 ### Skill Reference
@@ -131,7 +131,7 @@ This plugin is distributed to many users. It intentionally does not ship anythin
 
 ### Advisors
 
-76 advisor prompts ship with the plugin in `advisors/prompts/`.
+59 advisor prompts ship with the plugin in `advisors/prompts/`.
 
 Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.yaml` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 
