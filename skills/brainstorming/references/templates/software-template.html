@@ -582,6 +582,38 @@
   </style>
 </head>
 <body>
+  <!--
+  ========================= COMPONENT CONTRACT =========================
+  These rules travel with this artifact. Re-read them before editing this
+  file in a later session. Full source: skills/brainstorming/references/
+  brainstorm-components.md and skills/_shared/visualization-runner.md.
+
+  CONTENT-TYPE -> COMPONENT (one content type = exactly one component; if a
+  content type is already in this file, reuse the SAME component it uses):
+    - named item + its explanation (capabilities, wiring, failure modes,
+      source/producer/critics, options, components) -> <div class="card">
+      (bold <h3> title + <p> body) inside <div class="card-grid">.
+      ONE component for all of these. NEVER a table. NEVER a bulleted card.
+      NEVER override the card font (h3/p inherit --font-sans).
+    - ordered contents / outline of a deliverable -> <ol class="bullet-list">
+    - decision / constraint / risk / note -> a callout box:
+      class="callout callout-decision|constraint|risk|note"
+      (callout is the content class; callout-* is styling)
+    - section header -> an <h2> inside each <div class="section"> (EVERY section)
+    - panel intro -> exactly one <p class="description"> under the <h2>
+    Do not invent classes; do not render one content type two ways.
+
+  PANEL SHAPE (Sibling-Parity): tabs/sub-panels of the same content kind
+  share the same section sequence. A section in one sibling must appear in
+  ALL siblings, in order, unless explicitly marked N/A in that panel.
+
+  CLASS-INVENTORY SELF-CHECK (run blind, before declaring an edit done):
+    grep -oE 'class="[a-z][a-z-]+' <this-file> | sort | uniq -c
+  Emits the FIRST class token per element (content class must come first).
+  Recognized content tokens: card, card-grid, bullet-list, description,
+  callout. Any other content token = drift; fix before done.
+  =====================================================================
+  -->
   <h1>{title}</h1>
   <p class="subtitle">{subtitle}</p>
   <p class="context">{context}</p>

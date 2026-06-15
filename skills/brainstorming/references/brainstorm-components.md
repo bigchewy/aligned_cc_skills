@@ -4,9 +4,35 @@
 
 ## Contents
 
+- Content-Type → Component Mapping
+- Sibling-Parity Rule
 - Brand Token Injection
 - Templates
 - Components
+
+## Content-Type → Component Mapping
+
+The "Components" section below is a *menu of classes that exist*. This table is the *binding* — which component a given kind of content MUST use. The menu tells you what is legal; this table tells you what is correct.
+
+**Binding rule:** one content type resolves to **exactly one** component. And if that content type **already appears in the file**, reuse the same component the file already uses — never render one content type two different ways across panels, tabs, or edit sessions.
+
+| Content type | Use exactly this | Never |
+|---|---|---|
+| **Named item + its explanation** — a "here is a thing and what it does" pair: capabilities, wiring paths, failure modes, source/producer/critics, options, components, etc. | A surface card: `<div class="card">` holding a bold title (`<h3>`) + body (`<p>`), stacked inside a `<div class="card-grid">`. **ONE component for all of these.** | Never an HTML `<table>`. Never a card whose body is a `<ul>`/bulleted list. Never override the card font — `<h3>`/`<p>` inherit `--font-sans` from the template; leave them. |
+| **Ordered contents / outline of a deliverable** | `<ol class="bullet-list">` | A card grid; a table |
+| **Decision / constraint / risk / note** | a `callout` box carrying a `callout-*` modifier (`callout callout-decision`, `callout callout-constraint`, `callout callout-risk`, `callout callout-note`) — `callout` is the content class; the variant is styling | A plain card; a callout used for non-decision content |
+| **Section header** | an `<h2>` inside the section's `<div class="section">` wrapper (styled by `.section h2`), present on **every** section | Skipping it on some sections but not siblings; inventing an uppercase/label class — the template has none |
+| **Panel intro** | exactly one `<p class="description">` directly under the panel's `<h2>` | More than one intro paragraph; an intro rendered as a card or callout |
+
+> **Font note (divergence from a "serif" instruction).** This template is entirely sans-serif — `.card h3` is `font-weight: 600` sans and `.card p` is sans body, both resolving through `--font-sans` (see `templates/software-template.html`, `.card h3`/`.card p`). There is no `--font-serif` token. The "named item + explanation" content type is pinned to the `.card` component precisely so every instance shares that one built-in font. Do not introduce a serif face or any per-card font override — using the single `.card` component IS the font-consistency guarantee.
+
+This rule **composes with** the "do not invent classes" rule at the top of this file. Together: use only documented classes, **and** do not render one content type two different ways.
+
+## Sibling-Parity Rule
+
+Tabs and sub-panels that present the **same kind of content** must share the **same section sequence**. A section that appears in one sibling must appear in **all** of them, in the same order, unless it is explicitly marked N/A for that sibling (state the N/A in the panel, don't silently omit it).
+
+Concretely: if the "Source" sub-panel has section labels *Overview → Wiring → Failure Modes*, then the "Producer" and "Critics" sub-panels — siblings presenting the same kind of content — must carry the same three labels. A sibling missing a section its peers have is drift; add the section (or an explicit N/A note) before declaring the artifact done. This rule is enforced by the panel-shape audit in `skills/_shared/visualization-runner.md` (Structural Self-Check gate).
 
 ## Brand Token Injection
 

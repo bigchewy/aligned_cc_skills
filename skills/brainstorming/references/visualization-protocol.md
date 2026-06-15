@@ -52,3 +52,12 @@ Every visualization artifact is built for one fixed audience: **an executive who
 - **Overview (top level / first tab):** summary-level only — the high-level flow, key inputs, outputs, and decision points. No file-level or implementation detail here.
 - **Tabs and sub-tabs:** detail is allowed and welcome. An executive who understands details will drill in — give them real depth (file paths, schemas, sequencing) behind progressive disclosure, never on the surface.
 - **Before simplifying any draft,** list the must-keep inputs/outputs from the design document and treat that list as non-negotiable. Simplification means pushing detail down into sub-tabs, never dropping a must-keep element.
+
+## Structural consistency (hard precondition)
+
+Two rules in `{base-directory}/references/brainstorm-components.md` govern *how* content is rendered, not just which classes exist — apply both:
+
+- **Content-Type → Component Mapping.** One content type resolves to exactly one component, and a content type already present in the file must reuse the component the file already uses. Do not render the same kind of content (e.g., "named item + its explanation") two different ways.
+- **Sibling-Parity Rule.** Tabs/sub-panels presenting the same kind of content must share the same section sequence; a section present in one sibling must be present in all unless explicitly marked N/A.
+
+Both are mechanically gated by the Structural Self-Check in `skills/_shared/visualization-runner.md`, which runs before any snapshot is written.

@@ -57,6 +57,8 @@ Read `{template-path}` and Write its contents verbatim to the working artifact l
 
 Do not rewrite the template from memory — the file copy is the contract.
 
+The template carries a `COMPONENT CONTRACT` HTML comment at the top of `<body>` (content→component map, panel shape, class-inventory grep). Leave it in place — it must survive copy, patch, and the live-refresh strip into the committed snapshot, so the rules travel with the artifact into later editing sessions. Do not delete or summarize it.
+
 **Anti-shortcut contract.** Copy `{template-path}` with a file-copy/Write command and patch it. NEVER hand-write or "compactly rewrite" the artifact HTML from memory, even when that seems faster. The compact-direct-write shortcut is the root cause of KB-085/086 — it bypasses the template, the widgets, the browser-open step, and the Overview gate.
 
 ## Step 4: Open the artifact in the browser (unconditional — do not skip)
@@ -93,6 +95,20 @@ The Overview tab is the first thing a non-engineer sees. Two checks gate it.
 
 **Semantic self-check (not unit-testable, never blocks):** is the goal stated in the first two sentences? Is the language plain (no implementation vocabulary)? Does it fit one screen? This is an LLM judgment with no mechanical assertion — it does NOT have parity with the mermaid exit-code gate. On failure, rewrite the Overview and re-check once. **On a second failure, write the artifact anyway** and tell the user in one line which check failed and where the lever is (e.g., "Overview still leads with implementation detail — committed as-is; edit the Overview tab's `{goal}` slot to fix"). A soft semantic judgment never holds the user's output hostage; only the mechanical checks block.
 
+## Structural Self-Check gate (before any snapshot is written)
+
+Two **blind** checks — run them against the file's text without looking at the rendered page. Same fail-closed contract as the Mermaid and Overview-mechanical gates: a positive finding blocks the snapshot until the source is fixed. The reference for both is the "Content-Type → Component Mapping" and "Sibling-Parity Rule" sections in `{components-path}`.
+
+**a. Class inventory (assertable, fail-closed).** Run:
+
+`grep -oE 'class="[a-z][a-z-]+' {output-path} | sort | uniq -c`
+
+This grep emits only the **first** class token of each element (it stops at the first space), so an element's content class must come first — the documented components already follow that convention. The recognized content tokens are `card`, `card-grid`, `bullet-list`, `description`, and `callout` (callouts surface as the base `callout` token; the `callout-*` modifier is styling and never appears in this output). Read every content token in the output (ignore layout/widget plumbing — `tab-*`, `sub-*`, `phase-*`, `diagram-container`, `interactive-section`, `dropdown`, `decision-card*`, `q-*`). Any content token **not** named in the Content-Type → Component Mapping is drift — a class the artifact invented or a content type rendered the wrong way. Additionally, if the inventory shows the same content type carried by two different components (e.g., both `card` and a `<table>` describing named-item-plus-explanation content), that is a binding-rule violation. Fix the source and re-run before proceeding.
+
+**b. Panel-shape audit (assertable, fail-closed).** For each group of sibling panels/sub-panels that present the same kind of content, list the `<h2>` section headings (each `.section > h2`) present in each sibling. Assert every sibling carries the same label set in the same order. A label present in one sibling but missing from another fails the gate — add the section, or add an explicit N/A note in that panel, before proceeding. This is the mechanical enforcement of the Sibling-Parity Rule.
+
+Neither check requires opening the browser; both read the committed HTML text directly. Do not write the snapshot until both pass.
+
 ## Stripping the live-refresh script
 
 Before committing the snapshot, verify that both `<!-- LIVE-REFRESH-START -->` and `<!-- LIVE-REFRESH-END -->` delimiters exist in the file. If either delimiter is missing, STOP and flag the issue — a committed artifact with an active refresh script is a silent bug. If both are present, remove the block (inclusive of delimiters). The final committed artifact must not auto-refresh.
@@ -109,9 +125,22 @@ When a tabbed HTML document is generated (live visualization or any auxiliary mo
 
 The check: if a tab contains multiple diagrams, subgraphs, or sections that each deserve their own view, break them into nested sub-tabs rather than stacking vertically.
 
+## Editing an existing artifact
+
+The steps above describe generating an artifact. A second, distinct mode is **hand-editing a committed `docs/mockups/*.html`** — adding a panel, extending a section, revising content in place — without regenerating from the template. This is where rendering drift historically crept in (the same content type rendered three different ways across edit turns, siblings diverging). When you modify a committed artifact rather than regenerate it:
+
+a. **Re-read the contract before the first edit of the session.** Read this file's "Structural Self-Check gate" and the "Content-Type → Component Mapping" + "Sibling-Parity Rule" in `{components-path}` (or read the COMPONENT CONTRACT comment at the top of the artifact's `<body>`, which restates them). Do this once, before the first edit — not after.
+
+b. **Match new content to an existing component.** Before adding anything, find how that content type is already rendered in this file and reuse the exact same component. Never introduce a second rendering of a content type the file already contains. If the new content is a new content type, resolve it through the mapping table — never invent a class.
+
+c. **Re-run the Structural Self-Check gate after editing, before declaring done.** Both checks (class inventory + panel-shape audit) must pass on the edited file, exactly as they would for a fresh generation. An edit session is not complete until they do.
+
 ## Avoid These Mistakes
 
 - **The compact-direct-write shortcut** — hand-writing tighter HTML directly instead of copying the template. Forbidden: it skips every gate below. Always copy the file.
 - **Rewriting the template or widgets from memory** — always copy the file and patch it.
 - **Skipping the browser-open or mermaid gate** — both are unconditional numbered steps.
 - **Injecting the widget script inside the LIVE-REFRESH delimiters** — it must land outside them or the strip rule removes it.
+- **Rendering one content type two different ways** — a "named item + its explanation" pair must be a `.card` everywhere it appears, never also a table or a bulleted-card. Resolve every content type through the Content-Type → Component Mapping and reuse the file's existing component. The Structural Self-Check gate catches this.
+- **Letting sibling panels diverge** — sub-panels of the same content kind must share the same section sequence. A section in one sibling but not another is drift; the panel-shape audit blocks it.
+- **Editing a committed artifact without re-reading the contract** — hand-edits to `docs/mockups/*.html` follow the "Editing an existing artifact" section, including re-running the Structural Self-Check before done.
