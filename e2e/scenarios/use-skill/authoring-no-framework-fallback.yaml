@@ -38,8 +38,8 @@ tests:
       scenario_description: "Q&A phase with advisor (Architect proxy) has completed; output is a design doc"
       topic: "We've done Q&A and produced a rough design doc. What format should the output take?"
 
-  - description: "no-framework-c: design doc feeds writing-plans handoff"
+  - description: "no-framework-c: design doc feeds implementation-plan handoff"
     vars:
       system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       scenario_description: "Design doc is complete; user wants to proceed to an implementation plan"
-      topic: "The design doc is done. How does this feed into writing-plans?"
+      topic: "The design doc is done. How does this feed into an implementation plan?"

@@ -73,11 +73,11 @@ claude --plugin-dir /path/to/aligned_cc_skills
 
 ### Skill Reference
 
-Entry points are skills you invoke directly. Pipeline skills are downstream steps in a workflow. Support skills are typically invoked by other skills.
+Entry points are skills you invoke directly. The software-development loop (plan, execute, finish, worktrees) now lives in the superpowers plugin.
 
 | Skill | Type | Invocation | Description |
 |-------|------|------------|-------------|
-| brainstorming | Entry Point | `/aligned:brainstorming` | Explore ideas and strategies. Routes across four modes: software, authoring, research, roadmap |
+| brainstorming | Entry Point | `/aligned:brainstorming` | Explore ideas and strategies. Routes across three modes: authoring, research, roadmap |
 | use-advisor | Entry Point | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
 | use-framework | Entry Point | `/aligned:use-framework` | Guide through a framework's phases interactively |
 | add-advisor | Entry Point | `/aligned:add-advisor` | Add a new advisor to the Virtual Board |
@@ -88,14 +88,8 @@ Entry points are skills you invoke directly. Pipeline skills are downstream step
 | create-design-principles | Entry Point | `/aligned:create-design-principles` | Interactive design discovery + enforce precise, minimal design system |
 | create-image | Entry Point | `/aligned:create-image` | Generate diagrams, charts, icons, illustrations, and brand visuals — routes to diagram, icon, or illustration mode |
 | visualize-design | Entry Point | `/aligned:visualize-design` | Render any markdown doc or the current conversation as an on-brand, tabbed, Mermaid-validated HTML artifact |
-| codebase-audit | Entry Point | `/aligned:codebase-audit` | Multi-dimensional audit: code quality, tests, security, dead code, architecture |
-| root-cause-analysis | Entry Point | `/aligned:root-cause-analysis` | Root cause investigation for software and business problems with optional multi-agent mode |
+| root-cause-analysis | Entry Point | `/aligned:root-cause-analysis` | Root cause investigation for business and process problems with optional multi-agent mode |
 | eval-audit | Entry Point | `/aligned:eval-audit` | Eval coverage auditor (hook-prompted) |
-| kanban-resolve | Entry Point | `/aligned:kanban-resolve` | Triage and resolve all Kanban board items in one pass |
-| writing-plans | Pipeline | `/aligned:writing-plans` | Write implementation plans with dual-critic (Architect + Verifier). Secondary entry point for users with existing specs |
-| executing-plans | Pipeline | `/aligned:executing-plans` | Execute plans task-by-task with checkpoints |
-| finishing-a-development-branch | Pipeline | `/aligned:finishing-a-development-branch` | Deployment audit, tests, build, code simplification, merge/PR, plan archival |
-| using-git-worktrees | Infrastructure | `/aligned:using-git-worktrees` | Isolated worktree management |
 
 ## What this plugin does NOT include
 
@@ -111,21 +105,16 @@ This plugin is distributed to many users. It intentionally does not ship anythin
 |-------|-------------|
 | architecture-diagram-generator | Architecture diagrams with SVG and architecture.md updates |
 | artifact-verifier | 98% accuracy gate for document fact-checking |
-| code-reviewer | Post-implementation review against plan and coding standards |
-| code-simplifier | Scans branch changes for simplification opportunities |
 | critique-interactive-html-generator | Interactive HTML for accept/reject decisions on brainstorming critique findings, with copy-as-prompt round-trip |
 | flowchart-generator | Mermaid.js flowcharts for data flows, processes, and decision trees |
-| kanban-triage | Validates Kanban items through 5-phase root cause analysis |
 | mockup-generator | Self-contained HTML mockups for design-phase visualization |
 | session-document-generator | Orchestrates diagram agents to produce consolidated tabbed HTML documents |
-| doc-staleness-detector | Detect stale docs by comparing git history. Logs to Kanban, never edits directly |
 | project-scanner | Fast codebase scan for brainstorming context (languages, structure, dependencies) |
 
 ### Hooks
 
 | Event | Script | What It Does |
 |-------|--------|-------------|
-| PreToolUse | `auto-approve-worktrees.js` | Auto-approves Edit/Write in worktree directories |
 | PreToolUse | `auto-approve-safe-bash-paths.js` | Auto-approves Bash commands targeting `/tmp/` and `~/.claude/` only |
 | PostToolUse | `usage-tracker.js` | Tracks Skill/Task usage patterns |
 
@@ -162,7 +151,7 @@ Kickstart scaffolds this structure in each project:
 
 ### Iron Rules (Software Development)
 
-These rules are enforced by pipeline skills during software development:
+These rules apply during software development. The plan/execute/finish skills that enforced them now live in the superpowers plugin:
 
 1. **Tests first, always.** No production code without a failing test (TDD).
 2. **Error path tests for every mock.** Both `mockResolvedValue` and `mockRejectedValue`.

@@ -4,7 +4,7 @@ Canonical source for the `aligned` plugin. Edit skills here, not in `~/.claude/s
 
 ## Path Rule
 
-All internal references use `skills/` prefix (e.g., `skills/brainstorming/design-critique-checklist.md`). Never `~/.claude/skills/`. When editing cross-references, verify paths are relative to this repo root.
+All internal references use `skills/` prefix (e.g., `skills/brainstorming/roadmap-critique-checklist.md`). Never `~/.claude/skills/`. When editing cross-references, verify paths are relative to this repo root.
 
 ## Skill Anatomy
 
@@ -19,8 +19,8 @@ Frontmatter `name` must match the directory name:
 
 ```yaml
 ---
-name: writing-plans
-description: "Use when you have a spec or requirements for a multi-step task"
+name: persona-panel
+description: "Use when testing content against simulated buyer or user personas"
 ---
 ```
 
@@ -28,7 +28,7 @@ description: "Use when you have a spec or requirements for a multi-step task"
 
 Two YAML registries track all advisors and frameworks. Skills use these for discovery, routing, and selection. Any skill that creates or removes an advisor or framework MUST update the corresponding registry.
 
-- **`advisors/registry.yaml`** — All advisor personas. Used by use-advisor, code-reviewer, persona-panel, and contextual recommendation.
+- **`advisors/registry.yaml`** — All advisor personas. Used by use-advisor, persona-panel, and contextual recommendation.
 - **`frameworks/registry.yaml`** — All decision frameworks. Used by use-framework and contextual recommendation.
 
 ## Framework Prompts Are Interactive Scripts

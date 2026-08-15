@@ -1,10 +1,12 @@
 # Manual-Deploy Artifact Catalog
 
-Reference document for the manual-deploy artifact detection step. Lists file classes whose creation in a diff deterministically implies a non-automatable production step (e.g., DB migrations). Consumed by `skills/writing-plans/SKILL.md` (Manual Deploy Artifact Scan step) and `skills/finishing-a-development-branch/SKILL.md` (Step 0.5: Manual Deploy Artifact Notice).
+> Retained for scripts/autopilot, which is non-functional pending its port to superpowers skills (see README changelog 0.33.0).
 
-**Scope:** Detection-only. The downstream skills surface a notice at plan-write time and at branch-finish time so the manual step isn't forgotten. There is no evidence gate — the assistant does not demand the user paste proof that the manual step was performed.
+Reference document for the manual-deploy artifact detection step. Lists file classes whose creation in a diff deterministically implies a non-automatable production step (e.g., DB migrations).
 
-This catalog is a **superset** of `skills/finishing-a-development-branch/references/deployment-pitfall-catalog.md` in shape: severity-section organization and prose per-entry, PLUS a small fenced block inside each entry carrying machine-matchable fields.
+**Scope:** Detection-only. The downstream consumers surface a notice at plan-write time and at branch-finish time so the manual step isn't forgotten. There is no evidence gate — the assistant does not demand the user paste proof that the manual step was performed.
+
+Entries use severity-section organization and prose per-entry, PLUS a small fenced block inside each entry carrying machine-matchable fields.
 
 ## Contents
 

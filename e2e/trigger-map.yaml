@@ -1,6 +1,6 @@
 # e2e/trigger-map.yaml
 # Maps changed files -> eval scenarios to run.
-# Consumer: finishing-a-development-branch Step 1b
+# Consumer: eval-audit Phase 3 cross-validation
 # Update when: new eval scenarios are added
 # Note: scenario paths are e2e/-relative (for promptfoo -c), not repo-root-relative
 
@@ -145,12 +145,6 @@ triggers:
       - frameworks/5-gtm-motions-digital-health/anti-examples.md
     scenarios:
       - scenarios/use-framework/5-gtm-motions-digital-health.yaml
-
-  - paths:
-      - skills/writing-plans/SKILL.md
-      - skills/_shared/manual-deploy-artifact-catalog.md
-    scenarios:
-      - scenarios/manual-deploy/plan-scan-emits-post-automation.yaml
 
   - paths:
       - advisors/prompts/kristen-berman.md
