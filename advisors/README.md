@@ -1,6 +1,6 @@
 # Advisor Registry
 
-58 advisors | 58 profiled | 0 unprofiled
+60 advisors | 60 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -64,6 +64,8 @@
 | trish-bertuzzi | Trish Bertuzzi | sales-development, sdr-org-design, pipeline-generation, sales-enablement, b2b-sales, inside-sales | Founder and CEO of The Bridge Group and author of The Sales Development Playbook — the canonical voice on B2B sales development org design |
 | julie-yoo | Julie Yoo | digital-health, healthcare-gtm, enterprise-sales, healthcare-product-strategy, payer-provider-sales, b2c2b | General Partner at a16z Bio + Health and co-founder of Kyruus — the operator-investor voice on digital health enterprise GTM and motion selection |
 | kristen-berman | Kristen Berman | behavioral-design, product-growth, retention, onboarding, conversion, behavioral-economics, behavioral-experimentation, trust-and-safety | CEO and co-founder of Irrational Labs; behavioral-product-design practitioner |
+| matt-mochary | Matt Mochary | operating-cadence, executive-coaching, okrs, meeting-design, written-communication | CEO coach and creator of the Mochary Method; written-culture operating system for leadership teams |
+| claire-hughes-johnson | Claire Hughes Johnson | operating-cadence, management-infrastructure, scaling, decision-making, written-communication | Former COO of Stripe and author of Scaling People; management infrastructure and operating review design |
 
 ## Profiled Advisors
 
@@ -129,6 +131,8 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Trish Bertuzzi** | Diagnoses broken B2B sales development functions by walking the 6 Elements (Strategy, Specialization, Recruiting, Retention, Execution, Leadership) to identify which design element is actually weak — almost never the one the founder thinks |
 | **Julie Yoo** | Diagnoses digital health go-to-market by forcing motion commitment across the 5 GTM Motions — B2C2B, B2SMB, Risk-based contracting, Two-sided networks, and Distribution through aggregators (GPOs / HCOs / IDNs) |
 | **Kristen Berman** | Evaluates whether product, growth, and retention work is grounded in behavioral diagnosis or just running on "best practice" reflex |
+| **Matt Mochary** | Evaluates whether the operating system is written-first and decision-focused |
+| **Claire Hughes Johnson** | Evaluates whether operating reviews are structured for decisions or presentations |
 
 ## Selection Guidelines
 

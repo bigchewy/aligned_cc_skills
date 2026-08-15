@@ -208,3 +208,12 @@ def test_format_halt_cases_match_write_halt_callsites():
         f"write_halt callsites emit reasons missing from format_halt: "
         f"{sorted(undocumented)}. These will fall through to the *) "
         f"catch-all and print 'Unknown halt reason: <name>' to users.")
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

@@ -211,3 +211,12 @@ def test_behavioral_does_not_mirror_regular_files(tmp_path):
     result = _run_block(project, worktree)
     assert result.returncode == 0
     assert not (worktree / "apps" / "foo" / ".env.local").exists()
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

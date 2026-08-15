@@ -230,3 +230,12 @@ def test_behavioral_comment_only_mention_does_not_halt(tmp_path):
     assert not log_file.exists(), (
         "write_halt must not be called when --bare is only in a comment"
     )
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

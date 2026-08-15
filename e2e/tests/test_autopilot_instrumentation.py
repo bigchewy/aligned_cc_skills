@@ -342,3 +342,12 @@ def test_sampler_start_is_idempotent(tmp_path: Path):
     assert m1.group(1) == m2.group(1), (
         "second start_system_sampler started a NEW sampler — idempotency broken"
     )
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

@@ -5,7 +5,7 @@
 
 patterns:
   - advisors/registry.yaml
-  - advisors/prompts/**
+  - advisors/prompts/**/*
   - frameworks/registry.yaml
   - frameworks/*/prompt.md
   - frameworks/*/examples.md

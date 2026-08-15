@@ -60,3 +60,12 @@ def test_done_sentinel_still_documented():
     assert ".ralph-done" in DOC_TEXT, (
         "EXECUTE-PLAN.md must document the .ralph-done sentinel."
     )
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

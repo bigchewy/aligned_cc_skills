@@ -1,6 +1,6 @@
 # Framework Registry
 
-112 frameworks across 21 categories
+114 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -17,6 +17,7 @@
 | marketing | 1 |
 | negotiation | 3 |
 | onboarding | 4 |
+| operating-cadence | 2 |
 | podcasting | 4 |
 | positioning | 8 |
 | pricing | 1 |
@@ -142,6 +143,8 @@
 | proof-points-audit | Proof Points Audit | the-qa-engineer | evidence | an organization needs to inventory and verify every quantitative or proof-shaped claim in its customer-facing copy |
 | competitive-battle-card | Competitive Battle Card | april-dunford | competitive-analysis | positioning and messaging are complete and the org needs a salesperson's working battle card for the named competitors |
 | 3b-behavioral-design | 3B Framework (Behavior, Barriers, Benefits) | kristen-berman | behavioral-design | a product, growth, or CX team faces a 'users aren't doing the thing' problem and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit, or changing the target behavior itself |
+| mochary-weekly-check-in | The Weekly Check-In | matt-mochary | operating-cadence | a leadership team or manager-report pair is running status-heavy meetings with no written record of commitments or decisions, or needs to establish a repeatable operating rhythm tied to OKRs |
+| chj-operating-review | Operating Review Design | claire-hughes-johnson | operating-cadence | a leadership team is running operating reviews that produce presentations but not decisions, or where decisions made in the meeting don't stick |
 
 ## By Category
 
@@ -226,6 +229,11 @@
 - **integrative-piloting-process** — the Integrative Piloting Process (danny-iny)
 - **leveraged-learning** — the Leveraged Learning framework (danny-iny)
 - **pilot-program-methodology** — the Pilot Program Methodology (danny-iny)
+
+### Operating Cadence (2)
+
+- **mochary-weekly-check-in** — The Weekly Check-In (matt-mochary)
+- **chj-operating-review** — Operating Review Design (claire-hughes-johnson)
 
 ### Podcasting (4)
 

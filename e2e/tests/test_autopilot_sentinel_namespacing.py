@@ -105,3 +105,12 @@ def test_guard_checks_commits_ahead_of_main():
         "The guard must trigger only when the existing worktree has "
         "commits ahead of main (an empty worktree is safe to replan)."
     )
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

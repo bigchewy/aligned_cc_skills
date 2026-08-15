@@ -122,3 +122,12 @@ def test_preflight_passes_when_env_vars_required_unset():
         assert r.returncode == 0, f"preflight should pass (exit 0), got {r.returncode}: {r.stderr}"
         sentinel = Path(d) / ".autopilot-halt"
         assert not sentinel.exists(), "preflight must NOT write .autopilot-halt when env vars are unset"
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

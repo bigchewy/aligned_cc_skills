@@ -57,3 +57,12 @@ def test_blocked_path_does_not_halt():
     # sentinel or 'User Action Required' message by accident.
     assert ".ralph-human-blocked" not in SCRIPT_TEXT
     assert "User Action Required" not in SCRIPT_TEXT
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)

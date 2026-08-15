@@ -1,9 +1,9 @@
 # Aligned
 
-A virtual board of advisors for Claude Code. 60 expert personas, 116 structured frameworks, auto-selected by context.
+A virtual board of advisors for Claude Code. 60 expert personas, 114 structured frameworks, auto-selected by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.33.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.33.1-green.svg)](.claude-plugin/plugin.json)
 
 ```
 /plugin marketplace add bigchewy/aligned_cc_skills
@@ -176,6 +176,16 @@ Semver, pre-1.0:
 Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
+
+##### 0.33.1: Green Suite (2026-08-14)
+- Test suite is fully green: fixed the `advisors/prompts/**` eval-surface
+  pattern (Python 3.9 glob semantics), refreshed advisor/framework registry
+  READMEs (60 advisors, 114 frameworks across 22 categories, including the
+  missing Matt Mochary / Claire Hughes Johnson and operating-cadence entries).
+- Parked autopilot's tests: all 18 autopilot/ralph test files carry a
+  module-level skip marker. Autopilot itself stays in `scripts/autopilot/`
+  unchanged, non-functional, revivable by deleting the markers.
+- README badge and framework-count prose aligned with the registries.
 
 ##### 0.33.0: Superpowers Split (2026-08-14)
 - **BREAKING:** Removed the dev-workflow skills — the superpowers plugin

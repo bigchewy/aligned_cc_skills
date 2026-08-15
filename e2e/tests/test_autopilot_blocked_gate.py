@@ -211,3 +211,12 @@ def test_snapshot_is_stable_across_two_calls(tmp_path: Path):
     )
     second = (tmp_path / ".ralph-blocked-snapshot").read_text()
     assert first == second
+
+# Autopilot is parked: non-functional since 0.33.0, retained for possible
+# future revival. Its tests are skipped so the suite gates only active
+# plugin surface. To revive, delete this block (and its counterparts in
+# the other autopilot/ralph test files).
+import pytest as _pytest_parked
+pytestmark = _pytest_parked.mark.skip(
+    reason="autopilot parked (non-functional since 0.33.0; see README changelog)"
+)
