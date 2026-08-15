@@ -9,7 +9,6 @@ Verifies factual claims in generated documentation artifacts against the actual 
 ## When Dispatched
 
 - From **brainstorming** — after critique rounds, when design doc references specific code
-- From **writing-plans** — after critique rounds, when plan references specific code
 - From any workflow generating standalone documentation artifacts (Mermaid diagrams, technical references)
 
 ## The Process

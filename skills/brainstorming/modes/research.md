@@ -72,7 +72,7 @@ You MUST complete each phase before proceeding to the next.
 
 **Auto-consult domain advisors (topic-routed):**
 
-When a candidate or comparison axis falls within a domain advisor's expertise, dispatch that advisor as a consultative voice — analogous to the Architect auto-consult in `modes/software.md`, but routed by topic rather than by codebase ownership. Each consultation is a fresh sub-agent. Resolve the advisor's prompt file path through `skills/_shared/resolve-advisor-source.md`: match `{advisor-id}` in the resolver's returned `advisors` list and use that entry's `absolute_prompt_path`. This finds advisors in the plugin OR the project-local repo — required because health/therapy advisors now live in the user's personal repo, not the plugin. The `advisors/registry.yaml` is authoritative for topic routing; extend the routing examples per the merged set.
+When a candidate or comparison axis falls within a domain advisor's expertise, dispatch that advisor as a consultative voice — analogous to the Architect-as-proxy consult in `modes/authoring.md`, but routed by topic rather than by codebase ownership. Each consultation is a fresh sub-agent. Resolve the advisor's prompt file path through `skills/_shared/resolve-advisor-source.md`: match `{advisor-id}` in the resolver's returned `advisors` list and use that entry's `absolute_prompt_path`. This finds advisors in the plugin OR the project-local repo — required because health/therapy advisors now live in the user's personal repo, not the plugin. The `advisors/registry.yaml` is authoritative for topic routing; extend the routing examples per the merged set.
 
 **Topic routing examples** (extend per the registry — `advisors/registry.yaml` is authoritative):
 - ACT and contextual behavioral science → Steven Hayes (`steven-hayes`)
@@ -206,11 +206,11 @@ Commit the research synthesis to git after critique rounds are complete. The art
 
 **Step 3 of 3 — Next step prompt (mandatory):**
 
-Research mode has no `/aligned:writing-plans` follow-on. After committing the synthesis, output exactly two affordances:
+Research mode has no plan-writing follow-on. After committing the synthesis, output exactly two affordances:
 
 > **Affordance 1 — Land it where it is.** The research synthesis is committed at the path above. No further action needed.
 >
-> **Affordance 2 — Open a follow-up brainstorm using this research as input context (optional).** If the synthesis points toward an implementation or a content artifact, you can open a new brainstorm and pass the research file as input — Authoring mode for content work, Software mode for implementation work. There is no autopilot from Research mode.
+> **Affordance 2 — Open a follow-up brainstorm using this research as input context (optional).** If the synthesis points toward an implementation or a content artifact, you can open a new brainstorm and pass the research file as input — Authoring mode for content work; implementation work is out of scope for this plugin (if the superpowers plugin is installed, use `superpowers:brainstorming`). There is no autopilot from Research mode.
 
 ## Design Critique
 

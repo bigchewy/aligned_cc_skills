@@ -1,4 +1,4 @@
-<!-- Shared rules: Read into context once at the start of every brainstorming session per the SKILL.md Step 3 instruction. Applies to all four modes. Do not add YAML frontmatter. -->
+<!-- Shared rules: Read into context once at the start of every brainstorming session per the SKILL.md Step 3 instruction. Applies to all three modes. Do not add YAML frontmatter. -->
 
 # Shared Rules — Brainstorming Skill
 
@@ -16,7 +16,7 @@ If a question during the brainstorm requires deeper detail about the project —
 
 ## Stripping the live-refresh script
 
-The canonical strip-script rule (verify the `<!-- LIVE-REFRESH-START -->`/`<!-- LIVE-REFRESH-END -->` delimiters, remove the block, preserve the widget script) lives in `skills/_shared/visualization-runner.md` § "Stripping the live-refresh script". It applies to the software and authoring modes; research and roadmap modes skip it.
+The canonical strip-script rule (verify the `<!-- LIVE-REFRESH-START -->`/`<!-- LIVE-REFRESH-END -->` delimiters, remove the block, preserve the widget script) lives in `skills/_shared/visualization-runner.md` § "Stripping the live-refresh script". It applies to the authoring mode; research and roadmap modes skip it.
 
 ## Interaction principles (apply to every mode)
 

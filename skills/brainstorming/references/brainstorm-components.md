@@ -97,14 +97,13 @@ Once tokens are resolved, populate the `:root` block in the inline `<style>` wit
 
 ## Templates
 
-Each visualizing mode owns its own HTML template file. The two templates start as byte-identical copies; they are independent files going forward, free to diverge as the modes' visual needs differ.
+The visualizing mode owns its own HTML template file.
 
 | Mode      | Template path                                                   |
 | --------- | --------------------------------------------------------------- |
-| Software  | `{base-directory}/references/templates/software-template.html`  |
 | Authoring | `{base-directory}/references/templates/authoring-template.html` |
 
-Research and Roadmap modes do not generate a live HTML artifact and have no template. (A `roadmap-template.html` file remains on disk for backward compatibility with existing tests but is no longer wired into Roadmap mode.)
+Research and Roadmap modes do not generate a live HTML artifact and have no template. (The `roadmap-template.html` and `software-template.html` files remain on disk for backward compatibility — `software-template.html` is still consumed by the standalone visualize-design skill — but neither is wired into a brainstorming mode.)
 
 ### Copy-and-patch contract
 

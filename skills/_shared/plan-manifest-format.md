@@ -1,5 +1,7 @@
 # Plan Manifest Format
 
+> Retained for scripts/autopilot, which is non-functional pending its port to superpowers skills (see README changelog 0.33.0).
+
 Plans MAY include an OPTIONAL YAML front-matter block declaring the executor environment requirements. The autopilot's preflight phase reads this manifest and halts cleanly when the environment cannot satisfy it.
 
 ## Schema
@@ -16,7 +18,7 @@ The field is an array of strings. It is optional; an empty list is equivalent to
 
 ## Authoring
 
-The `writing-plans` skill auto-generates this manifest from the plan body before the critique panel runs. The Verifier critic enforces structural coherence: every `mcp__*__*` body reference must appear in `mcp-tools-required`, and vice versa. The author does not edit the manifest by hand — it is regenerated whenever the plan body changes. (See "Manifest authoring visibility" in the design doc — manifest writes are autonomous; the user reviews the manifest by reading the committed plan, not via interactive prompt.)
+The autopilot plan-authoring step auto-generates this manifest from the plan body before the critique panel runs. The Verifier critic enforces structural coherence: every `mcp__*__*` body reference must appear in `mcp-tools-required`, and vice versa. The author does not edit the manifest by hand — it is regenerated whenever the plan body changes. (See "Manifest authoring visibility" in the design doc — manifest writes are autonomous; the user reviews the manifest by reading the committed plan, not via interactive prompt.)
 
 ## Validation (autopilot preflight)
 
@@ -35,7 +37,7 @@ Preflight applies these probes from the shell that invokes `autopilot.sh`:
 
 ## Coherence check (Verifier critic)
 
-The writing-plans Verifier runs a deterministic structural diff:
+The Verifier critic runs a deterministic structural diff:
 - Every `mcp__*__*` reference in the plan body MUST appear in `mcp-tools-required`.
 - Every `mcp-tools-required` entry MUST appear at least once in the plan body.
 

@@ -34,6 +34,6 @@ defaultTest:
 tests:
   - description: "framework-runner-extraction: positioning framework runs identically"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       framework_name: "5-components-positioning"
       user_input: "Help me apply the 5 components of positioning to our product"

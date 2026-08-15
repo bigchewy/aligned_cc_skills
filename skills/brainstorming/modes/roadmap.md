@@ -21,7 +21,7 @@ Roadmap mode does **not** produce a strategic roadmap document, do quarterly pla
 
 ## Disambiguation rules
 
-- **Roadmap vs Software:** Software is one brainstorm → one design doc → one plan. Roadmap is "this is too big for one brainstorm" → a list of 3–6 brainstorming prompts to run in order. If the user can describe what they want as a single design doc, route to Software.
+- **Roadmap vs a single brainstorm:** a single brainstorm is one session → one design doc. Roadmap is "this is too big for one brainstorm" → a list of 3–6 brainstorming prompts to run in order. If the user can describe what they want as a single design doc, route to the matching single mode (or, for build-shaped work, to a dev-workflow plugin such as superpowers).
 - **Roadmap vs Authoring:** Authoring produces a single named document — including any *roadmap-shaped document* (quarterly plan, prioritization memo, portfolio doc for stakeholders). Roadmap mode produces a spawn-list, not a document. If the user wants a roadmap document for humans to read, that's Authoring with a roadmap-shaped framework. If the user wants a queue of brainstorms to run, that's Roadmap.
 - **Mixed signals:** Look at what the user expects to do with the artifact. "I'll paste each entry into a new brainstorming session" = Roadmap. "I'll share this with my team / stakeholders" = Authoring.
 
@@ -97,7 +97,7 @@ Commit `docs/plans/YYYY-MM-DD-<topic>-spawn-list.md` to git.
 
 Output exactly one affordance:
 
-> **Next:** Pick the first component with no remaining prerequisites and run `/aligned:brainstorming` against its spawn-brief paragraph. That brainstorm produces a design doc, which `/aligned:writing-plans` can turn into an implementation plan if the component is build-shaped. Repeat per component until the spawn list is exhausted.
+> **Next:** Pick the first component with no remaining prerequisites and run `/aligned:brainstorming` against its spawn-brief paragraph. That brainstorm produces a design doc; build-shaped components continue in a dev-workflow plugin (`superpowers:brainstorming` → `superpowers:writing-plans` if installed). Repeat per component until the spawn list is exhausted.
 
 ## Out of scope
 

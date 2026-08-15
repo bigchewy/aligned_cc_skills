@@ -35,6 +35,6 @@ defaultTest:
 tests:
   - description: "use-framework-direct: positioning framework direct invoke"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       framework_name: "5-components-positioning"
       user_context: "I want to position my B2B SaaS product for mid-market buyers"
