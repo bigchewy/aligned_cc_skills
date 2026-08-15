@@ -4,10 +4,7 @@
   "plugins": [
     {
       "name": "aligned",
-      "source": {
-        "source": "github",
-        "repo": "bigchewy/aligned_cc_skills"
-      },
+      "source": "./",
       "description": "Skill stack for Claude Code: brainstorming, structured thinking, 60 advisor personas, 114 frameworks, persona panels, brand content generation",
       "version": "0.33.1"
     }
