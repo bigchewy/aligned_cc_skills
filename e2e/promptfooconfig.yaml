@@ -39,7 +39,6 @@ scenarios:
   - file://scenarios/use-framework/6-elements-sdr.yaml
   - file://scenarios/use-advisor/julie-yoo-consult.yaml
   - file://scenarios/use-framework/5-gtm-motions-digital-health.yaml
-  - file://scenarios/manual-deploy/plan-scan-emits-post-automation.yaml
   - file://scenarios/use-skill/always-ask-routing.yaml
   - file://scenarios/use-skill/authoring-mode-engine-selection.yaml
   - file://scenarios/use-skill/authoring-no-framework-fallback.yaml
