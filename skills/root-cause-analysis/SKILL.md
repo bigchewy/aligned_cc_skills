@@ -29,7 +29,7 @@ Use for ANY business or process issue that isn't resolving:
 
 **Code bugs, test failures, and build breakage are out of scope.** If the
 superpowers plugin is installed, use `superpowers:systematic-debugging`
-for those; otherwise use your dev-workflow plugin's debugging skill.
+for those; otherwise install a dev-workflow plugin.
 
 - Deliverable isn't landing with the audience
 - Strategy not producing results

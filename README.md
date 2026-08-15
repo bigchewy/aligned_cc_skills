@@ -3,7 +3,7 @@
 A virtual board of advisors for Claude Code. 60 expert personas, 116 structured frameworks, auto-selected by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.30.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.33.0-green.svg)](.claude-plugin/plugin.json)
 
 ```
 /plugin marketplace add bigchewy/aligned_cc_skills
