@@ -1,11 +1,11 @@
 {
   "name": "aligned",
-  "version": "0.32.0",
-  "description": "Skill stack for Claude Code: brainstorming, structured thinking, 60 advisor personas, 116 frameworks, TDD pipeline, automated quality gates",
+  "version": "0.33.0",
+  "description": "Skill stack for Claude Code: brainstorming, structured thinking, 60 advisor personas, 114 frameworks, persona panels, brand content generation",
   "author": {
     "name": "Eric Page"
   },
   "repository": "https://github.com/bigchewy/aligned_cc_skills",
   "license": "MIT",
-  "keywords": ["brainstorming", "advisors", "frameworks", "tdd", "pipeline", "design-system"]
+  "keywords": ["brainstorming", "advisors", "frameworks", "design-system"]
 }

@@ -177,6 +177,22 @@ Version bumps happen in `.claude-plugin/plugin.json`.
 
 #### Changelog
 
+##### 0.33.0: Superpowers Split (2026-08-14)
+- **BREAKING:** Removed the dev-workflow skills — the superpowers plugin
+  (github.com/obra/superpowers) replaces them: `writing-plans`,
+  `executing-plans`, `finishing-a-development-branch`,
+  `using-git-worktrees` (same names in superpowers), `kanban-resolve` and
+  `codebase-audit` (no replacement). Removed agents: `code-reviewer`,
+  `code-simplifier`, `kanban-triage`, `doc-staleness-detector`. Removed
+  hook: `auto-approve-worktrees.js`.
+- **BREAKING:** `brainstorming` is now three modes (authoring, research,
+  roadmap); software design routes to `superpowers:brainstorming`.
+- **BREAKING:** `root-cause-analysis` now covers business/process problems
+  only; code bugs route to `superpowers:systematic-debugging`.
+- Autopilot (`scripts/autopilot/`) is non-functional in this release — it
+  drove the removed skills. A follow-up release ports it to superpowers.
+- **13 skills** (-6), **7 agents** (-4)
+
 ##### 0.30.0: AI-Native Brand Folder
 - **Canonical brand folder spec** (`docs/brand-folder-spec.md`): schema reference for the AI-native `brand/` folder — directory tree, frontmatter contract, provenance/confidence model, slice-loading mechanics, composition contracts, versioning, and consumer-side eval scenarios.
 - **Shared loader** (`skills/_shared/load-brand-slices.md`): single loader that every brand-consuming generator delegates to; resolves `{folder}/{file-stem}#{slice-slug}` references, validates frontmatter, and degrades gracefully on missing slices.
