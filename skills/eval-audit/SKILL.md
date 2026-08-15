@@ -63,7 +63,7 @@ For each changed LLM surface file:
 - Report what's missing with specifics (e.g., "New advisor added in commit abc123, no eval scenario exists")
 - Create a Kanban board entry for each gap in `docs/kanban/todo/` (see Kanban Entry Format below). If `e2e/trigger-map.yaml` exists in the project, include in the Expected field: "Create eval scenario AND add corresponding entry to `e2e/trigger-map.yaml`."
 - Ask: "Should I trigger the pipeline to create these eval scenarios now?"
-- If yes, kick off `/aligned:brainstorming` → `/aligned:writing-plans` → `/aligned:executing-plans` → `/aligned:finishing-a-development-branch` for the eval scenario creation work
+- If yes, kick off the eval scenario creation work — if the superpowers plugin is installed, use `superpowers:writing-plans` → `superpowers:executing-plans`; otherwise create the scenarios directly in this session.
 
 **Cross-validation (if `e2e/trigger-map.yaml` exists):** Read `e2e/trigger-map.yaml`. Verify every path in the trigger-map matches at least one `e2e/eval-surface.yaml` pattern. If any trigger-map path is not covered by a surface pattern, report: "Trigger-map path `<path>` does not match any eval-surface pattern — add a matching pattern to `e2e/eval-surface.yaml`." If `e2e/trigger-map.yaml` does not exist, skip this check.
 
@@ -86,4 +86,3 @@ When filing a Kanban entry, read `{base-directory}/../_shared/kanban-entry-forma
 ## Integration
 
 - **kickstart** — Scaffolds the `e2e/` infrastructure this skill audits
-- **executing-plans** — Implements eval scenarios when gaps are substantial

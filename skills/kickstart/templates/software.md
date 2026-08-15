@@ -46,11 +46,15 @@ Template for software projects (code, tests, builds). Referenced by `skills/kick
 ```markdown
 ## Workflows
 
-- `/aligned:brainstorming` — before any creative work
-- `/aligned:writing-plans` — before implementation
-- `/aligned:executing-plans` — to implement a plan
-- `/aligned:finishing-a-development-branch` — to complete work
-- `/aligned:root-cause-analysis` — for root cause investigation
+- `/aligned:brainstorming` — before authoring, research, or roadmap work
 - `/aligned:create-design-principles` — to define design direction
 - `/aligned:eval-audit` — to check eval coverage
+
+If the superpowers plugin is installed, use it for the development loop:
+
+- `superpowers:brainstorming` — before designing features
+- `superpowers:writing-plans` — before implementation
+- `superpowers:executing-plans` — to implement a plan
+- `superpowers:finishing-a-development-branch` — to complete work
+- `superpowers:systematic-debugging` — before fixing any bug
 ```
