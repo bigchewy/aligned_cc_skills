@@ -551,6 +551,7 @@ frameworks:
   - focus
   - critical-thinking
   follow_on_frameworks:
+  - kernel-of-good-strategy
   - 5-step-process
   helpful_documents:
   - company strategy
@@ -864,7 +865,7 @@ frameworks:
   - company strategy
   - business goals
   id: kernel-of-good-strategy
-  name: building a complete strategy using the kernel
+  name: Kernel of Good Strategy
   purpose: the irreducible core that distinguishes actual strategy from goal-setting
     dressed up as strategy
   use_when: someone's strategy is really just a list of goals and they need to build
