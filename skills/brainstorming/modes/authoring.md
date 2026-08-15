@@ -2,11 +2,11 @@
 
 # Authoring Mode
 
-A wrapper around either a registered framework or a structured Q&A with a topic advisor in The Architect's proxy seat. Produces a design doc that feeds `/aligned:writing-plans`.
+A wrapper around either a registered framework or a structured Q&A with a topic advisor in The Architect's proxy seat. Produces a sequenced design doc.
 
 ## Disambiguation rules
 
-- **Authoring vs Software:** if the deliverable is content (deck, memo, brief, positioning, curriculum), Authoring. If it's code that runs, Software.
+- **Authoring vs code work:** if the deliverable is content (deck, memo, brief, positioning, curriculum), Authoring. If it's code that runs, the work is out of scope for this plugin — if the superpowers plugin is installed, use `superpowers:brainstorming`.
 - **Authoring vs Research:** Authoring produces an arrangement (sequenced document); Research produces an evidence map. Authoring may invoke a Research sub-flow but is not Research.
 - **Authoring vs Roadmap:** Authoring produces a single named document — including any roadmap-shaped document (quarterly plan, prioritization memo, portfolio doc for stakeholders). Roadmap mode produces a spawn-list — a paste-ready queue of 3–6 brainstorming prompts that decompose an intent too big for one session. If the deliverable is a document humans read, that's Authoring. If the deliverable is a queue of brainstorms to run, that's Roadmap.
 
@@ -49,16 +49,17 @@ On framework completion, the runner returns control here. Proceed to Phase 3.
 
 ### Phase 2b/2c/2d: Structured Q&A with topic advisor in Architect's proxy seat
 
-The Q&A pattern is duplicated from `modes/software.md` (L22-134). See the parity marker below.
+The Q&A pattern below is the canonical Architect-as-proxy dispatch. See the marker below.
 
 For Phase 2b (matched advisor) — use the matched advisor's prompt in the proxy dispatch.
 For Phase 2c (top-scoring advisor) — use the top-scoring advisor's prompt in the proxy dispatch.
 For Phase 2d (Wise Eric default) — use `advisors/prompts/wise-eric.md`.
 
-<!-- PARITY MARKER: DUPLICATED FROM skills/brainstorming/modes/software.md (Q&A pattern, L22-134).
-     The Architect-as-proxy dispatch template (the sub-agent prompt body below) is the stable surface
-     for the parity test (e2e/tests/test_qa_pattern_parity.py). Sync substantive changes to both files
-     or document the intentional divergence in this marker. See decision 4 in
+<!-- CANONICAL Q&A PATTERN (Architect-as-proxy dispatch template).
+     The sub-agent prompt body below is the stable surface pinned by
+     e2e/tests/test_qa_pattern_parity.py. It was formerly duplicated from the
+     retired software mode, which moved to a dev-workflow plugin (superpowers);
+     authoring.md is now the canonical home. See decision 4 in
      docs/plans/2026-05-09-framework-runner-refactor-design.md. -->
 
 **Understanding the idea:**
@@ -179,9 +180,9 @@ Dispatch table:
 
 | deliverable_type | Template path | Critique checklist sections (passed to orchestrator) | Default critic pool (when registry's `default_critic_advisors` is unset) | Handoff prompt |
 |---|---|---|---|---|
-| content | `references/templates/authoring-template.html` | `["universal", "content"]` | brand-voice advisors + topic advisor | "Run /aligned:writing-plans against this doc to produce an implementation plan." |
+| content | `references/templates/authoring-template.html` | `["universal", "content"]` | brand-voice advisors + topic advisor | "If the work needs an implementation plan and the superpowers plugin is installed, run superpowers:writing-plans against this doc." |
 | decision | `references/templates/authoring-decision-template.html` | `["universal", "decision"]` | The Skeptic + topic advisor | "Document the decision; close any open questions." |
-| plan | `references/templates/authoring-plan-template.html` | `["universal", "plan"]` | strategy advisors (Rumelt, Christensen, Ries) | "Run /aligned:writing-plans." |
+| plan | `references/templates/authoring-plan-template.html` | `["universal", "plan"]` | strategy advisors (Rumelt, Christensen, Ries) | "If the work needs an implementation plan and the superpowers plugin is installed, run superpowers:writing-plans." |
 | analysis | `references/templates/authoring-analysis-template.html` | `["universal", "analysis"]` | topic advisors + The Skeptic | "Save analysis; surface follow-on actions." |
 
 **Critic pool override:** Before falling back to the default critic pool for the deliverable_type row, check the engine's `default_critic_advisors` field in `frameworks/registry.yaml`. If present and non-empty, use those advisor IDs as the critic pool instead of the defaults. (This is the consumption site for the field added in Task 10 — it is what makes the field load-bearing.)

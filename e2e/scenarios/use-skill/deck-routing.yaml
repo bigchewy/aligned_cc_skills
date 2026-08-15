@@ -35,5 +35,5 @@ defaultTest:
 tests:
   - description: "deck-routing: deck for client"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       user_input: "I need to build a deck for a client"

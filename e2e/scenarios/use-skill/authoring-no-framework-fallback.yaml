@@ -28,18 +28,18 @@ defaultTest:
 tests:
   - description: "no-framework-a: topic with no matching framework falls to Q&A"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       scenario_description: "User wants to write about an obscure topic with no registered framework"
       topic: "Design a naming convention system for my photo archive"
 
   - description: "no-framework-b: Q&A with advisor produces design doc"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       scenario_description: "Q&A phase with advisor (Architect proxy) has completed; output is a design doc"
       topic: "We've done Q&A and produced a rough design doc. What format should the output take?"
 
   - description: "no-framework-c: design doc feeds writing-plans handoff"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       scenario_description: "Design doc is complete; user wants to proceed to an implementation plan"
       topic: "The design doc is done. How does this feed into writing-plans?"

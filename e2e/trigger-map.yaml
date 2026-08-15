@@ -49,7 +49,7 @@ triggers:
       - skills/brainstorming/modes/authoring.md
     scenarios:
       - scenarios/use-skill/brainstorming-positioning.yaml
-      - scenarios/use-skill/brainstorming-four-modes.yaml
+      - scenarios/use-skill/brainstorming-three-modes.yaml
       - scenarios/use-skill/always-ask-routing.yaml
       - scenarios/use-skill/deck-routing.yaml
       - scenarios/use-skill/authoring-no-framework-fallback.yaml

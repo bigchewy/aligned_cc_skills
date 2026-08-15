@@ -1,4 +1,4 @@
-<!-- Visualization protocol: Read into context by visualizing modes (software, authoring) at the start of their Visualization step. Research and Roadmap modes do not generate a live HTML artifact and skip this protocol. Do not add YAML frontmatter. -->
+<!-- Visualization protocol: Read into context by the visualizing mode (authoring) at the start of its Visualization step. Research and Roadmap modes do not generate a live HTML artifact and skip this protocol. Do not add YAML frontmatter. -->
 
 # Visualization Protocol
 
@@ -10,7 +10,7 @@ The invoking mode supplies these values to the shared runner (all absolute paths
 
 | Input | Value in brainstorming context |
 |---|---|
-| `{template-path}` | `{base-directory}/references/templates/software-template.html` (absolute) |
+| `{template-path}` | `{base-directory}/references/templates/authoring-template.html` (absolute; authoring Phase 3 may substitute the deliverable-type-specific `authoring-*-template.html`) |
 | `{widgets-path}` | `{base-directory}/references/widgets.html` |
 | `{components-path}` | `{base-directory}/references/brainstorm-components.md` |
 | `{validate-mermaid-script}` | `{plugin-root}/skills/brainstorming/scripts/validate-mermaid.mjs` |

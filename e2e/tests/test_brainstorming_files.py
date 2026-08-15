@@ -78,7 +78,7 @@ def test_critique_checklist_structure(path, heading, criteria):
 
 def test_research_mode_file_structure():
     text = read("skills/brainstorming/modes/research.md")
-    # First line must be the canonical mode-file HTML comment (matches modes/software.md:1)
+    # First line must be the canonical mode-file HTML comment (matches modes/authoring.md:1)
     assert text.splitlines()[0] == "<!-- Mode file: Read into context by the brainstorming router. Do not add YAML frontmatter. -->"
     # Anti-regression: the {base-directory} resolution note was extracted to
     # references/shared-rules.md; mode files must not re-duplicate it.
@@ -106,17 +106,18 @@ def test_authoring_mode_file_structure():
     assert "_shared/contextual-recommendation.md" in text
     assert "framework-or-advisor" in text
     # Shared runners — only framework-runner is invoked from authoring mode.
-    # Advisor execution in Phase 2b/2c/2d uses the inline software-mode-style
-    # Q&A pattern (Architect-as-proxy), not _shared/advisor-runner.md. See the
-    # PARITY MARKER in authoring.md and Decision 5 in the design doc.
+    # Advisor execution in Phase 2b/2c/2d uses the inline Architect-as-proxy
+    # Q&A pattern, not _shared/advisor-runner.md. See the canonical marker in
+    # authoring.md and Decision 5 in the design doc.
     assert "_shared/framework-runner.md" in text
     assert "intake_gate_mode" in text and "strict" in text
     # Fallback ladder
     assert "Wise Eric" in text, "missing last-resort default advisor"
     assert "structured Q&A" in text or "Architect" in text and "proxy" in text
-    # Duplication marker
-    assert "PARITY MARKER" in text or "DUPLICATED FROM" in text
-    assert "modes/software.md" in text
+    # Canonical-pattern marker (formerly a parity marker paired with the retired
+    # software mode; authoring.md is now the canonical home of the Q&A dispatch)
+    assert "CANONICAL Q&A PATTERN" in text
+    assert "modes/software.md" not in text, "software mode is retired; no references allowed"
     # Critique panel config
     assert "authoring-critique-checklist.md" in text
     assert "deliverable_type" in text  # post-engine dispatch
@@ -137,41 +138,54 @@ def test_authoring_mode_is_in_eval_surface():
     assert "skills/brainstorming/modes/authoring.md" in text
 
 
-def test_skill_md_description_names_four_modes():
+def test_skill_md_description_names_three_modes():
     text = read("skills/brainstorming/SKILL.md")
     lines = text.splitlines()
     desc_line = next((l for l in lines[:10] if l.startswith("description:")), None)
     assert desc_line is not None
-    for mode in ["software", "authoring", "research", "roadmap"]:
+    for mode in ["authoring", "research", "roadmap"]:
         assert mode.lower() in desc_line.lower(), f"description missing mode: {mode}"
+    # Software must not be enumerated as a mode. The description's mode clause is
+    # the text between the em-dash and the first period; the routing-out sentence
+    # ("Software design routes to a dev-workflow plugin") may still say "software".
+    mode_clause = desc_line.split("—")[1].split(".")[0]
+    assert "software" not in mode_clause.lower(), \
+        "description still enumerates software as a mode"
     for gone in ["business", "planning"]:
         assert gone.lower() not in desc_line.lower(), f"description still mentions retired mode: {gone}"
 
 
-def test_skill_md_overview_describes_four_modes():
+def test_skill_md_overview_describes_three_modes():
     text = read("skills/brainstorming/SKILL.md")
     overview = text[text.index("## Overview"):text.index("## Step 1")]
-    for mode in ["Software", "Authoring", "Research", "Roadmap"]:
+    for mode in ["Authoring", "Research", "Roadmap"]:
         assert mode in overview, f"overview missing: {mode}"
+    bullets = [l for l in overview.splitlines() if l.startswith("- **")]
+    assert len(bullets) == 3, f"expected exactly 3 mode bullets, found {len(bullets)}"
+    for bullet in bullets:
+        assert not bullet.startswith("- **Software"), \
+            "overview still lists Software as a mode"
     assert "Business" not in overview, "overview still mentions retired Business mode"
     assert "Planning" not in overview, "overview still mentions retired Planning mode"
 
 
-def test_skill_md_step1_has_four_signal_sets_and_always_ask():
+def test_skill_md_step1_has_three_signal_sets_and_always_ask():
     text = read("skills/brainstorming/SKILL.md")
     step1 = text[text.index("## Step 1"):text.index("## Step 2")]
-    for h in ["**Software mode**", "**Authoring mode**", "**Research mode**", "**Roadmap mode**"]:
+    for h in ["**Authoring mode**", "**Research mode**", "**Roadmap mode**"]:
         assert h in step1, f"missing signal-set header: {h}"
-    for gone in ["**Business mode**", "**Planning mode**"]:
+    for gone in ["**Business mode**", "**Planning mode**", "**Software mode**"]:
         assert gone not in step1, f"retired signal-set still present: {gone}"
+    # Software requests route out to a dev-workflow plugin instead of a mode block
+    assert "superpowers:brainstorming" in text, \
+        "SKILL.md must route software requests to superpowers:brainstorming"
     # Always-ask discipline
     assert "always" in step1.lower() and ("ask" in step1.lower() or "present the question" in step1.lower())
     # Picker label format (task vocabulary, not mode IDs).
-    # The Roadmap picker label changed from "Break a big initiative into smaller
-    # pieces" to "Break a big intent into a queue of brainstorms" in the
-    # decomposition-scaffolding redesign.
-    for label_fragment in ["Write a document", "Design a code change", "Synthesize research", "Break a big intent"]:
+    for label_fragment in ["Write a document", "Synthesize research", "Break a big intent"]:
         assert label_fragment in step1, f"missing picker label: {label_fragment}"
+    assert "Design a code change" not in step1, \
+        "software picker label must be removed from the 3-way picker"
 
 
 def test_skill_md_keyword_expansion_includes_deck_and_breakdown_signals():
@@ -245,20 +259,21 @@ def test_roadmap_mode_file_structure():
 def test_skill_md_has_disambiguation_rules():
     text = read("skills/brainstorming/SKILL.md")
     assert "### Disambiguation Rules" in text, "missing Disambiguation Rules subsection"
-    # Rule pairs present after 4-mode collapse (Business mode removed)
+    # Rule pairs present after the 3-mode rescope (software mode routed out)
     for pair in [
-        "Software vs Authoring",
+        "Code-design vs Authoring",
         "Authoring vs Research",
     ]:
         assert pair in text, f"missing rule: {pair}"
-    # 4-mode picker labels must appear in Step 1
+    assert "Software vs Authoring" not in text, \
+        "the two Software-vs-Authoring rules must collapse into one Code-design-vs-Authoring rule"
+    # 3-mode picker labels must appear in Step 1
     for label in [
         "Write a document",
-        "Design a code change",
         "Synthesize research",
         "Break a big intent into a queue of brainstorms",
     ]:
-        assert label in text, f"missing 4-mode picker label: {label}"
+        assert label in text, f"missing 3-mode picker label: {label}"
 
 
 def test_skill_md_step2_has_per_mode_emphasis():
@@ -266,28 +281,32 @@ def test_skill_md_step2_has_per_mode_emphasis():
     step2_start = text.index("## Step 2")
     step3_start = text.index("## Step 3")
     step2 = text[step2_start:step3_start]
-    # Each of the 4 modes' emphasis tags must be present in the dispatch prompt template.
+    # Each of the 3 modes' emphasis tags must be present in the dispatch prompt template.
     # Roadmap's emphasis shifted from "prior roadmaps + open kanban + customer asks" to
     # "prior spawn-lists + related design docs" in the decomposition-scaffolding redesign.
     for hint in [
-        "code artifacts",
         "literature/KB/registries",
         "document corpus",
         "prior spawn-lists",
     ]:
         assert hint in step2, f"missing per-mode emphasis hint: {hint}"
-    # Business mode must be dropped from the 4-mode shape
+    # Software mode must be dropped from the 3-mode shape
+    assert "code artifacts" not in step2, \
+        "Software 'code artifacts' hint must be removed for 3-mode shape"
+    assert "{software" not in step2 and "software|" not in step2, \
+        "Software must be removed from mode enum in Step 2"
+    # Business mode must remain dropped
     assert "domain materials" not in step2, \
-        "Business 'domain materials' hint must be removed for 4-mode shape"
+        "Business 'domain materials' hint must be removed"
     assert "|business|" not in step2, \
         "Business must be removed from mode enum in Step 2"
 
 
 def test_skill_md_step3_uses_table_driven_handoff():
-    """Step 3 was refactored from five literal '**If <mode> mode:**' branches into a
-    single shared-rules read plus a four-row mode/checklist lookup table. Assert the
-    new structure: shared-rules.md is read once, all four modes appear as rows, and
-    each mode's checklist is referenced."""
+    """Step 3 is a single shared-rules read plus a three-row mode/checklist lookup
+    table. Assert the structure: shared-rules.md is read once, all three modes
+    appear as rows, and each mode's checklist is referenced. Software mode was
+    routed out to the superpowers plugin in the 3-mode rescope."""
     text = read("skills/brainstorming/SKILL.md")
     step3_start = text.index("## Step 3")
     step3 = text[step3_start:]
@@ -307,37 +326,39 @@ def test_skill_md_step3_uses_table_driven_handoff():
         assert old_branch not in step3, \
             f"Step 3 should be table-driven; stale branch still present: {old_branch}"
 
-    # Each of the 4 modes appears as a labeled row in the lookup table
-    for mode_label in ["Software", "Research", "Authoring", "Roadmap"]:
+    # Each of the 3 modes appears as a labeled row in the lookup table
+    for mode_label in ["Research", "Authoring", "Roadmap"]:
         assert mode_label in step3, f"Step 3 table missing mode row: {mode_label}"
 
-    # Business mode must be absent from 4-mode shape
+    # Retired modes must be absent from the 3-mode shape
+    assert "Software" not in step3, \
+        "Software mode must be removed from Step 3 for 3-mode shape"
     assert "Business" not in step3, \
-        "Business mode must be removed from Step 3 for 4-mode shape"
+        "Business mode must be removed from Step 3"
 
     # Each mode's mode file is referenced in the table
     for mode_file in [
-        "modes/software.md",
         "modes/research.md",
         "modes/authoring.md",
         "modes/roadmap.md",
     ]:
         assert mode_file in step3, f"Step 3 table missing mode file: {mode_file}"
 
-    assert "modes/business.md" not in step3, \
-        "modes/business.md must be removed from Step 3 for 4-mode shape"
+    for gone_file in ["modes/software.md", "modes/business.md"]:
+        assert gone_file not in step3, \
+            f"{gone_file} must be removed from Step 3 for 3-mode shape"
 
     # Each mode's critique checklist is referenced in the table
     for checklist in [
-        "design-critique-checklist.md",
         "research-critique-checklist.md",
         "authoring-critique-checklist.md",
         "roadmap-critique-checklist.md",
     ]:
         assert checklist in step3, f"missing checklist reference: {checklist}"
 
-    assert "business-critique-checklist.md" not in step3, \
-        "business-critique-checklist.md must be removed from Step 3 for 4-mode shape"
+    for gone_checklist in ["design-critique-checklist.md", "business-critique-checklist.md"]:
+        assert gone_checklist not in step3, \
+            f"{gone_checklist} must be removed from Step 3 for 3-mode shape"
 
 
 def test_shared_rules_owns_base_directory_resolution():
@@ -349,9 +370,10 @@ def test_shared_rules_owns_base_directory_resolution():
         "shared-rules.md must explain that {base-directory} resolves to the router, not modes/"
 
 
-def test_kickstart_marketing_copy_mentions_four_modes():
+def test_kickstart_marketing_copy_mentions_three_modes():
     text = read("skills/kickstart/SKILL.md")
-    assert "four modes" in text.lower(), "kickstart must declare four modes"
+    assert "three modes" in text.lower(), "kickstart must declare three modes"
+    assert "four modes" not in text.lower(), "kickstart still claims four modes"
     # Must not still claim five modes outside of CHANGELOG context
     assert "five modes" not in text.lower(), "kickstart still claims five modes"
 
@@ -376,20 +398,17 @@ def test_orchestration_does_not_reference_portfolio_file_path():
         "portfolio-file-path should be removed; no mode uses it after the Roadmap redesign"
 
 
-def test_software_mode_critique_config_unchanged():
-    text = read("skills/brainstorming/modes/software.md")
-    # Contract: division-of-labor + criteria-assignment yes + design-critique-checklist
-    assert "Fact-check mode: division-of-labor" in text
-    assert "Criteria assignment: yes" in text
-    assert "Checklist filename: design-critique-checklist.md" in text
-    # Output path convention preserved
-    assert "docs/plans/YYYY-MM-DD-<topic>-design.md" in text
-    # Temp dir pattern preserved
-    assert "/tmp/brainstorm-context-{topic}" in text
-    assert "/tmp/brainstorm-critique-{topic}" in text
-    # Post-critique checklist still has 3 mandatory steps
-    assert "POST-CRITIQUE CHECKLIST — 3 mandatory steps" in text
-
+def test_software_mode_files_removed_after_rescope():
+    """The 3-mode rescope routes software design to the superpowers plugin; the
+    mode file and its critique checklist are deleted. software-template.html
+    stays — the standalone visualize-design skill still uses it."""
+    for rel in [
+        "skills/brainstorming/modes/software.md",
+        "skills/brainstorming/design-critique-checklist.md",
+    ]:
+        assert not (REPO_ROOT / rel).exists(), f"{rel} must be deleted in the 3-mode rescope"
+    assert (REPO_ROOT / "skills/brainstorming/references/templates/software-template.html").exists(), \
+        "software-template.html must stay (visualize-design consumes it)"
 
 
 def test_business_files_removed_after_collapse():
@@ -413,25 +432,26 @@ def test_eval_surface_does_not_reference_business():
     assert "modes/business.md" not in text, "eval-surface still references deleted file"
 
 
-def test_four_modes_fixture_exists_and_lists_four_modes():
+def test_three_modes_fixture_exists_and_lists_three_modes():
     REPO = Path(__file__).resolve().parents[2]
     assert not (REPO / "e2e/fixtures/skill-prompts/brainstorming-five-modes.md").exists()
-    assert (REPO / "e2e/fixtures/skill-prompts/brainstorming-four-modes.md").exists()
-    text = (REPO / "e2e/fixtures/skill-prompts/brainstorming-four-modes.md").read_text()
-    for label in ["Software", "Authoring", "Research", "Roadmap"]:
+    assert not (REPO / "e2e/fixtures/skill-prompts/brainstorming-four-modes.md").exists()
+    assert (REPO / "e2e/fixtures/skill-prompts/brainstorming-three-modes.md").exists()
+    text = (REPO / "e2e/fixtures/skill-prompts/brainstorming-three-modes.md").read_text()
+    for label in ["Authoring", "Research", "Roadmap"]:
         assert label in text, f"missing mode label: {label}"
-    for retired in ["Business mode", "Planning mode"]:
+    for retired in ["Business mode", "Planning mode", "Software mode"]:
         assert retired not in text, f"retired mode still present: {retired}"
 
 
-def test_four_modes_eval_fixture_lists_briefs():
-    text = read("e2e/scenarios/use-skill/brainstorming-four-modes.yaml")
+def test_three_modes_eval_fixture_lists_briefs():
+    text = read("e2e/scenarios/use-skill/brainstorming-three-modes.yaml")
     test_count = text.count("- description:")
-    assert test_count >= 4, f"expected ≥4 test briefs in four-modes fixture; found {test_count}"
-    for mode_label in ["software", "research", "authoring", "roadmap"]:
+    assert test_count >= 3, f"expected ≥3 test briefs in three-modes fixture; found {test_count}"
+    for mode_label in ["research", "authoring", "roadmap"]:
         assert mode_label in text.lower(), f"missing mode label: {mode_label}"
-    for retired in ["business", "planning"]:
-        assert retired not in text.lower(), f"retired mode still in four-modes fixture: {retired}"
+    for retired in ["business", "planning", "software"]:
+        assert retired not in text.lower(), f"retired mode still in three-modes fixture: {retired}"
 
 
 def test_new_eval_scenario_files_exist_and_parse():
@@ -441,7 +461,7 @@ def test_new_eval_scenario_files_exist_and_parse():
         "always-ask-routing.yaml",
         "deck-routing.yaml",
         "authoring-no-framework-fallback.yaml",
-        "brainstorming-four-modes.yaml",
+        "brainstorming-three-modes.yaml",
         "framework-runner-extraction.yaml",
         "deliverable-type-dispatch.yaml",
         "use-framework-backward-compat.yaml",
@@ -482,14 +502,22 @@ def test_planning_mode_file_removed_after_rename():
 
 def test_planning_string_references_purged_from_brainstorming_skill():
     """Post-rename grep gate: `planning` should appear ≤2 times in skills/brainstorming/
-    (only intentional references to /aligned:writing-plans or historical CHANGELOG context)."""
+    (only historical/out-of-scope context). After the 3-mode rescope, no brainstorming
+    file may reference /aligned:writing-plans — plan-writing moved to the superpowers
+    plugin (superpowers:writing-plans, conditional on installation)."""
     hits = 0
+    offenders = []
     for p in (REPO_ROOT / "skills/brainstorming").rglob("*"):
         if not p.is_file() or p.suffix not in {".md", ".html", ".yaml"}:
             continue
-        for line in p.read_text().splitlines():
-            if "planning" in line.lower() and "writing-plans" not in line:
+        text = p.read_text()
+        if "/aligned:writing-plans" in text:
+            offenders.append(str(p.relative_to(REPO_ROOT)))
+        for line in text.splitlines():
+            if "planning" in line.lower():
                 hits += 1
+    assert not offenders, \
+        f"files still reference /aligned:writing-plans (removed in 3-mode rescope): {offenders}"
     assert hits <= 2, f"too many residual 'planning' references: {hits} (expected ≤2)"
 
 
@@ -607,7 +635,7 @@ def test_authoring_has_one_template_per_deliverable_type():
         )
 
 
-def test_references_describe_four_modes_post_collapse():
+def test_references_describe_three_modes_post_rescope():
     for rel in [
         "skills/brainstorming/references/shared-rules.md",
         "skills/brainstorming/references/visualization-protocol.md",
@@ -615,10 +643,10 @@ def test_references_describe_four_modes_post_collapse():
         "skills/_shared/critique-panel-orchestration.md",
     ]:
         text = read(rel)
-        # Must not enumerate business or planning anymore (writing-plans excepted)
-        for retired in [" business,", " planning,", "business |", "planning |"]:
+        # Must not enumerate business, planning, or software as modes anymore
+        for retired in [" business,", " planning,", "business |", "planning |", "software |"]:
             assert retired not in text.lower(), f"{rel} still enumerates retired mode: {retired!r}"
-        # Must enumerate Authoring as part of the 4-mode set
+        # Must enumerate Authoring as part of the 3-mode set
         assert "authoring" in text.lower(), f"{rel} missing authoring"
         # roadmap or research must be present in any mode enumeration
         assert "roadmap" in text.lower() or "research" in text.lower()
@@ -688,18 +716,6 @@ def test_shared_rules_strip_rule_points_to_runner():
     assert "## Stripping the live-refresh script" in text
     # ...but now points at the canonical text in the runner instead of restating it.
     assert "skills/_shared/visualization-runner.md" in text, "strip rule must point to the runner"
-
-
-def test_software_mode_nested_subtabs_reference():
-    text = read("skills/brainstorming/modes/software.md")
-    # The rule is no longer "defined in the protocol" — it moved to the runner.
-    assert "Nested sub-tabs rule defined in the protocol" not in text, (
-        "stale reference: nested sub-tabs rule moved to the runner"
-    )
-    assert "Nested sub-tabs" in text, "the rule reference must still be present"
-    assert "visualization runner" in text.lower() or "visualization-runner.md" in text, (
-        "reference must point at the runner that now defines the rule"
-    )
 
 
 def test_protocol_dispatch_states_anti_shortcut():

@@ -27,25 +27,25 @@ defaultTest:
 tests:
   - description: "deliverable-type-content: uses authoring-template.html"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       deliverable_type: "content"
 
   - description: "deliverable-type-decision: uses authoring-decision-template.html"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       deliverable_type: "decision"
 
   - description: "deliverable-type-plan: uses authoring-plan-template.html"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       deliverable_type: "plan"
 
   - description: "deliverable-type-analysis: uses authoring-analysis-template.html"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       deliverable_type: "analysis"
 
   - description: "deliverable-type-fallback: missing type falls to content template"
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-four-modes.md
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       deliverable_type: "unknown_or_missing"

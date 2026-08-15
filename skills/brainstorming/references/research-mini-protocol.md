@@ -1,6 +1,6 @@
 # Research Mini-Protocol (Authoring Sub-Flow Contract)
 
-> **Pattern:** Mode-as-sub-flow. This is NOT the Architect-as-proxy pattern in `modes/software.md`. Proxy is one-question-one-decision per dispatch; this protocol is multi-phase (scope → corpus scan → synthesis) inside a single sub-agent dispatch. The sub-agent's main thread returns only a one-line confirmation; the synthesis lives in a file that the parent Authoring session reads inline.
+> **Pattern:** Mode-as-sub-flow. This is NOT the Architect-as-proxy pattern in `modes/authoring.md`. Proxy is one-question-one-decision per dispatch; this protocol is multi-phase (scope → corpus scan → synthesis) inside a single sub-agent dispatch. The sub-agent's main thread returns only a one-line confirmation; the synthesis lives in a file that the parent Authoring session reads inline.
 
 ## Inputs
 

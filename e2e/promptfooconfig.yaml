@@ -43,7 +43,7 @@ scenarios:
   - file://scenarios/use-skill/always-ask-routing.yaml
   - file://scenarios/use-skill/authoring-mode-engine-selection.yaml
   - file://scenarios/use-skill/authoring-no-framework-fallback.yaml
-  - file://scenarios/use-skill/brainstorming-four-modes.yaml
+  - file://scenarios/use-skill/brainstorming-three-modes.yaml
   - file://scenarios/use-skill/deck-routing.yaml
   - file://scenarios/use-skill/deliverable-type-dispatch.yaml
   - file://scenarios/use-skill/framework-runner-extraction.yaml

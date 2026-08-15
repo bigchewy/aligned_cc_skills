@@ -1,0 +1,55 @@
+# e2e/scenarios/use-skill/brainstorming-three-modes.yaml
+# Mode-classification eval for the three-mode brainstorming router.
+# 3 modes × 1+ brief each. Replaces the retired four-modes scenario.
+# Per design §Diagnosis success criterion 3, ≥80% per-brief correctness is the target.
+
+description: "Skill: brainstorming three-mode classifier"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 1500
+
+prompts:
+  - "{{system_context}}\n\n---\n\nUser brief: {{brief}}\n\nClassify this brief into one of the three brainstorming modes (research, authoring, roadmap) AND present the 3-way picker question. State which mode you would pre-select or which you'd highlight."
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CLASSIFICATION ACCURACY: Does the response correctly
+        identify the expected mode (given in metadata) as the pre-selected
+        or highlighted choice in the 3-way picker? Wrong mode = 1.
+        Correct mode mentioned but not highlighted = 3.
+        Correct mode pre-selected or highlighted = 5.
+      weight: 3
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PICKER PRESENTATION: Does the response present the
+        3-way picker with all three picker labels? Look for: "Write a document",
+        "Synthesize research", "Break a big intent into a queue of brainstorms".
+        Missing labels or omitting the question = 1. All three labels present = 5.
+      weight: 2
+
+tests:
+  # Research
+  - description: "research: framework comparison"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      brief: "Compare frameworks for change management"
+      expected_mode: research
+
+  # Authoring
+  - description: "authoring: positioning brief"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      brief: "Write a competitive analysis for our go-to-market launch"
+      expected_mode: authoring
+
+  # Roadmap
+  - description: "roadmap: feature sequencing"
+    vars:
+      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      brief: "Sequence the next 8 features for the pilot launch"
+      expected_mode: roadmap
