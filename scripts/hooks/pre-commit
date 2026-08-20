@@ -1,0 +1,36 @@
+#!/bin/bash
+# Bump the plugin's patch version whenever a commit touches shipped plugin
+# content, so the change actually reaches the Claude Code plugin cache.
+#
+# Claude Code re-copies this repo into ~/.claude/plugins/cache only when the
+# version string changes. Edit a skill, commit without bumping, and the running
+# plugin keeps serving the old file with no error anywhere.
+#
+# Installed via: git config core.hooksPath scripts/hooks
+# Skip for one commit with: git commit --no-verify
+
+set -e
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
+# Only bump for directories that ship inside the plugin. Commits that touch
+# only docs, todo.md, or the top-level readmes leave the version alone.
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR \
+  -- advisors frameworks skills agents hooks tools .claude-plugin 2>/dev/null || true)
+
+[ -z "$STAGED" ] && exit 0
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "[pre-commit] node not on PATH; plugin version NOT bumped, this commit will not reach the plugin cache"
+  exit 0
+fi
+
+if ! NEXT=$(node "$REPO_ROOT/scripts/bump-plugin-version.cjs" 2>&1); then
+  echo "[pre-commit] version bump failed, this commit will not reach the plugin cache:"
+  echo "$NEXT"
+  exit 0
+fi
+
+git add "$REPO_ROOT/.claude-plugin/plugin.json" "$REPO_ROOT/.claude-plugin/marketplace.json"
+
+echo "[pre-commit] Plugin version bumped to $NEXT"
