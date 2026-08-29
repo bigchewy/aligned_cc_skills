@@ -1993,3 +1993,52 @@ frameworks:
   use_when: a founder or long-tenured executive wants out but believes the organization
     cannot run without them, or a board needs to prepare for a leadership transition
     before a search begins
+- advisor: lex-sisney
+  category: leadership
+  default_critic_advisors:
+  - lex-sisney
+  - claire-hughes-johnson
+  deliverable_type: plan
+  domains:
+  - org-design
+  - organizational-structure
+  - scaling
+  - role-clarity
+  - hiring-sequence
+  follow_on_frameworks:
+  - psiu-role-fit
+  helpful_documents:
+  - current org chart
+  - strategy or plan for the next stage
+  - list of open roles and recent hires
+  id: rules-of-structure
+  name: The Rules of Structure
+  purpose: redesigning an organization's structure from its strategy and lifecycle
+    stage, with every name off the paper
+  use_when: a scaling company cannot reach escape velocity despite a clear strategy,
+    keeps repeating the same execution mistakes, has one seat that keeps failing
+    hires, or has a founder who is still the bottleneck on decisions the structure
+    should have taken off them
+- advisor: lex-sisney
+  category: leadership
+  default_critic_advisors:
+  - lex-sisney
+  - lara-hogan
+  deliverable_type: analysis
+  domains:
+  - role-fit
+  - executive-hiring
+  - promotion-decisions
+  - psiu
+  - org-design
+  helpful_documents:
+  - job description or role description for the seat
+  - org chart showing where the role sits
+  - performance history for the seat (previous holders)
+  id: psiu-role-fit
+  name: PSIU Role Fit
+  purpose: coding a role before you hire, promote, or diagnose someone who is struggling
+    in it
+  use_when: a leader is about to hire or promote into a key seat, is deciding whether
+    a struggling executive is the wrong person or in the wrong seat, or has a board
+    and hiring manager who cannot agree on what a role requires

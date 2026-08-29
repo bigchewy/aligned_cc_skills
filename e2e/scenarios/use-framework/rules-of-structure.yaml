@@ -1,0 +1,101 @@
+# e2e/scenarios/use-framework/rules-of-structure.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Rules of Structure org redesign"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking for the strategy for the next stage, the lifecycle stage, and
+        the symptoms that point at structure — and then STOP and wait? A
+        response that draws a full structure map in one shot, lists functions
+        and reporting lines without asking anything, or runs several phases at
+        once scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Lex
+        Sisney's actual method? Correct markers: insists names come off the
+        paper before functions are mapped; treats repeated hiring failure in
+        one seat as a structural signal; names the three line checks
+        (short-range over long-range, efficiency over effectiveness, control
+        versus autonomy) or at least the first two; uses PSIU codes with
+        capitals and lowercase; distinguishes roles from hats; fits depth to
+        stage rather than over-designing a small company. Deductions for:
+        designing around the named people, accepting marketing under sales as
+        fine, prescribing a team-building or culture fix, presenting a
+        finished org chart before the phases run.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Lex Sisney
+        — calm, first person, teacherly, a thought experiment or a physics
+        analogy (rocket versus parachute, design controls behavior), a
+        rhetorical question then the answer, "here's the catch", short exhale
+        lines, PSIU shorthand used without apology, one self-implicating CJ.com
+        reference at most? Look for absence of management-book jargon
+        ("synergy", "empower", "best practices") and absence of emotion-first
+        coaching. A neutral facilitator voice or a bulleted best-practices list
+        scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking the
+        Phase 1 questions (strategy, stage, symptoms) and genuinely stopping,
+        rather than asking and then answering, or asking questions from three
+        different phases at once? Exactly one phase's questions, then a stop,
+        scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/rules-of-structure/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      org_brief: |
+        Context: $5M ARR SaaS, 35 people, growing 60% a year, one vertical
+        (dental practices) and we want to add two more next year off the same
+        platform. Third VP of Sales in two years just left. Marketing reports
+        to sales and has become a lead-gen desk. Engineering and customer
+        support both report to our COO, who also runs finance and legal. I'm
+        the founder-CEO and I still approve every enterprise contract and
+        break every product tie.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through redesigning my company's org structure. I'll answer phase by phase."
+      org_brief: |
+        Context: $5M ARR SaaS, 35 people, growing 60% a year, one vertical
+        (dental practices) and we want to add two more next year off the same
+        platform. Third VP of Sales in two years just left. Marketing reports
+        to sales and has become a lead-gen desk. Engineering and customer
+        support both report to our COO, who also runs finance and legal. I'm
+        the founder-CEO and I still approve every enterprise contract and
+        break every product tie.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Lex Sisney, author of Designed to Scale and Organizational Physics. Walk me through your rules-of-structure process for redesigning my org. I'll answer phase by phase."
+      org_brief: |
+        Context: $5M ARR SaaS, 35 people, growing 60% a year, one vertical
+        (dental practices) and we want to add two more next year off the same
+        platform. Third VP of Sales in two years just left. Marketing reports
+        to sales and has become a lead-gen desk. Engineering and customer
+        support both report to our COO, who also runs finance and legal. I'm
+        the founder-CEO and I still approve every enterprise contract and
+        break every product tie.

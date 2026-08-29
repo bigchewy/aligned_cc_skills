@@ -1,6 +1,6 @@
 # Advisor Registry
 
-61 advisors | 61 profiled | 0 unprofiled
+62 advisors | 62 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -67,6 +67,7 @@
 | matt-mochary | Matt Mochary | operating-cadence, executive-coaching, okrs, meeting-design, written-communication | CEO coach and creator of the Mochary Method; written-culture operating system for leadership teams |
 | claire-hughes-johnson | Claire Hughes Johnson | operating-cadence, management-infrastructure, scaling, decision-making, written-communication | Former COO of Stripe and author of Scaling People; management infrastructure and operating review design |
 | joan-garry | Joan Garry | nonprofit-leadership, board-governance, founder-transition, executive-succession, fundraising-culture | Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit Leadership, founder of the Nonprofit Leadership Lab |
+| lex-sisney | Lex Sisney | org-design, organizational-structure, scaling, role-fit, executive-hiring, lifecycle-strategy | Founder of Organizational Physics, co-founder and former CEO of Commission Junction, author of Designed to Scale; org structure and role fit for scaling companies |
 
 ## Profiled Advisors
 
@@ -135,6 +136,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Matt Mochary** | Evaluates whether the operating system is written-first and decision-focused |
 | **Claire Hughes Johnson** | Evaluates whether operating reviews are structured for decisions or presentations |
 | **Joan Garry** | Evaluates whether a nonprofit's problem has been located in the structure built around the founder, or misfiled as somebody's character defect |
+| **Lex Sisney** | Evaluates whether an organizational problem has been located in the design or misfiled as a people problem |
 
 ## Selection Guidelines
 

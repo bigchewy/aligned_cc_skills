@@ -1,6 +1,6 @@
 # Framework Registry
 
-116 frameworks across 22 categories
+118 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -13,7 +13,7 @@
 | customer | 1 |
 | evidence | 1 |
 | growth | 7 |
-| leadership | 10 |
+| leadership | 12 |
 | marketing | 1 |
 | negotiation | 3 |
 | onboarding | 4 |
@@ -147,6 +147,8 @@
 | chj-operating-review | Operating Review Design | claire-hughes-johnson | operating-cadence | a leadership team is running operating reviews that produce presentations but not decisions, or where decisions made in the meeting don't stick |
 | big-bat-board-assessment | Joan's Big BAT | joan-garry | leadership | a nonprofit leader describes their board as disengaged, dysfunctional, or lacking skill and needs a member-by-member diagnosis instead of an aggregate complaint |
 | organizational-readiness | Organizational Readiness | joan-garry | leadership | a founder or long-tenured executive wants out but believes the organization cannot run without them, or a board needs to prepare for a leadership transition before a search begins |
+| rules-of-structure | The Rules of Structure | lex-sisney | leadership | a scaling company cannot reach escape velocity despite a clear strategy, keeps repeating the same execution mistakes, has one seat that keeps failing hires, or has a founder who is still the bottleneck on decisions the structure should have taken off them |
+| psiu-role-fit | PSIU Role Fit | lex-sisney | leadership | a leader is about to hire or promote into a key seat, is deciding whether a struggling executive is the wrong person or in the wrong seat, or has a board and hiring manager who cannot agree on what a role requires |
 
 ## By Category
 
@@ -204,7 +206,7 @@
 - **product-market-fit-test** — the Product-Market Fit Test (sean-ellis)
 - **smallest-viable-audience** — Smallest Viable Audience (seth-godin)
 
-### Leadership (10)
+### Leadership (12)
 
 - **100-percent-responsibility** — 100% Responsibility (diana-chapman)
 - **above-below-the-line** — Above/Below the Line (diana-chapman)
@@ -216,6 +218,8 @@
 - **management-level-progression** — the Management Level Progression framework (lara-hogan)
 - **performance-standards-by-level** — Performance Standards by Level (ram-charan)
 - **pillars-of-integrity** — the Four Pillars of Integrity (jim-dethmer)
+- **psiu-role-fit** — PSIU Role Fit (lex-sisney)
+- **rules-of-structure** — The Rules of Structure (lex-sisney)
 
 ### Marketing (1)
 

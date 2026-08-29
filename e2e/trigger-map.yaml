@@ -164,3 +164,22 @@ triggers:
       - frameworks/reverse-engineered-brand/open-questions-schema.md
     scenarios:
       - scenarios/use-framework/reverse-engineered-brand.yaml
+
+  - paths:
+      - advisors/prompts/lex-sisney.md
+    scenarios:
+      - scenarios/use-advisor/lex-sisney-consult.yaml
+
+  - paths:
+      - frameworks/rules-of-structure/prompt.md
+      - frameworks/rules-of-structure/examples.md
+      - frameworks/rules-of-structure/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/rules-of-structure.yaml
+
+  - paths:
+      - frameworks/psiu-role-fit/prompt.md
+      - frameworks/psiu-role-fit/examples.md
+      - frameworks/psiu-role-fit/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/psiu-role-fit.yaml

@@ -1,0 +1,77 @@
+# e2e/scenarios/use-advisor/lex-sisney-consult.yaml
+# Quick-consult eval for Lex Sisney (organizational structure / scaling)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Lex Sisney structure consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SISNEY FRAMEWORK SPECIFICITY: Does the response draw on
+        Lex Sisney's actual material — PSIU codes written with capitals and
+        lowercase (PSiu, pSiU, PsIU), the rules of structure (short-range
+        functions must not control long-range ones; efficiency must not control
+        effectiveness; autonomy left toward the customer, control right), names
+        off the paper before designing, roles versus hats, integration over
+        entropy, the execution lifecycle stages (Nail It, Scale It), "design
+        controls behavior"? Generic org-design advice ("clarify roles",
+        "improve communication", "hire a strong COO") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE STRUCTURAL REFRAME: Does the response treat three
+        failed hires in one seat as a structural signal rather than a hiring
+        or personality problem? Look for: explicit statement that repeated
+        failure in one seat points at the seat, examination of what the seat
+        reports to and whether marketing reporting to sales violates a rule,
+        attention to the founder still holding hats the structure should have
+        removed. A response that focuses on interviewing better, finding a
+        stronger candidate, or the founder's leadership style scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Lex Sisney
+        — calm, first person, teacherly, a thought experiment or physics/sailing
+        analogy, a self-implicating story (CJ.com, hiring "the pros", the board
+        that never wrote down the code), rhetorical question then answer,
+        "here's the catch", short exhale lines ("It's just physics"), PSIU
+        shorthand used without apology? Look for absence of management-book
+        jargon ("synergy", "empower", "best practices", "at the end of the
+        day") and absence of emotion-first coaching. A neutral consultant tone
+        or a bulleted best-practices list scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CONCRETE NEXT ACTION: Does the response end with specific
+        structural moves — which function to move out from under which, the
+        PSIU code to hire against, which hats come off the founder, a hiring
+        sequence — rather than a principle or encouragement to "step back and
+        think about structure"? Vague reassurance or a prioritized theme list
+        scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — scaling founder, third failed sales VP, marketing under sales"
+    vars:
+      system_context: file://../../../advisors/prompts/lex-sisney.md
+      task_prompt: "\n\n---\n\nWe're a $5M ARR SaaS company, 35 people, growing 60% a year. I just had to let go of my third VP of Sales in two years. Each one seemed great in interviews. Marketing reports to sales — it's always been that way and honestly marketing has turned into a lead-gen desk. I still personally approve every enterprise contract and I'm the tiebreaker on every product decision. I'm exhausted and the board is starting to ask whether I'm the problem. How do I hire a VP of Sales who actually sticks?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "We're a $5M ARR SaaS company, 35 people, growing 60% a year. I just had to let go of my third VP of Sales in two years. Each one seemed great in interviews. Marketing reports to sales — it's always been that way and honestly marketing has turned into a lead-gen desk. I still personally approve every enterprise contract and I'm the tiebreaker on every product decision. I'm exhausted and the board is starting to ask whether I'm the problem. How do I hire a VP of Sales who actually sticks?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Lex Sisney, founder of Organizational Physics and author of Designed to Scale. We're a $5M ARR SaaS company, 35 people, growing 60% a year. I just had to let go of my third VP of Sales in two years. Each one seemed great in interviews. Marketing reports to sales — it's always been that way and honestly marketing has turned into a lead-gen desk. I still personally approve every enterprise contract and I'm the tiebreaker on every product decision. I'm exhausted and the board is starting to ask whether I'm the problem. How do I hire a VP of Sales who actually sticks?"

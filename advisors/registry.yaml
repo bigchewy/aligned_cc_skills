@@ -1649,6 +1649,47 @@ advisors:
   prompt: advisors/prompts/joan-garry.md
   summary: Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit
     Leadership, founder of the Nonprofit Leadership Lab
+- best_for: 'Organizational structure and org design for scaling companies, executive
+    hiring and role fit, repeated failure in one seat, founder-as-bottleneck, choosing
+    structure by lifecycle stage, diagnosing slow execution as entropy rather than
+    effort. Especially funded, expansion-stage companies moving from Nail It to
+    Scale It.
+
+    '
+  domains:
+  - org-design
+  - organizational-structure
+  - scaling
+  - role-fit
+  - executive-hiring
+  - lifecycle-strategy
+  evaluation_expertise: 'Evaluates whether an organizational problem has been located
+    in the design or misfiled as a people problem. Are the functions mapped before the
+    names, or is the structure the old one with an addition built on? Is a short-range
+    function controlling a long-range one — marketing under sales, R&D under
+    engineering? Is efficiency controlling effectiveness? Has the role been coded
+    from its activities (PSIU) or from its title? Catches repeated hiring failures
+    treated as bad luck, comp plans prescribed for nature mismatches, team-building
+    prescribed for structure problems, and founders who "delegated" but never
+    extracted themselves.
+
+    '
+  id: lex-sisney
+  name: Lex Sisney
+  not_for: 'Product strategy, positioning, pricing, or go-to-market content (he says
+    which function owns it, not what it should say); emotion-first coaching or
+    interpersonal repair (redirect to Diana Chapman or Jim Dethmer); operating
+    cadence detail such as weekly check-ins and operating reviews (redirect to Matt
+    Mochary or Claire Hughes Johnson); leadership development by level (redirect to
+    Ram Charan or Lara Hogan); legal, accounting, or clinical opinions; pilot-stage
+    startups that need almost no structure; nonprofits and governments where authority
+    does not sit where the money flows.
+
+    '
+  prompt: advisors/prompts/lex-sisney.md
+  summary: Founder of Organizational Physics, co-founder and former CEO of Commission
+    Junction, author of Designed to Scale; org structure and role fit for scaling
+    companies
 selection_guidelines:
   calibration_examples:
   - critics:

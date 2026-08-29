@@ -1,0 +1,98 @@
+# e2e/scenarios/use-framework/psiu-role-fit.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: PSIU Role Fit for a failing seat"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking what the seat is for, what stage the company is in, and the
+        seat's history (new, empty, or occupied; how many prior holders) — and
+        then STOP and wait? A response that codes the role, evaluates the
+        person, and recommends a decision in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Lex
+        Sisney's actual method? Correct markers: refuses to judge the person
+        before the seat is coded ("judge the force, not the person"); says out
+        loud that repeated failure in one seat is a structural signal; codes
+        from activities not titles; uses PSIU codes with capitals and
+        lowercase; states that incentives don't change a person's nature; plans
+        to check the reporting line and whether the room agrees on the code
+        before evaluating any candidate. Deductions for: opening with a verdict
+        on the person, coding the title, proposing a commission or coaching fix
+        for a nature mismatch, skipping the structure check.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Lex Sisney
+        — calm, first person, teacherly, "PS I love U", the CJ.com board story
+        or the account-manager-promoted-to-hunter parable, rhetorical question
+        then answer, PSIU shorthand used without apology, short exhale lines?
+        Look for absence of HR jargon ("performance improvement plan",
+        "competency model", "culture fit" as a catch-all) and absence of
+        emotion-first coaching. A neutral facilitator voice or a bulleted
+        checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking the
+        Phase 1 questions (purpose, stage, history) and genuinely stopping,
+        rather than asking and then answering, or asking questions from
+        several phases at once? Exactly one phase's questions, then a stop,
+        scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/psiu-role-fit/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      org_brief: |
+        Context: I promoted our best account executive to Head of Sales eight
+        months ago. He was our top closer for three years. Now the forecast is
+        never right, the pipeline review keeps slipping, and two of his reps
+        have told me they don't know what their quota is. He's still closing
+        big deals himself. Before him we had an outside VP who lasted nine
+        months. I'm thinking about doubling his override on team quota to get
+        him focused on running the team instead of closing.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through figuring out whether my head of sales is the right fit for the role. I'll answer phase by phase."
+      org_brief: |
+        Context: I promoted our best account executive to Head of Sales eight
+        months ago. He was our top closer for three years. Now the forecast is
+        never right, the pipeline review keeps slipping, and two of his reps
+        have told me they don't know what their quota is. He's still closing
+        big deals himself. Before him we had an outside VP who lasted nine
+        months. I'm thinking about doubling his override on team quota to get
+        him focused on running the team instead of closing.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Lex Sisney, author of How to Think About Hiring and creator of the PSIU framework. Walk me through your role-fit process for my head of sales. I'll answer phase by phase."
+      org_brief: |
+        Context: I promoted our best account executive to Head of Sales eight
+        months ago. He was our top closer for three years. Now the forecast is
+        never right, the pipeline review keeps slipping, and two of his reps
+        have told me they don't know what their quota is. He's still closing
+        big deals himself. Before him we had an outside VP who lasted nine
+        months. I'm thinking about doubling his override on team quota to get
+        him focused on running the team instead of closing.
