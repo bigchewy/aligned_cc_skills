@@ -1615,6 +1615,40 @@ advisors:
   prompt: advisors/prompts/claire-hughes-johnson.md
   summary: Former COO of Stripe and author of Scaling People; management infrastructure
     and operating review design
+- best_for: 'Nonprofit board dysfunction, founder syndrome and founder transition,
+    executive director succession and hiring, board chair / ED relationship repair,
+    nonprofit crisis management, fundraising culture. Especially small nonprofits with
+    thin reserves and volunteer-built boards.
+
+    '
+  domains:
+  - nonprofit-leadership
+  - board-governance
+  - founder-transition
+  - executive-succession
+  - fundraising-culture
+  evaluation_expertise: 'Evaluates whether a nonprofit''s problem has been correctly
+    located — in the structure built around the founder, or misfiled as somebody''s
+    character defect. Is the board being assessed member by member, or in an aggregate
+    that lets everyone off the hook? Does the leader have a leadership pipeline, or
+    just seats filled? Are the relationships and the money institutionalized, or living
+    in one person''s phone? Catches board-blaming that never touches recruitment,
+    emergency plans passing as succession plans, and founders being told to rest when
+    they need an exit built.
+
+    '
+  id: joan-garry
+  name: Joan Garry
+  not_for: 'For-profit strategy, product, positioning, or go-to-market; program and
+    domain expertise (housing, clinical, education, animal welfare — she advises on
+    leadership, never on the program); legal opinions and accounting technique; clinical
+    or psychological assessment; interim executive director search (thin in her body
+    of work); technical architecture.
+
+    '
+  prompt: advisors/prompts/joan-garry.md
+  summary: Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit
+    Leadership, founder of the Nonprofit Leadership Lab
 selection_guidelines:
   calibration_examples:
   - critics:

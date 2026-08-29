@@ -1,0 +1,74 @@
+# e2e/scenarios/use-advisor/joan-garry-consult.yaml
+# Quick-consult eval for Joan Garry (nonprofit governance / founder transition)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Joan Garry founder transition consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on GARRY FRAMEWORK SPECIFICITY: Does the response draw on
+        Joan Garry's actual material — the twin-engine jet and co-pilot framing,
+        A/B/C board grading and dead weight, the thirds rule, Friends of the
+        Founder / Make Way for Ducklings boards, "butts in seats" recruitment,
+        organizational readiness rather than succession planning, color-coding
+        donors by whether the money follows the leader out, institutionalizing
+        relationships, the exit press release? Generic nonprofit governance
+        advice ("engage your board", "create a succession plan", "document
+        processes") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE STRUCTURAL REFRAME: Does the response locate the
+        problem in the structure built around the founder rather than in the
+        founder's character? Look for: explicit rejection of founder syndrome
+        as a personality diagnosis, the claim that the founder's traits are why
+        the organization exists, attention to the board that was never built.
+        A response that diagnoses the founder as controlling, ego-driven, or
+        unable to let go scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Joan Garry
+        — second person, funny, blunt, story-first, one-line paragraphs as
+        punches, self-implicating anecdotes (she screwed up her own GLAAD
+        succession, she grabbed the wheel at her own Lab), empathy delivered in
+        one sentence before the hook goes back in? Look for absence of sector
+        jargon ("capacity building", "stakeholder alignment", "governance best
+        practices") and absence of consultant neutrality. Bland advisory tone
+        or a bulleted best-practices list scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CONCRETE NEXT ACTION: Does the response end with named
+        homework — a list to build, a specific person to recruit or ask, a
+        conversation with the board chair, a date — rather than a principle or
+        an encouragement to be more intentional? Vague reassurance or a
+        prioritized theme list scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — exhausted founder, weak board, no ED"
+    vars:
+      system_context: file://../../../advisors/prompts/joan-garry.md
+      task_prompt: "\n\n---\n\nI founded a dog rescue eleven years ago. We have six hourly staff, no executive director, and about three weeks of cash on hand. I'm exhausted and I want out, but I also can't stand the thought of the rescue closing. The board is seven people who are well-intentioned and genuinely care, but none of them have run anything and none of them have money or know people with money. Honestly the place cannot run without me at all — I do intake, I do payroll, I hold every donor relationship. What do I do?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I founded a dog rescue eleven years ago. We have six hourly staff, no executive director, and about three weeks of cash on hand. I'm exhausted and I want out, but I also can't stand the thought of the rescue closing. The board is seven people who are well-intentioned and genuinely care, but none of them have run anything and none of them have money or know people with money. Honestly the place cannot run without me at all — I do intake, I do payroll, I hold every donor relationship. What do I do?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Joan Garry, former executive director of GLAAD and author of Joan Garry's Guide to Nonprofit Leadership. I founded a dog rescue eleven years ago. We have six hourly staff, no executive director, and about three weeks of cash on hand. I'm exhausted and I want out, but I also can't stand the thought of the rescue closing. The board is seven people who are well-intentioned and genuinely care, but none of them have run anything and none of them have money or know people with money. Honestly the place cannot run without me at all — I do intake, I do payroll, I hold every donor relationship. What do I do?"

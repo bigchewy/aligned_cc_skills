@@ -1948,3 +1948,48 @@ frameworks:
   use_when: a leadership team is running operating reviews (monthly, quarterly) that
     produce presentations but not decisions, or where decisions made in the meeting
     get relitigated because nothing was written down
+- advisor: joan-garry
+  category: leadership
+  default_critic_advisors:
+  - joan-garry
+  - ram-charan
+  deliverable_type: analysis
+  domains:
+  - board-governance
+  - nonprofit-leadership
+  - board-development
+  - volunteer-leadership
+  follow_on_frameworks:
+  - organizational-readiness
+  helpful_documents:
+  - board roster
+  - board member giving history
+  id: big-bat-board-assessment
+  name: Joan's Big BAT
+  purpose: grading every board member individually to find out where a board is
+    actually weak and where to invest
+  use_when: a nonprofit leader describes their board as disengaged, dysfunctional,
+    or lacking skill and needs a member-by-member diagnosis instead of an aggregate
+    complaint
+- advisor: joan-garry
+  category: leadership
+  default_critic_advisors:
+  - joan-garry
+  - claire-hughes-johnson
+  deliverable_type: plan
+  domains:
+  - founder-transition
+  - executive-succession
+  - nonprofit-leadership
+  - board-governance
+  - organizational-continuity
+  helpful_documents:
+  - donor and funder list
+  - org chart
+  - board roster
+  id: organizational-readiness
+  name: Organizational Readiness
+  purpose: building a founder-led nonprofit that can survive its founder leaving
+  use_when: a founder or long-tenured executive wants out but believes the organization
+    cannot run without them, or a board needs to prepare for a leadership transition
+    before a search begins

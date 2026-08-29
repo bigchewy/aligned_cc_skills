@@ -1,6 +1,6 @@
 # Framework Registry
 
-114 frameworks across 22 categories
+116 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -13,7 +13,7 @@
 | customer | 1 |
 | evidence | 1 |
 | growth | 7 |
-| leadership | 8 |
+| leadership | 10 |
 | marketing | 1 |
 | negotiation | 3 |
 | onboarding | 4 |
@@ -145,6 +145,8 @@
 | 3b-behavioral-design | 3B Framework (Behavior, Barriers, Benefits) | kristen-berman | behavioral-design | a product, growth, or CX team faces a 'users aren't doing the thing' problem and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit, or changing the target behavior itself |
 | mochary-weekly-check-in | The Weekly Check-In | matt-mochary | operating-cadence | a leadership team or manager-report pair is running status-heavy meetings with no written record of commitments or decisions, or needs to establish a repeatable operating rhythm tied to OKRs |
 | chj-operating-review | Operating Review Design | claire-hughes-johnson | operating-cadence | a leadership team is running operating reviews that produce presentations but not decisions, or where decisions made in the meeting don't stick |
+| big-bat-board-assessment | Joan's Big BAT | joan-garry | leadership | a nonprofit leader describes their board as disengaged, dysfunctional, or lacking skill and needs a member-by-member diagnosis instead of an aggregate complaint |
+| organizational-readiness | Organizational Readiness | joan-garry | leadership | a founder or long-tenured executive wants out but believes the organization cannot run without them, or a board needs to prepare for a leadership transition before a search begins |
 
 ## By Category
 
@@ -202,13 +204,15 @@
 - **product-market-fit-test** — the Product-Market Fit Test (sean-ellis)
 - **smallest-viable-audience** — Smallest Viable Audience (seth-godin)
 
-### Leadership (8)
+### Leadership (10)
 
 - **100-percent-responsibility** — 100% Responsibility (diana-chapman)
 - **above-below-the-line** — Above/Below the Line (diana-chapman)
+- **big-bat-board-assessment** — Joan's Big BAT (joan-garry)
 - **braving-trust-inventory** — BRAVING Trust Inventory (brene-brown)
 - **clearing-model** — The Clearing Model to resolve relationship tensions (diana-chapman)
 - **leadership-pipeline-passages** — the Leadership Pipeline Passages (ram-charan)
+- **organizational-readiness** — Organizational Readiness (joan-garry)
 - **management-level-progression** — the Management Level Progression framework (lara-hogan)
 - **performance-standards-by-level** — Performance Standards by Level (ram-charan)
 - **pillars-of-integrity** — the Four Pillars of Integrity (jim-dethmer)

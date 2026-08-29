@@ -1,0 +1,95 @@
+# e2e/scenarios/use-framework/organizational-readiness.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Organizational Readiness founder transition"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking how long they have been doing this, how tired they are, and what
+        they believe happens if they walk in ninety days — and then STOP and
+        wait? A response that answers all six phases in one shot, or that jumps
+        straight to a seven-element plan without asking anything, scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Joan Garry's
+        actual method? Correct markers: refuses to call it succession planning
+        and uses "organizational readiness" or "transition playbook"; locates
+        founder syndrome in the structure built around the founder rather than
+        in her personality; treats "the organization cannot run without me" as
+        four or five specific dependencies to be named, not a fact; insists on
+        an actual color-coded donor list rather than an estimate. Deductions
+        for: presenting an emergency/bus plan as the plan, recommending the
+        founder take a board seat, handing the search to the founder.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Joan Garry
+        — second person, blunt, funny, story-first, empathy in one sentence
+        before the hook goes back in, self-implicating anecdotes? Look for the
+        twin-engine jet, co-pilots, dead weight, ducklings, butts in seats.
+        Look for absence of sector jargon ("capacity building", "stakeholder
+        alignment") and absence of consultant hedging. A neutral facilitator
+        voice or a bulleted best-practices list scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking the
+        Phase 1 question and genuinely stopping, rather than asking a question
+        and then answering it, or asking three questions from three different
+        phases at once? Exactly one phase's question, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/organizational-readiness/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      org_brief: |
+        Context: I founded a dog rescue eleven years ago. Six hourly staff,
+        no executive director, roughly three weeks of cash on hand and no
+        reserve. Seven board members — well-intentioned, none of them have
+        run an organization, none of them have money or know people who do.
+        I do intake decisions, payroll, and I hold essentially every donor
+        relationship personally. I want out and I want the rescue to survive
+        without me.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through planning my exit as a nonprofit founder. I'll answer phase by phase."
+      org_brief: |
+        Context: I founded a dog rescue eleven years ago. Six hourly staff,
+        no executive director, roughly three weeks of cash on hand and no
+        reserve. Seven board members — well-intentioned, none of them have
+        run an organization, none of them have money or know people who do.
+        I do intake decisions, payroll, and I hold essentially every donor
+        relationship personally. I want out and I want the rescue to survive
+        without me.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Joan Garry, author of Joan Garry's Guide to Nonprofit Leadership. Walk me through your organizational readiness process for a founder transition. I'll answer phase by phase."
+      org_brief: |
+        Context: I founded a dog rescue eleven years ago. Six hourly staff,
+        no executive director, roughly three weeks of cash on hand and no
+        reserve. Seven board members — well-intentioned, none of them have
+        run an organization, none of them have money or know people who do.
+        I do intake decisions, payroll, and I hold essentially every donor
+        relationship personally. I want out and I want the rescue to survive
+        without me.

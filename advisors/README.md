@@ -1,6 +1,6 @@
 # Advisor Registry
 
-60 advisors | 60 profiled | 0 unprofiled
+61 advisors | 61 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -66,6 +66,7 @@
 | kristen-berman | Kristen Berman | behavioral-design, product-growth, retention, onboarding, conversion, behavioral-economics, behavioral-experimentation, trust-and-safety | CEO and co-founder of Irrational Labs; behavioral-product-design practitioner |
 | matt-mochary | Matt Mochary | operating-cadence, executive-coaching, okrs, meeting-design, written-communication | CEO coach and creator of the Mochary Method; written-culture operating system for leadership teams |
 | claire-hughes-johnson | Claire Hughes Johnson | operating-cadence, management-infrastructure, scaling, decision-making, written-communication | Former COO of Stripe and author of Scaling People; management infrastructure and operating review design |
+| joan-garry | Joan Garry | nonprofit-leadership, board-governance, founder-transition, executive-succession, fundraising-culture | Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit Leadership, founder of the Nonprofit Leadership Lab |
 
 ## Profiled Advisors
 
@@ -133,6 +134,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Kristen Berman** | Evaluates whether product, growth, and retention work is grounded in behavioral diagnosis or just running on "best practice" reflex |
 | **Matt Mochary** | Evaluates whether the operating system is written-first and decision-focused |
 | **Claire Hughes Johnson** | Evaluates whether operating reviews are structured for decisions or presentations |
+| **Joan Garry** | Evaluates whether a nonprofit's problem has been located in the structure built around the founder, or misfiled as somebody's character defect |
 
 ## Selection Guidelines
 
