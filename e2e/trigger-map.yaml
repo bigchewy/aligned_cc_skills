@@ -183,3 +183,10 @@ triggers:
       - frameworks/psiu-role-fit/anti-examples.md
     scenarios:
       - scenarios/use-framework/psiu-role-fit.yaml
+
+  - paths:
+      - frameworks/lifecycle-strategy/prompt.md
+      - frameworks/lifecycle-strategy/examples.md
+      - frameworks/lifecycle-strategy/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/lifecycle-strategy.yaml

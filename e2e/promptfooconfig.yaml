@@ -52,3 +52,4 @@ scenarios:
   - file://scenarios/use-advisor/lex-sisney-consult.yaml
   - file://scenarios/use-framework/rules-of-structure.yaml
   - file://scenarios/use-framework/psiu-role-fit.yaml
+  - file://scenarios/use-framework/lifecycle-strategy.yaml

@@ -2042,3 +2042,29 @@ frameworks:
   use_when: a leader is about to hire or promote into a key seat, is deciding whether
     a struggling executive is the wrong person or in the wrong seat, or has a board
     and hiring manager who cannot agree on what a role requires
+- advisor: lex-sisney
+  category: strategy
+  default_critic_advisors:
+  - lex-sisney
+  - eric-ries
+  deliverable_type: analysis
+  domains:
+  - lifecycle-strategy
+  - product-market-fit
+  - scaling
+  - portfolio-sequencing
+  - execution-stage
+  follow_on_frameworks:
+  - rules-of-structure
+  helpful_documents:
+  - product list with revenue by product
+  - customer list or segment breakdown
+  - org chart
+  id: lifecycle-strategy
+  name: Lifecycle Strategy
+  purpose: finding out where each product, its market, and the company's ability
+    to execute actually sit on their lifecycles, and whether the three are aligned
+  use_when: a company is deciding whether to launch or spin out a second product,
+    is building scale infrastructure for a product that may not have product-market
+    fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow
+    execution is a product, market, or company-stage problem

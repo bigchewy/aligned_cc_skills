@@ -1,6 +1,6 @@
 # Framework Registry
 
-118 frameworks across 22 categories
+119 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -25,7 +25,7 @@
 | sales | 5 |
 | social-media | 9 |
 | startup | 7 |
-| strategy | 23 |
+| strategy | 24 |
 
 ## Quick Reference
 
@@ -149,6 +149,7 @@
 | organizational-readiness | Organizational Readiness | joan-garry | leadership | a founder or long-tenured executive wants out but believes the organization cannot run without them, or a board needs to prepare for a leadership transition before a search begins |
 | rules-of-structure | The Rules of Structure | lex-sisney | leadership | a scaling company cannot reach escape velocity despite a clear strategy, keeps repeating the same execution mistakes, has one seat that keeps failing hires, or has a founder who is still the bottleneck on decisions the structure should have taken off them |
 | psiu-role-fit | PSIU Role Fit | lex-sisney | leadership | a leader is about to hire or promote into a key seat, is deciding whether a struggling executive is the wrong person or in the wrong seat, or has a board and hiring manager who cannot agree on what a role requires |
+| lifecycle-strategy | Lifecycle Strategy | lex-sisney | strategy | a company is deciding whether to launch or spin out a second product, is building scale infrastructure for a product that may not have product-market fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow execution is a product, market, or company-stage problem |
 
 ## By Category
 
@@ -310,7 +311,7 @@
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 
-### Strategy (23)
+### Strategy (24)
 
 - **5-step-process** — 5-Step Process (ray-dalio)
 - **6-step-process** — 6-Step Process (wise-eric)
@@ -325,6 +326,7 @@
 - **idiot-index** — the Idiot Index to identify cost reduction opportunities (elon-musk)
 - **jobs-to-be-done** — Jobs to Be Done (clayton-christensen)
 - **kernel-of-good-strategy** — building a complete strategy using the kernel (richard-rumelt)
+- **lifecycle-strategy** — Lifecycle Strategy (lex-sisney)
 - **past-year-review** — the Past Year Review (PYR) (tim-ferriss)
 - **personal-resource-allocation** — Personal Resource Allocation (clayton-christensen)
 - **professional-context-intake** — Professional Context Intake (wise-eric)

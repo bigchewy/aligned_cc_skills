@@ -1,0 +1,98 @@
+# e2e/scenarios/use-framework/lifecycle-strategy.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Lifecycle Strategy product/market/execution fit"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking for the inventory of products with revenue share and growth
+        direction, and which one the user is most worried or excited about —
+        and then STOP and wait? A response that stages the products, names the
+        market, diagnoses teen pregnancy, and recommends a move in one shot
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Lex
+        Sisney's actual method? Correct markers: insists on "where are we now"
+        before "what should we do next"; plans to plot three lifecycles
+        (product: Pilot/Nail/Scale/Milk/Kill; market: innovators through
+        laggards; execution: Birth psIu through Maturity PSIu) and check their
+        alignment; treats stage as set by evidence such as repeat purchase and
+        who is actually paying, not by the roadmap; refuses to answer the
+        spin-out question before plotting. Deductions for: recommending a
+        business unit, sales team, or spin-out before staging; accepting
+        "growing fast" as a stage; skipping the execution lifecycle.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Lex Sisney
+        — calm, first person, teacherly, the sailing or physics framing
+        (currents, tides, seasons; a pyramid with one side out of balance),
+        a rhetorical question then the answer, "here's the catch", PSIU stage
+        codes used without apology, short exhale lines? Look for absence of
+        strategy-consultant jargon ("adjacencies", "TAM expansion", "strategic
+        optionality") and absence of a bulleted options list. A neutral
+        facilitator voice scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking the
+        Phase 1 inventory question and genuinely stopping, rather than asking
+        and then answering, or asking questions from several phases at once?
+        Exactly one phase's questions, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/lifecycle-strategy/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      org_brief: |
+        Context: Our core scheduling platform is 85% of revenue and growing
+        40% a year - we turn away deals we can't onboard. Six months ago we
+        launched an analytics add-on; it's 15% of revenue, 22 customers, all
+        from our existing base, about half renewed once. I've put two
+        engineers on analytics, given it a sales quota, and I want to spin it
+        out as its own business unit. Series A company, 35 people, I'm the
+        founder and still the tiebreaker on every product decision.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through figuring out whether to spin out my second product as its own business unit. I'll answer phase by phase."
+      org_brief: |
+        Context: Our core scheduling platform is 85% of revenue and growing
+        40% a year - we turn away deals we can't onboard. Six months ago we
+        launched an analytics add-on; it's 15% of revenue, 22 customers, all
+        from our existing base, about half renewed once. I've put two
+        engineers on analytics, given it a sales quota, and I want to spin it
+        out as its own business unit. Series A company, 35 people, I'm the
+        founder and still the tiebreaker on every product decision.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Lex Sisney, author of Organizational Physics. Walk me through your lifecycle strategy process - product, market, and execution fit - for my company. I'll answer phase by phase."
+      org_brief: |
+        Context: Our core scheduling platform is 85% of revenue and growing
+        40% a year - we turn away deals we can't onboard. Six months ago we
+        launched an analytics add-on; it's 15% of revenue, 22 customers, all
+        from our existing base, about half renewed once. I've put two
+        engineers on analytics, given it a sales quota, and I want to spin it
+        out as its own business unit. Series A company, 35 people, I'm the
+        founder and still the tiebreaker on every product decision.
