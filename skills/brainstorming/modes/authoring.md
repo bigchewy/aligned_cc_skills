@@ -95,11 +95,11 @@ Ask questions one at a time to refine the idea. Before asking each question, cla
    - **Content structure decisions** (sequence, grouping, coverage hierarchy, arrangement) → run the {topic_advisor} auto-consult (below).
    - **Layout/usability decisions** (scanning, navigation, labeling, user flow, conventions) → consult Steve Krug (`advisors/prompts/steve-krug.md`) using the same auto-consult dispatch pattern, substituting Krug's prompt for {topic_advisor}'s.
    - **Both apply?** Consult both in parallel.
-3. Dispatch the mockup-generator agent with the advisor-refined options to create a comparison mockup with all options as switchable tabs. Use this dispatch template — replace placeholders with actual values. Uses `subagent_type=general-purpose`.
+3. Invoke the `design` skill directly (Skill tool, `skill: "design"`) with the advisor-refined options, asking for one artboard per option on a single canvas. Use this args template — replace placeholders with actual values:
 
-   "Read `agents/mockup-generator.md` for your full workflow. Generate a comparison mockup showing {number} approach options for: {brief description of what's being compared}. Project root: `{project-root}`. Brainstorming session topic: `{topic}`. Create a single HTML file at `docs/mockups/{session-name}/approach-comparison.html` with tabbed navigation to switch between options. Each tab should be labeled with the approach name and include a short description of the trade-offs. Open the file in the browser after generating."
+   "Compare {number} approach options for: {brief description of what's being compared}. One artboard per option, laid out on a single canvas so they can be viewed side by side. Label each artboard with the approach name and a short description of the trade-offs. Brainstorming session topic: {topic}."
 
-4. After the user has reviewed the HTML mockup in the browser, proceed with the approach selection question.
+4. After the user has reviewed the design in the published Artifact, proceed with the approach selection question.
 
 **{topic_advisor} auto-consult:**
 
