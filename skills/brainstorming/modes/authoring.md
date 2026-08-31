@@ -99,6 +99,8 @@ Ask questions one at a time to refine the idea. Before asking each question, cla
 
    "Compare {number} approach options for: {brief description of what's being compared}. One artboard per option, laid out on a single canvas so they can be viewed side by side. Label each artboard with the approach name and a short description of the trade-offs. Brainstorming session topic: {topic}."
 
+If the `design` skill isn't available, present the options with the visualization runner (`skills/_shared/visualization-runner.md`) instead.
+
 4. After the user has reviewed the design in the published Artifact, proceed with the approach selection question.
 
 **{topic_advisor} auto-consult:**

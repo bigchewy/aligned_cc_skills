@@ -285,8 +285,6 @@ graph LR
     Ralph --> Finish
 
     Brain -.-> PS["project-scanner"]
-    Brain -.-> SDG["session-doc-gen"]
-    Brain -.-> MG["mockup-generator"]
     Finish -.-> CS["code-simplifier"]
     Finish -.-> CR["code-reviewer"]
 
@@ -374,7 +372,7 @@ graph LR
         <ul class="bullet-list">
           <li><strong>Business questions:</strong> asked directly to the user — product direction, scope, UX preferences</li>
           <li><strong>Technical questions:</strong> routed to The Architect via sub-agent (model=opus)</li>
-          <li><strong>UI options:</strong> Steve Krug consulted for UX; mockup-generator dispatched for comparison mockups</li>
+          <li><strong>UI options:</strong> Steve Krug consulted for UX; the `design` skill invoked for comparison mockups</li>
           <li><strong>Scan gate:</strong> Architect not dispatched until project-scanner completes</li>
         </ul>
         <div class="diagram-container">
@@ -423,7 +421,7 @@ graph LR
         <h3>Post-Design (All Modes)</h3>
         <ul class="bullet-list">
           <li><strong>Design doc:</strong> written to <code>docs/plans/YYYY-MM-DD-topic-design.md</code></li>
-          <li><strong>session-document-generator:</strong> produces tabbed HTML visualization from design doc</li>
+          <li><strong>Visualization runner:</strong> produces the tabbed HTML artifact from design doc</li>
           <li><strong>Critique panel:</strong> 2-4 advisors evaluate in parallel; fact-checker verifies all codebase claims</li>
           <li><strong>Visualization refresh:</strong> re-dispatched if design doc changed after critique</li>
         </ul>

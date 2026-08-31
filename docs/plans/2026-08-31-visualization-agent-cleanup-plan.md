@@ -218,6 +218,8 @@ session-document-generator, was deleted in the prior commit) and is deleted."
 
 ### Task 3: Bump the plugin version
 
+**Superseded during execution:** this repo's pre-commit hook (`scripts/hooks/pre-commit`) auto-bumps both manifest files whenever a commit touches shipped-content paths. Task 2's commit modified `skills/brainstorming/modes/authoring.md`, which triggered the hook and produced exactly this task's target state (0.33.6 → 0.33.7) as a side effect. This task's steps below were not executed separately — the target state they describe was already reached. See commit `893dbc9` and the SDD ledger for the full story (an incorrect revert-and-restore happened along the way before this was understood).
+
 **Files:**
 - Modify: `.claude-plugin/plugin.json`
 - Modify: `.claude-plugin/marketplace.json`

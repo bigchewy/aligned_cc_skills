@@ -86,6 +86,8 @@ by hand — reading the rewired dispatch template end to end and confirming it r
 a valid `design` skill call — not by an automated test, consistent with how the rest
 of this plugin's skill/agent markdown is verified.
 
+The shipped args template omits `{project-root}`: the `design` skill runs in-session with the same working directory, unlike the old subagent dispatch, which had to be told the project root explicitly because it started with none.
+
 ## Out of scope
 
 - No changes to `skills/_shared/visualization-runner.md`, `visualization-protocol.md`,
