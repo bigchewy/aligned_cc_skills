@@ -18,3 +18,4 @@ docs/kanban/board.html
 *.draft.pass1.yaml
 __pycache__/
 .ralph-blocked-snapshot
+.superpowers/
