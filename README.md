@@ -103,12 +103,8 @@ This plugin is distributed to many users. It intentionally does not ship anythin
 
 | Agent | Description |
 |-------|-------------|
-| architecture-diagram-generator | Architecture diagrams with SVG and architecture.md updates |
 | artifact-verifier | 98% accuracy gate for document fact-checking |
 | critique-interactive-html-generator | Interactive HTML for accept/reject decisions on brainstorming critique findings, with copy-as-prompt round-trip |
-| flowchart-generator | Mermaid.js flowcharts for data flows, processes, and decision trees |
-| mockup-generator | Self-contained HTML mockups for design-phase visualization |
-| session-document-generator | Orchestrates diagram agents to produce consolidated tabbed HTML documents |
 | project-scanner | Fast codebase scan for brainstorming context (languages, structure, dependencies) |
 
 ### Hooks
