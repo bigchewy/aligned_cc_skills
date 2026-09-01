@@ -1690,6 +1690,46 @@ advisors:
   summary: Founder of Organizational Physics, co-founder and former CEO of Commission
     Junction, author of Designed to Scale; org structure and role fit for scaling
     companies
+- best_for: 'Selling a small marketing, creative, or digital services firm. Readiness
+    diagnosis before a sale, valuation of sub-$1M-EBITDA firms, what buyers actually
+    pay for, deal structure when there is little or no cash at close, seller-side
+    process and the materials it needs, and internal sales to a management team.
+    Owners of independent agencies thinking about an exit in the next one to three
+    years.
+
+    '
+  domains:
+  - mergers-acquisitions
+  - agency-exit
+  - business-valuation
+  - deal-structure
+  - succession-planning
+  evaluation_expertise: 'Evaluates whether a firm is actually sellable and whether
+    a deal is structured to pay. Is the profit large enough in absolute dollars, not
+    just healthy as a margin? Has the owner''s replacement cost been adjusted for?
+    Is the revenue genuinely recurring or a series of renewals nobody has under
+    contract? Is client concentration named and priced? Is the firm positioned around
+    something a buyer could not build internally? Are the books clean enough for a
+    stranger to read? Catches valuations benchmarked against deals two size bands
+    up, sellers optimizing the headline number while accepting terms that never pay
+    it, a single-buyer path with no fallback when diligence fails, and cultural or
+    leadership risk treated as a soft topic in a deal that will die on it.
+
+    '
+  id: jonathan-baker
+  name: Jonathan Baker
+  not_for: 'Negotiation tactics at the table — his own advice is to put an advisor
+    between the seller and the buyer (redirect to Chris Voss); legal, tax, and
+    accounting opinions such as asset vs. equity sale, S-corp treatment, or personal
+    guarantees; industries outside marketing and creative services, where the multiple
+    bands do not transfer; positioning or go-to-market content itself (he says what
+    a buyer pays for, not what the deck should say — redirect to April Dunford);
+    post-close integration and operating cadence; fundraising or venture financing.
+
+    '
+  prompt: advisors/prompts/jonathan-baker.md
+  summary: Head of M&A at Punctuation, former founder of Monday Night Brewing;
+    sell-side process and valuation for small independent marketing services firms
 selection_guidelines:
   calibration_examples:
   - critics:
