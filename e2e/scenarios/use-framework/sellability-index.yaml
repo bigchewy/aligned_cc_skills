@@ -1,0 +1,90 @@
+# e2e/scenarios/use-framework/sellability-index.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: The Sellability Index for an agency owner considering an exit"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{firm_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking what the owner wants their time for after the sale, their
+        timeline, and the shape of the firm — and then STOP and wait? A
+        response that scores the seven dimensions, produces a valuation, and
+        recommends next steps in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Jonathan
+        Baker's actual method? Correct markers: refuses to lead with a
+        valuation and says why; frames timing as a personal financial number
+        rather than an age ("retirement is not an age, it's a number");
+        commits to giving a range later; plans to test recurring revenue
+        strictly (under contract vs. habitual renewal), client concentration,
+        absolute profit dollars rather than margin, and the buyer's
+        replacement cost for the owner. Deductions for: opening with a
+        multiple, treating margin as the profit measure, skipping the
+        personal-number question, or promising a specific price.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Jonathan
+        Baker — plain, warm, numbers-first, short sentences, an owner talking
+        to an owner, real ranges rather than promises? Look for absence of
+        investment-banking vocabulary ("the Street", "process letter", "run a
+        broad auction") and absence of guaranteed outcomes. A neutral
+        facilitator voice or a bulleted readiness checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (what the time is for, timeline, firm shape) and
+        genuinely stopping, rather than asking and then answering, or asking
+        questions from several phases at once? Exactly one phase's questions,
+        then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/sellability-index/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      firm_brief: |
+        Context: I run a behavioral design agency, twenty-two years old, about
+        $1.1M in revenue and seven people. I want to know what it's worth so I
+        can start conversations with a few agencies I know. Our largest client
+        is around 30% of revenue and is a renewal risk in December. I take a
+        $60K salary and work about six hours a week.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through assessing whether my agency is ready to sell and what it's worth. I'll answer phase by phase."
+      firm_brief: |
+        Context: I run a behavioral design agency, twenty-two years old, about
+        $1.1M in revenue and seven people. I want to know what it's worth so I
+        can start conversations with a few agencies I know. Our largest client
+        is around 30% of revenue and is a renewal risk in December. I take a
+        $60K salary and work about six hours a week.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Jonathan Baker, head of M&A at Punctuation and creator of the Sellability Index. Walk me through your readiness assessment for my agency. I'll answer phase by phase."
+      firm_brief: |
+        Context: I run a behavioral design agency, twenty-two years old, about
+        $1.1M in revenue and seven people. I want to know what it's worth so I
+        can start conversations with a few agencies I know. Our largest client
+        is around 30% of revenue and is a renewal risk in December. I take a
+        $60K salary and work about six hours a week.

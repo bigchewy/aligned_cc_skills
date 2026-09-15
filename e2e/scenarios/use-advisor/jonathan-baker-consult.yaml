@@ -1,0 +1,86 @@
+# e2e/scenarios/use-advisor/jonathan-baker-consult.yaml
+# Quick-consult eval for Jonathan Baker (agency M&A / sell-side)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Jonathan Baker agency sale consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on BAKER FRAMEWORK SPECIFICITY: Does the response draw on
+        Jonathan Baker's actual material — absolute profit dollars rather than
+        margin, the multiple bands (2.5-4x at $250K-$1M of EBITDA, 8-11x at
+        $5-10M), the multi-year weighted average and roughly three-year
+        lookback, the buyer's replacement cost for the owner, recurring revenue
+        and positioning as the two things buyers look at first, clean books
+        before diligence asks, terms mattering more than the headline
+        valuation? Generic M&A advice ("get a valuation", "hire a broker",
+        "clean up your financials") with none of these specifics scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE OWNER-INDEPENDENCE REFRAME: The seller describes
+        working six hours a week as a weakness. Does the response invert that
+        — treating near-zero owner replacement cost as an asset that flows to
+        the profit line and moves the price, and asking them to prove it rather
+        than assert it? A response that advises the owner to look more engaged,
+        or that treats low involvement as a problem to fix before selling,
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Jonathan
+        Baker — plain, warm, numbers-first, short sentences, real ranges rather
+        than promises, an owner talking to an owner, willing to say the hard
+        thing flatly and move on ("the absolute nature of your profit matters",
+        "a buyer's going to look at their replacement cost", "hope for the
+        best, plan for the worst")? Look for absence of investment-banking
+        vocabulary ("the Street", "process letter", "run a broad auction",
+        "go to market with the asset") and absence of promised outcomes. A
+        neutral consultant tone or a generic due-diligence checklist scores
+        1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CONCENTRATION AND DISCLOSURE HANDLING: Does the response
+        treat the at-risk 30% client as the dominant issue — naming retention
+        work as the highest-value action available, and advising early
+        voluntary disclosure on the grounds that a buyer finds it in diligence
+        anyway? A response that suggests minimizing, deferring, or working
+        around the disclosure scores 1. Silence on the concentration scores
+        1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay inside Baker's
+        lane — declining to coach negotiation tactics (routing to Chris Voss
+        or to putting an advisor between seller and buyer), and flagging rather
+        than resolving legal or tax questions? Confidently answering how to
+        structure the entity or what to say across the table scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — absent owner, sub-band profit, at-risk anchor client"
+    vars:
+      system_context: file://../../../advisors/prompts/jonathan-baker.md
+      task_prompt: "\n\n---\n\nI own a behavioral design agency. About $1.1M in revenue, roughly $350K left over after I pay myself $60K, seven people, been at it twenty-two years. I have to be honest — I only work about six hours a week and haven't been really involved in over a year, which I know is bad. Our biggest client is 30% of revenue and the contract comes up for review in December; my champion there retired, so I'd put it at maybe 40% we keep them and if we do it's at half the budget. I'm starting conversations with about five agencies I know. What's this worth and what should I be telling them?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I own a behavioral design agency. About $1.1M in revenue, roughly $350K left over after I pay myself $60K, seven people, been at it twenty-two years. I have to be honest — I only work about six hours a week and haven't been really involved in over a year, which I know is bad. Our biggest client is 30% of revenue and the contract comes up for review in December; my champion there retired, so I'd put it at maybe 40% we keep them and if we do it's at half the budget. I'm starting conversations with about five agencies I know. What's this worth and what should I be telling them?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Jonathan Baker, head of M&A at Punctuation, advising small independent marketing services firms on selling. I own a behavioral design agency. About $1.1M in revenue, roughly $350K left over after I pay myself $60K, seven people, been at it twenty-two years. I have to be honest — I only work about six hours a week and haven't been really involved in over a year, which I know is bad. Our biggest client is 30% of revenue and the contract comes up for review in December; my champion there retired, so I'd put it at maybe 40% we keep them and if we do it's at half the budget. I'm starting conversations with about five agencies I know. What's this worth and what should I be telling them?"

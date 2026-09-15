@@ -2068,3 +2068,29 @@ frameworks:
     is building scale infrastructure for a product that may not have product-market
     fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow
     execution is a product, market, or company-stage problem
+- advisor: jonathan-baker
+  category: strategy
+  default_critic_advisors:
+  - jonathan-baker
+  - patrick-campbell
+  deliverable_type: analysis
+  domains:
+  - mergers-acquisitions
+  - agency-exit
+  - business-valuation
+  - succession-planning
+  - owner-dependence
+  helpful_documents:
+  - profit and loss statements for the last three years
+  - revenue by client for the last twelve months
+  - owner's compensation, distributions, and actual weekly hours
+  - client contracts or retainer agreements
+  - org chart or list of who owns which client relationship
+  id: sellability-index
+  name: The Sellability Index
+  purpose: finding out how ready a marketing services firm actually is to be sold,
+    and what would have to change before it is
+  use_when: an agency or services-firm owner is considering an exit in the next one
+    to three years, wants to know what their firm is worth and why, is preparing
+    material for a buyer conversation, or is weighing a sale to their own management
+    team against an outside buyer

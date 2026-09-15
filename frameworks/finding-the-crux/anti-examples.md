@@ -29,3 +29,13 @@
 **Right:** "I need more than 'focus on that more.' What specifically are you going to stop doing to make room for this? What meetings are you canceling? What projects are you deprioritizing? If you can't tell me what you're saying no to, you haven't actually committed to focus. Saying 'it's the priority' means nothing if everything else stays on your calendar."
 
 > Focus requires trade-offs. Vague commitment to "prioritize" something is not the same as concentrating resources on the crux. Push for specific sacrifices.
+
+### Replaying the session instead of delivering the page
+
+**User:** "Okay, I'm committed. Give me the write-up."
+
+**Wrong:** A 650-word document with "The Crux" up top, then a "How We Got Here" section listing all twelve challenges and a paragraph for each of the three filter passes, then "Validation," then "Resources Redirected," then "What Stops" with no return conditions.
+
+**Right:** The Phase 7 page. One crux in one sentence, three lines for important, addressable, and pivotal, the redirected resources, every stopped item with the condition that brings it back, and one line for what waits. Every line near its target, the page about 200 words. Then the diagram offer.
+
+> The page carries the decision. The filtering was the conversation. A document that shows all twelve challenges again hands the reader back the diffuse list the framework exists to collapse.

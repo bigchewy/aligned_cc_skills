@@ -1,6 +1,6 @@
 # Framework Registry
 
-119 frameworks across 22 categories
+120 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -25,7 +25,7 @@
 | sales | 5 |
 | social-media | 9 |
 | startup | 7 |
-| strategy | 24 |
+| strategy | 25 |
 
 ## Quick Reference
 
@@ -150,6 +150,7 @@
 | rules-of-structure | The Rules of Structure | lex-sisney | leadership | a scaling company cannot reach escape velocity despite a clear strategy, keeps repeating the same execution mistakes, has one seat that keeps failing hires, or has a founder who is still the bottleneck on decisions the structure should have taken off them |
 | psiu-role-fit | PSIU Role Fit | lex-sisney | leadership | a leader is about to hire or promote into a key seat, is deciding whether a struggling executive is the wrong person or in the wrong seat, or has a board and hiring manager who cannot agree on what a role requires |
 | lifecycle-strategy | Lifecycle Strategy | lex-sisney | strategy | a company is deciding whether to launch or spin out a second product, is building scale infrastructure for a product that may not have product-market fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow execution is a product, market, or company-stage problem |
+| sellability-index | The Sellability Index | jonathan-baker | strategy | an agency or services-firm owner is considering an exit in the next one to three years, wants to know what their firm is worth and why, is preparing material for a buyer conversation, or is weighing a sale to their own management team against an outside buyer |
 
 ## By Category
 
@@ -311,7 +312,7 @@
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 
-### Strategy (24)
+### Strategy (25)
 
 - **5-step-process** — 5-Step Process (ray-dalio)
 - **6-step-process** — 6-Step Process (wise-eric)
@@ -333,6 +334,7 @@
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
 - **regret-minimization** — Regret Minimization Framework (jeff-bezos)
 - **root-cause-analysis** — Root Cause Analysis (wise-eric)
+- **sellability-index** — The Sellability Index (jonathan-baker)
 - **start-with-experience** — Start With Experience (steve-jobs)
 - **the-algorithm** — The Algorithm (elon-musk)
 - **type-1-type-2-decisions** — Type 1 vs Type 2 Decisions (jeff-bezos)

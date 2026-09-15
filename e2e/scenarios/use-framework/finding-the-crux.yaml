@@ -1,0 +1,83 @@
+# e2e/scenarios/use-framework/finding-the-crux.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# The deliverable under test is the Phase 7 page: one crux, why it passes
+# the three filters, what moves toward it, what stops (with return
+# conditions), and what waits. Length discipline is scored explicitly.
+
+description: "Framework: Finding the Crux one-page deliverable"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SINGLE CRUX: Does the final document name exactly one
+        crux — one challenge that is important, addressable, and pivotal —
+        rather than a prioritized list or a set of top-three priorities?
+        Score 5 for one crux stated in a single sentence with the three
+        filters each justified. Score 1 for a ranked list or multiple
+        "focus areas".
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LENGTH DISCIPLINE: Count the words in the final crux
+        document only (ignore the preceding conversation). Score 5 if it
+        is 200 words or fewer. Score 4 if 201-240. Score 3 if 241-350.
+        Score 2 if 351-600. Score 1 if over 600 words or if the document replays
+        the full challenge list and filter reasoning (a "how we got here"
+        section) instead of carrying only the decision.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FOCUS COMMITMENT: Does the document name what is
+        being stopped or refused to make room for the crux, and does each
+        stopped item carry the condition that brings it back? Score 5 for
+        3-6 stopped items each with a return condition plus named
+        redirected resources. Score 3 for stopped items without
+        conditions. Score 1 for "prioritize it more" with nothing stopped.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LOCK DISCIPLINE: Read the conversation before the
+        final page. Did the advisor state the crux back as one sentence
+        when validating it, and state the redirect and stop lines back at
+        size (with a condition on every stop) before assembling the page?
+        Score 5 if both were stated at size in the phase that produced
+        them and the final page reuses those lines verbatim. Score 3 if
+        elements were restated but reshaped or shortened at the end.
+        Score 1 if the page was written fresh at the end.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SPECIFICITY: Is the crux grounded in the specific
+        company (DataForge, mid-market data engineering teams, the
+        Airflow/cron/Slack incumbent, a 12-person team)? Generic advice
+        applicable to any B2B SaaS scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/finding-the-crux/prompt.md
+      task_prompt: "\n\n---\n\nThere is no live user. Simulate the user's answers from the company brief, run every phase in order, and finish by delivering the final written output exactly as the framework specifies."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "What is the single most important challenge this company should focus on, and what should it stop doing?"
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Richard Rumelt's 'finding the crux' method (filter challenges by importance, addressability, and pivotality) to identify this company's crux and what it should stop doing. Deliver the final written output."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md

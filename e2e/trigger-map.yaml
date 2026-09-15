@@ -190,3 +190,29 @@ triggers:
       - frameworks/lifecycle-strategy/anti-examples.md
     scenarios:
       - scenarios/use-framework/lifecycle-strategy.yaml
+
+  - paths:
+      - advisors/prompts/jonathan-baker.md
+    scenarios:
+      - scenarios/use-advisor/jonathan-baker-consult.yaml
+
+  - paths:
+      - frameworks/sellability-index/prompt.md
+      - frameworks/sellability-index/examples.md
+      - frameworks/sellability-index/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/sellability-index.yaml
+
+  - paths:
+      - frameworks/kernel-of-good-strategy/prompt.md
+      - frameworks/kernel-of-good-strategy/examples.md
+      - frameworks/kernel-of-good-strategy/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/kernel-of-good-strategy.yaml
+
+  - paths:
+      - frameworks/finding-the-crux/prompt.md
+      - frameworks/finding-the-crux/examples.md
+      - frameworks/finding-the-crux/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/finding-the-crux.yaml
