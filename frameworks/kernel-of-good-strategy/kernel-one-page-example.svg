@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660">
+  <!--
+    The strategy kernel on one page: reference layout for the
+    kernel-of-good-strategy framework's page one. Content is REM Medical's
+    strategy kernel (a sleep-medicine company that no longer exists), used
+    with its founder's permission. Purpose, challenge, guiding policy, key
+    actions, owners, and the year's goals are from the original plan.
+
+    Page one is what the company is doing. The kill list, the assumptions,
+    and the detail behind each action live on the deck pages
+    (build-example-deck.py), not here.
+
+    Swap every line of text for the user's locked lines; keep the boxes.
+    Colors and font are a neutral default; replace them with the project's
+    design-principles.md tokens when one exists.
+
+    Page one carries the strategy, about 200 words:
+      Purpose banner (one line, optional)
+      Challenge (one sentence) + Guiding policy (one sentence)
+      Three key-action cards: title, owner, this year's goals with owners
+  -->
+  <defs>
+    <style>
+      text {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="660" fill="#faf9f7"/>
+
+  <!-- Title -->
+  <text x="600" y="42" text-anchor="middle" fill="#1a1a1a" font-size="22" font-weight="700" letter-spacing="2">REM MEDICAL STRATEGY KERNEL</text>
+
+  <!-- ============================================================ -->
+  <!-- PURPOSE BANNER -->
+  <!-- ============================================================ -->
+  <rect x="40" y="66" width="1120" height="62" rx="12" ry="12" fill="#e8ebf2" stroke="#1e2847" stroke-width="1.5"/>
+  <text x="68" y="101" fill="#1e2847" font-size="11" font-weight="700" letter-spacing="1">PURPOSE</text>
+  <text x="620" y="104" text-anchor="middle" fill="#1e2847" font-size="19" font-weight="700">Enable people to lead a happier, healthier life starting with a better night's sleep</text>
+
+  <!-- Arrow: purpose to kernel -->
+  <polygon points="582,136 618,136 600,152" fill="#1e2847"/>
+
+  <!-- ============================================================ -->
+  <!-- CHALLENGE + GUIDING POLICY (label and sentence share a baseline, centered in each band) -->
+  <!-- ============================================================ -->
+  <rect x="40" y="164" width="1120" height="124" rx="12" ry="12" fill="#f5f3ef" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Challenge band: y 164-226, center 195 -->
+  <text x="68" y="199" fill="#1e2847" font-size="12" font-weight="700" letter-spacing="1">CHALLENGE</text>
+  <text x="640" y="200" text-anchor="middle" fill="#1a1a1a" font-size="15">It is likely that Medicare reimbursement for sleep diagnostics will be significantly reduced.</text>
+
+  <!-- Divider -->
+  <line x1="70" y1="226" x2="1130" y2="226" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Guiding policy band: y 226-288, center 257 -->
+  <text x="68" y="261" fill="#1e2847" font-size="12" font-weight="700" letter-spacing="1">GUIDING POLICY</text>
+  <text x="640" y="262" text-anchor="middle" fill="#1a1a1a" font-size="15">Leverage our strength in delivering outcomes by shifting from fee for service to getting paid for results.</text>
+
+  <!-- Arrow: kernel to actions -->
+  <polygon points="582,296 618,296 600,312" fill="#1e2847"/>
+
+  <!-- ============================================================ -->
+  <!-- KEY ACTION 1 -->
+  <!-- ============================================================ -->
+  <rect x="40" y="326" width="354" height="300" rx="12" ry="12" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+  <circle cx="217" cy="358" r="14" fill="#1e2847"/>
+  <text x="217" y="363" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">1</text>
+  <text x="217" y="394" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">FUEL THE ENGINE</text>
+  <text x="217" y="412" text-anchor="middle" fill="#555555" font-size="12">with existing fee-for-service business</text>
+  <text x="217" y="432" text-anchor="middle" fill="#6b7280" font-size="11">Owner: Jeff</text>
+  <line x1="64" y1="448" x2="370" y2="448" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="64" y="470" fill="#1e2847" font-size="10" font-weight="700" letter-spacing="1">THIS YEAR</text>
+  <circle cx="64" cy="492" r="2.5" fill="#1e2847"/>
+  <text x="76" y="496" fill="#555555" font-size="12">Engage 700 patients a month in Q4</text>
+  <text x="76" y="512" fill="#555555" font-size="12">in the Arizona region &#183; <tspan fill="#6b7280">Jeff</tspan></text>
+  <circle cx="64" cy="536" r="2.5" fill="#1e2847"/>
+  <text x="76" y="540" fill="#555555" font-size="12">Perform, and collect payment on,</text>
+  <text x="76" y="556" fill="#555555" font-size="12">250 home tests in Q4 &#183; <tspan fill="#6b7280">Robert</tspan></text>
+
+  <!-- ============================================================ -->
+  <!-- KEY ACTION 2 -->
+  <!-- ============================================================ -->
+  <rect x="423" y="326" width="354" height="300" rx="12" ry="12" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+  <circle cx="600" cy="358" r="14" fill="#1e2847"/>
+  <text x="600" y="363" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">2</text>
+  <text x="600" y="394" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">NEW DELIVERY MODELS</text>
+  <text x="600" y="412" text-anchor="middle" fill="#555555" font-size="12">extend into new ways to deliver care</text>
+  <text x="600" y="432" text-anchor="middle" fill="#6b7280" font-size="11">Owner: Eric</text>
+  <line x1="447" y1="448" x2="753" y2="448" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="447" y="470" fill="#1e2847" font-size="10" font-weight="700" letter-spacing="1">THIS YEAR</text>
+  <circle cx="447" cy="492" r="2.5" fill="#1e2847"/>
+  <text x="459" y="496" fill="#555555" font-size="12">Treat 2,000 patients through</text>
+  <text x="459" y="512" fill="#555555" font-size="12">occupational health &#183; <tspan fill="#6b7280">Jen F</tspan></text>
+  <circle cx="447" cy="536" r="2.5" fill="#1e2847"/>
+  <text x="459" y="540" fill="#555555" font-size="12">$100,000 a month from ancillary</text>
+  <text x="459" y="556" fill="#555555" font-size="12">DME products by end of Q3 &#183; <tspan fill="#6b7280">Michelle</tspan></text>
+  <circle cx="447" cy="580" r="2.5" fill="#1e2847"/>
+  <text x="459" y="584" fill="#555555" font-size="12">First dollar from the research</text>
+  <text x="459" y="600" fill="#555555" font-size="12">division by end of Q3 &#183; <tspan fill="#6b7280">Colleen</tspan></text>
+
+  <!-- ============================================================ -->
+  <!-- KEY ACTION 3 -->
+  <!-- ============================================================ -->
+  <rect x="806" y="326" width="354" height="300" rx="12" ry="12" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+  <circle cx="983" cy="358" r="14" fill="#1e2847"/>
+  <text x="983" y="363" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">3</text>
+  <text x="983" y="394" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">GEOGRAPHIC REACH</text>
+  <text x="983" y="412" text-anchor="middle" fill="#555555" font-size="12">extend into new regions</text>
+  <text x="983" y="432" text-anchor="middle" fill="#6b7280" font-size="11">Owner: Russell</text>
+  <line x1="830" y1="448" x2="1136" y2="448" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="830" y="470" fill="#1e2847" font-size="10" font-weight="700" letter-spacing="1">THIS YEAR</text>
+  <circle cx="830" cy="492" r="2.5" fill="#1e2847"/>
+  <text x="842" y="496" fill="#555555" font-size="12">See the first patient in the</text>
+  <text x="842" y="512" fill="#555555" font-size="12">Pacific Northwest by Aug 31 &#183; <tspan fill="#6b7280">Ken</tspan></text>
+  <circle cx="830" cy="536" r="2.5" fill="#1e2847"/>
+  <text x="842" y="540" fill="#555555" font-size="12">Break ground on 4 new sites</text>
+  <text x="842" y="556" fill="#555555" font-size="12">in Q4 &#183; <tspan fill="#6b7280">Jen B</tspan></text>
+  <circle cx="830" cy="580" r="2.5" fill="#1e2847"/>
+  <text x="842" y="584" fill="#555555" font-size="12">Sign 6 provider groups to</text>
+  <text x="842" y="600" fill="#555555" font-size="12">co-build new facilities &#183; <tspan fill="#6b7280">Russell</tspan></text>
+
+</svg>

@@ -55,3 +55,5 @@ scenarios:
   - file://scenarios/use-framework/lifecycle-strategy.yaml
   - file://scenarios/use-advisor/jonathan-baker-consult.yaml
   - file://scenarios/use-framework/sellability-index.yaml
+  - file://scenarios/use-framework/kernel-of-good-strategy.yaml
+  - file://scenarios/use-framework/finding-the-crux.yaml

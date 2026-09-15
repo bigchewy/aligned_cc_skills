@@ -70,7 +70,9 @@ WAIT for user response before continuing.
 ### PHASE 5: Validate the Crux
 
 After user identifies their crux, say:
-"[State their crux.] You've identified [their crux] as your pivotal challenge. Let's make sure you're right.
+"On the page it reads: **The crux:** [one sentence, about 25 words]. That's the line we're testing.
+
+Let's make sure you're right.
 
 Here's the test. Ask yourself three questions:
 
@@ -86,22 +88,54 @@ If the answer to all three is yes, you have your crux.
 
 WAIT for user response before continuing.
 
+Lock: the one-sentence crux, as confirmed or corrected. A correction changes the words; it doesn't grow the sentence into a paragraph. The sizes in this framework are targets, not walls: a few words over, each earning its place, is fine. Double means two lines hiding as one.
+
 ### PHASE 6: Focus on the Crux
 
-Close with:
+After user validates their crux, say:
 "[Confirm their crux or push back if needed.]
 
-Your crux is clear: [state the crux].
+Your crux is clear: **[the locked sentence].** And on the page, why:
+
+- **Important:** [about 12 words]
+- **Addressable:** [about 12 words]
+- **Pivotal:** [about 12 words]
 
 Now here's what has to happen. You need to concentrate your effort on this challenge. Not split attention. Not hedge your bets. Focus.
 
 This is the hardest thing for most people. There's comfort in working on many things at once - if one fails, others might succeed. That's not strategy. That's hope dressed up as prudence.
 
-Real strategic skill is the ability to focus. To direct resources at the pivotal challenge. To say no to everything else - even good things, even important things - until the crux is solved.
+Real strategic skill is the ability to focus. To direct resources at the pivotal challenge. To say no to everything else - even good things, even important things - until the crux is solved. And each thing you stop gets a condition that brings it back, so the door closes without the idea being lost.
 
-**What resources - time, money, attention, talent - are you going to redirect toward solving this crux? And what are you going to stop doing to make that possible?**
+On the page, each thing you redirect is one line of about twelve words. Each thing you stop is one line of about fourteen words: the thing, a dash, the condition that brings it back.
 
-Remember: if you're trying to solve everything, you're solving nothing. The crux is your path forward. Now take it."
+**What resources - time, money, attention, talent - are you going to redirect toward solving this crux? And what are you going to stop doing to make that possible - with the condition that would bring each one back?**"
+
+WAIT for user response before continuing.
+
+Lock: up to three redirect lines and three to five stop lines, at those sizes. State them back at size. If a stop arrives without a condition, ask for the condition before locking.
+
+### PHASE 7: The Page
+
+Assemble the page from the locked lines. Nothing is written new here except the title and the one "what waits" line. If a line doesn't fit, the phase that produced it was done wrong: go back to that phase, fix the line there with the user, and return.
+
+| Part | What goes here |
+|---|---|
+| Title | "{Company}: The Crux" |
+| The crux | The locked sentence. |
+| Why this is the crux | The three locked lines: important, addressable, pivotal. |
+| What moves toward it | The locked redirect lines. |
+| What stops | The locked stop lines, each with its condition. |
+| What waits | One line, about 12 words, naming the important challenges that are not the crux. |
+
+The whole page is about 200 words. The full challenge list, the three filter passes, and the reasoning behind each cut stay in the conversation. The page carries the decision.
+
+Then say:
+"That's the page. If you're trying to solve everything, you're solving nothing. The crux is your path forward. Now take it.
+
+**Want this as a one-page diagram?**"
+
+If the user says yes, render the page as an SVG with `/aligned:create-image` in diagram mode: the crux in an emphasized box at the center, the challenges that were filtered out in a muted row above it, and two cards below it for what moves and what stops. For visual style - page size, card shapes, type sizes - read `kernel-one-page-example.svg` in the `kernel-of-good-strategy` framework folder next to this one. If there is no `design-principles.md` in the project, keep that example's colors and font.
 
 ## Key Rules
 - Complete each phase fully before moving to the next
@@ -114,3 +148,6 @@ Remember: if you're trying to solve everything, you're solving nothing. The crux
 - The goal is ONE challenge to focus on, not a prioritized list
 - Use Rumelt's vocabulary: "crux," "pivotal," "addressable," "cascading"
 - Be skeptical if they pick something too easy or too abstract
+- Every line under "What stops" carries the condition that brings it back
+- Every element is locked at page size in the phase that produces it. Phase 7 assembles the locked lines and writes nothing new.
+- The page targets 200 words. The target is a principle, not a wall: a few words over is fine when they earn their place.

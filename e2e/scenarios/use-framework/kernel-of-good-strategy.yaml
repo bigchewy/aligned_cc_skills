@@ -1,0 +1,115 @@
+# e2e/scenarios/use-framework/kernel-of-good-strategy.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# The deliverable under test is the Phase 8 page: a one-page kernel with
+# word targets, exactly three owned actions with the year's goals, and a
+# kill list with re-entry conditions on its own page. Length discipline is scored explicitly.
+
+description: "Framework: Kernel of Good Strategy one-page deliverable"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on KERNEL COMPLETENESS: Does the final strategy contain
+        all of Rumelt's kernel — (1) a diagnosis of the challenge that is
+        specific enough to be wrong, (2) a guiding policy that is an
+        approach rather than a goal, (3) coherent actions that implement
+        the policy and reinforce each other — plus a kill list of things
+        the company will not do? Score 1 if the "strategy" is goals or
+        aspirations; score 5 if all four are present and the diagnosis
+        names the obstacle rather than the ambition.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LENGTH DISCIPLINE: The final strategy should be a
+        short deck: page one (the kernel) plus detail pages. Count the
+        words on page one only (title through the last goal; ignore
+        the detail pages and the preceding conversation). Score 5 if page
+        one is about 200 words or fewer, the challenge is one sentence,
+        and separate detail pages carry the "why" and falsifier, one page
+        per key action, the kill list with re-entry conditions, and the
+        assumptions and questions. Score 4 if page one is 201-260 words
+        with detail pages present. Score 3 if page one is under 260 but
+        the detail pages are missing (detail crammed onto page one or
+        dropped). Score 2 if the strategy is a single document of
+        261-600 words. Score 1 if over 600 words, or if it has sections
+        like "how we got here", "rationale", or "homework".
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LOCK DISCIPLINE: Read the conversation before the
+        final document. Did the advisor state the challenge back as one
+        sentence at page size before moving to the guiding policy, state
+        the three actions back with owners and goals before the
+        coherence check, state the kill list back with conditions, and
+        state the assumptions and questions back before assembling the
+        pages? Score 5 if every element was stated at size in the phase
+        that produced it and the final pages reuse those lines verbatim.
+        Score 3 if elements were restated but reshaped or shortened at
+        the end. Score 1 if the final document was written fresh at the
+        end with no earlier restatement.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THREE OWNED ACTIONS WITH GOALS: Does page one have
+        exactly three key actions, each with a named owner and this
+        year's goals, each goal with a number, a date, and an owner? Are
+        the actions free of "exit conditions" (a key action stays until
+        the strategy changes)? Is page one free of the kill list (which
+        belongs on its own page)? Score 5 if all of that holds. Score 3
+        for three actions missing owners or goals, or a kill list on page
+        one. Score 1 for four or more actions, two or fewer, or actions
+        with exit conditions.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ASSUMPTIONS AND QUESTIONS: Is there a page naming
+        3-5 key assumptions, each with the observation that would show it
+        broke, and 3-5 key questions, each with a named owner? Score 5 if
+        both lists are present and complete. Score 3 if assumptions lack
+        break conditions or questions lack owners. Score 1 if the page is
+        missing.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on KILL LIST QUALITY: Does every item on the kill list
+        (things not being done) carry a re-entry condition — an observable
+        event that would put it back on the table? Score 5 if 3-6 items
+        each with a condition. Score 3 if items exist but half or more
+        lack a condition. Score 1 if there is no kill list.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SPECIFICITY: Is the kernel grounded in the specific
+        company (DataForge, mid-market data engineering teams, the
+        Airflow/cron/Slack incumbent, a 12-person team)? Generic strategy
+        advice applicable to any B2B SaaS scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/kernel-of-good-strategy/prompt.md
+      task_prompt: "\n\n---\n\nThere is no live user. Simulate the user's answers from the company brief, run every phase in order, and finish by delivering the final strategy document exactly as the framework specifies."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Write a strategy for this company:"
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "Use Richard Rumelt's kernel of good strategy (diagnosis, guiding policy, coherent actions) to write a strategy for this company. Deliver the final strategy document."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md

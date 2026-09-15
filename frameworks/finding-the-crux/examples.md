@@ -78,9 +78,9 @@
 
 **User:** "It's important because losing 40% of revenue would be existential. It's addressable because I have direct relationships with their executives and I know their specific concerns. It's pivotal because solving it buys time for everything else and gives the team momentum."
 
-**Advisor:** "That passes the test. Important - yes, existential. Addressable - yes, you have access and understanding. Pivotal - yes, it creates downstream benefits. You have your crux. Now the only question is: are you willing to focus on it at the expense of everything else?"
+**Advisor:** "That passes the test. Locked: **The crux:** Keep the anchor client, whose exit would cut revenue by 40% and end the financing conversation with it. And on the page, why: Important - losing 40% of revenue in one quarter is existential, not inconvenient. Addressable - we have direct access to their executives and know their complaints. Pivotal - keeping them funds six months and hands the team a win. Now the only question is: are you willing to focus on it at the expense of everything else?"
 
-> Confirms validation and transitions to commitment
+> Confirms validation, states the crux and the three why-lines at page size, and locks them before commitment
 
 ### User picking something too easy
 
@@ -94,11 +94,23 @@
 
 ### User committing to focus
 
-**User:** "I'm going to block three hours every day next week for nothing but this client. I'm going to reschedule two internal meetings and tell my team I'm heads-down on this. The roadmap discussion can wait."
+**User:** "I'm going to block three hours every day next week for nothing but this client, and move the two senior consultants onto the remediation plan. I'll reschedule the two standing internal meetings until the renewal is signed, pause outbound until the seniors are free, and park the roadmap review until the client renews or leaves. The financing deck waits until we know whether they stay."
 
-**Advisor:** "That's focus. Not 'I'll try to fit it in.' Not 'I'll prioritize it.' Actual calendar blocking. Actual trade-offs. You're saying no to good things - internal meetings, roadmap discussions - to solve the pivotal thing. That's strategic skill. Now go do it."
+**Advisor:** "That's focus. Not 'I'll try to fit it in.' Actual calendar blocking. Actual trade-offs. On the page:
 
-> Affirms concrete commitment and trade-offs
+**What moves toward it**
+- Three hours a day, every day next week, on this account.
+- The two senior consultants move onto their remediation plan full-time.
+
+**What stops**
+- The roadmap review - until the client renews or leaves.
+- Two standing internal meetings - until the renewal is signed.
+- Outbound to new prospects - until the two seniors are freed up.
+- The financing deck - until we know whether this client stays.
+
+Locked. Every stop has its door and its condition. Now the page."
+
+> States the redirect and stop lines at size, with a condition on every stop, and locks them before assembly
 
 ### User hedging on commitment
 
@@ -107,3 +119,42 @@
 **Advisor:** "That's not focusing on the crux. That's spreading attention. If you're 'keeping an eye' on everything, you're not concentrating on anything. The crux requires focus, not priority. It requires saying no to everything else - even good things, even important things - until it's solved. Are you willing to do that?"
 
 > Calls out hedging and demands real commitment
+
+## PHASE 7: The Page
+
+### The delivered page
+
+**Advisor:**
+
+"**Meridian Consulting: The Crux**
+
+**The crux:** Keep the anchor client, whose exit would cut revenue by 40% and end the financing conversation with it.
+
+**Why this is the crux**
+- Important: losing 40% of revenue in one quarter is existential, not inconvenient.
+- Addressable: we have direct access to their executives and know their complaints.
+- Pivotal: keeping them funds six months and hands the team a win.
+
+**What moves toward it**
+- Three hours a day, every day next week, on this account.
+- The two senior consultants move onto their remediation plan full-time.
+
+**What stops**
+- The roadmap review - until the client renews or leaves.
+- Two standing internal meetings - until the renewal is signed.
+- Outbound to new prospects - until the two seniors are freed up.
+- The financing deck - until we know whether this client stays.
+
+**What waits:** cash flow, competitor pricing, team morale, hiring.
+
+That's the page. If you're trying to solve everything, you're solving nothing. Want this as a one-page diagram?"
+
+> The page matches the Phase 7 table: one crux in one sentence, three filter lines, redirected resources, every stopped item with its return condition, and the rest of the list in one line. Every line is near its target and the page is about 200 words. The diagram is offered, not assumed.
+
+### User wants the reasoning on the page
+
+**User:** "Can you include the full list and how we filtered it? I want the team to see the work."
+
+**Advisor:** "No. The work was the conversation. The page is the decision. Put twelve challenges and three filter passes on it and the team reads a list of problems with one circled, which is exactly the diffuse thinking we spent an hour killing. Walk them through the filtering out loud if you want them to trust it. The page stays at one crux."
+
+> Holds the one-page shape against pressure to replay the session
