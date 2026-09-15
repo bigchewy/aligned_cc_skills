@@ -107,13 +107,6 @@ This plugin is distributed to many users. It intentionally does not ship anythin
 | critique-interactive-html-generator | Interactive HTML for accept/reject decisions on brainstorming critique findings, with copy-as-prompt round-trip |
 | project-scanner | Fast codebase scan for brainstorming context (languages, structure, dependencies) |
 
-### Hooks
-
-| Event | Script | What It Does |
-|-------|--------|-------------|
-| PreToolUse | `auto-approve-safe-bash-paths.js` | Auto-approves Bash commands targeting `/tmp/` and `~/.claude/` only |
-| PostToolUse | `usage-tracker.js` | Tracks Skill/Task usage patterns |
-
 ### Advisors
 
 63 advisor prompts ship with the plugin in `advisors/prompts/`.
@@ -126,7 +119,7 @@ To add a new advisor, use `/aligned:add-advisor` which guides you through creati
 
 Aligned standardizes development environments across a team at two layers:
 
-**Plugin (cross-project):** Each developer installs the plugin once. All skills, agents, hooks, and advisors are available everywhere.
+**Plugin (cross-project):** Each developer installs the plugin once. All skills, agents, and advisors are available everywhere.
 
 **Per-project settings:** Running `/aligned:kickstart` creates `.claude/settings.json` with the plugin auto-enabled. Anyone who clones the project gets the same configuration without manual setup.
 
