@@ -100,7 +100,7 @@ Now we need coherent actions. This is where rubber meets road. Coherent actions 
 
 You get three. Not five. Give people a range and they write five, and the fifth is always padding. Exactly three. And each one has an owner. One name. If nobody owns it, it isn't a key action.
 
-Each action is a title of two to four words, an owner, and this year's goals: two to four, each with a number, a date, and an owner, about 12 words. All of that is page one, because the goals are what the leadership team checks against every week. Behind each action, on its own page: what it is in a sentence or two, what it depends on, and how we'll know it's working.
+Each action is a title of two to four words, an owner, and this year's goals: two to four, each with a number, a date, and an owner, about 12 words. All of that is page one, because the goals are what the leadership team checks against every week. The title carries no subtitle; if it needs one, the title is wrong. Behind each action, on its own page: what it is in two sentences, about 40 words, what it depends on, and how we'll know it's working.
 
 **What are the three actions? For each: the title, the owner, and this year's goals with their owners.**"
 
@@ -142,11 +142,11 @@ So: the kill list. The things you are going to stop doing, or refuse to start, b
 
 The kill list gets its own page, not a slot on page one. Page one is what you're doing; the kill list is what you've decided not to, and the two don't share a wall. Each item is a name, about five words, and its re-entry condition, about twelve words.
 
-**What goes on the kill list? Three to five things. For each, the name and the 'not until.'**"
+**What goes on the kill list? Four to seven things. For each, the name and the 'not until.'**"
 
 WAIT for user response before continuing.
 
-Lock: three to five names at about five words, each with a condition at about twelve words. If a name arrives without a condition, ask for the condition before locking.
+Lock: four to seven names at about five words, each with a condition at about twelve words. If a name arrives without a condition, ask for the condition before locking.
 
 ### PHASE 8: What We're Standing On
 
@@ -195,9 +195,9 @@ Every time someone hands you a 'strategy,' hold it against page one. Where's the
 
 **Want this as a one-page diagram, a deck, or both?**"
 
-If the user wants the one-page diagram, render page one as an SVG. The layout is `kernel-one-page-example.svg` in this framework's folder: a purpose banner, a challenge-and-policy block, three key-action cards with the year's goals, and a kill-list card. Read it, keep its boxes, and replace its text with the locked lines. Run `/aligned:create-image` in diagram mode so the colors and font come from the project's `design-principles.md`. If there is no `design-principles.md`, write the SVG directly from the example and keep its colors and font.
+If the user wants the one-page diagram, render two SVGs. Page one is `kernel-one-page-example.svg` in this framework's folder: a purpose banner, a challenge-and-policy block, and three key-action cards, each a short title, an owner, and the year's goals. No subtitle under the title; the explanation is the "what it is" line on the action's detail page. The kill list is a second SVG, `kernel-kill-list-example.svg` in the same folder, in the same style: a name column and a "comes back when" column. Read both, keep their boxes, and replace their text with the locked lines. Run `/aligned:create-image` in diagram mode so the colors and font come from the project's `design-principles.md`. If there is no `design-principles.md`, write the SVGs directly from the examples and keep their colors and font.
 
-If the user wants the deck, the layout is `build-example-deck.py` in this framework's folder, which builds `example-strategy-kernel.pptx`: page one, the challenge and policy, one page per key action, the kill list, and what we're standing on. Copy the script next to the user's strategy document, replace the content block with the locked lines, swap the design tokens for the project's `design-principles.md` values when one exists, and run it. The script is the source; the deck is a build output. Never hand-edit the deck.
+If the user wants the deck, the layout is `build-example-deck.py` in this framework's folder, which builds `example-strategy-kernel.pptx`: page one, the challenge and policy, one page per key action, the kill list, and what we're standing on. It needs `python-pptx` (`pip install python-pptx`). Copy the script next to the user's strategy document and replace everything below the `content` marker with the locked lines: the company name, the output file name, the purpose, the challenge with its "why" and "wrong if," the policy with its "why it fits" and gate, the three actions, the kill list, the assumptions, and the questions. Nothing above the marker names the company or carries any of the strategy's words. The pages size themselves to the lines, so a 25-word challenge and a five-row kill list fit without editing the layout. Swap the design tokens for the project's `design-principles.md` values when one exists, and run it. The script is the source; the deck is a build output. Never hand-edit the deck.
 
 ## Key Rules
 - Complete each phase fully before moving to the next
