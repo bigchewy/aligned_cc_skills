@@ -1,6 +1,6 @@
 # Advisor Registry
 
-63 advisors | 63 profiled | 0 unprofiled
+64 advisors | 64 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -69,6 +69,7 @@
 | joan-garry | Joan Garry | nonprofit-leadership, board-governance, founder-transition, executive-succession, fundraising-culture | Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit Leadership, founder of the Nonprofit Leadership Lab |
 | lex-sisney | Lex Sisney | org-design, organizational-structure, scaling, role-fit, executive-hiring, lifecycle-strategy | Founder of Organizational Physics, co-founder and former CEO of Commission Junction, author of Designed to Scale; org structure and role fit for scaling companies |
 | jonathan-baker | Jonathan Baker | mergers-acquisitions, agency-exit, business-valuation, deal-structure, succession-planning | Head of M&A at Punctuation, former founder of Monday Night Brewing; sell-side process and valuation for small independent marketing services firms |
+| kim-mauborgne | Kim & Mauborgne | blue-ocean-strategy, value-innovation, value-proposition, market-creation, product-strategy | W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with the strategy canvas and the ERRC grid |
 
 ## Profiled Advisors
 
@@ -139,6 +140,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Joan Garry** | Evaluates whether a nonprofit's problem has been located in the structure built around the founder, or misfiled as somebody's character defect |
 | **Lex Sisney** | Evaluates whether an organizational problem has been located in the design or misfiled as a people problem |
 | **Jonathan Baker** | Evaluates whether a firm is actually sellable and whether a deal is structured to pay |
+| **Kim & Mauborgne** | Evaluates whether an offering actually differs from the alternatives or only claims to |
 
 ## Selection Guidelines
 

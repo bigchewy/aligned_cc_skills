@@ -1,0 +1,87 @@
+# e2e/scenarios/use-framework/blue-ocean-value-props.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Blue Ocean Value Props for a me-too SaaS offering"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        confirming the single offering, who buys it, and where it sits
+        (pioneer, migrator, or settler) — and then STOP and wait? A response
+        that draws a strategy canvas, fills in an ERRC grid, and proposes a
+        tagline in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow the Blue
+        Ocean Shift order and Kim & Mauborgne's tool names? Correct markers:
+        works on one offering at a time; names the strategy canvas and that
+        it will list the factors the industry competes on starting with
+        price; plans to compare value curves against the alternatives buyers
+        use today; mentions that eliminate and reduce come before raise and
+        create, or that a do-not-do list will be written. Deductions for
+        inventing tool names, skipping straight to features, or treating the
+        exercise as positioning copy.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Kim &
+        Mauborgne — calm, methodical, speaking as "we", no war vocabulary,
+        no hype? A neutral facilitator voice or a bulleted strategy checklist
+        scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (which offering, who buys it, pioneer /
+        migrator / settler) and genuinely stopping, rather than asking and
+        then answering, or asking questions from several phases at once?
+        Exactly one phase's questions, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/blue-ocean-value-props/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      product_brief: |
+        Context: We make a sales and labor dashboard for independent
+        restaurants, $149 a month on an annual contract. Two other dashboards
+        look a lot like ours and deals come down to price. We also sell a
+        scheduling app and a payroll add-on. Owners who cancel say it was too
+        much work.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through building a blue ocean value proposition for my product. I'll answer phase by phase."
+      product_brief: |
+        Context: We make a sales and labor dashboard for independent
+        restaurants, $149 a month on an annual contract. Two other dashboards
+        look a lot like ours and deals come down to price. We also sell a
+        scheduling app and a payroll add-on. Owners who cancel say it was too
+        much work.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are W. Chan Kim and Renée Mauborgne. Walk me through the Blue Ocean Shift process to build a value proposition for my product: strategy canvas, ERRC grid, and the three qualities of a good strategy. I'll answer phase by phase."
+      product_brief: |
+        Context: We make a sales and labor dashboard for independent
+        restaurants, $149 a month on an annual contract. Two other dashboards
+        look a lot like ours and deals come down to price. We also sell a
+        scheduling app and a payroll add-on. Owners who cancel say it was too
+        much work.

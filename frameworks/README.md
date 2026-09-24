@@ -1,6 +1,6 @@
 # Framework Registry
 
-120 frameworks across 22 categories
+121 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -25,7 +25,7 @@
 | sales | 5 |
 | social-media | 9 |
 | startup | 7 |
-| strategy | 25 |
+| strategy | 26 |
 
 ## Quick Reference
 
@@ -151,6 +151,7 @@
 | psiu-role-fit | PSIU Role Fit | lex-sisney | leadership | a leader is about to hire or promote into a key seat, is deciding whether a struggling executive is the wrong person or in the wrong seat, or has a board and hiring manager who cannot agree on what a role requires |
 | lifecycle-strategy | Lifecycle Strategy | lex-sisney | strategy | a company is deciding whether to launch or spin out a second product, is building scale infrastructure for a product that may not have product-market fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow execution is a product, market, or company-stage problem |
 | sellability-index | The Sellability Index | jonathan-baker | strategy | an agency or services-firm owner is considering an exit in the next one to three years, wants to know what their firm is worth and why, is preparing material for a buyer conversation, or is weighing a sale to their own management team against an outside buyer |
+| blue-ocean-value-props | Blue Ocean Value Props | kim-mauborgne | strategy | a product looks like its competitors, buyers choose on price, the team keeps adding features without changing what buyers see, or someone needs to decide what an offering should stop doing as well as what it should do; also for a new offering that needs its value proposition set before positioning |
 
 ## By Category
 
@@ -312,12 +313,13 @@
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 
-### Strategy (25)
+### Strategy (26)
 
 - **5-step-process** — 5-Step Process (ray-dalio)
 - **6-step-process** — 6-Step Process (wise-eric)
 - **80-20-audit** — an 80/20 Audit (tim-ferriss)
 - **believability-weighted-decision-making** — Believability-Weighted Decision Making (ray-dalio)
+- **blue-ocean-value-props** — Blue Ocean Value Props (kim-mauborgne)
 - **bowtie-funnel** — the Bowtie Funnel (jacco-van-der-kooij)
 - **design-principles** — Design Principles (steve-jobs)
 - **finding-the-crux** — Finding the Crux (richard-rumelt)

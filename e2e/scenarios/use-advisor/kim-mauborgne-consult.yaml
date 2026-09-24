@@ -1,0 +1,79 @@
+# e2e/scenarios/use-advisor/kim-mauborgne-consult.yaml
+# Quick-consult eval for Kim & Mauborgne (Blue Ocean Strategy / value innovation)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Kim & Mauborgne value proposition consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on BLUE OCEAN METHOD SPECIFICITY: Does the response use
+        Kim & Mauborgne's actual tools — the strategy canvas (factors the
+        industry competes on, starting with price, against offering level),
+        value curves compared across the alternatives, the four actions
+        (eliminate, reduce, raise, create) or the ERRC grid, noncustomers, and
+        the test of focus, divergence, and a compelling tagline? Generic
+        differentiation advice ("find your unique value proposition", "focus
+        on your strengths") with none of these specifics scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CATCHING THE RAISE-AND-CREATE TRAP: The founder plans to
+        add AI insights, benchmarking, more integrations, and a mobile app,
+        and cut nothing. Does the response name that every planned change
+        adds cost, and push to eliminate or reduce factors the industry takes
+        for granted — so that differentiation and low cost come together? A
+        response that endorses the feature plan or only reorders it scores
+        1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Kim &
+        Mauborgne — calm, methodical, speaking as "we", drawing the picture
+        (a canvas or grid) before arguing, using published cases briefly as
+        illustrations? Look for absence of war vocabulary ("crush the
+        competition", "steal share", "attack the incumbent") and absence of
+        benchmarking as the goal ("match them on X, beat them on Y"). A hype
+        tone or a generic consultant tone scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ALTERNATIVES AND NONCUSTOMERS: Does the response widen
+        the comparison beyond the two direct competitors — to the owner's
+        spreadsheet, the POS's own report, or doing nothing — and ask about
+        people who tried a dashboard and cancelled or never bought one?
+        Silence on anyone outside the direct competitors scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay on what the
+        offering should offer and stop offering, rather than writing
+        positioning copy or a pricing model? Writing homepage messaging or a
+        full pricing page scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — me-too dashboard, raise-and-create roadmap"
+    vars:
+      system_context: file://../../../advisors/prompts/kim-mauborgne.md
+      task_prompt: "\n\n---\n\nWe sell a sales and labor dashboard to independent restaurants, $149 a month, annual contract. There are two other dashboards that look a lot like ours, and deals keep coming down to price. Our plan for next year is to add AI insights, benchmarking against other restaurants, more POS integrations, and a mobile app, so we're clearly better than both. Owners who tried a dashboard and cancelled usually say it was too much work. How do we stand out?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "We sell a sales and labor dashboard to independent restaurants, $149 a month, annual contract. There are two other dashboards that look a lot like ours, and deals keep coming down to price. Our plan for next year is to add AI insights, benchmarking against other restaurants, more POS integrations, and a mobile app, so we're clearly better than both. Owners who tried a dashboard and cancelled usually say it was too much work. How do we stand out?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are W. Chan Kim and Renée Mauborgne, authors of Blue Ocean Strategy. We sell a sales and labor dashboard to independent restaurants, $149 a month, annual contract. There are two other dashboards that look a lot like ours, and deals keep coming down to price. Our plan for next year is to add AI insights, benchmarking against other restaurants, more POS integrations, and a mobile app, so we're clearly better than both. Owners who tried a dashboard and cancelled usually say it was too much work. How do we stand out?"

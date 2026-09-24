@@ -2094,3 +2094,33 @@ frameworks:
     to three years, wants to know what their firm is worth and why, is preparing
     material for a buyer conversation, or is weighing a sale to their own management
     team against an outside buyer
+- advisor: kim-mauborgne
+  category: strategy
+  default_critic_advisors:
+  - kim-mauborgne
+  - april-dunford
+  deliverable_type: decision
+  domains:
+  - blue-ocean-strategy
+  - value-innovation
+  - value-proposition
+  - product-strategy
+  - competitive-analysis
+  follow_on_frameworks:
+  - 5-components-positioning
+  - value-metric
+  helpful_documents:
+  - current product or service description and pricing
+  - list of competitors and the other things buyers use instead
+  - customer interviews, win/loss notes, or sales call notes
+  - notes on people who looked at the product and did not buy
+  id: blue-ocean-value-props
+  name: Blue Ocean Value Props
+  purpose: deciding what one offering will eliminate, reduce, raise, and create so
+    that its value curve stands apart from every alternative buyers have today, and
+    writing down what it will be the best in the world at and what it will accept
+    being bad at
+  use_when: a product looks like its competitors, buyers choose on price, the team
+    keeps adding features without changing what buyers see, or someone needs to decide
+    what an offering should stop doing as well as what it should do; also for a new
+    offering that needs its value proposition set before positioning

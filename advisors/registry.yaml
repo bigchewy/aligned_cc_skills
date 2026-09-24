@@ -1730,6 +1730,43 @@ advisors:
   prompt: advisors/prompts/jonathan-baker.md
   summary: Head of M&A at Punctuation, former founder of Monday Night Brewing;
     sell-side process and valuation for small independent marketing services firms
+- best_for: 'Deciding what a product or service should offer and what it should
+    stop offering. Drawing the factors buyers compare on against the alternatives
+    they use today, choosing what to eliminate, reduce, raise, and create, writing
+    what the company will be bad at on purpose, and testing whether the new offering
+    stands apart. Product strategy, new offerings, repositioning a me-too product,
+    and finding demand among people who do not buy from the industry today.
+
+    '
+  domains:
+  - blue-ocean-strategy
+  - value-innovation
+  - value-proposition
+  - market-creation
+  - product-strategy
+  evaluation_expertise: 'Evaluates whether an offering actually differs from the
+    alternatives or only claims to. Are the competing factors named in the words
+    buyers use? Does the value curve have a different shape from the alternatives,
+    or the same shape a little higher? Is anything being eliminated or reduced, or
+    is every change an addition that raises cost? Are noncustomers considered? Can
+    the strategy be said in one line a buyer would repeat? Catches convergent value
+    curves, raise-and-create grids with nothing given up, feature lists passed off
+    as competing factors, and alternatives lists that leave out doing nothing.
+
+    '
+  id: kim-mauborgne
+  name: Kim & Mauborgne
+  not_for: 'Positioning copy and messaging for an offering whose value is already
+    set (redirect to April Dunford); diagnosing the strategic challenge itself
+    (redirect to Richard Rumelt); disruption theory and jobs to be done (redirect
+    to Clayton Christensen); pricing mechanics and value metrics (redirect to
+    Patrick Campbell); technical architecture or code.
+
+    '
+  prompt: advisors/prompts/kim-mauborgne.md
+  summary: W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue
+    Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with
+    the strategy canvas and the ERRC grid
 selection_guidelines:
   calibration_examples:
   - critics:
