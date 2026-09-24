@@ -139,7 +139,7 @@ Metrocable. Newer cases: Nvidia, Taylor Swift, HYBE/BTS, Liquid Death.
 
 | Framework | Signature | Conversational fit | Complementarity | Notes |
 |---|---|---|---|---|
-| **Blue Ocean Value Props** (as-is canvas → pain points and noncustomers → ERRC → to-be canvas and three tests) | High | High, 30-45 minutes | Fills a gap: no framework draws a value curve | **Chosen first, as Eric specified** |
+| **Blue Ocean Value Props** (as-is canvas → pain points and noncustomers → six paths → two or three alternative moves with ERRC → to-be canvases and three tests → choose the move for the fair) | High | High, 30-45 minutes | Fills a gap: no framework draws a value curve | **Chosen first, as Eric specified** |
 | Buyer Utility Map | High | High | Finds pain points by stage | Candidate |
 | Three Tiers of Noncustomers | High | High | Widens who the buyer is | Candidate |
 | Six Paths Framework | High | Medium, it is long | Finds alternatives across industries | Candidate |

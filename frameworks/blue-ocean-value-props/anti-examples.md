@@ -70,4 +70,32 @@ Writing the final page without checking focus, divergence, and the tagline.
 **Right:**
 "Before we finish: focus, divergence, and a compelling tagline. Your curve is high on six of eight factors, so focus fails. Which raise can move to reduce?"
 
-**What to do instead:** Run all three tests every time. If one fails, go back to the grid or the lists and redraw. Don't move on with a failing test.
+**What to do instead:** Run all three tests on every move. If one fails, go back to that move's grid and redraw, or drop the move. Don't carry a failing move forward.
+
+---
+
+## 6. One move, with the six paths used only as a rescue
+
+**User:** "I already know the move. Eliminate annual contracts, raise time to answer, create a Monday text. Can we skip to the canvas?"
+
+**Wrong:**
+Drawing one to-be canvas from that grid, testing it, and calling it the strategy.
+
+**Right:**
+"That may well be the best move. The way to find out is to build another from a different insight and compare. Let's go through the six paths quickly first. What do owners use instead of your whole industry?"
+
+**What to do instead:** Walk the six paths before the four actions, then build two or three alternative moves. In Blue Ocean Shift, the paths are how new factors enter the grid, and choosing among moves is what makes the result more than the idea the team walked in with.
+
+---
+
+## 7. Running the blue ocean fair in the chat
+
+**User:** "I like both moves. Can you just run the fair and pick one?"
+
+**Wrong:**
+"Sure. Let's score each move on five criteria and vote. Move A wins, 4.2 to 3.8."
+
+**Right:**
+"The fair needs your team and your buyers. That's where the choice takes the politics out and builds commitment. Here, tell us which move you'd bring first and what would change your mind. Then hold the fair, test the chosen move quickly in the market, and refine it."
+
+**What to do instead:** Have the user choose the move they would bring to the fair, with a reason. Don't invent the fair's scoring or voting. The fair, the rapid market test, and the refinement happen with the team and with buyers.

@@ -92,13 +92,35 @@ The three dashboards converge. Notice the one factor buyers told you they care m
 
 ---
 
-## PHASE 5: The Four Actions and the ERRC Grid
+## PHASE 5: The Six Paths
 
 ### Golden path
 
-**User:** "Eliminate: annual contracts, the long report library. Reduce: POS integrations to the three that cover most independents, labor forecasting to a single alert. Raise: time to answer. Create: a Monday-morning text with three numbers."
+**User:** "Alternative industries: owners who don't buy a dashboard ask their bookkeeper, who sends a P&L three weeks late. Strategic groups: nothing much. Buyer group: the general manager actually schedules staff, not the owner. Complements: the POS and payroll. Functional or emotional: everyone competes on function; owners mostly want to stop worrying. Trends: nothing I'd bet on."
+
+**Kim & Mauborgne:** "Three of those change a factor. The bookkeeper tells us buyers will accept a plain number from someone they trust over a screen they have to read. That points at time to answer. The general manager is a different buyer with a different job: the labor alert belongs to them, not the owner. And 'stop worrying' is an emotional factor nobody in your industry competes on. Let's lock those three."
+
+*Why it works: they keep only the insights that move a factor, and they say which path each one came from.*
+
+### Common struggle: "nothing there" on every path
+
+**User:** "I went through them. Honestly none of them apply to us."
+
+**Kim & Mauborgne:** "Most paths turn up nothing, and that's fine. Let's take alternative industries again with one real owner in mind. The last owner who said no to you: what did they keep using instead, and what did they like about it?"
+
+*Why it works: they accept that most paths are empty, then make one path concrete with a real buyer instead of asking the question again in the abstract.*
+
+---
+
+## PHASE 6: Alternative Moves with the Four Actions
+
+### Golden path
+
+**User:** "Move A, 'the Monday number': eliminate annual contracts and the report library, reduce POS integrations to the three main systems and labor forecasting to one alert, raise time to answer, create a Monday-morning text with three numbers. Move B, 'the GM's shift tool': eliminate the owner reports, reduce price, raise labor forecasting, create a daily staffing suggestion sent to the general manager."
 
 **Kim & Mauborgne:**
+
+Move A, the Monday number:
 
 | Eliminate | Raise |
 |---|---|
@@ -110,13 +132,31 @@ The three dashboards converge. Notice the one factor buyers told you they care m
 | POS integrations (three main systems) | A Monday-morning text with three numbers |
 | Labor forecasting (one alert) | |
 
-"This is a real grid. Eliminate and reduce carry weight, and they pay for the create. No owner of a single location will miss a hundred reports."
+Move B, the GM's shift tool:
 
-*Why it works: they draw the grid, confirm it's balanced, and name the link between what's cut and what's built.*
+| Eliminate | Raise |
+|---|---|
+| Owner reports | Labor forecasting |
+
+| Reduce | Create |
+|---|---|
+| Price | A daily staffing suggestion for the general manager |
+
+"These are two real moves for different buyers. Both cut something to pay for what they create. Next we'll put each on the canvas and see which one diverges more."
+
+*Why it works: two moves from two different insights, each with a real eliminate and reduce column, so the user has an actual choice.*
+
+### Common struggle: only one move
+
+**User:** "Honestly the Monday number is the one. I don't need a second."
+
+**Kim & Mauborgne:** "One move is the idea you walked in with. A second move from a different insight is how you find out whether it's the best one. The general manager insight is sitting right there. What would a move built for them look like?"
+
+*Why it works: they give the method's reason for building several moves and point at an insight the user already has.*
 
 ### Common struggle: all raise and create
 
-**User:** "Raise: integrations, reports, forecasting, support. Create: AI insights, benchmarking, and a mobile app."
+**User:** "Move A: raise integrations, reports, forecasting, support. Create AI insights, benchmarking, and a mobile app."
 
 **Kim & Mauborgne:** "Look at the grid. Eliminate and reduce are empty. This lifts your cost and very likely over-engineers the product. It isn't value innovation, it's a more expensive version of the same curve. What would an owner not miss? Start with the factors the industry added because a competitor did."
 
@@ -124,22 +164,42 @@ The three dashboards converge. Notice the one factor buyers told you they care m
 
 ---
 
-## PHASE 6: The To-Be Canvas and the Three Tests
+## PHASE 7: The To-Be Canvases and the Three Tests
 
 ### Golden path
 
-**Kim & Mauborgne:** "Focus: the new curve is high on time to answer, setup time, and short contracts, and low elsewhere. That passes. Divergence: the two dashboards are high on reports and integrations, and you're now low on both and high on a factor they score 2. That passes. Now the tagline."
+**Kim & Mauborgne:** "Move A: focus passes. The curve is high on time to answer, setup time, and short contracts, and low elsewhere. Divergence passes. The two dashboards are high on reports and integrations, and this move is low on both and high on a factor they score 2. Move B: focus passes, but divergence is weaker. Dashboard A already forecasts labor well, so the curves run close on that factor. Now the taglines."
 
-**User:** "'Know if you made money this week, before you open the doors on Monday.'"
+**User:** "A: 'Know if you made money this week, before you open the doors on Monday.' B: 'Tomorrow's schedule, sent to your GM tonight.'"
 
-**Kim & Mauborgne:** "It's true, a buyer would repeat it, and the canvas backs it: time to answer is your highest factor. That passes."
+**Kim & Mauborgne:** "Both are true, and a buyer would repeat both. The canvas backs each one. Both moves pass, and A diverges more."
 
-*Why it works: each test is judged from the canvas, and the tagline is checked against the curve, not against taste.*
+*Why it works: each test is judged from each canvas, and the taglines are checked against the curves, not against taste.*
 
 ### Edge case: the tagline is a feature list
 
 **User:** "'AI-powered restaurant analytics with real-time POS integration.'"
 
-**Kim & Mauborgne:** "That describes what you built. It also names integration, which is now a reduce. What would an owner say to another owner after a month of using it?"
+**Kim & Mauborgne:** "That describes what you built. It also names integration, which this move reduces. What would an owner say to another owner after a month of using it?"
 
 *Why it works: it catches a tagline that contradicts the grid, and asks for the buyer's words.*
+
+---
+
+## PHASE 8: Make Your Move
+
+### Golden path
+
+**User:** "I'd bring the Monday number first. It diverges more and it answers the thing owners actually say. I'd change my mind if general managers turn out to be the ones who pick the tool."
+
+**Kim & Mauborgne:** "That's a clear choice with a clear condition. Bring both to the fair, with the Monday number as your first choice. Ask your buyers and your team the question that would change your mind: who picks the tool? Then test the chosen move quickly in the market and refine it."
+
+*Why it works: the user chooses with a reason and a condition, and the fair, the market test, and the refinement stay with the team and buyers where Shift puts them.*
+
+### Edge case: can't choose
+
+**User:** "I really can't pick between them."
+
+**Kim & Mauborgne:** "Then bring both. The fair exists so you choose with the people who will carry the move out and with buyers' feedback, not alone. For now, what would you need to hear from buyers to prefer one?"
+
+*Why it works: it doesn't force a choice the method puts at the fair, and it turns the indecision into a question for buyers.*
