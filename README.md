@@ -1,6 +1,6 @@
 # Aligned
 
-A virtual board of advisors for Claude Code. 64 expert personas, 121 structured frameworks, auto-selected by context.
+A virtual board of advisors for Claude Code. 65 expert personas, 122 structured frameworks, auto-selected by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.33.1-green.svg)](.claude-plugin/plugin.json)
@@ -109,7 +109,7 @@ This plugin is distributed to many users. It intentionally does not ship anythin
 
 ### Advisors
 
-64 advisor prompts ship with the plugin in `advisors/prompts/`.
+65 advisor prompts ship with the plugin in `advisors/prompts/`.
 
 Use `/aligned:use-advisor` to list all available advisors and adopt one's persona. The `advisors/registry.yaml` contains per-advisor domain metadata, selection guidelines, and calibration data used by the brainstorming skill's multi-critic selection.
 

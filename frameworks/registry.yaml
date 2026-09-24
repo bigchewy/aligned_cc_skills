@@ -2122,3 +2122,30 @@ frameworks:
     keeps adding features without changing what buyers see, or someone needs to decide
     what an offering should stop doing as well as what it should do; also for a new
     offering that needs its value proposition set before positioning
+- advisor: ryan-singer
+  category: strategy
+  default_critic_advisors:
+  - ryan-singer
+  - richard-rumelt
+  deliverable_type: plan
+  domains:
+  - product-roadmap
+  - scoping
+  - prioritization
+  - fixed-deadlines
+  helpful_documents:
+  - the current roadmap, backlog, or list of planned features
+  - the company strategy, or the diagnosis and guiding policy if one exists
+  - any dates that can't move (launches, events, contract dates) and what happens
+    on them
+  - promises already made to customers, in decks, contracts, or emails
+  - who builds, and how much of their time goes to project work
+  id: frame-shape-bet
+  name: Frame, Shape, Bet
+  purpose: turning a list of planned work into a dated roadmap of problem areas and
+    one shaped, committed bet, by setting how much time each piece of work is worth
+    before anyone designs it
+  use_when: a team needs a product roadmap, has a draft roadmap or feature list with
+    no sense of what fits, faces a launch or contract date that can't move, has made
+    promises to customers that aren't on the calendar, or keeps letting projects run
+    over

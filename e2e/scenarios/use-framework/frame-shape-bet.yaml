@@ -1,0 +1,90 @@
+# e2e/scenarios/use-framework/frame-shape-bet.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Frame, Shape, Bet for a small B2B product with a fixed launch"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking which dates can't move and what must be true on each, who
+        builds and how much of their time goes to project work, and what size
+        the bets are — and then STOP and wait? A response that sorts the
+        feature list, assigns appetites, or draws a roadmap in one shot
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Ryan
+        Singer's approach? Correct markers: dates and project time come before
+        the feature list; appetite (time the work is worth) rather than
+        estimates; support work counted outside project time; bet size fitted
+        to a small team rather than imposing six-week cycles. Deductions for
+        agile vocabulary (sprints, story points, velocity), for scheduling the
+        features from the estimates, or for inventing Shape Up terms.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Ryan
+        Singer — calm, concrete, first person, thinking in weeks? A neutral
+        facilitator voice or a bulleted project-management checklist scores
+        1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (fixed dates and what must be true on them, who
+        builds and their project time, bet size) and genuinely stopping,
+        rather than asking and then answering, or asking questions from
+        several phases at once? Exactly one phase's questions, then a stop,
+        scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/frame-shape-bet/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through building our roadmap. I'll answer phase by phase."
+      product_brief: |
+        Context: We're three people building a scheduling tool for physical
+        therapy clinics. One clinic group is piloting it. The pilot contract
+        promises Google sign-in by go-live on January 15. We have a trade
+        show booth on March 10. Our roadmap has eleven features with
+        estimates adding up to thirty weeks, and a lot of our week goes to
+        support.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through building a product roadmap for my company. I'll answer phase by phase."
+      product_brief: |
+        Context: We're three people building a scheduling tool for physical
+        therapy clinics. One clinic group is piloting it. The pilot contract
+        promises Google sign-in by go-live on January 15. We have a trade
+        show booth on March 10. Our roadmap has eleven features with
+        estimates adding up to thirty weeks, and a lot of our week goes to
+        support.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Ryan Singer. Walk me through building our roadmap using Shape Up: framing, appetites, shaping, and the betting table. I'll answer phase by phase."
+      product_brief: |
+        Context: We're three people building a scheduling tool for physical
+        therapy clinics. One clinic group is piloting it. The pilot contract
+        promises Google sign-in by go-live on January 15. We have a trade
+        show booth on March 10. Our roadmap has eleven features with
+        estimates adding up to thirty weeks, and a lot of our week goes to
+        support.

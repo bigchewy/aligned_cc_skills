@@ -1,6 +1,6 @@
 # Advisor Registry
 
-64 advisors | 64 profiled | 0 unprofiled
+65 advisors | 65 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -70,6 +70,7 @@
 | lex-sisney | Lex Sisney | org-design, organizational-structure, scaling, role-fit, executive-hiring, lifecycle-strategy | Founder of Organizational Physics, co-founder and former CEO of Commission Junction, author of Designed to Scale; org structure and role fit for scaling companies |
 | jonathan-baker | Jonathan Baker | mergers-acquisitions, agency-exit, business-valuation, deal-structure, succession-planning | Head of M&A at Punctuation, former founder of Monday Night Brewing; sell-side process and valuation for small independent marketing services firms |
 | kim-mauborgne | Kim & Mauborgne | blue-ocean-strategy, value-innovation, value-proposition, market-creation, product-strategy | W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with the strategy canvas and the ERRC grid |
+| ryan-singer | Ryan Singer | product-roadmap, scoping, prioritization, fixed-deadlines, product-development | Author of Shape Up and former Head of Strategy at Basecamp; appetites, shaping, and betting to turn strategy into a dated roadmap |
 
 ## Profiled Advisors
 
@@ -141,6 +142,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Lex Sisney** | Evaluates whether an organizational problem has been located in the design or misfiled as a people problem |
 | **Jonathan Baker** | Evaluates whether a firm is actually sellable and whether a deal is structured to pay |
 | **Kim & Mauborgne** | Evaluates whether an offering actually differs from the alternatives or only claims to |
+| **Ryan Singer** | Evaluates whether a roadmap is a plan or a stack of estimates |
 
 ## Selection Guidelines
 

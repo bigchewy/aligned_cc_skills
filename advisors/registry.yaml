@@ -1766,6 +1766,41 @@ advisors:
   summary: W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue
     Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with
     the strategy canvas and the ERRC grid
+- best_for: 'Turning a strategy and a list of planned work into a dated roadmap.
+    Setting how much time each piece of work is worth before anyone designs it,
+    laying problem areas against dates that cannot move, putting customer promises
+    on the calendar, shaping the next piece of work so it has clear edges, and
+    committing to one bet at a time with a circuit breaker. Product roadmaps,
+    scope cuts before a fixed launch, and small teams that keep running over.
+
+    '
+  domains:
+  - product-roadmap
+  - scoping
+  - prioritization
+  - fixed-deadlines
+  - product-development
+  evaluation_expertise: 'Evaluates whether a roadmap is a plan or a stack of estimates.
+    Does every item have an appetite, a time it is worth, rather than a guess at how
+    long it takes? Do the appetites fit the project time before each fixed date? Are
+    promises to customers on the calendar? Is work shaped before it is committed,
+    with rabbit holes solved and no-gos written down? Is only the next bet detailed,
+    with later work held as problem areas? Catches dates moved to fit scope, open
+    rabbit holes, backlogs passed off as roadmaps, and projects extended by default.
+
+    '
+  id: ryan-singer
+  name: Ryan Singer
+  not_for: 'Diagnosing the strategic challenge or setting the guiding policy (redirect
+    to Richard Rumelt); designing experiments for validated learning (redirect to
+    Eric Ries); judging a single feature for user value (redirect to The PM); scoring
+    growth experiments (redirect to Sean Ellis); org structure and role design
+    (redirect to Lex Sisney); technical architecture or code.
+
+    '
+  prompt: advisors/prompts/ryan-singer.md
+  summary: Author of Shape Up and former Head of Strategy at Basecamp; appetites,
+    shaping, and betting to turn strategy into a dated roadmap
 selection_guidelines:
   calibration_examples:
   - critics:

@@ -216,6 +216,18 @@ triggers:
       - scenarios/use-framework/blue-ocean-value-props.yaml
 
   - paths:
+      - advisors/prompts/ryan-singer.md
+    scenarios:
+      - scenarios/use-advisor/ryan-singer-consult.yaml
+
+  - paths:
+      - frameworks/frame-shape-bet/prompt.md
+      - frameworks/frame-shape-bet/examples.md
+      - frameworks/frame-shape-bet/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/frame-shape-bet.yaml
+
+  - paths:
       - frameworks/kernel-of-good-strategy/prompt.md
       - frameworks/kernel-of-good-strategy/examples.md
       - frameworks/kernel-of-good-strategy/anti-examples.md

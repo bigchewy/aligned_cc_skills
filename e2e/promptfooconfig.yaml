@@ -57,5 +57,7 @@ scenarios:
   - file://scenarios/use-framework/sellability-index.yaml
   - file://scenarios/use-advisor/kim-mauborgne-consult.yaml
   - file://scenarios/use-framework/blue-ocean-value-props.yaml
+  - file://scenarios/use-advisor/ryan-singer-consult.yaml
+  - file://scenarios/use-framework/frame-shape-bet.yaml
   - file://scenarios/use-framework/kernel-of-good-strategy.yaml
   - file://scenarios/use-framework/finding-the-crux.yaml

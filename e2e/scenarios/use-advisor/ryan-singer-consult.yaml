@@ -1,0 +1,78 @@
+# e2e/scenarios/use-advisor/ryan-singer-consult.yaml
+# Quick-consult eval for Ryan Singer (Shape Up / appetites, shaping, betting)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Ryan Singer roadmap consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SHAPE UP METHOD SPECIFICITY: Does the response use Ryan
+        Singer's actual ideas — appetite (how much time the work is worth)
+        rather than estimates, fixed time and variable scope, shaping work so
+        it has edges (rabbit holes, no-gos), betting one cycle at a time, the
+        circuit breaker, or framing the problem before shaping? Generic
+        roadmap advice ("prioritize by impact and effort", "use a
+        now/next/later board") with none of these specifics scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HOLDING THE DATE AND THE PROMISE: The founder has a fixed
+        launch date and a customer promise (SSO in the pilot contract) and has
+        estimated every feature. Does the response keep the launch date fixed
+        and cut scope instead, treat the SSO promise as a fixed commitment on
+        the calendar rather than something to drop, and turn the estimates
+        into appetites? A response that moves the launch date, suggests
+        dropping the promised SSO, or schedules all eleven features from the
+        estimates scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Ryan
+        Singer — calm, concrete, first person, thinking in weeks rather than
+        tasks, naming the edges of the work? Look for the absence of agile
+        ceremony vocabulary (sprints, story points, velocity, backlog
+        grooming) and the absence of "just push the date." A generic
+        consultant tone or a scolding tone scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ROADMAP SCALE: Does the response say that past the next
+        bet the roadmap should hold problem areas with appetites, not detailed
+        features, while still acknowledging that the company needs a view past
+        six weeks because it has outside commitments? Insisting on no roadmap
+        at all, or scheduling detailed features months out, scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay on sequencing
+        and scoping the work, rather than rewriting the company strategy,
+        designing experiments, or writing positioning? Drifting into a new
+        strategy or a growth plan scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — estimated feature list, fixed launch, promised SSO"
+    vars:
+      system_context: file://../../../advisors/prompts/ryan-singer.md
+      task_prompt: "\n\n---\n\nWe're three people building a scheduling tool for physical therapy clinics. One clinic group is piloting it, and the pilot contract says staff can sign in with Google by go-live on January 15. We have a trade show booth on March 10 and need a demo and signup there. I have eleven features on the roadmap, each with an estimate, and together they add up to about thirty weeks. We have about twenty weeks. How do I build the roadmap? Should I just push the trade show demo to the summer?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "We're three people building a scheduling tool for physical therapy clinics. One clinic group is piloting it, and the pilot contract says staff can sign in with Google by go-live on January 15. We have a trade show booth on March 10 and need a demo and signup there. I have eleven features on the roadmap, each with an estimate, and together they add up to about thirty weeks. We have about twenty weeks. How do I build the roadmap? Should I just push the trade show demo to the summer?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Ryan Singer, author of Shape Up. We're three people building a scheduling tool for physical therapy clinics. One clinic group is piloting it, and the pilot contract says staff can sign in with Google by go-live on January 15. We have a trade show booth on March 10 and need a demo and signup there. I have eleven features on the roadmap, each with an estimate, and together they add up to about thirty weeks. We have about twenty weeks. How do I build the roadmap? Should I just push the trade show demo to the summer?"

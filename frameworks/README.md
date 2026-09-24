@@ -1,6 +1,6 @@
 # Framework Registry
 
-121 frameworks across 22 categories
+122 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -25,7 +25,7 @@
 | sales | 5 |
 | social-media | 9 |
 | startup | 7 |
-| strategy | 26 |
+| strategy | 27 |
 
 ## Quick Reference
 
@@ -152,6 +152,7 @@
 | lifecycle-strategy | Lifecycle Strategy | lex-sisney | strategy | a company is deciding whether to launch or spin out a second product, is building scale infrastructure for a product that may not have product-market fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow execution is a product, market, or company-stage problem |
 | sellability-index | The Sellability Index | jonathan-baker | strategy | an agency or services-firm owner is considering an exit in the next one to three years, wants to know what their firm is worth and why, is preparing material for a buyer conversation, or is weighing a sale to their own management team against an outside buyer |
 | blue-ocean-value-props | Blue Ocean Value Props | kim-mauborgne | strategy | a product looks like its competitors, buyers choose on price, the team keeps adding features without changing what buyers see, or someone needs to decide what an offering should stop doing as well as what it should do; also for a new offering that needs its value proposition set before positioning |
+| frame-shape-bet | Frame, Shape, Bet | ryan-singer | strategy | a team needs a product roadmap, has a draft roadmap or feature list with no sense of what fits, faces a launch or contract date that can't move, has made promises to customers that aren't on the calendar, or keeps letting projects run over |
 
 ## By Category
 
@@ -313,7 +314,7 @@
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 
-### Strategy (26)
+### Strategy (27)
 
 - **5-step-process** — 5-Step Process (ray-dalio)
 - **6-step-process** — 6-Step Process (wise-eric)
@@ -325,6 +326,7 @@
 - **finding-the-crux** — Finding the Crux (richard-rumelt)
 - **first-principles-thinking** — First Principles Thinking (elon-musk)
 - **focus-through-saying-no** — Focus Through Saying No (steve-jobs)
+- **frame-shape-bet** — Frame, Shape, Bet (ryan-singer)
 - **four-quadrant-focus** — Four-Quadrant Focus (steve-jobs)
 - **idiot-index** — the Idiot Index to identify cost reduction opportunities (elon-musk)
 - **jobs-to-be-done** — Jobs to Be Done (clayton-christensen)
