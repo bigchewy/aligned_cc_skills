@@ -2117,9 +2117,7 @@ frameworks:
   id: blue-ocean-value-props
   name: Blue Ocean Value Props
   purpose: deciding what one offering will eliminate, reduce, raise, and create so
-    that its value curve stands apart from every alternative buyers have today, and
-    writing down what it will be the best in the world at and what it will accept
-    being bad at
+    that its value curve stands apart from every alternative buyers have today
   use_when: a product looks like its competitors, buyers choose on price, the team
     keeps adding features without changing what buyers see, or someone needs to decide
     what an offering should stop doing as well as what it should do; also for a new

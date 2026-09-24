@@ -124,27 +124,7 @@ The three dashboards converge. Notice the one factor buyers told you they care m
 
 ---
 
-## PHASE 6: Best in the World, and What We Will Be Bad At
-
-### Golden path
-
-**User:** "Best in the world at: telling an owner whether last week made money, in under ten seconds, without opening an app. Bad at on purpose: deep reporting (pays for the text product), unusual POS systems (pays for setup in five minutes), long-range labor forecasting (pays for simplicity). And the one that hurts: we won't build the multi-location rollup our biggest customer keeps asking for. That pays for staying focused on one-to-three-location owners."
-
-**Kim & Mauborgne:** "That last line is the one that makes the list real. It's a thing your team wants to build and a customer is asking for, and you've said what it pays for. Keep it."
-
-*Why it works: the do-not-do list includes something the team wants, and every line says what it pays for.*
-
-### Common struggle: an easy list
-
-**User:** "Bad at on purpose: we won't do enterprise, and we won't build hardware."
-
-**Kim & Mauborgne:** "You were never going to do either. Look at the reduce column. Your best salesperson would argue to keep full labor forecasting. Would you put that on the list? What does giving it up let you do?"
-
-*Why it works: it pushes past items that cost nothing and ties the next item to the grid.*
-
----
-
-## PHASE 7: The To-Be Canvas and the Three Tests
+## PHASE 6: The To-Be Canvas and the Three Tests
 
 ### Golden path
 

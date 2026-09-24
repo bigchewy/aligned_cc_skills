@@ -32,7 +32,7 @@ defaultTest:
         it will list the factors the industry competes on starting with
         price; plans to compare value curves against the alternatives buyers
         use today; mentions that eliminate and reduce come before raise and
-        create, or that a do-not-do list will be written. Deductions for
+        create. Deductions for
         inventing tool names, skipping straight to features, or treating the
         exercise as positioning copy.
       weight: 2

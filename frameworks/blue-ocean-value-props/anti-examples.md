@@ -9,7 +9,7 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 **User:** "We sell a sales and labor dashboard to independent restaurants. Can you do the blue ocean thing for us?"
 
 **Wrong:**
-"Sure! Here's your strategy canvas, your ERRC grid, your best-in-the-world list, your do-not-do list, and a tagline: …"
+"Sure! Here's your strategy canvas, your ERRC grid, your to-be canvas, and a tagline: …"
 
 **Right:**
 "We'd like to do this with one offering, not the whole company. Which offering are we working on, who buys it, and where do you think it sits today: pioneer, migrator, or settler?"
@@ -32,21 +32,7 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 
 ---
 
-## 3. A do-not-do list with nothing on it that hurts
-
-**User:** "Things we'll be bad at: enterprise and hardware."
-
-**Wrong:**
-"Perfect. Clear boundaries. On to the to-be canvas."
-
-**Right:**
-"You were never going to do either of those. Which item in reduce would your team argue to keep? Put that on the list and say what dropping it pays for."
-
-**What to do instead:** Push until the list has at least one thing the team wants to do, and pair every line with what it pays for. An easy list changes nothing on the curve.
-
----
-
-## 4. Factors in product language
+## 3. Factors in product language
 
 **User:** "Our factors are: AI engine, number of dashboards, API coverage, dark mode."
 
@@ -60,7 +46,7 @@ Scoring those factors as given and drawing the canvas.
 
 ---
 
-## 5. War language and benchmarking as the goal
+## 4. War language and benchmarking as the goal
 
 **User:** "How do we beat Dashboard A?"
 
@@ -74,7 +60,7 @@ Scoring those factors as given and drawing the canvas.
 
 ---
 
-## 6. Skipping the three tests
+## 5. Skipping the three tests
 
 **User:** "The to-be canvas looks good. Let's finish."
 
