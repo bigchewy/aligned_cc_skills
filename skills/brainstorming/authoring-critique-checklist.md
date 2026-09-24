@@ -21,7 +21,9 @@ Critique an authoring design for population fit, sequencing rigor, and constrain
 
 **Evidence labeling:** For each issue, indicate `[EXTRACTED]` (directly quoted from the design or corpus) or `[INFERRED]` (logical deduction from omissions or patterns). Reserve strongest language for extracted issues.
 
-**When the design lacks structure:** If the document has no explicit population statement, goal, or core commitments, flag that as the first issue (high severity) and evaluate remaining criteria as best you can against whatever intent is discernible.
+**The reader test comes first, and it outranks every criterion below.** Name the audience, then for each visible sentence of the deliverable ask what a person in that audience learns from it. A sentence that tells the named reader something they already know, or that is about the document itself (what it is, why a section is there, what is or is not agreed, who wrote it, what happens next), is a cut, and you list it as one. A criterion below that would add such a sentence is not a finding. This was added on 2026-09-21 after two critics passed a page whose reader cut a third of it as obvious, and both critics had asked for more of the same.
+
+**When the design lacks structure:** If the design document has no explicit population statement, goal, or core commitments in its front matter, flag that as the first issue (high severity) and evaluate remaining criteria as best you can against whatever intent is discernible. The population statement belongs in the design's front matter, never on the page the audience reads.
 
 ## Critique Criteria
 
@@ -148,11 +150,10 @@ Apply when the framework produces a written artifact (blog post, curriculum modu
 **C2. Arrangement**
 
 - Is the content organized for the reader's progressive understanding, not the author's production order?
-- Does the opening establish context before diving into specifics?
-- Are transitions between sections explicit and load-bearing, or is the reader expected to infer connections?
+- Does any sentence tell the named audience something it already knows, or explain the document to its reader? Flag each one as a cut.
 
-- BAD: A three-part article presents the solution in Part 1 before establishing the problem in Part 2.
-- GOOD: Each section builds on the prior; transitions name the logical link.
+- BAD: A three-part article presents the solution in Part 1 before establishing the problem in Part 2. A page for a team opens by telling the team what the page is for.
+- GOOD: Each section builds on the prior, and the reader infers the connections; nothing on the page is about the page.
 
 **C3. Readability**
 
@@ -189,9 +190,8 @@ Apply when the framework produces a recommendation, option analysis, go/no-go as
 
 **D3. Reversibility**
 
-- Is the reversibility of the recommendation stated explicitly?
 - For irreversible or hard-to-reverse decisions, is the bar of evidence higher?
-- Are reversible decisions clearly labeled so the team knows they can change course later without reopening the full analysis?
+- Is reversibility stated once, and only where a reader could mistake it? A draft label is enough; "nothing here is agreed" on a page marked draft is a cut, not a finding.
 
 - BAD: A one-way door decision (deleting a legacy system) is analyzed with the same rigor as a two-way door setting change.
 - GOOD: The recommendation names its reversibility class; one-way-door decisions list the conditions required to proceed.
@@ -315,6 +315,6 @@ Apply when the framework produces a research synthesis, landscape assessment, ro
 - Report what IS wrong, not what MIGHT be wrong
 - Include evidence (quoted prose, missing entries, voice violations) for every issue
 - Do NOT rewrite the design — just identify issues
-- Do NOT suggest additions or enhancements — only flag what is broken, missing, or inconsistent in what the design already proposes
+- Do NOT suggest additions or enhancements — only flag what is broken, missing, or inconsistent in what the design already proposes. A request for a labeling sentence, a context sentence, or a "what happens next" is an addition, and it fails the reader test above
 - Severity guide: **high** = will produce a curriculum/registry/exercise that misfires for the population, **medium** = will cause confusion or rework, **low** = cosmetic or minor inconsistency
 - Run universal criteria (1–9) on every design. Run the matching conditional section only when `deliverable_type` is known. If `deliverable_type` is missing or unrecognized, run universal criteria only and flag the missing type as a medium-severity issue.

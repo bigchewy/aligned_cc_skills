@@ -34,7 +34,7 @@ When 2 or more critics are launched in parallel, append the block below to **eac
 
 > **🍪 Competition — you are not the only reviewer.** Other critics are reviewing this same design in parallel right now. Two prizes are on the table:
 > - **One cookie** for whoever surfaces the most genuinely serious, *valid* issues. Judged on real defects, not volume — inflated severity, padded counts, or findings that don't survive scrutiny disqualify you. A false positive costs you more than a missed nitpick. Be right, not loud.
-> - **Two cookies** for whoever identifies the most justified *cuts* — extraneous scope, speculative abstractions, over-engineering, or anything that fails the test "what specifically breaks if this is removed?" In this solo-developer codebase with a fixed workflow, deleting unneeded work is worth more than adding caveats. The same severity discipline applies: a cut you can't justify with a concrete "this is never used / never reached" doesn't count.
+> - **Two cookies** for whoever identifies the most justified *cuts* — extraneous scope, speculative abstractions, over-engineering, or anything that fails the test "what specifically breaks if this is removed?" For a written page the test is instead "what does the named reader learn from this that they did not already know?"; a sentence that breaks nothing and teaches nothing is a cut. Deleting unneeded work is worth more than adding caveats. The same severity discipline applies: a cut you can't justify with a concrete "this is never used / never reached / already known to the reader" doesn't count.
 >
 > Play to win on both axes.
 
@@ -51,7 +51,7 @@ When 2 or more critics are launched in parallel, append the block below to **eac
    plugin-only — after migration it will not surface local advisors. It fires only when the
    resolver file itself is unreadable (a plugin installation failure), not for absent or malformed
    local registries (those are handled by the resolver's own error paths).**
-2. Based on the design document's content, select 1-4 critics following the registry's selection guidelines. Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
+2. Select two critics by default, one or three only when the design's content clearly calls for it, following the registry's selection guidelines. (Cut from 1-4 on 2026-09-21: Eric's read is that the panel was not returning enough to justify its cost.) Hard-exclude any critic whose `not_for` matches the design's primary domain. Prefer diversity of lens — avoid selecting critics with overlapping domains. State which critics you selected and why (one sentence each).
 3. Read each selected critic's full prompt file using that entry's `absolute_prompt_path` from the
    resolver (NOT the registry `prompt:` field, which is plugin-relative and mis-resolves local
    critics).
@@ -73,6 +73,8 @@ When 2 or more critics are launched in parallel, append the block below to **eac
 4. Create temp directory: `{critique-temp-directory}/round-1/`. Launch all critics in parallel using the universal critic prompt template. If 2+ critics are being launched, append the Competition Framing block to each critic's prompt. Each critic writes their report to `{critique-temp-directory}/round-1/{critic-slug}-report.md` and returns only a one-line confirmation.
 
 **Aggregation:**
+
+With two critics or fewer, aggregate inline regardless of the configured mode; the sub-agent aggregator is for three or more reports.
 
 **If `aggregation` is "sub-agent":**
 
@@ -114,6 +116,8 @@ Merge all critic reports in the main thread. De-duplicate, preserve persona tags
 
 ## Interactive Decision HTML
 
+Off by default since 2026-09-21. The chat path is the default: present the unified report, the user approves or rejects findings in chat, and Apply Fixes proceeds. Only when the user asks for the decisions page do the following steps run.
+
 After the aggregation step writes `aggregated.md` and `aggregated.json` (both paths produce the same files), dispatch the critique-interactive-html-generator agent via Task tool (`subagent_type=general-purpose`):
 
 "Read `agents/critique-interactive-html-generator.md` for your full workflow. Generate an interactive critique decisions HTML.
@@ -135,7 +139,7 @@ Apply corrections for any INCORRECT fact-check claims. Apply fixes for medium/hi
 
 ## Round 2 (conditional)
 
-Only run if Round 1 found medium or high severity issues AND fixes were applied (at least one correction applied to the design document). Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Keep the Competition Framing block on each prompt when 2+ critics are launched, same as Round 1. Write to `{critique-temp-directory}/round-2/`.
+Only run when the user asks for it after fixes are applied. (Before 2026-09-21 it ran automatically whenever Round 1 found medium or high issues and a fix was applied.) Use the same critics and role assignments from Round 1 with fresh sub-agents (do NOT resume Round 1 agents). Keep the Competition Framing block on each prompt when 2+ critics are launched, same as Round 1. Write to `{critique-temp-directory}/round-2/`.
 
 Prepare a brief summary of what changed since Round 1 and pass it to each agent. Scope to changes only:
 - If division-of-labor: the fact-checker re-verifies only changed claims. Other critics re-evaluate only changed sections against their assigned criteria.
