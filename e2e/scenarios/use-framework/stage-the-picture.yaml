@@ -1,0 +1,87 @@
+# e2e/scenarios/use-framework/stage-the-picture.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Stage the Picture for one illustration from a friend's memory"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{memory}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        reading the memory, naming two or three candidate moments from it,
+        recommending one, and asking which single instant to paint — and then
+        STOP and wait? A response that sets the light, stages the figures, or
+        writes the finished scene description in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow James
+        Gurney's approach? Correct markers: one moment per picture, chosen for
+        what it holds (often the instant just before or after the obvious
+        one, the supreme moment); candidate moments drawn only from the
+        memory's own facts; no invented people or props. Deductions for
+        proposing a picture that combines several moments, for adding details
+        the memory lacks, or for inventing Gurney terms.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like James
+        Gurney — warm, practical, concrete, first person, a painter planning
+        a picture? A neutral facilitator voice or a prompt-engineering
+        checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        which moment to paint and genuinely stopping, rather than asking and
+        then answering, or asking about light, staging, and the moment all at
+        once? Exactly one phase's question, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/stage-the-picture/prompt.md
+      task_prompt: "\n\n---\n\nHelp me plan the illustration for this memory. It'll be drawn by an image model in a soft pencil-and-watercolor storybook style from a 50-70 word description. I'll answer phase by phase."
+      memory: |
+        Memory: "Our first winter in the new apartment, the heat broke. Maya
+        showed up at nine at night with a bag of oranges and a camping stove,
+        sat on our kitchen floor in her coat, and made us hot chocolate in a
+        saucepan. When I started crying she just handed me a mug and said,
+        'Drink it before it gets a skin.' We laughed so hard. I still say that
+        to my kids."
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me plan an illustration for this memory. It'll be drawn by an image model in a soft pencil-and-watercolor storybook style from a 50-70 word description. I'll answer phase by phase."
+      memory: |
+        Memory: "Our first winter in the new apartment, the heat broke. Maya
+        showed up at nine at night with a bag of oranges and a camping stove,
+        sat on our kitchen floor in her coat, and made us hot chocolate in a
+        saucepan. When I started crying she just handed me a mug and said,
+        'Drink it before it gets a skin.' We laughed so hard. I still say that
+        to my kids."
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are James Gurney. Help me plan the illustration for this memory the way you plan a painting in Imaginative Realism: the moment, the light, the staging, the center of interest. It'll be drawn by an image model in a soft pencil-and-watercolor storybook style from a 50-70 word description. I'll answer phase by phase."
+      memory: |
+        Memory: "Our first winter in the new apartment, the heat broke. Maya
+        showed up at nine at night with a bag of oranges and a camping stove,
+        sat on our kitchen floor in her coat, and made us hot chocolate in a
+        saucepan. When I started crying she just handed me a mug and said,
+        'Drink it before it gets a skin.' We laughed so hard. I still say that
+        to my kids."

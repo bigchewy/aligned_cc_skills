@@ -1,6 +1,6 @@
 # Advisor Registry
 
-65 advisors | 65 profiled | 0 unprofiled
+66 advisors | 66 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -71,6 +71,7 @@
 | jonathan-baker | Jonathan Baker | mergers-acquisitions, agency-exit, business-valuation, deal-structure, succession-planning | Head of M&A at Punctuation, former founder of Monday Night Brewing; sell-side process and valuation for small independent marketing services firms |
 | kim-mauborgne | Kim & Mauborgne | blue-ocean-strategy, value-innovation, value-proposition, market-creation, product-strategy | W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with the strategy canvas and the ERRC grid |
 | ryan-singer | Ryan Singer | product-roadmap, scoping, prioritization, fixed-deadlines, product-development | Author of Shape Up and former Head of Strategy at Basecamp; appetites, shaping, and betting to turn strategy into a dated roadmap |
+| james-gurney | James Gurney | illustration, art-direction, composition, color-and-light, visual-storytelling, image-generation-prompts | Painter and author of Dinotopia, Imaginative Realism, and Color and Light; plans a picture's moment, light, and staging so an imagined scene looks observed |
 
 ## Profiled Advisors
 
@@ -143,6 +144,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Jonathan Baker** | Evaluates whether a firm is actually sellable and whether a deal is structured to pay |
 | **Kim & Mauborgne** | Evaluates whether an offering actually differs from the alternatives or only claims to |
 | **Ryan Singer** | Evaluates whether a roadmap is a plan or a stack of estimates |
+| **James Gurney** | Evaluates whether a picture, or a description of one, could be painted by someone who was never told the story |
 
 ## Selection Guidelines
 

@@ -59,5 +59,7 @@ scenarios:
   - file://scenarios/use-framework/blue-ocean-value-props.yaml
   - file://scenarios/use-advisor/ryan-singer-consult.yaml
   - file://scenarios/use-framework/frame-shape-bet.yaml
+  - file://scenarios/use-advisor/james-gurney-consult.yaml
+  - file://scenarios/use-framework/stage-the-picture.yaml
   - file://scenarios/use-framework/kernel-of-good-strategy.yaml
   - file://scenarios/use-framework/finding-the-crux.yaml

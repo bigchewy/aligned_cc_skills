@@ -2149,3 +2149,29 @@ frameworks:
     no sense of what fits, faces a launch or contract date that can't move, has made
     promises to customers that aren't on the calendar, or keeps letting projects run
     over
+- advisor: james-gurney
+  category: visual-storytelling
+  default_critic_advisors:
+  - james-gurney
+  deliverable_type: content
+  domains:
+  - illustration
+  - composition
+  - color-and-light
+  - image-generation-prompts
+  helpful_documents:
+  - the written story or memory the picture comes from
+  - the style the picture will be drawn in (a style note, a reference image, or an
+    image-model style prompt)
+  - photos of the people or the place, if any
+  - any length or format limit on the finished description (for example, 50-70 words
+    for an image model)
+  id: stage-the-picture
+  name: Stage the Picture
+  purpose: planning one illustration from a written story or memory before it is drawn,
+    by choosing the moment, the light, the staging, and the one center of interest,
+    then writing a description another artist or an image model could paint from
+  use_when: someone needs to turn a written story or memory into a single illustration,
+    is writing or fixing a scene description or prompt for an image model, has a draft
+    description that reads as mood words with no light or staging, or has a picture
+    that tries to show several moments at once

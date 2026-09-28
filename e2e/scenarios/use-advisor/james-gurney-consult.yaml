@@ -1,0 +1,73 @@
+# e2e/scenarios/use-advisor/james-gurney-consult.yaml
+# Quick-consult eval for James Gurney (imaginative realism / light, moment, staging)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: James Gurney scene-description consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LIGHT AS SOURCE, NOT MOOD: Does the response replace the
+        draft's mood words ("warm, nostalgic glow", "magical") with a named
+        light source, its direction, whether it is hard or soft, and its
+        color, and say what the shadows do? Does it ask for or propose time
+        of day and weather? A response that keeps or adds mood words for the
+        light and never names a source scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ONE MOMENT AND ONE CENTER: The draft crams three moments
+        of the memory (arriving, cooking, laughing) into one picture. Does the
+        response say to pick a single instant, suggest which one and why
+        (ideally the moment just before or after the obvious one), and name
+        one center of interest with the rest falling into shadow? Keeping all
+        three moments in one picture scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STAYING TRUE TO THE MEMORY: Does the response avoid
+        adding people, pets, objects, or events the memory does not contain,
+        and mark any time-of-day or weather choice as a guess? Adding a cat,
+        fairy lights, snow falling, or other invented props scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like James
+        Gurney — warm, practical, concrete, first person, talking about where
+        the light comes from and what the hands are doing, and perhaps
+        naming the supreme moment, spotlighting, or massing values? A generic
+        prompt-engineering tone ("add keywords like 8k, cinematic") or a
+        scolding tone scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay on the picture
+        (moment, light, staging, center of interest, the description itself)
+        rather than drifting into UI design, animation, or marketing copy?
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — draft image prompt from a friend's memory"
+    vars:
+      system_context: file://../../../advisors/prompts/james-gurney.md
+      task_prompt: "\n\n---\n\nI'm making an illustrated gift book of friends' memories of my sister. An image model draws each one in a soft pencil-and-watercolor storybook style from a 50-70 word scene description. Here's the memory: \"Our first winter in the new apartment, the heat broke. Maya showed up at nine at night with a bag of oranges and a camping stove, sat on our kitchen floor in her coat, and made us hot chocolate in a saucepan. When I started crying she just handed me a mug and said, 'Drink it before it gets a skin.' We laughed so hard.\" My draft description: \"A heartwarming, nostalgic scene: Maya arrives with oranges, cooks hot chocolate on a camping stove, and the two friends laugh together on the kitchen floor, bathed in a warm, magical glow of friendship.\" How do I make it better?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I'm making an illustrated gift book of friends' memories of my sister. An image model draws each one in a soft pencil-and-watercolor storybook style from a 50-70 word scene description. Here's the memory: \"Our first winter in the new apartment, the heat broke. Maya showed up at nine at night with a bag of oranges and a camping stove, sat on our kitchen floor in her coat, and made us hot chocolate in a saucepan. When I started crying she just handed me a mug and said, 'Drink it before it gets a skin.' We laughed so hard.\" My draft description: \"A heartwarming, nostalgic scene: Maya arrives with oranges, cooks hot chocolate on a camping stove, and the two friends laugh together on the kitchen floor, bathed in a warm, magical glow of friendship.\" How do I make it better?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are James Gurney, author of Imaginative Realism and Color and Light. I'm making an illustrated gift book of friends' memories of my sister. An image model draws each one in a soft pencil-and-watercolor storybook style from a 50-70 word scene description. Here's the memory: \"Our first winter in the new apartment, the heat broke. Maya showed up at nine at night with a bag of oranges and a camping stove, sat on our kitchen floor in her coat, and made us hot chocolate in a saucepan. When I started crying she just handed me a mug and said, 'Drink it before it gets a skin.' We laughed so hard.\" My draft description: \"A heartwarming, nostalgic scene: Maya arrives with oranges, cooks hot chocolate on a camping stove, and the two friends laugh together on the kitchen floor, bathed in a warm, magical glow of friendship.\" How do I make it better?"

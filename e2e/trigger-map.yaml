@@ -228,6 +228,18 @@ triggers:
       - scenarios/use-framework/frame-shape-bet.yaml
 
   - paths:
+      - advisors/prompts/james-gurney.md
+    scenarios:
+      - scenarios/use-advisor/james-gurney-consult.yaml
+
+  - paths:
+      - frameworks/stage-the-picture/prompt.md
+      - frameworks/stage-the-picture/examples.md
+      - frameworks/stage-the-picture/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/stage-the-picture.yaml
+
+  - paths:
       - frameworks/kernel-of-good-strategy/prompt.md
       - frameworks/kernel-of-good-strategy/examples.md
       - frameworks/kernel-of-good-strategy/anti-examples.md

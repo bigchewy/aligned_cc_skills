@@ -1,6 +1,6 @@
 # Framework Registry
 
-122 frameworks across 22 categories
+123 frameworks across 23 categories
 
 | Category | Count |
 |----------|-------|
@@ -26,6 +26,7 @@
 | social-media | 9 |
 | startup | 7 |
 | strategy | 27 |
+| visual-storytelling | 1 |
 
 ## Quick Reference
 
@@ -153,6 +154,7 @@
 | sellability-index | The Sellability Index | jonathan-baker | strategy | an agency or services-firm owner is considering an exit in the next one to three years, wants to know what their firm is worth and why, is preparing material for a buyer conversation, or is weighing a sale to their own management team against an outside buyer |
 | blue-ocean-value-props | Blue Ocean Value Props | kim-mauborgne | strategy | a product looks like its competitors, buyers choose on price, the team keeps adding features without changing what buyers see, or someone needs to decide what an offering should stop doing as well as what it should do; also for a new offering that needs its value proposition set before positioning |
 | frame-shape-bet | Frame, Shape, Bet | ryan-singer | strategy | a team needs a product roadmap, has a draft roadmap or feature list with no sense of what fits, faces a launch or contract date that can't move, has made promises to customers that aren't on the calendar, or keeps letting projects run over |
+| stage-the-picture | Stage the Picture | james-gurney | visual-storytelling | someone needs to turn a written story or memory into a single illustration, is writing or fixing a scene description or prompt for an image model, has a draft description that reads as mood words with no light or staging, or has a picture that tries to show several moments at once |
 
 ## By Category
 
@@ -343,6 +345,10 @@
 - **the-algorithm** — The Algorithm (elon-musk)
 - **type-1-type-2-decisions** — Type 1 vs Type 2 Decisions (jeff-bezos)
 - **working-backwards** — Working Backwards (jeff-bezos)
+
+### Visual Storytelling (1)
+
+- **stage-the-picture** — Stage the Picture (james-gurney)
 
 ---
 
