@@ -85,7 +85,7 @@ Entry points are skills you invoke directly. The software-development loop (plan
 | find-potential-advisors | Entry Point | `/aligned:find-potential-advisors` | Research and evaluate potential advisors |
 | persona-panel | Entry Point | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
 | kickstart | Entry Point | `/aligned:kickstart` | Scaffold project with conventions, team settings, eval infrastructure |
-| create-design-principles | Entry Point | `/aligned:create-design-principles` | Interactive design discovery + enforce precise, minimal design system |
+| create-design-principles | Entry Point | `/aligned:create-design-principles` | Interactive design discovery, a measurable quality floor, and an Impeccable detector pass |
 | create-image | Entry Point | `/aligned:create-image` | Generate diagrams, charts, icons, illustrations, and brand visuals — routes to diagram, icon, or illustration mode |
 | visualize-design | Entry Point | `/aligned:visualize-design` | Render any markdown doc or the current conversation as an on-brand, tabbed, Mermaid-validated HTML artifact |
 | root-cause-analysis | Entry Point | `/aligned:root-cause-analysis` | Root cause investigation for business and process problems with optional multi-agent mode |
