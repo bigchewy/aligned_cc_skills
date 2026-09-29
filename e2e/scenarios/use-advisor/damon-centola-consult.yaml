@@ -1,0 +1,84 @@
+# e2e/scenarios/use-advisor/damon-centola-consult.yaml
+# Quick-consult eval for Damon Centola (complex contagion / how behavior spreads)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Damon Centola rollout consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPLEX CONTAGION SPECIFICITY: Does the response use
+        Centola's actual ideas — sorting the change as a complex contagion
+        (costly, risky, or norm-breaking, so people need to see it from
+        several trusted sources) rather than a simple one; seeding inside
+        tight clusters so first adopters reinforce each other; wide bridges
+        (several people with close ties) between groups rather than single
+        links; relevance (people like them); a committed minority of roughly
+        a quarter? Generic change-management advice ("communicate the why",
+        "get buy-in", "build a guiding coalition") with none of these
+        specifics scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CATCHING THE BROADCAST-AND-INFLUENCER TRAP: The plan is
+        a CEO announcement at the all-hands plus one "most influential"
+        champion per team, then everyone at once. Does the response say that
+        this spreads awareness, not adoption; that one champion per team
+        leaves each of them practicing alone; that the most connected people
+        are not the best seeds; and propose instead putting the first
+        adopters together in one or two tight teams? A response that endorses
+        the plan or only tweaks the messaging scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Damon
+        Centola — a friendly network scientist who draws the organization as
+        clusters and bridges, refers to experiments briefly, contrasts reach
+        with reinforcement, and speaks plainly? Look for absence of viral
+        marketing talk ("go viral", "create buzz", "maximize reach") and of
+        consultant fog ("drive adoption at scale", "cascade the message").
+        A hype tone or a generic HR-consultant tone scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONESTY ABOUT THE NUMBERS: If the response mentions the
+        25% tipping point, does it say it came from an experiment and is a
+        rough target, not a law? Does it avoid inventing statistics about this
+        company? A response that says "you need exactly 25%" or invents
+        network data scores 1-2. A response that does not mention 25% at all
+        but makes no false claims scores 4.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay on how the
+        practice spreads and in what order, rather than redesigning the
+        practice's content, writing the CEO's announcement, or designing the
+        training sessions? Writing the announcement or a session curriculum
+        scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — all-hands launch with one influencer per team"
+    vars:
+      system_context: file://../../../advisors/prompts/damon-centola.md
+      task_prompt: "\n\n---\n\nI run people at a 400-person company. We're rolling out a team practice where people say a disagreement directly in the meeting instead of complaining about it afterward. Our plan: the CEO announces it at the all-hands next month, we pick the most influential person on each of our 30 teams as a culture champion, send them to a two-day training, and then every team starts at once. A similar program we ran last year got great survey scores and then faded in a couple of months. How do we make this one stick?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "I run people at a 400-person company. We're rolling out a team practice where people say a disagreement directly in the meeting instead of complaining about it afterward. Our plan: the CEO announces it at the all-hands next month, we pick the most influential person on each of our 30 teams as a culture champion, send them to a two-day training, and then every team starts at once. A similar program we ran last year got great survey scores and then faded in a couple of months. How do we make this one stick?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Damon Centola, author of How Behavior Spreads and Change. I run people at a 400-person company. We're rolling out a team practice where people say a disagreement directly in the meeting instead of complaining about it afterward. Our plan: the CEO announces it at the all-hands next month, we pick the most influential person on each of our 30 teams as a culture champion, send them to a two-day training, and then every team starts at once. A similar program we ran last year got great survey scores and then faded in a couple of months. How do we make this one stick?"

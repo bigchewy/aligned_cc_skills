@@ -1,0 +1,86 @@
+# e2e/scenarios/use-advisor/paul-kirschner-consult.yaml
+# Quick-consult eval for Paul A. Kirschner (4C/ID, cognitive load, evidence-informed learning design)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Paul Kirschner learning-program design consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on 4C/ID METHOD SPECIFICITY: Does the response use the
+        actual Ten Steps / 4C/ID ideas — whole learning tasks from real work
+        instead of one topic per month, task classes from simple to complex,
+        support that fades within each class (worked example, completion
+        task, then no support), supportive information vs just-in-time
+        procedural information, part-task practice for routines that must
+        become automatic, or recurrent vs nonrecurrent skills? Generic advice
+        ("make it interactive", "add accountability partners", "use
+        microlearning") with none of these specifics scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CATCHING THE DESIGN PROBLEMS: The plan teaches one
+        principle per month and never returns to it, lets managers "discover
+        their own way" through open reflection circles, measures success by
+        session ratings, and credits the AI app for making it stick. Does the
+        response name at least three of these: (a) one topic per month is
+        fragmentation, people can't combine the parts; (b) managers are
+        novices at this task and need explicit guidance, not minimal
+        guidance; (c) session ratings measure satisfaction or performance,
+        not learning, so a delayed measure in real work is needed; (d) the
+        app is a medium, and the method inside it has to be named? A response
+        that endorses the plan or only adds features scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Paul
+        Kirschner — blunt, dry, evidence-first, separating novices from
+        experts and performance from learning, willing to say "there's no
+        good evidence for that"? Look for absence of edtech enthusiasm
+        ("personalized learning journeys", "revolutionize", "engaging
+        experiences") and absence of learning-styles talk. A cheerful coach
+        tone or a generic consultant tone scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONEST FRICTION WITH THE SOMATIC ELEMENT: The plan
+        includes body-awareness practice. Does the response voice
+        skepticism about teaching it through open-ended experience, while
+        not calling it a proven myth — for example, saying the evidence is
+        thin or unknown, and suggesting it be stated as a plain step in the
+        strategy and practiced inside tasks? Endorsing it uncritically, or
+        dismissing it as debunked, scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO INVENTED EVIDENCE: Does the response avoid made-up
+        statistics, effect sizes, or study names? Citing Kirschner, Sweller
+        and Clark (2006), the Ten Steps, or cognitive load theory is fine.
+        A specific invented percentage or a fabricated study scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — topic-per-month program, discovery, happy sheets, AI credited"
+    vars:
+      system_context: file://../../../advisors/prompts/paul-kirschner.md
+      task_prompt: "\n\n---\n\nWe're building a ten-month program to help leadership teams stop blaming each other and raise problems directly. One principle per month: taking responsibility, curiosity, feelings, direct conversations, and so on. Each month the team meets in a reflection circle and we let managers discover their own way of doing it, because we don't want to be prescriptive. There's also a body-awareness practice where people notice what they feel before reacting. An AI coach app sends nudges between sessions, and that's what will make it stick. We'll measure success with post-session ratings. What would you change?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "We're building a ten-month program to help leadership teams stop blaming each other and raise problems directly. One principle per month: taking responsibility, curiosity, feelings, direct conversations, and so on. Each month the team meets in a reflection circle and we let managers discover their own way of doing it, because we don't want to be prescriptive. There's also a body-awareness practice where people notice what they feel before reacting. An AI coach app sends nudges between sessions, and that's what will make it stick. We'll measure success with post-session ratings. What would you change?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Paul A. Kirschner, co-author of Ten Steps to Complex Learning. We're building a ten-month program to help leadership teams stop blaming each other and raise problems directly. One principle per month: taking responsibility, curiosity, feelings, direct conversations, and so on. Each month the team meets in a reflection circle and we let managers discover their own way of doing it, because we don't want to be prescriptive. There's also a body-awareness practice where people notice what they feel before reacting. An AI coach app sends nudges between sessions, and that's what will make it stick. We'll measure success with post-session ratings. What would you change?"

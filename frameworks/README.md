@@ -1,6 +1,6 @@
 # Framework Registry
 
-123 frameworks across 23 categories
+127 frameworks across 24 categories
 
 | Category | Count |
 |----------|-------|
@@ -13,7 +13,8 @@
 | customer | 1 |
 | evidence | 1 |
 | growth | 7 |
-| leadership | 12 |
+| leadership | 13 |
+| learning-design | 3 |
 | marketing | 1 |
 | negotiation | 3 |
 | onboarding | 4 |
@@ -155,6 +156,10 @@
 | blue-ocean-value-props | Blue Ocean Value Props | kim-mauborgne | strategy | a product looks like its competitors, buyers choose on price, the team keeps adding features without changing what buyers see, or someone needs to decide what an offering should stop doing as well as what it should do; also for a new offering that needs its value proposition set before positioning |
 | frame-shape-bet | Frame, Shape, Bet | ryan-singer | strategy | a team needs a product roadmap, has a draft roadmap or feature list with no sense of what fits, faces a launch or contract date that can't move, has made promises to customers that aren't on the calendar, or keeps letting projects run over |
 | stage-the-picture | Stage the Picture | james-gurney | visual-storytelling | someone needs to turn a written story or memory into a single illustration, is writing or fixing a scene description or prompt for an image model, has a draft description that reads as mood words with no light or staging, or has a picture that tries to show several moments at once |
+| ten-steps-blueprint | Ten Steps Blueprint | paul-kirschner | learning-design | someone is designing a training, coaching, or learning program that runs over weeks or months and must change what people do at work; the draft is organized one topic per session, people pass the sessions but don't use the skill, support never fades, or an app or AI is expected to make it stick |
+| behavior-gap-diagnosis | Behavior Gap Diagnosis | julie-dirksen | learning-design | someone asks for a training or workshop, a program is popular but behavior between sessions does not change, people know what to do and still do not do it, or a team needs to decide whether a behavior problem calls for practice, an environment change, a leader going first, or motivation work instead of more content |
+| assigning-ai-roles | Assigning AI Roles | ethan-mollick | learning-design | someone is building an AI tutor, AI coach, role-play practice partner, or AI feedback tool for a course or program; an existing AI learning tool gets good ratings but behavior does not change; or a team needs to decide what the AI should and should not do for learners |
+| complex-contagion-rollout | Complex Contagion Rollout | damon-centola | leadership | a company is rolling out a new team practice, culture program, or way of working that people find risky or awkward to start; a pilot or launch got good survey scores and then faded; someone plans to launch with an all-hands announcement, one champion per team, or everyone at once; or a leader needs to decide which teams go first and in what order |
 
 ## By Category
 
@@ -212,13 +217,14 @@
 - **product-market-fit-test** — the Product-Market Fit Test (sean-ellis)
 - **smallest-viable-audience** — Smallest Viable Audience (seth-godin)
 
-### Leadership (12)
+### Leadership (13)
 
 - **100-percent-responsibility** — 100% Responsibility (diana-chapman)
 - **above-below-the-line** — Above/Below the Line (diana-chapman)
 - **big-bat-board-assessment** — Joan's Big BAT (joan-garry)
 - **braving-trust-inventory** — BRAVING Trust Inventory (brene-brown)
 - **clearing-model** — The Clearing Model to resolve relationship tensions (diana-chapman)
+- **complex-contagion-rollout** — Complex Contagion Rollout (damon-centola)
 - **leadership-pipeline-passages** — the Leadership Pipeline Passages (ram-charan)
 - **organizational-readiness** — Organizational Readiness (joan-garry)
 - **management-level-progression** — the Management Level Progression framework (lara-hogan)
@@ -226,6 +232,12 @@
 - **pillars-of-integrity** — the Four Pillars of Integrity (jim-dethmer)
 - **psiu-role-fit** — PSIU Role Fit (lex-sisney)
 - **rules-of-structure** — The Rules of Structure (lex-sisney)
+
+### Learning Design (3)
+
+- **assigning-ai-roles** — Assigning AI Roles (ethan-mollick)
+- **behavior-gap-diagnosis** — Behavior Gap Diagnosis (julie-dirksen)
+- **ten-steps-blueprint** — Ten Steps Blueprint (paul-kirschner)
 
 ### Marketing (1)
 

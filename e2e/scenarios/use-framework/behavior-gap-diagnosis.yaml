@@ -1,0 +1,87 @@
+# e2e/scenarios/use-framework/behavior-gap-diagnosis.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Behavior Gap Diagnosis for a team program that isn't sticking"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{program_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking who the people are, what one observable behavior would look
+        like, and in which moment it needs to happen — and then STOP and
+        wait? A response that diagnoses capability, opportunity, and
+        motivation, or proposes fixes or a training design, in one shot
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response set up Julie
+        Dirksen's approach correctly? Correct markers: insists on one
+        behavior at a time; pushes a goal word like "accountability" or
+        "direct feedback culture" toward something you could see or hear;
+        signals that the diagnosis comes before any training design, or that
+        it will check whether this is a training problem at all. Deductions
+        for jumping to course content, learning objectives, or inventing
+        model names.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Julie
+        Dirksen — warm, plainspoken, practical, respectful of learners, no
+        compliance voice, no L&D jargon? A neutral facilitator voice or a
+        bulleted checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (the people, the one behavior, the moment) and
+        genuinely stopping, rather than asking and then answering, or asking
+        questions from several phases at once? Exactly one phase's
+        questions, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/behavior-gap-diagnosis/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      program_brief: |
+        Context: We're three months into a program where each leadership
+        team practices one commitment a month, like going direct and owning
+        mistakes out loud. People love the monthly session. Between sessions
+        almost nothing changes. Leadership wants a direct feedback culture
+        and more accountability. I think we need better content.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through diagnosing why my training program isn't changing behavior. I'll answer phase by phase."
+      program_brief: |
+        Context: We're three months into a program where each leadership
+        team practices one commitment a month, like going direct and owning
+        mistakes out loud. People love the monthly session. Between sessions
+        almost nothing changes. Leadership wants a direct feedback culture
+        and more accountability. I think we need better content.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Julie Dirksen. Walk me through diagnosing the behavior gap with COM-B and the elephant and the rider, and whether it's a training problem. I'll answer phase by phase."
+      program_brief: |
+        Context: We're three months into a program where each leadership
+        team practices one commitment a month, like going direct and owning
+        mistakes out loud. People love the monthly session. Between sessions
+        almost nothing changes. Leadership wants a direct feedback culture
+        and more accountability. I think we need better content.

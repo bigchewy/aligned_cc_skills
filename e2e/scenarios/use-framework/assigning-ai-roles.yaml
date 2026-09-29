@@ -1,0 +1,90 @@
+# e2e/scenarios/use-framework/assigning-ai-roles.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Assigning AI Roles for a team-learning practice moment"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{program_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        pinning down one learning moment: what the learner should be able to
+        do without the AI afterward, who the learner is, and where the moment
+        sits (before learning, during practice, or after a real attempt) —
+        and then STOP and wait? A response that picks a role, lists risks,
+        and writes a full AI prompt in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow the
+        Mollicks' "Assigning AI" approach? Correct markers: works on one
+        learning moment and one role at a time; frames the goal as a behavior
+        the learner does without AI rather than a topic; signals that a role
+        will be chosen from the seven (mentor, tutor, coach, teammate,
+        student, simulator, tool) or that the prompt will be tested. Deductions
+        for inventing roles, treating "AI coach" as one generic thing, or
+        jumping to features.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Ethan
+        Mollick — first person, direct, curious, practical, no hype? A neutral
+        facilitator voice or a bulleted checklist of AI best practices
+        scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (the behavior without AI, the learner and what
+        they know, where the moment sits) and genuinely stopping, rather than
+        asking and then answering, or asking questions from several phases
+        at once? Exactly one phase's questions, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/assigning-ai-roles/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      program_brief: |
+        Context: We run a ten-month program where intact teams practice one
+        communication habit per month, like raising an issue directly with
+        the person involved instead of complaining to someone else. Teams
+        meet monthly with a champion. We want an AI coach people can use
+        between sessions. Right now we just have a chatbot that answers
+        questions about the habits.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through designing an AI coach for my program. I'll answer phase by phase."
+      program_brief: |
+        Context: We run a ten-month program where intact teams practice one
+        communication habit per month, like raising an issue directly with
+        the person involved instead of complaining to someone else. Teams
+        meet monthly with a champion. We want an AI coach people can use
+        between sessions. Right now we just have a chatbot that answers
+        questions about the habits.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Ethan Mollick. Walk me through the Assigning AI approach from your paper with Lilach Mollick to design the AI's role for my program: pick the role, name its risks, write the prompt, and test it. I'll answer phase by phase."
+      program_brief: |
+        Context: We run a ten-month program where intact teams practice one
+        communication habit per month, like raising an issue directly with
+        the person involved instead of complaining to someone else. Teams
+        meet monthly with a champion. We want an AI coach people can use
+        between sessions. Right now we just have a chatbot that answers
+        questions about the habits.

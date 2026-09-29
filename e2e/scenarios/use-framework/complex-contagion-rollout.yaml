@@ -1,0 +1,90 @@
+# e2e/scenarios/use-framework/complex-contagion-rollout.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Complex Contagion Rollout for a team practice"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{rollout_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking what exact behavior people should start doing and what it
+        costs a person to try it — and then STOP and wait? A response that
+        maps the network, picks seed teams, and writes a wave plan in one
+        shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response frame the work
+        in Centola's terms? Correct markers: distinguishes simple contagions
+        (spread by one contact or an announcement) from complex ones (need
+        several trusted sources); asks about or names the costs that make a
+        behavior complex (only pays off if others do it, believability,
+        social risk, effort or nerve); signals that the plan will look at
+        tight groups and the ties between them rather than reach. Deductions
+        for recommending influencers or broadcast, stating 25% as a law, or
+        inventing tool names.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Damon
+        Centola — plain, warm, evidence-minded, talking about how behavior
+        spreads between people? A neutral facilitator voice or a bulleted
+        change-management checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (the exact behavior, and what it costs to try)
+        and genuinely stopping, rather than asking and then answering, or
+        asking questions from several phases at once? Exactly one phase's
+        questions, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/complex-contagion-rollout/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      rollout_brief: |
+        Context: We're a 300-person software company rolling out a
+        ten-month team program on how teams handle conflict. We have six
+        engineering squads, two customer success teams, sales, and a
+        platform group. Last year's culture program was announced at an
+        all-hands and faded within two months. We want to know which teams
+        should start and in what order.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through planning the rollout order for a team practice across my company. I'll answer phase by phase."
+      rollout_brief: |
+        Context: We're a 300-person software company rolling out a
+        ten-month team program on how teams handle conflict. We have six
+        engineering squads, two customer success teams, sales, and a
+        platform group. Last year's culture program was announced at an
+        all-hands and faded within two months. We want to know which teams
+        should start and in what order.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Damon Centola. Walk me through planning the rollout of a team practice using complex contagion: clusters, wide bridges, and the 25% tipping point. I'll answer phase by phase."
+      rollout_brief: |
+        Context: We're a 300-person software company rolling out a
+        ten-month team program on how teams handle conflict. We have six
+        engineering squads, two customer success teams, sales, and a
+        platform group. Last year's culture program was announced at an
+        all-hands and faded within two months. We want to know which teams
+        should start and in what order.

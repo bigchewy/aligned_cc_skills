@@ -1,0 +1,94 @@
+# e2e/scenarios/use-framework/ten-steps-blueprint.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Ten Steps Blueprint for a team conflict-skills program"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{program_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking for one whole task from real work (what a competent person
+        actually does, start to finish), who the learners are and whether
+        they are novices or experts at this task, and the program length and
+        rhythm — and then STOP and wait? A response that lays out task
+        classes, learning tasks, supportive and procedural information, and
+        part-task practice in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow the Ten
+        Steps / 4C/ID and use its names? Correct markers: starts from one
+        whole learning task rather than a list of topics; mentions that the
+        brief's one-topic-per-month plan risks fragmentation, or that task
+        classes will be whole-task versions from simple to complex; uses
+        terms such as learning task, task class, supportive information,
+        procedural information, part-task practice, or support that fades.
+        Deductions for invented step names, for treating the program as a
+        content outline, or for skipping to modules.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Paul
+        Kirschner — direct, dry, evidence-first, making the novice-versus-
+        expert distinction about the task rather than about seniority? No
+        edtech enthusiasm, no learning-styles talk. A neutral facilitator
+        voice or a bulleted checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (the whole task, the learners and their level
+        on this task, the program length and rhythm) and genuinely stopping,
+        rather than asking and then answering, or asking questions from
+        several phases at once? Exactly one phase's questions, then a stop,
+        scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/ten-steps-blueprint/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
+      program_brief: |
+        Context: We're designing a ten-month program for leadership teams
+        at mid-size companies. The goal is that managers stop complaining
+        about peers behind their backs and raise problems directly. Our
+        draft covers one principle per month: responsibility, curiosity,
+        feelings, direct conversations. Teams meet every two weeks and an
+        app sends prompts in between.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through designing a training program for this, step by step. I'll answer phase by phase."
+      program_brief: |
+        Context: We're designing a ten-month program for leadership teams
+        at mid-size companies. The goal is that managers stop complaining
+        about peers behind their backs and raise problems directly. Our
+        draft covers one principle per month: responsibility, curiosity,
+        feelings, direct conversations. Teams meet every two weeks and an
+        app sends prompts in between.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Paul A. Kirschner. Walk me through the Ten Steps to Complex Learning (4C/ID) to design this program: learning tasks, task classes, supportive and procedural information, and part-task practice. I'll answer phase by phase."
+      program_brief: |
+        Context: We're designing a ten-month program for leadership teams
+        at mid-size companies. The goal is that managers stop complaining
+        about peers behind their backs and raise problems directly. Our
+        draft covers one principle per month: responsibility, curiosity,
+        feelings, direct conversations. Teams meet every two weeks and an
+        app sends prompts in between.

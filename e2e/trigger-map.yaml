@@ -252,3 +252,51 @@ triggers:
       - frameworks/finding-the-crux/anti-examples.md
     scenarios:
       - scenarios/use-framework/finding-the-crux.yaml
+
+  - paths:
+      - advisors/prompts/paul-kirschner.md
+    scenarios:
+      - scenarios/use-advisor/paul-kirschner-consult.yaml
+
+  - paths:
+      - frameworks/ten-steps-blueprint/prompt.md
+      - frameworks/ten-steps-blueprint/examples.md
+      - frameworks/ten-steps-blueprint/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/ten-steps-blueprint.yaml
+
+  - paths:
+      - advisors/prompts/julie-dirksen.md
+    scenarios:
+      - scenarios/use-advisor/julie-dirksen-consult.yaml
+
+  - paths:
+      - frameworks/behavior-gap-diagnosis/prompt.md
+      - frameworks/behavior-gap-diagnosis/examples.md
+      - frameworks/behavior-gap-diagnosis/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/behavior-gap-diagnosis.yaml
+
+  - paths:
+      - advisors/prompts/ethan-mollick.md
+    scenarios:
+      - scenarios/use-advisor/ethan-mollick-consult.yaml
+
+  - paths:
+      - frameworks/assigning-ai-roles/prompt.md
+      - frameworks/assigning-ai-roles/examples.md
+      - frameworks/assigning-ai-roles/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/assigning-ai-roles.yaml
+
+  - paths:
+      - advisors/prompts/damon-centola.md
+    scenarios:
+      - scenarios/use-advisor/damon-centola-consult.yaml
+
+  - paths:
+      - frameworks/complex-contagion-rollout/prompt.md
+      - frameworks/complex-contagion-rollout/examples.md
+      - frameworks/complex-contagion-rollout/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/complex-contagion-rollout.yaml

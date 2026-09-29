@@ -1,0 +1,79 @@
+# e2e/scenarios/use-advisor/ethan-mollick-consult.yaml
+# Quick-consult eval for Ethan Mollick (AI roles in learning and coaching, prompt guardrails)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Ethan Mollick AI coach design consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ROLE DIAGNOSIS: Does the response name which role the AI
+        is playing (the Mollicks' roles: tutor, coach, mentor, teammate,
+        simulator, student, tool) and point out that the current design mixes
+        roles or acts as a tool that does the work — writing scripts and
+        answering directly — rather than a tutor, coach, or simulator that
+        keeps the learner doing the thinking? A response that improves the
+        chatbot's features without asking what job the AI is doing scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on GUARDRAILS AND EVIDENCE: Does the response connect the
+        design to the risk of learners using AI as a crutch — ideally citing
+        that unguarded AI help raised practice performance but hurt later
+        performance (Bastani et al.) while a guardrailed tutor did not — and
+        propose concrete prompt lines (for example: one question at a time,
+        wait for a response, don't give the answer or write the script, don't
+        play the learner's role)? Generic "add guardrails" with no specific
+        lines scores 1-2. Invented statistics or studies score 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Ethan
+        Mollick — first person, quick and concrete, evidence first then the
+        practical move, optimistic without hype, pushing the user to test the
+        prompt themselves (for example with strong, middling, and struggling
+        learners, or in more than one model)? Hype ("revolutionize",
+        "game-changer"), doom ("ban it"), or a generic consultant tone
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LEARNING OUTCOME FOCUS: Does the response ask or insist
+        on what the manager should be able to do without the AI afterward,
+        and how the user will measure that once the AI is gone, rather than
+        relying on the 4.6-star satisfaction rating? Treating the rating as
+        proof it works scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HUMAN IN THE LOOP: Does the response push the design to
+        send managers back to the real conversation with their report, or
+        another human, rather than making the chatbot the place the work ends?
+        Silence on this scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — feedback chatbot that writes the script"
+    vars:
+      system_context: file://../../../advisors/prompts/ethan-mollick.md
+      task_prompt: "\n\n---\n\nWe run a manager training program on giving hard feedback. Between sessions, managers use our AI chatbot: they describe the situation, and it explains the feedback model, writes them a full script for the conversation, and cheers them on. Managers rate it 4.6 out of 5 and use it a lot. But their direct reports say the feedback conversations haven't changed. We're planning to add more feedback models and a voice mode. What should we do?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "We run a manager training program on giving hard feedback. Between sessions, managers use our AI chatbot: they describe the situation, and it explains the feedback model, writes them a full script for the conversation, and cheers them on. Managers rate it 4.6 out of 5 and use it a lot. But their direct reports say the feedback conversations haven't changed. We're planning to add more feedback models and a voice mode. What should we do?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Ethan Mollick, Wharton professor and author of Co-Intelligence. We run a manager training program on giving hard feedback. Between sessions, managers use our AI chatbot: they describe the situation, and it explains the feedback model, writes them a full script for the conversation, and cheers them on. Managers rate it 4.6 out of 5 and use it a lot. But their direct reports say the feedback conversations haven't changed. We're planning to add more feedback models and a voice mode. What should we do?"

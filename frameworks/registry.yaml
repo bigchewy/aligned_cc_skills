@@ -2175,3 +2175,113 @@ frameworks:
     is writing or fixing a scene description or prompt for an image model, has a draft
     description that reads as mood words with no light or staging, or has a picture
     that tries to show several moments at once
+- advisor: paul-kirschner
+  category: learning-design
+  default_critic_advisors:
+  - paul-kirschner
+  - danny-iny
+  deliverable_type: plan
+  domains:
+  - instructional-design
+  - learning-science
+  - complex-skills-training
+  - program-design
+  - behavior-change
+  follow_on_frameworks:
+  - leveraged-learning
+  - 3b-behavioral-design
+  helpful_documents:
+  - a description of the job or situation where people must use the skill
+  - the current program outline, curriculum, or session plan, if one exists
+  - examples of people doing the skill well and badly
+  - how the program measures success today
+  id: ten-steps-blueprint
+  name: Ten Steps Blueprint
+  purpose: designing a program for a complex skill people use at work, built from
+    whole tasks in classes from simple to complex, with support that fades, information
+    given at the right time, and practice for the routines that must become automatic
+  use_when: someone is designing a training, coaching, or learning program that runs
+    over weeks or months and must change what people do at work; the draft is organized
+    one topic per session, people pass the sessions but don't use the skill, support
+    never fades, or an app or AI is expected to make it stick
+- advisor: julie-dirksen
+  category: learning-design
+  default_critic_advisors:
+  - julie-dirksen
+  - kristen-berman
+  deliverable_type: decision
+  domains:
+  - learning-design
+  - behavior-change
+  - instructional-design
+  - training-transfer
+  helpful_documents:
+  - the training request, program outline, or learning objectives
+  - what people currently do instead (observations, examples, complaints)
+  - how the behavior is measured, rewarded, or noticed today
+  - notes from people who tried the behavior and stopped
+  id: behavior-gap-diagnosis
+  name: Behavior Gap Diagnosis
+  purpose: finding out why people aren't doing a target behavior, whether training
+    can fix it, and which kind of fix matches each gap
+  use_when: someone asks for a training or workshop, a program is popular but behavior
+    between sessions does not change, people know what to do and still do not do it,
+    or a team needs to decide whether a behavior problem calls for practice, an environment
+    change, a leader going first, or motivation work instead of more content
+- advisor: ethan-mollick
+  category: learning-design
+  default_critic_advisors:
+  - ethan-mollick
+  - kristen-berman
+  deliverable_type: content
+  domains:
+  - ai-in-learning
+  - prompt-design
+  - ai-coaching
+  - learning-design
+  helpful_documents:
+  - the learning goal or curriculum for the moment being designed
+  - any existing AI prompt or system prompt for this moment
+  - notes on who the learners are and what they already know
+  - transcripts or examples of learners using an AI tool today
+  id: assigning-ai-roles
+  name: Assigning AI Roles
+  purpose: choosing the one role an AI should play in a learning or coaching moment,
+    naming that role's risk, and writing and testing a prompt whose guardrails keep
+    the learner doing the thinking
+  use_when: someone is building an AI tutor, AI coach, role-play practice partner,
+    or AI feedback tool for a course or program; an existing AI learning tool gets
+    good ratings but behavior does not change; or a team needs to decide what the
+    AI should and should not do for learners
+- advisor: damon-centola
+  category: leadership
+  default_critic_advisors:
+  - damon-centola
+  - lex-sisney
+  deliverable_type: plan
+  domains:
+  - behavior-diffusion
+  - organizational-change
+  - rollout-sequencing
+  - social-networks
+  follow_on_frameworks:
+  - organizational-readiness
+  - build-measure-learn
+  helpful_documents:
+  - a description of the practice or behavior being rolled out
+  - an org chart or list of teams, with rough sizes
+  - any record of who works with whom (shared projects, recurring meetings, Slack
+    channels, collaboration data)
+  - the current rollout or pilot plan, if one exists
+  - notes on which managers support the change and which do not
+  id: complex-contagion-rollout
+  name: Complex Contagion Rollout
+  purpose: planning how a costly, risky, or norm-breaking practice spreads through
+    an organization, by choosing which tight groups adopt first, which groups go next
+    based on how widely they are tied to groups that already adopted, and how many
+    committed people each group needs before its norm flips
+  use_when: a company is rolling out a new team practice, culture program, or way
+    of working that people find risky or awkward to start; a pilot or launch got good
+    survey scores and then faded; someone plans to launch with an all-hands announcement,
+    one champion per team, or everyone at once; or a leader needs to decide which teams
+    go first and in what order

@@ -1,0 +1,80 @@
+# e2e/scenarios/use-advisor/julie-dirksen-consult.yaml
+# Quick-consult eval for Julie Dirksen (learning design for behavior change)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Julie Dirksen training request consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DIAGNOSIS BEFORE DESIGN: Does the response hold off on
+        designing a course and first find out why the team leads aren't
+        doing the behavior? Look for asking or reasoning about whether they
+        could already do it (they did fine in the workshop role plays), and
+        for separating capability, opportunity, and motivation (COM-B or
+        equivalent plain words). A response that opens with a module outline,
+        a refresher workshop, or learning objectives scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NAMING WHAT TRAINING CAN'T FIX: The prompt says the CEO
+        vents about people publicly and the one lead who went direct was
+        reported to HR. Does the response say plainly that this part is not a
+        training problem, and name who has to act (the CEO going first,
+        changing what happens to people who try it)? Treating it as something
+        a better course will fix scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE ELEPHANT: Does the response address the emotional,
+        automatic side of "knows how but won't" — what the moment feels like
+        (fear of conflict), and what the old behavior (venting) gets people —
+        and propose something the emotional side can feel (small safe first
+        tries, seeing someone respected do it, practice with feedback), rather
+        than more explaining of why it matters? Silence on emotion or a
+        pure "communicate the importance" answer scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Julie
+        Dirksen — warm, plainspoken, practical, using everyday examples,
+        respectful of learners, possibly using the rider and elephant
+        picture? Look for absence of compliance voice ("make it mandatory",
+        "hold them accountable to the training"), absence of blaming learners
+        ("they're resistant"), and absence of L&D jargon without a person in
+        it. A generic consultant or corporate L&D tone scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay on why people
+        aren't doing the behavior and what kind of fix matches, rather than
+        teaching the content of direct feedback itself (scripts, feedback
+        models) or inventing statistics? Writing a feedback script or citing
+        made-up research scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — knows how but won't, refresher request"
+    vars:
+      system_context: file://../../../advisors/prompts/julie-dirksen.md
+      task_prompt: "\n\n---\n\nWe ran a two-day workshop on direct feedback for our 12 team leads six months ago. They did great in the role plays. But they still complain about people on other teams to their own teams or to me instead of talking to the person. Our CEO does the same thing, honestly, and the one lead who did go direct last quarter got reported to HR. I want to run a refresher workshop with a stronger case for why it matters. Can you help me design it?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "We ran a two-day workshop on direct feedback for our 12 team leads six months ago. They did great in the role plays. But they still complain about people on other teams to their own teams or to me instead of talking to the person. Our CEO does the same thing, honestly, and the one lead who did go direct last quarter got reported to HR. I want to run a refresher workshop with a stronger case for why it matters. Can you help me design it?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Julie Dirksen, author of Talk to the Elephant. We ran a two-day workshop on direct feedback for our 12 team leads six months ago. They did great in the role plays. But they still complain about people on other teams to their own teams or to me instead of talking to the person. Our CEO does the same thing, honestly, and the one lead who did go direct last quarter got reported to HR. I want to run a refresher workshop with a stronger case for why it matters. Can you help me design it?"

@@ -63,3 +63,11 @@ scenarios:
   - file://scenarios/use-framework/stage-the-picture.yaml
   - file://scenarios/use-framework/kernel-of-good-strategy.yaml
   - file://scenarios/use-framework/finding-the-crux.yaml
+  - file://scenarios/use-advisor/paul-kirschner-consult.yaml
+  - file://scenarios/use-framework/ten-steps-blueprint.yaml
+  - file://scenarios/use-advisor/julie-dirksen-consult.yaml
+  - file://scenarios/use-framework/behavior-gap-diagnosis.yaml
+  - file://scenarios/use-advisor/ethan-mollick-consult.yaml
+  - file://scenarios/use-framework/assigning-ai-roles.yaml
+  - file://scenarios/use-advisor/damon-centola-consult.yaml
+  - file://scenarios/use-framework/complex-contagion-rollout.yaml

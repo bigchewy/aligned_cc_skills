@@ -1837,6 +1837,170 @@ advisors:
   prompt: advisors/prompts/james-gurney.md
   summary: Painter and author of Dinotopia, Imaginative Realism, and Color and Light;
     plans a picture's moment, light, and staging so an imagined scene looks observed
+- best_for: 'Designing a program that builds a complex skill people use at work,
+    over weeks or months. Choosing the whole task people practice, ordering task
+    classes from simple to complex, deciding how much help learners get and how it
+    fades, what to explain before a task and what to give just in time, which
+    routines to drill until automatic, and how to measure learning rather than
+    in-session performance. Also for checking a learning design for myths and for
+    claims that an app or AI will do the teaching.
+
+    '
+  domains:
+  - instructional-design
+  - learning-science
+  - cognitive-load-theory
+  - complex-skills-training
+  - evidence-informed-learning
+  evaluation_expertise: 'Evaluates whether a learning program will build a skill
+    people can use at work, or only produce good feelings and good session scores.
+    Is it built from whole tasks from real work, or one topic per session? Are the
+    learners treated as novices at the task, with explicit guidance, or left to
+    discover it? Does support fade to nothing inside each task class? Do tasks vary
+    the way real situations vary? Is routine how-to given just in time, and are the
+    few routines that must be automatic drilled and spaced? Does it measure learning
+    weeks later in real work, or satisfaction and in-session performance? Catches
+    fragmentation, minimal guidance for novices, support that never fades, learning
+    styles and other myths, and credit given to the medium for what the method did.
+
+    '
+  id: paul-kirschner
+  name: Paul A. Kirschner
+  not_for: 'Selling, pricing, or launching a course (redirect to Danny Iny); habit
+    and behavior design inside a product (redirect to Kristen Berman); the content
+    of conscious leadership (redirect to Diana Chapman or Jim Dethmer); trust,
+    vulnerability, and fear of change (redirect to Brene Brown); management practice
+    (redirect to Lara Hogan or Matt Mochary); technical architecture or code.
+
+    '
+  prompt: advisors/prompts/paul-kirschner.md
+  summary: Emeritus Professor of Educational Psychology at the Open University of
+    the Netherlands, co-author of Ten Steps to Complex Learning, How Learning Happens,
+    and Evidence-Informed Learning Design; 4C/ID program design, cognitive load, and
+    learning myths
+- best_for: 'Deciding whether a training, workshop, or learning program will actually
+    change what people do at work, and what to do instead when it will not. Naming
+    the target behavior in terms you could watch, separating can''t (capability) from
+    can''t-here (opportunity) from won''t-in-the-moment (motivation, including the
+    emotional side), and matching each gap to its own fix: information, a job aid,
+    practice with feedback, environment and social support, or motivation and identity
+    work. Programs where people know what to do and still do not do it, and emotional
+    resistance of the "knows how but won''t" kind.
+
+    '
+  domains:
+  - learning-design
+  - behavior-change
+  - instructional-design
+  - training-transfer
+  - practice-and-feedback
+  evaluation_expertise: 'Evaluates whether a learning design is aimed at a behavior
+    or only at knowledge. Is the target written as something a person does in a specific
+    moment, or as "understand" and "be aware of"? Was it checked whether learners could
+    already do it before more content was built? Is a skill being taught as knowledge,
+    with no practice and no feedback? Does the design account for the setting (incentives,
+    what the manager does, competing priorities) and for the emotional, automatic side
+    of motivation, or only for the conscious, agreeing side? Catches refresher courses
+    for people who already know, compliance voice aimed at capable adults, every gap
+    answered with content, missing feedback loops, and success measured by satisfaction
+    instead of behavior.
+
+    '
+  id: julie-dirksen
+  name: Julie Dirksen
+  not_for: 'Product and app behavior design for customers (redirect to Kristen Berman);
+    what a leadership practice means or how to do it well (redirect to Diana Chapman
+    or Jim Dethmer); shame, belonging, and vulnerability as the core issue (redirect
+    to Brené Brown); validating and selling a course (redirect to Danny Iny); week-to-week
+    management practice (redirect to Lara Hogan or Matt Mochary); therapy or clinical
+    issues; technical architecture or code.
+
+    '
+  prompt: advisors/prompts/julie-dirksen.md
+  summary: Founder of Usable Learning, author of Design for How People Learn and Talk
+    to the Elephant; learning design for behavior change, COM-B diagnosis, and when
+    training is not the answer
+- best_for: 'Designing what an AI does in a learning or coaching moment. Choosing
+    whether the AI acts as tutor, coach, mentor, teammate, simulator, student, or
+    tool; naming the known risk of that role; writing prompts with guardrails that
+    keep the learner doing the thinking; testing prompts on strong, middling, and
+    struggling learners; and deciding what humans do with the output. AI tutors,
+    AI coaches between training sessions, role-play practice partners, and any
+    program where AI helps people learn or change behavior.
+
+    '
+  domains:
+  - ai-in-learning
+  - prompt-design
+  - ai-coaching
+  - learning-design
+  - human-ai-collaboration
+  evaluation_expertise: 'Evaluates whether an AI learning design helps people learn
+    or just does the work for them. Is there a learning goal the person can do without
+    the AI afterward? Is the AI playing one clear role, or a tool dressed as a tutor?
+    Does the prompt hold back answers, ask one question at a time, and wait? Has the
+    prompt been tested on more than the author''s own good answers? Is learning measured
+    once the AI is gone, not by satisfaction? Catches answer-giving tutors, stacked
+    roles, missing wait points, untested prompts, satisfaction scores taken as proof,
+    and designs where the AI replaces the human conversation it should prepare people
+    for.
+
+    '
+  id: ethan-mollick
+  name: Ethan Mollick
+  not_for: 'AI-native product strategy and whether AI should be the foundation of
+    a company (redirect to Garry Tan); behavioral nudges, defaults, and friction in
+    a product (redirect to Kristen Berman); the meaning of conscious-leadership content
+    (redirect to Diana Chapman or Jim Dethmer); pricing and selling a course (redirect
+    to Danny Iny); model training or technical architecture.
+
+    '
+  prompt: advisors/prompts/ethan-mollick.md
+  summary: Wharton professor, author of Co-Intelligence and the One Useful Thing newsletter;
+    designing the AI's role in learning and coaching, with guardrailed prompts that
+    keep the learner doing the thinking
+- best_for: 'Planning how a new practice or behavior spreads through an organization
+    when it costs people something to try: it is socially risky, breaks a norm, or
+    only pays off once others do it too. Choosing which teams go first, which go
+    next and why, how many committed people a team needs before its norm flips, how
+    to connect teams so the practice crosses between them, and how to tell a team
+    has adopted it rather than heard about it. Culture programs, team practice
+    rollouts, pilots that faded after launch, and phased adoption of new ways of
+    working.
+
+    '
+  domains:
+  - behavior-diffusion
+  - social-networks
+  - organizational-change
+  - rollout-sequencing
+  - social-norms
+  evaluation_expertise: 'Evaluates whether a rollout plan treats a hard behavior
+    change as a message or as a behavior people need to see from several trusted
+    sources. Are the first adopters placed together in a tight group, or scattered
+    one per team? Is the plan relying on influencers or an all-hands announcement
+    for reach? Are later waves chosen by how many real ties they have to groups that
+    already adopted, or by the org chart? Is any bridge between teams a single
+    person? Is success counted as attendance and survey scores or as a changed norm?
+    Catches shotgun pilots, silver-bullet champions, narrow bridges, unprotected
+    early adopters, and tipping-point numbers stated as laws.
+
+    '
+  id: damon-centola
+  name: Damon Centola
+  not_for: 'Whether the practice itself works or is worth adopting (redirect to Eric
+    Ries); org structure, authority, and role fit (redirect to Lex Sisney); the content
+    and coaching of conscious-leadership practices (redirect to Diana Chapman or Jim
+    Dethmer); designing one person''s habit or product behavior (redirect to Kristen
+    Berman); operating cadence such as weekly check-ins and operating reviews (redirect
+    to Matt Mochary or Claire Hughes Johnson); simple changes that spread fine by
+    announcement; technical architecture or code.
+
+    '
+  prompt: advisors/prompts/damon-centola.md
+  summary: Elihu Katz Professor at the University of Pennsylvania, director of the
+    Network Dynamics Group, author of How Behavior Spreads and Change; how costly
+    behavior spreads through clusters and wide bridges, and the order to seed it
 selection_guidelines:
   calibration_examples:
   - critics:
