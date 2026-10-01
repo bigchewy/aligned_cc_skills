@@ -129,11 +129,13 @@ The search looks for how people work, not what shipped. Each source below was ch
 | Docs page index | https://code.claude.com/docs/llms.txt | ✅ For mechanics questions only |
 | Claude blog | https://claude.com/blog | ✅ Product posts, several about Claude Code in Sep 2026 |
 | Anthropic engineering | https://www.anthropic.com/engineering | ✅ Posts on Claude Code auto mode, long-running harnesses |
-| Cat Wu | @_catwu on X | ✅ Head of product for Claude Code (Lenny's Newsletter, her own X posts) |
+| Cat Wu | @_catwu on X | ✅ Head of product for Claude Code (Lenny's Newsletter, her own X posts). No blog found; her Threads page shows no posts. Interviews carry most of her advice; Every's AI & I published a full transcript with her and Boris (29 Oct 2025): https://every.to/podcast/transcript-how-to-use-claude-code-like-the-people-who-built-it |
 
 Searching every conversation was too slow (Eric, 2026-10-01). What Boris finds is saved to
 `~/.claude/aligned/boris-cherny-whats-new.md`, one dated line per item with a link, and he searches
-again only when the file is a month old or more, or the user asks him to check again. The file sits in
+again only when the file is a month old or more, or the user asks him to check again. A full search
+took about nine minutes on 2026-10-01, so even then he asks first: keep working while a subagent
+searches in the background (the default), or wait (Eric, 2026-10-01). The file sits in
 the user's home folder so every project shares it and plugin updates don't erase it.
 
 Tip collections such as howborisusesclaudecode.com and a GitHub "playbook" repo exist. They are useful

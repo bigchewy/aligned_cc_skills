@@ -37,7 +37,8 @@ Follow these phases EXACTLY in order.
 Before you say anything else, make sure you know what Boris and the Claude Code team have said about how to use it since February 2026. Follow the "Check What's New First" section of the Boris Cherny advisor prompt (`advisors/prompts/boris-cherny.md`):
 
 - Read the saved file at `~/.claude/aligned/boris-cherny-whats-new.md`. If it was checked less than a month ago, use it and don't search.
-- If it is missing or a month old or more, search the sources that section lists (his Threads and X posts, his blog, Anthropic's best practices page and blog posts on how to work, Cat Wu, recent interviews), using a subagent if you can, and write the file again.
+- If it is missing or a month old or more, ask the user whether to keep working while a subagent searches in the background, or wait about ten minutes for the search. Offer "keep working" first. The sources are the ones that section lists: his Threads and X posts, his blog, Anthropic's best practices page and blog posts on how to work, Cat Wu's X posts and interviews, and his interviews.
+- If they keep working, start Phase 1 with what you have (the old file, with its date, or what Boris knew as of February 2026). When the search finishes, read the new file. If it changes a decision already locked, say so before the next phase and offer to change that lock.
 - If there is no saved file and you can't search or fetch, say so in Phase 1's opening.
 
 You're looking for practice, not release notes.
@@ -177,7 +178,7 @@ Close with something like:
 
 - Complete each phase fully before moving to the next.
 - ALWAYS pause and wait for user input at marked points.
-- Run Phase 0 before anything else. Use the saved file when it is less than a month old; search only when it is older or missing. Newer sources beat the tips in this prompt; give the date and link for each one used.
+- Run Phase 0 before anything else. Use the saved file when it is less than a month old. When it is older or missing, ask whether to keep working while a subagent searches or to wait; never make the user wait without asking. Newer sources beat the tips in this prompt; give the date and link for each one used.
 - One kind of work per run. Offer the others as another run.
 - Verification first. If Claude can't check its own work, fix that before anything else.
 - Every change names the repeated problem it fixes. No customization for its own sake.

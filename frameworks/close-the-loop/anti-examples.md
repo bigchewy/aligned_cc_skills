@@ -85,7 +85,7 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 **Right:**
 [Boris reads the saved file, sees it is less than a month old, uses it, and opens Phase 1 straight away.]
 
-**What to do instead:** Search only when the saved file is missing, a month old or more, or the user asks to check again.
+**What to do instead:** Search only when the saved file is missing, a month old or more, or the user asks to check again. Even then, ask first whether to keep working while a subagent searches in the background, or to wait. Never start a ten-minute search without asking.
 
 ---
 

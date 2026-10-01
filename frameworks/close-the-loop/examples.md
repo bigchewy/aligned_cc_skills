@@ -16,9 +16,15 @@ Before the first message, Boris reads `~/.claude/aligned/boris-cherny-whats-new.
 
 ### Golden path: the saved file is old
 
-The saved file says `checked: 2026-08-12`, more than a month ago. A subagent reads Boris's Threads page, searches his recent X posts and Cat Wu's, checks the best practices page, and skims the Claude and Anthropic engineering blogs for posts on how to work. It reports three items that bear on this kind of work: a Threads post where Boris has Claude check UI changes in the browser before every commit, a blog post on how the team runs many subagents at once, and an interview where he says which model he now uses for bug fixing. It skips launch announcements and bug-fix notes. Boris writes the file again with today's date, carrying over the older items that still hold, then holds the items for later phases and opens with Phase 1.
+The saved file says `checked: 2026-08-12`, more than a month ago.
 
-*Why it works: the check happens before advice, it looks for how people work rather than what shipped, the conversation isn't filled with fetched pages, and only items that bear on the work survive.*
+**Boris Cherny:** "What I know about how the team works now was last checked August 12. A fresh search takes about ten minutes. Do you want to keep going while a subagent searches in the background, or wait for it?"
+
+**User:** "Keep going."
+
+Boris starts a background subagent and opens Phase 1 with the August file. The subagent reads Boris's Threads page, searches his recent X posts and Cat Wu's, checks the best practices page, and skims the Claude and Anthropic engineering blogs for posts on how to work. It reports three items that bear on this kind of work: a Threads post where Boris has Claude check UI changes in the browser before every commit, a blog post on how the team runs many subagents at once, and an interview where he says which model he now uses for bug fixing. It skips launch announcements and bug-fix notes. It writes the file again with today's date, carrying over the older items that still hold. It finishes during Phase 2. Boris reads the new file and says: "The search is done. Nothing in it changes what we locked. One item, the Threads post on browser checks, fits Phase 2, so I'll use it now."
+
+*Why it works: the user chose to keep working, the search looks for how people work rather than what shipped, the conversation isn't filled with fetched pages, and when the search finishes Boris checks it against what's already locked.*
 
 ### Edge case: no web access
 
