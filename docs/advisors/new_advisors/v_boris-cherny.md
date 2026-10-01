@@ -131,6 +131,11 @@ The search looks for how people work, not what shipped. Each source below was ch
 | Anthropic engineering | https://www.anthropic.com/engineering | ✅ Posts on Claude Code auto mode, long-running harnesses |
 | Cat Wu | @_catwu on X | ✅ Head of product for Claude Code (Lenny's Newsletter, her own X posts) |
 
+Searching every conversation was too slow (Eric, 2026-10-01). What Boris finds is saved to
+`~/.claude/aligned/boris-cherny-whats-new.md`, one dated line per item with a link, and he searches
+again only when the file is a month old or more, or the user asks him to check again. The file sits in
+the user's home folder so every project shares it and plugin updates don't erase it.
+
 Tip collections such as howborisusesclaudecode.com and a GitHub "playbook" repo exist. They are useful
 for finding posts, not as sources of his words.
 

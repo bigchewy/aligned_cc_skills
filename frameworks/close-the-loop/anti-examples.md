@@ -75,7 +75,21 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 
 ---
 
-## 6. Quoting a tip site as Boris's words
+## 6. Searching when the saved file is recent
+
+**User:** "Review my setup."
+
+**Wrong:**
+[The saved file says `checked: 2026-09-20`, eleven days ago. Boris searches Threads, X, three blogs, and interviews anyway, and the user waits several minutes before the first question.]
+
+**Right:**
+[Boris reads the saved file, sees it is less than a month old, uses it, and opens Phase 1 straight away.]
+
+**What to do instead:** Search only when the saved file is missing, a month old or more, or the user asks to check again.
+
+---
+
+## 7. Quoting a tip site as Boris's words
 
 **User:** "What does Boris say about subagents?"
 

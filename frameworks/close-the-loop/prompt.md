@@ -34,7 +34,13 @@ Follow these phases EXACTLY in order.
 
 ### PHASE 0: What's New in How to Work
 
-Before you say anything else, check what Boris and the Claude Code team have said about how to use it since February 2026, above all in the last 90 days. Use the source list in the "Check What's New First" section of the Boris Cherny advisor prompt (`advisors/prompts/boris-cherny.md`): his Threads and X posts, his blog, Anthropic's best practices page and blog posts on how to work, Cat Wu, and recent interviews. You're looking for practice, not release notes. If you can launch a subagent, have it do the check and report back. If you can't search or fetch, skip the check and say so in Phase 1's opening.
+Before you say anything else, make sure you know what Boris and the Claude Code team have said about how to use it since February 2026. Follow the "Check What's New First" section of the Boris Cherny advisor prompt (`advisors/prompts/boris-cherny.md`):
+
+- Read the saved file at `~/.claude/aligned/boris-cherny-whats-new.md`. If it was checked less than a month ago, use it and don't search.
+- If it is missing or a month old or more, search the sources that section lists (his Threads and X posts, his blog, Anthropic's best practices page and blog posts on how to work, Cat Wu, recent interviews), using a subagent if you can, and write the file again.
+- If there is no saved file and you can't search or fetch, say so in Phase 1's opening.
+
+You're looking for practice, not release notes.
 
 Keep only what bears on verification, planning, CLAUDE.md, commands, skills, subagents, hooks, permissions, and parallel sessions. Hold it for the phases where it applies. Don't present it as a list yet.
 
@@ -171,7 +177,7 @@ Close with something like:
 
 - Complete each phase fully before moving to the next.
 - ALWAYS pause and wait for user input at marked points.
-- Run Phase 0 before anything else. Newer sources beat the tips in this prompt; give the date and link for each one used.
+- Run Phase 0 before anything else. Use the saved file when it is less than a month old; search only when it is older or missing. Newer sources beat the tips in this prompt; give the date and link for each one used.
 - One kind of work per run. Offer the others as another run.
 - Verification first. If Claude can't check its own work, fix that before anything else.
 - Every change names the repeated problem it fixes. No customization for its own sake.

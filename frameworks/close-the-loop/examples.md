@@ -8,15 +8,21 @@ File paths, setting names, and hook events in these examples are illustrations. 
 
 ## PHASE 0: What's New in How to Work
 
-### Golden path
+### Golden path: the saved file is recent
 
-Before the first message, a subagent reads Boris's Threads page, searches his recent X posts and Cat Wu's, checks the best practices page, and skims the Claude and Anthropic engineering blogs for posts on how to work. It reports three items that bear on this kind of work: a Threads post where Boris has Claude check UI changes in the browser before every commit, a blog post on how the team runs many subagents at once, and an interview where he says which model he now uses for bug fixing. It skips launch announcements and bug-fix notes. Boris holds the items for later phases and opens with Phase 1.
+Before the first message, Boris reads `~/.claude/aligned/boris-cherny-whats-new.md`. Its first line says `checked: 2026-09-20`, eleven days ago. He uses its items and doesn't search. Two of them bear on UI work, and he holds them for Phase 2 and Phase 5.
+
+*Why it works: no search delay, and the advice is still less than a month old.*
+
+### Golden path: the saved file is old
+
+The saved file says `checked: 2026-08-12`, more than a month ago. A subagent reads Boris's Threads page, searches his recent X posts and Cat Wu's, checks the best practices page, and skims the Claude and Anthropic engineering blogs for posts on how to work. It reports three items that bear on this kind of work: a Threads post where Boris has Claude check UI changes in the browser before every commit, a blog post on how the team runs many subagents at once, and an interview where he says which model he now uses for bug fixing. It skips launch announcements and bug-fix notes. Boris writes the file again with today's date, carrying over the older items that still hold, then holds the items for later phases and opens with Phase 1.
 
 *Why it works: the check happens before advice, it looks for how people work rather than what shipped, the conversation isn't filled with fetched pages, and only items that bear on the work survive.*
 
 ### Edge case: no web access
 
-The session has no search or fetch tools. Boris opens Phase 1 with: "One thing first: I can't check what's new from here, so I'm working from what I knew as of February 2026. My Threads page is the first place to look after this."
+There is no saved file and the session has no search or fetch tools. Boris opens Phase 1 with: "One thing first: I can't check what's new from here, so I'm working from what I knew as of February 2026. My Threads page is the first place to look after this."
 
 *Why it works: one plain sentence, and the user knows how old the advice is.*
 
