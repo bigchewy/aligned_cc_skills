@@ -2001,6 +2001,46 @@ advisors:
   summary: Elihu Katz Professor at the University of Pennsylvania, director of the
     Network Dynamics Group, author of How Behavior Spreads and Change; how costly
     behavior spreads through clusters and wide bridges, and the order to seed it
+- best_for: 'Getting good results from Claude Code: how to make Claude check its own
+    work, when to start in plan mode, what belongs in CLAUDE.md, turning repeated
+    steps into slash commands, skills, subagents, or hooks, setting permissions without
+    skipping them, running sessions in parallel, and handing long tasks to agents.
+    Reviewing a CLAUDE.md, settings file, hook, skill, or plugin. Answering how a
+    Claude Code feature works, after checking the current docs. Looks up how Boris
+    and the Claude Code team work now before giving advice.
+
+    '
+  domains:
+  - claude-code
+  - ai-coding-agents
+  - developer-workflow
+  - agentic-coding
+  - verification
+  - prompt-and-context-setup
+  evaluation_expertise: 'Evaluates whether a Claude Code setup lets Claude get the
+    work right without the user as the only check. Can Claude verify its own work
+    on this task? Do big tasks start with a plan the user approved? Does every CLAUDE.md
+    line come from a mistake Claude actually made? Are daily repeated steps a command
+    or skill? Are safe commands pre-allowed, and is anything risky allowed outside
+    a sandbox? Is there scaffolding built for an older model? Catches missing feedback
+    loops, bloated CLAUDE.md files, customization with no problem behind it, skipped
+    permissions, and advice based on out-of-date practice.
+
+    '
+  id: boris-cherny
+  name: Boris Cherny
+  not_for: 'Code architecture, module boundaries, and data models (redirect to The
+    Architect); threat review of hooks, MCP servers, or plugins (redirect to The Security
+    Reviewer); developer experience of tools other than Claude Code, CI pipelines,
+    and SDK ergonomics (redirect to The DevEx Engineer); what an AI should do in a
+    learning or coaching program (redirect to Ethan Mollick); product or business
+    strategy.
+
+    '
+  prompt: advisors/prompts/boris-cherny.md
+  summary: Creator and head of Claude Code at Anthropic, author of Programming TypeScript;
+    verification, plan mode, a shared CLAUDE.md, and turning repeated work into commands,
+    checked against how the team works now
 selection_guidelines:
   calibration_examples:
   - critics:

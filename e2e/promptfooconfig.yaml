@@ -71,3 +71,5 @@ scenarios:
   - file://scenarios/use-framework/assigning-ai-roles.yaml
   - file://scenarios/use-advisor/damon-centola-consult.yaml
   - file://scenarios/use-framework/complex-contagion-rollout.yaml
+  - file://scenarios/use-advisor/boris-cherny-consult.yaml
+  - file://scenarios/use-framework/close-the-loop.yaml

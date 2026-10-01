@@ -1,6 +1,6 @@
 # Framework Registry
 
-127 frameworks across 24 categories
+128 frameworks across 25 categories
 
 | Category | Count |
 |----------|-------|
@@ -11,6 +11,7 @@
 | conversion | 4 |
 | copywriting | 2 |
 | customer | 1 |
+| developer-tooling | 1 |
 | evidence | 1 |
 | growth | 7 |
 | leadership | 13 |
@@ -160,6 +161,7 @@
 | behavior-gap-diagnosis | Behavior Gap Diagnosis | julie-dirksen | learning-design | someone asks for a training or workshop, a program is popular but behavior between sessions does not change, people know what to do and still do not do it, or a team needs to decide whether a behavior problem calls for practice, an environment change, a leader going first, or motivation work instead of more content |
 | assigning-ai-roles | Assigning AI Roles | ethan-mollick | learning-design | someone is building an AI tutor, AI coach, role-play practice partner, or AI feedback tool for a course or program; an existing AI learning tool gets good ratings but behavior does not change; or a team needs to decide what the AI should and should not do for learners |
 | complex-contagion-rollout | Complex Contagion Rollout | damon-centola | leadership | a company is rolling out a new team practice, culture program, or way of working that people find risky or awkward to start; a pilot or launch got good survey scores and then faded; someone plans to launch with an all-hands announcement, one champion per team, or everyone at once; or a leader needs to decide which teams go first and in what order |
+| close-the-loop | Close the Loop | boris-cherny | developer-tooling | someone wants their Claude Code setup reviewed, keeps correcting Claude on the same kind of work, is the only check on Claude's output, has a long CLAUDE.md that isn't preventing mistakes, approves the same commands over and over, or wants to know how the Claude Code team works today |
 
 ## By Category
 
@@ -202,6 +204,10 @@
 ### Customer (1)
 
 - **buyer-persona** — Buyer Persona (matt-dixon)
+
+### Developer Tooling (1)
+
+- **close-the-loop** — Close the Loop (boris-cherny)
 
 ### Evidence (1)
 

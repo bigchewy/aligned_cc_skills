@@ -300,3 +300,15 @@ triggers:
       - frameworks/complex-contagion-rollout/anti-examples.md
     scenarios:
       - scenarios/use-framework/complex-contagion-rollout.yaml
+
+  - paths:
+      - advisors/prompts/boris-cherny.md
+    scenarios:
+      - scenarios/use-advisor/boris-cherny-consult.yaml
+
+  - paths:
+      - frameworks/close-the-loop/prompt.md
+      - frameworks/close-the-loop/examples.md
+      - frameworks/close-the-loop/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/close-the-loop.yaml

@@ -1,0 +1,98 @@
+# e2e/scenarios/use-framework/close-the-loop.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+# The eval runs with no tools, so Phase 0 cannot fetch; the framework should
+# say so in Phase 1's opening and carry on.
+
+description: "Framework: Close the Loop for a Claude Code setup review"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{setup}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking which one kind of work the user hands Claude most often and
+        what went wrong last time — and then STOP and wait? A response that
+        reviews the whole pasted setup, lists changes, or writes CLAUDE.md
+        rules in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Boris
+        Cherny's approach? Correct markers: narrows to one kind of work and
+        one mistake; does not open with a feature tour; does not endorse
+        skipping permissions; does not present specific model names or
+        setting keys as current fact. Deductions for recommending many
+        hooks, subagents, or MCP servers before knowing what goes wrong, or
+        for inventing quotes attributed to Boris.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FRESHNESS: The responder has no web access. Does the
+        response say in one plain sentence that it can't check what's new
+        and is working from what it knew as of an earlier date? Silently
+        presenting early-2026 tips as current scores 1-2. Spending more than
+        two sentences on it also loses a point.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Boris
+        Cherny — brief, practical, first person, the builder of the tool
+        asking what keeps going wrong? A neutral facilitator voice or a
+        consultant's checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        about the one kind of work and its last mistake and genuinely
+        stopping, rather than asking and then answering, or asking about
+        verification, planning, and CLAUDE.md all at once? Exactly one
+        phase's question, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/close-the-loop/prompt.md
+      task_prompt: "\n\n---\n\nReview my Claude Code setup. Here it is. I'll answer phase by phase."
+      setup: |
+        CLAUDE.md (excerpt, 380 lines total): "Write clean code. Use
+        TypeScript. Follow best practices. Be careful with the database.
+        Always write tests. Use descriptive variable names..."
+        Hooks: none. Slash commands: none. Subagents: none.
+        Permissions: I approve every command by hand.
+        I mostly use it for UI changes in a Next.js app.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Review my Claude Code setup. Here it is. I'll answer phase by phase."
+      setup: |
+        CLAUDE.md (excerpt, 380 lines total): "Write clean code. Use
+        TypeScript. Follow best practices. Be careful with the database.
+        Always write tests. Use descriptive variable names..."
+        Hooks: none. Slash commands: none. Subagents: none.
+        Permissions: I approve every command by hand.
+        I mostly use it for UI changes in a Next.js app.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Boris Cherny, creator of Claude Code. Review my Claude Code setup the way you described your own setup in your January 2026 tips: verification, plan mode, a shared CLAUDE.md, slash commands. I'll answer phase by phase."
+      setup: |
+        CLAUDE.md (excerpt, 380 lines total): "Write clean code. Use
+        TypeScript. Follow best practices. Be careful with the database.
+        Always write tests. Use descriptive variable names..."
+        Hooks: none. Slash commands: none. Subagents: none.
+        Permissions: I approve every command by hand.
+        I mostly use it for UI changes in a Next.js app.

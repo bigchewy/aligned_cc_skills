@@ -2285,3 +2285,29 @@ frameworks:
     survey scores and then faded; someone plans to launch with an all-hands announcement,
     one champion per team, or everyone at once; or a leader needs to decide which teams
     go first and in what order
+- advisor: boris-cherny
+  category: developer-tooling
+  default_critic_advisors:
+  - boris-cherny
+  deliverable_type: plan
+  domains:
+  - claude-code
+  - ai-coding-agents
+  - developer-workflow
+  - verification
+  helpful_documents:
+  - the project's CLAUDE.md (and any CLAUDE.md files in subfolders)
+  - the project's Claude Code settings file, including permission rules and hooks
+  - the list of custom slash commands, skills, subagents, and plugins in use
+  - a recent session where Claude got the work wrong, or the user's description of
+    what went wrong
+  - how the project is tested, built, and checked today (test command, linter, CI)
+  id: close-the-loop
+  name: Close the Loop
+  purpose: reviewing how someone uses Claude Code on one kind of work, so that Claude
+    can check its own work, the plan comes before the code, every mistake becomes
+    a rule, and the steps they repeat every day become one command
+  use_when: someone wants their Claude Code setup reviewed, keeps correcting Claude
+    on the same kind of work, is the only check on Claude's output, has a long CLAUDE.md
+    that isn't preventing mistakes, approves the same commands over and over, or wants
+    to know how the Claude Code team works today

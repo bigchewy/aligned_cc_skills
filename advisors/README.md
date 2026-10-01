@@ -1,6 +1,6 @@
 # Advisor Registry
 
-70 advisors | 70 profiled | 0 unprofiled
+71 advisors | 71 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -76,6 +76,7 @@
 | julie-dirksen | Julie Dirksen | learning-design, behavior-change, instructional-design, training-transfer, practice-and-feedback | Founder of Usable Learning, author of Design for How People Learn and Talk to the Elephant; learning design for behavior change, COM-B diagnosis, and when training is not the answer |
 | ethan-mollick | Ethan Mollick | ai-in-learning, prompt-design, ai-coaching, learning-design, human-ai-collaboration | Wharton professor, author of Co-Intelligence and the One Useful Thing newsletter; designing the AI's role in learning and coaching, with guardrailed prompts that keep the learner doing the thinking |
 | damon-centola | Damon Centola | behavior-diffusion, social-networks, organizational-change, rollout-sequencing, social-norms | Elihu Katz Professor at the University of Pennsylvania, director of the Network Dynamics Group, author of How Behavior Spreads and Change; how costly behavior spreads through clusters and wide bridges, and the order to seed it |
+| boris-cherny | Boris Cherny | claude-code, ai-coding-agents, developer-workflow, agentic-coding, verification, prompt-and-context-setup | Creator and head of Claude Code at Anthropic, author of Programming TypeScript; verification, plan mode, a shared CLAUDE.md, and turning repeated work into commands, checked against how the team works now |
 
 ## Profiled Advisors
 
@@ -153,6 +154,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Julie Dirksen** | Evaluates whether a learning design is aimed at a behavior or only at knowledge, and whether training is the right fix at all |
 | **Ethan Mollick** | Evaluates whether an AI learning design helps people learn or just does the work for them |
 | **Damon Centola** | Evaluates whether a rollout plan treats a hard behavior change as a message or as something people need to see from several trusted sources |
+| **Boris Cherny** | Evaluates whether a Claude Code setup lets Claude get the work right without the user as the only check |
 
 ## Selection Guidelines
 
