@@ -1,0 +1,80 @@
+# e2e/scenarios/use-advisor/gino-wickman-consult.yaml
+# Quick-consult eval for Gino Wickman (EOS, operating systems for growing companies,
+# packaging a method into a repeatable implementation)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+# The scenario mixes a packaging question with an inner-work component, so the
+# HANDOFF rubric checks that he keeps it but sends the content to Chapman or Dethmer.
+
+description: "Advisor: Gino Wickman packaging a leadership method consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on REPEATABILITY FIRST: The user's method is delivered
+        differently for every client and lives in two founders' heads. Does
+        the response make "what's the same every time" the starting point:
+        naming a few components, fixed steps, and writing down each session
+        so someone else could deliver it? A response that leads with
+        building the app, or with a long list of generic consulting tips,
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SERVICE BEFORE PRODUCT: Does the response push the
+        user to run the process with real clients before building
+        software, and point to the checkup or another repeated tool as the
+        first thing that could become product? Endorsing building the app
+        now scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HANDOFF: One of the user's components is presence
+        (leaders noticing when they are reactive). Does the response keep it
+        in the system, say plainly that EOS is light on this kind of inner
+        work, and name Diana Chapman or Jim Dethmer (or similar inner-work
+        experts) for the content? Turning presence into the Segue or ignoring
+        it scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Gino
+        Wickman: plain, warm, simple, first person, numbers and
+        percentages, references to EOS (Six Key Components, Rocks,
+        Scorecard, the EOS Process, the Organizational Checkup) as his own
+        experience? A neutral consultant tone or management jargon scores
+        1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ACCURACY: Does the response avoid inventing EOS facts
+        or quotes, and avoid attributing "you can't manage what you don't
+        measure" or "100% strong" to Wickman? Any EOS numbers it gives
+        (20-statement checkup, 3 to 7 Rocks, 5 to 15 Scorecard numbers,
+        90-minute weekly meeting) are correct.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt): packaging a method, inner component, wants an app"
+    vars:
+      system_context: file://../../../advisors/prompts/gino-wickman.md
+      task_prompt: "\n\n---\n\nMy cofounder and I run leadership-team sessions for companies of 30 to 150 people. We mix individual practices, like leaders noticing when they're reactive and saying so, with company systems: a shared purpose, clear priorities, people in roles that fit them, and meetings where everyone is present. We've done it with three clients and each one got something a little different. We want this to become a repeatable service and eventually a product, without raising money. We're thinking of building an app next. Where do we start?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "My cofounder and I run leadership-team sessions for companies of 30 to 150 people. We mix individual practices, like leaders noticing when they're reactive and saying so, with company systems: a shared purpose, clear priorities, people in roles that fit them, and meetings where everyone is present. We've done it with three clients and each one got something a little different. We want this to become a repeatable service and eventually a product, without raising money. We're thinking of building an app next. Where do we start?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Gino Wickman, creator of EOS. My cofounder and I run leadership-team sessions for companies of 30 to 150 people. We mix individual practices, like leaders noticing when they're reactive and saying so, with company systems: a shared purpose, clear priorities, people in roles that fit them, and meetings where everyone is present. We've done it with three clients and each one got something a little different. We want this to become a repeatable service and eventually a product, without raising money. We're thinking of building an app next. Where do we start?"

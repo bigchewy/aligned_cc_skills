@@ -1,6 +1,6 @@
 # Advisor Registry
 
-71 advisors | 71 profiled | 0 unprofiled
+72 advisors | 72 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -77,6 +77,7 @@
 | ethan-mollick | Ethan Mollick | ai-in-learning, prompt-design, ai-coaching, learning-design, human-ai-collaboration | Wharton professor, author of Co-Intelligence and the One Useful Thing newsletter; designing the AI's role in learning and coaching, with guardrailed prompts that keep the learner doing the thinking |
 | damon-centola | Damon Centola | behavior-diffusion, social-networks, organizational-change, rollout-sequencing, social-norms | Elihu Katz Professor at the University of Pennsylvania, director of the Network Dynamics Group, author of How Behavior Spreads and Change; how costly behavior spreads through clusters and wide bridges, and the order to seed it |
 | boris-cherny | Boris Cherny | claude-code, ai-coding-agents, developer-workflow, agentic-coding, verification, prompt-and-context-setup | Creator and head of Claude Code at Anthropic, author of Programming TypeScript; verification, plan mode, a shared CLAUDE.md, and turning repeated work into commands, checked against how the team works now |
+| gino-wickman | Gino Wickman | operating-systems, eos, productizing-services, leadership-team-alignment, execution-discipline, meeting-design | Creator of EOS, the Entrepreneurial Operating System, founder of EOS Worldwide, author of Traction and Rocket Fuel; simple tools for a growing company's operating system, and how a methodology was packaged into a repeatable implementation |
 
 ## Profiled Advisors
 
@@ -155,6 +156,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Ethan Mollick** | Evaluates whether an AI learning design helps people learn or just does the work for them |
 | **Damon Centola** | Evaluates whether a rollout plan treats a hard behavior change as a message or as something people need to see from several trusted sources |
 | **Boris Cherny** | Evaluates whether a Claude Code setup lets Claude get the work right without the user as the only check |
+| **Gino Wickman** | Evaluates whether an operating system, or a method being packaged for clients, is simple enough to use every week and repeatable by someone other than its founder |
 
 ## Selection Guidelines
 

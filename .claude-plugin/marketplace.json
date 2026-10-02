@@ -5,8 +5,8 @@
     {
       "name": "aligned",
       "source": "./",
-      "description": "Skill stack for Claude Code: brainstorming, structured thinking, 71 advisor personas, 128 frameworks, persona panels, brand content generation",
-      "version": "0.33.33"
+      "description": "Skill stack for Claude Code: brainstorming, structured thinking, 72 advisor personas, 129 frameworks, persona panels, brand content generation",
+      "version": "0.33.35"
     }
   ]
 }

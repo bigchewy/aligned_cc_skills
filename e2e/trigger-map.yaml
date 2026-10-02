@@ -312,3 +312,15 @@ triggers:
       - frameworks/close-the-loop/anti-examples.md
     scenarios:
       - scenarios/use-framework/close-the-loop.yaml
+
+  - paths:
+      - advisors/prompts/gino-wickman.md
+    scenarios:
+      - scenarios/use-advisor/gino-wickman-consult.yaml
+
+  - paths:
+      - frameworks/proven-process/prompt.md
+      - frameworks/proven-process/examples.md
+      - frameworks/proven-process/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/proven-process.yaml

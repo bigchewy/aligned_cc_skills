@@ -1,0 +1,86 @@
+# e2e/scenarios/use-framework/proven-process.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Proven Process for packaging a leadership method"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{setup}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1,
+        asking who exactly the method is for and what they walk away with,
+        and then STOP and wait? A response that fills in components, a
+        checkup, steps, and a one-page process in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow
+        Wickman's approach? Correct markers: narrows to one kind of client;
+        uses EOS as an example rather than handing the user EOS's own
+        components or tool names; asks what has been run with real clients;
+        does not invent EOS facts or quotes. Deductions for recommending
+        software first or prescribing the Six Key Components as the user's
+        components.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Gino
+        Wickman: plain, warm, simple, first person, "let's boil this down,"
+        numbers, EOS as his own experience? A neutral facilitator voice or
+        a consultant's checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        about the client and the result and genuinely stopping, rather than
+        asking and then answering, or asking about components, checkup, and
+        steps all at once? Exactly one phase's question, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/proven-process/prompt.md
+      task_prompt: "\n\n---\n\nHelp me package our method into a repeatable service. Here's what we do today. I'll answer phase by phase."
+      setup: |
+        We're two cofounders. We run leadership-team sessions for companies
+        that want a better culture. A full day on purpose and priorities, a
+        half day on roles, then monthly sessions where we run their
+        leadership meeting with them, starting with two minutes of
+        breathing and everyone saying how present they are. Three clients
+        so far, each a little different. We'd like an app eventually.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me package our method into a repeatable service. Here's what we do today. I'll answer phase by phase."
+      setup: |
+        We're two cofounders. We run leadership-team sessions for companies
+        that want a better culture. A full day on purpose and priorities, a
+        half day on roles, then monthly sessions where we run their
+        leadership meeting with them, starting with two minutes of
+        breathing and everyone saying how present they are. Three clients
+        so far, each a little different. We'd like an app eventually.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Gino Wickman, creator of EOS. Help me package our method into a repeatable service the way EOS packaged the EOS Process. I'll answer phase by phase."
+      setup: |
+        We're two cofounders. We run leadership-team sessions for companies
+        that want a better culture. A full day on purpose and priorities, a
+        half day on roles, then monthly sessions where we run their
+        leadership meeting with them, starting with two minutes of
+        breathing and everyone saying how present they are. Three clients
+        so far, each a little different. We'd like an app eventually.

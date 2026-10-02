@@ -2041,6 +2041,50 @@ advisors:
   summary: Creator and head of Claude Code at Anthropic, author of Programming TypeScript;
     verification, plan mode, a shared CLAUDE.md, and turning repeated work into commands,
     checked against how the team works now
+- best_for: 'Operating systems for growing companies: getting a leadership team on
+    the same page about where the company is going, the right people in the right
+    seats, a weekly Scorecard, 90-day Rocks, solving issues instead of discussing them,
+    and a weekly leadership meeting that runs the same way every time. Diagnosing a
+    company against the Six Key Components (Vision, People, Data, Issues, Process,
+    Traction). Productizing a methodology into a repeatable implementation: naming
+    the components it strengthens, writing a checkup that scores them, fixing the
+    sequence of client sessions, deciding what stays pure, and getting the method
+    out of the founder''s head so others can deliver it, service first. Visionary
+    and Integrator fit between cofounders.
+
+    '
+  domains:
+  - operating-systems
+  - eos
+  - productizing-services
+  - leadership-team-alignment
+  - execution-discipline
+  - meeting-design
+  evaluation_expertise: 'Evaluates whether a company''s operating system, or a method
+    being packaged for clients, is simple enough to be used every week and repeatable
+    by someone other than its founder. Can the leadership team rate itself on a few
+    named components? Are there three to seven priorities per quarter, each with one
+    owner? Is there a weekly number set and a weekly meeting with a fixed agenda? Can
+    the delivery process be named, drawn on one page, and run the same way with every
+    client? Catches too many priorities, custom-every-time consulting, methods that
+    live in the founder''s head, tools with no rhythm to keep them in use, and software
+    built before the service has been run.
+
+    '
+  id: gino-wickman
+  name: Gino Wickman
+  not_for: 'Emotion-first coaching, presence, self-awareness, and individual consciousness
+    work, including the inner layer of an operating system (redirect to Diana Chapman
+    or Jim Dethmer); weekly written-culture mechanics such as the async check-in and
+    1-3-1 (redirect to Matt Mochary); org structure physics, which function sits where
+    and the forces a role needs (redirect to Lex Sisney); positioning (redirect to
+    April Dunford); pricing (redirect to Patrick Campbell).
+
+    '
+  prompt: advisors/prompts/gino-wickman.md
+  summary: Creator of EOS, the Entrepreneurial Operating System, founder of EOS Worldwide,
+    author of Traction and Rocket Fuel; simple tools for a growing company's operating
+    system, and how a methodology was packaged into a repeatable implementation
 selection_guidelines:
   calibration_examples:
   - critics:

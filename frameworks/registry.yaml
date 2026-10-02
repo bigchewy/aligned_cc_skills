@@ -2311,3 +2311,31 @@ frameworks:
     on the same kind of work, is the only check on Claude's output, has a long CLAUDE.md
     that isn't preventing mistakes, approves the same commands over and over, or wants
     to know how the Claude Code team works today
+- advisor: gino-wickman
+  category: strategy
+  default_critic_advisors:
+  - gino-wickman
+  deliverable_type: plan
+  domains:
+  - productizing-services
+  - operating-systems
+  - service-design
+  - eos
+  helpful_documents:
+  - a description of the method or service as it is delivered today, even a rough
+    one
+  - notes, agendas, or recordings from the last two or three client engagements
+  - the tools, worksheets, or exercises used in sessions
+  - any assessment or survey the client fills out before or during the work
+  - current pricing and who the clients have been
+  id: proven-process
+  name: Proven Process
+  purpose: turning a method someone delivers by hand into a repeatable engagement,
+    with who it is for, the components it strengthens, a checkup that scores them,
+    the named steps a client goes through, what gets written down so someone else
+    can deliver it, and a one-page picture of the whole thing
+  use_when: someone wants to turn a consulting, coaching, or facilitation method into
+    a repeatable service or product, delivers the same kind of engagement differently
+    for every client, wants to build an operating system for client companies like
+    EOS, needs an assessment that scores a client before and after, or wants their
+    method out of their own head so others can deliver it

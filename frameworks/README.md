@@ -1,6 +1,6 @@
 # Framework Registry
 
-128 frameworks across 25 categories
+129 frameworks across 25 categories
 
 | Category | Count |
 |----------|-------|
@@ -27,7 +27,7 @@
 | sales | 5 |
 | social-media | 9 |
 | startup | 7 |
-| strategy | 27 |
+| strategy | 28 |
 | visual-storytelling | 1 |
 
 ## Quick Reference
@@ -162,6 +162,7 @@
 | assigning-ai-roles | Assigning AI Roles | ethan-mollick | learning-design | someone is building an AI tutor, AI coach, role-play practice partner, or AI feedback tool for a course or program; an existing AI learning tool gets good ratings but behavior does not change; or a team needs to decide what the AI should and should not do for learners |
 | complex-contagion-rollout | Complex Contagion Rollout | damon-centola | leadership | a company is rolling out a new team practice, culture program, or way of working that people find risky or awkward to start; a pilot or launch got good survey scores and then faded; someone plans to launch with an all-hands announcement, one champion per team, or everyone at once; or a leader needs to decide which teams go first and in what order |
 | close-the-loop | Close the Loop | boris-cherny | developer-tooling | someone wants their Claude Code setup reviewed, keeps correcting Claude on the same kind of work, is the only check on Claude's output, has a long CLAUDE.md that isn't preventing mistakes, approves the same commands over and over, or wants to know how the Claude Code team works today |
+| proven-process | Proven Process | gino-wickman | strategy | someone wants to turn a consulting, coaching, or facilitation method into a repeatable service or product, delivers the same kind of engagement differently for every client, wants to build an operating system for client companies like EOS, needs an assessment that scores a client before and after, or wants their method out of their own head so others can deliver it |
 
 ## By Category
 
@@ -334,7 +335,7 @@
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 
-### Strategy (27)
+### Strategy (28)
 
 - **5-step-process** — 5-Step Process (ray-dalio)
 - **6-step-process** — 6-Step Process (wise-eric)
@@ -355,6 +356,7 @@
 - **past-year-review** — the Past Year Review (PYR) (tim-ferriss)
 - **personal-resource-allocation** — Personal Resource Allocation (clayton-christensen)
 - **professional-context-intake** — Professional Context Intake (wise-eric)
+- **proven-process** — Proven Process (gino-wickman)
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
 - **regret-minimization** — Regret Minimization Framework (jeff-bezos)
 - **root-cause-analysis** — Root Cause Analysis (wise-eric)
