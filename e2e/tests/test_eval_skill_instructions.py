@@ -22,6 +22,21 @@ def test_eval_step_never_skips_for_missing_key(rel):
     assert "Never skip the run because `ANTHROPIC_API_KEY` is not set" in text
 
 
+@pytest.mark.parametrize("rel", EVAL_SKILLS)
+def test_eval_step_never_suggests_a_full_run_for_a_new_scenario(rel):
+    text = (REPO / rel).read_text()
+    assert "Never suggest `--all` unless a file in `e2e/providers/` changed" in text
+    assert "without asking the user" not in text
+
+
+def test_readme_says_when_a_full_run_is_worth_it():
+    text = (REPO / "e2e/README.md").read_text()
+    assert "840 Claude calls" in text
+    assert "Claude never suggests it otherwise" in text
+    assert "875" not in text
+    assert "Claude asks before running it" not in text
+
+
 def test_eval_audit_does_not_defer_on_credentials():
     text = (REPO / "skills/eval-audit/SKILL.md").read_text()
     assert "missing credentials" not in text

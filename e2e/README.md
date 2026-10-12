@@ -42,7 +42,7 @@ Run named scenarios:
 npm run eval -- scenarios/use-advisor/steve-blank-consult.yaml
 ```
 
-Run every scenario. This is about 875 Claude calls, so Claude asks before running it:
+Run every scenario. This is about 840 Claude calls and roughly 4 million tokens, most of them judge input. It is worth that only when a file in `providers/` changed, because that changes how every scenario is scored. Claude never suggests it otherwise, and states the cost first when it does:
 
 ```bash
 npm run eval -- --all
