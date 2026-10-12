@@ -7,15 +7,15 @@
 description: "Framework: Finding the Crux one-page deliverable"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -65,18 +65,24 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/finding-the-crux/prompt.md
       task_prompt: "\n\n---\n\nThere is no live user. Simulate the user's answers from the company brief, run every phase in order, and finish by delivering the final written output exactly as the framework specifies."
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "What is the single most important challenge this company should focus on, and what should it stop doing?"
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "Use Richard Rumelt's 'finding the crux' method (filter challenges by importance, addressability, and pivotality) to identify this company's crux and what it should stop doing. Deliver the final written output."

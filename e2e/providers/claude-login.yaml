@@ -1,0 +1,11 @@
+# Shared promptfoo provider for every eval scenario: the model under test and the
+# llm-rubric judge. Runs through the `claude` CLI on the Claude Code login, not
+# ANTHROPIC_API_KEY. run_evals.py removes ANTHROPIC_API_KEY from the environment,
+# because this provider would otherwise pass it to the SDK and bill the API.
+id: anthropic:claude-agent-sdk
+config:
+  apiKeyRequired: false
+  model: sonnet
+  custom_system_prompt: ""
+  tools: []
+  max_turns: 1

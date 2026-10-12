@@ -6,15 +6,15 @@
 description: "Skill: use-framework direct invocation backward compat"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}\n\n---\n\nThe user directly invokes: /aligned:use-framework {{framework_name}}\n\nUser context: {{user_context}}\n\nHow does the skill respond?"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -34,6 +34,8 @@ defaultTest:
 
 tests:
   - description: "use-framework-direct: positioning framework direct invoke"
+    metadata:
+      arm: single
     vars:
       system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       framework_name: "5-components-positioning"

@@ -5,15 +5,15 @@
 description: "Advisor: Julie Dirksen training request consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -65,16 +65,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — knows how but won't, refresher request"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/julie-dirksen.md
       task_prompt: "\n\n---\n\nWe ran a two-day workshop on direct feedback for our 12 team leads six months ago. They did great in the role plays. But they still complain about people on other teams to their own teams or to me instead of talking to the person. Our CEO does the same thing, honestly, and the one lead who did go direct last quarter got reported to HR. I want to run a refresher workshop with a stronger case for why it matters. Can you help me design it?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "We ran a two-day workshop on direct feedback for our 12 team leads six months ago. They did great in the role plays. But they still complain about people on other teams to their own teams or to me instead of talking to the person. Our CEO does the same thing, honestly, and the one lead who did go direct last quarter got reported to HR. I want to run a refresher workshop with a stronger case for why it matters. Can you help me design it?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Julie Dirksen, author of Talk to the Elephant. We ran a two-day workshop on direct feedback for our 12 team leads six months ago. They did great in the role plays. But they still complain about people on other teams to their own teams or to me instead of talking to the person. Our CEO does the same thing, honestly, and the one lead who did go direct last quarter got reported to HR. I want to run a refresher workshop with a stronger case for why it matters. Can you help me design it?"

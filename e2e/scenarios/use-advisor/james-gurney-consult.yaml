@@ -5,15 +5,15 @@
 description: "Advisor: James Gurney scene-description consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -58,16 +58,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — draft image prompt from a friend's memory"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/james-gurney.md
       task_prompt: "\n\n---\n\nI'm making an illustrated gift book of friends' memories of my sister. An image model draws each one in a soft pencil-and-watercolor storybook style from a 50-70 word scene description. Here's the memory: \"Our first winter in the new apartment, the heat broke. Maya showed up at nine at night with a bag of oranges and a camping stove, sat on our kitchen floor in her coat, and made us hot chocolate in a saucepan. When I started crying she just handed me a mug and said, 'Drink it before it gets a skin.' We laughed so hard.\" My draft description: \"A heartwarming, nostalgic scene: Maya arrives with oranges, cooks hot chocolate on a camping stove, and the two friends laugh together on the kitchen floor, bathed in a warm, magical glow of friendship.\" How do I make it better?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I'm making an illustrated gift book of friends' memories of my sister. An image model draws each one in a soft pencil-and-watercolor storybook style from a 50-70 word scene description. Here's the memory: \"Our first winter in the new apartment, the heat broke. Maya showed up at nine at night with a bag of oranges and a camping stove, sat on our kitchen floor in her coat, and made us hot chocolate in a saucepan. When I started crying she just handed me a mug and said, 'Drink it before it gets a skin.' We laughed so hard.\" My draft description: \"A heartwarming, nostalgic scene: Maya arrives with oranges, cooks hot chocolate on a camping stove, and the two friends laugh together on the kitchen floor, bathed in a warm, magical glow of friendship.\" How do I make it better?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are James Gurney, author of Imaginative Realism and Color and Light. I'm making an illustrated gift book of friends' memories of my sister. An image model draws each one in a soft pencil-and-watercolor storybook style from a 50-70 word scene description. Here's the memory: \"Our first winter in the new apartment, the heat broke. Maya showed up at nine at night with a bag of oranges and a camping stove, sat on our kitchen floor in her coat, and made us hot chocolate in a saucepan. When I started crying she just handed me a mug and said, 'Drink it before it gets a skin.' We laughed so hard.\" My draft description: \"A heartwarming, nostalgic scene: Maya arrives with oranges, cooks hot chocolate on a camping stove, and the two friends laugh together on the kitchen floor, bathed in a warm, magical glow of friendship.\" How do I make it better?"

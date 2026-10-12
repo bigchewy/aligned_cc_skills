@@ -6,15 +6,15 @@
 description: "Framework: Reverse-Engineered Brand build (Marley model)"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -48,6 +48,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/reverse-engineered-brand/prompt.md
       task_prompt: |
@@ -65,12 +67,16 @@ tests:
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Reverse engineer this company's brand and produce a review of their brand across key areas:"
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "aware-but-unaided (knows ETL approach, not Marley model)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: |

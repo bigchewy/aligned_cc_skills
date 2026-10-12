@@ -5,15 +5,15 @@
 description: "Advisor: Lex Sisney structure consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -62,16 +62,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — scaling founder, third failed sales VP, marketing under sales"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/lex-sisney.md
       task_prompt: "\n\n---\n\nWe're a $5M ARR SaaS company, 35 people, growing 60% a year. I just had to let go of my third VP of Sales in two years. Each one seemed great in interviews. Marketing reports to sales — it's always been that way and honestly marketing has turned into a lead-gen desk. I still personally approve every enterprise contract and I'm the tiebreaker on every product decision. I'm exhausted and the board is starting to ask whether I'm the problem. How do I hire a VP of Sales who actually sticks?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "We're a $5M ARR SaaS company, 35 people, growing 60% a year. I just had to let go of my third VP of Sales in two years. Each one seemed great in interviews. Marketing reports to sales — it's always been that way and honestly marketing has turned into a lead-gen desk. I still personally approve every enterprise contract and I'm the tiebreaker on every product decision. I'm exhausted and the board is starting to ask whether I'm the problem. How do I hire a VP of Sales who actually sticks?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Lex Sisney, founder of Organizational Physics and author of Designed to Scale. We're a $5M ARR SaaS company, 35 people, growing 60% a year. I just had to let go of my third VP of Sales in two years. Each one seemed great in interviews. Marketing reports to sales — it's always been that way and honestly marketing has turned into a lead-gen desk. I still personally approve every enterprise contract and I'm the tiebreaker on every product decision. I'm exhausted and the board is starting to ask whether I'm the problem. How do I hire a VP of Sales who actually sticks?"

@@ -8,15 +8,15 @@
 description: "Skill: brainstorming business positioning strategy"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -71,12 +71,16 @@ defaultTest:
 
 tests:
   - description: "with-skill (structured brainstorming process)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../fixtures/skill-prompts/brainstorming-business.md
       task_prompt: "\n\n---\n\nHelp me develop a positioning strategy for this company:"
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "without-skill (vanilla baseline)"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Help me develop a positioning strategy for this company:"

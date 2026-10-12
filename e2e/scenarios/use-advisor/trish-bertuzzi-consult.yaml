@@ -5,15 +5,15 @@
 description: "Advisor: Trish Bertuzzi B2B sales development consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -71,16 +71,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — pipeline shortfall w/ pressure to hire"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/trish-bertuzzi.md
       task_prompt: "\n\n---\n\nI'm a VP of Sales at an $8M ARR B2B SaaS company. We have 7 AEs and 4 SDRs reporting to one SDR manager who was our top SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO has already committed to the board that we'll hit 4x coverage — he wants to hire three more SDRs this month. Our ramp time is about six months and SDRs typically leave or get promoted after ten to twelve months. What should we do?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I'm a VP of Sales at an $8M ARR B2B SaaS company. We have 7 AEs and 4 SDRs reporting to one SDR manager who was our top SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO has already committed to the board that we'll hit 4x coverage — he wants to hire three more SDRs this month. Our ramp time is about six months and SDRs typically leave or get promoted after ten to twelve months. What should we do?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Trish Bertuzzi, founder of The Bridge Group and author of The Sales Development Playbook. I'm a VP of Sales at an $8M ARR B2B SaaS company. We have 7 AEs and 4 SDRs reporting to one SDR manager who was our top SDR last year. Pipeline is at 60% of coverage for Q3 and the CRO has already committed to the board that we'll hit 4x coverage — he wants to hire three more SDRs this month. Our ramp time is about six months and SDRs typically leave or get promoted after ten to twelve months. What should we do?"

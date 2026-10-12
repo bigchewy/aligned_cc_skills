@@ -3,14 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "description": "Eval framework for Aligned plugin skills",
+  "engines": {
+    "node": ">=22.22.0"
+  },
   "scripts": {
-    "eval": "promptfoo eval",
-    "eval:smoke": "promptfoo eval --filter-first-n 1 --no-write",
+    "eval": ".venv/bin/python run_evals.py",
     "view": "promptfoo view",
-    "test": "pytest tests/ -v",
-    "test:scorer": "pytest tests/test_distinctness.py -v"
+    "test": ".venv/bin/python -m pytest tests/ -v",
+    "test:scorer": ".venv/bin/python -m pytest tests/test_distinctness.py -v"
   },
   "devDependencies": {
-    "promptfoo": "^0.100.0"
+    "@anthropic-ai/claude-agent-sdk": "0.3.283",
+    "promptfoo": "0.124.1"
   }
 }

@@ -5,15 +5,15 @@
 description: "Framework: contextual recommendation from task context"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{skill_prompt}}\n\n---\n\n{{recommendation_logic}}\n\n---\n\nRegistry contents:\n{{registry}}\n\n{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -48,6 +48,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (skill + recommendation file + registry)"
+    metadata:
+      arm: full-stack
     vars:
       skill_prompt: file://../../../skills/use-framework/SKILL.md
       recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
@@ -55,6 +57,8 @@ tests:
       task_prompt: "I'm paralyzed by a big career decision and can't stop overthinking it."
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       skill_prompt: ""
       recommendation_logic: ""

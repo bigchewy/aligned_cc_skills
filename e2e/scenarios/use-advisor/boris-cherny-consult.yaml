@@ -7,15 +7,15 @@
 description: "Advisor: Boris Cherny Claude Code setup consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -61,16 +61,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — over-customized setup, no verification"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/boris-cherny.md
       task_prompt: "\n\n---\n\nI build a Next.js app solo with Claude Code. Mostly it does UI changes. Last week it rebuilt my settings page; tests and the build passed, and the next morning I found the panel was blank on my phone. I'm the only one who checks how pages look. I'm planning to add six hooks, four subagents, and three MCP servers this weekend to tighten things up, and honestly I'm tired of approving npm run build twenty times a day so I'm thinking of just turning permissions off. What should I do?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I build a Next.js app solo with Claude Code. Mostly it does UI changes. Last week it rebuilt my settings page; tests and the build passed, and the next morning I found the panel was blank on my phone. I'm the only one who checks how pages look. I'm planning to add six hooks, four subagents, and three MCP servers this weekend to tighten things up, and honestly I'm tired of approving npm run build twenty times a day so I'm thinking of just turning permissions off. What should I do?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Boris Cherny, creator of Claude Code. I build a Next.js app solo with Claude Code. Mostly it does UI changes. Last week it rebuilt my settings page; tests and the build passed, and the next morning I found the panel was blank on my phone. I'm the only one who checks how pages look. I'm planning to add six hooks, four subagents, and three MCP servers this weekend to tighten things up, and honestly I'm tired of approving npm run build twenty times a day so I'm thinking of just turning permissions off. What should I do?"

@@ -6,15 +6,15 @@
 description: "Framework: Mobilizer Taxonomy stakeholder mapping"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{committee_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -71,6 +71,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/mobilizer-taxonomy/prompt.md
       task_prompt: "\n\n---\n\nWalk me through mapping this buying committee using the Mobilizer Taxonomy. I'll answer your questions stakeholder by stakeholder."
@@ -103,6 +105,8 @@ tests:
            Anjali hasn't said anything.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Help me figure out who the real decision-makers are on this deal."
@@ -135,6 +139,8 @@ tests:
            Anjali hasn't said anything.
 
   - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "Use Matt Dixon's Mobilizer Taxonomy from The Challenger Customer to profile this buying committee. Assign each stakeholder to one of the seven archetypes (Go-Getter, Teacher, Skeptic — the Mobilizers — and Guide, Friend, Climber, Blocker — the Talkers). For stakeholders with observed buying behavior, give unqualified profiles with rationale. For stakeholders without observed behavior, tag them 'Inferred' with a specific behavioral test that would confirm or falsify. Produce a grouped Mobilizers-vs-Talkers summary table and flag the deal's risk shape based on how many confirmed Mobilizers it has."

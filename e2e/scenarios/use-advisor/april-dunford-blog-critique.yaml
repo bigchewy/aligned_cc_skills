@@ -6,15 +6,15 @@
 description: "Advisor: April Dunford blog post critique"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{content}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -48,18 +48,24 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/april-dunford.md
       task_prompt: "\n\n---\n\nReview this blog post draft. Tell me what's working, what's not, and how to make it stronger."
       content: file://../../fixtures/sample-blog-post.md
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Review this blog post draft. Tell me what's working, what's not, and how to make it stronger."
       content: file://../../fixtures/sample-blog-post.md
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are April Dunford, positioning consultant and author of Obviously Awesome. Review this blog post draft. Tell me what's working, what's not, and how to make it stronger."

@@ -6,15 +6,15 @@
 description: "Framework: Blue Ocean Value Props for a me-too SaaS offering"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -55,6 +55,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/blue-ocean-value-props/prompt.md
       task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
@@ -66,6 +68,8 @@ tests:
         much work.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Walk me through building a blue ocean value proposition for my product. I'll answer phase by phase."
@@ -77,6 +81,8 @@ tests:
         much work.
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are W. Chan Kim and Renée Mauborgne. Walk me through the Blue Ocean Shift process to build a value proposition for my product: strategy canvas, ERRC grid, and the three qualities of a good strategy. I'll answer phase by phase."

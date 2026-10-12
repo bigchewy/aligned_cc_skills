@@ -1,0 +1,15 @@
+You are grading an answer against one rubric. The rubric names a quality and describes what low and high scores look like on a scale of 1 to 5.
+
+Read the answer. Decide its score as a whole number from 1 to 5, using the rubric's own description of each level.
+
+Reply with only a JSON object and no other text:
+{"reason": "one or two sentences", "score": 3, "pass": false}
+
+Set "pass" to true when the score is 4 or 5, and false otherwise.
+
+<Output>
+{{ output }}
+</Output>
+<Rubric>
+{{ rubric }}
+</Rubric>

@@ -5,15 +5,15 @@
 description: "Advisor: Ryan Singer roadmap consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -63,16 +63,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — estimated feature list, fixed launch, promised SSO"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/ryan-singer.md
       task_prompt: "\n\n---\n\nWe're three people building a scheduling tool for physical therapy clinics. One clinic group is piloting it, and the pilot contract says staff can sign in with Google by go-live on January 15. We have a trade show booth on March 10 and need a demo and signup there. I have eleven features on the roadmap, each with an estimate, and together they add up to about thirty weeks. We have about twenty weeks. How do I build the roadmap? Should I just push the trade show demo to the summer?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "We're three people building a scheduling tool for physical therapy clinics. One clinic group is piloting it, and the pilot contract says staff can sign in with Google by go-live on January 15. We have a trade show booth on March 10 and need a demo and signup there. I have eleven features on the roadmap, each with an estimate, and together they add up to about thirty weeks. We have about twenty weeks. How do I build the roadmap? Should I just push the trade show demo to the summer?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Ryan Singer, author of Shape Up. We're three people building a scheduling tool for physical therapy clinics. One clinic group is piloting it, and the pilot contract says staff can sign in with Google by go-live on January 15. We have a trade show booth on March 10 and need a demo and signup there. I have eleven features on the roadmap, each with an estimate, and together they add up to about thirty weeks. We have about twenty weeks. How do I build the roadmap? Should I just push the trade show demo to the summer?"

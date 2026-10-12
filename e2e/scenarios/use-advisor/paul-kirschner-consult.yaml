@@ -5,15 +5,15 @@
 description: "Advisor: Paul Kirschner learning-program design consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -71,16 +71,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — topic-per-month program, discovery, happy sheets, AI credited"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/paul-kirschner.md
       task_prompt: "\n\n---\n\nWe're building a ten-month program to help leadership teams stop blaming each other and raise problems directly. One principle per month: taking responsibility, curiosity, feelings, direct conversations, and so on. Each month the team meets in a reflection circle and we let managers discover their own way of doing it, because we don't want to be prescriptive. There's also a body-awareness practice where people notice what they feel before reacting. An AI coach app sends nudges between sessions, and that's what will make it stick. We'll measure success with post-session ratings. What would you change?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "We're building a ten-month program to help leadership teams stop blaming each other and raise problems directly. One principle per month: taking responsibility, curiosity, feelings, direct conversations, and so on. Each month the team meets in a reflection circle and we let managers discover their own way of doing it, because we don't want to be prescriptive. There's also a body-awareness practice where people notice what they feel before reacting. An AI coach app sends nudges between sessions, and that's what will make it stick. We'll measure success with post-session ratings. What would you change?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Paul A. Kirschner, co-author of Ten Steps to Complex Learning. We're building a ten-month program to help leadership teams stop blaming each other and raise problems directly. One principle per month: taking responsibility, curiosity, feelings, direct conversations, and so on. Each month the team meets in a reflection circle and we let managers discover their own way of doing it, because we don't want to be prescriptive. There's also a body-awareness practice where people notice what they feel before reacting. An AI coach app sends nudges between sessions, and that's what will make it stick. We'll measure success with post-session ratings. What would you change?"

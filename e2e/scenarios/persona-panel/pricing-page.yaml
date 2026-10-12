@@ -6,15 +6,15 @@
 description: "Persona-panel: SaaS pricing page critique"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 3000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{content}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -48,18 +48,24 @@ defaultTest:
 
 tests:
   - description: "full-stack (advisor context + persona instructions)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/april-dunford.md
       task_prompt: "\n\n---\n\nEvaluate the content below from multiple distinct buyer perspectives. For each persona, be concrete -- reference specific elements in the content. Provide each persona's unique viewpoint based on their role, psychology, and priorities. Structure your output with clear persona headers.\n\nEvaluate this pricing page for effectiveness:"
       content: file://../../fixtures/sample-pricing-page.md
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Review this pricing page and provide detailed feedback:"
       content: file://../../fixtures/sample-pricing-page.md
 
   - description: "aware-but-unaided (describes persona panel in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "Act as a panel of 5 distinct buyer personas and evaluate this pricing page from each perspective separately. Provide specific, differentiated feedback from each persona:"

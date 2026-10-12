@@ -5,15 +5,15 @@
 description: "Advisor: Damon Centola rollout consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -69,16 +69,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — all-hands launch with one influencer per team"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/damon-centola.md
       task_prompt: "\n\n---\n\nI run people at a 400-person company. We're rolling out a team practice where people say a disagreement directly in the meeting instead of complaining about it afterward. Our plan: the CEO announces it at the all-hands next month, we pick the most influential person on each of our 30 teams as a culture champion, send them to a two-day training, and then every team starts at once. A similar program we ran last year got great survey scores and then faded in a couple of months. How do we make this one stick?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I run people at a 400-person company. We're rolling out a team practice where people say a disagreement directly in the meeting instead of complaining about it afterward. Our plan: the CEO announces it at the all-hands next month, we pick the most influential person on each of our 30 teams as a culture champion, send them to a two-day training, and then every team starts at once. A similar program we ran last year got great survey scores and then faded in a couple of months. How do we make this one stick?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Damon Centola, author of How Behavior Spreads and Change. I run people at a 400-person company. We're rolling out a team practice where people say a disagreement directly in the meeting instead of complaining about it afterward. Our plan: the CEO announces it at the all-hands next month, we pick the most influential person on each of our 30 teams as a culture champion, send them to a two-day training, and then every team starts at once. A similar program we ran last year got great survey scores and then faded in a couple of months. How do we make this one stick?"

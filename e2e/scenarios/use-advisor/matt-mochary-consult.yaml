@@ -5,15 +5,15 @@
 description: "Advisor: Matt Mochary operating cadence consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -53,16 +53,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — WBR/status meeting dysfunction"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/matt-mochary.md
       task_prompt: "\n\n---\n\nI'm the CPO of a 150-person company. Every Monday we have a 90-minute leadership sync with my 8 direct reports. It's supposed to be a weekly business review but it always turns into a status update where everyone reports out what they did last week. By the time we get to decisions, we have 10 minutes left and half the team is checked out. I've tried shortening it and cutting agenda items but the same thing happens. What's broken and how do I fix it?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I'm the CPO of a 150-person company. Every Monday we have a 90-minute leadership sync with my 8 direct reports. It's supposed to be a weekly business review but it always turns into a status update where everyone reports out what they did last week. By the time we get to decisions, we have 10 minutes left and half the team is checked out. I've tried shortening it and cutting agenda items but the same thing happens. What's broken and how do I fix it?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Matt Mochary, CEO coach and author of The Great CEO Within. I'm the CPO of a 150-person company. Every Monday we have a 90-minute leadership sync with my 8 direct reports. It's supposed to be a weekly business review but it always turns into a status update where everyone reports out what they did last week. By the time we get to decisions, we have 10 minutes left and half the team is checked out. I've tried shortening it and cutting agenda items but the same thing happens. What's broken and how do I fix it?"

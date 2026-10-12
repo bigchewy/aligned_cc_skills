@@ -7,15 +7,15 @@
 description: "Skill: use-framework backward compat after framework-runner extraction"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}\n\n---\n\nFramework: {{framework_name}}\n\nUser request: {{user_input}}\n\nRun this framework now."
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -33,6 +33,8 @@ defaultTest:
 
 tests:
   - description: "framework-runner-extraction: positioning framework runs identically"
+    metadata:
+      arm: single
     vars:
       system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       framework_name: "5-components-positioning"

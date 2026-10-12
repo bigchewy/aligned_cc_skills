@@ -5,15 +5,15 @@
 description: "Advisor: Jonathan Baker agency sale consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -71,16 +71,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — absent owner, sub-band profit, at-risk anchor client"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/jonathan-baker.md
       task_prompt: "\n\n---\n\nI own a behavioral design agency. About $1.1M in revenue, roughly $350K left over after I pay myself $60K, seven people, been at it twenty-two years. I have to be honest — I only work about six hours a week and haven't been really involved in over a year, which I know is bad. Our biggest client is 30% of revenue and the contract comes up for review in December; my champion there retired, so I'd put it at maybe 40% we keep them and if we do it's at half the budget. I'm starting conversations with about five agencies I know. What's this worth and what should I be telling them?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I own a behavioral design agency. About $1.1M in revenue, roughly $350K left over after I pay myself $60K, seven people, been at it twenty-two years. I have to be honest — I only work about six hours a week and haven't been really involved in over a year, which I know is bad. Our biggest client is 30% of revenue and the contract comes up for review in December; my champion there retired, so I'd put it at maybe 40% we keep them and if we do it's at half the budget. I'm starting conversations with about five agencies I know. What's this worth and what should I be telling them?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Jonathan Baker, head of M&A at Punctuation, advising small independent marketing services firms on selling. I own a behavioral design agency. About $1.1M in revenue, roughly $350K left over after I pay myself $60K, seven people, been at it twenty-two years. I have to be honest — I only work about six hours a week and haven't been really involved in over a year, which I know is bad. Our biggest client is 30% of revenue and the contract comes up for review in December; my champion there retired, so I'd put it at maybe 40% we keep them and if we do it's at half the budget. I'm starting conversations with about five agencies I know. What's this worth and what should I be telling them?"

@@ -6,15 +6,15 @@
 description: "Framework: The Sellability Index for an agency owner considering an exit"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{firm_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -57,6 +57,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/sellability-index/prompt.md
       task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
@@ -68,6 +70,8 @@ tests:
         $60K salary and work about six hours a week.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Walk me through assessing whether my agency is ready to sell and what it's worth. I'll answer phase by phase."
@@ -79,6 +83,8 @@ tests:
         $60K salary and work about six hours a week.
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Jonathan Baker, head of M&A at Punctuation and creator of the Sellability Index. Walk me through your readiness assessment for my agency. I'll answer phase by phase."

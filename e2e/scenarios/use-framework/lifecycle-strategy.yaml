@@ -6,15 +6,15 @@
 description: "Framework: Lifecycle Strategy product/market/execution fit"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -59,6 +59,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/lifecycle-strategy/prompt.md
       task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
@@ -72,6 +74,8 @@ tests:
         founder and still the tiebreaker on every product decision.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Walk me through figuring out whether to spin out my second product as its own business unit. I'll answer phase by phase."
@@ -85,6 +89,8 @@ tests:
         founder and still the tiebreaker on every product decision.
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Lex Sisney, author of Organizational Physics. Walk me through your lifecycle strategy process - product, market, and execution fit - for my company. I'll answer phase by phase."

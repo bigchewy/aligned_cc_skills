@@ -6,15 +6,15 @@
 description: "Framework: Complex Contagion Rollout for a team practice"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{rollout_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -54,6 +54,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/complex-contagion-rollout/prompt.md
       task_prompt: "\n\n---\n\nWalk me through this. I'll answer phase by phase."
@@ -66,6 +68,8 @@ tests:
         should start and in what order.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Walk me through planning the rollout order for a team practice across my company. I'll answer phase by phase."
@@ -78,6 +82,8 @@ tests:
         should start and in what order.
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Damon Centola. Walk me through planning the rollout of a team practice using complex contagion: clusters, wide bridges, and the 25% tipping point. I'll answer phase by phase."

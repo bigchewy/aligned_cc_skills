@@ -6,15 +6,15 @@
 description: "Framework: 6 Elements of SDR Playbook — pipeline-function diagnostic"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -66,6 +66,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/6-elements-sdr/prompt.md
       task_prompt: "\n\n---\n\nWalk me through the 6 Elements on my SDR function. I'll answer your questions element by element."
@@ -81,6 +83,8 @@ tests:
         out inside their first six months.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Help me figure out how to fix our pipeline shortfall. We have 4 SDRs at $8M ARR and pipeline is at 60% of target."
@@ -96,6 +100,8 @@ tests:
         out inside their first six months.
 
   - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "Use Trish Bertuzzi's 6 Elements of the Sales Development Playbook framework to diagnose my SDR function. Walk through the six elements — Strategy, Specialization, Recruiting, Retention, Execution, Leadership — identify the weak ones, and prescribe a priority-ordered fix list."

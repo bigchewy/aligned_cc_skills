@@ -6,15 +6,15 @@
 description: "Framework: 5-Components Positioning document generation"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -48,18 +48,24 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/5-components-positioning/prompt.md
       task_prompt: "\n\n---\n\nWalk me through positioning for this company. Complete all phases and produce the full positioning document."
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Help me position this company:"
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "Use April Dunford's 5 Components of Positioning framework to position this company. Work through all 5 components in order and produce the full positioning document."

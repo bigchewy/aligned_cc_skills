@@ -6,15 +6,15 @@
 description: "Framework: Proven Process for packaging a leadership method"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{setup}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -50,6 +50,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/proven-process/prompt.md
       task_prompt: "\n\n---\n\nHelp me package our method into a repeatable service. Here's what we do today. I'll answer phase by phase."
@@ -62,6 +64,8 @@ tests:
         so far, each a little different. We'd like an app eventually.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Help me package our method into a repeatable service. Here's what we do today. I'll answer phase by phase."
@@ -74,6 +78,8 @@ tests:
         so far, each a little different. We'd like an app eventually.
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Gino Wickman, creator of EOS. Help me package our method into a repeatable service the way EOS packaged the EOS Process. I'll answer phase by phase."

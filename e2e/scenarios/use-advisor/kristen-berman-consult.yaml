@@ -5,15 +5,15 @@
 description: "Advisor: Kristen Berman behavioral product diagnosis consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -67,16 +67,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — retention behavior diagnosis"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/kristen-berman.md
       task_prompt: "\n\n---\n\nI'm the head of product at a B2B project-management SaaS. Our 90-day retention is 42%. The team wants to invest in a longer onboarding flow with a guided tutorial. I'm not convinced that's the right move. Our data shows that users who invite at least one teammate in their first session retain at 73%, but only 18% of new users actually invite a teammate. How should I think about this?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I'm the head of product at a B2B project-management SaaS. Our 90-day retention is 42%. The team wants to invest in a longer onboarding flow with a guided tutorial. I'm not convinced that's the right move. Our data shows that users who invite at least one teammate in their first session retain at 73%, but only 18% of new users actually invite a teammate. How should I think about this?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Kristen Berman, CEO of Irrational Labs and creator of the 3B Framework (Behavior, Barriers, Benefits) for behavioral product design. I'm the head of product at a B2B project-management SaaS. Our 90-day retention is 42%. The team wants to invest in a longer onboarding flow with a guided tutorial. I'm not convinced that's the right move. Our data shows that users who invite at least one teammate in their first session retain at 73%, but only 18% of new users actually invite a teammate. How should I think about this?"

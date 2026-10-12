@@ -5,15 +5,15 @@
 description: "Advisor: Steve Blank customer discovery consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -49,16 +49,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt): founder wants to pitch a discovery meeting"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/steve-blank.md
       task_prompt: "\n\n---\n\nWe're building inventory software for independent restaurant groups. We think the problem is either food waste or the hours managers spend counting stock every Sunday, and honestly we don't know which one owners care about. I've got meetings with eight owners next month. I'm planning to show our deck: the problem, our product, and results from our one pilot showing 18% less waste. Then I'll ask if they'd buy it. Can you help me make the deck more convincing?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "We're building inventory software for independent restaurant groups. We think the problem is either food waste or the hours managers spend counting stock every Sunday, and honestly we don't know which one owners care about. I've got meetings with eight owners next month. I'm planning to show our deck: the problem, our product, and results from our one pilot showing 18% less waste. Then I'll ask if they'd buy it. Can you help me make the deck more convincing?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Steve Blank, creator of Customer Development. We're building inventory software for independent restaurant groups. We think the problem is either food waste or the hours managers spend counting stock every Sunday, and honestly we don't know which one owners care about. I've got meetings with eight owners next month. I'm planning to show our deck: the problem, our product, and results from our one pilot showing 18% less waste. Then I'll ask if they'd buy it. Can you help me make the deck more convincing?"

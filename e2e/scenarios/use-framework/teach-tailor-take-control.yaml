@@ -6,15 +6,15 @@
 description: "Framework: Teach-Tailor-Take Control (TTTC) meeting prep"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{meeting_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -68,6 +68,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/teach-tailor-take-control/prompt.md
       task_prompt: "\n\n---\n\nHelp me prep this meeting using Teach-Tailor-Take Control. I'll answer your questions in order."
@@ -89,6 +91,8 @@ tests:
         AI engine processes claims 3x faster than legacy systems.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Help me prep for this pitch meeting."
@@ -110,6 +114,8 @@ tests:
         AI engine processes claims 3x faster than legacy systems.
 
   - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "Use Matt Dixon's Teach-Tailor-Take Control framework from The Challenger Sale to prep this meeting. Walk through the three skills in order: Teach (is the commercial insight a real reframe or just a feature?), Tailor (is it specific to this buyer's industry, role, and current pressure?), and Take Control (what's the plan for holding commercial ground around pricing and next steps?). Surface the biggest gap across the three and produce an integrated meeting plan with a specific opening move, middle, and closing proposal."

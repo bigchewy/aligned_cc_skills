@@ -6,15 +6,15 @@
 description: "Skill: brainstorming deck keyword routes to Authoring"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 1000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}\n\n---\n\nUser says: {{user_input}}\n\nPresent the 4-way picker question and indicate which option best fits this request."
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -34,6 +34,8 @@ defaultTest:
 
 tests:
   - description: "deck-routing: deck for client"
+    metadata:
+      arm: single
     vars:
       system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
       user_input: "I need to build a deck for a client"

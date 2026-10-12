@@ -8,15 +8,15 @@
 description: "Advisor: Gino Wickman packaging a leadership method consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -65,16 +65,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt): packaging a method, inner component, wants an app"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/gino-wickman.md
       task_prompt: "\n\n---\n\nMy cofounder and I run leadership-team sessions for companies of 30 to 150 people. We mix individual practices, like leaders noticing when they're reactive and saying so, with company systems: a shared purpose, clear priorities, people in roles that fit them, and meetings where everyone is present. We've done it with three clients and each one got something a little different. We want this to become a repeatable service and eventually a product, without raising money. We're thinking of building an app next. Where do we start?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "My cofounder and I run leadership-team sessions for companies of 30 to 150 people. We mix individual practices, like leaders noticing when they're reactive and saying so, with company systems: a shared purpose, clear priorities, people in roles that fit them, and meetings where everyone is present. We've done it with three clients and each one got something a little different. We want this to become a repeatable service and eventually a product, without raising money. We're thinking of building an app next. Where do we start?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Gino Wickman, creator of EOS. My cofounder and I run leadership-team sessions for companies of 30 to 150 people. We mix individual practices, like leaders noticing when they're reactive and saying so, with company systems: a shared purpose, clear priorities, people in roles that fit them, and meetings where everyone is present. We've done it with three clients and each one got something a little different. We want this to become a repeatable service and eventually a product, without raising money. We're thinking of building an app next. Where do we start?"

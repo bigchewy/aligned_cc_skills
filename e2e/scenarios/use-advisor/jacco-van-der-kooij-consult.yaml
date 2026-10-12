@@ -5,15 +5,15 @@
 description: "Advisor: Jacco van der Kooij revenue diagnosis consult"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 2500
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -57,16 +57,22 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated advisor prompt) — NRR leak diagnosis"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../advisors/prompts/jacco-van-der-kooij.md
       task_prompt: "\n\n---\n\nI'm the founder of a B2B SaaS company. We're at 6M ARR, growing 40% year over year. Our sales team keeps telling me we need more pipeline to hit our number. I'm about to hire two more AEs. But our CFO flagged that our NRR last quarter was 84%. What should I do?"
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "I'm the founder of a B2B SaaS company. We're at 6M ARR, growing 40% year over year. Our sales team keeps telling me we need more pipeline to hit our number. I'm about to hire two more AEs. But our CFO flagged that our NRR last quarter was 84%. What should I do?"
 
   - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "You are Jacco van der Kooij, founder of Winning by Design and author of Revenue Architecture. I'm the founder of a B2B SaaS company. We're at 6M ARR, growing 40% year over year. Our sales team keeps telling me we need more pipeline to hit our number. I'm about to hire two more AEs. But our CFO flagged that our NRR last quarter was 84%. What should I do?"

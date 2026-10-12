@@ -6,15 +6,15 @@
 description: "Framework: 5 GTM Motions for Digital Health — motion-commitment diagnostic"
 
 providers:
-  - id: anthropic:messages:claude-sonnet-4-20250514
-    config:
-      temperature: 0
-      max_tokens: 4000
+  - file://../../providers/claude-login.yaml
 
 prompts:
   - "{{system_context}}{{task_prompt}}\n\n{{org_brief}}"
 
 defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
   assert:
     - type: llm-rubric
       value: |
@@ -73,6 +73,8 @@ defaultTest:
 
 tests:
   - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
     vars:
       system_context: file://../../../frameworks/5-gtm-motions-digital-health/prompt.md
       task_prompt: "\n\n---\n\nWalk me through the 5 GTM Motions on my digital health company. I'll answer your questions motion by motion."
@@ -91,6 +93,8 @@ tests:
         is progressing.
 
   - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
     vars:
       system_context: ""
       task_prompt: "Help me design a GTM strategy for my digital health company. We're at Series A with 14 months of runway."
@@ -109,6 +113,8 @@ tests:
         is progressing.
 
   - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
     vars:
       system_context: ""
       task_prompt: "Use Julie Yoo's 5 GTM Motions for Digital Health framework to diagnose my company. Walk through the five motions — B2C2B, B2SMB, Risk-based contracting, Two-sided networks, Distribution through aggregators — identify which one fits best, and tell me what to commit to primarily and what to stage for later."
