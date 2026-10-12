@@ -1,6 +1,6 @@
 import json
 
-from scorers.scenario_verdict import Verdict, score_file, score_results
+from scorers.scenario_verdict import Verdict, is_rate_limited, score_file, score_results
 
 
 def result(arm, score, description=None, error=None, failure_reason=0, components=None, model=None):
@@ -119,3 +119,45 @@ def test_score_file_wrong_shape_is_error(tmp_path):
 
 def test_verdict_defaults():
     assert Verdict("PASS", "").model == "unknown"
+
+
+def test_missing_numeric_score_is_error():
+    bad = result("full-stack", None)
+    v = score_results([bad, result("vanilla", 1.0)])
+    assert v.verdict == "ERROR"
+    assert "no numeric score" in v.reason
+
+
+def test_null_nested_score_falls_back_to_top_level():
+    r = result("single", 4.0)
+    r["gradingResult"]["score"] = None
+    v = score_results([r])
+    assert v.verdict == "PASS"
+    assert v.full_stack == 4.0
+
+
+def test_non_dict_result_is_error(tmp_path):
+    path = tmp_path / "out.json"
+    path.write_text(json.dumps({"results": {"results": [1, result("single", 4.0)]}}))
+    v = score_file(path)
+    assert v.verdict == "ERROR"
+    assert "not an object" in v.reason
+
+
+def test_description_with_429_is_not_rate_limit():
+    v = score_results([result("full-stack", 0, description="case 429", error="spawn claude ENOENT", failure_reason=2), result("vanilla", 1.0)])
+    assert v.verdict == "ERROR"
+    assert v.rate_limited is False
+
+
+def test_judge_reason_429_is_rate_limit():
+    judge_failed = {"pass": False, "score": 0, "reason": "429 Too Many Requests", "metadata": {"graderError": True}}
+    v = score_results([result("full-stack", 4.0, components=[judge_failed]), result("vanilla", 1.0)])
+    assert v.verdict == "ERROR"
+    assert v.rate_limited is True
+
+
+def test_is_rate_limited_matches_429_as_whole_word_only():
+    assert is_rate_limited("HTTP 429") is True
+    assert is_rate_limited("error code 1429 from server") is False
+    assert is_rate_limited("Usage Limit reached") is True

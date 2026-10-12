@@ -5,6 +5,7 @@ and aware-but-unaided answers. Routing scenarios label every test "single" and
 have no baseline. Scores are on the 1 to 5 scale set by providers/rubric-prompt.txt.
 """
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean
@@ -15,7 +16,13 @@ VANILLA_GAP_MIN = 1.0
 AWARE_GAP_MIN = 0.5
 SINGLE_MIN = 3.5
 ERROR_FAILURE_REASON = 2
-RATE_LIMIT_MARKERS = ("rate limit", "rate_limit", "429", "usage limit")
+RATE_LIMIT_MARKERS = ("rate limit", "rate_limit", "usage limit")
+RATE_LIMIT_CODE = re.compile(r"\b429\b")
+
+
+def is_rate_limited(text):
+    lowered = text.lower()
+    return any(m in lowered for m in RATE_LIMIT_MARKERS) or bool(RATE_LIMIT_CODE.search(text))
 
 
 @dataclass
@@ -34,13 +41,16 @@ def _description(result):
 
 
 def _errors(results):
+    """Return (display, raw) pairs. Only the raw text is checked for rate limits."""
     errors = []
     for r in results:
         if r.get("error") or r.get("failureReason") == ERROR_FAILURE_REASON:
-            errors.append(f"{_description(r)}: {r.get('error') or 'provider error'}")
+            raw = str(r.get("error") or "")
+            errors.append((f"{_description(r)}: {raw or 'provider error'}", raw))
         for c in (r.get("gradingResult") or {}).get("componentResults") or []:
             if (c.get("metadata") or {}).get("graderError"):
-                errors.append(f"{_description(r)}: judge failed: {c.get('reason')}")
+                raw = str(c.get("reason") or "")
+                errors.append((f"{_description(r)}: judge failed: {raw}", raw))
     return errors
 
 
@@ -57,16 +67,21 @@ def score_results(results):
         return Verdict("ERROR", "promptfoo output has no test results")
     errors = _errors(results)
     if errors:
-        rate_limited = any(m in e.lower() for e in errors for m in RATE_LIMIT_MARKERS)
-        return Verdict("ERROR", "; ".join(errors[:3]), rate_limited=rate_limited)
+        rate_limited = any(is_rate_limited(raw) for _, raw in errors)
+        return Verdict("ERROR", "; ".join(display for display, _ in errors[:3]), rate_limited=rate_limited)
 
     by_arm = {}
     for r in results:
         arm = ((r.get("testCase") or {}).get("metadata") or {}).get("arm")
         if arm not in ARMS:
             return Verdict("ERROR", f"{_description(r)}: missing or unknown kind label {arm!r}")
-        score = (r.get("gradingResult") or {}).get("score", r.get("score"))
-        by_arm.setdefault(arm, []).append(float(score))
+        nested = (r.get("gradingResult") or {}).get("score")
+        score = nested if nested is not None else r.get("score")
+        try:
+            value = float(score)
+        except (TypeError, ValueError):
+            return Verdict("ERROR", f"{_description(r)}: no numeric score")
+        by_arm.setdefault(arm, []).append(value)
     model = _model(results)
 
     if "single" in by_arm:
@@ -114,4 +129,6 @@ def score_file(path):
         return Verdict("ERROR", "promptfoo output has no results list")
     if not isinstance(results, list):
         return Verdict("ERROR", "promptfoo output has no results list")
+    if not all(isinstance(r, dict) for r in results):
+        return Verdict("ERROR", "promptfoo output has a result that is not an object")
     return score_results(results)
