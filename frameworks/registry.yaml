@@ -2339,3 +2339,22 @@ frameworks:
     for every client, wants to build an operating system for client companies like
     EOS, needs an assessment that scores a client before and after, or wants their
     method out of their own head so others can deliver it
+- advisor: steve-blank
+  category: startup
+  deliverable_type: content
+  domains:
+  - customer-discovery
+  - problem-validation
+  - customer-interviews
+  helpful_documents:
+  - business plan or positioning draft
+  - list of people to talk to
+  - existing pitch deck
+  id: customer-problem-presentation
+  name: Customer Problem Presentation
+  purpose: building a short presentation of the problems they think a customer has,
+    so a customer meeting draws answers out of the customer instead of pitching to
+    them
+  use_when: someone is about to talk to potential customers before the product or
+    pitch is settled, needs to test which problem a market cares about, wants a discovery
+    deck rather than a sales deck, or has competing problem guesses to compare

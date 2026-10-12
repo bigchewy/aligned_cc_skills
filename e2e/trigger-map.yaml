@@ -324,3 +324,15 @@ triggers:
       - frameworks/proven-process/anti-examples.md
     scenarios:
       - scenarios/use-framework/proven-process.yaml
+
+  - paths:
+      - advisors/prompts/steve-blank.md
+    scenarios:
+      - scenarios/use-advisor/steve-blank-consult.yaml
+
+  - paths:
+      - frameworks/customer-problem-presentation/prompt.md
+      - frameworks/customer-problem-presentation/examples.md
+      - frameworks/customer-problem-presentation/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/customer-problem-presentation.yaml

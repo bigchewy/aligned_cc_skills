@@ -75,3 +75,5 @@ scenarios:
   - file://scenarios/use-framework/close-the-loop.yaml
   - file://scenarios/use-advisor/gino-wickman-consult.yaml
   - file://scenarios/use-framework/proven-process.yaml
+  - file://scenarios/use-advisor/steve-blank-consult.yaml
+  - file://scenarios/use-framework/customer-problem-presentation.yaml

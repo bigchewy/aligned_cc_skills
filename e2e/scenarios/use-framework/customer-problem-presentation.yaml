@@ -1,0 +1,83 @@
+# e2e/scenarios/use-framework/customer-problem-presentation.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Customer Problem Presentation for a founder with two problem guesses"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 4000
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1,
+        asking who they will sit in front of and every problem they think
+        those people have, and then STOP and wait? A response that drafts the
+        whole presentation, the slides, or the interview script in one shot
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Steve
+        Blank's problem presentation? Correct markers: the plan is guesses to
+        test; the presentation draws information out instead of selling;
+        competing problem guesses are kept rather than picked between before
+        the meetings; problems come before the solution. Deductions for
+        recommending proof points, demos, or pricing in this meeting, or for
+        picking one problem for the founder.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Steve
+        Blank: blunt, practical, a veteran founder? A neutral facilitator
+        voice or a bulleted checklist scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 question (who they will meet, and what problems they
+        think those people have) and genuinely stopping, rather than asking
+        and then answering, or asking questions from several phases at once?
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    vars:
+      system_context: file://../../../frameworks/customer-problem-presentation/prompt.md
+      task_prompt: "\n\n---\n\nHelp me build a problem presentation for my customer meetings. I'll answer phase by phase."
+      product_brief: |
+        Context: We're building inventory software for independent restaurant
+        groups. We think the problem is either food waste or the hours
+        managers spend counting stock every Sunday. We don't know which one
+        owners care about. I have meetings with eight owners next month, and
+        I have a pitch deck with results from one pilot.
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "Help me build a presentation for my customer discovery meetings. I'll answer phase by phase."
+      product_brief: |
+        Context: We're building inventory software for independent restaurant
+        groups. We think the problem is either food waste or the hours
+        managers spend counting stock every Sunday. We don't know which one
+        owners care about. I have meetings with eight owners next month, and
+        I have a pitch deck with results from one pilot.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Steve Blank. Walk me through building a Customer Discovery problem presentation, from The Four Steps to the Epiphany. I'll answer phase by phase."
+      product_brief: |
+        Context: We're building inventory software for independent restaurant
+        groups. We think the problem is either food waste or the hours
+        managers spend counting stock every Sunday. We don't know which one
+        owners care about. I have meetings with eight owners next month, and
+        I have a pitch deck with results from one pilot.

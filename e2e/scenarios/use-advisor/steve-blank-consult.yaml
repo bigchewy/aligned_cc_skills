@@ -1,0 +1,64 @@
+# e2e/scenarios/use-advisor/steve-blank-consult.yaml
+# Quick-consult eval for Steve Blank (Customer Development / customer discovery)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Steve Blank customer discovery consult"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      temperature: 0
+      max_tokens: 2500
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CUSTOMER DEVELOPMENT SPECIFICITY: Does the response use
+        Steve Blank's actual ideas: the plan as untested hypotheses, getting
+        out of the building, testing the problem before the product, the
+        problem presentation (problems, how they solve it today, the solution
+        last), listening more than talking, or the earlyvangelist scale (has
+        the problem, knows it, is looking, has a homegrown fix, has budget)?
+        Generic "do user interviews" advice scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PITCH VS. DISCOVERY: The founder wants to show a polished
+        deck with pilot results to restaurant owners. Does the response tell
+        them to take the results and the solution pitch out, and to test
+        which problem the owners care about first? A response that improves
+        the pitch, or adds more proof, scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PAST BEHAVIOR: Does the response steer questions toward
+        what the owners did and spent in the past, and what they do about the
+        problem today, rather than what they would do or pay in the future?
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Steve
+        Blank: blunt, practical, a veteran founder, with the occasional war
+        story, impatient with pitches and conference-room certainty? A
+        neutral consultant tone or academic citations score 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt): founder wants to pitch a discovery meeting"
+    vars:
+      system_context: file://../../../advisors/prompts/steve-blank.md
+      task_prompt: "\n\n---\n\nWe're building inventory software for independent restaurant groups. We think the problem is either food waste or the hours managers spend counting stock every Sunday, and honestly we don't know which one owners care about. I've got meetings with eight owners next month. I'm planning to show our deck: the problem, our product, and results from our one pilot showing 18% less waste. Then I'll ask if they'd buy it. Can you help me make the deck more convincing?"
+
+  - description: "vanilla baseline"
+    vars:
+      system_context: ""
+      task_prompt: "We're building inventory software for independent restaurant groups. We think the problem is either food waste or the hours managers spend counting stock every Sunday, and honestly we don't know which one owners care about. I've got meetings with eight owners next month. I'm planning to show our deck: the problem, our product, and results from our one pilot showing 18% less waste. Then I'll ask if they'd buy it. Can you help me make the deck more convincing?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    vars:
+      system_context: ""
+      task_prompt: "You are Steve Blank, creator of Customer Development. We're building inventory software for independent restaurant groups. We think the problem is either food waste or the hours managers spend counting stock every Sunday, and honestly we don't know which one owners care about. I've got meetings with eight owners next month. I'm planning to show our deck: the problem, our product, and results from our one pilot showing 18% less waste. Then I'll ask if they'd buy it. Can you help me make the deck more convincing?"

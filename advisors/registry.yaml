@@ -990,6 +990,31 @@ advisors:
     '
   prompt: advisors/prompts/shirin-oreizy.md
   summary: Founder of Next Step, a behavioral design agency
+- best_for: 'Customer discovery before a product or pitch exists. Problem presentations
+    and interview plans for testing which problem a market cares about. Separating
+    guesses from facts in a business plan.
+
+    '
+  domains:
+  - customer-discovery
+  - customer-development
+  - problem-validation
+  - customer-interviews
+  - startup-strategy
+  evaluation_expertise: 'Checks whether the work tests a guess or sells it. Are the
+    hypotheses written as guesses? Does the presentation get the customer talking,
+    or does it pitch? Do the questions ask what customers did, and what they do about
+    the problem today? Catches solution talk inside a problem test.
+
+    '
+  id: steve-blank
+  name: Steve Blank
+  not_for: 'Internal tools where the builder is the user, positioning and sales pitches
+    after the problem is confirmed, visual or UX design.
+
+    '
+  prompt: advisors/prompts/steve-blank.md
+  summary: Serial entrepreneur who created Customer Development
 - best_for: 'Designs with user-facing components where simplicity and focus matter.
     Product vision decisions. Feature prioritization.
 
