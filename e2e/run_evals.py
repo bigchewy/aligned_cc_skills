@@ -29,6 +29,8 @@ RUNS_DIR = E2E / "output" / "runs"
 PROMPTFOO = E2E / "node_modules" / ".bin" / "promptfoo"
 SHARED_FILES = {"e2e/providers/claude-login.yaml", "e2e/providers/rubric-prompt.txt"}
 OK_EXIT_CODES = {0, 100}
+EMPTY_ENV = "empty.env"
+LARGE_SELECTION = 10
 
 
 @dataclass
@@ -112,11 +114,18 @@ def estimate_calls(scenarios):
     return total
 
 
-def child_env(use_api_key, base_env):
+def child_env(use_api_key, base_env, empty_env_file=None):
+    """Environment for promptfoo. promptfoo reads DOTENV_PATH (else ./.env) when it imports, so
+    point it at an empty file; otherwise e2e/.env could bring ANTHROPIC_API_KEY back."""
     env = dict(base_env)
     env.pop("CLAUDE_PID", None)
+    env.pop("DOTENV_PATH", None)
+    env.pop("DOTENV_CONFIG_PATH", None)
     if not use_api_key:
-        env.pop("ANTHROPIC_API_KEY", None)
+        for name in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL"):
+            env.pop(name, None)
+    if empty_env_file is not None:
+        env["DOTENV_PATH"] = str(empty_env_file)
     env["PROMPTFOO_ASSERTIONS_MAX_CONCURRENCY"] = "2"
     return env
 
@@ -125,9 +134,10 @@ def output_name(scenario):
     return scenario.removeprefix("scenarios/").removesuffix(".yaml").replace("/", "__") + ".json"
 
 
-def promptfoo_command(scenario, out_path):
+def promptfoo_command(scenario, out_path, env_file):
     return [
         str(PROMPTFOO), "eval", "-c", scenario, "-o", str(out_path),
+        "--env-file", str(env_file),
         "--max-concurrency", "2", "--no-cache", "--no-write", "--no-progress-bar",
     ]
 
@@ -135,7 +145,7 @@ def promptfoo_command(scenario, out_path):
 def run_scenario(scenario, run_dir, env, run=subprocess.run):
     out = run_dir / output_name(scenario)
     try:
-        proc = run(promptfoo_command(scenario, out), cwd=E2E, env=env, capture_output=True, text=True)
+        proc = run(promptfoo_command(scenario, out, run_dir / EMPTY_ENV), cwd=E2E, env=env, capture_output=True, text=True)
     except OSError as exc:
         return Verdict("ERROR", f"promptfoo did not start: {exc}")
     if proc.returncode not in OK_EXIT_CODES:
@@ -149,13 +159,21 @@ def _fmt(value):
     return "" if value is None else f"{value:.2f}"
 
 
-def write_summary(run_dir, rows):
+def write_summary(run_dir, rows, not_run=None):
     models = sorted({v.model for _, v in rows if v.model != "unknown"}) or ["unknown"]
     lines = [
         f"# Eval run {run_dir.name}",
         "",
         f"Model: {', '.join(models)}",
         "",
+    ]
+    if not_run is not None:
+        lines = [
+            f"The run stopped on a rate limit. Not run yet: {', '.join(not_run)}.",
+            f"Finish it with: npm run eval -- --resume {run_dir.name}",
+            "",
+        ] + lines
+    lines += [
         "| Scenario | Verdict | Full-stack | Gap vs vanilla | Gap vs aware | Reason |",
         "|---|---|---|---|---|---|",
     ]
@@ -180,6 +198,7 @@ def _parse(argv):
     parser.add_argument("--all", action="store_true", help="run every scenario")
     parser.add_argument("--resume", metavar="RUN_ID", help="finish a stopped run")
     parser.add_argument("--base", default="main", help="branch to compare against (default main)")
+    parser.add_argument("--yes", action="store_true", help="run a large changed-files selection without stopping")
     parser.add_argument("--use-api-key", action="store_true", help="keep ANTHROPIC_API_KEY for contributors with no Claude Code login")
     return parser.parse_args(argv)
 
@@ -220,17 +239,34 @@ def main(argv, run=subprocess.run):
             if not scenarios:
                 print("No changed files map to an eval scenario. Nothing to run.")
                 return 0
+            if len(scenarios) > LARGE_SELECTION and not args.yes:
+                print(f"{len(scenarios)} scenarios selected, about {estimate_calls(scenarios)} Claude calls.")
+                print("Pass --yes to run them, or name scenarios.")
+                return 2
         run_dir = RUNS_DIR / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         run_dir.mkdir(parents=True, exist_ok=True)
         (run_dir / "scenarios.json").write_text(json.dumps(scenarios, indent=2))
 
-    print(f"Run {run_dir.name}: {len(scenarios)} scenarios, about {estimate_calls(scenarios)} Claude calls.")
-    env = child_env(args.use_api_key, os.environ)
-    rows = []
+    saved = {}
     for scenario in scenarios:
         out = run_dir / output_name(scenario)
-        if out.is_file():
-            verdict = score_file(out)
+        if not out.is_file():
+            continue
+        verdict = score_file(out)
+        if verdict.verdict == "ERROR":
+            out.unlink()
+        else:
+            saved[scenario] = verdict
+    to_run = [s for s in scenarios if s not in saved]
+    print(f"Run {run_dir.name}: {len(scenarios)} scenarios, about {estimate_calls(to_run)} Claude calls.")
+    empty_env = run_dir / EMPTY_ENV
+    empty_env.write_text("")
+    env = child_env(args.use_api_key, os.environ, empty_env_file=empty_env)
+    rows = []
+    for index, scenario in enumerate(scenarios):
+        out = run_dir / output_name(scenario)
+        if scenario in saved:
+            verdict = saved[scenario]
         else:
             print(f"Running {scenario}")
             verdict = run_scenario(scenario, run_dir, env, run=run)
@@ -238,7 +274,7 @@ def main(argv, run=subprocess.run):
             out.unlink(missing_ok=True)
             print(f"Stopped on a rate limit at {scenario}: {verdict.reason}")
             print(f"Resume later with: npm run eval -- --resume {run_dir.name}")
-            write_summary(run_dir, rows)
+            write_summary(run_dir, rows, not_run=scenarios[index:])
             return 2
         rows.append((scenario, verdict))
 

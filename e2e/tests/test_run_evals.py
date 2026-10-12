@@ -137,13 +137,52 @@ def test_child_env_keeps_api_key_only_when_asked():
     assert "CLAUDE_PID" not in env
 
 
+def test_child_env_drops_dotenv_pointers_always():
+    base = {"DOTENV_PATH": "/x/.env", "DOTENV_CONFIG_PATH": "/y/.env", "PATH": "/bin"}
+    for use_key in (False, True):
+        env = child_env(use_key, base)
+        assert "DOTENV_PATH" not in env
+        assert "DOTENV_CONFIG_PATH" not in env
+
+
+def test_child_env_points_promptfoo_at_an_empty_dotenv_file(tmp_path):
+    empty = tmp_path / "empty.env"
+    env = child_env(False, {"DOTENV_PATH": "/x/.env"}, empty_env_file=empty)
+    assert env["DOTENV_PATH"] == str(empty)
+    assert "DOTENV_CONFIG_PATH" not in env
+
+
+def test_child_env_drops_routing_vars_unless_api_key_wanted():
+    base = {"ANTHROPIC_AUTH_TOKEN": "t", "ANTHROPIC_BASE_URL": "http://x", "ANTHROPIC_API_KEY": "k"}
+    env = child_env(False, base)
+    assert "ANTHROPIC_AUTH_TOKEN" not in env
+    assert "ANTHROPIC_BASE_URL" not in env
+    env = child_env(True, base)
+    assert env["ANTHROPIC_AUTH_TOKEN"] == "t"
+    assert env["ANTHROPIC_BASE_URL"] == "http://x"
+
+
 def test_promptfoo_command(tmp_path):
-    cmd = promptfoo_command(STEVE, tmp_path / "x.json")
+    cmd = promptfoo_command(STEVE, tmp_path / "x.json", tmp_path / "empty.env")
     assert cmd[0].endswith("node_modules/.bin/promptfoo")
     assert cmd[1:] == [
         "eval", "-c", STEVE, "-o", str(tmp_path / "x.json"),
+        "--env-file", str(tmp_path / "empty.env"),
         "--max-concurrency", "2", "--no-cache", "--no-write", "--no-progress-bar",
     ]
+
+
+def test_main_creates_empty_env_file_and_passes_it(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    fake = FakeRun(outputs={STEVE: promptfoo_output([("full-stack", 4.5), ("vanilla", 2.0)])})
+    monkeypatch.setenv("DOTENV_PATH", "/elsewhere/.env")
+    main(["e2e/" + STEVE], run=fake)
+    cmd, kwargs = fake.promptfoo_calls[0]
+    run_dir = next(tmp_path.iterdir())
+    empty = run_dir / "empty.env"
+    assert empty.read_text() == ""
+    assert cmd[cmd.index("--env-file") + 1] == str(empty)
+    assert kwargs["env"]["DOTENV_PATH"] == str(empty)
 
 
 def test_output_name():
@@ -286,3 +325,106 @@ def test_matches_surface_single_star_stays_in_one_directory():
 
 def test_matches_surface_exact_path_matches_itself():
     assert matches_surface("skills/use-advisor/SKILL.md", "skills/use-advisor/SKILL.md")
+
+
+PASSING = [("full-stack", 4.5), ("vanilla", 2.0)]
+RUN_ID = "20261012-130000"
+
+
+def make_run_dir(tmp_path, scenarios, saved):
+    run_dir = tmp_path / RUN_ID
+    run_dir.mkdir()
+    (run_dir / "scenarios.json").write_text(json.dumps(scenarios))
+    for scenario, data in saved.items():
+        (run_dir / output_name(scenario)).write_text(json.dumps(data))
+    return run_dir
+
+
+def test_resume_reruns_scenario_whose_saved_output_is_an_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    make_run_dir(tmp_path, [STEVE, GINO], {
+        STEVE: promptfoo_output([("full-stack", 0), ("vanilla", 0)], error="provider crashed"),
+        GINO: promptfoo_output(PASSING),
+    })
+    fake = FakeRun(outputs={STEVE: promptfoo_output(PASSING)})
+    assert main(["--resume", RUN_ID], run=fake) == 0
+    assert [c[0][c[0].index("-c") + 1] for c in fake.promptfoo_calls] == [STEVE]
+
+
+def test_resume_call_count_ignores_scenarios_that_will_not_run(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    make_run_dir(tmp_path, [STEVE, GINO], {STEVE: promptfoo_output(PASSING), GINO: promptfoo_output(PASSING)})
+    fake = FakeRun()
+    assert main(["--resume", RUN_ID], run=fake) == 0
+    assert "about 0 Claude calls" in capsys.readouterr().out
+    assert fake.promptfoo_calls == []
+
+
+def test_resume_call_count_counts_errored_saved_outputs(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    make_run_dir(tmp_path, [STEVE, GINO], {
+        STEVE: promptfoo_output([("full-stack", 0), ("vanilla", 0)], error="boom"),
+        GINO: promptfoo_output(PASSING),
+    })
+    main(["--resume", RUN_ID], run=FakeRun(outputs={STEVE: promptfoo_output(PASSING)}))
+    assert f"about {estimate_calls([STEVE])} Claude calls" in capsys.readouterr().out
+
+
+def test_summary_after_rate_limit_stop_names_unrun_scenarios_and_resume_command(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    monkeypatch.setattr(run_evals, "all_scenarios", lambda: [GINO, STEVE])
+    limited = FakeRun(outputs={
+        GINO: promptfoo_output(PASSING),
+        STEVE: promptfoo_output([("full-stack", 0), ("vanilla", 0)], error="You've hit your limit"),
+    })
+    assert main(["--all"], run=limited) == 2
+    run_dir = next(tmp_path.iterdir())
+    text = (run_dir / "summary.md").read_text()
+    head = text.split("| Scenario |")[0]
+    assert "rate limit" in text.splitlines()[0]
+    assert STEVE in head
+    assert GINO not in head
+    assert f"npm run eval -- --resume {run_dir.name}" in head
+
+
+def many_scenarios():
+    return run_evals.all_scenarios()[:11]
+
+
+def patch_selection(monkeypatch, scenarios):
+    monkeypatch.setattr(run_evals, "changed_files", lambda base, run=None: ["x"])
+    monkeypatch.setattr(
+        run_evals, "select_scenarios", lambda *a: Selection(scenarios=scenarios, shared_changed=[], unmapped=[])
+    )
+    monkeypatch.setattr(run_evals, "load_triggers", lambda: [])
+    monkeypatch.setattr(run_evals, "load_patterns", lambda: [])
+
+
+def test_large_changed_files_selection_needs_yes(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    scenarios = many_scenarios()
+    assert len(scenarios) == 11
+    patch_selection(monkeypatch, scenarios)
+    fake = FakeRun()
+    assert main([], run=fake) == 2
+    out = capsys.readouterr().out
+    assert "11 scenarios" in out
+    assert "Pass --yes to run them, or name scenarios" in out
+    assert fake.promptfoo_calls == []
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_large_changed_files_selection_runs_with_yes(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    patch_selection(monkeypatch, many_scenarios())
+    fake = FakeRun()
+    main(["--yes"], run=fake)
+    assert len(fake.promptfoo_calls) == 11
+
+
+def test_ten_scenario_changed_files_selection_runs_without_yes(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
+    patch_selection(monkeypatch, many_scenarios()[:10])
+    fake = FakeRun()
+    main([], run=fake)
+    assert len(fake.promptfoo_calls) == 10

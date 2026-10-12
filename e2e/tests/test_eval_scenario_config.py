@@ -87,3 +87,8 @@ def test_paired_scenarios_have_one_full_stack_and_one_vanilla(path):
     else:
         assert arms.count("full-stack") == 1
         assert arms.count("vanilla") == 1
+
+
+@pytest.mark.parametrize("path", SCENARIOS, ids=_ids)
+def test_scenario_has_no_top_level_env(path):
+    assert "env" not in _load(path)

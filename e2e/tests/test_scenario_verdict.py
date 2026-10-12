@@ -193,3 +193,17 @@ def test_is_rate_limited_matches_429_as_whole_word_only():
     assert is_rate_limited("HTTP 429") is True
     assert is_rate_limited("error code 1429 from server") is False
     assert is_rate_limited("Usage Limit reached") is True
+
+
+def test_is_rate_limited_matches_agent_sdk_limit_messages():
+    assert is_rate_limited("You've hit your limit · resets 3pm")
+    assert is_rate_limited("You’ve hit your weekly limit")
+    assert is_rate_limited("You've reached your usage cap")
+    assert is_rate_limited("You’ve reached your monthly cap")
+    assert is_rate_limited("You're out of usage credits")
+    assert is_rate_limited("Session limit reached")
+    assert is_rate_limited("OUT OF USAGE")
+
+
+def test_is_rate_limited_ignores_ordinary_text():
+    assert not is_rate_limited("Stop. You reached a good point here.")

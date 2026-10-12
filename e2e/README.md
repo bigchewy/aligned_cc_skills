@@ -32,6 +32,10 @@ npm run eval
 
 It collects the files changed on your branch against `main` (pass `--base <branch>` to compare with another branch), plus uncommitted and untracked files. Then it looks each one up in `trigger-map.yaml` and runs only the mapped scenarios. A changed scenario file runs itself. If nothing maps, it runs nothing.
 
+If the changed files select more than 10 scenarios, the runner prints the count and the call estimate and stops. Pass `--yes` to run a large changed-files selection without stopping, or name the scenarios you want.
+
+The runner makes promptfoo ignore `e2e/.env`, so keys in it never reach the eval.
+
 Run named scenarios:
 
 ```bash

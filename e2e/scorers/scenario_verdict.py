@@ -16,12 +16,16 @@ VANILLA_GAP_MIN = 1.0
 AWARE_GAP_MIN = 0.5
 SINGLE_MIN = 3.5
 ERROR_FAILURE_REASON = 2
-RATE_LIMIT_MARKERS = ("rate limit", "rate_limit", "usage limit")
+RATE_LIMIT_MARKERS = (
+    "rate limit", "rate_limit", "usage limit",
+    "hit your limit", "reached your limit", "out of usage", "limit reached",
+    "you've hit your", "you've reached your",
+)
 RATE_LIMIT_CODE = re.compile(r"\b429\b")
 
 
 def is_rate_limited(text):
-    lowered = text.lower()
+    lowered = text.lower().replace("’", "'")
     return any(m in lowered for m in RATE_LIMIT_MARKERS) or bool(RATE_LIMIT_CODE.search(text))
 
 
