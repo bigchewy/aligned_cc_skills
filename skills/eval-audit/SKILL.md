@@ -77,7 +77,7 @@ After the coverage check, if new LLM surface patterns were added (new advisor ty
 
 3. **Write the pattern entry** to the project's classification patterns file (if it exists, typically at `e2e/references/classification-patterns.md`).
 
-4. **If the API call can't run** (missing credentials, rate limits, CI environment), file a Kanban entry (see format below) with the specific instruction: "Run one eval pass against [scenario] and document the classification pattern."
+4. **If the eval can't run** (a rate limit, a CI environment with no Claude Code login), file a Kanban entry (see format below) with the specific instruction: "Run one eval pass against [scenario] and document the classification pattern." Evals run on the Claude Code login, so a missing `ANTHROPIC_API_KEY` is never a reason to defer.
 
 ## Kanban Entry Format
 

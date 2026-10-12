@@ -183,7 +183,7 @@ Derive field values:
 
 > **Conditional:** Only run this step if the project has an eval infrastructure (e.g., `e2e/` directory, detected in Step 0). If not found, print: "Skipping eval scenario — no eval infrastructure found."
 
-If the project has eval infrastructure, create an eval scenario to establish a quality baseline. Check the project's CLAUDE.md or existing scenarios for the schema format. If `e2e/trigger-map.yaml` exists, add an entry mapping the new framework file paths (prompt.md, examples.md, anti-examples.md) to the new scenario path. If `e2e/promptfooconfig.yaml` exists, add `file://<scenario-path>` to its `scenarios` list.
+If the project has eval infrastructure, create an eval scenario to establish a quality baseline. Check the project's CLAUDE.md or existing scenarios for the schema format, and copy an existing scenario's provider and options lines exactly. If `e2e/trigger-map.yaml` exists, add an entry mapping the new framework file paths (prompt.md, examples.md, anti-examples.md) to the new scenario path.
 
 **Important:** Check which advisor the framework path actually loads. The framework's primary advisor may not be the advisor the user selected. The voice fingerprint and anti-patterns must match the **actual responding advisor**.
 
@@ -194,7 +194,7 @@ Minimum scenario should include:
 - Voice fingerprint with signature phrases and anti-patterns
 - Framework-specific terminology
 
-Run the scenario to verify baseline quality. If it fails, classify the failure (prompt issue, eval calibration, or model variance) and fix. First-run failures are common — usually eval calibration.
+Run the new scenario to verify baseline quality. If `e2e/run_evals.py` exists, run only the new scenario from `e2e/` with `npm run eval -- <scenario-path>`. The runner uses the Claude Code login. Never skip the run because `ANTHROPIC_API_KEY` is not set, and never run `--all` without asking the user. If `e2e/run_evals.py` does not exist, use the project's own eval command. If the scenario fails, classify the failure (prompt issue, eval calibration, or model variance) and fix. First-run failures are common — usually eval calibration.
 
 ### 7. Update Advisor and Framework Counts
 

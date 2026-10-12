@@ -437,13 +437,7 @@ Find the section starting at `### Step 1b: LLM Eval (auto-run if surface changed
 
 **After tests pass, check if LLM behavior surface files were changed on this branch.**
 
-**1. API key guard.** Check `ANTHROPIC_API_KEY` is set:
-
-```bash
-printenv ANTHROPIC_API_KEY
-```
-
-If not set, report: "ANTHROPIC_API_KEY not set — skipping LLM eval." Continue to Step 1c. Non-blocking.
+**1. Login, not key.** Superseded on 2026-10-12: evals run through the Claude Code login with `e2e/run_evals.py`, which picks scenarios from changed files. Never skip an eval because `ANTHROPIC_API_KEY` is not set. The skill this plan built was removed on 2026-08-14.
 
 **2. Config guard.** Read `e2e/eval-surface.yaml` and `e2e/trigger-map.yaml`. If either file is missing or empty, report: "Eval config missing — skipping LLM eval. Expected `e2e/eval-surface.yaml` and `e2e/trigger-map.yaml`." Continue to Step 1c. Non-blocking.
 
