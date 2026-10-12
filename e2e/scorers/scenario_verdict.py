@@ -44,7 +44,7 @@ def _errors(results):
     """Return (display, raw) pairs. Only the raw text is checked for rate limits."""
     errors = []
     for r in results:
-        if r.get("error") or r.get("failureReason") == ERROR_FAILURE_REASON:
+        if r.get("failureReason") == ERROR_FAILURE_REASON:
             raw = str(r.get("error") or "")
             errors.append((f"{_description(r)}: {raw or 'provider error'}", raw))
         for c in (r.get("gradingResult") or {}).get("componentResults") or []:
@@ -55,11 +55,19 @@ def _errors(results):
 
 
 def _model(results):
+    totals = {}
     for r in results:
-        usage = ((r.get("response") or {}).get("metadata") or {}).get("modelUsage") or {}
-        if usage:
-            return next(iter(usage))
-    return "unknown"
+        usage = ((r.get("response") or {}).get("metadata") or {}).get("modelUsage")
+        if not isinstance(usage, dict):
+            continue
+        for name, stats in usage.items():
+            tokens = stats.get("outputTokens") if isinstance(stats, dict) else None
+            if isinstance(tokens, bool) or not isinstance(tokens, (int, float)):
+                tokens = 0
+            totals[name] = totals.get(name, 0) + tokens
+    if not totals:
+        return "unknown"
+    return max(totals, key=totals.get)
 
 
 def score_results(results):

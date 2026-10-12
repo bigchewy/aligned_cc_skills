@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from scorers.scenario_verdict import Verdict, is_rate_limited, score_file, score_results
 
@@ -115,6 +116,37 @@ def test_score_file_wrong_shape_is_error(tmp_path):
     v = score_file(path)
     assert v.verdict == "ERROR"
     assert "no results list" in v.reason
+
+
+def test_real_promptfoo_run_is_scored():
+    path = Path(__file__).resolve().parents[1] / "fixtures" / "promptfoo-runs" / "steve-blank-consult.json"
+    v = score_file(path)
+    assert v.verdict == "PASS"
+    assert v.full_stack == 5.0
+    assert v.gap_vanilla == 1.0
+    assert v.gap_aware == 0.5
+    assert v.model == "claude-sonnet-5"
+
+
+def test_assert_failure_with_error_text_is_not_an_error():
+    v = score_results([
+        result("full-stack", 5.0),
+        result("vanilla", 4.0, error="rubric failed: voice", failure_reason=1),
+    ])
+    assert v.verdict in ("PASS", "FAIL")
+    assert v.verdict != "ERROR"
+
+
+def test_failure_reason_2_with_empty_error_is_error():
+    v = score_results([result("full-stack", 0, error=None, failure_reason=2), result("vanilla", 1.0)])
+    assert v.verdict == "ERROR"
+    assert "provider error" in v.reason
+
+
+def test_model_is_the_one_with_most_output_tokens():
+    r = result("single", 4.0)
+    r["response"] = {"metadata": {"modelUsage": {"small": {"outputTokens": 13}, "big": {"outputTokens": 2000}}}}
+    assert score_results([r]).model == "big"
 
 
 def test_verdict_defaults():
