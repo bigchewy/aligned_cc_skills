@@ -2,7 +2,8 @@
 # Maps changed files -> eval scenarios to run.
 # Consumer: eval-audit Phase 3 cross-validation
 # Update when: new eval scenarios are added
-# Note: scenario paths are e2e/-relative (for promptfoo -c), not repo-root-relative
+# Note: scenario paths are e2e/-relative, not repo-root-relative.
+# Consumer: run_evals.py, which runs only the scenarios mapped from changed files.
 
 triggers:
   - paths:
