@@ -11,9 +11,9 @@ Exit codes: 0 all passed or nothing to run, 1 a scenario failed or errored,
 """
 import argparse
 import datetime
-import fnmatch
 import json
 import os
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -63,6 +63,28 @@ def changed_files(base, run=subprocess.run):
     return sorted(files)
 
 
+def matches_surface(path, pattern):
+    """Glob match where `**/` is zero or more directories, `*` and `?` stay in one segment."""
+    regex, i = "", 0
+    while i < len(pattern):
+        if pattern.startswith("**/", i):
+            regex += "(?:.*/)?"
+            i += 3
+        elif pattern.startswith("**", i):
+            regex += ".*"
+            i += 2
+        elif pattern[i] == "*":
+            regex += "[^/]*"
+            i += 1
+        elif pattern[i] == "?":
+            regex += "[^/]"
+            i += 1
+        else:
+            regex += re.escape(pattern[i])
+            i += 1
+    return re.fullmatch(regex, path) is not None
+
+
 def select_scenarios(changed, triggers, patterns):
     picked, shared, unmapped = set(), [], []
     for path in changed:
@@ -75,7 +97,7 @@ def select_scenarios(changed, triggers, patterns):
         hits = [t for t in triggers if path in t["paths"]]
         for trigger in hits:
             picked.update(trigger["scenarios"])
-        if not hits and any(fnmatch.fnmatch(path, p) for p in patterns):
+        if not hits and any(matches_surface(path, p) for p in patterns):
             unmapped.append(path)
     scenarios = sorted(s for s in picked if (E2E / s).is_file())
     return Selection(scenarios=scenarios, shared_changed=shared, unmapped=unmapped)

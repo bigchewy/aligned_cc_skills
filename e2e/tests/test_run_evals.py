@@ -11,6 +11,7 @@ from run_evals import (
     changed_files,
     estimate_calls,
     main,
+    matches_surface,
     output_name,
     promptfoo_command,
     run_scenario,
@@ -266,3 +267,22 @@ def test_resume_skips_finished_scenarios(tmp_path, monkeypatch):
 def test_resume_unknown_run_is_usage_error(tmp_path, monkeypatch):
     monkeypatch.setattr(run_evals, "RUNS_DIR", tmp_path)
     assert main(["--resume", "nope"], run=FakeRun()) == 2
+
+
+def test_flat_advisor_prompt_without_trigger_is_unmapped():
+    sel = select_scenarios(["advisors/prompts/new-advisor.md"], TRIGGERS, PATTERNS)
+    assert sel.unmapped == ["advisors/prompts/new-advisor.md"]
+
+
+def test_matches_surface_double_star_matches_zero_or_more_directories():
+    assert matches_surface("advisors/prompts/a/b.md", "advisors/prompts/**/*")
+    assert matches_surface("advisors/prompts/new-advisor.md", "advisors/prompts/**/*")
+
+
+def test_matches_surface_single_star_stays_in_one_directory():
+    assert matches_surface("frameworks/x/prompt.md", "frameworks/*/prompt.md")
+    assert not matches_surface("frameworks/x/y/prompt.md", "frameworks/*/prompt.md")
+
+
+def test_matches_surface_exact_path_matches_itself():
+    assert matches_surface("skills/use-advisor/SKILL.md", "skills/use-advisor/SKILL.md")
