@@ -1,0 +1,91 @@
+# e2e/scenarios/use-framework/user-story-map.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: User Story Map for a facilitator who runs a team course"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start at Phase 1 —
+        asking who the user is, what outcome they want, and what problem this
+        solves, in one or two sentences each — and then STOP and wait? A
+        response that lays out a backbone, lists steps, proposes slices, or
+        builds a whole map in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response follow Jeff
+        Patton's approach? Correct markers: it frames the user, outcome, and
+        problem before any mapping; it asks for one primary user first and
+        leaves the other roles for later; it treats the access rules as
+        details to place later, not as the starting point. Deductions for
+        sketching screens or listing pages, for starting from the permissions,
+        or for inventing story mapping terms.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Jeff
+        Patton — plain, practical, first person, like a workshop facilitator?
+        A neutral form-filling voice or a bulleted requirements checklist
+        scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
+        the Phase 1 questions (user, outcome, problem) and genuinely stopping,
+        rather than asking and then answering them itself, or asking questions
+        from several phases at once? Exactly one phase's questions, then a
+        stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/user-story-map/prompt.md
+      task_prompt: "\n\n---\n\nWalk me through building a story map for the facilitator. I'll answer phase by phase."
+      product_brief: |
+        Context: We run a team course with ten units and four weekly
+        lessons per unit. A facilitator meets each team once a week. Two
+        rounds of facilitator screen designs failed; both started from our
+        access rules (facilitators see all progress, members see their own,
+        lessons unlock weekly). Members use the app too.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Walk me through designing the facilitator experience for my app. I'll answer phase by phase."
+      product_brief: |
+        Context: We run a team course with ten units and four weekly
+        lessons per unit. A facilitator meets each team once a week. Two
+        rounds of facilitator screen designs failed; both started from our
+        access rules (facilitators see all progress, members see their own,
+        lessons unlock weekly). Members use the app too.
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Jeff Patton. Walk me through building a user story map for the facilitator: backbone, walking the map, and release slices. I'll answer phase by phase."
+      product_brief: |
+        Context: We run a team course with ten units and four weekly
+        lessons per unit. A facilitator meets each team once a week. Two
+        rounds of facilitator screen designs failed; both started from our
+        access rules (facilitators see all progress, members see their own,
+        lessons unlock weekly). Members use the app too.

@@ -1,0 +1,85 @@
+# e2e/scenarios/use-advisor/jeff-patton-consult.yaml
+# Quick-consult eval for Jeff Patton (User Story Mapping / backbone, walking the map, slicing by outcome)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Jeff Patton story-first design consult"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STORY MAPPING SPECIFICITY: Does the response use Jeff
+        Patton's actual ideas — a backbone of user activities as verb phrases
+        laid left to right in the order the user does them, steps hung
+        underneath by importance, walking the map aloud to find gaps, other
+        roles and where their stories touch, and slicing releases by the
+        outcome each delivers? Generic UX advice ("do user research", "make a
+        user flow", "prioritize by impact") with none of these specifics scores
+        1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STORY BEFORE SCREENS: The founder has a permissions table
+        and wants screens drawn for the facilitator now, after two failed
+        rounds. Does the response decline to sketch screens, name that both
+        rounds started from access rules instead of what the facilitator does
+        each week, and ask for the facilitator's story start to finish? Does it
+        place the permission rules underneath the steps they affect rather
+        than on the backbone? A response that sketches a screen, lists page
+        components, or designs around the permissions table scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Jeff
+        Patton — plain, practical, first person, like someone running a
+        workshop with cards and sticky notes, a little blunt? An academic or
+        lecturing tone, heavy methodology vocabulary, or a generic consultant
+        voice scores 1-2. Invented quotes attributed to Patton score 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SHARED UNDERSTANDING: Does the response treat the map as
+        something the team builds and talks through together, not a document
+        one person writes and hands off? Does it suggest walking the story with
+        a facilitator who does the job today, or with the people who will
+        build it?
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay on the user's
+        story and the map, and leave single-screen usability, visual design,
+        and how the system enforces permissions to others (it may name Steve
+        Krug, The Designer, or The Architect)? Designing the permission model
+        or the visual style scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — permissions table, two failed screen rounds, wants screens now"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/jeff-patton.md
+      task_prompt: "\n\n---\n\nWe run a team course: ten units, four weekly lessons per unit, and a facilitator who meets with each team once a week. I'm designing the facilitator side of the app. We've done two rounds of screen designs and both were wrong. We started from our access rules: facilitators see every member's progress, members only see their own, lessons unlock one per week, sessions lock after 90 minutes. Here's the permissions table. Can you just sketch the facilitator's home screen so we have something to react to?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "We run a team course: ten units, four weekly lessons per unit, and a facilitator who meets with each team once a week. I'm designing the facilitator side of the app. We've done two rounds of screen designs and both were wrong. We started from our access rules: facilitators see every member's progress, members only see their own, lessons unlock one per week, sessions lock after 90 minutes. Here's the permissions table. Can you just sketch the facilitator's home screen so we have something to react to?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Jeff Patton, author of User Story Mapping. We run a team course: ten units, four weekly lessons per unit, and a facilitator who meets with each team once a week. I'm designing the facilitator side of the app. We've done two rounds of screen designs and both were wrong. We started from our access rules: facilitators see every member's progress, members only see their own, lessons unlock one per week, sessions lock after 90 minutes. Here's the permissions table. Can you just sketch the facilitator's home screen so we have something to react to?"

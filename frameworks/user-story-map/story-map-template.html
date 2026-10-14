@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Map</title>
+<!--
+  User Story Map template (frameworks/user-story-map).
+  Two things change per map, and nothing else:
+    1. The tokens in :root (and the dark block) — replace with the project's design-principles.md values.
+    2. The JSON inside <script id="map-data"> — rebuilt from the Markdown story map after each phase.
+  Never hand-edit the layout below. The Markdown map is the source; this page is a build output.
+-->
+<style>
+  :root {
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --text: #1f1d1a;
+    --muted: #6b665e;
+    --line: #dcd7cd;
+    --accent: #2f5d8a;
+    --accent-text: #ffffff;
+    --card: #fff6c9;
+    --card-border: #e6d78a;
+    --gap: #b3412e;
+    --touch: #6a4c93;
+    --slice: #2f5d8a;
+    --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-head: var(--font-body);
+    --radius: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #171614; --surface: #211f1c; --text: #ece8e1; --muted: #a39d93; --line: #3a3732;
+      --accent: #7fa8d1; --accent-text: #10161c; --card: #3a3420; --card-border: #5c5230;
+      --gap: #e07a66; --touch: #b79ad9; --slice: #7fa8d1;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #171614; --surface: #211f1c; --text: #ece8e1; --muted: #a39d93; --line: #3a3732;
+    --accent: #7fa8d1; --accent-text: #10161c; --card: #3a3420; --card-border: #5c5230;
+    --gap: #e07a66; --touch: #b79ad9; --slice: #7fa8d1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.4 var(--font-body); }
+  header { padding: 24px 16px 8px; max-width: 1200px; }
+  h1 { font-family: var(--font-head); font-size: 26px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0; }
+  .frame { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0 0; }
+  .frame div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+  .frame b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  main { padding: 8px 16px 32px; }
+  .lane { margin-top: 24px; }
+  .lane h2 { font-family: var(--font-head); font-size: 18px; margin: 0 0 8px; }
+  .scroll { overflow-x: auto; padding-bottom: 8px; }
+  table { border-collapse: separate; border-spacing: 8px 0; }
+  td { vertical-align: top; width: 180px; min-width: 180px; }
+  td.label { width: 150px; min-width: 150px; position: sticky; left: 0; background: var(--bg); z-index: 1; }
+  .activity { background: var(--accent); color: var(--accent-text); border-radius: var(--radius); padding: 10px; font-weight: 600; }
+  .touch { display: block; margin-top: 6px; font-weight: 400; font-size: 12px; }
+  .touch::before { content: "\2194  "; }
+  .band td { padding-top: 10px; }
+  .band.cut td { border-top: 3px dashed var(--slice); }
+  .slice-name { font-weight: 600; color: var(--slice); }
+  .slice-outcome { font-size: 13px; color: var(--muted); }
+  .step { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 8px 10px; margin-bottom: 6px; }
+  .step.gap { border: 2px dashed var(--gap); background: var(--surface); }
+  .step small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 13px; margin-top: 12px; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; border-radius: 3px; }
+  .lg-act::before { background: var(--accent); }
+  .lg-step::before { background: var(--card); border: 1px solid var(--card-border); }
+  .lg-gap::before { border: 2px dashed var(--gap); }
+  .questions { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; }
+  .questions h2 { font-size: 16px; margin: 0 0 6px; }
+  .questions ol { margin: 0; padding-left: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle"></p>
+  <div class="frame" id="frame"></div>
+  <div class="legend"><span class="lg-act">Activity (backbone)</span><span class="lg-step">Step or detail</span><span class="lg-gap">Gap found on the walk</span></div>
+</header>
+<main id="map"></main>
+
+<script type="application/json" id="map-data">
+{
+  "title": "Story map title",
+  "subtitle": "One line naming the product or feature",
+  "frame": { "user": "", "outcome": "", "problem": "" },
+  "slices": [
+    { "id": 1, "name": "Slice 1", "outcome": "What the user can do after this slice" }
+  ],
+  "lanes": [
+    {
+      "role": "Primary user",
+      "activities": [
+        {
+          "name": "Verb phrase the user would say",
+          "touches": ["Other role: the activity where their stories meet"],
+          "steps": [
+            { "text": "Step the user does", "slice": 1 },
+            { "text": "Step someone assumed", "gap": true, "note": "Found on the walk" }
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": []
+}
+</script>
+<script>
+(function () {
+  var d = JSON.parse(document.getElementById('map-data').textContent);
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  document.title = d.title || 'Story Map';
+  document.getElementById('title').textContent = d.title || '';
+  document.getElementById('subtitle').textContent = d.subtitle || '';
+  var fr = document.getElementById('frame');
+  [['User', d.frame && d.frame.user], ['Outcome', d.frame && d.frame.outcome], ['Problem', d.frame && d.frame.problem]].forEach(function (p) {
+    if (!p[1]) return; var c = el('div'); c.appendChild(el('b', null, p[0])); c.appendChild(document.createTextNode(p[1])); fr.appendChild(c);
+  });
+  var slices = (d.slices || []).slice();
+  var bands = slices.map(function (s) { return { id: s.id, name: s.name, outcome: s.outcome, cut: true }; });
+  bands.push({ id: null, name: slices.length ? 'Later' : 'Not sliced yet', outcome: '', cut: slices.length > 0 });
+  var map = document.getElementById('map');
+  (d.lanes || []).forEach(function (lane) {
+    var sec = el('section', 'lane'); sec.appendChild(el('h2', null, lane.role));
+    var wrap = el('div', 'scroll'); var t = el('table'); var head = el('tr');
+    head.appendChild(el('td', 'label'));
+    lane.activities.forEach(function (a) {
+      var td = el('td'); var card = el('div', 'activity', a.name);
+      (a.touches || []).forEach(function (x) { card.appendChild(el('span', 'touch', x)); });
+      td.appendChild(card); head.appendChild(td);
+    });
+    t.appendChild(head);
+    bands.forEach(function (b) {
+      var any = lane.activities.some(function (a) { return (a.steps || []).some(function (s) { return (s.slice == null ? null : s.slice) === b.id; }); });
+      if (!any && b.id === null) return;
+      var tr = el('tr', 'band' + (b.cut ? ' cut' : '')); var lab = el('td', 'label');
+      lab.appendChild(el('div', 'slice-name', b.name)); if (b.outcome) lab.appendChild(el('div', 'slice-outcome', b.outcome));
+      tr.appendChild(lab);
+      lane.activities.forEach(function (a) {
+        var td = el('td');
+        (a.steps || []).filter(function (s) { return (s.slice == null ? null : s.slice) === b.id; }).forEach(function (s) {
+          var c = el('div', 'step' + (s.gap ? ' gap' : ''), s.text); if (s.note) c.appendChild(el('small', null, s.note)); td.appendChild(c);
+        });
+        tr.appendChild(td);
+      });
+      t.appendChild(tr);
+    });
+    wrap.appendChild(t); sec.appendChild(wrap); map.appendChild(sec);
+  });
+  if ((d.questions || []).length) {
+    var q = el('section', 'questions'); q.appendChild(el('h2', null, 'Open questions')); var ol = el('ol');
+    d.questions.forEach(function (x) { ol.appendChild(el('li', null, x)); }); q.appendChild(ol); map.appendChild(q);
+  }
+})();
+</script>
+</body>
+</html>

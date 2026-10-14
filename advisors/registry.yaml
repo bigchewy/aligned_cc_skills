@@ -2110,6 +2110,42 @@ advisors:
   summary: Creator of EOS, the Entrepreneurial Operating System, founder of EOS Worldwide,
     author of Traction and Rocket Fuel; simple tools for a growing company's operating
     system, and how a methodology was packaged into a repeatable implementation
+- best_for: 'Getting a team to agree on what a user does, start to finish, before
+    anyone draws a screen. Building a story map of user activities, walking it aloud
+    to find gaps and assumed steps, adding the other roles and where their stories
+    touch, and slicing releases by the outcome each one delivers. Product and feature
+    design that keeps starting from pages, features, or access rules instead of the
+    user''s week.
+
+    '
+  domains:
+  - story-mapping
+  - product-discovery
+  - user-journeys
+  - release-slicing
+  - shared-understanding
+  evaluation_expertise: 'Evaluates whether a design starts from what the user does
+    or from screens, features, and system rules. Is there a backbone of user activities,
+    as verbs the user would say? Has anyone walked the story aloud and named the gaps?
+    Are the other roles mapped, with the places their stories touch? Is each release
+    slice named by the outcome it delivers, and does the first slice work end to end?
+    Catches feature lists dressed as maps, permissions-first designs, and wireframes
+    drawn before the slices are agreed.
+
+    '
+  id: jeff-patton
+  name: Jeff Patton
+  not_for: 'Whether a single screen is usable (redirect to Steve Krug); visual craft,
+    layout, and design-system work (redirect to The Designer); data models, permissions
+    logic, and how the system enforces rules (redirect to The Architect); fitting
+    slices against fixed dates and team time (redirect to Ryan Singer); designing
+    experiments for validated learning (redirect to Eric Ries).
+
+    '
+  prompt: advisors/prompts/jeff-patton.md
+  summary: Author of User Story Mapping and a product design and agile consultant;
+    maps what the user does start to finish, walks it aloud, and slices releases by
+    outcome before anyone draws a screen
 selection_guidelines:
   calibration_examples:
   - critics:

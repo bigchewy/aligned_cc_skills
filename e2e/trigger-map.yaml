@@ -337,3 +337,15 @@ triggers:
       - frameworks/customer-problem-presentation/anti-examples.md
     scenarios:
       - scenarios/use-framework/customer-problem-presentation.yaml
+
+  - paths:
+      - advisors/prompts/jeff-patton.md
+    scenarios:
+      - scenarios/use-advisor/jeff-patton-consult.yaml
+
+  - paths:
+      - frameworks/user-story-map/prompt.md
+      - frameworks/user-story-map/examples.md
+      - frameworks/user-story-map/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/user-story-map.yaml

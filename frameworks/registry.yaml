@@ -2358,3 +2358,31 @@ frameworks:
   use_when: someone is about to talk to potential customers before the product or
     pitch is settled, needs to test which problem a market cares about, wants a discovery
     deck rather than a sales deck, or has competing problem guesses to compare
+- advisor: jeff-patton
+  category: product-design
+  default_critic_advisors:
+  - jeff-patton
+  - the-pm
+  deliverable_type: plan
+  domains:
+  - story-mapping
+  - product-discovery
+  - user-journeys
+  - release-slicing
+  helpful_documents:
+  - notes on what the user does today, in their own words (interviews, support threads,
+    a session recording)
+  - any existing screens, specs, or access rules, so the map can be checked against
+    them afterward
+  - the project's design-principles.md, so the map is drawn in the project's colors
+    and type
+  id: user-story-map
+  name: User Story Map
+  purpose: building a shared, visual map of what a user does start to finish, walking
+    it aloud to find the holes, and slicing it into releases by outcome, before anyone
+    draws a screen
+  use_when: a team is about to design screens for a product or feature, earlier screen
+    designs started from features, pages, or access rules and missed what users do,
+    more than one role (such as a member and a facilitator) shares the product, the
+    team can't agree what the first release must include, or someone needs a story
+    map built and agreed before wireframes

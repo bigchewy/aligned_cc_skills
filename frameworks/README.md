@@ -1,6 +1,6 @@
 # Framework Registry
 
-130 frameworks across 25 categories
+131 frameworks across 26 categories
 
 | Category | Count |
 |----------|-------|
@@ -23,6 +23,7 @@
 | podcasting | 4 |
 | positioning | 8 |
 | pricing | 1 |
+| product-design | 1 |
 | psychology | 12 |
 | sales | 5 |
 | social-media | 9 |
@@ -164,6 +165,7 @@
 | close-the-loop | Close the Loop | boris-cherny | developer-tooling | someone wants their Claude Code setup reviewed, keeps correcting Claude on the same kind of work, is the only check on Claude's output, has a long CLAUDE.md that isn't preventing mistakes, approves the same commands over and over, or wants to know how the Claude Code team works today |
 | proven-process | Proven Process | gino-wickman | strategy | someone wants to turn a consulting, coaching, or facilitation method into a repeatable service or product, delivers the same kind of engagement differently for every client, wants to build an operating system for client companies like EOS, needs an assessment that scores a client before and after, or wants their method out of their own head so others can deliver it |
 | customer-problem-presentation | Customer Problem Presentation | steve-blank | startup | someone is about to talk to potential customers before the product or pitch is settled, needs to test which problem a market cares about, wants a discovery deck rather than a sales deck, or has competing problem guesses to compare |
+| user-story-map | User Story Map | jeff-patton | product-design | a team is about to design screens for a product or feature, earlier screen designs started from features, pages, or access rules and missed what users do, more than one role (such as a member and a facilitator) shares the product, the team can't agree what the first release must include, or someone needs a story map built and agreed before wireframes |
 
 ## By Category
 
@@ -290,6 +292,10 @@
 ### Pricing (1)
 
 - **value-metric** — Value Metric Framework (patrick-campbell)
+
+### Product Design (1)
+
+- **user-story-map** — User Story Map (jeff-patton)
 
 ### Psychology (12)
 

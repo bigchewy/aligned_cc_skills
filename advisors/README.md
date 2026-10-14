@@ -1,6 +1,6 @@
 # Advisor Registry
 
-73 advisors | 73 profiled | 0 unprofiled
+74 advisors | 74 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -79,6 +79,7 @@
 | boris-cherny | Boris Cherny | claude-code, ai-coding-agents, developer-workflow, agentic-coding, verification, prompt-and-context-setup | Creator and head of Claude Code at Anthropic, author of Programming TypeScript; verification, plan mode, a shared CLAUDE.md, and turning repeated work into commands, checked against how the team works now |
 | gino-wickman | Gino Wickman | operating-systems, eos, productizing-services, leadership-team-alignment, execution-discipline, meeting-design | Creator of EOS, the Entrepreneurial Operating System, founder of EOS Worldwide, author of Traction and Rocket Fuel; simple tools for a growing company's operating system, and how a methodology was packaged into a repeatable implementation |
 | steve-blank | Steve Blank | customer-discovery, customer-development, problem-validation, customer-interviews, startup-strategy | Serial entrepreneur who created Customer Development |
+| jeff-patton | Jeff Patton | story-mapping, product-discovery, user-journeys, release-slicing, shared-understanding | Author of User Story Mapping and a product design and agile consultant; maps what the user does start to finish, walks it aloud, and slices releases by outcome before anyone draws a screen |
 
 ## Profiled Advisors
 
@@ -159,6 +160,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Boris Cherny** | Evaluates whether a Claude Code setup lets Claude get the work right without the user as the only check |
 | **Gino Wickman** | Evaluates whether an operating system, or a method being packaged for clients, is simple enough to use every week and repeatable by someone other than its founder |
 | **Steve Blank** | Checks whether the work tests a guess or sells it |
+| **Jeff Patton** | Evaluates whether a design starts from what the user does or from screens, features, and system rules |
 
 ## Selection Guidelines
 
