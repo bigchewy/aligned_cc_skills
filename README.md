@@ -1,6 +1,6 @@
 # Aligned
 
-A virtual board of advisors for Claude Code. 72 expert personas, 129 structured frameworks, auto-selected by context.
+A virtual board of advisors for Claude Code. 73 expert personas, 130 structured frameworks, auto-selected by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.33.1-green.svg)](.claude-plugin/plugin.json)

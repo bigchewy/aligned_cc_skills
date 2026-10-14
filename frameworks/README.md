@@ -1,6 +1,6 @@
 # Framework Registry
 
-129 frameworks across 25 categories
+130 frameworks across 25 categories
 
 | Category | Count |
 |----------|-------|
@@ -26,7 +26,7 @@
 | psychology | 12 |
 | sales | 5 |
 | social-media | 9 |
-| startup | 7 |
+| startup | 8 |
 | strategy | 28 |
 | visual-storytelling | 1 |
 
@@ -163,6 +163,7 @@
 | complex-contagion-rollout | Complex Contagion Rollout | damon-centola | leadership | a company is rolling out a new team practice, culture program, or way of working that people find risky or awkward to start; a pilot or launch got good survey scores and then faded; someone plans to launch with an all-hands announcement, one champion per team, or everyone at once; or a leader needs to decide which teams go first and in what order |
 | close-the-loop | Close the Loop | boris-cherny | developer-tooling | someone wants their Claude Code setup reviewed, keeps correcting Claude on the same kind of work, is the only check on Claude's output, has a long CLAUDE.md that isn't preventing mistakes, approves the same commands over and over, or wants to know how the Claude Code team works today |
 | proven-process | Proven Process | gino-wickman | strategy | someone wants to turn a consulting, coaching, or facilitation method into a repeatable service or product, delivers the same kind of engagement differently for every client, wants to build an operating system for client companies like EOS, needs an assessment that scores a client before and after, or wants their method out of their own head so others can deliver it |
+| customer-problem-presentation | Customer Problem Presentation | steve-blank | startup | someone is about to talk to potential customers before the product or pitch is settled, needs to test which problem a market cares about, wants a discovery deck rather than a sales deck, or has competing problem guesses to compare |
 
 ## By Category
 
@@ -325,9 +326,10 @@
 - **social-media-queen-method** — the Social Media Queen Method (rachel-pedersen)
 - **thirty-minute-daily-instagram** — the 30-Minute Daily Instagram System (sue-b-zimmerman)
 
-### Startup (7)
+### Startup (8)
 
 - **build-measure-learn** — Build-Measure-Learn (eric-ries)
+- **customer-problem-presentation** — Customer Problem Presentation (steve-blank)
 - **do-things-that-dont-scale** — Do Things That Don't Scale (paul-graham)
 - **earlyvangelists** — Earlyvangelists (eric-ries)
 - **earnestness-filter** — Earnestness Filter (paul-graham)
