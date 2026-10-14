@@ -349,3 +349,4 @@ triggers:
       - frameworks/user-story-map/anti-examples.md
     scenarios:
       - scenarios/use-framework/user-story-map.yaml
+      - scenarios/use-framework/user-story-map-picture.yaml

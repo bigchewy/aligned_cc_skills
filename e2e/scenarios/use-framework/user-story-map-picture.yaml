@@ -1,0 +1,75 @@
+# e2e/scenarios/use-framework/user-story-map-picture.yaml
+# Regression check from the 2026-10-13 planted run: "build the map as text
+# for me to review before any screens" was read as "no picture," and the
+# frame came back as chat text with a promise to draw later. The framework
+# reads that wording as "no screens yet" and draws the map as soon as the
+# frame locks. The eval provider has no tools, so the judge scores what the
+# response does or says it is doing now.
+
+description: "Framework: User Story Map keeps the picture when asked for the map as text before screens"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PICTURE KEPT: The user asked for the facilitator and
+        member story map "as text for me to review before any screens," with
+        the frame already agreed. Does the response build and publish (or open)
+        the story map picture now, with the frame at the top and an empty
+        backbone, and read "as text ... before any screens" as "no screens
+        yet"? A response that gives the map or the frame only as chat text,
+        says it will draw the picture later, or treats the wording as a reason
+        to skip the picture scores 1. Asking once to confirm "no picture at
+        all" is acceptable only if it still treats the picture as the default.
+      weight: 3
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO SCREENS YET: Does the response say that screens wait
+        until Slice 1 is agreed, and avoid sketching any app screen, wireframe,
+        page layout, or field list? The story map page itself is not a screen;
+        drawing or publishing it is expected. Any app screen sketch scores 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: With the frame locked, does the
+        response move to Phase 2, asking for the facilitator's backbone as a
+        handful of big activities left to right, and then stop and wait?
+        Laying out a backbone itself, filling in steps, or proposing slices
+        scores 1-2. Asking a pacing question instead of the backbone scores 2.
+      weight: 2
+
+tests:
+  - description: "full-stack — map as text before screens, frame already agreed"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../frameworks/user-story-map/prompt.md
+      task_prompt: |
+
+
+        ---
+
+        Build the facilitator and member story map as text for me to review before any screens.
+
+        The frame is agreed, so treat Phase 1 as locked:
+        - User: the facilitator running one team through the course.
+        - Outcome: they walk into each weekly session ready, knowing who did the lesson, without an evening of prep.
+        - Problem: the prep is scattered across a PDF, a group chat, and a spreadsheet, so they guess who's ready.
+
+        Context: We run a team course with ten units and four weekly lessons
+        per unit. A facilitator meets each team once a week. Members use the
+        app too. The project's design principles are at
+        brand/conscious-os/guidelines/design-principles.md.
+
+        (Test harness note: tool calls aren't available in this conversation.
+        Treat any setup or drawing you would do with tools as already done, and
+        write the reply the user sees afterward. Use [map link] for any link.)

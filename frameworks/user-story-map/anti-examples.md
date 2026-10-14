@@ -54,9 +54,9 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 "Sure. Top bar with the course name, a card per member with a progress ring, a big Start Session button..."
 
 **Right:**
-"Not yet. We haven't agreed which steps make Slice 1, so any screen now is a guess at what matters. Let's draw the line first. Once everyone agrees on it, the map's ready for wireframes, and they start from Slice 1."
+"Not yet. We haven't agreed which steps make Slice 1, so any screen now is a guess at what matters. Let's draw the line first. Once everyone agrees on it, we sketch Slice 1, one screen per activity, right next to the map."
 
-**What to do instead:** Draw the map, never a screen. Wireframes come after the slices are agreed, and start from Slice 1.
+**What to do instead:** Draw the map, not a screen, until Slice 1 is agreed. Then Phase 8 wireframes Slice 1.
 
 ---
 
@@ -73,7 +73,7 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 **Right:**
 Update the Markdown map, rebuild the HTML from `story-map-template.html`, republish it to the same link, and say: "Map updated: 15 steps under the six activities. Same link as before. Look at 'Check who's ready.' It only has two cards. Is that really all?"
 
-**What to do instead:** Draw the map after every phase from 2 on. People agree on a picture they can all see. A list in a chat reply is a shared document, not shared understanding.
+**What to do instead:** Draw the map after every phase from 1 on. People agree on a picture they can all see. A list in a chat reply is a shared document, not shared understanding.
 
 ---
 
@@ -87,4 +87,19 @@ Hand-writing a fresh HTML page with its own blue-and-orange palette and a new la
 **Right:**
 "Colors and type from brand/guidelines/design-principles.md." Then build from the template, replacing only the tokens and the map data.
 
-**What to do instead:** Read the project's design principles once, put its tokens into the template, and change only the map data on each redraw. Say which file supplied the colors, or that none was found.
+**What to do instead:** Read the project's design principles once, put its tokens into the template, and change only the map data on each redraw. Say which file supplied the colors, or that none was found. In a monorepo, look under `brand/*/guidelines/` too, and ask which app the map is for when more than one file matches.
+
+---
+
+## 7. Reading "map as text before screens" as "no picture"
+
+**User:** "Build the facilitator and member story map as text for me to review before any screens." *(The frame is already clear from the brief.)*
+
+**Wrong:**
+"Here's the frame. User: the facilitator. Outcome: walk into each session knowing who's ready. Problem: prep is scattered across three tools. Since you asked for text, I'll keep this in chat and draw the picture later. First question: how fast should we go?"
+*(No picture published. The request's wording overrode the "Draw the map" step.)*
+
+**Right:**
+Lock the frame, build the HTML from `story-map-template.html` with the frame at the top and an empty backbone, publish it, and say: "Frame's up on the map, at this link. Colors from brand/conscious-os/guidelines/design-principles.md. No screens yet: those wait until we've agreed Slice 1. Now the backbone. Tell me what the facilitator does, start to finish, as a handful of big activities."
+
+**What to do instead:** Read "as text," "for review," and "before any screens" as "no screens yet." The picture is how the map gets reviewed, so keep drawing it. Only drop the picture if the user clearly asks for no picture, and confirm once before you do.

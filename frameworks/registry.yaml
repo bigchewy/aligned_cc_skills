@@ -2379,8 +2379,8 @@ frameworks:
   id: user-story-map
   name: User Story Map
   purpose: building a shared, visual map of what a user does start to finish, walking
-    it aloud to find the holes, and slicing it into releases by outcome, before anyone
-    draws a screen
+    it aloud to find the holes, slicing it into releases by outcome, and then wireframing
+    the first slice next to the map
   use_when: a team is about to design screens for a product or feature, earlier screen
     designs started from features, pages, or access rules and missed what users do,
     more than one role (such as a member and a facilitator) shares the product, the
