@@ -616,6 +616,80 @@ def test_authoring_mode_documents_project_scan_failure():
     ]), "missing project-scan-failure handling"
 
 
+def _section(text: str, heading: str) -> str:
+    """Return the body of a markdown section, up to the next heading of the same or higher level."""
+    level = heading.split(" ")[0]
+    start = text.index(heading) + len(heading)
+    stops = [i for i in (text.find("\n" + "#" * n + " ", start) for n in range(1, len(level) + 1)) if i != -1]
+    return text[start:min(stops)] if stops else text[start:]
+
+
+def test_authoring_sizes_the_work_with_three_sizes():
+    text = read("skills/brainstorming/modes/authoring.md")
+    assert "### Size the work" in text, "authoring.md must have a 'Size the work' step"
+    body = _section(text, "### Size the work")
+    for size in ["**Small**", "**Medium**", "**Full**"]:
+        assert size in body, f"sizing step must name {size}"
+    small = next(line for line in body.splitlines() if "**Small**" in line).lower()
+    for skipped in ["design doc", "critique panel", "html page"]:
+        assert f"no {skipped}" in small or skipped in small, f"Small row must say it skips the {skipped}"
+    medium = next(line for line in body.splitlines() if "**Medium**" in line).lower()
+    assert "critique panel" in medium and "no html page" in medium, (
+        "Medium must keep the critique panel and skip the HTML page"
+    )
+    assert "override" in body.lower(), "the user must be able to override the size"
+    assert "step up" in body.lower() or "steps up" in body.lower(), "work that grows must step up a size"
+    assert "never moves down" in body.lower() or "never down" in body.lower(), "sizing must not move down mid-task"
+
+
+def test_authoring_sizing_comes_after_minimum_questions_and_before_phase_3():
+    text = read("skills/brainstorming/modes/authoring.md")
+    minimum = text.index("Ask a minimum of 3 business questions")
+    sizing = text.index("### Size the work")
+    phase3 = text.index("### Phase 3:")
+    assert minimum < sizing < phase3, "sizing must sit after the 3-question minimum and before Phase 3"
+    body = _section(text, "### Size the work")
+    assert "framework" in body.lower(), "sizing must say when it happens on the framework path"
+
+
+def test_authoring_after_design_sections_name_their_sizes():
+    text = read("skills/brainstorming/modes/authoring.md")
+    after = _section(text, "## After the Design")
+    assert "Runs for Medium and Full" in _section(after, "### Documentation")
+    assert "Runs for Full only" in _section(after, "### Visualization")
+    assert "Runs for Medium and Full" in _section(after, "### Critique Panel")
+
+
+def test_authoring_playback_labels_three_sources():
+    text = read("skills/brainstorming/modes/authoring.md")
+    assert "**Play it back:**" in text, "authoring.md must have a playback step in the Q&A"
+    playback = text[text.index("**Play it back:**"):]
+    playback = playback[: playback.index("\n\n**", 1)]
+    for label in ["**You said**", "decided**", "**My guess**"]:
+        assert label in playback, f"playback must use the {label} label"
+    assert "wrong or missing" in playback, "each playback chunk must end by asking what's wrong or missing"
+    assert "Briefly note each {topic_advisor} decision" not in text, (
+        "the one-sentence advisor note is replaced by labeled playback"
+    )
+
+
+def test_authoring_keeps_three_question_minimum():
+    text = read("skills/brainstorming/modes/authoring.md")
+    assert "MANDATORY: Ask a minimum of 3 business questions" in text
+
+
+def test_skill_md_overview_mentions_authoring_sizing():
+    overview = _section(read("skills/brainstorming/SKILL.md"), "## Overview")
+    assert "Small, Medium, or Full" in overview, "SKILL.md overview must say Authoring sizes the work"
+
+
+def test_sizing_playback_scenario_is_mapped():
+    trigger_map = yaml.safe_load(read("e2e/trigger-map.yaml"))
+    entries = [e for e in trigger_map["triggers"] if "skills/brainstorming/modes/authoring.md" in e["paths"]]
+    assert entries, "authoring.md must be in the trigger map"
+    assert "scenarios/use-skill/authoring-sizing-playback.yaml" in entries[0]["scenarios"]
+
+
 def test_authoring_critique_checklist_has_conditional_sections():
     text = read("skills/brainstorming/authoring-critique-checklist.md")
     for tag in ["content", "decision", "plan", "analysis"]:

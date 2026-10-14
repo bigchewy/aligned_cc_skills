@@ -1,0 +1,120 @@
+# e2e/scenarios/use-skill/authoring-sizing-playback.yaml
+# Validates two Authoring-mode behaviors: (1) sizing the work (Small / Medium /
+# Full) after the 3-business-question minimum, with the user able to override
+# and Claude stepping up when the work grows; (2) playback chunks that label
+# what the user said, what the topic advisor decided, and what Claude is guessing.
+# Loads the live modes/authoring.md so a run against the old file is a real baseline.
+
+description: "Skill: authoring mode sizing and playback"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nYou are running Authoring mode as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe user's latest message: {{user_message}}\n\nWrite your next message to the user, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "sizing-a: small job after the minimum questions gets Small, in chat"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/brainstorming/modes/authoring.md
+      scenario_description: "Q&A path with a topic advisor. The user has answered three business questions: the deliverable is a 120-word reply to a customer asking why their renewal price went up, the audience is one existing customer of four years, the price rose 12% because the hosting vendor raised its rates, the price is firm but annual prepay saves 8%, and success is that the customer renews. The advisor has made no decisions yet."
+      user_message: "That's everything. What's next?"
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on SIZING SMALL: Does the reply (1) name a size for the work
+          in plain words (Small or an equivalent plain phrase), (2) give a short
+          reason, (3) deliver or offer the draft reply right there in chat, and
+          (4) NOT start a design doc, a critique panel, or an HTML page?
+          A reply that launches the full design-doc / critique / visualization
+          process for this job = 1. All four met = 5.
+
+  - description: "sizing-b: the size is not picked before the 3-question minimum"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/brainstorming/modes/authoring.md
+      scenario_description: "Q&A path with a topic advisor. This is the very first turn after engine selection. No business questions have been asked yet."
+      user_message: "I just need a short internal note telling my team we're moving standup to 10am. Should be quick, let's just do it."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on MINIMUM QUESTIONS HOLD: Does the reply ask a business
+          question (one question) instead of sizing the work or drafting the
+          note? Picking a size, drafting the note, or skipping the questions
+          because the request looks simple = 1. Asks exactly one business
+          question and does not name a size yet = 5.
+
+  - description: "sizing-c: a mid-sized document gets Medium, which skips only the HTML page"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/brainstorming/modes/authoring.md
+      scenario_description: "Q&A path with a topic advisor. Four business questions are answered: the deliverable is a two-page strategy memo for the leadership team choosing between two pricing models, it will be read in a meeting next week, and success is a decision in that meeting. The advisor has resolved the memo's section order."
+      user_message: "I think you have what you need. How do we proceed?"
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on SIZE AND STEPS MATCH: Does the reply name a size in plain
+          words with a reason, and do the steps it says it will run match that
+          size? Small = draft in chat only. Medium = Markdown design doc plus
+          critique panel, no HTML page. Full = doc, panel, and HTML page.
+          No size named = 1. A size named but the listed steps contradict it = 2.
+          Size named, reason given, steps match = 5. Medium or Full both score 5
+          if consistent.
+
+  - description: "sizing-d: the user overrides Small up to Full"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/brainstorming/modes/authoring.md
+      scenario_description: "Q&A path. Three business questions answered. Claude said: 'This is a Small job, so I'll draft the one-pager here in chat, with no design doc, critique panel, or HTML page.'"
+      user_message: "No, run the whole thing on this one. I want the panel and the page."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on OVERRIDE HONORED: Does the reply accept the user's
+          override to Full and say it will run the design doc, the critique
+          panel, and the HTML page? Arguing the user back down, or keeping any
+          of the three steps skipped = 1. Accepts and names all three = 5.
+
+  - description: "sizing-e: work that grows mid-task steps up a size"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/brainstorming/modes/authoring.md
+      scenario_description: "Q&A path. Claude sized the work as Small (a short email to a partner) and was drafting it in chat. The user has just added new requirements."
+      user_message: "Actually this needs to go to the partner's whole board, cover our three-year roadmap and the revenue split, and they'll forward it to their lawyers."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on STEP UP: Does the reply say plainly that the work has
+          grown, and move it up to a larger size (Medium or Full), naming what
+          that adds? Continuing as Small, or silently changing course without
+          saying so = 1. Says it grew, names the new size and what it adds = 5.
+
+  - description: "playback-a: playback labels user, advisor, and guess"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/brainstorming/modes/authoring.md
+      scenario_description: "Q&A path with April Dunford as topic advisor, writing a positioning brief. The user said: the buyers are operations leads at mid-size logistics companies, and the main competitor is spreadsheets. April Dunford, as proxy, decided the brief leads with competitive alternatives before unique attributes. Nobody has said what market category to use yet. The audience-and-competition part is now clear enough to describe back."
+      user_message: "Yes, spreadsheets are what we lose to most."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on LABELED PLAYBACK: Does the reply describe the
+          audience-and-competition part back to the user, with each point
+          marked by where it came from: something the user said, something
+          the advisor (April Dunford) decided, and something Claude is
+          guessing (for example the market category)? Does it end by asking
+          what is wrong or missing? No playback = 1. Playback with no source
+          labels = 2. All three sources labeled and ends asking what's wrong
+          or missing = 5.

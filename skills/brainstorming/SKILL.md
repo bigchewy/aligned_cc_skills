@@ -11,7 +11,7 @@ description: "Structures creative and strategic work through guided dialogue acr
 A unified brainstorming skill that adapts its process based on what you're
 working on. Three modes covering distinct shapes of brainstorm work:
 
-- **Authoring** — structured-document arrangement with framework + domain-advisor panel and optional Research sub-phase; deliverable is a sequenced design doc — curricula, framework prompts, exercise programs, strategy memos, competitive analyses, positioning briefs, market analyses, GTM/sales documents, and diagnostic write-ups.
+- **Authoring** — structured-document arrangement with framework + domain-advisor panel and optional Research sub-phase; deliverable is a sequenced design doc — curricula, framework prompts, exercise programs, strategy memos, competitive analyses, positioning briefs, market analyses, GTM/sales documents, and diagnostic write-ups. After the business questions, Authoring sizes the work as Small, Medium, or Full, which decides whether the design doc, critique panel, and HTML page run.
 - **Research** — corpus survey + comparative synthesis with Skeptic Pass; deliverable is a research memo or KB artifact.
 - **Roadmap** — decomposition scaffolding for intents too big for one brainstorm; deliverable is a spawn-list of 3–6 paste-ready brainstorming prompts.
 

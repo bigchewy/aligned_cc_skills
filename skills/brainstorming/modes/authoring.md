@@ -45,7 +45,7 @@ Read `skills/_shared/framework-runner.md` and invoke it with:
 - **Matched framework path:** from Phase 1
 - **`intake_gate_mode`:** `strict` (brainstorming wrapper gates on `required_documents`)
 
-On framework completion, the runner returns control here. Proceed to Phase 3.
+On framework completion, the runner returns control here. Proceed to Size the work.
 
 ### Phase 2b/2c/2d: Structured Q&A with topic advisor in Architect's proxy seat
 
@@ -70,7 +70,7 @@ For Phase 2d (Wise Eric default) — use `advisors/prompts/wise-eric.md`.
 
 **Scan gate:** Before asking any **content-design** question or dispatching a {topic_advisor} auto-consult, the scan MUST have completed and you MUST have reviewed the summary. If the user responds to the first business question before the scan finishes, ask another business question — do not idle. Once the scan completes, incorporate the summary as working context for all subsequent questions.
 
-**MANDATORY: Ask a minimum of 3 business questions before proposing any approaches or design sections.** Even when the user's request seems fully specified, there are always unstated assumptions about scope, priorities, and constraints. Do not shortcut the Q&A because the problem seems obvious.
+**MANDATORY: Ask a minimum of 3 business questions before proposing any approaches or design sections.** Even when the user's request seems fully specified, there are always unstated assumptions about scope, priorities, and constraints. Do not shortcut the Q&A because the problem seems obvious. Until the minimum is met, each message is one short acknowledgment of what the user said, then exactly one business question. That holds when the user says the job is quick or says "let's just do it": their word is evidence for the size you pick in Size the work, and the size, the draft, and any mention of the minimum wait until then.
 
 Ask questions one at a time to refine the idea. Before asking each question, classify it:
 
@@ -79,9 +79,15 @@ Ask questions one at a time to refine the idea. Before asking each question, cla
 
 **For business questions:** Ask the user directly. Prefer multiple choice when possible. One question per message.
 
-**For content-design questions:** Do NOT ask the user. Instead, dispatch {topic_advisor} as the user's proxy to answer the question (see "{topic_advisor} as proxy" under auto-consult below). Each content-design question gets its own fresh sub-agent dispatch — the answer comes back to the main thread, you incorporate it, and it shapes what questions come next (which may be business or content-design). Briefly note each decision to the user: what was decided and why (one sentence), plus any constraints flagged — so they have visibility without needing to weigh in.
+**For content-design questions:** Do NOT ask the user. Instead, dispatch {topic_advisor} as the user's proxy to answer the question (see "{topic_advisor} as proxy" under auto-consult below). Each content-design question gets its own fresh sub-agent dispatch — the answer comes back to the main thread, you incorporate it, and it shapes what questions come next (which may be business or content-design). The user sees each decision in the next playback chunk (below), labeled as the advisor's.
 
 **Gray area:** If a question has both business and content-design dimensions, ask the user the business dimension **first**. Only after the user answers, and only if their answer warrants it, dispatch {topic_advisor} as proxy for the content-design dimension.
+
+**Play it back:** As soon as one part of the deliverable is clear enough to describe (who it is for, what it argues, how it is ordered), describe that part back to the user in about 200-300 words, then return to questions about the next part. Playback and questions alternate through the whole Q&A. Mark every point in a chunk with where it came from:
+- **You said** — something the user told you.
+- **{topic_advisor} decided** — a content-design decision the advisor made as proxy, with any constraint it flagged.
+- **My guess** — anything you filled in that nobody has said yet.
+End each chunk by asking what's wrong or missing.
 
 **Exploring approaches:**
 - Propose 2-3 different approaches with trade-offs
@@ -143,7 +149,7 @@ The user has delegated content-design decision authority to {topic_advisor}. The
    - **Constraints:** Any preconditions, caveats, or risks that affect the design (e.g., 'requires migrating X first', 'incompatible with planned approach Y')"
 
 2. Incorporate the decision into the brainstorm's working context. {topic_advisor}'s answer will often shape what the next question is — that's the point. Continue the Q&A flow: if the next question is business, ask the user; if content-design, dispatch a fresh {topic_advisor} agent. Each new dispatch includes accumulated context from prior decisions (e.g., "Prior decisions: {list}. New question: {question}").
-3. Briefly note each {topic_advisor} decision to the user: what was decided and why (one sentence), plus any constraints flagged — do not drop caveats that affect the design.
+3. Carry each {topic_advisor} decision into the next playback chunk, labeled as the advisor's, with any constraints it flagged — do not drop caveats that affect the design.
 
 **Standard review workflow** (presenting options or design sections):
 
@@ -172,9 +178,27 @@ The user has delegated content-design decision authority to {topic_advisor}. The
    - If presenting options: lead with the advisor-recommended option and include their domain-grounded reasoning. Still present all options — {topic_advisor} advises, the user decides.
 
 **Presenting the design:**
-The design doc is the deliverable. Save to `{worktree}/docs/plans/YYYY-MM-DD-{topic}-design.md`.
+For Medium and Full, the design doc is the deliverable. Save to `{worktree}/docs/plans/YYYY-MM-DD-{topic}-design.md`.
+
+### Size the work
+
+Size the work once the 3-business-question minimum is met and you understand what the user wants. On the framework path (Phase 2a), size it when the framework finishes; the framework's own WAIT points are never cut short. Never size before the minimum, however simple the request looks.
+
+Name the size to the user in one plain sentence with the reason, for example: "This is a Small job, so I'll draft it here in chat, with no design doc, critique panel, or HTML page."
+
+| Size | When it fits | What runs |
+|---|---|---|
+| **Small** | One short piece the user will use as it is: an email, a reply, a post, a short note | The answer or draft in chat. No design doc, no critique panel, no HTML page. Skip Phase 3 and After the Design. |
+| **Medium** | A document other people will read or decide from, where nobody needs a page to review it | The Markdown design doc and the critique panel, no HTML page. |
+| **Full** | A document with several parts that people review together, or one the user wants to see as a page | Everything: the design doc, the critique panel, and the HTML page. |
+
+The user can override the size in either direction before work starts. Do what they pick, and do not argue them back.
+
+If the work grows mid-task (a new audience, more parts, higher stakes), stop, say plainly that it grew, and step up a size, naming what the new size adds. Sizing never moves down mid-task.
 
 ### Phase 3: Post-engine dispatch by `deliverable_type`
+
+Runs for Medium and Full. Medium uses this phase's critique checklist sections and critic pool; the HTML template is used only by the Visualization step.
 
 Read the engine's `deliverable_type` from the framework registry. If the engine was a Q&A fallback (no framework), prompt the user to pick `content | decision | plan | analysis` once (a single AskUserQuestion in the design-doc-finalization step — this is NOT mid-flow human review; it is the deliverable-type tag that the user must own as part of authoring).
 
@@ -197,11 +221,11 @@ Dispatch table:
 
 ### Documentation
 
-Save the design doc to `{worktree}/docs/plans/YYYY-MM-DD-{topic}-design.md`. Use the deliverable-type-specific template chosen in Phase 3.
+Runs for Medium and Full. Save the design doc to `{worktree}/docs/plans/YYYY-MM-DD-{topic}-design.md`. Use the deliverable-type-specific template chosen in Phase 3.
 
 ### Visualization
 
-Read `{base-directory}/references/visualization-protocol.md` and follow it.
+Runs for Full only. Read `{base-directory}/references/visualization-protocol.md` and follow it.
 
 ### Widgets
 
@@ -209,7 +233,7 @@ Per `references/brainstorm-components.md` widget table.
 
 ### Critique Panel
 
-Read `{base-directory}/../_shared/critique-panel-orchestration.md`. Config:
+Runs for Medium and Full. Read `{base-directory}/../_shared/critique-panel-orchestration.md`. Config:
 
 - Fact-check mode: `division-of-labor`
 - Criteria assignment: `yes` (per-section, conditioned on `deliverable_type`)
