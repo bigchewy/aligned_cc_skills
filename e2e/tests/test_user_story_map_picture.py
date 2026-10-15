@@ -171,6 +171,128 @@ class TestTemplate:
         assert result.returncode == 0, result.stderr
 
 
+MD_TEMPLATE = FRAMEWORK / "story-map-template.md"
+EXAMPLE_DIR = FRAMEWORK / "example"
+EXAMPLE_MD = EXAMPLE_DIR / "team-course.md"
+EXAMPLE_HTML = EXAMPLE_DIR / "team-course.html"
+MAP_DATA = re.compile(r'(<script type="application/json" id="map-data">)(.*?)(</script>)', flags=re.S)
+
+
+def _example_data() -> dict:
+    m = MAP_DATA.search(_read(EXAMPLE_HTML))
+    assert m, "example must keep the map-data JSON block"
+    return json.loads(m.group(2))
+
+
+class TestMarkdownTemplate:
+    def test_markdown_template_has_every_section_the_json_needs(self):
+        md = _read(MD_TEMPLATE)
+        for heading in ("## Frame", "## Slices", "## Lane:", "## Open questions", "## Slice 1 wireframes"):
+            assert heading in md, f"Markdown template must have a {heading} section"
+
+    def test_markdown_template_says_how_each_part_becomes_json(self):
+        md = _read(MD_TEMPLATE)
+        for field in ('"frame"', '"slices"', '"lanes"', '"touches"', '"gap"', '"questions"', '"wireframes"', '"card"'):
+            assert field in md, f"Markdown template must map a section to {field}"
+
+    def test_prompt_points_to_markdown_template_and_example(self):
+        section = _read(PROMPT).split("### The map on screen")[1].split("### PHASE 1")[0]
+        assert "story-map-template.md" in section
+        assert "example/team-course" in section
+
+
+class TestWorkedExample:
+    def test_example_html_is_the_template_with_only_the_json_changed(self):
+        template = MAP_DATA.sub(r"\1\3", _read(TEMPLATE))
+        example = MAP_DATA.sub(r"\1\3", _read(EXAMPLE_HTML))
+        assert example == template, "the example must be built from the template, not hand-edited"
+
+    def test_example_is_the_team_course_map_with_two_lanes(self):
+        data = _example_data()
+        assert [lane["role"] for lane in data["lanes"]] == ["Facilitator", "Member"]
+        names = [a["name"] for a in data["lanes"][0]["activities"]]
+        assert "Check who's ready" in names and len(names) == 6
+
+    def test_every_step_belongs_to_a_known_slice_or_later(self):
+        data = _example_data()
+        ids = {s["id"] for s in data["slices"]}
+        for lane in data["lanes"]:
+            for activity in lane["activities"]:
+                for step in activity["steps"]:
+                    assert step.get("slice") in ids | {None}, step
+
+    def test_example_shows_a_gap_and_touch_points(self):
+        data = _example_data()
+        activities = [a for lane in data["lanes"] for a in lane["activities"]]
+        assert any(s.get("gap") for a in activities for s in a["steps"])
+        assert any(a.get("touches") for a in activities)
+
+    def test_one_wireframe_per_slice_one_activity(self):
+        data = _example_data()
+        slice_one = {
+            (lane["role"], a["name"])
+            for lane in data["lanes"]
+            for a in lane["activities"]
+            if any(s.get("slice") == 1 for s in a["steps"])
+        }
+        wired = [(w["lane"], w["activity"]) for w in data["wireframes"]]
+        assert sorted(wired) == sorted(slice_one)
+
+    def test_every_wireframe_element_names_a_slice_one_card_in_its_lane(self):
+        data = _example_data()
+        for w in data["wireframes"]:
+            lane = next(l for l in data["lanes"] if l["role"] == w["lane"])
+            cards = {a["name"] for a in lane["activities"]} | {
+                s["text"] for a in lane["activities"] for s in a["steps"] if s.get("slice") == 1
+            }
+            for element in w["elements"]:
+                assert element["card"] in cards, f"{w['activity']}: {element['card']} is not a Slice 1 card"
+
+    def test_markdown_source_holds_every_string_in_the_json(self):
+        md = _read(EXAMPLE_MD)
+        data = _example_data()
+        strings = [data["title"], *data["frame"].values(), *data["questions"]]
+        strings += [s["name"] for s in data["slices"]] + [s["outcome"] for s in data["slices"]]
+        for lane in data["lanes"]:
+            for a in lane["activities"]:
+                strings += [a["name"], *a.get("touches", [])]
+                strings += [s["text"] for s in a["steps"]]
+        for w in data["wireframes"]:
+            for e in w["elements"]:
+                strings += [e["card"], *e.get("rows", [])] + ([e["text"]] if "text" in e else [])
+        missing = [s for s in strings if s not in md]
+        assert not missing, f"JSON strings missing from the Markdown source: {missing}"
+
+    def test_examples_md_points_to_the_finished_page(self):
+        assert "example/team-course.html" in _read(EXAMPLES)
+
+    @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+    def test_example_renders_both_tabs(self, tmp_path):
+        """Run the page script against a tiny DOM stub and count what it draws."""
+        html = _read(EXAMPLE_HTML)
+        data = MAP_DATA.search(html).group(2)
+        script = re.findall(r"<script>(.*?)</script>", html, flags=re.S)[0]
+        stub = (
+            "var made={};function E(t){this.tagName=t;this.children=[];this.className='';this.textContent='';"
+            "this.hidden=false;this.attrs={};}E.prototype.appendChild=function(c){this.children.push(c);"
+            "made[c.className]=(made[c.className]||0)+1;return c};E.prototype.setAttribute=function(k,v){this.attrs[k]=v};"
+            "E.prototype.getAttribute=function(k){return this.attrs[k]};E.prototype.addEventListener=function(){};"
+            "E.prototype.querySelectorAll=function(){return []};var byId={};"
+            "var document={createElement:function(t){return new E(t)},createTextNode:function(t){return new E('#text')},"
+            "getElementById:function(id){if(id==='map-data')return{textContent:DATA};return byId[id]||(byId[id]=new E('div'))}};"
+        )
+        js = tmp_path / "render.js"
+        js.write_text(
+            "var DATA=" + json.dumps(data) + ";" + stub + script
+            + ";console.log(JSON.stringify({wire:made['wire']||0,lane:made['lane']||0,tabsHidden:byId['tabs'].hidden}));",
+            encoding="utf-8",
+        )
+        result = subprocess.run(["node", str(js)], capture_output=True, text=True)
+        assert result.returncode == 0, result.stderr
+        counts = json.loads(result.stdout.strip().splitlines()[-1])
+        assert counts == {"wire": 9, "lane": 2, "tabsHidden": False}
+
+
 class TestEval:
     def test_picture_scenario_exists_and_is_triggered(self):
         assert PICTURE_SCENARIO.exists()

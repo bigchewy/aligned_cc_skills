@@ -249,6 +249,12 @@ Slice 1 reaches nine activities: five in the facilitator lane (everything but "W
 
 *Draw the map* one last time with both tabs. "Added the picked exercise to 'Run the session.' Nudge stays in Later."
 
-**Jeff Patton:** "That's the map and the first screens, on one page. Before anyone builds, walk both again with the people who'll build it and someone who runs a team today. Steve Krug can tell you whether people can use these screens, The Designer can work on how they look, and The Architect can work out how the system enforces the unlock rule."
+**Jeff Patton:** "That's the map and the first screens, on one page. Before anyone builds, walk both again with the people who'll build it and someone who runs a team today. Steve Krug can tell you whether people can use these screens, Brad Frost can build them from your design system, and The Architect can work out how the system enforces the unlock rule."
 
 *Why it works: every element traces back to a card, the screens use the map's own words, nothing below the Slice 1 line sneaks in, and walking the screens finds a hole the way walking the map did.*
+
+---
+
+## The finished page
+
+This whole conversation, built: `example/team-course.md` is the Markdown source after Phase 8, and `example/team-course.html` is the page built from it with `story-map-template.html`. Only the JSON block differs from the template; the colors are the template's own, since the example has no design-principles file. Open the HTML to see the Map tab and the Wireframes tab with all nine Slice 1 sketches.

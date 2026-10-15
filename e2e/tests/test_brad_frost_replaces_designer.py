@@ -30,9 +30,7 @@ SCANNED = [
     TRIGGER_MAP,
 ]
 
-# Another session owns uncommitted work here and repoints it itself.
-# Remove this entry once that work lands.
-PENDING_ELSEWHERE = [REPO_ROOT / "frameworks" / "user-story-map"]
+PENDING_ELSEWHERE: list[Path] = []
 
 OLD_NAME = re.compile(r"the-designer|The Designer")
 

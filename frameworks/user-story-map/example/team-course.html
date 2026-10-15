@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Map</title>
+<!--
+  User Story Map template (frameworks/user-story-map).
+  Two things change per map, and nothing else:
+    1. The tokens in :root (and the dark block) — replace with the project's design-principles.md values.
+    2. The JSON inside <script id="map-data"> — rebuilt from the Markdown story map after each phase.
+  Never hand-edit the layout below. The Markdown map is the source; this page is a build output.
+  The page has two tabs: Map and Wireframes. The Wireframes tab appears once "wireframes" in the
+  JSON has entries (Phase 8). Each wireframe element names the map card it comes from.
+-->
+<style>
+  :root {
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --text: #1f1d1a;
+    --muted: #6b665e;
+    --line: #dcd7cd;
+    --accent: #2f5d8a;
+    --accent-text: #ffffff;
+    --card: #fff6c9;
+    --card-border: #e6d78a;
+    --gap: #b3412e;
+    --touch: #6a4c93;
+    --slice: #2f5d8a;
+    --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-head: var(--font-body);
+    --radius: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #171614; --surface: #211f1c; --text: #ece8e1; --muted: #a39d93; --line: #3a3732;
+      --accent: #7fa8d1; --accent-text: #10161c; --card: #3a3420; --card-border: #5c5230;
+      --gap: #e07a66; --touch: #b79ad9; --slice: #7fa8d1;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #171614; --surface: #211f1c; --text: #ece8e1; --muted: #a39d93; --line: #3a3732;
+    --accent: #7fa8d1; --accent-text: #10161c; --card: #3a3420; --card-border: #5c5230;
+    --gap: #e07a66; --touch: #b79ad9; --slice: #7fa8d1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.4 var(--font-body); }
+  header { padding: 24px 16px 8px; max-width: 1200px; }
+  h1 { font-family: var(--font-head); font-size: 26px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0; }
+  .frame { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0 0; }
+  .frame div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+  .frame b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  main { padding: 8px 16px 32px; }
+  .lane { margin-top: 24px; }
+  .lane h2 { font-family: var(--font-head); font-size: 18px; margin: 0 0 8px; }
+  .scroll { overflow-x: auto; padding-bottom: 8px; }
+  table { border-collapse: separate; border-spacing: 8px 0; }
+  td { vertical-align: top; width: 180px; min-width: 180px; }
+  td.label { width: 150px; min-width: 150px; position: sticky; left: 0; background: var(--bg); z-index: 1; }
+  tr.backbone td { height: 1px; padding-bottom: 12px; }
+  .activity { background: var(--accent); color: var(--accent-text); border-radius: var(--radius); padding: 10px 12px; font-weight: 600; height: 100%; min-height: 64px; display: flex; flex-direction: column; gap: 6px; }
+  .touch { margin-top: auto; font-weight: 400; font-size: 12px; line-height: 1.3; border-top: 1px solid color-mix(in srgb, var(--accent-text) 30%, transparent); padding-top: 6px; }
+  .touch + .touch { margin-top: 0; border-top: 0; padding-top: 0; }
+  .touch::before { content: "\2194  "; }
+  .band td { padding-top: 10px; }
+  .band.cut td { border-top: 3px dashed var(--slice); }
+  .slice-name { font-weight: 600; color: var(--slice); }
+  .slice-outcome { font-size: 13px; color: var(--muted); }
+  .step { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 8px 10px; margin-bottom: 6px; min-height: calc(2.8em + 18px); }
+  .step.gap { border: 2px dashed var(--gap); background: var(--surface); }
+  .step small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 13px; margin-top: 12px; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; border-radius: 3px; }
+  .lg-act::before { background: var(--accent); }
+  .lg-step::before { background: var(--card); border: 1px solid var(--card-border); }
+  .lg-gap::before { border: 2px dashed var(--gap); }
+  .questions { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; }
+  .questions h2 { font-size: 16px; margin: 0 0 6px; }
+  .questions ol { margin: 0; padding-left: 20px; }
+  .empty { color: var(--muted); border: 2px dashed var(--line); border-radius: var(--radius); padding: 24px 16px; margin-top: 24px; max-width: 560px; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 20px 0 0; }
+  .tabs[hidden] { display: none; }
+  .tabs button { font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 14px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+  .panel[hidden] { display: none; }
+  .wires { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 24px; }
+  .wire h3 { font-family: var(--font-head); font-size: 15px; margin: 0 0 2px; }
+  .wire .lane-name { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .screen { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin-top: 8px; min-height: 200px; }
+  .el { margin-bottom: 10px; }
+  .el .from { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .el .from::before { content: "\21B3  card: "; }
+  .el-heading .body { font-family: var(--font-head); font-weight: 700; font-size: 17px; }
+  .el-text .body { color: var(--text); }
+  .el-list .body { border: 1px solid var(--line); border-radius: var(--radius); }
+  .el-list .row { padding: 6px 10px; border-top: 1px solid var(--line); }
+  .el-list .row:first-child { border-top: 0; }
+  .el-button .body { display: inline-block; background: var(--accent); color: var(--accent-text); border-radius: var(--radius); padding: 6px 14px; font-weight: 600; }
+  .el-link .body { color: var(--accent); text-decoration: underline; }
+  .el-field .body { border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle"></p>
+  <div class="frame" id="frame"></div>
+  <div class="tabs" id="tabs" role="tablist" hidden>
+    <button role="tab" data-tab="map" aria-selected="true">Map</button>
+    <button role="tab" data-tab="wireframes" aria-selected="false">Wireframes</button>
+  </div>
+</header>
+<main>
+  <section class="panel" id="panel-map">
+    <div class="legend"><span class="lg-act">Activity (backbone)</span><span class="lg-step">Step or detail</span><span class="lg-gap">Gap found on the walk</span></div>
+    <div id="map"></div>
+  </section>
+  <section class="panel" id="panel-wireframes" hidden>
+    <div class="wires" id="wires"></div>
+  </section>
+</main>
+
+<script type="application/json" id="map-data">
+{
+  "title": "Team course story map",
+  "subtitle": "A course app for one team, run by a facilitator over 10 units",
+  "frame": {
+    "user": "The facilitator running one team through the course",
+    "outcome": "They walk into each weekly session ready, knowing who did the lesson, without an evening of prep",
+    "problem": "The prep is scattered across a PDF, a group chat, and a spreadsheet, so they guess who's ready"
+  },
+  "slices": [
+    {
+      "id": 1,
+      "name": "Slice 1: Run a week",
+      "outcome": "A facilitator runs a full week with one team and walks in knowing who's ready, without the spreadsheet"
+    },
+    {
+      "id": 2,
+      "name": "Slice 2: Run a unit",
+      "outcome": "The facilitator sees who fell behind across a unit and opens the next one"
+    }
+  ],
+  "lanes": [
+    {
+      "role": "Facilitator",
+      "activities": [
+        {
+          "name": "Get the team set up",
+          "steps": [
+            {
+              "text": "Invite the members",
+              "slice": 1
+            },
+            {
+              "text": "Set the session day and time",
+              "slice": 1
+            },
+            {
+              "text": "Share the course outline",
+              "slice": null
+            }
+          ]
+        },
+        {
+          "name": "Prepare the week's lesson",
+          "steps": [
+            {
+              "text": "Read the lesson",
+              "slice": 1
+            },
+            {
+              "text": "Pick the live exercise",
+              "slice": 1
+            },
+            {
+              "text": "Lesson visible to facilitator before members",
+              "slice": 1,
+              "note": "Detail: a rule under Read the lesson"
+            },
+            {
+              "text": "Notes for this team",
+              "slice": null
+            }
+          ]
+        },
+        {
+          "name": "Check who's ready",
+          "touches": [
+            "Member: Do the week's lesson"
+          ],
+          "steps": [
+            {
+              "text": "See who finished the lesson",
+              "slice": 1
+            },
+            {
+              "text": "Nudge who hasn't started",
+              "slice": null
+            },
+            {
+              "text": "Mark someone excused",
+              "slice": null,
+              "gap": true,
+              "note": "Found on the walk"
+            }
+          ]
+        },
+        {
+          "name": "Run the session",
+          "touches": [
+            "Member: Join the session"
+          ],
+          "steps": [
+            {
+              "text": "Open the live exercise",
+              "slice": 1
+            },
+            {
+              "text": "Take attendance",
+              "slice": 1
+            },
+            {
+              "text": "Note what came up",
+              "slice": null
+            }
+          ]
+        },
+        {
+          "name": "Follow up after",
+          "touches": [
+            "Member: Practice during the week"
+          ],
+          "steps": [
+            {
+              "text": "Send a recap",
+              "slice": 1
+            },
+            {
+              "text": "Note who needs a check-in",
+              "slice": null
+            }
+          ]
+        },
+        {
+          "name": "Wrap up the unit",
+          "steps": [
+            {
+              "text": "See who fell behind this unit",
+              "slice": 2
+            },
+            {
+              "text": "Talk with anyone behind",
+              "slice": 2
+            },
+            {
+              "text": "Open the next unit",
+              "slice": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "Member",
+      "activities": [
+        {
+          "name": "Join the course",
+          "steps": [
+            {
+              "text": "Accept the invite",
+              "slice": 1
+            },
+            {
+              "text": "See the course outline",
+              "slice": null
+            }
+          ]
+        },
+        {
+          "name": "Do the week's lesson",
+          "touches": [
+            "Facilitator: Check who's ready"
+          ],
+          "steps": [
+            {
+              "text": "Open this week's lesson",
+              "slice": 1
+            },
+            {
+              "text": "Do the exercises",
+              "slice": 1
+            },
+            {
+              "text": "Mark it done",
+              "slice": 1
+            }
+          ]
+        },
+        {
+          "name": "Join the session",
+          "touches": [
+            "Facilitator: Run the session"
+          ],
+          "steps": [
+            {
+              "text": "Join from the calendar link",
+              "slice": 1,
+              "gap": true,
+              "note": "Found on the walk"
+            },
+            {
+              "text": "Take part in the live exercise",
+              "slice": 1
+            }
+          ]
+        },
+        {
+          "name": "Practice during the week",
+          "touches": [
+            "Facilitator: Follow up after"
+          ],
+          "steps": [
+            {
+              "text": "Read the recap",
+              "slice": 1
+            },
+            {
+              "text": "Try the practice on the team",
+              "slice": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": [
+    "Does the facilitator need to see a lesson before it unlocks for members, and how far ahead?",
+    "Who marks a member excused, the facilitator or the member?",
+    "What does the facilitator do by hand to wrap up a unit until Slice 2 ships?"
+  ],
+  "wireframes": [
+    {
+      "lane": "Facilitator",
+      "activity": "Get the team set up",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "Get the team set up",
+          "card": "Get the team set up"
+        },
+        {
+          "kind": "field",
+          "text": "Member email addresses",
+          "card": "Invite the members"
+        },
+        {
+          "kind": "field",
+          "text": "Session day and time",
+          "card": "Set the session day and time"
+        },
+        {
+          "kind": "button",
+          "text": "Send the invites",
+          "card": "Invite the members"
+        }
+      ]
+    },
+    {
+      "lane": "Facilitator",
+      "activity": "Prepare the week's lesson",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "Lesson 2, before members see it",
+          "card": "Lesson visible to facilitator before members"
+        },
+        {
+          "kind": "text",
+          "text": "The lesson text",
+          "card": "Read the lesson"
+        },
+        {
+          "kind": "list",
+          "rows": [
+            "Exercise 1",
+            "Exercise 2",
+            "Exercise 3"
+          ],
+          "card": "Pick the live exercise"
+        },
+        {
+          "kind": "button",
+          "text": "Use this one live",
+          "card": "Pick the live exercise"
+        }
+      ]
+    },
+    {
+      "lane": "Facilitator",
+      "activity": "Check who's ready",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "Who's ready for Thursday",
+          "card": "Check who's ready"
+        },
+        {
+          "kind": "list",
+          "rows": [
+            "Ana: Finished lesson 2",
+            "Ben: Finished lesson 2",
+            "Cy: Finished lesson 2",
+            "Dee: Not started",
+            "Eli: Not started"
+          ],
+          "card": "See who finished the lesson"
+        },
+        {
+          "kind": "text",
+          "text": "3 of 5 finished",
+          "card": "See who finished the lesson"
+        },
+        {
+          "kind": "link",
+          "text": "Run the session",
+          "card": "Run the session"
+        }
+      ]
+    },
+    {
+      "lane": "Facilitator",
+      "activity": "Run the session",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "Thursday session",
+          "card": "Run the session"
+        },
+        {
+          "kind": "text",
+          "text": "Exercise 2, picked during prep",
+          "card": "Pick the live exercise"
+        },
+        {
+          "kind": "button",
+          "text": "Open the live exercise",
+          "card": "Open the live exercise"
+        },
+        {
+          "kind": "list",
+          "rows": [
+            "Ana: here",
+            "Ben: here",
+            "Cy: here",
+            "Dee: away",
+            "Eli: here"
+          ],
+          "card": "Take attendance"
+        }
+      ]
+    },
+    {
+      "lane": "Facilitator",
+      "activity": "Follow up after",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "Recap for the team",
+          "card": "Follow up after"
+        },
+        {
+          "kind": "field",
+          "text": "What we covered, and this week's practice",
+          "card": "Send a recap"
+        },
+        {
+          "kind": "button",
+          "text": "Send the recap",
+          "card": "Send a recap"
+        }
+      ]
+    },
+    {
+      "lane": "Member",
+      "activity": "Join the course",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "You're invited to the team course",
+          "card": "Join the course"
+        },
+        {
+          "kind": "text",
+          "text": "Sessions are Thursdays at 6",
+          "card": "Accept the invite"
+        },
+        {
+          "kind": "button",
+          "text": "Accept the invite",
+          "card": "Accept the invite"
+        }
+      ]
+    },
+    {
+      "lane": "Member",
+      "activity": "Do the week's lesson",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "This week: Lesson 2",
+          "card": "Open this week's lesson"
+        },
+        {
+          "kind": "text",
+          "text": "The lesson text, then each exercise",
+          "card": "Do the exercises"
+        },
+        {
+          "kind": "button",
+          "text": "Mark it done",
+          "card": "Mark it done"
+        }
+      ]
+    },
+    {
+      "lane": "Member",
+      "activity": "Join the session",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "Thursday session at 6",
+          "card": "Join the session"
+        },
+        {
+          "kind": "button",
+          "text": "Join from the calendar link",
+          "card": "Join from the calendar link"
+        },
+        {
+          "kind": "text",
+          "text": "Exercise 2 opens here when the facilitator starts it",
+          "card": "Take part in the live exercise"
+        }
+      ]
+    },
+    {
+      "lane": "Member",
+      "activity": "Practice during the week",
+      "elements": [
+        {
+          "kind": "heading",
+          "text": "Recap from Thursday",
+          "card": "Read the recap"
+        },
+        {
+          "kind": "text",
+          "text": "What we covered, and this week's practice",
+          "card": "Read the recap"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script>
+(function () {
+  var d = JSON.parse(document.getElementById('map-data').textContent);
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  document.title = d.title || 'Story Map';
+  document.getElementById('title').textContent = d.title || '';
+  document.getElementById('subtitle').textContent = d.subtitle || '';
+  var fr = document.getElementById('frame');
+  [['User', d.frame && d.frame.user], ['Outcome', d.frame && d.frame.outcome], ['Problem', d.frame && d.frame.problem]].forEach(function (p) {
+    if (!p[1]) return; var c = el('div'); c.appendChild(el('b', null, p[0])); c.appendChild(document.createTextNode(p[1])); fr.appendChild(c);
+  });
+  var slices = (d.slices || []).slice();
+  var bands = slices.map(function (s) { return { id: s.id, name: s.name, outcome: s.outcome, cut: true }; });
+  bands.push({ id: null, name: slices.length ? 'Later' : 'Not sliced yet', outcome: '', cut: slices.length > 0 });
+  var map = document.getElementById('map');
+  var hasActivities = (d.lanes || []).some(function (lane) { return (lane.activities || []).length; });
+  if (!hasActivities) map.appendChild(el('div', 'empty', 'Backbone: no activities yet.'));
+  (d.lanes || []).filter(function (lane) { return (lane.activities || []).length; }).forEach(function (lane) {
+    var sec = el('section', 'lane'); sec.appendChild(el('h2', null, lane.role));
+    var wrap = el('div', 'scroll'); var t = el('table'); var head = el('tr', 'backbone');
+    head.appendChild(el('td', 'label'));
+    lane.activities.forEach(function (a) {
+      var td = el('td'); var card = el('div', 'activity', a.name);
+      (a.touches || []).forEach(function (x) { card.appendChild(el('span', 'touch', x)); });
+      td.appendChild(card); head.appendChild(td);
+    });
+    t.appendChild(head);
+    bands.forEach(function (b) {
+      var any = lane.activities.some(function (a) { return (a.steps || []).some(function (s) { return (s.slice == null ? null : s.slice) === b.id; }); });
+      if (!any && b.id === null) return;
+      var tr = el('tr', 'band' + (b.cut ? ' cut' : '')); var lab = el('td', 'label');
+      lab.appendChild(el('div', 'slice-name', b.name)); if (b.outcome) lab.appendChild(el('div', 'slice-outcome', b.outcome));
+      tr.appendChild(lab);
+      lane.activities.forEach(function (a) {
+        var td = el('td');
+        (a.steps || []).filter(function (s) { return (s.slice == null ? null : s.slice) === b.id; }).forEach(function (s) {
+          var c = el('div', 'step' + (s.gap ? ' gap' : ''), s.text); if (s.note) c.appendChild(el('small', null, s.note)); td.appendChild(c);
+        });
+        tr.appendChild(td);
+      });
+      t.appendChild(tr);
+    });
+    wrap.appendChild(t); sec.appendChild(wrap); map.appendChild(sec);
+  });
+  if ((d.questions || []).length) {
+    var q = el('section', 'questions'); q.appendChild(el('h2', null, 'Open questions')); var ol = el('ol');
+    d.questions.forEach(function (x) { ol.appendChild(el('li', null, x)); }); q.appendChild(ol); map.appendChild(q);
+  }
+  var wf = d.wireframes || [];
+  if (wf.length) {
+    var wires = document.getElementById('wires');
+    wf.forEach(function (w) {
+      var box = el('article', 'wire');
+      if (w.lane) box.appendChild(el('div', 'lane-name', w.lane));
+      box.appendChild(el('h3', null, w.activity));
+      var scr = el('div', 'screen');
+      (w.elements || []).forEach(function (e) {
+        var kind = ['heading', 'text', 'list', 'button', 'link', 'field'].indexOf(e.kind) >= 0 ? e.kind : 'text';
+        var item = el('div', 'el el-' + kind); var body = el('div', 'body');
+        if (kind === 'list') { (e.rows || []).forEach(function (r) { body.appendChild(el('div', 'row', r)); }); }
+        else { body.textContent = e.text || ''; }
+        item.appendChild(body); item.appendChild(el('span', 'from', e.card)); scr.appendChild(item);
+      });
+      box.appendChild(scr); wires.appendChild(box);
+    });
+    var tabs = document.getElementById('tabs'); tabs.hidden = false;
+    var buttons = tabs.querySelectorAll('button');
+    function show(name) {
+      buttons.forEach(function (b) { b.setAttribute('aria-selected', String(b.getAttribute('data-tab') === name)); });
+      document.getElementById('panel-map').hidden = name !== 'map';
+      document.getElementById('panel-wireframes').hidden = name !== 'wireframes';
+    }
+    buttons.forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-tab')); }); });
+  }
+})();
+</script>
+</body>
+</html>

@@ -34,8 +34,8 @@ The picture is how the map gets reviewed. Wording in a request can't turn it off
 Do this setup once, quietly, as soon as the frame locks in Phase 1. Then redraw the map at every point marked **Draw the map.**
 
 1. **Find the design principles.** Look for the project's `design-principles.md` in these places: `brand/guidelines/design-principles.md`, `brand/*/guidelines/design-principles.md` (a monorepo keeps one per app, such as `brand/conscious-os/guidelines/design-principles.md`), and `docs/design/design-principles.md`. If exactly one is found, use it. If more than one is found, ask which app the map is for, and use that app's file. If none is found in the project, use `~/.claude/docs/design/design-principles.md` if it exists. Take its background, surface, text, muted text, border, and accent colors, its font families, and its dark-mode values if it has them. If no file is found anywhere, say so in one sentence, offer `/aligned:create-design-principles`, and use the template's own tokens until the user decides. Always tell the user which file supplied the colors, or that none was found.
-2. **Set up two files** in the project, named for the map: `docs/story-maps/{slug}.md` (the text map, the source) and `docs/story-maps/{slug}.html` (the picture, a build output). Create the folder if it doesn't exist. If the project keeps docs somewhere else, use that place and say where.
-3. **Build the HTML from `story-map-template.html`** in this framework's folder. Copy it, replace the tokens in `:root` and the two dark-mode blocks with the design-principles values, and replace the JSON inside `<script id="map-data">` with the current map. Change nothing else in the template. Never hand-edit the HTML. Update the Markdown first, then rebuild the JSON from it. The page has a Map tab and a Wireframes tab. The Wireframes tab stays hidden until Phase 8 adds wireframes to the JSON.
+2. **Set up two files** in the project, named for the map: `docs/story-maps/{slug}.md` (the text map, the source) and `docs/story-maps/{slug}.html` (the picture, a build output). Create the folder if it doesn't exist. If the project keeps docs somewhere else, use that place and say where. Start the Markdown from `story-map-template.md` in this framework's folder. Its opening comment says which JSON field each section becomes.
+3. **Build the HTML from `story-map-template.html`** in this framework's folder. Copy it, replace the tokens in `:root` and the two dark-mode blocks with the design-principles values, and replace the JSON inside `<script id="map-data">` with the current map. Change nothing else in the template. For a finished pair to copy from, see `example/team-course.md` and `example/team-course.html`: the team course map from the examples after Phase 8, with two lanes, two slices, gaps from the walk, and nine wireframes. Never hand-edit the HTML. Update the Markdown first, then rebuild the JSON from it. The page has a Map tab and a Wireframes tab. The Wireframes tab stays hidden until Phase 8 adds wireframes to the JSON.
 4. **Show it.** If the Artifact tool is available, publish the HTML as an artifact on the first draw, and republish the same file to the same URL on every later draw, so the user keeps one link and anyone they share it with can comment. If the Artifact tool is not available, open the HTML file in the user's browser (`open` on macOS, `xdg-open` on Linux, `start` on Windows) and give its path. Either way, also show a short text version of what changed in the reply.
 
 **Draw the map** means: update the Markdown, rebuild the HTML, show it, and name in one line what changed since the last draw ("Added the member lane and two places their stories touch").
@@ -262,7 +262,7 @@ If they want to add something that isn't on the map ("put a chat panel here"):
 "What's the person doing when they'd use it? If it's a step we missed, it goes on the map first, then on the screen. If it's below the Slice 1 line, it waits."
 
 If they start on colors, spacing, or polish:
-"That's The Designer's work, and it's worth doing. Right now we're checking that each screen tells the right part of the story."
+"That's Brad Frost's work, and it's worth doing. Right now we're checking that each screen tells the right part of the story."
 
 If they want to wireframe Slice 2:
 "Let's get Slice 1 agreed and built first. Slice 2's screens will change once people use these."
@@ -272,7 +272,7 @@ If they want to wireframe Slice 2:
 **Draw the map** one last time, with both tabs, and give the link.
 
 Then close with something like:
-"That's the map and the first screens, on one page. Before anyone builds, walk both again with the people who'll build it and someone who does this job today. They'll find holes we didn't. Steve Krug can tell you whether people can use these screens, The Designer can work on how they look, and The Architect can work out how the system enforces the rules underneath."
+"That's the map and the first screens, on one page. Before anyone builds, walk both again with the people who'll build it and someone who does this job today. They'll find holes we didn't. Steve Krug can tell you whether people can use these screens, Brad Frost can build them from your design system, and The Architect can work out how the system enforces the rules underneath."
 
 ## Key Rules
 
@@ -289,4 +289,4 @@ Then close with something like:
 - Each other role gets its own lane and its touch points. Say that the lanes are an adaptation of Patton's method, if asked.
 - Every slice has an outcome written next to it, and Slice 1 reaches every activity on the backbone.
 - Quote Patton only from the Quick Reference, his articles, and lines he has said in his own voice. Don't invent quotes.
-- If the question is whether one screen is usable, that's Steve Krug. Visual craft is The Designer. How the system enforces rules is The Architect. Fitting slices to fixed dates is Ryan Singer.
+- If the question is whether one screen is usable, that's Steve Krug. Visual craft and the design system are Brad Frost. How the system enforces rules is The Architect. Fitting slices to fixed dates is Ryan Singer.
