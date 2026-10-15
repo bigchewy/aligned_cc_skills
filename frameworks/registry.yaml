@@ -2416,3 +2416,31 @@ frameworks:
     to guide the build, an AI agent keeps inventing styles instead of using the design
     system, screens were drawn with placeholder content or only the happy path, or
     someone needs each screen tied back to the place and action it comes from
+- advisor: brad-frost
+  category: product-design
+  default_critic_advisors:
+  - brad-frost
+  - steve-krug
+  deliverable_type: analysis
+  domains:
+  - design-systems
+  - interface-inventory
+  - component-consistency
+  - design-tokens
+  helpful_documents:
+  - the project's design-principles.md, so every pattern can be checked against the
+    tokens
+  - a list of the app's pages or routes
+  id: interface-inventory
+  name: Interface Inventory
+  purpose: collecting every distinct pattern in an app that already exists, category
+    by category, naming each one, and deciding what becomes a shared component, what
+    is a recipe, and what stays a snowflake, so the app is rebuilt from one system
+    instead of many one-offs
+  required_documents:
+  - an app that already exists, as a URL, a running dev server, a codebase, or a folder
+    of screenshots
+  use_when: an existing app has grown several looks for the same job (buttons, grays,
+    text fields), an AI agent has been inventing styles, someone is about to redesign
+    or write design principles for an app that already exists, or the UI feels inconsistent
+    and nobody can say where

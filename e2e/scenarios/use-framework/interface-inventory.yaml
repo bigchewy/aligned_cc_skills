@@ -1,0 +1,90 @@
+# e2e/scenarios/use-framework/interface-inventory.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Interface Inventory for an agent-built invoicing app"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start with the first
+        step — settling which app, whether there is a design-principles.md,
+        and how screens will be captured — and then STOP and wait? A response
+        that jumps to a cleanup plan, proposes new button styles, or produces
+        a full audit in one shot scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on AUDIT BEFORE REDESIGN: The builder asked to "just fix the
+        buttons and pick a better blue." Does the response hold off on picking
+        a blue or a button style, explain that the inventory looks at every
+        category first (colors, forms, headings, messaging, and the rest, not
+        only buttons), and say that design changes belong in the design
+        principles before the merge? Picking a hex value or a new button style
+        scores 1-2. Narrowing the audit to buttons only, even without picking
+        values, scores at most 3.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: This is the first step of a
+        multi-step framework, so judge only what a first step can show. Does
+        the response frame the work as Brad Frost's interface inventory —
+        going category by category (buttons, forms, colors, headings, and so
+        on) and capturing one example of each distinct look rather than every
+        instance on every page? A page-by-page audit that hunts every instance,
+        or generic "do a UI audit" advice, scores 1-2. Invented steps
+        attributed to Frost score 1-2. Not yet naming or sorting patterns is
+        correct at this step and is not a deduction.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Brad
+        Frost — enthusiastic, plain, practical, friendly but firm that the
+        system is in charge? A stiff consultant voice or several paragraphs of
+        lecture before starting scores 1-2. Invented quotes attributed to Frost
+        score 1. "An interface inventory is a comprehensive collection of the
+        bits and pieces that make up your user interface" is a real quote from
+        his book, not invented.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/interface-inventory/prompt.md
+      task_prompt: "\n\n---\n\nMy app's UI has gotten messy and I want to clean it up. Honestly, can you just fix the buttons and pick a better blue? I'll answer step by step."
+      product_brief: &brief |
+        Context: An invoicing app I built alone over 18 months, mostly with an
+        AI coding agent. Next.js, runs at localhost:3000. About 20 pages. There
+        is a docs/design/design-principles.md with --accent, --text,
+        --text-muted, --border, a 4px spacing grid, and an 8px radius, but the
+        agent hasn't always used it. Buttons look different on almost every
+        page.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "My app's UI has gotten messy and I want to clean it up. Honestly, can you just fix the buttons and pick a better blue? I'll answer step by step."
+      product_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Brad Frost, author of Atomic Design. Walk me through an interface inventory of my app. Honestly, can you just fix the buttons and pick a better blue? I'll answer step by step."
+      product_brief: *brief

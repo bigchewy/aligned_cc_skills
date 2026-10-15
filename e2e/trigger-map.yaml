@@ -357,6 +357,13 @@ triggers:
       - scenarios/use-framework/breadboard-to-pages.yaml
 
   - paths:
+      - frameworks/interface-inventory/prompt.md
+      - frameworks/interface-inventory/examples.md
+      - frameworks/interface-inventory/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/interface-inventory.yaml
+
+  - paths:
       - frameworks/user-story-map/prompt.md
       - frameworks/user-story-map/examples.md
       - frameworks/user-story-map/anti-examples.md

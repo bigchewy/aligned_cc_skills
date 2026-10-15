@@ -1,6 +1,6 @@
 # Framework Registry
 
-132 frameworks across 26 categories
+133 frameworks across 26 categories
 
 | Category | Count |
 |----------|-------|
@@ -23,7 +23,7 @@
 | podcasting | 4 |
 | positioning | 8 |
 | pricing | 1 |
-| product-design | 2 |
+| product-design | 3 |
 | psychology | 12 |
 | sales | 5 |
 | social-media | 9 |
@@ -167,6 +167,7 @@
 | customer-problem-presentation | Customer Problem Presentation | steve-blank | startup | someone is about to talk to potential customers before the product or pitch is settled, needs to test which problem a market cares about, wants a discovery deck rather than a sales deck, or has competing problem guesses to compare |
 | user-story-map | User Story Map | jeff-patton | product-design | a team is about to design screens for a product or feature, earlier screen designs started from features, pages, or access rules and missed what users do, more than one role (such as a member and a facilitator) shares the product, the team can't agree what the first release must include, or someone needs a story map built and agreed before wireframes |
 | breadboard-to-pages | Breadboard to Pages | brad-frost | product-design | a breadboard or Slice 1 of a story map is agreed and needs finished screens to guide the build, an AI agent keeps inventing styles instead of using the design system, screens were drawn with placeholder content or only the happy path, or someone needs each screen tied back to the place and action it comes from |
+| interface-inventory | Interface Inventory | brad-frost | product-design | an existing app has grown several looks for the same job (buttons, grays, text fields), an AI agent has been inventing styles, someone is about to redesign or write design principles for an app that already exists, or the UI feels inconsistent and nobody can say where |
 
 ## By Category
 
@@ -294,9 +295,10 @@
 
 - **value-metric** — Value Metric Framework (patrick-campbell)
 
-### Product Design (2)
+### Product Design (3)
 
 - **breadboard-to-pages** — Breadboard to Pages (brad-frost)
+- **interface-inventory** — Interface Inventory (brad-frost)
 - **user-story-map** — User Story Map (jeff-patton)
 
 ### Psychology (12)
