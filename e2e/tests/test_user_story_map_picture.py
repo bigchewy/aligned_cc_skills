@@ -119,6 +119,14 @@ class TestPromptPhases:
         assert "save it at `docs/design/design-principles.md`" in ph
         assert "which file was found" in ph
 
+    def test_phase_nine_starts_design_principles_in_the_same_reply(self):
+        ph = _phase(_read(PROMPT), 9)
+        assert "right away, in the same reply" in ph
+        assert "Don't announce it and stop" in ph
+        assert "with Breadboard to Pages" in ph
+        ex = _read(EXAMPLES).split("## PHASE 9: Screens")[1].split("## PHASE 10")[0]
+        assert "same reply" in ex
+
     def test_phase_nine_names_the_trigger_for_phase_ten(self):
         ph = _phase(_read(PROMPT), 9)
         assert "the one allowed case" in ph

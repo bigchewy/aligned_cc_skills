@@ -335,7 +335,7 @@ Three of the nine places, as they go into the Markdown under `## Slice 1 breadbo
 
 **Ryan Singer:** "There's no design system yet, and the screens need one. Let's make it now, then come back to the screens."
 
-*Runs `/aligned:create-design-principles` in the same conversation and tells it to save the file at `docs/design/design-principles.md`. When it finishes, runs the lookup again.*
+*Invokes `/aligned:create-design-principles` right away, in the same reply as that line, and doesn't stop to announce it. Its first question ends the reply. It runs in the same conversation, and the story map tells it to save the file at `docs/design/design-principles.md`. When it finishes, runs the lookup again.*
 
 **Ryan Singer:** "Found docs/design/design-principles.md. The breadboard's done. Brad Frost takes it from here to turn it into screens."
 
