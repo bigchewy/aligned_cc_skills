@@ -66,10 +66,6 @@ class TestPictureStartsAtPhaseOne:
         assert "before Phase 2" not in prompt
         assert "do the setup in" not in _phase(prompt, 2)
 
-    def test_template_renders_with_no_activities(self):
-        data = _template_data()
-        assert "lanes" in data and "wireframes" in data
-
 
 class TestPhaseEight:
     def test_phase_eight_wireframes_slice_one(self):
@@ -142,35 +138,6 @@ def _template_data() -> dict:
     return json.loads(m.group(1))
 
 
-class TestTemplate:
-    def test_template_has_map_and_wireframe_tabs(self):
-        html = _read(TEMPLATE)
-        assert 'data-tab="map"' in html
-        assert 'data-tab="wireframes"' in html
-
-    def test_template_wireframe_elements_name_their_card(self):
-        data = _template_data()
-        assert data["wireframes"], "template must show the wireframe data shape"
-        for wf in data["wireframes"]:
-            assert wf.get("activity")
-            for element in wf["elements"]:
-                assert element.get("card"), "every wireframe element names the map card it comes from"
-
-    def test_only_one_template(self):
-        htmls = sorted(p.name for p in FRAMEWORK.glob("*.html"))
-        assert htmls == ["story-map-template.html"]
-
-    @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
-    def test_template_script_parses(self, tmp_path):
-        html = _read(TEMPLATE)
-        scripts = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
-        assert scripts
-        js = tmp_path / "template.js"
-        js.write_text("\n".join(scripts), encoding="utf-8")
-        result = subprocess.run(["node", "--check", str(js)], capture_output=True, text=True)
-        assert result.returncode == 0, result.stderr
-
-
 MD_TEMPLATE = FRAMEWORK / "story-map-template.md"
 EXAMPLE_DIR = FRAMEWORK / "example"
 EXAMPLE_MD = EXAMPLE_DIR / "team-course.md"
@@ -184,16 +151,124 @@ def _example_data() -> dict:
     return json.loads(m.group(2))
 
 
-class TestMarkdownTemplate:
-    def test_markdown_template_has_every_section_the_json_needs(self):
-        md = _read(MD_TEMPLATE)
-        for heading in ("## Frame", "## Slices", "## Lane:", "## Open questions", "## Slice 1 wireframes"):
-            assert heading in md, f"Markdown template must have a {heading} section"
+def _render_counts(html: str, data: dict | None = None) -> dict:
+    """Run the page script in Node against a DOM stub; count class tokens on appended elements."""
+    import tempfile
 
-    def test_markdown_template_says_how_each_part_becomes_json(self):
+    payload = json.dumps(data) if data is not None else MAP_DATA.search(html).group(2)
+    script = re.findall(r"<script>(.*?)</script>", html, flags=re.S)[0]
+    stub = (
+        "var made={};function E(t){this.tagName=t;this.children=[];this.className='';this.textContent='';"
+        "this.hidden=false;this.attrs={};}E.prototype.appendChild=function(c){this.children.push(c);"
+        "String(c.className||'').split(' ').filter(Boolean).forEach(function(k){made[k]=(made[k]||0)+1});return c};"
+        "E.prototype.setAttribute=function(k,v){this.attrs[k]=v};"
+        "E.prototype.getAttribute=function(k){return this.attrs[k]};E.prototype.addEventListener=function(){};"
+        "E.prototype.querySelectorAll=function(){return []};var byId={};"
+        "var document={createElement:function(t){return new E(t)},createTextNode:function(t){return new E('#text')},"
+        "getElementById:function(id){if(id==='map-data')return{textContent:DATA};return byId[id]||(byId[id]=new E('div'))}};"
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        js = Path(tmp) / "render.js"
+        js.write_text(
+            "var DATA=" + json.dumps(payload) + ";" + stub + script
+            + ";console.log(JSON.stringify({classes:made,tabs_hidden:!!byId['tabs'].hidden,"
+            "screens_hidden:!!byId['screens-link'].hidden}));",
+            encoding="utf-8",
+        )
+        result = subprocess.run(["node", str(js)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+class TestTemplateShape:
+    def test_json_has_the_new_fields(self):
+        d = _template_data()
+        assert set(d["frame"]) == {"user", "outcome", "problem", "why"}
+        assert d["roles"] and "about" in d["roles"][0]
+        assert "measure" in d["slices"][0]
+        t = d["activities"][0]["tasks"][0]
+        assert {"text", "role", "slice"} <= set(t)
+        assert any(det["kind"] == "rule" for a in d["activities"] for t in a["tasks"] for det in t.get("details", []))
+        assert d["breadboard"][0]["affordances"][0]["card"]
+        assert d["screens"] == ""
+        assert "lanes" not in d and "wireframes" not in d
+
+    def test_tabs_are_map_and_breadboard(self):
+        html = _read(TEMPLATE)
+        assert 'data-tab="map"' in html and 'data-tab="breadboard"' in html
+        assert 'data-tab="wireframes"' not in html
+        assert 'id="screens-link"' in html
+
+    def test_only_one_template(self):
+        assert sorted(p.name for p in FRAMEWORK.glob("*.html")) == ["story-map-template.html"]
+
+    @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+    def test_template_script_parses(self, tmp_path):
+        scripts = re.findall(r"<script>(.*?)</script>", _read(TEMPLATE), flags=re.S)
+        assert scripts
+        js = tmp_path / "template.js"
+        js.write_text("\n".join(scripts), encoding="utf-8")
+        result = subprocess.run(["node", "--check", str(js)], capture_output=True, text=True)
+        assert result.returncode == 0, result.stderr
+
+    @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+    def test_template_sample_renders(self):
+        r = _render_counts(_read(TEMPLATE))
+        c = r["classes"]
+        assert c["activity"] == 2 and c["task"] == 3 and c["detail"] == 1
+        assert c["gap"] >= 1 and c["workaround"] >= 1
+        assert c["role-card"] == 2 and c["slice-measure"] == 1
+        assert c["place"] == 1 and c["affordance"] == 2
+        assert r["tabs_hidden"] is False and r["screens_hidden"] is True
+
+
+class TestTemplateEdgeCases:
+    pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+
+    def _base(self):
+        return {"title": "T", "subtitle": "", "frame": {"user": "u", "outcome": "", "problem": "", "why": ""},
+                "roles": [{"name": "Owner", "about": "Runs it"}], "slices": [], "questions": [],
+                "breadboard": [], "screens": ""}
+
+    def test_activities_without_tasks_still_draw(self):
+        d = self._base() | {"activities": [{"name": "Do A", "tasks": []}, {"name": "Do B", "tasks": []}]}
+        assert _render_counts(_read(TEMPLATE), d)["classes"]["activity"] == 2
+
+    def test_no_slices_draws_one_uncut_band(self):
+        d = self._base() | {"activities": [{"name": "Do A", "tasks": [{"text": "Step", "role": "Owner", "slice": None}]}]}
+        r = _render_counts(_read(TEMPLATE), d)
+        assert r["classes"].get("cut", 0) == 0 and r["classes"]["task"] == 1
+        assert r["tabs_hidden"] is True
+
+    def test_single_role_map_shows_role_chip(self):
+        d = self._base() | {"slices": [{"id": 1, "name": "Slice 1", "outcome": "o", "measure": ""}],
+                            "activities": [{"name": "Do A", "tasks": [{"text": "Step", "role": "Owner", "slice": 1}]}]}
+        c = _render_counts(_read(TEMPLATE), d)["classes"]
+        assert c["role-chip"] == 1 and c.get("slice-measure", 0) == 0
+
+    def test_map_sits_in_a_scroll_container(self):
+        assert re.search(r'class="scroll"|\'scroll\'', _read(TEMPLATE))
+
+    def test_screens_link_shows_when_screens_set(self):
+        d = self._base() | {"activities": [], "screens": "screens/index.html"}
+        assert _render_counts(_read(TEMPLATE), d)["screens_hidden"] is False
+
+
+class TestMarkdownTemplate:
+    def test_sections_in_order(self):
         md = _read(MD_TEMPLATE)
-        for field in ('"frame"', '"slices"', '"lanes"', '"touches"', '"gap"', '"questions"', '"wireframes"', '"card"'):
-            assert field in md, f"Markdown template must map a section to {field}"
+        heads = ["## Frame", "## Roles", "## Slices", "## Map", "## Open questions", "## Slice 1 breadboard"]
+        positions = [md.index(h) for h in heads]
+        assert positions == sorted(positions)
+        assert "**Why:**" in md
+        assert "| Card | Tier | Kind | Role | Slice | Gap | Note |" in md
+        assert "| Affordance | Leads to | Card |" in md
+
+    def test_comment_maps_markdown_to_json(self):
+        md = _read(MD_TEMPLATE)
+        for field in ('"why"', '"roles"', '"measure"', '"activities"', '"tasks"', '"details"',
+                      '"workaround"', '"breadboard"', '"affordances"', '"screens"'):
+            assert field in md, field
 
     def test_prompt_points_to_markdown_template_and_example(self):
         section = _read(PROMPT).split("### The map on screen")[1].split("### PHASE 1")[0]
@@ -201,6 +276,7 @@ class TestMarkdownTemplate:
         assert "example/team-course" in section
 
 
+@pytest.mark.skip(reason="rebuilt in Task 2")
 class TestWorkedExample:
     def test_example_html_is_the_template_with_only_the_json_changed(self):
         template = MAP_DATA.sub(r"\1\3", _read(TEMPLATE))

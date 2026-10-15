@@ -10,8 +10,11 @@
     1. The tokens in :root (and the dark block) — replace with the project's design-principles.md values.
     2. The JSON inside <script id="map-data"> — rebuilt from the Markdown story map after each phase.
   Never hand-edit the layout below. The Markdown map is the source; this page is a build output.
-  The page has two tabs: Map and Wireframes. The Wireframes tab appears once "wireframes" in the
-  JSON has entries (Phase 8). Each wireframe element names the map card it comes from.
+  The page draws one timeline. Each activity is a card over its tasks; each task is a column; details
+  hang under their task. Horizontal bands are the release slices, each with an outcome and a measure.
+  The page has two tabs: Map and Breadboard. The tab row appears once "breadboard" in the JSON has
+  entries (Phase 8). Each affordance names the map card it comes from. A Screens link appears once
+  "screens" in the JSON holds a link (Phase 10).
 -->
 <style>
   :root {
@@ -51,54 +54,61 @@
   .frame { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0 0; }
   .frame div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
   .frame b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .roles { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 0; }
+  .role-card { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--touch); border-radius: var(--radius); padding: 8px 12px; min-width: 180px; max-width: 360px; }
+  .role-card b { display: block; }
+  .role-card span { color: var(--muted); font-size: 13px; }
   main { padding: 8px 16px 32px; }
-  .lane { margin-top: 24px; }
-  .lane h2 { font-family: var(--font-head); font-size: 18px; margin: 0 0 8px; }
-  .scroll { overflow-x: auto; padding-bottom: 8px; }
+  .scroll { overflow-x: auto; padding-bottom: 8px; margin-top: 16px; }
   table { border-collapse: separate; border-spacing: 8px 0; }
-  td { vertical-align: top; width: 180px; min-width: 180px; }
-  td.label { width: 150px; min-width: 150px; position: sticky; left: 0; background: var(--bg); z-index: 1; }
+  td { vertical-align: top; width: 150px; min-width: 150px; }
+  td.label { width: 170px; min-width: 170px; position: sticky; left: 0; background: var(--bg); z-index: 1; }
   tr.backbone td { height: 1px; padding-bottom: 12px; }
   .activity { background: var(--accent); color: var(--accent-text); border-radius: var(--radius); padding: 10px 12px; font-weight: 600; height: 100%; min-height: 64px; display: flex; flex-direction: column; gap: 6px; }
-  .touch { margin-top: auto; font-weight: 400; font-size: 12px; line-height: 1.3; border-top: 1px solid color-mix(in srgb, var(--accent-text) 30%, transparent); padding-top: 6px; }
-  .touch + .touch { margin-top: 0; border-top: 0; padding-top: 0; }
-  .touch::before { content: "\2194  "; }
+  .role-chip { margin-top: auto; align-self: flex-start; font-weight: 400; font-size: 11px; line-height: 1.3; border: 1px solid color-mix(in srgb, var(--accent-text) 55%, transparent); border-radius: 999px; padding: 1px 8px; }
+  .role-chip + .role-chip { margin-top: 0; }
   .band td { padding-top: 10px; }
   .band.cut td { border-top: 3px dashed var(--slice); }
   .slice-name { font-weight: 600; color: var(--slice); }
   .slice-outcome { font-size: 13px; color: var(--muted); }
-  .step { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 8px 10px; margin-bottom: 6px; min-height: calc(2.8em + 18px); }
-  .step.gap { border: 2px dashed var(--gap); background: var(--surface); }
-  .step small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .slice-measure { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 2px; }
+  .task { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 8px 10px; margin-bottom: 6px; min-height: calc(2.8em + 18px); }
+  .task.gap { border: 2px dashed var(--gap); background: var(--surface); }
+  .task.workaround { border-left: 5px solid var(--touch); }
+  .task.workaround::before { content: "workaround"; display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--touch); }
+  .task small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .task small.task-role { margin-top: 0; margin-bottom: 2px; font-size: 11px; }
+  .detail { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 8px; margin: 0 0 6px 10px; font-size: 12px; color: var(--muted); }
+  .detail.gap { border: 1px dashed var(--gap); }
+  .detail.kind-rule::before { content: "rule: "; font-weight: 600; }
+  .detail.kind-alternative::before { content: "or: "; font-weight: 600; }
+  .detail.kind-exception::before { content: "unless: "; font-weight: 600; }
   .legend { display: flex; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 13px; margin-top: 12px; }
   .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; border-radius: 3px; }
   .lg-act::before { background: var(--accent); }
-  .lg-step::before { background: var(--card); border: 1px solid var(--card-border); }
+  .lg-task::before { background: var(--card); border: 1px solid var(--card-border); }
+  .lg-detail::before { background: var(--surface); border: 1px solid var(--line); }
   .lg-gap::before { border: 2px dashed var(--gap); }
+  .lg-work::before { background: var(--card); border-left: 4px solid var(--touch); }
   .questions { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; }
   .questions h2 { font-size: 16px; margin: 0 0 6px; }
   .questions ol { margin: 0; padding-left: 20px; }
   .empty { color: var(--muted); border: 2px dashed var(--line); border-radius: var(--radius); padding: 24px 16px; margin-top: 24px; max-width: 560px; }
-  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 20px 0 0; }
+  .tabs { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--line); margin: 20px 0 0; }
   .tabs[hidden] { display: none; }
   .tabs button { font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 14px; cursor: pointer; }
   .tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+  .tabs a { margin-left: auto; font-weight: 600; color: var(--accent); padding: 8px 14px; }
+  .tabs a[hidden] { display: none; }
   .panel[hidden] { display: none; }
-  .wires { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 24px; }
-  .wire h3 { font-family: var(--font-head); font-size: 15px; margin: 0 0 2px; }
-  .wire .lane-name { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
-  .screen { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin-top: 8px; min-height: 200px; }
-  .el { margin-bottom: 10px; }
-  .el .from { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
-  .el .from::before { content: "\21B3  card: "; }
-  .el-heading .body { font-family: var(--font-head); font-weight: 700; font-size: 17px; }
-  .el-text .body { color: var(--text); }
-  .el-list .body { border: 1px solid var(--line); border-radius: var(--radius); }
-  .el-list .row { padding: 6px 10px; border-top: 1px solid var(--line); }
-  .el-list .row:first-child { border-top: 0; }
-  .el-button .body { display: inline-block; background: var(--accent); color: var(--accent-text); border-radius: var(--radius); padding: 6px 14px; font-weight: 600; }
-  .el-link .body { color: var(--accent); text-decoration: underline; }
-  .el-field .body { border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px; color: var(--muted); }
+  .places { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 24px; }
+  .place { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .place h3 { font-family: var(--font-head); font-size: 16px; margin: 0 0 2px; }
+  .place .place-role { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+  .affordance { border-top: 1px solid var(--line); padding: 8px 0; }
+  .affordance .aff-text { font-weight: 600; }
+  .affordance .aff-to { display: block; color: var(--accent); font-size: 13px; }
+  .affordance .aff-card { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -106,18 +116,20 @@
   <h1 id="title"></h1>
   <p class="sub" id="subtitle"></p>
   <div class="frame" id="frame"></div>
+  <div class="roles" id="roles"></div>
   <div class="tabs" id="tabs" role="tablist" hidden>
     <button role="tab" data-tab="map" aria-selected="true">Map</button>
-    <button role="tab" data-tab="wireframes" aria-selected="false">Wireframes</button>
+    <button role="tab" data-tab="breadboard" aria-selected="false">Breadboard</button>
+    <a id="screens-link" hidden>Screens</a>
   </div>
 </header>
 <main>
   <section class="panel" id="panel-map">
-    <div class="legend"><span class="lg-act">Activity (backbone)</span><span class="lg-step">Step or detail</span><span class="lg-gap">Gap found on the walk</span></div>
+    <div class="legend"><span class="lg-act">Activity (backbone)</span><span class="lg-task">Task</span><span class="lg-detail">Detail, rule, or exception</span><span class="lg-gap">Gap found on the walk</span><span class="lg-work">Workaround</span></div>
     <div id="map"></div>
   </section>
-  <section class="panel" id="panel-wireframes" hidden>
-    <div class="wires" id="wires"></div>
+  <section class="panel" id="panel-breadboard" hidden>
+    <div class="places" id="places"></div>
   </section>
 </main>
 
@@ -125,37 +137,46 @@
 {
   "title": "Story map title",
   "subtitle": "One line naming the product or feature",
-  "frame": { "user": "", "outcome": "", "problem": "" },
-  "slices": [
-    { "id": 1, "name": "Slice 1", "outcome": "What the user can do after this slice" }
+  "frame": { "user": "", "outcome": "", "problem": "", "why": "" },
+  "roles": [
+    { "name": "Primary user", "about": "Who they are, in one line" },
+    { "name": "Other role", "about": "Who they are, in one line" }
   ],
-  "lanes": [
+  "slices": [
+    { "id": 1, "name": "Slice 1", "outcome": "What the user can do after this slice", "measure": "What you would measure to know it worked" }
+  ],
+  "activities": [
     {
-      "role": "Primary user",
-      "activities": [
+      "name": "Verb phrase the user would say",
+      "tasks": [
         {
-          "name": "Verb phrase the user would say",
-          "touches": ["Other role: the activity where their stories meet"],
-          "steps": [
-            { "text": "Step the user does", "slice": 1 },
-            { "text": "Step someone assumed", "gap": true, "note": "Found on the walk" }
+          "text": "Task the user does", "role": "Primary user", "slice": 1,
+          "details": [
+            { "text": "A rule that applies to this task", "kind": "rule", "slice": 1 }
           ]
-        }
+        },
+        { "text": "Task someone assumed", "role": "Primary user", "slice": 1, "gap": true, "note": "Found on the walk" }
+      ]
+    },
+    {
+      "name": "Next verb phrase",
+      "tasks": [
+        { "text": "Task done by hand today", "role": "Other role", "slice": 1, "workaround": true }
       ]
     }
   ],
   "questions": [],
-  "wireframes": [
+  "breadboard": [
     {
-      "lane": "Primary user",
-      "activity": "Verb phrase the user would say",
-      "elements": [
-        { "kind": "heading", "text": "Words from the card", "card": "Step the user does" },
-        { "kind": "list", "rows": ["One row", "Another row"], "card": "Step the user does" },
-        { "kind": "button", "text": "Main action", "card": "Step the user does" }
+      "place": "Place the user can navigate to",
+      "role": "Primary user",
+      "affordances": [
+        { "text": "Thing the user can act on", "to": "", "card": "Task the user does" },
+        { "text": "Another thing they can act on", "to": "Place the user can navigate to", "card": "Task someone assumed" }
       ]
     }
-  ]
+  ],
+  "screens": ""
 }
 </script>
 <script>
@@ -166,69 +187,109 @@
   document.getElementById('title').textContent = d.title || '';
   document.getElementById('subtitle').textContent = d.subtitle || '';
   var fr = document.getElementById('frame');
-  [['User', d.frame && d.frame.user], ['Outcome', d.frame && d.frame.outcome], ['Problem', d.frame && d.frame.problem]].forEach(function (p) {
+  var f = d.frame || {};
+  [['User', f.user], ['Outcome', f.outcome], ['Problem', f.problem], ['Why', f.why]].forEach(function (p) {
     if (!p[1]) return; var c = el('div'); c.appendChild(el('b', null, p[0])); c.appendChild(document.createTextNode(p[1])); fr.appendChild(c);
   });
-  var slices = (d.slices || []).slice();
-  var bands = slices.map(function (s) { return { id: s.id, name: s.name, outcome: s.outcome, cut: true }; });
-  bands.push({ id: null, name: slices.length ? 'Later' : 'Not sliced yet', outcome: '', cut: slices.length > 0 });
+  var rolesBox = document.getElementById('roles');
+  (d.roles || []).forEach(function (r) {
+    var c = el('div', 'role-card'); c.appendChild(el('b', null, r.name)); if (r.about) c.appendChild(el('span', null, r.about)); rolesBox.appendChild(c);
+  });
+
+  var slices = d.slices || [];
+  var ids = slices.map(function (s) { return s.id; });
+  function sid(v) { return (v == null || ids.indexOf(v) < 0) ? null : v; }
+  var activities = d.activities || [];
+  var cols = [];
+  activities.forEach(function (a) {
+    var ts = a.tasks || [];
+    if (!ts.length) cols.push({ t: null });
+    else ts.forEach(function (t) { cols.push({ t: t }); });
+  });
+  function detailSlice(t, x) { return sid(x.slice === undefined ? t.slice : x.slice); }
+
   var map = document.getElementById('map');
-  var hasActivities = (d.lanes || []).some(function (lane) { return (lane.activities || []).length; });
-  if (!hasActivities) map.appendChild(el('div', 'empty', 'Backbone: no activities yet.'));
-  (d.lanes || []).filter(function (lane) { return (lane.activities || []).length; }).forEach(function (lane) {
-    var sec = el('section', 'lane'); sec.appendChild(el('h2', null, lane.role));
-    var wrap = el('div', 'scroll'); var t = el('table'); var head = el('tr', 'backbone');
+  if (!activities.length) map.appendChild(el('div', 'empty', 'Backbone: no activities yet.'));
+  else {
+    var wrap = el('div', 'scroll'); var table = el('table'); var head = el('tr', 'backbone');
     head.appendChild(el('td', 'label'));
-    lane.activities.forEach(function (a) {
-      var td = el('td'); var card = el('div', 'activity', a.name);
-      (a.touches || []).forEach(function (x) { card.appendChild(el('span', 'touch', x)); });
+    activities.forEach(function (a) {
+      var ts = a.tasks || [];
+      var td = el('td'); td.colSpan = Math.max(1, ts.length);
+      var card = el('div', 'activity', a.name);
+      var seen = [];
+      ts.forEach(function (t) { if (t.role && seen.indexOf(t.role) < 0) seen.push(t.role); });
+      seen.forEach(function (r) { card.appendChild(el('span', 'role-chip', r)); });
       td.appendChild(card); head.appendChild(td);
     });
-    t.appendChild(head);
+    table.appendChild(head);
+
+    var bands = slices.map(function (s) { return { id: s.id, name: s.name, outcome: s.outcome, measure: s.measure, cut: true }; });
+    if (slices.length) {
+      var hasLater = cols.some(function (c) {
+        return c.t && (sid(c.t.slice) === null || (c.t.details || []).some(function (x) { return detailSlice(c.t, x) === null; }));
+      });
+      if (hasLater) bands.push({ id: null, name: 'Later', outcome: '', measure: '', cut: true });
+    } else {
+      bands.push({ id: null, name: 'Not sliced yet', outcome: '', measure: '', cut: false });
+    }
     bands.forEach(function (b) {
-      var any = lane.activities.some(function (a) { return (a.steps || []).some(function (s) { return (s.slice == null ? null : s.slice) === b.id; }); });
-      if (!any && b.id === null) return;
       var tr = el('tr', 'band' + (b.cut ? ' cut' : '')); var lab = el('td', 'label');
-      lab.appendChild(el('div', 'slice-name', b.name)); if (b.outcome) lab.appendChild(el('div', 'slice-outcome', b.outcome));
+      lab.appendChild(el('div', 'slice-name', b.name));
+      if (b.outcome) lab.appendChild(el('div', 'slice-outcome', b.outcome));
+      if (b.measure) lab.appendChild(el('div', 'slice-measure', 'Measure: ' + b.measure));
       tr.appendChild(lab);
-      lane.activities.forEach(function (a) {
-        var td = el('td');
-        (a.steps || []).filter(function (s) { return (s.slice == null ? null : s.slice) === b.id; }).forEach(function (s) {
-          var c = el('div', 'step' + (s.gap ? ' gap' : ''), s.text); if (s.note) c.appendChild(el('small', null, s.note)); td.appendChild(c);
-        });
+      cols.forEach(function (c) {
+        var td = el('td'); var t = c.t;
+        if (t) {
+          if (sid(t.slice) === b.id) {
+            var card = el('div', 'task' + (t.gap ? ' gap' : '') + (t.workaround ? ' workaround' : ''));
+            if (t.role) card.appendChild(el('small', 'task-role', t.role));
+            card.appendChild(document.createTextNode(t.text));
+            if (t.note) card.appendChild(el('small', null, t.note));
+            td.appendChild(card);
+          }
+          (t.details || []).filter(function (x) { return detailSlice(t, x) === b.id; }).forEach(function (x) {
+            td.appendChild(el('div', 'detail kind-' + (x.kind || 'detail') + (x.gap ? ' gap' : ''), x.text));
+          });
+        }
         tr.appendChild(td);
       });
-      t.appendChild(tr);
+      table.appendChild(tr);
     });
-    wrap.appendChild(t); sec.appendChild(wrap); map.appendChild(sec);
-  });
+    wrap.appendChild(table); map.appendChild(wrap);
+  }
   if ((d.questions || []).length) {
     var q = el('section', 'questions'); q.appendChild(el('h2', null, 'Open questions')); var ol = el('ol');
     d.questions.forEach(function (x) { ol.appendChild(el('li', null, x)); }); q.appendChild(ol); map.appendChild(q);
   }
-  var wf = d.wireframes || [];
-  if (wf.length) {
-    var wires = document.getElementById('wires');
-    wf.forEach(function (w) {
-      var box = el('article', 'wire');
-      if (w.lane) box.appendChild(el('div', 'lane-name', w.lane));
-      box.appendChild(el('h3', null, w.activity));
-      var scr = el('div', 'screen');
-      (w.elements || []).forEach(function (e) {
-        var kind = ['heading', 'text', 'list', 'button', 'link', 'field'].indexOf(e.kind) >= 0 ? e.kind : 'text';
-        var item = el('div', 'el el-' + kind); var body = el('div', 'body');
-        if (kind === 'list') { (e.rows || []).forEach(function (r) { body.appendChild(el('div', 'row', r)); }); }
-        else { body.textContent = e.text || ''; }
-        item.appendChild(body); item.appendChild(el('span', 'from', e.card)); scr.appendChild(item);
+
+  var bb = d.breadboard || [];
+  var tabs = document.getElementById('tabs');
+  var link = document.getElementById('screens-link');
+  tabs.hidden = !bb.length;
+  link.hidden = !d.screens;
+  if (d.screens) { link.href = d.screens; link.textContent = 'Screens'; }
+  if (bb.length) {
+    var places = document.getElementById('places');
+    bb.forEach(function (p) {
+      var box = el('article', 'place');
+      box.appendChild(el('h3', null, p.place));
+      if (p.role) box.appendChild(el('div', 'place-role', p.role));
+      (p.affordances || []).forEach(function (a) {
+        var row = el('div', 'affordance');
+        row.appendChild(el('div', 'aff-text', a.text));
+        if (a.to) row.appendChild(el('span', 'aff-to', '→ ' + a.to));
+        row.appendChild(el('span', 'aff-card', 'card: ' + a.card));
+        box.appendChild(row);
       });
-      box.appendChild(scr); wires.appendChild(box);
+      places.appendChild(box);
     });
-    var tabs = document.getElementById('tabs'); tabs.hidden = false;
     var buttons = tabs.querySelectorAll('button');
     function show(name) {
       buttons.forEach(function (b) { b.setAttribute('aria-selected', String(b.getAttribute('data-tab') === name)); });
       document.getElementById('panel-map').hidden = name !== 'map';
-      document.getElementById('panel-wireframes').hidden = name !== 'wireframes';
+      document.getElementById('panel-breadboard').hidden = name !== 'breadboard';
     }
     buttons.forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-tab')); }); });
   }
