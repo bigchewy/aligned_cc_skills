@@ -1039,8 +1039,8 @@ advisors:
   prompt: advisors/prompts/steve-jobs.md
   summary: Co-founder of Apple who demanded insanely great products
 - best_for: 'UI layout comparisons, navigation design, page clarity, label and icon
-    evaluation, user flow simplicity. Pairs well with The Designer — Krug evaluates
-    clarity, The Designer evaluates craft.
+    evaluation, user flow simplicity. Pairs well with Brad Frost — Krug evaluates
+    clarity, Frost evaluates how the screen is built from the design system.
 
     '
   domains:
@@ -1116,34 +1116,49 @@ advisors:
     '
   prompt: advisors/prompts/the-architect.md
   summary: Senior systems thinker who evaluates designs against the codebase
-- best_for: 'Designs with UI changes, mockup review, design system compliance, layout
-    decisions, responsive behavior. Pairs well with Steve Jobs (product vision) —
-    The Designer evaluates craft, Jobs evaluates focus.
+- best_for: 'Turning a breadboard of places and actions into exact static screens
+    built from the project''s design system: a template for each place, then a page
+    with real content, then variations (first-time and empty, long content, other
+    roles), at phone and desktop widths. Reviewing screens and mockups for design-system
+    consistency, component reuse, responsive behavior, and whether every element
+    comes from the system''s tokens and components. Setting up a design system so
+    AI coding agents build from it instead of inventing values. Pairs well with Steve
+    Krug — Krug judges whether a screen is clear, Frost judges how it is built from
+    the design system.
 
     '
   domains:
-  - visual-hierarchy
-  - spacing
-  - typography
-  - color-contrast
-  - responsiveness
+  - design-systems
+  - atomic-design
   - design-tokens
   - component-consistency
-  - accessibility
-  evaluation_expertise: 'Evaluates visual craft and design system compliance. Is the
-    hierarchy clear? Are spacing and typography consistent with the design system?
-    Is color contrast accessible? Are components reused correctly? Catches visual
-    inconsistencies, accessibility violations, and design system drift.
+  - responsiveness
+  - visual-hierarchy
+  - screen-rendering
+  - ai-and-design-systems
+  evaluation_expertise: 'Evaluates whether screens are built from the design system
+    or around it. Does every element trace to a token or a component? Do two components
+    do the same job with different looks? Does the page hold up with real content:
+    long names, empty states, first-time users, other roles? Does the layout work
+    at phone and desktop widths? Is hierarchy set with the type scale and contrast
+    levels in design-principles.md? Catches placeholder text standing in for content,
+    one-off values, duplicate components, and screens that only work with ideal data.
 
     '
-  id: the-designer
-  name: The Designer
-  not_for: 'Backend architecture, business strategy, data models, API design, content
-    strategy.
+  id: brad-frost
+  name: Brad Frost
+  not_for: 'Whether a person can use a screen without thinking (redirect to Steve
+    Krug); setting the design direction, palette, type, and tokens in design-principles.md
+    (redirect to /aligned:create-design-principles); deciding the places, actions,
+    and connections before any screen exists (redirect to Ryan Singer); the user''s
+    story and release slices (redirect to Jeff Patton); illustration (redirect to
+    James Gurney); backend architecture and data models (redirect to The Architect).
 
     '
-  prompt: advisors/prompts/the-designer.md
-  summary: Senior visual and interaction designer who evaluates UI craft quality
+  prompt: advisors/prompts/brad-frost.md
+  summary: Author of Atomic Design and design system consultant; builds screens from
+    a design system's parts, tests them with real content, and sets up design systems
+    that AI agents build from
 - best_for: 'Tooling designs, skill/agent architecture, CI/CD pipelines, developer
     workflows, SDK design.
 
@@ -1854,7 +1869,7 @@ advisors:
     '
   id: james-gurney
   name: James Gurney
-  not_for: 'UI, screen layout, or design-system review (redirect to The Designer);
+  not_for: 'UI, screen layout, or design-system review (redirect to Brad Frost);
     animation timing and what should move; marketing or sales copy; drawing a specific
     real person''s likeness from photos; product or business strategy.
 
@@ -2136,7 +2151,7 @@ advisors:
   id: jeff-patton
   name: Jeff Patton
   not_for: 'Whether a single screen is usable (redirect to Steve Krug); visual craft,
-    layout, and design-system work (redirect to The Designer); data models, permissions
+    layout, and design-system work (redirect to Brad Frost); data models, permissions
     logic, and how the system enforces rules (redirect to The Architect); fitting
     slices against fixed dates and team time (redirect to Ryan Singer); designing
     experiments for validated learning (redirect to Eric Ries).

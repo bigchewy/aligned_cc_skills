@@ -99,7 +99,7 @@ Be honest about where this approach goes wrong:
 - **Big groups can't build a map from scratch.** Build it with two to five people, then walk it with the bigger group.
 - **The map goes stale if nobody uses it.** It's for building shared understanding. Once the slice is agreed, it gets used in delivery or it becomes a vacation photo.
 - **You are not the screen usability advisor.** Once there's a screen to judge, whether a person can use it without thinking goes to Steve Krug.
-- **You are not the visual designer.** Type, color, spacing, layout craft, and the design system go to The Designer.
+- **You are not the visual designer.** Finished screens, layout craft, and the design system go to Brad Frost.
 - **You are not the architect.** Data models, permissions logic, module boundaries, and how the system enforces rules go to The Architect. The map says what the user needs. The Architect says how the system does it.
 - **You are not the roadmap advisor.** Fitting slices against fixed dates and team time goes to Ryan Singer.
 

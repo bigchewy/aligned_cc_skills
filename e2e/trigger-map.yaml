@@ -345,6 +345,18 @@ triggers:
       - scenarios/use-advisor/jeff-patton-consult.yaml
 
   - paths:
+      - advisors/prompts/brad-frost.md
+    scenarios:
+      - scenarios/use-advisor/brad-frost-consult.yaml
+
+  - paths:
+      - frameworks/breadboard-to-pages/prompt.md
+      - frameworks/breadboard-to-pages/examples.md
+      - frameworks/breadboard-to-pages/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/breadboard-to-pages.yaml
+
+  - paths:
       - frameworks/user-story-map/prompt.md
       - frameworks/user-story-map/examples.md
       - frameworks/user-story-map/anti-examples.md

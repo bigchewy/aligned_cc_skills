@@ -1,0 +1,85 @@
+# e2e/scenarios/use-advisor/brad-frost-consult.yaml
+# Quick-consult eval for Brad Frost (Atomic Design / templates, pages with real content, variations, system discipline)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Brad Frost screens-from-the-system consult"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ATOMIC DESIGN SPECIFICITY: Does the response use Brad
+        Frost's actual method — the parts the screen needs (atoms, molecules,
+        organisms) built from the design system, a template that shows what the
+        content is made from, then a page with real representative content, then
+        variations of that page? Generic design advice ("add whitespace", "use a
+        card", "make the button stand out") with none of these specifics scores
+        1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on REAL CONTENT AND VARIATIONS: The builder asked for a quick
+        mockup with placeholder text. Does the response push for real copy and
+        name the cases that break the page — no team members yet, one member,
+        many members, a very long name or email, an error, and what a non-owner
+        member sees differently? A single happy-path mockup with lorem ipsum
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SYSTEM DISCIPLINE: The builder wants a brighter blue and
+        16px corners on this one screen, neither of which is in their tokens.
+        Does the response decline to put one-off values on the screen, and say
+        to either change the token in design-principles.md for everyone or use
+        what exists? Does it avoid inventing a type scale, palette, or spacing
+        values of its own? Hard-coding the new blue on the screen, or making up
+        values not in the tokens, scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Brad Frost
+        — enthusiastic, plain, practical, first person, friendly but blunt that
+        the system is in charge, maybe a dry joke about ordinary components? A
+        stiff consultant voice or a lecture on design theory scores 1-2.
+        Invented quotes attributed to Frost score 1.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPE DISCIPLINE: Does the response stay on building the
+        screen from the system and testing it with real content? Does it leave
+        whether a person can use the screen without thinking to Steve Krug, and
+        choosing the design direction and token values to the design-principles
+        skill (it may name them)? Redesigning the product's features or running
+        a usability review scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — team settings place, wants a quick lorem ipsum mockup and a brighter one-off blue"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/brad-frost.md
+      task_prompt: "\n\n---\n\nI'm building a small team habit tracker by myself with Claude Code. My breadboard has a place called Team Settings: the owner can rename the team, invite a member by email, change a member's role, and remove a member. Remove leads to a confirm step, then back to Team Settings. I have a design-principles.md with our colors, type scale, and a 4px spacing grid. Can you just mock up Team Settings quickly with some lorem ipsum so I can see the layout? Also our primary blue feels dull — on this screen use something brighter, like #2F80FF, and round the cards to 16px. Our tokens say 8px."
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I'm building a small team habit tracker by myself with Claude Code. My breadboard has a place called Team Settings: the owner can rename the team, invite a member by email, change a member's role, and remove a member. Remove leads to a confirm step, then back to Team Settings. I have a design-principles.md with our colors, type scale, and a 4px spacing grid. Can you just mock up Team Settings quickly with some lorem ipsum so I can see the layout? Also our primary blue feels dull — on this screen use something brighter, like #2F80FF, and round the cards to 16px. Our tokens say 8px."
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Brad Frost, author of Atomic Design. I'm building a small team habit tracker by myself with Claude Code. My breadboard has a place called Team Settings: the owner can rename the team, invite a member by email, change a member's role, and remove a member. Remove leads to a confirm step, then back to Team Settings. I have a design-principles.md with our colors, type scale, and a 4px spacing grid. Can you just mock up Team Settings quickly with some lorem ipsum so I can see the layout? Also our primary blue feels dull — on this screen use something brighter, like #2F80FF, and round the cards to 16px. Our tokens say 8px."

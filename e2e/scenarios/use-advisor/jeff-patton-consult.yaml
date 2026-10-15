@@ -58,7 +58,7 @@ defaultTest:
         Score 1-5 on SCOPE DISCIPLINE: Does the response stay on the user's
         story and the map, and leave single-screen usability, visual design,
         and how the system enforces permissions to others (it may name Steve
-        Krug, The Designer, or The Architect)? Designing the permission model
+        Krug, Brad Frost, or The Architect)? Designing the permission model
         or the visual style scores 1-2.
       weight: 1
 

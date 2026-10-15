@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{Product} Slice 1 Screens</title>
+<style>
+/* ===== Page chrome: the frame around the screens. Do not change. ===== */
+:root {
+  --bp-bg: #f6f6f4;
+  --bp-surface: #ffffff;
+  --bp-text: #1d1d1b;
+  --bp-muted: #5f5f5a;
+  --bp-border: #dcdcd6;
+  --bp-accent: #2d5bd7;
+  --bp-trace: #b4237a;
+
+  /* ===== Project tokens: copy every token from design-principles.md here, with its own name. ===== */
+  /* PROJECT-TOKENS-LIGHT */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bp-bg: #161615;
+    --bp-surface: #1f1f1d;
+    --bp-text: #ecece8;
+    --bp-muted: #a3a39c;
+    --bp-border: #3a3a36;
+    --bp-accent: #8aa8ff;
+    --bp-trace: #f27ac0;
+    /* PROJECT-TOKENS-DARK */
+  }
+}
+:root[data-theme="dark"] {
+  --bp-bg: #161615;
+  --bp-surface: #1f1f1d;
+  --bp-text: #ecece8;
+  --bp-muted: #a3a39c;
+  --bp-border: #3a3a36;
+  --bp-accent: #8aa8ff;
+  --bp-trace: #f27ac0;
+  /* PROJECT-TOKENS-DARK */
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bp-bg); color: var(--bp-text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header.bp { padding: 24px 16px 8px; max-width: 1400px; margin: 0 auto; }
+header.bp h1 { margin: 0 0 4px; font-size: 24px; }
+header.bp p { margin: 0; color: var(--bp-muted); }
+nav.bp-tabs { display: flex; gap: 4px; flex-wrap: wrap; padding: 12px 16px 0; max-width: 1400px; margin: 0 auto; border-bottom: 1px solid var(--bp-border); }
+nav.bp-tabs button, .bp-switch button { font: inherit; border: 1px solid var(--bp-border); background: var(--bp-surface); color: var(--bp-text); padding: 6px 12px; border-radius: 6px 6px 0 0; cursor: pointer; }
+nav.bp-tabs button[aria-selected="true"], .bp-switch button[aria-pressed="true"] { background: var(--bp-accent); border-color: var(--bp-accent); color: var(--bp-surface); }
+.bp-switch { display: flex; gap: 4px; flex-wrap: wrap; margin: 8px 0 12px; }
+.bp-switch button { border-radius: 999px; font-size: 13px; padding: 4px 10px; }
+.bp-tools { display: flex; gap: 16px; align-items: center; padding: 8px 16px; max-width: 1400px; margin: 0 auto; color: var(--bp-muted); font-size: 13px; }
+main.bp { max-width: 1400px; margin: 0 auto; padding: 16px; }
+.bp-panel[hidden] { display: none; }
+.bp-panel table { border-collapse: collapse; width: 100%; background: var(--bp-surface); font-size: 14px; }
+.bp-panel th, .bp-panel td { border: 1px solid var(--bp-border); padding: 6px 8px; text-align: left; vertical-align: top; }
+.bp-scroll { overflow-x: auto; }
+section.page { margin-bottom: 48px; }
+section.page > h2 { margin: 0; font-size: 18px; }
+.frames { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+.frame { background: var(--bp-surface); border: 1px solid var(--bp-border); border-radius: 12px; overflow: hidden; }
+.frame-label { font-size: 12px; color: var(--bp-muted); padding: 4px 8px; border-bottom: 1px solid var(--bp-border); }
+.frame.phone .screen { width: 390px; }
+.frame.desktop { flex: 1 1 480px; min-width: 0; }
+.frame.desktop .scaler { transform-origin: top left; }
+.frame.desktop .screen { width: 1280px; }
+.screen { container-type: inline-size; min-height: 640px; }
+.variation[hidden] { display: none; }
+@media (max-width: 480px) {
+  .frame.phone { flex: 1 1 100%; }
+  .frame.phone .scaler { transform-origin: top left; }
+}
+
+/* Show sources: print each element's breadboard item on the screen. */
+.show-sources .screen [data-from] { outline: 1px dashed var(--bp-trace); outline-offset: 1px; position: relative; }
+.show-sources .screen [data-from]::after { content: attr(data-from); position: absolute; left: 0; top: -1.4em; z-index: 2; font: 600 10px/1.4 system-ui, sans-serif; color: var(--bp-surface); background: var(--bp-trace); padding: 0 4px; border-radius: 3px; white-space: nowrap; pointer-events: none; }
+
+/* ===== Screen styles: written per project. Only var(--…) tokens for colors, sizes, spacing, radii,
+   and shadows. Layout changes between phone and desktop use @container queries on .screen. ===== */
+/* SCREEN-STYLES */
+</style>
+</head>
+<body>
+<header class="bp">
+  <h1>{Product}: Slice 1 screens</h1>
+  <p>Tokens from {path to design-principles.md}. Breadboard from {source}. Story map: {path or none}.</p>
+</header>
+
+<nav class="bp-tabs" role="tablist">
+  <button role="tab" data-tab="pages" aria-selected="true">Pages</button>
+  <button role="tab" data-tab="templates" aria-selected="false">Templates</button>
+  <button role="tab" data-tab="parts" aria-selected="false">Parts</button>
+  <button role="tab" data-tab="walk" aria-selected="false">Walk</button>
+</nav>
+<div class="bp-tools">
+  <label><input type="checkbox" id="show-sources"> Show sources</label>
+  <label><input type="checkbox" id="dark"> Dark</label>
+</div>
+
+<main class="bp">
+  <div class="bp-panel" data-panel="pages">
+    <!-- One section per place. Each .variation holds one <template class="screen-src">; the script
+         stamps it into a 390px phone frame and a 1280px desktop frame. The first variation is the main page.
+         Every element inside carries data-from="{Place} › {affordance}". -->
+    <!-- PAGES -->
+  </div>
+
+  <div class="bp-panel" data-panel="templates" hidden>
+    <!-- One column per place: grey boxes in order, each labeled with its part and longest content. -->
+    <!-- TEMPLATES -->
+  </div>
+
+  <div class="bp-panel" data-panel="parts" hidden>
+    <div class="bp-scroll"><!-- PARTS-TABLE --></div>
+    <!-- VALUES-TO-ADD -->
+  </div>
+
+  <div class="bp-panel" data-panel="walk" hidden>
+    <div class="bp-scroll"><!-- WALK-TABLE --></div>
+    <!-- OPEN-QUESTIONS -->
+  </div>
+</main>
+
+<script>
+(function () {
+  const tabs = document.querySelectorAll('nav.bp-tabs [data-tab]');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(o => o.setAttribute('aria-selected', o === t ? 'true' : 'false'));
+    document.querySelectorAll('.bp-panel').forEach(p => { p.hidden = p.dataset.panel !== t.dataset.tab; });
+    fit();
+  }));
+
+  document.getElementById('show-sources').addEventListener('change', e => {
+    document.body.classList.toggle('show-sources', e.target.checked);
+  });
+  document.getElementById('dark').addEventListener('change', e => {
+    document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
+  });
+
+  function frame(kind, width, src) {
+    const f = document.createElement('div');
+    f.className = 'frame ' + kind;
+    f.innerHTML = '<div class="frame-label">' + (kind === 'phone' ? 'Phone' : 'Desktop') + ' · ' + width + 'px</div><div class="scaler"><div class="screen"></div></div>';
+    f.querySelector('.screen').appendChild(src.content.cloneNode(true));
+    return f;
+  }
+
+  document.querySelectorAll('section.page').forEach(page => {
+    const vars = page.querySelectorAll('.variation');
+    vars.forEach((v, i) => {
+      const src = v.querySelector('template.screen-src');
+      if (!src) return;
+      const frames = document.createElement('div');
+      frames.className = 'frames';
+      frames.appendChild(frame('phone', 390, src));
+      frames.appendChild(frame('desktop', 1280, src));
+      v.appendChild(frames);
+      v.hidden = i !== 0;
+    });
+    if (vars.length > 1) {
+      const sw = document.createElement('div');
+      sw.className = 'bp-switch';
+      vars.forEach((v, i) => {
+        const b = document.createElement('button');
+        b.textContent = v.dataset.variation || ('Variation ' + (i + 1));
+        b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+        b.addEventListener('click', () => {
+          vars.forEach((o, j) => { o.hidden = j !== i; });
+          sw.querySelectorAll('button').forEach(o => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+          fit();
+        });
+        sw.appendChild(b);
+      });
+      page.insertBefore(sw, vars[0]);
+    }
+  });
+
+  function fit() {
+    document.querySelectorAll('.frame').forEach(f => {
+      const scaler = f.querySelector('.scaler');
+      const screen = f.querySelector('.screen');
+      if (!scaler || !screen || !f.offsetParent) return;
+      const natural = screen.offsetWidth;
+      const scale = Math.min(1, f.clientWidth / natural);
+      scaler.style.transform = scale < 1 ? 'scale(' + scale + ')' : '';
+      scaler.style.height = scale < 1 ? (screen.offsetHeight * scale) + 'px' : '';
+    });
+  }
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+  fit();
+})();
+</script>
+</body>
+</html>

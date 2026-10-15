@@ -50,7 +50,6 @@
 | steve-krug | Steve Krug | usability, scanning, conventions, question-marks, trunk-test, clarity, happy-talk | Usability expert, author of Don't Make Me Think |
 | sue-b-zimmerman | Sue B. Zimmerman | instagram-strategy, social-media, engagement, content-systems | #TheInstagramExpert |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
-| the-designer | The Designer | visual-hierarchy, spacing, typography, color-contrast, responsiveness, design-tokens, component-consistency, accessibility | Senior visual and interaction designer who evaluates UI craft quality |
 | the-devex-engineer | The DevEx Engineer | developer-ergonomics, maintainability, onboarding, tooling, CI-CD, DX | Developer experience obsessive who evaluates tools by how they feel |
 | the-pm | The PM | product-value, prioritization, user-problems, scope-control, success-criteria | Product leader who evaluates features through user value lens |
 | the-qa-engineer | The QA Engineer | edge-cases, failure-modes, testing, reliability, error-handling | Edge-case hunter who assumes everything will break |
@@ -80,6 +79,7 @@
 | gino-wickman | Gino Wickman | operating-systems, eos, productizing-services, leadership-team-alignment, execution-discipline, meeting-design | Creator of EOS, the Entrepreneurial Operating System, founder of EOS Worldwide, author of Traction and Rocket Fuel; simple tools for a growing company's operating system, and how a methodology was packaged into a repeatable implementation |
 | steve-blank | Steve Blank | customer-discovery, customer-development, problem-validation, customer-interviews, startup-strategy | Serial entrepreneur who created Customer Development |
 | jeff-patton | Jeff Patton | story-mapping, product-discovery, user-journeys, release-slicing, shared-understanding | Author of User Story Mapping and a product design and agile consultant; maps what the user does start to finish, walks it aloud, and slices releases by outcome before anyone draws a screen |
+| brad-frost | Brad Frost | design-systems, atomic-design, design-tokens, component-consistency, responsiveness, visual-hierarchy, screen-rendering, ai-and-design-systems | Author of Atomic Design and design system consultant; builds screens from a design system's parts, tests them with real content, and sets up design systems that AI agents build from |
 
 ## Profiled Advisors
 
@@ -131,7 +131,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Steve Krug** | Evaluates whether the user has to think |
 | **Sue B. Zimmerman** | Evaluates whether Instagram presence is intentional or random |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
-| **The Designer** | Evaluates visual craft and design system compliance |
 | **The DevEx Engineer** | Evaluates developer experience impact |
 | **The PM** | Evaluates whether the work solves a real user problem and has clear success criteria |
 | **The QA Engineer** | Evaluates failure modes and edge cases |
@@ -161,6 +160,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Gino Wickman** | Evaluates whether an operating system, or a method being packaged for clients, is simple enough to use every week and repeatable by someone other than its founder |
 | **Steve Blank** | Checks whether the work tests a guess or sells it |
 | **Jeff Patton** | Evaluates whether a design starts from what the user does or from screens, features, and system rules |
+| **Brad Frost** | Evaluates whether screens are built from the design system or around it |
 
 ## Selection Guidelines
 

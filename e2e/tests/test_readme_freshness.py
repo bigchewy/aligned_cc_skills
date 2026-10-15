@@ -13,6 +13,8 @@ GONE_IDS = [
     "deb-dana", "irene-lyon", "akiko-iwasaki", "david-putrino", "david-systrom",
     "byron-katie", "gabor-mate", "marsha-linehan", "martin-seligman",
     "richard-schwartz", "steven-hayes",
+    # retired archetype, replaced by brad-frost
+    "the-designer",
     # phantom framework IDs — benjamin-levine's 4 frameworks (folders already absent, still in README)
     "autonomic-fatigue-vs-training-fatigue", "cardiac-deconditioning-model",
     "heart-rate-reserve-training-zones", "levine-protocol",

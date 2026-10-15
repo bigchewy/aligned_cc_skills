@@ -1,0 +1,110 @@
+# e2e/scenarios/use-framework/breadboard-to-pages.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Breadboard to Pages for a team habit tracker's Slice 1"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response start with Phase 1 —
+        reading the breadboard back and sorting each affordance into the part
+        that will draw it (atom, molecule, or organism; component, recipe, or
+        snowflake; already in the design principles or new) — and then STOP
+        and ask whether that matches? A response that draws finished screens,
+        writes page HTML for all three places, or runs every phase at once
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SYSTEM DISCIPLINE: The builder asked for lorem ipsum and
+        to "make it look nice." Does the response say pages need real content
+        (or offer to write realistic content for the builder to check), and
+        tie every visual value to the tokens given in the design principles
+        rather than picking new colors, sizes, or a type scale? Does it name a
+        value the tokens are missing (there is no color for a destructive
+        action) and send it to the design principles instead of inventing one?
+        Accepting lorem ipsum or inventing values scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response use Brad Frost's
+        Atomic Design stages correctly — parts first, then a template per
+        place, then pages with real content, then variations — and tie each
+        part to the breadboard item it comes from? Generic advice ("start with
+        a wireframe", "use a card layout") or invented Atomic Design rules
+        about type or color score 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Brad
+        Frost — enthusiastic, plain, practical, friendly but firm that the
+        system is in charge? A stiff checklist voice, or several paragraphs of
+        lecture before the work starts, scores 1-2. Invented quotes attributed
+        to Frost score 1. These lines are real quotes from his book Atomic
+        Design and are not invented: "Pages are essential for testing the
+        effectiveness of the underlying design system", "What content and
+        display patterns go on this page? And in what general order?", "To
+        create more robust and resilient designs, we need to concurrently
+        account for the best situations and the worst", and "Atomic design is
+        not a linear process, but rather a mental model."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/breadboard-to-pages/prompt.md
+      task_prompt: "\n\n---\n\nHere's the breadboard for Slice 1 and my design principles. Walk me through getting to finished screens. Honestly, just mock up all three screens quickly with lorem ipsum and make them look nice."
+      product_brief: &brief |
+        Breadboard (Slice 1 of a team habit tracker; the owner sets up a team):
+
+        Team Settings
+          team name (edit)        -> Team Settings
+          Invite (email, role)    -> Invite Sent
+          member row: role menu   -> Team Settings
+          member row: Remove      -> Confirm Remove
+
+        Confirm Remove
+          Remove {name}           -> Team Settings
+          Cancel                  -> Team Settings
+
+        Invite Sent
+          Invite another          -> Team Settings
+          Done                    -> Team Settings
+
+        design-principles.md (brand/guidelines/design-principles.md), tokens:
+          --bg #FAFAF7; --surface #FFFFFF; --text #1C1C1A; --text-muted #5E5E58;
+          --border #E2E2DC; --accent #3B5BDB; --error-text #B42318
+          --space-1..--space-8 on a 4px grid; --radius-md 8px
+          type roles: headline (Inter 600 24/32), body (Inter 400 16/24),
+          label (Inter 500 13/16, +0.02em), data (JetBrains Mono 400 14/20)
+          No component library yet.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Here's the breadboard for Slice 1 and my design principles. Walk me through getting to finished screens. Honestly, just mock up all three screens quickly with lorem ipsum and make them look nice."
+      product_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Brad Frost, author of Atomic Design. Here's the breadboard for Slice 1 and my design principles. Walk me through getting to finished screens. Honestly, just mock up all three screens quickly with lorem ipsum and make them look nice."
+      product_brief: *brief
