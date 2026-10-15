@@ -149,6 +149,41 @@ class TestAntiExample:
         assert "Slice 1" in block.split("**Right:**")[1]
 
 
+class TestExamples:
+    def test_new_phases_have_golden_paths(self):
+        ex = _read(EXAMPLES)
+        for h in ("## PHASE 8: Breadboard Slice 1", "## PHASE 9: Screens", "## PHASE 10: Link Back"):
+            assert h in ex, h
+        p8 = ex.split("## PHASE 8: Breadboard Slice 1")[1].split("## PHASE 9")[0]
+        assert "### Golden path" in p8 and "Ryan Singer" in p8 and "Who's ready for Thursday" in p8
+        p9 = ex.split("## PHASE 9: Screens")[1].split("## PHASE 10")[0]
+        assert "Brad Frost" in p9 and "breadboard-to-pages" in p9
+
+    def test_examples_drop_wireframes_and_team_walks(self):
+        ex = _read(EXAMPLES).lower()
+        assert "wirefram" not in ex and "who else should hear" not in ex
+
+    def test_phase_six_has_the_workaround(self):
+        p6 = _read(EXAMPLES).split("## PHASE 6")[1].split("## PHASE 7")[0]
+        assert "Wrap up the unit by hand, as today" in p6
+
+
+class TestAntiExamples:
+    def _block(self, title_pattern):
+        anti = _read(ANTI)
+        m = re.search(r"^## \d+\. " + title_pattern + r".*$", anti, flags=re.IGNORECASE | re.MULTILINE)
+        assert m, title_pattern
+        return anti[m.end():].split("\n## ")[0]
+
+    def test_stacked_lanes(self):
+        b = self._block("Stacked role lanes")
+        assert "**Wrong:**" in b and "one timeline" in b.split("**Right:**")[1]
+
+    def test_affordance_with_no_card(self):
+        b = self._block("A breadboard affordance with no card")
+        assert "**Wrong:**" in b and "card" in b.split("**Right:**")[1]
+
+
 class TestAdvisor:
     def test_core_frameworks_summary_includes_wireframes(self):
         advisor = _read(ADVISOR)

@@ -8,15 +8,15 @@ Golden paths, common struggles, and edge cases by phase. Notes explain why each 
 
 ### Golden path
 
-**User:** "The user is the facilitator. They want to run a good session every week without spending their evening getting ready. The problem: today they piece it together from a PDF, a group chat, and a spreadsheet of who did the lesson, and they walk in not knowing who's prepared."
+**User:** "The user is the facilitator. They want to run a good session every week without spending their evening getting ready. The problem: today they piece it together from a PDF, a group chat, and a spreadsheet of who did the lesson, and they walk in not knowing who's prepared. For the business, teams that finish a unit sign up for the next one."
 
-**Jeff Patton:** "Good. That's a person with a week, not a feature. Let me read it back. User: the facilitator running one team through the course. Outcome: they walk into each weekly session ready, knowing who did the lesson, without an evening of prep. Problem: the prep is scattered across three tools, so they guess who's ready. Is that it?"
+**Jeff Patton:** "Good. That's a person with a week, not a feature. Let me read it back. User: the facilitator running one team through the course. Outcome: they walk into each weekly session ready, knowing who did the lesson, without an evening of prep. Problem: the prep is scattered across a PDF, a group chat, and a spreadsheet, so they guess who's ready. Why: teams that finish a unit sign up for the next. Is that it?"
 
 **User:** "Yes."
 
 *Draw the map:* the first picture goes up with the frame at the top and an empty backbone underneath. "Frame's on the map, at this link. Colors from brand/guidelines/design-principles.md. Now the backbone."
 
-*Why it works: he takes the answer in the user's terms, sharpens the outcome into something you could see happen, and locks it before any cards go up. The picture exists from the first locked answer, so every later turn has a link.*
+*Why it works: he takes the answer in the user's terms, sharpens the outcome into something you could see happen, and locks all four lines before any cards go up. The picture exists from the first locked answer, so every later turn has a link.*
 
 ### Common struggle: answering with a screen
 
@@ -29,6 +29,16 @@ Golden paths, common struggles, and edge cases by phase. Notes explain why each 
 **Jeff Patton:** "There's the outcome. Walk in knowing who's ready. The dashboard might be one way to get there, or it might not."
 
 *Why it works: he turns a screen back into what the person is trying to do, without arguing about the screen.*
+
+### Common struggle: no why
+
+**User:** "Why build it? Facilitators want it."
+
+**Jeff Patton:** "What does the business get? More teams signing up, fewer leaving, less support? Pick the one you'd check."
+
+**User:** "Teams that finish a unit sign up for the next."
+
+*Why it works: "users want it" isn't a reason anyone can check. He offers three kinds of answer and asks for one.*
 
 ---
 
@@ -44,7 +54,7 @@ Golden paths, common struggles, and edge cases by phase. Notes explain why each 
 
 **Jeff Patton:** "Then the story is: set up once, then a weekly loop of prepare, check, run, follow up, with a wrap-up every fourth week. That's your backbone."
 
-*Draw the map:* the backbone row goes up, six activity cards in the project's accent color. One line in the reply: "Backbone up: six facilitator activities. Same link."
+*Draw the map:* the backbone row goes up, six activity cards in the project's accent color, each over an empty column. One line in the reply: "Backbone up: six facilitator activities. Same link."
 
 *Why it works: verbs the user would say, in the order they happen, and he names the weekly loop so nobody mistakes the order for a one-time flow.*
 
@@ -66,34 +76,32 @@ Golden paths, common struggles, and edge cases by phase. Notes explain why each 
 
 ---
 
-## PHASE 3: Steps and Details
+## PHASE 3: Tasks and Details
 
 ### Golden path
 
-**User:** "Under 'Prepare the week's lesson': read the lesson, pick which exercise to run live, note anything to watch for with this team."
+**User:** "Under 'Prepare the week's lesson': read the lesson, pick which exercise to run live, write notes for this team."
 
-**Jeff Patton:** "Top to bottom, which can't they skip?"
-
-**User:** "Reading the lesson. Picking the exercise. The notes are nice to have."
-
-**Jeff Patton:** "So the notes go lower. Exceptions? What goes wrong in prep?"
+**Jeff Patton:** "Three tasks, left to right in the order they do them. Now the details under each. What goes wrong in prep?"
 
 **User:** "The lesson isn't unlocked yet when they want to prep on the weekend."
 
-**Jeff Patton:** "That's a real one, and it's a rule, so it hangs under 'Read the lesson' as a detail. Facilitator needs to see the lesson before members can. We'll ask whether that's true when we slice."
+**Jeff Patton:** "That's a real one, and it's a rule, so it hangs under 'Read the lesson' as a detail: the lesson is visible to the facilitator before members. It goes high, because without it there's no prep. We'll ask how far ahead when we slice."
 
-*Why it works: priority by importance, an exception found by asking, and a system rule placed under the step it affects instead of on the backbone.*
+*Why it works: tasks run left to right in the order the person does them. The exception he asked for turned out to be a rule, and it hangs under the task it affects instead of going on the backbone.*
 
-The steps after Phase 3, facilitator lane:
+The facilitator's tasks and details after Phase 3:
 
-| Get the team set up | Prepare the week's lesson | Check who's ready | Run the session | Follow up after | Wrap up the unit |
-|---|---|---|---|---|---|
-| Invite the members | Read the lesson | See who finished the lesson | Open the live exercise | Send a recap | See who fell behind this unit |
-| Set the session day and time | Pick the live exercise | Nudge who hasn't started | Take attendance | Note who needs a check-in | Talk with anyone behind |
-| Share the course outline | Notes for this team | | Note what came up | | Open the next unit |
-| | *Detail: lesson visible to facilitator before members* | | | | |
+| Activity | Tasks, left to right | Details |
+|---|---|---|
+| Get the team set up | Invite the members · Set the session day and time · Share the course outline | |
+| Prepare the week's lesson | Read the lesson · Pick the live exercise · Notes for this team | Under "Read the lesson": *Rule: Lesson visible to facilitator before members* |
+| Check who's ready | See who finished the lesson · Nudge who hasn't started | |
+| Run the session | Open the live exercise · Take attendance · Note what came up | |
+| Follow up after | Send a recap · Note who needs a check-in | |
+| Wrap up the unit | See who fell behind this unit · Talk with anyone behind · Open the next unit | |
 
-*Draw the map:* steps go up under each activity, top to bottom. "Added 15 steps under the six activities."
+*Draw the map:* tasks go up under each activity, left to right, with the rule hanging under "Read the lesson." "Added 15 tasks under the six activities, and one rule under 'Read the lesson.'"
 
 ### Common struggle: describing buttons
 
@@ -103,7 +111,7 @@ The steps after Phase 3, facilitator lane:
 
 **User:** "Who did this week's lesson, and who didn't."
 
-**Jeff Patton:** "Write that. 'See who finished the lesson.' The dot is one way to show it, and the wireframes will decide that."
+**Jeff Patton:** "Write that. 'See who finished the lesson.' The dot is one way to show it, and we decide that after Slice 1 is agreed."
 
 *Why it works: he keeps the map about the person's need and leaves the display for later.*
 
@@ -117,11 +125,11 @@ The steps after Phase 3, facilitator lane:
 
 **User:** "Members get a link in the calendar invite. And yes, someone being away is common. The facilitator should be able to mark them excused."
 
-**Jeff Patton:** "Two gaps. 'Members join the session' belongs to the member, so it waits for their lane. 'Mark someone excused' goes under 'Check who's ready.' Who else should hear this walk? Is there a facilitator who runs this today, on the PDF and the spreadsheet?"
+**Jeff Patton:** "Two gaps. Joining from the calendar link is the member's task, so it waits until we put the member on the map. 'Mark someone excused' goes under 'Check who's ready.'"
 
-*Draw the map:* "Mark someone excused" goes up with the dashed gap border. "Walk found two gaps. One added, one held for the member lane."
+*Draw the map:* "Mark someone excused" goes up with the dashed gap border. "Walk found two gaps. One added, one held for the member's tasks."
 
-*Why it works: he tells it in first person using only what's on the map, so the gaps show up where the story breaks, and he asks for someone who does the job today.*
+*Why it works: he tells it in first person using only what's on the map, so the gaps show up where the story breaks. A gap that belongs to another role gets held, not forced onto the facilitator.*
 
 ### Edge case: the user wants to skip it
 
@@ -133,31 +141,45 @@ The steps after Phase 3, facilitator lane:
 
 ---
 
-## PHASE 5: Explore Other Users
+## PHASE 5: Other Roles on the Same Timeline
 
 ### Golden path
 
-**User:** "The member: Join the course. Do the week's lesson. Join the session. Practice during the week."
+**User:** "The member. They join the course, do the week's lesson, join the session, and practice during the week."
 
-**Jeff Patton:** "Where do their stories touch?"
+**Jeff Patton:** "Where does each of those happen in the facilitator's story?"
 
-**User:** "When the member does the lesson, the facilitator sees it in 'Check who's ready.' And the facilitator's recap lands in the member's week."
+**User:** "They join the course right after the invites go out. They do the lesson after the facilitator preps and before the check. They join the session at the same time the facilitator runs it. And they practice after the recap."
 
-**Jeff Patton:** "And the gap from the walk, members joining the session, is in their lane now. Let me walk the touch points from both sides. The member finishes lesson two Tuesday night. Wednesday the facilitator sees it. Thursday the member joins from the calendar link, and the facilitator takes attendance. Friday the recap arrives and the member practices with it. That holds."
+**Jeff Patton:** "Then three of those are new activities on the backbone, at those points: 'Join the course,' 'Do the week's lesson,' and 'Practice during the week.' Joining the session isn't new. It happens inside 'Run the session,' so the member's tasks sit under that activity next to the facilitator's. That's where the gap from the walk goes: 'Join from the calendar link,' tagged Member."
 
-The member lane:
+**Jeff Patton:** "Let me walk 'Run the session' from both sides. The member joins from the calendar link. Then the facilitator sees them arrive and takes attendance. The facilitator opens the live exercise. Then the member takes part in it. That holds."
 
-| Join the course | Do the week's lesson | Join the session | Practice during the week |
-|---|---|---|---|
-| Accept the invite | Open this week's lesson | Join from the calendar link | Read the recap |
-| See the course outline | Do the exercises | Take part in the live exercise | Try the practice on the team |
-| | Mark it done | | |
+The map after Phase 5, one timeline, each task tagged with its role:
 
-Touch points: "Do the week's lesson" ↔ facilitator "Check who's ready." "Join the session" ↔ facilitator "Run the session." Facilitator "Follow up after" ↔ member "Practice during the week."
+| Activity | Tasks, left to right (role) |
+|---|---|
+| Get the team set up | Invite the members · Set the session day and time · Share the course outline (Facilitator) |
+| Join the course | Accept the invite · See the course outline (Member) |
+| Prepare the week's lesson | Read the lesson · Pick the live exercise · Notes for this team (Facilitator) |
+| Do the week's lesson | Open this week's lesson · Do the exercises · Mark it done (Member) |
+| Check who's ready | See who finished the lesson · Nudge who hasn't started · Mark someone excused (Facilitator) |
+| Run the session | Open the live exercise (Facilitator) · Join from the calendar link (Member) · Take part in the live exercise (Member) · Take attendance (Facilitator) · Note what came up (Facilitator) |
+| Follow up after | Send a recap · Note who needs a check-in (Facilitator) |
+| Practice during the week | Read the recap · Try the practice on the team (Member) |
+| Wrap up the unit | See who fell behind this unit · Talk with anyone behind · Open the next unit (Facilitator) |
 
-*Draw the map:* the member lane appears below the facilitator lane, each touch point marked on both cards. "Added the member lane and three places their stories touch."
+*Draw the map:* the three member activities slot into the backbone, and every card carries a role chip. "Added the member: three activities on the backbone, and two member tasks under 'Run the session' next to the facilitator's."
 
-*Why it works: a lane per role, only as deep as it needs to be to show the touch points, and the touch points get walked from both sides.*
+*Why it works: the member goes on the same timeline, so the order of the story shows who waits on whom. "Do the week's lesson" sits right before "Check who's ready," and that's the dependency the facilitator cares about.*
+
+### Common struggle: a separate map for the member
+
+**User:** "Can we do the member as a second map underneath?"
+
+**Jeff Patton:** "Keep them on one timeline. The story happens in one order for everyone, and one timeline shows where one person waits on another. Each card says whose task it is."
+
+*Why it works: a second map hides the hand-offs. One timeline with role tags shows them.*
 
 ---
 
@@ -169,9 +191,9 @@ Touch points: "Do the week's lesson" ↔ facilitator "Check who's ready." "Join 
 
 **Jeff Patton:** "Check every activity. 'Follow up after' has nothing, and neither does 'Wrap up the unit.' Does the story break without them?"
 
-**User:** "Without a recap the members lose the thread. Wrap-up can wait. They can do that by hand for the first cohort."
+**User:** "Without a recap the members lose the thread. Wrap-up can wait. They can do that by hand for the first cohort, the way they do it now."
 
-**Jeff Patton:** "Then 'Send a recap' goes above the line, even if it's just a text box. Wrap-up stays below for now, done by hand. What's the outcome of Slice 1?"
+**Jeff Patton:** "Then 'Send a recap' goes above the line, and so does 'Read the recap' for the member. For the wrap-up, we put a workaround card in Slice 1: 'Wrap up the unit by hand, as today.' It holds the place in the story, so Slice 1 still works start to finish, and we don't build that part yet. What's the outcome of Slice 1?"
 
 **User:** "A facilitator can run a full week with one team, walking in knowing who's ready, without the spreadsheet."
 
@@ -179,17 +201,35 @@ Touch points: "Do the week's lesson" ↔ facilitator "Check who's ready." "Join 
 
 **User:** "They stop using the spreadsheet by week three."
 
-**Jeff Patton:** "Write it next to the line."
+**Jeff Patton:** "Write it next to the line. Now Slice 2."
 
-| Slice | Outcome | Measure |
-|---|---|---|
-| Slice 1: Run a week | A facilitator runs a full week with one team and walks in knowing who's ready, without the spreadsheet | Facilitators stop using the spreadsheet by week three |
-| Slice 2: Run a unit | The facilitator sees who fell behind across a unit and opens the next one | Every unit wrap-up happens in the app |
-| Later | Nudges, excused weeks, team notes | |
+**User:** "Run a unit. The facilitator sees who fell behind across a unit and opens the next one. Measure: every unit wrap-up happens in the app."
 
-*Draw the map:* two dashed slice lines cross both lanes, with the outcome written at the left of each. "Cut two slices. Slice 1 reaches every facilitator and member activity except Wrap up the unit, which is done by hand for now."
+**Jeff Patton:** "That counts whether they use the screen. What did the wrap-up do for the people who fell behind?"
 
-*Why it works: Slice 1 reaches across the whole backbone, so the story still works end to end, and each slice is named by what someone can do after it.*
+**User:** "Then: facilitators talk with every member who fell behind before the next unit opens."
+
+**Jeff Patton:** "That one you can check, and it's what the wrap-up is for."
+
+| Slice | Name | Outcome | Measure |
+|---|---|---|---|
+| 1 | Slice 1: Run a week | A facilitator runs a full week with one team and walks in knowing who's ready, without the spreadsheet | Facilitators stop using the spreadsheet by week three |
+| 2 | Slice 2: Run a unit | The facilitator sees who fell behind across a unit and opens the next one | Facilitators talk with every member who fell behind before the next unit opens |
+| Later | | Nudges, excused weeks, team notes, the course outline | |
+
+The rule under "Read the lesson" goes in Slice 1 with its task, never earlier.
+
+*Draw the map:* two slice lines cross the one timeline, with the name, outcome, and measure written at the left of each. "Cut two slices. Slice 1 reaches all nine activities. 'Wrap up the unit' gets there with a workaround card."
+
+*Why it works: Slice 1 reaches every activity on the backbone, so the story still works end to end, and the workaround card says how the facilitator gets by until Slice 2. Each measure checks the outcome, not whether a screen got used.*
+
+### Common struggle: an activity left empty
+
+**User:** "Wrap-up just isn't in Slice 1."
+
+**Jeff Patton:** "Then the story breaks at 'Wrap up the unit.' What's the least they could do there, even by hand? If it's by hand, that's a workaround card in Slice 1, and we don't build that part yet."
+
+*Why it works: he doesn't force a feature into Slice 1. He asks what happens today, and a workaround card keeps the story whole.*
 
 ---
 
@@ -197,64 +237,147 @@ Touch points: "Do the week's lesson" ↔ facilitator "Check who's ready." "Join 
 
 ### Golden path
 
-**Jeff Patton:** "Here's your story map." *(Gives the Markdown map: frame, both lanes, steps with their slices, touch points, slices with outcomes and measures, and open questions.)*
+**Jeff Patton:** "Here's your story map." *(Gives the Markdown map: frame with the why, roles, slices with outcomes and measures, each activity with its tasks and details, each card with its role and slice, the workaround card and the gaps from the walk marked, and open questions.)*
 
 Open questions from this example:
 1. Does the facilitator need to see a lesson before it unlocks for members, and how far ahead?
 2. Who marks a member excused, the facilitator or the member?
-3. What does the facilitator do by hand to wrap up a unit until Slice 2 ships?
+3. What does "Wrap up the unit by hand, as today" look like for the facilitator until Slice 2 ships?
 
 *Draw the map* and give the link.
 
-**Jeff Patton:** "The map's agreed. Now we sketch Slice 1, one screen per activity, using the words already on the cards. Same page, second tab."
+**Jeff Patton:** "The map's agreed. Ryan Singer takes it from here to wire up Slice 1."
 
-*Why it works: the result is the map and the open questions, and it moves straight into the Slice 1 wireframes instead of stopping at "ready for wireframes."*
+*Why it works: the result is the map and the open questions, and the hand-off is one line straight into Phase 8, with no stop to ask whether to go on.*
 
 ---
 
-## PHASE 8: Wireframe Slice 1
+## PHASE 8: Breadboard Slice 1
 
 ### Golden path
 
-Slice 1 reaches nine activities: five in the facilitator lane (everything but "Wrap up the unit") and all four in the member lane. That makes nine wireframes. Two of them, as they go into the Markdown:
+**Ryan Singer:** "I'm going to lay Slice 1 out as a breadboard. Words only. No layout, no colors. In *Shape Up* I split it into three parts. 'Places: These are things you can navigate to, like screens, dialogs, or menus that pop up.' 'Affordances: These are things the user can act on, like buttons and fields.' 'Connection lines: These show how the affordances take the user from place to place.' Every affordance here names the card it came from."
 
-**Facilitator: Check who's ready**
+Three of the nine places, as they go into the Markdown under `## Slice 1 breadboard`:
 
-| Element | Text | Card |
+**Lesson 2, before members see it (Facilitator)**
+
+| Affordance | Leads to | Card |
 |---|---|---|
-| Heading | Who's ready for Thursday | Check who's ready |
-| List, one row per member | Name, and "Finished lesson 2" or "Not started" | See who finished the lesson |
-| Detail under the list | "3 of 5 finished" | See who finished the lesson |
-| Link to the next screen | Run the session | Run the session |
+| The lesson text | | Read the lesson |
+| A note that members can't see it yet | | Lesson visible to facilitator before members |
+| List of exercises | | Pick the live exercise |
+| Use this one live button | Who's ready for Thursday | Pick the live exercise |
 
-**Member: Do the week's lesson**
+**Who's ready for Thursday (Facilitator)**
 
-| Element | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| Heading | This week: Lesson 2 | Open this week's lesson |
-| Lesson body and exercises | The lesson text, then each exercise | Do the exercises |
-| Main button | Mark it done | Mark it done |
+| List of members with finished or not started | | See who finished the lesson |
+| Count of members who finished | | See who finished the lesson |
+| Run the session link | Thursday session | Run the session |
 
-"Nudge who hasn't started" sits below the Slice 1 line, so the readiness list has no nudge button.
+**This week's lesson (Member)**
 
-*Draw the map:* the Wireframes tab appears beside the Map tab, nine sketches in the project's colors, each box labeled with its card. "Added nine Slice 1 wireframes on a second tab. Same link."
+| Affordance | Leads to | Card |
+|---|---|---|
+| The lesson text | | Open this week's lesson |
+| Each exercise | | Do the exercises |
+| Mark it done button | | Mark it done |
 
-**Jeff Patton:** "Here's Slice 1 as screens, on the Wireframes tab of the same link. Every box names the card it came from. Walking it: I'm the member, Tuesday night, I mark lesson 2 done. Wednesday the facilitator opens 'Who's ready for Thursday' and sees me in the finished rows. Thursday they run the session and take attendance. Friday the recap lands and I read it. One hole: on 'Run the session,' the facilitator needs the exercise they picked during prep, and nothing on that screen shows it. The card exists, 'Pick the live exercise,' so the screen needs a box for it. Which screen looks wrong to you?"
+"Nudge who hasn't started" sits below the Slice 1 line, so "Who's ready for Thursday" has no nudge button. "Wrap up the unit by hand, as today" is a workaround card, so it gets no place and no affordance.
 
-**User:** "Can we put a message button next to each member who hasn't started?"
+*Draw the map:* the Breadboard tab appears beside the Map tab, nine places, each with its affordances and where they lead. "Added the Slice 1 breadboard on a second tab. Same link."
 
-**Jeff Patton:** "That's 'Nudge who hasn't started,' and it's below the Slice 1 line. If it belongs in Slice 1, move the card up on the map first, then it goes on the screen. Does it?"
+**Ryan Singer:** "Here's Slice 1 as a breadboard, on the Breadboard tab of the same link. Nine places, each with what the user can do there and where it takes them. Every affordance names the card it serves. Walking it: the member opens 'This week's lesson' Tuesday night and presses 'Mark it done.' Wednesday the facilitator opens 'Who's ready for Thursday' and sees the count go up. 'Run the session link' takes them to 'Thursday session.' I found no Slice 1 task without an affordance, and every connection lands on a place that's there. Which place looks wrong to you?"
 
-**User:** "No, it can wait. Add the exercise to the session screen."
+**User:** "Looks right."
 
-*Draw the map* one last time with both tabs. "Added the picked exercise to 'Run the session.' Nudge stays in Later."
+*Draw the map* with the breadboard locked. "Breadboard locked: nine places."
 
-**Jeff Patton:** "That's the map and the first screens, on one page. Before anyone builds, walk both again with the people who'll build it and someone who runs a team today. Steve Krug can tell you whether people can use these screens, Brad Frost can build them from your design system, and The Architect can work out how the system enforces the unlock rule."
+*Why it works: places are named the way each person would say them, every affordance traces back to a Slice 1 card, nothing below the line sneaks in, and walking the breadboard checks it the way walking the map did.*
 
-*Why it works: every element traces back to a card, the screens use the map's own words, nothing below the Slice 1 line sneaks in, and walking the screens finds a hole the way walking the map did.*
+### Common struggle: an affordance with no card
+
+**User:** "On 'Thursday session,' add a button to download attendance as a spreadsheet."
+
+**Ryan Singer:** "What's the person doing when they'd use it? There's no card for that on the map."
+
+**User:** "Keeping their old spreadsheet up to date, I guess."
+
+**Ryan Singer:** "Then it works against the Slice 1 measure. Facilitators are supposed to stop using the spreadsheet by week three. If it's a task we missed, it goes on the map first, in a slice. I'd drop it."
+
+**User:** "Drop it."
+
+*Why it works: an affordance with no card is a gap. He asks what the person is doing, finds the button would undo the slice's own measure, and either it goes on the map first or it doesn't go on the breadboard.*
+
+### Edge case: the user starts on how it looks
+
+**User:** "Should the count be a big number at the top?"
+
+**Ryan Singer:** "That comes next, with Brad Frost. Right now I want to know the places are right and every action goes somewhere."
+
+*Why it works: the breadboard stays in words, so the argument is about what the person can do, not how big the number is.*
+
+---
+
+## PHASE 9: Screens
+
+### Golden path
+
+**Ryan Singer:** *(Checks for `design-principles.md` again, with the same lookup as the setup, and finds `brand/guidelines/design-principles.md`.)* "The screens will use brand/guidelines/design-principles.md. The breadboard's done. Brad Frost takes it from here to turn it into screens."
+
+*Runs `/aligned:use-framework breadboard-to-pages` in the same conversation.* That framework reads the breadboard from `docs/story-maps/team-course.md` under `## Slice 1 breadboard` and runs its own phases and WAIT points in Brad Frost's voice. It writes `docs/story-maps/team-course-screens.md` and `docs/story-maps/team-course-screens.html`.
+
+*Why it works: the design-principles check runs again because the user may have made one since the setup. The hand-off is one line, and the story map doesn't repeat Brad Frost's phases.*
+
+### Edge case: no design principles yet
+
+**Ryan Singer:** "There's no design system yet, and the screens need one. Let's make it now, then come back to the screens."
+
+*Runs `/aligned:create-design-principles` in the same conversation and tells it to save the file at `docs/design/design-principles.md`. When it finishes, runs the lookup again.*
+
+**Ryan Singer:** "Found docs/design/design-principles.md. The breadboard's done. Brad Frost takes it from here to turn it into screens."
+
+*Why it works: the screens need tokens, and Brad Frost won't invent them. The save path matches the lookup, so the next check finds the file.*
+
+### Edge case: the user says not now
+
+**User:** "I don't want to do the design system today."
+
+**Ryan Singer:** "Then the screens wait until there's a design system. The map and the breadboard are saved. When you're ready, say 'make the design principles' here and we'll pick up the screens from this step."
+
+*Why it works: nothing is lost, and the user gets a plain sentence to come back with, not a command to remember.*
+
+---
+
+## PHASE 10: Link Back
+
+### Golden path
+
+*(Brad Frost closes breadboard-to-pages Phase 7 with the screens link. The user replies.)*
+
+**User:** "Great, thanks."
+
+**Jeff Patton:** *(Writes the screens link into `docs/story-maps/team-course.md`, rebuilds the map, and republishes it to the same link.)*
+
+```
+## Screens
+
+team-course-screens.html
+```
+
+**Jeff Patton:** "The Screens link is at the top of the map now.
+
+- Map: the same link as before, with the Map tab and the Breadboard tab
+- Screens: team-course-screens.html, built by Brad Frost from the breadboard
+
+That's the map, the Slice 1 breadboard, and the screens, linked to each other. Before you build, Steve Krug can tell you whether people can use these screens, and The Architect can work out how the system enforces the unlock rule."
+
+*Why it works: the user's reply to Brad Frost is the cue, so the story map picks up without being asked. Both links go in the reply, and the map's own Screens link means anyone who opens the map can find the screens.*
 
 ---
 
 ## The finished page
 
-This whole conversation, built: `example/team-course.md` is the Markdown source after Phase 8, and `example/team-course.html` is the page built from it with `story-map-template.html`. Only the JSON block differs from the template; the colors are the template's own, since the example has no design-principles file. Open the HTML to see the Map tab and the Wireframes tab with all nine Slice 1 sketches.
+This whole conversation, built: `example/team-course.md` is the Markdown source after Phase 8, and `example/team-course.html` is the page built from it with `story-map-template.html`. Only the JSON block differs from the template; the colors are the template's own, since the example has no design-principles file. Open the HTML to see the Map tab, with both roles on one timeline, and the Breadboard tab with all nine Slice 1 places. The Screens link stays hidden, because the example stops before Phase 10.
