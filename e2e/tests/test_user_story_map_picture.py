@@ -361,3 +361,9 @@ class TestWorkedExample:
         assert r["tabs_hidden"] is False and r["screens_hidden"] is True
 
 
+class TestEval:
+    def test_picture_scenario_exists_and_is_triggered(self):
+        assert PICTURE_SCENARIO.exists()
+        assert "scenarios/use-framework/user-story-map-picture.yaml" in _read(TRIGGER_MAP)
+
+
