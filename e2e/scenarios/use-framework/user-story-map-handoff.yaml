@@ -1,0 +1,157 @@
+# e2e/scenarios/use-framework/user-story-map-handoff.yaml
+# Checks Phases 8-9 of the story map. Once the map is agreed, Patton hands off
+# in one line and Ryan Singer breadboards Slice 1 in words, then stops. Once
+# the breadboard is locked and the project has no design-principles.md, the
+# framework makes one in this conversation before Brad Frost draws screens.
+# The eval provider has no tools, so the judge scores what the response does
+# or says it is doing now.
+
+description: "Framework: User Story Map hands the agreed map to Ryan Singer's breadboard, then to Brad Frost's screens"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "map agreed, go to the breadboard"
+    metadata:
+      arm: single
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on HAND-OFF: The user said the map is agreed and told the
+          framework to keep going. Does Jeff Patton hand off in one line (for
+          example, saying Ryan Singer takes the map from here to breadboard
+          Slice 1), and does the rest of the reply continue in Ryan Singer's
+          voice: calm, concrete, a little dry, first person? Patton going on
+          to talk through the breadboard himself, or no hand-off line at all,
+          scores 1-2. A long speech from Patton before the hand-off scores 3.
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on BREADBOARD: Does the response give a breadboard of
+          Slice 1 only, in words, as places, affordances, and where each
+          affordance leads? Check all of these:
+          (a) Every Slice 1 task that is not the workaround has at least one
+          affordance. The Slice 1 tasks are: Invite the members, Set the
+          session day and time, Accept the invite, Read the lesson, Pick the
+          live exercise, Open this week's lesson, Do the exercises, Mark it
+          done, See who finished the lesson, Open the live exercise, Join
+          from the calendar link, Take part in the live exercise, Take
+          attendance, Send a recap, Read the recap.
+          (b) Every affordance names the map card it serves.
+          (c) There is no affordance for "Wrap up the unit by hand, as today."
+          It is a workaround the user does outside the app. Naming it only to
+          say it gets no affordance is fine.
+          (d) Each place names the one role that uses it, and connections
+          lead to places that are on the breadboard.
+          (e) Nothing from Slice 2 or Later appears.
+          (f) No visual design: no layout, colors, wireframes, or screen
+          sketches.
+          Missing several Slice 1 tasks, an affordance with no card, a
+          workaround affordance, or any screen sketch scores 1-2. One small
+          miss scores 3-4.
+        weight: 3
+      - type: llm-rubric
+        value: |
+          Score 1-5 on DISCIPLINE: After the breadboard, does the response
+          walk it against the map (or say what that walk found), ask which
+          place looks wrong, and then stop and wait? Starting Phase 9, handing
+          off to Brad Frost, drawing screens, or asking about colors and
+          layout in this same reply scores 1. Going on to breadboard Slice 2
+          scores 1.
+        weight: 2
+    vars:
+      system_context: file://../../../frameworks/user-story-map/prompt.md
+      task_prompt: |
+
+
+        ---
+
+        The map's agreed. Keep going.
+
+        Here is the locked map (the Markdown is at docs/story-maps/team-course.md and the map page is published at [map link]).
+
+        Frame:
+        - User: the facilitator running one team through the course.
+        - Outcome: they walk into each weekly session ready, knowing who did the lesson, without an evening of prep.
+        - Problem: the prep is scattered across a PDF, a group chat, and a spreadsheet, so they guess who's ready.
+        - Why: teams that finish a unit sign up for the next.
+
+        Roles: Facilitator (runs one team through the course), Member (does each week's lesson and joins the weekly session).
+
+        Timeline, with each activity's Slice 1 tasks:
+        1. Get the team set up: Invite the members, Set the session day and time (Facilitator)
+        2. Join the course: Accept the invite (Member)
+        3. Prepare the week's lesson: Read the lesson, Pick the live exercise (Facilitator); detail rule on Read the lesson: "Lesson visible to facilitator before members"
+        4. Do the week's lesson: Open this week's lesson, Do the exercises, Mark it done (Member)
+        5. Check who's ready: See who finished the lesson (Facilitator)
+        6. Run the session: Open the live exercise, Take attendance (Facilitator); Join from the calendar link, Take part in the live exercise (Member)
+        7. Follow up after: Send a recap (Facilitator)
+        8. Practice during the week: Read the recap (Member)
+        9. Wrap up the unit: Wrap up the unit by hand, as today (Facilitator, a workaround the facilitator does outside the app)
+
+        Below the Slice 1 line: Share the course outline, See the course outline, Notes for this team, Nudge who hasn't started, Mark someone excused, Note what came up, Note who needs a check-in, Try the practice on the team, and in Slice 2: See who fell behind this unit, Talk with anyone behind, Open the next unit.
+
+        Slices:
+        - Slice 1: Run a week. A facilitator runs a full week with one team and walks in knowing who's ready, without the spreadsheet. Measure: facilitators stop using the spreadsheet by week three.
+        - Slice 2: Run a unit. The facilitator sees who fell behind across a unit and opens the next one. Measure: facilitators talk with every member who fell behind before the next unit opens.
+
+        The project's design principles are at docs/design/design-principles.md.
+
+        (Test harness note: tool calls aren't available in this conversation.
+        Treat any setup, saving, or drawing you would do with tools as already
+        done, and write the reply the user sees afterward. Use [map link] for
+        any link.)
+
+  - description: "breadboard agreed, no design principles"
+    metadata:
+      arm: single
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on DESIGN PRINCIPLES FIRST: The project has no
+          design-principles.md anywhere, and the user has locked the
+          breadboard. Does the response say the screens need a design system
+          first, and run or start /aligned:create-design-principles in this
+          same conversation (saving it at docs/design/design-principles.md),
+          before any screens? Telling the user to open another session, or to
+          type a slash command themselves, scores 1. Skipping straight to
+          screens with no design system scores 1. Handing the user a command
+          to run later scores 2. Starting the design-principles questions (or
+          saying it is starting them now) in this reply scores 4-5.
+        weight: 3
+      - type: llm-rubric
+        value: |
+          Score 1-5 on FROST HAND-OFF: Does the response say Brad Frost takes
+          the breadboard to screens next, through the breadboard-to-pages
+          framework, and say it happens in this same conversation once the
+          design principles exist? No mention of Brad Frost or
+          breadboard-to-pages scores 1. Naming him but saying it happens in
+          another session scores 2. Drawing or sketching the screens itself
+          in this reply scores 1.
+        weight: 2
+    vars:
+      system_context: file://../../../frameworks/user-story-map/prompt.md
+      task_prompt: |
+
+
+        ---
+
+        The breadboard looks right. Lock it.
+
+        The map and its Slice 1 breadboard are saved at docs/story-maps/team-course.md and published at [map link]. The breadboard has nine places: Get the team set up (Facilitator), Lesson 2, before members see it (Facilitator), Who's ready for Thursday (Facilitator), Thursday session (Facilitator), Recap for the team (Facilitator), You're invited to the team course (Member), This week's lesson (Member), Thursday session at 6 (Member), and Recap from Thursday (Member). Every Slice 1 task except the workaround "Wrap up the unit by hand, as today" has an affordance, and every affordance names its card.
+
+        This project has no design-principles.md. There is none under brand/guidelines/, brand/*/guidelines/, docs/design/, or in my home folder.
+
+        (Test harness note: tool calls aren't available in this conversation.
+        Treat any setup, saving, or lookup you would do with tools as already
+        done, and write the reply the user sees afterward. Use [map link] for
+        any link.)

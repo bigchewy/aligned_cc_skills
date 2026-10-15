@@ -390,3 +390,4 @@ triggers:
     scenarios:
       - scenarios/use-framework/user-story-map.yaml
       - scenarios/use-framework/user-story-map-picture.yaml
+      - scenarios/use-framework/user-story-map-handoff.yaml

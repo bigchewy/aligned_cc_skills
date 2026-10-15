@@ -451,3 +451,13 @@ class TestEval:
         assert "scenarios/use-framework/user-story-map-picture.yaml" in _read(TRIGGER_MAP)
 
 
+HANDOFF_SCENARIO = REPO_ROOT / "e2e" / "scenarios" / "use-framework" / "user-story-map-handoff.yaml"
+
+
+class TestHandoffEval:
+    def test_scenario_exists_with_two_tests_and_is_triggered(self):
+        import yaml
+        sc = yaml.safe_load(_read(HANDOFF_SCENARIO))
+        assert len(sc["tests"]) == 2
+        assert sc["tests"][0]["vars"]["system_context"].endswith("frameworks/user-story-map/prompt.md")
+        assert "scenarios/use-framework/user-story-map-handoff.yaml" in _read(TRIGGER_MAP)
