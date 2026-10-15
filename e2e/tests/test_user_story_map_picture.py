@@ -481,3 +481,29 @@ class TestHandoffEval:
         assert len(sc["tests"]) == 2
         assert sc["tests"][0]["vars"]["system_context"].endswith("frameworks/user-story-map/prompt.md")
         assert "scenarios/use-framework/user-story-map-handoff.yaml" in _read(TRIGGER_MAP)
+
+
+LINK_BACK_SCENARIO = REPO_ROOT / "e2e" / "scenarios" / "use-framework" / "user-story-map-link-back.yaml"
+
+
+class TestLinkBackEval:
+    """After Brad Frost's framework closes, the one-framework rule must not end the story map before Phase 10."""
+
+    def test_scenario_loads_the_runner_rule_and_both_frameworks(self):
+        import yaml
+        sc = yaml.safe_load(_read(LINK_BACK_SCENARIO))
+        v = sc["tests"][0]["vars"]
+        assert v["runner_context"].endswith("skills/_shared/framework-runner.md")
+        assert v["skill_context"].endswith("skills/use-framework/SKILL.md")
+        assert v["system_context"].endswith("frameworks/user-story-map/prompt.md")
+        assert v["inner_context"].endswith("frameworks/breadboard-to-pages/prompt.md")
+        for var in ("runner_context", "skill_context", "system_context", "inner_context"):
+            assert "{{" + var + "}}" in sc["prompts"][0]
+
+    def test_scenario_is_triggered_by_every_file_it_loads(self):
+        tm = _read(TRIGGER_MAP)
+        entry = "scenarios/use-framework/user-story-map-link-back.yaml"
+        for path in ("skills/_shared/framework-runner.md", "skills/use-framework/SKILL.md",
+                     "frameworks/user-story-map/prompt.md", "frameworks/breadboard-to-pages/prompt.md"):
+            blocks = [b for b in tm.split("- paths:") if path in b.split("scenarios:")[0]]
+            assert any(entry in b for b in blocks), f"{path} must trigger {entry}"

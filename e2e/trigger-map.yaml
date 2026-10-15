@@ -391,3 +391,11 @@ triggers:
       - scenarios/use-framework/user-story-map.yaml
       - scenarios/use-framework/user-story-map-picture.yaml
       - scenarios/use-framework/user-story-map-handoff.yaml
+      - scenarios/use-framework/user-story-map-link-back.yaml
+
+  - paths:
+      - skills/_shared/framework-runner.md
+      - skills/use-framework/SKILL.md
+      - frameworks/breadboard-to-pages/prompt.md
+    scenarios:
+      - scenarios/use-framework/user-story-map-link-back.yaml

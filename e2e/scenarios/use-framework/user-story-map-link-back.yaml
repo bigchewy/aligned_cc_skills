@@ -1,0 +1,95 @@
+# e2e/scenarios/use-framework/user-story-map-link-back.yaml
+# Checks that the story map reaches Phase 10 after Brad Frost's
+# breadboard-to-pages closes. The shared runner and the use-framework skill
+# both say "Run one framework per session," and breadboard-to-pages Phase 7
+# ends with a WAIT. The model sees all four texts, the way it would mid-session,
+# plus Frost's closing and the user's reply. The right move is Phase 10: put the
+# screens link on the map, republish it, give both links, in Jeff Patton's voice.
+# The eval provider has no tools, so the judge scores what the response does or
+# says it is doing now.
+
+description: "Framework: User Story Map links the screens back to the map after Brad Frost's framework closes"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{runner_context}}\n\n---\n\n{{skill_context}}\n\n---\n\nThe framework running in this conversation:\n\n{{system_context}}\n\n---\n\nThe framework the story map started in Phase 9, in this same conversation:\n\n{{inner_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "Frost's closing given, user replies"
+    metadata:
+      arm: single
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on LINK BACK: Brad Frost has closed breadboard-to-pages
+          with the screens link, and the user replied. Does the response run
+          the story map's Phase 10: write the screens link into the story map
+          (under "## Screens" or into the map's screens field), rebuild and
+          republish the map so the Screens link shows on it, and give both
+          links, the map and the screens? All of that present scores 5. Saying
+          it will do it later, or doing only part (for example giving the
+          screens link without adding it to the map), scores 2-3. Ending the
+          session after Frost's closing with no link added to the map scores 1.
+        weight: 3
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NO EARLY STOP: Does the response treat the rule "Run one
+          framework per session" as NOT ending the story map here? A response
+          that says the session is over, says another framework or session is
+          needed to finish, tells the user to type a command or start a new
+          invocation, or restarts breadboard-to-pages scores 1. Continuing the
+          story map without comment on the rule is fine and scores 5.
+        weight: 2
+      - type: llm-rubric
+        value: |
+          Score 1-5 on VOICE AND CLOSE: Does the response speak as Jeff Patton
+          again (plain, story-first, not Brad Frost's design-system voice), ask
+          no new question, and close by pointing to what comes before building
+          (for example Steve Krug on whether people can use the screens, or The
+          Architect on the rules underneath)? Asking a new question or starting
+          new work (a new slice, new screens) scores 1-2.
+        weight: 1
+    vars:
+      runner_context: file://../../../skills/_shared/framework-runner.md
+      skill_context: file://../../../skills/use-framework/SKILL.md
+      system_context: file://../../../frameworks/user-story-map/prompt.md
+      inner_context: file://../../../frameworks/breadboard-to-pages/prompt.md
+      task_prompt: |
+
+
+        ---
+
+        Conversation so far (summary): You ran the User Story Map for a team
+        course app with the user. The map is at docs/story-maps/team-course.md,
+        published as an artifact at [map link]. Phases 1-8 are locked: one
+        timeline for the facilitator and member, Slice 1 "Run a week," and a
+        nine-place Slice 1 breadboard written under "## Slice 1 breadboard."
+        In Phase 9 the project's design principles were found at
+        docs/design/design-principles.md, Ryan Singer handed off, and you ran
+        /aligned:use-framework breadboard-to-pages in this conversation.
+        Brad Frost has now finished all seven of its phases. The screens page
+        is docs/story-maps/team-course-screens.md and .html, published as an
+        artifact at [screens link].
+
+        Brad Frost's last message (breadboard-to-pages Phase 7) ended:
+        "That's every place in Slice 1 as a page, built only from your tokens,
+        with the cases that break it. Hand the HTML and the Markdown to
+        whoever builds it, and tell them to use only the tokens and parts on
+        the Parts tab. Anything new gets flagged, not invented. Before
+        building, Steve Krug can tell you whether people can use these pages."
+
+        The user replies:
+
+        Looks good. Thanks, Brad.
+
+        (Test harness note: tool calls aren't available in this conversation.
+        Treat any file edit, rebuild, or publish you would do with tools as
+        already done, and write the reply the user sees afterward. Use
+        [map link] and [screens link] for links.)
