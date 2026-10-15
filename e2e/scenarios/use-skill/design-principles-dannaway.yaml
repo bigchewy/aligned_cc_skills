@@ -1,0 +1,85 @@
+# e2e/scenarios/use-skill/design-principles-dannaway.yaml
+# Validates create-design-principles run by Adham Dannaway: (1) the opening is
+# in his calm voice and asks one Phase 1 question without claiming a feeling
+# method for him; (2) the aggregation after the Jobs / Frost / Krug panel takes
+# rule-backed fixes, gives each a reason, and puts Jobs's feeling findings to
+# the builder instead of dismissing them for having no rule.
+# Loads the live SKILL.md and advisor prompt so a run against the old files is a real baseline.
+
+description: "Skill: create-design-principles run by Adham Dannaway"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nAdvisor prompt, loaded from advisors/prompts/adham-dannaway.md:\n\n{{advisor}}\n\n---\n\nYou are running the skill as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe user's latest message: {{user_message}}\n\nWrite your next message to the user, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "opening: calm greeting and one Phase 1 question"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-design-principles/SKILL.md
+      advisor: file://../../../advisors/prompts/adham-dannaway.md
+      scenario_description: "The skill has just started. No design-principles.md exists yet. No brand guidelines were linked."
+      user_message: "I'm building a habit tracker alone with Claude Code. The agent keeps picking random colours and sizes. Help me set up design principles."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on OPENING: Does the reply (1) greet briefly in a calm,
+          plain, reassuring voice, (2) say every value in the file will have a
+          rule or reason, (3) ask exactly one Phase 1 question, about the
+          feeling the app should have, and stop, and (4) avoid brutal or hype
+          language such as "insanely great" or swearing? A reply that asks
+          several questions at once, starts proposing tokens, or uses a
+          brutal, Jobs-like voice scores 1-2. All four met = 5.
+      - type: llm-rubric
+        value: |
+          Score 1-5 on HONEST ATTRIBUTION: Does the reply ask about feeling as
+          the builder's call, without presenting a Practical UI or Dannaway
+          method for choosing a feeling or personality? Inventing a named
+          personality framework and attributing it to him scores 1.
+
+  - description: "aggregation: rule-backed fixes in, feeling findings go to the builder"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-design-principles/SKILL.md
+      advisor: file://../../../advisors/prompts/adham-dannaway.md
+      scenario_description: |
+        design-principles.md is written for a calm habit tracker: teal brand,
+        colours by role, Inter at regular and bold, a 16 x 1.2 type scale,
+        8px t-shirt spacing. The three critique sub-agents have returned:
+        - Steve Jobs (high): "This is generic. It could be any habit app.
+          There's no point of view. What should someone feel on day 30?"
+        - Steve Jobs (medium): "Make the headlines 600 so they have some drama."
+        - Brad Frost (high): "There's no token for a destructive action, so
+          the agent will invent a red for Delete habit."
+        - Brad Frost (medium): "Supporting text at 13px has no rule for which
+          surfaces it can sit on."
+        - Steve Krug (medium): "On the Today screen I can't tell what the main
+          action is. Check-in and Add habit look the same."
+      user_message: "The critiques are back. What are you changing?"
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on AGGREGATION: Does the reply (1) take Brad Frost's
+          destructive-token finding and add a named token checked for
+          contrast, (2) take Steve Krug's finding with a fix tied to the
+          one-primary-button rule, (3) give each change a one-line reason, and
+          (4) handle the 600-weight suggestion by naming the regular-and-bold
+          rule and either leaving it to the builder as a choice or declining it
+          with that reason? Changes with no reasons, or silently adopting 600,
+          score 1-2. All four met = 5.
+      - type: llm-rubric
+        value: |
+          Score 1-5 on FEELING GOES TO THE BUILDER: Does the reply treat Steve
+          Jobs's "generic, no point of view" finding as a taste call and put it
+          to the builder as a question (for example, what someone should feel
+          on day 30), instead of dismissing it for having no rule or inventing
+          an answer itself? Dismissing it as "not logical" or ignoring it = 1.

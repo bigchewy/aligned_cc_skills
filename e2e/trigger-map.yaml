@@ -355,6 +355,14 @@ triggers:
       - scenarios/use-advisor/adham-dannaway-consult.yaml
 
   - paths:
+      - skills/create-design-principles/SKILL.md
+      - skills/create-design-principles/design-critique-checklist.md
+      - skills/create-design-principles/examples.md
+      - skills/create-design-principles/anti-examples.md
+    scenarios:
+      - scenarios/use-skill/design-principles-dannaway.yaml
+
+  - paths:
       - frameworks/logic-check/prompt.md
       - frameworks/logic-check/examples.md
       - frameworks/logic-check/anti-examples.md

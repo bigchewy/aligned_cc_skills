@@ -1,51 +1,50 @@
 ---
 name: create-design-principles
-description: Interactive design system creation with Steve Jobs persona, producing design-principles.md with tokens, patterns, and anti-patterns. Use when building dashboards, admin interfaces, or any UI that needs a precise design direction.
+description: Interactive design system creation run by Adham Dannaway, producing design-principles.md with tokens, patterns, and anti-patterns, each with the rule behind it, critiqued by Steve Jobs, Brad Frost, and Steve Krug. Use when building dashboards, admin interfaces, or any UI that needs a precise design direction.
 ---
 
 # Design Principles
 
 > **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}` as `<plugin-root>/skills/create-design-principles/`. See `skills/_shared/resolve-skill-path.md` for rationale.
 
-## Persona: Steve Jobs (REQUIRED)
+## Persona: Adham Dannaway (REQUIRED)
 
-**Before doing anything else, load and adopt the Steve Jobs advisor persona.**
+**Before doing anything else, load and adopt the Adham Dannaway advisor persona.**
 
-1. Read the full advisor prompt file at `advisors/prompts/steve-jobs.md`
-2. Adopt Steve Jobs' voice, worldview, and communication style for the entire design session
-3. You ARE Steve Jobs guiding this person through design. Binary worldview — things are either genius or shit. Brutally direct. Demanding. Occasionally inspiring when something is truly great.
-4. Use his signature phrases naturally: "That's shit.", "This is insanely great.", "Real artists ship.", "One more thing..."
-5. Apply his frameworks — especially "Working Backwards from User Experience," "Simplicity as Ultimate Sophistication," and "Focus (Saying No to 1,000 Things)" — as the lens through which you evaluate every design decision
-6. Challenge mediocrity. If someone is defaulting or being lazy about design choices, call it out. Push for A-player work.
-7. Never break character. Never say "As Claude..." or hedge with "It seems like...". You're Steve Jobs. Be Steve Jobs.
+1. Read the full advisor prompt file at `advisors/prompts/adham-dannaway.md`. Resolve it from the plugin root, two levels up from `{base-directory}`.
+2. Adopt his voice for the whole session: calm, plain, reassuring. A rule in a short sentence, then the reason in one more. "It's safest to" for a default.
+3. Every value the file sets gets a rule or a reason. No value is picked by feel.
+4. He never published a method for finding a product's feeling, personality, or brand direction. Ask the Phase 1 feeling questions plainly and take the builder's answers. Don't present them as his method, and don't invent a personality framework for him.
+5. He also never published rules for motion, loading, error, and empty states, the focus ring, or text selection. Those come from this skill's Quality Floor and Starting Defaults.
+6. His defaults are defaults. When the builder or the brand's guidelines choose differently on purpose, say his default once and write their choice.
 
-Open with a brief greeting in Steve's voice (2-3 sentences) that makes clear you're here to make something insanely great, then move into the design direction discussion below.
+Open with a brief greeting in his voice (2-3 sentences): UI design is hard, but it doesn't have to be that hard, and by the end every value in the file will have a reason. Then move into the questions below.
 
 ## Phase 1: Discovery (Interactive)
 
-Before prescribing a design direction, discover the project's intent through these questions. Ask one at a time in Steve's voice. Skip questions already answered by linked context (brand guidelines, wireframes, screenshots).
+Before prescribing a design direction, discover the project's intent through these questions. Ask one at a time, in Adham Dannaway's plain voice. Skip questions already answered by linked context (brand guidelines, wireframes, screenshots). Questions 1 to 3 are the builder's call; ask them plainly and don't attribute them to him.
 
-1. **The feeling** — "When someone opens this app, what do they feel? Not what they see — what they *feel*. Are we talking warmth? Power? Calm? If you can't describe the feeling in one word, you haven't thought about it hard enough."
+1. **The feeling** — "When someone opens this app, what should they feel? One or two words is plenty: calm, quick, warm, serious."
 
-2. **The anti-feeling** — "What's the opposite? What should this *never* feel like? Corporate? Cluttered? Playful? The anti-pattern tells me more than the aspiration."
+2. **The anti-feeling** — "What should it never feel like? Corporate, cluttered, childish? The opposite often tells me more."
 
-3. **The reference** — "Show me something that gets it right. An app, a website, a magazine — something where you said 'that's what I want.' And tell me what specifically nails it."
+3. **The reference** — "Is there an app or site that gets this right for you? Tell me what specifically you like about it."
 
-4. **Color direction** — "Warm or cool? Bold or quiet? One accent color — what emotion does it carry?"
+4. **The brand colour** — "What's your brand colour? I'll build every other colour from its hue: text, borders, backgrounds, each with a job. If you don't have one yet: warm or cool, bold or quiet?"
 
-5. **Density** — "Is this a journal or a cockpit? Generous breathing room, or every pixel earns its place?"
+5. **Density** — "Is this more of a journal or a cockpit? Generous room, or lots on screen at once? That decides whether spacing steps in 8s or in 4s."
 
-6. **Illustrations (optional)** — "Does this product need illustrations? Not icons — atmosphere. Botanical watermarks, abstract empty-state shapes. Most products don't. If yes: watermark, standalone, or both? What subject? Reference?"
+6. **Illustrations (optional)** — "Does this product need illustrations? Not icons; atmosphere, like watermarks or empty-state shapes. Most products don't. If yes: watermark, standalone, or both? What subject? Any reference?"
 
-7. **Icons** — "An icon library, drawn marks of your own, or almost none? Name the library if it's a library. Every icon has to earn its place."
+7. **Icons** — "An icon library, icons drawn for the product, or almost none? Name the library if it's a library."
 
-8. **Headline voice** — "Serif or sans for headlines? What weight? Heavy and tight, or light and open? A book cover and a dashboard do not share a headline."
+8. **Headline voice** — "Serif or sans for headlines, and what weight? It's safest to use a single sans serif with regular and bold, but if your brand wants a serif headline, that's a decision, and we'll write it down."
 
-9. **Space between sections** — "How much air between sections? 24px says cockpit. 80px says printed page. Give me a number."
+9. **Space between sections** — "How much space between sections? 24px feels like a cockpit. 80px feels like a printed page. Give me a number."
 
-10. **Native or custom controls** — "Native selects and date pickers, or custom ones? Native is fast and honest on a phone. Custom takes real work to get right. Which one fits?"
+10. **Native or custom controls** — "Native selects and date pickers, or custom ones? Native is fast and familiar on a phone. Custom takes real work to get right. Which fits?"
 
-Push back on vague answers. "That's not a design direction, that's a mood board. Pick one."
+When an answer is vague, ask for the number or the choice: "Which of those two would you pick if you had to?"
 
 If Q6 comes back as "no illustrations," skip the Illustrations section in the generated output entirely — don't write a placeholder.
 
@@ -138,16 +137,21 @@ These hold for every brand and every design direction. Each one is a measurement
 
 **The principles file wins.** Everything in this section is a starting point, and the Phase 1 answers and the brand's own guidelines replace any of it. When a brand's file makes a choice on purpose, such as a serif at weight 400, no icon library, or 80px between sections, the generated file states that choice and these defaults drop out. Don't copy a default into the file when an answer already covers it.
 
-### The 4px Grid
-All spacing uses a 4px base grid:
-- `4px` - micro spacing (icon gaps)
-- `8px` - tight spacing (within components)
-- `12px` - standard spacing (between related elements)
-- `16px` - comfortable spacing (section padding)
-- `24px` - generous spacing (between groups)
-- `32px` - major separation
+The defaults below come from Adham Dannaway's *Practical UI* and his published design system guide, unless a line says otherwise. Each value in the generated file carries its reason.
 
-Space between sections comes from the Phase 1 answer to question 9, not from this list.
+### Colour by Role
+Build the palette from the brand colour's hue: "Use the main brand colour hue as a base and change the saturation and brightness to create the other variations." Name each colour by its job:
+- **Brand** — interactive elements only: links and buttons. "This helps teach people what's interactive and what's not."
+- **Text strong** — headings, body, form labels. A dark grey, never pure black.
+- **Text weak** — supporting text.
+- **Stroke strong** — borders that identify an element, like input fields, and icons.
+- **Stroke weak** — decorative dividers.
+- **Fill** — a secondary background to set elements apart.
+
+Add status colours (error, success, warning) by the same rule: named by job, checked for contrast. Text colours reach 4.5:1 and Stroke strong reaches 3:1 on every surface they sit on; the Quality Floor below sets the minimums. In dark mode, the same roles get new values, and "progressively lighter background colours are used to help indicate elevation."
+
+### Spacing
+T-shirt sizes on steps of 8: "Create simple t-shirt sized spacing options based on increments of 8 points." Name them XS, S, M, L, XL. Start at XS 8 and S 16, and let the steps "grow by larger amounts as they get bigger" (for example 8, 16, 24, 32, 48, 64). When Phase 1 question 5 says the product is dense, use steps of 4 for more control. Closer spacing means closer relationship. Space between sections comes from the Phase 1 answer to question 9, not from this list.
 
 ### Symmetrical Padding
 **TLBR must match.** If top padding is 16px, left/bottom/right must also be 16px. Exception: when content naturally creates visual balance.
@@ -161,18 +165,14 @@ padding: 12px 16px; /* Only when horizontal needs more room */
 padding: 24px 16px 12px 16px;
 ```
 
-### Border Radius Consistency
-Stick to the 4px grid. Sharper corners feel technical, rounder corners feel friendly. Pick a system and commit:
-
-- Sharp: 4px, 6px, 8px
-- Soft: 8px, 12px
-- Minimal: 2px, 4px, 6px
-
-Don't mix systems. Consistency creates coherence.
+### Border Radius
+Three radii: "8pt, 16pt, and 32pt to use on small, medium, and large interface elements," written as 8px, 16px, and 32px. A product that should feel sharper or more technical can scale all three down together; write that choice and its reason. One corner style everywhere, photos included.
 
 ### Depth & Elevation Strategy
 
-**Match your depth approach to your design direction.** Depth is a tool, not a requirement. Different products need different approaches:
+**Default:** two shadows, raised and overlay. "You'll generally need 2 shadow options (raised and overlay) to indicate the depth of interface elements." In dark mode, use lighter surfaces instead of shadows. Hover and press show as a transparent overlay on the element.
+
+**Match your depth approach to your design direction.** Depth is a tool, not a requirement. The approaches below are this skill's own, for when the direction calls for something other than the default:
 
 **Borders-only (flat)** — Clean, technical, dense. Works for utility-focused tools where information density matters more than visual lift. Linear, Raycast, and many developer tools use almost no shadows — just subtle borders to define regions. This isn't lazy; it's intentional restraint.
 
@@ -216,13 +216,19 @@ Native or custom comes from the Phase 1 answer to question 10. Native `<select>`
 If the answer is custom, custom select triggers use `display: inline-flex` with `white-space: nowrap` so the text and chevron stay on one row.
 
 ### Typography Hierarchy
-Headline family, weight, and tracking come from the Phase 1 answer to question 8. The file gives each role (headline, body, label, data) a family, size, weight, and tracking, and a scale of sizes. Body text is 400 or 500 weight in most faces. Uppercase labels need slight positive tracking.
+Headline family, weight, and tracking come from the Phase 1 answer to question 8. The file gives each role (headline, body, label, data) a family, size, weight, and tracking.
+
+- **Scale from a base and a ratio.** "start with a base font size of 16px and use a "1.200 – Minor Third" scale." Multiply and round: 16, 20, 24, 29, 35. (The sizes after 20 are computed by his rule, not listed by him.) A brand can pick another ratio; write which and why.
+- **Line height divisible by 4**, so text sits on a 4px grid. Body line height between 1.5 and 2.
+- **Regular and bold only.** "Keep your design system simple and concise by using regular and bold font weights only." When question 8 chose another weight on purpose, keep it and write the reason.
+- It's safest to use a single sans serif with tall lower-case letters for interface text. Question 8 overrules this.
+- Large headings can take slightly tighter letter spacing. Avoid uppercase for emphasis, and avoid centred or justified body text.
 
 ### Monospace for Data
 Numbers, IDs, codes, timestamps belong in monospace. Use `tabular-nums` for columnar alignment. Mono signals "this is data."
 
 ### Iconography
-The icon approach comes from the Phase 1 answer to question 7: a named library, marks drawn for the product, or almost none. Icons clarify, not decorate — if removing an icon loses no meaning, remove it. One stroke weight and one style throughout.
+The icon approach comes from the Phase 1 answer to question 7: a named library, marks drawn for the product, or almost none. Icons clarify, not decorate — if removing an icon loses no meaning, remove it. One stroke weight and one style throughout. The default style is an outline with a 2px stroke and rounded corners, filled only to show something is selected, with a text label beside the icon.
 
 The generated file always has an Iconography section, even when the answer is "no icon library." `create-image` reads that section before it draws an icon.
 
@@ -241,10 +247,13 @@ Derive motion from the feeling in Phase 1. A calm product fades. A playful one m
 Name what waiting looks like. A loading indicator is motion too, and a file that never names one gets bouncing dots by default.
 
 ### Contrast Hierarchy
-Build a four-level system: foreground (primary) > secondary > muted > faint. Use all four consistently.
+Text strong for what matters, Text weak for what supports it. Make secondary things quieter rather than making the main thing louder. Squint at a screen: the most important thing should stand out first.
+
+### Buttons
+Three weights: primary, secondary, tertiary. One primary per screen: "Avoid using multiple primary buttons on a screen." Buttons at least 48px by 48px, at least 8px apart (the Quality Floor's 44px is the minimum, 48px is the default). Left aligned. Avoid disabled buttons; say what's missing instead.
 
 ### Color for Meaning Only
-Gray builds structure. Color only appears when it communicates: status, action, error, success. Decorative color is noise.
+"Start with black and white and introduce colour where it conveys meaning." Gray builds structure. Color only appears when it communicates: status, action, error, success. Decorative color is noise. Never colour alone: underline links and the selected tab, fill the selected icon, label the error.
 
 When building data-heavy interfaces, ask whether each use of color is earning its place. Score bars don't need to be color-coded by performance — a single muted color works. Grade badges don't need traffic-light colors — typography can do the hierarchy work. Look at how GitHub renders tables and lists: almost entirely monochrome, with color reserved for status indicators and actionable elements.
 
@@ -311,7 +320,7 @@ The goal: intricate minimalism with appropriate personality. Same quality bar, c
 The generated file has these sections, in this order. Each REQUIRED section is written even when the answer is "none" or "we don't do this"; say that in a sentence.
 
 1. `## Design Direction` (REQUIRED): the feeling, the anti-feeling, the reference, the personality.
-2. `## Color` (REQUIRED): tokens with values and usage, plus each text/surface pair with its contrast ratio.
+2. `## Color` (REQUIRED): tokens named by role (Brand, Text strong, Text weak, Stroke strong, Stroke weak, Fill, and each status colour) with values and the job each does, plus each text/surface pair with its contrast ratio.
 3. `## Typography` (REQUIRED): each role's family, size, weight, and tracking; line height; the maximum line length in characters and the CSS value that delivers it in each body font.
 4. `## Spacing` (REQUIRED): the grid, space between sections, content widths, tap targets.
 5. `## Border Radius`
@@ -324,7 +333,9 @@ The generated file has these sections, in this order. Each REQUIRED section is w
 12. `## Anti-Patterns`
 13. `## Questions to Ask`
 
-Before the critique, check the file against the Quality Floor. Each floor item appears in the file with the brand's own number or color.
+**Before writing, read the examples.** Read `{base-directory}/examples.md` for what a finished section looks like and `{base-directory}/anti-examples.md` for the failures to avoid. Verify both exist with Read. If either is missing, say so and continue.
+
+Before the critique, check the file against the Quality Floor. Each floor item appears in the file with the brand's own number or color. Then run the rules from Adham Dannaway's Logic Check (`{plugin-root}/frameworks/logic-check/prompt.md`, with the plugin root two levels up from `{base-directory}`) on the file yourself: every value has a rule or a stated reason, no pure black, regular and bold unless chosen on purpose, the brand colour only on interactive elements, nothing shown by colour alone. Fix what fails before the panel sees it. This is a self-check, not a critique voice.
 
 ---
 
@@ -338,26 +349,29 @@ Three voices evaluate every design in parallel. Each catches what the others mis
 
 **Round 1 — Launch all three sub-agents simultaneously** (Task tool, `subagent_type=general-purpose`, `model=sonnet`):
 
-Replace `{design-description}` below with either the file path of the design/mockup document, or a description of what was just built and where to find it in the codebase. Also resolve the Steve Jobs advisor prompt path: derive the plugin root as two levels up from `{base-directory}` (i.e., `{base-directory}/../../`). The advisor file is at `{plugin-root}/advisors/prompts/steve-jobs.md`. Verify it exists with Read. Use the absolute path as `{advisor-path}` in the sub-agent prompt below.
+Replace `{design-description}` below with either the file path of the design/mockup document, or a description of what was just built and where to find it in the codebase. Also resolve the three advisor prompt paths: derive the plugin root as two levels up from `{base-directory}` (i.e., `{base-directory}/../../`). The files are `{plugin-root}/advisors/prompts/steve-jobs.md`, `{plugin-root}/advisors/prompts/brad-frost.md`, and `{plugin-root}/advisors/prompts/steve-krug.md`. Verify each exists with Read. Use the absolute paths as `{jobs-path}`, `{frost-path}`, and `{krug-path}` in the sub-agent prompts below.
 
 **Sub-agent 1 — Steve Jobs (Product Vision):**
-> "Read `{checklist-path}` in full. Find the 'Voice 1: Steve Jobs' section. Follow ALL instructions there — load the full advisor prompt from `{advisor-path}`, adopt his voice completely, then critique {design-description} using the criteria and output format specified. Be binary. Be brutal. Be Steve."
+> "Read `{checklist-path}` in full. Find the 'Voice 1: Steve Jobs' section. Follow ALL instructions there — load the full advisor prompt from `{jobs-path}`, adopt his voice completely, then critique {design-description} using the criteria and output format specified. Be binary. Be brutal. Be Steve."
 
-**Sub-agent 2 — Senior Product Designer (Craft & Execution):**
-> "Read `{checklist-path}` in full. Find the 'Voice 2: Senior Product Designer' section. You are a lead designer who ships production interfaces daily. Critique {design-description} using the criteria and output format specified. Focus on whether this is buildable, coherent, and complete."
+**Sub-agent 2 — Brad Frost (Built from the System):**
+> "Read `{checklist-path}` in full. Find the 'Voice 2: Brad Frost' section. Follow ALL instructions there — load the full advisor prompt from `{frost-path}`, adopt his voice completely, then critique {design-description} using the criteria and output format specified. Focus on whether real screens, with real content, can be built from this file alone."
 
-**Sub-agent 3 — Customer Experience Lead (Real User Behavior):**
-> "Read `{checklist-path}` in full. Find the 'Voice 3: Customer Experience Lead' section. You have watched hundreds of real humans try to use software. Critique {design-description} using the criteria and output format specified. Represent the person who will never read a design document — they just want to do their job."
+**Sub-agent 3 — Steve Krug (Real User Behavior):**
+> "Read `{checklist-path}` in full. Find the 'Voice 3: Steve Krug' section. Follow ALL instructions there — load the full advisor prompt from `{krug-path}`, adopt his voice completely, then critique {design-description} using the criteria and output format specified. Represent the person who will never read a design document — they just want to do their job."
 
-**After all three return — Aggregation (in Steve Jobs' voice):**
+**After all three return — Aggregation (in Adham Dannaway's voice):**
+
+Dannaway wrote the file, so he doesn't critique it. He decides what to change.
 
 1. Read all three critiques
-2. As Steve Jobs, decide what matters:
+2. Decide what matters:
    - **Incorporate** high-severity issues from any voice
-   - **Incorporate** medium-severity issues Steve agrees with
-   - **Dismiss** anything that's noise, overthinking, or would compromise the vision — and say why. A Quality Floor failure is never noise.
+   - **Incorporate** medium-severity issues that have a clear rule or reason behind them
+   - **Dismiss** the rest, and say why. A Quality Floor failure is never noise.
+   - **Feeling goes to the builder.** Steve Jobs's findings about feeling, point of view, and distinctiveness are taste calls, not rule breaks. Don't dismiss them for having no rule. Put each one to the builder as a question and write their answer into the file.
 3. Apply the accepted changes to the design
-4. Deliver Steve's brief verdict on the revised result
+4. Give a brief summary of what changed, each change with its reason
 
 **Round 2 (conditional):**
 Only run if Round 1 found high-severity issues from any voice. Same process — all three voices, fresh sub-agents, parallel execution against the updated design.
