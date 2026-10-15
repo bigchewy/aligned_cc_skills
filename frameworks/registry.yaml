@@ -2378,14 +2378,15 @@ frameworks:
     and type
   id: user-story-map
   name: User Story Map
-  purpose: building a shared, visual map of what a user does start to finish, walking
-    it aloud to find the holes, slicing it into releases by outcome, and then wireframing
-    the first slice next to the map
+  purpose: building a shared, visual map of what a user does start to finish on one
+    timeline, walking it aloud to find the holes, slicing it into releases by outcome,
+    then breadboarding Slice 1 with Ryan Singer and handing it to Brad Frost for screens,
+    in one session
   use_when: a team is about to design screens for a product or feature, earlier screen
     designs started from features, pages, or access rules and missed what users do,
     more than one role (such as a member and a facilitator) shares the product, the
     team can't agree what the first release must include, or someone needs a story
-    map built and agreed before wireframes
+    map built and agreed before any screens
 - advisor: brad-frost
   category: product-design
   default_critic_advisors:

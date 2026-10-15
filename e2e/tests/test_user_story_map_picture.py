@@ -184,17 +184,30 @@ class TestAntiExamples:
         assert "**Wrong:**" in b and "card" in b.split("**Right:**")[1]
 
 
-class TestAdvisor:
-    def test_core_frameworks_summary_includes_wireframes(self):
-        advisor = _read(ADVISOR)
-        assert "No screens. Produces a map ready for wireframes." not in advisor
-        core = advisor.split("## Core Frameworks")[1].split("## ")[0]
-        assert "wirefram" in core.lower() and "Slice 1" in core
+class TestAdvisorsAndRegistry:
+    def test_patton_core_names_breadboard_and_frost(self):
+        core = _read(ADVISOR).split("## Core Frameworks")[1].split("\n## ")[0]
+        assert "breadboard" in core.lower() and "Brad Frost" in core and "Slice 1" in core
+        assert "second tab" not in core and "wirefram" not in core.lower()
 
-    def test_no_screens_first_says_wireframes_follow_slice_one(self):
-        advisor = _read(ADVISOR)
-        section = advisor.split("**No screens first.**")[1].split("**No ")[0]
-        assert "Slice 1" in section and "wirefram" in section.lower()
+    def test_patton_rule_hands_off_after_slice_one(self):
+        a = _read(ADVISOR)
+        assert "Sketch one screen per Slice 1 activity" not in a
+        assert "Ryan Singer breadboards" in a
+
+    def test_singer_runs_phase_eight(self):
+        s = _read(REPO_ROOT / "advisors" / "prompts" / "ryan-singer.md")
+        assert "user-story-map" in s
+        line = next(l for l in s.splitlines() if "not yet as guided frameworks" in l)
+        assert "breadboarding" not in line
+
+    def test_registry_entry(self):
+        import yaml
+        reg = yaml.safe_load(_read(REPO_ROOT / "frameworks" / "registry.yaml"))
+        e = next(f for f in reg["frameworks"] if f["id"] == "user-story-map")
+        assert "Ryan Singer" in e["purpose"] and "Brad Frost" in e["purpose"]
+        assert "wirefram" not in (e["purpose"] + e["use_when"]).lower()
+        assert e["use_when"] in _read(REPO_ROOT / "frameworks" / "README.md")
 
 
 class TestDesignPrinciplesLookup:
