@@ -164,7 +164,7 @@ The map after Phase 5, one timeline, each task tagged with its role:
 | Prepare the week's lesson | Read the lesson · Pick the live exercise · Notes for this team (Facilitator) |
 | Do the week's lesson | Open this week's lesson · Do the exercises · Mark it done (Member) |
 | Check who's ready | See who finished the lesson · Nudge who hasn't started · Mark someone excused (Facilitator) |
-| Run the session | Open the live exercise (Facilitator) · Join from the calendar link (Member) · Take part in the live exercise (Member) · Take attendance (Facilitator) · Note what came up (Facilitator) |
+| Run the session | Join from the calendar link (Member) · Take attendance (Facilitator) · Open the live exercise (Facilitator) · Take part in the live exercise (Member) · Note what came up (Facilitator) |
 | Follow up after | Send a recap · Note who needs a check-in (Facilitator) |
 | Practice during the week | Read the recap · Try the practice on the team (Member) |
 | Wrap up the unit | See who fell behind this unit · Talk with anyone behind · Open the next unit (Facilitator) |
@@ -325,7 +325,7 @@ Three of the nine places, as they go into the Markdown under `## Slice 1 breadbo
 
 ### Golden path
 
-**Ryan Singer:** *(Checks for `design-principles.md` again, with the same lookup as the setup, and finds `brand/guidelines/design-principles.md`.)* "The screens will use brand/guidelines/design-principles.md. The breadboard's done. Brad Frost takes it from here to turn it into screens."
+**Ryan Singer:** *(Checks for `design-principles.md` again, with the same lookup as the setup, and finds `brand/guidelines/design-principles.md`.)* "The screens will use brand/guidelines/design-principles.md. The breadboard's done. Brad Frost takes the breadboard to screens here, with Breadboard to Pages."
 
 *Runs `/aligned:use-framework breadboard-to-pages` in the same conversation.* That framework reads the breadboard from `docs/story-maps/team-course.md` under `## Slice 1 breadboard` and runs its own phases and WAIT points in Brad Frost's voice. It writes `docs/story-maps/team-course-screens.md` and `docs/story-maps/team-course-screens.html`.
 
@@ -337,7 +337,7 @@ Three of the nine places, as they go into the Markdown under `## Slice 1 breadbo
 
 *Invokes `/aligned:create-design-principles` right away, in the same reply as that line, and doesn't stop to announce it. Its first question ends the reply. It runs in the same conversation, and the story map tells it to save the file at `docs/design/design-principles.md`. When it finishes, runs the lookup again.*
 
-**Ryan Singer:** "Found docs/design/design-principles.md. The breadboard's done. Brad Frost takes it from here to turn it into screens."
+**Ryan Singer:** "Found docs/design/design-principles.md. The breadboard's done. Brad Frost takes the breadboard to screens here, with Breadboard to Pages."
 
 *Why it works: the screens need tokens, and Brad Frost won't invent them. The save path matches the lookup, so the next check finds the file.*
 

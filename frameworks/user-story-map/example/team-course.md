@@ -69,10 +69,10 @@ A course app for one team, run by a facilitator over 10 units
 
 | Card | Tier | Kind | Role | Slice | Gap | Note |
 |---|---|---|---|---|---|---|
-| Open the live exercise | task | step | Facilitator | 1 | | |
 | Join from the calendar link | task | step | Member | 1 | yes | Found on the walk |
-| Take part in the live exercise | task | step | Member | 1 | | |
 | Take attendance | task | step | Facilitator | 1 | | |
+| Open the live exercise | task | step | Facilitator | 1 | | |
+| Take part in the live exercise | task | step | Member | 1 | | |
 | Note what came up | task | step | Facilitator | Later | | |
 
 ### Follow up after

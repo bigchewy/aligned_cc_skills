@@ -483,7 +483,23 @@ class TestHandoffEval:
         assert "scenarios/use-framework/user-story-map-handoff.yaml" in _read(TRIGGER_MAP)
 
 
-LINK_BACK_SCENARIO = REPO_ROOT / "e2e" / "scenarios" / "use-framework" / "user-story-map-link-back.yaml"
+class TestStoryOrder:
+    def test_run_the_session_tasks_follow_the_walk(self):
+        run = next(a for a in _example_data()["activities"] if a["name"] == "Run the session")
+        assert [t["text"] for t in run["tasks"]] == [
+            "Join from the calendar link", "Take attendance", "Open the live exercise",
+            "Take part in the live exercise", "Note what came up"]
+
+    def test_phase_six_keeps_the_detail_slice_rule(self):
+        assert "A detail is never in an earlier slice than its task." in _phase(_read(PROMPT), 6)
+
+    def test_examples_hand_off_names_breadboard_to_pages(self):
+        ex = _read(EXAMPLES)
+        assert "takes it from here to turn it into screens" not in ex
+        assert ex.count("with Breadboard to Pages") >= 2
+
+
+LINK_BACK_SCENARIO =REPO_ROOT / "e2e" / "scenarios" / "use-framework" / "user-story-map-link-back.yaml"
 
 
 class TestLinkBackEval:
