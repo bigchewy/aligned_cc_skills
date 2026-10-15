@@ -350,6 +350,18 @@ triggers:
       - scenarios/use-advisor/brad-frost-consult.yaml
 
   - paths:
+      - advisors/prompts/adham-dannaway.md
+    scenarios:
+      - scenarios/use-advisor/adham-dannaway-consult.yaml
+
+  - paths:
+      - frameworks/logic-check/prompt.md
+      - frameworks/logic-check/examples.md
+      - frameworks/logic-check/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/logic-check.yaml
+
+  - paths:
       - frameworks/breadboard-to-pages/prompt.md
       - frameworks/breadboard-to-pages/examples.md
       - frameworks/breadboard-to-pages/anti-examples.md

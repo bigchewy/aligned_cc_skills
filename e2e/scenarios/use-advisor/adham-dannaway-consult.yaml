@@ -1,0 +1,86 @@
+# e2e/scenarios/use-advisor/adham-dannaway-consult.yaml
+# Quick-consult eval for Adham Dannaway (Practical UI / colour by role, type scale, limited options, one primary)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Adham Dannaway logic-driven tokens consult"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on RULE SPECIFICITY: Does the response use Adham Dannaway's
+        actual method — colours named by role (brand, text strong, text weak,
+        stroke strong, stroke weak, fill) made from the brand hue, text at
+        4.5:1 and interface elements at 3:1, a type scale from a 16px base and
+        a ratio such as 1.2 with rounded sizes, regular and bold weights only,
+        spacing as a short scale that grows as it gets bigger, and one primary
+        button per screen? Generic advice ("pick a nice palette", "use
+        whitespace", "keep it consistent") with none of these scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FIXING THE SPECIFIC PROBLEMS: The builder uses pure black
+        text, four font weights, the brand teal on headings and a star rating
+        as well as buttons, and two filled primary buttons side by side on the
+        settings screen. Does the response name each of these and give the fix
+        (dark grey text, regular and bold only, brand colour only on things you
+        can click, one primary with the other secondary), each with a one-line
+        reason? Missing two or more of the four scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Adham
+        Dannaway — calm, plain, reassuring, a rule in a short sentence followed
+        by the reason, maybe "it's safest to"? A hype-filled, brutal, or
+        lecturing voice scores 1-2. Invented quotes attributed to Dannaway
+        score 1. These lines are real quotes from his published posts and are
+        not invented: "It's safest to avoid pure black against white and opt
+        for a dark grey instead", "Keep your design system simple and concise
+        by using regular and bold font weights only", "A simple and effective
+        approach is to apply the brand colour to interactive elements like
+        text links and buttons", "This helps teach people what's interactive
+        and what's not", "Avoid using multiple primary buttons on a screen",
+        "Start with black and white and introduce colour where it conveys
+        meaning", and "Unless you're shouting at people, there aren't many
+        valid reasons to use uppercase."
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONEST SCOPE: The builder also asks what feeling the app
+        should have. Does the response treat feeling and brand direction as
+        the builder's call (asking them, or naming it as something his rules
+        don't decide) rather than presenting a Dannaway method for choosing a
+        feeling? Does it avoid usability testing advice? Inventing a
+        personality framework and attributing it to him scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — black text, four weights, teal everywhere, two primaries"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/adham-dannaway.md
+      task_prompt: "\n\n---\n\nI'm building a habit tracker alone with Claude Code. It looks amateur and I can't say why. Text is pure black (#000) on white. I use Inter at 400, 500, 600, and 700. Our brand teal (#0F9D8A) is on buttons, but also on every heading and the star rating for streaks. The settings screen has Save and Export side by side, both filled teal. I want to write a design-principles file so the agent stops guessing. Also, what feeling should the app have? I was thinking calm."
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I'm building a habit tracker alone with Claude Code. It looks amateur and I can't say why. Text is pure black (#000) on white. I use Inter at 400, 500, 600, and 700. Our brand teal (#0F9D8A) is on buttons, but also on every heading and the star rating for streaks. The settings screen has Save and Export side by side, both filled teal. I want to write a design-principles file so the agent stops guessing. Also, what feeling should the app have? I was thinking calm."
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Adham Dannaway, author of Practical UI. I'm building a habit tracker alone with Claude Code. It looks amateur and I can't say why. Text is pure black (#000) on white. I use Inter at 400, 500, 600, and 700. Our brand teal (#0F9D8A) is on buttons, but also on every heading and the star rating for streaks. The settings screen has Save and Export side by side, both filled teal. I want to write a design-principles file so the agent stops guessing. Also, what feeling should the app have? I was thinking calm."

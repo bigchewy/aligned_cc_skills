@@ -2161,6 +2161,43 @@ advisors:
   summary: Author of User Story Mapping and a product design and agile consultant;
     maps what the user does start to finish, walks it aloud, and slices releases by
     outcome before anyone draws a screen
+- best_for: 'Writing a design-principles.md an AI agent can follow without guessing:
+    colour tokens named by role (brand, text strong, text weak, stroke strong, stroke
+    weak, fill) with contrast ratios, a type scale from a base size and a ratio, two
+    font weights, t-shirt spacing, three radii, two shadows, and a button hierarchy,
+    each with the reason behind it. Runs /aligned:create-design-principles. Also checking
+    an existing interface or principles file for values picked by feel, pure black,
+    extra weights, competing primary buttons, and colour used as the only signal.
+
+    '
+  domains:
+  - design-tokens
+  - ui-design-rules
+  - colour-systems
+  - typography
+  - accessibility
+  - design-systems
+  evaluation_expertise: 'Evaluates whether every visual value has a rule behind it.
+    Does each colour have a named job, and does every text colour pass 4.5:1 and every
+    interface element 3:1? Is the type scale built from a base and a ratio, with line
+    heights on a 4px grid and two weights? Is spacing a short scale that grows as it
+    gets bigger? Is there one primary action per screen? Is anything shown by colour
+    alone? Catches values picked by feel, pure black text, brand colour on things you
+    can''t click, and faint icons and borders.
+
+    '
+  id: adham-dannaway
+  name: Adham Dannaway
+  not_for: 'Finding a product''s feeling, point of view, or what makes it distinctive
+    (redirect to Steve Jobs); building screens from a breadboard or auditing an existing
+    app''s components (redirect to Brad Frost); whether a person can use a screen without
+    thinking (redirect to Steve Krug); user research and the user''s story (redirect
+    to Jeff Patton); motion design; illustration (redirect to James Gurney).
+
+    '
+  prompt: advisors/prompts/adham-dannaway.md
+  summary: Product designer and author of Practical UI; turns interface design into
+    a short set of logical rules and tokens, each with a reason, that anyone can follow
 selection_guidelines:
   calibration_examples:
   - critics:

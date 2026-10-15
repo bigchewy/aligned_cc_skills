@@ -1,0 +1,89 @@
+# e2e/scenarios/use-framework/logic-check.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Logic Check on a habit tracker's settings screen"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The builder already said what to check
+        and gave the principles file, so the response may confirm that in a
+        line and move into naming the rule behind each value. Does it then
+        STOP and wait — asking a question — before writing the whole fix list?
+        A response that runs every step and finishes with a complete fix list
+        and no question scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on RULE BEHIND EVERY VALUE: Does the response sort the values
+        into ones that follow a rule (16px base, 20 and 24 from 16 × 1.2
+        rounded, the 8/16/24 spacing) and ones with no rule yet (the 13px and
+        14px sizes, the 500 and 600 weights, the 12px gap, #000 text), and say
+        which rule each kept value follows? Generic critique with no rule named
+        per value scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on RESPECTING THE FILE: The principles file says the 600
+        headline weight was chosen on purpose. Does the response leave that
+        choice alone (or mark it as chosen on purpose) instead of telling the
+        builder to drop 600? Telling them to remove the 600 weight scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Adham
+        Dannaway — calm, plain, reassuring, a rule in a short sentence and the
+        reason in one more? A hype, brutal, or lecturing voice scores 1-2.
+        Invented quotes attributed to him score 1. These are real quotes, not
+        invented: "Without a logical system, you're just using gut feeling to
+        move stuff around until it looks pretty", "It's safest to avoid pure
+        black against white and opt for a dark grey instead", "Keep your
+        design system simple and concise by using regular and bold font
+        weights only", "Avoid using multiple primary buttons on a screen."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/logic-check/prompt.md
+      task_prompt: "\n\n---\n\nPlease check my settings screen against my principles file. Here's what's on the screen and what the file says. I'll answer step by step."
+      product_brief: &brief |
+        docs/design/design-principles.md says: base size 16px, type scale
+        ratio 1.2 rounded (16, 20, 24), Inter, body 400, headlines 600 (chosen
+        on purpose for our brand), spacing 8 / 16 / 24, brand teal #0F9D8A for
+        buttons and links, text #2B2F2E.
+
+        The settings screen uses: text #000; sizes 13px, 14px, 16px, 20px,
+        24px; weights 400, 500, 600, 700; a 12px gap between rows plus 8, 16,
+        and 24 elsewhere; teal on headings, the streak star rating, and two
+        filled buttons side by side, Save and Export.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Please check my settings screen against my design principles. Here's what's on the screen and what the file says. I'll answer step by step."
+      product_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Adham Dannaway, author of Practical UI. Please check my settings screen against my principles file. Here's what's on the screen and what the file says. I'll answer step by step."
+      product_brief: *brief

@@ -2444,3 +2444,29 @@ frameworks:
     text fields), an AI agent has been inventing styles, someone is about to redesign
     or write design principles for an app that already exists, or the UI feels inconsistent
     and nobody can say where
+- advisor: adham-dannaway
+  category: product-design
+  default_critic_advisors:
+  - adham-dannaway
+  - steve-krug
+  deliverable_type: analysis
+  domains:
+  - ui-design-rules
+  - design-tokens
+  - accessibility
+  - colour-systems
+  helpful_documents:
+  - the project's design-principles.md, when checking a screen, so choices made on
+    purpose are respected
+  id: logic-check
+  name: Logic Check
+  purpose: reading a design principles file or an existing screen, naming the rule
+    behind every visual value, and listing every value picked by feel with the rule
+    that fixes it
+  required_documents:
+  - a design-principles.md, or an existing screen as a URL, a running dev server,
+    code, or a screenshot
+  use_when: a screen looks amateur and nobody can say why, an AI agent keeps picking
+    colours, sizes, or weights by feel, a design principles file needs checking before
+    screens are built from it, or text contrast, button hierarchy, or colour-only signals
+    need checking

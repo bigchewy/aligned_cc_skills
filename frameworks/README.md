@@ -1,6 +1,6 @@
 # Framework Registry
 
-133 frameworks across 26 categories
+134 frameworks across 26 categories
 
 | Category | Count |
 |----------|-------|
@@ -23,7 +23,7 @@
 | podcasting | 4 |
 | positioning | 8 |
 | pricing | 1 |
-| product-design | 3 |
+| product-design | 4 |
 | psychology | 12 |
 | sales | 5 |
 | social-media | 9 |
@@ -168,6 +168,7 @@
 | user-story-map | User Story Map | jeff-patton | product-design | a team is about to design screens for a product or feature, earlier screen designs started from features, pages, or access rules and missed what users do, more than one role (such as a member and a facilitator) shares the product, the team can't agree what the first release must include, or someone needs a story map built and agreed before wireframes |
 | breadboard-to-pages | Breadboard to Pages | brad-frost | product-design | a breadboard or Slice 1 of a story map is agreed and needs finished screens to guide the build, an AI agent keeps inventing styles instead of using the design system, screens were drawn with placeholder content or only the happy path, or someone needs each screen tied back to the place and action it comes from |
 | interface-inventory | Interface Inventory | brad-frost | product-design | an existing app has grown several looks for the same job (buttons, grays, text fields), an AI agent has been inventing styles, someone is about to redesign or write design principles for an app that already exists, or the UI feels inconsistent and nobody can say where |
+| logic-check | Logic Check | adham-dannaway | product-design | a screen looks amateur and nobody can say why, an AI agent keeps picking colours, sizes, or weights by feel, a design principles file needs checking before screens are built from it, or text contrast, button hierarchy, or colour-only signals need checking |
 
 ## By Category
 
@@ -295,10 +296,11 @@
 
 - **value-metric** — Value Metric Framework (patrick-campbell)
 
-### Product Design (3)
+### Product Design (4)
 
 - **breadboard-to-pages** — Breadboard to Pages (brad-frost)
 - **interface-inventory** — Interface Inventory (brad-frost)
+- **logic-check** — Logic Check (adham-dannaway)
 - **user-story-map** — User Story Map (jeff-patton)
 
 ### Psychology (12)
