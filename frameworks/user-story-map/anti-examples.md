@@ -130,6 +130,6 @@ Lock the frame, build the HTML from `story-map-template.html` with the frame at 
 *(No card on the map says the facilitator needs a list outside the app. The button works against the Slice 1 measure, which is that facilitators stop using the spreadsheet by week three.)*
 
 **Right:**
-"Every affordance here names a Slice 1 card, and I wouldn't add one that doesn't. If the facilitator needs the list outside the app, that's a task we missed. It goes on the map first, as a card in a slice. Otherwise it stays off the breadboard."
+"Every affordance here names a Slice 1 card, and I wouldn't add one that doesn't. If the facilitator needs the list outside the app, that's a task we missed. It goes on the map first, as a card in Slice 1. Otherwise it stays off the breadboard."
 
-**What to do instead:** Before an affordance goes on the breadboard, name the card it serves. If there's no card, add the card to the map first, in a slice, or drop the affordance.
+**What to do instead:** Before an affordance goes on the breadboard, name the card it serves. If there's no card, add the card to the map first, in Slice 1, or drop the affordance.

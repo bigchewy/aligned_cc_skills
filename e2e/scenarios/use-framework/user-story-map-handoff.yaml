@@ -147,7 +147,7 @@ tests:
 
         The breadboard looks right. Lock it.
 
-        The map and its Slice 1 breadboard are saved at docs/story-maps/team-course.md and published at [map link]. The breadboard has nine places: Get the team set up (Facilitator), Lesson 2, before members see it (Facilitator), Who's ready for Thursday (Facilitator), Thursday session (Facilitator), Recap for the team (Facilitator), You're invited to the team course (Member), This week's lesson (Member), Thursday session at 6 (Member), and Recap from Thursday (Member). Every Slice 1 task except the workaround "Wrap up the unit by hand, as today" has an affordance, and every affordance names its card.
+        The map and its Slice 1 breadboard are saved at docs/story-maps/team-course.md and published at [map link]. The breadboard has nine places: Get the team set up (Facilitator), Lesson 2, before members see it (Facilitator), Who's ready for Thursday (Facilitator), Thursday session (Facilitator), Recap for the team (Facilitator), You're invited to the team course (Member), This week's lesson (Member), Thursday session at 6 (Member), and Recap from Thursday (Member). Every Slice 1 task except the workaround "Wrap up the unit by hand, as today" has an affordance, and every affordance names its card. The Phase 7 write-up is already done, so hand off to Brad Frost; don't rewrite the map.
 
         This project has no design-principles.md. There is none under brand/guidelines/, brand/*/guidelines/, docs/design/, or in my home folder.
 

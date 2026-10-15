@@ -64,6 +64,7 @@ tests:
         - User: the facilitator running one team through the course.
         - Outcome: they walk into each weekly session ready, knowing who did the lesson, without an evening of prep.
         - Problem: the prep is scattered across a PDF, a group chat, and a spreadsheet, so they guess who's ready.
+        - Why: teams that finish a unit sign up for the next.
 
         Context: We run a team course with ten units and four weekly lessons
         per unit. A facilitator meets each team once a week. Members use the

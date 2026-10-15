@@ -129,7 +129,7 @@ A course app for one team, run by a facilitator over 10 units
 |---|---|---|
 | List of members with finished or not started | | See who finished the lesson |
 | Count of members who finished | | See who finished the lesson |
-| Run the session link | Thursday session | Run the session |
+| Run the session link | Thursday session | Open the live exercise |
 
 ### Thursday session (Facilitator)
 
@@ -137,7 +137,7 @@ A course app for one team, run by a facilitator over 10 units
 |---|---|---|
 | Open the live exercise button | | Open the live exercise |
 | Attendance list with here or away | | Take attendance |
-| Recap link | Recap for the team | Follow up after |
+| Recap link | Recap for the team | Send a recap |
 
 ### Recap for the team (Facilitator)
 

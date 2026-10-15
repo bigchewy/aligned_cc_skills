@@ -275,7 +275,7 @@ Three of the nine places, as they go into the Markdown under `## Slice 1 breadbo
 |---|---|---|
 | List of members with finished or not started | | See who finished the lesson |
 | Count of members who finished | | See who finished the lesson |
-| Run the session link | Thursday session | Run the session |
+| Run the session link | Thursday session | Open the live exercise |
 
 **This week's lesson (Member)**
 
@@ -359,18 +359,18 @@ Three of the nine places, as they go into the Markdown under `## Slice 1 breadbo
 
 **User:** "Great, thanks."
 
-**Jeff Patton:** *(Writes the screens link into `docs/story-maps/team-course.md`, rebuilds the map, and republishes it to the same link.)*
+**Jeff Patton:** *(Writes the screens link into `docs/story-maps/team-course.md`, rebuilds the map, and republishes it to the same link. The map and the screens were published as artifacts, so `[screens link]` stands for the screens page's artifact URL. A relative path like `team-course-screens.html` goes there only when no Artifact tool was used.)*
 
 ```
 ## Screens
 
-team-course-screens.html
+[screens link]
 ```
 
 **Jeff Patton:** "The Screens link is at the top of the map now.
 
 - Map: the same link as before, with the Map tab and the Breadboard tab
-- Screens: team-course-screens.html, built by Brad Frost from the breadboard
+- Screens: [screens link], built by Brad Frost from the breadboard
 
 That's the map, the Slice 1 breadboard, and the screens, linked to each other. Before you build, Steve Krug can tell you whether people can use these screens, and The Architect can work out how the system enforces the unlock rule."
 
@@ -380,4 +380,4 @@ That's the map, the Slice 1 breadboard, and the screens, linked to each other. B
 
 ## The finished page
 
-This whole conversation, built: `example/team-course.md` is the Markdown source after Phase 8, and `example/team-course.html` is the page built from it with `story-map-template.html`. Only the JSON block differs from the template; the colors are the template's own, since the example has no design-principles file. Open the HTML to see the Map tab, with both roles on one timeline, and the Breadboard tab with all nine Slice 1 places. The Screens link stays hidden, because the example stops before Phase 10.
+This whole conversation, built: `example/team-course.md` is the Markdown source after Phase 8, and `example/team-course.html` is the page built from it with `story-map-template.html`. Only the JSON block differs from the template; the colors are the template's own, so the example stands alone, even though the conversation above found a design-principles file. Open the HTML to see the Map tab, with both roles on one timeline, and the Breadboard tab with all nine Slice 1 places. The Screens link stays hidden, because the example stops before Phase 10.

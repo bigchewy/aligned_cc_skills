@@ -44,7 +44,7 @@ defaultTest:
     - type: llm-rubric
       value: |
         Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end by asking
-        the Phase 1 questions (user, outcome, problem) and genuinely stopping,
+        the Phase 1 questions (user, outcome, problem, why) and genuinely stopping,
         rather than asking and then answering them itself, or asking questions
         from several phases at once? Exactly one phase's questions, then a
         stop, scores 5.

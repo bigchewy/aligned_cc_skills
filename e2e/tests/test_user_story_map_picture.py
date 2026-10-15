@@ -1,11 +1,12 @@
-"""The User Story Map framework always draws the map and ends with Slice 1 wireframes.
+"""The User Story Map framework always draws the map, then breadboards Slice 1 and hands it to screens.
 
 Guards the contract added after the 2026-10-13 planted run, where "build the
 map as text for me to review before any screens" was read as "no picture."
-The picture starts as soon as the frame locks in Phase 1, wording in a request
-can't turn it off, and Phase 8 wireframes Slice 1 into a second tab of the same
-page. The design-principles lookup also finds monorepo files under
-brand/*/guidelines/.
+The picture starts as soon as the frame locks in Phase 1, and wording in a
+request can't turn it off. Phase 8 breadboards Slice 1 into a second tab of
+the same page, Phase 9 hands the breadboard to Brad Frost's screens framework,
+and Phase 10 links the screens back from the map. The design-principles
+lookup also finds monorepo files under brand/*/guidelines/.
 """
 
 import json
@@ -353,6 +354,18 @@ class TestMarkdownTemplate:
         assert "| Card | Tier | Kind | Role | Slice | Gap | Note |" in md
         assert "| Affordance | Leads to | Card |" in md
 
+    def test_why_placeholder_says_what_the_business_gets(self):
+        md = _read(MD_TEMPLATE)
+        assert "- **Why:** {what the business gets if it's fixed}" in md
+        assert "- **Problem:** {what goes wrong for them today}" in md
+
+    def test_roles_fill_after_phase_1(self):
+        assert "Roles after Phase 1" in _read(MD_TEMPLATE)
+
+    def test_screens_link_opens_in_new_tab(self):
+        html = _read(TEMPLATE)
+        assert 'id="screens-link" target="_blank" rel="noopener"' in html
+
     def test_comment_maps_markdown_to_json(self):
         md = _read(MD_TEMPLATE)
         for field in ('"why"', '"roles"', '"measure"', '"activities"', '"tasks"', '"details"',
@@ -409,7 +422,6 @@ class TestWorkedExample:
         d = _example_data()
         s1 = {t["text"] for a in d["activities"] for t in a["tasks"] if t.get("slice") == 1 and not t.get("workaround")}
         s1 |= {x["text"] for a in d["activities"] for t in a["tasks"] for x in t.get("details", []) if x.get("slice") == 1}
-        s1 |= {a["name"] for a in d["activities"]}
         places = {p["place"] for p in d["breadboard"]}
         for p in d["breadboard"]:
             for aff in p["affordances"]:

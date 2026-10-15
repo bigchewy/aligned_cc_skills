@@ -80,7 +80,7 @@ If the outcome is vague ("a better experience"):
 If the why is missing or only says "users want it":
 "What does the business get? More people signing up, fewer leaving, less support? Pick the one you'd check."
 
-**Lock:** the user, the outcome, the problem, and the why, one or two sentences each, plus the chooser if there is one. The user becomes the first row in Roles.
+**Lock:** the user, the outcome, the problem, and the why, one or two sentences each, plus the chooser if there is one. The user becomes the first row in Roles, and the chooser goes in Roles too.
 
 Then do the setup in "The map on screen."
 
@@ -283,7 +283,7 @@ Build it from the Slice 1 cards on the map:
 - **Each place belongs to one role.** Name it the way that person would, and write the role after it: "Who's ready for Thursday (Facilitator)."
 - **Every Slice 1 task that isn't a workaround has at least one affordance.** Workaround cards get none, because the user does them outside the app.
 - **Every affordance names the card it serves,** a Slice 1 task or detail, word for word.
-- **An affordance with no card is a gap.** Add the card to the map, in a slice, or drop the affordance.
+- **An affordance with no card is a gap.** Add the card to the map, in Slice 1, or drop the affordance.
 - **Each connection leads to a place on the breadboard.** If it leads nowhere, either the place is missing or the connection is.
 - **Slice 1 only.** Tasks below the Slice 1 line don't appear.
 
@@ -302,7 +302,7 @@ If they start on layout, colors, or how a button looks:
 "That comes next, with Brad Frost. Right now I want to know the places are right and every action goes somewhere."
 
 If they want to add something that isn't on the map ("put a chat panel here"):
-"What's the person doing when they'd use it? If it's a task we missed, it goes on the map first, in a slice. If it's below the Slice 1 line, it waits."
+"What's the person doing when they'd use it? If it's a task we missed, it goes on the map first, in Slice 1. If it's below the Slice 1 line, it waits."
 
 If they want to breadboard Slice 2:
 "Let's get Slice 1 built first. Slice 2 will look different once people use this."
@@ -318,7 +318,7 @@ If they want to breadboard Slice 2:
 Check for the project's `design-principles.md` again, with the same lookup as step 1 of "The map on screen." The user may have made one since the setup.
 
 If none is found anywhere, say something like:
-"There's no design system yet, and the screens need one. Let's make it now, then come back to the screens."
+"There's no design system yet, and the screens need one before Brad Frost can build them. Let's make it now, then he takes the breadboard to screens here."
 Then run `/aligned:create-design-principles` in the same conversation first, and tell it to save it at `docs/design/design-principles.md`, so the lookup finds it. When it finishes, run the lookup again and say which file was found. Then go on with this phase.
 
 If they don't want to make one now:

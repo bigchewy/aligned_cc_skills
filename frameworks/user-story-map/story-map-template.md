@@ -29,7 +29,7 @@
   in task order. A breadboard row's Card column must be a Slice 1 task or detail, word for word. Leave
   Leads to empty when the affordance stays on the same place.
 
-  Leave a section empty until its phase: Roles and Map after Phase 2, Slices after Phase 6, Breadboard
+  Leave a section empty until its phase: Roles after Phase 1 (the user, and the chooser if there is one), Map after Phase 2, Slices after Phase 6, Breadboard
   after Phase 8, Screens after Phase 10. Empty sections become empty arrays or strings, and the page draws
   what exists. Delete this comment in the copy.
 -->
@@ -42,8 +42,8 @@
 
 - **User:** {the one person whose story comes first}
 - **Outcome:** {what's different for them when this works}
-- **Problem:** {what goes wrong for them today, and what the business gets if it's fixed}
-- **Why:** {why this is worth building now}
+- **Problem:** {what goes wrong for them today}
+- **Why:** {what the business gets if it's fixed}
 
 ## Roles
 
