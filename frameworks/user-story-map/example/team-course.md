@@ -7,186 +7,168 @@ A course app for one team, run by a facilitator over 10 units
 - **User:** The facilitator running one team through the course
 - **Outcome:** They walk into each weekly session ready, knowing who did the lesson, without an evening of prep
 - **Problem:** The prep is scattered across a PDF, a group chat, and a spreadsheet, so they guess who's ready
+- **Why:** Teams that finish a unit sign up for the next
+
+## Roles
+
+| Role | Who they are |
+|---|---|
+| Facilitator | Runs one team through the course |
+| Member | Does each week's lesson and joins the weekly session |
 
 ## Slices
 
 | Slice | Name | Outcome | Measure |
 |---|---|---|---|
 | 1 | Slice 1: Run a week | A facilitator runs a full week with one team and walks in knowing who's ready, without the spreadsheet | Facilitators stop using the spreadsheet by week three |
-| 2 | Slice 2: Run a unit | The facilitator sees who fell behind across a unit and opens the next one | Every unit wrap-up happens in the app |
+| 2 | Slice 2: Run a unit | The facilitator sees who fell behind across a unit and opens the next one | Facilitators talk with every member who fell behind before the next unit opens |
 
-## Lane: Facilitator
+## Map
 
 ### Get the team set up
 
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Invite the members | 1 | | |
-| Set the session day and time | 1 | | |
-| Share the course outline | Later | | |
-
-### Prepare the week's lesson
-
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Read the lesson | 1 | | |
-| Pick the live exercise | 1 | | |
-| Lesson visible to facilitator before members | 1 | | Detail: a rule under Read the lesson |
-| Notes for this team | Later | | |
-
-### Check who's ready
-
-Touches: Member: Do the week's lesson
-
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| See who finished the lesson | 1 | | |
-| Nudge who hasn't started | Later | | |
-| Mark someone excused | Later | yes | Found on the walk |
-
-### Run the session
-
-Touches: Member: Join the session
-
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Open the live exercise | 1 | | |
-| Take attendance | 1 | | |
-| Note what came up | Later | | |
-
-### Follow up after
-
-Touches: Member: Practice during the week
-
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Send a recap | 1 | | |
-| Note who needs a check-in | Later | | |
-
-### Wrap up the unit
-
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| See who fell behind this unit | 2 | | |
-| Talk with anyone behind | 2 | | |
-| Open the next unit | 2 | | |
-
-## Lane: Member
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Invite the members | task | step | Facilitator | 1 | | |
+| Set the session day and time | task | step | Facilitator | 1 | | |
+| Share the course outline | task | step | Facilitator | Later | | |
 
 ### Join the course
 
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Accept the invite | 1 | | |
-| See the course outline | Later | | |
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Accept the invite | task | step | Member | 1 | | |
+| See the course outline | task | step | Member | Later | | |
+
+### Prepare the week's lesson
+
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Read the lesson | task | step | Facilitator | 1 | | |
+| Lesson visible to facilitator before members | detail | rule | Facilitator | 1 | | |
+| Pick the live exercise | task | step | Facilitator | 1 | | |
+| Notes for this team | task | step | Facilitator | Later | | |
 
 ### Do the week's lesson
 
-Touches: Facilitator: Check who's ready
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Open this week's lesson | task | step | Member | 1 | | |
+| Do the exercises | task | step | Member | 1 | | |
+| Mark it done | task | step | Member | 1 | | |
 
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Open this week's lesson | 1 | | |
-| Do the exercises | 1 | | |
-| Mark it done | 1 | | |
+### Check who's ready
 
-### Join the session
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| See who finished the lesson | task | step | Facilitator | 1 | | |
+| Nudge who hasn't started | task | step | Facilitator | Later | | |
+| Mark someone excused | task | step | Facilitator | Later | yes | Found on the walk |
 
-Touches: Facilitator: Run the session
+### Run the session
 
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Join from the calendar link | 1 | yes | Found on the walk |
-| Take part in the live exercise | 1 | | |
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Open the live exercise | task | step | Facilitator | 1 | | |
+| Join from the calendar link | task | step | Member | 1 | yes | Found on the walk |
+| Take part in the live exercise | task | step | Member | 1 | | |
+| Take attendance | task | step | Facilitator | 1 | | |
+| Note what came up | task | step | Facilitator | Later | | |
+
+### Follow up after
+
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Send a recap | task | step | Facilitator | 1 | | |
+| Note who needs a check-in | task | step | Facilitator | Later | | |
 
 ### Practice during the week
 
-Touches: Facilitator: Follow up after
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Read the recap | task | step | Member | 1 | | |
+| Try the practice on the team | task | step | Member | Later | | |
 
-| Step | Slice | Gap | Note |
-|---|---|---|---|
-| Read the recap | 1 | | |
-| Try the practice on the team | Later | | |
+### Wrap up the unit
+
+| Card | Tier | Kind | Role | Slice | Gap | Note |
+|---|---|---|---|---|---|---|
+| Wrap up the unit by hand, as today | task | workaround | Facilitator | 1 | | |
+| See who fell behind this unit | task | step | Facilitator | 2 | | |
+| Talk with anyone behind | task | step | Facilitator | 2 | | |
+| Open the next unit | task | step | Facilitator | 2 | | |
 
 ## Open questions
 
 1. Does the facilitator need to see a lesson before it unlocks for members, and how far ahead?
 2. Who marks a member excused, the facilitator or the member?
-3. What does the facilitator do by hand to wrap up a unit until Slice 2 ships?
+3. What does "Wrap up the unit by hand, as today" look like for the facilitator until Slice 2 ships?
 
-## Slice 1 wireframes
+## Slice 1 breadboard
 
-### Facilitator: Get the team set up
+### Get the team set up (Facilitator)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | Get the team set up | Get the team set up |
-| field | Member email addresses | Invite the members |
-| field | Session day and time | Set the session day and time |
-| button | Send the invites | Invite the members |
+| Member email addresses field | | Invite the members |
+| Send the invites button | | Invite the members |
+| Session day and time field | | Set the session day and time |
 
-### Facilitator: Prepare the week's lesson
+### Lesson 2, before members see it (Facilitator)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | Lesson 2, before members see it | Lesson visible to facilitator before members |
-| text | The lesson text | Read the lesson |
-| list | Exercise 1 / Exercise 2 / Exercise 3 | Pick the live exercise |
-| button | Use this one live | Pick the live exercise |
+| The lesson text | | Read the lesson |
+| A note that members can't see it yet | | Lesson visible to facilitator before members |
+| List of exercises | | Pick the live exercise |
+| Use this one live button | Who's ready for Thursday | Pick the live exercise |
 
-### Facilitator: Check who's ready
+### Who's ready for Thursday (Facilitator)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | Who's ready for Thursday | Check who's ready |
-| list | Ana: Finished lesson 2 / Ben: Finished lesson 2 / Cy: Finished lesson 2 / Dee: Not started / Eli: Not started | See who finished the lesson |
-| text | 3 of 5 finished | See who finished the lesson |
-| link | Run the session | Run the session |
+| List of members with finished or not started | | See who finished the lesson |
+| Count of members who finished | | See who finished the lesson |
+| Run the session link | Thursday session | Run the session |
 
-### Facilitator: Run the session
+### Thursday session (Facilitator)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | Thursday session | Run the session |
-| text | Exercise 2, picked during prep | Pick the live exercise |
-| button | Open the live exercise | Open the live exercise |
-| list | Ana: here / Ben: here / Cy: here / Dee: away / Eli: here | Take attendance |
+| Open the live exercise button | | Open the live exercise |
+| Attendance list with here or away | | Take attendance |
+| Recap link | Recap for the team | Follow up after |
 
-### Facilitator: Follow up after
+### Recap for the team (Facilitator)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | Recap for the team | Follow up after |
-| field | What we covered, and this week's practice | Send a recap |
-| button | Send the recap | Send a recap |
+| What we covered, and this week's practice field | | Send a recap |
+| Send the recap button | | Send a recap |
 
-### Member: Join the course
+### You're invited to the team course (Member)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | You're invited to the team course | Join the course |
-| text | Sessions are Thursdays at 6 | Accept the invite |
-| button | Accept the invite | Accept the invite |
+| Accept the invite button | This week's lesson | Accept the invite |
 
-### Member: Do the week's lesson
+### This week's lesson (Member)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | This week: Lesson 2 | Open this week's lesson |
-| text | The lesson text, then each exercise | Do the exercises |
-| button | Mark it done | Mark it done |
+| The lesson text | | Open this week's lesson |
+| Each exercise | | Do the exercises |
+| Mark it done button | | Mark it done |
 
-### Member: Join the session
+### Thursday session at 6 (Member)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | Thursday session at 6 | Join the session |
-| button | Join from the calendar link | Join from the calendar link |
-| text | Exercise 2 opens here when the facilitator starts it | Take part in the live exercise |
+| Join from the calendar link button | | Join from the calendar link |
+| Exercise 2 opens here when the facilitator starts it | | Take part in the live exercise |
 
-### Member: Practice during the week
+### Recap from Thursday (Member)
 
-| Kind | Text | Card |
+| Affordance | Leads to | Card |
 |---|---|---|
-| heading | Recap from Thursday | Read the recap |
-| text | What we covered, and this week's practice | Read the recap |
+| What we covered, and this week's practice | | Read the recap |

@@ -276,100 +276,88 @@ class TestMarkdownTemplate:
         assert "example/team-course" in section
 
 
-@pytest.mark.skip(reason="rebuilt in Task 2")
 class TestWorkedExample:
-    def test_example_html_is_the_template_with_only_the_json_changed(self):
-        template = MAP_DATA.sub(r"\1\3", _read(TEMPLATE))
-        example = MAP_DATA.sub(r"\1\3", _read(EXAMPLE_HTML))
-        assert example == template, "the example must be built from the template, not hand-edited"
+    def test_built_from_template(self):
+        assert MAP_DATA.sub(r"\1\3", _read(EXAMPLE_HTML)) == MAP_DATA.sub(r"\1\3", _read(TEMPLATE))
 
-    def test_example_is_the_team_course_map_with_two_lanes(self):
-        data = _example_data()
-        assert [lane["role"] for lane in data["lanes"]] == ["Facilitator", "Member"]
-        names = [a["name"] for a in data["lanes"][0]["activities"]]
-        assert "Check who's ready" in names and len(names) == 6
+    def test_one_timeline_two_roles(self):
+        d = _example_data()
+        assert "lanes" not in d
+        assert [r["name"] for r in d["roles"]] == ["Facilitator", "Member"]
+        roles = {t["role"] for a in d["activities"] for t in a["tasks"]}
+        assert roles == {"Facilitator", "Member"}
+        run = next(a for a in d["activities"] if a["name"] == "Run the session")
+        assert {t["role"] for t in run["tasks"]} == {"Facilitator", "Member"}
 
-    def test_every_step_belongs_to_a_known_slice_or_later(self):
-        data = _example_data()
-        ids = {s["id"] for s in data["slices"]}
-        for lane in data["lanes"]:
-            for activity in lane["activities"]:
-                for step in activity["steps"]:
-                    assert step.get("slice") in ids | {None}, step
+    def test_slice_one_reaches_every_activity(self):
+        for a in _example_data()["activities"]:
+            assert any(t.get("slice") == 1 for t in a["tasks"]), a["name"]
 
-    def test_example_shows_a_gap_and_touch_points(self):
-        data = _example_data()
-        activities = [a for lane in data["lanes"] for a in lane["activities"]]
-        assert any(s.get("gap") for a in activities for s in a["steps"])
-        assert any(a.get("touches") for a in activities)
+    def test_wrap_up_uses_a_workaround(self):
+        wrap = next(a for a in _example_data()["activities"] if a["name"] == "Wrap up the unit")
+        assert any(t.get("workaround") and t.get("slice") == 1 for t in wrap["tasks"])
 
-    def test_one_wireframe_per_slice_one_activity(self):
-        data = _example_data()
-        slice_one = {
-            (lane["role"], a["name"])
-            for lane in data["lanes"]
-            for a in lane["activities"]
-            if any(s.get("slice") == 1 for s in a["steps"])
-        }
-        wired = [(w["lane"], w["activity"]) for w in data["wireframes"]]
-        assert sorted(wired) == sorted(slice_one)
+    def test_every_slice_has_a_measure_and_why_is_set(self):
+        d = _example_data()
+        assert all(s["measure"] for s in d["slices"])
+        assert d["frame"]["why"] == "Teams that finish a unit sign up for the next"
 
-    def test_every_wireframe_element_names_a_slice_one_card_in_its_lane(self):
-        data = _example_data()
-        for w in data["wireframes"]:
-            lane = next(l for l in data["lanes"] if l["role"] == w["lane"])
-            cards = {a["name"] for a in lane["activities"]} | {
-                s["text"] for a in lane["activities"] for s in a["steps"] if s.get("slice") == 1
-            }
-            for element in w["elements"]:
-                assert element["card"] in cards, f"{w['activity']}: {element['card']} is not a Slice 1 card"
+    def test_rule_hangs_under_read_the_lesson(self):
+        tasks = {t["text"]: t for a in _example_data()["activities"] for t in a["tasks"]}
+        assert any(x["kind"] == "rule" for x in tasks["Read the lesson"]["details"])
 
-    def test_markdown_source_holds_every_string_in_the_json(self):
-        md = _read(EXAMPLE_MD)
-        data = _example_data()
-        strings = [data["title"], *data["frame"].values(), *data["questions"]]
-        strings += [s["name"] for s in data["slices"]] + [s["outcome"] for s in data["slices"]]
-        for lane in data["lanes"]:
-            for a in lane["activities"]:
-                strings += [a["name"], *a.get("touches", [])]
-                strings += [s["text"] for s in a["steps"]]
-        for w in data["wireframes"]:
-            for e in w["elements"]:
-                strings += [e["card"], *e.get("rows", [])] + ([e["text"]] if "text" in e else [])
-        missing = [s for s in strings if s not in md]
-        assert not missing, f"JSON strings missing from the Markdown source: {missing}"
+    def test_no_detail_in_an_earlier_slice_than_its_task(self):
+        order = lambda s: 10**6 if s is None else s
+        for a in _example_data()["activities"]:
+            for t in a["tasks"]:
+                for x in t.get("details", []):
+                    assert order(x.get("slice")) >= order(t.get("slice")), x["text"]
+
+    def test_every_slice_one_task_has_an_affordance(self):
+        d = _example_data()
+        cards = {aff["card"] for p in d["breadboard"] for aff in p["affordances"]}
+        for a in d["activities"]:
+            for t in a["tasks"]:
+                if t.get("slice") == 1 and not t.get("workaround"):
+                    assert t["text"] in cards, t["text"]
+
+    def test_every_affordance_names_a_slice_one_card_and_a_real_place(self):
+        d = _example_data()
+        s1 = {t["text"] for a in d["activities"] for t in a["tasks"] if t.get("slice") == 1 and not t.get("workaround")}
+        s1 |= {x["text"] for a in d["activities"] for t in a["tasks"] for x in t.get("details", []) if x.get("slice") == 1}
+        s1 |= {a["name"] for a in d["activities"]}
+        places = {p["place"] for p in d["breadboard"]}
+        for p in d["breadboard"]:
+            for aff in p["affordances"]:
+                assert aff["card"] in s1, aff
+                assert aff.get("to", "") in places | {""}, aff
+
+    def test_markdown_holds_every_json_string(self):
+        md, d = _read(EXAMPLE_MD), _example_data()
+        strings = [d["title"], *[v for v in d["frame"].values() if v], *d["questions"]]
+        strings += [r["name"] for r in d["roles"]] + [r["about"] for r in d["roles"]]
+        strings += [s[k] for s in d["slices"] for k in ("name", "outcome", "measure")]
+        for a in d["activities"]:
+            strings.append(a["name"])
+            for t in a["tasks"]:
+                strings.append(t["text"])
+                strings += [x["text"] for x in t.get("details", [])]
+        for p in d["breadboard"]:
+            strings.append(p["place"])
+            for aff in p["affordances"]:
+                strings += [aff["text"], aff["card"]] + ([aff["to"]] if aff.get("to") else [])
+        assert [s for s in strings if s not in md] == []
 
     def test_examples_md_points_to_the_finished_page(self):
         assert "example/team-course.html" in _read(EXAMPLES)
 
     @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
-    def test_example_renders_both_tabs(self, tmp_path):
-        """Run the page script against a tiny DOM stub and count what it draws."""
-        html = _read(EXAMPLE_HTML)
-        data = MAP_DATA.search(html).group(2)
-        script = re.findall(r"<script>(.*?)</script>", html, flags=re.S)[0]
-        stub = (
-            "var made={};function E(t){this.tagName=t;this.children=[];this.className='';this.textContent='';"
-            "this.hidden=false;this.attrs={};}E.prototype.appendChild=function(c){this.children.push(c);"
-            "made[c.className]=(made[c.className]||0)+1;return c};E.prototype.setAttribute=function(k,v){this.attrs[k]=v};"
-            "E.prototype.getAttribute=function(k){return this.attrs[k]};E.prototype.addEventListener=function(){};"
-            "E.prototype.querySelectorAll=function(){return []};var byId={};"
-            "var document={createElement:function(t){return new E(t)},createTextNode:function(t){return new E('#text')},"
-            "getElementById:function(id){if(id==='map-data')return{textContent:DATA};return byId[id]||(byId[id]=new E('div'))}};"
-        )
-        js = tmp_path / "render.js"
-        js.write_text(
-            "var DATA=" + json.dumps(data) + ";" + stub + script
-            + ";console.log(JSON.stringify({wire:made['wire']||0,lane:made['lane']||0,tabsHidden:byId['tabs'].hidden}));",
-            encoding="utf-8",
-        )
-        result = subprocess.run(["node", str(js)], capture_output=True, text=True)
-        assert result.returncode == 0, result.stderr
-        counts = json.loads(result.stdout.strip().splitlines()[-1])
-        assert counts == {"wire": 9, "lane": 2, "tabsHidden": False}
+    def test_example_renders(self):
+        d = _example_data()
+        r = _render_counts(_read(EXAMPLE_HTML))
+        assert r["classes"]["activity"] == 9
+        assert r["classes"]["task"] == sum(len(a["tasks"]) for a in d["activities"])
+        assert r["classes"]["place"] == len(d["breadboard"])
+        assert r["tabs_hidden"] is False and r["screens_hidden"] is True
 
 
-class TestEval:
-    def test_picture_scenario_exists_and_is_triggered(self):
-        assert PICTURE_SCENARIO.exists()
-        assert "scenarios/use-framework/user-story-map-picture.yaml" in _read(TRIGGER_MAP)
