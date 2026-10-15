@@ -107,6 +107,22 @@ class TestPromptPhases:
                   "/aligned:create-design-principles", "design-principles.md"):
             assert s in ph, s
 
+    def test_phase_nine_decline_does_not_hand_user_a_command(self):
+        ph = _phase(_read(PROMPT), 9)
+        assert "Run `/aligned:use-framework breadboard-to-pages`" not in ph
+        assert "make the design principles" in ph
+        assert "## Screens" in ph
+
+    def test_phase_nine_names_the_save_path(self):
+        ph = _phase(_read(PROMPT), 9)
+        assert "save it at `docs/design/design-principles.md`" in ph
+        assert "which file was found" in ph
+
+    def test_phase_nine_names_the_trigger_for_phase_ten(self):
+        ph = _phase(_read(PROMPT), 9)
+        assert "the one allowed case" in ph
+        assert "breadboard-to-pages Phase 7" in ph and "go to Phase 10 before anything else" in ph
+
     def test_phase_ten_links_back(self):
         ph = _phase(_read(PROMPT), 10)
         assert "screens" in ph and "republish" in ph.lower()

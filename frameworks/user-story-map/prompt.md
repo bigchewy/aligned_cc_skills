@@ -319,21 +319,23 @@ Check for the project's `design-principles.md` again, with the same lookup as st
 
 If none is found anywhere, say something like:
 "There's no design system yet, and the screens need one. Let's make it now, then come back to the screens."
-Then run `/aligned:create-design-principles` in the same conversation first. When it finishes, come back to this phase.
+Then run `/aligned:create-design-principles` in the same conversation first, and tell it to save it at `docs/design/design-principles.md`, so the lookup finds it. When it finishes, run the lookup again and say which file was found. Then go on with this phase.
 
 If they don't want to make one now:
-"Then the screens wait. The map and the breadboard are saved. Run `/aligned:use-framework breadboard-to-pages` once the design principles exist." Skip Phase 10, and close.
+"Then the screens wait until there's a design system. The map and the breadboard are saved. When you're ready, say 'make the design principles' here and we'll pick up the screens from this step. If the screens get made some other way, add their link under `## Screens` in the map and rebuild the map, so the two stay linked." Then close. Phase 10 waits for the screens.
 
 Once a `design-principles.md` exists, hand off in one line, something like:
 "The breadboard's done. Brad Frost takes it from here to turn it into screens."
 
-Then invoke `/aligned:use-framework breadboard-to-pages` in the same conversation. That framework runs its own phases and WAIT points, in Brad Frost's voice. It reads the breadboard from `docs/story-maps/{slug}.md` under `## Slice 1 breadboard`, and writes `docs/story-maps/{slug}-screens.md` and `docs/story-maps/{slug}-screens.html`. Don't repeat its phases here.
+Then invoke `/aligned:use-framework breadboard-to-pages` in the same conversation. This is the one allowed case of running a second framework inside this one: the story map pauses here and resumes at Phase 10. That framework runs its own phases and WAIT points, in Brad Frost's voice. It reads the breadboard from `docs/story-maps/{slug}.md` under `## Slice 1 breadboard`, and writes `docs/story-maps/{slug}-screens.md` and `docs/story-maps/{slug}-screens.html`. Don't repeat its phases here.
+
+When Brad Frost has given the screens link in breadboard-to-pages Phase 7 and the user replies, go to Phase 10 before anything else.
 
 ---
 
 ### PHASE 10: Link Back
 
-After `breadboard-to-pages` returns, speak as Jeff Patton again.
+This starts with the user's reply to Brad Frost's closing in breadboard-to-pages Phase 7. Speak as Jeff Patton again.
 
 Write the screens page link into the story map Markdown under `## Screens`, and into `screens` in the JSON. Use the artifact URL if the screens page was published as an artifact. Otherwise use the relative path to `{slug}-screens.html`. Rebuild the map HTML and republish it to the same link, so the Screens link shows at the top of the map.
 
