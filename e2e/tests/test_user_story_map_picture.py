@@ -67,35 +67,60 @@ class TestPictureStartsAtPhaseOne:
         assert "do the setup in" not in _phase(prompt, 2)
 
 
-class TestPhaseEight:
-    def test_phase_eight_wireframes_slice_one(self):
-        prompt = _read(PROMPT)
-        assert re.search(r"^### PHASE 8: Wireframe Slice 1$", prompt, flags=re.MULTILINE)
-        phase8 = _phase(prompt, 8)
-        assert "one wireframe per activity" in phase8
-        assert "**WAIT for the user to respond.**" in phase8
-        assert "card" in phase8 and "design-principles.md" in phase8
-        assert "second tab" in phase8 or "Wireframes tab" in phase8
+class TestPromptPhases:
+    def test_phase_headings(self):
+        p = _read(PROMPT)
+        for h in ("### PHASE 1: Frame It", "### PHASE 3: Tasks and Details", "### PHASE 5: Other Roles on the Same Timeline",
+                  "### PHASE 8: Breadboard Slice 1", "### PHASE 9: Screens", "### PHASE 10: Link Back"):
+            assert re.search("^" + re.escape(h) + "$", p, flags=re.MULTILINE), h
 
-    def test_phase_seven_no_longer_stops_at_ready_for_wireframes(self):
-        phase7 = _phase(_read(PROMPT), 7)
-        assert "ready for wireframes" not in phase7
-        assert "No screens and no wireframes." not in phase7
-        assert "Phase 8" in phase7
+    def test_citation_fixed(self):
+        p = _read(PROMPT)
+        assert "That follows the swim lanes Patton described" not in p
+        assert "looks a bit like swim lanes" in p and "one timeline" in p
 
-    def test_no_rule_still_bans_wireframes_outright(self):
-        prompt = _read(PROMPT)
-        assert "never draws a screen, a wireframe" not in prompt
-        assert "No wireframes, page layouts, or field lists at any phase" not in prompt
-        rules = prompt.split("## Key Rules")[1]
-        assert "Slice 1" in rules and "wirefram" in rules.lower()
+    def test_no_wireframes_and_no_team_walk(self):
+        p = _read(PROMPT).lower()
+        assert "wirefram" not in p
+        assert "who else should hear" not in p and "people who'll build it" not in p
 
-    def test_examples_have_a_phase_eight_golden_path(self):
-        examples = _read(EXAMPLES)
-        assert "## PHASE 8: Wireframe Slice 1" in examples
-        phase8 = examples.split("## PHASE 8: Wireframe Slice 1")[1]
-        assert "### Golden path" in phase8
-        assert "Check who's ready" in phase8, "Phase 8 example must use the team-course map"
+    def test_phase_one_asks_why(self):
+        assert "**Why" in _phase(_read(PROMPT), 1)
+
+    def test_phase_six_workaround_rule(self):
+        ph = _phase(_read(PROMPT), 6)
+        assert "workaround" in ph.lower() and "measure" in ph.lower()
+
+    def test_phase_eight_is_singer_breadboard(self):
+        ph = _phase(_read(PROMPT), 8)
+        for s in ("Ryan Singer", "Shape Up", "ryan-singer.md", "## Slice 1 breadboard",
+                  "These are things you can navigate to, like screens, dialogs, or menus that pop up.",
+                  "These are things the user can act on, like buttons and fields.",
+                  "These show how the affordances take the user from place to place."):
+            assert s in ph, s
+        assert "card" in ph and "workaround" in ph.lower()
+        assert "**WAIT for the user to respond.**" in ph
+
+    def test_phase_nine_hands_to_frost_same_conversation(self):
+        ph = _phase(_read(PROMPT), 9)
+        for s in ("Brad Frost", "/aligned:use-framework breadboard-to-pages", "same conversation",
+                  "/aligned:create-design-principles", "design-principles.md"):
+            assert s in ph, s
+
+    def test_phase_ten_links_back(self):
+        ph = _phase(_read(PROMPT), 10)
+        assert "screens" in ph and "republish" in ph.lower()
+        assert "**WAIT" not in ph
+
+    def test_key_rules_name_all_three_advisors(self):
+        rules = _read(PROMPT).split("## Key Rules")[1]
+        for s in ("one timeline", "Ryan Singer", "Brad Frost", "workaround"):
+            assert s in rules, s
+
+    def test_setup_points_to_templates_and_example(self):
+        section = _read(PROMPT).split("### The map on screen")[1].split("### PHASE 1")[0]
+        for s in ("story-map-template.md", "story-map-template.html", "example/team-course", "Breadboard tab"):
+            assert s in section, s
 
 
 class TestAntiExample:
@@ -269,11 +294,6 @@ class TestMarkdownTemplate:
         for field in ('"why"', '"roles"', '"measure"', '"activities"', '"tasks"', '"details"',
                       '"workaround"', '"breadboard"', '"affordances"', '"screens"'):
             assert field in md, field
-
-    def test_prompt_points_to_markdown_template_and_example(self):
-        section = _read(PROMPT).split("### The map on screen")[1].split("### PHASE 1")[0]
-        assert "story-map-template.md" in section
-        assert "example/team-course" in section
 
 
 class TestWorkedExample:
