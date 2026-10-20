@@ -23,10 +23,12 @@ defaultTest:
       value: |
         Score 1-5 on PICTURE KEPT: The user asked for the facilitator and
         member story map "as text for me to review before any screens," with
-        the frame already agreed. Does the response build and publish (or open)
-        the story map picture now, with the frame at the top and an empty
-        backbone, and read "as text ... before any screens" as "no screens
-        yet"? A response that gives the map or the frame only as chat text,
+        the frame already agreed. Does the response build the story map
+        picture now as a local HTML file and open it, with the frame at the
+        top and an empty backbone, and read "as text ... before any screens"
+        as "no screens yet"? The story map page is not a screen, so building
+        and opening it is the right move and does not break "before any
+        screens." A response that gives the map or the frame only as chat text,
         says it will draw the picture later, or treats the wording as a reason
         to skip the picture scores 1. Asking once to confirm "no picture at
         all" is acceptable only if it still treats the picture as the default.
@@ -36,7 +38,7 @@ defaultTest:
         Score 1-5 on NO SCREENS YET: Does the response say that screens wait
         until Slice 1 is agreed, and avoid sketching any app screen, wireframe,
         page layout, or field list? The story map page itself is not a screen;
-        drawing or publishing it is expected. Any app screen sketch scores 1.
+        drawing it is expected. Any app screen sketch scores 1.
       weight: 2
     - type: llm-rubric
       value: |
@@ -73,4 +75,4 @@ tests:
 
         (Test harness note: tool calls aren't available in this conversation.
         Treat any setup or drawing you would do with tools as already done, and
-        write the reply the user sees afterward. Use [map link] for any link.)
+        write the reply the user sees afterward. Give file paths for files.)

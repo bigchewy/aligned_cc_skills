@@ -101,3 +101,12 @@ def test_scenario_exists_and_is_wired():
               "frameworks/interface-inventory/anti-examples.md"):
         assert p in flat
     assert "scenarios/use-framework/interface-inventory.yaml" in flat
+
+
+def test_inventory_stays_local_never_published():
+    text = _read(PROMPT) + _read(EXAMPLES) + _read(ANTI)
+    for s in ("If the Artifact tool is available", "republish", "same URL", "artifact URL"):
+        assert s.lower() not in text.lower(), s
+    show = _read(PROMPT).split("4. **Show it.**")[1].split("**Draw the inventory** means")[0]
+    assert "Don't publish it to claude.ai" in show
+    assert "file path" in show and "docs/design/interface-inventory-{date}.html" in show

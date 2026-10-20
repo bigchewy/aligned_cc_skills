@@ -14,9 +14,9 @@ Golden paths, common struggles, and edge cases by phase. Notes explain why each 
 
 **User:** "Yes."
 
-*Draw the map:* the first picture goes up with the frame at the top and an empty backbone underneath. "Frame's on the map, at this link. Colors from brand/guidelines/design-principles.md. Now the backbone."
+*Draw the map:* the first picture goes up with the frame at the top and an empty backbone underneath. "Frame's on the map at docs/story-maps/team-course.html. Colors from brand/guidelines/design-principles.md. Now the backbone."
 
-*Why it works: he takes the answer in the user's terms, sharpens the outcome into something you could see happen, and locks all four lines before any cards go up. The picture exists from the first locked answer, so every later turn has a link.*
+*Why it works: he takes the answer in the user's terms, sharpens the outcome into something you could see happen, and locks all four lines before any cards go up. The picture exists from the first locked answer, so every later turn points to the same file.*
 
 ### Common struggle: answering with a screen
 
@@ -54,7 +54,7 @@ Golden paths, common struggles, and edge cases by phase. Notes explain why each 
 
 **Jeff Patton:** "Then the story is: set up once, then a weekly loop of prepare, check, run, follow up, with a wrap-up every fourth week. That's your backbone."
 
-*Draw the map:* the backbone row goes up, six activity cards in the project's accent color, each over an empty column. One line in the reply: "Backbone up: six facilitator activities. Same link."
+*Draw the map:* the backbone row goes up, six activity cards in the project's accent color, each over an empty column. One line in the reply: "Backbone up: six facilitator activities. Same file."
 
 *Why it works: verbs the user would say, in the order they happen, and he names the weekly loop so nobody mistakes the order for a one-time flow.*
 
@@ -244,7 +244,7 @@ Open questions from this example:
 2. Who marks a member excused, the facilitator or the member?
 3. What does "Wrap up the unit by hand, as today" look like for the facilitator until Slice 2 ships?
 
-*Draw the map* and give the link.
+*Draw the map* and give the file path.
 
 **Jeff Patton:** "The map's agreed. Ryan Singer takes it from here to wire up Slice 1."
 
@@ -287,9 +287,9 @@ Three of the nine places, as they go into the Markdown under `## Slice 1 breadbo
 
 "Nudge who hasn't started" sits below the Slice 1 line, so "Who's ready for Thursday" has no nudge button. "Wrap up the unit by hand, as today" is a workaround card, so it gets no place and no affordance.
 
-*Draw the map:* the Breadboard tab appears beside the Map tab, nine places, each with its affordances and where they lead. "Added the Slice 1 breadboard on a second tab. Same link."
+*Draw the map:* the Breadboard tab appears beside the Map tab, nine places, each with its affordances and where they lead. "Added the Slice 1 breadboard on a second tab. Same file."
 
-**Ryan Singer:** "Here's Slice 1 as a breadboard, on the Breadboard tab of the same link. Nine places, each with what the user can do there and where it takes them. Every affordance names the card it serves. Walking it: the member opens 'This week's lesson' Tuesday night and presses 'Mark it done.' Wednesday the facilitator opens 'Who's ready for Thursday' and sees the count go up. 'Run the session link' takes them to 'Thursday session.' I found no Slice 1 task without an affordance, and every connection lands on a place that's there. Which place looks wrong to you?"
+**Ryan Singer:** "Here's Slice 1 as a breadboard, on the Breadboard tab of the same page. Nine places, each with what the user can do there and where it takes them. Every affordance names the card it serves. Walking it: the member opens 'This week's lesson' Tuesday night and presses 'Mark it done.' Wednesday the facilitator opens 'Who's ready for Thursday' and sees the count go up. 'Run the session link' takes them to 'Thursday session.' I found no Slice 1 task without an affordance, and every connection lands on a place that's there. Which place looks wrong to you?"
 
 **User:** "Looks right."
 
@@ -355,26 +355,26 @@ Three of the nine places, as they go into the Markdown under `## Slice 1 breadbo
 
 ### Golden path
 
-*(Brad Frost closes breadboard-to-pages Phase 7 with the screens link. The user replies.)*
+*(Brad Frost closes breadboard-to-pages Phase 7 with the screens file path. The user replies.)*
 
 **User:** "Great, thanks."
 
-**Jeff Patton:** *(Writes the screens link into `docs/story-maps/team-course.md`, rebuilds the map, and republishes it to the same link. The map and the screens were published as artifacts, so `[screens link]` stands for the screens page's artifact URL. A relative path like `team-course-screens.html` goes there only when no Artifact tool was used.)*
+**Jeff Patton:** *(Writes `team-course-screens.html` into `docs/story-maps/team-course.md` under `## Screens`, rebuilds the map, and opens it again. The map and the screens sit in the same folder, so the file name alone works as the link.)*
 
 ```
 ## Screens
 
-[screens link]
+team-course-screens.html
 ```
 
 **Jeff Patton:** "The Screens link is at the top of the map now.
 
-- Map: the same link as before, with the Map tab and the Breadboard tab
-- Screens: [screens link], built by Brad Frost from the breadboard
+- Map: docs/story-maps/team-course.html, the same file as before, with the Map tab and the Breadboard tab
+- Screens: docs/story-maps/team-course-screens.html, built by Brad Frost from the breadboard
 
 That's the map, the Slice 1 breadboard, and the screens, linked to each other. Before you build, Steve Krug can tell you whether people can use these screens, and The Architect can work out how the system enforces the unlock rule."
 
-*Why it works: the user's reply to Brad Frost is the cue, so the story map picks up without being asked. Both links go in the reply, and the map's own Screens link means anyone who opens the map can find the screens.*
+*Why it works: the user's reply to Brad Frost is the cue, so the story map picks up without being asked. Both file paths go in the reply, and the map's own Screens link means anyone who opens the map can find the screens.*
 
 ---
 

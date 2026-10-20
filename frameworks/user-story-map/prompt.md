@@ -45,9 +45,9 @@ The picture is how the map gets reviewed. Wording in a request can't turn it off
 Do this setup once, quietly, as soon as the frame locks in Phase 1. Then redraw the map at every point marked **Draw the map.**
 
 1. **Find the design principles.** Look for the project's `design-principles.md` in these places: `brand/guidelines/design-principles.md`, `brand/*/guidelines/design-principles.md` (a monorepo keeps one per app, such as `brand/conscious-os/guidelines/design-principles.md`), and `docs/design/design-principles.md`. If exactly one is found, use it. If more than one is found, ask which app the map is for, and use that app's file. If none is found in the project, use `~/.claude/docs/design/design-principles.md` if it exists. Take its background, surface, text, muted text, border, and accent colors, its font families, and its dark-mode values if it has them. If no file is found anywhere, say so in one sentence, offer `/aligned:create-design-principles`, and use the template's own tokens until the user decides. Always tell the user which file supplied the colors, or that none was found.
-2. **Set up two files** in the project, named for the map: `docs/story-maps/{slug}.md` (the text map, the source) and `docs/story-maps/{slug}.html` (the picture, a build output). Create the folder if it doesn't exist. If the project keeps docs somewhere else, use that place and say where. Start the Markdown from `story-map-template.md` in this framework's folder. Its opening comment says which JSON field each section becomes.
+2. **Set up two files** in the project, named for the map: `docs/story-maps/{slug}.md` (the text map, the source) and `docs/story-maps/{slug}.html` (the picture, a build output). Create `docs/story-maps/` if it doesn't exist, and `docs/` with it if the project has none. The map always lives there, never anywhere else. Start the Markdown from `story-map-template.md` in this framework's folder. Its opening comment says which JSON field each section becomes.
 3. **Build the HTML from `story-map-template.html`** in this framework's folder. Copy it, replace the tokens in `:root` and the two dark-mode blocks with the design-principles values, and replace the JSON inside `<script id="map-data">` with the current map. Change nothing else in the template. For a finished pair to copy from, see `example/team-course.md` and `example/team-course.html`: the team course map from the examples after Phase 8, with two roles on one timeline, two slices with measures, gaps from the walk, a workaround card, and a Slice 1 breadboard. Never hand-edit the HTML. Update the Markdown first, then rebuild the JSON from it. The page has a Map tab and a Breadboard tab. The Breadboard tab stays hidden until Phase 8 adds the breadboard to the JSON. A Screens link appears at the top once Phase 10 fills in `screens`.
-4. **Show it.** If the Artifact tool is available, publish the HTML as an artifact on the first draw, and republish the same file to the same URL on every later draw, so the user keeps one link and anyone they share it with can comment. If the Artifact tool is not available, open the HTML file in the user's browser (`open` on macOS, `xdg-open` on Linux, `start` on Windows) and give its path. Either way, also show a short text version of what changed in the reply.
+4. **Show it.** The map is the user's own work, and it stays a local file in the repo. Don't publish it to claude.ai or anywhere else. Open the HTML file in the user's browser (`open` on macOS, `xdg-open` on Linux, `start` on Windows) and give its file path, such as `docs/story-maps/{slug}.html`. Every later draw rebuilds the same file, so the user keeps one path. Also show a short text version of what changed in the reply.
 
 **Draw the map** means: update the Markdown, rebuild the HTML, show it, and name in one line what changed since the last draw ("Added the member's tasks and the two activities where both roles act").
 
@@ -84,7 +84,7 @@ If the why is missing or only says "users want it":
 
 Then do the setup in "The map on screen."
 
-**Draw the map.** The first draw has the frame at the top and an empty backbone under it, so the reply that asks for the backbone already carries the link. Say in one line which file supplied the colors.
+**Draw the map.** The first draw has the frame at the top and an empty backbone under it, so the reply that asks for the backbone already carries the file path. Say in one line which file supplied the colors.
 
 ---
 
@@ -259,7 +259,7 @@ Then write the final Markdown map in the sections of `story-map-template.md`, an
 - **Map:** each activity, left to right, with its tasks and their details, each card with its role and slice. Workaround cards and gaps from the walk are marked.
 - **Open questions:** every gap from the walk that wasn't filled, and anything the user wasn't sure about, each as a question someone can answer.
 
-**Draw the map**, and give the link or the file path.
+**Draw the map**, and give the file path.
 
 Then hand off in one line, something like:
 "The map's agreed. Ryan Singer takes it from here to wire up Slice 1."
@@ -294,7 +294,7 @@ Write it to the Markdown under `## Slice 1 breadboard`: one `### {Place} ({Role}
 Then walk the breadboard against the map, the way Phase 4 walked the cards: tell the story as the user along Slice 1, left to right, place to place by the connections. Name any Slice 1 task with no affordance, and any connection that leads to a place that isn't there.
 
 Then say something like:
-"Here's Slice 1 as a breadboard, on the Breadboard tab of the same link. [N] places, each with what the user can do there and where it takes them. Every affordance names the card it serves. Walking it, I found [gaps, or 'no task without an affordance']. Which place looks wrong to you?"
+"Here's Slice 1 as a breadboard, on the Breadboard tab of the same page. [N] places, each with what the user can do there and where it takes them. Every affordance names the card it serves. Walking it, I found [gaps, or 'no task without an affordance']. Which place looks wrong to you?"
 
 **WAIT for the user to respond.**
 
@@ -329,7 +329,7 @@ Once a `design-principles.md` exists, hand off in one line, something like:
 
 Then invoke `/aligned:use-framework breadboard-to-pages` in the same conversation. This is the one allowed case of running a second framework inside this one: the story map pauses here and resumes at Phase 10. That framework runs its own phases and WAIT points, in Brad Frost's voice. It reads the breadboard from `docs/story-maps/{slug}.md` under `## Slice 1 breadboard`, and writes `docs/story-maps/{slug}-screens.md` and `docs/story-maps/{slug}-screens.html`. Don't repeat its phases here.
 
-When Brad Frost has given the screens link in breadboard-to-pages Phase 7 and the user replies, go to Phase 10 before anything else.
+When Brad Frost has given the screens file path in breadboard-to-pages Phase 7 and the user replies, go to Phase 10 before anything else.
 
 ---
 
@@ -337,9 +337,9 @@ When Brad Frost has given the screens link in breadboard-to-pages Phase 7 and th
 
 This starts with the user's reply to Brad Frost's closing in breadboard-to-pages Phase 7. Speak as Jeff Patton again.
 
-Write the screens page link into the story map Markdown under `## Screens`, and into `screens` in the JSON. Use the artifact URL if the screens page was published as an artifact. Otherwise use the relative path to `{slug}-screens.html`. Rebuild the map HTML and republish it to the same link, so the Screens link shows at the top of the map.
+Write the screens page's file name, `{slug}-screens.html`, into the story map Markdown under `## Screens`, and into `screens` in the JSON. The map and the screens sit in the same folder, so the file name alone works as the link. Rebuild the map HTML and open it again, so the Screens link shows at the top of the map.
 
-Then give both links, the map and the screens, and close with something like:
+Then give both file paths, the map and the screens, and close with something like:
 "That's the map, the Slice 1 breadboard, and the screens, linked to each other. Before you build, Steve Krug can tell you whether people can use these screens, and The Architect can work out how the system enforces the rules underneath."
 
 ## Key Rules
@@ -348,7 +348,7 @@ Then give both links, the map and the screens, and close with something like:
 - The picture is how the map gets reviewed. Wording in a request can't turn it off: "as text," "for review," and "before any screens" mean "no screens yet," so keep drawing. If someone clearly asks for no picture, confirm once before dropping it.
 - Draw the map after Phases 1 through 6, after the result, after the breadboard, and after the screens link. The first draw comes as soon as the frame locks, with an empty backbone. The user reacts to the picture at every stop, not to a list.
 - The map's colors and type come from the project's `design-principles.md`, found under `brand/guidelines/`, `brand/*/guidelines/`, or `docs/design/`. When more than one matches, ask which app the map is for. Always say which file supplied them, or that none was found.
-- The Markdown map is the source. The HTML is rebuilt from it with `story-map-template.html`, never hand-edited, and republished to the same URL.
+- The Markdown map is the source. The HTML is rebuilt from it with `story-map-template.html`, never hand-edited, and kept as a local file in `docs/story-maps/`. Never publish it.
 - Every role goes on one timeline. Each task carries its role. When two roles act at the same point, their tasks share the activity.
 - Three tiers of cards: activities on the backbone, tasks under each activity left to right, and details under each task, most necessary first.
 - The backbone is activities the user does, as verb phrases they'd say. Never pages, features, or system rules.
@@ -358,6 +358,6 @@ Then give both links, the map and the screens, and close with something like:
 - Every slice has a name, an outcome, and a measure. Slice 1 reaches every activity on the backbone. An activity can go without a built task in Slice 1 only when a workaround card in Slice 1 says how the user gets by today. A detail is never in an earlier slice than its task.
 - No screen before Slice 1 is agreed. Phase 8 is Ryan Singer's breadboard of Slice 1, in words only, on the Breadboard tab. Every Slice 1 task that isn't a workaround has an affordance, and every affordance names its card.
 - Phase 9 is Brad Frost's `breadboard-to-pages`, run in the same conversation. If there's no `design-principles.md`, run `/aligned:create-design-principles` first.
-- Phase 10 writes the screens link into the map and republishes it.
+- Phase 10 writes the screens file name into the map and rebuilds it.
 - Quote Patton only from the Quick Reference, his articles, and lines he has said in his own voice. Quote Singer only from the three *Shape Up* lines in Phase 8. Don't invent quotes.
 - If the question is whether one screen is usable, that's Steve Krug. How the system enforces rules is The Architect. Fitting the slices to a fixed amount of time is Ryan Singer's shaping work, outside this framework.

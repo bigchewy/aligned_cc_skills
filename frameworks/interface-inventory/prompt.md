@@ -32,7 +32,7 @@ The inventory is reviewed as a picture, never as a list.
 1. **Find the design principles.** Look for `design-principles.md` in `brand/guidelines/`, `brand/*/guidelines/`, and `docs/design/`. If more than one is found, ask which app. If none is found, say so and keep going: the inventory still finds the duplicates, and its findings become the first draft of the tokens.
 2. **Set up the files.** `docs/design/interface-inventory-{date}.md` (the source) and `docs/design/interface-inventory-{date}.html` (the picture, a build output). Screenshots go in `docs/design/interface-inventory-{date}/`. If the project keeps docs somewhere else, use that place and say where.
 3. **Build the page.** One section per category. In each, the distinct patterns side by side, each with its screenshot, its name once it has one, and `data-from="{page or route} › {element}"` saying where it was found. Use the design principles' colors and type for the page itself when they exist. Rebuild the HTML from the Markdown; don't hand-edit it.
-4. **Show it.** If the Artifact tool is available, publish the HTML and republish to the same URL on every later draw. Otherwise open it in the browser and give its path.
+4. **Show it.** The inventory stays a local file in the repo. Don't publish it to claude.ai or anywhere else. Open the HTML in the user's browser and give its file path, such as `docs/design/interface-inventory-{date}.html`. Every later draw rebuilds the same file.
 
 **Draw the inventory** means: update the Markdown, rebuild the HTML, show it, and name in one line what changed.
 
@@ -154,7 +154,7 @@ Write the final Markdown and give it in the reply:
 - **Build list:** one task per merge, and the standing rule for the agent.
 - **Open questions.**
 
-**Draw the inventory** one last time and give the link.
+**Draw the inventory** one last time and give the file path.
 
 Then close with something like:
 "[N] patterns down to [M]. Hand the build list to your agent one task at a time, and put the rule in its instructions so it doesn't grow a new gray next week. Run this again after the next big feature lands. Systems drift."
@@ -171,6 +171,6 @@ Then close with something like:
 - Every kept pattern is a component, a recipe, or a snowflake. Snowflakes are allowed.
 - Name patterns for their job, not their look.
 - The build list is written so an AI agent can do each task alone, with a standing rule to use only the named components and tokens.
-- The Markdown is the source. Rebuild the HTML from it and republish to the same URL.
+- The Markdown is the source. Rebuild the HTML from it. Both stay local files in the repo. Never publish them.
 - Quote Brad Frost only from *Atomic Design* and his published posts. Don't invent quotes.
 - Whether a person can use the app without thinking is Steve Krug. The design direction and token values are `/aligned:create-design-principles`. New screens from a breadboard are Breadboard to Pages.

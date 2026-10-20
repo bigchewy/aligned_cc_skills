@@ -41,7 +41,7 @@ The screens are reviewed as a picture, never as a list. Do this setup once, befo
 3. **Set up two files** next to the story map: `docs/story-maps/{slug}-screens.md` (the source) and `docs/story-maps/{slug}-screens.html` (the picture, a build output). With no story map, use `docs/screens/{slug}-screens.md` and `.html`. Start the Markdown from `screens-template.md` in this framework's folder, and the HTML from `screens-template.html`.
 4. **Fill the tokens.** Copy every color, type, spacing, radius, shadow, and motion token from `design-principles.md` into the template's `:root` as CSS custom properties, with the dark-mode values in both dark-mode blocks. Use the file's own token names. Screen markup and screen styles use only `var(--…)` for colors, sizes, spacing, radii, and shadows. Write each page's markup once inside a `<template class="screen-src">`; the template's script stamps it into a 390px phone frame and a 1280px desktop frame. Layout changes between the two widths use `@container` queries on `.screen`, so the desktop page is the same markup with more room. The only raw values allowed outside `:root` are the frame widths and the container-query widths.
 5. **Trace every element.** Every element on a page carries `data-from="{Place} › {affordance}"` naming the breadboard item it comes from. The template's "Show sources" switch prints those names on the screen. An element with no breadboard item behind it is a gap. Add the item to the breadboard, or take the element off the page.
-6. **Show it.** If the Artifact tool is available, publish the HTML as an artifact on the first draw, and republish the same file to the same URL on every later draw. Otherwise open the HTML in the user's browser and give its path.
+6. **Show it.** The screens are the user's own work, and they stay local files in the repo. Don't publish them to claude.ai or anywhere else. Open the HTML in the user's browser and give its file path, such as `docs/story-maps/{slug}-screens.html`. Every later draw rebuilds the same file.
 
 **Draw the screens** means: update the Markdown, rebuild the HTML from it, show it, and name in one line what changed ("Added the empty and ten-member variations of Team Settings").
 
@@ -199,7 +199,7 @@ Write the final Markdown and give it in the reply:
 - **Walk:** each Slice 1 step and the page and element that carries it.
 - **Open questions:** every gap not filled.
 
-**Draw the screens** one last time, and give the link.
+**Draw the screens** one last time, and give the file path.
 
 Then close with something like:
 "That's every place in Slice 1 as a page, built only from your tokens, with the cases that break it. Hand the HTML and the Markdown to whoever builds it, and tell them to use only the tokens and parts on the Parts tab. Anything new gets flagged, not invented. Before building, Steve Krug can tell you whether people can use these pages."
@@ -216,6 +216,6 @@ Then close with something like:
 - Real content, never lorem ipsum. Write realistic content when none is given, and mark it for the user to check.
 - A page isn't done until its variations are: empty, one, many, long text, error, loading when it waits, and every other role.
 - Hierarchy uses the type roles and contrast levels in `design-principles.md`. The three hierarchy rules are Refactoring UI's (Wathan and Schoger), named as theirs.
-- The Markdown is the source. Rebuild the HTML from it and republish to the same URL.
+- The Markdown is the source. Rebuild the HTML from it. Both stay local files in the repo. Never publish them.
 - Quote Brad Frost only from *Atomic Design* and his published posts. Don't invent quotes.
 - Whether a person can use a page without thinking is Steve Krug. The design direction and token values are `/aligned:create-design-principles`. The places and connections are Ryan Singer's breadboard. The user's story is Jeff Patton's map. Data and permissions logic is The Architect.

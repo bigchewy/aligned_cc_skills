@@ -127,3 +127,12 @@ def test_scenario_exists_and_is_wired():
               "frameworks/breadboard-to-pages/anti-examples.md"):
         assert p in flat
     assert "scenarios/use-framework/breadboard-to-pages.yaml" in flat
+
+
+def test_screens_stay_local_never_published():
+    text = _read(PROMPT) + _read(EXAMPLES) + _read(ANTI)
+    for s in ("If the Artifact tool is available", "republish", "same URL", "artifact URL"):
+        assert s.lower() not in text.lower(), s
+    show = _read(PROMPT).split("6. **Show it.**")[1].split("**Draw the screens** means")[0]
+    assert "Don't publish them to claude.ai" in show
+    assert "file path" in show and "docs/story-maps/{slug}-screens.html" in show

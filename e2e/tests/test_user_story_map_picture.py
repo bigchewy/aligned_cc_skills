@@ -134,7 +134,7 @@ class TestPromptPhases:
 
     def test_phase_ten_links_back(self):
         ph = _phase(_read(PROMPT), 10)
-        assert "screens" in ph and "republish" in ph.lower()
+        assert "screens" in ph and "Rebuild the map HTML" in ph
         assert "**WAIT" not in ph
 
     def test_key_rules_name_all_three_advisors(self):
@@ -523,3 +523,25 @@ class TestLinkBackEval:
                      "frameworks/user-story-map/prompt.md", "frameworks/breadboard-to-pages/prompt.md"):
             blocks = [b for b in tm.split("- paths:") if path in b.split("scenarios:")[0]]
             assert any(entry in b for b in blocks), f"{path} must trigger {entry}"
+
+
+class TestLocalFilesOnly:
+    """Story maps and screens are the user's IP: local HTML in docs/story-maps/, never claude.ai."""
+
+    PUBLISH = re.compile(r"If the Artifact tool is available|artifact URL|as an artifact|republish|same URL|same link|(?<!never )(?<!don't )\bpublish(ed|es)? (it|the)\b", re.IGNORECASE)
+
+    def test_no_publish_steps_anywhere(self):
+        for path in (PROMPT, EXAMPLES, ANTI):
+            hits = self.PUBLISH.findall(_read(path))
+            assert not hits, f"{path.name} still publishes: {hits}"
+
+    def test_show_it_forbids_publishing_and_names_the_file_path(self):
+        text = _read(PROMPT)
+        show = text.split("4. **Show it.**")[1].split("**Draw the map** means")[0]
+        assert "Don't publish it to claude.ai" in show
+        assert "file path" in show and "docs/story-maps/{slug}.html" in show
+
+    def test_phase_ten_links_by_file_name(self):
+        ph = _phase(_read(PROMPT), 10)
+        assert "`{slug}-screens.html`" in ph
+        assert "same folder" in ph

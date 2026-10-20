@@ -71,7 +71,7 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 *(No picture drawn.)*
 
 **Right:**
-Update the Markdown map, rebuild the HTML from `story-map-template.html`, republish it to the same link, and say: "Map updated: 15 tasks under the six activities. Same link as before. Look at 'Check who's ready.' It only has two cards. Is that really all?"
+Update the Markdown map, rebuild the HTML from `story-map-template.html`, open it again, and say: "Map updated: 15 tasks under the six activities. Same file as before, docs/story-maps/team-course.html. Look at 'Check who's ready.' It only has two cards. Is that really all?"
 
 **What to do instead:** Draw the map after every phase from 1 on. People agree on a picture they can all see. A list in a chat reply is a shared document, not shared understanding.
 
@@ -97,10 +97,10 @@ Hand-writing a fresh HTML page with its own blue-and-orange palette and a new la
 
 **Wrong:**
 "Here's the frame. User: the facilitator. Outcome: walk into each session knowing who's ready. Problem: prep is scattered across three tools. Since you asked for text, I'll keep this in chat and draw the picture later. First question: how fast should we go?"
-*(No picture published. The request's wording overrode the "Draw the map" step.)*
+*(No picture drawn. The request's wording overrode the "Draw the map" step.)*
 
 **Right:**
-Lock the frame, build the HTML from `story-map-template.html` with the frame at the top and an empty backbone, publish it, and say: "Frame's up on the map, at this link. Colors from brand/conscious-os/guidelines/design-principles.md. No screens yet: those wait until we've agreed Slice 1. Now the backbone. Tell me what the facilitator does, start to finish, as a handful of big activities."
+Lock the frame, build the HTML from `story-map-template.html` with the frame at the top and an empty backbone, open it, and say: "Frame's up on the map at docs/story-maps/team-course.html. Colors from brand/conscious-os/guidelines/design-principles.md. No screens yet: those wait until we've agreed Slice 1. Now the backbone. Tell me what the facilitator does, start to finish, as a handful of big activities."
 
 **What to do instead:** Read "as text," "for review," and "before any screens" as "no screens yet." The picture is how the map gets reviewed, so keep drawing it. Only drop the picture if the user clearly asks for no picture, and confirm once before you do.
 
