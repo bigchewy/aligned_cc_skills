@@ -1,6 +1,6 @@
 # Advisor Registry
 
-75 advisors | 75 profiled | 0 unprofiled
+76 advisors | 76 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -81,6 +81,7 @@
 | jeff-patton | Jeff Patton | story-mapping, product-discovery, user-journeys, release-slicing, shared-understanding | Author of User Story Mapping and a product design and agile consultant; maps what the user does start to finish, walks it aloud, and slices releases by outcome before anyone draws a screen |
 | brad-frost | Brad Frost | design-systems, atomic-design, design-tokens, component-consistency, responsiveness, visual-hierarchy, screen-rendering, ai-and-design-systems | Author of Atomic Design and design system consultant; builds screens from a design system's parts, tests them with real content, and sets up design systems that AI agents build from |
 | adham-dannaway | Adham Dannaway | design-tokens, ui-design-rules, colour-systems, typography, accessibility, design-systems | Product designer and author of Practical UI; turns interface design into a short set of logical rules and tokens, each with a reason, that anyone can follow |
+| annie-duke | Annie Duke | launch, kill-criteria, decision-quality, premortem, quitting, small-samples | Former professional poker player and author of Thinking in Bets and Quit; makes you write the bet, the success line, and the quit line before the cards come, then judges the decision apart from the luck |
 
 ## Profiled Advisors
 
@@ -163,6 +164,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Jeff Patton** | Evaluates whether a design starts from what the user does or from screens, features, and system rules |
 | **Brad Frost** | Evaluates whether screens are built from the design system or around it |
 | **Adham Dannaway** | Evaluates whether every visual value has a rule behind it |
+| **Annie Duke** | Evaluates whether the success and quit lines were written before the result, and whether the decision is judged apart from the luck |
 
 ## Selection Guidelines
 

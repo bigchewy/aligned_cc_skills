@@ -1,0 +1,84 @@
+# e2e/scenarios/use-advisor/annie-duke-consult.yaml
+# Quick-consult eval for Annie Duke (resulting / kill criteria as states and dates / one customer is a sample of one)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Annie Duke one-customer launch consult"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHOD SPECIFICITY: Does the response use Annie Duke's
+        actual tools? It should name resulting (judging a decision by its
+        outcome) and say one couple is a sample of one, and it should say the
+        success line and quit line should have been written before launch as
+        a state and a date (kill criteria). Generic advice ("talk to more
+        users", "iterate", "look at your metrics") with none of these scores
+        1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE SPECIFIC SITUATION: The founder wrote no number
+        before launch, 19 of 48 guests wrote, the wedding date moved two weeks
+        mid-campaign, and the founder now wants to call it a failure and quit.
+        Does the response (a) separate what the founder controlled from the
+        moved wedding date before calling it bad luck or a bad product,
+        (b) refuse to decide keep-or-quit off one customer as if it were a
+        trend, and (c) end with a concrete state and date for the next
+        customer, written before that launch? Missing two or more scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Annie
+        Duke: warm, blunt, curious, pushing back with a question that has an
+        obvious answer, poker analogies, "right?" Hype, lecturing, or academic
+        hedging scores 1-2. Invented quotes attributed to her score 1. These
+        lines are real and not invented: "There's this word that we use in
+        poker: 'resulting.'", "The problem is that we're all resulters at
+        heart", "So the best kill criteria contain a state and a date", "If I
+        am not in this state by this date, I must quit", "So a pre-mortem is
+        great, but only if you attach a pre-commitment with it", "Knowing what
+        you know today, would you start this today?", "Pivoting is still
+        quitting", "We don't know after one flip", "Okay, just question: is
+        50% greater than zero?"
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONEST SCOPE: The founder also asks how to find the next
+        couple. Does the response say recruiting customers isn't Duke's own
+        method (pointing to Paul Graham, Rob Fitzpatrick's commitment test, or
+        another source) instead of presenting a Duke recruiting method? Does
+        it avoid funnel or conversion-rate math on 48 people? Inventing a Duke
+        recruiting framework scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — no number set, 19 of 48 wrote, wedding moved, wants to quit"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/annie-duke.md
+      task_prompt: "\n\n---\n\nI launched my site for couples with one real couple. Their friends and family write illustrated memories of them, delivered before the wedding. I didn't write down a target before launch. 48 people were invited and 19 wrote something. Halfway through, the wedding moved two weeks earlier, so the window shrank. The couple said they loved what they got. Honestly it feels like it flopped and I'm thinking about shutting it down. Also, how should I find the next couple?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I launched my site for couples with one real couple. Their friends and family write illustrated memories of them, delivered before the wedding. I didn't write down a target before launch. 48 people were invited and 19 wrote something. Halfway through, the wedding moved two weeks earlier, so the window shrank. The couple said they loved what they got. Honestly it feels like it flopped and I'm thinking about shutting it down. Also, how should I find the next couple?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Annie Duke, author of Thinking in Bets and Quit. I launched my site for couples with one real couple. Their friends and family write illustrated memories of them, delivered before the wedding. I didn't write down a target before launch. 48 people were invited and 19 wrote something. Halfway through, the wedding moved two weeks earlier, so the window shrank. The couple said they loved what they got. Honestly it feels like it flopped and I'm thinking about shutting it down. Also, how should I find the next couple?"

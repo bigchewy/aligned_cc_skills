@@ -2471,3 +2471,30 @@ frameworks:
     colours, sizes, or weights by feel, a design principles file needs checking before
     screens are built from it, or text contrast, button hierarchy, or colour-only signals
     need checking
+- advisor: annie-duke
+  category: startup
+  default_critic_advisors:
+  - annie-duke
+  - eric-ries
+  deliverable_type: decision
+  domains:
+  - launch
+  - kill-criteria
+  - decision-quality
+  - small-samples
+  follow_on_frameworks:
+  - pivot-or-persevere
+  helpful_documents:
+  - the site's brief (name, feeling, positioning)
+  - the site's decisions.md, once Phase 1 of the launch has run
+  - what the first customer and their people did, for Phase 8 of the launch
+  id: launch-bet
+  name: Launch Bet
+  purpose: treating a launch with one real customer as one bet, writing the success
+    line and the quit line as a state and a date before the build, and judging that
+    customer's result apart from the luck
+  use_when: a product or site is about to launch with one real customer instead of
+    a public release and needs a success number and a quit line before the build,
+    a first customer to pick and recruit, or a first customer has been served and
+    the founder needs to judge the result and decide whether to keep going, change
+    one thing, stop, or wait

@@ -1,6 +1,6 @@
 # Framework Registry
 
-134 frameworks across 26 categories
+135 frameworks across 26 categories
 
 | Category | Count |
 |----------|-------|
@@ -27,7 +27,7 @@
 | psychology | 12 |
 | sales | 5 |
 | social-media | 9 |
-| startup | 8 |
+| startup | 9 |
 | strategy | 28 |
 | visual-storytelling | 1 |
 
@@ -169,6 +169,7 @@
 | breadboard-to-pages | Breadboard to Pages | brad-frost | product-design | a breadboard or Slice 1 of a story map is agreed and needs finished screens to guide the build, an AI agent keeps inventing styles instead of using the design system, screens were drawn with placeholder content or only the happy path, or someone needs each screen tied back to the place and action it comes from |
 | interface-inventory | Interface Inventory | brad-frost | product-design | an existing app has grown several looks for the same job (buttons, grays, text fields), an AI agent has been inventing styles, someone is about to redesign or write design principles for an app that already exists, or the UI feels inconsistent and nobody can say where |
 | logic-check | Logic Check | adham-dannaway | product-design | a screen looks amateur and nobody can say why, an AI agent keeps picking colours, sizes, or weights by feel, a design principles file needs checking before screens are built from it, or text contrast, button hierarchy, or colour-only signals need checking |
+| launch-bet | Launch Bet | annie-duke | startup | a product or site is about to launch with one real customer instead of a public release and needs a success number and a quit line before the build, a first customer to pick and recruit, or a first customer has been served and the founder needs to judge the result and decide whether to keep going, change one thing, stop, or wait |
 
 ## By Category
 
@@ -338,7 +339,7 @@
 - **social-media-queen-method** — the Social Media Queen Method (rachel-pedersen)
 - **thirty-minute-daily-instagram** — the 30-Minute Daily Instagram System (sue-b-zimmerman)
 
-### Startup (8)
+### Startup (9)
 
 - **build-measure-learn** — Build-Measure-Learn (eric-ries)
 - **customer-problem-presentation** — Customer Problem Presentation (steve-blank)
@@ -346,6 +347,7 @@
 - **earlyvangelists** — Earlyvangelists (eric-ries)
 - **earnestness-filter** — Earnestness Filter (paul-graham)
 - **four-market-types** — Four Market Types (eric-ries)
+- **launch-bet** — Launch Bet (annie-duke)
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 

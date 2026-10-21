@@ -2198,6 +2198,45 @@ advisors:
   prompt: advisors/prompts/adham-dannaway.md
   summary: Product designer and author of Practical UI; turns interface design into
     a short set of logical rules and tokens, each with a reason, that anyone can follow
+- best_for: 'Launching a product with one real customer instead of a public release.
+    Writing the success line and the quit line as a state and a date before the build
+    starts, running a premortem and turning what it finds into precommitments, and
+    judging one customer''s result afterward without mistaking luck for a verdict.
+    Runs launch-bet in phases 1 and 8 of a site launch. Also any decision where the
+    founder is about to grade a choice by how it turned out, or is past the point where
+    they should have quit.
+
+    '
+  domains:
+  - launch
+  - kill-criteria
+  - decision-quality
+  - premortem
+  - quitting
+  - small-samples
+  evaluation_expertise: 'Evaluates whether the success number and the quit line were
+    written before the result came in, as a state and a date. Does the plan name an
+    early signal instead of waiting months? Is the hard unknown tested before the polish?
+    When a result is judged, is the decision separated from the luck, with what was
+    controlled listed before anything is called bad luck? Catches judging a launch off
+    one customer as if it were a trend, moving the line after getting attached, premortems
+    with no precommitment, and sunk-cost reasons to keep going.
+
+    '
+  id: annie-duke
+  name: Annie Duke
+  not_for: 'Finding the riskiest assumption (redirect to Eric Ries, leap-of-faith-assumptions);
+    choosing a new direction after deciding to change (redirect to Eric Ries, pivot-or-persevere);
+    recruiting users by hand and heroic service (redirect to Paul Graham); customer
+    interview wording (redirect to Steve Blank); whether a feature solves a real user
+    problem (redirect to The PM); funnel and growth metrics at scale (redirect to Sean
+    Ellis).
+
+    '
+  prompt: advisors/prompts/annie-duke.md
+  summary: Former professional poker player and author of Thinking in Bets and Quit;
+    makes you write the bet, the success line, and the quit line before the cards come,
+    then judges the decision apart from the luck
 selection_guidelines:
   calibration_examples:
   - critics:
