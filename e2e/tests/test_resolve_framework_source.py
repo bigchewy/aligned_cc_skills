@@ -258,3 +258,16 @@ def test_unregistered_entries_have_empty_purpose_category_domains_use_when():
         e = _by_id(entries)[fid]
         assert e["purpose"] == "" and e["category"] == ""
         assert e["domains"] == [] and e["use_when"] == ""
+
+
+def test_docs_say_projects_keep_local_registries():
+    for doc in ["CLAUDE.md", "README.md"]:
+        text = read(doc)
+        assert "frameworks/registry.yaml" in text, doc
+        assert "advisors/registry.yaml" in text, doc
+        assert "project root" in text, doc
+        assert "merge" in text, doc
+        assert "local entry wins" in text, doc
+    claude = read("CLAUDE.md")
+    assert "resolve-advisor-source" in claude
+    assert "resolve-framework-source" in claude

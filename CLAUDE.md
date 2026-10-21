@@ -31,6 +31,8 @@ Two YAML registries track all advisors and frameworks. Skills use these for disc
 - **`advisors/registry.yaml`** — All advisor personas. Used by use-advisor, persona-panel, and contextual recommendation.
 - **`frameworks/registry.yaml`** — All decision frameworks. Used by use-framework and contextual recommendation.
 
+A project can also keep its own `advisors/` and `frameworks/` at the project root, with a `registry.yaml` plus `prompts/` (advisors) or one folder per framework. These merge with the plugin's registries, and a local entry wins on a matching id. `skills/_shared/resolve-advisor-source.md` does the advisor merge and `skills/_shared/resolve-framework-source.md` does the framework merge. Skills that read either registry go through these resolvers.
+
 ## Framework Prompts Are Interactive Scripts
 
 Framework files (`frameworks/*/prompt.md`) contain explicit WAIT points where the user must respond before continuing. The framework IS the process; skipping WAIT points defeats the purpose.

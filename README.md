@@ -115,6 +115,8 @@ Use `/aligned:use-advisor` to list all available advisors and adopt one's person
 
 To add a new advisor, use `/aligned:add-advisor` which guides you through creation and registration in `advisors/prompts/`.
 
+A project can keep its own `advisors/` and `frameworks/` at the project root. Each has a `registry.yaml`, plus `prompts/` for advisors or one folder per framework. `advisors/registry.yaml` and `frameworks/registry.yaml` in the project merge with the plugin's, and a local entry wins on a matching id. Local frameworks show as `(local)` in listings.
+
 ### Team Setup
 
 Aligned standardizes development environments across a team at two layers:
