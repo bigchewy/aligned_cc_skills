@@ -271,3 +271,10 @@ def test_docs_say_projects_keep_local_registries():
     claude = read("CLAUDE.md")
     assert "resolve-advisor-source" in claude
     assert "resolve-framework-source" in claude
+
+
+def test_resolver_procedure_sets_registered_true_on_registered_entries():
+    text = (REPO / "skills/_shared/resolve-framework-source.md").read_text()
+    proc = text.split("## Procedure", 1)[1].split("## Finding", 1)[0]
+    step1 = proc.split("2. **Merge", 1)[0]
+    assert "registered: true" in step1

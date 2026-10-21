@@ -27,6 +27,8 @@ Include escape hatch: "Or say 'list all' to browse the full catalog."
 
 Do NOT proceed with scoring. Wait for the user's response, then re-enter this file with their answer as task context.
 
+A "list all" reply is the exception: it returns to the calling skill's full listing and is not scored as task context.
+
 **Path 3/4 boundary:** If recent conversation messages describe a task, project, or problem domain, that counts as useful context (Path 3 — proceed to scoring). If the conversation is empty, purely about tooling, or covers multiple unrelated topics with no clear dominant task, prompt the user (Path 4).
 
 ## Stage 1: Domain Filter

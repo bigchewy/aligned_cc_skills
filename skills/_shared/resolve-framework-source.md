@@ -12,7 +12,7 @@ the framework-side parallel of `skills/_shared/resolve-advisor-source.md`.
 
 1. **Load the plugin registry (canonical).** Read the plugin `frameworks/registry.yaml`
    (resolve the plugin root per `skills/_shared/resolve-skill-path.md` — Plugin root section).
-   Tag every entry `source: "plugin"`.
+   Tag every entry `source: "plugin"` and `registered: true`.
 
 2. **Merge the project-local registry (if present).** If `<project-cwd>/frameworks/registry.yaml`
    exists, load it and merge its `frameworks:` list. Tag those entries `source: "local"` and

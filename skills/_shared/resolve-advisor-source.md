@@ -3,7 +3,7 @@
 Shared procedure that returns the merged advisor set (plugin global + project-local)
 plus the plugin's panel `selection_guidelines`. Every advisor read path calls this so
 the merge logic cannot drift across callers. This is the advisor-side parallel of the
-framework merge already implemented in `skills/use-framework/SKILL.md` Step 1.
+framework merge in `skills/_shared/resolve-framework-source.md`.
 
 > **Note:** This is a `skills/_shared/` library file. `{base-directory}` refers to the
 > CALLING skill's base directory; the caller resolves it per `skills/_shared/resolve-skill-path.md`

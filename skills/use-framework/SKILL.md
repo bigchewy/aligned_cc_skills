@@ -10,7 +10,7 @@ Guide the user through a framework's phases interactively.
 ## Invocation
 
 - `/aligned:use-framework the work` — fuzzy match, start framework session
-- `/aligned:use-framework` — list available frameworks
+- `/aligned:use-framework` — with a task in the conversation, recommend a framework; with no task in the conversation, list every framework
 
 ## Step 1: Discover Available Frameworks
 
@@ -36,6 +36,8 @@ If the resolver could not parse that line, the entry's `name` is the folder name
 
 List frameworks alphabetically by display name. When the resolver returned entries with `source: "local"`, annotate each one with a trailing `(local)` marker so the user can tell project-specific frameworks from global ones.
 
+**List all.** Do this for a bare call with no task in the conversation, and for a "list all" reply to any recommendation prompt. List every entry from Step 1a. Put the `source: "local"` entries first under their own heading, each name followed by `(local)`. Then list the plugin entries alphabetically. Never shorten or summarize the local group. Show the name and advisor on each line.
+
 ## Step 3: Match User Input
 
 If the user provided a framework name argument:
@@ -46,7 +48,12 @@ If the user provided a framework name argument:
 4. **Multiple matches:** Ask the user which one they meant
 5. **No match → contextual recommendation:** The args didn't match any entry name, so treat them as task context. Read `skills/_shared/contextual-recommendation.md` (plugin-relative path) and follow its process. Pass entity type: `framework`, frameworks: the pre-merged list from Step 1a, task context: the user's original args.
 
-If no argument was provided, read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `framework`, frameworks: the pre-merged list from Step 1a, task context: empty (the shared file will check conversation context and decide whether to score or prompt — see its Path 3/4 boundary logic).
+If no argument was provided:
+
+- **No task in the conversation** (the shared file's Path 4 condition): do not ask a question. List all frameworks as described in Step 2.
+- **A task in the conversation** (Path 3): read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `framework`, frameworks: the pre-merged list from Step 1a, task context: empty (the shared file will check conversation context and score it — see its Path 3/4 boundary logic).
+
+If the user replies "list all" to any recommendation prompt, list all frameworks as described in Step 2. Do not score the reply as task context.
 
 If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to listing all available frameworks alphabetically.
 

@@ -81,3 +81,11 @@ def test_unregistered_frameworks_excluded_from_scoring():
     text = read("skills/_shared/contextual-recommendation.md")
     assert "registered: false" in text
     assert "reachable by name only" in text
+
+
+def test_path4_list_all_reply_is_not_scored_as_task_context():
+    text = read("skills/_shared/contextual-recommendation.md")
+    path4 = text.split("## Path 4", 1)[1].split("## Stage 1", 1)[0]
+    assert '"list all"' in path4
+    assert "not scored as task context" in path4
+    assert "calling skill's full listing" in path4
