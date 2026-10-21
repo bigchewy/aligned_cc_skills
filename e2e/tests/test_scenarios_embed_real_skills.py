@@ -18,16 +18,22 @@ AUTHORING = [
     "../../../skills/brainstorming/modes/authoring.md",
 ]
 
+USE_FRAMEWORK = [
+    "../../../skills/use-framework/SKILL.md",
+    "../../../skills/_shared/framework-runner.md",
+    "../../../frameworks/5-components-positioning/prompt.md",
+]
+
 REQUIRED = {
     "scenarios/use-skill/authoring-mode-engine-selection.yaml": AUTHORING
     + ["../../../skills/_shared/contextual-recommendation.md"],
     "scenarios/use-skill/deliverable-type-dispatch.yaml": AUTHORING,
     "scenarios/use-skill/authoring-no-framework-fallback.yaml": AUTHORING,
-    "scenarios/use-skill/use-framework-backward-compat.yaml": [
-        "../../../skills/use-framework/SKILL.md",
-        "../../../skills/_shared/framework-runner.md",
-        "../../../frameworks/5-components-positioning/prompt.md",
-    ],
+    "scenarios/use-skill/use-framework-backward-compat.yaml": USE_FRAMEWORK,
+    "scenarios/use-skill/framework-runner-extraction.yaml": USE_FRAMEWORK,
+    "scenarios/use-skill/always-ask-routing.yaml": ["../../../skills/brainstorming/SKILL.md"],
+    "scenarios/use-skill/brainstorming-three-modes.yaml": ["../../../skills/brainstorming/SKILL.md"],
+    "scenarios/use-skill/deck-routing.yaml": ["../../../skills/brainstorming/SKILL.md"],
 }
 
 
@@ -63,3 +69,16 @@ def test_embedded_files_exist_and_prompt_uses_them(scenario):
                 path = (E2E_DIR / "scenarios/use-skill" / value[len("file://"):]).resolve()
                 assert path.is_file(), f"{scenario}: {value} does not exist"
                 assert "{{" + name + "}}" in prompt, f"{scenario}: prompt never uses var {name}"
+
+
+def test_frozen_classifier_is_gone_and_no_scenario_embeds_it():
+    assert not (E2E_DIR / FROZEN).exists(), f"{FROZEN} should be deleted; scenarios embed the real skill"
+    for scenario in sorted((E2E_DIR / "scenarios").rglob("*.yaml")):
+        assert FROZEN not in scenario.read_text(), f"{scenario.relative_to(E2E_DIR)} embeds {FROZEN}"
+
+
+def test_deck_routing_rubric_matches_the_real_three_way_picker():
+    text = (E2E_DIR / "scenarios/use-skill/deck-routing.yaml").read_text()
+    assert "4-way" not in text and "Design a code change" not in text
+    for label in ["Write a document", "Synthesize research", "Break a big intent into a queue of brainstorms"]:
+        assert label in text, f"deck-routing rubric is missing picker label: {label}"

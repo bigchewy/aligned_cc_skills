@@ -10,7 +10,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nFramework: {{framework_name}}\n\nUser request: {{user_input}}\n\nRun this framework now."
+  - "{{skill_prompt}}\n\n---\n\n{{runner_prompt}}\n\n---\n\n{{framework_prompt}}\n\n---\n\nFramework: {{framework_name}}\n\nUser request: {{user_input}}\n\nRun this framework now."
 
 defaultTest:
   options:
@@ -19,16 +19,23 @@ defaultTest:
   assert:
     - type: llm-rubric
       value: |
-        Score 1-5 on FRAMEWORK EXECUTION FIDELITY: Does the response follow
-        the framework's structured process with explicit WAIT points and
-        phase-by-phase execution? Skipping WAIT points or collapsing phases = 1.
-        Full phase-by-phase execution with WAIT points = 5.
+        Score 1-5 on FRAMEWORK EXECUTION FIDELITY: The runner starts Phase 1
+        with the framework's scripted opening and stops at the first WAIT
+        point; it must not continue into later phases in the same message.
+        Does the response open Phase 1 as the framework scripts it and end on
+        a question for the user? Running past the first WAIT point, collapsing
+        phases, or skipping Phase 1 = 1. Phase 1 opened as scripted, ending on
+        the user's question = 5.
       weight: 3
     - type: llm-rubric
       value: |
-        Score 1-5 on INTAKE GATE: Does the response begin with an intake gate
-        (strict or soft) to understand the user's situation before diving into
-        the framework? No intake = 1. Clear intake question(s) first = 5.
+        Score 1-5 on INTAKE GATE: use-framework runs the intake gate in
+        advisory mode: it notes any missing required or helpful documents in
+        a short line, then starts Phase 1 without waiting. Does the response
+        handle intake that way (a brief note about useful inputs, or none if
+        the framework lists none, then straight into Phase 1)? Blocking on
+        documents, or a long intake questionnaire before Phase 1 = 1.
+        Advisory note then Phase 1 = 5.
       weight: 2
 
 tests:
@@ -36,6 +43,8 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/use-framework/SKILL.md
+      runner_prompt: file://../../../skills/_shared/framework-runner.md
+      framework_prompt: file://../../../frameworks/5-components-positioning/prompt.md
       framework_name: "5-components-positioning"
       user_input: "Help me apply the 5 components of positioning to our product"

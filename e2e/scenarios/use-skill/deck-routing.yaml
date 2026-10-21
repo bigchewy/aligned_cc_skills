@@ -1,5 +1,5 @@
 # e2e/scenarios/use-skill/deck-routing.yaml
-# Validates that "deck" keyword triggers Authoring pre-selection in the 4-way picker.
+# Validates that "deck" keyword triggers Authoring pre-selection in the 3-way picker.
 # Design: "deck", "presentation", "pitch deck", "memo", "battle card" are all
 # Authoring keyword signals per SKILL.md keyword expansion (Task 20 amendment).
 
@@ -9,7 +9,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nUser says: {{user_input}}\n\nPresent the 4-way picker question and indicate which option best fits this request."
+  - "{{skill_prompt}}\n\n---\n\nUser says: {{user_input}}\n\nPresent the 3-way picker question, written out in full with every option label as you would pass it to AskUserQuestion, and indicate which option best fits this request."
 
 defaultTest:
   options:
@@ -19,17 +19,17 @@ defaultTest:
     - type: llm-rubric
       value: |
         Score 1-5 on AUTHORING PRE-SELECTION: Does the response present
-        the 4-way picker AND indicate that "Write a document" / Authoring
+        the 3-way picker AND indicate that "Write a document" / Authoring
         is the best fit for this request? Presenting picker without
         highlighting Authoring = 3. Presenting picker with Authoring
         highlighted or pre-selected = 5.
       weight: 3
     - type: llm-rubric
       value: |
-        Score 1-5 on PICKER COMPLETENESS: Does the response present all four
-        picker labels ("Write a document", "Design a code change",
-        "Synthesize research", "Break a big initiative")? Missing any = 1.
-        All four present = 5.
+        Score 1-5 on PICKER COMPLETENESS: Does the response present all three
+        picker labels ("Write a document", "Synthesize research",
+        "Break a big intent into a queue of brainstorms")? Missing any = 1.
+        All three present = 5.
       weight: 2
 
 tests:
@@ -37,5 +37,5 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       user_input: "I need to build a deck for a client"

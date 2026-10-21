@@ -9,7 +9,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nUser brief: {{brief}}\n\nClassify this brief into one of the three brainstorming modes (research, authoring, roadmap) AND present the 3-way picker question. State which mode you would pre-select or which you'd highlight."
+  - "{{skill_prompt}}\n\n---\n\nUser brief: {{brief}}\n\nClassify this brief into one of the three brainstorming modes (research, authoring, roadmap) AND present the 3-way picker question. State which mode you would pre-select or which you'd highlight."
 
 defaultTest:
   options:
@@ -38,7 +38,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       brief: "Compare frameworks for change management"
       expected_mode: research
 
@@ -47,7 +47,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       brief: "Write a competitive analysis for our go-to-market launch"
       expected_mode: authoring
 
@@ -56,6 +56,6 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       brief: "Sequence the next 8 features for the pilot launch"
       expected_mode: roadmap

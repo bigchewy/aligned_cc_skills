@@ -432,12 +432,11 @@ def test_eval_surface_does_not_reference_business():
     assert "modes/business.md" not in text, "eval-surface still references deleted file"
 
 
-def test_three_modes_fixture_exists_and_lists_three_modes():
+def test_brainstorming_skill_lists_three_modes_and_no_mode_fixtures_remain():
     REPO = Path(__file__).resolve().parents[2]
-    assert not (REPO / "e2e/fixtures/skill-prompts/brainstorming-five-modes.md").exists()
-    assert not (REPO / "e2e/fixtures/skill-prompts/brainstorming-four-modes.md").exists()
-    assert (REPO / "e2e/fixtures/skill-prompts/brainstorming-three-modes.md").exists()
-    text = (REPO / "e2e/fixtures/skill-prompts/brainstorming-three-modes.md").read_text()
+    for stale in ["five", "four", "three"]:
+        assert not (REPO / f"e2e/fixtures/skill-prompts/brainstorming-{stale}-modes.md").exists()
+    text = read("skills/brainstorming/SKILL.md")
     for label in ["Authoring", "Research", "Roadmap"]:
         assert label in text, f"missing mode label: {label}"
     for retired in ["Business mode", "Planning mode", "Software mode"]:

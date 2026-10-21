@@ -9,7 +9,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser says: {{user_input}}\n\nHow does the brainstorming router respond?"
+  - "{{skill_prompt}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser says: {{user_input}}\n\nHow does the brainstorming router respond? If it would ask an AskUserQuestion, write the question out in full with every option label, and mark the pre-selected option."
 
 defaultTest:
   options:
@@ -24,6 +24,11 @@ defaultTest:
         (b) Same-mode repeat → skips picker, proceeds = 5
         (c) Different-mode re-invoke → re-presents picker = 5
         (d) Explicit --mode flag → skips picker = 5
+        (e) Uncertain session state → falls back to presenting the picker = 5
+        (f) Retired mode name (business, planning) → says that mode no longer
+            exists and presents the 3-way picker = 5
+        Whenever the picker is presented, the skill requires the auto-detected
+        mode to be pre-selected; pre-selecting is correct, not a fault.
         Incorrect behavior for the scenario = 1.
       weight: 3
 
@@ -32,7 +37,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       scenario_description: "Fresh session, no prior brainstorm context"
       user_input: "Help me plan out what to build next quarter"
 
@@ -40,7 +45,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       scenario_description: "User already selected Roadmap mode this session; now adds a follow-up"
       user_input: "Actually, also add the authentication service to the roadmap"
 
@@ -48,7 +53,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       scenario_description: "User was in Roadmap mode; now asks something clearly Research-shaped"
       user_input: "Let's switch — compare the leading frameworks for onboarding surveys"
 
@@ -56,7 +61,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       scenario_description: "User supplies explicit mode flag"
       user_input: "--mode authoring: draft the launch memo for the pilot"
 
@@ -64,7 +69,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       scenario_description: "Ambiguous session state — prior mode marker not conclusive"
       user_input: "Let's brainstorm something new"
 
@@ -72,6 +77,6 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
       scenario_description: "User explicitly invokes a retired mode name (business or planning)"
       user_input: "Start a business mode brainstorm on our pricing strategy"
