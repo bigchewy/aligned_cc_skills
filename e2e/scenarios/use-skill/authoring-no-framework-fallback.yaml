@@ -9,7 +9,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser topic: {{topic}}\n\nDescribe how the authoring mode engine selection and execution proceeds when no matching framework is found."
+  - "{{skill_prompt}}\n\n---\n\n{{mode_prompt}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser topic: {{topic}}\n\nDescribe how the authoring mode engine selection and execution proceeds when no matching framework is found."
 
 defaultTest:
   options:
@@ -30,7 +30,8 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       scenario_description: "User wants to write about an obscure topic with no registered framework"
       topic: "Design a naming convention system for my photo archive"
 
@@ -38,7 +39,8 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       scenario_description: "Q&A phase with advisor (Architect proxy) has completed; output is a design doc"
       topic: "We've done Q&A and produced a rough design doc. What format should the output take?"
 
@@ -46,6 +48,7 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       scenario_description: "Design doc is complete; user wants to proceed to an implementation plan"
       topic: "The design doc is done. How does this feed into an implementation plan?"

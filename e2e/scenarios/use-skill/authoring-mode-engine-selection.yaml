@@ -9,7 +9,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser topic: {{topic}}\n\nDescribe how Phase 1 engine selection proceeds and what engine is selected (or presented)."
+  - "{{skill_prompt}}\n\n---\n\n{{mode_prompt}}\n\n---\n\n{{recommendation_logic}}\n\n---\n\nScenario: {{scenario_description}}\n\nUser topic: {{topic}}\n\nDescribe how Phase 1 engine selection proceeds and what engine is selected (or presented)."
 
 defaultTest:
   options:
@@ -38,7 +38,9 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
       scenario_description: "Contextual-recommendation finds exactly one high-confidence framework match"
       topic: "Build a positioning brief using April Dunford's 5-components framework"
 
@@ -46,7 +48,9 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
       scenario_description: "Contextual-recommendation finds 2-3 plausible framework matches at similar confidence"
       topic: "Write a go-to-market strategy for our new product"
 
@@ -54,7 +58,9 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
       scenario_description: "Contextual-recommendation finds no matching frameworks"
       topic: "Design a naming convention for my digital art archive"
 
@@ -62,7 +68,9 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
       scenario_description: "Contextual-recommendation finds a matching advisor but no framework"
       topic: "Get revenue architecture advice for our sales motion"
 
@@ -70,6 +78,8 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
       scenario_description: "Project scan fails or returns empty; no signals available"
       topic: "Write something for our team but I'm not sure what exactly"

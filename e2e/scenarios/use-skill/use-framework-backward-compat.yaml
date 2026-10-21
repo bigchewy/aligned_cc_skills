@@ -9,7 +9,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nThe user directly invokes: /aligned:use-framework {{framework_name}}\n\nUser context: {{user_context}}\n\nHow does the skill respond?"
+  - "{{skill_prompt}}\n\n---\n\n{{runner_prompt}}\n\n---\n\n{{framework_prompt}}\n\n---\n\nThe user directly invokes: /aligned:use-framework {{framework_name}}\n\nUser context: {{user_context}}\n\nHow does the skill respond?"
 
 defaultTest:
   options:
@@ -37,6 +37,8 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/use-framework/SKILL.md
+      runner_prompt: file://../../../skills/_shared/framework-runner.md
+      framework_prompt: file://../../../frameworks/5-components-positioning/prompt.md
       framework_name: "5-components-positioning"
       user_context: "I want to position my B2B SaaS product for mid-market buyers"

@@ -9,7 +9,7 @@ providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nThe framework execution is complete. The framework's deliverable_type is: {{deliverable_type}}\n\nDescribe what Phase 3 does next: which template is used, which critique checklist section applies, and what the final output looks like."
+  - "{{skill_prompt}}\n\n---\n\n{{mode_prompt}}\n\n---\n\nThe framework execution is complete. The framework's deliverable_type is: {{deliverable_type}}\n\nDescribe what Phase 3 does next: which template is used, which critique checklist section applies, and what the final output looks like."
 
 defaultTest:
   options:
@@ -29,33 +29,38 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       deliverable_type: "content"
 
   - description: "deliverable-type-decision: uses authoring-decision-template.html"
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       deliverable_type: "decision"
 
   - description: "deliverable-type-plan: uses authoring-plan-template.html"
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       deliverable_type: "plan"
 
   - description: "deliverable-type-analysis: uses authoring-analysis-template.html"
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       deliverable_type: "analysis"
 
   - description: "deliverable-type-fallback: missing type falls to content template"
     metadata:
       arm: single
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-three-modes.md
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       deliverable_type: "unknown_or_missing"
