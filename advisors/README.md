@@ -51,7 +51,6 @@
 | sue-b-zimmerman | Sue B. Zimmerman | instagram-strategy, social-media, engagement, content-systems | #TheInstagramExpert |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
 | the-devex-engineer | The DevEx Engineer | developer-ergonomics, maintainability, onboarding, tooling, CI-CD, DX | Developer experience obsessive who evaluates tools by how they feel |
-| the-pm | The PM | product-value, prioritization, user-problems, scope-control, success-criteria | Product leader who evaluates features through user value lens |
 | the-qa-engineer | The QA Engineer | edge-cases, failure-modes, testing, reliability, error-handling | Edge-case hunter who assumes everything will break |
 | the-security-reviewer | The Security Reviewer | authentication, data-exposure, injection, OWASP, API-security, access-control | Security engineer who sees every input as hostile |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
@@ -82,6 +81,7 @@
 | brad-frost | Brad Frost | design-systems, atomic-design, design-tokens, component-consistency, responsiveness, visual-hierarchy, screen-rendering, ai-and-design-systems | Author of Atomic Design and design system consultant; builds screens from a design system's parts, tests them with real content, and sets up design systems that AI agents build from |
 | adham-dannaway | Adham Dannaway | design-tokens, ui-design-rules, colour-systems, typography, accessibility, design-systems | Product designer and author of Practical UI; turns interface design into a short set of logical rules and tokens, each with a reason, that anyone can follow |
 | annie-duke | Annie Duke | launch, kill-criteria, decision-quality, premortem, quitting, small-samples | Former professional poker player and author of Thinking in Bets and Quit; makes you write the bet, the success line, and the quit line before the cards come, then judges the decision apart from the luck |
+| jason-fried | Jason Fried | product-value, scope-control, user-problems, prioritization, small-teams, saying-no | Co-founder and CEO of 37signals and co-author of Getting Real and Rework; cuts a product to the half that kicks ass, says no by default, and builds the epicenter first |
 
 ## Profiled Advisors
 
@@ -134,7 +134,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Sue B. Zimmerman** | Evaluates whether Instagram presence is intentional or random |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
 | **The DevEx Engineer** | Evaluates developer experience impact |
-| **The PM** | Evaluates whether the work solves a real user problem and has clear success criteria |
 | **The QA Engineer** | Evaluates failure modes and edge cases |
 | **The Security Reviewer** | Evaluates security surface |
 | **Tim Ferriss** | Evaluates whether assumptions have been tested or merely accepted |
@@ -165,6 +164,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Brad Frost** | Evaluates whether screens are built from the design system or around it |
 | **Adham Dannaway** | Evaluates whether every visual value has a rule behind it |
 | **Annie Duke** | Evaluates whether the success and quit lines were written before the result, and whether the decision is judged apart from the luck |
+| **Jason Fried** | Evaluates whether every feature earns its place and the epicenter is built first |
 
 ## Selection Guidelines
 

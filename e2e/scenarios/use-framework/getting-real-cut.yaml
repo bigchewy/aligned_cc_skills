@@ -1,0 +1,93 @@
+# e2e/scenarios/use-framework/getting-real-cut.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: Getting Real Cut on a twelve-item version one"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The founder gave the list and the big
+        idea but nothing else. Does the response work on the early steps
+        (the big idea, the enemy, whose itch, the fixed time, or the
+        epicenter) and then STOP with a question, instead of handing over a
+        finished cut list with every step done? A complete final cut with no
+        question scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE RIGHT FIRST MOVES: Does the response push on the
+        founder's big idea (which runs to three ideas: memory book, family
+        social network, gift marketplace) and ask them to pick one, ask what
+        the product is the opposite of or what it can't live without, and
+        note that the founder isn't the main user? Jumping straight to a
+        prioritization matrix (RICE, MoSCoW, impact/effort) scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NOT A BACKLOG: The founder says they'll put cut items in
+        a ranked backlog. Cutting happens in a later step, so the response
+        may not reach it yet. Score 5 if it tells them cut items won't be
+        saved as a backlog (let customers bring back what matters, "not
+        now"). Score 4 if it stays on an early step and neither ranks nor
+        endorses a backlog. Score 1-2 if it endorses the ranked backlog,
+        ranks the cut items, or sorts the whole list into priority tiers.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Jason
+        Fried: short declarative sentences, a flat claim and a plain reason,
+        calm, an everyday analogy? PM jargon or hype scores 1-2. Invented
+        quotes attributed to him score 1. These are real and not invented:
+        "The answer is less", "Take whatever you think your product should be
+        and cut it in half", "Each time you say yes to a feature, you're
+        adopting a child", "Whatever the page absolutely can't live without
+        is the epicenter", "Let your customers be your memory."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/getting-real-cut/prompt.md
+      task_prompt: "\n\n---\n\nHelp me cut my version one. Here's the list. I'll answer step by step."
+      product_brief: &brief |
+        The site: friends and family write illustrated memories of one
+        person, delivered a few a day for weeks. I'm solo, building with
+        Claude Code. Big idea: it's a memory book, a social network for
+        families, and a gift marketplace. I'm not really the user, I just
+        think people would like it.
+
+        Version one: invite people, write a memory, AI illustration,
+        delivery schedule, recipient inbox, reactions, comments, an admin
+        analytics dashboard, theme and font settings, multi-language support,
+        scale work for 10,000 campaigns, and a mobile app. Whatever we cut,
+        I'll put in a backlog ranked by priority.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Help me cut my version one. Here's the list. I'll answer step by step."
+      product_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Jason Fried, co-founder of 37signals and co-author of Getting Real. Help me cut my version one. Here's the list. I'll answer step by step."
+      product_brief: *brief

@@ -105,7 +105,7 @@ Be honest about where this approach goes wrong:
 - **You don't recruit customers.** Picking and recruiting the first customer is new writing in `launch-bet`, borrowed from Rob Fitzpatrick. Hand-to-hand recruiting and heroic service go to Paul Graham's `do-things-that-dont-scale`.
 - **You don't find the assumption.** Listing every assumption and picking the riskiest goes to Eric Ries's `leap-of-faith-assumptions`.
 - **You don't plan the pivot.** When the decision is to change something big, the nine pivot types live in Eric Ries's `pivot-or-persevere`. You decide that it's time; he helps choose the new direction.
-- **You don't judge the product itself.** Whether a feature solves a real user problem goes to The PM. Whether the screens work goes to Steve Krug.
+- **You don't judge the product itself.** Whether a feature should exist at all, and what to cut, goes to Jason Fried. Whether the screens work goes to Steve Krug.
 - **Too early to tell is a real answer.** Don't force keep or stop after one customer when the result sits between the lines. Name the one fact that would settle it and the date it arrives.
 
 **Warning signs:** If someone wants to "just launch and see," ask what they'll do on day fourteen if the number is bad. If they don't know, the bet isn't written yet.

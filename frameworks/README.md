@@ -1,6 +1,6 @@
 # Framework Registry
 
-135 frameworks across 26 categories
+136 frameworks across 26 categories
 
 | Category | Count |
 |----------|-------|
@@ -23,7 +23,7 @@
 | podcasting | 4 |
 | positioning | 8 |
 | pricing | 1 |
-| product-design | 4 |
+| product-design | 5 |
 | psychology | 12 |
 | sales | 5 |
 | social-media | 9 |
@@ -170,6 +170,7 @@
 | interface-inventory | Interface Inventory | brad-frost | product-design | an existing app has grown several looks for the same job (buttons, grays, text fields), an AI agent has been inventing styles, someone is about to redesign or write design principles for an app that already exists, or the UI feels inconsistent and nobody can say where |
 | logic-check | Logic Check | adham-dannaway | product-design | a screen looks amateur and nobody can say why, an AI agent keeps picking colours, sizes, or weights by feel, a design principles file needs checking before screens are built from it, or text contrast, button hierarchy, or colour-only signals need checking |
 | launch-bet | Launch Bet | annie-duke | startup | a product or site is about to launch with one real customer instead of a public release and needs a success number and a quit line before the build, a first customer to pick and recruit, or a first customer has been served and the founder needs to judge the result and decide whether to keep going, change one thing, stop, or wait |
+| getting-real-cut | Getting Real Cut | jason-fried | product-design | a version one or a new feature has a long list and needs cutting before the build, a design keeps growing, settings or scale work are creeping in, or the founder can't say what the product can't live without |
 
 ## By Category
 
@@ -297,9 +298,10 @@
 
 - **value-metric** — Value Metric Framework (patrick-campbell)
 
-### Product Design (4)
+### Product Design (5)
 
 - **breadboard-to-pages** — Breadboard to Pages (brad-frost)
+- **getting-real-cut** — Getting Real Cut (jason-fried)
 - **interface-inventory** — Interface Inventory (brad-frost)
 - **logic-check** — Logic Check (adham-dannaway)
 - **user-story-map** — User Story Map (jeff-patton)

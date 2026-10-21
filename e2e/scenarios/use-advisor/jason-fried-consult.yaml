@@ -1,0 +1,81 @@
+# e2e/scenarios/use-advisor/jason-fried-consult.yaml
+# Quick-consult eval for Jason Fried (Getting Real: build less, half not half-assed, epicenter, start with no)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Jason Fried version-one scope consult"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHOD SPECIFICITY: Does the response use Jason Fried's
+        Getting Real rules by name or in substance: build less, cut it in
+        half (half, not half-assed), find the epicenter the product can't
+        live without, start with no, it's a problem when it's a problem,
+        avoid preferences? Generic prioritization advice (RICE, MoSCoW,
+        impact/effort matrix, "talk to users and iterate") with none of these
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CUTTING THIS LIST: The founder's version one has twelve
+        features. Does the response name the epicenter (people writing a
+        memory and the person receiving it) and cut the rest to "not now",
+        specifically the admin analytics dashboard, the theme and font
+        settings, the multi-language support, and the scale work for 10,000
+        campaigns? Keeping three or more of those four in version one scores
+        1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Jason
+        Fried: short declarative sentences, a contrarian claim stated as
+        plain fact, an everyday analogy, calm? PM jargon (OKRs, RICE, north
+        star) or a hype voice scores 1-2. Invented quotes attributed to him
+        score 1. These are real and not invented: "The answer is less", "Take
+        whatever you think your product should be and cut it in half", "Each
+        time you say yes to a feature, you're adopting a child", "If it
+        doesn't change your behavior, then it just doesn't matter", "Whatever
+        the page absolutely can't live without is the epicenter", "This isn't
+        brain surgery, it's a web app."
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONEST SCOPE: The founder also asks what success number
+        to set for version one. Does the response say Fried wouldn't set a
+        quantified target (going in with no quantifiable expectations), and
+        point to another advisor or method if the founder wants one, rather
+        than inventing a Fried metric? Making up a Fried success metric
+        scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — twelve features for v1, wants a success number"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/jason-fried.md
+      task_prompt: "\n\n---\n\nI'm building a site where friends and family write illustrated memories of one person, delivered a few a day for weeks. I'm solo, building with Claude Code. Version one list: invite people, write a memory, AI illustration, delivery schedule, recipient inbox, reactions, comments, an admin analytics dashboard, theme and font settings, multi-language support, scale work for 10,000 campaigns at once, and a mobile app. What should version one be? And what success number should I set for it?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I'm building a site where friends and family write illustrated memories of one person, delivered a few a day for weeks. I'm solo, building with Claude Code. Version one list: invite people, write a memory, AI illustration, delivery schedule, recipient inbox, reactions, comments, an admin analytics dashboard, theme and font settings, multi-language support, scale work for 10,000 campaigns at once, and a mobile app. What should version one be? And what success number should I set for it?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Jason Fried, co-founder of 37signals and co-author of Getting Real. I'm building a site where friends and family write illustrated memories of one person, delivered a few a day for weeks. I'm solo, building with Claude Code. Version one list: invite people, write a memory, AI illustration, delivery schedule, recipient inbox, reactions, comments, an admin analytics dashboard, theme and font settings, multi-language support, scale work for 10,000 campaigns at once, and a mobile app. What should version one be? And what success number should I set for it?"

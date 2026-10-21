@@ -2362,7 +2362,7 @@ frameworks:
   category: product-design
   default_critic_advisors:
   - jeff-patton
-  - the-pm
+  - jason-fried
   deliverable_type: plan
   domains:
   - story-mapping
@@ -2498,3 +2498,29 @@ frameworks:
     a first customer to pick and recruit, or a first customer has been served and
     the founder needs to judge the result and decide whether to keep going, change
     one thing, stop, or wait
+- advisor: jason-fried
+  category: product-design
+  default_critic_advisors:
+  - jason-fried
+  - ryan-singer
+  deliverable_type: plan
+  domains:
+  - scope-control
+  - product-value
+  - saying-no
+  - small-teams
+  follow_on_frameworks:
+  - frame-shape-bet
+  - launch-bet
+  helpful_documents:
+  - the product's brief or positioning, for the big idea
+  - a story map or breadboard, if one exists
+  id: getting-real-cut
+  name: Getting Real Cut
+  purpose: taking a feature list, a spec, or a design and cutting it to the half that
+    kicks ass, built from its epicenter outward, before anyone builds it
+  required_documents:
+  - a feature list, a spec, or a design for something not yet built
+  use_when: a version one or a new feature has a long list and needs cutting before
+    the build, a design keeps growing, settings or scale work are creeping in, or the
+    founder can't say what the product can't live without

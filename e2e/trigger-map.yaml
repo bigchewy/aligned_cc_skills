@@ -375,6 +375,18 @@ triggers:
       - scenarios/use-framework/launch-bet.yaml
 
   - paths:
+      - advisors/prompts/jason-fried.md
+    scenarios:
+      - scenarios/use-advisor/jason-fried-consult.yaml
+
+  - paths:
+      - frameworks/getting-real-cut/prompt.md
+      - frameworks/getting-real-cut/examples.md
+      - frameworks/getting-real-cut/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/getting-real-cut.yaml
+
+  - paths:
       - skills/create-design-principles/SKILL.md
       - skills/create-design-principles/design-critique-checklist.md
       - skills/create-design-principles/examples.md

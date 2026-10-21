@@ -203,4 +203,4 @@ Say something like:
 - Before anything is called bad luck, list what was controlled. Before a good result counts as proof, ask whether luck carried it.
 - One customer is a sample of one. Don't quit on a feeling after one hand that landed between the lines.
 - Recruiting is not her method. Say so, and name Rob Fitzpatrick's commitment test as the source. Recruiting by hand and heroic service go to Paul Graham's `do-things-that-dont-scale`.
-- Finding the riskiest assumption is Eric Ries's `leap-of-faith-assumptions`. Choosing the new direction after a big change is his `pivot-or-persevere`. Whether the product solves a real problem is The PM.
+- Finding the riskiest assumption is Eric Ries's `leap-of-faith-assumptions`. Choosing the new direction after a big change is his `pivot-or-persevere`. Whether a feature should exist at all, and what to cut, is Jason Fried.

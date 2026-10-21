@@ -1182,30 +1182,6 @@ advisors:
     '
   prompt: advisors/prompts/the-devex-engineer.md
   summary: Developer experience obsessive who evaluates tools by how they feel
-- best_for: 'Any design with user-facing changes. Scope control. Ensuring clear success
-    criteria. Separating must-haves from nice-to-haves.
-
-    '
-  domains:
-  - product-value
-  - prioritization
-  - user-problems
-  - scope-control
-  - success-criteria
-  evaluation_expertise: 'Evaluates whether the work solves a real user problem and
-    has clear success criteria. Are must-haves separated from nice-to-haves? Is scope
-    controlled? Are there features that don''t connect to user needs? Catches scope
-    creep and missing success metrics.
-
-    '
-  id: the-pm
-  name: The PM
-  not_for: 'Pure infrastructure with no user impact. Designs where the user need is
-    already well-established and validated.
-
-    '
-  prompt: advisors/prompts/the-pm.md
-  summary: Product leader who evaluates features through user value lens
 - best_for: 'Designs where reliability matters. Anything touching auth, data, payments.
     Designs that need clear test strategies.
 
@@ -1833,7 +1809,7 @@ advisors:
   name: Ryan Singer
   not_for: 'Diagnosing the strategic challenge or setting the guiding policy (redirect
     to Richard Rumelt); designing experiments for validated learning (redirect to
-    Eric Ries); judging a single feature for user value (redirect to The PM); scoring
+    Eric Ries); judging a single feature for user value (redirect to Jason Fried); scoring
     growth experiments (redirect to Sean Ellis); org structure and role design
     (redirect to Lex Sisney); technical architecture or code.
 
@@ -2228,8 +2204,8 @@ advisors:
   not_for: 'Finding the riskiest assumption (redirect to Eric Ries, leap-of-faith-assumptions);
     choosing a new direction after deciding to change (redirect to Eric Ries, pivot-or-persevere);
     recruiting users by hand and heroic service (redirect to Paul Graham); customer
-    interview wording (redirect to Steve Blank); whether a feature solves a real user
-    problem (redirect to The PM); funnel and growth metrics at scale (redirect to Sean
+    interview wording (redirect to Steve Blank); whether a feature should exist at all
+    and what to cut (redirect to Jason Fried); funnel and growth metrics at scale (redirect to Sean
     Ellis).
 
     '
@@ -2237,6 +2213,43 @@ advisors:
   summary: Former professional poker player and author of Thinking in Bets and Quit;
     makes you write the bet, the success line, and the quit line before the cards come,
     then judges the decision apart from the luck
+- best_for: 'Deciding whether a feature should exist at all and cutting a feature list,
+    spec, or design down to its core before anyone builds it. Version-one scope for
+    a small product, saying no to feature requests, finding the epicenter of a screen,
+    stripping settings and scale work the product doesn''t need yet, and getting to
+    running software fast. Runs getting-real-cut. Critic in design reviews for scope
+    and user value.
+
+    '
+  domains:
+  - product-value
+  - scope-control
+  - user-problems
+  - prioritization
+  - small-teams
+  - saying-no
+  evaluation_expertise: 'Evaluates whether every feature earns its place. What is the
+    big idea, and does each piece serve it? What can the product not live without,
+    and is that built first? Is anything here for users, scale, or edge cases that
+    don''t exist yet? Are settings dodging a decision? What are the hidden costs of
+    each yes? Catches version ones that try to do everything, features copied from
+    competitors, details polished before the core works, and one loud request treated
+    as a pattern.
+
+    '
+  id: jason-fried
+  name: Jason Fried
+  not_for: 'Setting a success number or quit line before launch (redirect to Annie
+    Duke); testing the riskiest assumption (redirect to Eric Ries); setting an appetite
+    and shaping the work after the cut (redirect to Ryan Singer); customer interviews
+    (redirect to Steve Blank); whether people can use a screen (redirect to Steve Krug);
+    growth, acquisition, and funnel metrics (redirect to Sean Ellis).
+
+    '
+  prompt: advisors/prompts/jason-fried.md
+  summary: Co-founder and CEO of 37signals and co-author of Getting Real and Rework;
+    cuts a product to the half that kicks ass, says no by default, and builds the
+    epicenter first
 selection_guidelines:
   calibration_examples:
   - critics:
