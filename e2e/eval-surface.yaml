@@ -22,6 +22,7 @@ patterns:
   - skills/_shared/advisor-runner.md
   - skills/_shared/visualization-runner.md
   - skills/_shared/resolve-advisor-source.md
+  - skills/_shared/resolve-framework-source.md
   - skills/_shared/manual-deploy-artifact-catalog.md
   - frameworks/*/render-review-html.md
   - frameworks/*/open-questions-schema.md

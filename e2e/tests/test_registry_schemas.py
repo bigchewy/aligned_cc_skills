@@ -252,6 +252,42 @@ class TestLocalAdvisorRegistrySchema:
         )
 
 
+class TestLocalFrameworkRegistrySchema:
+    """A project-local framework registry must satisfy the framework schema, with
+    prompt folders resolved against its OWN root and advisors found in plugin or local."""
+
+    FIXTURE_ROOT = REPO_ROOT / "e2e" / "fixtures" / "local-advisor-repo"
+
+    @pytest.fixture
+    def registry(self):
+        path = self.FIXTURE_ROOT / "frameworks" / "registry.yaml"
+        assert path.exists(), f"Local framework fixture registry not found at {path}"
+        with open(path) as f:
+            data = yaml.safe_load(f)
+        assert data is not None and "frameworks" in data
+        return data
+
+    def test_local_entries_have_required_fields(self, registry):
+        for i, entry in enumerate(registry["frameworks"]):
+            missing = FRAMEWORK_REQUIRED_FIELDS - set(entry.keys())
+            assert not missing, f"Local framework entry {i} missing: {missing}"
+
+    def test_local_registered_ids_have_prompt_files(self, registry):
+        for entry in registry["frameworks"]:
+            prompt = self.FIXTURE_ROOT / "frameworks" / entry["id"] / "prompt.md"
+            assert prompt.is_file(), f"Local framework {entry['id']}: no prompt.md at {prompt}"
+
+    def test_local_framework_advisors_exist(self, registry):
+        ids = set()
+        for root in (REPO_ROOT, self.FIXTURE_ROOT):
+            with open(root / "advisors" / "registry.yaml") as f:
+                ids |= {a["id"] for a in yaml.safe_load(f)["advisors"]}
+        for entry in registry["frameworks"]:
+            assert entry["advisor"] in ids, (
+                f"Local framework {entry['id']}: advisor {entry['advisor']} not in plugin or local advisors"
+            )
+
+
 def test_deliverable_type_frontmatter_matches_registry():
     """Every framework prompt.md frontmatter must mirror its registry deliverable_type."""
     import re

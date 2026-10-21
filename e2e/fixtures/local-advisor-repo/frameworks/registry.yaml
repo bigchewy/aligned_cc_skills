@@ -1,0 +1,15 @@
+frameworks:
+  - id: example-local-framework
+    name: "Example Local Framework"
+    advisor: example-local-advisor
+    purpose: "a fixture framework that exists only in a project-local repo"
+    category: fixture
+    domains: [fixture, local-merge]
+    use_when: "a test needs a framework that only the project defines"
+  - id: fear-setting
+    name: "Fear Setting (local override)"
+    advisor: example-local-advisor
+    purpose: "a local override of a plugin framework id"
+    category: fixture
+    domains: [fixture, local-merge]
+    use_when: "a test needs a local framework that shadows a plugin framework"
