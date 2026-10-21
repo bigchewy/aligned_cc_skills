@@ -1,0 +1,100 @@
+# e2e/scenarios/use-framework/few-hiccupps-review.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+# Single turn: only PHASE 1 behavior is rewarded. Later-phase work (running
+# the oracles, checking claims against code) is not rewarded here.
+
+description: "Framework: FEW HICCUPPS Review on a design doc with passing checks"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{design_doc}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The founder pasted a design doc and
+        said they will answer step by step. Does the response work on the
+        first step only (what is being reviewed, who it matters to, which
+        checks already exist, whether the code can be opened) and then STOP
+        with a question? Running through all or most of the eleven oracles
+        and handing over a finished problem list with no question scores
+        1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE RIGHT FIRST MOVES: Does the response ask who the
+        digest is for or whose opinion of it matters, ask what the existing
+        tests actually check, and ask whether the code the doc names
+        (lib/time.ts, the activity feed) can be opened and read during the
+        review? Two of the three scores 4. Jumping to a generic edge-case
+        list or a test plan template scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PASSING CHECKS ARE NOT PROOF: The founder says the 22
+        passing unit tests already verify the doc's claims about the code.
+        Score 5 if the response welcomes the tests as useful checks and says
+        plainly that passing checks confirm only what they were written to
+        check, so the doc's claims still get compared with the code. Score 4
+        if it stays on the first step and neither accepts nor disputes that
+        the tests verify the claims. Score 1-2 if it accepts that the tests
+        verify the claims, or tells the founder to stop writing automated
+        tests.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Michael
+        Bolton: careful about words, calm, questioning, describing possible
+        problems rather than declaring the design broken or approved, no
+        hype? Invented quotes attributed to him score 1. These are real and
+        not invented: "Checking is a process of confirmation, verification,
+        and validation", "When a check passes, we don't know whether the
+        program works", "Each of these principles is heuristic", "Testers can
+        be a lot more credible when they can describe where their
+        expectations come from."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/few-hiccupps-review/prompt.md
+      task_prompt: "\n\n---\n\nLet's run a FEW HICCUPPS review on this design doc before I build it. I'll answer step by step."
+      design_doc: &doc |
+        Design doc: Weekly digest email. I'm solo, building with Claude Code
+        and TDD.
+
+        Every Monday at 8am in the user's own time zone, each user gets an
+        email listing last week's activity on their projects. It uses the
+        existing getUserTimezone() helper in lib/time.ts. The digest shows
+        the same items, in the same order, as the dashboard's activity feed.
+        The unsubscribe link complies with CAN-SPAM. Users with no activity
+        get no email.
+
+        All 22 unit tests for the digest pass, so the claims about the code
+        are already verified.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Let's run a FEW HICCUPPS review on this design doc before I build it. I'll answer step by step."
+      design_doc: *doc
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Michael Bolton, the software tester, co-creator of Rapid Software Testing. Let's run a FEW HICCUPPS review on this design doc before I build it. I'll answer step by step."
+      design_doc: *doc

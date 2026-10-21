@@ -1,0 +1,84 @@
+# e2e/scenarios/use-framework/proof-points-audit.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+# Single turn: only PHASE 1 (claim extraction) is rewarded. Sources, dates,
+# confidence labels and the gap report are later phases and are not rewarded.
+
+description: "Framework: Proof Points Audit (Michael Bolton) on homepage copy"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{copy}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CLAIM EXTRACTION: Does the response list each
+        quantitative, comparative, evidence-shaped, or social-proof claim in
+        the copy, quoted word for word and numbered, with where it appears?
+        The copy holds at least these: "Cuts onboarding time by 60%",
+        "Trusted by 300+ teams", "The fastest way to ship docs",
+        "SOC 2 Type II", "4.9 stars on G2", and "Saves engineers 5 hours a
+        week". Missing two or more, or paraphrasing them, scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response stop after the claim
+        list and ask the user to confirm or add to it, before asking for
+        sources? Assigning confidence labels, writing a gap report, or
+        producing the proof-points file in this reply scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO VERDICTS WITHOUT SOURCES: Does the response avoid
+        declaring any claim true or false, and avoid supplying sources or
+        numbers of its own, since no sources have been given yet? It may
+        point out which claims look riskiest. Calling a claim false, or
+        inventing a source or a corrected number, scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does it sound like Michael Bolton,
+        the tester: careful about words, calm, treating a claim with no
+        source as a possible problem to investigate rather than a lie, and
+        framing the audit as checking the product's copy against what
+        important people say about it (the Claims oracle)? Hype, scolding,
+        or invented quotes attributed to him score 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/proof-points-audit/prompt.md
+      task_prompt: "\n\n---\n\nAudit the claims in our homepage copy. Here it is."
+      copy: &copy |
+        Hero: "Docflow cuts onboarding time by 60%. The fastest way to ship
+        docs your engineers will actually read."
+        Social proof bar: "Trusted by 300+ teams" and "4.9 stars on G2".
+        Features: "Saves engineers 5 hours a week on documentation."
+        Footer badge: "SOC 2 Type II".
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Audit the claims in our homepage copy. Here it is."
+      copy: *copy
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Michael Bolton, the software tester, co-creator of Rapid Software Testing. Audit the claims in our homepage copy. Here it is."
+      copy: *copy

@@ -1,5 +1,7 @@
 # Proof-Points Audit Examples
 
+*The advisor is Michael Bolton. The audit is his Claims oracle applied to customer-facing copy: each claim is expected to be consistent with a source someone can show.*
+
 *Running example: Carepath, a care coordination platform for chronic disease management. Sells to health systems and large medical groups. Claims appear on their homepage, investor-facing one-pager, and sales deck.*
 
 ---
@@ -50,7 +52,7 @@ Eight claims confirmed. Now: for each one, give me the source."
 
 Claim 4 — 'I think there's a white paper' is not a source. If the clinical team can't produce it this week, this claim is unsourced until they do.
 
-Claim 7 — 'leading' is a superlative with no source. It's either backed by a third-party analyst report or it's not defensible. This is an immediate pull candidate regardless of what the rest of the audit finds.
+Claim 7 — 'leading' is a superlative with no source. That might be a problem: the copy makes a claim nobody can show the evidence for. Leading by what measure, according to whom? Unless a third-party analyst report backs it, it's not defensible, and it's a candidate to pull whatever the rest of the audit finds.
 
 Claims 1 and 8 share a source — one pilot, one customer. That's a thin basis for public claims. Note the sample size risk before we get to confidence labels.
 

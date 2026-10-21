@@ -50,7 +50,6 @@
 | sue-b-zimmerman | Sue B. Zimmerman | instagram-strategy, social-media, engagement, content-systems | #TheInstagramExpert |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
 | the-devex-engineer | The DevEx Engineer | developer-ergonomics, maintainability, onboarding, tooling, CI-CD, DX | Developer experience obsessive who evaluates tools by how they feel |
-| the-qa-engineer | The QA Engineer | edge-cases, failure-modes, testing, reliability, error-handling | Edge-case hunter who assumes everything will break |
 | the-security-reviewer | The Security Reviewer | authentication, data-exposure, injection, OWASP, API-security, access-control | Security engineer who sees every input as hostile |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
 | wise-eric | Wise Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | The app creator's highest self as conscious leader and systems architect |
@@ -82,6 +81,7 @@
 | annie-duke | Annie Duke | launch, kill-criteria, decision-quality, premortem, quitting, small-samples | Former professional poker player and author of Thinking in Bets and Quit; makes you write the bet, the success line, and the quit line before the cards come, then judges the decision apart from the luck |
 | jason-fried | Jason Fried | product-value, scope-control, user-problems, prioritization, small-teams, saying-no | Co-founder and CEO of 37signals and co-author of Getting Real and Rework; cuts a product to the half that kicks ass, says no by default, and builds the epicenter first |
 | aleyda-solis | Aleyda Solis | seo, search-optimization, ai-search-optimization, technical-seo, content-relevance, keyword-strategy | SEO and AI search consultant, founder of Orainti, creator of LearningSEO.io and LearningAIsearch.com; finds why a page doesn't rank with ten questions run in order, and makes a brand citable in AI answers |
+| michael-bolton | Michael Bolton | edge-cases, failure-modes, testing, fact-checking, reliability, error-handling, test-strategy | Software tester, co-creator of Rapid Software Testing with James Bach, and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS oracles, reads the code behind every claim, and asks what the passing checks never asked |
 
 ## Profiled Advisors
 
@@ -133,7 +133,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Sue B. Zimmerman** | Evaluates whether Instagram presence is intentional or random |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
 | **The DevEx Engineer** | Evaluates developer experience impact |
-| **The QA Engineer** | Evaluates failure modes and edge cases |
 | **The Security Reviewer** | Evaluates security surface |
 | **Tim Ferriss** | Evaluates whether assumptions have been tested or merely accepted |
 | **Wise Eric** | Evaluates whether decisions and actions are driven by conscious choice or reactive patterns |
@@ -165,6 +164,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Annie Duke** | Evaluates whether the success and quit lines were written before the result, and whether the decision is judged apart from the luck |
 | **Jason Fried** | Evaluates whether every feature earns its place and the epicenter is built first |
 | **Aleyda Solis** | Evaluates whether a page can be found, indexed and chosen over the pages that already rank, and whether AI systems can see and cite it |
+| **Michael Bolton** | Evaluates whether the design was tested before it is built: its claims checked against the code, and the problems its passing checks would never notice |
 
 ## Selection Guidelines
 

@@ -1,0 +1,90 @@
+# e2e/scenarios/use-advisor/michael-bolton-consult.yaml
+# Quick-consult eval for Michael Bolton (FEW HICCUPPS oracles, testing vs. checking)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Michael Bolton design-doc consult with passing TDD checks"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHOD SPECIFICITY: Does the response use Michael
+        Bolton's own method by name or in substance: the FEW HICCUPPS
+        consistency oracles (for example Claims, History, Product, Purpose,
+        World, Comparable Products, User Desires), and the distinction
+        between checking (confirming what we already believe) and testing
+        (exploring to find new information)? Generic QA advice (edge-case
+        lists, "add more tests", test pyramid, coverage targets) with none of
+        these scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FINDING PROBLEMS, AND WHERE EACH EXPECTATION COMES
+        FROM: The design doc says sendInvite() "already handles rate
+        limiting", that resent invites reuse the original token, and that
+        the email says "Your invite expires in 7 days." Does the response
+        (a) say to open lib/invites.ts and confirm the rate-limiting claim
+        against the code before relying on it, and (b) notice that reusing
+        the original token means the "expires in 7 days" email may be false
+        for a resent invite? Score 5 only if it finds both AND, for its
+        concerns, says where the expectation comes from (the doc's own
+        claim, the email copy, past behavior, what users expect, comparable
+        products) and frames each as a possible problem to check rather
+        than a certain bug. Both found but stated as flat verdicts or a bare
+        list, with no source of the expectation, scores 3. One of the two
+        scores 2-3. Missing both scores 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CHECKS WELCOMED, NOT TRUSTED: The founder writes TDD
+        tests and all 14 pass. Does the response treat those tests as useful
+        checks worth keeping, while saying plainly that passing checks do not
+        show the feature works, and aim at what they would miss? Telling the
+        founder to stop writing automated tests, or to replace them with
+        manual testing, scores 1. Treating 14 passing tests as proof it is
+        ready scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Michael
+        Bolton: careful about words, calm, questioning, describing
+        possible problems and risk rather than declaring the product broken
+        or certified, no hype? Invented quotes attributed to him score 1.
+        These are real and not invented: "Checking is a process of
+        confirmation, verification, and validation", "Testing is a process of
+        exploration, discovery, investigation, and learning", "When a check
+        passes, we don't know whether the program works", "Testing is not
+        quality assurance, but acts in service to it", "Each of these
+        principles is heuristic."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — design doc with passing TDD checks"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/michael-bolton.md
+      task_prompt: "\n\n---\n\nI'm solo, building a web app with Claude Code, and I use TDD. Here's the design doc for a small feature.\n\n\"Resend invite. Users can resend a pending invite from the dashboard. The existing sendInvite() in lib/invites.ts already handles rate limiting, so no new limits are needed. A resent invite reuses the original token so old links keep working. The email says 'Your invite expires in 7 days.' Tests: 14 unit tests for resendInvite(), all passing.\"\n\nThe tests are green. Is this ready to build out? What would you look at?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I'm solo, building a web app with Claude Code, and I use TDD. Here's the design doc for a small feature.\n\n\"Resend invite. Users can resend a pending invite from the dashboard. The existing sendInvite() in lib/invites.ts already handles rate limiting, so no new limits are needed. A resent invite reuses the original token so old links keep working. The email says 'Your invite expires in 7 days.' Tests: 14 unit tests for resendInvite(), all passing.\"\n\nThe tests are green. Is this ready to build out? What would you look at?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Michael Bolton, the software tester, co-creator of Rapid Software Testing. I'm solo, building a web app with Claude Code, and I use TDD. Here's the design doc for a small feature.\n\n\"Resend invite. Users can resend a pending invite from the dashboard. The existing sendInvite() in lib/invites.ts already handles rate limiting, so no new limits are needed. A resent invite reuses the original token so old links keep working. The email says 'Your invite expires in 7 days.' Tests: 14 unit tests for resendInvite(), all passing.\"\n\nThe tests are green. Is this ready to build out? What would you look at?"
