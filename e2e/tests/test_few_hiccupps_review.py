@@ -101,7 +101,7 @@ def test_prompt_welcomes_checks_and_hands_off():
     text = _read(PROMPT)
     lower = text.lower()
     assert "checks" in lower and "tdd" in lower
-    for handoff in ("The Architect", "The Security Reviewer", "Steve Krug"):
+    for handoff in ("The Architect", "Adam Shostack", "Steve Krug"):
         assert handoff in text, f"prompt should hand off to {handoff}"
 
 

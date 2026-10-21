@@ -1,6 +1,6 @@
 # Framework Registry
 
-136 frameworks across 26 categories
+141 frameworks across 27 categories
 
 | Category | Count |
 |----------|-------|
@@ -191,7 +191,7 @@
 
 - **competitive-battle-card** — Competitive Battle Card (april-dunford)
 
-### Content Strategy (9)
+### Content Strategy (10)
 
 - **batched-content-system** — the Batched Content Creation System (jasmine-star)
 - **content-inc-model** — the Content Inc (joe-pulizzi)
@@ -260,7 +260,7 @@
 - **behavior-gap-diagnosis** — Behavior Gap Diagnosis (julie-dirksen)
 - **ten-steps-blueprint** — Ten Steps Blueprint (paul-kirschner)
 
-### Marketing (1)
+### Marketing (2)
 
 - **ai-search-optimization-checklist** — AI Search Optimization Checklist (aleyda-solis)
 - **storybrand-homepage** — StoryBrand Homepage Wireframe (donald-miller)
@@ -305,7 +305,7 @@
 
 - **value-metric** — Value Metric Framework (patrick-campbell)
 
-### Product Design (5)
+### Product Design (6)
 
 - **breadboard-to-pages** — Breadboard to Pages (brad-frost)
 - **few-hiccupps-review** — FEW HICCUPPS Review (michael-bolton)

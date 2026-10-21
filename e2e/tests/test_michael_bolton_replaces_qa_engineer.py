@@ -145,7 +145,7 @@ def test_prompt_is_built_on_his_method_and_names_its_neighbors():
     assert "what you never published" in lower
     # Bach's model may be taught only with credit to Bach.
     assert "James Bach" in text
-    for neighbor in ("The Architect", "The Security Reviewer", "Annie Duke", "Steve Krug"):
+    for neighbor in ("The Architect", "Adam Shostack", "Annie Duke", "Steve Krug"):
         assert neighbor in text, f"prompt should hand off to {neighbor}"
 
 

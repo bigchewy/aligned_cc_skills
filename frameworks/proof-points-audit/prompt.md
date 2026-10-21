@@ -250,4 +250,4 @@ WAIT for user to review the output and confirm or request revisions.
 - Never supply a source, a date, or a corrected number the user didn't give. Ask for the artifact behind the claim.
 - "The CEO said it" points to a source; it isn't one. Ask where the CEO got it.
 - Label confidence from the source's quality and age, not from who wrote the copy.
-- Security and compliance controls themselves go to The Security Reviewer; this audit checks only that the claim about them is backed by a current certificate.
+- Security and compliance controls themselves go to Adam Shostack; this audit checks only that the claim about them is backed by a current certificate.

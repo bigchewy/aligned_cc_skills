@@ -1139,29 +1139,6 @@ advisors:
   summary: Author of Atomic Design and design system consultant; builds screens from
     a design system's parts, tests them with real content, and sets up design systems
     that AI agents build from
-- best_for: 'Tooling designs, skill/agent architecture, CI/CD pipelines, developer
-    workflows, SDK design.
-
-    '
-  domains:
-  - developer-ergonomics
-  - maintainability
-  - onboarding
-  - tooling
-  - CI-CD
-  - DX
-  evaluation_expertise: 'Evaluates developer experience impact. Is the code maintainable
-    by someone who didn''t write it? Are the APIs ergonomic? Is the tooling intuitive?
-    Catches poor DX, undocumented conventions, and maintenance burden.
-
-    '
-  id: the-devex-engineer
-  name: The DevEx Engineer
-  not_for: 'User-facing product features, business strategy, marketing, content.
-
-    '
-  prompt: advisors/prompts/the-devex-engineer.md
-  summary: Developer experience obsessive who evaluates tools by how they feel
 - best_for: 'Productivity audits, lifestyle and business experiments, learning acceleration
     plans, fear-setting for stuck decisions, simplification of overcomplicated workflows.
 
@@ -1980,7 +1957,7 @@ advisors:
   not_for: 'Code architecture, module boundaries, and data models (redirect to The
     Architect); threat review of hooks, MCP servers, or plugins (redirect to Adam
     Shostack); developer experience of tools other than Claude Code, CI pipelines,
-    and SDK ergonomics (redirect to The DevEx Engineer); what an AI should do in a
+    and SDK ergonomics (redirect to The Architect); what an AI should do in a
     learning or coaching program (redirect to Ethan Mollick); product or business
     strategy.
 
@@ -2250,9 +2227,8 @@ advisors:
   id: michael-bolton
   name: Michael Bolton
   not_for: 'Security review of authentication, injection, or data exposure (redirect
-    to The Security Reviewer); how a design fits codebase patterns and module boundaries
-    (redirect to The Architect); developer tooling and ergonomics (redirect to The
-    DevEx Engineer); whether people can use a screen (redirect to Steve Krug); setting
+    to Adam Shostack); how a design fits codebase patterns and module boundaries,
+    and developer tooling and ergonomics (redirect to The Architect); whether people can use a screen (redirect to Steve Krug); setting
     a success number or quit line before a launch (redirect to Annie Duke); early
     ideation where the concept is still forming; positioning and strategy.
 

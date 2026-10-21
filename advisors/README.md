@@ -1,6 +1,6 @@
 # Advisor Registry
 
-76 advisors | 76 profiled | 0 unprofiled
+75 advisors | 75 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -49,7 +49,6 @@
 | steve-krug | Steve Krug | usability, scanning, conventions, question-marks, trunk-test, clarity, happy-talk | Usability expert, author of Don't Make Me Think |
 | sue-b-zimmerman | Sue B. Zimmerman | instagram-strategy, social-media, engagement, content-systems | #TheInstagramExpert |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
-| the-devex-engineer | The DevEx Engineer | developer-ergonomics, maintainability, onboarding, tooling, CI-CD, DX | Developer experience obsessive who evaluates tools by how they feel |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
 | wise-eric | Wise Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | The app creator's highest self as conscious leader and systems architect |
 | kate-bowler | Kate Bowler | empathetic-copywriting, health-wellness-copy, chronic-illness-communication, permission-giving, anti-platitude | Duke professor, Stage IV cancer survivor, anti-platitude voice for health/wellness copy |
@@ -132,7 +131,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Steve Krug** | Evaluates whether the user has to think |
 | **Sue B. Zimmerman** | Evaluates whether Instagram presence is intentional or random |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
-| **The DevEx Engineer** | Evaluates developer experience impact |
 | **Tim Ferriss** | Evaluates whether assumptions have been tested or merely accepted |
 | **Wise Eric** | Evaluates whether decisions and actions are driven by conscious choice or reactive patterns |
 | **Kate Bowler** | Authors empathetic copy for health and wellness products, chronic illness communities, and any audience that has been dismissed, medicalized, or sold toxic positivity |

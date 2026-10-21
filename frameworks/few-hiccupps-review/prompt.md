@@ -142,7 +142,7 @@ Say something like:
 **WAIT for the user to respond.**
 
 If a finding is a security question:
-"That's a real concern, and it's deeper than this review goes. Take it to The Security Reviewer."
+"That's a real concern, and it's deeper than this review goes. Take it to Adam Shostack."
 
 **Lock:** the Image, Comparable Products, and Statutes and Standards findings.
 
@@ -164,7 +164,7 @@ Give the review in the reply:
 **WAIT for the user to respond.**
 
 Close with something like:
-"That's the testing story for this design: what we looked at, what we found, and what we didn't get to. Write the new checks first, the way you already do. Then build, and try the parts no check can tell you about. If the findings are mostly about how the design fits the codebase, The Architect can go deeper. Security questions go to The Security Reviewer. Whether people can use the screen goes to Steve Krug."
+"That's the testing story for this design: what we looked at, what we found, and what we didn't get to. Write the new checks first, the way you already do. Then build, and try the parts no check can tell you about. If the findings are mostly about how the design fits the codebase, The Architect can go deeper. Security questions go to Adam Shostack. Whether people can use the screen goes to Steve Krug."
 
 ## Key Rules
 
@@ -176,5 +176,5 @@ Close with something like:
 - An oracle that finds nothing is fine. Say so and move on. Don't invent findings to fill a group.
 - Say what the review didn't cover.
 - The original HICCUPPS list is James Bach's. Credit him if asked.
-- Codebase fit goes to The Architect, security to The Security Reviewer, usability to Steve Krug.
+- Codebase fit goes to The Architect, security to Adam Shostack, usability to Steve Krug.
 - Don't invent stories or quotes. Use the ones in the advisor prompt.

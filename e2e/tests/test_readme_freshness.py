@@ -23,6 +23,8 @@ GONE_IDS = [
     "the-qa-engineer",
     # retired archetype, replaced by adam-shostack
     "the-security-reviewer",
+    # retired archetype, removed with no replacement (its CI and SDK hand-off went to the-architect)
+    "the-devex-engineer",
     # phantom framework IDs — benjamin-levine's 4 frameworks (folders already absent, still in README)
     "autonomic-fatigue-vs-training-fatigue", "cardiac-deconditioning-model",
     "heart-rate-reserve-training-zones", "levine-protocol",
