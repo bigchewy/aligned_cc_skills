@@ -52,7 +52,8 @@ here — route to Authoring with the `root-cause-analysis` framework.
   meeting prep for a decision
 - Environment (tiebreaker): content registries, prior curricula,
   brand voice files are present, OR the request's topic matches a
-  `domains:` entry in `frameworks/registry.yaml` (e.g.,
+  `domains:` entry in the merged framework list from
+  `skills/_shared/resolve-framework-source.md` (plugin + project-local) (e.g.,
   `competitive-analysis`, `positioning`, `market-strategy`,
   `go-to-market`) — when a registered framework matches the topic,
   prefer Authoring

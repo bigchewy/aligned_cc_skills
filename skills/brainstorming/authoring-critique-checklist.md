@@ -132,7 +132,7 @@ If the design includes a Decision Log or an Open Questions list, evaluate each d
 
 ## Conditional sections
 
-These sections apply only when the design's `deliverable_type` matches. Skip non-matching sections. The orchestrator selects the applicable section based on the `deliverable_type` field from `frameworks/registry.yaml` (synced via `tools/sync_framework_frontmatter.py`).
+These sections apply only when the design's `deliverable_type` matches. Skip non-matching sections. The orchestrator selects the applicable section based on the `deliverable_type` field from the engine's merged entry (`skills/_shared/resolve-framework-source.md`; plugin entries are synced via `tools/sync_framework_frontmatter.py`).
 
 ### deliverable_type: content
 

@@ -16,7 +16,10 @@ A wrapper around either a registered framework or a structured Q&A with a topic 
 
 Read `skills/_shared/contextual-recommendation.md` and invoke it with:
 - **Entity type:** `framework-or-advisor`
-- **Frameworks input:** the registry path `frameworks/registry.yaml`.
+- **Frameworks input:** the **pre-merged framework list** from `skills/_shared/resolve-framework-source.md`
+  (plugin global + project-local, deduped, local-wins) — passed via contextual-recommendation's
+  list branch. Passing the plugin registry path here would make project-local frameworks
+  invisible to engine selection.
 - **Advisors input:** the **pre-merged advisor list** from `skills/_shared/resolve-advisor-source.md`
   (plugin global + project-local, deduped, local-wins) — passed via contextual-recommendation's
   dual-contract list branch. Passing the plugin registry path here would make project-local
@@ -211,7 +214,7 @@ Dispatch table:
 | plan | `references/templates/authoring-plan-template.html` | `["universal", "plan"]` | strategy advisors (Rumelt, Christensen, Ries) | "If the work needs an implementation plan and the superpowers plugin is installed, run superpowers:writing-plans." |
 | analysis | `references/templates/authoring-analysis-template.html` | `["universal", "analysis"]` | topic advisors + The Skeptic | "Save analysis; surface follow-on actions." |
 
-**Critic pool override:** Before falling back to the default critic pool for the deliverable_type row, check the engine's `default_critic_advisors` field in `frameworks/registry.yaml`. If present and non-empty, use those advisor IDs as the critic pool instead of the defaults. (This is the consumption site for the field added in Task 10 — it is what makes the field load-bearing.)
+**Critic pool override:** Before falling back to the default critic pool for the deliverable_type row, check the engine's `default_critic_advisors` field in the engine's merged entry from `skills/_shared/resolve-framework-source.md`. If present and non-empty, use those advisor IDs as the critic pool instead of the defaults. (This is the consumption site for the field added in Task 10 — it is what makes the field load-bearing.)
 
 **Interaction with `critique-panel-orchestration.md`:** That file expects ONE critique checklist with one `criteria-mapping` per calling mode file. The authoring mode supplies the `authoring-critique-checklist.md` file (single checklist) and passes the list of section IDs from the Critique-checklist-sections column above. The orchestrator runs only the listed sections, skipping inapplicable ones. The `authoring-critique-checklist.md` (Task 18) is authored so sections are independently runnable.
 
