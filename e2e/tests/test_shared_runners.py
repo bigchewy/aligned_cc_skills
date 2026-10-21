@@ -98,15 +98,14 @@ def test_use_advisor_invokes_shared_runner():
 
 def test_use_framework_documents_absolute_path_construction():
     """The framework-runner fails closed unless given an absolute directory path.
-    use-framework must tell the model how to construct that absolute path from
-    the registry `id` returned by Step 3."""
+    use-framework must hand the runner the matched entry's `absolute_framework_dir`
+    from the framework resolver (plugin or project-local)."""
     text = read("skills/use-framework/SKILL.md")
-    assert "frameworks/<id>/" in text or "frameworks/<id>" in text, (
-        "use-framework must document the absolute path pattern "
-        "`<plugin-root>/frameworks/<id>/` for the runner handoff"
+    assert "absolute_framework_dir" in text, (
+        "use-framework must hand the runner the entry's absolute_framework_dir"
     )
-    assert "resolve-skill-path.md" in text, (
-        "use-framework must point at resolve-skill-path.md for plugin root resolution"
+    assert "resolve-framework-source.md" in text, (
+        "use-framework must point at resolve-framework-source.md for path resolution"
     )
 
 

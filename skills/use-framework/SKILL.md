@@ -14,41 +14,39 @@ Guide the user through a framework's phases interactively.
 
 ## Step 1: Discover Available Frameworks
 
-Discover all frameworks from the plugin's flat directory.
+**Step 1a: Resolve the merged framework set**
 
-**Step 1a: Discover frameworks from registry and filesystem**
+Read `skills/_shared/resolve-framework-source.md` (plugin-relative path) and follow its procedure to obtain the merged framework set (plugin global + project-local, deduped, local-wins). Use the returned `frameworks` list as the listing source. Each entry carries `id`, `name`, `advisor`, `purpose`, `category`, `domains`, `use_when`, `absolute_framework_dir`, `source`, and `registered`.
 
-**Primary source:** Read `frameworks/registry.yaml` (plugin-relative). Parse the `frameworks` list — each entry has `id`, `name`, `advisor`, `purpose`, `category`, `domains` (list), and `use_when`. Use this as the primary listing source.
+> The resolver's own error paths already handle degradation (absent local registry → plugin-only result; malformed local YAML → degrade and warn). No additional fallback is needed here — a resolver file that cannot be read indicates a plugin installation failure, which is a distinct failure mode and not something `use-framework` should silently paper over.
 
-**Fallback:** If `frameworks/registry.yaml` does not exist or fails to parse, glob `frameworks/*/prompt.md` from both plugin and project directories (deduplicate by slug, project-local wins). This also discovers project-local frameworks not in the plugin registry.
-
-**Merge:** If both the registry and project-local glob return results, merge them. Registry entries are the canonical source for plugin frameworks. Project-local frameworks (found via glob but not in registry) are appended to the list.
-
-**Context management:** When listing all frameworks, use registry metadata (name, advisor, purpose) directly. Do not read full `prompt.md` contents during discovery — full reads happen only after matching.
+**Context management:** When listing all frameworks, use the resolver's metadata (name, advisor, purpose) directly. Do not read full `prompt.md` contents during discovery — full reads happen only after matching.
 
 ## Step 2: Extract Framework Names
 
-Read the first line of each `prompt.md`, which follows the format:
+Registered entries already carry `name` and `advisor`. Use them as-is.
+
+For `registered: false` entries only (a project-local folder with no registry entry), the resolver parsed the first line of `prompt.md`, which follows the format:
 
 ```
 You are {Advisor}, guiding someone through {Framework} - {purpose}.
 ```
 
-Parse the framework name from between "guiding someone through" and the dash/period. Parse the advisor name from between "You are " and the comma. This gives the display name and associated advisor for matching and listing.
+If the resolver could not parse that line, the entry's `name` is the folder name and its `advisor` is empty. List it anyway. Do not fail the entire listing because one folder is malformed.
 
-If a file doesn't match this format, skip it and continue. Do not fail the entire listing because one file is malformed.
+List frameworks alphabetically by display name. When the resolver returned entries with `source: "local"`, annotate each one with a trailing `(local)` marker so the user can tell project-specific frameworks from global ones.
 
 ## Step 3: Match User Input
 
 If the user provided a framework name argument:
 
-1. Match against both the folder slug (e.g., `the-work`) and the extracted display name (e.g., `The Work`)
+1. Match against both the folder slug (the entry `id`, e.g., `the-work`) and the display `name` (e.g., `The Work`), over the merged list from Step 1a
 2. Use case-insensitive substring matching
 3. **Single match:** Use it
 4. **Multiple matches:** Ask the user which one they meant
-5. **No match → contextual recommendation:** The args didn't match any entry name, so treat them as task context. Read `skills/_shared/contextual-recommendation.md` (plugin-relative path) and follow its process. Pass entity type: `framework`, registry path: `frameworks/registry.yaml`, task context: the user's original args.
+5. **No match → contextual recommendation:** The args didn't match any entry name, so treat them as task context. Read `skills/_shared/contextual-recommendation.md` (plugin-relative path) and follow its process. Pass entity type: `framework`, frameworks: the pre-merged list from Step 1a, task context: the user's original args.
 
-If no argument was provided, read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `framework`, registry path: `frameworks/registry.yaml`, task context: empty (the shared file will check conversation context and decide whether to score or prompt — see its Path 3/4 boundary logic).
+If no argument was provided, read `skills/_shared/contextual-recommendation.md` and follow its process. Pass entity type: `framework`, frameworks: the pre-merged list from Step 1a, task context: empty (the shared file will check conversation context and decide whether to score or prompt — see its Path 3/4 boundary logic).
 
 If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to listing all available frameworks alphabetically.
 
@@ -56,14 +54,11 @@ If `skills/_shared/contextual-recommendation.md` cannot be read, fall back to li
 
 After matching, hand off to the shared runner.
 
-**Resolving the absolute framework path.** The runner requires an absolute directory path and fails closed otherwise. Construct it from the matched framework's registry `id`:
-
-`<plugin-root>/frameworks/<id>/`
-
-Where `<plugin-root>` is the parent of the matched `.claude-plugin/` directory. Resolve it via the procedure in `skills/_shared/resolve-skill-path.md` (Plugin root section). If Step 3 fell back to the project-local glob and produced a full path directly, use that path as-is.
+**Resolving the absolute framework path.** The runner requires an absolute directory path and fails closed otherwise. Use the matched entry's `absolute_framework_dir` from Step 1a. The resolver already anchors plugin frameworks on the plugin root and project-local frameworks on the project directory.
 
 Read `skills/_shared/framework-runner.md` and invoke it with:
-- **Matched framework path:** the absolute path constructed above
+- **Matched framework path:** the matched entry's `absolute_framework_dir`
+- **`framework_entry`:** the matched merged entry (so the runner can find the framework's advisor)
 - **`intake_gate_mode`:** `advisory` (preserves existing top-level invocation behavior — `required_documents` are noted to the user but execution proceeds)
 
 The runner handles loading content, applying the intake gate, running phases with WAIT discipline, voice rules, and composability with `/aligned:use-advisor`.
