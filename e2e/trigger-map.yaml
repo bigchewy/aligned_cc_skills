@@ -387,6 +387,25 @@ triggers:
       - scenarios/use-framework/getting-real-cut.yaml
 
   - paths:
+      - advisors/prompts/michael-bolton.md
+    scenarios:
+      - scenarios/use-advisor/michael-bolton-consult.yaml
+
+  - paths:
+      - frameworks/few-hiccupps-review/prompt.md
+      - frameworks/few-hiccupps-review/examples.md
+      - frameworks/few-hiccupps-review/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/few-hiccupps-review.yaml
+
+  - paths:
+      - frameworks/proof-points-audit/prompt.md
+      - frameworks/proof-points-audit/examples.md
+      - frameworks/proof-points-audit/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/proof-points-audit.yaml
+
+  - paths:
       - skills/create-design-principles/SKILL.md
       - skills/create-design-principles/design-critique-checklist.md
       - skills/create-design-principles/examples.md

@@ -1182,29 +1182,6 @@ advisors:
     '
   prompt: advisors/prompts/the-devex-engineer.md
   summary: Developer experience obsessive who evaluates tools by how they feel
-- best_for: 'Designs where reliability matters. Anything touching auth, data, payments.
-    Designs that need clear test strategies.
-
-    '
-  domains:
-  - edge-cases
-  - failure-modes
-  - testing
-  - reliability
-  - error-handling
-  evaluation_expertise: 'Evaluates failure modes and edge cases. What happens when
-    things go wrong? Are error paths tested? Is the happy path the only path considered?
-    Catches missing error handling, untested boundaries, and reliability gaps.
-
-    '
-  id: the-qa-engineer
-  name: The QA Engineer
-  not_for: 'Early ideation, positioning, strategy, brainstorms where the concept is
-    still forming.
-
-    '
-  prompt: advisors/prompts/the-qa-engineer.md
-  summary: Edge-case hunter who assumes everything will break
 - best_for: 'Designs touching authentication, user data, APIs, external integrations,
     RLS policies, secrets management.
 
@@ -2250,6 +2227,49 @@ advisors:
   summary: Co-founder and CEO of 37signals and co-author of Getting Real and Rework;
     cuts a product to the half that kicks ass, says no by default, and builds the
     epicenter first
+- best_for: 'Reviewing a design doc, a feature, or an existing screen before it is
+    built: finding the problems the green checks would never notice, and checking
+    every claim the doc makes about the codebase against the code. Edge cases and
+    failure modes framed as consistency oracles (FEW HICCUPPS). Turning findings
+    into new checks for a TDD workflow. Verifying numbers and claims in customer-facing
+    copy. Runs few-hiccupps-review and proof-points-audit. First-choice fact-checker
+    and critic in design reviews for failure modes and test strategy.
+
+    '
+  domains:
+  - edge-cases
+  - failure-modes
+  - testing
+  - fact-checking
+  - reliability
+  - error-handling
+  - test-strategy
+  evaluation_expertise: 'Evaluates whether the design has been tested before it is
+    built. Does each claim about the codebase match the code when the file is read?
+    Is the design consistent with its own past behavior, with comparable parts of
+    the same product, with what reasonable users want, and with the laws and standards
+    that apply? Do the existing checks assert what matters, or only what was easy?
+    Catches green test suites treated as proof, "already handles" claims nobody read,
+    behavior changes that break what users relied on, emails and copy that promise
+    what the code does not do, and reports that count passing tests instead of saying
+    what was examined.
+
+    '
+  id: michael-bolton
+  name: Michael Bolton
+  not_for: 'Security review of authentication, injection, or data exposure (redirect
+    to The Security Reviewer); how a design fits codebase patterns and module boundaries
+    (redirect to The Architect); developer tooling and ergonomics (redirect to The
+    DevEx Engineer); whether people can use a screen (redirect to Steve Krug); setting
+    a success number or quit line before a launch (redirect to Annie Duke); early
+    ideation where the concept is still forming; positioning and strategy.
+
+    '
+  prompt: advisors/prompts/michael-bolton.md
+  summary: Software tester, co-creator of Rapid Software Testing with James Bach,
+    and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS
+    oracles, reads the code behind every claim, and asks what the passing checks
+    never asked
 selection_guidelines:
   calibration_examples:
   - critics:
@@ -2262,7 +2282,7 @@ selection_guidelines:
   - critics:
     - steve-jobs
     - the-architect
-    - the-qa-engineer
+    - michael-bolton
     scope: A user-facing feature with backend + UI + auth
   - critics:
     - april-dunford

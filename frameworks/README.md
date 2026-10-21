@@ -144,7 +144,7 @@
 | buyer-persona | Buyer Persona | matt-dixon | customer | an organization needs to characterize a specific role on the buying committee (champion, mobilizer, blocker, approver) |
 | messaging-distillation | Messaging Distillation | april-dunford | positioning | positioning and narrative are complete and the org needs copy-ready language for decks, pages, emails, and one-pagers |
 | brand-voice | Brand Voice | steve-krug | brand | an organization has existing copy and needs to extract a documented brand voice + terminology contract |
-| proof-points-audit | Proof Points Audit | the-qa-engineer | evidence | an organization needs to inventory and verify every quantitative or proof-shaped claim in its customer-facing copy |
+| proof-points-audit | Proof Points Audit | michael-bolton | evidence | an organization needs to inventory and verify every quantitative or proof-shaped claim in its customer-facing copy |
 | competitive-battle-card | Competitive Battle Card | april-dunford | competitive-analysis | positioning and messaging are complete and the org needs a salesperson's working battle card for the named competitors |
 | 3b-behavioral-design | 3B Framework (Behavior, Barriers, Benefits) | kristen-berman | behavioral-design | a product, growth, or CX team faces a 'users aren't doing the thing' problem and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit, or changing the target behavior itself |
 | mochary-weekly-check-in | The Weekly Check-In | matt-mochary | operating-cadence | a leadership team or manager-report pair is running status-heavy meetings with no written record of commitments or decisions, or needs to establish a repeatable operating rhythm tied to OKRs |
@@ -171,6 +171,7 @@
 | logic-check | Logic Check | adham-dannaway | product-design | a screen looks amateur and nobody can say why, an AI agent keeps picking colours, sizes, or weights by feel, a design principles file needs checking before screens are built from it, or text contrast, button hierarchy, or colour-only signals need checking |
 | launch-bet | Launch Bet | annie-duke | startup | a product or site is about to launch with one real customer instead of a public release and needs a success number and a quit line before the build, a first customer to pick and recruit, or a first customer has been served and the founder needs to judge the result and decide whether to keep going, change one thing, stop, or wait |
 | getting-real-cut | Getting Real Cut | jason-fried | product-design | a version one or a new feature has a long list and needs cutting before the build, a design keeps growing, settings or scale work are creeping in, or the founder can't say what the product can't live without |
+| few-hiccupps-review | FEW HICCUPPS Review | michael-bolton | product-design | a design doc is about to be built and its claims about the codebase need checking against the code, the tests all pass but nobody has asked what they miss, a feature needs its edge cases and failure modes found before the build, or an existing screen feels wrong and nobody can say which expectation it breaks |
 
 ## By Category
 
@@ -220,7 +221,7 @@
 
 ### Evidence (1)
 
-- **proof-points-audit** — Proof Points Audit (the-qa-engineer)
+- **proof-points-audit** — Proof Points Audit (michael-bolton)
 
 ### Growth (7)
 
@@ -301,6 +302,7 @@
 ### Product Design (5)
 
 - **breadboard-to-pages** — Breadboard to Pages (brad-frost)
+- **few-hiccupps-review** — FEW HICCUPPS Review (michael-bolton)
 - **getting-real-cut** — Getting Real Cut (jason-fried)
 - **interface-inventory** — Interface Inventory (brad-frost)
 - **logic-check** — Logic Check (adham-dannaway)

@@ -1841,7 +1841,7 @@ frameworks:
     emails)
   use_when: an organization has existing copy and needs to extract a documented brand
     voice + terminology contract
-- advisor: the-qa-engineer
+- advisor: michael-bolton
   category: evidence
   deliverable_type: analysis
   domains:
@@ -2524,3 +2524,32 @@ frameworks:
   use_when: a version one or a new feature has a long list and needs cutting before
     the build, a design keeps growing, settings or scale work are creeping in, or the
     founder can't say what the product can't live without
+- advisor: michael-bolton
+  category: product-design
+  default_critic_advisors:
+  - michael-bolton
+  - the-architect
+  deliverable_type: analysis
+  domains:
+  - edge-cases
+  - failure-modes
+  - fact-checking
+  - design-review
+  - test-strategy
+  follow_on_frameworks:
+  - proof-points-audit
+  helpful_documents:
+  - the codebase the design doc describes, open so files can be read during the review
+  - the existing tests (checks) for the area the design touches
+  - past bug reports or incidents in the same area
+  id: few-hiccupps-review
+  name: FEW HICCUPPS Review
+  purpose: running a design doc, a feature, or an existing screen through the FEW
+    HICCUPPS consistency oracles to find problems before they're built, and checking
+    what the doc claims about the codebase against the code
+  required_documents:
+  - a design doc, a feature description, or an existing screen to review
+  use_when: a design doc is about to be built and its claims about the codebase need
+    checking against the code, the tests all pass but nobody has asked what they miss,
+    a feature needs its edge cases and failure modes found before the build, or an
+    existing screen feels wrong and nobody can say which expectation it breaks
