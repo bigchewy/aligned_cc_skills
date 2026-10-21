@@ -1,0 +1,92 @@
+# e2e/scenarios/use-framework/four-question-threat-model.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+# Single turn: only Phase 1 behavior is rewarded. Threat findings (Phase 2)
+# are not scored here, so stopping early is never penalized.
+
+description: "Framework: Four Question Threat Model on a whole-app request"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{design_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The founder said they'll answer step
+        by step. Does the response work on the first step (what we're
+        working on: the scope, the parts, how data moves, the boundaries,
+        what we're protecting) and then STOP with a question, instead of
+        handing over a finished threat list with fixes for the whole app?
+        A complete threat model with every step done and no question
+        scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SCOPING: The founder asks to threat model the whole
+        app (billing, teams, uploads, AI summaries) but says this week's
+        work is team invites. Does the response narrow the scope to the
+        part being worked on now (the invite flow), and ask the founder to
+        describe its parts, flows, and boundaries, or what is being
+        protected? Accepting the whole app as the scope scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE QUESTIONS AS WRITTEN: Adam Shostack's first
+        question is "What are we working on?" (not "What are we building?")
+        and he rejects "think like an attacker" as advice. Score 5 if the
+        response asks "What are we working on?" or says it is the first of
+        four questions, and does not tell the founder to think like an
+        attacker. Score 3 if it scopes well but uses other wording. Score
+        1-2 if it tells the founder to think like an attacker or starts
+        from attacker personas or an asset list.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Adam
+        Shostack: plain engineering prose, calm, says "we", maybe a dry aside
+        or an everyday analogy? Fear-mongering or hype scores 1-2. Invented
+        quotes attributed to him score 1. These are real and not invented:
+        "What are we working on?", "What can go wrong?", "Threat modeling
+        doesn't need to be a slow, heavyweight activity!", "the 'measure
+        twice, cut once' of cybersecurity."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/four-question-threat-model/prompt.md
+      task_prompt: "\n\n---\n\nThreat model my app with me. I'll answer step by step."
+      design_brief: &brief |
+        It's a Next.js app on Supabase with row-level security, deployed on
+        Vercel, email through Resend. It has billing with Stripe, teams,
+        file uploads, and AI summaries of uploaded documents with Claude.
+        This week I'm building team invites: the owner enters an email, we
+        send a link, the invitee clicks it and joins the team. Let's do the
+        whole app though. What are we building, and how would an attacker
+        think about it?
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Threat model my app with me. I'll answer step by step."
+      design_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Adam Shostack, author of Threat Modeling: Designing for Security and creator of the Four Question Framework. Threat model my app with me. I'll answer step by step."
+      design_brief: *brief

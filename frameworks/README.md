@@ -171,6 +171,8 @@
 | logic-check | Logic Check | adham-dannaway | product-design | a screen looks amateur and nobody can say why, an AI agent keeps picking colours, sizes, or weights by feel, a design principles file needs checking before screens are built from it, or text contrast, button hierarchy, or colour-only signals need checking |
 | launch-bet | Launch Bet | annie-duke | startup | a product or site is about to launch with one real customer instead of a public release and needs a success number and a quit line before the build, a first customer to pick and recruit, or a first customer has been served and the founder needs to judge the result and decide whether to keep going, change one thing, stop, or wait |
 | getting-real-cut | Getting Real Cut | jason-fried | product-design | a version one or a new feature has a long list and needs cutting before the build, a design keeps growing, settings or scale work are creeping in, or the founder can't say what the product can't live without |
+| four-question-threat-model | Four Question Threat Model | adam-shostack | security | a design or feature touches login, permissions, user data, row-level security, secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server, and nobody has asked what can go wrong before it ships |
+| phantom-b-llm-threats | PHANTOM-B LLM Threats | adam-shostack | security | a feature, hook, plugin, or agent sends text to an LLM and acts on what comes back, reads text someone else wrote (emails, PRs, web pages, tool results), or lets the model call tools, and nobody has asked what can go wrong with the model part |
 
 ## By Category
 
@@ -328,6 +330,11 @@
 - **jolt-effect** — the JOLT Effect (matt-dixon)
 - **mobilizer-taxonomy** — the Mobilizer Taxonomy (matt-dixon)
 - **teach-tailor-take-control** — Teach-Tailor-Take Control (TTTC) (matt-dixon)
+
+### Security (2)
+
+- **four-question-threat-model** — Four Question Threat Model (adam-shostack)
+- **phantom-b-llm-threats** — PHANTOM-B LLM Threats (adam-shostack)
 
 ### Social Media (9)
 
