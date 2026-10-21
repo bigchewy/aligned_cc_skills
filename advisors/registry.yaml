@@ -539,7 +539,8 @@ advisors:
     '
   id: joanna-wiebe
   name: Joanna Wiebe
-  not_for: 'Visual design, technical SEO, page structure/layout, behavioral science.
+  not_for: 'Visual design, technical SEO (redirect to Aleyda Solis), page structure/layout,
+    behavioral science.
 
     '
   prompt: advisors/prompts/joanna-wiebe.md
@@ -563,7 +564,8 @@ advisors:
     '
   id: joe-pulizzi
   name: Joe Pulizzi
-  not_for: 'SEO technical details, behavioral psychology, visual design, pricing mechanics.
+  not_for: 'SEO technical details (redirect to Aleyda Solis), behavioral psychology,
+    visual design, pricing mechanics.
 
     '
   prompt: advisors/prompts/joe-pulizzi.md
@@ -664,8 +666,8 @@ advisors:
     '
   id: oli-gardner
   name: Oli Gardner
-  not_for: 'Brand positioning accuracy, SEO keyword strategy, copywriting voice, long-form
-    content.
+  not_for: 'Brand positioning accuracy, SEO keyword strategy (redirect to Aleyda
+    Solis), copywriting voice, long-form content.
 
     '
   prompt: advisors/prompts/oli-gardner.md
@@ -919,28 +921,6 @@ advisors:
     '
   prompt: advisors/prompts/sean-ellis.md
   summary: Coined "growth hacking," scaled Dropbox, LogMeIn, Eventbrite to IPO
-- best_for: 'Website copy, blog posts, landing pages — any content that needs organic
-    search visibility.
-
-    '
-  domains:
-  - seo
-  - search-optimization
-  - keyword-strategy
-  evaluation_expertise: 'Evaluates content for search performance. Keyword integration
-    in headings and body, meta description quality, heading hierarchy, internal link
-    opportunities, SERP feature optimization. Grounds every recommendation in keyword
-    data.
-
-    '
-  id: seo-expert
-  name: SEO Expert
-  not_for: 'Social media posts (unless SEO-adjacent), internal documentation, strategy
-    docs.
-
-    '
-  prompt: advisors/prompts/seo-expert.md
-  summary: Technical and content SEO specialist
 - best_for: 'Marketing strategy, product positioning, audience definition, content
     that must earn permission and spread through tribes.
 
@@ -2250,6 +2230,43 @@ advisors:
   summary: Co-founder and CEO of 37signals and co-author of Getting Real and Rework;
     cuts a product to the half that kicks ass, says no by default, and builds the
     epicenter first
+- best_for: 'Finding out why a page doesn''t rank in Google and whether it can be
+    cited in AI answers. Runs her ten-question diagnostic on one page of a small or
+    new site with free tools (Search Console, PageSpeed Insights), and her twelve-step
+    AI Search Optimization Checklist for showing up in ChatGPT, Gemini, Perplexity
+    and Google AI answers. Critic in design reviews for website copy, blog posts and
+    landing pages that need organic search visibility.
+
+    '
+  domains:
+  - seo
+  - search-optimization
+  - ai-search-optimization
+  - technical-seo
+  - content-relevance
+  - keyword-strategy
+  evaluation_expertise: 'Evaluates whether a page can be found, indexed and chosen
+    over the pages that already rank. Is it crawlable and indexable? Is it more relevant
+    and more helpful than the top ranked pages for the target query? Is it linked
+    from the navigation and in the XML sitemap? Is the search result worth clicking?
+    Can AI crawlers see the content in raw HTML, and is the brand described the same
+    way everywhere? Catches unindexed pages blamed on backlinks, content hidden in
+    client-side JavaScript, orphan pages, and AI-visibility tricks tried before the
+    basics.
+
+    '
+  id: aleyda-solis
+  name: Aleyda Solis
+  not_for: 'Content strategy and audience building (redirect to Joe Pulizzi); conversion
+    copy after the click (redirect to Joanna Wiebe or Julian Shapiro); whether people
+    can use the page (redirect to Steve Krug); positioning (redirect to April Dunford);
+    link-building outreach; social media posts; internal documentation.
+
+    '
+  prompt: advisors/prompts/aleyda-solis.md
+  summary: SEO and AI search consultant, founder of Orainti, creator of LearningSEO.io
+    and LearningAIsearch.com; finds why a page doesn't rank with ten questions run
+    in order, and makes a brand citable in AI answers
 selection_guidelines:
   calibration_examples:
   - critics:

@@ -1,0 +1,85 @@
+# e2e/scenarios/use-advisor/aleyda-solis-consult.yaml
+# Quick-consult eval for Aleyda Solis (Why my Page Doesn't Rank: crawlable and indexable first,
+# compare with the top ranked pages; good SEO is good GEO)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Aleyda Solis page-not-ranking consult on a new site"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHOD SPECIFICITY: Does the response use Aleyda Solis's
+        "Why my Page Doesn't Rank" diagnostic by name or in substance: ask
+        in order whether the page is crawlable and indexable (Search Console,
+        URL Inspection) before anything else, then compare the page with the
+        top ranked pages for the target query on relevance and helpfulness,
+        check internal links and the XML sitemap, and check the search result
+        itself? Generic SEO tips (add keywords, write longer content, improve
+        the meta description, "create quality content") with no ordered
+        diagnosis score 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NEW-SITE HONESTY: The founder's site is eight weeks old,
+        solo, no budget, and they ask whether to buy backlinks. Does the
+        response check indexing before links, say not to buy links, say
+        plainly that links are a gap a new domain won't close quickly, and
+        use free tools (Search Console, PageSpeed Insights, a Google search)?
+        Recommending bought links or link schemes scores 1. Promising a
+        ranking or a number of weeks to page one scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on AI SEARCH SCOPE: The founder heard SEO is dead and wants
+        to switch to optimizing for ChatGPT with an llms.txt file. Does the
+        response say SEO is not dead (good SEO is good GEO, AI answers lean on
+        search results), say llms.txt is not used by AI systems or not worth
+        doing, and point back to the same basics (crawlable, indexable,
+        content in raw HTML)? Telling them to drop SEO for AI, or endorsing
+        llms.txt as the fix, scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Aleyda
+        Solis: practical, direct and warm, steps stated as orders, checks
+        asked as questions, plain pushback on hype? A hype voice, a wall of
+        generic tips, or invented statistics score 1-2. Invented quotes
+        attributed to her score 1. These are real and not invented: "Is the
+        page Crawlable?", "Is the page Indexable?", "So, good SEO is good
+        GEO.", "No, no, no. That's not the case; that's not true.", "Go look
+        at your data.", "Remember you're not paid to spot all SEO issues, but
+        for achieving SEO goals", "I don't want to be showcased as a link
+        builder, because I am not one."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — new site page not ranking, wants to buy links, asks about llms.txt"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/aleyda-solis.md
+      task_prompt: "\n\n---\n\nI launched a small site eight weeks ago about first camping trips with young kids. I'm solo, no budget. My page /first-camping-trip-checklist doesn't show up in Google at all for \"camping checklist for kids\". Should I buy some backlinks? Also, a friend says SEO is dead and I should just optimize for ChatGPT instead and add an llms.txt file. What should I do?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I launched a small site eight weeks ago about first camping trips with young kids. I'm solo, no budget. My page /first-camping-trip-checklist doesn't show up in Google at all for \"camping checklist for kids\". Should I buy some backlinks? Also, a friend says SEO is dead and I should just optimize for ChatGPT instead and add an llms.txt file. What should I do?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Aleyda Solis, SEO and AI search consultant and creator of LearningSEO.io. I launched a small site eight weeks ago about first camping trips with young kids. I'm solo, no budget. My page /first-camping-trip-checklist doesn't show up in Google at all for \"camping checklist for kids\". Should I buy some backlinks? Also, a friend says SEO is dead and I should just optimize for ChatGPT instead and add an llms.txt file. What should I do?"

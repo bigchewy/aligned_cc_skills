@@ -43,7 +43,6 @@
 | robb-wolf | Robb Wolf | health-product-gtm, health-claims, science-to-consumer, trust-building, DTC-health | Research biochemist, co-founder of LMNT |
 | robbie-kellman-baxter | Robbie Kellman Baxter | subscription, membership, retention, forever-promise, recurring-revenue | Founder of Peninsula Strategies, author of The Membership Economy |
 | sean-ellis | Sean Ellis | growth-hacking, product-market-fit, experimentation, retention, north-star-metrics | Coined "growth hacking," scaled Dropbox, LogMeIn, Eventbrite to IPO |
-| seo-expert | SEO Expert | seo, search-optimization, keyword-strategy | Technical and content SEO specialist |
 | seth-godin | Seth Godin | marketing, permission-marketing, remarkable-products, tribes | Author of Purple Cow, The Dip, and This Is Marketing |
 | shirin-oreizy | Shirin Oreizy | behavioral-science, conversion, ux-psychology, cognitive-load, friction | Founder of Next Step, a behavioral design agency |
 | steve-jobs | Steve Jobs | product-design, simplicity, UX, focus, user-experience | Co-founder of Apple who demanded insanely great products |
@@ -82,6 +81,7 @@
 | adham-dannaway | Adham Dannaway | design-tokens, ui-design-rules, colour-systems, typography, accessibility, design-systems | Product designer and author of Practical UI; turns interface design into a short set of logical rules and tokens, each with a reason, that anyone can follow |
 | annie-duke | Annie Duke | launch, kill-criteria, decision-quality, premortem, quitting, small-samples | Former professional poker player and author of Thinking in Bets and Quit; makes you write the bet, the success line, and the quit line before the cards come, then judges the decision apart from the luck |
 | jason-fried | Jason Fried | product-value, scope-control, user-problems, prioritization, small-teams, saying-no | Co-founder and CEO of 37signals and co-author of Getting Real and Rework; cuts a product to the half that kicks ass, says no by default, and builds the epicenter first |
+| aleyda-solis | Aleyda Solis | seo, search-optimization, ai-search-optimization, technical-seo, content-relevance, keyword-strategy | SEO and AI search consultant, founder of Orainti, creator of LearningSEO.io and LearningAIsearch.com; finds why a page doesn't rank with ten questions run in order, and makes a brand citable in AI answers |
 
 ## Profiled Advisors
 
@@ -126,7 +126,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Robb Wolf** | Evaluates health product content for scientific defensibility and trust-building through substance |
 | **Robbie Kellman Baxter** | Evaluates whether content reflects membership thinking vs transaction thinking |
 | **Sean Ellis** | Evaluates whether growth is built on product-market fit or propped up by acquisition spend |
-| **SEO Expert** | Evaluates content for search performance |
 | **Seth Godin** | Evaluates whether the work earns attention or steals it |
 | **Shirin Oreizy** | Evaluates through behavioral science lens |
 | **Steve Jobs** | Evaluates whether the work achieves simplicity and focus |
@@ -165,6 +164,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Adham Dannaway** | Evaluates whether every visual value has a rule behind it |
 | **Annie Duke** | Evaluates whether the success and quit lines were written before the result, and whether the decision is judged apart from the luck |
 | **Jason Fried** | Evaluates whether every feature earns its place and the epicenter is built first |
+| **Aleyda Solis** | Evaluates whether a page can be found, indexed and chosen over the pages that already rank, and whether AI systems can see and cite it |
 
 ## Selection Guidelines
 

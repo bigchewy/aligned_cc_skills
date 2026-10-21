@@ -1,0 +1,110 @@
+# e2e/scenarios/use-framework/why-my-page-doesnt-rank.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+#
+# The founder has already answered all ten questions, so the response should
+# give the Phase 9 result. A single-turn test of the first step did not
+# separate the arms (any capable model asks for the index check and the top
+# pages first); the method shows in how the answers are turned into one fix.
+
+description: "Framework: Why My Page Doesn't Rank, from ten answers to one fix first"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{page_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ONE FIX FIRST: The founder has answered all ten
+        questions and asks what to do. Does the response pick ONE fix to make
+        first, tied to the question where the page loses most (the page says
+        "story" and buries the checklist while the search wants a checklist,
+        or the page is orphaned and out of the sitemap), then give a short
+        ordered list of two or three more, and a date or trigger to check the
+        data again? A long list of eight or more recommendations with no
+        single first fix scores 1-2. A first fix of "buy or build backlinks"
+        scores 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NEW-DOMAIN HONESTY: Does the response say plainly that
+        links are the gap a new domain won't close this week, refuse the
+        founder's plan to buy links, say the disavow and manual action checks
+        don't apply here, put the effort on what the founder controls, and
+        avoid promising a position or a number of weeks? Endorsing bought
+        links scores 1. Promising a ranking or a timeline scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on GROUNDED IN THE COMPARISON: Are the fixes tied to what
+        the top ranked pages do (a printable checklist up top, "checklist" in
+        the title) and to the founder's own answers, rather than generic SEO
+        advice (add keywords, write longer content, add schema everywhere,
+        start a blog)? Generic advice not tied to the answers scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Aleyda
+        Solis: practical, direct and warm, steps stated as orders, checks
+        asked as questions? Hype or invented statistics score 1-2. Invented
+        quotes attributed to her score 1. These are real and not invented:
+        "Your recommendations shouldn't include all that matters, is too
+        complex & won't be done anyway.", "Remember you're not paid to spot
+        all SEO issues, but for achieving SEO goals", "Go look at your
+        data.", "I don't want to be showcased as a link builder, because I am
+        not one."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/why-my-page-doesnt-rank/prompt.md
+      task_prompt: "\n\n---\n\nWe've gone through all ten questions for my page. Here are my answers. What do I do?"
+      page_brief: &brief |
+        Site: first camping trips with young kids, launched eight weeks ago.
+        I'm solo, no budget. Page: /first-camping-trip-checklist. Query:
+        "camping checklist for kids".
+
+        Top three: an REI checklist guide, a printable PDF checklist from a
+        parenting blog, and a Reddit thread of parents' lists.
+        Q1-2: URL Inspection says "URL is on Google". Position about 40.
+        Q3: my title is "Before You Go: Our Family Camping Story". The
+        checklist starts halfway down, after a 600-word story. All three top
+        results say "checklist" in the title and put the list first.
+        Q4: mine has the things we forgot on our first trip, with photos of
+        our own gear. Theirs are generic.
+        Q5: PageSpeed Insights mobile LCP 4.1s (poor). HTTPS yes. A newsletter
+        popup covers the page on mobile.
+        Q6: only linked from page 3 of my blog index. Not in my XML sitemap.
+        Q7: Search Console shows 2 sites linking to me. The top pages are big
+        sites with far more.
+        Q8: I've never disavowed anything. Q9: no manual actions.
+        Q10: 300 impressions, 1 click for this query.
+
+        I'm still tempted to buy a pack of guest post links.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "We've gone through all ten questions of a page SEO diagnostic for my page. Here are my answers. What do I do?"
+      page_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Aleyda Solis, SEO consultant and creator of LearningSEO.io. We've gone through all ten questions of your Why my Page Doesn't Rank checklist for my page. Here are my answers. What do I do?"
+      page_brief: *brief

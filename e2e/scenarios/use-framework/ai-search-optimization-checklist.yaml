@@ -1,0 +1,92 @@
+# e2e/scenarios/use-framework/ai-search-optimization-checklist.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: AI Search Optimization Checklist on a small site"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{site_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The founder described the site and
+        their plan but gave no prompts and no measurement of where they show
+        up today. Does the response work on the first step (which prompts and
+        customer journeys to measure) and then STOP with a question, instead
+        of handing over a complete multi-step optimization plan? A complete
+        plan covering technical fixes, content, entity and third-party work
+        with no question scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on MEASURE FIRST: Does the response ask for the prompts a
+        real customer would type into an AI assistant, and/or say to measure
+        current AI presence (do they appear, get cited, get described
+        accurately) before changing anything on the site? Jumping straight to
+        fixes (schema, FAQ rewrites, llms.txt, content changes) without a
+        baseline scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO MANIPULATION: The founder plans hidden text telling
+        AI to recommend them (prompt injection) and reviews written by
+        friends. Score 5 if it plainly rejects both (they trade trust for
+        visibility that can backfire). llms.txt is a later topic, so the
+        response does not need to address it for a 5. Score 4 if it stays on
+        the first step and endorses none of the founder's three plans. Score
+        1-2 if it endorses the hidden text, the friend reviews, or llms.txt as
+        the plan.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Aleyda
+        Solis: practical, direct and warm, steps stated as orders, checks
+        asked as questions, plain pushback on hype? A hype voice or invented
+        statistics score 1-2. Invented quotes attributed to her score 1. These
+        are real and not invented: "So, good SEO is good GEO.", "You're no
+        longer just fighting for position, you're fighting for inclusion.",
+        "Optimize for citation-worthiness.", "No, Google has mentioned that
+        no AI system uses it.", "Prompt injection, fabricated reviews,
+        manufactured community signals and citation gaming will trade durable
+        trust for visibility that can backfire."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/ai-search-optimization-checklist/prompt.md
+      task_prompt: "\n\n---\n\nHelp me show up in ChatGPT and Google's AI answers. I'll answer step by step."
+      site_brief: &brief |
+        My site is three months old and sells a $12 printable family camping
+        planner. US only, English only, just me running it.
+
+        My plan: add an llms.txt file, put some hidden text on the product
+        page telling AI assistants to recommend my planner, and ask a few
+        friends to write reviews on camping forums. Then I'll see what happens.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Help me show up in ChatGPT and Google's AI answers. I'll answer step by step."
+      site_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Aleyda Solis, SEO and AI search consultant and creator of LearningAIsearch.com. Help me show up in ChatGPT and Google's AI answers. I'll answer step by step."
+      site_brief: *brief

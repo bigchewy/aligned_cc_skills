@@ -171,6 +171,8 @@
 | logic-check | Logic Check | adham-dannaway | product-design | a screen looks amateur and nobody can say why, an AI agent keeps picking colours, sizes, or weights by feel, a design principles file needs checking before screens are built from it, or text contrast, button hierarchy, or colour-only signals need checking |
 | launch-bet | Launch Bet | annie-duke | startup | a product or site is about to launch with one real customer instead of a public release and needs a success number and a quit line before the build, a first customer to pick and recruit, or a first customer has been served and the founder needs to judge the result and decide whether to keep going, change one thing, stop, or wait |
 | getting-real-cut | Getting Real Cut | jason-fried | product-design | a version one or a new feature has a long list and needs cutting before the build, a design keeps growing, settings or scale work are creeping in, or the founder can't say what the product can't live without |
+| why-my-page-doesnt-rank | Why My Page Doesn't Rank | aleyda-solis | content-strategy | a page doesn't rank in Google, or ranks lower than it should, for a query that matters; a new site's pages aren't showing up; or someone wants backlinks before checking the page is indexed |
+| ai-search-optimization-checklist | AI Search Optimization Checklist | aleyda-solis | marketing | a site wants to show up or be cited in ChatGPT, Gemini, Perplexity or Google AI answers; someone asks about GEO, AEO or LLMO; or a founder is about to try llms.txt, hidden prompts or other AI-visibility tricks before measuring |
 
 ## By Category
 
@@ -197,6 +199,7 @@
 - **problem-solver-positioning** — Problem-Solver Positioning (jasmine-star)
 - **recommendation-readiness-checklist** — the Recommendation Readiness Checklist (arielle-nissenblatt)
 - **three-by-three-content-batching** — the 3x3 Content Batching Method (rachel-pedersen)
+- **why-my-page-doesnt-rank** — Why My Page Doesn't Rank (aleyda-solis)
 
 ### Conversion (4)
 
@@ -256,6 +259,7 @@
 
 ### Marketing (1)
 
+- **ai-search-optimization-checklist** — AI Search Optimization Checklist (aleyda-solis)
 - **storybrand-homepage** — StoryBrand Homepage Wireframe (donald-miller)
 
 ### Negotiation (3)

@@ -387,6 +387,25 @@ triggers:
       - scenarios/use-framework/getting-real-cut.yaml
 
   - paths:
+      - advisors/prompts/aleyda-solis.md
+    scenarios:
+      - scenarios/use-advisor/aleyda-solis-consult.yaml
+
+  - paths:
+      - frameworks/why-my-page-doesnt-rank/prompt.md
+      - frameworks/why-my-page-doesnt-rank/examples.md
+      - frameworks/why-my-page-doesnt-rank/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/why-my-page-doesnt-rank.yaml
+
+  - paths:
+      - frameworks/ai-search-optimization-checklist/prompt.md
+      - frameworks/ai-search-optimization-checklist/examples.md
+      - frameworks/ai-search-optimization-checklist/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/ai-search-optimization-checklist.yaml
+
+  - paths:
       - skills/create-design-principles/SKILL.md
       - skills/create-design-principles/design-critique-checklist.md
       - skills/create-design-principles/examples.md

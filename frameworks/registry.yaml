@@ -2524,3 +2524,57 @@ frameworks:
   use_when: a version one or a new feature has a long list and needs cutting before
     the build, a design keeps growing, settings or scale work are creeping in, or the
     founder can't say what the product can't live without
+- advisor: aleyda-solis
+  category: content-strategy
+  default_critic_advisors:
+  - aleyda-solis
+  - joe-pulizzi
+  deliverable_type: analysis
+  domains:
+  - seo
+  - technical-seo
+  - content-relevance
+  - search-optimization
+  follow_on_frameworks:
+  - ai-search-optimization-checklist
+  - content-inc-model
+  helpful_documents:
+  - access to Google Search Console for the site
+  - a PageSpeed Insights report for the page
+  id: why-my-page-doesnt-rank
+  name: Why My Page Doesn't Rank
+  purpose: running the ten diagnostic questions from LearningSEO.io in order on one
+    page of a small or new site, with free tools, until the reason it doesn't rank
+    is found and one fix is chosen first
+  required_documents:
+  - the URL of one page that doesn't rank, and the query it should rank for
+  use_when: a page doesn't rank in Google, or ranks lower than it should, for a query
+    that matters; a new site's pages aren't showing up; or someone wants backlinks
+    before checking the page is indexed
+- advisor: aleyda-solis
+  category: marketing
+  default_critic_advisors:
+  - aleyda-solis
+  - april-dunford
+  deliverable_type: plan
+  domains:
+  - ai-search-optimization
+  - brand-visibility
+  - citations
+  - technical-seo
+  follow_on_frameworks:
+  - why-my-page-doesnt-rank
+  helpful_documents:
+  - a list of the questions customers ask before they buy or sign up
+  - access to Google Search Console and the site's analytics
+  id: ai-search-optimization-checklist
+  name: AI Search Optimization Checklist
+  purpose: her twelve steps for showing up, being described accurately, and being
+    cited in AI answers (ChatGPT, Gemini, Perplexity, Google AI Overviews and AI Mode),
+    measured before anything is changed and scaled down for one person on a small
+    site
+  required_documents:
+  - the site's URL and what it sells or offers
+  use_when: a site wants to show up or be cited in ChatGPT, Gemini, Perplexity or
+    Google AI answers; someone asks about GEO, AEO or LLMO; or a founder is about to
+    try llms.txt, hidden prompts or other AI-visibility tricks before measuring
