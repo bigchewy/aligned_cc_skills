@@ -25,8 +25,9 @@ the framework-side parallel of `skills/_shared/resolve-advisor-source.md`.
    `source: "local"`, and `id` = the folder name. Read the first `You are ...` line of its
    `prompt.md` (skip any frontmatter); it follows the standard format
    `You are {Advisor}, guiding someone through {Framework} - {purpose}.` Take `advisor` and
-   `name` from it. Set `domains` and `use_when` to empty. If the folder name matches a plugin
-   `id`, local still wins.
+   `name` from it. If the first line does not match that format, use the folder name as `name`
+   and leave `advisor` empty. Set `purpose`, `category`, `domains`, and `use_when` to empty.
+   If the folder name matches a plugin `id`, local still wins.
 
 4. **Compute the absolute paths for every entry.**
    `absolute_framework_dir = <scope-root>/frameworks/<id>/` and
@@ -45,8 +46,11 @@ not a `.claude/`-nested path.
 ## Finding a framework's advisor
 
 Look up the entry's `advisor` in the merged advisor set from
-`skills/_shared/resolve-advisor-source.md`, and use that entry's `absolute_prompt_path`. A local
-framework may name a plugin advisor or a local advisor; the merged set holds both.
+`skills/_shared/resolve-advisor-source.md`, and use that entry's `absolute_prompt_path`. Match
+by `id` first, then by display `name`, ignoring case. Unregistered folders need the name match,
+because their `advisor` is a display name such as "Example Local Advisor", not an id. If nothing
+matches, the framework-runner falls back to its generic facilitator. A local framework may name
+a plugin advisor or a local advisor; the merged set holds both.
 
 ## Return contract
 

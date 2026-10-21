@@ -69,14 +69,35 @@ def merge_frameworks(plugin_root, project_root):
         advisor, name = _parse_first_line(prompt)
         entry = {
             "id": folder,
-            "name": name,
-            "advisor": advisor,
+            "name": name or folder,
+            "advisor": advisor or "",
+            "purpose": "",
+            "category": "",
             "domains": [],
             "use_when": "",
         }
         merged[folder] = _scoped(entry, project_root, "local", registered=False)
 
     return list(merged.values()), warnings
+
+
+def find_advisor(merged_advisors, key):
+    """Match by id first, then by display name (case-insensitive). None if no match."""
+    for source, a in merged_advisors:
+        if a["id"] == key:
+            return source, a
+    for source, a in merged_advisors:
+        if a["name"].lower() == key.lower():
+            return source, a
+    return None
+
+
+def _merged_advisors():
+    plugin = yaml.safe_load((PLUGIN / "advisors" / "registry.yaml").read_text())["advisors"]
+    local = yaml.safe_load((FIXTURE / "advisors" / "registry.yaml").read_text())["advisors"]
+    by_id = {a["id"]: ("plugin", a) for a in plugin}
+    by_id.update({a["id"]: ("local", a) for a in local})
+    return list(by_id.values())
 
 
 def _plugin_ids():
@@ -126,6 +147,7 @@ def test_resolver_documents_error_paths():
     assert "absent" in text and "plugin-only" in text
     assert "malformed" in text and "warning" in text
     assert "frameworks/registry.yaml" in text  # the warning names the file
+    assert "warning: could not parse" in text
     assert "fail closed" in text or "fails closed" in text or "fail-close" in text
 
 
@@ -207,3 +229,32 @@ def test_local_framework_advisor_resolves_in_merged_advisors():
     source, advisor = merged[framework["advisor"]]
     assert source == "local"
     assert (FIXTURE / "advisors/prompts" / f"{advisor['id']}.md").is_file()
+
+
+def test_unregistered_framework_advisor_resolves_by_name():
+    entries, _ = merge_frameworks(PLUGIN, FIXTURE)
+    framework = _by_id(entries)["unregistered-local-framework"]
+    source, advisor = find_advisor(_merged_advisors(), framework["advisor"])
+    assert source == "local"
+    assert advisor["id"] == "example-local-advisor"
+
+
+def test_advisor_lookup_with_no_match_returns_none():
+    assert find_advisor(_merged_advisors(), "Nobody At All") is None
+
+
+def test_unregistered_folder_without_header_uses_folder_name():
+    entries, _ = merge_frameworks(PLUGIN, FIXTURE)
+    entry = _by_id(entries)["no-header-local-framework"]
+    assert entry["registered"] is False
+    assert entry["name"] == "no-header-local-framework"
+    assert entry["advisor"] == ""
+    assert find_advisor(_merged_advisors(), entry["advisor"]) is None
+
+
+def test_unregistered_entries_have_empty_purpose_category_domains_use_when():
+    entries, _ = merge_frameworks(PLUGIN, FIXTURE)
+    for fid in ["unregistered-local-framework", "no-header-local-framework"]:
+        e = _by_id(entries)[fid]
+        assert e["purpose"] == "" and e["category"] == ""
+        assert e["domains"] == [] and e["use_when"] == ""
