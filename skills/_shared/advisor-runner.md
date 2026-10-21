@@ -44,15 +44,17 @@ element's content is allowed to come from. Those live only in the framework's ow
 moment you are about to produce a framework's deliverable — a kernel, a canvas, a diagnosis, a
 scored matrix, a filled-in template of any kind — stop, whether or not the user named the framework:
 
-1. Look up the framework in `frameworks/registry.yaml` by this advisor's id. Each entry carries
-   `advisor`, `id`, `name`, and `use_when`; the `id` is the framework's directory name.
-2. Read `skills/_shared/framework-runner.md` and invoke it with that framework's directory and
-   `intake_gate_mode=strict`
+1. Read `skills/_shared/resolve-framework-source.md` and follow its procedure to get the merged
+   framework list (plugin + project-local). Find this advisor's framework there by the entry's
+   `advisor` field (match this advisor's id or display name). Each entry carries `advisor`, `id`,
+   `name`, `use_when`, and `absolute_framework_dir`.
+2. Read `skills/_shared/framework-runner.md` and invoke it with that entry's
+   `absolute_framework_dir` and `intake_gate_mode=strict`
 3. The advisor's voice carries through the framework
 4. On framework completion, control returns here — the advisor resumes free conversation
 
 Producing framework output directly from the Core Frameworks summary is a failure, not a shortcut.
-If the registry holds no framework matching what you are about to produce, say so and stay in
+If the merged list holds no framework matching what you are about to produce, say so and stay in
 conversation rather than improvising the structure yourself.
 
 When invoked by another caller that has already loaded a framework (e.g., `framework-runner` dispatched here for voice setup):

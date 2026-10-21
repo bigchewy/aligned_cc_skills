@@ -230,3 +230,30 @@ def test_visualization_runner_overview_gate():
     assert "write the artifact anyway" in lower or "write anyway" in lower, (
         "semantic check must never hold output hostage on second failure"
     )
+
+
+def test_framework_runner_resolves_advisor_through_resolver():
+    text = read("skills/_shared/framework-runner.md")
+    assert "resolve-advisor-source.md" in text
+    assert "framework_entry" in text
+
+
+def test_framework_runner_loads_advisor_prompt_silently():
+    text = read("skills/_shared/framework-runner.md")
+    assert "advisor-runner.md" in text
+    assert "greeting_mode=silent" in text
+    assert "absolute_prompt_path" in text
+
+
+def test_framework_runner_voice_prefers_resolved_advisor_prompt():
+    text = read("skills/_shared/framework-runner.md")
+    voice = text.split("## Voice", 1)[1].split("## Composability", 1)[0]
+    assert "resolved" in voice.lower()
+    assert "advisor's prompt" in voice or "advisor prompt" in voice
+
+
+def test_advisor_runner_framework_lookup_uses_resolver():
+    text = read("skills/_shared/advisor-runner.md")
+    assert "resolve-framework-source.md" in text
+    assert "absolute_framework_dir" in text
+    assert "Look up the framework in `frameworks/registry.yaml`" not in text

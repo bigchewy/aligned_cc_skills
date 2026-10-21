@@ -7,6 +7,7 @@ Shared runner protocol for executing a matched framework. Invoked by `skills/use
 The calling skill passes:
 - **Matched framework path:** absolute path to the framework folder containing `prompt.md` / `examples.md` / `anti-examples.md`
 - **`intake_gate_mode`:** `strict` or `advisory` (default `advisory`)
+- **`framework_entry`** (optional): the framework's merged entry from `skills/_shared/resolve-framework-source.md`. When absent, the runner reads the advisor from the first line of `prompt.md` (see Step 0).
 
 ## Configuration Validation (fail-closed)
 
@@ -16,6 +17,17 @@ Before Step 1, validate inputs. **STOP** if any check fails:
 - **`intake_gate_mode`:** must be exactly `strict` or `advisory`. If unset, default to `advisory`. If set to any other value, stop and tell the caller "Framework runner cannot proceed: invalid `intake_gate_mode=<value>`."
 
 These checks fail closed — the runner refuses to start with invalid inputs rather than silently degrading.
+
+## Step 0: Load the Framework's Advisor
+
+Skip this step if an advisor persona is already active (for example, `skills/use-advisor/SKILL.md` or `skills/_shared/advisor-runner.md` dispatched this runner). That persona sets the voice.
+
+Otherwise, find the framework's advisor:
+
+1. Get the advisor from `framework_entry.advisor`. If no `framework_entry` was passed, read the first line of `prompt.md` ("You are {Advisor}, ...") and take the name after "You are " and before the first comma.
+2. Read `skills/_shared/resolve-advisor-source.md` and follow its procedure to get the merged advisor set (plugin + project-local). Match the advisor by `id` first, then by display `name`, ignoring case. A local framework may name a plugin advisor or a local advisor.
+3. On a match, read `skills/_shared/advisor-runner.md` and invoke it with that entry's `absolute_prompt_path` and `greeting_mode=silent`. The advisor's own prompt, including a project-local one, sets the voice.
+4. On no match (or no advisor named), do not stop. The generic-facilitator fallback in Voice applies.
 
 ## Step 1: Load Framework Content
 
@@ -54,8 +66,9 @@ A phase is complete when: (a) the scripted content for that phase has been deliv
 
 ## Voice
 
-- If an advisor persona is active (via `skills/_shared/advisor-runner.md` or `/aligned:use-advisor`): deliver the framework in that advisor's voice.
-- If no advisor is active: follow the framework prompt as-is — it already names an advisor in its opening line, so adopt that advisor's voice as written.
+- If an advisor persona is active (via `skills/_shared/advisor-runner.md`, `/aligned:use-advisor`, or Step 0): deliver the framework in that advisor's voice.
+- Prefer the resolved advisor prompt from Step 0 over the framework prompt's one-line opening. A project-local advisor prompt carries the project's own voice rules.
+- If Step 0 found no advisor: follow the framework prompt as-is — it names an advisor in its opening line, so adopt that advisor's voice as written.
 - If a framework's `prompt.md` references an advisor that cannot be resolved (missing advisor / broken reference): fallback to generic facilitator voice — narrate each phase neutrally without impersonating the missing advisor. Log a Decision Log entry noting the fallback.
 
 <!-- DECISION-LOG conflict="stop vs fallback when a framework references a non-existent advisor" choice="fallback to generic facilitator voice" reason="stopping would break the user's framework session for a missing voice detail; graceful degradation preserves the framework's substance" confidence="0.85" -->
