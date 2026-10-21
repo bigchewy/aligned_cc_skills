@@ -13,3 +13,10 @@ frameworks:
     category: fixture
     domains: [fixture, local-merge]
     use_when: "a test needs a local framework that shadows a plugin framework"
+  - id: nudge-the-quiet-ones
+    name: "Nudge the Quiet Ones"
+    advisor: example-local-advisor
+    purpose: "write a reminder to people in a group who have not yet responded"
+    category: fixture
+    domains: [reminders, follow-ups, group-asks]
+    use_when: "the user needs to write a reminder to people in a group who haven't responded yet"

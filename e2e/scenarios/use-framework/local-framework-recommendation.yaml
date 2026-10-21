@@ -1,0 +1,54 @@
+# e2e/scenarios/use-framework/local-framework-recommendation.yaml
+# Tests that contextual recommendation sees a project-local framework
+# (merged from <project-cwd>/frameworks/registry.yaml) and marks it "(local)".
+
+description: "Framework: recommendation includes a project-local framework"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{skill_prompt}}\n\n---\n\n{{resolver}}\n\n---\n\n{{recommendation_logic}}\n\n---\n\nPlugin registry contents:\n{{registry}}\n\nThe project's local registry is at <project-cwd>/frameworks/registry.yaml with these contents:\n{{local_registry}}\n\n{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LOCAL RECOMMENDATION: Does the response recommend
+        "Nudge the Quiet Ones", the project-local framework whose use_when
+        is writing a reminder to group members who haven't replied? A plugin
+        framework recommended instead, with the local one missing, scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on LOCAL MARKER: Does the response mark Nudge the Quiet
+        Ones as "(local)" so the user can tell it comes from the project
+        rather than the plugin? No marker scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PRESENTATION FORMAT: Does the response use the expected
+        format: "Selected: {Name}" with reasoning and alternatives for a
+        high-confidence match, or a numbered shortlist with rationales for a
+        low-confidence one? Raw alphabetical dump scores 1.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ESCAPE HATCH: Does the response offer a way to see the
+        full catalog, such as "list all"? Missing escape hatch scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (skill + resolver + recommendation file + plugin and local registries)"
+    metadata:
+      arm: single
+    vars:
+      skill_prompt: file://../../../skills/use-framework/SKILL.md
+      resolver: file://../../../skills/_shared/resolve-framework-source.md
+      recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
+      registry: file://../../../frameworks/registry.yaml
+      local_registry: file://../../fixtures/local-advisor-repo/frameworks/registry.yaml
+      task_prompt: "I need to write a reminder email to people in the group who haven't replied yet."

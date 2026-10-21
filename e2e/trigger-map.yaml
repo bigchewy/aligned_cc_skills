@@ -75,6 +75,7 @@ triggers:
     scenarios:
       - scenarios/use-advisor/contextual-recommendation.yaml
       - scenarios/use-framework/contextual-recommendation.yaml
+      - scenarios/use-framework/local-framework-recommendation.yaml
 
   - paths:
       - skills/use-advisor/SKILL.md
@@ -84,6 +85,13 @@ triggers:
   - paths:
       - skills/use-framework/SKILL.md
     scenarios:
+      - scenarios/use-framework/contextual-recommendation.yaml
+      - scenarios/use-framework/local-framework-recommendation.yaml
+
+  - paths:
+      - skills/_shared/resolve-framework-source.md
+    scenarios:
+      - scenarios/use-framework/local-framework-recommendation.yaml
       - scenarios/use-framework/contextual-recommendation.yaml
 
   - paths:
