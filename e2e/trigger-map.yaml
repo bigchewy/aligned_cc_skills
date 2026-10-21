@@ -421,6 +421,23 @@ triggers:
       - frameworks/proof-points-audit/anti-examples.md
     scenarios:
       - scenarios/use-framework/proof-points-audit.yaml
+      - advisors/prompts/adam-shostack.md
+    scenarios:
+      - scenarios/use-advisor/adam-shostack-consult.yaml
+
+  - paths:
+      - frameworks/four-question-threat-model/prompt.md
+      - frameworks/four-question-threat-model/examples.md
+      - frameworks/four-question-threat-model/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/four-question-threat-model.yaml
+
+  - paths:
+      - frameworks/phantom-b-llm-threats/prompt.md
+      - frameworks/phantom-b-llm-threats/examples.md
+      - frameworks/phantom-b-llm-threats/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/phantom-b-llm-threats.yaml
 
   - paths:
       - skills/create-design-principles/SKILL.md

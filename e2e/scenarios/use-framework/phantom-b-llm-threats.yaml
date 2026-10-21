@@ -1,0 +1,92 @@
+# e2e/scenarios/use-framework/phantom-b-llm-threats.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+# Single turn: the founder's injection claim belongs to Phase 2, so the
+# rubric gives full credit for correcting it and near-full credit for
+# staying on Phase 1 without endorsing it. Stopping early is never penalized.
+
+description: "Framework: PHANTOM-B LLM Threats on a PR-review hook"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{design_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The founder said they'll answer step
+        by step. Does the response work on the first step (which parts call
+        the model, whose model it is, what text goes in and from whom, what
+        the model's output can reach) and then STOP with a question,
+        instead of handing over a finished analysis of all eight threats
+        with fixes? A complete analysis with every step done and no
+        question scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on BOXING THE LLM PART: Does the response focus on the
+        model call (PR text and diff sent to Claude) rather than the whole
+        repo or CI system, and point at what matters: the input is written
+        by anyone who opens a PR, and the output can act through the GitHub
+        MCP server (labels, and the "approved" label triggers auto-merge)?
+        Ignoring the tool reach, or analyzing the whole system, scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NOT A CONTROL: The founder says the system prompt tells
+        Claude to ignore instructions in the PR, so prompt injection is
+        handled. Score 5 if the response says a prompt line is not a
+        control (prompt injection is not solved; ask what injected text
+        could make it do). Score 4 if it stays on the first step and neither
+        agrees nor disagrees. Score 1-2 if it agrees the system prompt
+        handles injection or calls the hook safe.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Adam
+        Shostack: plain engineering prose, calm, curious and cautious about
+        LLMs, says "we"? Hype or fear-mongering scores 1-2. Invented quotes
+        attributed to him score 1. These are real and not invented:
+        "Input is confused with code", "LLMs are excellent at sounding
+        confident", "What can go wrong with the LLM parts of the system?",
+        "a fixed lens, which you use when you're looking at an LLM."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/phantom-b-llm-threats/prompt.md
+      task_prompt: "\n\n---\n\nRun PHANTOM-B on my Claude Code hook with me. I'll answer step by step."
+      design_brief: &brief |
+        I have a Claude Code plugin with a hook. When a pull request is
+        opened on my public repo, the hook sends the PR description and the
+        diff to Claude through the Anthropic API. Claude writes a review
+        comment and can add labels through the GitHub MCP server. The
+        "approved" label triggers auto-merge. My system prompt tells Claude
+        to ignore any instructions inside the PR, so prompt injection is
+        handled.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Run PHANTOM-B on my Claude Code hook with me. I'll answer step by step."
+      design_brief: *brief
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Adam Shostack, author of Threat Modeling: Designing for Security and of the PHANTOM-B white paper. Run PHANTOM-B on my Claude Code hook with me. I'll answer step by step."
+      design_brief: *brief

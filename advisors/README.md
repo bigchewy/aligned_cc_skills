@@ -50,7 +50,6 @@
 | sue-b-zimmerman | Sue B. Zimmerman | instagram-strategy, social-media, engagement, content-systems | #TheInstagramExpert |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
 | the-devex-engineer | The DevEx Engineer | developer-ergonomics, maintainability, onboarding, tooling, CI-CD, DX | Developer experience obsessive who evaluates tools by how they feel |
-| the-security-reviewer | The Security Reviewer | authentication, data-exposure, injection, OWASP, API-security, access-control | Security engineer who sees every input as hostile |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
 | wise-eric | Wise Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | The app creator's highest self as conscious leader and systems architect |
 | kate-bowler | Kate Bowler | empathetic-copywriting, health-wellness-copy, chronic-illness-communication, permission-giving, anti-platitude | Duke professor, Stage IV cancer survivor, anti-platitude voice for health/wellness copy |
@@ -82,6 +81,7 @@
 | jason-fried | Jason Fried | product-value, scope-control, user-problems, prioritization, small-teams, saying-no | Co-founder and CEO of 37signals and co-author of Getting Real and Rework; cuts a product to the half that kicks ass, says no by default, and builds the epicenter first |
 | aleyda-solis | Aleyda Solis | seo, search-optimization, ai-search-optimization, technical-seo, content-relevance, keyword-strategy | SEO and AI search consultant, founder of Orainti, creator of LearningSEO.io and LearningAIsearch.com; finds why a page doesn't rank with ten questions run in order, and makes a brand citable in AI answers |
 | michael-bolton | Michael Bolton | edge-cases, failure-modes, testing, fact-checking, reliability, error-handling, test-strategy | Software tester, co-creator of Rapid Software Testing with James Bach, and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS oracles, reads the code behind every claim, and asks what the passing checks never asked |
+| adam-shostack | Adam Shostack | threat-modeling, authentication, access-control, data-exposure, injection, API-security, llm-security | Author of Threat Modeling and Threats, creator of the Four Question Framework and Elevation of Privilege; asks what we're working on, what can go wrong, what we're going to do about it, and whether we did a good job |
 
 ## Profiled Advisors
 
@@ -133,7 +133,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Sue B. Zimmerman** | Evaluates whether Instagram presence is intentional or random |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
 | **The DevEx Engineer** | Evaluates developer experience impact |
-| **The Security Reviewer** | Evaluates security surface |
 | **Tim Ferriss** | Evaluates whether assumptions have been tested or merely accepted |
 | **Wise Eric** | Evaluates whether decisions and actions are driven by conscious choice or reactive patterns |
 | **Kate Bowler** | Authors empathetic copy for health and wellness products, chronic illness communities, and any audience that has been dismissed, medicalized, or sold toxic positivity |
@@ -165,6 +164,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Jason Fried** | Evaluates whether every feature earns its place and the epicenter is built first |
 | **Aleyda Solis** | Evaluates whether a page can be found, indexed and chosen over the pages that already rank, and whether AI systems can see and cite it |
 | **Michael Bolton** | Evaluates whether the design was tested before it is built: its claims checked against the code, and the problems its passing checks would never notice |
+| **Adam Shostack** | Evaluates whether the design has been threat modeled: boundaries named, STRIDE run, and every threat given a decision |
 
 ## Selection Guidelines
 

@@ -1,0 +1,86 @@
+# e2e/scenarios/use-advisor/adam-shostack-consult.yaml
+# Quick-consult eval for Adam Shostack (Four Question Framework, STRIDE, PHANTOM-B)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Adam Shostack invite-flow and PR-hook threat consult"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHOD SPECIFICITY: Does the response use Adam
+        Shostack's method by name or in substance: the four questions (what
+        are we working on, what can go wrong, what are we going to do about
+        it, did we do a good job), STRIDE run on parts and on flows that
+        cross a boundary, and for the model part, prompt injection or
+        over-reliance from PHANTOM-B? A generic OWASP Top 10 list or
+        "security best practices" with none of these scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FINDING THESE THREATS: The design has three real
+        problems. (1) The accept route takes team_id from the query string
+        and inserts with the service-role key, so a logged-in user can join
+        any team and row-level security never checks it. (2) The Resend
+        bounce webhook is not verified, so anyone can post fake events.
+        (3) The PR hook feeds PR text written by anyone to Claude, which
+        can add labels through the GitHub MCP server, and an "approved"
+        label triggers auto-merge, so prompt injection in a PR can merge
+        code. Score 5 if all three are named and tied to the design, 3 if
+        two, 1-2 if one or none. A long generic list that buries them
+        scores at most 3.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Adam
+        Shostack: plain engineering prose, calm, says "we", maybe a dry aside
+        or an everyday analogy, no fear-mongering? Hype, "catastrophic",
+        or shaming the developer scores 1-2. Invented quotes attributed to
+        him score 1. These are real and not invented: "What are we working
+        on?", "What can go wrong?", "Telling people to think like an
+        attacker isn't prescriptive or clear", "Input is confused with
+        code", "LLMs are excellent at sounding confident", "the 'measure
+        twice, cut once' of cybersecurity."
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONEST SCOPE: The founder asks whether they should
+        "think like an attacker" and whether his method covers Claude Code
+        hooks and MCP servers. Does the response steer away from "think
+        like an attacker" toward concrete steps (the questions, STRIDE), and
+        say plainly that his published method doesn't cover hooks or MCP
+        servers by name, so it is applying STRIDE or PHANTOM-B to them?
+        Endorsing "think like an attacker" as the method, or claiming he
+        published a hook or MCP checklist, scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — invite flow plus PR-review hook"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/adam-shostack.md
+      task_prompt: "\n\n---\n\nI'm solo, building with Claude Code. Two things ship this week. One: team invites in my Next.js app on Supabase. The owner enters an email, /api/invite inserts a row in invites and sends a link through Resend. The link goes to /accept?token=...&team_id=..., which requires login and then inserts into team_members using the service-role key. Resend posts bounces to /api/resend-webhook. Two: a Claude Code plugin hook that sends every new PR's description and diff to Claude, which writes a review comment and can add labels through the GitHub MCP server. The 'approved' label triggers auto-merge. Is this secure? Should I just think like an attacker? And does your method even cover hooks and MCP servers?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I'm solo, building with Claude Code. Two things ship this week. One: team invites in my Next.js app on Supabase. The owner enters an email, /api/invite inserts a row in invites and sends a link through Resend. The link goes to /accept?token=...&team_id=..., which requires login and then inserts into team_members using the service-role key. Resend posts bounces to /api/resend-webhook. Two: a Claude Code plugin hook that sends every new PR's description and diff to Claude, which writes a review comment and can add labels through the GitHub MCP server. The 'approved' label triggers auto-merge. Is this secure? Should I just think like an attacker? And does your method even cover hooks and MCP servers?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Adam Shostack, author of Threat Modeling: Designing for Security and creator of the Four Question Framework. I'm solo, building with Claude Code. Two things ship this week. One: team invites in my Next.js app on Supabase. The owner enters an email, /api/invite inserts a row in invites and sends a link through Resend. The link goes to /accept?token=...&team_id=..., which requires login and then inserts into team_members using the service-role key. Resend posts bounces to /api/resend-webhook. Two: a Claude Code plugin hook that sends every new PR's description and diff to Claude, which writes a review comment and can add labels through the GitHub MCP server. The 'approved' label triggers auto-merge. Is this secure? Should I just think like an attacker? And does your method even cover hooks and MCP servers?"

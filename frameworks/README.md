@@ -174,6 +174,8 @@
 | why-my-page-doesnt-rank | Why My Page Doesn't Rank | aleyda-solis | content-strategy | a page doesn't rank in Google, or ranks lower than it should, for a query that matters; a new site's pages aren't showing up; or someone wants backlinks before checking the page is indexed |
 | ai-search-optimization-checklist | AI Search Optimization Checklist | aleyda-solis | marketing | a site wants to show up or be cited in ChatGPT, Gemini, Perplexity or Google AI answers; someone asks about GEO, AEO or LLMO; or a founder is about to try llms.txt, hidden prompts or other AI-visibility tricks before measuring |
 | few-hiccupps-review | FEW HICCUPPS Review | michael-bolton | product-design | a design doc is about to be built and its claims about the codebase need checking against the code, the tests all pass but nobody has asked what they miss, a feature needs its edge cases and failure modes found before the build, or an existing screen feels wrong and nobody can say which expectation it breaks |
+| four-question-threat-model | Four Question Threat Model | adam-shostack | security | a design or feature touches login, permissions, user data, row-level security, secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server, and nobody has asked what can go wrong before it ships |
+| phantom-b-llm-threats | PHANTOM-B LLM Threats | adam-shostack | security | a feature, hook, plugin, or agent sends text to an LLM and acts on what comes back, reads text someone else wrote (emails, PRs, web pages, tool results), or lets the model call tools, and nobody has asked what can go wrong with the model part |
 
 ## By Category
 
@@ -334,6 +336,11 @@
 - **jolt-effect** — the JOLT Effect (matt-dixon)
 - **mobilizer-taxonomy** — the Mobilizer Taxonomy (matt-dixon)
 - **teach-tailor-take-control** — Teach-Tailor-Take Control (TTTC) (matt-dixon)
+
+### Security (2)
+
+- **four-question-threat-model** — Four Question Threat Model (adam-shostack)
+- **phantom-b-llm-threats** — PHANTOM-B LLM Threats (adam-shostack)
 
 ### Social Media (9)
 

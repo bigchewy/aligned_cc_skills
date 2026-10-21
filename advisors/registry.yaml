@@ -1162,31 +1162,6 @@ advisors:
     '
   prompt: advisors/prompts/the-devex-engineer.md
   summary: Developer experience obsessive who evaluates tools by how they feel
-- best_for: 'Designs touching authentication, user data, APIs, external integrations,
-    RLS policies, secrets management.
-
-    '
-  domains:
-  - authentication
-  - data-exposure
-  - injection
-  - OWASP
-  - API-security
-  - access-control
-  evaluation_expertise: 'Evaluates security surface. Is authentication handled correctly?
-    Are there injection vectors? Is user data exposed? Are API endpoints properly
-    authorized? Catches OWASP top 10 vulnerabilities, missing access controls, and
-    data exposure risks.
-
-    '
-  id: the-security-reviewer
-  name: The Security Reviewer
-  not_for: 'UI-only changes, content strategy, marketing, internal tools with no auth
-    surface.
-
-    '
-  prompt: advisors/prompts/the-security-reviewer.md
-  summary: Security engineer who sees every input as hostile
 - best_for: 'Productivity audits, lifestyle and business experiments, learning acceleration
     plans, fear-setting for stuck decisions, simplification of overcomplicated workflows.
 
@@ -2003,8 +1978,8 @@ advisors:
   id: boris-cherny
   name: Boris Cherny
   not_for: 'Code architecture, module boundaries, and data models (redirect to The
-    Architect); threat review of hooks, MCP servers, or plugins (redirect to The Security
-    Reviewer); developer experience of tools other than Claude Code, CI pipelines,
+    Architect); threat review of hooks, MCP servers, or plugins (redirect to Adam
+    Shostack); developer experience of tools other than Claude Code, CI pipelines,
     and SDK ergonomics (redirect to The DevEx Engineer); what an AI should do in a
     learning or coaching program (redirect to Ethan Mollick); product or business
     strategy.
@@ -2287,6 +2262,45 @@ advisors:
     and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS
     oracles, reads the code behind every claim, and asks what the passing checks
     never asked
+- best_for: 'Threat modeling a design doc, spec, or feature before it ships: authentication,
+    access control, Supabase row-level security, data exposure, injection, secrets,
+    webhooks, and API routes. Threat review of Claude Code hooks, plugins, and MCP
+    servers. Finding what can go wrong with the parts of a system that call an LLM
+    (prompt injection, over-reliance, what the model can reach). Runs the Four Question
+    Framework with STRIDE, fast and cheap, in under an hour.
+
+    '
+  domains:
+  - threat-modeling
+  - authentication
+  - access-control
+  - data-exposure
+  - injection
+  - API-security
+  - llm-security
+  evaluation_expertise: 'Evaluates whether a design has been threat modeled. Is there
+    a picture of what we''re working on, with its boundaries named? Has each part
+    and each flow that crosses a boundary been checked for spoofing, tampering, repudiation,
+    information disclosure, denial of service, and elevation of privilege? Does every
+    threat have a decision (mitigate, eliminate, accept, transfer, or don''t build
+    it)? For LLM parts, has prompt injection, over-reliance, and what the model can
+    reach been checked? Catches user IDs trusted from the request, tables without row-level
+    security, secrets that reach the browser, unverified webhooks, tool output treated
+    as instructions, and long generic threat lists nobody will act on.
+
+    '
+  id: adam-shostack
+  name: Adam Shostack
+  not_for: 'How Claude Code permissions, sandboxes, and hooks work (redirect to Boris
+    Cherny); module boundaries and data models (redirect to The Architect); privacy
+    harms that happen by design (LINDDUN, Kim Wuyts''s method, not on the board); UI-only
+    changes, content strategy, and marketing with no auth or data surface.
+
+    '
+  prompt: advisors/prompts/adam-shostack.md
+  summary: Author of Threat Modeling and Threats, creator of the Four Question Framework
+    and Elevation of Privilege; asks what we're working on, what can go wrong, what
+    we're going to do about it, and whether we did a good job
 selection_guidelines:
   calibration_examples:
   - critics:
@@ -2294,7 +2308,7 @@ selection_guidelines:
     scope: A single utility with no integrations
   - critics:
     - the-architect
-    - the-security-reviewer
+    - adam-shostack
     scope: An API route with database writes and RLS
   - critics:
     - steve-jobs
@@ -2305,7 +2319,7 @@ selection_guidelines:
     - april-dunford
     - steve-jobs
     - the-architect
-    - the-security-reviewer
+    - adam-shostack
     scope: A product launch plan spanning positioning, UI, backend, integrations
   complex_scope: 3-4 critics
   narrow_scope: 1-2 critics

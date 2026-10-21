@@ -2607,3 +2607,59 @@ frameworks:
     checking against the code, the tests all pass but nobody has asked what they miss,
     a feature needs its edge cases and failure modes found before the build, or an
     existing screen feels wrong and nobody can say which expectation it breaks
+- advisor: adam-shostack
+  category: security
+  default_critic_advisors:
+  - adam-shostack
+  - boris-cherny
+  deliverable_type: analysis
+  domains:
+  - threat-modeling
+  - stride
+  - access-control
+  - data-exposure
+  - authentication
+  follow_on_frameworks:
+  - phantom-b-llm-threats
+  helpful_documents:
+  - a sketch or diagram of the parts and how data moves between them
+  - the database schema and its row-level security policies
+  - the list of third-party services, webhooks, hooks, or MCP servers it touches
+  id: four-question-threat-model
+  name: Four Question Threat Model
+  purpose: one person threat modeling one design doc in under an hour, by asking the
+    Four Question Framework in order with STRIDE as the checklist for what can go wrong
+  required_documents:
+  - a design doc, spec, or feature description for something being worked on now
+  use_when: a design or feature touches login, permissions, user data, row-level security,
+    secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server,
+    and nobody has asked what can go wrong before it ships
+- advisor: adam-shostack
+  category: security
+  default_critic_advisors:
+  - adam-shostack
+  - boris-cherny
+  deliverable_type: analysis
+  domains:
+  - llm-security
+  - prompt-injection
+  - threat-modeling
+  - ai-agents
+  follow_on_frameworks:
+  - four-question-threat-model
+  helpful_documents:
+  - a sketch of the system with the LLM calls marked
+  - the system prompt, the tools or MCP servers the model can use, and what data it
+    can read
+  - the threat model from four-question-threat-model, if one exists
+  id: phantom-b-llm-threats
+  name: PHANTOM-B LLM Threats
+  purpose: one person finding what can go wrong with the parts of a system that call
+    an LLM, using the eight PHANTOM-B threats as prompts, then deciding what to do about
+    each
+  required_documents:
+  - a design, spec, or running system where code calls an LLM (an app feature, a Claude
+    Code hook or plugin, an agent with tools)
+  use_when: a feature, hook, plugin, or agent sends text to an LLM and acts on what comes
+    back, reads text someone else wrote (emails, PRs, web pages, tool results), or lets
+    the model call tools, and nobody has asked what can go wrong with the model part
