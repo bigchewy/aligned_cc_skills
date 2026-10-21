@@ -9,7 +9,9 @@ Shared scoring and presentation logic for intent-based advisor and framework sel
 
 The calling skill passes:
 - **Entity type:** `advisor`, `framework`, or `framework-or-advisor`
-- **Input (framework callers):** a registry YAML path (`frameworks/registry.yaml`)
+- **Input (framework callers):** the pre-merged framework list from
+  `skills/_shared/resolve-framework-source.md` (plugin + project-local, deduped, local-wins).
+  A registry YAML path (`frameworks/registry.yaml`) is still valid for plugin-only scope.
 - **Input (advisor callers):** either a registry YAML path (`advisors/registry.yaml`, plugin-only
   scope) or a pre-merged advisor entry list from `skills/_shared/resolve-advisor-source.md`
   (plugin + local, deduped, local-wins)
@@ -30,16 +32,15 @@ Do NOT proceed with scoring. Wait for the user's response, then re-enter this fi
 ## Stage 1: Domain Filter
 
 **Stage 1 input is dual-contract.** The calling skill passes ONE of:
-- **A registry YAML path** (framework callers, and any advisor caller that wants plugin-only
-  scope) — read and parse all entries.
-- **A pre-merged advisor entry list** (advisor callers that already merged plugin + local via
-  `skills/_shared/resolve-advisor-source.md`) — use the list as-is; do NOT re-read a registry.
+- **A registry YAML path** (any caller that wants plugin-only scope) — read and parse all entries.
+- **A pre-merged entry list** — use the list as-is; do NOT re-read a registry. Advisor callers
+  pass the list from `skills/_shared/resolve-advisor-source.md`. Framework callers pass the list
+  from `skills/_shared/resolve-framework-source.md`.
 
-Framework callers always use the path branch. Advisor callers that must surface project-local
-advisors use the pre-merged-list branch — otherwise local advisors are invisible to contextual
-recommendation.
+Callers that must surface project-local advisors or frameworks use the pre-merged-list branch —
+otherwise local entries are invisible to contextual recommendation.
 
-**Scoring eligibility filter (advisors only):** Exclude entries where `domains` is empty (`domains: []`). These are unprofiled advisors — they lack the metadata needed for meaningful scoring. They remain accessible via named invocation (Path 1) but are invisible to contextual recommendation.
+**Scoring eligibility filter:** Exclude entries where `domains` is empty (`domains: []`). These are unprofiled entries — they lack the metadata needed for meaningful scoring. They remain accessible via named invocation (Path 1) but are invisible to contextual recommendation. For frameworks this includes every entry with `registered: false` (a project-local folder with no registry entry): it is reachable by name only.
 
 **Extract domain signals:** From the user's task context, identify which domain tags from the registry's vocabulary are relevant. Map natural language to existing tag values — e.g., "I need a landing page" maps to tags like `landing-pages`, `conversion-optimization`. Only use tags that actually appear in the registry's `domains` fields.
 
@@ -74,7 +75,7 @@ On the filtered candidate set, apply these priority rules in order:
 
 ## Multi-Entity Mode (entity type: `framework-or-advisor`)
 
-When the calling skill passes entity type `framework-or-advisor`, run Stages 1-2 against **both** registries and merge the results into a single ranked list.
+When the calling skill passes entity type `framework-or-advisor`, run Stages 1-2 against **both** pre-merged lists (the framework list from `skills/_shared/resolve-framework-source.md` and the advisor list from `skills/_shared/resolve-advisor-source.md`) and merge the results into a single ranked list.
 
 ### Field mapping (merged)
 
@@ -100,6 +101,8 @@ If no framework scores AND no advisor scores (both registries empty or zero doma
 ## Confidence Test and Presentation
 
 After ranking, decide how to present results using a structural confidence test — not a numeric score.
+
+In every format below, an entry with `source: "local"` carries `(local)` after its name.
 
 ### Auto-select mode (high confidence)
 

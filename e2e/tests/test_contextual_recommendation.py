@@ -56,3 +56,28 @@ def test_configuration_documents_advisor_input_variants():
     assert "framework callers" in text.lower(), (
         "## Configuration must document the framework-callers input variant by name"
     )
+
+
+def test_stage1_accepts_premerged_framework_list():
+    text = read("skills/_shared/contextual-recommendation.md")
+    assert "resolve-framework-source" in text, (
+        "Stage 1 must name resolve-framework-source as the source of the merged framework list"
+    )
+
+
+def test_configuration_framework_callers_pass_merged_list():
+    text = read("skills/_shared/contextual-recommendation.md")
+    config = text.split("## Configuration", 1)[1].split("## Path 4", 1)[0]
+    assert "Input (framework callers)" in config
+    assert "pre-merged framework list" in config
+
+
+def test_stage1_no_longer_says_framework_callers_always_use_path():
+    text = read("skills/_shared/contextual-recommendation.md")
+    assert "Framework callers always use the path branch" not in text
+
+
+def test_unregistered_frameworks_excluded_from_scoring():
+    text = read("skills/_shared/contextual-recommendation.md")
+    assert "registered: false" in text
+    assert "reachable by name only" in text
