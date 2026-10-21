@@ -21,6 +21,8 @@ Before starting, gather:
 
 Before any framework work, detect what infrastructure exists in the current repo.
 
+**Plugin or project repo:** "Writing to the plugin itself" means project-cwd contains `.claude-plugin/plugin.json` whose `name` is `aligned`. Otherwise it is a project repo. In a project repo, the registry lives in the project (`<project-cwd>/frameworks/registry.yaml`), never in the plugin.
+
 **Framework path detection:**
 1. Check the project's CLAUDE.md for framework prompt path configuration
 2. If `frameworks/` exists at repo root and contains subdirectories with `prompt.md` files → use it
@@ -31,7 +33,7 @@ Before any framework work, detect what infrastructure exists in the current repo
 
 | Marker | Check | Enables |
 |--------|-------|---------|
-| Framework registry file | Check CLAUDE.md or Grep for registry | Registry entry (Step 5) |
+| Framework registry file | Check CLAUDE.md, then `<project-cwd>/frameworks/registry.yaml` (or the plugin's `frameworks/registry.yaml` when writing to the plugin itself) | Registry entry (Step 5). In a project repo a missing registry is created, not skipped |
 | Eval infrastructure | Check for eval scenarios directory + eval script in package.json | Eval scenario (Step 6) |
 | Build script | Read package.json for `build` script | Build verification (Step 8) |
 
@@ -39,7 +41,8 @@ Before any framework work, detect what infrastructure exists in the current repo
 ```
 Environment Detection:
   Framework path: {detected path}              → {found / will create}
-  Registry:       {registry path}              → {found / not found (skipping)}
+  Writing to:     {plugin itself / project repo}
+  Registry:       {registry path}              → {found / will create (project repo) / not found (skipping, plugin lightweight mode)}
   Evals:          {eval dir}                   → {found / not found (skipping)}
   Build:          package.json build script    → {found / not found (skipping)}
 ```
@@ -153,9 +156,16 @@ When writing prompt.md, examples.md, and anti-examples.md, follow these craft gu
 
 ### 5. Add Registry Entry
 
-> **Conditional:** Only run this step if `frameworks/registry.yaml` exists in the plugin directory. If not found, print: "Skipping registry entry — no framework registry found (lightweight mode)."
+> **Where to write:** Writing to the plugin itself: append to the plugin's `frameworks/registry.yaml`. Project repo: append to `<project-cwd>/frameworks/registry.yaml`. If that file does not exist, create it with a one-line comment header and the list key, then append the entry:
+>
+> ```yaml
+> # Project frameworks. Merged with the aligned plugin's registry; entries here win on a matching id.
+> frameworks:
+> ```
+>
+> **Conditional:** Skip this step only in lightweight mode: writing to the plugin itself, no `frameworks/registry.yaml` found. Print: "Skipping registry entry — no framework registry found (lightweight mode)." In a project repo the default is to create the registry.
 
-Append one entry to the `frameworks` list in `frameworks/registry.yaml`:
+Append one entry to the `frameworks` list in the registry file:
 
 ```yaml
   - id: {framework-slug}
@@ -177,7 +187,7 @@ Derive field values:
 - **use_when:** Natural language trigger phrase for when to use this framework
 - **required_documents, helpful_documents:** From `prompt.md` YAML frontmatter; omit keys if lists are empty
 
-**Post-append validation:** After appending, parse the full `frameworks/registry.yaml` file. If YAML parsing fails, revert the append (restore the file from git) and report the error. One bad entry must not corrupt the registry for all consumers.
+**Post-append validation:** After appending, parse the full registry file you wrote. If YAML parsing fails, revert the append and report the error. Restore the previous content; if you just created the file, it is untracked, so delete the newly created file instead of restoring it from git. One bad entry must not corrupt the registry for all consumers.
 
 ### 6. Create Eval Scenario
 
@@ -197,6 +207,8 @@ Minimum scenario should include:
 Run the new scenario to verify baseline quality. If `e2e/run_evals.py` exists, run only the new scenario from `e2e/` with `npm run eval -- <scenario-path>`. The runner uses the Claude Code login. Never skip the run because `ANTHROPIC_API_KEY` is not set. Never suggest `--all` unless a file in `e2e/providers/` changed; a new scenario only needs its own run. When a provider file did change, state the call count and token cost before asking the user. If `e2e/run_evals.py` does not exist, use the project's own eval command. If the scenario fails, classify the failure (prompt issue, eval calibration, or model variance) and fix. First-run failures are common — usually eval calibration.
 
 ### 7. Update Advisor and Framework Counts
+
+> **Conditional:** Only when writing to the plugin itself. In a project repo, skip this step: the plugin's README and manifests do not describe project content.
 
 Count the actual advisors and frameworks in the plugin directory and update all references so metadata stays in sync:
 

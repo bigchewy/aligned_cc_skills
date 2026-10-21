@@ -17,6 +17,8 @@ Specify the advisor by name or by pointing to an existing research file in `docs
 
 Before any advisor work, detect what infrastructure exists in the current repo.
 
+**Plugin or project repo:** "Writing to the plugin itself" means project-cwd contains `.claude-plugin/plugin.json` whose `name` is `aligned`. Otherwise it is a project repo. In a project repo, the registry lives in the project (`<project-cwd>/advisors/registry.yaml` and `<project-cwd>/frameworks/registry.yaml`), never in the plugin.
+
 **Prompt path detection:**
 1. Check the project's CLAUDE.md for advisor prompt path configuration
 2. If `advisors/prompts/` exists at repo root → use it
@@ -27,16 +29,17 @@ Before any advisor work, detect what infrastructure exists in the current repo.
 
 | Marker | Check | Enables |
 |--------|-------|---------|
-| Advisor registry file | Check CLAUDE.md or Grep for `advisors/registry.yaml` | Registry entry (Step 3) |
-| Framework registry file | Check for `frameworks/registry.yaml` | Framework registry entry (Step 5) |
+| Advisor registry file | Check CLAUDE.md, then `<project-cwd>/advisors/registry.yaml` (or the plugin's when writing to the plugin itself) | Registry entry (Steps 3 and 7). In a project repo a missing registry is created, not skipped |
+| Framework registry file | Check for `<project-cwd>/frameworks/registry.yaml` (or the plugin's when writing to the plugin itself) | Framework registry entry (Step 5). In a project repo a missing registry is created, not skipped |
 | Eval infrastructure | Check for eval scenarios directory + eval script in package.json | Eval scenario (Step 6) |
 
 **Print summary:**
 ```
 Environment Detection:
   Prompt path:       {detected path}           → {found / will create}
-  Advisor registry:  {registry path}           → {found (full mode) / not found (lightweight mode)}
-  Framework registry: frameworks/registry.yaml → {found / not found (skipping)}
+  Writing to:        {plugin itself / project repo}
+  Advisor registry:  {registry path}           → {found (full mode) / will create (project repo) / not found (lightweight mode)}
+  Framework registry: frameworks/registry.yaml → {found / will create (project repo) / not found (skipping)}
   Evals:             {eval dir}               → {found / not found (skipping)}
 ```
 
@@ -77,11 +80,11 @@ From the research, select the top 2-3 frameworks based on:
 
 ### 3. Create Advisor Registry Entry
 
-> **Conditional:** Only run this step if an advisor registry file was detected in Step 0. If not found, print: "Skipping registry entry — no registry found (lightweight mode)."
+> **Conditional:** Skip this step only in lightweight mode: writing to the plugin itself, no advisor registry detected in Step 0. Print: "Skipping registry entry — no registry found (lightweight mode)." In a project repo the default is to write `<project-cwd>/advisors/registry.yaml` (created in Step 7 if absent).
 
-Add the advisor to the project's registry file (the path and format vary by project — check CLAUDE.md for the registry location and entry format).
+Add the advisor to the registry file. Writing to the plugin itself, or when the project's CLAUDE.md documents its own registry location and entry format, follow that. Otherwise in a project repo, Step 7 writes the full-schema entry.
 
-**If no registry format is documented**, create a simple entry with:
+**If no registry format is documented and Step 7 does not apply**, create a simple entry with:
 - id, name, tagline, category
 - bestFor topics
 - enabled: false (hidden until explicitly enabled)
@@ -159,7 +162,7 @@ You are [Name], [role]. [One sentence core philosophy.]
 
 Use the `/aligned:add-framework` skill to implement the top-ranked framework.
 
-> **Critical:** The add-framework skill updates `frameworks/registry.yaml` as part of its registry-entry step. If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to `frameworks/registry.yaml` with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
+> **Critical:** The add-framework skill updates the framework registry as part of its registry-entry step (`<project-cwd>/frameworks/registry.yaml` in a project repo; create it if absent, with a one-line comment header and a `frameworks:` list key; the plugin's `frameworks/registry.yaml` when writing to the plugin itself). If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to that registry with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
 
 ### 6. Create Eval Scenario
 
@@ -177,7 +180,14 @@ Run the new scenario to verify baseline quality. If `e2e/run_evals.py` exists, r
 
 ### 7. Update the Registry
 
-Append one entry to the `advisors` list in `advisors/registry.yaml`:
+Writing to the plugin itself: append to the plugin's `advisors/registry.yaml`. Project repo: append to `<project-cwd>/advisors/registry.yaml`. If that file does not exist, create it with a one-line comment header and the list key, then append the entry:
+
+```yaml
+# Project advisors. Merged with the aligned plugin's registry; entries here win on a matching id.
+advisors:
+```
+
+Append one entry to the `advisors` list in the registry file:
 
 ```yaml
   - id: {slug}
@@ -196,11 +206,13 @@ Where:
 - **summary:** One-line description
 - **domains:** Comma-separated expertise areas as a YAML list (e.g., `[marketing, growth, content-strategy]`); use `[]` if unknown
 
-**Post-append validation:** After appending, parse the full `advisors/registry.yaml` file. If YAML parsing fails, revert the append (restore the file from git) and report the error. One bad entry must not corrupt the registry for all consumers.
+**Post-append validation:** After appending, parse the full registry file you wrote. If YAML parsing fails, revert the append and report the error. Restore the previous content; if you just created the file, it is untracked, so delete the newly created file instead of restoring it from git. One bad entry must not corrupt the registry for all consumers.
 
-If `advisors/registry.yaml` does not exist, skip this step silently (lightweight mode — the add-advisor skill works without a registry).
+If the registry does not exist and you are writing to the plugin itself, skip this step silently (lightweight mode — the add-advisor skill works without a registry). In a project repo, create it as described above.
 
 ### 8. Update Advisor and Framework Counts
+
+> **Conditional:** Only when writing to the plugin itself. In a project repo, skip this step: the plugin's README and manifests do not describe project content.
 
 Count the actual advisors and frameworks in the plugin directory and update all references so metadata stays in sync:
 
