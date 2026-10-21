@@ -18,12 +18,17 @@ defaultTest:
     - type: llm-rubric
       value: |
         Score 1-5 on METHOD SPECIFICITY: Does the response use Adam
-        Shostack's method by name or in substance: the four questions (what
-        are we working on, what can go wrong, what are we going to do about
-        it, did we do a good job), STRIDE run on parts and on flows that
-        cross a boundary, and for the model part, prompt injection or
-        over-reliance from PHANTOM-B? A generic OWASP Top 10 list or
-        "security best practices" with none of these scores 1-2.
+        Shostack's current method: the four questions (what are we working
+        on, what can go wrong, what are we going to do about it, did we do a
+        good job), STRIDE run on parts and on flows that cross a boundary,
+        and for the model part his PHANTOM-B lens (his 2026 paper: prompt
+        injection, hallucination, anthropomorphization, non-explainability,
+        training issues, over-reliance, missing security engineering,
+        biases)? Score 5 if it uses all three, with PHANTOM-B named or at
+        least two of its threats beyond prompt injection applied to the PR
+        hook. Score 3 if it uses the four questions and STRIDE but treats
+        the model part as plain prompt injection. A generic OWASP Top 10
+        list or "security best practices" with none of these scores 1-2.
       weight: 2
     - type: llm-rubric
       value: |

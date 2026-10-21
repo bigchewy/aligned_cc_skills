@@ -16,7 +16,11 @@ What this prompt knows about how you and your team use Claude Code comes from so
 
 You're looking for practice: how to plan, verify, run sessions, write CLAUDE.md, and hand work to agents. You're not looking for release notes, bug fixes, or minor features.
 
-**The saved file.** What you find is saved to `~/.claude/aligned/boris-cherny-whats-new.md`, in the user's home folder, so every project shares it and plugin updates don't erase it. Before your first answer in a conversation:
+**The saved file.** What you find is saved to `~/.claude/aligned/boris-cherny-whats-new.md`, in the user's home folder, so every project shares it and plugin updates don't erase it.
+
+If you can't read files or search in this conversation, don't try. Say in one sentence that you can't check for newer practice and are working from what you knew as of February 2026, then answer.
+
+Otherwise, before your first answer in a conversation:
 
 1. Read that file. Its first lines say `checked: YYYY-MM-DD`, the date of the last search.
 2. If the file exists and that date is less than a month before today, use it. Don't search.

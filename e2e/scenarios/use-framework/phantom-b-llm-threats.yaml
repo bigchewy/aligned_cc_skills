@@ -22,13 +22,28 @@ defaultTest:
     - type: llm-rubric
       value: |
         Score 1-5 on PHASE DISCIPLINE: The founder said they'll answer step
-        by step. Does the response work on the first step (which parts call
+        by step, and their message already describes the model call. Score
+        5 if the response either works on the first step (which parts call
         the model, whose model it is, what text goes in and from whom, what
-        the model's output can reach) and then STOP with a question,
-        instead of handing over a finished analysis of all eight threats
-        with fixes? A complete analysis with every step done and no
-        question scores 1-2.
+        the model's output can reach) or confirms that step from what the
+        founder gave and asks the founder the next questions, then STOPS
+        for the founder's answers. Score 1-2 if it answers the threat
+        questions itself and hands over a finished analysis of all eight
+        threats with fixes.
       weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on RUNS PHANTOM-B: The founder asked to run PHANTOM-B,
+        Adam Shostack's 2026 lens for the LLM parts of a system: prompt
+        injection, hallucination, anthropomorphization, non-explainability,
+        training issues, over-reliance, missing security engineering,
+        biases. Score 5 if the response runs it: boxes the LLM part and
+        uses PHANTOM-B's own threats or says which of them come next. Score
+        4 if it is still on the boxing step and names PHANTOM-B as the
+        method it is running. Score 1-2 if it says it doesn't know
+        PHANTOM-B, asks the founder to supply the steps, or swaps in a
+        different method (the four questions, STRIDE, OWASP) instead.
+      weight: 2
     - type: llm-rubric
       value: |
         Score 1-5 on BOXING THE LLM PART: Does the response focus on the
