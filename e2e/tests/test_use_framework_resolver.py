@@ -32,4 +32,6 @@ def test_use_framework_runner_path_is_absolute_framework_dir():
 
 def test_use_framework_first_line_parse_only_for_unregistered():
     text = read("skills/use-framework/SKILL.md")
-    assert "registered: false" in text
+    step2 = text.split("## Step 2", 1)[1].split("## Step 3", 1)[0]
+    assert "registered: false" in step2
+    assert "only" in step2

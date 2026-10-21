@@ -45,7 +45,8 @@ Two execution paths based on Phase 1 result (outcomes 2–5 all route to the str
 ### Phase 2a: Framework runner (engine = framework)
 
 Read `skills/_shared/framework-runner.md` and invoke it with:
-- **Matched framework path:** from Phase 1
+- **Matched framework path:** the selected entry's `absolute_framework_dir`
+- **`framework_entry`:** the selected entry from Phase 1
 - **`intake_gate_mode`:** `strict` (brainstorming wrapper gates on `required_documents`)
 
 On framework completion, the runner returns control here. Proceed to Size the work.
@@ -203,11 +204,11 @@ If the work grows mid-task (a new audience, more parts, higher stakes), stop, sa
 
 Runs for Medium and Full. Medium uses this phase's critique checklist sections and critic pool; the HTML template is used only by the Visualization step.
 
-Read the engine's `deliverable_type` from the framework registry. If the engine was a Q&A fallback (no framework), prompt the user to pick `content | decision | plan | analysis` once (a single AskUserQuestion in the design-doc-finalization step — this is NOT mid-flow human review; it is the deliverable-type tag that the user must own as part of authoring).
+Read the engine's `deliverable_type` from the engine's merged entry (`skills/_shared/resolve-framework-source.md`). If the engine was a Q&A fallback (no framework), prompt the user to pick `content | decision | plan | analysis` once (a single AskUserQuestion in the design-doc-finalization step — this is NOT mid-flow human review; it is the deliverable-type tag that the user must own as part of authoring).
 
 Dispatch table:
 
-| deliverable_type | Template path | Critique checklist sections (passed to orchestrator) | Default critic pool (when registry's `default_critic_advisors` is unset) | Handoff prompt |
+| deliverable_type | Template path | Critique checklist sections (passed to orchestrator) | Default critic pool (when the merged entry's `default_critic_advisors` is unset) | Handoff prompt |
 |---|---|---|---|---|
 | content | `references/templates/authoring-template.html` | `["universal", "content"]` | brand-voice advisors + topic advisor | "If the work needs an implementation plan and the superpowers plugin is installed, run superpowers:writing-plans against this doc." |
 | decision | `references/templates/authoring-decision-template.html` | `["universal", "decision"]` | The Skeptic + topic advisor | "Document the decision; close any open questions." |
@@ -218,7 +219,7 @@ Dispatch table:
 
 **Interaction with `critique-panel-orchestration.md`:** That file expects ONE critique checklist with one `criteria-mapping` per calling mode file. The authoring mode supplies the `authoring-critique-checklist.md` file (single checklist) and passes the list of section IDs from the Critique-checklist-sections column above. The orchestrator runs only the listed sections, skipping inapplicable ones. The `authoring-critique-checklist.md` (Task 18) is authored so sections are independently runnable.
 
-**Registry drift fallback:** If the registry entry is missing `deliverable_type` (manual edit drifted from script), fall back to the `content` template + a generic critique pool and append a one-line drift note to the design doc's Decision Log. Suggest running `python tools/sync_framework_frontmatter.py` to re-sync.
+**Registry drift fallback:** If the merged entry is missing `deliverable_type`, fall back to the `content` template + a generic critique pool and append a one-line drift note to the design doc's Decision Log. For a `source: "plugin"` entry (manual edit drifted from script), also suggest running `python tools/sync_framework_frontmatter.py` to re-sync. For a `source: "local"` entry, skip the sync hint: a local framework with no `deliverable_type` just uses the content default.
 
 ## After the Design
 

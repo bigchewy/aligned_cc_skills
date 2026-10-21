@@ -252,6 +252,13 @@ def test_framework_runner_voice_prefers_resolved_advisor_prompt():
     assert "advisor's prompt" in voice or "advisor prompt" in voice
 
 
+def test_framework_runner_voice_has_single_no_advisor_rule():
+    text = read("skills/_shared/framework-runner.md")
+    voice = text.split("## Voice", 1)[1].split("## Composability", 1)[0]
+    assert "adopt that advisor's voice as written" not in voice
+    assert "generic facilitator" in voice
+
+
 def test_advisor_runner_framework_lookup_uses_resolver():
     text = read("skills/_shared/advisor-runner.md")
     assert "resolve-framework-source.md" in text

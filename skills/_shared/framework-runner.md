@@ -24,7 +24,7 @@ Skip this step if an advisor persona is already active (for example, `skills/use
 
 Otherwise, find the framework's advisor:
 
-1. Get the advisor from `framework_entry.advisor`. If no `framework_entry` was passed, read the first line of `prompt.md` ("You are {Advisor}, ...") and take the name after "You are " and before the first comma.
+1. Get the advisor from `framework_entry.advisor`. If no `framework_entry` was passed, read the first line of `prompt.md` (skip any YAML frontmatter; "You are {Advisor}, ...") and take the name after "You are " and before the first comma.
 2. Read `skills/_shared/resolve-advisor-source.md` and follow its procedure to get the merged advisor set (plugin + project-local). Match the advisor by `id` first, then by display `name`, ignoring case. A local framework may name a plugin advisor or a local advisor.
 3. On a match, read `skills/_shared/advisor-runner.md` and invoke it with that entry's `absolute_prompt_path` and `greeting_mode=silent`. The advisor's own prompt, including a project-local one, sets the voice.
 4. On no match (or no advisor named), do not stop. The generic-facilitator fallback in Voice applies.
@@ -68,7 +68,6 @@ A phase is complete when: (a) the scripted content for that phase has been deliv
 
 - If an advisor persona is active (via `skills/_shared/advisor-runner.md`, `/aligned:use-advisor`, or Step 0): deliver the framework in that advisor's voice.
 - Prefer the resolved advisor prompt from Step 0 over the framework prompt's one-line opening. A project-local advisor prompt carries the project's own voice rules.
-- If Step 0 found no advisor: follow the framework prompt as-is — it names an advisor in its opening line, so adopt that advisor's voice as written.
 - If a framework's `prompt.md` references an advisor that cannot be resolved (missing advisor / broken reference): fallback to generic facilitator voice — narrate each phase neutrally without impersonating the missing advisor. Log a Decision Log entry noting the fallback.
 
 <!-- DECISION-LOG conflict="stop vs fallback when a framework references a non-existent advisor" choice="fallback to generic facilitator voice" reason="stopping would break the user's framework session for a missing voice detail; graceful degradation preserves the framework's substance" confidence="0.85" -->

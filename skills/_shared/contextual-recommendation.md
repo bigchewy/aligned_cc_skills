@@ -42,7 +42,7 @@ otherwise local entries are invisible to contextual recommendation.
 
 **Scoring eligibility filter:** Exclude entries where `domains` is empty (`domains: []`). These are unprofiled entries — they lack the metadata needed for meaningful scoring. They remain accessible via named invocation (Path 1) but are invisible to contextual recommendation. For frameworks this includes every entry with `registered: false` (a project-local folder with no registry entry): it is reachable by name only.
 
-**Extract domain signals:** From the user's task context, identify which domain tags from the registry's vocabulary are relevant. Map natural language to existing tag values — e.g., "I need a landing page" maps to tags like `landing-pages`, `conversion-optimization`. Only use tags that actually appear in the registry's `domains` fields.
+**Extract domain signals:** From the user's task context, identify which domain tags from the input entries' vocabulary are relevant. Map natural language to existing tag values — e.g., "I need a landing page" maps to tags like `landing-pages`, `conversion-optimization`. Only use tags that actually appear in the input entries' `domains` fields.
 
 **Filter:** Keep entries that share at least one domain tag with the extracted set. Entries with zero overlap are excluded from Stage 2.
 
@@ -96,7 +96,7 @@ When a framework and an advisor score similarly in Stage 2:
 
 ### Zero-signal handling
 
-If no framework scores AND no advisor scores (both registries empty or zero domain overlap after Stage 1), degrade to Path 4 (No Context Available) per the top of this file.
+If no framework scores AND no advisor scores (both input lists empty or zero domain overlap after Stage 1), degrade to Path 4 (No Context Available) per the top of this file.
 
 ## Confidence Test and Presentation
 
