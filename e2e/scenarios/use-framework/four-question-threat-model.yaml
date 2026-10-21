@@ -41,12 +41,13 @@ defaultTest:
       value: |
         Score 1-5 on THE QUESTIONS AS WRITTEN: Adam Shostack's first
         question is "What are we working on?" (not "What are we building?")
-        and he rejects "think like an attacker" as advice. Score 5 if the
-        response asks "What are we working on?" or says it is the first of
-        four questions, and does not tell the founder to think like an
-        attacker. Score 3 if it scopes well but uses other wording. Score
-        1-2 if it tells the founder to think like an attacker or starts
-        from attacker personas or an asset list.
+        and he rejects "think like an attacker" as advice. He says rewording
+        the questions is a common mistake. Score 5 if the response asks
+        "What are we working on?" in those words and does not tell the
+        founder to think like an attacker. Score 2 if it asks "What are we
+        building?" or another rewording, even when it calls it the first of
+        four questions. Score 1 if it tells the founder to think like an
+        attacker or starts from attacker personas or an asset list.
       weight: 2
     - type: llm-rubric
       value: |
