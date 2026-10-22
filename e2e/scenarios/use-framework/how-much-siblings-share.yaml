@@ -1,0 +1,91 @@
+# e2e/scenarios/use-framework/how-much-siblings-share.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# Single turn: only PHASE 1 behavior is rewarded. Aaker's test, the Olins
+# type, and the share list come later and are not rewarded here.
+
+description: "Framework: How Much the Siblings Share for a wedding sibling"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{family}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The founder described two products
+        and said they will answer step by step. Does the response work on the
+        first step only (who buys each product, how known the parent's name
+        is, where the two products meet) and then STOP with a question?
+        Deciding the brand family, picking colors, or designing logos in this
+        reply with no question scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE RIGHT FIRST MOVES: Does the response notice or ask
+        that the two products have different buyers (someone celebrating one
+        person versus a couple's friends before a wedding), ask how many
+        people know the Moments With name today, and ask where a buyer of one
+        product runs into the other (a shared account, checkout, email, or
+        the printed book)? Two of the three scores 4. Treating it as a matter
+        of taste ("which feels right to you?") scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO EARLY VERDICT: Does the response hold off on declaring
+        that the wedding product must share the parent's look, or must stand
+        alone, until the facts are in? A firm verdict before asking about
+        buyers and name recognition scores 1-2. Saying which way the facts so
+        far lean, while asking for the rest, scores 5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Michael
+        Bierut: plain words, warm, no branding jargon ("brand architecture
+        synergies", "elevate", "touchpoints")? Invented quotes attributed to
+        him score 1. These are real and not invented: "If you have a great
+        idea but can't make it work, it isn't a great idea", "I think that big
+        global enterprises are entitled to communicate on a simpler level."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/how-much-siblings-share/prompt.md
+      task_prompt: "\n\n---\n\nLet's run How Much the Siblings Share on my two products. I'll answer step by step."
+      family: &family |
+        Moments With (momentswith.app): friends and family write specific
+        memories of one person, each memory gets illustrated, and a few are
+        delivered to that person every day for several weeks. Launched
+        recently.
+
+        Before You Came Along (beforeyoucamealong.com): the same machinery for
+        a couple before their wedding. Friends and family write memories from
+        before the two of them met, and the collection becomes a printed book.
+
+        Today Before You Came Along uses Moments With's design rules: paper
+        background #FDFAF6, one accent #A34A51, no gold, hearts, confetti, or
+        script fonts.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Should my second product share my first product's brand or be its own thing? I'll answer step by step."
+      family: *family
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Michael Bierut, the graphic designer and former Pentagram partner. Let's run How Much the Siblings Share on my two products. I'll answer step by step."
+      family: *family

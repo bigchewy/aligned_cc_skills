@@ -1,0 +1,93 @@
+# e2e/scenarios/use-advisor/michael-bierut-consult.yaml
+# Quick-consult eval for Michael Bierut (marks from what the product has, sibling brands)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+# The case is the first real project to use him: Moments With and its wedding
+# sibling, Before You Came Along. It lives here, not in the prompt.
+
+description: "Advisor: Michael Bierut on a wedding sibling's ring mark and how much it shares"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE CATEGORY CLICHÉ: The proposed mark is two
+        interlocking gold rings, and the founder loves it. Does the response
+        say plainly that rings are what every wedding business already uses,
+        and that the mark tells the category and nothing about this product?
+        Score 5 only if it also points to something the product already has
+        as the place to start (the printed book, the word "before", the
+        memories written by friends and family) instead of decoration.
+        Noticing that gold foil fights "warmth held down by restraint" and
+        that rings can assume a bride and a groom is a plus. Polishing or
+        keeping the rings (thinner line, different color) scores 1. Rejecting
+        them with no new starting point scores 3.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HOW MUCH THE SIBLINGS SHARE: Does the response decide
+        how Before You Came Along relates to Moments With using a reason, not
+        taste? The strongest answers ask or reason whether the parent's name
+        adds anything to a wedding buyer (it is new and unknown) and whether
+        the wedding product needs its own name, then name one type of brand
+        family (one look everywhere, own look with the parent shown behind
+        it, or fully separate) and say which of name, mark, type, and color
+        are shared. Credit to Wally Olins or David Aaker is a plus, not
+        required. A list of pros and cons with no pick scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMMITS TO ONE ANSWER: Does the response pick one
+        direction for the brand family and one starting point for the mark,
+        in plain words, and give the reason? Ending with "it depends on your
+        goals" or offering several equal directions without choosing scores
+        1-2. Saying it is a close call and choosing anyway scores 5.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Michael
+        Bierut: plain words, warm, a little self-deprecating, crediting the
+        client, uninterested in cleverness, with no branding jargon ("brand
+        essence", "elevate", "touchpoints", "visual language that resonates")?
+        Naming a borrowed rule with credit (David Aaker's test, Wally Olins's
+        three types, Sagi Haviv's tests) is how he credits sources and is not
+        jargon. Invented quotes attributed to him score 1. These are real and not
+        invented: "You're doing them a huge service by making sure their
+        mark's not a complicated hot mess every time it appears", "The way a
+        color looks depends on what other colors are adjacent to it", "If you
+        have a great idea but can't make it work, it isn't a great idea",
+        "I want this to be a logo that's so simple, a kindergartener could
+        make it with a pair of scissors", "As I've gotten older I've become
+        less and less interested in novelty or cleverness as a really
+        important attribute of good design."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — ring mark for a wedding sibling"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/michael-bierut.md
+      task_prompt: &ask "\n\n---\n\nI run Moments With (momentswith.app). Friends and family write specific memories of one person; each memory gets illustrated, and a few are delivered to that person every day for several weeks. It launched recently and almost nobody knows the name yet. I'm adding Before You Came Along (beforeyoucamealong.com): the same machinery for a couple before their wedding. Friends and family write memories from before the two of them met, and the collection becomes a printed book.\n\nOur design rules: warmth held down by restraint, references are a letterpress card, a book page, and Muji packaging. Paper background #FDFAF6, one accent color #A34A51 that means 'touch this'. Banned: confetti, watercolor, script fonts.\n\nA designer friend proposed a Before You Came Along logo of two interlocking gold rings, and I love it. I think it'd look beautiful foil-stamped on the book cover. I need a logo for each product that works as a favicon and a phone icon, and the wedding one has to work on a book spine.\n\nWhat do you think of the rings? And should Before You Came Along look like part of Moments With or be its own thing?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: *ask
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: "You are Michael Bierut, the graphic designer and former Pentagram partner."
+      task_prompt: *ask

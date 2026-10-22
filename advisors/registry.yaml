@@ -2277,6 +2277,44 @@ advisors:
   summary: Author of Threat Modeling and Threats, creator of the Four Question Framework
     and Elevation of Privilege; asks what we're working on, what can go wrong, what
     we're going to do about it, and whether we did a good job
+- best_for: 'Logos and marks: finding a mark in something the product already has and cutting
+    it down to one plain shape. Visual identity for a new product. How a parent brand and
+    its siblings look side by side: whether a sibling shares the name, mark, type and color,
+    or stands alone. Judging whether a mark works small and in print: a 16-pixel favicon,
+    a phone home-screen icon, a book spine, one-color print. Choosing a brand''s colors when
+    a look already exists, judged next to the colors around them with contrast numbers.
+
+    '
+  domains:
+  - visual-identity
+  - logo-design
+  - brand-architecture
+  - brand-color
+  - graphic-design
+  evaluation_expertise: 'Evaluates whether a mark comes from something the product already
+    has or from decoration and the category cliché. Is it simple enough to cut out with scissors
+    and draw from memory? Does it pass Sagi Haviv''s three tests: appropriate, distinctive
+    and memorable, simple? Does it survive 16 pixels, a home-screen icon, one color, reversed
+    out, and a book spine? Is each color judged next to its neighbors, with contrast numbers?
+    For sibling brands, does the second brand have a reason to exist, is one of Olins''s three
+    types chosen, and is it clear which of name, mark, type and color are shared? Catches
+    marks that only work big and in color, rings and lightbulbs, swooshes added to feel finished,
+    and advice that lists options without picking one.
+
+    '
+  id: michael-bierut
+  name: Michael Bierut
+  not_for: 'Headlines, naming, and the emotional one-liner (redirect to Don Draper); simplicity
+    reviews of a whole product (redirect to Steve Jobs); writing the design-principles file
+    and its color tokens (redirect to Adham Dannaway); screens and components (redirect to
+    Brad Frost); whether a page is easy to use (redirect to Steve Krug); planning one illustration
+    (redirect to James Gurney).
+
+    '
+  prompt: advisors/prompts/michael-bierut.md
+  summary: Pentagram partner from 1990 to 2025 and author of How to and Seventy-nine Short
+    Essays on Design; boils a mark down from what the product already has and decides how
+    sibling brands look side by side
 selection_guidelines:
   calibration_examples:
   - critics:

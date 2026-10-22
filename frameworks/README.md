@@ -1,6 +1,6 @@
 # Framework Registry
 
-141 frameworks across 27 categories
+144 frameworks across 28 categories
 
 | Category | Count |
 |----------|-------|
@@ -29,6 +29,7 @@
 | social-media | 9 |
 | startup | 9 |
 | strategy | 28 |
+| visual-identity | 3 |
 | visual-storytelling | 1 |
 
 ## Quick Reference
@@ -176,6 +177,9 @@
 | few-hiccupps-review | FEW HICCUPPS Review | michael-bolton | product-design | a design doc is about to be built and its claims about the codebase need checking against the code, the tests all pass but nobody has asked what they miss, a feature needs its edge cases and failure modes found before the build, or an existing screen feels wrong and nobody can say which expectation it breaks |
 | four-question-threat-model | Four Question Threat Model | adam-shostack | security | a design or feature touches login, permissions, user data, row-level security, secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server, and nobody has asked what can go wrong before it ships |
 | phantom-b-llm-threats | PHANTOM-B LLM Threats | adam-shostack | security | a feature, hook, plugin, or agent sends text to an LLM and acts on what comes back, reads text someone else wrote (emails, PRs, web pages, tool results), or lets the model call tools, and nobody has asked what can go wrong with the model part |
+| boil-it-down | Boil It Down | michael-bierut | visual-identity | a product needs a logo or mark, the current mark is the category cliché or a pile of decoration, a team has several logo directions and can't pick, or a mark needs to work as an app icon, a favicon, and in print |
+| how-much-siblings-share | How Much the Siblings Share | michael-bierut | visual-identity | a company is launching a second product or a spin-off and has to decide whether it shares the parent's name and look, carries a small 'from' line, or stands alone; or two related products already look either too alike or unrelated |
+| small-size-and-print-test | The Small-Size and Print Test | michael-bierut | visual-identity | a mark is about to ship and nobody has seen it at 16 pixels, as a phone icon, in one color, or on a book spine; a new brand color has been picked on its own; or a team argues about a logo on taste |
 
 ## By Category
 
@@ -396,6 +400,12 @@
 - **the-algorithm** — The Algorithm (elon-musk)
 - **type-1-type-2-decisions** — Type 1 vs Type 2 Decisions (jeff-bezos)
 - **working-backwards** — Working Backwards (jeff-bezos)
+
+### Visual Identity (3)
+
+- **boil-it-down** — Boil It Down (michael-bierut)
+- **how-much-siblings-share** — How Much the Siblings Share (michael-bierut)
+- **small-size-and-print-test** — The Small-Size and Print Test (michael-bierut)
 
 ### Visual Storytelling (1)
 

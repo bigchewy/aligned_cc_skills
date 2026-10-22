@@ -2663,3 +2663,86 @@ frameworks:
   use_when: a feature, hook, plugin, or agent sends text to an LLM and acts on what comes
     back, reads text someone else wrote (emails, PRs, web pages, tool results), or lets
     the model call tools, and nobody has asked what can go wrong with the model part
+- advisor: michael-bierut
+  category: visual-identity
+  default_critic_advisors:
+  - michael-bierut
+  - steve-jobs
+  deliverable_type: plan
+  domains:
+  - logo-design
+  - visual-identity
+  - brand-mark
+  follow_on_frameworks:
+  - small-size-and-print-test
+  helpful_documents:
+  - the product's name and any existing logo, colors, or typefaces
+  - the design rules the product already follows, including any looks it bans
+  - the places the mark has to appear (app icon, favicon, printed piece, packaging, signage)
+  - marks from competitors or from the category
+  id: boil-it-down
+  name: Boil It Down
+  purpose: finding a mark in something the product already has, throwing out the category
+    cliché, and cutting it down until it looks almost unfinished, so the result is one mark
+    described well enough to draw
+  required_documents:
+  - a short description of the product and who uses it
+  use_when: a product needs a logo or mark, the current mark is the category cliché or a pile
+    of decoration, a team has several logo directions and can't pick, or a mark needs to work
+    as an app icon, a favicon, and in print
+- advisor: michael-bierut
+  category: visual-identity
+  default_critic_advisors:
+  - michael-bierut
+  - april-dunford
+  deliverable_type: decision
+  domains:
+  - brand-architecture
+  - sibling-brands
+  - visual-identity
+  follow_on_frameworks:
+  - boil-it-down
+  - small-size-and-print-test
+  helpful_documents:
+  - each product's name, domain, and any existing logo, colors, or typefaces
+  - the design rules the parent already follows
+  - places where the two products meet (a shared checkout, account, footer, email, or printed
+    piece)
+  - how many people know the parent's name today
+  id: how-much-siblings-share
+  name: How Much the Siblings Share
+  purpose: deciding how a new product looks next to the product it came from, by picking one
+    of three types of brand family and then listing exactly which of name, mark, type, and
+    color the sibling shares
+  required_documents:
+  - a short description of each product, who buys it, and who uses it
+  use_when: a company is launching a second product or a spin-off and has to decide whether
+    it shares the parent's name and look, carries a small 'from' line, or stands alone; or
+    two related products already look either too alike or unrelated
+- advisor: michael-bierut
+  category: visual-identity
+  default_critic_advisors:
+  - michael-bierut
+  deliverable_type: analysis
+  domains:
+  - logo-design
+  - favicon
+  - print
+  - brand-color
+  - contrast
+  helpful_documents:
+  - the color values (hex) of the mark, its background, and the colors it sits next to
+  - the places the mark has to appear and their sizes (favicon, app icon, book cover or spine,
+    packaging)
+  - how it will be printed (full color, one color, on what paper)
+  - the name and any wordmark that goes with the mark
+  id: small-size-and-print-test
+  name: The Small-Size and Print Test
+  purpose: running a mark through Sagi Haviv's three tests, the draw-it-from-memory test,
+    the smallest and hardest places it has to live, one-color print, and Josef Albers's rule
+    for color, and ending with pass, fix, or redraw for each
+  required_documents:
+  - the mark or marks to test, as an image, a file, or a description precise enough to draw
+  use_when: a mark is about to ship and nobody has seen it at 16 pixels, as a phone icon,
+    in one color, or on a book spine; a new brand color has been picked on its own; or a team
+    argues about a logo on taste

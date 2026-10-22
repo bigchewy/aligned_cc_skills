@@ -488,3 +488,29 @@ triggers:
       - frameworks/breadboard-to-pages/prompt.md
     scenarios:
       - scenarios/use-framework/user-story-map-link-back.yaml
+
+  - paths:
+      - advisors/prompts/michael-bierut.md
+    scenarios:
+      - scenarios/use-advisor/michael-bierut-consult.yaml
+
+  - paths:
+      - frameworks/boil-it-down/prompt.md
+      - frameworks/boil-it-down/examples.md
+      - frameworks/boil-it-down/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/boil-it-down.yaml
+
+  - paths:
+      - frameworks/how-much-siblings-share/prompt.md
+      - frameworks/how-much-siblings-share/examples.md
+      - frameworks/how-much-siblings-share/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/how-much-siblings-share.yaml
+
+  - paths:
+      - frameworks/small-size-and-print-test/prompt.md
+      - frameworks/small-size-and-print-test/examples.md
+      - frameworks/small-size-and-print-test/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/small-size-and-print-test.yaml

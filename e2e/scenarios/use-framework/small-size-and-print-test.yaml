@@ -1,0 +1,81 @@
+# e2e/scenarios/use-framework/small-size-and-print-test.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# Single turn: only PHASE 1 behavior is rewarded, plus not judging on taste.
+# Haviv's tests, sizes, and contrast numbers come later.
+
+description: "Framework: The Small-Size and Print Test on a hand-drawn envelope mark"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{mark}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: The founder described a mark and said
+        they will answer step by step. Does the response work on the first
+        step only (the mark, the places it has to live, the colors) and then
+        STOP with a question? Delivering a full verdict on the mark, every
+        size, and the colors in this reply with no question scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE HARD PLACES: Does the response name the hard places
+        the mark has to pass: a 16-pixel favicon, a phone home-screen icon
+        cropped to a rounded square, one-color print, light on dark, and a
+        book spine or cover? Does it ask for anything missing, such as the
+        colors the mark sits next to? Four or more hard places named scores
+        4-5. Only "make sure it scales" scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NOT JUDGING ON TASTE: The founder says people love the
+        mark. Does the response set liking aside and say the test is whether
+        it works? Agreeing it is lovely and moving on scores 1. Praising or
+        criticizing its style with no reference to whether it works scores 2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Michael
+        Bierut: plain words, warm, no branding jargon? Invented quotes
+        attributed to him score 1. These are real and not invented: "The way
+        a color looks depends on what other colors are adjacent to it",
+        "You're doing them a huge service by making sure their mark's not a
+        complicated hot mess every time it appears."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/small-size-and-print-test/prompt.md
+      task_prompt: "\n\n---\n\nLet's run The Small-Size and Print Test on our mark. I'll answer step by step."
+      mark: &mark |
+        The mark for Moments With: a hand-drawn envelope, thin wobbly pencil
+        line, with a small heart where the flap closes. Drawn in #A34A51 on a
+        paper background #FDFAF6. It has to be the favicon and the phone icon,
+        and a sibling product will print a version on a book cover. Everyone
+        I've shown it to loves it.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Is our logo ready to ship? I'll answer step by step."
+      mark: *mark
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Michael Bierut, the graphic designer and former Pentagram partner. Let's run The Small-Size and Print Test on our mark. I'll answer step by step."
+      mark: *mark

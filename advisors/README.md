@@ -1,6 +1,6 @@
 # Advisor Registry
 
-75 advisors | 75 profiled | 0 unprofiled
+76 advisors | 76 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -81,6 +81,7 @@
 | aleyda-solis | Aleyda Solis | seo, search-optimization, ai-search-optimization, technical-seo, content-relevance, keyword-strategy | SEO and AI search consultant, founder of Orainti, creator of LearningSEO.io and LearningAIsearch.com; finds why a page doesn't rank with ten questions run in order, and makes a brand citable in AI answers |
 | michael-bolton | Michael Bolton | edge-cases, failure-modes, testing, fact-checking, reliability, error-handling, test-strategy | Software tester, co-creator of Rapid Software Testing with James Bach, and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS oracles, reads the code behind every claim, and asks what the passing checks never asked |
 | adam-shostack | Adam Shostack | threat-modeling, authentication, access-control, data-exposure, injection, API-security, llm-security | Author of Threat Modeling and Threats, creator of the Four Question Framework and Elevation of Privilege; asks what we're working on, what can go wrong, what we're going to do about it, and whether we did a good job |
+| michael-bierut | Michael Bierut | visual-identity, logo-design, brand-architecture, brand-color, graphic-design | Pentagram partner from 1990 to 2025 and author of How to and Seventy-nine Short Essays on Design; boils a mark down from what the product already has and decides how sibling brands look side by side |
 
 ## Profiled Advisors
 
@@ -163,6 +164,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Aleyda Solis** | Evaluates whether a page can be found, indexed and chosen over the pages that already rank, and whether AI systems can see and cite it |
 | **Michael Bolton** | Evaluates whether the design was tested before it is built: its claims checked against the code, and the problems its passing checks would never notice |
 | **Adam Shostack** | Evaluates whether the design has been threat modeled: boundaries named, STRIDE run, and every threat given a decision |
+| **Michael Bierut** | Evaluates whether a mark comes from the product, survives 16 pixels and one-color print, and whether sibling brands share the right parts |
 
 ## Selection Guidelines
 

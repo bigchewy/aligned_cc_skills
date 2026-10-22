@@ -1,0 +1,93 @@
+# e2e/scenarios/use-framework/boil-it-down.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# Single turn. The product description answers Phase 1, so Phase 2 (the
+# "already there" and cliché lists, then a question) is allowed. Picking a
+# source and cutting it down come later and are not rewarded here.
+
+description: "Framework: Boil It Down for a new product's mark"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{product}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STEP DISCIPLINE: The founder described the product,
+        already answering the first step's questions (what it is, the name,
+        where the mark appears, what's decided), and said they will answer
+        step by step. Score 5 if the response either asks what is still
+        missing from that first step, or confirms it and goes on only to an
+        inventory of what the product already has and what the category
+        cliché is, then STOPS with a question for the founder. Picking the
+        mark's source for the founder, describing finished logo concepts, or
+        cutting a mark down in this reply scores 1-2. No question at the end
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE RIGHT FIRST MOVES: Does the response confirm or ask
+        about where the mark has to live (favicon, phone icon, printed
+        pieces), treat the hardest places (16 pixels, one color) as the ones
+        to design for, and take in the founder's existing rules (banned looks,
+        paper color, one accent) as already decided? Two of the three scores
+        4. Jumping to mood words or a style board scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO DECORATION: Does the response avoid suggesting
+        decoration or the category cliché (hearts, envelopes with hearts,
+        gold, script lettering, confetti) as a direction? Any suggestion of
+        those as the mark scores 1. Hinting that the mark will come from
+        something the product already has scores 5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Michael
+        Bierut: plain words, warm, a little self-deprecating, no branding
+        jargon ("brand essence", "elevate", "touchpoints")? Invented quotes
+        attributed to him score 1. These are real and not invented: "If you
+        have a great idea but can't make it work, it isn't a great idea",
+        "You're doing them a huge service by making sure their mark's not a
+        complicated hot mess every time it appears", "It turns out that M-A-D
+        are not good letters to do this with."
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/boil-it-down/prompt.md
+      task_prompt: "\n\n---\n\nLet's run Boil It Down for my product's logo. I'll answer step by step."
+      product: &product |
+        Moments With (momentswith.app). Friends and family write specific
+        memories of one person. Each memory gets illustrated, and a few are
+        delivered to that person every day for several weeks, like letters.
+        The mark has to work as a favicon and a phone home-screen icon.
+        Design rules already set: warmth held down by restraint, references
+        are a letterpress card, a book page, Muji packaging. Paper background
+        #FDFAF6, one accent #A34A51. Banned: gold, foil, hearts, confetti,
+        watercolor, script fonts.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Let's design a logo for my product. I'll answer step by step."
+      product: *product
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Michael Bierut, the graphic designer and former Pentagram partner. Let's run Boil It Down for my product's logo. I'll answer step by step."
+      product: *product
