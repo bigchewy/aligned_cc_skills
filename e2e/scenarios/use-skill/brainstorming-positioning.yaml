@@ -1,17 +1,22 @@
 # e2e/scenarios/use-skill/brainstorming-positioning.yaml
-# Two paired comparisons: with-skill vs. without-skill
-# Tests whether the brainstorming skill's structured process produces
-# better output than prompting Claude directly.
-# System context is embedded in the prompt (file:// resolves in prompt vars,
-# not in provider config).
+# Paired comparison: the real brainstorming skill (router + authoring mode) vs. no skill.
+# Brainstorming is interactive. Its first turn picks the mode, starts the process and
+# stops for the user, so this scores the first turn the way the paired framework
+# scenarios do (see use-framework/sellability-index.yaml): stopping at the right place,
+# grounding in the brief, and asking the one question that matters. A one-shot answer
+# with a finished strategy is the vanilla behavior the skill exists to replace.
+# Rewritten 2026-10-28: it used to embed the retired business-mode prompt and score a
+# finished deliverable, which no first turn of the real skill can produce. The eval
+# provider has no tools, so the skill arm is told to skip the scan and file reads;
+# otherwise its first turn is only "let me resolve the base directory" and stops.
 
-description: "Skill: brainstorming business positioning strategy"
+description: "Skill: brainstorming a positioning strategy (first turn)"
 
 providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+  - "{{skill_prompt}}{{mode_prompt}}{{task_prompt}}\n\n{{company_brief}}"
 
 defaultTest:
   options:
@@ -20,68 +25,48 @@ defaultTest:
   assert:
     - type: llm-rubric
       value: |
-        Score 1-5 on STRUCTURAL COMPLETENESS: Does the response follow
-        a recognizable structured process with distinct phases or steps?
-        Look for: explicit goal definition, problem identification,
-        analysis/diagnosis, and solution design as separate recognizable
-        sections. A wall of undifferentiated advice scores 1-2.
-        Clear phases with logical progression scores 4-5.
+        Score 1-5 on PHASE DISCIPLINE: Does the response start a structured
+        process and then STOP for the founder, instead of delivering a finished
+        positioning strategy? Good markers: it says what kind of work this is
+        (a positioning document) and how it will proceed (a positioning
+        framework or advisor), then asks the founder something and waits. A
+        response that writes the full positioning, options and recommendation
+        in one go scores 1-2. Stating the mode or engine it picked in one line
+        is correct, not a fault.
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on DIAGNOSTIC DEPTH: Does the response identify
-        root causes and non-obvious problems, or stay surface-level?
-        Look for: "why" analysis beyond first-order observations,
-        identification of hidden obstacles, pattern recognition across
-        problems, distinction between symptoms and causes.
-        Listing obvious problems without analysis scores 1-2.
-        Multi-level causal analysis scores 4-5.
+        Score 1-5 on GROUNDING: Are its observations and questions tied to this
+        company's specifics (DataForge, mid-market data engineering teams, the
+        visual debugger, Airflow, Dagster and Prefect, the customer quotes)?
+        Generic positioning questions that could go to any B2B SaaS company
+        score 1-2. Questions and observations built on details from the brief
+        score 4-5.
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on SOLUTION SPECIFICITY: Are recommendations grounded
-        in this specific company's situation (DataForge, mid-market data
-        engineering, Airflow alternative)? Does each solution trace back
-        to a specific diagnosed problem or root cause? Generic B2B SaaS
-        advice scores 1-2. Solutions that reference specific company
-        details and map to identified problems score 4-5.
-      weight: 2
-    - type: llm-rubric
-      value: |
-        Score 1-5 on DECISION READINESS: Does the output give a founder
-        enough to pick a direction and brief their team? Look for:
-        multiple distinct approaches (2-3) rather than a single take,
-        an explicit recommended choice, rationale that ties the choice
-        back to diagnosed problems or root causes, and clear tradeoffs
-        between the alternatives. A single unargued recommendation or
-        a list of options with no pick scores 1-2. Multiple options
-        with an explicit recommendation, tradeoff reasoning, and
-        problem-grounded rationale scores 4-5.
-      weight: 1
-    - type: llm-rubric
-      value: |
-        Score 1-5 on FRAMEWORK APPLICATION: Does the response correctly
-        apply relevant business frameworks or analytical methods? Look for:
-        proper use of competitive analysis, market segmentation, value
-        proposition design, or positioning methodology — applied to the
-        specific situation, not just name-dropped. No frameworks or
-        hallucinated frameworks score 1-2. Correctly applied, relevant
-        frameworks score 4-5.
+        Score 1-5 on QUESTION QUALITY: Does it ask the question whose answer
+        would most change the positioning, and skip questions the brief
+        already answers? A long list of generic intake questions, or asking for
+        facts that are in the brief, scores 1-2. No question at all scores 1.
+        One or two sharp questions the brief leaves open score 4-5.
       weight: 1
 
 tests:
-  - description: "with-skill (structured brainstorming process)"
+  - description: "with-skill (brainstorming router + authoring mode)"
     metadata:
       arm: full-stack
     vars:
-      system_context: file://../../fixtures/skill-prompts/brainstorming-business.md
-      task_prompt: "\n\n---\n\nHelp me develop a positioning strategy for this company:"
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
+      task_prompt: "\n\n---\n\n(Session note: the brainstorming skill and its authoring mode file are included above. This session has no tools, so the project scan returns nothing and no files can be read. Skip those steps and go straight to the mode's first step with the founder.)\n\nUser: /aligned:brainstorming Help me develop a positioning strategy for this company:"
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
 
   - description: "without-skill (vanilla baseline)"
     metadata:
       arm: vanilla
     vars:
-      system_context: ""
+      skill_prompt: ""
+      mode_prompt: ""
       task_prompt: "Help me develop a positioning strategy for this company:"
       company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md

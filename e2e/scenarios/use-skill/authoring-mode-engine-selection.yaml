@@ -61,7 +61,7 @@ tests:
       skill_prompt: file://../../../skills/brainstorming/SKILL.md
       mode_prompt: file://../../../skills/brainstorming/modes/authoring.md
       recommendation_logic: file://../../../skills/_shared/contextual-recommendation.md
-      scenario_description: "Contextual-recommendation finds no matching frameworks"
+      scenario_description: "Contextual-recommendation finds no matching frameworks and no matching advisors"
       topic: "Design a naming convention for my digital art archive"
 
   - description: "engine-selection-advisor: advisor match found, no framework"
