@@ -1,165 +1,161 @@
 ---
 name: find-potential-advisors
-description: Researches and evaluates potential advisor candidates for the Virtual Board. Use when exploring a new domain or identifying experts before running add-advisor.
+description: "Use when exploring a new domain for the Virtual Board, looking for real experts to model as advisors, or before running add-advisor on someone not yet chosen."
 ---
 
 # Find Potential Advisors
 
-A research skill that helps identify and evaluate potential advisors for the Virtual Board. Works for any domain: trauma, leadership, negotiation, creativity, productivity, relationships, etc.
+Finds real experts for a domain, counts how much of their own material is public, and
+recommends 2 or 3 finalists to turn into advisors with `/aligned:add-advisor`. Works for any
+domain: trauma, leadership, design, growth, medicine, negotiation.
 
-**Input:** A brief document (created through interview or provided directly)
-**Output:** Research findings, candidate list, evaluation matrix, and 2-3 finalists for user selection
-**Relationship:** Predecessor to `/aligned:add-advisor`
+**Output:** one brief file, filled in from `report-template.md`, and a short summary in chat.
+
+## The core rule
+
+**Each phase is done by different agents, and every count and quote in the report has a URL.**
+
+- The agent that picks a candidate is the worst one to grade them. So candidates are profiled
+  by one agent and evaluated by another, which gets their names and nothing else.
+- Search snippets are wrong often enough to matter. In one run, two snippets gave episode
+  lengths that were 15 and 20 minutes off from the episode pages. Only opened pages count.
+- A report from memory looks just like a researched one unless it shows its sources. So the
+  report shows every URL, every sum, and what was skipped.
+
+Eight runs in a row merged these phases and guessed the ratings. `anti-examples.md` shows how.
+`examples.md` shows what the evidence should look like.
+
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line
+> printed at skill load. If compressed, Glob `$HOME` for `**/.claude-plugin/plugin.json`, take the
+> parent of the matched `.claude-plugin/` dir as the plugin root, and compute `{base-directory}`
+> as `<plugin-root>/skills/find-potential-advisors/`. See `skills/_shared/resolve-skill-path.md`.
 
 ## Invocation
 
 ```
-/aligned:find-potential-advisors                           # Start interview to create brief
-/aligned:find-potential-advisors docs/plans/my-brief.md   # Use existing brief, skip to Phase 2
+/aligned:find-potential-advisors                          # interview first
+/aligned:find-potential-advisors docs/plans/my-brief.md   # use an existing brief
 ```
 
-If a brief path is provided as an argument, validate it contains required fields and proceed directly to Phase 2 (Research).
+## Phase 1: Interview
 
-## Phase 1: Interview (or Brief Intake)
+The main session does this part. The brief it produces is the Brief section of
+`report-template.md`.
 
-If no brief path provided, conduct an interview to create one. Ask questions one at a time:
+If a brief path was given, read it and check every field in the template's Brief section.
+Ask only for the fields that are missing.
 
-1. **Domain/Focus Area**
-   - "What domain or focus area should this advisor cover?"
+Otherwise, ask these one at a time. Skip a question when the user has already answered it.
+Question 6 is the exception.
 
-2. **Target Users**
-   - "Who will use this advisor and what situation are they facing?"
+1. What domain should this advisor cover?
+2. Who will use the advisor, and what situation are they in?
+3. Any contexts, groups of people or uses the research should focus on? (optional)
+4. Any preference for the kind of approach, or should the research decide? (optional)
+5. Anything else: cultural context, safety concerns, outcomes? (optional)
+6. **Overlaps.** Read `skills/_shared/resolve-advisor-source.md` and follow it to get the
+   merged advisor list. Name the advisors whose domains are near this one, one line each. Then
+   ask: "Which of these should the new advisor stay away from, and is there anyone else?" Ask
+   this even when the user's message answers everything else. Their message describes a need.
+   It doesn't say which advisors to avoid.
+7. How many candidates? (default 10)
 
-3. **Specific Research Angles** (optional)
-   - "Are there specific contexts, populations, or applications the research should focus on?"
+Then write the brief to `docs/plans/YYYY-MM-DD-find-advisor-<domain>-brief.md`. Include a
+hypothetical situation for the voice samples and 3 to 5 research questions. Write both
+yourself from the interview.
 
-4. **Modality Preferences** (optional)
-   - "Do you have preferences for the type of approach, or should research guide this?"
+## Phases 2 to 6: Run the workflow
 
-5. **Additional Considerations** (optional, open-ended)
-   - "Any other requirements? (e.g., cultural context, safety concerns, specific outcomes)"
+If the Workflow tool is available in this session, call it:
 
-6. **Differentiation Check** (automatic)
-   - Read the project's CLAUDE.md or advisor registry to check for existing advisors in this domain. Resolve the registry by checking for `registry.yaml` first, then globbing `advisors/prompts/*.md`.
-   - Present: "Current advisors in related areas: [list]. The new advisor should be distinct."
-   - Ask: "Any specific overlaps to avoid?"
+- `scriptPath`: `{base-directory}/workflow.js`
+- `args`:
+  - `brief_path`: the brief's absolute path
+  - `skill_dir`: `{base-directory}`
+  - `research_questions`: the questions from the brief
+  - `candidate_count`: the number from the brief
+  - `exclude`: every advisor named under "Advisors already on the board nearby", plus anyone
+    else the user named
 
-7. **Candidate Count** (optional, defaults to 10)
-   - "How many initial candidates should I research?"
+The script runs each phase with its own agents:
+1. One research agent per question.
+2. One agent picks the candidates.
+3. Profile agents take 3 candidates each. A different agent then evaluates each group.
+4. The script works out each rating from the counted items that have URLs.
+5. One agent picks the finalists.
+6. One agent writes the brief.
+7. A fresh agent checks the brief, with one round of fixes.
 
-**Interview Flexibility:** Skip questions whose answers are already clear from context. If the user provides a pre-written brief, validate it has required fields and proceed to research.
+With 10 candidates and 4 questions, that's about 16 agents.
 
-**Output:** Brief document saved to `docs/plans/YYYY-MM-DD-find-advisor-<domain>-brief.md`
+It runs in the background. Tell the user in one or two sentences that it has started and
+roughly how many agents it will use. Then carry on. If this skill was started from inside
+another task, go back to that task while the workflow runs.
 
-## Phase 2: Research Modalities
+When the workflow finishes, read its result:
 
-Research what approaches are most effective for the domain.
+- **`done`:** read the brief. Give the user its Chat summary section. If `problems` isn't empty,
+  add each problem to the "What was skipped or not verified" list you show.
+- **`too_few`:** fewer than 2 candidates rated High or Medium. Show the Chat summary, then ask
+  which to do: widen the search, lower the bar, or go ahead with the best candidate.
+- **`failed`:** say which step failed, from `skipped`. Offer to rerun with `resumeFromRunId`, so
+  the finished agents aren't paid for twice.
 
-**Process:**
-1. Conduct 3-5 web searches per research question using `WebSearch` and `WebFetch` tools (never `Bash(curl)` — it creates stale permission entries)
-2. Prioritize systematic reviews and meta-analyses
-3. Stop when findings start repeating
-4. Include any specialized angles from the brief
+## If the Workflow tool is not available
 
-**Document:**
-- What modalities/frameworks have best evidence?
-- What approaches are specifically effective for the target users?
-- Any emerging or specialized approaches?
-- Sources cited
+Run the same agents with the Agent tool. Every agent gets this line, then its inputs:
+`Read {base-directory}/agent-prompts.md, the section "## <Section>", and follow it.`
 
-**Output:** Research section added to brief document.
+Make a task list with one item per agent below. Check each item off when its agent returns.
 
-## Phase 3: Identify Candidates
+1. **Research.** One agent per research question, all at once. Give each one the brief path and
+   its question. Wait for all of them.
+2. **Candidates.** One agent. Give it the brief path, the candidate count, the names to leave
+   out, and all the research results.
+3. **Profile, then evaluate.** Split the candidates into groups of 3. For each group, start a
+   Profile agent. When it returns, start an Evaluate agent for the same names. The evaluator
+   must be a different agent, and it gets the names only.
+4. **Ratings.** Work out each rating yourself with the rubric under Evaluation in
+   `report-template.md`. Count only items with URLs. Show the minutes and their sum.
+5. **Too few?** If fewer than 2 candidates are High or Medium, start a Write agent for the
+   sections up to Evaluation. Then stop and give the user the three choices.
+6. **Finalists.** One agent. Give it the strong candidates, ranked, with their profiles and
+   evaluations.
+7. **Write.** One agent. Give it all the results as JSON.
+8. **Check.** A fresh agent with the brief path. If it finds problems, start a Fix agent, then a
+   second Check agent.
 
-Based on research, identify candidates (per brief, default 10) who:
-- Are recognized experts in effective modalities
-- Have substantial public presence
-- Have a distinctive voice/approach
+Then report the result the same way as in the workflow section above.
 
-**For each candidate, document:**
-- Name and credentials
-- Primary modality/approach
-- Key works (books, frameworks, talks)
-- Why they might fit this need
+## Phase 7: The user picks
 
-**Output:** Candidates section added to brief document.
+Give the user the brief's Chat summary. It has the recommendation, the finalists with their
+counts, who was left out, **What was skipped or not verified**, the brief's path, and the
+question of which to add.
 
-## Execution Strategy: Sub-Agents
+When they pick, write the choice into the brief. Then tell them the next step is
+`/aligned:add-advisor <name>` with the brief as its research file.
 
-Phases 2-4 involve significant research. Use sub-agents to parallelize:
+## Red flags
 
-**Phase 2 (Research):** Spawn one sub-agent per research question. Each agent conducts 3-5 web searches using `WebSearch` and `WebFetch` tools (never `Bash(curl)`) and returns findings. Consolidate results into the brief.
+If you catch yourself thinking any of these, stop and run the step as written:
 
-**Phase 3 (Candidates):** After research identifies key modalities, spawn sub-agents to research 2-3 candidates each in parallel. Each agent returns a candidate profile.
+| Thought | What's true |
+|---------|-------------|
+| "I'll merge research and candidate-finding into one agent to save time." | The agent that finds a candidate then grades them. That's how eight runs went wrong. |
+| "The search snippet gives the episode length." | Snippets were off by 15 and 20 minutes from the pages. Open the page. |
+| "I know he did that project, from memory." | It goes in "What was skipped or not verified," not in the recommendation. |
+| "Four books and lots of talks. Clearly High." | High needs 5 counted hours with URLs. Count them. |
+| "The user's message answers the interview." | It doesn't say which advisors to avoid. Ask question 6. |
+| "I'll write the voice sample myself." | Build it from real quotes with URLs. |
+| "The report looks fine, so I'll skip the check." | The check is how you find out. Run it. |
+| "This is a side task. I'll keep it small." | The user builds an advisor on it. Run the workflow and go back to the main task. |
+| "Nothing was skipped, so I'll leave that section out." | Write "Nothing." Leaving it out reads as hiding it. |
 
-**Phase 4 (Evaluation):** Spawn sub-agents to evaluate 2-3 candidates each for voice mimicry potential. Each agent assesses public material availability and returns a rating.
+## Files
 
-This parallelization keeps the main session focused on coordination while sub-agents handle deep research.
-
-## Phase 4: Evaluate Voice Mimicry Potential
-
-Assess each candidate's public material availability.
-
-**Evaluation Criteria:**
-
-| Rating | Criteria |
-|--------|----------|
-| High | 2+ books AND 5+ hours video/audio AND distinctive terminology |
-| Medium | 1 book OR 2+ hours content, identifiable style |
-| Low | Limited material or generic communication style |
-
-**For each candidate, assess:**
-- Written works (books, articles, transcripts)
-- Spoken content (talks, podcasts, interviews)
-- Distinctive voice markers (phrases, style, signature concepts)
-- Accessibility (freely available vs. paywalled)
-
-**Checkpoint:** If fewer than 2 candidates score High or Medium, report to user. Options: expand search criteria, lower threshold, or proceed with limited options.
-
-**Output:** Evaluation matrix added to brief document.
-
-## Phase 5: Narrow to Finalists
-
-Select top 2-3 candidates. For each:
-
-1. **Summary Profile** - Who they are and their approach
-
-2. **Differentiation Analysis** - How they differ from existing advisors
-
-3. **Framework Potential** - What frameworks could be built; how they differ from existing ones
-
-4. **Voice Sample** - Brief example response to a hypothetical user situation relevant to the domain
-
-5. **Trade-offs** - Pros and cons compared to other finalists
-
-**Include:** Claude's recommended choice with reasoning.
-
-**Output:** Finalists section added to brief document.
-
-## Phase 6: User Selection
-
-Present finalists with:
-- Comparison summary
-- Claude's recommendation
-- Request user selection
-
-Once selected:
-- Document choice in brief
-- Prompt: "Ready to implement? Run `/aligned:add-advisor` to create this advisor."
-
-## Document Structure Options
-
-**Option A: Single Document** (default)
-All phases append to one brief.md file with clear section headers.
-
-**Option B: Folder Structure** (for complex searches)
-```
-docs/plans/find-advisor-<domain>-YYYY-MM-DD/
-├── 01-brief.md
-├── 02-research.md
-├── 03-candidates.md
-├── 04-evaluation.md
-└── 05-finalists.md
-```
-
-Use Option A unless the user requests Option B or the document exceeds reasonable length.
+- `workflow.js`: the Workflow script for Phases 2 to 6.
+- `agent-prompts.md`: instructions for each agent. The script and the fallback both use it.
+- `report-template.md`: the brief's sections, the rating rubric, and the Chat summary shape.
+- `examples.md`: evidence done right, from a real run.
+- `anti-examples.md`: the eight ways real runs went wrong.
