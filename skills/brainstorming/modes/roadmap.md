@@ -66,7 +66,7 @@ Most decompositions are mostly linear; not all are. If two components are indepe
 
 For each component, write the spawn-brief block using the 5-field schema in `{base-directory}/references/spawn-brief-template.md`. **Reference the template; do not duplicate the schema here.** Every field must be substantive — no `TBD`, no one-word placeholders.
 
-The spawn-brief paragraph (the `>` blockquote) is what gets pasted verbatim into a fresh `/aligned:brainstorming` invocation. It MUST contain mode-disambiguating verbs ("design...", "compare...", "write...", "synthesize...") so the brainstorming router auto-routes to the correct mode. A generic brief falls through to the always-ask 4-mode confirmation — not a failure, but a friction the spawn-list should be authored to avoid.
+The spawn-brief paragraph (the `>` blockquote) is what gets pasted verbatim into a fresh `/aligned:brainstorming` invocation. It MUST contain mode-disambiguating verbs ("design...", "compare...", "write...", "synthesize...") so the brainstorming router auto-routes to the correct mode. A generic brief leaves the router unsure, so it asks which mode — not a failure, but a friction the spawn-list should be authored to avoid.
 
 Quality bar: could a reader who has never seen this conversation paste the spawn-brief paragraph into a fresh `/aligned:brainstorming` and get a useful brainstorm started? If not, re-author it with the missing population, constraints, or deliverable shape.
 

@@ -179,8 +179,8 @@ def test_skill_md_step1_has_three_signal_sets_and_always_ask():
     # Software requests route out to a dev-workflow plugin instead of a mode block
     assert "superpowers:brainstorming" in text, \
         "SKILL.md must route software requests to superpowers:brainstorming"
-    # Always-ask discipline
-    assert "always" in step1.lower() and ("ask" in step1.lower() or "present the question" in step1.lower())
+    # Ask-when-unsure discipline (replaced always-ask on 2026-10-28; see test_confident_skips.py)
+    assert "highly confident" in step1.lower() and "picker" in step1.lower()
     # Picker label format (task vocabulary, not mode IDs).
     for label_fragment in ["Write a document", "Synthesize research", "Break a big intent"]:
         assert label_fragment in step1, f"missing picker label: {label_fragment}"

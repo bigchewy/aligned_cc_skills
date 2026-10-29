@@ -78,11 +78,25 @@ here — route to Authoring with the `root-cause-analysis` framework.
   plan, prioritization memo, portfolio doc for stakeholders) — those are
   Authoring with a roadmap-shaped framework, not Roadmap mode
 
-**Always ask the user to confirm.** Even when signals point cleanly at one mode, present an AskUserQuestion with the auto-detected mode pre-selected. The user confirms with one tap or picks another. Exceptions:
-- Explicit `--mode authoring|research|roadmap` arg → skip the question.
-- This is the second+ brainstorm in the conversation AND the auto-detected mode matches the prior brainstorm's mode → skip the question (session-scoped heuristic; on uncertainty, fall back to always-ask).
+**Ask only when you're not confident.** Skip the question when you're highly confident of the
+mode, and say the mode in one line so the user can redirect. You're confident when both hold:
+- The signals point at one mode, with no strong signal for another.
+- That mode's rules fit what the user asked for. Read the mode's Out of scope and Key
+  Principles. If the request asks for something the mode excludes (advisors in Roadmap mode,
+  a stakeholder document in Roadmap mode, an evidence map in Authoring), you're not confident.
+  Pick the mode that fits, or ask.
 
-Present the 3-way picker AskUserQuestion with these task-vocabulary picker labels:
+Also skip the question when:
+- The user passed `--mode authoring|research|roadmap`.
+- This is the second or later brainstorm in the conversation and the detected mode matches the
+  last one.
+
+Otherwise, present the picker. Don't guess between modes to save a question.
+
+**Once a mode is picked, follow its rules.** If partway through the request needs something the
+mode excludes, don't drop the mode's rules quietly. Say so, and switch to the mode that fits.
+
+When you ask, present the 3-way picker AskUserQuestion with these task-vocabulary picker labels:
 
 - **Write a document** — deck, memo, brief, positioning, sales pitch, curriculum, RCA write-up, competitive analysis, any named deliverable authored from a framework → *Authoring*
 - **Synthesize research** — compare frameworks, literature review, prior art survey, evidence map → *Research*

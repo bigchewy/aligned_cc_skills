@@ -18,7 +18,7 @@ Each entry in a Roadmap-mode `spawn-list.md` uses this schema. Multiple entries 
 
 A user invoking `/aligned:brainstorming` against a component pastes the **spawn-brief paragraph** (the `>` blockquote) as the prompt. The brainstorming router runs topic-keyword signal detection on the paragraph prose; the spawn-brief is authored to contain explicit mode-disambiguating verbs so detection routes correctly.
 
-`Target mode` is for the human reader and documentation, not consumed by the router (no parsing layer exists). If signal detection misses, the always-ask 3-mode confirmation question presents with no pre-selected mode — friction, not failure.
+`Target mode` is for the human reader and documentation, not consumed by the router (no parsing layer exists). If signal detection misses, the router isn't confident and presents the 3-mode question with no pre-selected mode — friction, not failure.
 
 Plan-writing is **not** a spawn-list consumer. The chain is:
 

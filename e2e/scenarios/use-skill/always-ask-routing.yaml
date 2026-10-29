@@ -1,9 +1,11 @@
 # e2e/scenarios/use-skill/always-ask-routing.yaml
-# Validates that the brainstorming router always presents the 3-way picker on
-# first invocation, skips it for same-mode repeat, re-asks for mode changes,
-# and respects explicit --mode flags.
+# Validates that the brainstorming router asks for the mode only when it isn't
+# confident: it names the mode and proceeds on a clear single-mode request, presents
+# the 3-way picker on ambiguous or mismatched requests, skips it for same-mode repeat,
+# re-asks for mode changes, and respects explicit --mode flags. (The file keeps its
+# old name so trigger-map entries still point at it.)
 
-description: "Skill: brainstorming always-ask routing discipline"
+description: "Skill: brainstorming confident routing discipline"
 
 providers:
   - file://../../providers/claude-login.yaml
@@ -19,8 +21,12 @@ defaultTest:
     - type: llm-rubric
       value: |
         Score 1-5 on ROUTING CORRECTNESS: Given the scenario description,
-        does the response follow the correct always-ask discipline?
-        (a) First invocation → always presents picker = 5
+        does the response ask for the mode only when it isn't confident?
+        (a) Ambiguous first request (could be more than one mode) → presents picker = 5
+        (g) Clear single-mode request whose mode fits everything asked →
+            names the mode in one line and proceeds without the picker = 5
+        (h) Request that asks for something the detected mode excludes →
+            does not silently run that mode; picks the mode that fits or presents picker = 5
         (b) Same-mode repeat → skips picker, proceeds = 5
         (c) Different-mode re-invoke → re-presents picker = 5
         (d) Explicit --mode flag → skips picker = 5
@@ -33,13 +39,29 @@ defaultTest:
       weight: 3
 
 tests:
-  - description: "always-ask-a: first invocation always presents picker"
+  - description: "always-ask-a: ambiguous first request presents picker"
     metadata:
       arm: single
     vars:
       skill_prompt: file://../../../skills/brainstorming/SKILL.md
       scenario_description: "Fresh session, no prior brainstorm context"
       user_input: "Help me plan out what to build next quarter"
+
+  - description: "always-ask-g: clear single-mode request proceeds without picker"
+    metadata:
+      arm: single
+    vars:
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      scenario_description: "Fresh session, no prior brainstorm context"
+      user_input: "Write a positioning brief for our new analytics product, using April Dunford's framework"
+
+  - description: "always-ask-h: request needs something the detected mode excludes"
+    metadata:
+      arm: single
+    vars:
+      skill_prompt: file://../../../skills/brainstorming/SKILL.md
+      scenario_description: "Fresh session. Roadmap mode excludes advisor panels and produces only a spawn-list of brainstorm prompts."
+      user_input: "Break the launch of our second site into pieces, convene my product and architecture advisors on it, and put the plan into Asana with subtasks"
 
   - description: "always-ask-b: same-mode repeat skips picker"
     metadata:

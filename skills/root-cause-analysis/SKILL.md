@@ -1,6 +1,6 @@
 ---
 name: root-cause-analysis
-description: "Use when a business or process problem isn't resolving — a deliverable that isn't landing, a strategy not producing results, a process breakdown. Supports low (default) and high severity with multi-agent investigation. Code bugs and test failures are out of scope; use a dev-workflow plugin such as superpowers (systematic-debugging)."
+description: "Use when a business or process problem isn't resolving — a deliverable that isn't landing, a strategy not producing results, a process breakdown. Picks low or high severity from the problem; high adds a multi-agent investigation. Code bugs and test failures are out of scope; use a dev-workflow plugin such as superpowers (systematic-debugging)."
 ---
 
 # Root Cause Analysis
@@ -52,10 +52,12 @@ for those; otherwise install a dev-workflow plugin.
 
 ## Severity Levels
 
-Default severity is **low** (current single-agent behavior). Pass `high` as an argument for multi-agent fan-out investigation.
+Pick the severity yourself before Phase 1, using "When to Use High Severity" below. Say which
+you picked and why, in one line, so the user can overrule it. Ask only when the criteria don't
+settle it. Don't fall back to low because nobody passed an argument.
 
-- `/aligned:root-cause-analysis` — low severity (default)
-- `/aligned:root-cause-analysis high` — high severity, multi-agent
+- `/aligned:root-cause-analysis` — you pick the severity
+- `/aligned:root-cause-analysis low` or `high` — the user picked it; use that
 
 ### High Severity — Phase 0: Multi-Agent Investigation
 
@@ -262,6 +264,27 @@ You MUST complete each phase before proceeding to the next.
 - If any criterion is FAIL → address the findings, then re-run Phase 5
 - If all PASS or FLAG → note any FLAGs, then proceed to the Lessons-Learned Gate
 
+## Analysis-Only Review
+
+Phase 5 only runs after a fix. Many runs end earlier, with an analysis the user takes away: a
+list of obstacles, root causes and proposed fixes. Those still get checked.
+
+Before presenting an analysis-only result, start a fresh agent that did none of the analysis.
+Give it the source material (the user's notes, the documents, the feedback the analysis was
+built from) and the analysis. Ask it to:
+
+1. List every concern, obstacle or complaint in the source material.
+2. For each one, find where the analysis covers it, or mark it missed.
+3. For each root cause, quote the line of source material it rests on. Mark any that rest on
+   nothing in the source.
+
+Add the missed items to the analysis, or say why each one is set aside. Then tell the user what
+the review found.
+
+In one real run, a strategy problem across three people ran at low severity with no agents and
+no review. The user later found that it had missed one of the major concerns in the source
+notes.
+
 ## Lessons-Learned Gate
 
 BEFORE completing this skill's process:
@@ -317,6 +340,7 @@ If you catch yourself thinking:
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
 | **4. Implementation** | Define success criteria, fix, verify | Problem resolved, verified |
 | **5. Post-Fix Review** | Sub-agent reviews changes for blast radius, root cause consistency, completeness | All criteria PASS or FLAG |
+| **Analysis-Only Review** (no fix applied) | Fresh agent checks the analysis against the source for missed items | Every source concern covered or set aside |
 
 ## When Process Reveals No Root Cause
 

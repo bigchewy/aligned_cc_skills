@@ -247,6 +247,6 @@ Runs for Medium and Full. Read `{base-directory}/../_shared/critique-panel-orche
 ## Key Principles
 
 - The wrapper owns scaffolding (project scan, intake gates, visualization, critique, commit, handoff). The engine (framework or Q&A) owns the conversation.
-- Always-ask routing means the user has confirmed they want Authoring before this file runs.
+- By the time this file runs, the router has either confirmed Authoring with the user or said it picked Authoring, so the user could redirect.
 - Fallback ladder paths 2b/2c/2d are structured Q&A — never free exploration.
 - Wise Eric is the last-resort default proxy. His prompt handles "I'm not sure what I need" gracefully.
