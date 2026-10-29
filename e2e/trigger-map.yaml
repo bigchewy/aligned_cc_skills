@@ -60,6 +60,7 @@ triggers:
 
   - paths:
       - skills/_shared/framework-runner.md
+      - skills/_shared/resolve-design-principles.md
     scenarios:
       - scenarios/use-skill/framework-runner-extraction.yaml
       - scenarios/use-skill/use-framework-backward-compat.yaml

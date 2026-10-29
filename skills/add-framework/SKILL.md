@@ -116,11 +116,22 @@ If they struggle:
 Close with:
 "{Summary and next steps}"
 
+## Artifact
+
+{What the page shows when the framework ends: its sections in order, which phase fills each,
+and the form each takes (a table, a 2x2, a one-page kernel, a ranked list). One line on what the
+reader should do with it.}
+
 ## Key Rules
 - Complete each phase fully before moving to the next
 - ALWAYS pause and wait for user input at marked points
 - {Framework-specific guidance - positive framing}
 ```
+
+Every framework ends with an artifact: the framework runner publishes the result in the
+project's brand once the last phase is done. The `## Artifact` section tells it what to put on
+the page. Write it as the deliverable the expert's own method produces, not a transcript of the
+session.
 
 ### 3. Create examples.md
 

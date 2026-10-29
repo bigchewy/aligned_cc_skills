@@ -48,6 +48,7 @@ Read `skills/_shared/framework-runner.md` and invoke it with:
 - **Matched framework path:** the selected entry's `absolute_framework_dir`
 - **`framework_entry`:** the selected entry from Phase 1
 - **`intake_gate_mode`:** `strict` (brainstorming wrapper gates on `required_documents`)
+- **`publish_artifact`:** `no` (brainstorming renders its own page from the result)
 
 On framework completion, the runner returns control here. Proceed to Size the work.
 

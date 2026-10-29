@@ -14,6 +14,8 @@ framework folder and the registry path.
    runner read the advisor's name from it, so a different form leaves the framework unloadable.
    The advisor named there resolves to an advisor in the plugin or project registry.
 3. **Pauses.** Every phase that asks the user something ends with a WAIT marker.
+   **Artifact.** `prompt.md` has an `## Artifact` section. Every section of the page it
+   describes is filled by a named phase.
 4. **Sources.** Every phase in `prompt.md` has a line in `sources.md`, either with a source or
    starting `Added:`. Open 3 of the URLs (the first, one from the middle, the last) and confirm
    each page describes what the line says. Every quote or story attributed to the expert in

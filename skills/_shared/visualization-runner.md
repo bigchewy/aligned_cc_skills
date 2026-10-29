@@ -32,18 +32,9 @@ Read `{components-path}` for the `:root` token rules and the component-class ref
 
 ## Step 2: Resolve the project's design tokens
 
-Resolve design tokens so the artifact matches the project's brand, not the aligned plugin's. Find the right design-principles file using this lookup order (use `{project-root}` as resolved by the caller):
+Resolve design tokens so the artifact matches the project's brand, not the aligned plugin's. Read `skills/_shared/resolve-design-principles.md` and follow it with `{project-root}` as resolved by the caller. It returns the design-principles.md file to use, or `none`.
 
-a. **Project root:** `{project-root}/docs/design/design-principles.md`
-b. **Monorepo apps:** if (a) is missing, Glob `{project-root}/apps/*/docs/design/design-principles.md`. Same for `{project-root}/packages/*/docs/design/design-principles.md`.
-   - Exactly one match: use it.
-   - Multiple matches: ask the user which app/package this brainstorm targets, then use that one.
-   - Zero matches: continue to (c).
-c. **Global fallback:** `~/.claude/docs/design/design-principles.md`.
-
-**Placeholder check.** If the file found in (a), (b), or (c) is a kickstart-generated placeholder — heuristic: under 500 bytes, OR contains "This file is a placeholder", OR contains "Run `/aligned:create-design-principles`" — treat it as missing, advance to the next lookup step, and surface this warning to the user: *"Your project's `docs/design/design-principles.md` is still a placeholder. The brainstorm visualization will use the aligned plugin's default tokens. Run `/aligned:create-design-principles` to define the project's brand."*
-
-If no usable file is found at any step, skip token extraction — the template's built-in defaults will apply.
+If it returns `none`, skip token extraction — the template's built-in defaults will apply.
 
 Once a usable file is found, extract values per the "Brand Token Injection" / "Resolving project tokens" rules in `{components-path}`. If those rules' halt-and-ask trigger fires (genuine token-name ambiguity, unmappable brand-specific tokens), present the proposed mapping to the user before continuing.
 
