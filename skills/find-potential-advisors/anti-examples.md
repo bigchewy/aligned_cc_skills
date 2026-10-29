@@ -66,15 +66,7 @@ The run's own admission, once asked:
 Why it's wrong: the voice sample is how the user judges whether a persona will sound like the
 person. One made up from memory tests nothing. Build it from quotes with URLs.
 
-## 6. The overlap question skipped
-
-> I'm skipping the advisor interview because your message already answers it.
-
-Why it's wrong: the user's message named the problem. It didn't say which existing advisors the
-new one must stay away from. That question is asked every time, even when everything else in the
-interview is already answered.
-
-## 7. Cuts admitted only when asked
+## 6. Cuts admitted only when asked
 
 The run presented three finalists and asked "Which of the three should I add?" It said nothing
 about what it had skipped. When the user asked "Did you run the full program?", it listed five
@@ -84,7 +76,7 @@ Why it's wrong: the user can't tell a researched report from a guessed one unles
 which is which. "What was skipped or not verified" goes in every chat summary, even when the
 answer is "Nothing."
 
-## 8. Treating the search as a side errand
+## 7. Treating the search as a side errand
 
 Two of the runs above started in the middle of a brainstorm in another repo. The model wanted to
 get back to the main task, so it ran the search in two agents and moved on.

@@ -63,10 +63,15 @@ def test_skill_has_an_agent_fallback_that_reads_the_same_prompts():
     assert "different agent" in fallback.lower()
 
 
-def test_overlap_question_is_never_skipped():
-    phase1 = _section(_read(SKILL), "## Phase 1")
-    assert "overlap" in phase1.lower()
-    assert "even when" in phase1.lower()
+def test_interview_skips_only_what_it_already_knows():
+    # The user's rule (2026-10-28): skip a question when highly confident of the
+    # answer, never on a significant guess, and say the assumption so it can be fixed.
+    phase1 = _section(_read(SKILL), "## Phase 1").lower()
+    assert "highly confident" in phase1
+    assert "guess" in phase1
+    assert "overlap" in phase1
+    assert "assumption" in phase1
+    assert "even when the user's message answers everything else" not in phase1
 
 
 def test_skill_names_the_failures_it_guards_against():

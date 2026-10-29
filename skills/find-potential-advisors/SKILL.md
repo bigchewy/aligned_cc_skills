@@ -45,8 +45,9 @@ The main session does this part. The brief it produces is the Brief section of
 If a brief path was given, read it and check every field in the template's Brief section.
 Ask only for the fields that are missing.
 
-Otherwise, ask these one at a time. Skip a question when the user has already answered it.
-Question 6 is the exception.
+Otherwise, go through these one at a time. Skip a question when you're highly confident of the
+answer from what the user said or from files you've read. Don't skip one by guessing. Ask the
+ones you can't answer with confidence.
 
 1. What domain should this advisor cover?
 2. Who will use the advisor, and what situation are they in?
@@ -54,10 +55,14 @@ Question 6 is the exception.
 4. Any preference for the kind of approach, or should the research decide? (optional)
 5. Anything else: cultural context, safety concerns, outcomes? (optional)
 6. **Overlaps.** Read `skills/_shared/resolve-advisor-source.md` and follow it to get the
-   merged advisor list. Name the advisors whose domains are near this one, one line each. Then
-   ask: "Which of these should the new advisor stay away from, and is there anyone else?" Ask
-   this even when the user's message answers everything else. Their message describes a need.
-   It doesn't say which advisors to avoid.
+   merged advisor list. Find the advisors whose domains are near this one. Always do this
+   lookup, even when you skip the question.
+   - If the user already said which advisors to stay away from, or it's clear (for example,
+     no one nearby), don't ask. Write your assumption in the brief and say it in one line when
+     the search starts, so the user can correct it.
+   - If there are nearby advisors and you can't tell which the user wants kept separate, name
+     them, one line each, and ask: "Which of these should the new advisor stay away from, and
+     is there anyone else?"
 7. How many candidates? (default 10)
 
 Then write the brief to `docs/plans/YYYY-MM-DD-find-advisor-<domain>-brief.md`. Include a
@@ -146,7 +151,7 @@ If you catch yourself thinking any of these, stop and run the step as written:
 | "The search snippet gives the episode length." | Snippets were off by 15 and 20 minutes from the pages. Open the page. |
 | "I know he did that project, from memory." | It goes in "What was skipped or not verified," not in the recommendation. |
 | "Four books and lots of talks. Clearly High." | High needs 5 counted hours with URLs. Count them. |
-| "The user's message answers the interview." | It doesn't say which advisors to avoid. Ask question 6. |
+| "I'll guess which advisors to steer clear of." | If you can't tell, ask question 6. If you can, write the assumption in the brief and say it. |
 | "I'll write the voice sample myself." | Build it from real quotes with URLs. |
 | "The report looks fine, so I'll skip the check." | The check is how you find out. Run it. |
 | "This is a side task. I'll keep it small." | The user builds an advisor on it. Run the workflow and go back to the main task. |
@@ -158,4 +163,4 @@ If you catch yourself thinking any of these, stop and run the step as written:
 - `agent-prompts.md`: instructions for each agent. The script and the fallback both use it.
 - `report-template.md`: the brief's sections, the rating rubric, and the Chat summary shape.
 - `examples.md`: evidence done right, from a real run.
-- `anti-examples.md`: the eight ways real runs went wrong.
+- `anti-examples.md`: the ways real runs went wrong.
