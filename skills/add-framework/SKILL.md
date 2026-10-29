@@ -15,6 +15,18 @@ Before starting, gather:
 - Source material (book, methodology, research)
 - Whether it's a check-in framework (true/false)
 
+## Before You Start: Is This the Expert's Own Method?
+
+A framework voiced by an advisor tells the user "this is how {Advisor} does it." So check two
+things before building:
+
+1. **Is it their own published method?** Find it in their book, essay or talk, and open the
+   page. If the method belongs to someone else, build it under that person instead, or credit
+   them by name in `prompt.md`'s opening. If you can't find a published method at all, say so to
+   the user and stop. Don't build a method the expert never described.
+2. **Is it useful outside this project?** A framework for one product, one brand or one codebase
+   goes in the project repo's `frameworks/`, not in the plugin.
+
 ## Process
 
 ### 0. Environment Detection
@@ -55,10 +67,18 @@ Create the folder structure:
 {detected-framework-path}/{framework-id}/
 ├── prompt.md
 ├── examples.md
-└── anti-examples.md
+├── anti-examples.md
+└── sources.md
 ```
 
 Where `{detected-framework-path}` is the path determined in Step 0. If the directory doesn't exist yet, create it.
+
+`sources.md` records where each part came from. The framework runner doesn't load it, so it costs
+nothing when the framework runs. Write it as you go:
+- One line per phase: the phase name and its source (URL, or book and chapter).
+- A phase or rule you added that the expert never described starts with `Added:` and says why.
+- Each quote or story attributed to the expert in `examples.md`, with its URL.
+- Credit for anyone else whose method the framework uses.
 
 ### 2. Create prompt.md
 
@@ -112,6 +132,9 @@ Structure by phase with 2-3 examples each:
 - Edge cases (challenging scenarios)
 
 Include notes explaining WHY each response works.
+
+The user lines and coaching lines are written for the framework. Anything put in the expert's
+mouth as their own words or story has to be in `sources.md` with its URL.
 
 ### 4. Create anti-examples.md
 
@@ -182,7 +205,7 @@ Append one entry to the `frameworks` list in the registry file:
 Derive field values:
 - **id:** The framework's directory name (kebab-case slug)
 - **name, advisor, purpose:** Parsed from the first line of `prompt.md` (`You are {Advisor}, guiding someone through {Name} - {purpose}.`)
-- **category:** Ask the user, suggesting from: positioning, startup, content-strategy, social-media, pricing, growth, podcasting, negotiation, leadership, strategy, psychology, health-autonomic, health-movement, health-fitness, conversion, onboarding
+- **category:** Pick an existing category from the registry's other entries. A new category needs the user's yes first: ask, naming the closest existing category and why it doesn't fit.
 - **domains:** 2-5 expertise tags, derived from the framework's content
 - **use_when:** Natural language trigger phrase for when to use this framework
 - **required_documents, helpful_documents:** From `prompt.md` YAML frontmatter; omit keys if lists are empty
@@ -218,11 +241,38 @@ Count the actual advisors and frameworks in the plugin directory and update all 
    - `README.md` — opening description, "How It Works" bullets, and Advisors section
    - `.claude-plugin/plugin.json` — `description` field
    - `.claude-plugin/marketplace.json` — `description` field
+   - `frameworks/README.md` — the count in the headline, and the category table
+   - `advisors/README.md` — only if an advisor was added too
 
 The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
+
+If `e2e/tests/test_readme_freshness.py` exists, run it. It fails when a count is behind.
 
 ### 8. Verify
 
 > **Conditional:** Only run build verification if a `build` script was detected in Step 0. If not found, print: "Skipping build verification — no build script found."
 
 If the project has a build script, run it to verify no compilation errors were introduced. If the project has a web interface for testing, verify the framework works in the advisor's session.
+
+### 9. Check and Report
+
+Start a fresh agent, one that wrote none of the files. Give it the framework folder, the
+registry path, and `{base-directory}/report-template.md`. It follows the template's "Check agent"
+section and returns a list of problems. Fix each problem.
+
+Then report to the user in the template's shape. The report always ends with
+**What was skipped or not done**. Write "Nothing" when nothing was.
+
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line
+> printed at skill load. If compressed, follow `skills/_shared/resolve-skill-path.md`.
+
+## Mistakes Real Runs Made
+
+`anti-examples.md` shows each one with what to do instead. In short: phases invented for an
+expert who never wrote them, someone else's method voiced as the advisor's, a one-product
+framework put in the plugin, a category made up without asking, and the README counts missed.
+
+## Notes
+
+- **Started inside another task.** Run every step anyway, including the eval and the check.
+  Anything you skip goes in the report.

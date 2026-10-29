@@ -45,18 +45,24 @@ Environment Detection:
 
 ### 1. Load or Create Research
 
-**If research file exists** at `docs/advisors/new_advisors/v_{advisor_name}.md`:
-- Read the existing research file
-- Extract frameworks, voice patterns, and domain expertise
-- Skip to step 2
+Every advisor gets a research file at `docs/advisors/new_advisors/v_{advisor_name}.md`. Create
+the folder if it doesn't exist. The voice and the frameworks are built from this file, and the
+check in Step 10 tests the prompt against it.
 
-> **Note:** Research files are stored at `docs/advisors/new_advisors/` if that directory exists in the current repo. In repos without this directory, research is conducted in-memory only.
+**If a research file or a find-potential-advisors brief exists**, read it. It counts as the
+research file only if it has everything listed below. Fill in whatever is missing, and write the
+result to the research file path.
 
-**If no research file exists**:
-- Search for the advisor's most prominent frameworks and methodologies
-- Create research file at `docs/advisors/new_advisors/v_{advisor_name}.md`
-(Only if `docs/advisors/new_advisors/` exists or can be created. In lightweight repos, keep research in-memory.)
-- Document 5-10 framework candidates
+**Otherwise**, research the advisor with `WebSearch` and `WebFetch`. Open the pages. A search
+snippet is a lead, not a source.
+
+The research file must contain:
+- **Sources:** each book, essay, talk or interview you used, with its URL.
+- **Voice:** 8 to 12 real quotes, copied word for word, each with its URL. Add their own terms
+  and phrases, each with the URL of a page where they use it.
+- **Framework candidates:** 5 to 10, each with the source it comes from (URL, or book and
+  chapter).
+- **From memory, not checked:** anything you believe but couldn't confirm on a page.
 
 #### Framework Curation Criteria
 
@@ -75,6 +81,14 @@ From the research, select the top 2-3 frameworks based on:
 - Highest fit scores
 - Best conversational applicability
 - Most distinctive to this advisor
+
+Step 5 builds every framework you select, so select only what you'll build. List the candidates
+you didn't select in the prompt's Core Frameworks section as "also available in conversation,
+not yet guided frameworks."
+
+**Where each framework goes.** A framework that only makes sense in one project (for one
+product, one brand, one codebase) goes in that project repo's `frameworks/`, even when the
+advisor goes in the plugin. Only frameworks useful to anyone go in the plugin.
 
 **Do not ask for approval.** Proceed with the best candidates.
 
@@ -134,6 +148,9 @@ You are [Name], [role]. [One sentence core philosophy.]
 - Show voice through examples, not descriptions
 - Include what they DON'T sound like
 - 4-6 example phrases minimum
+- Every phrase in quotation marks under "How You Speak" appears word for word in the research
+  file's Voice section, with its URL. Lines in their style that aren't real quotes go outside
+  quotation marks.
 
 **Identity:**
 - One sentence core philosophy upfront
@@ -158,9 +175,14 @@ You are [Name], [role]. [One sentence core philosophy.]
 4. **Missing constraints** - No "what NOT to do" section
 5. **No failure modes** - Pretending the approach always works
 
-### 5. Add First Framework
+### 5. Add Each Selected Framework
 
-Use the `/aligned:add-framework` skill to implement the top-ranked framework.
+Run `/aligned:add-framework` once for every framework selected in Step 2. Don't write framework
+files by hand: the skill's source check and final check only run if you use it. Building one
+framework and listing the rest as names is not done.
+
+When frameworks for the same advisor, or for advisors built together, hand off to each other,
+add a line in each `prompt.md` naming the other framework and when to switch to it.
 
 > **Critical:** The add-framework skill updates the framework registry as part of its registry-entry step (`<project-cwd>/frameworks/registry.yaml` in a project repo; create it if absent, with a one-line comment header and a `frameworks:` list key; the plugin's `frameworks/registry.yaml` when writing to the plugin itself). If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to that registry with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
 
@@ -222,15 +244,44 @@ Count the actual advisors and frameworks in the plugin directory and update all 
    - `README.md` — opening description, "How It Works" bullets, and Advisors section
    - `.claude-plugin/plugin.json` — `description` field
    - `.claude-plugin/marketplace.json` — `description` field
+   - `advisors/README.md` — the count in the headline, and a row for the new advisor in Quick Reference
+   - `frameworks/README.md` — the count in the headline, and the category table, for each framework added
 
 The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
+
+If `e2e/tests/test_readme_freshness.py` exists, run it. It fails when a count is behind.
 
 ### 9. Commit
 
 Commit all changes with message: `feat: add {advisor-name} advisor`
 
+### 10. Check and Report
+
+Start a fresh agent, one that wrote none of the files. Give it the paths of everything this run
+wrote, the research file, and `{base-directory}/report-template.md`. It follows the template's
+"Check agent" section and returns a list of problems. Fix each problem, then commit the fixes.
+
+Then report to the user in the template's shape. The report always ends with
+**What was skipped or not done**. Write "Nothing" when nothing was.
+
+> **Path Resolution:** Resolve `{base-directory}` from the "Base directory for this skill:" line
+> printed at skill load. If compressed, follow `skills/_shared/resolve-skill-path.md`.
+
+## Mistakes Real Runs Made
+
+`anti-examples.md` shows each one with what to do instead. In short: one framework built when
+three were picked, framework files written by hand, voice phrases from memory, no research file,
+evals skipped for a reason that wasn't true, a one-product framework put in the plugin, and the
+work never read before it was called done.
+
 ## Notes
 
+- **Started inside another task.** Run every step anyway. The user gets an advisor they'll use
+  for months, and the task you were on can wait the few minutes. Anything you skip goes in the
+  report.
+- **Several advisors at once.** Give each its own agent. Tell each agent to read this skill
+  itself, rather than retelling the steps in your own words. When they finish, add the
+  hand-offs between their frameworks (Step 5), then run Step 10 once over all of them.
 - All new advisors are created with `enabled: false` - they won't appear in the front-end until explicitly enabled
 - Review created prompt files to verify voice authenticity
 - **Local advisors require two files.** Advisors have no glob fallback (unlike frameworks): a prompt
