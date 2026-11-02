@@ -12,7 +12,7 @@ GONE_IDS = [
     "patrick-mckeown", "roy-freeman", "shirley-sahrmann", "stuart-mcgill",
     "deb-dana", "irene-lyon", "akiko-iwasaki", "david-putrino", "david-systrom",
     "byron-katie", "gabor-mate", "marsha-linehan", "martin-seligman",
-    "richard-schwartz", "steven-hayes",
+    "richard-schwartz", "steven-hayes", "wise-eric",
     # retired archetype, replaced by brad-frost
     "the-designer",
     # retired archetype, replaced by jason-fried

@@ -59,7 +59,7 @@ frameworks:
     root causes, designing plans, and pushing through to results
   use_when: someone wants a systematic process for setting goals, identifying problems,
     diagnosing root causes, designing solutions, and executing
-- advisor: wise-eric
+- advisor: coach-eric
   category: strategy
   deliverable_type: plan
   domains:
@@ -1051,7 +1051,7 @@ frameworks:
     a development plan that targets the right transition
   use_when: a leader's performance doesn't match their level and they need to identify
     which leadership passage they are actually operating at
-- advisor: wise-eric
+- advisor: coach-eric
   category: psychology
   deliverable_type: analysis
   domains:
@@ -1236,7 +1236,7 @@ frameworks:
     love, not vanity metrics
   use_when: a startup needs to measure whether they have product-market fit before
     investing in scaling
-- advisor: wise-eric
+- advisor: coach-eric
   category: strategy
   deliverable_type: analysis
   domains:
@@ -1309,7 +1309,7 @@ frameworks:
     you would regret not taking
   use_when: someone faces a major irreversible life decision and needs to project
     to age 80 to evaluate which choice minimizes regret
-- advisor: wise-eric
+- advisor: coach-eric
   category: strategy
   deliverable_type: analysis
   domains:
@@ -1527,7 +1527,7 @@ frameworks:
     nod
   use_when: someone is selling features and benefits but hasn't found the emotional
     truth that makes their offering irresistible
-- advisor: wise-eric
+- advisor: coach-eric
   category: psychology
   deliverable_type: content
   domains:
@@ -1629,7 +1629,7 @@ frameworks:
     building anything
   use_when: a team needs to define a new product or feature by writing the press release
     first and working backwards to what must be built
-- advisor: wise-eric
+- advisor: coach-eric
   category: psychology
   deliverable_type: analysis
   domains:

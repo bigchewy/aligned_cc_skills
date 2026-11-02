@@ -112,7 +112,7 @@ def test_authoring_mode_file_structure():
     assert "_shared/framework-runner.md" in text
     assert "intake_gate_mode" in text and "strict" in text
     # Fallback ladder
-    assert "Wise Eric" in text, "missing last-resort default advisor"
+    assert "Coach Eric" in text, "missing last-resort default advisor"
     assert "structured Q&A" in text or "Architect" in text and "proxy" in text
     # Canonical-pattern marker (formerly a parity marker paired with the retired
     # software mode; authoring.md is now the canonical home of the Q&A dispatch)

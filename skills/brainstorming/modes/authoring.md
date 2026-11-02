@@ -32,7 +32,7 @@ Outcomes (the fallback ladder):
 2. **Auto-select fires on an advisor (no framework match)** → Phase 2b (structured Q&A with the matched advisor in The Architect's proxy seat).
 3. **Shortlist mode** → present the unified shortlist; user picks an entry; route to 2a or 2b based on entity type.
 4. **No high-confidence match (Stage 1 returns candidates but none auto-select)** → Phase 2c (structured Q&A; top-scoring topic advisor in proxy seat).
-5. **Zero candidates** (both registries returned nothing after domain filter — extremely rare given 154 frameworks + 70 advisors) → Phase 2d (structured Q&A with Wise Eric in proxy seat).
+5. **Zero candidates** (both registries returned nothing after domain filter — extremely rare given 154 frameworks + 70 advisors) → Phase 2d (structured Q&A with Coach Eric in proxy seat).
 
 Path 4 of `contextual-recommendation.md` (the "what problem are you working on?" prompt) is reserved for top-level skill invocations where the user invoked `/aligned:use-advisor` with no args and no conversation context. Authoring mode always has a topic; Path 4 never fires from here.
 
@@ -58,7 +58,7 @@ The Q&A pattern below is the canonical Architect-as-proxy dispatch. See the mark
 
 For Phase 2b (matched advisor) — use the matched advisor's prompt in the proxy dispatch.
 For Phase 2c (top-scoring advisor) — use the top-scoring advisor's prompt in the proxy dispatch.
-For Phase 2d (Wise Eric default) — use `advisors/prompts/wise-eric.md`.
+For Phase 2d (Coach Eric default) — use `advisors/prompts/coach-eric.md`.
 
 <!-- CANONICAL Q&A PATTERN (Architect-as-proxy dispatch template).
      The sub-agent prompt body below is the stable surface pinned by
@@ -249,4 +249,4 @@ Runs for Medium and Full. Read `{base-directory}/../_shared/critique-panel-orche
 - The wrapper owns scaffolding (project scan, intake gates, visualization, critique, commit, handoff). The engine (framework or Q&A) owns the conversation.
 - By the time this file runs, the router has either confirmed Authoring with the user or said it picked Authoring, so the user could redirect.
 - Fallback ladder paths 2b/2c/2d are structured Q&A — never free exploration.
-- Wise Eric is the last-resort default proxy. His prompt handles "I'm not sure what I need" gracefully.
+- Coach Eric is the last-resort default proxy. His prompt handles "I'm not sure what I need" gracefully.

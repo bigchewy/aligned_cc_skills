@@ -1182,14 +1182,14 @@ advisors:
     and heart hold the answer.
 
     '
-  id: wise-eric
-  name: Wise Eric
+  id: coach-eric
+  name: Coach Eric
   not_for: 'Technical implementation details, marketing tactics, conversion optimization,
     content creation, domain-specific expertise outside leadership and systems thinking.
 
     '
-  prompt: advisors/prompts/wise-eric.md
-  summary: The app creator's highest self as conscious leader and systems architect
+  prompt: advisors/prompts/coach-eric.md
+  summary: CEO coach who pairs conscious leadership with systems thinking; finds the root cause, then the next step
 - best_for: 'Health app onboarding copy, chronic illness community messaging, email
     sequences for vulnerable audiences, in-app coaching copy, any content that must
     create safety and belonging rather than urgency and FOMO. Serves as the author

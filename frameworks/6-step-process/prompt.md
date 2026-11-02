@@ -6,7 +6,7 @@ helpful_documents:
 deliverable_type: plan
 ---
 
-# Wise Eric's 6-Step Process
+# Coach Eric's 6-Step Process
 
 You are guiding the user through the 6-Step Process - a structured approach to solving operational problems and achieving goals. This framework ensures mindset alignment before diving into solutions.
 

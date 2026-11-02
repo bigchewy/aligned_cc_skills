@@ -40,7 +40,7 @@
 | 100-percent-responsibility | 100% Responsibility | diana-chapman | leadership | someone is blaming others or external circumstances for their situation and needs to reclaim agency |
 | 5-components-positioning | 5 Components of Positioning | april-dunford | positioning | a business needs to define or refine its market positioning from scratch using a structured methodology |
 | 5-step-process | 5-Step Process | ray-dalio | strategy | someone wants a systematic process for setting goals, identifying problems, diagnosing root causes, designing solutions, and executing |
-| 6-step-process | 6-Step Process | wise-eric | strategy | someone wants a systematic process for setting goals, diagnosing problems, designing solutions, and executing with mindset alignment |
+| 6-step-process | 6-Step Process | coach-eric | strategy | someone wants a systematic process for setting goals, diagnosing problems, designing solutions, and executing with mindset alignment |
 | 80-20-audit | an 80/20 Audit | tim-ferriss | strategy | someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results |
 | above-below-the-line | Above/Below the Line | diana-chapman | leadership | someone is reactive or defensive and needs to check whether they are operating from above or below the line |
 | accusation-audit | an Accusation Audit | chris-voss | negotiation | someone is entering a conversation where the other party likely has negative assumptions and needs to preemptively defuse them |
@@ -99,7 +99,7 @@
 | pain-plus-reflection | Pain + Reflection = Progress | ray-dalio | psychology | someone has experienced a painful failure and needs a structured way to extract lessons and turn it into growth |
 | past-year-review | the Past Year Review (PYR) | tim-ferriss | strategy | someone wants to review their past year systematically to make data-driven decisions about the next year |
 | performance-standards-by-level | Performance Standards by Level | ram-charan | leadership | a leader's performance doesn't match their level and they need to identify which leadership passage they are actually operating at |
-| personal-context-intake | Personal Context Intake | wise-eric | psychology | a new user needs an initial session to share their personal context, history, and goals before working with advisors |
+| personal-context-intake | Personal Context Intake | coach-eric | psychology | a new user needs an initial session to share their personal context, history, and goals before working with advisors |
 | personal-credo | Personal Credo | jim-loehr | psychology | someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose |
 | personal-resource-allocation | Personal Resource Allocation | clayton-christensen | strategy | someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions |
 | pillars-of-integrity | the Four Pillars of Integrity | jim-dethmer | leadership | someone feels fragmented or out of alignment and needs to identify where their integrity is broken |
@@ -111,12 +111,12 @@
 | presence-check-in | a Presence Check-In | matt-chapman | psychology | someone is distracted or disconnected and needs to arrive fully in the present moment before starting deeper work |
 | problem-solver-positioning | Problem-Solver Positioning | jasmine-star | content-strategy | someone describes their business by what they do rather than the problem they solve and it's not resonating |
 | product-market-fit-test | the Product-Market Fit Test | sean-ellis | growth | a startup needs to measure whether they have product-market fit before investing in scaling |
-| professional-context-intake | Professional Context Intake | wise-eric | strategy | a new user needs an initial session to share their professional and business context before working with business advisors |
+| professional-context-intake | Professional Context Intake | coach-eric | strategy | a new user needs an initial session to share their professional and business context before working with business advisors |
 | proximate-objectives | Proximate Objectives | richard-rumelt | strategy | someone has ambitious goals but no traction and needs to identify achievable near-term objectives that build momentum |
 | quadrinity | Quadrinity Process | jim-dethmer | psychology | someone needs to check in with all four aspects of self — physical, emotional, intellectual, and spiritual |
 | recommendation-readiness-checklist | the Recommendation Readiness Checklist | arielle-nissenblatt | content-strategy | someone wants their content recommended but it may not meet the quality bar needed for word-of-mouth growth |
 | regret-minimization | Regret Minimization Framework | jeff-bezos | strategy | someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret |
-| root-cause-analysis | Root Cause Analysis | wise-eric | strategy | something isn't working and the user needs to diagnose why before proposing fixes; the deliverable is a diagnostic document, not a brainstorm |
+| root-cause-analysis | Root Cause Analysis | coach-eric | strategy | something isn't working and the user needs to diagnose why before proposing fixes; the deliverable is a diagnostic document, not a brainstorm |
 | sales-pitch-structure | Sales Pitch Structure | april-dunford | positioning | someone has completed positioning work and needs to translate it into a compelling sales narrative |
 | science-of-design | the Science of Design Methodology | shirin-oreizy | conversion | someone needs a systematic approach to understand and influence how customers make decisions using behavioral science |
 | smallest-viable-audience | Smallest Viable Audience | seth-godin | growth | someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve |
@@ -129,14 +129,14 @@
 | teach-tailor-take-control | Teach-Tailor-Take Control (TTTC) | matt-dixon | sales | a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps |
 | the-algorithm | The Algorithm | elon-musk | strategy | someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach |
 | the-carousel | The Carousel | don-draper | positioning | someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible |
-| the-story-so-far | The Story So Far | wise-eric | psychology | a user wants to reflect on their journey and progress with the Virtual Board over time |
+| the-story-so-far | The Story So Far | coach-eric | psychology | a user wants to reflect on their journey and progress with the Virtual Board over time |
 | thirty-minute-daily-instagram | the 30-Minute Daily Instagram System | sue-b-zimmerman | social-media | someone feels Instagram takes too much time and needs a structured 30-minute daily protocol |
 | three-by-three-content-batching | the 3x3 Content Batching Method | rachel-pedersen | content-strategy | someone needs to create months of content efficiently through batching rather than daily creation |
 | type-1-type-2-decisions | Type 1 vs Type 2 Decisions | jeff-bezos | strategy | someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices |
 | value-metric | Value Metric Framework | patrick-campbell | pricing | someone needs to identify the right value metric for their pricing model — the unit of value customers pay for |
 | vulnerability-check | Vulnerability Check | brene-brown | psychology | someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs |
 | working-backwards | Working Backwards | jeff-bezos | strategy | a team needs to define a new product or feature by writing the press release first and working backwards to what must be built |
-| zone-of-genius | the Zone of Genius discovery process | wise-eric | psychology | someone wants to identify their zone of genius to align their work with their unique abilities and passions |
+| zone-of-genius | the Zone of Genius discovery process | coach-eric | psychology | someone wants to identify their zone of genius to align their work with their unique abilities and passions |
 | permission-blessing | Permission Blessing | kate-bowler | copywriting | writing copy for vulnerable audiences — health apps, chronic illness communities, onboarding flows — where the reader needs to feel seen before being asked to do anything |
 | insane-honesty | Insane Honesty | doug-kessler | copywriting | writing B2B professional services copy — cold emails, thought leadership, landing pages, sales enablement — that needs to stand out from corporate noise |
 | bowtie-funnel | the Bowtie Funnel | jacco-van-der-kooij | strategy | a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math |
@@ -334,14 +334,14 @@
 - **fear-setting** — Fear-Setting (tim-ferriss)
 - **living-into-values** — Living Into Values (brene-brown)
 - **pain-plus-reflection** — Pain + Reflection = Progress (ray-dalio)
-- **personal-context-intake** — Personal Context Intake (wise-eric)
+- **personal-context-intake** — Personal Context Intake (coach-eric)
 - **personal-credo** — Personal Credo (jim-loehr)
 - **presence-check-in** — a Presence Check-In (matt-chapman)
 - **quadrinity** — Quadrinity Process (jim-dethmer)
 - **stress-recovery-oscillation** — Stress-Recovery Oscillation (jim-loehr)
-- **the-story-so-far** — The Story So Far (wise-eric)
+- **the-story-so-far** — The Story So Far (coach-eric)
 - **vulnerability-check** — Vulnerability Check (brene-brown)
-- **zone-of-genius** — the Zone of Genius discovery process (wise-eric)
+- **zone-of-genius** — the Zone of Genius discovery process (coach-eric)
 
 ### Sales (5)
 
@@ -383,7 +383,7 @@
 ### Strategy (28)
 
 - **5-step-process** — 5-Step Process (ray-dalio)
-- **6-step-process** — 6-Step Process (wise-eric)
+- **6-step-process** — 6-Step Process (coach-eric)
 - **80-20-audit** — an 80/20 Audit (tim-ferriss)
 - **believability-weighted-decision-making** — Believability-Weighted Decision Making (ray-dalio)
 - **blue-ocean-value-props** — Blue Ocean Value Props (kim-mauborgne)
@@ -400,11 +400,11 @@
 - **lifecycle-strategy** — Lifecycle Strategy (lex-sisney)
 - **past-year-review** — the Past Year Review (PYR) (tim-ferriss)
 - **personal-resource-allocation** — Personal Resource Allocation (clayton-christensen)
-- **professional-context-intake** — Professional Context Intake (wise-eric)
+- **professional-context-intake** — Professional Context Intake (coach-eric)
 - **proven-process** — Proven Process (gino-wickman)
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
 - **regret-minimization** — Regret Minimization Framework (jeff-bezos)
-- **root-cause-analysis** — Root Cause Analysis (wise-eric)
+- **root-cause-analysis** — Root Cause Analysis (coach-eric)
 - **sellability-index** — The Sellability Index (jonathan-baker)
 - **start-with-experience** — Start With Experience (steve-jobs)
 - **the-algorithm** — The Algorithm (elon-musk)

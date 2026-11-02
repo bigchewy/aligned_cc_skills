@@ -50,7 +50,7 @@
 | sue-b-zimmerman | Sue B. Zimmerman | instagram-strategy, social-media, engagement, content-systems | #TheInstagramExpert |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
-| wise-eric | Wise Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | The app creator's highest self as conscious leader and systems architect |
+| coach-eric | Coach Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | CEO coach who pairs conscious leadership with systems thinking; finds the root cause, then the next step |
 | kate-bowler | Kate Bowler | empathetic-copywriting, health-wellness-copy, chronic-illness-communication, permission-giving, anti-platitude | Duke professor, Stage IV cancer survivor, anti-platitude voice for health/wellness copy |
 | doug-kessler | Doug Kessler | b2b-copywriting, insane-honesty, content-strategy, galvanizing-story, thought-leadership | Co-founder of Velocity Partners, creator of Insane Honesty and the Galvanizing Story |
 | jacco-van-der-kooij | Jacco van der Kooij | revenue-architecture, gtm-strategy, saas-sales, customer-success, recurring-revenue-metrics | Founder of Winning by Design, architect of the Bowtie Funnel and Sales as a Science |
@@ -134,7 +134,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Sue B. Zimmerman** | Evaluates whether Instagram presence is intentional or random |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
 | **Tim Ferriss** | Evaluates whether assumptions have been tested or merely accepted |
-| **Wise Eric** | Evaluates whether decisions and actions are driven by conscious choice or reactive patterns |
+| **Coach Eric** | Evaluates whether decisions and actions are driven by conscious choice or reactive patterns |
 | **Kate Bowler** | Authors empathetic copy for health and wellness products, chronic illness communities, and any audience that has been dismissed, medicalized, or sold toxic positivity |
 | **Doug Kessler** | Authors B2B content that treats business audiences as intelligent adults |
 | **Jacco van der Kooij** | Diagnoses end-to-end recurring-revenue architectures |
