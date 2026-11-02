@@ -1,0 +1,104 @@
+# e2e/scenarios/use-framework/benefit-and-barrier-test.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# The deliverable under test is the Benefit and Barrier table: each claimed
+# advantage tested for a benefit (cost or price), a barrier a capable
+# competitor can't get past, and materiality, then called Power, treadmill,
+# or not yet.
+
+description: "Framework: Benefit and Barrier Test table"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}\n\n{{moat_claims}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on BENEFIT AS COST OR PRICE: For each claimed advantage,
+        does the document state the benefit as a lower cost or a higher
+        price than a named competitor (Dagster, Prefect, Astronomer, or
+        self-run Airflow), rather than as "customers love it" or "we grow
+        fast"? Score 5 if every row is stated as cost or price, or marked as
+        having no benefit yet. Score 3 if some rows are. Score 1 if benefits
+        are described only as quality, delight, or growth.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on BARRIER TEST: Does the document ask, for each claimed
+        advantage, why a capable, funded competitor could not copy it, and
+        does it call the visual debugger and the ex-Databricks/ex-Segment
+        founders copyable (a feature can be rebuilt, people can be hired)?
+        Score 5 if every row has a barrier or "none we can name" and the
+        debugger is judged copyable. Score 3 if barriers are discussed but
+        the debugger or the team is treated as a moat. Score 1 if no
+        barrier test is applied.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on MATERIALITY: Does the document separate an effect
+        existing from an effect being big enough to change price or cost,
+        for example saying the connector "network effect" exists but may not
+        be a network economy, or that 47 customers' failure data is too
+        small to matter yet? Score 5 if at least two rows get a clear
+        material / not material judgment with a reason. Score 1 if
+        materiality is never raised.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONEST VERDICT: Does the document end with a table (or
+        equivalent list) giving each claimed advantage one verdict of the
+        kind Power / copyable execution (treadmill) / not yet, and does it
+        allow that the company has no durable advantage today? Score 5 for a
+        verdict on every row and an honest "no Power yet" or a single
+        well-justified exception (switching costs from pipelines built in the
+        tool may be judged early or partial). Score 1 if it declares several
+        moats or gives no verdicts.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ONE NEXT STEP: Does the document end with one concrete
+        next step tied to the strongest row, rather than a list of
+        everything to build? Score 5 for one specific step. Score 1 for a
+        generic list.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/benefit-and-barrier-test/prompt.md
+      task_prompt: "\n\n---\n\nThere is no live user. Simulate the user's answers from the company brief and the moat claims, run every phase in order, and finish by delivering the final written output exactly as the framework specifies."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+      moat_claims: &claims |
+        ## What our pitch deck says protects us
+
+        1. The visual debugger. Customers say it's why they bought.
+        2. Network effects: every new customer asks for connectors, and our connector library (140 today) helps every other customer.
+        3. Our data: we see millions of pipeline runs and can predict failures.
+        4. Switching costs: once a team has built 30 pipelines in DataForge, moving them is a quarter of work.
+        5. The team: our founders are ex-Databricks and ex-Segment.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Which of these claimed advantages are real, durable moats, and what should the company do next?"
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+      moat_claims: *claims
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "Use Hamilton Helmer's 7 Powers test that Power needs both a benefit and a barrier to check each claimed advantage below, judge whether each is material, and deliver a final verdict table."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+      moat_claims: *claims

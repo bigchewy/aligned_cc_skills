@@ -2288,3 +2288,73 @@ frameworks:
   use_when: a chart is busy or uses the tool's default colors, gridlines, legend and labels; it
     looks fine but people miss its point; or a chart needs one series to stand out and a title
     that says the takeaway
+- advisor: hamilton-helmer
+  category: strategy
+  default_critic_advisors:
+  - hamilton-helmer
+  - richard-rumelt
+  deliverable_type: analysis
+  domains:
+  - competitive-advantage
+  - moats
+  - business-strategy
+  follow_on_frameworks:
+  - power-progression-check
+  - counter-positioning-test
+  helpful_documents:
+  - competitive landscape
+  - unit economics or a P&L
+  - the moat or "why we win" slide
+  id: benefit-and-barrier-test
+  name: The Benefit and Barrier Test
+  purpose: testing each advantage a business believes protects it, asking what it is worth in
+    lower cost or higher price, why a capable competitor can't copy it, and whether it is big
+    enough to matter, so each one ends as Power, a treadmill, or not yet
+  use_when: someone claims a moat (network effects, brand, data, switching costs, technology,
+    a team) and needs to know whether it is real, durable and material
+- advisor: hamilton-helmer
+  category: strategy
+  default_critic_advisors:
+  - hamilton-helmer
+  - richard-rumelt
+  deliverable_type: analysis
+  domains:
+  - competitive-advantage
+  - moats
+  - startup-strategy
+  follow_on_frameworks:
+  - counter-positioning-test
+  - benefit-and-barrier-test
+  helpful_documents:
+  - company strategy
+  - competitive landscape
+  - growth and customer numbers
+  id: power-progression-check
+  name: Power Progression Check
+  purpose: placing a business in its phase (origination, takeoff or stability), striking the
+    powers that phase cannot offer yet, and naming the one power to aim for and the sign that
+    would show it forming
+  use_when: a startup or young business wants to know which durable advantage it can
+    realistically build now and which ones to stop counting on
+- advisor: hamilton-helmer
+  category: strategy
+  default_critic_advisors:
+  - hamilton-helmer
+  - richard-rumelt
+  deliverable_type: analysis
+  domains:
+  - counter-positioning
+  - competitive-advantage
+  - business-models
+  follow_on_frameworks:
+  - benefit-and-barrier-test
+  - power-progression-check
+  helpful_documents:
+  - business model
+  - competitive landscape
+  id: counter-positioning-test
+  name: The Counter-Positioning Test
+  purpose: finding out whether the incumbent won't copy your business model because copying
+    would damage its own business, or only because it hasn't got around to it yet
+  use_when: a newcomer competes with an incumbent that has the capabilities to copy it, and
+    needs to know whether anything stops the incumbent from following

@@ -1989,6 +1989,34 @@ advisors:
   summary: Founder of storytelling with data and author of storytelling with data; picks the
     plainest chart for the point, pushes everything else to gray, and puts the takeaway in
     the title
+- best_for: 'Moats and durable competitive advantage. Testing whether a claimed advantage
+    (network effects, brand, data, switching costs, a team) is real Power, which powers a
+    company can build at its stage, and whether an incumbent will copy a new business model.
+
+    '
+  domains:
+  - competitive-advantage
+  - moats
+  - business-strategy
+  - counter-positioning
+  - durable-returns
+  evaluation_expertise: 'Evaluates whether a claimed advantage is Power: a benefit (lower
+    cost or higher price) plus a barrier a capable competitor cannot get past, big enough to
+    matter. Catches moat slides that name effects without materiality, execution and features
+    called moats, brand bought with ad spend, and late-stage powers claimed by a startup.
+
+    '
+  id: hamilton-helmer
+  name: Hamilton Helmer
+  not_for: 'Positioning and messaging (redirect to April Dunford); finding the crux of a
+    strategy (redirect to Richard Rumelt); low-end disruption by a cheaper technology
+    (redirect to Clayton Christensen); go-to-market, pricing tactics and growth loops; UI and
+    code.
+
+    '
+  prompt: advisors/prompts/hamilton-helmer.md
+  summary: Author of 7 Powers and co-founder of Strategy Capital; tests whether an advantage
+    is Power, a benefit plus a barrier, and whether it is material
 selection_guidelines:
   calibration_examples:
   - critics:

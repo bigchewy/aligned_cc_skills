@@ -529,3 +529,29 @@ triggers:
       - frameworks/big-idea-and-takeaway-title/anti-examples.md
     scenarios:
       - scenarios/use-framework/big-idea-and-takeaway-title.yaml
+
+  - paths:
+      - advisors/prompts/hamilton-helmer.md
+    scenarios:
+      - scenarios/use-advisor/hamilton-helmer-consult.yaml
+
+  - paths:
+      - frameworks/benefit-and-barrier-test/prompt.md
+      - frameworks/benefit-and-barrier-test/examples.md
+      - frameworks/benefit-and-barrier-test/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/benefit-and-barrier-test.yaml
+
+  - paths:
+      - frameworks/power-progression-check/prompt.md
+      - frameworks/power-progression-check/examples.md
+      - frameworks/power-progression-check/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/power-progression-check.yaml
+
+  - paths:
+      - frameworks/counter-positioning-test/prompt.md
+      - frameworks/counter-positioning-test/examples.md
+      - frameworks/counter-positioning-test/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/counter-positioning-test.yaml

@@ -1,0 +1,128 @@
+# e2e/scenarios/use-framework/counter-positioning-test.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# The deliverable under test is the final page: the two business models side
+# by side, the collateral-damage line, a verdict, the condition that makes
+# following rational for the incumbent, and the second power to build.
+# The brief mixes one real collateral-damage answer with inertia claims, so
+# the framework has to separate them.
+
+description: "Framework: The Counter-Positioning Test on a direct-to-consumer insurer"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DAMAGE VS INERTIA: Does the response separate a real
+        reason the incumbent won't copy (copying would hurt its existing
+        business: undercutting the independent-agent channel that writes most
+        of its premiums) from reasons that don't last (the incumbents are
+        "slow", "bureaucratic", "don't get digital")? Score 5 if it names the
+        agent-channel damage as the barrier AND explicitly says slowness and
+        bureaucracy are not a barrier. Score 3 if it names the damage but
+        also counts slowness as protection. Score 1 if it treats the
+        incumbents' slowness or tech gap as the main moat.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE PAGE: Does the final written output contain all of:
+        (a) a two-column comparison of the two business models (the startup
+        vs the agent-based carriers), (b) one line of the form "If they
+        copied us, they would lose ___" or equivalent naming the specific
+        loss, (c) a verdict (counter-positioned, partly, or exposed) with a
+        reason, (d) the condition under which following becomes rational for
+        the incumbent (for example a share of direct sales or a shrinking
+        agent channel), and (e) a second power to build later? Score 5 for
+        all five, 4 for four, 3 for three, 2 for two, 1 for one or none.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NOT A PERMANENT MOAT: Does the response treat the
+        incumbent's reluctance as protection for a stage, with a point where
+        following becomes rational, rather than a permanent moat? Score 5 if
+        it names that crossing point and ties the time until then to building
+        a second power (such as scale economies, switching costs or network
+        economies). Score 1 if it calls the position permanent or durable
+        with no crossing point.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SPECIFICITY: Is the analysis grounded in this company
+        (Harbor Mutual Direct, renters and small-landlord insurance, the
+        large agent-based carriers, the 15-20% commission, the one carrier
+        that already has a direct brand)? Does it deal with the carrier that
+        already sells direct, which weakens the barrier for that one
+        incumbent? Generic advice that would fit any startup scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SOURCING DISCIPLINE: Score 5 if any words put in
+        quotation marks as Hamilton Helmer's own are plausible short spoken
+        lines (such as "Power requires a benefit and a barrier" or "counter
+        positioning is the refuge from that") and book concepts are explained
+        rather than quoted, or if the response quotes him not at all. Score 1
+        if it presents long formal book definitions in quotation marks as
+        his exact words, or attributes invented quotes to him. If the
+        response is not written as Helmer, score on whether it avoids
+        invented quotes from anyone.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/counter-positioning-test/prompt.md
+      task_prompt: "\n\n---\n\nThere is no live user. Simulate the user's answers from the company brief, run every phase in order, and finish by delivering the final written output exactly as the framework specifies."
+      company_brief: &brief |
+        # Company Brief: Harbor Mutual Direct
+
+        Harbor Mutual Direct sells renters insurance and small-landlord
+        property insurance online, direct to the customer. Two years old,
+        38,000 policies, $14M in written premium, 22 people.
+
+        Business model: customers buy and manage policies on the website and
+        app. No agents, no commissions. Claims under $2,000 are paid by a
+        rules engine within a day. Premiums average about 20% below the big
+        carriers for the same coverage, mostly because there is no agent
+        commission.
+
+        The incumbents: four large national carriers. They sell almost
+        entirely through independent agents, who earn a 15-20% commission
+        and own the customer relationship. Agents write about 85% of the
+        carriers' premiums and can move their book of business to another
+        carrier. One of the four already runs a small direct brand online,
+        priced close to Harbor, which it does not advertise much.
+
+        What the founders say about why the carriers haven't copied them:
+        "The carriers are slow and bureaucratic." "They don't get digital;
+        their apps are terrible." "Their actuaries would take three years to
+        approve anything." "If they sold direct at our price, the agents
+        would revolt and take their books elsewhere."
+
+        Direct sales are about 12% of this insurance market today, growing a
+        few points a year.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Why won't the big carriers just copy this company, and how safe is its position against them?"
+      company_brief: *brief
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "Use Hamilton Helmer's counter-positioning idea from 7 Powers to test whether this company is counter-positioned against the big carriers: compare the business models, say why the incumbents won't copy it, judge whether it's counter-positioned, and say what would make following rational for them. Deliver the final written output."
+      company_brief: *brief

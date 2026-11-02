@@ -45,6 +45,9 @@ seats:
       - do: Write a strategy that names what is hard and what you will do about it
         framework: kernel-of-good-strategy
         also: [finding-the-crux, proximate-objectives, lifecycle-strategy, blue-ocean-value-props, working-backwards]
+      - do: Find what will keep competitors from copying you
+        framework: benefit-and-barrier-test
+        also: [power-progression-check, counter-positioning-test]
       - do: Make the big calls, and know which ones you can undo
         framework: type-1-type-2-decisions
         also: [believability-weighted-decision-making, first-principles-thinking, fear-setting, regret-minimization]

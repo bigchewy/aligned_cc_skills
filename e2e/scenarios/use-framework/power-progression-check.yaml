@@ -1,0 +1,99 @@
+# e2e/scenarios/use-framework/power-progression-check.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# The deliverable under test is the one-page progression: the phase with
+# its evidence, the powers struck for timing (branding and process power
+# before stability), the counter-positioning check, one or two plausible
+# powers with a countable sign to watch, and the next check.
+
+description: "Framework: Power Progression Check one-page progression"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{company_brief}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE CALL: Does the final document place the business
+        in exactly one phase of a progression (origination, takeoff, or
+        stability, or clearly equivalent stages) and give concrete evidence
+        from the brief for it (e.g. 47 customers, 15% month-on-month growth,
+        18 months post-launch)? Either origination or takeoff is acceptable
+        if justified. Score 5 for one phase with specific evidence. Score 3
+        for a phase named without evidence or hedged across two. Score 1 if
+        no stage is identified.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STRUCK POWERS: Does the document explicitly rule out
+        advantages the company cannot have at its stage, and say why?
+        Score 5 if branding and process power (or clearly equivalent:
+        brand-as-moat and hard-to-copy operating processes) are struck as
+        unavailable until a mature or stable phase, each with a one-line
+        reason. Score 3 if some advantages are dismissed without tying the
+        dismissal to stage. Score 1 if nothing is ruled out, or if brand is
+        named as a current or near-term moat.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SUBSTITUTION AND INCUMBENT RISK: Does the document ask
+        what customers are substituting away from (e.g. self-run Airflow,
+        Astronomer, Dagster/Prefect, or a large platform that could add the
+        feature) and whether a player with the capabilities would copy
+        DataForge, judging that by whether copying would damage the
+        incumbent's existing business rather than by inertia? Score 5 for a
+        named incumbent, a clear judgment on whether counter-positioning
+        holds, and the reason. Score 3 for incumbents mentioned without a
+        judgment on why they would or would not copy. Score 1 if absent.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on ONE POWER AND A SIGN: Does the document end with one
+        power to aim for (two at most), tied to scale relative to
+        competitors, a concrete countable condition that would show it is
+        forming, and a next check date or trigger event? Score 5 for all
+        three with a measurable condition. Score 3 for a power named with
+        a vague sign ("monitor retention") or no next check. Score 1 for a
+        list of everything to build, or no recommendation.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO OVERCLAIM: Does the document avoid declaring that
+        DataForge already has a durable moat or competitive advantage, and
+        treat growth and product quality (e.g. the visual debugger) as
+        execution rather than as a lasting advantage in itself? Score 5 if
+        it clearly says no durable advantage is established yet and names
+        what would have to be true. Score 1 if it asserts an existing moat
+        from growth, a feature, or customer love.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/power-progression-check/prompt.md
+      task_prompt: "\n\n---\n\nThere is no live user. Simulate the user's answers from the company brief, run every phase in order, and finish by delivering the final written output exactly as the framework specifies."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Which durable competitive advantages can this company realistically build at its current stage, and which one should it aim for?"
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md
+
+  - description: "aware-but-unaided (names framework in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "Use Hamilton Helmer's power progression from 7 Powers (origination, takeoff, stability) to decide which powers are available to this company now, which to aim for, and what would show it's forming. Deliver the final written output."
+      company_brief: file://../../fixtures/company-briefs/b2b-saas-startup.md

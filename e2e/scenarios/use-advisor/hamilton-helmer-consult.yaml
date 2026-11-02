@@ -1,0 +1,90 @@
+# e2e/scenarios/use-advisor/hamilton-helmer-consult.yaml
+# Quick-consult eval for Hamilton Helmer (benefit and barrier / materiality / power progression / counter-positioning)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+
+description: "Advisor: Hamilton Helmer early-stage moat consult"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHOD SPECIFICITY: Does the response use Hamilton
+        Helmer's actual tools? It should test the claimed advantages for a
+        benefit (lower cost or higher price) and a barrier (why a capable
+        competitor can't copy it), ask whether each effect is material
+        (network effects vs. network economies), and place the company in a
+        stage of the power progression (origination, takeoff, stability),
+        noting that branding comes late. Generic moat advice ("build a
+        community", "focus on brand", "create a flywheel") with none of
+        these scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE SPECIFIC SITUATION: The founder has 40 paying
+        group gifts, claims network effects (each gift brings 30 new
+        writers), a brand, and a house AI art style, and a big greeting-card
+        company could add the feature. Does the response (a) say the art
+        style and the product can be copied (a treadmill, not Power),
+        (b) say the brand claim is too early at this stage, (c) treat the
+        writer network as an effect whose materiality is unproven, and
+        (d) ask why the card company would not copy them, i.e. whether
+        copying would hurt its existing business (counter-positioning)?
+        Missing two or more scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like
+        Hamilton Helmer: calm, courteous, conceding what is true before
+        drawing a finer distinction, marking uncertainty, using "castle and
+        not a shack", "treadmill", "material"? Hype ("massive moat",
+        "unstoppable flywheel") or a harsh dismissive tone scores 1-2.
+        Invented quotes attributed to him score 1. These lines are real and
+        not invented: "Power requires a benefit and a barrier", "So benefit
+        and a barrier, we call it the to be or not to be test.", "you have
+        to have a pretty good understanding of why it's a castle and not a
+        shack.", "You're on a treadmill and if you stop running on that
+        treadmill, you get creamed, but it's not power.", "That's not power,
+        that you paid for it.", "almost every startup that you want to deal
+        with starts with counter positioning", "Yeah, it's not an impact,
+        it's a material impact."
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on HONEST SCOPE: The founder also asks for a growth plan
+        to get the next 1,000 gifts. Does the response say go-to-market and
+        growth aren't Helmer's method and point elsewhere, instead of
+        inventing a Helmer growth playbook? And does it allow "no Power yet"
+        as an honest answer rather than inventing a moat to be encouraging?
+        Inventing a Helmer growth framework or declaring a moat scores 1-2.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — 40 group gifts, claims network effects, brand, AI art style"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/hamilton-helmer.md
+      task_prompt: "\n\n---\n\nI run a startup where friends write short memories of one person and we turn them into an illustrated keepsake delivered over a few weeks. We've sold 40 group gifts at $79. My investor deck says we have three moats: network effects (each gift brings in about 30 new writers, and some become buyers), our brand, and our house AI art style that nobody else has. A big greeting-card company could add something like this. Are these real moats? And can you give me a growth plan to get to the next 1,000 gifts?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "I run a startup where friends write short memories of one person and we turn them into an illustrated keepsake delivered over a few weeks. We've sold 40 group gifts at $79. My investor deck says we have three moats: network effects (each gift brings in about 30 new writers, and some become buyers), our brand, and our house AI art style that nobody else has. A big greeting-card company could add something like this. Are these real moats? And can you give me a growth plan to get to the next 1,000 gifts?"
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Hamilton Helmer, author of 7 Powers. I run a startup where friends write short memories of one person and we turn them into an illustrated keepsake delivered over a few weeks. We've sold 40 group gifts at $79. My investor deck says we have three moats: network effects (each gift brings in about 30 new writers, and some become buyers), our brand, and our house AI art style that nobody else has. A big greeting-card company could add something like this. Are these real moats? And can you give me a growth plan to get to the next 1,000 gifts?"

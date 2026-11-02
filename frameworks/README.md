@@ -1,6 +1,6 @@
 # Framework Registry
 
-116 frameworks across 26 categories
+119 frameworks across 26 categories
 
 | Category | Count |
 |----------|-------|
@@ -27,7 +27,7 @@
 | sales | 5 |
 | security | 2 |
 | startup | 9 |
-| strategy | 27 |
+| strategy | 30 |
 | visual-identity | 3 |
 | visual-storytelling | 1 |
 
@@ -151,6 +151,9 @@
 | declutter-and-focus | Declutter and Focus | cole-nussbaumer-knaflic | data-visualization | a chart is busy or uses the tool's default colors, gridlines, legend and labels; it looks fine but people miss its point; or a chart needs one series to stand out and a title that says the takeaway |
 | choose-an-effective-visual | Choose an Effective Visual | cole-nussbaumer-knaflic | data-visualization | someone has data and doesn't know which chart to draw, a chart is the wrong type for its point (a line across categories, a pie for change over time, a spaghetti graph of crossing lines), or a team argues about whether to use a pie |
 | big-idea-and-takeaway-title | The Big Idea and Takeaway Title | cole-nussbaumer-knaflic | data-visualization | a dashboard, report or slide shows data but nobody acts on it; chart titles only say what the chart is ("Revenue by month"); or someone needs to say the point of their data before picking or cleaning up a chart |
+| benefit-and-barrier-test | The Benefit and Barrier Test | hamilton-helmer | strategy | someone claims a moat (network effects, brand, data, switching costs, technology, a team) and needs to know whether it is real, durable and material |
+| power-progression-check | Power Progression Check | hamilton-helmer | strategy | a startup or young business wants to know which durable advantage it can realistically build now and which ones to stop counting on |
+| counter-positioning-test | The Counter-Positioning Test | hamilton-helmer | strategy | a newcomer competes with an incumbent that has the capabilities to copy it, and needs to know whether anything stops the incumbent from following |
 
 ## By Category
 
@@ -308,14 +311,16 @@
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 
-### Strategy (27)
+### Strategy (30)
 
 - **5-step-process** — 5-Step Process (ray-dalio)
 - **6-step-process** — 6-Step Process (coach-eric)
 - **80-20-audit** — an 80/20 Audit (tim-ferriss)
+- **benefit-and-barrier-test** — The Benefit and Barrier Test (hamilton-helmer)
 - **believability-weighted-decision-making** — Believability-Weighted Decision Making (ray-dalio)
 - **blue-ocean-value-props** — Blue Ocean Value Props (kim-mauborgne)
 - **bowtie-funnel** — the Bowtie Funnel (jacco-van-der-kooij)
+- **counter-positioning-test** — The Counter-Positioning Test (hamilton-helmer)
 - **design-principles** — Design Principles (steve-jobs)
 - **finding-the-crux** — Finding the Crux (richard-rumelt)
 - **first-principles-thinking** — First Principles Thinking (elon-musk)
@@ -328,6 +333,7 @@
 - **lifecycle-strategy** — Lifecycle Strategy (lex-sisney)
 - **past-year-review** — the Past Year Review (PYR) (tim-ferriss)
 - **personal-resource-allocation** — Personal Resource Allocation (clayton-christensen)
+- **power-progression-check** — Power Progression Check (hamilton-helmer)
 - **professional-context-intake** — Professional Context Intake (coach-eric)
 - **proven-process** — Proven Process (gino-wickman)
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
