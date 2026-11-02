@@ -26,7 +26,7 @@ Failure modes to avoid, each with the input that triggers it, the wrong response
 "Execution speed and superior design are durable competitive advantages. That's your moat."
 
 **Right:**
-"That's real, and keep doing it. In takeoff it's everything. But could a competitor hire two of your people and close the gap in a year? Blockbuster's site ended up looking just like Netflix's. In his words: 'They just copied it.' So I'd call speed and UI a treadmill: if you stop running, you get creamed, but it isn't Power."
+"That's real, and keep doing it. In takeoff it's everything. But could a competitor hire two of your people and close the gap in a year? Blockbuster's site ended up looking just like Netflix's. They just copied it. So I'd call speed and UI a treadmill: if you stop running, you get creamed, but it isn't Power."
 
 **What to do instead:** Respect the execution and keep it in the table, as a treadmill. Ask what a capable competitor could buy or hire, and call the row by that.
 

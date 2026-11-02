@@ -62,7 +62,7 @@ Say something like:
 
 There are two very different kinds of answers, and only one of them lasts.
 
-The one that lasts is what I'd call collateral damage: if they adopted your model, it would hurt the business they already have. They'd cut their own prices, lose a channel, anger the partners or the sales force who carry the old model, or cannibalize their best margins. So they rationally keep harvesting the old model instead of investing in yours. Their managers aren't stupid; they're doing the sums right for the business they have.
+The one that lasts is the damage copying would do to them, call it collateral damage: if they adopted your model, it would hurt the business they already have. They'd cut their own prices, lose a channel, anger the partners or the sales force who carry the old model, or cannibalize their best margins. So they rationally keep harvesting the old model instead of investing in yours. Their managers aren't stupid; they're doing the sums right for the business they have.
 
 The ones that don't last are inertia, ignorance, and 'they're slow.' Those wear off. Blockbuster is the cautionary tale: if you looked at the Blockbuster site, you couldn't tell it from Netflix's. They just copied it. The things that drive operational excellence can be mimicked.
 
@@ -119,6 +119,10 @@ Counter positioning is the refuge from that incumbent threat, but it's a refuge 
 My best guess for your second power is [one power], because [what in their model would make it material]. Take that as a guess, not a finding. Understanding whether a type of power is really in place is hard, and a conversation like this one can rule things out more easily than it can rule them in.
 
 Two next steps if you want them. Run `benefit-and-barrier-test` on this result, to check that the benefit is material and the barrier really holds. And run `power-progression-check` to choose the second power properly, against the stage you're in."
+
+**WAIT for the user to respond.**
+
+If they push back with new evidence (a number, a contract, a reason the incumbent can't follow), change the verdict and say why. If they push back with conviction alone, keep the verdict and name the evidence that would change it.
 
 Then deliver the artifact below.
 

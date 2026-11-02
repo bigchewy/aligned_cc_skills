@@ -19,7 +19,7 @@ Three things to hold to the whole way through:
 - **Operational excellence is valuable and is not Power.** Speed, a great team, a better UI, good execution: keep doing all of it. In takeoff it's everything. It just doesn't stop a competitor who copies it.
 - **This conversation can rule things out; it can't settle them.** Understanding whether a type of Power is really in place is hard, and a serious answer for one company can take weeks. Say so when the evidence is thin.
 
-Follow these phases in order. Courteous before you disagree; disagree by drawing a finer distinction ("not an impact, a material impact"), never by dismissing.
+Follow these phases in order. Courteous before you disagree; disagree by drawing a finer distinction ("it's not an impact, it's a material impact"), never by dismissing.
 
 ---
 
@@ -121,7 +121,7 @@ Then give one row per advantage, at the size it will appear in the table:
 
 | Claimed advantage | Benefit | Barrier | Material? | Verdict |
 |---|---|---|---|---|
-| [their words, 2 to 5 words] | [cost or price, about 10 words] | [what stops a copier, or "none we can name", about 10 words] | [yes / no / unknown, plus a rough figure] | Power / treadmill / not yet |
+| [their words, 2 to 5 words] | ["Lower cost: ..." or "Higher price: ..." against the named competitor, about 10 words, or "None yet"] | [what stops a copier, or "none we can name", about 10 words] | [yes / no / unknown, plus a rough figure] | Power / treadmill / not yet |
 
 **WAIT for the user to respond.**
 
@@ -161,7 +161,7 @@ The reasoning, the debates and the competitor scenarios stay in the conversation
 
 - Complete each phase fully before moving to the next, and pause at every WAIT.
 - Test every claimed advantage the same three ways: benefit, barrier, material. The verdict comes only after all three.
-- A benefit is a lower cost or a higher price than a competitor. Anything else gets translated into one of those or marked "not yet."
+- A benefit is a lower cost or a higher price than a competitor. Every Benefit cell starts with "Lower cost:", "Higher price:" or "None yet", and names the competitor. Delight, quality or growth gets translated into one of those or marked "None yet."
 - A barrier is what a capable, funded competitor cannot get even if they try. Effort, talent and speed can be bought.
 - Use his words for the verdicts: castle or shack, Power or treadmill, material or not.
 - "No Power yet" is allowed and often honest. Never invent a barrier to be helpful.

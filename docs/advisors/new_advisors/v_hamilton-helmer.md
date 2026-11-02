@@ -166,7 +166,7 @@ Pages that failed or gave nothing usable:
 - Go-to-market, pricing tactics, copy, growth loops, or how to get the first users. He says the opposite of a
   plan matters early: "Not like that at all. At the earlier stage, you can imagine wildly more degrees of
   freedom" ✅ [LENNY-T]
-- Small businesses and gifts with no competitors. His math is market share and margins over years.
+- Small businesses with no real competitors. His math is market share and margins over years.
 - Pharma-style cornered resources: "it's usually not the types of things that I'm dealing with" ✅ [LENNY-T]
 - Fast answers. "it might take us weeks to answer that question for a single company." ✅ [LENNY-T]
 
@@ -189,6 +189,12 @@ Twelve exact quotes:
 11. "almost every startup that you want to deal with starts with counter positioning" ✅
 12. "everything is always about something else." ✅ (a Sri Lankan journalist mentor's saying, which he applies
     to power: "if you really dig down, everything is always about something else.")
+
+Four more exact quotes from the same transcript, also used in the advisor prompt:
+13. "So moat is the second. So it's not synonymous with power because you can have a moat around a very undesirable piece of property" ✅
+14. "there are lots of things that I would say have network effects but not network economies." ✅
+15. "remember, action is the first principle of business." ✅
+16. "The key thing here is materiality, not whether the flywheel exists, but whether the effect is strong enough to really tilt returns." ✅
 
 His own terms and phrases (each read at the [LENNY-T] URL above): "benefit and a barrier" ✅; "the to be or
 not to be test" ✅; "castle and not a shack" ✅; "power progression" ✅; "origination, takeoff, and stability"

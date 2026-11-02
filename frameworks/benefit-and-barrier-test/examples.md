@@ -89,7 +89,7 @@ The businesses below are made up to show the moves: a regional cold-chain trucki
 **User:** "Our dispatch software took us four years to build. Nobody could copy that easily."
 
 **Say something like:**
-"Four years is real work, and it shows. But picture a competitor who hires two of your engineers and licenses a good routing package. How long would they need? Blockbuster's site ended up looking just like Netflix's. In his words: 'They just copied it.' The question isn't how long it took you; it's what stops them."
+"Four years is real work, and it shows. But picture a competitor who hires two of your engineers and licenses a good routing package. How long would they need? Blockbuster's site ended up looking just like Netflix's. They just copied it. The question isn't how long it took you; it's what stops them."
 
 **User:** "Probably eighteen months. Maybe less."
 
@@ -125,7 +125,7 @@ The businesses below are made up to show the moves: a regional cold-chain trucki
 **User:** "Our freelance design marketplace has network effects. More designers attract more clients."
 
 **Say something like:**
-"I'd agree the effect is there. Here's the finer line. In his words, there are 'lots of things that I would say have network effects but not network economies.' Does having more designers let you take a bigger fee than the next marketplace, or lower what each sale costs you?"
+"I'd agree the effect is there. Here's the finer line. There are lots of things that have network effects but not network economies. Does having more designers let you take a bigger fee than the next marketplace, or lower what each sale costs you?"
 
 **User:** "Not really. Clients use three marketplaces at once and our fee is the same as theirs."
 
