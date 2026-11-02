@@ -87,7 +87,7 @@ seats:
       - do: Fix a process that keeps breaking
         framework: the-algorithm
         also: [5-step-process]
-      - do: Turn work one person does by hand into a process anyone can run
+      - do: Turn a service your team delivers by hand into a package clients can buy
         framework: proven-process
     also_ask: []
 
@@ -203,7 +203,7 @@ seats:
         framework: management-level-progression
       - do: Help an engineer make the jump to manager
         framework: leadership-pipeline-passages
-      - do: Set what good work looks like at each level
+      - do: Find the level a manager is really working at, and plan the next step
         framework: performance-standards-by-level
     also_ask: []
 
@@ -637,7 +637,7 @@ seats:
       - do: Rebuild trust on a team that has lost it
         framework: braving-trust-inventory
         also: [clearing-model, vulnerability-check]
-      - do: Turn the company values into things people do every day
+      - do: Help each leader name two values and act on them every day
         framework: living-into-values
         also: [personal-credo]
       - do: Spread a new way of working through the company
