@@ -4,6 +4,7 @@ The script name has a hyphen, so every test calls it by subprocess.
 """
 import copy
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -338,3 +339,293 @@ def test_errors_are_all_reported(tmp_path):
     lines = result.stderr.splitlines()
     assert "ERROR: unknown dept 'nowhere' on seat 'coo'" in lines
     assert "ERROR: also_ask repeats advisor 'a1' on seat 'ceo'" in lines
+
+
+# ---------------------------------------------------------------- rendered pages
+
+PAGES = ROOT / "skills" / "org-chart" / "pages"
+CHART_FILES = {"b2b": "index.html", "b2c": "b2c.html"}
+HREF = re.compile(r'href="([^"]+)"')
+
+
+def page_files():
+    files = sorted(p for p in PAGES.rglob("*") if p.is_file())
+    assert files, f"no pages in {PAGES}"
+    return files
+
+
+def html_pages():
+    return [p for p in page_files() if p.suffix == ".html"]
+
+
+def test_committed_pages_are_current():
+    result = run("--check")
+    assert result.returncode == 0, result.stderr
+
+
+def test_check_detects_stale_page(tmp_path):
+    out = tmp_path / "pages"
+    shutil.copytree(PAGES, out)
+    page = out / "seats" / "support.html"
+    text = page.read_text(encoding="utf-8")
+    page.write_text(text.replace("Support", "Supporx", 1), encoding="utf-8")
+    result = run("--check", "--out", out)
+    assert result.returncode == 1
+    lines = result.stderr.splitlines()
+    assert any(
+        line.startswith("ERROR: stale page ") and "support.html" in line
+        and line.endswith("; run scripts/generate-org-chart.py")
+        for line in lines
+    ), lines
+    assert len(lines) == 1, lines
+
+
+def test_check_detects_missing_and_extra_files(tmp_path):
+    out = tmp_path / "pages"
+    shutil.copytree(PAGES, out)
+    (out / "style.css").unlink()
+    (out / "seats" / "old-seat.html").write_text("old", encoding="utf-8")
+    result = run("--check", "--out", out)
+    assert result.returncode == 1
+    assert "style.css" in result.stderr
+    assert "old-seat.html" in result.stderr
+
+
+def test_check_writes_nothing(tmp_path):
+    out = tmp_path / "pages"
+    result = run("--check", "--out", out, "--author-out", tmp_path / "a.html")
+    assert result.returncode == 1
+    assert not out.exists()
+    assert not (tmp_path / "a.html").exists()
+
+
+def test_chart_links_resolve():
+    data = seats_data()
+    for chart, name in CHART_FILES.items():
+        page = PAGES / name
+        text = page.read_text(encoding="utf-8")
+        for href in HREF.findall(text):
+            if href.endswith(".html"):
+                assert (page.parent / href).exists(), f"{name} links missing {href}"
+        for seat in data["seats"]:
+            linked = f'href="seats/{seat["id"]}.html"' in text
+            assert linked == (chart in seat["people"]), f"{name} and {seat['id']}"
+    assert 'href="b2c.html"' in (PAGES / "index.html").read_text(encoding="utf-8")
+    assert 'href="index.html"' in (PAGES / "b2c.html").read_text(encoding="utf-8")
+
+
+def test_every_seat_page_exists_and_links_resolve():
+    for seat in seats_data()["seats"]:
+        page = PAGES / "seats" / f"{seat['id']}.html"
+        assert page.exists(), seat["id"]
+        text = page.read_text(encoding="utf-8")
+        for href in HREF.findall(text):
+            if href.endswith(".html"):
+                assert (page.parent / href).exists(), f"{seat['id']} links missing {href}"
+        for chart, name in CHART_FILES.items():
+            linked = f'href="../{name}"' in text
+            assert linked == (chart in seat["people"]), f"{seat['id']} and {name}"
+
+
+def test_shared_seat_links_both_charts():
+    text = (PAGES / "seats" / "support.html").read_text(encoding="utf-8")
+    assert 'href="../index.html"' in text
+    assert 'href="../b2c.html"' in text
+    assert re.search(r"\b5 people\b", text)
+    assert re.search(r"\b10 people\b", text)
+
+
+def test_partnerships_alone_in_b2c_sales_column():
+    text = (PAGES / "b2c.html").read_text(encoding="utf-8")
+    col = re.search(r'<section class="dept" id="dept-sales">(.*?)</section>', text, re.S)
+    assert col, "b2c has no sales column"
+    assert re.findall(r'href="seats/([^"]+)\.html"', col.group(1)) == ["partnerships"]
+
+
+def test_columns_follow_seats_file_order():
+    data = seats_data()
+    for chart, name in CHART_FILES.items():
+        text = (PAGES / name).read_text(encoding="utf-8")
+        linked = re.findall(r'href="seats/([^"]+)\.html"', text)
+        expected = [s["id"] for s in data["seats"] if chart in s["people"]]
+        assert sorted(linked) == sorted(expected), name
+        # Board and CEO sit above the columns; every column seat keeps file order.
+        top = ("board", "ceo")
+        assert linked[:2] == ["board", "ceo"], name
+        assert [i for i in linked if i not in top] == [i for i in expected if i not in top], name
+
+
+def test_support_reports_to_differs_by_chart():
+    b2b = (PAGES / "index.html").read_text(encoding="utf-8")
+    b2c = (PAGES / "b2c.html").read_text(encoding="utf-8")
+    assert 'href="seats/support.html" data-reports-to="head-of-customer-success"' in b2b
+    assert 'href="seats/support.html" data-reports-to="head-of-customer-experience"' in b2c
+
+
+def test_commands_name_real_ids():
+    fw = set(framework_registry())
+    adv = set(advisor_registry())
+    seen = 0
+    for page in (PAGES / "seats").glob("*.html"):
+        text = page.read_text(encoding="utf-8")
+        for fid in re.findall(r"/aligned:use-framework ([a-z0-9-]+)", text):
+            assert fid in fw, f"{page.name} names {fid}"
+            seen += 1
+        for aid in re.findall(r"/aligned:use-advisor ([a-z0-9-]+)", text):
+            assert aid in adv, f"{page.name} names {aid}"
+            seen += 1
+    assert seen > 0
+
+
+def test_seat_page_lists_every_framework_and_advisor():
+    fw_reg = framework_registry()
+    for seat in seats_data()["seats"]:
+        text = (PAGES / "seats" / f"{seat['id']}.html").read_text(encoding="utf-8")
+        for fid in seat_frameworks(seat):
+            assert f"/aligned:use-framework {fid}<" in text, (seat["id"], fid)
+        for aid in seat_advisors(seat, fw_reg):
+            assert f"/aligned:use-advisor {aid}<" in text, (seat["id"], aid)
+
+
+def test_missing_block_on_every_seat_with_missing():
+    for seat in seats_data()["seats"]:
+        text = (PAGES / "seats" / f"{seat['id']}.html").read_text(encoding="utf-8")
+        assert ("Not covered yet" in text) == bool(seat.get("missing")), seat["id"]
+
+
+def test_empty_seat_shows_only_missing_block():
+    text = (PAGES / "seats" / "devops.html").read_text(encoding="utf-8")
+    assert "Not covered yet" in text
+    assert "Ask an advisor" not in text
+    assert "/aligned:use-" not in text
+
+
+def test_registry_text_is_escaped():
+    text = (PAGES / "seats" / "head-of-people.html").read_text(encoding="utf-8")
+    assert "Pain + Reflection" in text
+    tttc = (PAGES / "seats" / "head-of-sales.html").read_text(encoding="utf-8")
+    assert "Teach-Tailor-Take Control (TTTC)" in tttc
+    for page in html_pages():
+        body = page.read_text(encoding="utf-8")
+        # Every '<' opens a tag or comment; registry text never leaks one raw.
+        for m in re.finditer(r"<", body):
+            nxt = body[m.end():m.end() + 1]
+            assert re.match(r"[a-zA-Z/!]", nxt), f"{page.name}: raw '<' at {m.start()}"
+
+
+def test_escaping_with_hostile_registry(tmp_path):
+    a, f = tiny_registries(tmp_path)
+    reg = load(f)
+    reg["frameworks"][0]["name"] = 'Fish & <Chips> "Quoted"'
+    reg["frameworks"][0]["purpose"] = "uses <script>alert(1)</script> here"
+    f.write_text(yaml.safe_dump(reg))
+    seats = write_seats(tmp_path, BASE)
+    out = tmp_path / "out"
+    result = run(
+        "--seats", seats, "--advisors", a, "--frameworks", f,
+        "--out", out, "--author-out", tmp_path / "a.html",
+    )
+    assert result.returncode == 0, result.stderr
+    text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
+    assert "Fish &amp; &lt;Chips&gt; &quot;Quoted&quot;" in text
+    assert "<script>alert" not in text
+    assert "Uses &lt;script&gt;" in text
+
+
+def test_registry_dashes_become_commas(tmp_path):
+    a, f = tiny_registries(tmp_path)
+    reg = load(f)
+    reg["frameworks"][0]["purpose"] = "pick one motion — then commit for 18–24 months"
+    f.write_text(yaml.safe_dump(reg))
+    seats = write_seats(tmp_path, BASE)
+    out = tmp_path / "out"
+    result = run(
+        "--seats", seats, "--advisors", a, "--frameworks", f,
+        "--out", out, "--author-out", tmp_path / "a.html",
+    )
+    assert result.returncode == 0, result.stderr
+    text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
+    assert "Pick one motion, then commit for 18, 24 months" in text
+
+
+def test_purpose_first_letter_capitalized():
+    text = (PAGES / "seats" / "head-of-people.html").read_text(encoding="utf-8")
+    assert "Transforming failure and pain into progress" in text
+
+
+def test_no_network_scripts():
+    for page in html_pages():
+        text = page.read_text(encoding="utf-8")
+        assert "<script src=" not in text, page.name
+        for link in re.findall(r"<link\b[^>]*>", text):
+            for url in re.findall(r'href="(https?://[^"]+)"', link):
+                assert url.startswith("https://fonts.googleapis.com/"), (page.name, url)
+    css = (PAGES / "style.css").read_text(encoding="utf-8")
+    assert "@import" not in css
+    assert "system-ui" in css
+
+
+def test_pages_avoid_retired_patterns():
+    for path in (ROOT / "skills" / "org-chart").rglob("*"):
+        if path.is_file():
+            text = path.read_text(encoding="utf-8")
+            for pattern in RETIRED_PATTERNS:
+                assert not pattern.search(text), (path.name, pattern.pattern)
+
+
+def test_no_dashes_in_pages():
+    for path in page_files():
+        text = path.read_text(encoding="utf-8")
+        assert "–" not in text and "—" not in text, path.name
+
+
+def test_page_titles():
+    assert "<title>B2B Org Chart</title>" in (PAGES / "index.html").read_text(encoding="utf-8")
+    assert "<title>B2C Org Chart</title>" in (PAGES / "b2c.html").read_text(encoding="utf-8")
+    support = (PAGES / "seats" / "support.html").read_text(encoding="utf-8")
+    assert "<title>Support</title>" in support
+
+
+def test_chart_fixed_text():
+    lede = (
+        "What each seat in a 100-person software company does, and the frameworks "
+        "a CEO can run before hiring for it."
+    )
+    for name in CHART_FILES.values():
+        text = (PAGES / name).read_text(encoding="utf-8")
+        assert lede in text
+        assert "Headcounts are a typical split for 100 people, rounded." in text
+
+
+def test_build_is_deterministic(tmp_path):
+    one, two = tmp_path / "one", tmp_path / "two"
+    assert run("--out", one, "--author-out", tmp_path / "a1.html").returncode == 0
+    assert run("--out", two, "--author-out", tmp_path / "a2.html").returncode == 0
+    files_one = sorted(p.relative_to(one) for p in one.rglob("*") if p.is_file())
+    files_two = sorted(p.relative_to(two) for p in two.rglob("*") if p.is_file())
+    assert files_one and files_one == files_two
+    for rel in files_one:
+        assert (one / rel).read_bytes() == (two / rel).read_bytes(), rel
+    assert (tmp_path / "a1.html").read_bytes() == (tmp_path / "a2.html").read_bytes()
+
+
+def test_author_page_lists_gaps_and_holding(tmp_path):
+    author = tmp_path / "a.html"
+    assert run("--out", tmp_path / "out", "--author-out", author).returncode == 0
+    text = author.read_text(encoding="utf-8")
+    assert "James Gurney" in text
+    assert "Stage the Picture" in text
+    # Nothing first, then thin by headcount.
+    b2b = text.split('id="gaps-b2b"')[1].split("</table>")[0]
+    assert b2b.index("Support") < b2b.index("Software engineers")
+    assert b2b.index("Software engineers") < b2b.index("Security")
+    assert "Head of product" not in b2b
+
+
+def test_build_removes_stale_pages(tmp_path):
+    out = tmp_path / "out"
+    (out / "seats").mkdir(parents=True)
+    (out / "seats" / "old-seat.html").write_text("old", encoding="utf-8")
+    assert run("--out", out, "--author-out", tmp_path / "a.html").returncode == 0
+    assert not (out / "seats" / "old-seat.html").exists()
+    assert run("--check", "--out", out).returncode == 0

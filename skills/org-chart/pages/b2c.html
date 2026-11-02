@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B2C Org Chart</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <nav class="switch" aria-label="Choose a chart"><a href="index.html">B2B</a><a href="b2c.html" aria-current="page">B2C</a></nav>
+    <h1>B2C Org Chart</h1>
+    <p class="sub">What each seat in a 100-person software company does, and the frameworks a CEO can run before hiring for it.</p>
+    <div class="tiles">
+      <div class="tile"><span class="label">Advisors on this chart</span><span class="num">59</span></div>
+      <div class="tile"><span class="label">Frameworks on this chart</span><span class="num">107</span></div>
+      <div class="tile"><span class="label">Seats</span><span class="num">32</span></div>
+      <div class="tile bad"><span class="label">Seats with nothing yet</span><span class="num">7</span></div>
+    </div>
+  </header>
+
+  <section aria-label="The org chart">
+    <ul class="legend">
+      <li><span class="pill covered">Covered</span><span>Two or more advisors and three or more frameworks fit the seat's work.</span></li>
+      <li><span class="pill thin">Thin</span><span>Some of the work has a framework. Some has nothing yet.</span></li>
+      <li><span class="pill none">Nothing yet</span><span>No advisor or framework fits this seat yet.</span></li>
+    </ul>
+    <div class="chart">
+      <div class="top">
+        <a href="seats/board.html" class="seat none dotted"><span class="seat-row"><span class="seat-name">Board and fundraising</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span><span class="seat-counts">0 jobs</span></span></a>
+        <div class="v-line dotted"></div>
+        <a href="seats/ceo.html" class="seat covered"><span class="seat-row"><span class="seat-name">CEO</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">6 jobs</span></span></a>
+        <div class="v-line"></div>
+      </div>
+      <div class="depts">
+        <section class="dept" id="dept-lead">
+          <div class="dept-head"><h3>Leadership team</h3><span class="seat-n">1 person</span></div>
+          <a href="seats/coo.html" data-reports-to="ceo" class="seat covered head"><span class="seat-row"><span class="seat-name">COO or chief of staff</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">4 jobs</span></span></a>
+        </section>
+        <section class="dept" id="dept-product">
+          <div class="dept-head"><h3>Product and design</h3><span class="seat-n">14 people</span></div>
+          <a href="seats/head-of-product.html" data-reports-to="ceo" class="seat covered head"><span class="seat-row"><span class="seat-name">Head of product</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">5 jobs</span></span></a>
+          <a href="seats/product-managers.html" data-reports-to="head-of-product" class="seat covered report"><span class="seat-row"><span class="seat-name">Product managers</span><span class="seat-n">×6</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">5 jobs</span></span></a>
+          <a href="seats/product-designers.html" data-reports-to="head-of-product" class="seat covered report"><span class="seat-row"><span class="seat-name">Product designers</span><span class="seat-n">×6</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">4 jobs</span></span></a>
+          <a href="seats/user-researcher.html" data-reports-to="head-of-product" class="seat covered report"><span class="seat-row"><span class="seat-name">User researcher</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">3 jobs</span></span></a>
+        </section>
+        <section class="dept" id="dept-eng">
+          <div class="dept-head"><h3>Engineering</h3><span class="seat-n">41 people</span></div>
+          <a href="seats/cto.html" data-reports-to="ceo" class="seat thin head"><span class="seat-row"><span class="seat-name">CTO or VP of engineering</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">2 jobs</span></span></a>
+          <a href="seats/engineering-managers.html" data-reports-to="cto" class="seat covered report"><span class="seat-row"><span class="seat-name">Engineering managers</span><span class="seat-n">×5</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">3 jobs</span></span></a>
+          <a href="seats/software-engineers.html" data-reports-to="cto" class="seat thin report"><span class="seat-row"><span class="seat-name">Software engineers</span><span class="seat-n">×30</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">2 jobs</span></span></a>
+          <a href="seats/quality-and-testing.html" data-reports-to="cto" class="seat thin report"><span class="seat-row"><span class="seat-name">Quality and testing</span><span class="seat-n">×2</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">1 job</span></span></a>
+          <a href="seats/security.html" data-reports-to="cto" class="seat thin report"><span class="seat-row"><span class="seat-name">Security</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">2 jobs</span></span></a>
+          <a href="seats/devops.html" data-reports-to="cto" class="seat none report"><span class="seat-row"><span class="seat-name">DevOps and reliability</span><span class="seat-n">×2</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span><span class="seat-counts">0 jobs</span></span></a>
+        </section>
+        <section class="dept" id="dept-mkt">
+          <div class="dept-head"><h3>Marketing</h3><span class="seat-n">13 people</span></div>
+          <a href="seats/head-of-marketing.html" data-reports-to="ceo" class="seat covered head"><span class="seat-row"><span class="seat-name">Head of marketing</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">4 jobs</span></span></a>
+          <a href="seats/product-marketing.html" data-reports-to="head-of-marketing" class="seat covered report"><span class="seat-row"><span class="seat-name">Product marketing</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">6 jobs</span></span></a>
+          <a href="seats/content-and-search.html" data-reports-to="head-of-marketing" class="seat covered report"><span class="seat-row"><span class="seat-name">Content and search</span><span class="seat-n">×2</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">4 jobs</span></span></a>
+          <a href="seats/brand-and-design.html" data-reports-to="head-of-marketing" class="seat covered report"><span class="seat-row"><span class="seat-name">Brand and design</span><span class="seat-n">×2</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">4 jobs</span></span></a>
+          <a href="seats/paid-acquisition.html" data-reports-to="head-of-marketing" class="seat thin report"><span class="seat-row"><span class="seat-name">Paid acquisition and app stores</span><span class="seat-n">×3</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">3 jobs</span></span></a>
+          <a href="seats/lifecycle-and-retention.html" data-reports-to="head-of-marketing" class="seat thin report"><span class="seat-row"><span class="seat-name">Lifecycle and retention</span><span class="seat-n">×2</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">4 jobs</span></span></a>
+          <a href="seats/community.html" data-reports-to="head-of-marketing" class="seat thin report"><span class="seat-row"><span class="seat-name">Community</span><span class="seat-n">×2</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">2 jobs</span></span></a>
+        </section>
+        <section class="dept" id="dept-sales">
+          <div class="dept-head"><h3>Sales</h3><span class="seat-n">1 person</span></div>
+          <a href="seats/partnerships.html" data-reports-to="ceo" class="seat thin head"><span class="seat-row"><span class="seat-name">Partnerships</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">1 job</span></span></a>
+        </section>
+        <section class="dept" id="dept-cust">
+          <div class="dept-head"><h3>Customers</h3><span class="seat-n">14 people</span></div>
+          <a href="seats/head-of-customer-experience.html" data-reports-to="ceo" class="seat thin head"><span class="seat-row"><span class="seat-name">Head of customer experience</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">2 jobs</span></span></a>
+          <a href="seats/support.html" data-reports-to="head-of-customer-experience" class="seat none report"><span class="seat-row"><span class="seat-name">Support</span><span class="seat-n">×10</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span><span class="seat-counts">0 jobs</span></span></a>
+          <a href="seats/trust-and-safety.html" data-reports-to="head-of-customer-experience" class="seat thin report"><span class="seat-row"><span class="seat-name">Trust and safety</span><span class="seat-n">×3</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">3 jobs</span></span></a>
+        </section>
+        <section class="dept" id="dept-people">
+          <div class="dept-head"><h3>People</h3><span class="seat-n">6 people</span></div>
+          <a href="seats/head-of-people.html" data-reports-to="ceo" class="seat covered head"><span class="seat-row"><span class="seat-name">Head of people</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">6 jobs</span></span></a>
+          <a href="seats/recruiting.html" data-reports-to="head-of-people" class="seat thin report"><span class="seat-row"><span class="seat-name">Recruiting</span><span class="seat-n">×4</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">1 job</span></span></a>
+          <a href="seats/learning-and-development.html" data-reports-to="head-of-people" class="seat covered report"><span class="seat-row"><span class="seat-name">Learning and development</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill covered">Covered</span><span class="seat-counts">4 jobs</span></span></a>
+        </section>
+        <section class="dept" id="dept-ops">
+          <div class="dept-head"><h3>Finance, legal, and operations</h3><span class="seat-n">9 people</span></div>
+          <a href="seats/head-of-finance.html" data-reports-to="ceo" class="seat none head"><span class="seat-row"><span class="seat-name">Head of finance</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span><span class="seat-counts">0 jobs</span></span></a>
+          <a href="seats/accounting-and-fpa.html" data-reports-to="head-of-finance" class="seat none report"><span class="seat-row"><span class="seat-name">Accounting and FP&amp;A</span><span class="seat-n">×2</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span><span class="seat-counts">0 jobs</span></span></a>
+          <a href="seats/legal.html" data-reports-to="head-of-finance" class="seat none report"><span class="seat-row"><span class="seat-name">Legal</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span><span class="seat-counts">0 jobs</span></span></a>
+          <a href="seats/data-and-business-operations.html" data-reports-to="head-of-finance" class="seat thin report"><span class="seat-row"><span class="seat-name">Data and business operations</span><span class="seat-n">×4</span></span><span class="seat-row start"><span class="pill thin">Thin</span><span class="seat-counts">2 jobs</span></span></a>
+          <a href="seats/it.html" data-reports-to="head-of-finance" class="seat none report"><span class="seat-row"><span class="seat-name">IT</span><span class="seat-n">×1</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span><span class="seat-counts">0 jobs</span></span></a>
+        </section>
+      </div>
+    </div>
+    <p class="muted">Headcounts are a typical split for 100 people, rounded.</p>
+  </section>
+</div>
+</body>
+</html>

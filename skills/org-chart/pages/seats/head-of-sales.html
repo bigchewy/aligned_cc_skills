@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Head of sales</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a></nav>
+    <h1>Head of sales</h1>
+    <div class="meta"><span>Sales</span><span>1 person</span><span class="pill covered">Covered</span></div>
+    <p class="does">Builds the sales team, picks the sales motion, and owns the number.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Pick your sales motion</h3><div class="who">the 5 GTM Motions for Digital Health <span class="by">· Julie Yoo</span></div><p class="why">A motion-commitment diagnostic that forces a digital health founder to pick one primary go-to-market motion, B2C2B, B2SMB, Risk-based contracting, Two-sided networks, or Distribution through aggregators, for the next 18 months, and confirms that product, evidence, buyer, and runway all match the chosen motion</p><div class="cmd"><code>/aligned:use-framework 5-gtm-motions-digital-health</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Find where revenue leaks between first touch and renewal</h3><div class="who">the Bowtie Funnel <span class="by">· Jacco van der Kooij</span></div><p class="why">A diagnostic walk through the end-to-end recurring-revenue architecture, six stages from Awareness through Expansion, to find where revenue is actually leaking</p><div class="cmd"><code>/aligned:use-framework bowtie-funnel</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Teach the team to sell with an insight instead of a demo</h3><div class="who">Teach-Tailor-Take Control (TTTC) <span class="by">· Matt Dixon</span></div><p class="why">The three-skill Challenger sales motion, delivering a reframing commercial insight (Teach), adapting it to this specific buyer (Tailor), and assertively guiding commercial dynamics around pricing, timing, and next steps (Take Control)</p><div class="cmd"><code>/aligned:use-framework teach-tailor-take-control</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Design the team that books first meetings</h3><div class="who">the 6 Elements of the Sales Development Playbook <span class="by">· Trish Bertuzzi</span></div><p class="why">A full-function diagnostic and redesign of a B2B sales development organization across six design elements, Strategy, Specialization, Recruiting, Retention, Execution, and Leadership, producing a ranked fix list that stops leaders from hiring more SDRs into a broken design</p><div class="cmd"><code>/aligned:use-framework 6-elements-sdr</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Julie Yoo</div><p class="why">General Partner at a16z Bio + Health and co-founder of Kyruus, the operator-investor voice on digital health enterprise GTM and motion selection</p><div class="cmd"><code>/aligned:use-advisor julie-yoo</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Jacco van der Kooij</div><p class="why">Founder of Winning by Design, architect of the Bowtie Funnel and Sales as a Science</p><div class="cmd"><code>/aligned:use-advisor jacco-van-der-kooij</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Matt Dixon</div><p class="why">Research-backed B2B sales author, co-author of The Challenger Sale, The Challenger Customer, The Effortless Experience, and The JOLT Effect</p><div class="cmd"><code>/aligned:use-advisor matt-dixon</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Trish Bertuzzi</div><p class="why">Founder and CEO of The Bridge Group and author of The Sales Development Playbook, the canonical voice on B2B sales development org design</p><div class="cmd"><code>/aligned:use-advisor trish-bertuzzi</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <section class="missing">
+    <h2>Not covered yet</h2>
+    <p>Forecasting, quotas, and sales comp plans.</p>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="social-and-community.html">← Previous: Social and community</a><a href="account-executives.html">Next: Account executives →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

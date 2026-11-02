@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product marketing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a><a href="../b2c.html">← B2C chart</a></nav>
+    <h1>Product marketing</h1>
+    <div class="meta"><span>Marketing</span><span>B2B: 2 people</span><span>B2C: 1 person</span><span class="pill covered">Covered</span></div>
+    <p class="does">Writes the messaging, pricing pages, battle cards, and launch plans.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Put your positioning on one page the team can use</h3><div class="who">Positioning Canvas <span class="by">· April Dunford</span></div><p class="why">Capturing positioning work in a one-page canvas for team alignment</p><div class="cmd"><code>/aligned:use-framework positioning-canvas</code><button type="button" class="copy">Copy</button></div><div class="other"><span class="label">Other ways to do this</span><ul><li><div class="who">Origin Story Interview <span class="by">· April Dunford</span></div><p class="why">Extracting a founder&#x27;s origin story and use cases for positioning</p><div class="cmd"><code>/aligned:use-framework origin-story-interview</code><button type="button" class="copy">Copy</button></div></li></ul></div></li>
+      <li class="card"><h3>Write the messaging every page and pitch pulls from</h3><div class="who">Messaging Distillation <span class="by">· April Dunford</span></div><p class="why">Distills positioning and narrative into a language/messaging.md file with slices for category name, tagline, elevator-pitch variants, value-prop phrasings, value-prop-to-persona map, key phrases, and (optional) pricing language</p><div class="cmd"><code>/aligned:use-framework messaging-distillation</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Arm the team against each competitor</h3><div class="who">Competitive Battle Card <span class="by">· April Dunford</span></div><p class="why">Produces market/competitive.md with competitive-landscape, differentiators, and common-objections slices; declares depends_on against strategy/positioning#competitive-alternatives so drift is detectable</p><div class="cmd"><code>/aligned:use-framework competitive-battle-card</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Write down who buys and how they decide</h3><div class="who">Buyer Persona <span class="by">· Matt Dixon</span></div><p class="why">Produces one personas/{role}.md file per run, capturing role overview, evaluation criteria, skepticism triggers, language resonance, and common objections, anchored in the Challenger commercial-insight frame</p><div class="cmd"><code>/aligned:use-framework buyer-persona</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Back every claim with a source and a date</h3><div class="who">Proof Points Audit <span class="by">· Michael Bolton</span></div><p class="why">Produces proof/proof-points.md with structured, sourced, dated claims; conditionally splits into proof/clinical-evidence.md and proof/compliance.md when the org has clinical evidence or compliance certifications</p><div class="cmd"><code>/aligned:use-framework proof-points-audit</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Decide what customers pay for</h3><div class="who">Value Metric Framework <span class="by">· Patrick Campbell</span></div><p class="why">How their customer pays and what they pay for</p><div class="cmd"><code>/aligned:use-framework value-metric</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">April Dunford</div><p class="why">Positioning consultant, helped 200+ tech companies position products</p><div class="cmd"><code>/aligned:use-advisor april-dunford</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Matt Dixon</div><p class="why">Research-backed B2B sales author, co-author of The Challenger Sale, The Challenger Customer, The Effortless Experience, and The JOLT Effect</p><div class="cmd"><code>/aligned:use-advisor matt-dixon</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Michael Bolton</div><p class="why">Software tester, co-creator of Rapid Software Testing with James Bach, and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS oracles, reads the code behind every claim, and asks what the passing checks never asked</p><div class="cmd"><code>/aligned:use-advisor michael-bolton</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Patrick Campbell</div><p class="why">Founder of ProfitWell (acquired by Paddle for $200M)</p><div class="cmd"><code>/aligned:use-advisor patrick-campbell</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="head-of-marketing.html">← Previous: Head of marketing</a><a href="content-and-search.html">Next: Content and search →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

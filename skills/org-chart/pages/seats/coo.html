@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COO or chief of staff</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a><a href="../b2c.html">← B2C chart</a></nav>
+    <h1>COO or chief of staff</h1>
+    <div class="meta"><span>Leadership team</span><span>B2B: 1 person</span><span>B2C: 1 person</span><span class="pill covered">Covered</span></div>
+    <p class="does">Runs the operating rhythm of weekly updates and monthly reviews, and fixes processes that break.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Replace status meetings with a written weekly update</h3><div class="who">The Weekly Check-In <span class="by">· Matt Mochary</span></div><p class="why">Replace status meetings with an async written update covering emotional state, single top priority, commitment review, and issues with proposed solutions</p><div class="cmd"><code>/aligned:use-framework mochary-weekly-check-in</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Run a monthly review that ends in decisions</h3><div class="who">Operating Review Design <span class="by">· Claire Hughes Johnson</span></div><p class="why">Transform a status-presentation meeting into a decision-focused operating review through pre-reads, discussion-only meeting norms, decision logs, and strategy-connected metrics</p><div class="cmd"><code>/aligned:use-framework chj-operating-review</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Fix a process that keeps breaking</h3><div class="who">The Algorithm <span class="by">· Elon Musk</span></div><p class="why">A strict five-step sequence for improving any process: question requirements, delete, simplify, accelerate, then automate</p><div class="cmd"><code>/aligned:use-framework the-algorithm</code><button type="button" class="copy">Copy</button></div><div class="other"><span class="label">Other ways to do this</span><ul><li><div class="who">5-Step Process <span class="by">· Ray Dalio</span></div><p class="why">A five-step loop for achieving goals by identifying problems, diagnosing root causes, designing plans, and pushing through to results</p><div class="cmd"><code>/aligned:use-framework 5-step-process</code><button type="button" class="copy">Copy</button></div></li></ul></div></li>
+      <li class="card"><h3>Turn a service your team delivers by hand into a package clients can buy</h3><div class="who">Proven Process <span class="by">· Gino Wickman</span></div><p class="why">Turning a method someone delivers by hand into a repeatable engagement, with who it is for, the components it strengthens, a checkup that scores them, the named steps a client goes through, what gets written down so someone else can deliver it, and a one-page picture of the whole thing</p><div class="cmd"><code>/aligned:use-framework proven-process</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Matt Mochary</div><p class="why">CEO coach and creator of the Mochary Method; written-culture operating system for leadership teams</p><div class="cmd"><code>/aligned:use-advisor matt-mochary</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Claire Hughes Johnson</div><p class="why">Former COO of Stripe and author of Scaling People; management infrastructure and operating review design</p><div class="cmd"><code>/aligned:use-advisor claire-hughes-johnson</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Elon Musk</div><p class="why">Serial founder who builds from physics up</p><div class="cmd"><code>/aligned:use-advisor elon-musk</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Ray Dalio</div><p class="why">Founder who converts radical truth and transparency into decision-making systems</p><div class="cmd"><code>/aligned:use-advisor ray-dalio</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Gino Wickman</div><p class="why">Creator of EOS, the Entrepreneurial Operating System, founder of EOS Worldwide, author of Traction and Rocket Fuel; simple tools for a growing company&#x27;s operating system, and how a methodology was packaged into a repeatable implementation</p><div class="cmd"><code>/aligned:use-advisor gino-wickman</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="ceo.html">← Previous: CEO</a><a href="head-of-product.html">Next: Head of product →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

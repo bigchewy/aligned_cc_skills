@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Org Chart Gaps</title>
+<style>
+{{css}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Org Chart Gaps</h1>
+    <p class="sub">For the plugin author. Seats with nothing come first, then thin seats with the most people. This page is not shipped.</p>
+  </header>
+{{gaps}}
+  <section>
+    <h2>Holding list</h2>
+    <p>These advisors and frameworks are on no seat yet.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Advisor or framework</th><th>Id</th><th>Why</th></tr></thead>
+      <tbody>
+{{holding}}
+      </tbody>
+    </table></div>
+  </section>
+</div>
+</body>
+</html>

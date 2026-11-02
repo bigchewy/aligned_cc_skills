@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <nav class="switch" aria-label="Choose a chart">{{switch}}</nav>
+    <h1>{{title}}</h1>
+    <p class="sub">What each seat in a 100-person software company does, and the frameworks a CEO can run before hiring for it.</p>
+    <div class="tiles">
+      <div class="tile"><span class="label">Advisors on this chart</span><span class="num">{{advisor_count}}</span></div>
+      <div class="tile"><span class="label">Frameworks on this chart</span><span class="num">{{framework_count}}</span></div>
+      <div class="tile"><span class="label">Seats</span><span class="num">{{seat_count}}</span></div>
+      <div class="tile bad"><span class="label">Seats with nothing yet</span><span class="num">{{none_count}}</span></div>
+    </div>
+  </header>
+
+  <section aria-label="The org chart">
+    <ul class="legend">
+      <li><span class="pill covered">Covered</span><span>Two or more advisors and three or more frameworks fit the seat's work.</span></li>
+      <li><span class="pill thin">Thin</span><span>Some of the work has a framework. Some has nothing yet.</span></li>
+      <li><span class="pill none">Nothing yet</span><span>No advisor or framework fits this seat yet.</span></li>
+    </ul>
+    <div class="chart">
+      <div class="top">
+{{top}}
+      </div>
+      <div class="depts">
+{{columns}}
+      </div>
+    </div>
+    <p class="muted">Headcounts are a typical split for 100 people, rounded.</p>
+  </section>
+</div>
+</body>
+</html>

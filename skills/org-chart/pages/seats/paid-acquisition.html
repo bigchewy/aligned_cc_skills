@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paid acquisition and app stores</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../b2c.html">← B2C chart</a></nav>
+    <h1>Paid acquisition and app stores</h1>
+    <div class="meta"><span>Marketing</span><span>3 people</span><span class="pill thin">Thin</span></div>
+    <p class="does">Buys ads, runs the app store listings, and brings in new users at a cost the business can afford.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Test ads and channels every week and pick the next test by score</h3><div class="who">the Growth Hacking Process <span class="by">· Sean Ellis</span></div><p class="why">A systematic five-step methodology for achieving sustainable growth. This process scaled Dropbox, LogMeIn, and Eventbrite</p><div class="cmd"><code>/aligned:use-framework growth-hacking-process</code><button type="button" class="copy">Copy</button></div><div class="other"><span class="label">Other ways to do this</span><ul><li><div class="who">ICE Prioritization <span class="by">· Sean Ellis</span></div><p class="why">A simple but ruthless scoring system to prioritize growth experiments. This framework prevents analysis paralysis and ensures you always work on the highest-value experiments first</p><div class="cmd"><code>/aligned:use-framework ice-prioritization</code><button type="button" class="copy">Copy</button></div></li></ul></div></li>
+      <li class="card"><h3>Build a landing page that turns ad clicks into signups</h3><div class="who">Landing Page Assembly <span class="by">· Oli Gardner</span></div><p class="why">Building a high-converting landing page through structured advisor collaboration across six stages</p><div class="cmd"><code>/aligned:use-framework landing-page-assembly</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Cut the steps between install and first use</h3><div class="who">the Cognitive Friction Audit <span class="by">· Shirin Oreizy</span></div><p class="why">A systematic process for identifying and eliminating decision-making barriers in user journeys. Every friction point costs conversions</p><div class="cmd"><code>/aligned:use-framework cognitive-friction-audit</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Sean Ellis</div><p class="why">Coined &quot;growth hacking,&quot; scaled Dropbox, LogMeIn, Eventbrite to IPO</p><div class="cmd"><code>/aligned:use-advisor sean-ellis</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Oli Gardner</div><p class="why">Co-founder of Unbounce</p><div class="cmd"><code>/aligned:use-advisor oli-gardner</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Shirin Oreizy</div><p class="why">Founder of Next Step, a behavioral design agency</p><div class="cmd"><code>/aligned:use-advisor shirin-oreizy</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Julian Shapiro</div><p class="why">Founder of Demand Curve and Bell Curve</p><div class="cmd"><code>/aligned:use-advisor julian-shapiro</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Joanna Wiebe</div><p class="why">Founder of Copyhackers, coined &quot;conversion copywriting&quot;</p><div class="cmd"><code>/aligned:use-advisor joanna-wiebe</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <section class="missing">
+    <h2>Not covered yet</h2>
+    <p>Buying ads on each platform, app store listings and ratings, and tracking what each new paying user costs.</p>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="brand-and-design.html">← Previous: Brand and design</a><a href="lifecycle-and-retention.html">Next: Lifecycle and retention →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

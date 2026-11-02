@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sales enablement</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a></nav>
+    <h1>Sales enablement</h1>
+    <div class="meta"><span>Sales</span><span>1 person</span><span class="pill covered">Covered</span></div>
+    <p class="does">Onboards new reps and trains the team on the pitch and the product.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Build onboarding that gets new reps selling</h3><div class="who">Ten Steps Blueprint <span class="by">· Paul A. Kirschner</span></div><p class="why">Designing a program for a complex skill people use at work, built from whole tasks in classes from simple to complex, with support that fades, information given at the right time, and practice for the routines that must become automatic</p><div class="cmd"><code>/aligned:use-framework ten-steps-blueprint</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Find out why reps skip what they were trained to do</h3><div class="who">Behavior Gap Diagnosis <span class="by">· Julie Dirksen</span></div><p class="why">Finding out why people aren&#x27;t doing a target behavior, whether training can fix it, and which kind of fix matches each gap</p><div class="cmd"><code>/aligned:use-framework behavior-gap-diagnosis</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Teach the pitch</h3><div class="who">Sales Pitch Structure <span class="by">· April Dunford</span></div><p class="why">Transforming positioning work into a story that helps buyers make confident decisions</p><div class="cmd"><code>/aligned:use-framework sales-pitch-structure</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Train reps to handle each competitor</h3><div class="who">Competitive Battle Card <span class="by">· April Dunford</span></div><p class="why">Produces market/competitive.md with competitive-landscape, differentiators, and common-objections slices; declares depends_on against strategy/positioning#competitive-alternatives so drift is detectable</p><div class="cmd"><code>/aligned:use-framework competitive-battle-card</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Paul A. Kirschner</div><p class="why">Emeritus Professor of Educational Psychology at the Open University of the Netherlands, co-author of Ten Steps to Complex Learning, How Learning Happens, and Evidence-Informed Learning Design; 4C/ID program design, cognitive load, and learning myths</p><div class="cmd"><code>/aligned:use-advisor paul-kirschner</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Julie Dirksen</div><p class="why">Founder of Usable Learning, author of Design for How People Learn and Talk to the Elephant; learning design for behavior change, COM-B diagnosis, and when training is not the answer</p><div class="cmd"><code>/aligned:use-advisor julie-dirksen</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">April Dunford</div><p class="why">Positioning consultant, helped 200+ tech companies position products</p><div class="cmd"><code>/aligned:use-advisor april-dunford</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="revenue-operations.html">← Previous: Revenue operations</a><a href="head-of-customer-success.html">Next: Head of customer success →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

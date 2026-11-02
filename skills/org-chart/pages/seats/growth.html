@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Growth and demand gen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a></nav>
+    <h1>Growth and demand gen</h1>
+    <div class="meta"><span>Marketing</span><span>2 people</span><span class="pill covered">Covered</span></div>
+    <p class="does">Runs the experiments, landing pages, and paid campaigns that bring in leads.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Run growth experiments every week and pick the next one by score</h3><div class="who">the Growth Hacking Process <span class="by">· Sean Ellis</span></div><p class="why">A systematic five-step methodology for achieving sustainable growth. This process scaled Dropbox, LogMeIn, and Eventbrite</p><div class="cmd"><code>/aligned:use-framework growth-hacking-process</code><button type="button" class="copy">Copy</button></div><div class="other"><span class="label">Other ways to do this</span><ul><li><div class="who">ICE Prioritization <span class="by">· Sean Ellis</span></div><p class="why">A simple but ruthless scoring system to prioritize growth experiments. This framework prevents analysis paralysis and ensures you always work on the highest-value experiments first</p><div class="cmd"><code>/aligned:use-framework ice-prioritization</code><button type="button" class="copy">Copy</button></div></li></ul></div></li>
+      <li class="card"><h3>Build a landing page that turns visitors into leads</h3><div class="who">Landing Page Assembly <span class="by">· Oli Gardner</span></div><p class="why">Building a high-converting landing page through structured advisor collaboration across six stages</p><div class="cmd"><code>/aligned:use-framework landing-page-assembly</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Rewrite the homepage so a visitor gets it in five seconds</h3><div class="who">StoryBrand Homepage Wireframe <span class="by">· Donald Miller</span></div><p class="why">Building a homepage that passes the grunt test using story structure</p><div class="cmd"><code>/aligned:use-framework storybrand-homepage</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Sean Ellis</div><p class="why">Coined &quot;growth hacking,&quot; scaled Dropbox, LogMeIn, Eventbrite to IPO</p><div class="cmd"><code>/aligned:use-advisor sean-ellis</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Oli Gardner</div><p class="why">Co-founder of Unbounce</p><div class="cmd"><code>/aligned:use-advisor oli-gardner</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Donald Miller</div><p class="why">StoryBrand creator, clarifies marketing messages through story structure</p><div class="cmd"><code>/aligned:use-advisor donald-miller</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Julian Shapiro</div><p class="why">Founder of Demand Curve and Bell Curve</p><div class="cmd"><code>/aligned:use-advisor julian-shapiro</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Rob Walling</div><p class="why">Serial entrepreneur, founder of MicroConf and TinySeed</p><div class="cmd"><code>/aligned:use-advisor rob-walling</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Shirin Oreizy</div><p class="why">Founder of Next Step, a behavioral design agency</p><div class="cmd"><code>/aligned:use-advisor shirin-oreizy</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="content-and-search.html">← Previous: Content and search</a><a href="brand-and-design.html">Next: Brand and design →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

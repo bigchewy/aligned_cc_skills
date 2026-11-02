@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quality and testing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a><a href="../b2c.html">← B2C chart</a></nav>
+    <h1>Quality and testing</h1>
+    <div class="meta"><span>Engineering</span><span>B2B: 2 people</span><span>B2C: 2 people</span><span class="pill thin">Thin</span></div>
+    <p class="does">Finds the bugs before customers do.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Check a feature against everything it should agree with</h3><div class="who">FEW HICCUPPS Review <span class="by">· Michael Bolton</span></div><p class="why">Running a design doc, a feature, or an existing screen through the FEW HICCUPPS consistency oracles to find problems before they&#x27;re built, and checking what the doc claims about the codebase against the code</p><div class="cmd"><code>/aligned:use-framework few-hiccupps-review</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Michael Bolton</div><p class="why">Software tester, co-creator of Rapid Software Testing with James Bach, and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS oracles, reads the code behind every claim, and asks what the passing checks never asked</p><div class="cmd"><code>/aligned:use-advisor michael-bolton</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <section class="missing">
+    <h2>Not covered yet</h2>
+    <p>A test plan for a release and deciding what to test by risk. Michael Bolton covers design review but not release testing.</p>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="software-engineers.html">← Previous: Software engineers</a><a href="security.html">Next: Security →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

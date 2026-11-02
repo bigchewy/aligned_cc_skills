@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sales development reps</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a></nav>
+    <h1>Sales development reps</h1>
+    <div class="meta"><span>Sales</span><span>5 people</span><span class="pill thin">Thin</span></div>
+    <p class="does">Prospect, send cold outreach, and book first meetings for the account executives.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Set up how the team prospects and books meetings</h3><div class="who">the 6 Elements of the Sales Development Playbook <span class="by">· Trish Bertuzzi</span></div><p class="why">A full-function diagnostic and redesign of a B2B sales development organization across six design elements, Strategy, Specialization, Recruiting, Retention, Execution, and Leadership, producing a ranked fix list that stops leaders from hiring more SDRs into a broken design</p><div class="cmd"><code>/aligned:use-framework 6-elements-sdr</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Write cold email a buyer trusts</h3><div class="who">Insane Honesty <span class="by">· Doug Kessler</span></div><p class="why">Creating B2B copy that earns trust through radical honesty, structured around the Galvanizing Story and Three Whys frameworks</p><div class="cmd"><code>/aligned:use-framework insane-honesty</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Trish Bertuzzi</div><p class="why">Founder and CEO of The Bridge Group and author of The Sales Development Playbook, the canonical voice on B2B sales development org design</p><div class="cmd"><code>/aligned:use-advisor trish-bertuzzi</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Doug Kessler</div><p class="why">Co-founder of Velocity Partners, creator of Insane Honesty and the Galvanizing Story</p><div class="cmd"><code>/aligned:use-advisor doug-kessler</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Chris Voss</div><p class="why">Former FBI lead kidnapping negotiator, author of Never Split the Difference</p><div class="cmd"><code>/aligned:use-advisor chris-voss</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <section class="missing">
+    <h2>Not covered yet</h2>
+    <p>A daily prospecting playbook with cold call openers, email sequences, and answers to the first objection. Trish Bertuzzi&#x27;s framework is for the leader who designs the team.</p>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="account-executives.html">← Previous: Account executives</a><a href="revenue-operations.html">Next: Revenue operations →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

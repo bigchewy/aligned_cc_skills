@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer success managers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a></nav>
+    <h1>Customer success managers</h1>
+    <div class="meta"><span>Customers</span><span>5 people</span><span class="pill thin">Thin</span></div>
+    <p class="does">Onboard new customers, run business reviews, and save accounts at risk.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Show each customer the value they signed up for</h3><div class="who">the Forever Promise Framework <span class="by">· Robbie Kellman Baxter</span></div><p class="why">The process of defining the ongoing value commitment that turns a subscription into a real membership relationship</p><div class="cmd"><code>/aligned:use-framework forever-promise</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Get customers to use the product the way it works best</h3><div class="who">3B Framework (Behavior, Barriers, Benefits) <span class="by">· Kristen Berman</span></div><p class="why">A behavioral-science diagnostic for product behavior problems that names the specific target behavior, audits five categories of barriers, and tests benefit salience to surface the single highest-leverage experiment</p><div class="cmd"><code>/aligned:use-framework 3b-behavioral-design</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Talk a customer out of canceling</h3><div class="who">Calibrated Questions <span class="by">· Chris Voss</span></div><p class="why">A technique for influencing outcomes by asking questions that make the other person solve your problem</p><div class="cmd"><code>/aligned:use-framework calibrated-questions</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Robbie Kellman Baxter</div><p class="why">Founder of Peninsula Strategies, author of The Membership Economy</p><div class="cmd"><code>/aligned:use-advisor robbie-kellman-baxter</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Kristen Berman</div><p class="why">CEO and co-founder of Irrational Labs; behavioral-product-design practitioner</p><div class="cmd"><code>/aligned:use-advisor kristen-berman</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Chris Voss</div><p class="why">Former FBI lead kidnapping negotiator, author of Never Split the Difference</p><div class="cmd"><code>/aligned:use-advisor chris-voss</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <section class="missing">
+    <h2>Not covered yet</h2>
+    <p>Customer onboarding plans, quarterly business reviews, and saving an account that wants to cancel.</p>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="head-of-customer-success.html">← Previous: Head of customer success</a><a href="support.html">Next: Support →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a><a href="../b2c.html">← B2C chart</a></nav>
+    <h1>Support</h1>
+    <div class="meta"><span>Customers</span><span>B2B: 5 people</span><span>B2C: 10 people</span><span class="pill none">Nothing yet</span></div>
+    <p class="does">Answers tickets and fixes customer problems.</p>
+  </header>
+  <section class="missing none">
+    <h2>Not covered yet</h2>
+    <p>Ticket triage, a help center, and making support low effort for the customer. Matt Dixon co-wrote The Effortless Experience on this, and he has no framework for it yet.</p>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><span class="label">B2B chart</span><a href="customer-success-managers.html">← Previous: Customer success managers</a><a href="head-of-people.html">Next: Head of people →</a></div>
+    <div class="pager-row"><span class="label">B2C chart</span><a href="head-of-customer-experience.html">← Previous: Head of customer experience</a><a href="trust-and-safety.html">Next: Trust and safety →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

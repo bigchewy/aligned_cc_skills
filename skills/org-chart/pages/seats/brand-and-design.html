@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand and design</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a><a href="../b2c.html">← B2C chart</a></nav>
+    <h1>Brand and design</h1>
+    <div class="meta"><span>Marketing</span><span>B2B: 1 person</span><span>B2C: 2 people</span><span class="pill covered">Covered</span></div>
+    <p class="does">Owns the logo, the visual identity, and the voice.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Find a logo in something the product already has</h3><div class="who">Boil It Down <span class="by">· Michael Bierut</span></div><p class="why">Finding a mark in something the product already has, throwing out the category cliché, and cutting it down until it looks almost unfinished, so the result is one mark described well enough to draw</p><div class="cmd"><code>/aligned:use-framework boil-it-down</code><button type="button" class="copy">Copy</button></div><div class="other"><span class="label">Other ways to do this</span><ul><li><div class="who">The Small-Size and Print Test <span class="by">· Michael Bierut</span></div><p class="why">Running a mark through Sagi Haviv&#x27;s three tests, the draw-it-from-memory test, the smallest and hardest places it has to live, one-color print, and Josef Albers&#x27;s rule for color, and ending with pass, fix, or redraw for each</p><div class="cmd"><code>/aligned:use-framework small-size-and-print-test</code><button type="button" class="copy">Copy</button></div></li></ul></div></li>
+      <li class="card"><h3>Decide how a new product looks next to the old one</h3><div class="who">How Much the Siblings Share <span class="by">· Michael Bierut</span></div><p class="why">Deciding how a new product looks next to the product it came from, by picking one of three types of brand family and then listing exactly which of name, mark, type, and color the sibling shares</p><div class="cmd"><code>/aligned:use-framework how-much-siblings-share</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Write down how the company sounds</h3><div class="who">Brand Voice <span class="by">· Steve Krug</span></div><p class="why">Extracts a complete language/voice.md from 3, 10 sample pieces of existing copy, with seven slices (tone-principles, register-table, dos-and-donts, banned-phrases, banned-terms, glossary, competitor-naming)</p><div class="cmd"><code>/aligned:use-framework brand-voice</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Find the feeling that makes people lean in</h3><div class="who">The Carousel <span class="by">· Don Draper</span></div><p class="why">The feeling that makes people lean in, not the feature that makes them nod</p><div class="cmd"><code>/aligned:use-framework the-carousel</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Michael Bierut</div><p class="why">Pentagram partner from 1990 to 2025 and author of How to and Seventy-nine Short Essays on Design; boils a mark down from what the product already has and decides how sibling brands look side by side</p><div class="cmd"><code>/aligned:use-advisor michael-bierut</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Steve Krug</div><p class="why">Usability expert, author of Don&#x27;t Make Me Think</p><div class="cmd"><code>/aligned:use-advisor steve-krug</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Don Draper</div><p class="why">Creative director</p><div class="cmd"><code>/aligned:use-advisor don-draper</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><span class="label">B2B chart</span><a href="growth.html">← Previous: Growth and demand gen</a><a href="social-and-community.html">Next: Social and community →</a></div>
+    <div class="pager-row"><span class="label">B2C chart</span><a href="content-and-search.html">← Previous: Content and search</a><a href="paid-acquisition.html">Next: Paid acquisition and app stores →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

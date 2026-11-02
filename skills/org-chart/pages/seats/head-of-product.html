@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Head of product</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header>
+    <nav class="crumbs" aria-label="Back to the chart"><a href="../index.html">← B2B chart</a><a href="../b2c.html">← B2C chart</a></nav>
+    <h1>Head of product</h1>
+    <div class="meta"><span>Product and design</span><span>B2B: 1 person</span><span>B2C: 1 person</span><span class="pill covered">Covered</span></div>
+    <p class="does">Decides what the product does, what it stops doing, and what gets built this quarter.</p>
+  </header>
+  <section>
+    <h2>Jobs</h2>
+    <ol class="jobs">
+      <li class="card"><h3>Decide what the team builds next quarter</h3><div class="who">Frame, Shape, Bet <span class="by">· Ryan Singer</span></div><p class="why">Turning a list of planned work into a dated roadmap of problem areas and one shaped, committed bet, by setting how much time each piece of work is worth before anyone designs it</p><div class="cmd"><code>/aligned:use-framework frame-shape-bet</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Cut a feature list down to the half that matters</h3><div class="who">Getting Real Cut <span class="by">· Jason Fried</span></div><p class="why">Taking a feature list, a spec, or a design and cutting it to the half that kicks ass, built from its epicenter outward, before anyone builds it</p><div class="cmd"><code>/aligned:use-framework getting-real-cut</code><button type="button" class="copy">Copy</button></div><div class="other"><span class="label">Other ways to do this</span><ul><li><div class="who">Focus Through Saying No <span class="by">· Steve Jobs</span></div><p class="why">A ruthless focus exercise that forces a not-doing list by cutting everything that isn&#x27;t the single top priority</p><div class="cmd"><code>/aligned:use-framework focus-through-saying-no</code><button type="button" class="copy">Copy</button></div></li><li><div class="who">Four-Quadrant Focus <span class="by">· Steve Jobs</span></div><p class="why">Clarifying product portfolio using a 2x2 grid of your key dimensions</p><div class="cmd"><code>/aligned:use-framework four-quadrant-focus</code><button type="button" class="copy">Copy</button></div></li></ul></div></li>
+      <li class="card"><h3>Find out what customers hire the product to do</h3><div class="who">Jobs to Be Done <span class="by">· Clayton Christensen</span></div><p class="why">Uncovering the functional, emotional, and social progress a customer is hiring a product to make</p><div class="cmd"><code>/aligned:use-framework jobs-to-be-done</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Decide what the product does that no rival does</h3><div class="who">Blue Ocean Value Props <span class="by">· Kim &amp; Mauborgne</span></div><p class="why">Deciding what one offering will eliminate, reduce, raise, and create so that its value curve stands apart from every alternative buyers have today</p><div class="cmd"><code>/aligned:use-framework blue-ocean-value-props</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><h3>Start from what the customer sees and work back to the build</h3><div class="who">Start With Experience <span class="by">· Steve Jobs</span></div><p class="why">Designing products by starting with customer experience and working backwards</p><div class="cmd"><code>/aligned:use-framework start-with-experience</code><button type="button" class="copy">Copy</button></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>Ask an advisor</h2>
+    <ul class="advisors">
+      <li class="card"><div class="who">Ryan Singer</div><p class="why">Author of Shape Up and former Head of Strategy at Basecamp; appetites, shaping, and betting to turn strategy into a dated roadmap</p><div class="cmd"><code>/aligned:use-advisor ryan-singer</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Jason Fried</div><p class="why">Co-founder and CEO of 37signals and co-author of Getting Real and Rework; cuts a product to the half that kicks ass, says no by default, and builds the epicenter first</p><div class="cmd"><code>/aligned:use-advisor jason-fried</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Steve Jobs</div><p class="why">Co-founder of Apple who demanded insanely great products</p><div class="cmd"><code>/aligned:use-advisor steve-jobs</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Clayton Christensen</div><p class="why">Harvard professor, pioneer of disruptive innovation and Jobs to Be Done</p><div class="cmd"><code>/aligned:use-advisor clayton-christensen</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Kim &amp; Mauborgne</div><p class="why">W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with the strategy canvas and the ERRC grid</p><div class="cmd"><code>/aligned:use-advisor kim-mauborgne</code><button type="button" class="copy">Copy</button></div></li>
+      <li class="card"><div class="who">Garry Tan</div><p class="why">CEO of YC, designer-engineer-founder who leads with earnestness and product taste</p><div class="cmd"><code>/aligned:use-advisor garry-tan</code><button type="button" class="copy">Copy</button></div></li>
+    </ul>
+  </section>
+  <nav class="pager" aria-label="Other seats">
+    <div class="pager-row"><a href="coo.html">← Previous: COO or chief of staff</a><a href="product-managers.html">Next: Product managers →</a></div>
+  </nav>
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>
