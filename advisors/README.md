@@ -1,6 +1,6 @@
 # Advisor Registry
 
-77 advisors | 77 profiled | 0 unprofiled
+73 advisors | 73 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -12,7 +12,6 @@
 | brene-brown | Brene Brown | vulnerability, leadership-courage, shame-resilience, trust-building, organizational-culture | Research professor on courage, shame, and wholehearted leadership |
 | chris-voss | Chris Voss | negotiation, tactical-empathy, difficult-conversations, deal-making, conflict-resolution | Former FBI lead kidnapping negotiator, author of Never Split the Difference |
 | clayton-christensen | Clayton Christensen | jobs-to-be-done, disruptive-innovation, customer-motivation, strategic-resource-allocation, innovation-strategy | Harvard professor, pioneer of disruptive innovation and Jobs to Be Done |
-| danny-iny | Danny Iny | course-creation, validation-first-launches, pilot-methodology, online-education, knowledge-business | Founder of Mirasee, creator of Course Builder's Laboratory |
 | diana-chapman | Diana Chapman | conscious-leadership, emotional-intelligence, self-awareness, conflict-resolution, team-dynamics | Co-founder of the Conscious Leadership Group |
 | don-draper | Don Draper | creative-direction, storytelling, emotional-copywriting, brand-narrative, simplicity | Creative director |
 | donald-miller | Donald Miller | storybrand, homepage-conversion, messaging-clarity, storytelling, copywriting | StoryBrand creator, clarifies marketing messages through story structure |
@@ -40,7 +39,6 @@
 | ray-dalio | Ray Dalio | systems-thinking, decision-making, strategy, radical-truth | Founder who converts radical truth and transparency into decision-making systems |
 | richard-rumelt | Richard Rumelt | strategic-clarity, focus, cutting-fluff, identifying-the-crux | UCLA professor who cuts through strategic fluff |
 | rob-walling | Rob Walling | bootstrapped-saas, smb-gtm, self-serve, acquisition-channels, product-market-fit | Serial entrepreneur, founder of MicroConf and TinySeed |
-| robb-wolf | Robb Wolf | health-product-gtm, health-claims, science-to-consumer, trust-building, DTC-health | Research biochemist, co-founder of LMNT |
 | robbie-kellman-baxter | Robbie Kellman Baxter | subscription, membership, retention, forever-promise, recurring-revenue | Founder of Peninsula Strategies, author of The Membership Economy |
 | sean-ellis | Sean Ellis | growth-hacking, product-market-fit, experimentation, retention, north-star-metrics | Coined "growth hacking," scaled Dropbox, LogMeIn, Eventbrite to IPO |
 | seth-godin | Seth Godin | marketing, permission-marketing, remarkable-products, tribes | Author of Purple Cow, The Dip, and This Is Marketing |
@@ -51,7 +49,6 @@
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
 | coach-eric | Coach Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | CEO coach who pairs conscious leadership with systems thinking; finds the root cause, then the next step |
-| kate-bowler | Kate Bowler | empathetic-copywriting, health-wellness-copy, chronic-illness-communication, permission-giving, anti-platitude | Duke professor, Stage IV cancer survivor, anti-platitude voice for health/wellness copy |
 | doug-kessler | Doug Kessler | b2b-copywriting, insane-honesty, content-strategy, galvanizing-story, thought-leadership | Co-founder of Velocity Partners, creator of Insane Honesty and the Galvanizing Story |
 | jacco-van-der-kooij | Jacco van der Kooij | revenue-architecture, gtm-strategy, saas-sales, customer-success, recurring-revenue-metrics | Founder of Winning by Design, architect of the Bowtie Funnel and Sales as a Science |
 | matt-dixon | Matt Dixon | b2b-sales, enterprise-deals, sales-methodology, discovery, customer-indecision, stakeholder-mapping | Research-backed B2B sales author — co-author of The Challenger Sale, The Challenger Customer, The Effortless Experience, and The JOLT Effect |
@@ -62,7 +59,6 @@
 | claire-hughes-johnson | Claire Hughes Johnson | operating-cadence, management-infrastructure, scaling, decision-making, written-communication | Former COO of Stripe and author of Scaling People; management infrastructure and operating review design |
 | joan-garry | Joan Garry | nonprofit-leadership, board-governance, founder-transition, executive-succession, fundraising-culture | Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit Leadership, founder of the Nonprofit Leadership Lab |
 | lex-sisney | Lex Sisney | org-design, organizational-structure, scaling, role-fit, executive-hiring, lifecycle-strategy | Founder of Organizational Physics, co-founder and former CEO of Commission Junction, author of Designed to Scale; org structure and role fit for scaling companies |
-| jonathan-baker | Jonathan Baker | mergers-acquisitions, agency-exit, business-valuation, deal-structure, succession-planning | Head of M&A at Punctuation, former founder of Monday Night Brewing; sell-side process and valuation for small independent marketing services firms |
 | kim-mauborgne | Kim & Mauborgne | blue-ocean-strategy, value-innovation, value-proposition, market-creation, product-strategy | W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with the strategy canvas and the ERRC grid |
 | ryan-singer | Ryan Singer | product-roadmap, scoping, prioritization, fixed-deadlines, product-development | Author of Shape Up and former Head of Strategy at Basecamp; appetites, shaping, and betting to turn strategy into a dated roadmap |
 | james-gurney | James Gurney | illustration, art-direction, composition, color-and-light, visual-storytelling, image-generation-prompts | Painter and author of Dinotopia, Imaginative Realism, and Color and Light; plans a picture's moment, light, and staging so an imagined scene looks observed |
@@ -96,7 +92,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Brene Brown** | Evaluates whether leadership and communication surfaces the emotional truth or hides behind armor |
 | **Chris Voss** | Evaluates whether communication and negotiation approaches use empathy as a tool rather than logic as a weapon |
 | **Clayton Christensen** | Evaluates whether the work understands the job the customer is hiring the product to do — functional, emotional, and social dimensions |
-| **Danny Iny** | Evaluates whether knowledge products and courses are being validated before being built |
 | **Diana Chapman** | Evaluates whether leadership content addresses inner state, not just tactics |
 | **Don Draper** | Evaluates whether messaging makes people feel something or just informs them |
 | **Donald Miller** | Evaluates whether the brand is positioned as the guide (not the hero), the customer's problem is clearly stated, a simple plan is visible, and the call to action is unambiguous |
@@ -124,7 +119,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Ray Dalio** | Evaluates the system of cause-effect relationships |
 | **Richard Rumelt** | Evaluates whether the work identifies its crux — the one thing that matters most |
 | **Rob Walling** | Evaluates bootstrapped SaaS viability and go-to-market strategy |
-| **Robb Wolf** | Evaluates health product content for scientific defensibility and trust-building through substance |
 | **Robbie Kellman Baxter** | Evaluates whether content reflects membership thinking vs transaction thinking |
 | **Sean Ellis** | Evaluates whether growth is built on product-market fit or propped up by acquisition spend |
 | **Seth Godin** | Evaluates whether the work earns attention or steals it |
@@ -135,7 +129,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
 | **Tim Ferriss** | Evaluates whether assumptions have been tested or merely accepted |
 | **Coach Eric** | Evaluates whether decisions and actions are driven by conscious choice or reactive patterns |
-| **Kate Bowler** | Authors empathetic copy for health and wellness products, chronic illness communities, and any audience that has been dismissed, medicalized, or sold toxic positivity |
 | **Doug Kessler** | Authors B2B content that treats business audiences as intelligent adults |
 | **Jacco van der Kooij** | Diagnoses end-to-end recurring-revenue architectures |
 | **Matt Dixon** | Diagnoses stalled complex B2B enterprise deals using empirical research from millions of analyzed sales conversations |
@@ -146,7 +139,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Claire Hughes Johnson** | Evaluates whether operating reviews are structured for decisions or presentations |
 | **Joan Garry** | Evaluates whether a nonprofit's problem has been located in the structure built around the founder, or misfiled as somebody's character defect |
 | **Lex Sisney** | Evaluates whether an organizational problem has been located in the design or misfiled as a people problem |
-| **Jonathan Baker** | Evaluates whether a firm is actually sellable and whether a deal is structured to pay |
 | **Kim & Mauborgne** | Evaluates whether an offering actually differs from the alternatives or only claims to |
 | **Ryan Singer** | Evaluates whether a roadmap is a plan or a stack of estimates |
 | **James Gurney** | Evaluates whether a picture, or a description of one, could be painted by someone who was never told the story |

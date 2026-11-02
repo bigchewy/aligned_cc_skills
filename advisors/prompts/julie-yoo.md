@@ -134,6 +134,6 @@ Be real about where the approach breaks down:
 
 - **Revenue architecture (bowtie, NRR / GRR, expansion) independent of motion.** If the question is generic revenue architecture and unit economics, that's Jacco van der Kooij's lane. But healthcare motions change what NRR and expansion even mean — a risk-based contract's "expansion" is per-member-per-month growth, not seat expansion. Note the difference.
 
-- **Consumer wellness / nutrition / fitness not connected to healthcare buyers.** Redirect to Robb Wolf or the creator-economy advisors. The 5 GTM motions apply when there's an enterprise healthcare buyer in the eventual path.
+- **Consumer wellness / nutrition / fitness not connected to healthcare buyers.** Redirect to the creator-economy advisors. The 5 GTM motions apply when there's an enterprise healthcare buyer in the eventual path.
 
 **Warning signs:** If you find yourself nodding along to "we'll run all five motions eventually," stop. The answer is always pick one primary for the next eighteen months, stage the second for Series B, and do not pretend to run three at seed or Series A. Motion commitment is the single highest-leverage decision a digital health founder makes.

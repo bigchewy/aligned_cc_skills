@@ -1,15 +1,15 @@
 # Framework Registry
 
-147 frameworks across 29 categories
+141 frameworks across 28 categories
 
 | Category | Count |
 |----------|-------|
 | behavioral-design | 1 |
 | brand | 1 |
 | competitive-analysis | 1 |
-| content-strategy | 9 |
+| content-strategy | 10 |
 | conversion | 4 |
-| copywriting | 2 |
+| copywriting | 1 |
 | customer | 1 |
 | data-visualization | 3 |
 | developer-tooling | 1 |
@@ -17,19 +17,19 @@
 | growth | 7 |
 | leadership | 13 |
 | learning-design | 3 |
-| marketing | 1 |
+| marketing | 2 |
 | negotiation | 3 |
-| onboarding | 4 |
 | operating-cadence | 2 |
 | podcasting | 4 |
 | positioning | 8 |
 | pricing | 1 |
-| product-design | 5 |
+| product-design | 6 |
 | psychology | 12 |
 | sales | 5 |
+| security | 2 |
 | social-media | 9 |
 | startup | 9 |
-| strategy | 28 |
+| strategy | 27 |
 | visual-identity | 3 |
 | visual-storytelling | 1 |
 
@@ -44,7 +44,6 @@
 | 80-20-audit | an 80/20 Audit | tim-ferriss | strategy | someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results |
 | above-below-the-line | Above/Below the Line | diana-chapman | leadership | someone is reactive or defensive and needs to check whether they are operating from above or below the line |
 | accusation-audit | an Accusation Audit | chris-voss | negotiation | someone is entering a conversation where the other party likely has negative assumptions and needs to preemptively defuse them |
-| audience-first-business-model | the Audience-First Business Model | danny-iny | onboarding | someone wants to create a course or digital product and needs to validate demand by building an audience first |
 | batched-content-system | the Batched Content Creation System | jasmine-star | content-strategy | someone struggles with consistent content creation and needs a system for batching production efficiently |
 | believability-weighted-decision-making | Believability-Weighted Decision Making | ray-dalio | strategy | a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise |
 | bio-promise-alignment | the Bio-Promise Alignment Framework | sue-b-zimmerman | social-media | someone's Instagram bio promises one thing but their content delivers another, causing follower drop-off |
@@ -81,7 +80,6 @@
 | homer-vs-spock | the Homer vs Spock Framework | shirin-oreizy | conversion | someone's marketing leads with features and logic and they need to understand why emotional appeal must come first |
 | ice-prioritization | ICE Prioritization | sean-ellis | growth | a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones |
 | idiot-index | the Idiot Index to identify cost reduction opportunities | elon-musk | strategy | someone needs to identify cost reduction opportunities by comparing current costs to theoretical minimums |
-| integrative-piloting-process | the Integrative Piloting Process | danny-iny | onboarding | someone is building a course and wants to develop and deliver simultaneously using real student feedback |
 | jk5-content-pillars | the JK5 Content Pillars Method | jenna-kutcher | content-strategy | someone needs to define their core content topics to balance audience connection with revenue generation |
 | jobs-to-be-done | Jobs to Be Done | clayton-christensen | strategy | someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features |
 | jolt-effect | the JOLT Effect | matt-dixon | sales | a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy |
@@ -90,7 +88,6 @@
 | landing-page-assembly | Landing Page Assembly | oli-gardner | conversion | someone needs to build or improve a landing page using a structured stage-by-stage assembly process |
 | leadership-pipeline-passages | the Leadership Pipeline Passages | ram-charan | leadership | a leader is struggling at a new level and needs to understand what skills, time allocation, and values must shift |
 | leap-of-faith-assumptions | Leap of Faith Assumptions | eric-ries | startup | a startup needs to identify which untested assumptions are most critical to their business and design experiments to test them |
-| leveraged-learning | the Leveraged Learning framework | danny-iny | onboarding | someone is designing a course and needs to ensure it drives real transformation rather than passive content consumption |
 | living-into-values | Living Into Values | brene-brown | psychology | someone knows their values abstractly but struggles to live them consistently in daily decisions and behavior |
 | management-level-progression | the Management Level Progression framework | lara-hogan | leadership | an engineering manager needs to understand what's expected at their current level or prepare for the next one |
 | message-magic-system | the Message Magic System | elise-darma | social-media | someone wants to automate Instagram DM conversations to convert engagement into sales using chatbot flows |
@@ -103,7 +100,6 @@
 | personal-credo | Personal Credo | jim-loehr | psychology | someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose |
 | personal-resource-allocation | Personal Resource Allocation | clayton-christensen | strategy | someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions |
 | pillars-of-integrity | the Four Pillars of Integrity | jim-dethmer | leadership | someone feels fragmented or out of alignment and needs to identify where their integrity is broken |
-| pilot-program-methodology | the Pilot Program Methodology | danny-iny | onboarding | someone wants to validate course demand before investing in full production |
 | pivot-or-persevere | Pivot or Persevere | eric-ries | startup | a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one |
 | podcast-brand-strategy | a Podcast Brand Strategy audit | jeremy-enns | podcasting | a podcaster's growth has stalled and they need to audit their brand positioning and content strategy |
 | podcast-marketing-systems | Podcast Marketing Systems | jeremy-enns | podcasting | a podcaster is doing one-off promotion per episode and needs sustainable marketing systems that compound |
@@ -137,7 +133,6 @@
 | vulnerability-check | Vulnerability Check | brene-brown | psychology | someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs |
 | working-backwards | Working Backwards | jeff-bezos | strategy | a team needs to define a new product or feature by writing the press release first and working backwards to what must be built |
 | zone-of-genius | the Zone of Genius discovery process | coach-eric | psychology | someone wants to identify their zone of genius to align their work with their unique abilities and passions |
-| permission-blessing | Permission Blessing | kate-bowler | copywriting | writing copy for vulnerable audiences — health apps, chronic illness communities, onboarding flows — where the reader needs to feel seen before being asked to do anything |
 | insane-honesty | Insane Honesty | doug-kessler | copywriting | writing B2B professional services copy — cold emails, thought leadership, landing pages, sales enablement — that needs to stand out from corporate noise |
 | bowtie-funnel | the Bowtie Funnel | jacco-van-der-kooij | strategy | a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math |
 | 6-elements-sdr | the 6 Elements of the Sales Development Playbook | trish-bertuzzi | sales | a revenue leader needs to diagnose why their SDR / pipeline-generation function is underperforming — pipeline shortfall, rep churn, scale transition — and wants a structured walk through the six design elements before hiring more reps |
@@ -156,7 +151,6 @@
 | rules-of-structure | The Rules of Structure | lex-sisney | leadership | a scaling company cannot reach escape velocity despite a clear strategy, keeps repeating the same execution mistakes, has one seat that keeps failing hires, or has a founder who is still the bottleneck on decisions the structure should have taken off them |
 | psiu-role-fit | PSIU Role Fit | lex-sisney | leadership | a leader is about to hire or promote into a key seat, is deciding whether a struggling executive is the wrong person or in the wrong seat, or has a board and hiring manager who cannot agree on what a role requires |
 | lifecycle-strategy | Lifecycle Strategy | lex-sisney | strategy | a company is deciding whether to launch or spin out a second product, is building scale infrastructure for a product that may not have product-market fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow execution is a product, market, or company-stage problem |
-| sellability-index | The Sellability Index | jonathan-baker | strategy | an agency or services-firm owner is considering an exit in the next one to three years, wants to know what their firm is worth and why, is preparing material for a buyer conversation, or is weighing a sale to their own management team against an outside buyer |
 | blue-ocean-value-props | Blue Ocean Value Props | kim-mauborgne | strategy | a product looks like its competitors, buyers choose on price, the team keeps adding features without changing what buyers see, or someone needs to decide what an offering should stop doing as well as what it should do; also for a new offering that needs its value proposition set before positioning |
 | frame-shape-bet | Frame, Shape, Bet | ryan-singer | strategy | a team needs a product roadmap, has a draft roadmap or feature list with no sense of what fits, faces a launch or contract date that can't move, has made promises to customers that aren't on the calendar, or keeps letting projects run over |
 | stage-the-picture | Stage the Picture | james-gurney | visual-storytelling | someone needs to turn a written story or memory into a single illustration, is writing or fixing a scene description or prompt for an image model, has a draft description that reads as mood words with no light or staging, or has a picture that tries to show several moments at once |
@@ -222,7 +216,6 @@
 ### Copywriting (2)
 
 - **insane-honesty** — Insane Honesty (doug-kessler)
-- **permission-blessing** — Permission Blessing (kate-bowler)
 
 ### Customer (1)
 
@@ -287,10 +280,6 @@
 
 ### Onboarding (4)
 
-- **audience-first-business-model** — the Audience-First Business Model (danny-iny)
-- **integrative-piloting-process** — the Integrative Piloting Process (danny-iny)
-- **leveraged-learning** — the Leveraged Learning framework (danny-iny)
-- **pilot-program-methodology** — the Pilot Program Methodology (danny-iny)
 
 ### Operating Cadence (2)
 
@@ -405,7 +394,6 @@
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
 - **regret-minimization** — Regret Minimization Framework (jeff-bezos)
 - **root-cause-analysis** — Root Cause Analysis (coach-eric)
-- **sellability-index** — The Sellability Index (jonathan-baker)
 - **start-with-experience** — Start With Experience (steve-jobs)
 - **the-algorithm** — The Algorithm (elon-musk)
 - **type-1-type-2-decisions** — Type 1 vs Type 2 Decisions (jeff-bezos)

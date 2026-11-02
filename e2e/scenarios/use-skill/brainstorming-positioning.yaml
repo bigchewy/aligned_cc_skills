@@ -2,7 +2,7 @@
 # Paired comparison: the real brainstorming skill (router + authoring mode) vs. no skill.
 # Brainstorming is interactive. Its first turn picks the mode, starts the process and
 # stops for the user, so this scores the first turn the way the paired framework
-# scenarios do (see use-framework/sellability-index.yaml): stopping at the right place,
+# scenarios do (see the use-framework scenarios): stopping at the right place,
 # grounding in the brief, and asking the one question that matters. A one-shot answer
 # with a finished strategy is the vanilla behavior the skill exists to replace.
 # Rewritten 2026-10-28: it used to embed the retired business-mode prompt and score a

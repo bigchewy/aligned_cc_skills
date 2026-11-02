@@ -148,32 +148,6 @@ advisors:
     '
   prompt: advisors/prompts/clayton-christensen.md
   summary: Harvard professor, pioneer of disruptive innovation and Jobs to Be Done
-- best_for: 'Course and workshop design, knowledge product launches, coaching program
-    structure, pilot program planning, creator-economy business models.
-
-    '
-  domains:
-  - course-creation
-  - validation-first-launches
-  - pilot-methodology
-  - online-education
-  - knowledge-business
-  evaluation_expertise: 'Evaluates whether knowledge products and courses are being
-    validated before being built. Is demand proven through willingness to pay, or
-    assumed from engagement metrics? Is the creator hiding behind perfectionism instead
-    of launching a transparent pilot? Are timelines realistic — 60 days to pilot,
-    not 8 months to polish? Catches building without validation, audience-first paralysis
-    without monetization, and perfectionism masking fear of selling.
-
-    '
-  id: danny-iny
-  name: Danny Iny
-  not_for: 'Technical architecture, visual design, SEO, enterprise sales strategy,
-    content that doesn''t involve teaching or education.
-
-    '
-  prompt: advisors/prompts/danny-iny.md
-  summary: Founder of Mirasee, creator of Course Builder's Laboratory
 - best_for: 'Leadership development content, team culture docs, founder reflections,
     conflict resolution plans, organizational values. Work that requires emotional
     honesty and self-awareness.
@@ -846,32 +820,6 @@ advisors:
     '
   prompt: advisors/prompts/rob-walling.md
   summary: Serial entrepreneur, founder of MicroConf and TinySeed
-- best_for: 'Health product content, health claims review, DTC health GTM strategy,
-    content-led health product launches.
-
-    '
-  domains:
-  - health-product-gtm
-  - health-claims
-  - science-to-consumer
-  - trust-building
-  - DTC-health
-  evaluation_expertise: 'Evaluates health product content for scientific defensibility
-    and trust-building through substance. Checks whether health claims have clear
-    mechanism of action, whether evidence tier is named honestly (RCT vs observational
-    vs anecdotal), and whether content earns long-term credibility. Evaluates GTM
-    approach against content-led organic distribution. Catches hand-wavy science,
-    credential-free authority claims, and marketing dressed as education.
-
-    '
-  id: robb-wolf
-  name: Robb Wolf
-  not_for: 'SEO strategy, visual design, behavioral psychology tactics, technical
-    implementation, non-health products.
-
-    '
-  prompt: advisors/prompts/robb-wolf.md
-  summary: Research biochemist, co-founder of LMNT
 - best_for: 'Subscription model design, membership strategy, retention planning, onboarding
     content, health subscription products.
 
@@ -1190,38 +1138,6 @@ advisors:
     '
   prompt: advisors/prompts/coach-eric.md
   summary: CEO coach who pairs conscious leadership with systems thinking; finds the root cause, then the next step
-- best_for: 'Health app onboarding copy, chronic illness community messaging, email
-    sequences for vulnerable audiences, in-app coaching copy, any content that must
-    create safety and belonging rather than urgency and FOMO. Serves as the author
-    for health/wellness B2C copy, not a critic.
-
-    '
-  domains:
-  - empathetic-copywriting
-  - health-wellness-copy
-  - chronic-illness-communication
-  - permission-giving
-  - anti-platitude
-  evaluation_expertise: 'Authors empathetic copy for health and wellness products,
-    chronic illness communities, and any audience that has been dismissed, medicalized,
-    or sold toxic positivity. Writes from inside the experience of a failing body,
-    not from outside observing it. Names physical realities without euphemism. Grants
-    permission to feel what you feel before asking anyone to do anything. Dismantles
-    wellness cliches and replaces them with honest language. Flags copy that accidentally
-    shames people for being sick, imposes redemption arcs on conditions that don''t
-    resolve, or uses fight/warrior/journey framing for people whose bravest act today
-    was standing up.
-
-    '
-  id: kate-bowler
-  name: Kate Bowler
-  not_for: 'Conversion optimization, SaaS product copy, B2B thought leadership, competitive
-    analysis, technical documentation, high-energy marketing.
-
-    '
-  prompt: advisors/prompts/kate-bowler.md
-  summary: Duke professor, Stage IV cancer survivor, anti-platitude voice for health/wellness
-    copy
 - best_for: 'B2B consulting and professional services copy, cold email sequences for
     high-value prospects, thought leadership content, authority-building articles,
     sales enablement, brand narrative. Serves as the author for B2B professional services
@@ -1423,7 +1339,7 @@ advisors:
     health); late-stage deal mechanics inside a single deal (redirect to Matt Dixon
     / JOLT Effect); generic B2B revenue architecture not healthcare-specific (redirect
     to Jacco van der Kooij); consumer wellness / nutrition / fitness not connected
-    to healthcare buyers (redirect to Robb Wolf or creator-economy advisors).
+    to healthcare buyers (redirect to the creator-economy advisors).
 
     '
   prompt: advisors/prompts/julie-yoo.md
@@ -1615,46 +1531,6 @@ advisors:
   summary: Founder of Organizational Physics, co-founder and former CEO of Commission
     Junction, author of Designed to Scale; org structure and role fit for scaling
     companies
-- best_for: 'Selling a small marketing, creative, or digital services firm. Readiness
-    diagnosis before a sale, valuation of sub-$1M-EBITDA firms, what buyers actually
-    pay for, deal structure when there is little or no cash at close, seller-side
-    process and the materials it needs, and internal sales to a management team.
-    Owners of independent agencies thinking about an exit in the next one to three
-    years.
-
-    '
-  domains:
-  - mergers-acquisitions
-  - agency-exit
-  - business-valuation
-  - deal-structure
-  - succession-planning
-  evaluation_expertise: 'Evaluates whether a firm is actually sellable and whether
-    a deal is structured to pay. Is the profit large enough in absolute dollars, not
-    just healthy as a margin? Has the owner''s replacement cost been adjusted for?
-    Is the revenue genuinely recurring or a series of renewals nobody has under
-    contract? Is client concentration named and priced? Is the firm positioned around
-    something a buyer could not build internally? Are the books clean enough for a
-    stranger to read? Catches valuations benchmarked against deals two size bands
-    up, sellers optimizing the headline number while accepting terms that never pay
-    it, a single-buyer path with no fallback when diligence fails, and cultural or
-    leadership risk treated as a soft topic in a deal that will die on it.
-
-    '
-  id: jonathan-baker
-  name: Jonathan Baker
-  not_for: 'Negotiation tactics at the table — his own advice is to put an advisor
-    between the seller and the buyer (redirect to Chris Voss); legal, tax, and
-    accounting opinions such as asset vs. equity sale, S-corp treatment, or personal
-    guarantees; industries outside marketing and creative services, where the multiple
-    bands do not transfer; positioning or go-to-market content itself (he says what
-    a buyer pays for, not what the deck should say — redirect to April Dunford);
-    post-close integration and operating cadence; fundraising or venture financing.
-
-    '
-  prompt: advisors/prompts/jonathan-baker.md
-  summary: Head of M&A at Punctuation, former founder of Monday Night Brewing;
-    sell-side process and valuation for small independent marketing services firms
 - best_for: 'Deciding what a product or service should offer and what it should
     stop offering. Drawing the factors buyers compare on against the alternatives
     they use today, choosing what to eliminate, reduce, raise, and create, and testing
@@ -1791,7 +1667,7 @@ advisors:
     '
   id: paul-kirschner
   name: Paul A. Kirschner
-  not_for: 'Selling, pricing, or launching a course (redirect to Danny Iny); habit
+  not_for: 'Selling, pricing, or launching a course; habit
     and behavior design inside a product (redirect to Kristen Berman); the content
     of conscious leadership (redirect to Diana Chapman or Jim Dethmer); trust,
     vulnerability, and fear of change (redirect to Brene Brown); management practice
@@ -1836,7 +1712,7 @@ advisors:
   not_for: 'Product and app behavior design for customers (redirect to Kristen Berman);
     what a leadership practice means or how to do it well (redirect to Diana Chapman
     or Jim Dethmer); shame, belonging, and vulnerability as the core issue (redirect
-    to Brené Brown); validating and selling a course (redirect to Danny Iny); week-to-week
+    to Brené Brown); validating and selling a course; week-to-week
     management practice (redirect to Lara Hogan or Matt Mochary); therapy or clinical
     issues; technical architecture or code.
 
@@ -1876,8 +1752,8 @@ advisors:
   not_for: 'AI-native product strategy and whether AI should be the foundation of
     a company (redirect to Garry Tan); behavioral nudges, defaults, and friction in
     a product (redirect to Kristen Berman); the meaning of conscious-leadership content
-    (redirect to Diana Chapman or Jim Dethmer); pricing and selling a course (redirect
-    to Danny Iny); model training or technical architecture.
+    (redirect to Diana Chapman or Jim Dethmer); pricing and selling a course; model
+    training or technical architecture.
 
     '
   prompt: advisors/prompts/ethan-mollick.md

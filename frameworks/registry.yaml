@@ -120,23 +120,6 @@ frameworks:
     can
   use_when: someone is entering a conversation where the other party likely has negative
     assumptions and needs to preemptively defuse them
-- advisor: danny-iny
-  category: onboarding
-  deliverable_type: plan
-  domains:
-  - course-creation
-  - audience-building
-  - validation
-  - business-model
-  helpful_documents:
-  - content strategy
-  - business goals
-  id: audience-first-business-model
-  name: the Audience-First Business Model
-  purpose: the approach that flips the traditional course creation sequence to build
-    audience before products and validate through engagement before building
-  use_when: someone wants to create a course or digital product and needs to validate
-    demand by building an audience first
 - advisor: jasmine-star
   category: content-strategy
   deliverable_type: plan
@@ -758,23 +741,6 @@ frameworks:
     and cost reduction opportunities
   use_when: someone needs to identify cost reduction opportunities by comparing current
     costs to theoretical minimums
-- advisor: danny-iny
-  category: onboarding
-  deliverable_type: plan
-  domains:
-  - course-creation
-  - iterative-development
-  - student-feedback
-  - lean-education
-  helpful_documents:
-  - product description
-  - customer research
-  id: integrative-piloting-process
-  name: the Integrative Piloting Process
-  purpose: a methodology for delivering courses while developing them, using student
-    feedback to iterate in real-time
-  use_when: someone is building a course and wants to develop and deliver simultaneously
-    using real student feedback
 - advisor: jenna-kutcher
   category: content-strategy
   deliverable_type: content
@@ -921,22 +887,6 @@ frameworks:
     before building anything
   use_when: a startup needs to identify which untested assumptions are most critical
     to their business and design experiments to test them
-- advisor: danny-iny
-  category: onboarding
-  deliverable_type: plan
-  domains:
-  - course-design
-  - learning-outcomes
-  - transformation
-  - instructional-design
-  helpful_documents:
-  - product description
-  id: leveraged-learning
-  name: the Leveraged Learning framework
-  purpose: a six-layer system for designing courses that actually create student transformation,
-    not just content consumption
-  use_when: someone is designing a course and needs to ensure it drives real transformation
-    rather than passive content consumption
 - advisor: brene-brown
   category: psychology
   deliverable_type: plan
@@ -1106,22 +1056,6 @@ frameworks:
     energetic wholeness
   use_when: someone feels fragmented or out of alignment and needs to identify where
     their integrity is broken
-- advisor: danny-iny
-  category: onboarding
-  deliverable_type: plan
-  domains:
-  - course-validation
-  - pilot-testing
-  - demand-validation
-  - lean-education
-  helpful_documents:
-  - product description
-  - customer research
-  id: pilot-program-methodology
-  name: the Pilot Program Methodology
-  purpose: a validation-first approach to course creation that tests demand before
-    you build
-  use_when: someone wants to validate course demand before investing in full production
 - advisor: eric-ries
   category: startup
   deliverable_type: decision
@@ -1643,25 +1577,6 @@ frameworks:
     trap where most high achievers get stuck
   use_when: someone wants to identify their zone of genius to align their work with
     their unique abilities and passions
-- advisor: kate-bowler
-  category: copywriting
-  deliverable_type: content
-  domains:
-  - empathetic-copywriting
-  - health-wellness
-  - chronic-illness
-  - onboarding-copy
-  - permission-giving
-  helpful_documents:
-  - brand-voice
-  - positioning
-  id: permission-blessing
-  name: Permission Blessing
-  purpose: creating empathetic copy for health/wellness and chronic illness audiences
-    by naming physical realities, validating emotions, and dismantling platitudes
-  use_when: writing copy for vulnerable audiences — health apps, chronic illness communities,
-    onboarding flows — where the reader needs to feel seen before being asked to do
-    anything
 - advisor: doug-kessler
   category: copywriting
   deliverable_type: content
@@ -2068,32 +1983,6 @@ frameworks:
     is building scale infrastructure for a product that may not have product-market
     fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow
     execution is a product, market, or company-stage problem
-- advisor: jonathan-baker
-  category: strategy
-  default_critic_advisors:
-  - jonathan-baker
-  - patrick-campbell
-  deliverable_type: analysis
-  domains:
-  - mergers-acquisitions
-  - agency-exit
-  - business-valuation
-  - succession-planning
-  - owner-dependence
-  helpful_documents:
-  - profit and loss statements for the last three years
-  - revenue by client for the last twelve months
-  - owner's compensation, distributions, and actual weekly hours
-  - client contracts or retainer agreements
-  - org chart or list of who owns which client relationship
-  id: sellability-index
-  name: The Sellability Index
-  purpose: finding out how ready a marketing services firm actually is to be sold,
-    and what would have to change before it is
-  use_when: an agency or services-firm owner is considering an exit in the next one
-    to three years, wants to know what their firm is worth and why, is preparing
-    material for a buyer conversation, or is weighing a sale to their own management
-    team against an outside buyer
 - advisor: kim-mauborgne
   category: strategy
   default_critic_advisors:
@@ -2179,7 +2068,6 @@ frameworks:
   category: learning-design
   default_critic_advisors:
   - paul-kirschner
-  - danny-iny
   deliverable_type: plan
   domains:
   - instructional-design
@@ -2188,7 +2076,6 @@ frameworks:
   - program-design
   - behavior-change
   follow_on_frameworks:
-  - leveraged-learning
   - 3b-behavioral-design
   helpful_documents:
   - a description of the job or situation where people must use the skill

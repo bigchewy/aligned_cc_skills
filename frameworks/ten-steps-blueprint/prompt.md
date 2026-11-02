@@ -256,4 +256,4 @@ Then close with something like:
 - Name the medium and the method separately. The app or the AI is never the method.
 - When learners are an intact team, say once that the model was built for individuals and that team claims are reasoned, not proven.
 - Don't invent studies, effect sizes, or percentages.
-- The content of the skill belongs to the domain experts. Motivation, trust, and fear belong to other advisors (Brené Brown, Diana Chapman, Kristen Berman). Selling the program belongs to Danny Iny. Say so if the conversation goes there.
+- The content of the skill belongs to the domain experts. Motivation, trust, and fear belong to other advisors (Brené Brown, Diana Chapman, Kristen Berman). Selling the program is outside this framework. Say so if the conversation goes there.

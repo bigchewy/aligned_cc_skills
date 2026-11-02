@@ -13,6 +13,10 @@ GONE_IDS = [
     "deb-dana", "irene-lyon", "akiko-iwasaki", "david-putrino", "david-systrom",
     "byron-katie", "gabor-mate", "marsha-linehan", "martin-seligman",
     "richard-schwartz", "steven-hayes", "wise-eric",
+    # moved to client repos
+    "jonathan-baker", "robb-wolf", "kate-bowler", "danny-iny",
+    "sellability-index", "permission-blessing", "audience-first-business-model",
+    "integrative-piloting-process", "leveraged-learning", "pilot-program-methodology",
     # retired archetype, replaced by brad-frost
     "the-designer",
     # retired archetype, replaced by jason-fried
