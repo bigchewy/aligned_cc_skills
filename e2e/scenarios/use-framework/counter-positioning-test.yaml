@@ -50,9 +50,13 @@ defaultTest:
         following becomes rational, rather than a permanent moat? Score 5 if
         it names that crossing point and ties the time until then to building
         a second power (such as scale economies, switching costs or network
-        economies). Score 1 if it calls the position permanent or durable
-        with no crossing point.
-      weight: 1
+        economies). Score 5 only if the crossing point is concrete and
+        countable (for example a share of direct sales or of agent-written
+        premium) AND one second power is chosen with a reason. Score 3 for a
+        vague crossing point ("eventually", "as digital grows") or a list of
+        possible powers with no choice. Score 1 if it calls the position
+        permanent or durable with no crossing point.
+      weight: 2
     - type: llm-rubric
       value: |
         Score 1-5 on SPECIFICITY: Is the analysis grounded in this company
@@ -105,8 +109,7 @@ tests:
         What the founders say about why the carriers haven't copied them:
         "The carriers are slow and bureaucratic." "They don't get digital;
         their apps are terrible." "Their actuaries would take three years to
-        approve anything." "If they sold direct at our price, the agents
-        would revolt and take their books elsewhere."
+        approve anything." "Our brand is the moat: customers love us."
 
         Direct sales are about 12% of this insurance market today, growing a
         few points a year.
