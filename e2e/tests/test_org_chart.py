@@ -629,3 +629,71 @@ def test_build_removes_stale_pages(tmp_path):
     assert run("--out", out, "--author-out", tmp_path / "a.html").returncode == 0
     assert not (out / "seats" / "old-seat.html").exists()
     assert run("--check", "--out", out).returncode == 0
+
+
+# ---- Task 6: skill, hook, add-skill steps, README ----
+
+SKILL_MD = ROOT / "skills" / "org-chart" / "SKILL.md"
+HOOK = ROOT / "scripts" / "hooks" / "pre-commit"
+README = ROOT / "README.md"
+
+
+def _section(text, heading):
+    """Text from the heading up to the next '### ' heading."""
+    start = text.index(heading)
+    nxt = text.find("\n### ", start + 1)
+    return text[start : nxt if nxt != -1 else len(text)]
+
+
+def test_skill_frontmatter():
+    text = SKILL_MD.read_text()
+    fm = yaml.safe_load(text.split("---")[1])
+    assert fm["name"] == "org-chart"
+    assert fm["description"].startswith("Use when")
+    assert "**Path Resolution:**" in text
+    assert "skills/_shared/resolve-skill-path.md" in text
+    for cmd in ("open", "xdg-open", 'cmd /c start ""'):
+        assert cmd in text
+    assert "pages/index.html" in text
+    assert "—" not in text and "–" not in text
+
+
+def test_readme_lists_org_chart():
+    assert "/aligned:org-chart" in README.read_text()
+
+
+def test_hook_rebuilds_org_chart():
+    text = HOOK.read_text()
+    assert "generate-org-chart.py" in text
+    for path in (
+        "advisors/registry.yaml",
+        "frameworks/registry.yaml",
+        "skills/org-chart/seats.yaml",
+        "scripts/org-chart-templates",
+    ):
+        assert path in text
+
+
+def test_hook_tolerates_missing_python(tmp_path):
+    empty_bin = tmp_path / "bin"
+    empty_bin.mkdir()
+    fake_root = tmp_path / "repo"
+    fake_root.mkdir()
+    result = subprocess.run(
+        ["/bin/bash", "-c", f'source "{HOOK}"; rebuild_org_chart'],
+        capture_output=True,
+        text=True,
+        env={"PATH": str(empty_bin), "REPO_ROOT": str(fake_root)},
+    )
+    assert result.returncode == 0
+    assert "org chart NOT rebuilt" in result.stdout + result.stderr
+
+
+def test_add_skills_place_new_entries():
+    adv = _section((ROOT / "skills/add-advisor/SKILL.md").read_text(), "### 8.")
+    fw = _section((ROOT / "skills/add-framework/SKILL.md").read_text(), "### 7.")
+    for step in (adv, fw):
+        assert "skills/org-chart/seats.yaml" in step
+        assert "generate-org-chart.py" in step
+        assert "skip when `scripts/generate-org-chart.py` does not exist" in step
+        assert "e2e/tests/test_org_chart.py" in step

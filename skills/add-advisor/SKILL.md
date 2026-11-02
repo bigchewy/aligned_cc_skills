@@ -251,6 +251,8 @@ The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also updat
 
 If `e2e/tests/test_readme_freshness.py` exists, run it. It fails when a count is behind.
 
+**Place the advisor on the org chart** (skip when `scripts/generate-org-chart.py` does not exist). add-framework already placed every framework this run built, so do this only for an advisor that ended up with no framework. Ask the user whether the advisor goes in a seat's `also_ask` list or in the holding list, naming the seat choices from `skills/org-chart/seats.yaml`. Edit that file, then run `scripts/generate-org-chart.py` and `pytest e2e/tests/test_org_chart.py`. The build fails and names the id if the advisor is unplaced.
+
 ### 9. Commit
 
 Commit all changes with message: `feat: add {advisor-name} advisor`

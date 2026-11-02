@@ -259,6 +259,8 @@ The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also updat
 
 If `e2e/tests/test_readme_freshness.py` exists, run it. It fails when a count is behind.
 
+**Place the framework on the org chart** (skip when `scripts/generate-org-chart.py` does not exist). Ask the user which seat and which job the new framework belongs to, naming the choices from `skills/org-chart/seats.yaml`. Add it there, then run `scripts/generate-org-chart.py` and `pytest e2e/tests/test_org_chart.py`. The build fails and names the id if the framework has no seat.
+
 ### 8. Verify
 
 > **Conditional:** Only run build verification if a `build` script was detected in Step 0. If not found, print: "Skipping build verification — no build script found."

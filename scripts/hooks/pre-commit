@@ -1,6 +1,10 @@
 #!/bin/bash
-# Bump the plugin's patch version whenever a commit touches shipped plugin
-# content, so the change actually reaches the Claude Code plugin cache.
+# Two jobs, neither of which ever blocks a commit:
+#
+# 1. Rebuild the org chart pages when a commit stages their inputs, and stage
+#    the rebuilt pages.
+# 2. Bump the plugin's patch version whenever a commit touches shipped plugin
+#    content, so the change actually reaches the Claude Code plugin cache.
 #
 # Claude Code re-copies this repo into ~/.claude/plugins/cache only when the
 # version string changes. Edit a skill, commit without bumping, and the running
@@ -11,7 +15,48 @@
 
 set -e
 
-REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_ROOT=${REPO_ROOT:-$(git rev-parse --show-toplevel)}
+
+# Rebuild the org chart pages. Warns and returns 0 on any problem.
+rebuild_org_chart() {
+  local py=""
+  local candidate
+  for candidate in "$REPO_ROOT/e2e/.venv/bin/python" python3; do
+    if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import yaml' >/dev/null 2>&1; then
+      py="$candidate"
+      break
+    fi
+  done
+
+  if [ -z "$py" ]; then
+    echo "[pre-commit] python with PyYAML not found; org chart NOT rebuilt"
+    return 0
+  fi
+
+  if ! OUT=$("$py" "$REPO_ROOT/scripts/generate-org-chart.py" 2>&1); then
+    echo "[pre-commit] org chart build failed; org chart NOT rebuilt:"
+    echo "$OUT"
+    return 0
+  fi
+
+  git add "$REPO_ROOT/skills/org-chart/pages"
+  echo "[pre-commit] Org chart pages rebuilt"
+  return 0
+}
+
+# Do nothing more when this file is sourced (the tests source it to call
+# rebuild_org_chart on its own).
+if [ "${BASH_SOURCE[0]}" != "$0" ]; then
+  return 0
+fi
+
+ORG_CHART_INPUTS=$(git diff --cached --name-only --diff-filter=ACMR \
+  -- advisors/registry.yaml frameworks/registry.yaml skills/org-chart/seats.yaml \
+  scripts/org-chart-templates 2>/dev/null || true)
+
+if [ -n "$ORG_CHART_INPUTS" ] && [ -f "$REPO_ROOT/scripts/generate-org-chart.py" ]; then
+  rebuild_org_chart
+fi
 
 # Only bump for directories that ship inside the plugin. Commits that touch
 # only docs, todo.md, or the top-level readmes leave the version alone.

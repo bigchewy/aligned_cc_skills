@@ -88,6 +88,7 @@ Entry points are skills you invoke directly. The software-development loop (plan
 | create-design-principles | Entry Point | `/aligned:create-design-principles` | Interactive design discovery, a measurable quality floor, and an Impeccable detector pass |
 | create-image | Entry Point | `/aligned:create-image` | Generate diagrams, charts, icons, illustrations, and brand visuals — routes to diagram, icon, or illustration mode |
 | visualize-design | Entry Point | `/aligned:visualize-design` | Render any markdown doc or the current conversation as an on-brand, tabbed, Mermaid-validated HTML artifact |
+| org-chart | Entry Point | `/aligned:org-chart` | Open the B2B and B2C org charts: every seat, its jobs, and the command to run for each |
 | root-cause-analysis | Entry Point | `/aligned:root-cause-analysis` | Root cause investigation for business and process problems with optional multi-agent mode |
 | eval-audit | Entry Point | `/aligned:eval-audit` | Eval coverage auditor (hook-prompted) |
 
