@@ -3,6 +3,7 @@
 The script name has a hyphen, so every test calls it by subprocess.
 """
 import copy
+import html
 import re
 import shutil
 import subprocess
@@ -499,12 +500,32 @@ def test_commands_name_real_ids():
 
 def test_seat_page_lists_every_framework_and_advisor():
     fw_reg = framework_registry()
+    adv_reg = advisor_registry()
     for seat in seats_data()["seats"]:
         text = (PAGES / "seats" / f"{seat['id']}.html").read_text(encoding="utf-8")
         for fid in seat_frameworks(seat):
             assert f"/aligned:use-framework {fid}<" in text, (seat["id"], fid)
         for aid in seat_advisors(seat, fw_reg):
-            assert f"/aligned:use-advisor {aid}<" in text, (seat["id"], aid)
+            name = html.escape(adv_reg[aid]["name"], quote=False)
+            assert f'<th scope="row">{name}</th>' in text, (seat["id"], aid)
+
+
+def test_advisor_section_is_a_plain_table():
+    fw_reg = framework_registry()
+    adv_reg = advisor_registry()
+    for seat in seats_data()["seats"]:
+        text = (PAGES / "seats" / f"{seat['id']}.html").read_text(encoding="utf-8")
+        advisors = seat_advisors(seat, fw_reg)
+        if not advisors:
+            assert "Ask an advisor" not in text
+            continue
+        section = text.split("<h2>Ask an advisor</h2>", 1)[1].split("</section>", 1)[0]
+        assert "/aligned:use-advisor" not in section
+        assert 'class="copy"' not in section
+        assert '<table class="advisor-table">' in section
+        names = {html.escape(adv_reg[a]["name"], quote=False) for a in advisors}
+        example = re.search(r"Talk to my advisor, (.+?)\.”", section)
+        assert example and example.group(1) in names, (seat["id"], example and example.group(1))
 
 
 def test_missing_block_on_every_seat_with_missing():
@@ -651,7 +672,7 @@ def test_purpose_and_summary_end_with_period(tmp_path):
     text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
     assert '<p class="why">Plain purpose.</p>' in text
     assert '<p class="why">Asks why?</p>' in text
-    assert '<p class="why">Plain summary.</p>' in text
+    assert "<td>Plain summary.</td>" in text
 
 
 def test_real_why_lines_end_in_punctuation():

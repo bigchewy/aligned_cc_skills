@@ -489,18 +489,20 @@ def render_seat(seat, data):
 
     advisor_ids = seat_advisor_ids(seat, data["frameworks"])
     if advisor_ids:
-        items = []
+        rows = []
         for aid in advisor_ids:
             advisor = data["advisors"][aid]
-            items.append(
-                f'      <li class="card"><div class="who">{text(advisor["name"])}</div>'
-                f'<p class="why">{sentence(advisor.get("summary", ""))}</p>'
-                f"{command('advisor', aid)}</li>"
+            rows.append(
+                f'        <tr><th scope="row">{text(advisor["name"])}</th>'
+                f'<td>{sentence(advisor.get("summary", ""))}</td></tr>'
             )
+        example = text(data["advisors"][advisor_ids[0]]["name"])
         body.append(
-            '  <section>\n    <h2>Ask an advisor</h2>\n    <ul class="advisors">\n'
-            + "\n".join(items)
-            + "\n    </ul>\n  </section>"
+            "  <section>\n    <h2>Ask an advisor</h2>\n"
+            f'    <p class="muted">Say “Talk to my advisor, {example}.” to bring one in.</p>\n'
+            '    <div class="table-scroll">\n      <table class="advisor-table">\n'
+            + "\n".join(rows)
+            + "\n      </table>\n    </div>\n  </section>"
         )
 
     missing = (seat.get("missing") or "").strip()
