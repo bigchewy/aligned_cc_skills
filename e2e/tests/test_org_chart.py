@@ -170,6 +170,26 @@ def test_seats_text_has_no_dashes():
     assert "—" not in text and "–" not in text
 
 
+def test_missing_lines_talk_to_the_ceo_not_about_the_plugin():
+    # A missing line says what the CEO has to get elsewhere. It never reads
+    # like the plugin's backlog: no advisor names, frameworks, or coverage talk.
+    names = [a["name"] for a in advisor_registry().values()]
+    fw_names = [f["name"] for f in framework_registry().values()]
+    banned = re.compile(r"\b(framework|frameworks|advisor|advisors|plugin|covered|nothing yet)\b", re.I)
+    for seat in seats_data()["seats"]:
+        missing = seat.get("missing") or ""
+        assert not banned.search(missing), (seat["id"], missing)
+        for name in names + fw_names:
+            assert name not in missing, (seat["id"], name)
+
+
+def test_healthcare_motion_job_is_scoped_and_last():
+    seat = next(s for s in seats_data()["seats"] if s["id"] == "head-of-sales")
+    last = seat["jobs"][-1]
+    assert last["framework"] == "5-gtm-motions-digital-health"
+    assert "healthcare" in last["do"]
+
+
 def test_departments_in_order():
     ids = [d["id"] for d in seats_data()["departments"]]
     assert ids == ["lead", "product", "eng", "mkt", "sales", "cust", "people", "ops"]
@@ -490,7 +510,24 @@ def test_seat_page_lists_every_framework_and_advisor():
 def test_missing_block_on_every_seat_with_missing():
     for seat in seats_data()["seats"]:
         text = (PAGES / "seats" / f"{seat['id']}.html").read_text(encoding="utf-8")
-        assert ("Not covered yet" in text) == bool(seat.get("missing")), seat["id"]
+        has_block = "<h2>Not covered yet</h2>" in text or "<h2>Still missing</h2>" in text
+        assert has_block == bool(seat.get("missing")), seat["id"]
+
+
+def test_missing_block_title_follows_coverage():
+    seen = set()
+    for seat in seats_data()["seats"]:
+        if not seat.get("missing"):
+            continue
+        text = (PAGES / "seats" / f"{seat['id']}.html").read_text(encoding="utf-8")
+        if seat["coverage"] == "covered":
+            assert "<h2>Still missing</h2>" in text, seat["id"]
+            assert "Not covered yet" not in text, seat["id"]
+        else:
+            assert "<h2>Not covered yet</h2>" in text, seat["id"]
+            assert "Still missing" not in text, seat["id"]
+        seen.add(seat["coverage"])
+    assert seen == {"covered", "thin", "none"}
 
 
 def test_empty_seat_shows_only_missing_block():
@@ -545,7 +582,105 @@ def test_registry_dashes_become_commas(tmp_path):
     )
     assert result.returncode == 0, result.stderr
     text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
-    assert "Pick one motion, then commit for 18, 24 months" in text
+    assert "Pick one motion, then commit for 18 to 24 months" in text
+
+
+def build_tiny(tmp_path, data=None, frameworks=None, advisors=None):
+    """Build the tiny fixture with registry edits; return the out dir."""
+    a, f = tiny_registries(tmp_path)
+    if frameworks:
+        reg = load(f)
+        for i, changes in frameworks.items():
+            reg["frameworks"][i].update(changes)
+        f.write_text(yaml.safe_dump(reg))
+    if advisors:
+        reg = load(a)
+        for i, changes in advisors.items():
+            reg["advisors"][i].update(changes)
+        a.write_text(yaml.safe_dump(reg))
+    seats = write_seats(tmp_path, data or BASE)
+    out = tmp_path / "out"
+    result = run(
+        "--seats", seats, "--advisors", a, "--frameworks", f,
+        "--out", out, "--author-out", tmp_path / "a.html",
+    )
+    assert result.returncode == 0, result.stderr
+    return out
+
+
+def test_number_ranges_read_as_to(tmp_path):
+    out = build_tiny(tmp_path, frameworks={
+        0: {"purpose": "teams of 3–10 people"},
+        1: {"purpose": "runs 3 – 10 weeks — then stops"},
+    })
+    text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
+    assert "Teams of 3 to 10 people." in text
+    assert "Runs 3 to 10 weeks, then stops." in text
+
+
+def test_framework_names_drop_leading_lowercase_article(tmp_path):
+    out = build_tiny(tmp_path, frameworks={
+        0: {"name": "the Bowtie Funnel"},
+        1: {"name": "an 80/20 Audit"},
+        2: {"name": "a Weekly Review"},
+    })
+    text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
+    assert '<div class="who">Bowtie Funnel <span' in text
+    assert '<div class="who">80/20 Audit <span' in text
+    assert '<div class="who">Weekly Review <span' in text
+
+
+def test_framework_names_keep_capitalized_article(tmp_path):
+    out = build_tiny(tmp_path, frameworks={0: {"name": "The Algorithm"}})
+    text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
+    assert '<div class="who">The Algorithm <span' in text
+
+
+def test_real_cards_have_no_lowercase_article():
+    for page in (PAGES / "seats").glob("*.html"):
+        text = page.read_text(encoding="utf-8")
+        assert not re.search(r'<div class="who">(the|an|a) ', text), page.name
+
+
+def test_purpose_and_summary_end_with_period(tmp_path):
+    out = build_tiny(
+        tmp_path,
+        frameworks={0: {"purpose": "plain purpose"}, 1: {"purpose": "asks why?"}},
+        advisors={0: {"summary": "plain summary"}},
+    )
+    text = (out / "seats" / "ceo.html").read_text(encoding="utf-8")
+    assert '<p class="why">Plain purpose.</p>' in text
+    assert '<p class="why">Asks why?</p>' in text
+    assert '<p class="why">Plain summary.</p>' in text
+
+
+def test_real_why_lines_end_in_punctuation():
+    for page in (PAGES / "seats").glob("*.html"):
+        for line in re.findall(r'<p class="why">(.*?)</p>', page.read_text(encoding="utf-8")):
+            assert re.search(r"[.!?][\"')\]]*$", html_unescape(line)), (page.name, line)
+
+
+def html_unescape(value):
+    import html
+    return html.unescape(value)
+
+
+def test_empty_chart_cards_skip_job_count():
+    for name in CHART_FILES.values():
+        text = (PAGES / name).read_text(encoding="utf-8")
+        assert "0 jobs" not in text, name
+        assert re.search(r"\b[1-9]\d* jobs?<", text), name
+
+
+def test_column_totals_sum_to_headcount():
+    for name in CHART_FILES.values():
+        text = (PAGES / name).read_text(encoding="utf-8")
+        heads = re.findall(
+            r'<div class="dept-head"><h3>[^<]*</h3><span class="seat-n">(\d+) (?:person|people)</span>',
+            text,
+        )
+        assert heads, name
+        assert sum(int(n) for n in heads) == 100, (name, heads)
 
 
 def test_purpose_first_letter_capitalized():
@@ -658,6 +793,26 @@ def test_skill_frontmatter():
     assert "—" not in text and "–" not in text
 
 
+def test_skill_description_stays_on_org_chart_requests():
+    fm = yaml.safe_load(SKILL_MD.read_text().split("---")[1])
+    desc = fm["description"]
+    assert "org chart" in desc
+    assert "not hired" in desc
+    assert "use-framework" in desc
+    assert "such as sales, marketing, hiring, or strategy" not in desc
+
+
+def test_add_framework_offers_holding():
+    fw = _section((ROOT / "skills/add-framework/SKILL.md").read_text(), "### 7.")
+    assert "fits no seat" in fw
+    assert "`holding`" in fw
+
+
+def test_authoring_mode_has_no_stale_counts():
+    text = (ROOT / "skills/brainstorming/modes/authoring.md").read_text()
+    assert not re.search(r"\b\d+ frameworks \+ \d+ advisors\b", text)
+
+
 def test_readme_lists_org_chart():
     assert "/aligned:org-chart" in README.read_text()
 
@@ -687,6 +842,49 @@ def test_hook_tolerates_missing_python(tmp_path):
     )
     assert result.returncode == 0
     assert "org chart NOT rebuilt" in result.stdout + result.stderr
+
+
+def _fake_repo(tmp_path, generator_body):
+    """A repo root whose venv python is the real one and whose generator is a stub."""
+    fake_root = tmp_path / "repo"
+    (fake_root / "e2e" / ".venv" / "bin").mkdir(parents=True)
+    py = fake_root / "e2e" / ".venv" / "bin" / "python"
+    py.write_text(f'#!/bin/sh\nexec "{sys.executable}" "$@"\n')
+    py.chmod(0o755)
+    (fake_root / "scripts").mkdir()
+    (fake_root / "scripts" / "generate-org-chart.py").write_text(generator_body)
+    return fake_root
+
+
+def _source_hook(fake_root, tmp_path):
+    return subprocess.run(
+        ["/bin/bash", "-c", f'source "{HOOK}"; rebuild_org_chart; echo "after=$?"'],
+        capture_output=True,
+        text=True,
+        cwd=tmp_path,
+        env={"PATH": "/usr/bin:/bin", "REPO_ROOT": str(fake_root), "HOME": str(tmp_path)},
+    )
+
+
+def test_hook_tolerates_build_failure(tmp_path):
+    stub = "import sys\nprint('ERROR: boom', file=sys.stderr)\nsys.exit(1)\n"
+    fake_root = _fake_repo(tmp_path, stub)
+    result = _source_hook(fake_root, tmp_path)
+    out = result.stdout + result.stderr
+    assert result.returncode == 0, out
+    assert "after=0" in result.stdout
+    assert "org chart build failed" in out
+    assert "ERROR: boom" in out
+
+
+def test_hook_tolerates_staging_failure(tmp_path):
+    # The stub build succeeds, but tmp_path is not a repository, so staging fails.
+    fake_root = _fake_repo(tmp_path, "pass\n")
+    result = _source_hook(fake_root, tmp_path)
+    out = result.stdout + result.stderr
+    assert result.returncode == 0, out
+    assert "after=0" in result.stdout
+    assert "NOT staged" in out
 
 
 def test_add_skills_place_new_entries():

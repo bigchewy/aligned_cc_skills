@@ -56,10 +56,16 @@ seats:
         also: [6-step-process]
       - do: Look at your own part in what keeps going wrong
         framework: 100-percent-responsibility
-        also: [above-below-the-line, pillars-of-integrity, professional-context-intake, personal-context-intake, the-story-so-far]
+        also: [above-below-the-line, pillars-of-integrity]
       - do: Spend your week on the work only you can do
         framework: zone-of-genius
-        also: [80-20-audit, personal-resource-allocation, past-year-review]
+        also: [80-20-audit, personal-resource-allocation]
+      - do: Look back on the past year and decide what to keep doing
+        framework: past-year-review
+        also: [the-story-so-far]
+      - do: Give your coach the full picture of you and your company
+        framework: professional-context-intake
+        also: [personal-context-intake]
     also_ask: [garry-tan]
 
   - id: board
@@ -187,9 +193,8 @@ seats:
         framework: close-the-loop
     also_ask: [the-architect]
     missing: >-
-      Technical strategy, paying down tech debt, engineering hiring plans, and
-      measuring how fast the team delivers. The Architect reviews designs but has
-      no frameworks yet.
+      Get outside help with technical strategy, paying down tech debt, an
+      engineering hiring plan, and measuring how fast the team delivers.
 
   - id: engineering-managers
     dept: eng
@@ -199,11 +204,11 @@ seats:
     coverage: covered
     does: Run teams of five to seven engineers, with one-on-ones, hiring, and getting work out the door.
     jobs:
-      - do: Find where each manager is on the ladder and what has to change
+      - do: Spell out what each rung of the engineering manager ladder expects
         framework: management-level-progression
       - do: Help an engineer make the jump to manager
         framework: leadership-pipeline-passages
-      - do: Find the level a manager is really working at, and plan the next step
+      - do: Catch a manager still doing the job below their title, and plan the fix
         framework: performance-standards-by-level
     also_ask: []
 
@@ -221,8 +226,8 @@ seats:
         framework: few-hiccupps-review
     also_ask: [the-architect]
     missing: >-
-      Code review, architecture decision records, and estimating work. This is the
-      largest seat in the company and it has two frameworks.
+      Get outside help with code review standards, architecture decision records,
+      and estimating work.
 
   - id: quality-and-testing
     dept: eng
@@ -236,8 +241,8 @@ seats:
         framework: few-hiccupps-review
     also_ask: []
     missing: >-
-      A test plan for a release and deciding what to test by risk. Michael Bolton
-      covers design review but not release testing.
+      Get outside help with a test plan for each release and with deciding what
+      to test first by risk.
 
   - id: security
     dept: eng
@@ -253,8 +258,8 @@ seats:
         framework: phantom-b-llm-threats
     also_ask: []
     missing: >-
-      SOC 2 and the security questionnaires that enterprise buyers send. Threat
-      modeling is covered.
+      Get outside help with SOC 2 and the security questionnaires that enterprise
+      buyers send.
 
   - id: devops
     dept: eng
@@ -278,7 +283,7 @@ seats:
       - do: Decide who you are for and why you win
         framework: 5-components-positioning
         also: [reverse-engineered-brand]
-      - do: Tell the story of what changed in the world and why you
+      - do: Tell the story of what changed in the world and why your company wins
         framework: strategic-narrative
       - do: Pick the smallest group of customers you can win first
         framework: smallest-viable-audience
@@ -440,14 +445,14 @@ seats:
     coverage: covered
     does: Builds the sales team, picks the sales motion, and owns the number.
     jobs:
-      - do: Pick your sales motion
-        framework: 5-gtm-motions-digital-health
       - do: Find where revenue leaks between first touch and renewal
         framework: bowtie-funnel
       - do: Teach the team to sell with an insight instead of a demo
         framework: teach-tailor-take-control
       - do: Design the team that books first meetings
         framework: 6-elements-sdr
+      - do: If you sell into healthcare, pick your go-to-market motion
+        framework: 5-gtm-motions-digital-health
     also_ask: []
     missing: Forecasting, quotas, and sales comp plans.
 
@@ -486,9 +491,8 @@ seats:
         framework: insane-honesty
     also_ask: [chris-voss]
     missing: >-
-      A daily prospecting playbook with cold call openers, email sequences, and
-      answers to the first objection. Trish Bertuzzi's framework is for the leader
-      who designs the team.
+      Get outside help with a daily prospecting playbook: cold call openers,
+      email sequences, and answers to the first objection.
 
   - id: revenue-operations
     dept: sales
@@ -598,9 +602,9 @@ seats:
     does: Answers tickets and fixes customer problems.
     jobs: []
     missing: >-
-      Ticket triage, a help center, and making support low effort for the
-      customer. Matt Dixon co-wrote The Effortless Experience on this, and he has
-      no framework for it yet.
+      Get outside help with ticket triage, a help center, and making support low
+      effort for the customer. The book The Effortless Experience is a good place
+      to start.
 
   - id: trust-and-safety
     dept: cust
@@ -646,7 +650,7 @@ seats:
         framework: energy-audit
         also: [stress-recovery-oscillation, presence-check-in, quadrinity, pain-plus-reflection]
     also_ask: [ram-charan]
-    missing: Performance reviews and pay bands have nothing yet.
+    missing: Get outside help with performance reviews and pay bands.
 
   - id: recruiting
     dept: people
@@ -660,9 +664,8 @@ seats:
         framework: psiu-role-fit
     also_ask: []
     missing: >-
-      Interview scorecards, structured interview loops, sourcing, and closing
-      offers. PSIU Role Fit covers only what the role needs before the search
-      starts.
+      Get outside help with interview scorecards, structured interview loops,
+      sourcing, and closing offers.
 
   - id: learning-and-development
     dept: people
@@ -692,8 +695,8 @@ seats:
     does: Owns the budget, the runway, and the financial model for fundraising.
     jobs: []
     missing: >-
-      Budgeting, runway planning, unit economics, and the fundraising model. The
-      Idiot Index looks at cost but not at the budget.
+      Get outside help with budgeting, runway planning, unit economics, and the
+      fundraising model.
 
   - id: accounting-and-fpa
     dept: ops
@@ -729,7 +732,7 @@ seats:
       - do: Find where a cost is far above what the parts are worth
         framework: idiot-index
     also_ask: [sean-ellis]
-    missing: Picking a north star metric and defining the company's core metrics. Charts are covered.
+    missing: Get outside help with picking a north star metric and defining the company's core metrics.
 
   - id: it
     dept: ops

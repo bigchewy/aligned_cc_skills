@@ -32,7 +32,7 @@ Outcomes (the fallback ladder):
 2. **Auto-select fires on an advisor (no framework match)** → Phase 2b (structured Q&A with the matched advisor in The Architect's proxy seat).
 3. **Shortlist mode** → present the unified shortlist; user picks an entry; route to 2a or 2b based on entity type.
 4. **No high-confidence match (Stage 1 returns candidates but none auto-select)** → Phase 2c (structured Q&A; top-scoring topic advisor in proxy seat).
-5. **Zero candidates** (both registries returned nothing after domain filter — extremely rare given 154 frameworks + 70 advisors) → Phase 2d (structured Q&A with Coach Eric in proxy seat).
+5. **Zero candidates** (both registries returned nothing after domain filter — extremely rare given how many frameworks and advisors the registries hold) → Phase 2d (structured Q&A with Coach Eric in proxy seat).
 
 Path 4 of `contextual-recommendation.md` (the "what problem are you working on?" prompt) is reserved for top-level skill invocations where the user invoked `/aligned:use-advisor` with no args and no conversation context. Authoring mode always has a topic; Path 4 never fires from here.
 

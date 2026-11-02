@@ -39,7 +39,11 @@ rebuild_org_chart() {
     return 0
   fi
 
-  git add "$REPO_ROOT/skills/org-chart/pages"
+  if ! OUT=$(git add "$REPO_ROOT/skills/org-chart/pages" 2>&1); then
+    echo "[pre-commit] org chart pages rebuilt but NOT staged:"
+    echo "$OUT"
+    return 0
+  fi
   echo "[pre-commit] Org chart pages rebuilt"
   return 0
 }

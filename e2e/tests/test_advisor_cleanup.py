@@ -15,11 +15,12 @@ REGISTRY = REPO_ROOT / "advisors" / "registry.yaml"
 FW_REGISTRY = REPO_ROOT / "frameworks" / "registry.yaml"
 TRIGGER_MAP = REPO_ROOT / "e2e" / "trigger-map.yaml"
 
+HOME = Path.home()
 MOVED = {
-    "jonathan-baker": "/Users/ericpage/Documents/nextstep",
-    "robb-wolf": "/Users/ericpage/Documents/aligned",
-    "kate-bowler": "/Users/ericpage/Documents/aligned",
-    "danny-iny": "/Users/ericpage/software/planted",
+    "jonathan-baker": HOME / "Documents" / "nextstep",
+    "robb-wolf": HOME / "Documents" / "aligned",
+    "kate-bowler": HOME / "Documents" / "aligned",
+    "danny-iny": HOME / "software" / "planted",
 }
 DELETED = [
     "joan-garry",
@@ -163,6 +164,45 @@ def test_deleted_advisors_gone(advisor_id):
     assert not any(fw["advisor"] == advisor_id for fw in _frameworks().values())
 
 
-def test_plugin_counts():
-    assert len(_advisors()) == 64
-    assert len(_frameworks()) == 116
+REMOVED_NAMES = [
+    "Joan Garry",
+    "Jonathan Baker",
+    "Robb Wolf",
+    "Kate Bowler",
+    "Danny Iny",
+    "Elise Darma",
+    "Jasmine Star",
+    "Sue B. Zimmerman",
+    "Rachel Pedersen",
+    "Jenna Kutcher",
+    "Arielle Nissenblatt",
+    "Jeremy Enns",
+    "Jay Clouse",
+    "Wise Eric",
+    "creator-economy",
+]
+
+NAME_SCANNED = [
+    REPO_ROOT / "advisors",
+    REPO_ROOT / "frameworks",
+    REPO_ROOT / "skills",
+    REPO_ROOT / "agents",
+    REPO_ROOT / "e2e" / "scenarios",
+    TRIGGER_MAP,
+]
+
+
+def test_removed_names_absent_from_shipped_files():
+    pattern = re.compile("|".join(re.escape(n) for n in REMOVED_NAMES), re.IGNORECASE)
+    hits = []
+    for root in NAME_SCANNED:
+        paths = [root] if root.is_file() else root.rglob("*")
+        for p in paths:
+            if "node_modules" in p.parts or not p.is_file():
+                continue
+            if p.suffix not in {".md", ".yaml", ".yml", ".html", ".json"}:
+                continue
+            for n, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1):
+                if pattern.search(line):
+                    hits.append(f"{p.relative_to(REPO_ROOT)}:{n}: {line.strip()}")
+    assert not hits, "Still names removed advisors:\n" + "\n".join(hits)

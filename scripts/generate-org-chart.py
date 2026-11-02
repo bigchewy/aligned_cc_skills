@@ -28,6 +28,9 @@ HEADCOUNT = 100
 COVERAGE_LEVELS = ("covered", "thin", "none")
 COVERAGE_LABEL = {"covered": "Covered", "thin": "Thin", "none": "Nothing yet"}
 DASH = re.compile(r"\s*[–—]\s*")
+RANGE = re.compile(r"(?<=\d)\s*[–—]\s*(?=\d)")
+ARTICLE = re.compile(r"^(the|an|a) (?=\S)")
+ENDS_IN_PUNCT = re.compile(r"[.!?][\"')\]]*$")
 PAGE_SUFFIXES = (".html", ".css")
 
 
@@ -188,15 +191,31 @@ def load_and_validate(seats_path, advisors_path, frameworks_path):
 # ---------------------------------------------------------------- render
 
 
+def undash(value):
+    """A dash between two digits becomes " to "; any other dash becomes ", "."""
+    return DASH.sub(", ", RANGE.sub(" to ", str(value).strip()))
+
+
 def text(value):
-    """Registry or seats-file text, made safe for HTML. Dashes become ", "."""
-    return html.escape(DASH.sub(", ", str(value).strip()), quote=True)
+    """Registry or seats-file text, made safe for HTML, with dashes replaced."""
+    return html.escape(undash(value), quote=True)
 
 
 def sentence(value):
-    """Like text(), with the first letter capitalized (registry purposes start lowercase)."""
-    raw = DASH.sub(", ", str(value).strip())
-    return html.escape(raw[:1].upper() + raw[1:], quote=True)
+    """Like text(), capitalized and closed with a period when it has no end punctuation.
+
+    Registry purposes and summaries start lowercase and often have no period.
+    """
+    raw = undash(value)
+    raw = raw[:1].upper() + raw[1:]
+    if raw and not ENDS_IN_PUNCT.search(raw):
+        raw += "."
+    return html.escape(raw, quote=True)
+
+
+def framework_name(name):
+    """A framework's display name without a leading lowercase article."""
+    return ARTICLE.sub("", str(name).strip())
 
 
 def fill(template, **values):
@@ -281,11 +300,11 @@ def seat_card(seat, chart, top_ids):
     n = seat["people"][chart]
     count = f'<span class="seat-n">×{n}</span>' if n else ""
     jobs = len(seat.get("jobs") or [])
+    job_count = f'<span class="seat-counts">{plural(jobs, "job")}</span>' if jobs else ""
     return (
         f'<a {attrs} class="{" ".join(classes)}">'
         f'<span class="seat-row"><span class="seat-name">{text(seat["name"])}</span>{count}</span>'
-        f'<span class="seat-row start">{pill(seat["coverage"])}'
-        f'<span class="seat-counts">{plural(jobs, "job")}</span></span></a>'
+        f'<span class="seat-row start">{pill(seat["coverage"])}{job_count}</span></a>'
     )
 
 
@@ -307,8 +326,11 @@ def render_chart(data, chart):
         top_parts.append('<div class="v-line"></div>')
 
     col_parts = []
+    chart_seats = [s for s in data["seats"] if on_chart(s, chart)]
     for dept, seats in columns:
-        total = sum(s["people"][chart] for s in seats)
+        # Count every seat in the department, including the ones drawn above
+        # the columns (the CEO and the board belong to Leadership).
+        total = sum(s["people"][chart] for s in chart_seats if s["dept"] == dept["id"])
         cards = "\n".join(indent + "  " + seat_card(s, chart, top_ids) for s in seats)
         col_parts.append(
             f'{indent}<section class="dept" id="dept-{text(dept["id"])}">\n'
@@ -318,7 +340,6 @@ def render_chart(data, chart):
             f"{indent}</section>"
         )
 
-    chart_seats = [s for s in data["seats"] if on_chart(s, chart)]
     frameworks, advisors = set(), set()
     for seat in chart_seats:
         frameworks |= set(seat_frameworks(seat))
@@ -353,7 +374,7 @@ def framework_block(fid, data):
     fw = data["frameworks"][fid]
     advisor = data["advisors"][fw["advisor"]]
     return (
-        f'<div class="who">{text(fw["name"])} <span class="by">· {text(advisor["name"])}</span></div>'
+        f'<div class="who">{text(framework_name(fw["name"]))} <span class="by">· {text(advisor["name"])}</span></div>'
         f'<p class="why">{sentence(fw.get("purpose", ""))}</p>'
         f"{command('framework', fid)}"
     )
@@ -448,8 +469,9 @@ def render_seat(seat, data):
     missing = (seat.get("missing") or "").strip()
     if missing:
         level = " none" if seat["coverage"] == "none" else ""
+        title = "Still missing" if seat["coverage"] == "covered" else "Not covered yet"
         body.append(
-            f'  <section class="missing{level}">\n    <h2>Not covered yet</h2>\n'
+            f'  <section class="missing{level}">\n    <h2>{title}</h2>\n'
             f"    <p>{text(missing)}</p>\n  </section>"
         )
 
