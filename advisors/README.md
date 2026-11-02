@@ -1,6 +1,6 @@
 # Advisor Registry
 
-64 advisors | 64 profiled | 0 unprofiled
+63 advisors | 63 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -52,7 +52,6 @@
 | lex-sisney | Lex Sisney | org-design, organizational-structure, scaling, role-fit, executive-hiring, lifecycle-strategy | Founder of Organizational Physics, co-founder and former CEO of Commission Junction, author of Designed to Scale; org structure and role fit for scaling companies |
 | kim-mauborgne | Kim & Mauborgne | blue-ocean-strategy, value-innovation, value-proposition, market-creation, product-strategy | W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with the strategy canvas and the ERRC grid |
 | ryan-singer | Ryan Singer | product-roadmap, scoping, prioritization, fixed-deadlines, product-development | Author of Shape Up and former Head of Strategy at Basecamp; appetites, shaping, and betting to turn strategy into a dated roadmap |
-| james-gurney | James Gurney | illustration, art-direction, composition, color-and-light, visual-storytelling, image-generation-prompts | Painter and author of Dinotopia, Imaginative Realism, and Color and Light; plans a picture's moment, light, and staging so an imagined scene looks observed |
 | paul-kirschner | Paul A. Kirschner | instructional-design, learning-science, cognitive-load-theory, complex-skills-training, evidence-informed-learning | Emeritus Professor of Educational Psychology at the Open University of the Netherlands, co-author of Ten Steps to Complex Learning, How Learning Happens, and Evidence-Informed Learning Design; 4C/ID program design, cognitive load, and learning myths |
 | julie-dirksen | Julie Dirksen | learning-design, behavior-change, instructional-design, training-transfer, practice-and-feedback | Founder of Usable Learning, author of Design for How People Learn and Talk to the Elephant; learning design for behavior change, COM-B diagnosis, and when training is not the answer |
 | ethan-mollick | Ethan Mollick | ai-in-learning, prompt-design, ai-coaching, learning-design, human-ai-collaboration | Wharton professor, author of Co-Intelligence and the One Useful Thing newsletter; designing the AI's role in learning and coaching, with guardrailed prompts that keep the learner doing the thinking |
@@ -123,7 +122,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Lex Sisney** | Evaluates whether an organizational problem has been located in the design or misfiled as a people problem |
 | **Kim & Mauborgne** | Evaluates whether an offering actually differs from the alternatives or only claims to |
 | **Ryan Singer** | Evaluates whether a roadmap is a plan or a stack of estimates |
-| **James Gurney** | Evaluates whether a picture, or a description of one, could be painted by someone who was never told the story |
 | **Paul A. Kirschner** | Evaluates whether a learning program will build a skill people can use at work, or only produce good feelings and good session scores |
 | **Julie Dirksen** | Evaluates whether a learning design is aimed at a behavior or only at knowledge, and whether training is the right fix at all |
 | **Ethan Mollick** | Evaluates whether an AI learning design helps people learn or just does the work for them |

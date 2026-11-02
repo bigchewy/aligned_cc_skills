@@ -1,6 +1,6 @@
 # Framework Registry
 
-116 frameworks across 26 categories
+115 frameworks across 25 categories
 
 | Category | Count |
 |----------|-------|
@@ -29,7 +29,6 @@
 | startup | 9 |
 | strategy | 27 |
 | visual-identity | 3 |
-| visual-storytelling | 1 |
 
 ## Quick Reference
 
@@ -126,7 +125,6 @@
 | lifecycle-strategy | Lifecycle Strategy | lex-sisney | strategy | a company is deciding whether to launch or spin out a second product, is building scale infrastructure for a product that may not have product-market fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow execution is a product, market, or company-stage problem |
 | blue-ocean-value-props | Blue Ocean Value Props | kim-mauborgne | strategy | a product looks like its competitors, buyers choose on price, the team keeps adding features without changing what buyers see, or someone needs to decide what an offering should stop doing as well as what it should do; also for a new offering that needs its value proposition set before positioning |
 | frame-shape-bet | Frame, Shape, Bet | ryan-singer | strategy | a team needs a product roadmap, has a draft roadmap or feature list with no sense of what fits, faces a launch or contract date that can't move, has made promises to customers that aren't on the calendar, or keeps letting projects run over |
-| stage-the-picture | Stage the Picture | james-gurney | visual-storytelling | someone needs to turn a written story or memory into a single illustration, is writing or fixing a scene description or prompt for an image model, has a draft description that reads as mood words with no light or staging, or has a picture that tries to show several moments at once |
 | ten-steps-blueprint | Ten Steps Blueprint | paul-kirschner | learning-design | someone is designing a training, coaching, or learning program that runs over weeks or months and must change what people do at work; the draft is organized one topic per session, people pass the sessions but don't use the skill, support never fades, or an app or AI is expected to make it stick |
 | behavior-gap-diagnosis | Behavior Gap Diagnosis | julie-dirksen | learning-design | someone asks for a training or workshop, a program is popular but behavior between sessions does not change, people know what to do and still do not do it, or a team needs to decide whether a behavior problem calls for practice, an environment change, a leader going first, or motivation work instead of more content |
 | assigning-ai-roles | Assigning AI Roles | ethan-mollick | learning-design | someone is building an AI tutor, AI coach, role-play practice partner, or AI feedback tool for a course or program; an existing AI learning tool gets good ratings but behavior does not change; or a team needs to decide what the AI should and should not do for learners |
@@ -343,10 +341,6 @@
 - **boil-it-down** — Boil It Down (michael-bierut)
 - **how-much-siblings-share** — How Much the Siblings Share (michael-bierut)
 - **small-size-and-print-test** — The Small-Size and Print Test (michael-bierut)
-
-### Visual Storytelling (1)
-
-- **stage-the-picture** — Stage the Picture (james-gurney)
 
 ---
 

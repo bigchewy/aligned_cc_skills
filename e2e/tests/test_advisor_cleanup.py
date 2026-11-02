@@ -21,6 +21,7 @@ MOVED = {
     "robb-wolf": HOME / "Documents" / "aligned",
     "kate-bowler": HOME / "Documents" / "aligned",
     "danny-iny": HOME / "software" / "planted",
+    "james-gurney": HOME / "software" / "moments",
 }
 DELETED = [
     "joan-garry",
@@ -72,6 +73,7 @@ MOVED_FRAMEWORKS = {
         "leveraged-learning",
         "pilot-program-methodology",
     ],
+    "james-gurney": ["stage-the-picture"],
 }
 ALL_MOVED_FRAMEWORKS = [f for fs in MOVED_FRAMEWORKS.values() for f in fs] + DELETED_FRAMEWORKS
 REMOVED_ADVISORS = list(MOVED) + list(DELETED)
@@ -178,6 +180,7 @@ REMOVED_NAMES = [
     "Arielle Nissenblatt",
     "Jeremy Enns",
     "Jay Clouse",
+    "James Gurney",
     "Wise Eric",
     "creator-economy",
 ]

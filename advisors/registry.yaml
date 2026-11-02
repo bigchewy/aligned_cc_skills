@@ -874,8 +874,8 @@ advisors:
     Krug); setting the design direction, palette, type, and tokens in design-principles.md
     (redirect to /aligned:create-design-principles); deciding the places, actions,
     and connections before any screen exists (redirect to Ryan Singer); the user''s
-    story and release slices (redirect to Jeff Patton); illustration (redirect to
-    James Gurney); backend architecture and data models (redirect to The Architect).
+    story and release slices (redirect to Jeff Patton); illustration; backend
+    architecture and data models (redirect to The Architect).
 
     '
   prompt: advisors/prompts/brad-frost.md
@@ -1364,42 +1364,6 @@ advisors:
   prompt: advisors/prompts/ryan-singer.md
   summary: Author of Shape Up and former Head of Strategy at Basecamp; appetites,
     shaping, and betting to turn strategy into a dated roadmap
-- best_for: 'Planning a single illustration from a written story or memory before
-    it is drawn: choosing the one moment to show, where the light comes from and
-    its color, time of day and weather, where the figures stand and what their hands
-    are doing, one center of interest, and what falls into shadow. Writing or critiquing
-    scene descriptions / prompts for AI image generation. Reviewing illustrations
-    for light, staging, and whether the eye lands where it should. Color and light
-    for a picture or a set of pictures. Art direction for illustrated books.
-
-    '
-  domains:
-  - illustration
-  - art-direction
-  - composition
-  - color-and-light
-  - visual-storytelling
-  - image-generation-prompts
-  evaluation_expertise: 'Evaluates whether a picture, or a description of one, could
-    be painted by someone who was never told the story. Is there one moment, not a
-    summary of several? Does the light have a named source, a direction, a quality
-    (hard or soft), and a color, with shadows that agree? Can you tell where each
-    figure stands and what their hands do? Is there one center of interest, with
-    everything else massed into light or shadow? Catches mood words standing in for
-    light, crowded frames, missing time of day and weather, and details invented
-    that the story never contained.
-
-    '
-  id: james-gurney
-  name: James Gurney
-  not_for: 'UI, screen layout, or design-system review (redirect to Brad Frost);
-    animation timing and what should move; marketing or sales copy; drawing a specific
-    real person''s likeness from photos; product or business strategy.
-
-    '
-  prompt: advisors/prompts/james-gurney.md
-  summary: Painter and author of Dinotopia, Imaginative Realism, and Color and Light;
-    plans a picture's moment, light, and staging so an imagined scene looks observed
 - best_for: 'Designing a program that builds a complex skill people use at work,
     over weeks or months. Choosing the whole task people practice, ordering task
     classes from simple to complex, deciding how much help learners get and how it
@@ -1715,7 +1679,7 @@ advisors:
     (redirect to Steve Jobs); building screens from a breadboard or auditing an existing
     app''s components (redirect to Brad Frost); whether a person can use a screen without
     thinking (redirect to Steve Krug); user research and the user''s story (redirect
-    to Jeff Patton); motion design; illustration (redirect to James Gurney).
+    to Jeff Patton); motion design; illustration.
 
     '
   prompt: advisors/prompts/adham-dannaway.md
@@ -1945,8 +1909,7 @@ advisors:
   not_for: 'Headlines, naming, and the emotional one-liner (redirect to Don Draper); simplicity
     reviews of a whole product (redirect to Steve Jobs); writing the design-principles file
     and its color tokens (redirect to Adham Dannaway); screens and components (redirect to
-    Brad Frost); whether a page is easy to use (redirect to Steve Krug); planning one illustration
-    (redirect to James Gurney).
+    Brad Frost); whether a page is easy to use (redirect to Steve Krug); planning one illustration.
 
     '
   prompt: advisors/prompts/michael-bierut.md

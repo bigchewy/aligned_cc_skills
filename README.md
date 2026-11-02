@@ -1,6 +1,6 @@
 # Aligned
 
-A virtual board of advisors for running a company, inside Claude Code and Cowork. 64 expert personas and 116 structured frameworks for strategy, positioning, marketing, sales, product, leadership, and operations, picked for you by context.
+A virtual board of advisors for running a company, inside Claude Code and Cowork. 63 expert personas and 115 structured frameworks for strategy, positioning, marketing, sales, product, leadership, and operations, picked for you by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.33.95-green.svg)](.claude-plugin/plugin.json)
@@ -84,7 +84,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 1. **Find your seat.** `/aligned:org-chart` shows which advisors and frameworks fit your role.
 2. **Converse with an advisor.** `/aligned:use-advisor April Dunford` and describe a positioning challenge. She runs her actual methodology.
 3. **Run a brainstorm.** `/aligned:brainstorming` with a real problem. The system detects your domain and selects relevant advisors for the critique panel.
-4. **Try a framework.** `/aligned:use-framework` to browse 116 structured decision frameworks with interactive, phase-gated walkthroughs.
+4. **Try a framework.** `/aligned:use-framework` to browse 115 structured decision frameworks with interactive, phase-gated walkthroughs.
 5. **Layer in context.** Add competitors, personas, and strategy docs to your project folder and point to them from your `CLAUDE.md`. The advisors bring your company context into every conversation.
 
 ## Reference
@@ -118,7 +118,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 
 ### Advisors
 
-64 advisor prompts ship in `advisors/prompts/`, registered in `advisors/registry.yaml` with each advisor's domains, best-for and not-for lines, and the calibration data the brainstorming critique panel uses to pick critics. Browse them in `docs/advisor-catalog.html`, or run `/aligned:use-advisor` with no name to list them.
+63 advisor prompts ship in `advisors/prompts/`, registered in `advisors/registry.yaml` with each advisor's domains, best-for and not-for lines, and the calibration data the brainstorming critique panel uses to pick critics. Browse them in `docs/advisor-catalog.html`, or run `/aligned:use-advisor` with no name to list them.
 
 Advisors built for a single client now live in that client's repo as project-local advisors (see below), so the plugin carries only advisors useful to any company.
 
@@ -126,7 +126,7 @@ To add an advisor, run `/aligned:add-advisor`.
 
 ### Frameworks
 
-116 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy, psychology, leadership, startup, and positioning, followed by product design, growth, sales, conversion, and negotiation. Browse them in `docs/framework-catalog.html`.
+115 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy, psychology, leadership, startup, and positioning, followed by product design, growth, sales, conversion, and negotiation. Browse them in `docs/framework-catalog.html`.
 
 Framework prompts are interactive scripts with hard WAIT points. Run them through `/aligned:use-framework`, one question at a time.
 
@@ -171,7 +171,7 @@ Semver, pre-1.0. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.js
 - New `/aligned:org-chart` skill with B2B and B2C org chart pages: every seat, its coverage, its jobs, and the command for each.
 - Narrowed to business and advisory work. Advisors built for single clients moved to those clients' repos as project-local advisors; nonprofit and solo-creator advisors were removed. Coach Eric is now a CEO coach.
 - New advisors since 0.33.1 include Adham Dannaway, Annie Duke, Jason Fried, Aleyda Solis, Michael Bolton, Adam Shostack, Michael Bierut, and Cole Nussbaumer Knaflic.
-- **64 advisors, 116 frameworks, 14 skills, 3 agents.**
+- **63 advisors, 115 frameworks, 14 skills, 3 agents.**
 
 #### 0.33.1: Green Suite (2026-08-14)
 - Test suite is fully green: fixed the `advisors/prompts/**` eval-surface

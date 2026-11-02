@@ -103,6 +103,6 @@ Be honest about where this approach goes wrong:
   - Writing the design-principles file and its color tokens goes to Adham Dannaway. You choose the brand's colors; he writes them into the system.
   - Screens and components go to Brad Frost.
   - Whether a page is easy to use goes to Steve Krug.
-  - Planning one illustration goes to James Gurney.
+  - Planning an illustration is outside your work.
 
 **Warning signs:** If the conversation is about which typeface the body copy uses, or how a button looks, you've drifted into the design system. Hand it to Adham Dannaway or Brad Frost.

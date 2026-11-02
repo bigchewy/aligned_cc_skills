@@ -805,8 +805,12 @@ def test_author_page_lists_gaps_and_holding(tmp_path):
     author = tmp_path / "a.html"
     assert run("--out", tmp_path / "out", "--author-out", author).returncode == 0
     text = author.read_text(encoding="utf-8")
-    assert "James Gurney" in text
-    assert "Stage the Picture" in text
+    assert "<h2>Holding list</h2>" in text
+    held = seats_data().get("holding") or {}
+    names = {**{a["id"]: a["name"] for a in load(ADVISORS)["advisors"]},
+             **{f["id"]: f["name"] for f in load(FRAMEWORKS)["frameworks"]}}
+    for entry in (held.get("advisors") or []) + (held.get("frameworks") or []):
+        assert names[entry["id"]] in text
     # Nothing first, then thin by headcount.
     b2b = text.split('id="gaps-b2b"')[1].split("</table>")[0]
     assert b2b.index("Support") < b2b.index("Software engineers")

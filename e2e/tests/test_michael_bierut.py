@@ -34,7 +34,7 @@ UNCONFIRMED = (
     "It doesn't mean much until you get to know the person",
 )
 
-HANDOFFS = ("Don Draper", "Steve Jobs", "Adham Dannaway", "Brad Frost", "Steve Krug", "James Gurney")
+HANDOFFS = ("Don Draper", "Steve Jobs", "Adham Dannaway", "Brad Frost", "Steve Krug")
 
 
 def _read(path: Path) -> str:

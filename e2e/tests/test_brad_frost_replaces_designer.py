@@ -83,11 +83,12 @@ def test_nothing_shipped_names_the_designer():
 
 
 def test_advisors_that_handed_off_visual_work_now_name_brad_frost():
-    for slug in ("jeff-patton", "steve-krug", "james-gurney"):
+    # James Gurney moved to the moments repo on 2026-11-02, so he is no longer checked here.
+    for slug in ("jeff-patton", "steve-krug"):
         text = (REPO_ROOT / "advisors" / "prompts" / f"{slug}.md").read_text(encoding="utf-8")
         assert "Brad Frost" in text, f"{slug}.md should hand visual work to Brad Frost"
     reg = _registry()
-    for slug in ("jeff-patton", "steve-krug", "james-gurney"):
+    for slug in ("jeff-patton", "steve-krug"):
         entry = reg[slug]
         text = entry.get("best_for", "") + entry.get("not_for", "")
         assert "Brad Frost" in text, f"{slug} registry entry should name Brad Frost"

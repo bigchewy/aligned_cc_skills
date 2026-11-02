@@ -7,6 +7,8 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 
 GONE_IDS = [
+    # moved to the moments repo on 2026-11-02
+    "james-gurney", "stage-the-picture",
     "benjamin-levine", "copywriter",
     "andreo-spina", "blair-grubb", "italo-biaggioni", "kelly-starrett",
     "patrick-mckeown", "roy-freeman", "shirley-sahrmann", "stuart-mcgill",

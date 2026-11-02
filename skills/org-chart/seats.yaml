@@ -744,9 +744,5 @@ seats:
     missing: Onboarding and offboarding checklists, access reviews, and buying software.
 
 holding:
-  advisors:
-    - id: james-gurney
-      why: undecided
-  frameworks:
-    - id: stage-the-picture
-      why: undecided
+  advisors: []
+  frameworks: []
