@@ -1,0 +1,750 @@
+# The org chart data. The only file a person edits.
+#
+# scripts/generate-org-chart.py reads this file and the two registries, checks
+# them, and builds the pages in skills/org-chart/pages/. Every framework and
+# advisor in the registries must sit on a seat or in holding.
+#
+# departments: list order sets column order on the charts.
+# seats: list order sets order within a column and the previous/next links.
+#   people: typical headcount at 100 people, per chart. A seat appears only on
+#     the charts it lists. 0 means not on the payroll.
+#   reports_to: a seat id, or {b2b: id, b2c: id} when it differs by chart.
+#   coverage: covered | thin | none, set by hand and checked by the build.
+#   jobs: what the CEO needs done. One framework per job; `also` lists other
+#     frameworks for the same job.
+#   also_ask: advisors with no framework on this seat.
+#   missing: required when coverage is thin or none.
+
+departments:
+  - id: lead
+    name: Leadership team
+  - id: product
+    name: Product and design
+  - id: eng
+    name: Engineering
+  - id: mkt
+    name: Marketing
+  - id: sales
+    name: Sales
+  - id: cust
+    name: Customers
+  - id: people
+    name: People
+  - id: ops
+    name: Finance, legal, and operations
+
+seats:
+  # ---------------------------------------------------------------- Leadership team
+  - id: ceo
+    dept: lead
+    name: CEO
+    people: {b2b: 1, b2c: 1}
+    coverage: covered
+    does: Sets the strategy, builds the leadership team, and makes the calls nobody else can make.
+    jobs:
+      - do: Write a strategy that names what is hard and what you will do about it
+        framework: kernel-of-good-strategy
+        also: [finding-the-crux, proximate-objectives, lifecycle-strategy, blue-ocean-value-props, working-backwards]
+      - do: Make the big calls, and know which ones you can undo
+        framework: type-1-type-2-decisions
+        also: [believability-weighted-decision-making, first-principles-thinking, fear-setting, regret-minimization]
+      - do: Decide whether to change course or keep going
+        framework: pivot-or-persevere
+        also: [do-things-that-dont-scale, earnestness-filter]
+      - do: Find why a problem keeps coming back
+        framework: root-cause-analysis
+        also: [6-step-process]
+      - do: Look at your own part in what keeps going wrong
+        framework: 100-percent-responsibility
+        also: [above-below-the-line, pillars-of-integrity, professional-context-intake, personal-context-intake, the-story-so-far]
+      - do: Spend your week on the work only you can do
+        framework: zone-of-genius
+        also: [80-20-audit, personal-resource-allocation, past-year-review]
+    also_ask: [garry-tan]
+
+  - id: board
+    dept: lead
+    name: Board and fundraising
+    people: {b2b: 0, b2c: 0}
+    dotted: true
+    coverage: none
+    does: Raises money, reports to investors, and runs the board meetings.
+    jobs: []
+    missing: Raising a venture round, running a board meeting with investors, and building the board deck.
+
+  - id: coo
+    dept: lead
+    name: COO or chief of staff
+    people: {b2b: 1, b2c: 1}
+    reports_to: ceo
+    coverage: covered
+    does: Runs the operating rhythm of weekly updates and monthly reviews, and fixes processes that break.
+    jobs:
+      - do: Replace status meetings with a written weekly update
+        framework: mochary-weekly-check-in
+      - do: Run a monthly review that ends in decisions
+        framework: chj-operating-review
+      - do: Fix a process that keeps breaking
+        framework: the-algorithm
+        also: [5-step-process]
+      - do: Turn work one person does by hand into a process anyone can run
+        framework: proven-process
+    also_ask: []
+
+  # ---------------------------------------------------------------- Product and design
+  - id: head-of-product
+    dept: product
+    name: Head of product
+    people: {b2b: 1, b2c: 1}
+    reports_to: ceo
+    coverage: covered
+    does: Decides what the product does, what it stops doing, and what gets built this quarter.
+    jobs:
+      - do: Decide what the team builds next quarter
+        framework: frame-shape-bet
+      - do: Cut a feature list down to the half that matters
+        framework: getting-real-cut
+        also: [focus-through-saying-no, four-quadrant-focus]
+      - do: Find out what customers hire the product to do
+        framework: jobs-to-be-done
+      - do: Decide what the product does that no rival does
+        framework: blue-ocean-value-props
+      - do: Start from what the customer sees and work back to the build
+        framework: start-with-experience
+    also_ask: [garry-tan]
+
+  - id: product-managers
+    dept: product
+    name: Product managers
+    people: {b2b: 4, b2c: 6}
+    reports_to: head-of-product
+    coverage: covered
+    does: Find out what customers need, scope the work, and decide when a feature is done.
+    jobs:
+      - do: Test your riskiest guess before you build
+        framework: leap-of-faith-assumptions
+        also: [build-measure-learn, launch-bet]
+      - do: Find out which problems customers will pay to solve
+        framework: customer-problem-presentation
+        also: [earlyvangelists, four-market-types]
+      - do: Map what the user does start to finish, and slice the first release
+        framework: user-story-map
+      - do: Check whether customers would miss the product if it went away
+        framework: product-market-fit-test
+      - do: Find out why users don't do what the product asks
+        framework: 3b-behavioral-design
+    also_ask: [jason-fried, paul-graham]
+
+  - id: product-designers
+    dept: product
+    name: Product designers
+    people: {b2b: 4, b2c: 6}
+    reports_to: head-of-product
+    coverage: covered
+    does: Design the screens, keep the design system consistent, and make the product easy to use.
+    jobs:
+      - do: Write the design rules every screen follows
+        framework: design-principles
+        also: [logic-check]
+      - do: Turn a rough flow into real screens
+        framework: breadboard-to-pages
+      - do: List every pattern the app already uses
+        framework: interface-inventory
+      - do: Find the steps where users stall or quit
+        framework: cognitive-friction-audit
+        also: [homer-vs-spock]
+    also_ask: [steve-krug]
+
+  - id: user-researcher
+    dept: product
+    name: User researcher
+    people: {b2b: 1, b2c: 1}
+    reports_to: head-of-product
+    coverage: covered
+    does: Runs customer interviews and usability tests and tells the team what they learned.
+    jobs:
+      - do: Run customer interviews that test what you think the problem is
+        framework: customer-problem-presentation
+      - do: Find out what job customers hire the product for
+        framework: jobs-to-be-done
+      - do: Study how users decide, apart from what they say
+        framework: science-of-design
+    also_ask: [kristen-berman]
+
+  # ---------------------------------------------------------------- Engineering
+  - id: cto
+    dept: eng
+    name: CTO or VP of engineering
+    people: {b2b: 1, b2c: 1}
+    reports_to: ceo
+    coverage: thin
+    does: Owns the technical direction, the engineering team, and how fast the team ships.
+    jobs:
+      - do: Sort technical decisions into the ones you can undo and the ones you can't
+        framework: type-1-type-2-decisions
+        also: [first-principles-thinking]
+      - do: Set up how the team works with Claude Code
+        framework: close-the-loop
+    also_ask: [the-architect]
+    missing: >-
+      Technical strategy, paying down tech debt, engineering hiring plans, and
+      measuring how fast the team delivers. The Architect reviews designs but has
+      no frameworks yet.
+
+  - id: engineering-managers
+    dept: eng
+    name: Engineering managers
+    people: {b2b: 5, b2c: 5}
+    reports_to: cto
+    coverage: covered
+    does: Run teams of five to seven engineers, with one-on-ones, hiring, and getting work out the door.
+    jobs:
+      - do: Find where each manager is on the ladder and what has to change
+        framework: management-level-progression
+      - do: Help an engineer make the jump to manager
+        framework: leadership-pipeline-passages
+      - do: Set what good work looks like at each level
+        framework: performance-standards-by-level
+    also_ask: []
+
+  - id: software-engineers
+    dept: eng
+    name: Software engineers
+    people: {b2b: 26, b2c: 30}
+    reports_to: cto
+    coverage: thin
+    does: Write, review, and ship the code.
+    jobs:
+      - do: Set up Claude Code so it checks its own work
+        framework: close-the-loop
+      - do: Review a design or a feature for things that don't add up
+        framework: few-hiccupps-review
+    also_ask: [the-architect]
+    missing: >-
+      Code review, architecture decision records, and estimating work. This is the
+      largest seat in the company and it has two frameworks.
+
+  - id: quality-and-testing
+    dept: eng
+    name: Quality and testing
+    people: {b2b: 2, b2c: 2}
+    reports_to: cto
+    coverage: thin
+    does: Finds the bugs before customers do.
+    jobs:
+      - do: Check a feature against everything it should agree with
+        framework: few-hiccupps-review
+    also_ask: []
+    missing: >-
+      A test plan for a release and deciding what to test by risk. Michael Bolton
+      covers design review but not release testing.
+
+  - id: security
+    dept: eng
+    name: Security
+    people: {b2b: 1, b2c: 1}
+    reports_to: cto
+    coverage: thin
+    does: Keeps customer data safe and gets the company through security reviews.
+    jobs:
+      - do: Find what can go wrong in a new design before you build it
+        framework: four-question-threat-model
+      - do: Find what can go wrong where the product calls an AI model
+        framework: phantom-b-llm-threats
+    also_ask: []
+    missing: >-
+      SOC 2 and the security questionnaires that enterprise buyers send. Threat
+      modeling is covered.
+
+  - id: devops
+    dept: eng
+    name: DevOps and reliability
+    people: {b2b: 2, b2c: 2}
+    reports_to: cto
+    coverage: none
+    does: Keeps the product up, runs deploys, and leads the response when something breaks.
+    jobs: []
+    missing: Incident response, blameless postmortems, uptime targets, and on-call.
+
+  # ---------------------------------------------------------------- Marketing
+  - id: head-of-marketing
+    dept: mkt
+    name: Head of marketing
+    people: {b2b: 1, b2c: 1}
+    reports_to: ceo
+    coverage: covered
+    does: Owns positioning, the marketing plan, and how many customers marketing brings in.
+    jobs:
+      - do: Decide who you are for and why you win
+        framework: 5-components-positioning
+        also: [reverse-engineered-brand]
+      - do: Tell the story of what changed in the world and why you
+        framework: strategic-narrative
+      - do: Pick the smallest group of customers you can win first
+        framework: smallest-viable-audience
+      - do: Build an audience before you sell to it
+        framework: content-inc-model
+    also_ask: []
+
+  - id: product-marketing
+    dept: mkt
+    name: Product marketing
+    people: {b2b: 2, b2c: 1}
+    reports_to: head-of-marketing
+    coverage: covered
+    does: Writes the messaging, pricing pages, battle cards, and launch plans.
+    jobs:
+      - do: Put your positioning on one page the team can use
+        framework: positioning-canvas
+        also: [origin-story-interview]
+      - do: Write the messaging every page and pitch pulls from
+        framework: messaging-distillation
+      - do: Arm the team against each competitor
+        framework: competitive-battle-card
+      - do: Write down who buys and how they decide
+        framework: buyer-persona
+      - do: Back every claim with a source and a date
+        framework: proof-points-audit
+      - do: Decide what customers pay for
+        framework: value-metric
+    also_ask: []
+
+  - id: content-and-search
+    dept: mkt
+    name: Content and search
+    people: {b2b: 3, b2c: 2}
+    reports_to: head-of-marketing
+    coverage: covered
+    does: Writes the blog, the guides, and the email, and gets them found in search and AI answers.
+    jobs:
+      - do: Plan content that builds an audience
+        framework: content-inc-model
+      - do: Write copy buyers trust
+        framework: insane-honesty
+      - do: Find out why a page doesn't show up in search
+        framework: why-my-page-doesnt-rank
+      - do: Get the company named in AI answers
+        framework: ai-search-optimization-checklist
+    also_ask: [joanna-wiebe, donald-miller]
+
+  - id: growth
+    dept: mkt
+    name: Growth and demand gen
+    people: {b2b: 2}
+    reports_to: head-of-marketing
+    coverage: covered
+    does: Runs the experiments, landing pages, and paid campaigns that bring in leads.
+    jobs:
+      - do: Run growth experiments every week and pick the next one by score
+        framework: growth-hacking-process
+        also: [ice-prioritization]
+      - do: Build a landing page that turns visitors into leads
+        framework: landing-page-assembly
+      - do: Rewrite the homepage so a visitor gets it in five seconds
+        framework: storybrand-homepage
+    also_ask: [julian-shapiro, rob-walling, shirin-oreizy]
+
+  - id: brand-and-design
+    dept: mkt
+    name: Brand and design
+    people: {b2b: 1, b2c: 2}
+    reports_to: head-of-marketing
+    coverage: covered
+    does: Owns the logo, the visual identity, and the voice.
+    jobs:
+      - do: Find a logo in something the product already has
+        framework: boil-it-down
+        also: [small-size-and-print-test]
+      - do: Decide how a new product looks next to the old one
+        framework: how-much-siblings-share
+      - do: Write down how the company sounds
+        framework: brand-voice
+      - do: Find the feeling that makes people lean in
+        framework: the-carousel
+    also_ask: []
+
+  - id: social-and-community
+    dept: mkt
+    name: Social and community
+    people: {b2b: 1}
+    reports_to: head-of-marketing
+    coverage: none
+    does: Runs the social accounts and the customer community.
+    jobs: []
+    missing: Social media and community for a software company.
+
+  - id: paid-acquisition
+    dept: mkt
+    name: Paid acquisition and app stores
+    people: {b2c: 3}
+    reports_to: head-of-marketing
+    coverage: thin
+    does: Buys ads, runs the app store listings, and brings in new users at a cost the business can afford.
+    jobs:
+      - do: Test ads and channels every week and pick the next test by score
+        framework: growth-hacking-process
+        also: [ice-prioritization]
+      - do: Build a landing page that turns ad clicks into signups
+        framework: landing-page-assembly
+      - do: Cut the steps between install and first use
+        framework: cognitive-friction-audit
+    also_ask: [julian-shapiro, joanna-wiebe]
+    missing: >-
+      Buying ads on each platform, app store listings and ratings, and tracking
+      what each new paying user costs.
+
+  - id: lifecycle-and-retention
+    dept: mkt
+    name: Lifecycle and retention
+    people: {b2c: 2}
+    reports_to: head-of-marketing
+    coverage: thin
+    does: Gets new users to come back, keeps members paying, and wins back the ones who leave.
+    jobs:
+      - do: Decide what members get for as long as they pay
+        framework: forever-promise
+      - do: Get new users to build the habit
+        framework: 3b-behavioral-design
+      - do: Price on what members value
+        framework: value-metric
+      - do: Check whether users would miss the product if it went away
+        framework: product-market-fit-test
+    also_ask: []
+    missing: >-
+      The email and push sequences for onboarding, win-back, and saving a member
+      who tries to cancel.
+
+  - id: community
+    dept: mkt
+    name: Community
+    people: {b2c: 2}
+    reports_to: head-of-marketing
+    coverage: thin
+    does: Runs the places where users meet each other, and turns the most active ones into fans.
+    jobs:
+      - do: Pick the small group your community is for
+        framework: smallest-viable-audience
+      - do: Spread a new habit through groups of members who know each other
+        framework: complex-contagion-rollout
+    also_ask: []
+    missing: >-
+      Running the forum or Discord, recruiting volunteer moderators, and planning
+      community events.
+
+  # ---------------------------------------------------------------- Sales
+  - id: head-of-sales
+    dept: sales
+    name: Head of sales
+    people: {b2b: 1}
+    reports_to: ceo
+    coverage: covered
+    does: Builds the sales team, picks the sales motion, and owns the number.
+    jobs:
+      - do: Pick your sales motion
+        framework: 5-gtm-motions-digital-health
+      - do: Find where revenue leaks between first touch and renewal
+        framework: bowtie-funnel
+      - do: Teach the team to sell with an insight instead of a demo
+        framework: teach-tailor-take-control
+      - do: Design the team that books first meetings
+        framework: 6-elements-sdr
+    also_ask: []
+    missing: Forecasting, quotas, and sales comp plans.
+
+  - id: account-executives
+    dept: sales
+    name: Account executives
+    people: {b2b: 9}
+    reports_to: head-of-sales
+    coverage: covered
+    does: Run deals from the first meeting to the signed contract.
+    jobs:
+      - do: Tell the pitch as a story a buyer can act on
+        framework: sales-pitch-structure
+      - do: Teach the buyer something new about their own business
+        framework: teach-tailor-take-control
+      - do: Find who on the buying side will push the deal through
+        framework: mobilizer-taxonomy
+      - do: Save a deal that stalls because the buyer can't decide
+        framework: jolt-effect
+      - do: Handle a hard call without giving ground
+        framework: calibrated-questions
+        also: [tactical-empathy-labeling, accusation-audit]
+    also_ask: []
+
+  - id: sales-development-reps
+    dept: sales
+    name: Sales development reps
+    people: {b2b: 5}
+    reports_to: head-of-sales
+    coverage: thin
+    does: Prospect, send cold outreach, and book first meetings for the account executives.
+    jobs:
+      - do: Set up how the team prospects and books meetings
+        framework: 6-elements-sdr
+      - do: Write cold email a buyer trusts
+        framework: insane-honesty
+    also_ask: [chris-voss]
+    missing: >-
+      A daily prospecting playbook with cold call openers, email sequences, and
+      answers to the first objection. Trish Bertuzzi's framework is for the leader
+      who designs the team.
+
+  - id: revenue-operations
+    dept: sales
+    name: Revenue operations
+    people: {b2b: 2}
+    reports_to: head-of-sales
+    coverage: thin
+    does: Runs the CRM, the forecast, territories, and quotas.
+    jobs:
+      - do: Map the funnel from first touch to renewal and find the leaks
+        framework: bowtie-funnel
+    also_ask: []
+    missing: Forecasting, setting quotas and territories, and designing sales comp plans.
+
+  - id: sales-enablement
+    dept: sales
+    name: Sales enablement
+    people: {b2b: 1}
+    reports_to: head-of-sales
+    coverage: covered
+    does: Onboards new reps and trains the team on the pitch and the product.
+    jobs:
+      - do: Build onboarding that gets new reps selling
+        framework: ten-steps-blueprint
+      - do: Find out why reps skip what they were trained to do
+        framework: behavior-gap-diagnosis
+      - do: Teach the pitch
+        framework: sales-pitch-structure
+      - do: Train reps to handle each competitor
+        framework: competitive-battle-card
+    also_ask: []
+
+  - id: partnerships
+    dept: sales
+    name: Partnerships
+    people: {b2c: 1}
+    reports_to: ceo
+    coverage: thin
+    does: Finds partners, signs distribution deals, and keeps them working.
+    jobs:
+      - do: Negotiate a partner deal
+        framework: calibrated-questions
+        also: [tactical-empathy-labeling, accusation-audit]
+    also_ask: []
+    missing: >-
+      Finding the right partners, setting deal terms, and running a partner
+      program after the deal is signed.
+
+  # ---------------------------------------------------------------- Customers
+  - id: head-of-customer-success
+    dept: cust
+    name: Head of customer success
+    people: {b2b: 1}
+    reports_to: ceo
+    coverage: thin
+    does: Owns retention, renewals, and expansion revenue.
+    jobs:
+      - do: Find where you lose customers after the sale
+        framework: bowtie-funnel
+      - do: Decide what you promise customers for as long as they pay
+        framework: forever-promise
+    also_ask: [patrick-campbell]
+    missing: Customer health scores, a renewal playbook, and a plan for churn by segment.
+
+  - id: head-of-customer-experience
+    dept: cust
+    name: Head of customer experience
+    people: {b2c: 1}
+    reports_to: ceo
+    coverage: thin
+    does: Owns support, trust and safety, and what members feel at every step after they sign up.
+    jobs:
+      - do: Decide what you promise members for as long as they pay
+        framework: forever-promise
+      - do: Find where members get stuck and fix it in the product
+        framework: 3b-behavioral-design
+    also_ask: []
+    missing: >-
+      Support staffing, response time targets, and a way to get what support
+      hears back to the product team.
+
+  - id: customer-success-managers
+    dept: cust
+    name: Customer success managers
+    people: {b2b: 5}
+    reports_to: head-of-customer-success
+    coverage: thin
+    does: Onboard new customers, run business reviews, and save accounts at risk.
+    jobs:
+      - do: Show each customer the value they signed up for
+        framework: forever-promise
+      - do: Get customers to use the product the way it works best
+        framework: 3b-behavioral-design
+      - do: Talk a customer out of canceling
+        framework: calibrated-questions
+    also_ask: []
+    missing: >-
+      Customer onboarding plans, quarterly business reviews, and saving an account
+      that wants to cancel.
+
+  - id: support
+    dept: cust
+    name: Support
+    people: {b2b: 5, b2c: 10}
+    reports_to: {b2b: head-of-customer-success, b2c: head-of-customer-experience}
+    coverage: none
+    does: Answers tickets and fixes customer problems.
+    jobs: []
+    missing: >-
+      Ticket triage, a help center, and making support low effort for the
+      customer. Matt Dixon co-wrote The Effortless Experience on this, and he has
+      no framework for it yet.
+
+  - id: trust-and-safety
+    dept: cust
+    name: Trust and safety
+    people: {b2c: 3}
+    reports_to: head-of-customer-experience
+    coverage: thin
+    does: Stops fraud, spam, and abuse, and decides what users may post.
+    jobs:
+      - do: Find how people could abuse a new feature before it ships
+        framework: four-question-threat-model
+      - do: Find how people could misuse the AI parts of the product
+        framework: phantom-b-llm-threats
+      - do: Design the nudges that steer users away from bad behavior
+        framework: 3b-behavioral-design
+    also_ask: []
+    missing: >-
+      Content rules, review queues for fraud and abuse reports, and a way for
+      users to appeal a decision.
+
+  # ---------------------------------------------------------------- People
+  - id: head-of-people
+    dept: people
+    name: Head of people
+    people: {b2b: 1, b2c: 1}
+    reports_to: ceo
+    coverage: covered
+    does: Owns how the company is organized, the culture, performance reviews, and pay.
+    jobs:
+      - do: Design the org chart from the strategy
+        framework: rules-of-structure
+      - do: Write down what a role needs before you hire for it
+        framework: psiu-role-fit
+      - do: Rebuild trust on a team that has lost it
+        framework: braving-trust-inventory
+        also: [clearing-model, vulnerability-check]
+      - do: Turn the company values into things people do every day
+        framework: living-into-values
+        also: [personal-credo]
+      - do: Spread a new way of working through the company
+        framework: complex-contagion-rollout
+      - do: Keep your leaders from burning out
+        framework: energy-audit
+        also: [stress-recovery-oscillation, presence-check-in, quadrinity, pain-plus-reflection]
+    also_ask: [ram-charan]
+    missing: Performance reviews and pay bands have nothing yet.
+
+  - id: recruiting
+    dept: people
+    name: Recruiting
+    people: {b2b: 3, b2c: 4}
+    reports_to: head-of-people
+    coverage: thin
+    does: Finds candidates, runs interview loops, and closes offers.
+    jobs:
+      - do: Write down what the role needs before the search starts
+        framework: psiu-role-fit
+    also_ask: []
+    missing: >-
+      Interview scorecards, structured interview loops, sourcing, and closing
+      offers. PSIU Role Fit covers only what the role needs before the search
+      starts.
+
+  - id: learning-and-development
+    dept: people
+    name: Learning and development
+    people: {b2b: 1, b2c: 1}
+    reports_to: head-of-people
+    coverage: covered
+    does: Builds training for managers and new hires.
+    jobs:
+      - do: Build training for a skill people use on the job
+        framework: ten-steps-blueprint
+      - do: Check whether training is the fix at all
+        framework: behavior-gap-diagnosis
+      - do: Decide what part AI plays in a lesson
+        framework: assigning-ai-roles
+      - do: Get a new practice to spread past the first few teams
+        framework: complex-contagion-rollout
+    also_ask: []
+
+  # ---------------------------------------------------------------- Finance, legal, and operations
+  - id: head-of-finance
+    dept: ops
+    name: Head of finance
+    people: {b2b: 1, b2c: 1}
+    reports_to: ceo
+    coverage: none
+    does: Owns the budget, the runway, and the financial model for fundraising.
+    jobs: []
+    missing: >-
+      Budgeting, runway planning, unit economics, and the fundraising model. The
+      Idiot Index looks at cost but not at the budget.
+
+  - id: accounting-and-fpa
+    dept: ops
+    name: Accounting and FP&A
+    people: {b2b: 2, b2c: 2}
+    reports_to: head-of-finance
+    coverage: none
+    does: Closes the books each month and builds the forecast.
+    jobs: []
+    missing: The month-end close, the board financial package, and the forecast.
+
+  - id: legal
+    dept: ops
+    name: Legal
+    people: {b2b: 1, b2c: 1}
+    reports_to: head-of-finance
+    coverage: none
+    does: Reviews contracts and keeps the company compliant.
+    jobs: []
+    missing: Contract review and privacy compliance.
+
+  - id: data-and-business-operations
+    dept: ops
+    name: Data and business operations
+    people: {b2b: 2, b2c: 4}
+    reports_to: head-of-finance
+    coverage: thin
+    does: Builds dashboards, defines the metrics, and answers questions with data.
+    jobs:
+      - do: Build a chart that makes one point
+        framework: choose-an-effective-visual
+        also: [big-idea-and-takeaway-title, declutter-and-focus]
+      - do: Find where a cost is far above what the parts are worth
+        framework: idiot-index
+    also_ask: [sean-ellis]
+    missing: Picking a north star metric and defining the company's core metrics. Charts are covered.
+
+  - id: it
+    dept: ops
+    name: IT
+    people: {b2b: 1, b2c: 1}
+    reports_to: head-of-finance
+    coverage: none
+    does: Sets up laptops and accounts, and manages who has access to what software.
+    jobs: []
+    missing: Onboarding and offboarding checklists, access reviews, and buying software.
+
+holding:
+  advisors:
+    - id: james-gurney
+      why: undecided
+  frameworks:
+    - id: stage-the-picture
+      why: undecided
