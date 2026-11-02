@@ -1,0 +1,97 @@
+# e2e/scenarios/use-advisor/cole-nussbaumer-knaflic-consult.yaml
+# Quick-consult eval for Cole Nussbaumer Knaflic (chart choice, declutter, focus, takeaway titles)
+# Paired comparison: full-stack vs. vanilla vs. aware-but-unaided
+# The case is the first real project to use her: an analytics page for a personal
+# symptom-log app, read on a phone. It lives here, not in the prompt.
+
+description: "Advisor: Cole Nussbaumer Knaflic on a phone analytics page that should show a before-and-after change"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on FINDS THE POINT FIRST: The user's draft is a dashboard
+        of seven separate charts with descriptive titles. Does the response
+        say plainly that the page has one job (did things change after the
+        diet started) and that the page should be built around that point,
+        not around one chart per field? Score 5 only if it asks for or
+        writes the point as one sentence and treats the other fields as
+        secondary. Polishing all seven charts as they are scores 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on CHART CHOICE AND FOCUS: Does the response recommend a
+        chart that shows change over time with the diet's start date marked
+        (a line over the days, or a before-and-after comparison such as a
+        slopegraph or dot plot of the two periods), and keep the four 0-10
+        ratings on the same y-axis range if they are shown as panels? Does
+        it push most of the chart to gray and use one accent color for what
+        matters? Recommending a pie chart, a rainbow of series colors, or a
+        different y-axis range per panel scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on TAKEAWAY TITLES: Does the response replace descriptive
+        titles like "Headache (0-10)" with titles that state what the chart
+        shows, and give at least one example title? Does it handle the case
+        where the data doesn't show a clear change, by keeping the title
+        honest rather than claiming the diet worked? Writing a title that
+        claims a result the user hasn't stated is a minus.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHONE FIT: Does the response account for the page being
+        read on a phone about 390 pixels wide: stacking charts down the page,
+        deciding what the first screen shows, labeling lines directly instead
+        of using a legend, and keeping interaction minimal? Ignoring the
+        phone entirely scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Cole
+        Nussbaumer Knaflic: warm, practical, a teacher, focused on audience
+        and point, gray first and one color, takeaway titles, relaxed about
+        chart dogma? Crediting a storytelling with data team member by name
+        (Elizabeth Ricks, Alex Velez, Amy Esselman, Mike Cisneros, Simon
+        Rowe) is how she credits sources and is a plus. Invented quotes
+        attributed to her score 1. These are real and not invented:
+        "Exploratory analysis is the process of turning over 100 rocks to
+        find perhaps 1 or 2 precious gemstones", "Too often we underutilize
+        this space with a descriptive title", "Put your key takeaway—the so
+        what?—there", "I often start by making every single component of my
+        visual light grey, pushing it all to the background", "Bar charts
+        are almost always a reasonable option", "When opting for a line
+        graph, you want the lines themselves to mean something", "Nearly
+        every graph has a perfect use case—including the pie".
+      weight: 1
+
+tests:
+  - description: "full-stack (curated advisor prompt) — phone analytics page for a symptom log"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../advisors/prompts/cole-nussbaumer-knaflic.md
+      task_prompt: &ask "\n\n---\n\nI built a personal symptom-log web app that lives on my iPhone home screen. Every day I rate headache, fatigue, congestion and sleep from 0 to 10, plus a crash level (none, mild, bad), how many naps I took, and what I ate. I have about 30 days of data. Two weeks ago I started a low-histamine diet.\n\nI'm building an analytics page. My current draft has seven charts stacked on one page, one per field: 'Headache (0-10)', 'Fatigue (0-10)', 'Congestion (0-10)', 'Sleep (0-10)', 'Crash level', 'Naps per day', 'Meals'. Each is a bar chart with one bar per day, each field in its own color, a legend at the top, gridlines, and a value label on every bar. Each chart picked its own y-axis range automatically.\n\nThe page is read on my phone, about 390 pixels wide. What I really want to know is whether the diet changed how I feel compared with the two weeks before I started it.\n\nHow should I redo this page?"
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: *ask
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: "You are Cole Nussbaumer Knaflic, founder of storytelling with data."
+      task_prompt: *ask

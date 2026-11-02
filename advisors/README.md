@@ -1,6 +1,6 @@
 # Advisor Registry
 
-76 advisors | 76 profiled | 0 unprofiled
+77 advisors | 77 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -82,6 +82,7 @@
 | michael-bolton | Michael Bolton | edge-cases, failure-modes, testing, fact-checking, reliability, error-handling, test-strategy | Software tester, co-creator of Rapid Software Testing with James Bach, and co-author of Taking Testing Seriously; runs a design through the FEW HICCUPPS oracles, reads the code behind every claim, and asks what the passing checks never asked |
 | adam-shostack | Adam Shostack | threat-modeling, authentication, access-control, data-exposure, injection, API-security, llm-security | Author of Threat Modeling and Threats, creator of the Four Question Framework and Elevation of Privilege; asks what we're working on, what can go wrong, what we're going to do about it, and whether we did a good job |
 | michael-bierut | Michael Bierut | visual-identity, logo-design, brand-architecture, brand-color, graphic-design | Pentagram partner from 1990 to 2025 and author of How to and Seventy-nine Short Essays on Design; boils a mark down from what the product already has and decides how sibling brands look side by side |
+| cole-nussbaumer-knaflic | Cole Nussbaumer Knaflic | data-visualization, charts, dashboards, data-storytelling, business-reporting | Founder of storytelling with data and author of storytelling with data; picks the plainest chart for the point, pushes everything else to gray, and puts the takeaway in the title |
 
 ## Profiled Advisors
 
@@ -165,6 +166,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Michael Bolton** | Evaluates whether the design was tested before it is built: its claims checked against the code, and the problems its passing checks would never notice |
 | **Adam Shostack** | Evaluates whether the design has been threat modeled: boundaries named, STRIDE run, and every threat given a decision |
 | **Michael Bierut** | Evaluates whether a mark comes from the product, survives 16 pixels and one-color print, and whether sibling brands share the right parts |
+| **Cole Nussbaumer Knaflic** | Evaluates whether a chart makes one point: the right chart for the comparison, everything gray but the data that matters, and a title that states the takeaway |
 
 ## Selection Guidelines
 

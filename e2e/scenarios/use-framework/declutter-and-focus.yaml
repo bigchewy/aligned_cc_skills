@@ -1,0 +1,99 @@
+# e2e/scenarios/use-framework/declutter-and-focus.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# Single turn. The user describes the chart, who sees it and its point, so
+# Phase 1 is answered and Phase 2 (push everything to gray, then a question)
+# is allowed. Cutting clutter, the accent color and the takeaway title come
+# later and are not rewarded here.
+
+description: "Framework: Declutter and Focus on a busy line chart"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{chart}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STEP DISCIPLINE: The user described the chart, who sees
+        it, and the one point it should make, already answering the first
+        step, and said they will go step by step. Score 5 if the response
+        confirms the point (or asks what is still missing), then goes on only
+        to making every part of the chart gray (or neutral) before anything is
+        emphasized, and STOPS with a question for the user. Delivering the full
+        makeover in this reply (every clutter cut, the accent color, the final
+        title and the test all at once) scores 1-2. No question at the end
+        scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE RIGHT FIRST MOVES: Does the response (a) keep the
+        line chart because time on the x-axis suits lines, or briefly check
+        the chart type, (b) treat gray, with nothing emphasized, as the
+        starting point so color later becomes a choice, and (c) name the
+        chart's specific parts that turn gray (the five channel lines, the
+        labels, the legend) rather than speaking generally? Two of the three
+        scores 4. Suggesting more colors, a new palette per channel, or
+        decoration scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on DECLUTTER PLUS FOCUS: Does the response show that
+        cleaning up is not the end, that focus (one accent color on the series
+        that carries the point, and a title that states the takeaway) is still
+        coming? A hint that one series will get color later, or that the
+        title will state the point, scores 4-5. Treating "clean and
+        professional" as the goal scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Cole
+        Nussbaumer Knaflic: plain, warm, a teacher's voice, firm on the method,
+        no jargon ("leverage", "actionable insights", "synergy")? Invented
+        quotes attributed to her score 1. Quoting a storytelling with data
+        team member's practice as Cole's own words scores 1-2. These are real
+        and not invented: "I often start by making every single component of
+        my visual light grey, pushing it all to the background", "Rethink how
+        you use color - don't use it to make your graph colorful.", "When used
+        sparingly, color is your single biggest tool for drawing your
+        audience's attention", "Labeling every data point creates a cluttered
+        visual".
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/declutter-and-focus/prompt.md
+      task_prompt: "\n\n---\n\nLet's run Declutter and Focus on one of my charts. I'll go step by step."
+      chart: &chart |
+        It's a line chart of weekly sign-ups by channel for the last six
+        months: five lines (paid ads, referral, organic search, social,
+        partners), each in the tool's default color. It has a box border,
+        horizontal and vertical gridlines, a data label on every point, a
+        legend box at the bottom, and the title "Weekly Sign-ups by Channel."
+        It goes on a slide in our monthly leadership meeting. The point I want
+        them to get: referral passed paid ads in August, and we spend almost
+        nothing on referral.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Help me improve one of my charts. I'll go step by step."
+      chart: *chart
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Cole Nussbaumer Knaflic, author of Storytelling with Data. Let's run Declutter and Focus on one of my charts. I'll go step by step."
+      chart: *chart

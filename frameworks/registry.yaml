@@ -2746,3 +2746,88 @@ frameworks:
   use_when: a mark is about to ship and nobody has seen it at 16 pixels, as a phone icon,
     in one color, or on a book spine; a new brand color has been picked on its own; or a team
     argues about a logo on taste
+- advisor: cole-nussbaumer-knaflic
+  category: data-visualization
+  default_critic_advisors:
+  - cole-nussbaumer-knaflic
+  deliverable_type: decision
+  domains:
+  - data-visualization
+  - chart-selection
+  - business-charts
+  - dashboards
+  follow_on_frameworks:
+  - declutter-and-focus
+  - big-idea-and-takeaway-title
+  helpful_documents:
+  - the current chart, if there is one, as an image or a description
+  - where the chart will be seen (a slide, a report, a dashboard tile, a phone screen)
+  - the tool that will draw it (Excel, a charting library, a BI tool)
+  id: choose-an-effective-visual
+  name: Choose an Effective Visual
+  purpose: picking one chart type for one point by starting from the audience, naming the
+    comparison the chart has to show, and then choosing bar, line, slopegraph or dot plot,
+    or pie, with the reason and what was ruled out
+  required_documents:
+  - the data to show (a table, a file, or a description of the columns and rows)
+  - who will look at the chart and what they need to know or do after seeing it
+  use_when: someone has data and doesn't know which chart to draw, a chart is the wrong type
+    for its point (a line across categories, a pie for change over time, a spaghetti graph
+    of crossing lines), or a team argues about whether to use a pie
+- advisor: cole-nussbaumer-knaflic
+  category: data-visualization
+  default_critic_advisors:
+  - cole-nussbaumer-knaflic
+  deliverable_type: content
+  domains:
+  - data-visualization
+  - data-storytelling
+  - chart-titles
+  - dashboards
+  - reports
+  helpful_documents:
+  - who will look at it, and what they decide or do after looking
+  - the data behind each chart, or the numbers that matter most
+  - the current title of each chart
+  - how it will be seen (a live dashboard, a sent report, a slide in a meeting, a phone screen)
+  id: big-idea-and-takeaway-title
+  name: The Big Idea and Takeaway Title
+  purpose: deciding whether a page is for exploring or for explaining, naming who it is for
+    and what they should know or do, telling the story in three minutes and then in one sentence,
+    and rewriting every chart title as the takeaway, the "so what?"
+  required_documents:
+  - the page, report, slide or chart to work on, as an image, a file, a link, or a description
+    of each chart and what it shows
+  use_when: a dashboard, report or slide shows data but nobody acts on it; chart titles only
+    say what the chart is ("Revenue by month"); or someone needs to say the point of their
+    data before picking or cleaning up a chart
+- advisor: cole-nussbaumer-knaflic
+  category: data-visualization
+  default_critic_advisors:
+  - cole-nussbaumer-knaflic
+  - steve-krug
+  deliverable_type: plan
+  domains:
+  - data-visualization
+  - chart-design
+  - decluttering
+  - visual-emphasis
+  follow_on_frameworks:
+  - choose-an-effective-visual
+  - big-idea-and-takeaway-title
+  helpful_documents:
+  - who sees the chart and where (a slide, a report, a dashboard, a phone)
+  - the brand or product color palette
+  - the tool or library the chart is built in
+  id: declutter-and-focus
+  name: Declutter and Focus
+  purpose: taking one existing chart, pushing everything to gray, cutting the clutter, then
+    adding one accent color and a title that states the takeaway, and checking the result with
+    the "where are your eyes drawn?" test, so the result is a list of changes to the chart, in
+    order
+  required_documents:
+  - the chart to fix (an image, the chart code, or a description of every part of it)
+  - the one point the chart is meant to make, or the question it answers
+  use_when: a chart is busy or uses the tool's default colors, gridlines, legend and labels; it
+    looks fine but people miss its point; or a chart needs one series to stand out and a title
+    that says the takeaway

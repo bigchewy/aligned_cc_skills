@@ -1,0 +1,97 @@
+# e2e/scenarios/use-framework/choose-an-effective-visual.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# Single turn. The user describes the audience, the point and the data, which
+# answers Phase 1. So the reply may confirm that and go on to name the
+# comparison (Phase 2), then stop with a question. Picking the final chart
+# type and running all the chart rules come later and are not rewarded here.
+# The data is a personal health log: the case that prompted this advisor.
+
+description: "Framework: Choose an Effective Visual for a health-log chart"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{situation}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STEP DISCIPLINE: The user already said who the chart is
+        for, what they need to see, where it appears, and what the data is,
+        and said they will answer step by step. Score 5 if the response
+        confirms that and then asks which comparison the chart has to show
+        (or names the likely comparison and asks the user to confirm it),
+        then STOPS with a question. Laying out a finished chart spec with
+        every rule, or answering several later steps at once without asking
+        anything, scores 1-2. No question at the end scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on COMPARISON FIRST: Does the response treat the chart type
+        as following from the comparison (across categories, over time,
+        between two points, or part-to-whole) rather than from taste? Naming
+        that this data is over time, or asking whether the point is over time
+        or between two points (before and after the change), scores 4-5.
+        Recommending a pie chart for change over time, or picking a chart with
+        no reason tied to what the person needs to see, scores 1.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on SPAGHETTI AWARENESS: The user has six things tracked
+        daily for 90 days. Does the response notice, or ask about, the risk
+        of six crossing lines on one chart, or hint at panels or highlighting
+        one line? Mentioning it scores 4-5. Suggesting six colored lines with
+        a legend as the answer scores 1. Not mentioning it at all, while
+        staying on the current step, scores 3.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Cole
+        Nussbaumer Knaflic: plain, warm, a teacher's voice, starting from the
+        audience, firm on method and soft on chart dogma (no chart type is
+        banned)? Calling pie charts evil or banned scores 1. Invented quotes
+        attributed to her score 1. These are real and not invented: "Your
+        audience and takeaway should drive the choice", "Bar charts are almost
+        always a reasonable option", "When opting for a line graph, you want
+        the lines themselves to mean something", "Use something less familiar
+        only when it reveals an insight that would otherwise be difficult to
+        see", "Nearly every graph has a perfect use case—including the pie".
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/choose-an-effective-visual/prompt.md
+      task_prompt: "\n\n---\n\nLet's run Choose an Effective Visual for a chart in my app. I'll answer step by step."
+      situation: &situation |
+        The app is a personal health log. Each day the user rates six
+        symptoms from 0 to 10 (headache, flushing, itching, fatigue, stomach,
+        sleep), and logs what they ate. The chart is on the app's summary
+        page, viewed on a phone. The audience is the user themself, and
+        sometimes their doctor at an appointment. What they need to see:
+        whether things got better after they started a low-histamine diet
+        six weeks ago. I have 90 days of daily ratings. Right now the page
+        shows a pie chart of the average rating for each symptom.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Help me pick a chart for my app. I'll answer step by step."
+      situation: *situation
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Cole Nussbaumer Knaflic, author of storytelling with data. Let's run Choose an Effective Visual for a chart in my app. I'll answer step by step."
+      situation: *situation

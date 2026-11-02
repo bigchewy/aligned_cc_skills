@@ -1,0 +1,92 @@
+# e2e/scenarios/use-framework/big-idea-and-takeaway-title.yaml
+# Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
+# Single turn. The user describes an app's home dashboard and asks for better
+# chart titles. Phase 1 (exploring or explaining) must come first, so the
+# right reply asks that question, maybe with who/what, and stops. Writing the
+# Big Idea or rewriting every title in this reply is rushing.
+
+description: "Framework: The Big Idea and Takeaway Title for a personal health-tracking dashboard"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{page}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on STEP DISCIPLINE: The user described a dashboard page and
+        said they will answer step by step. Score 5 if the response asks
+        whether the page is for exploring (people look things up and find
+        their own answers) or for explaining one point, possibly together
+        with who it is for and what they should know or do, and then STOPS
+        with a question. Writing a one-sentence Big Idea for the user, or
+        rewriting all the chart titles in this reply, scores 1-2. No question
+        at the end scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on THE RIGHT FIRST MOVES: Does the response (a) raise the
+        exploring vs. explaining question for this page, (b) ask or confirm
+        who looks at it and what they should know or do after looking, and
+        (c) avoid starting with chart types, colors, or decluttering? All
+        three scores 5. Two scores 4. Jumping straight to chart types or
+        color advice scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on NO DESCRIPTIVE TITLES: If the response offers any title
+        suggestions, are they takeaways (a sentence with a verb that says what
+        the data shows) rather than labels like "Symptom Trends Over Time"?
+        Offering label-style titles scores 1. Offering no titles yet scores 5.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Cole
+        Nussbaumer Knaflic of storytelling with data: plain, warm, a teacher's
+        voice, pushing toward a clear point and an action, no jargon
+        ("leverage insights", "data-driven narrative", "synergy")? Invented
+        quotes attributed to her score 1. These are real and not invented:
+        "Exploratory analysis is the process of turning over 100 rocks to find
+        perhaps 1 or 2 precious gemstones", "Resist this urge. You are making
+        your audience reopen all of the oysters!", "Too often we underutilize
+        this space with a descriptive title." Crediting Amy Esselman for the
+        dashboard-to-story idea is correct, not an error.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/big-idea-and-takeaway-title/prompt.md
+      task_prompt: "\n\n---\n\nLet's run The Big Idea and Takeaway Title on my app's home page. I'll answer step by step."
+      page: &page |
+        My app lets people log their symptoms and what they ate each day,
+        to find out which foods might be setting off histamine reactions.
+        The home page has four charts: "Symptom score by day" (a line, last
+        30 days), "Foods logged" (a bar chart of the top 10 foods), "Symptoms
+        by type" (a pie), and "Streak" (days in a row with a log). Users
+        open it every morning after logging. Most of them say they can't
+        tell what it's telling them.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Help me write better chart titles for my app's home page. I'll answer step by step."
+      page: *page
+
+  - description: "aware-but-unaided (names expert in prompt)"
+    metadata:
+      arm: aware
+    vars:
+      system_context: ""
+      task_prompt: "You are Cole Nussbaumer Knaflic of storytelling with data. Let's run The Big Idea and Takeaway Title on my app's home page. I'll answer step by step."
+      page: *page

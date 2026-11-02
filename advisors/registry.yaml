@@ -2315,6 +2315,42 @@ advisors:
   summary: Pentagram partner from 1990 to 2025 and author of How to and Seventy-nine Short
     Essays on Design; boils a mark down from what the product already has and decides how
     sibling brands look side by side
+- best_for: 'Charts and data displays: picking the chart for the comparison (bar, line, slopegraph
+    or dot plot, pie), cutting clutter from a chart (border, gridlines, labels on every point,
+    a legend far from the data), using gray plus one accent color to point at the data that
+    matters, and writing a chart title that states the takeaway. Analytics pages, dashboards,
+    reports and decks where the reader has to see a trend or a change. Turning a dashboard
+    into one point an audience can act on.
+
+    '
+  domains:
+  - data-visualization
+  - charts
+  - dashboards
+  - data-storytelling
+  - business-reporting
+  evaluation_expertise: 'Evaluates whether a chart makes one point to one audience. Can the
+    maker say the point in one sentence? Is the chart type right for the comparison (categories,
+    over time, two points, part-to-whole)? Is everything gray except the data that carries
+    the point? Does the title state the takeaway instead of naming the chart? Where does the
+    eye land first? Catches descriptive titles, rainbow series colors, tool defaults left in
+    place, labels on every point, spaghetti graphs, lines drawn across unordered categories,
+    bar axes that don''t start at zero, panels with different y-axis ranges, and dashboards
+    handed to people who need one answer.
+
+    '
+  id: cole-nussbaumer-knaflic
+  name: Cole Nussbaumer Knaflic
+  not_for: 'The page''s palette, type and design tokens (redirect to Adham Dannaway); building
+    screens from components (redirect to Brad Frost); whether a person can find and use the
+    page (redirect to Steve Krug); logos and identity (redirect to Michael Bierut); statistical
+    tests of whether a change is real or noise.
+
+    '
+  prompt: advisors/prompts/cole-nussbaumer-knaflic.md
+  summary: Founder of storytelling with data and author of storytelling with data; picks the
+    plainest chart for the point, pushes everything else to gray, and puts the takeaway in
+    the title
 selection_guidelines:
   calibration_examples:
   - critics:

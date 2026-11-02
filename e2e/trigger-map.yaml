@@ -496,6 +496,11 @@ triggers:
       - scenarios/use-advisor/michael-bierut-consult.yaml
 
   - paths:
+      - advisors/prompts/cole-nussbaumer-knaflic.md
+    scenarios:
+      - scenarios/use-advisor/cole-nussbaumer-knaflic-consult.yaml
+
+  - paths:
       - frameworks/boil-it-down/prompt.md
       - frameworks/boil-it-down/examples.md
       - frameworks/boil-it-down/anti-examples.md
@@ -515,3 +520,24 @@ triggers:
       - frameworks/small-size-and-print-test/anti-examples.md
     scenarios:
       - scenarios/use-framework/small-size-and-print-test.yaml
+
+  - paths:
+      - frameworks/choose-an-effective-visual/prompt.md
+      - frameworks/choose-an-effective-visual/examples.md
+      - frameworks/choose-an-effective-visual/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/choose-an-effective-visual.yaml
+
+  - paths:
+      - frameworks/declutter-and-focus/prompt.md
+      - frameworks/declutter-and-focus/examples.md
+      - frameworks/declutter-and-focus/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/declutter-and-focus.yaml
+
+  - paths:
+      - frameworks/big-idea-and-takeaway-title/prompt.md
+      - frameworks/big-idea-and-takeaway-title/examples.md
+      - frameworks/big-idea-and-takeaway-title/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/big-idea-and-takeaway-title.yaml

@@ -1,6 +1,6 @@
 # Framework Registry
 
-144 frameworks across 28 categories
+147 frameworks across 29 categories
 
 | Category | Count |
 |----------|-------|
@@ -11,6 +11,7 @@
 | conversion | 4 |
 | copywriting | 2 |
 | customer | 1 |
+| data-visualization | 3 |
 | developer-tooling | 1 |
 | evidence | 1 |
 | growth | 7 |
@@ -180,6 +181,9 @@
 | boil-it-down | Boil It Down | michael-bierut | visual-identity | a product needs a logo or mark, the current mark is the category cliché or a pile of decoration, a team has several logo directions and can't pick, or a mark needs to work as an app icon, a favicon, and in print |
 | how-much-siblings-share | How Much the Siblings Share | michael-bierut | visual-identity | a company is launching a second product or a spin-off and has to decide whether it shares the parent's name and look, carries a small 'from' line, or stands alone; or two related products already look either too alike or unrelated |
 | small-size-and-print-test | The Small-Size and Print Test | michael-bierut | visual-identity | a mark is about to ship and nobody has seen it at 16 pixels, as a phone icon, in one color, or on a book spine; a new brand color has been picked on its own; or a team argues about a logo on taste |
+| declutter-and-focus | Declutter and Focus | cole-nussbaumer-knaflic | data-visualization | a chart is busy or uses the tool's default colors, gridlines, legend and labels; it looks fine but people miss its point; or a chart needs one series to stand out and a title that says the takeaway |
+| choose-an-effective-visual | Choose an Effective Visual | cole-nussbaumer-knaflic | data-visualization | someone has data and doesn't know which chart to draw, a chart is the wrong type for its point (a line across categories, a pie for change over time, a spaghetti graph of crossing lines), or a team argues about whether to use a pie |
+| big-idea-and-takeaway-title | The Big Idea and Takeaway Title | cole-nussbaumer-knaflic | data-visualization | a dashboard, report or slide shows data but nobody acts on it; chart titles only say what the chart is ("Revenue by month"); or someone needs to say the point of their data before picking or cleaning up a chart |
 
 ## By Category
 
@@ -223,6 +227,12 @@
 ### Customer (1)
 
 - **buyer-persona** — Buyer Persona (matt-dixon)
+
+### Data Visualization (3)
+
+- **big-idea-and-takeaway-title** — The Big Idea and Takeaway Title (cole-nussbaumer-knaflic)
+- **choose-an-effective-visual** — Choose an Effective Visual (cole-nussbaumer-knaflic)
+- **declutter-and-focus** — Declutter and Focus (cole-nussbaumer-knaflic)
 
 ### Developer Tooling (1)
 
