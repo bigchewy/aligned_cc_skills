@@ -340,26 +340,63 @@ def render_chart(data, chart):
             f"{indent}</section>"
         )
 
+    return fill(
+        _template("chart.html"),
+        title=CHART_TITLE[chart],
+        switch=switch_links(CHART_FILE[chart]),
+        top="\n".join(indent + p for p in top_parts),
+        columns="\n".join(col_parts),
+    )
+
+
+BACKGROUND_FILE = "background.html"
+
+
+def switch_links(current_file):
+    """The B2B / B2C / Background switch, with the current page marked."""
+    pages = [(CHART_FILE[c], CHART_LABEL[c]) for c in CHARTS] + [(BACKGROUND_FILE, "Background")]
+    return "".join(
+        f'<a href="{href}"{" aria-current=\"page\"" if href == current_file else ""}>{label}</a>'
+        for href, label in pages
+    )
+
+
+def chart_counts(data, chart):
+    """Advisors, frameworks, seats, and empty seats on one chart."""
+    chart_seats = [s for s in data["seats"] if on_chart(s, chart)]
     frameworks, advisors = set(), set()
     for seat in chart_seats:
         frameworks |= set(seat_frameworks(seat))
         advisors |= set(seat_advisor_ids(seat, data["frameworks"]))
+    return {
+        "advisors": len(advisors),
+        "frameworks": len(frameworks),
+        "seats": len(chart_seats),
+        "none": sum(1 for s in chart_seats if s["coverage"] == "none"),
+    }
 
-    current = ' aria-current="page"'
-    switch = "".join(
-        f'<a href="{CHART_FILE[c]}"{current if c == chart else ""}>{CHART_LABEL[c]}</a>'
-        for c in CHARTS
-    )
+
+def render_background(data):
+    counts = {chart: chart_counts(data, chart) for chart in CHARTS}
+    rows = [
+        ("advisors", "Advisors"),
+        ("frameworks", "Frameworks"),
+        ("seats", "Seats"),
+        ("none", "Seats with nothing yet"),
+    ]
+    indent = "          "
+    lines = []
+    for key, label in rows:
+        cls = ' class="bad"' if key == "none" else ""
+        cells = "".join(
+            f'<td{cls} data-chart="{chart}" data-row="{key}">{counts[chart][key]}</td>'
+            for chart in CHARTS
+        )
+        lines.append(f'{indent}<tr><th scope="row">{label}</th>{cells}</tr>')
     return fill(
-        _template("chart.html"),
-        title=CHART_TITLE[chart],
-        switch=switch,
-        advisor_count=str(len(advisors)),
-        framework_count=str(len(frameworks)),
-        seat_count=str(len(chart_seats)),
-        none_count=str(sum(1 for s in chart_seats if s["coverage"] == "none")),
-        top="\n".join(indent + p for p in top_parts),
-        columns="\n".join(col_parts),
+        _template("background.html"),
+        switch=switch_links(BACKGROUND_FILE),
+        rows="\n".join(lines),
     )
 
 
@@ -536,6 +573,7 @@ def build(data):
     files = {"style.css": _template("style.css")}
     for chart in CHARTS:
         files[CHART_FILE[chart]] = render_chart(data, chart)
+    files[BACKGROUND_FILE] = render_background(data)
     for seat in data["seats"]:
         files[f"seats/{seat['id']}.html"] = render_seat(seat, data)
     return files

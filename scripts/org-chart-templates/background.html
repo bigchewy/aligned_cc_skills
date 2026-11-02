@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Background</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <nav class="switch" aria-label="Choose a page">{{switch}}</nav>
+    <h1>Background</h1>
+    <p class="sub">Aligned advisors and frameworks by role</p>
+  </header>
+
+  <section aria-label="Counts for each chart">
+    <div class="table-scroll">
+      <table class="counts">
+        <thead><tr><th scope="col"><span class="sr">Count</span></th><th scope="col">B2B</th><th scope="col">B2C</th></tr></thead>
+        <tbody>
+{{rows}}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Headcounts are a typical split for 100 people, rounded.</p>
+  </section>
+</div>
+</body>
+</html>

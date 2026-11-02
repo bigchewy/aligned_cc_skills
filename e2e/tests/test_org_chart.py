@@ -722,14 +722,50 @@ def test_page_titles():
 
 
 def test_chart_fixed_text():
-    lede = (
-        "What each seat in a 100-person software company does, and the frameworks "
-        "a CEO can run before hiring for it."
-    )
     for name in CHART_FILES.values():
         text = (PAGES / name).read_text(encoding="utf-8")
-        assert lede in text
-        assert "Headcounts are a typical split for 100 people, rounded." in text
+        assert '<p class="sub">Aligned advisors and frameworks by role</p>' in text
+
+
+def test_charts_have_no_tiles():
+    for name in CHART_FILES.values():
+        text = (PAGES / name).read_text(encoding="utf-8")
+        assert 'class="tiles"' not in text
+        assert "Headcounts are a typical split" not in text
+
+
+def test_chart_legend_is_a_footer():
+    for name in CHART_FILES.values():
+        text = (PAGES / name).read_text(encoding="utf-8")
+        footer = text.split('<footer class="legend-foot"', 1)
+        assert len(footer) == 2, f"{name} has no legend footer"
+        assert 'class="legend"' not in footer[0], f"{name} shows the legend above the footer"
+        for level in ("covered", "thin", "none"):
+            assert f'class="pill {level}"' in footer[1]
+
+
+def test_switch_has_three_choices():
+    for name in list(CHART_FILES.values()) + ["background.html"]:
+        text = (PAGES / name).read_text(encoding="utf-8")
+        switch = text.split('<nav class="switch"', 1)[1].split("</nav>", 1)[0]
+        assert 'href="index.html"' in switch
+        assert 'href="b2c.html"' in switch
+        assert 'href="background.html"' in switch
+        assert switch.count('aria-current="page"') == 1
+
+
+def test_background_page():
+    text = (PAGES / "background.html").read_text(encoding="utf-8")
+    assert "<title>Background</title>" in text
+    assert "Headcounts are a typical split for 100 people, rounded." in text
+    for label in ("Advisors", "Frameworks", "Seats", "Seats with nothing yet"):
+        assert f"<th scope=\"row\">{label}</th>" in text
+    data = seats_data()
+    for chart in ("b2b", "b2c"):
+        seats = [s for s in data["seats"] if chart in s["people"]]
+        none = sum(1 for s in seats if s["coverage"] == "none")
+        assert f'data-chart="{chart}" data-row="seats">{len(seats)}<' in text
+        assert f'data-chart="{chart}" data-row="none">{none}<' in text
 
 
 def test_build_is_deterministic(tmp_path):

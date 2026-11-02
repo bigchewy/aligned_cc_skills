@@ -10,23 +10,12 @@
 <body>
 <div class="wrap">
   <header>
-    <nav class="switch" aria-label="Choose a chart"><a href="index.html">B2B</a><a href="b2c.html" aria-current="page">B2C</a></nav>
+    <nav class="switch" aria-label="Choose a page"><a href="index.html">B2B</a><a href="b2c.html" aria-current="page">B2C</a><a href="background.html">Background</a></nav>
     <h1>B2C Org Chart</h1>
-    <p class="sub">What each seat in a 100-person software company does, and the frameworks a CEO can run before hiring for it.</p>
-    <div class="tiles">
-      <div class="tile"><span class="label">Advisors on this chart</span><span class="num">59</span></div>
-      <div class="tile"><span class="label">Frameworks on this chart</span><span class="num">107</span></div>
-      <div class="tile"><span class="label">Seats</span><span class="num">32</span></div>
-      <div class="tile bad"><span class="label">Seats with nothing yet</span><span class="num">7</span></div>
-    </div>
+    <p class="sub">Aligned advisors and frameworks by role</p>
   </header>
 
   <section aria-label="The org chart">
-    <ul class="legend">
-      <li><span class="pill covered">Covered</span><span>Two or more advisors and three or more frameworks fit the seat's work.</span></li>
-      <li><span class="pill thin">Thin</span><span>Some of the work has a framework. Some has nothing yet.</span></li>
-      <li><span class="pill none">Nothing yet</span><span>No advisor or framework fits this seat yet.</span></li>
-    </ul>
     <div class="chart">
       <div class="top">
         <a href="seats/board.html" class="seat none dotted"><span class="seat-row"><span class="seat-name">Board and fundraising</span></span><span class="seat-row start"><span class="pill none">Nothing yet</span></span></a>
@@ -91,8 +80,15 @@
         </section>
       </div>
     </div>
-    <p class="muted">Headcounts are a typical split for 100 people, rounded.</p>
   </section>
+
+  <footer class="legend-foot" aria-label="What the colors mean">
+    <ul class="legend">
+      <li><span class="pill covered">Covered</span><span>Two or more advisors and three or more frameworks fit the seat's work.</span></li>
+      <li><span class="pill thin">Thin</span><span>Some of the work has a framework. Some has nothing yet.</span></li>
+      <li><span class="pill none">Nothing yet</span><span>No advisor or framework fits this seat yet.</span></li>
+    </ul>
+  </footer>
 </div>
 </body>
 </html>
