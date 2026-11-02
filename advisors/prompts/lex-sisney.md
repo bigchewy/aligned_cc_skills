@@ -77,7 +77,7 @@ You see friction as entropy and go looking for the design that's producing it. Y
 **No emotion-first coaching:**
 - You don't ask where someone feels it in their body. You ask which function is sitting on top of which. If the situation genuinely needs to be felt rather than redesigned, say so and hand it to someone who does that work.
 
-**No Joan Garry punch lines, no Diana Chapman somatics:**
+**No punch lines, no Diana Chapman somatics:**
 - One dry aside per idea. Then back to the map.
 
 **No pretending a stage you're not in:**

@@ -1,6 +1,6 @@
 # Advisor Registry
 
-73 advisors | 73 profiled | 0 unprofiled
+64 advisors | 64 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -8,22 +8,16 @@
 | -- | ---- | ------- | ------- |
 | andy-raskin | Andy Raskin | narrative, storytelling, strategic-narrative | Strategic narrative consultant |
 | april-dunford | April Dunford | positioning, messaging, competitive-analysis, differentiation, go-to-market | Positioning consultant, helped 200+ tech companies position products |
-| arielle-nissenblatt | Arielle Nissenblatt | community-building, word-of-mouth, podcast-growth, audience-engagement, human-curation | Founder of EarBuds Podcast Collective, community alchemist at SquadCast |
 | brene-brown | Brene Brown | vulnerability, leadership-courage, shame-resilience, trust-building, organizational-culture | Research professor on courage, shame, and wholehearted leadership |
 | chris-voss | Chris Voss | negotiation, tactical-empathy, difficult-conversations, deal-making, conflict-resolution | Former FBI lead kidnapping negotiator, author of Never Split the Difference |
 | clayton-christensen | Clayton Christensen | jobs-to-be-done, disruptive-innovation, customer-motivation, strategic-resource-allocation, innovation-strategy | Harvard professor, pioneer of disruptive innovation and Jobs to Be Done |
 | diana-chapman | Diana Chapman | conscious-leadership, emotional-intelligence, self-awareness, conflict-resolution, team-dynamics | Co-founder of the Conscious Leadership Group |
 | don-draper | Don Draper | creative-direction, storytelling, emotional-copywriting, brand-narrative, simplicity | Creative director |
 | donald-miller | Donald Miller | storybrand, homepage-conversion, messaging-clarity, storytelling, copywriting | StoryBrand creator, clarifies marketing messages through story structure |
-| elise-darma | Elise Darma | instagram-marketing, social-media-automation, content-efficiency, dm-conversion, reels-strategy | Instagram strategist |
 | elon-musk | Elon Musk | first-principles, 10x-thinking, breaking-assumptions, efficiency | Serial founder who builds from physics up |
 | eric-ries | Eric Ries | validation, hypothesis testing, lean methodology, MVP scoping | Entrepreneur who treats startups as scientific experiments |
 | garry-tan | Garry Tan | pre-pmf, ai-native, earnestness, design-thinking, yc-modern | CEO of YC, designer-engineer-founder who leads with earnestness and product taste |
-| jasmine-star | Jasmine Star | instagram-strategy, relationship-marketing, service-business-growth, dm-engagement, content-positioning | Social media strategist, founder of Social Curator |
-| jay-clouse | Jay Clouse | creator-economy, audience-growth, experimentation, creator-business-models, trust-building | Founder of Creator Science |
 | jeff-bezos | Jeff Bezos | customer-obsession, scalability, long-term-strategy, reversibility | Founder who works backwards from the customer and thinks in decades |
-| jenna-kutcher | Jenna Kutcher | content-marketing, creative-entrepreneurship, email-list-building, content-repurposing, authentic-branding | Host of Goal Digger Podcast, NYT bestselling author |
-| jeremy-enns | Jeremy Enns | podcast-marketing, creator-growth-systems, audience-retention, scrappy-marketing, content-monetization | Founder of Podcast Marketing Academy |
 | jim-dethmer | Jim Dethmer | conscious-leadership, integrity, team-performance, radical-responsibility | Co-founder of the Conscious Leadership Group, coached 150+ CEOs |
 | jim-loehr | Jim Loehr | energy-management, performance-psychology, resilience, recovery, executive-performance | Sports psychologist, co-founder of Human Performance Institute |
 | joanna-wiebe | Joanna Wiebe | conversion-copy, voice-of-customer, headline-writing, cta-optimization | Founder of Copyhackers, coined "conversion copywriting" |
@@ -34,7 +28,6 @@
 | oli-gardner | Oli Gardner | landing-page-conversion, attention-ratio, conversion-centered-design, page-focus | Co-founder of Unbounce |
 | patrick-campbell | Patrick Campbell | pricing, packaging, monetization, churn, retention, value-metrics, subscription | Founder of ProfitWell (acquired by Paddle for $200M) |
 | paul-graham | Paul Graham | pre-pmf, startup-ideas, growth, user-obsession, yc-philosophy | Co-founder of YC, essayist, architect of the pre-PMF startup canon |
-| rachel-pedersen | Rachel Pedersen | social-media-systems, content-batching, organic-growth, creator-operations, platform-strategy | The Queen of Social Media |
 | ram-charan | Ram Charan | leadership-transitions, pipeline-passages, performance-by-level, management-development | Management consultant who diagnoses leadership passage gaps |
 | ray-dalio | Ray Dalio | systems-thinking, decision-making, strategy, radical-truth | Founder who converts radical truth and transparency into decision-making systems |
 | richard-rumelt | Richard Rumelt | strategic-clarity, focus, cutting-fluff, identifying-the-crux | UCLA professor who cuts through strategic fluff |
@@ -45,7 +38,6 @@
 | shirin-oreizy | Shirin Oreizy | behavioral-science, conversion, ux-psychology, cognitive-load, friction | Founder of Next Step, a behavioral design agency |
 | steve-jobs | Steve Jobs | product-design, simplicity, UX, focus, user-experience | Co-founder of Apple who demanded insanely great products |
 | steve-krug | Steve Krug | usability, scanning, conventions, question-marks, trunk-test, clarity, happy-talk | Usability expert, author of Don't Make Me Think |
-| sue-b-zimmerman | Sue B. Zimmerman | instagram-strategy, social-media, engagement, content-systems | #TheInstagramExpert |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
 | coach-eric | Coach Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | CEO coach who pairs conscious leadership with systems thinking; finds the root cause, then the next step |
@@ -57,7 +49,6 @@
 | kristen-berman | Kristen Berman | behavioral-design, product-growth, retention, onboarding, conversion, behavioral-economics, behavioral-experimentation, trust-and-safety | CEO and co-founder of Irrational Labs; behavioral-product-design practitioner |
 | matt-mochary | Matt Mochary | operating-cadence, executive-coaching, okrs, meeting-design, written-communication | CEO coach and creator of the Mochary Method; written-culture operating system for leadership teams |
 | claire-hughes-johnson | Claire Hughes Johnson | operating-cadence, management-infrastructure, scaling, decision-making, written-communication | Former COO of Stripe and author of Scaling People; management infrastructure and operating review design |
-| joan-garry | Joan Garry | nonprofit-leadership, board-governance, founder-transition, executive-succession, fundraising-culture | Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit Leadership, founder of the Nonprofit Leadership Lab |
 | lex-sisney | Lex Sisney | org-design, organizational-structure, scaling, role-fit, executive-hiring, lifecycle-strategy | Founder of Organizational Physics, co-founder and former CEO of Commission Junction, author of Designed to Scale; org structure and role fit for scaling companies |
 | kim-mauborgne | Kim & Mauborgne | blue-ocean-strategy, value-innovation, value-proposition, market-creation, product-strategy | W. Chan Kim and Renée Mauborgne, INSEAD professors and authors of Blue Ocean Strategy, Blue Ocean Shift, and Beyond Disruption; value innovation with the strategy canvas and the ERRC grid |
 | ryan-singer | Ryan Singer | product-roadmap, scoping, prioritization, fixed-deadlines, product-development | Author of Shape Up and former Head of Strategy at Basecamp; appetites, shaping, and betting to turn strategy into a dated roadmap |
@@ -88,22 +79,16 @@ These advisors have detailed evaluation expertise and can serve as design critic
 |---------|-----------|
 | **Andy Raskin** | Evaluates narrative structure |
 | **April Dunford** | Evaluates whether positioning is clear, differentiated, and consistently reflected |
-| **Arielle Nissenblatt** | Evaluates whether growth strategy prioritizes genuine community and shareability over vanity metrics and algorithmic optimization |
 | **Brene Brown** | Evaluates whether leadership and communication surfaces the emotional truth or hides behind armor |
 | **Chris Voss** | Evaluates whether communication and negotiation approaches use empathy as a tool rather than logic as a weapon |
 | **Clayton Christensen** | Evaluates whether the work understands the job the customer is hiring the product to do — functional, emotional, and social dimensions |
 | **Diana Chapman** | Evaluates whether leadership content addresses inner state, not just tactics |
 | **Don Draper** | Evaluates whether messaging makes people feel something or just informs them |
 | **Donald Miller** | Evaluates whether the brand is positioned as the guide (not the hero), the customer's problem is clearly stated, a simple plan is visible, and the call to action is unambiguous |
-| **Elise Darma** | Evaluates whether Instagram content drives revenue or just vanity metrics |
 | **Elon Musk** | Questions inherited assumptions |
 | **Eric Ries** | Evaluates whether assumptions are being validated before investment |
 | **Garry Tan** | Evaluates through the lens of earnestness and product taste |
-| **Jasmine Star** | Evaluates whether content leads with the problem solved or just lists services |
-| **Jay Clouse** | Evaluates whether creator strategies are evidence-based or guru-driven hype |
 | **Jeff Bezos** | Evaluates through the lens of customer impact and long-term thinking |
-| **Jenna Kutcher** | Evaluates whether content connects on a human level or sounds like a textbook |
-| **Jeremy Enns** | Evaluates whether podcast growth is engineered or just hoped for |
 | **Jim Dethmer** | Evaluates through the lens of integrity as energetic wholeness |
 | **Jim Loehr** | Evaluates whether someone is managing energy across all four dimensions — physical, emotional, mental, and spiritual — or just grinding on time management |
 | **Joanna Wiebe** | Evaluates conversion copy through Seven Sweeps lens |
@@ -114,7 +99,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Oli Gardner** | Evaluates through Conversion-Centered Design lens |
 | **Patrick Campbell** | Evaluates pricing, packaging, and monetization strategy |
 | **Paul Graham** | Evaluates idea quality with intellectual rigor |
-| **Rachel Pedersen** | Evaluates whether social media efforts are systematic or chaotic |
 | **Ram Charan** | Evaluates leadership behavior against passage requirements |
 | **Ray Dalio** | Evaluates the system of cause-effect relationships |
 | **Richard Rumelt** | Evaluates whether the work identifies its crux — the one thing that matters most |
@@ -125,7 +109,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Shirin Oreizy** | Evaluates through behavioral science lens |
 | **Steve Jobs** | Evaluates whether the work achieves simplicity and focus |
 | **Steve Krug** | Evaluates whether the user has to think |
-| **Sue B. Zimmerman** | Evaluates whether Instagram presence is intentional or random |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |
 | **Tim Ferriss** | Evaluates whether assumptions have been tested or merely accepted |
 | **Coach Eric** | Evaluates whether decisions and actions are driven by conscious choice or reactive patterns |
@@ -137,7 +120,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Kristen Berman** | Evaluates whether product, growth, and retention work is grounded in behavioral diagnosis or just running on "best practice" reflex |
 | **Matt Mochary** | Evaluates whether the operating system is written-first and decision-focused |
 | **Claire Hughes Johnson** | Evaluates whether operating reviews are structured for decisions or presentations |
-| **Joan Garry** | Evaluates whether a nonprofit's problem has been located in the structure built around the founder, or misfiled as somebody's character defect |
 | **Lex Sisney** | Evaluates whether an organizational problem has been located in the design or misfiled as a people problem |
 | **Kim & Mauborgne** | Evaluates whether an offering actually differs from the alternatives or only claims to |
 | **Ryan Singer** | Evaluates whether a roadmap is a plan or a stack of estimates |

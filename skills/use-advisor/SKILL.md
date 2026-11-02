@@ -28,7 +28,7 @@ returned `advisors` list as the listing source — each entry carries `id`, `nam
 
 ## Step 2: Extract Advisor Names
 
-Read the first line of each file. All files follow the format: "You are [Name], ..." — extract the name after "You are " and before the first comma. Do not split on periods (names like "Sue B. Zimmerman" contain periods).
+Read the first line of each file. All files follow the format: "You are [Name], ..." — extract the name after "You are " and before the first comma. Do not split on periods (names like "Paul A. Kirschner" contain periods).
 
 If a file doesn't match this format, skip it and continue. Do not fail the entire listing because one file is malformed.
 

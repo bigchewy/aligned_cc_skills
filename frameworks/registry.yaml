@@ -120,22 +120,6 @@ frameworks:
     can
   use_when: someone is entering a conversation where the other party likely has negative
     assumptions and needs to preemptively defuse them
-- advisor: jasmine-star
-  category: content-strategy
-  deliverable_type: plan
-  domains:
-  - content-creation
-  - productivity
-  - social-media
-  - batch-processing
-  helpful_documents:
-  - content strategy
-  id: batched-content-system
-  name: the Batched Content Creation System
-  purpose: a framework for batch-creating content to maintain consistent posting without
-    daily overwhelm
-  use_when: someone struggles with consistent content creation and needs a system
-    for batching production efficiently
 - advisor: ray-dalio
   category: strategy
   deliverable_type: decision
@@ -150,24 +134,6 @@ frameworks:
     quality
   use_when: a team needs to make a high-stakes decision and wants to weight input
     by each person's track record and expertise
-- advisor: sue-b-zimmerman
-  category: social-media
-  deliverable_type: analysis
-  domains:
-  - instagram
-  - profile-optimization
-  - content-alignment
-  - conversion
-  helpful_documents:
-  - content strategy
-  - positioning statement
-  id: bio-promise-alignment
-  name: the Bio-Promise Alignment Framework
-  purpose: a method for ensuring your Instagram content delivers on the contract your
-    bio makes with followers. Disconnect between bio and content destroys trust and
-    kills conversions
-  use_when: someone's Instagram bio promises one thing but their content delivers
-    another, causing follower drop-off
 - advisor: brene-brown
   category: leadership
   deliverable_type: analysis
@@ -218,24 +184,6 @@ frameworks:
     other person solve your problem
   use_when: someone needs to steer a negotiation or conversation by asking how/what
     questions that shift the problem to the other party
-- advisor: sue-b-zimmerman
-  category: social-media
-  deliverable_type: plan
-  domains:
-  - instagram
-  - content-strategy
-  - engagement
-  - conversion
-  helpful_documents:
-  - content strategy
-  - product description
-  id: cec-method
-  name: the CEC Method
-  purpose: the Content-Engagement-Conversion pathway that drives Instagram sales.
-    This is the methodology from Ready Set Gram that transforms random posting into
-    systematic revenue generation
-  use_when: someone posts on Instagram without a system and needs a content-to-conversion
-    pathway
 - advisor: diana-chapman
   category: leadership
   deliverable_type: plan
@@ -273,92 +221,22 @@ frameworks:
     in user journeys. Every friction point costs conversions
   use_when: a product or page has high drop-off and someone needs to identify and
     remove cognitive friction points in the user journey
-- advisor: arielle-nissenblatt
-  category: growth
-  deliverable_type: plan
-  domains:
-  - community-building
-  - word-of-mouth
-  - audience-engagement
-  - advocacy
-  helpful_documents:
-  - content strategy
-  id: community-amplification
-  name: the Community Amplification Framework
-  purpose: a system for transforming passive listeners into active advocates who naturally
-    share your content
-  use_when: someone has an audience but needs to turn passive consumers into active
-    advocates who share and promote their content
 - advisor: joe-pulizzi
   category: content-strategy
   default_critic_advisors:
   - joe-pulizzi
-  - jay-clouse
   deliverable_type: plan
   domains:
   - content-marketing
   - audience-building
   - business-model
   - content-first
-  follow_on_frameworks:
-  - creator-flywheel
   id: content-inc-model
   name: the Content Inc
   purpose: a six-step audience-first model for building a content-driven business
     before monetizing
   use_when: someone wants to build a business by establishing a content platform and
     audience before creating products
-- advisor: jay-clouse
-  category: content-strategy
-  deliverable_type: plan
-  domains:
-  - experimentation
-  - content-testing
-  - creator-business
-  - metrics
-  helpful_documents:
-  - content strategy
-  - business goals
-  id: creator-experimentation-protocol
-  name: the Creator Experimentation Protocol
-  purpose: a scientific framework for testing content and business ideas before scaling,
-    measuring what matters, and building sustainable creator businesses
-  use_when: a creator needs to test content or business ideas systematically before
-    committing resources to scale
-- advisor: jay-clouse
-  category: content-strategy
-  deliverable_type: plan
-  domains:
-  - creator-business
-  - flywheel-growth
-  - platform-independence
-  - sustainability
-  helpful_documents:
-  - content strategy
-  - business goals
-  id: creator-flywheel
-  name: the Creator Flywheel framework
-  purpose: a systematic approach to building sustainable creator businesses through
-    interconnected experiments and feedback loops, creating businesses that aren't
-    reliant on borrowed platforms
-  use_when: a creator wants to build a self-reinforcing business system that compounds
-    over time and doesn't depend on any single platform
-- advisor: jay-clouse
-  category: content-strategy
-  deliverable_type: decision
-  domains:
-  - content-strategy
-  - niche-focus
-  - thought-leadership
-  - shareability
-  helpful_documents:
-  - content strategy
-  id: depth-over-breadth-strategy
-  name: the Depth Over Breadth Content Strategy
-  purpose: a framework for creating memorable, shareable content by going a mile deep
-    on narrow topics rather than an inch deep on many topics
-  use_when: a creator is spread too thin across topics and needs to go deeper on fewer
-    subjects for more impact
 - advisor: steve-jobs
   category: strategy
   deliverable_type: content
@@ -373,22 +251,6 @@ frameworks:
     for colors, typography, and theme
   use_when: someone needs guiding design principles for a product that prioritize
     simplicity, elegance, and user experience
-- advisor: jasmine-star
-  category: social-media
-  deliverable_type: plan
-  domains:
-  - instagram
-  - direct-messaging
-  - sales-conversations
-  - relationship-building
-  helpful_documents:
-  - content strategy
-  id: dm-relationship-cultivation
-  name: the DM Relationship Cultivation System
-  purpose: a framework for turning Instagram engagement into sales conversations through
-    authentic relationship building
-  use_when: someone wants to convert Instagram engagement into sales conversations
-    through authentic DM outreach
 - advisor: paul-graham
   category: startup
   deliverable_type: plan
@@ -406,23 +268,6 @@ frameworks:
     learn and recruit users by hand
   use_when: a founder is in the earliest stage and needs to identify the unscalable
     manual things they should be doing to get traction
-- advisor: arielle-nissenblatt
-  category: podcasting
-  deliverable_type: plan
-  domains:
-  - podcast-discovery
-  - curation
-  - recommendation-systems
-  - community
-  helpful_documents:
-  - content strategy
-  id: earbuds-recommendation-model
-  name: the EarBuds Recommendation Model
-  purpose: a framework for building a human-curated recommendation platform where
-    daily recommendations create personal connection, discovery habits, social proof,
-    and network effects
-  use_when: someone wants to build a recommendation-driven content platform using
-    human curation and daily habit formation
 - advisor: eric-ries
   category: startup
   deliverable_type: analysis
@@ -457,23 +302,6 @@ frameworks:
     or just performing
   use_when: a founder needs to honestly assess whether they are genuinely committed
     to their startup or just performing the role
-- advisor: jeremy-enns
-  category: podcasting
-  deliverable_type: analysis
-  domains:
-  - podcast-growth
-  - retention
-  - revenue
-  - sustainable-growth
-  helpful_documents:
-  - content strategy
-  - business goals
-  id: ears-framework
-  name: the EARS Framework
-  purpose: a systematic approach to podcast growth that prioritizes retention and
-    revenue over download vanity metrics
-  use_when: a podcaster is chasing download numbers and needs to refocus on retention
-    and revenue as growth levers
 - advisor: jim-loehr
   category: psychology
   deliverable_type: analysis
@@ -488,23 +316,6 @@ frameworks:
     energy
   use_when: someone feels depleted or imbalanced and needs to assess which energy
     dimension — physical, emotional, mental, or spiritual — needs attention
-- advisor: arielle-nissenblatt
-  category: growth
-  deliverable_type: plan
-  domains:
-  - audience-engagement
-  - community-building
-  - retention
-  - advocacy
-  helpful_documents:
-  - content strategy
-  id: engagement-pyramid
-  name: the Engagement Pyramid
-  purpose: a model for understanding and cultivating audience engagement levels, from
-    passive consumer to active evangelist. The goal is moving people UP the pyramid,
-    not just acquiring new people at the bottom
-  use_when: someone has an audience but most people are passive consumers and they
-    need a strategy to deepen engagement
 - advisor: tim-ferriss
   category: psychology
   default_critic_advisors:
@@ -557,24 +368,6 @@ frameworks:
     instead of by analogy
   use_when: someone is stuck in conventional thinking and needs to decompose a problem
     to its fundamental truths to find novel solutions
-- advisor: elise-darma
-  category: social-media
-  deliverable_type: plan
-  domains:
-  - instagram-reels
-  - customer-journey
-  - video-content
-  - conversion
-  helpful_documents:
-  - content strategy
-  - product description
-  id: first-seven-reels
-  name: the Your First 7 Reels framework
-  purpose: a strategic system that maps Reels to customer journey stages from unaware
-    to ready-to-buy. This framework has generated $2.4M+ in tracked organic Instagram
-    sales
-  use_when: someone is starting with Instagram Reels and needs a strategic sequence
-    that maps content to the buyer journey
 - advisor: steve-jobs
   category: strategy
   deliverable_type: decision
@@ -631,23 +424,6 @@ frameworks:
     to match
   use_when: a startup needs to identify whether they are entering an existing, resegmented,
     new, or clone market to set the right strategy
-- advisor: sue-b-zimmerman
-  category: social-media
-  deliverable_type: analysis
-  domains:
-  - instagram
-  - content-formats
-  - platform-strategy
-  - audience-behavior
-  helpful_documents:
-  - content strategy
-  id: four-neighborhoods
-  name: the Four Neighborhoods Framework
-  purpose: a mental model for understanding Instagram as a village with distinct neighborhoods
-    (Feed, Stories, Reels, Live) where different audiences spend time and expect different
-    content
-  use_when: someone needs to understand how different Instagram formats serve different
-    purposes and audiences
 - advisor: steve-jobs
   category: strategy
   deliverable_type: analysis
@@ -741,23 +517,6 @@ frameworks:
     and cost reduction opportunities
   use_when: someone needs to identify cost reduction opportunities by comparing current
     costs to theoretical minimums
-- advisor: jenna-kutcher
-  category: content-strategy
-  deliverable_type: content
-  domains:
-  - content-pillars
-  - social-media
-  - brand-building
-  - sales-content
-  helpful_documents:
-  - content strategy
-  - positioning statement
-  id: jk5-content-pillars
-  name: the JK5 Content Pillars Method
-  purpose: a framework for creating sustainable content that builds connection AND
-    drives sales by choosing 5 topics (4 that connect, 1 that sells)
-  use_when: someone needs to define their core content topics to balance audience
-    connection with revenue generation
 - advisor: clayton-christensen
   category: strategy
   deliverable_type: analysis
@@ -914,39 +673,6 @@ frameworks:
     needs to shift to succeed at their current (or next) level
   use_when: an engineering manager needs to understand what's expected at their current
     level or prepare for the next one
-- advisor: elise-darma
-  category: social-media
-  deliverable_type: plan
-  domains:
-  - instagram
-  - DM-automation
-  - sales-funnels
-  - ManyChat
-  helpful_documents:
-  - product description
-  id: message-magic-system
-  name: the Message Magic System
-  purpose: a 3-part DM automation framework using ManyChat that turns Instagram engagement
-    into sales conversations automatically, 24/7
-  use_when: someone wants to automate Instagram DM conversations to convert engagement
-    into sales using chatbot flows
-- advisor: elise-darma
-  category: social-media
-  deliverable_type: plan
-  domains:
-  - instagram
-  - content-templates
-  - simplification
-  - revenue-system
-  helpful_documents:
-  - content strategy
-  - product description
-  id: one-one-one-one-method
-  name: the 1-1-1-1 Method
-  purpose: a framework for turning Instagram into a revenue system using just ONE
-    Reel style, ONE Story format, ONE Carousel template, and ONE DM flow
-  use_when: someone is overwhelmed by Instagram content creation and needs a minimalist
-    system with one template per format
 - advisor: april-dunford
   category: positioning
   deliverable_type: content
@@ -1074,39 +800,6 @@ frameworks:
     stay the course, or stop entirely
   use_when: a startup has data from experiments and needs to decide whether to pivot
     to a new direction or persevere with the current one
-- advisor: jeremy-enns
-  category: podcasting
-  deliverable_type: analysis
-  domains:
-  - podcast-branding
-  - positioning
-  - content-strategy
-  - audience-growth
-  helpful_documents:
-  - content strategy
-  - positioning statement
-  id: podcast-brand-strategy
-  name: a Podcast Brand Strategy audit
-  purpose: the foundational work that determines whether your podcast grows or stalls
-  use_when: a podcaster's growth has stalled and they need to audit their brand positioning
-    and content strategy
-- advisor: jeremy-enns
-  category: podcasting
-  deliverable_type: plan
-  domains:
-  - podcast-marketing
-  - growth-systems
-  - sustainable-growth
-  - infrastructure
-  helpful_documents:
-  - content strategy
-  - business goals
-  id: podcast-marketing-systems
-  name: Podcast Marketing Systems
-  purpose: building sustainable growth infrastructure that compounds over time instead
-    of chasing downloads episode by episode
-  use_when: a podcaster is doing one-off promotion per episode and needs sustainable
-    marketing systems that compound
 - advisor: april-dunford
   category: positioning
   deliverable_type: content
@@ -1137,22 +830,6 @@ frameworks:
     and reconnect with what matters
   use_when: someone is distracted or disconnected and needs to arrive fully in the
     present moment before starting deeper work
-- advisor: jasmine-star
-  category: content-strategy
-  deliverable_type: content
-  domains:
-  - content-positioning
-  - problem-framing
-  - brand-messaging
-  - audience-connection
-  helpful_documents:
-  - positioning statement
-  id: problem-solver-positioning
-  name: Problem-Solver Positioning
-  purpose: a framework to position content around the problem you solve, not what
-    you do
-  use_when: someone describes their business by what they do rather than the problem
-    they solve and it's not resonating
 - advisor: sean-ellis
   category: growth
   deliverable_type: decision
@@ -1214,21 +891,6 @@ frameworks:
     and spiritual selves in turn
   use_when: someone needs to check in with all four aspects of self — physical, emotional,
     intellectual, and spiritual
-- advisor: arielle-nissenblatt
-  category: content-strategy
-  deliverable_type: analysis
-  domains:
-  - content-quality
-  - recommendation-readiness
-  - audience-growth
-  - quality-audit
-  helpful_documents:
-  - content strategy
-  id: recommendation-readiness-checklist
-  name: the Recommendation Readiness Checklist
-  purpose: a diagnostic to determine if their content is truly ready to be recommended
-  use_when: someone wants their content recommended but it may not meet the quality
-    bar needed for word-of-mouth growth
 - advisor: jeff-bezos
   category: strategy
   deliverable_type: decision
@@ -1311,23 +973,6 @@ frameworks:
     recruit others
   use_when: someone is trying to appeal to everyone and needs to focus on the smallest
     group they can meaningfully serve
-- advisor: rachel-pedersen
-  category: social-media
-  deliverable_type: plan
-  domains:
-  - organic-growth
-  - authority-building
-  - authenticity
-  - social-media-strategy
-  helpful_documents:
-  - content strategy
-  - positioning statement
-  id: social-media-queen-method
-  name: the Social Media Queen Method
-  purpose: an organic-first growth system for building authority through authentic
-    value creation
-  use_when: someone wants to build social media authority through organic value creation
-    rather than paid ads
 - advisor: steve-jobs
   category: strategy
   deliverable_type: plan
@@ -1475,38 +1120,6 @@ frameworks:
     moments, patterns, and growth
   use_when: a user wants to reflect on their journey and progress with the Virtual
     Board over time
-- advisor: sue-b-zimmerman
-  category: social-media
-  deliverable_type: plan
-  domains:
-  - instagram
-  - time-management
-  - daily-practice
-  - efficiency
-  helpful_documents:
-  - content strategy
-  id: thirty-minute-daily-instagram
-  name: the 30-Minute Daily Instagram System
-  purpose: a structured protocol to make Instagram manageable and effective without
-    taking over your life
-  use_when: someone feels Instagram takes too much time and needs a structured 30-minute
-    daily protocol
-- advisor: rachel-pedersen
-  category: content-strategy
-  deliverable_type: plan
-  domains:
-  - content-batching
-  - productivity
-  - content-creation
-  - modular-production
-  helpful_documents:
-  - content strategy
-  id: three-by-three-content-batching
-  name: the 3x3 Content Batching Method
-  purpose: a framework for creating 3 months of content in 3 hours through strategic
-    planning and modular production
-  use_when: someone needs to create months of content efficiently through batching
-    rather than daily creation
 - advisor: jeff-bezos
   category: strategy
   deliverable_type: decision
@@ -1863,51 +1476,6 @@ frameworks:
   use_when: a leadership team is running operating reviews (monthly, quarterly) that
     produce presentations but not decisions, or where decisions made in the meeting
     get relitigated because nothing was written down
-- advisor: joan-garry
-  category: leadership
-  default_critic_advisors:
-  - joan-garry
-  - ram-charan
-  deliverable_type: analysis
-  domains:
-  - board-governance
-  - nonprofit-leadership
-  - board-development
-  - volunteer-leadership
-  follow_on_frameworks:
-  - organizational-readiness
-  helpful_documents:
-  - board roster
-  - board member giving history
-  id: big-bat-board-assessment
-  name: Joan's Big BAT
-  purpose: grading every board member individually to find out where a board is
-    actually weak and where to invest
-  use_when: a nonprofit leader describes their board as disengaged, dysfunctional,
-    or lacking skill and needs a member-by-member diagnosis instead of an aggregate
-    complaint
-- advisor: joan-garry
-  category: leadership
-  default_critic_advisors:
-  - joan-garry
-  - claire-hughes-johnson
-  deliverable_type: plan
-  domains:
-  - founder-transition
-  - executive-succession
-  - nonprofit-leadership
-  - board-governance
-  - organizational-continuity
-  helpful_documents:
-  - donor and funder list
-  - org chart
-  - board roster
-  id: organizational-readiness
-  name: Organizational Readiness
-  purpose: building a founder-led nonprofit that can survive its founder leaving
-  use_when: a founder or long-tenured executive wants out but believes the organization
-    cannot run without them, or a board needs to prepare for a leadership transition
-    before a search begins
 - advisor: lex-sisney
   category: leadership
   default_critic_advisors:
@@ -2152,7 +1720,6 @@ frameworks:
   - rollout-sequencing
   - social-networks
   follow_on_frameworks:
-  - organizational-readiness
   - build-measure-learn
   helpful_documents:
   - a description of the practice or behavior being rolled out

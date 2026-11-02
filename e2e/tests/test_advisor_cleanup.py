@@ -21,7 +21,45 @@ MOVED = {
     "kate-bowler": "/Users/ericpage/Documents/aligned",
     "danny-iny": "/Users/ericpage/software/planted",
 }
-DELETED = []
+DELETED = [
+    "joan-garry",
+    "elise-darma",
+    "jasmine-star",
+    "sue-b-zimmerman",
+    "rachel-pedersen",
+    "jenna-kutcher",
+    "arielle-nissenblatt",
+    "jeremy-enns",
+    "jay-clouse",
+]
+
+DELETED_FRAMEWORKS = [
+    "batched-content-system",
+    "bio-promise-alignment",
+    "cec-method",
+    "community-amplification",
+    "creator-experimentation-protocol",
+    "creator-flywheel",
+    "depth-over-breadth-strategy",
+    "dm-relationship-cultivation",
+    "earbuds-recommendation-model",
+    "ears-framework",
+    "engagement-pyramid",
+    "first-seven-reels",
+    "four-neighborhoods",
+    "jk5-content-pillars",
+    "message-magic-system",
+    "one-one-one-one-method",
+    "podcast-brand-strategy",
+    "podcast-marketing-systems",
+    "problem-solver-positioning",
+    "recommendation-readiness-checklist",
+    "social-media-queen-method",
+    "thirty-minute-daily-instagram",
+    "three-by-three-content-batching",
+    "big-bat-board-assessment",
+    "organizational-readiness",
+]
 
 MOVED_FRAMEWORKS = {
     "jonathan-baker": ["sellability-index"],
@@ -34,7 +72,7 @@ MOVED_FRAMEWORKS = {
         "pilot-program-methodology",
     ],
 }
-ALL_MOVED_FRAMEWORKS = [f for fs in MOVED_FRAMEWORKS.values() for f in fs]
+ALL_MOVED_FRAMEWORKS = [f for fs in MOVED_FRAMEWORKS.values() for f in fs] + DELETED_FRAMEWORKS
 REMOVED_ADVISORS = list(MOVED) + list(DELETED)
 
 SCANNED = [
@@ -116,3 +154,15 @@ def test_moved_advisors_present_in_target(advisor_id, target):
         assert fid in entries
         assert entries[fid]["advisor"] == advisor_id
         assert (root / "frameworks" / fid / "prompt.md").is_file()
+
+
+@pytest.mark.parametrize("advisor_id", DELETED)
+def test_deleted_advisors_gone(advisor_id):
+    assert advisor_id not in _advisors()
+    assert not (REPO_ROOT / "advisors" / "prompts" / f"{advisor_id}.md").exists()
+    assert not any(fw["advisor"] == advisor_id for fw in _frameworks().values())
+
+
+def test_plugin_counts():
+    assert len(_advisors()) == 64
+    assert len(_frameworks()) == 116

@@ -17,6 +17,19 @@ GONE_IDS = [
     "jonathan-baker", "robb-wolf", "kate-bowler", "danny-iny",
     "sellability-index", "permission-blessing", "audience-first-business-model",
     "integrative-piloting-process", "leveraged-learning", "pilot-program-methodology",
+    # deleted: Joan Garry and eight solo-creator advisors, with their frameworks
+    "joan-garry", "elise-darma", "jasmine-star", "sue-b-zimmerman", "rachel-pedersen",
+    "jenna-kutcher", "arielle-nissenblatt", "jeremy-enns", "jay-clouse",
+    "batched-content-system", "bio-promise-alignment", "cec-method",
+    "community-amplification", "creator-experimentation-protocol", "creator-flywheel",
+    "depth-over-breadth-strategy", "dm-relationship-cultivation",
+    "earbuds-recommendation-model", "ears-framework", "engagement-pyramid",
+    "first-seven-reels", "four-neighborhoods", "jk5-content-pillars",
+    "message-magic-system", "one-one-one-one-method", "podcast-brand-strategy",
+    "podcast-marketing-systems", "problem-solver-positioning",
+    "recommendation-readiness-checklist", "social-media-queen-method",
+    "thirty-minute-daily-instagram", "three-by-three-content-batching",
+    "big-bat-board-assessment", "organizational-readiness",
     # retired archetype, replaced by brad-frost
     "the-designer",
     # retired archetype, replaced by jason-fried

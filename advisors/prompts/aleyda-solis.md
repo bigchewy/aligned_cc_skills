@@ -128,7 +128,7 @@ Be honest about where this approach goes wrong:
 
 - **The checklist can make you tactical.** Ten questions find a broken page. They don't decide what the site should publish. Content strategy and audience go to Joe Pulizzi's `content-inc-model`.
 - **A new domain loses on links and authority.** The diagnostic names the gap. It can't close it fast. Say so instead of promising a ranking.
-- **Built for brands with teams.** The AI checklist assumes owners, PR, feeds and markets. Scale it down and skip what doesn't apply. Earning mentions in communities goes to Arielle Nissenblatt.
+- **Built for brands with teams.** The AI checklist assumes owners, PR, feeds and markets. Scale it down and skip what doesn't apply.
 - **You stop at the search result.** Once the click happens, conversion copy goes to Joanna Wiebe and her Seven Sweeps, and whether people can use the page goes to Steve Krug.
 - **You don't set the bet.** If the founder wants a success line and a quit line before a launch, that's Annie Duke's `launch-bet`.
 

@@ -44,31 +44,6 @@ advisors:
     '
   prompt: advisors/prompts/april-dunford.md
   summary: Positioning consultant, helped 200+ tech companies position products
-- best_for: 'Podcast growth strategy, community-building plans, audience engagement
-    programs, word-of-mouth campaigns, content shareability assessment.
-
-    '
-  domains:
-  - community-building
-  - word-of-mouth
-  - podcast-growth
-  - audience-engagement
-  - human-curation
-  evaluation_expertise: 'Evaluates whether growth strategy prioritizes genuine community
-    and shareability over vanity metrics and algorithmic optimization. Is the content
-    designed to trigger personal recommendations? Are listeners being treated as advocates,
-    not traffic? Catches download obsession, algorithm-first thinking, and strategies
-    that build passive audiences instead of active communities.
-
-    '
-  id: arielle-nissenblatt
-  name: Arielle Nissenblatt
-  not_for: 'Technical architecture, paid acquisition strategy, SEO, backend systems,
-    rapid-scale growth plans.
-
-    '
-  prompt: advisors/prompts/arielle-nissenblatt.md
-  summary: Founder of EarBuds Podcast Collective, community alchemist at SquadCast
 - best_for: 'Leadership communications, team culture assessments, difficult conversation
     preparation, organizational trust diagnostics, content about leadership and authenticity.
 
@@ -221,31 +196,6 @@ advisors:
     '
   prompt: advisors/prompts/donald-miller.md
   summary: StoryBrand creator, clarifies marketing messages through story structure
-- best_for: 'Time-constrained Instagram strategy, DM automation flows, Reels-first
-    content plans, sub-1K-follower monetization. Small business owners who need Instagram
-    revenue in 30 minutes a week, not 30 hours.
-
-    '
-  domains:
-  - instagram-marketing
-  - social-media-automation
-  - content-efficiency
-  - dm-conversion
-  - reels-strategy
-  evaluation_expertise: 'Evaluates whether Instagram content drives revenue or just
-    vanity metrics. Is the time investment proportional to return? Are DMs automated
-    for off-hours conversion? Catches over-investment in content creation, chasing
-    follower counts, and copying influencer tactics that don''t work for small accounts.
-
-    '
-  id: elise-darma
-  name: Elise Darma
-  not_for: 'Multi-channel marketing strategy, brand building, B2B marketing, long-form
-    content, platforms other than Instagram.
-
-    '
-  prompt: advisors/prompts/elise-darma.md
-  summary: Instagram strategist
 - best_for: 'Designs where conventional thinking may be limiting. Questioning inherited
     assumptions.
 
@@ -319,57 +269,6 @@ advisors:
   prompt: advisors/prompts/garry-tan.md
   summary: CEO of YC, designer-engineer-founder who leads with earnestness and product
     taste
-- best_for: 'Service businesses converting through relationship — photographers, coaches,
-    consultants. DM engagement systems, content calendars that solve audience problems,
-    Instagram strategy built on showing up.
-
-    '
-  domains:
-  - instagram-strategy
-  - relationship-marketing
-  - service-business-growth
-  - dm-engagement
-  - content-positioning
-  evaluation_expertise: 'Evaluates whether content leads with the problem solved or
-    just lists services. Is the audience focus at 98% their problems, 2% your offer?
-    Are DM relationships being cultivated or ghosted after engagement? Catches feature-first
-    messaging, posting-and-ghosting, and content that talks about you instead of them.
-
-    '
-  id: jasmine-star
-  name: Jasmine Star
-  not_for: 'Product businesses, B2B enterprise marketing, multi-channel strategy,
-    technical documentation, platforms outside Instagram.
-
-    '
-  prompt: advisors/prompts/jasmine-star.md
-  summary: Social media strategist, founder of Social Curator
-- best_for: 'Creator business plans, newsletter strategy, podcast growth audits, content
-    monetization models, audience experiments. Work that needs a scientific, sustainable
-    approach to creator growth.
-
-    '
-  domains:
-  - creator-economy
-  - audience-growth
-  - experimentation
-  - creator-business-models
-  - trust-building
-  evaluation_expertise: 'Evaluates whether creator strategies are evidence-based or
-    guru-driven hype. Is there a testable hypothesis before scaling? Are trust metrics
-    (email open rates, revenue per subscriber) tracked over vanity metrics? Catches
-    hustle-culture assumptions, premature scaling, and building on unvalidated audience
-    assumptions.
-
-    '
-  id: jay-clouse
-  name: Jay Clouse
-  not_for: 'Enterprise marketing, paid advertising strategy, brand identity design,
-    technical product development, time-sensitive viral campaigns.
-
-    '
-  prompt: advisors/prompts/jay-clouse.md
-  summary: Founder of Creator Science
 - best_for: 'Designs that affect customers, need to scale, or involve irreversible
     decisions. Long-term architectural bets.
 
@@ -392,57 +291,6 @@ advisors:
     '
   prompt: advisors/prompts/jeff-bezos.md
   summary: Founder who works backwards from the customer and thinks in decades
-- best_for: 'Content pillar strategy, email marketing for creatives, social media
-    repurposing workflows, personal brand development. Creative entrepreneurs who
-    need warmth and structure without corporate rigidity.
-
-    '
-  domains:
-  - content-marketing
-  - creative-entrepreneurship
-  - email-list-building
-  - content-repurposing
-  - authentic-branding
-  evaluation_expertise: 'Evaluates whether content connects on a human level or sounds
-    like a textbook. Are content pillars balanced between connection and selling?
-    Is the creator showing up as a real person or performing polish? Catches over-complicated
-    frameworks, hustle-culture undertones, and content that breaks the promise the
-    bio makes.
-
-    '
-  id: jenna-kutcher
-  name: Jenna Kutcher
-  not_for: 'B2B enterprise strategy, technical documentation, analytical frameworks,
-    regulated industries, luxury brand positioning.
-
-    '
-  prompt: advisors/prompts/jenna-kutcher.md
-  summary: Host of Goal Digger Podcast, NYT bestselling author
-- best_for: 'Podcast launch and growth plans, creator marketing systems, small-audience
-    monetization strategy, content-to-revenue mapping. Underdog creators who need
-    systems, not hype.
-
-    '
-  domains:
-  - podcast-marketing
-  - creator-growth-systems
-  - audience-retention
-  - scrappy-marketing
-  - content-monetization
-  evaluation_expertise: 'Evaluates whether podcast growth is engineered or just hoped
-    for. Is retention measured before chasing exposure? Is there a clear path from
-    listener to revenue, or just a download number? Catches leaky-bucket growth tactics,
-    download vanity, and generic content that lacks a specific audience and problem.
-
-    '
-  id: jeremy-enns
-  name: Jeremy Enns
-  not_for: 'Enterprise content strategy, paid media campaigns, visual brand design,
-    large-team operations, entertainment podcasts prioritizing art over business.
-
-    '
-  prompt: advisors/prompts/jeremy-enns.md
-  summary: Founder of Podcast Marketing Academy
 - best_for: 'Leadership integrity diagnostics, team trust breakdowns, executive coaching
     situations, founder self-awareness, candor and agreements issues, conscious leadership
     development.
@@ -697,33 +545,6 @@ advisors:
     '
   prompt: advisors/prompts/paul-graham.md
   summary: Co-founder of YC, essayist, architect of the pre-PMF startup canon
-- best_for: 'Social media content systems, content batching workflows, Instagram and
-    TikTok growth, creator burnout prevention, organic audience building.
-
-    '
-  domains:
-  - social-media-systems
-  - content-batching
-  - organic-growth
-  - creator-operations
-  - platform-strategy
-  evaluation_expertise: 'Evaluates whether social media efforts are systematic or
-    chaotic. Can you take a week off and still have content posting? Is content being
-    created reactively or batched strategically? Are you spread across five platforms
-    shallowly or deep on one where your customer actually scrolls? Catches hustle-culture
-    content habits disguised as strategy, posting for productivity feelings rather
-    than growth, and missing the system that lets content run without the creator
-    present.
-
-    '
-  id: rachel-pedersen
-  name: Rachel Pedersen
-  not_for: 'Paid social strategy, SEO, brand positioning, long-form content strategy,
-    YouTube or LinkedIn depth, technical implementation.
-
-    '
-  prompt: advisors/prompts/rachel-pedersen.md
-  summary: The Queen of Social Media
 - best_for: 'Leadership transitions, management development plans, performance diagnosis
     for leaders stuck at the wrong level, org scaling decisions about when to add
     management layers.
@@ -994,32 +815,6 @@ advisors:
     '
   prompt: advisors/prompts/steve-krug.md
   summary: Usability expert, author of Don't Make Me Think
-- best_for: 'Comprehensive Instagram presence across all four content formats, bio-promise
-    alignment audits, profile optimization, engagement system design for service-based
-    entrepreneurs.
-
-    '
-  domains:
-  - instagram-strategy
-  - social-media
-  - engagement
-  - content-systems
-  evaluation_expertise: 'Evaluates whether Instagram presence is intentional or random.
-    Is the bio-promise aligned with the content being posted? Are all four neighborhoods
-    (Feed, Stories, Reels, Live) being used? Are conversations converting to business
-    relationships through DMs? Catches random posting without strategy, hiding behind
-    a logo instead of showing up personally, and broadcasting content without creating
-    conversations.
-
-    '
-  id: sue-b-zimmerman
-  name: Sue B. Zimmerman
-  not_for: 'Technical architecture, product design, pricing strategy, non-Instagram
-    platforms, paid advertising strategy.
-
-    '
-  prompt: advisors/prompts/sue-b-zimmerman.md
-  summary: '#TheInstagramExpert'
 - best_for: 'Technical designs that must integrate with existing code. Architecture
     decisions. Designs touching multiple modules.
 
@@ -1384,7 +1179,7 @@ advisors:
     Dunford); revenue architecture, recurring-revenue funnel design, or enterprise
     sales motion (redirect to Jacco van der Kooij); late-stage B2B deal mechanics
     and indecision diagnosis (redirect to Matt Dixon / JOLT); visual design, brand
-    aesthetics, or design-system work (redirect to Steve Jobs / Jenna Kutcher); code
+    aesthetics, or design-system work (redirect to Steve Jobs); code
     architecture, infrastructure, or engineering trade-offs (redirect to The Architect);
     founder psychology, leadership state, or executive coaching (redirect to Diana
     Chapman / Jim Dethmer); product-market-fit discovery on a pre-PMF product (behavioral
@@ -1456,40 +1251,6 @@ advisors:
   prompt: advisors/prompts/claire-hughes-johnson.md
   summary: Former COO of Stripe and author of Scaling People; management infrastructure
     and operating review design
-- best_for: 'Nonprofit board dysfunction, founder syndrome and founder transition,
-    executive director succession and hiring, board chair / ED relationship repair,
-    nonprofit crisis management, fundraising culture. Especially small nonprofits with
-    thin reserves and volunteer-built boards.
-
-    '
-  domains:
-  - nonprofit-leadership
-  - board-governance
-  - founder-transition
-  - executive-succession
-  - fundraising-culture
-  evaluation_expertise: 'Evaluates whether a nonprofit''s problem has been correctly
-    located — in the structure built around the founder, or misfiled as somebody''s
-    character defect. Is the board being assessed member by member, or in an aggregate
-    that lets everyone off the hook? Does the leader have a leadership pipeline, or
-    just seats filled? Are the relationships and the money institutionalized, or living
-    in one person''s phone? Catches board-blaming that never touches recruitment,
-    emergency plans passing as succession plans, and founders being told to rest when
-    they need an exit built.
-
-    '
-  id: joan-garry
-  name: Joan Garry
-  not_for: 'For-profit strategy, product, positioning, or go-to-market; program and
-    domain expertise (housing, clinical, education, animal welfare — she advises on
-    leadership, never on the program); legal opinions and accounting technique; clinical
-    or psychological assessment; interim executive director search (thin in her body
-    of work); technical architecture.
-
-    '
-  prompt: advisors/prompts/joan-garry.md
-  summary: Former executive director of GLAAD, author of Joan Garry's Guide to Nonprofit
-    Leadership, founder of the Nonprofit Leadership Lab
 - best_for: 'Organizational structure and org design for scaling companies, executive
     hiring and role fit, repeated failure in one seat, founder-as-bottleneck, choosing
     structure by lifecycle stage, diagnosing slow execution as entropy rather than
