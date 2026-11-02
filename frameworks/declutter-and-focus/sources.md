@@ -17,6 +17,7 @@ All pages opened on 2026-11-01. Research file: `docs/advisors/new_advisors/v_col
 - Phase 6, On a Phone: Mike Cisneros, you can take it with you (recap of a mobile challenge created by Andy Cotgreave). https://www.storytellingwithdata.com/blog/2019/8/20/you-can-take-it-with-you
 - Phase 7, The Changes, In Order: Added: the ordered list of changes is the deliverable the user asked for; it collects the decisions from Phases 2 to 6 so someone can make them in the chart tool.
 - Added: Phase 1's "pick one tile" branch for dashboards. Amy Esselman's from dashboard to story supports pulling one story out of a dashboard (https://www.storytellingwithdata.com/blog/from-dashboard-to-story), but the one-tile rule is ours.
+- Added: in Phase 3, the default examples after Elizabeth Ricks's list (tick marks, a bold axis line, extra decimal places, a 3D effect, a shadow, a background fill). Ricks says to question the tool's defaults ([declutter!](https://www.storytellingwithdata.com/blog/2019/5/13/declutter-and-question-defaults)); these specific examples are ours.
 - Added: in Phase 4, "make the second series a darker gray" instead of a second color. It follows from Cole's "use color sparingly," but the darker-gray move is not quoted from a page.
 
 ## Lines quoted as Cole's own words

@@ -1,9 +1,12 @@
 # e2e/scenarios/use-framework/choose-an-effective-visual.yaml
 # Three paired comparisons: full-stack vs. vanilla vs. aware-but-unaided
-# Single turn. The user describes the audience, the point and the data, which
-# answers Phase 1. So the reply may confirm that and go on to name the
-# comparison (Phase 2), then stop with a question. Picking the final chart
-# type and running all the chart rules come later and are not rewarded here.
+# Single turn. The user has already answered Phases 1 and 2: who the chart is
+# for, what they need to see, and the comparison (before and after a change,
+# over time). So the reply is Phase 3: pick one chart, say what it rules out,
+# and deal with six lines on one chart. It should stop with a question rather
+# than run every later rule at once.
+# An earlier version tested only Phase 2. The aware arm scored as well as the
+# framework there, because any model asks "which comparison?" (2026-11-01).
 # The data is a personal health log: the case that prompted this advisor.
 
 description: "Framework: Choose an Effective Visual for a health-log chart"
@@ -21,33 +24,36 @@ defaultTest:
   assert:
     - type: llm-rubric
       value: |
-        Score 1-5 on STEP DISCIPLINE: The user already said who the chart is
-        for, what they need to see, where it appears, and what the data is,
-        and said they will answer step by step. Score 5 if the response
-        confirms that and then asks which comparison the chart has to show
-        (or names the likely comparison and asks the user to confirm it),
-        then STOPS with a question. Laying out a finished chart spec with
-        every rule, or answering several later steps at once without asking
-        anything, scores 1-2. No question at the end scores 1-2.
+        Score 1-5 on ONE CHART, WITH THE REASON: The user has said the
+        comparison is over time: daily ratings across 90 days, to see the
+        trend and where it changed after a diet started. Does the response
+        pick one chart type and tie the reason to that comparison (a line
+        over the days, ideally with the diet's start marked)? Does it say
+        plainly that the current pie chart is ruled out because a pie shows
+        parts of a whole, not change over time, without banning pies in
+        general? Listing several equal options without choosing scores 1-2.
+        Keeping the pie scores 1.
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on COMPARISON FIRST: Does the response treat the chart type
-        as following from the comparison (across categories, over time,
-        between two points, or part-to-whole) rather than from taste? Naming
-        that this data is over time, or asking whether the point is over time
-        or between two points (before and after the change), scores 4-5.
-        Recommending a pie chart for change over time, or picking a chart with
-        no reason tied to what the person needs to see, scores 1.
+        Score 1-5 on SIX LINES: Six symptoms on one line chart would cross
+        and tangle. Does the response handle that with a named fix: small
+        panels, one per symptom, or one line highlighted at a time with the
+        rest in gray? Score 5 only if panels come with the rule that every
+        panel uses the same y-axis range (0 to 10), so the eye compares like
+        with like. The framework runs one step at a time, so naming the
+        tangle risk and saying it gets fixed in the next step scores 4.
+        Panels with no word on the y-axis range scores 3. Not noticing the
+        risk at all scores 2. Six colored lines with a legend as the answer
+        scores 1.
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on SPAGHETTI AWARENESS: The user has six things tracked
-        daily for 90 days. Does the response notice, or ask about, the risk
-        of six crossing lines on one chart, or hint at panels or highlighting
-        one line? Mentioning it scores 4-5. Suggesting six colored lines with
-        a legend as the answer scores 1. Not mentioning it at all, while
-        staying on the current step, scores 3.
+        Score 1-5 on STEP DISCIPLINE: Does the response make the chart
+        decision for this step and then STOP with a question for the user
+        (for example which symptom matters most, or whether the doctor needs
+        the averages)? Laying out a finished spec with colors, titles,
+        labels and phone layout all at once, with no question, scores 1-2.
       weight: 1
     - type: llm-rubric
       value: |
@@ -60,7 +66,9 @@ defaultTest:
         always a reasonable option", "When opting for a line graph, you want
         the lines themselves to mean something", "Use something less familiar
         only when it reveals an insight that would otherwise be difficult to
-        see", "Nearly every graph has a perfect use case—including the pie".
+        see", "Nearly every graph has a perfect use case—including the pie",
+        "It's important in the above example that my y-axis minimum and
+        maximum are the same for each graph".
       weight: 1
 
 tests:
@@ -69,7 +77,7 @@ tests:
       arm: full-stack
     vars:
       system_context: file://../../../frameworks/choose-an-effective-visual/prompt.md
-      task_prompt: "\n\n---\n\nLet's run Choose an Effective Visual for a chart in my app. I'll answer step by step."
+      task_prompt: "\n\n---\n\nLet's run Choose an Effective Visual for a chart in my app. I'll answer step by step. Here's what I've answered so far, including the comparison."
       situation: &situation |
         The app is a personal health log. Each day the user rates six
         symptoms from 0 to 10 (headache, flushing, itching, fatigue, stomach,
@@ -80,12 +88,17 @@ tests:
         six weeks ago. I have 90 days of daily ratings. Right now the page
         shows a pie chart of the average rating for each symptom.
 
+        The comparison is over time: the daily ratings across all 90 days,
+        so I can see the trend and where it changed after the diet started.
+        Not just two averages. I want all six symptoms on the page. So which
+        chart should it be?
+
   - description: "vanilla baseline"
     metadata:
       arm: vanilla
     vars:
       system_context: ""
-      task_prompt: "Help me pick a chart for my app. I'll answer step by step."
+      task_prompt: "Help me pick a chart for my app. I'll answer step by step. Here's what I've answered so far, including the comparison."
       situation: *situation
 
   - description: "aware-but-unaided (names expert in prompt)"
@@ -93,5 +106,5 @@ tests:
       arm: aware
     vars:
       system_context: ""
-      task_prompt: "You are Cole Nussbaumer Knaflic, author of storytelling with data. Let's run Choose an Effective Visual for a chart in my app. I'll answer step by step."
+      task_prompt: "You are Cole Nussbaumer Knaflic, author of storytelling with data. Let's run Choose an Effective Visual for a chart in my app. I'll answer step by step. Here's what I've answered so far, including the comparison."
       situation: *situation

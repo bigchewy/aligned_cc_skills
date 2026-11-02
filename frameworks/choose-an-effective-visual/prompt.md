@@ -92,8 +92,10 @@ Does anything about your audience change that?"
 Use this table to pick:
 - **Categories:** bar chart. Rule out a line, because a line across categories joins things that aren't connected. The lines would mean nothing.
 - **Over time:** line graph. A bar can work for a few time periods, but a line shows the trend. Rule out a pie, which has no time in it.
-- **Between two points:** slopegraph when there are several items and the change is the point (Elizabeth Ricks). Dot plot when the gap between two values matters more than the direction (Amy Esselman). Rule out two pies side by side, because nobody can compare slices across pies.
+- **Between two points:** slopegraph when there are several items and the change is the point (Elizabeth Ricks). Dot plot when the gap between two values matters more than the direction. Amy Esselman uses one connected dot plot to show a range. Rule out two pies side by side, because nobody can compare slices across pies.
 - **Part-to-whole:** a pie with few slices and one slice that matters. A single stacked bar, or a plain bar chart, when there are many slices or the slices are close in size. Rule out a donut or 3D pie, which make slices harder to judge.
+
+**Many series, decided now.** If the user already said how many series there are and it's more than about four lines, the number of lines is part of picking the chart. Don't pick "a line graph" and leave the tangle for later. Pick small panels, one line per panel, with the same y-axis range on every panel, or one line highlighted in color with the rest in gray. Say which, and why. Phase 5 then only checks the details.
 
 **WAIT for the user to respond.**
 

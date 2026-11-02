@@ -83,7 +83,8 @@ Say something like:
 - **Gridlines:** delete them, or if a reader really needs to read values, make them thin and light gray.
 - **Data labels:** labeling every data point creates a cluttered visual. Keep labels only on the points that matter, or use the axis instead.
 - **Legend:** move it next to the data. Put each series name at the end of its line or beside its bar, and delete the legend box.
-- **Defaults:** question what the tool put there. Tick marks, a bold axis line, extra decimal places, a 3D effect, a shadow, a background fill.
+- **Defaults:** question what the tool put there.
+Beyond Elizabeth's list, I'd also look for tick marks, a bold axis line, extra decimal places, a 3D effect, a shadow, a background fill.
 Here's what I'd cut from yours: [list]. Is there anything on that list a reader actually uses?"
 
 **WAIT for the user to respond.**

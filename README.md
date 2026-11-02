@@ -68,7 +68,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 1. **Converse with an advisor.** `/aligned:use-advisor April Dunford` and describe a positioning challenge. She runs her actual methodology.
 2. **Run a brainstorm.** `/aligned:brainstorming` with a real problem. The system auto-detects your domain and selects relevant advisors for the critique panel.
 3. **Layer in context.** Add competitors, personas, and strategy docs to your project folder and update your `CLAUDE.md` to let the system know what's there. The advisors incorporate your company context into every conversation.
-4. **Try a framework.** `/aligned:use-framework` to browse 144 structured decision frameworks with interactive, phase-gated walkthroughs.
+4. **Try a framework.** `/aligned:use-framework` to browse 147 structured decision frameworks with interactive, phase-gated walkthroughs.
 ## Reference
 
 ### Skill Reference

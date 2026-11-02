@@ -2785,6 +2785,9 @@ frameworks:
   - chart-titles
   - dashboards
   - reports
+  follow_on_frameworks:
+  - choose-an-effective-visual
+  - declutter-and-focus
   helpful_documents:
   - who will look at it, and what they decide or do after looking
   - the data behind each chart, or the numbers that matter most
