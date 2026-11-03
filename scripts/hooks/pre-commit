@@ -1,8 +1,8 @@
 #!/bin/bash
 # Two jobs, neither of which ever blocks a commit:
 #
-# 1. Rebuild the org chart pages when a commit stages their inputs, and stage
-#    the rebuilt pages.
+# 1. Rebuild the org chart pages and the playbook pages when a commit stages
+#    their inputs, and stage the rebuilt pages.
 # 2. Bump the plugin's patch version whenever a commit touches shipped plugin
 #    content, so the change actually reaches the Claude Code plugin cache.
 #
@@ -17,52 +17,68 @@ set -e
 
 REPO_ROOT=${REPO_ROOT:-$(git rev-parse --show-toplevel)}
 
-# Rebuild the org chart pages. Warns and returns 0 on any problem.
+# Print the python that can run a generator, or return 1 when none can.
 #
 # Python is picked in this order: this checkout's e2e/.venv, the main
 # checkout's e2e/.venv (a git worktree has no venv of its own), then python3.
 # A candidate is used only if it has PyYAML and can parse the generator, so an
 # old system python3 is skipped instead of failing on newer syntax.
-rebuild_org_chart() {
-  local generator="$REPO_ROOT/scripts/generate-org-chart.py"
+pick_python() {
+  local generator="$1"
   local main_venv=""
   local common
   if common=$(git -C "$REPO_ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
     main_venv="${common%/*}/e2e/.venv/bin/python"
   fi
 
-  local py=""
   local candidate
   for candidate in "$REPO_ROOT/e2e/.venv/bin/python" $main_venv python3; do
     if command -v "$candidate" >/dev/null 2>&1 \
       && "$candidate" -c 'import ast, sys, yaml; ast.parse(open(sys.argv[1]).read())' "$generator" >/dev/null 2>&1; then
-      py="$candidate"
-      break
+      echo "$candidate"
+      return 0
     fi
   done
+  return 1
+}
 
-  if [ -z "$py" ]; then
-    echo "[pre-commit] no python with PyYAML that can run scripts/generate-org-chart.py; org chart NOT rebuilt"
+# Run one page generator and stage its pages. Warns and returns 0 on any problem.
+# Arguments: what the pages are called in a warning ("org chart"), the same
+# capitalized ("Org chart"), the generator's file name, the pages dir.
+rebuild_pages() {
+  local what="$1" What="$2" script="$3" pages="$4"
+  local generator="$REPO_ROOT/scripts/$script"
+  local py
+  if ! py=$(pick_python "$generator"); then
+    echo "[pre-commit] no python with PyYAML that can run scripts/$script; $what NOT rebuilt"
     return 0
   fi
 
   if ! OUT=$("$py" "$generator" 2>&1); then
-    echo "[pre-commit] org chart build failed; org chart NOT rebuilt:"
+    echo "[pre-commit] $what build failed; $what NOT rebuilt:"
     echo "$OUT"
     return 0
   fi
 
-  if ! OUT=$(git add "$REPO_ROOT/skills/org-chart/pages" 2>&1); then
-    echo "[pre-commit] org chart pages rebuilt but NOT staged:"
+  if ! OUT=$(git add "$REPO_ROOT/$pages" 2>&1); then
+    echo "[pre-commit] $what pages rebuilt but NOT staged:"
     echo "$OUT"
     return 0
   fi
-  echo "[pre-commit] Org chart pages rebuilt"
+  echo "[pre-commit] $What pages rebuilt"
   return 0
 }
 
+rebuild_org_chart() {
+  rebuild_pages "org chart" "Org chart" generate-org-chart.py skills/org-chart/pages
+}
+
+rebuild_playbook() {
+  rebuild_pages "playbook" "Playbook" generate-playbook.py skills/playbook/pages
+}
+
 # Do nothing more when this file is sourced (the tests source it to call
-# rebuild_org_chart on its own).
+# rebuild_org_chart or rebuild_playbook on its own).
 if [ "${BASH_SOURCE[0]}" != "$0" ]; then
   return 0
 fi
@@ -73,6 +89,17 @@ ORG_CHART_INPUTS=$(git diff --cached --name-only --diff-filter=ACMR \
 
 if [ -n "$ORG_CHART_INPUTS" ] && [ -f "$REPO_ROOT/scripts/generate-org-chart.py" ]; then
   rebuild_org_chart
+fi
+
+# The playbook takes its tokens from the org chart's style.css and its text
+# helpers from generate-org-chart.py, so those count as its inputs too.
+PLAYBOOK_INPUTS=$(git diff --cached --name-only --diff-filter=ACMR \
+  -- frameworks/registry.yaml advisors/registry.yaml skills/playbook/layers.yaml \
+  scripts/generate-playbook.py scripts/playbook-templates \
+  scripts/org-chart-templates/style.css scripts/generate-org-chart.py 2>/dev/null || true)
+
+if [ -n "$PLAYBOOK_INPUTS" ] && [ -f "$REPO_ROOT/scripts/generate-playbook.py" ]; then
+  rebuild_playbook
 fi
 
 # Only bump for directories that ship inside the plugin. Commits that touch

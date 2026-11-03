@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playbook</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Playbook</h1>
+    <p class="sub">Every framework by I, We and It</p>
+  </header>
+
+  <form class="filters" aria-label="Filter the map">
+{{filters}}
+  </form>
+
+  <div class="map">
+{{columns}}
+  </div>
+</div>
+<script>
+(function () {
+  var form = document.querySelector(".filters");
+  function picked(name) {
+    var input = form.querySelector('input[name="' + name + '"]:checked');
+    return input ? input.value : "";
+  }
+  function apply() {
+    var stage = picked("stage");
+    var market = picked("market");
+    var items = document.querySelectorAll(".item");
+    for (var i = 0; i < items.length; i++) {
+      var stages = items[i].getAttribute("data-stages");
+      var m = items[i].getAttribute("data-market");
+      var off = (stage && stages && stages.split(" ").indexOf(stage) < 0) || (market && m && m !== market);
+      items[i].hidden = !!off;
+    }
+    var areas = document.querySelectorAll(".area");
+    for (var j = 0; j < areas.length; j++) {
+      areas[j].hidden = !areas[j].querySelector(".item:not([hidden])");
+    }
+  }
+  form.addEventListener("change", apply);
+  apply();
+})();
+</script>
+</body>
+</html>

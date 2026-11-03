@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Focus Through Saying No</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap page">
+  <header>
+    <nav class="crumbs" aria-label="Back to the map"><a href="../index.html">← Playbook</a></nav>
+    <h1>Focus Through Saying No</h1>
+    <div class="meta"><span>I · Focus</span><span class="by">Steve Jobs</span></div>
+    <p class="does">A ruthless focus exercise that forces a not-doing list by cutting everything that isn&#x27;t the single top priority.</p>
+    <div class="cmd"><code>/aligned:use-framework focus-through-saying-no</code><button type="button" class="copy">Copy</button></div>
+  </header>
+  <section>
+    <h2>Helps to have</h2>
+    <ul class="docs">
+      <li><span class="doc">business goals</span><span class="from">from <a href="proximate-objectives.html">Proximate Objectives</a></span></li>
+    </ul>
+  </section>
+</div>
+<script>
+// On a narrow screen the graph scrolls sideways; start at the right, where this framework is.
+var graphBox = document.querySelector(".graph-box");
+if (graphBox) graphBox.scrollLeft = graphBox.scrollWidth;
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

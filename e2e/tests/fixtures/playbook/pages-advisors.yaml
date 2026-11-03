@@ -1,0 +1,6 @@
+# Advisors for pages-registry.yaml.
+advisors:
+- id: adv-a
+  name: Advisor A
+- id: adv-b
+  name: Advisor B

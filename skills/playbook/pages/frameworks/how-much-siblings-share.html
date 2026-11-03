@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Much the Siblings Share</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap page">
+  <header>
+    <nav class="crumbs" aria-label="Back to the map"><a href="../index.html">← Playbook</a></nav>
+    <h1>How Much the Siblings Share</h1>
+    <div class="meta"><span>It · Brand</span><span class="by">Michael Bierut</span></div>
+    <p class="does">Deciding how a new product looks next to the product it came from, by picking one of three types of brand family and then listing exactly which of name, mark, type, and color the sibling shares.</p>
+    <div class="cmd"><code>/aligned:use-framework how-much-siblings-share</code><button type="button" class="copy">Copy</button></div>
+    <div class="chips"><span class="chip stage">Nail it</span><span class="chip stage">Scale it</span><span class="chip stage">Milk it</span></div>
+  </header>
+  <section>
+    <h2>Must have</h2>
+    <ul class="docs">
+      <li><span class="doc">a short description of each product, who buys it, and who uses it</span><span class="from">from outside</span></li>
+    </ul>
+  </section>
+  <section>
+    <h2>Helps to have</h2>
+    <ul class="docs">
+      <li><span class="doc">each product&#x27;s name, domain, and any existing logo, colors, or typefaces</span><span class="from">from outside</span></li>
+      <li><span class="doc">the design rules the parent already follows</span><span class="from">from <a href="design-principles.html">Design Principles</a></span></li>
+      <li><span class="doc">places where the two products meet (a shared checkout, account, footer, email, or printed piece)</span><span class="from">from outside</span></li>
+      <li><span class="doc">how many people know the parent&#x27;s name today</span><span class="from">from outside</span></li>
+    </ul>
+  </section>
+  <section class="before">
+    <h2>What comes before it</h2>
+    <div class="graph-box"><svg class="graph" width="396" height="66" viewBox="0 0 396 66" role="img" aria-label="What comes before How Much the Siblings Share"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs><path class="edge helpful" d="M184,33 C209,33 209,33 234,33" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/><rect class="node self" x="236" y="10" width="150" height="46" rx="5" fill="none" stroke="currentColor"/><text text-anchor="middle"><tspan x="311" y="30">How Much the</tspan><tspan x="311" y="46">Siblings Share</tspan></text><a href="design-principles.html"><rect class="node" x="34" y="10" width="150" height="46" rx="5" fill="none" stroke="currentColor"/><text text-anchor="middle"><tspan x="109" y="38">Design Principles</tspan></text></a></svg></div>
+    <ul class="key"><li><svg width="34" height="8" aria-hidden="true"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="1.5"/></svg>Must have</li><li><svg width="34" height="8" aria-hidden="true"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/></svg>Helps to have</li></ul>
+  </section>
+  <p class="closing">Put the result into your Top Goal or your next check-in.</p>
+</div>
+<script>
+// On a narrow screen the graph scrolls sideways; start at the right, where this framework is.
+var graphBox = document.querySelector(".graph-box");
+if (graphBox) graphBox.scrollLeft = graphBox.scrollWidth;
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

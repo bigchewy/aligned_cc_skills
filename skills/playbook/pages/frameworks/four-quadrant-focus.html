@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four-Quadrant Focus</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap page">
+  <header>
+    <nav class="crumbs" aria-label="Back to the map"><a href="../index.html">← Playbook</a></nav>
+    <h1>Four-Quadrant Focus</h1>
+    <div class="meta"><span>It · Strategy</span><span class="by">Steve Jobs</span></div>
+    <p class="does">Clarifying product portfolio using a 2x2 grid of your key dimensions.</p>
+    <div class="cmd"><code>/aligned:use-framework four-quadrant-focus</code><button type="button" class="copy">Copy</button></div>
+    <div class="chips"><span class="chip stage">Nail it</span><span class="chip stage">Scale it</span><span class="chip stage">Milk it</span></div>
+  </header>
+  <section>
+    <h2>Helps to have</h2>
+    <ul class="docs">
+      <li><span class="doc">product description</span><span class="from">from outside</span></li>
+    </ul>
+  </section>
+  <p class="closing">Put the result into your Top Goal or your next check-in.</p>
+</div>
+<script>
+// On a narrow screen the graph scrolls sideways; start at the right, where this framework is.
+var graphBox = document.querySelector(".graph-box");
+if (graphBox) graphBox.scrollLeft = graphBox.scrollWidth;
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

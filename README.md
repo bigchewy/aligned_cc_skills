@@ -94,6 +94,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | Skill | Invocation | Description |
 |-------|------------|-------------|
 | org-chart | `/aligned:org-chart` | Open the B2B and B2C org charts: every seat, its jobs, and the command to run for each |
+| playbook | `/aligned:playbook` | Open the playbook map: every framework by I, We and It, where to start in each area, and what comes before each framework |
 | use-advisor | `/aligned:use-advisor` | Adopt an advisor persona for the conversation |
 | use-framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
 | brainstorming | `/aligned:brainstorming` | Explore ideas and strategies across three modes: authoring, research, roadmap |

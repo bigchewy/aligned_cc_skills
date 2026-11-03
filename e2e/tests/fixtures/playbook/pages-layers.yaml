@@ -1,0 +1,38 @@
+# Places pages-registry.yaml in I, We and It for the page tests in test_playbook.py.
+layers:
+  - id: i
+    name: I
+    does: Work on yourself.
+    areas:
+      - id: self
+        name: Self
+        note: Alone.
+        start: solo
+        frameworks: [solo, twice]
+  - id: we
+    name: We
+    does: Work on the team.
+    areas:
+      - id: team
+        name: Team
+        note: Together.
+        start: we-writer
+        frameworks: [we-writer, we-reader, twice]
+  - id: it
+    name: It
+    does: Work on the company.
+    areas:
+      - id: ops
+        name: Ops
+        note: The company.
+        start: it-reader
+        frameworks: [it-reader, it-mid, it-fed]
+      - id: loops
+        name: Loops
+        note: Round and round.
+        start: help-1
+        frameworks: [help-1, help-2]
+
+holding:
+  - id: held
+    why: Not on the map.

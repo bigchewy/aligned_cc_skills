@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breadboard to Pages</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap page">
+  <header>
+    <nav class="crumbs" aria-label="Back to the map"><a href="../index.html">← Playbook</a></nav>
+    <h1>Breadboard to Pages</h1>
+    <div class="meta"><span>It · Product</span><span class="by">Brad Frost</span></div>
+    <p class="does">Turning a breadboard of places and actions into exact static screens built only from the project&#x27;s design system, testing each one with real content and the cases that break it, at phone and desktop widths, and walking the screens against the story map.</p>
+    <div class="cmd"><code>/aligned:use-framework breadboard-to-pages</code><button type="button" class="copy">Copy</button></div>
+  </header>
+  <section>
+    <h2>Must have</h2>
+    <ul class="docs">
+      <li><span class="doc">a breadboard of the slice to build: each place, what the user can do there, and where each action leads</span><span class="from">from <a href="user-story-map.html">User Story Map</a></span></li>
+      <li><span class="doc">the project&#x27;s design-principles.md, so every screen uses the project&#x27;s tokens</span><span class="from">from <a href="design-principles.html">Design Principles</a></span></li>
+    </ul>
+  </section>
+  <section>
+    <h2>Helps to have</h2>
+    <ul class="docs">
+      <li><span class="doc">the story map the breadboard came from (docs/story-maps/{slug}.md), so the screens can be walked against it</span><span class="from">from <a href="user-story-map.html">User Story Map</a></span></li>
+      <li><span class="doc">real content: actual names, emails, labels, and the longest values the app allows</span><span class="from">from outside</span></li>
+    </ul>
+  </section>
+  <section class="before">
+    <h2>What comes before it</h2>
+    <div class="graph-box"><svg class="graph" width="396" height="126" viewBox="0 0 396 126" role="img" aria-label="What comes before Breadboard to Pages"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs><path class="edge required" d="M184,33 C209,33 209,63 234,63" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrow)"/><path class="edge required" d="M184,93 C209,93 209,63 234,63" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrow)"/><path class="edge helpful" d="M34,99 C8,99 8,39 32,39" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/><rect class="node self" x="236" y="40" width="150" height="46" rx="5" fill="none" stroke="currentColor"/><text text-anchor="middle"><tspan x="311" y="68">Breadboard to Pages</tspan></text><a href="user-story-map.html"><rect class="node" x="34" y="10" width="150" height="46" rx="5" fill="none" stroke="currentColor"/><text text-anchor="middle"><tspan x="109" y="38">User Story Map</tspan></text></a><a href="design-principles.html"><rect class="node" x="34" y="70" width="150" height="46" rx="5" fill="none" stroke="currentColor"/><text text-anchor="middle"><tspan x="109" y="98">Design Principles</tspan></text></a></svg></div>
+    <ul class="key"><li><svg width="34" height="8" aria-hidden="true"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="1.5"/></svg>Must have</li><li><svg width="34" height="8" aria-hidden="true"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/></svg>Helps to have</li></ul>
+  </section>
+  <p class="closing">Put the result into your Top Goal or your next check-in.</p>
+</div>
+<script>
+// On a narrow screen the graph scrolls sideways; start at the right, where this framework is.
+var graphBox = document.querySelector(".graph-box");
+if (graphBox) graphBox.scrollLeft = graphBox.scrollWidth;
+document.addEventListener("click", function (event) {
+  var button = event.target.closest("button.copy");
+  if (!button) return;
+  var code = button.parentNode.querySelector("code");
+  var text = code.textContent;
+  function show(label) {
+    button.textContent = label;
+    setTimeout(function () { button.textContent = "Copy"; }, 1500);
+  }
+  function selectText() {
+    var range = document.createRange();
+    range.selectNodeContents(code);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    show("Selected");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { show("Copied"); }, selectText);
+  } else {
+    selectText();
+  }
+});
+</script>
+</body>
+</html>

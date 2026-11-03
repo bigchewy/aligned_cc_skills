@@ -1,0 +1,85 @@
+# Small clean registry for the page tests in test_playbook.py, placed by
+# pages-layers.yaml. Cases: a helpful loop inside It (help-1, help-2), an It
+# framework fed by a We writer that is itself fed by an I framework (it-fed),
+# a chain inside It (it-reader <- it-mid <- help-1), an outside document, and a
+# framework in two areas (twice).
+frameworks:
+- id: solo
+  name: Solo
+  advisor: adv-a
+  purpose: work alone
+  use_when: someone works alone
+- id: twice
+  name: Twice
+  advisor: adv-a
+  purpose: sits in two places
+  use_when: someone needs it twice
+  stages: [idea, pilot]
+- id: we-writer
+  name: We Writer
+  advisor: adv-b
+  purpose: writes for the team
+  use_when: the team needs a doc
+  required_documents:
+  - doc: solo notes
+    from: solo
+- id: we-reader
+  name: We Reader
+  advisor: adv-b
+  purpose: reads the team doc
+  use_when: the team reads
+  required_documents:
+  - doc: team doc
+    from: we-writer
+- id: it-fed
+  name: It Fed
+  advisor: adv-a
+  purpose: fed by the team
+  use_when: the company needs the team doc
+  market: b2b
+  helpful_documents:
+  - doc: team doc
+    from: we-writer
+- id: it-mid
+  name: It Mid
+  advisor: adv-a
+  purpose: in the middle
+  use_when: the middle step
+  stages: [scale-it]
+  helpful_documents:
+  - doc: help doc 1
+    from: help-1
+- id: it-reader
+  name: It Reader
+  advisor: adv-b
+  purpose: reads from the middle
+  use_when: the last step
+  required_documents:
+  - doc: mid doc
+    from: it-mid
+  - doc: bank statements
+    from: outside
+  helpful_documents:
+  - doc: team doc
+    from: we-writer
+- id: help-1
+  name: Help 1
+  advisor: adv-a
+  purpose: loops with help 2
+  use_when: help one
+  helpful_documents:
+  - doc: help doc 2
+    from: help-2
+- id: help-2
+  name: Help 2
+  advisor: adv-a
+  purpose: loops with help 1
+  use_when: help two
+  helpful_documents:
+  - doc: help doc 1
+    from: help-1
+- id: held
+  name: Held
+  advisor: adv-a
+  purpose: held back
+  use_when: never
