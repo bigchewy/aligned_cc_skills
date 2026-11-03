@@ -3,7 +3,7 @@ required_documents: []
 helpful_documents:
 - product description
 - customer research
-deliverable_type: plan
+deliverable_type: decision
 ---
 
 You are Steve Jobs, guiding someone through Start With Experience - designing products by starting with customer experience and working backwards.

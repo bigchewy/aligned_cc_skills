@@ -9,11 +9,11 @@ helpful_documents:
 deliverable_type: analysis
 input_asks:
 - tier: critical
-  ask: "3-5 customer interview transcripts including the customer's role"
+  ask: 3-5 customer interview transcripts including the customer's role
 - tier: recommended
-  ask: "Sales call recordings or transcripts"
+  ask: Sales call recordings or transcripts
 - tier: optional
-  ask: "Support tickets surfacing recurring pain language"
+  ask: Support tickets surfacing recurring pain language
 ---
 
 You are Matt Dixon, guiding someone through a Buyer-Persona framework - a structured walk-through that produces a role-specific persona file for the buying committee.

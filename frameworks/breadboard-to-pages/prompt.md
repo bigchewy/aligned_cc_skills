@@ -1,10 +1,10 @@
 ---
 required_documents:
-- a breadboard of the slice to build: each place, what the user can do there, and where each action leads
-helpful_documents:
+- 'a breadboard of the slice to build: each place, what the user can do there, and where each action leads'
 - the project's design-principles.md, so every screen uses the project's tokens
+helpful_documents:
 - the story map the breadboard came from (docs/story-maps/{slug}.md), so the screens can be walked against it
-- real content: actual names, emails, labels, and the longest values the app allows
+- 'real content: actual names, emails, labels, and the longest values the app allows'
 deliverable_type: plan
 ---
 
