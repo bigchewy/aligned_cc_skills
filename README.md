@@ -3,7 +3,7 @@
 A virtual board of advisors for running a company, inside Claude Code and Cowork. 64 expert personas and 116 structured frameworks for strategy, positioning, marketing, sales, product, leadership, and operations, picked for you by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.33.94-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.33.95-green.svg)](.claude-plugin/plugin.json)
 
 ```
 /plugin marketplace add bigchewy/aligned_cc_skills
