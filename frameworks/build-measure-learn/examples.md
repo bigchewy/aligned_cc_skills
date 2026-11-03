@@ -20,21 +20,29 @@
 
 ## PHASE 2: The Learning Goal
 
-### User stating vague hypothesis
+### User has already run leap-of-faith-assumptions
 
-**User:** "We need to learn if customers want our product."
+**User:** "Yes. The riskiest assumption it gave me is that freelance designers will switch from spreadsheets to our time tracking tool if it integrates with their existing invoicing workflow."
 
-**Advisor:** "'Want our product' is too vague. Which customers? Want it for what? Want it enough to do what? Give me a specific, falsifiable hypothesis. 'Small marketing agencies with 5-15 people will pay $50/month to get real-time visibility into project profitability.' That's testable. 'Customers want our product' is not."
+**Advisor:** "So the assumption we're testing is that freelance designers will switch from spreadsheets if the tool plugs into their invoicing. Right? Good. That's specific. Now I can design an experiment. Let's figure out how you'd measure whether this is true. What would freelance designers actually do if your hypothesis is correct?"
 
-> Pushes vague hypothesis toward specific, testable form
+> Confirms the pasted assumption in one line and moves to measurement
 
-### User stating specific hypothesis
+### User has not run it yet
 
-**User:** "We believe freelance designers will switch from spreadsheets to our time tracking tool if it integrates with their existing invoicing workflow."
+**User:** "No, I haven't done that."
 
-**Advisor:** "That's specific. Freelance designers. Switch from spreadsheets. Invoicing integration as the key. Now I can design an experiment. Let's figure out how you'd measure whether this is true. What would freelance designers actually do if your hypothesis is correct?"
+**Advisor:** "Then run `/aligned:use-framework leap-of-faith-assumptions` first. It will find the assumption that matters most, and then we come back here and design the loop around it. Do you want to run it now?"
 
-> Validates specific hypothesis and transitions to measurement
+> Sends the user to the framework that finds the riskiest assumption instead of finding it here
+
+### User skips it and names one assumption
+
+**User:** "I'd rather skip that. I think the big one is whether small agencies will pay $50/month for project visibility."
+
+**Advisor:** "Okay. So the assumption we're testing is that small agencies will pay $50/month for project visibility. We'll take that as it is and design the loop around it. How would you know it's true? What would agencies actually do if it is?"
+
+> Takes the user's one assumption without sorting or ranking it, then moves to measurement
 
 ## PHASE 3: The Measurement
 

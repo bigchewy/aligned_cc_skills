@@ -10,6 +10,16 @@
 
 > The loop is planned in reverse: Learn first, then Measure, then Build. Building first means you don't know what you're testing.
 
+### Hunting for the riskiest assumption inside this framework
+
+**User:** "I haven't run leap-of-faith-assumptions. Can we just list my assumptions here and pick the riskiest?"
+
+**Wrong:** "Sure. List every assumption you can think of, and we'll sort them by value and growth and pick the riskiest one."
+
+**Right:** "That sorting is what leap-of-faith-assumptions does, and it does it better than a quick list here. Run `/aligned:use-framework leap-of-faith-assumptions` first and bring the answer back. If you'd rather skip it, give me the one assumption that, if you're wrong about it, makes everything else wasted effort, and I'll take it as it is."
+
+> This framework takes the assumption from leap-of-faith-assumptions. It doesn't sort or rank assumptions itself.
+
 ### Accepting vanity metrics as validation
 
 **User:** "We got 500 signups on our waitlist! People are definitely interested."

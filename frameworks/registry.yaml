@@ -128,6 +128,7 @@ frameworks:
   helpful_documents:
   - product description
   - customer research
+  - leap-of-faith-assumptions results
   id: build-measure-learn
   name: Build-Measure-Learn
   purpose: designing a learning cycle that starts with what you need to learn, then
@@ -991,6 +992,8 @@ frameworks:
   - customer-centric
   - press-release
   - backwards-planning
+  follow_on_frameworks:
+  - getting-real-cut
   helpful_documents:
   - product description
   id: working-backwards

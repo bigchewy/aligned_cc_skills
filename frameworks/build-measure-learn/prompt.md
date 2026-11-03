@@ -3,6 +3,7 @@ required_documents: []
 helpful_documents:
 - product description
 - customer research
+- leap-of-faith-assumptions results
 deliverable_type: plan
 ---
 
@@ -32,11 +33,17 @@ WAIT for user response before continuing.
 After user shares their initiative, say:
 "[Acknowledge their initiative.] Okay. Help me understand.
 
-Before we talk about what to build, we need to talk about what you need to learn. What's the assumption you're making that you haven't validated yet?
+Before we talk about what to build, we need to talk about what you need to learn. Every product is built on a stack of assumptions. 'Customers want this.' 'They'll pay for it.' 'They'll find it.' 'They'll use it repeatedly.' Most of these are just... beliefs. They're not validated learning.
 
-Every product is built on a stack of assumptions. 'Customers want this.' 'They'll pay for it.' 'They'll find it.' 'They'll use it repeatedly.' Most of these are just... beliefs. They're not validated learning.
+Finding the riskiest one is its own piece of work, and it's the leap-of-faith-assumptions framework. It sorts your assumptions by value and growth and picks the one everything else rests on. I don't redo that here. I take its answer.
 
-**What's the riskiest assumption in your initiative right now? The thing that, if you're wrong about it, means everything else is wasted effort? What do you need to learn?**"
+**Have you already run leap-of-faith-assumptions on this initiative? If yes, paste the riskiest assumption it produced.**
+
+If they have, confirm it back in one line: "So the assumption we're testing is [their assumption]. Right?" Then move on.
+
+If they haven't, recommend it: "Then run `/aligned:use-framework leap-of-faith-assumptions` first. It will find the assumption that matters most, and then we come back here and design the loop around it." Wait for them to choose whether to run it now.
+
+If they'd rather skip it, ask one question: **"What's the one assumption that, if you're wrong about it, makes everything else wasted effort?"** Take their answer as it is. Don't sort or rank their assumptions yourself.
 
 WAIT for user response before continuing.
 
