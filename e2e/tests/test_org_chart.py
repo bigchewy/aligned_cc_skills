@@ -948,6 +948,51 @@ def test_hook_tolerates_staging_failure(tmp_path):
     assert "NOT staged" in out
 
 
+def _git(cwd, *args):
+    subprocess.run(["git", *args], cwd=cwd, check=True, capture_output=True,
+                   env={"PATH": "/usr/bin:/bin", "HOME": str(cwd),
+                        "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+                        "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"})
+
+
+def test_hook_uses_main_checkout_venv_from_a_worktree(tmp_path):
+    # A worktree has no e2e/.venv of its own. The hook must find the main
+    # checkout's venv instead of falling back to system python3.
+    main = _fake_repo(tmp_path, "pass\n")
+    (main / "skills" / "org-chart" / "pages").mkdir(parents=True)
+    (main / "skills" / "org-chart" / "pages" / "index.html").write_text("x")
+    _git(main, "init", "-q")
+    # Commit everything but the venv: like the real repo, e2e/.venv is untracked.
+    _git(main, "add", "scripts", "skills")
+    _git(main, "commit", "-q", "-m", "init")
+    wt = tmp_path / "wt"
+    _git(main, "worktree", "add", "-q", str(wt))
+    (wt / "scripts" / "generate-org-chart.py").write_text("pass\n")
+    empty_bin = tmp_path / "bin"
+    empty_bin.mkdir()
+    (empty_bin / "git").symlink_to("/usr/bin/git")
+    result = subprocess.run(
+        ["/bin/bash", "-c", f'source "{HOOK}"; rebuild_org_chart'],
+        capture_output=True, text=True, cwd=wt,
+        env={"PATH": str(empty_bin), "REPO_ROOT": str(wt), "HOME": str(tmp_path)},
+    )
+    out = result.stdout + result.stderr
+    assert result.returncode == 0, out
+    assert "Org chart pages rebuilt" in out
+
+
+def test_hook_skips_python_that_cannot_parse_the_generator(tmp_path):
+    # An interpreter that has PyYAML but is too old for the generator's syntax
+    # must be skipped with a warning, not run into a SyntaxError.
+    fake_root = _fake_repo(tmp_path, "def broken(:\n")
+    result = _source_hook(fake_root, tmp_path)
+    out = result.stdout + result.stderr
+    assert result.returncode == 0, out
+    assert "after=0" in result.stdout
+    assert "SyntaxError" not in out
+    assert "org chart NOT rebuilt" in out
+
+
 def test_add_skills_place_new_entries():
     adv = _section((ROOT / "skills/add-advisor/SKILL.md").read_text(), "### 8.")
     fw = _section((ROOT / "skills/add-framework/SKILL.md").read_text(), "### 7.")
