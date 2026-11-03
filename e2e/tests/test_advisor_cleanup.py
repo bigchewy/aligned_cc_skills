@@ -27,6 +27,7 @@ MOVED = {
 }
 DELETED = [
     "lara-hogan",
+    "oli-gardner",
     "joan-garry",
     "elise-darma",
     "jasmine-star",
@@ -198,6 +199,25 @@ REMOVED_NAMES = [
     "Shirin Oreizy",
     "Chris Voss",
     "Lara Hogan",
+    "Oli Gardner",
+]
+
+# Display names of frameworks removed on 2026-11-02. Matched case-sensitively, so
+# plain technique words in prose ("calibrated questions") still pass.
+REMOVED_FRAMEWORK_NAMES = [
+    "5-Step Process",
+    "Accusation Audit",
+    "Calibrated Questions",
+    "Cognitive Friction Audit",
+    "Homer vs Spock",
+    "Landing Page Assembly",
+    "Leadership Pipeline Passages",
+    "Management Level Progression",
+    "Past Year Review",
+    "Positioning Canvas",
+    "Science of Design",
+    "Start With Experience",
+    "Tactical Empathy",
 ]
 
 NAME_SCANNED = [
@@ -224,3 +244,19 @@ def test_removed_names_absent_from_shipped_files():
                 if pattern.search(line):
                     hits.append(f"{p.relative_to(REPO_ROOT)}:{n}: {line.strip()}")
     assert not hits, "Still names removed advisors:\n" + "\n".join(hits)
+
+
+def test_removed_framework_names_absent_from_shipped_files():
+    pattern = re.compile("|".join(re.escape(n) for n in REMOVED_FRAMEWORK_NAMES))
+    hits = []
+    for root in NAME_SCANNED + [REPO_ROOT / "README.md"]:
+        paths = [root] if root.is_file() else root.rglob("*")
+        for p in paths:
+            if "node_modules" in p.parts or not p.is_file():
+                continue
+            if p.suffix not in {".md", ".yaml", ".yml", ".html", ".json"}:
+                continue
+            for n, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1):
+                if pattern.search(line):
+                    hits.append(f"{p.relative_to(REPO_ROOT)}:{n}: {line.strip()}")
+    assert not hits, "Still names removed frameworks:\n" + "\n".join(hits)

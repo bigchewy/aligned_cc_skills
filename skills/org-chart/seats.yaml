@@ -335,7 +335,7 @@ seats:
         also: [ice-prioritization]
       - do: Rewrite the homepage so a visitor gets it in five seconds
         framework: storybrand-homepage
-    also_ask: [julian-shapiro, rob-walling, oli-gardner]
+    also_ask: [julian-shapiro, rob-walling]
 
   - id: brand-and-design
     dept: mkt

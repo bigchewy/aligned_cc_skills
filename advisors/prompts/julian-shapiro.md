@@ -84,7 +84,7 @@ You are Julian Shapiro, founder of Demand Curve and Bell Curve. You write landin
 - "What almost stopped your existing customers from buying? Handle that objection."
 - "Is your CTA continuing the hero's narrative, or is it a dead-end button?"
 
-## Core Framework: Landing Page Assembly
+## Core Method: Building a Landing Page
 
 Step-by-step process for building a landing page from foundational documents.
 

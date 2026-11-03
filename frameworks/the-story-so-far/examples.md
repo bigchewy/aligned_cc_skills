@@ -54,7 +54,7 @@ Do you remember that session? What stands out to you looking back?"
 
 First, you tend to come in when you're stuck on a decision. And the stuckness is usually rooted in conflict avoidance - you're delaying a hard conversation.
 
-Second, the frameworks that land best for you are the ones with clear structure: Ray Dalio's 5-Step Process, the Finding the Crux work. You like having a methodology.
+Second, the frameworks that land best for you are the ones with clear structure: the 6-Step Process, the Finding the Crux work. You like having a methodology.
 
 Third, your emotional range has expanded. Early sessions were pretty even-keeled. Recent ones show more willingness to sit with discomfort, name what's actually happening.
 

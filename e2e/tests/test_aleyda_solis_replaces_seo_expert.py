@@ -85,7 +85,8 @@ def test_nothing_shipped_names_seo_expert():
 
 def test_content_and_landing_page_advisors_hand_seo_to_aleyda():
     reg = _registry()
-    for slug in ("joe-pulizzi", "joanna-wiebe", "oli-gardner"):
+    # Oli Gardner was removed on 2026-11-02, so he is no longer checked here.
+    for slug in ("joe-pulizzi", "joanna-wiebe"):
         assert "Aleyda Solis" in reg[slug].get("not_for", ""), f"{slug} not_for should name Aleyda Solis"
 
 

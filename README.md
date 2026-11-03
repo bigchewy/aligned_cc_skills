@@ -1,6 +1,6 @@
 # Aligned
 
-A virtual board of advisors for running a company, inside Claude Code and Cowork. 60 expert personas and 102 structured frameworks for strategy, positioning, marketing, sales, product, leadership, and operations, picked for you by context.
+A virtual board of advisors for running a company, inside Claude Code and Cowork. 59 expert personas and 102 structured frameworks for strategy, positioning, marketing, sales, product, leadership, and operations, picked for you by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.33.98-green.svg)](.claude-plugin/plugin.json)
@@ -118,7 +118,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 
 ### Advisors
 
-60 advisor prompts ship in `advisors/prompts/`, registered in `advisors/registry.yaml` with each advisor's domains, best-for and not-for lines, and the calibration data the brainstorming critique panel uses to pick critics. Browse them in `docs/advisor-catalog.html`, or run `/aligned:use-advisor` with no name to list them.
+59 advisor prompts ship in `advisors/prompts/`, registered in `advisors/registry.yaml` with each advisor's domains, best-for and not-for lines, and the calibration data the brainstorming critique panel uses to pick critics. Browse them in `docs/advisor-catalog.html`, or run `/aligned:use-advisor` with no name to list them.
 
 Advisors built for a single client now live in that client's repo as project-local advisors (see below), so the plugin carries only advisors useful to any company.
 
@@ -171,7 +171,7 @@ Semver, pre-1.0. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.js
 - New `/aligned:org-chart` skill with B2B and B2C org chart pages: every seat, its coverage, its jobs, and the command for each.
 - Narrowed to business and advisory work. Advisors built for single clients moved to those clients' repos as project-local advisors; nonprofit and solo-creator advisors were removed. Coach Eric is now a CEO coach.
 - New advisors since 0.33.1 include Adham Dannaway, Annie Duke, Jason Fried, Aleyda Solis, Michael Bolton, Adam Shostack, Michael Bierut, and Cole Nussbaumer Knaflic.
-- **60 advisors, 102 frameworks, 14 skills, 3 agents.**
+- **59 advisors, 102 frameworks, 14 skills, 3 agents.**
 
 #### 0.33.1: Green Suite (2026-08-14)
 - Test suite is fully green: fixed the `advisors/prompts/**` eval-surface

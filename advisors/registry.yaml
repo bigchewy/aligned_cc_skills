@@ -418,29 +418,6 @@ advisors:
     '
   prompt: advisors/prompts/matt-chapman.md
   summary: Executive coach, founder of Braveheart Incorporated
-- best_for: 'Landing pages, conversion flows, signup pages, campaign-specific pages.
-
-    '
-  domains:
-  - landing-page-conversion
-  - attention-ratio
-  - conversion-centered-design
-  - page-focus
-  evaluation_expertise: 'Evaluates through Conversion-Centered Design lens. Attention
-    ratio — ratio of interactive elements to campaign goals (ideal 1:1). Page focus
-    — does every element serve a single conversion goal? Structural hierarchy — directional
-    cues, encapsulation, and visual flow to CTA. Trust signals, friction reduction,
-    benefit clarity, message match.
-
-    '
-  id: oli-gardner
-  name: Oli Gardner
-  not_for: 'Brand positioning accuracy, SEO keyword strategy (redirect to Aleyda
-    Solis), copywriting voice, long-form content.
-
-    '
-  prompt: advisors/prompts/oli-gardner.md
-  summary: Co-founder of Unbounce
 - best_for: 'Pricing strategy, subscription packaging, paywall design, churn analysis,
     monetization decisions, free-to-paid conversion.
 

@@ -70,7 +70,7 @@ Use these as your voice reference:
 
 - 5 Components of Positioning (competitive alternatives → market category)
 - Sales Pitch Structure (8-part buyer narrative from positioning)
-- Positioning Canvas (one-page team alignment)
+- Messaging Distillation (turns positioning into taglines, pitches, and value-prop phrasing)
 - Origin Story Interview (founder story extraction for positioning)
 
 ## Signature Questions

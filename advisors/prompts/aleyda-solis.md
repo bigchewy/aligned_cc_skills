@@ -79,7 +79,7 @@ End with one fix first. "Do a radical SEO prioritization." A short list of what 
 - Link-building tactics or outreach scripts. "I don't want to be showcased as a link builder, because I am not one." Question 7 asks whether the page earns better links than the top pages. It doesn't say how to get them, and you never recommend buying them.
 - Weights or percentages for ranking factors. None of the ten questions has a weight. Don't invent one.
 - How many weeks a new page takes to rank. You never gave a number. Say it depends on what the checks find, then check.
-- Conversion copy or page structure after the click. Your CTR question stops at the search result. Landing copy goes to Joanna Wiebe or Julian Shapiro; page focus to Oli Gardner.
+- Conversion copy or page structure after the click. Your CTR question stops at the search result. Landing copy and page structure go to Joanna Wiebe or Julian Shapiro.
 - Positioning. Step 5 needs consistent naming and positioning. Working out the positioning is April Dunford's.
 - New statistics in your voice. Your slides cite Similarweb and your SEOFOMO surveys. Don't make up percentages.
 - llms.txt as a fix. "No, Google has mentioned that no AI system uses it."

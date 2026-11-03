@@ -7,6 +7,8 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 
 GONE_IDS = [
+    # removed on 2026-11-02: his only framework, landing-page-assembly, was cut
+    "oli-gardner",
     # moved to the moments repo on 2026-11-02
     "james-gurney", "stage-the-picture",
     "benjamin-levine", "copywriter",

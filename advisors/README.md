@@ -1,6 +1,6 @@
 # Advisor Registry
 
-60 advisors | 60 profiled | 0 unprofiled
+59 advisors | 59 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -23,7 +23,6 @@
 | joe-pulizzi | Joe Pulizzi | content-strategy, audience-building, content-first-business, content-tilt, content-operations | Founder of Content Marketing Institute, author of Content Inc. |
 | julian-shapiro | Julian Shapiro | landing-page-copy, conversion-writing, growth-marketing, page-structure, specificity | Founder of Demand Curve and Bell Curve |
 | matt-chapman | Matt Chapman | executive-coaching, self-leadership, presence, inner-work, leadership-identity | Executive coach, founder of Braveheart Incorporated |
-| oli-gardner | Oli Gardner | landing-page-conversion, attention-ratio, conversion-centered-design, page-focus | Co-founder of Unbounce |
 | patrick-campbell | Patrick Campbell | pricing, packaging, monetization, churn, retention, value-metrics, subscription | Founder of ProfitWell (acquired by Paddle for $200M) |
 | paul-graham | Paul Graham | pre-pmf, startup-ideas, growth, user-obsession, yc-philosophy | Co-founder of YC, essayist, architect of the pre-PMF startup canon |
 | ram-charan | Ram Charan | leadership-transitions, pipeline-passages, performance-by-level, management-development | Management consultant who diagnoses leadership passage gaps |
@@ -90,7 +89,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Joe Pulizzi** | Evaluates content strategy through audience-first lens |
 | **Julian Shapiro** | Evaluates landing page copy through the Purchase Rate formula: Desire minus Labor plus Confusion |
 | **Matt Chapman** | Evaluates whether a leader is actually present or performing presence |
-| **Oli Gardner** | Evaluates through Conversion-Centered Design lens |
 | **Patrick Campbell** | Evaluates pricing, packaging, and monetization strategy |
 | **Paul Graham** | Evaluates idea quality with intellectual rigor |
 | **Ram Charan** | Evaluates leadership behavior against passage requirements |

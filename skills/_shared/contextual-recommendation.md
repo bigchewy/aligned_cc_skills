@@ -152,8 +152,8 @@ These anchor scoring behavior. Use them as reference when making recommendations
 
 | User context | Entity type | Expected result | Mode |
 |---|---|---|---|
-| "I need to build a landing page" | advisor | Oli Gardner | Auto-select |
-| "I need to build a landing page" | framework | Landing Page Assembly | Auto-select |
+| "I need to build a landing page" | advisor | Julian Shapiro | Auto-select |
+| "I need to build a landing page" | framework | StoryBrand Homepage Wireframe | Auto-select |
 | "help me with pricing" | advisor | Shortlist: Robbie Kellman Baxter, April Dunford, Patrick Campbell | Shortlist |
 | "I'm paralyzed by a big decision" | framework | Fear Setting | Auto-select |
 
@@ -161,7 +161,7 @@ These anchor scoring behavior. Use them as reference when making recommendations
 
 | User context | Entity type | Expected result | Mode |
 |---|---|---|---|
-| "I need to position my product and build the landing page for it" | advisor | Shortlist: April Dunford, Oli Gardner | Shortlist |
+| "I need to position my product and build the landing page for it" | advisor | Shortlist: April Dunford, Julian Shapiro | Shortlist |
 | "I want to grow my podcast audience on social media" | framework | Shortlist: podcasting + social-media frameworks | Shortlist |
 | "help me be a better manager" | advisor | Shortlist: leadership-domain advisors | Shortlist |
 
