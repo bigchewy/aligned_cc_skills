@@ -49,9 +49,11 @@ Also removed later on 2026-11-02: Oli Gardner, whose only framework was landing-
 
 1. ~~Same-job groups~~ — decided above.
 2. ~~The unplaced frameworks~~ — decided above.
-3. Portability: launch-bet is written for one event-site project. (landing-page-assembly is deleted.)
-4. Does B2C get its own flows (acquisition, retention loops, community) or stay a filter?
-5. Pre-PMF "We": nothing helps cofounders agree on roles.
+3. ~~Portability~~ — done 2026-11-02. launch-bet now works for any one-customer launch; the moments
+   site-launch version lives in the moments repo as a local framework. landing-page-assembly is deleted.
+4. ~~B2C~~ — decided 2026-11-02: post-PMF B2C gets its own flows. It is different enough from B2B
+   that a filter isn't enough.
+5. ~~Pre-PMF "We" gap~~ — decided 2026-11-02: leave it. No framework for cofounders agreeing on roles.
 6. Category set: personal frameworks are filed under `leadership`/`psychology`/`strategy`; decide whether
    I / We / It becomes a field, or the categories get redrawn.
 7. Then write `flows.yaml` (validated like `skills/org-chart/seats.yaml`) and build the playbook visual from it.
