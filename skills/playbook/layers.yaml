@@ -1,4 +1,3 @@
-# DRAFT for Eric's review (2026-11-03). Becomes layers.yaml once the design is approved.
 # Layer -> area -> framework ids. A framework usually sits in one area and may sit in more.
 # start: the one framework a CEO runs first in that area. It must be in the area's list.
 # Frameworks that belong in no area go on the holding list with a reason.

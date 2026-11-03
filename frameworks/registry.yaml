@@ -36,6 +36,10 @@ frameworks:
     up
   required_documents:
   - the alternatives recent buyers almost chose instead of you
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a business needs to define or refine its market positioning from scratch
     using a structured methodology
 - advisor: coach-eric
@@ -53,6 +57,10 @@ frameworks:
   name: 6-Step Process
   purpose: a structured approach to solving operational problems that starts with
     a mindset check before goal-setting, diagnosis, and planning
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone wants a systematic process for setting goals, diagnosing problems,
     designing solutions, and executing with mindset alignment
 - advisor: tim-ferriss
@@ -135,6 +143,9 @@ frameworks:
   name: Build-Measure-Learn
   purpose: designing a learning cycle that starts with what you need to learn, then
     works backward to what to measure and build
+  stages:
+  - idea
+  - pilot
   use_when: a team needs to design a rapid learning cycle for a product initiative
     to validate assumptions quickly
 - advisor: diana-chapman
@@ -167,6 +178,9 @@ frameworks:
   name: Content Inc. Model
   purpose: a six-step audience-first model for building a content-driven business
     before monetizing
+  stages:
+  - idea
+  - pilot
   use_when: someone wants to build a business by establishing a content platform and
     audience before creating products
 - advisor: steve-jobs
@@ -198,6 +212,9 @@ frameworks:
   name: Do Things That Don't Scale
   purpose: identifying the unscalable work a founder should be doing right now to
     learn and recruit users by hand
+  stages:
+  - idea
+  - pilot
   use_when: a founder is in the earliest stage and needs to identify the unscalable
     manual things they should be doing to get traction
 - advisor: steve-blank
@@ -216,6 +233,9 @@ frameworks:
   purpose: scoring real prospects against five criteria (has the problem, knows it,
     is searching, has built a workaround, has budget) to find the customers who will
     actually buy rather than the ones being polite
+  stages:
+  - idea
+  - pilot
   use_when: a startup needs to distinguish between customers who will actually pay
     versus those giving polite but uncommitted feedback
 - advisor: garry-tan
@@ -233,6 +253,9 @@ frameworks:
   name: Earnestness Filter
   purpose: pressure-testing whether a founder is genuinely earnest about their startup
     or just performing
+  stages:
+  - idea
+  - pilot
   use_when: a founder needs to honestly assess whether they are genuinely committed
     to their startup or just performing the role
 - advisor: jim-loehr
@@ -336,9 +359,14 @@ frameworks:
   - strategy
   - positioning
   id: forever-promise
+  market: b2c
   name: Forever Promise
   purpose: the process of defining the ongoing value commitment that turns a subscription
     into a real membership relationship
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone is building a subscription or membership business and needs to
     articulate the ongoing value commitment that keeps members
 - advisor: eric-ries
@@ -359,6 +387,9 @@ frameworks:
   name: Four Market Types
   purpose: diagnosing which market type you're entering and aligning your tactics
     to match
+  stages:
+  - idea
+  - pilot
   use_when: a startup needs to identify whether they are entering an existing, resegmented,
     new, or clone market to set the right strategy
 - advisor: steve-jobs
@@ -374,6 +405,10 @@ frameworks:
   id: four-quadrant-focus
   name: Four-Quadrant Focus
   purpose: clarifying product portfolio using a 2x2 grid of your key dimensions
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone has a bloated product line and needs a 2x2 grid to simplify down
     to the essential offerings
 - advisor: sean-ellis
@@ -399,6 +434,10 @@ frameworks:
     test cadence'
   required_documents:
   - a product-market fit survey result of 40% or more "very disappointed"
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a product team needs a repeatable process for generating, prioritizing,
     testing, and scaling growth experiments
 - advisor: sean-ellis
@@ -420,6 +459,10 @@ frameworks:
   purpose: a simple but ruthless scoring system to prioritize growth experiments.
     This framework prevents analysis paralysis and ensures you always work on the
     highest-value experiments first
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a team has too many growth experiment ideas and needs a fast scoring system
     to pick the highest-impact ones
 - advisor: clayton-christensen
@@ -453,10 +496,15 @@ frameworks:
   - stakeholder map
   - discovery call transcripts
   id: jolt-effect
+  market: b2b
   name: JOLT Effect
   purpose: a four-move tactical playbook for rescuing late-stage B2B enterprise deals
     stalled by customer indecision — Judge the indecision type, Offer a specific recommendation,
     Limit exploration, Take risk off the table
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a complex B2B deal has stalled in late stage because the buyer is actively
     engaged but cannot commit, and the rep needs to diagnose whether it's Valuation,
     Lack of Information, or Outcome Uncertainty indecision and apply the matching
@@ -478,11 +526,16 @@ frameworks:
   - discovery call transcripts
   - email threads with the buying committee
   id: mobilizer-taxonomy
+  market: b2b
   name: Mobilizer Taxonomy
   purpose: assigning each person in a B2B buying committee to one of seven Dixon archetypes
     — separating the three Mobilizers (Go-Getter, Teacher, Skeptic) who drive consensus
     from the four Talkers (Guide, Friend, Climber, Blocker) who feel accessible but
     don't move deals
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a complex B2B deal has multiple stakeholders and the rep needs to distinguish
     real consensus-builders from accessible-but-inert stakeholders, especially when
     a 'champion' feels responsive but the deal isn't advancing
@@ -524,6 +577,9 @@ frameworks:
   name: Leap of Faith Assumptions
   purpose: identifying and testing the riskiest assumptions underlying a business
     before building anything
+  stages:
+  - idea
+  - pilot
   use_when: a startup needs to identify which untested assumptions are most critical
     to their business and design experiments to test them
 - advisor: brene-brown
@@ -581,6 +637,9 @@ frameworks:
   name: Performance Standards by Level
   purpose: diagnosing which passage a leader is actually performing at and creating
     a development plan that targets the right transition
+  stages:
+  - scale-it
+  - milk-it
   use_when: a leader's performance doesn't match their level and they need to identify
     which leadership passage they are actually operating at
 - advisor: jim-loehr
@@ -640,6 +699,9 @@ frameworks:
   name: Pivot or Persevere
   purpose: a structured decision process for determining whether to change strategy,
     stay the course, or stop entirely
+  stages:
+  - idea
+  - pilot
   use_when: a startup has data from experiments and needs to decide whether to pivot
     to a new direction or persevere with the current one
 - advisor: matt-chapman
@@ -676,6 +738,9 @@ frameworks:
     love, not vanity metrics
   required_documents:
   - survey results from at least 40 active users
+  stages:
+  - idea
+  - pilot
   use_when: a startup needs to measure whether they have product-market fit before
     investing in scaling
 - advisor: richard-rumelt
@@ -752,11 +817,16 @@ frameworks:
   - competitive landscape
   - customer research
   id: sales-pitch-structure
+  market: b2b
   name: Sales Pitch Structure
   purpose: transforming positioning work into a story that helps buyers make confident
     decisions
   required_documents:
   - positioning statement
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone has completed positioning work and needs to translate it into
     a compelling sales narrative
 - advisor: seth-godin
@@ -791,6 +861,10 @@ frameworks:
   id: storybrand-homepage
   name: StoryBrand Homepage Wireframe
   purpose: building a homepage that passes the grunt test using story structure
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone needs to build or rewrite a homepage that turns visitors into
     customers by following story structure
 - advisor: andy-raskin
@@ -811,6 +885,7 @@ frameworks:
   - positioning statement
   - company strategy
   id: strategic-narrative
+  market: b2b
   name: Five-Element Strategic Narrative
   purpose: 'building a strategic narrative from five elements: the undeniable change
     in the world, the stakes, the promised land, the obstacles, and the magic gifts
@@ -818,6 +893,10 @@ frameworks:
   required_documents:
   - an internal strategy memo, talk transcript, or sales conversation describing the
     market shift the brand sees
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone needs to build a sales deck or company narrative that opens with
     a shift in the world, not a product pitch
 - advisor: jim-loehr
@@ -847,10 +926,15 @@ frameworks:
   - pitch deck or meeting agenda
   - deal notes
   id: teach-tailor-take-control
+  market: b2b
   name: Teach-Tailor-Take Control (TTTC)
   purpose: the three-skill Challenger sales motion — delivering a reframing commercial
     insight (Teach), adapting it to this specific buyer (Tailor), and assertively
     guiding commercial dynamics around pricing, timing, and next steps (Take Control)
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a rep is prepping a specific upcoming B2B discovery call, exec pitch,
     or advancement meeting and needs to pressure-test whether they have a real insight,
     whether it's adapted to this buyer, and whether they have a plan for holding commercial
@@ -878,6 +962,7 @@ frameworks:
   - advertising
   - nostalgia
   id: the-carousel
+  market: b2c
   name: The Carousel
   purpose: 'finding the feeling behind a product: one real person, what they feel,
     a true moment from their story, and a one-sentence idea an ad or page can carry'
@@ -909,10 +994,15 @@ frameworks:
   - strategy
   - positioning
   id: value-metric
+  market: b2b
   name: Value Metric Framework
   purpose: choosing the value metric a price scales with by brainstorming candidates,
     scoring them on alignment, simplicity, and growth, and planning how to validate
     the winner with customers
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone needs to identify the right value metric for their pricing model
     — the unit of value customers pay for
 - advisor: brene-brown
@@ -973,9 +1063,14 @@ frameworks:
   - positioning
   - brand-voice
   id: insane-honesty
+  market: b2b
   name: Insane Honesty
   purpose: creating B2B copy that earns trust through radical honesty, structured
     around the Galvanizing Story and Three Whys frameworks
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: writing B2B professional services copy — cold emails, thought leadership,
     landing pages, sales enablement — that needs to stand out from corporate noise
 - advisor: jacco-van-der-kooij
@@ -991,10 +1086,15 @@ frameworks:
   - revenue metrics
   - customer segmentation
   id: bowtie-funnel
+  market: b2b
   name: Bowtie Funnel
   purpose: a diagnostic walk through the end-to-end recurring-revenue architecture
     — six stages from Awareness through Expansion — to find where revenue is actually
     leaking
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a founder or revenue leader needs to diagnose where their recurring-revenue
     business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage
     conversion math
@@ -1013,11 +1113,16 @@ frameworks:
   - ramp and tenure data
   - last 90 days meetings-held and opportunity conversion
   id: 6-elements-sdr
+  market: b2b
   name: 6 Elements of Sales Development
   purpose: a full-function diagnostic and redesign of a B2B sales development organization
     across six design elements — Strategy, Specialization, Recruiting, Retention,
     Execution, and Leadership — producing a ranked fix list that stops leaders from
     hiring more SDRs into a broken design
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a revenue leader needs to diagnose why their SDR / pipeline-generation
     function is underperforming — pipeline shortfall, rep churn, scale transition
     — and wants a structured walk through the six design elements before hiring more
@@ -1038,11 +1143,16 @@ frameworks:
   - runway and fundraising plan
   - integration roadmap (EHR / payer / revenue-cycle)
   id: 5-gtm-motions-digital-health
+  market: b2b
   name: 5 GTM Motions for Digital Health
   purpose: a motion-commitment diagnostic that forces a digital health founder to
     pick one primary go-to-market motion — B2C2B, B2SMB, Risk-based contracting, Two-sided
     networks, or Distribution through aggregators — for the next 18 months, and confirms
     that product, evidence, buyer, and runway all match the chosen motion
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a digital health founder is selecting or refining their go-to-market motion,
     running multiple motions in parallel with unclear progress, or preparing for a
     fundraise and needs to commit to a single primary motion backed by matching product,
@@ -1064,6 +1174,7 @@ frameworks:
   - a local folder path with supplementary content (past decks, customer interviews,
     sample copy, internal docs)
   id: reverse-engineered-brand
+  market: b2b
   name: Reverse-Engineered Brand
   purpose: the orchestrator that auto-fills positioning, narrative, buyer-persona,
     messaging-distillation, competitive-battle-card, proof-points-audit, brand-voice,
@@ -1073,6 +1184,10 @@ frameworks:
   required_documents:
   - a public URL for the org (homepage or About page) OR a local folder of source
     material
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: an organization is building its first canonical brand/ folder from a public
     URL and optional supplementary content
 - advisor: matt-dixon
@@ -1091,12 +1206,17 @@ frameworks:
   - interview transcripts
   - competitor positioning
   id: buyer-persona
+  market: b2b
   name: Buyer Persona
   purpose: produces one personas/{role}.md file per run, capturing role overview,
     evaluation criteria, skepticism triggers, language resonance, and common objections
     — anchored in the Challenger commercial-insight frame
   required_documents:
   - customer interview transcripts including the customer's role
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: an organization needs to characterize a specific role on the buying committee
     (champion, mobilizer, blocker, approver)
 - advisor: april-dunford
@@ -1144,6 +1264,10 @@ frameworks:
   required_documents:
   - 3–10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales
     emails)
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: an organization has existing copy and needs to extract a documented brand
     voice + terminology contract
 - advisor: michael-bolton
@@ -1168,6 +1292,10 @@ frameworks:
     no proof
   required_documents:
   - existing customer-facing copy (homepage, deck, one-pager)
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: an organization needs to inventory and verify every quantitative or proof-shaped
     claim in its customer-facing copy
 - advisor: april-dunford
@@ -1184,6 +1312,7 @@ frameworks:
   - customer win/loss interviews
   - competitor public materials
   id: competitive-battle-card
+  market: b2b
   name: Competitive Battle Card
   purpose: 'writing a battle card for each competitive alternative: the landscape,
     real advantages and disadvantages, myths to correct, and each common objection
@@ -1191,6 +1320,10 @@ frameworks:
   required_documents:
   - 'completed strategy/positioning.md (Component 1: competitive alternatives)'
   - completed language/messaging.md (value-prop phrasings)
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: positioning and messaging are complete and the org needs a salesperson's
     working battle card for the named competitors
 - advisor: kristen-berman
@@ -1214,6 +1347,10 @@ frameworks:
   purpose: a behavioral-science diagnostic for product behavior problems that names
     the specific target behavior, audits five categories of barriers, and tests benefit
     salience to surface the single highest-leverage experiment
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a product, growth, or CX team faces a 'users aren't doing the thing' problem
     and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit,
     or changing the target behavior itself
@@ -1233,6 +1370,11 @@ frameworks:
   name: The Weekly Check-In
   purpose: replace status meetings with an async written update covering emotional
     state, single top priority, commitment review, and issues with proposed solutions
+  stages:
+  - pilot
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a leadership team or manager-report pair is running status-heavy meetings
     with no written record of commitments or decisions, or needs to establish a repeatable
     operating rhythm tied to OKRs
@@ -1254,6 +1396,9 @@ frameworks:
   purpose: transform a status-presentation meeting into a decision-focused operating
     review through pre-reads, discussion-only meeting norms, decision logs, and strategy-connected
     metrics
+  stages:
+  - scale-it
+  - milk-it
   use_when: a leadership team is running operating reviews (monthly, quarterly) that
     produce presentations but not decisions, or where decisions made in the meeting
     get relitigated because nothing was written down
@@ -1279,6 +1424,10 @@ frameworks:
   name: The Rules of Structure
   purpose: redesigning an organization's structure from its strategy and lifecycle
     stage, with every name off the paper
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a scaling company cannot reach escape velocity despite a clear strategy,
     keeps repeating the same execution mistakes, has one seat that keeps failing hires,
     or has a founder who is still the bottleneck on decisions the structure should
@@ -1356,6 +1505,10 @@ frameworks:
   name: Blue Ocean Value Props
   purpose: deciding what one offering will eliminate, reduce, raise, and create so
     that its value curve stands apart from every alternative buyers have today
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a product looks like its competitors, buyers choose on price, the team
     keeps adding features without changing what buyers see, or someone needs to decide
     what an offering should stop doing as well as what it should do; also for a new
@@ -1410,6 +1563,10 @@ frameworks:
   purpose: designing a program for a complex skill people use at work, built from
     whole tasks in classes from simple to complex, with support that fades, information
     given at the right time, and practice for the routines that must become automatic
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone is designing a training, coaching, or learning program that runs
     over weeks or months and must change what people do at work; the draft is organized
     one topic per session, people pass the sessions but don't use the skill, support
@@ -1434,6 +1591,10 @@ frameworks:
   name: Behavior Gap Diagnosis
   purpose: finding out why people aren't doing a target behavior, whether training
     can fix it, and which kind of fix matches each gap
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone asks for a training or workshop, a program is popular but behavior
     between sessions does not change, people know what to do and still do not do it,
     or a team needs to decide whether a behavior problem calls for practice, an environment
@@ -1459,6 +1620,10 @@ frameworks:
   purpose: choosing the one role an AI should play in a learning or coaching moment,
     naming that role's risk, and writing and testing a prompt whose guardrails keep
     the learner doing the thinking
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: someone is building an AI tutor, AI coach, role-play practice partner,
     or AI feedback tool for a course or program; an existing AI learning tool gets
     good ratings but behavior does not change; or a team needs to decide what the
@@ -1487,6 +1652,10 @@ frameworks:
     an organization, by choosing which tight groups adopt first, which groups go next
     based on how widely they are tied to groups that already adopted, and how many
     committed people each group needs before its norm flips
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a company is rolling out a new team practice, culture program, or way
     of working that people find risky or awkward to start; a pilot or launch got good
     survey scores and then faded; someone plans to launch with an all-hands announcement,
@@ -1536,6 +1705,7 @@ frameworks:
   - any assessment or survey the client fills out before or during the work
   - current pricing and who the clients have been
   id: proven-process
+  market: b2b
   name: Proven Process
   purpose: turning a method someone delivers by hand into a repeatable engagement,
     with who it is for, the components it strengthens, a checkup that scores them,
@@ -1562,6 +1732,9 @@ frameworks:
   purpose: building a short presentation of the problems they think a customer has,
     so a customer meeting draws answers out of the customer instead of pitching to
     them
+  stages:
+  - idea
+  - pilot
   use_when: someone is about to talk to potential customers before the product or
     pitch is settled, needs to test which problem a market cares about, wants a discovery
     deck rather than a sales deck, or has competing problem guesses to compare
@@ -1704,6 +1877,9 @@ frameworks:
   purpose: treating a launch with one real customer as one bet, writing the success
     line and the quit line as a state and a date before the build, and judging that
     customer's result apart from the luck
+  stages:
+  - idea
+  - pilot
   use_when: a product, feature, or service is about to launch with one real customer instead of
     a public release and needs a success number and a quit line before the build,
     a first customer to pick and recruit, or a first customer has been served and
@@ -1929,6 +2105,10 @@ frameworks:
     type, and color the sibling shares
   required_documents:
   - a short description of each product, who buys it, and who uses it
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
   use_when: a company is launching a second product or a spin-off and has to decide
     whether it shares the parent's name and look, carries a small 'from' line, or
     stands alone; or two related products already look either too alike or unrelated
