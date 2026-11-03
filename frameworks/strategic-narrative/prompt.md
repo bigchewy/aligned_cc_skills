@@ -4,6 +4,7 @@ required_documents:
 helpful_documents:
 - positioning statement
 - company strategy
+- origin story
 deliverable_type: content
 input_asks:
 - tier: critical

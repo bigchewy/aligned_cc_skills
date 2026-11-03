@@ -6,6 +6,7 @@ helpful_documents:
 - the places the mark has to appear and their sizes (favicon, app icon, book cover or spine, packaging)
 - how it will be printed (full color, one color, on what paper)
 - the name and any wordmark that goes with the mark
+- sibling sharing decision
 deliverable_type: analysis
 ---
 

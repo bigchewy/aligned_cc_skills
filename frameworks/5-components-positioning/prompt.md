@@ -4,6 +4,8 @@ required_documents:
 helpful_documents:
 - competitive landscape
 - customer research
+- origin story
+- value curve
 deliverable_type: content
 input_asks:
 - tier: critical

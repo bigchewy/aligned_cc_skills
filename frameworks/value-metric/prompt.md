@@ -3,6 +3,7 @@ required_documents: []
 helpful_documents:
 - strategy
 - positioning
+- value curve
 deliverable_type: analysis
 ---
 

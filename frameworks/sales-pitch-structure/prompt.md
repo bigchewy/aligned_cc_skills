@@ -4,6 +4,7 @@ required_documents:
 helpful_documents:
 - competitive landscape
 - customer research
+- language/messaging.md
 deliverable_type: content
 ---
 

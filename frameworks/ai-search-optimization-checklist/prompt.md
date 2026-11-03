@@ -4,6 +4,7 @@ required_documents:
 helpful_documents:
 - a list of the questions customers ask before they buy or sign up
 - access to Google Search Console and the site's analytics
+- page ranking diagnosis
 deliverable_type: plan
 ---
 

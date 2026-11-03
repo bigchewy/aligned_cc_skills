@@ -47,7 +47,16 @@ def test_registry_entry():
     assert e["name"] == "PHANTOM-B LLM Threats"
     assert e["category"] == "security"
     assert e["deliverable_type"] == "analysis"
-    assert "four-question-threat-model" in e.get("follow_on_frameworks", [])
+    assert "follow_on_frameworks" not in e
+    with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+        b = {x["id"]: x for x in yaml.safe_load(f)["frameworks"]}["four-question-threat-model"]
+    writers = [
+        w
+        for k in ("required_documents", "helpful_documents")
+        for d in b.get(k) or []
+        for w in ([d["from"]] if isinstance(d["from"], str) else d["from"])
+    ]
+    assert "phantom-b-llm-threats" in writers
 
 
 def test_prompt_opens_in_the_standard_form():

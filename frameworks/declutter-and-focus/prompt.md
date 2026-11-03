@@ -6,6 +6,7 @@ helpful_documents:
 - who sees the chart and where (a slide, a report, a dashboard, a phone)
 - the brand or product color palette
 - the tool or library the chart is built in
+- chart type choice
 deliverable_type: plan
 ---
 

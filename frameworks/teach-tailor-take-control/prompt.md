@@ -5,6 +5,8 @@ helpful_documents:
 - buyer's recent public statements or writing
 - pitch deck or meeting agenda
 - deal notes
+- stakeholder map
+- buyer persona
 deliverable_type: plan
 ---
 

@@ -198,7 +198,6 @@ class TestFrameworkRegistrySchema:
         with open(REPO_ROOT / "advisors" / "registry.yaml") as f:
             adv = yaml.safe_load(f)
         advisor_ids = {a["id"] for a in adv["advisors"]}
-        framework_ids = {e["id"] for e in data["frameworks"]}
 
         typed_count = 0
         for e in data["frameworks"]:
@@ -207,12 +206,13 @@ class TestFrameworkRegistrySchema:
                 for aid in e["default_critic_advisors"]:
                     assert aid in advisor_ids, f"{e['id']} references unknown advisor: {aid}"
                 typed_count += 1
-            if "follow_on_frameworks" in e:
-                assert isinstance(e["follow_on_frameworks"], list), e["id"]
-                for fid in e["follow_on_frameworks"]:
-                    assert fid in framework_ids, f"{e['id']} references unknown framework: {fid}"
-
         assert typed_count >= 5, "fewer than 5 entries got default_critic_advisors — field adds no signal"
+
+    def test_no_entry_has_follow_on_frameworks(self):
+        with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+            data = yaml.safe_load(f)
+        have = [e["id"] for e in data["frameworks"] if "follow_on_frameworks" in e]
+        assert not have, f"document links replaced follow_on_frameworks; still on: {have}"
 
 
 class TestLocalAdvisorRegistrySchema:

@@ -41,9 +41,51 @@ def test_build_measure_learn_lists_leap_of_faith_output_as_helpful_document():
     assert "leap-of-faith-assumptions results" in yaml.safe_load(frontmatter)["helpful_documents"]
 
 
+def writers_of(framework_id):
+    """Every framework id named in a `from` of this framework's documents."""
+    entry = registry()[framework_id]
+    return [
+        w
+        for key in ("required_documents", "helpful_documents")
+        for d in entry.get(key) or []
+        for w in ([d["from"]] if isinstance(d["from"], str) else d["from"])
+    ]
+
+
 def test_leap_of_faith_hands_off_to_build_measure_learn():
-    assert "build-measure-learn" in registry()["leap-of-faith-assumptions"]["follow_on_frameworks"]
+    assert "leap-of-faith-assumptions" in writers_of("build-measure-learn")
 
 
 def test_working_backwards_hands_off_to_getting_real_cut():
-    assert "getting-real-cut" in registry()["working-backwards"]["follow_on_frameworks"]
+    assert "working-backwards" in writers_of("getting-real-cut")
+
+
+# Handoffs that follow_on_frameworks used to carry. Each is now a document the
+# first framework writes and the second one uses (writer, framework that takes it).
+RETIRED_FOLLOW_ONS = [
+    ("80-20-audit", "zone-of-genius"),
+    ("build-measure-learn", "pivot-or-persevere"),
+    ("finding-the-crux", "kernel-of-good-strategy"),
+    ("four-market-types", "earlyvangelists"),
+    ("four-market-types", "leap-of-faith-assumptions"),
+    ("ice-prioritization", "growth-hacking-process"),
+    ("mobilizer-taxonomy", "teach-tailor-take-control"),
+    ("origin-story-interview", "5-components-positioning"),
+    ("origin-story-interview", "strategic-narrative"),
+    ("product-market-fit-test", "pivot-or-persevere"),
+    ("buyer-persona", "teach-tailor-take-control"),
+    ("messaging-distillation", "sales-pitch-structure"),
+    ("blue-ocean-value-props", "5-components-positioning"),
+    ("blue-ocean-value-props", "value-metric"),
+    ("launch-bet", "pivot-or-persevere"),
+    ("phantom-b-llm-threats", "four-question-threat-model"),
+    ("how-much-siblings-share", "boil-it-down"),
+    ("how-much-siblings-share", "small-size-and-print-test"),
+    ("choose-an-effective-visual", "declutter-and-focus"),
+    ("why-my-page-doesnt-rank", "ai-search-optimization-checklist"),
+]
+
+
+def test_retired_follow_ons_became_document_links():
+    missing = [(a, b) for a, b in RETIRED_FOLLOW_ONS if a not in writers_of(b)]
+    assert not missing, missing

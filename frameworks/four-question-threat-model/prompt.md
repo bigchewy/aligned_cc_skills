@@ -5,6 +5,7 @@ helpful_documents:
 - a sketch or diagram of the parts and how data moves between them
 - the database schema and its row-level security policies
 - the list of third-party services, webhooks, hooks, or MCP servers it touches
+- LLM threats list
 deliverable_type: analysis
 ---
 

@@ -145,8 +145,11 @@ def test_no_framework_points_at_a_removed_entry():
     advisors = _advisors()
     fws = _frameworks()
     for fid, fw in fws.items():
-        for f in fw.get("follow_on_frameworks") or []:
-            assert f in fws, f"{fid} follows on to missing framework {f}"
+        for key in ("required_documents", "helpful_documents"):
+            for d in fw.get(key) or []:
+                src = d["from"]
+                for f in [src] if isinstance(src, str) else src:
+                    assert f == "outside" or f in fws, f"{fid} takes a document from missing framework {f}"
         for a in fw.get("default_critic_advisors") or []:
             assert a in advisors, f"{fid} names missing critic {a}"
 

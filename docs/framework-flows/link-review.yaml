@@ -26,6 +26,20 @@
   confidence: sure
   reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
     Sure: this is the user''s own material.'
+- id: 5-components-positioning/origin-story
+  framework: 5-components-positioning
+  doc: origin story
+  kind: helpful
+  from: origin-story-interview
+  confidence: likely
+  reason: Origin Story Interview pulls out the founder's origin story and use cases for positioning. The document goes by a different name.
+- id: 5-components-positioning/value-curve
+  framework: 5-components-positioning
+  doc: value curve
+  kind: helpful
+  from: blue-ocean-value-props
+  confidence: guess
+  reason: Blue Ocean Value Props writes a new value curve against the alternatives buyers use. Positioning could use it, but the prompt only says positioning copy is someone else's work.
 - id: 6-step-process/company-strategy
   framework: 6-step-process
   doc: company strategy
@@ -114,6 +128,13 @@
   reason: 'The founder''s own description of what they are building. Working Backwards writes a press
     release that could stand in, but no framework names this as its output. Guess: a plugin framework
     might write it.'
+- id: earlyvangelists/market-type-diagnosis
+  framework: earlyvangelists
+  doc: market type diagnosis
+  kind: helpful
+  from: four-market-types
+  confidence: likely
+  reason: Four Market Types names the market type, and its prompt tells the user to look for earlyvangelists. The document goes by a different name.
 - id: earnestness-filter/product-description
   framework: earnestness-filter
   doc: product description
@@ -208,6 +229,13 @@
   from: outside
   confidence: sure
   reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
+- id: growth-hacking-process/ice-scored-experiment-list
+  framework: growth-hacking-process
+  doc: ICE-scored experiment list
+  kind: helpful
+  from: ice-prioritization
+  confidence: likely
+  reason: Growth Hacking Process sets up an ICE-scored backlog, and ICE Prioritization is what scores experiments. The document goes by a different name.
 - id: ice-prioritization/business-goals
   framework: ice-prioritization
   doc: business goals
@@ -305,6 +333,13 @@
   confidence: likely
   reason: Proximate Objectives writes the near-term objective and its success criteria, which serve as
     the business goals. It does not call them business goals.
+- id: kernel-of-good-strategy/the-crux
+  framework: kernel-of-good-strategy
+  doc: the crux
+  kind: helpful
+  from: finding-the-crux
+  confidence: likely
+  reason: Finding the Crux names the single hardest challenge, and its prompt points to Kernel of Good Strategy next. The kernel's diagnosis starts from that challenge.
 - id: leap-of-faith-assumptions/product-description
   framework: leap-of-faith-assumptions
   doc: product description
@@ -322,6 +357,13 @@
   confidence: sure
   reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
     Sure: this is the user''s own material.'
+- id: leap-of-faith-assumptions/market-type-diagnosis
+  framework: leap-of-faith-assumptions
+  doc: market type diagnosis
+  kind: helpful
+  from: four-market-types
+  confidence: guess
+  reason: The market type changes which assumptions are riskiest. Leap of Faith could use it, but neither prompt says so.
 - id: pivot-or-persevere/product-description
   framework: pivot-or-persevere
   doc: product description
@@ -346,6 +388,27 @@
   from: outside
   confidence: sure
   reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
+- id: pivot-or-persevere/build-measure-learn-results
+  framework: pivot-or-persevere
+  doc: build-measure-learn results
+  kind: helpful
+  from: build-measure-learn
+  confidence: likely
+  reason: Build-Measure-Learn ends with what was measured and learned. A pivot decision needs that, but the document goes by a different name.
+- id: pivot-or-persevere/product-market-fit-survey-result
+  framework: pivot-or-persevere
+  doc: product-market fit survey result
+  kind: helpful
+  from: product-market-fit-test
+  confidence: likely
+  reason: Product-Market Fit Test writes the survey result that says how many users would be very disappointed. A pivot decision weighs that number.
+- id: pivot-or-persevere/launch-bet-decisions-file
+  framework: pivot-or-persevere
+  doc: launch bet decisions file
+  kind: helpful
+  from: launch-bet
+  confidence: likely
+  reason: Launch Bet keeps a decisions file with the bet and what the first customer did, and its prompt hands a big change to Pivot or Persevere.
 - id: product-market-fit-test/survey-results-from-at-least-40-active-users
   framework: product-market-fit-test
   doc: survey results from at least 40 active users
@@ -423,6 +486,13 @@
   confidence: sure
   reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
     Sure: this is the user''s own material.'
+- id: sales-pitch-structure/language-messaging-md
+  framework: sales-pitch-structure
+  doc: language/messaging.md
+  kind: helpful
+  from: messaging-distillation
+  confidence: likely
+  reason: Messaging Distillation writes language/messaging.md with the elevator pitches and key phrases. A pitch uses that language.
 - id: smallest-viable-audience/positioning
   framework: smallest-viable-audience
   doc: positioning
@@ -482,6 +552,13 @@
   from: kernel-of-good-strategy
   confidence: sure
   reason: Kernel of Good Strategy writes the company strategy as its output.
+- id: strategic-narrative/origin-story
+  framework: strategic-narrative
+  doc: origin story
+  kind: helpful
+  from: origin-story-interview
+  confidence: likely
+  reason: Origin Story Interview pulls out the founder's origin story and use cases. A strategic narrative can draw on it.
 - id: teach-tailor-take-control/account-research
   framework: teach-tailor-take-control
   doc: account research
@@ -516,6 +593,20 @@
   confidence: sure
   reason: 'The rep''s own notes and records of the deal. No framework writes them. Sure: this is the user''s
     own material.'
+- id: teach-tailor-take-control/stakeholder-map
+  framework: teach-tailor-take-control
+  doc: stakeholder map
+  kind: helpful
+  from: mobilizer-taxonomy
+  confidence: likely
+  reason: Mobilizer Taxonomy sorts each person on a buying committee into an archetype. Tailoring the pitch to each person uses that map.
+- id: teach-tailor-take-control/buyer-persona
+  framework: teach-tailor-take-control
+  doc: buyer persona
+  kind: helpful
+  from: buyer-persona
+  confidence: likely
+  reason: Buyer Persona writes a role profile for the buying committee. Tailoring the pitch to a role uses it.
 - id: value-metric/strategy
   framework: value-metric
   doc: strategy
@@ -530,6 +621,13 @@
   from: 5-components-positioning
   confidence: sure
   reason: 5 Components of Positioning writes the positioning as its output.
+- id: value-metric/value-curve
+  framework: value-metric
+  doc: value curve
+  kind: helpful
+  from: blue-ocean-value-props
+  confidence: likely
+  reason: Blue Ocean Value Props writes a new value curve, and its prompt hands pricing to the value metric framework next.
 - id: working-backwards/product-description
   framework: working-backwards
   doc: product description
@@ -1409,6 +1507,13 @@
   confidence: sure
   reason: 'Access to Google and analytics tools. No framework writes it. Sure: this is the user''s own
     material.'
+- id: ai-search-optimization-checklist/page-ranking-diagnosis
+  framework: ai-search-optimization-checklist
+  doc: page ranking diagnosis
+  kind: helpful
+  from: why-my-page-doesnt-rank
+  confidence: likely
+  reason: Why My Page Doesn't Rank finds and fixes what keeps a page out of search, and its prompt hands the AI answers step to the AI Search Optimization Checklist.
 - id: few-hiccupps-review/a-design-doc-a-feature-description-or-an-existing-screen-to-review
   framework: few-hiccupps-review
   doc: a design doc, a feature description, or an existing screen to review
@@ -1470,6 +1575,13 @@
   from: outside
   confidence: sure
   reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
+- id: four-question-threat-model/llm-threats-list
+  framework: four-question-threat-model
+  doc: LLM threats list
+  kind: helpful
+  from: phantom-b-llm-threats
+  confidence: guess
+  reason: PHANTOM-B lists threats for the LLM parts only, and its prompt hands the rest of the system to the four-question threat model. The threat model could merge the two lists, but neither prompt asks for that.
 - id: phantom-b-llm-threats/a-design-spec-or-running-system-where-code-calls-an-llm-an-app-feature-a-claude-code-hook-or-plugin-an-agent-with-tools
   framework: phantom-b-llm-threats
   doc: a design, spec, or running system where code calls an LLM (an app feature, a Claude Code hook or
@@ -1540,6 +1652,13 @@
   from: outside
   confidence: sure
   reason: 'Competitors'' own marks. No framework writes them. Sure: this is the user''s own material.'
+- id: boil-it-down/sibling-sharing-decision
+  framework: boil-it-down
+  doc: sibling sharing decision
+  kind: helpful
+  from: how-much-siblings-share
+  confidence: likely
+  reason: How Much the Siblings Share decides what the products share, and its prompt says to design the marks with Boil It Down next.
 - id: how-much-siblings-share/a-short-description-of-each-product-who-buys-it-and-who-uses-it
   framework: how-much-siblings-share
   doc: a short description of each product, who buys it, and who uses it
@@ -1614,6 +1733,13 @@
   from: outside
   confidence: sure
   reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
+- id: small-size-and-print-test/sibling-sharing-decision
+  framework: small-size-and-print-test
+  doc: sibling sharing decision
+  kind: helpful
+  from: how-much-siblings-share
+  confidence: guess
+  reason: The sibling sharing decision says whether a sibling gets its own accent color, which the small-size test then checks. The prompt says so only for that one case.
 - id: choose-an-effective-visual/the-data-to-show-a-table-a-file-or-a-description-of-the-columns-and-rows
   framework: choose-an-effective-visual
   doc: the data to show (a table, a file, or a description of the columns and rows)
@@ -1724,3 +1850,17 @@
   from: outside
   confidence: sure
   reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
+- id: zone-of-genius/80-20-audit-results
+  framework: zone-of-genius
+  doc: 80/20 audit results
+  kind: helpful
+  from: 80-20-audit
+  confidence: guess
+  reason: The 80/20 Audit ends with the positive 20 percent of a person's work and life. Zone of Genius could start from that list, but the audit never says so.
+- id: declutter-and-focus/chart-type-choice
+  framework: declutter-and-focus
+  doc: chart type choice
+  kind: helpful
+  from: choose-an-effective-visual
+  confidence: likely
+  reason: Choose an Effective Visual picks the chart type, and its prompt hands the chart to Declutter and Focus next.

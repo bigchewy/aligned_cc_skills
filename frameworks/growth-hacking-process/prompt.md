@@ -4,6 +4,7 @@ required_documents:
 helpful_documents:
 - product description
 - business metrics
+- ICE-scored experiment list
 deliverable_type: plan
 ---
 

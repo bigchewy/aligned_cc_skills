@@ -3,6 +3,7 @@ required_documents: []
 helpful_documents:
 - customer research
 - product description
+- market type diagnosis
 deliverable_type: analysis
 ---
 

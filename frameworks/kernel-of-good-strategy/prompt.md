@@ -3,6 +3,7 @@ required_documents: []
 helpful_documents:
 - company strategy
 - business goals
+- the crux
 deliverable_type: plan
 ---
 

@@ -4,6 +4,9 @@ helpful_documents:
 - product description
 - customer research
 - business metrics
+- build-measure-learn results
+- product-market fit survey result
+- launch bet decisions file
 deliverable_type: decision
 ---
 
