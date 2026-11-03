@@ -422,22 +422,6 @@ frameworks:
     highest-value experiments first
   use_when: a team has too many growth experiment ideas and needs a fast scoring system
     to pick the highest-impact ones
-- advisor: elon-musk
-  category: strategy
-  deliverable_type: analysis
-  domains:
-  - cost-optimization
-  - manufacturing
-  - first-principles
-  - efficiency
-  helpful_documents:
-  - product description
-  id: idiot-index
-  name: Idiot Index
-  purpose: comparing finished cost to raw material cost to expose hidden inefficiency
-    and cost reduction opportunities
-  use_when: someone needs to identify cost reduction opportunities by comparing current
-    costs to theoretical minimums
 - advisor: clayton-christensen
   category: strategy
   deliverable_type: analysis
@@ -599,20 +583,6 @@ frameworks:
     a development plan that targets the right transition
   use_when: a leader's performance doesn't match their level and they need to identify
     which leadership passage they are actually operating at
-- advisor: coach-eric
-  category: psychology
-  deliverable_type: analysis
-  domains:
-  - intake-assessment
-  - personal-history
-  - context-gathering
-  - coaching
-  id: personal-context-intake
-  name: Personal Context Intake
-  purpose: a structured intake that maps health, emotional patterns, growth background,
-    relationships, and values to build a personal client file
-  use_when: a new user needs an initial session to share their personal context, history,
-    and goals before working with advisors
 - advisor: jim-loehr
   category: psychology
   deliverable_type: content
@@ -708,20 +678,6 @@ frameworks:
   - survey results from at least 40 active users
   use_when: a startup needs to measure whether they have product-market fit before
     investing in scaling
-- advisor: coach-eric
-  category: strategy
-  deliverable_type: analysis
-  domains:
-  - intake-assessment
-  - business-context
-  - professional-history
-  - coaching
-  id: professional-context-intake
-  name: Professional Context Intake
-  purpose: a structured intake that maps business context, expertise, challenges,
-    and decision style to build a professional brief
-  use_when: a new user needs an initial session to share their professional and business
-    context before working with business advisors
 - advisor: richard-rumelt
   category: strategy
   deliverable_type: plan
@@ -927,20 +883,6 @@ frameworks:
     a true moment from their story, and a one-sentence idea an ad or page can carry'
   use_when: someone is selling features and benefits but hasn't found the emotional
     truth that makes their offering irresistible
-- advisor: coach-eric
-  category: psychology
-  deliverable_type: content
-  domains:
-  - reflection
-  - journey-review
-  - progress-tracking
-  - narrative
-  id: the-story-so-far
-  name: The Story So Far
-  purpose: a reflective tour through a user's session history that surfaces breakthrough
-    moments, patterns, and growth
-  use_when: a user wants to reflect on their journey and progress with the Virtual
-    Board over time
 - advisor: jeff-bezos
   category: strategy
   deliverable_type: decision

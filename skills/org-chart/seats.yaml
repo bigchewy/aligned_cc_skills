@@ -60,9 +60,6 @@ seats:
       - do: Spend your week on the work only you can do
         framework: zone-of-genius
         also: [80-20-audit, personal-resource-allocation]
-      - do: Give your coach the full picture of you and your company
-        framework: professional-context-intake
-        also: [personal-context-intake, the-story-so-far]
 
   - id: board
     dept: lead
@@ -709,8 +706,6 @@ seats:
       - do: Build a chart that makes one point
         framework: choose-an-effective-visual
         also: [big-idea-and-takeaway-title, declutter-and-focus]
-      - do: Find where a cost is far above what the parts are worth
-        framework: idiot-index
     also_ask: [sean-ellis]
     missing: Get outside help with picking a north star metric and defining the company's core metrics.
 

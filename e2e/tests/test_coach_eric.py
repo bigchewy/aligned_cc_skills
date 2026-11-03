@@ -22,12 +22,10 @@ SUMMARY = (
     "finds the root cause, then the next step"
 )
 
+# The intakes and the-story-so-far were removed on 2026-11-02 (built for va-web-app).
 SIX = [
     "6-step-process",
     "root-cause-analysis",
-    "professional-context-intake",
-    "personal-context-intake",
-    "the-story-so-far",
     "zone-of-genius",
 ]
 

@@ -32,13 +32,24 @@ Eric's rule going forward: simplify wherever two frameworks do the same job.
 (energy-audit, stress-recovery-oscillation, personal-credo) is the first example, under I. flows.yaml
 and the playbook visual must show a system as one area of focus that holds several frameworks.
 
+Also removed later on 2026-11-02: Oli Gardner, whose only framework was landing-page-assembly.
+
+## Decided (2026-11-02): frameworks with no flow
+
+| Framework | Decision |
+|---|---|
+| personal-context-intake, professional-context-intake, the-story-so-far | Deleted. They were built for va-web-app, which keeps its own copies in `src/lib/frameworks/prompts/`. They write to its profile page and read its session history, neither of which the plugin has. |
+| idiot-index | Deleted. It compares a product's finished cost to its raw-material cost; a software company rarely has raw materials. The idea stays in Elon Musk's advisor prompt. |
+| reverse-engineered-brand | Kept as the fast path for the "Position and message" flow: it runs that flow's frameworks at once. flows.yaml marks it as a flow runner, not a step. |
+| the-algorithm | Kept, in an It flow for fixing operations, next to 6-step-process. |
+| close-the-loop | Kept on the CTO and software engineer seats, outside the I / We / It flows. It is Boris Cherny's only framework. |
+| stage-the-picture | Moved to the moments repo earlier. |
+
 ## Open decisions
 
 1. ~~Same-job groups~~ — decided above.
-2. The 8 unplaced (stage-the-picture has since moved to the moments repo): personal-context-intake, professional-context-intake, the-story-so-far (depend on
-   host setup the plugin doesn't ship); reverse-engineered-brand (runs a whole flow); idiot-index,
-   the-algorithm, close-the-loop, stage-the-picture (not company work).
-3. Portability: launch-bet is written for one event-site project; landing-page-assembly needs a hosted runtime.
+2. ~~The unplaced frameworks~~ — decided above.
+3. Portability: launch-bet is written for one event-site project. (landing-page-assembly is deleted.)
 4. Does B2C get its own flows (acquisition, retention loops, community) or stay a filter?
 5. Pre-PMF "We": nothing helps cofounders agree on roles.
 6. Category set: personal frameworks are filed under `leadership`/`psychology`/`strategy`; decide whether

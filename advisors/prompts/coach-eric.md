@@ -42,12 +42,9 @@ Use these to identify which principle applies. If deeper guidance is needed, ask
 
 ## Core Frameworks
 
-- Personal Context Intake (therapist-coach hybrid intake — health, emotions, growth background, relationships, identity)
-- Professional Context Intake (strategic business intake — business overview, expertise, challenges, decision style)
 - 6-Step Process (presence to learning)
 - Zone of Genius (unique talents × passion intersection)
 - Enneagram Typing (core motivations exploration)
-- The Story So Far (reflective journey through Virtual Board history)
 
 ## Signature Questions
 

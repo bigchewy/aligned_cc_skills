@@ -1,6 +1,6 @@
 # Aligned
 
-A virtual board of advisors for running a company, inside Claude Code and Cowork. 59 expert personas and 102 structured frameworks for strategy, positioning, marketing, sales, product, leadership, and operations, picked for you by context.
+A virtual board of advisors for running a company, inside Claude Code and Cowork. 59 expert personas and 98 structured frameworks for strategy, positioning, marketing, sales, product, leadership, and operations, picked for you by context.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.33.99-green.svg)](.claude-plugin/plugin.json)
@@ -84,7 +84,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 1. **Find your seat.** `/aligned:org-chart` shows which advisors and frameworks fit your role.
 2. **Converse with an advisor.** `/aligned:use-advisor April Dunford` and describe a positioning challenge. She runs her actual methodology.
 3. **Run a brainstorm.** `/aligned:brainstorming` with a real problem. The system detects your domain and selects relevant advisors for the critique panel.
-4. **Try a framework.** `/aligned:use-framework` to browse 102 structured decision frameworks with interactive, phase-gated walkthroughs.
+4. **Try a framework.** `/aligned:use-framework` to browse 98 structured decision frameworks with interactive, phase-gated walkthroughs.
 5. **Layer in context.** Add competitors, personas, and strategy docs to your project folder and point to them from your `CLAUDE.md`. The advisors bring your company context into every conversation.
 
 ## Reference
@@ -126,7 +126,7 @@ To add an advisor, run `/aligned:add-advisor`.
 
 ### Frameworks
 
-102 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (19), leadership (12), psychology (12), startup (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
+98 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (17), leadership (12), startup (10), psychology (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
 
 Framework prompts are interactive scripts with hard WAIT points. Run them through `/aligned:use-framework`, one question at a time.
 
@@ -171,7 +171,7 @@ Semver, pre-1.0. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.js
 - New `/aligned:org-chart` skill with B2B and B2C org chart pages: every seat, its coverage, its jobs, and the command for each.
 - Narrowed to business and advisory work. Advisors built for single clients moved to those clients' repos as project-local advisors; nonprofit and solo-creator advisors were removed. Coach Eric is now a CEO coach.
 - New advisors since 0.33.1 include Adham Dannaway, Annie Duke, Jason Fried, Aleyda Solis, Michael Bolton, Adam Shostack, Michael Bierut, and Cole Nussbaumer Knaflic.
-- **59 advisors, 102 frameworks, 14 skills, 3 agents.**
+- **59 advisors, 98 frameworks, 14 skills, 3 agents.**
 
 #### 0.33.1: Green Suite (2026-08-14)
 - Test suite is fully green: fixed the `advisors/prompts/**` eval-surface

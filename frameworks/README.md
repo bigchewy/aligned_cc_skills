@@ -1,6 +1,6 @@
 # Framework Registry
 
-102 frameworks across 22 categories
+98 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
@@ -20,11 +20,11 @@
 | positioning | 6 |
 | pricing | 1 |
 | product-design | 7 |
-| psychology | 12 |
+| psychology | 10 |
 | sales | 8 |
 | security | 2 |
 | startup | 10 |
-| strategy | 19 |
+| strategy | 17 |
 | visual-identity | 3 |
 
 ## Quick Reference
@@ -55,7 +55,6 @@
 | four-quadrant-focus | Four-Quadrant Focus | steve-jobs | strategy | someone has a bloated product line and needs a 2x2 grid to simplify down to the essential offerings |
 | growth-hacking-process | the Growth Hacking Process | sean-ellis | growth | a product team needs a repeatable process for generating, prioritizing, testing, and scaling growth experiments |
 | ice-prioritization | ICE Prioritization | sean-ellis | growth | a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones |
-| idiot-index | the Idiot Index to identify cost reduction opportunities | elon-musk | strategy | someone needs to identify cost reduction opportunities by comparing current costs to theoretical minimums |
 | jobs-to-be-done | Jobs to Be Done | clayton-christensen | strategy | someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features |
 | jolt-effect | the JOLT Effect | matt-dixon | sales | a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy |
 | mobilizer-taxonomy | the Mobilizer Taxonomy | matt-dixon | sales | a complex B2B deal has multiple stakeholders and the rep needs to distinguish real consensus-builders from accessible-but-inert stakeholders, especially when a 'champion' feels responsive but the deal isn't advancing |
@@ -65,14 +64,12 @@
 | origin-story-interview | Origin Story Interview | april-dunford | positioning | someone needs to extract and articulate their origin story as a foundation for positioning and brand narrative |
 | pain-plus-reflection | Pain + Reflection = Progress | ray-dalio | psychology | someone has experienced a painful failure and needs a structured way to extract lessons and turn it into growth |
 | performance-standards-by-level | Performance Standards by Level | ram-charan | leadership | a leader's performance doesn't match their level and they need to identify which leadership passage they are actually operating at |
-| personal-context-intake | Personal Context Intake | coach-eric | psychology | a new user needs an initial session to share their personal context, history, and goals before working with advisors |
 | personal-credo | Personal Credo | jim-loehr | psychology | someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose |
 | personal-resource-allocation | Personal Resource Allocation | clayton-christensen | leadership | someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions |
 | pillars-of-integrity | the Four Pillars of Integrity | jim-dethmer | leadership | someone feels fragmented or out of alignment and needs to identify where their integrity is broken |
 | pivot-or-persevere | Pivot or Persevere | eric-ries | startup | a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one |
 | presence-check-in | a Presence Check-In | matt-chapman | psychology | someone is distracted or disconnected and needs to arrive fully in the present moment before starting deeper work |
 | product-market-fit-test | the Product-Market Fit Test | sean-ellis | startup | a startup needs to measure whether they have product-market fit before investing in scaling |
-| professional-context-intake | Professional Context Intake | coach-eric | strategy | a new user needs an initial session to share their professional and business context before working with business advisors |
 | proximate-objectives | Proximate Objectives | richard-rumelt | strategy | someone has ambitious goals but no traction and needs to identify achievable near-term objectives that build momentum |
 | quadrinity | Quadrinity Process | jim-dethmer | psychology | someone needs to check in with all four aspects of self — physical, emotional, intellectual, and spiritual |
 | regret-minimization | Regret Minimization Framework | jeff-bezos | leadership | someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret |
@@ -85,7 +82,6 @@
 | teach-tailor-take-control | Teach-Tailor-Take Control (TTTC) | matt-dixon | sales | a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps |
 | the-algorithm | The Algorithm | elon-musk | strategy | someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach |
 | the-carousel | The Carousel | don-draper | brand | someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible |
-| the-story-so-far | The Story So Far | coach-eric | psychology | a user wants to reflect on their journey and progress with the Virtual Board over time |
 | type-1-type-2-decisions | Type 1 vs Type 2 Decisions | jeff-bezos | strategy | someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices |
 | value-metric | Value Metric Framework | patrick-campbell | pricing | someone needs to identify the right value metric for their pricing model — the unit of value customers pay for |
 | vulnerability-check | Vulnerability Check | brene-brown | psychology | someone is avoiding vulnerability or armoring up and needs to explore what they are protecting and what it costs |
@@ -232,18 +228,16 @@
 - **logic-check** — Logic Check (adham-dannaway)
 - **user-story-map** — User Story Map (jeff-patton)
 
-### Psychology (12)
+### Psychology (10)
 
 - **energy-audit** — Energy Audit (jim-loehr)
 - **fear-setting** — Fear-Setting (tim-ferriss)
 - **living-into-values** — Living Into Values (brene-brown)
 - **pain-plus-reflection** — Pain + Reflection = Progress (ray-dalio)
-- **personal-context-intake** — Personal Context Intake (coach-eric)
 - **personal-credo** — Personal Credo (jim-loehr)
 - **presence-check-in** — a Presence Check-In (matt-chapman)
 - **quadrinity** — Quadrinity Process (jim-dethmer)
 - **stress-recovery-oscillation** — Stress-Recovery Oscillation (jim-loehr)
-- **the-story-so-far** — The Story So Far (coach-eric)
 - **vulnerability-check** — Vulnerability Check (brene-brown)
 - **zone-of-genius** — the Zone of Genius discovery process (coach-eric)
 
@@ -276,7 +270,7 @@
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 - **product-market-fit-test** — the Product-Market Fit Test (sean-ellis)
 
-### Strategy (19)
+### Strategy (17)
 
 - **6-step-process** — 6-Step Process (coach-eric)
 - **believability-weighted-decision-making** — Believability-Weighted Decision Making (ray-dalio)
@@ -286,11 +280,9 @@
 - **first-principles-thinking** — First Principles Thinking (elon-musk)
 - **focus-through-saying-no** — Focus Through Saying No (steve-jobs)
 - **four-quadrant-focus** — Four-Quadrant Focus (steve-jobs)
-- **idiot-index** — the Idiot Index to identify cost reduction opportunities (elon-musk)
 - **jobs-to-be-done** — Jobs to Be Done (clayton-christensen)
 - **kernel-of-good-strategy** — building a complete strategy using the kernel (richard-rumelt)
 - **lifecycle-strategy** — Lifecycle Strategy (lex-sisney)
-- **professional-context-intake** — Professional Context Intake (coach-eric)
 - **proven-process** — Proven Process (gino-wickman)
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
 - **root-cause-analysis** — Root Cause Analysis (coach-eric)

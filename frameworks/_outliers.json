@@ -5,10 +5,7 @@
     "do-things-that-dont-scale": { "name": "Do Things That Don't Scale", "advisor": "paul-graham" },
     "earnestness-filter": { "name": "Earnestness Filter", "advisor": "garry-tan" },
     "focus-through-saying-no": { "name": "Focus Through Saying No", "advisor": "steve-jobs" },
-    "personal-context-intake": { "name": "Personal Context Intake", "advisor": "coach-eric" },
-    "professional-context-intake": { "name": "Professional Context Intake", "advisor": "coach-eric" },
     "quadrinity": { "name": "Quadrinity Process", "advisor": "diana-chapman" },
-    "the-story-so-far": { "name": "The Story So Far", "advisor": "coach-eric" },
     "6-step-process": { "name": "6-Step Process", "advisor": "coach-eric" }
   }
 }

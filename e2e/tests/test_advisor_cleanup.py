@@ -65,6 +65,12 @@ DELETED_FRAMEWORKS = [
     "three-by-three-content-batching",
     "big-bat-board-assessment",
     "organizational-readiness",
+    # 2026-11-02: built for va-web-app, which keeps its own copies
+    "personal-context-intake",
+    "professional-context-intake",
+    "the-story-so-far",
+    # 2026-11-02: manufacturing cost tool, not software-company work
+    "idiot-index",
     "5-step-process",
     "positioning-canvas",
     "start-with-experience",
@@ -218,6 +224,10 @@ REMOVED_FRAMEWORK_NAMES = [
     "Science of Design",
     "Start With Experience",
     "Tactical Empathy",
+    "Personal Context Intake",
+    "Professional Context Intake",
+    "The Story So Far",
+    # Not "Idiot Index": it stays as one of Elon Musk's ideas in his advisor prompt.
 ]
 
 NAME_SCANNED = [
