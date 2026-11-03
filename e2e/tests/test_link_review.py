@@ -74,9 +74,18 @@ def test_reason_is_not_empty():
         assert isinstance(e["reason"], str) and e["reason"].strip(), e["id"]
 
 
-def test_outside_and_list_links_are_never_sure():
+def test_list_links_are_never_sure():
     for e in review_entries():
-        if e["from"] == "outside":
-            assert e["confidence"] == "guess", e["id"]
         if isinstance(e["from"], list):
             assert e["confidence"] != "sure", e["id"]
+
+
+def test_outside_links_are_sure_or_guess_and_say_which_case():
+    for e in review_entries():
+        if e["from"] != "outside":
+            continue
+        assert e["confidence"] in {"sure", "guess"}, e["id"]
+        if e["confidence"] == "sure":
+            assert "user's own material" in e["reason"], e["id"]
+        else:
+            assert "might write it" in e["reason"], e["id"]

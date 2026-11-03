@@ -153,9 +153,9 @@ As it drafts each link, the builder also records how sure it is and why, in `doc
   reason: 5 Components writes the positioning statement as its output.
 ```
 
-- **sure**: the writing framework names this document as its output, in its purpose or its prompt.
+- **sure**: the writing framework names this document as its output, or the document is plainly the user's own material and comes from outside.
 - **likely**: one framework fits, but its output goes by a different name.
-- **guess**: more than one framework could write it, or none clearly does and the builder chose `outside`.
+- **guess**: more than one framework could write it, or a plugin framework might write a document now marked outside.
 
 `proximate-objectives` is the `from` for the quarterly goals that `mochary-weekly-check-in` and `chj-operating-review` need. The build report lists every required document whose `from` is `outside`. That list shows which frameworks to build next.
 

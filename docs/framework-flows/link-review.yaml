@@ -7,24 +7,25 @@
   doc: the alternatives recent buyers almost chose instead of you
   kind: required
   from: outside
-  confidence: guess
-  reason: Comes from talking to recent buyers. 5 Components asks for it as its critical input, and no
-    framework writes it.
+  confidence: sure
+  reason: 'Comes from talking to recent buyers. 5 Components asks for it as its critical input, and no
+    framework writes it. Sure: this is the user''s own material.'
 - id: 5-components-positioning/competitive-landscape
   framework: 5-components-positioning
   doc: competitive landscape
   kind: helpful
   from: outside
   confidence: guess
-  reason: Competitive Battle Card writes a landscape, but it needs 5 Components first. Here the landscape
-    is the founder's own research.
+  reason: 'Competitive Battle Card writes a landscape, but it needs 5 Components first. Here the landscape
+    is the founder''s own research. Guess: a plugin framework might write it.'
 - id: 5-components-positioning/customer-research
   framework: 5-components-positioning
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: 6-step-process/company-strategy
   framework: 6-step-process
   doc: company strategy
@@ -57,15 +58,17 @@
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: build-measure-learn/customer-research
   framework: build-measure-learn
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: build-measure-learn/leap-of-faith-assumptions-results
   framework: build-measure-learn
   doc: leap-of-faith-assumptions results
@@ -90,38 +93,42 @@
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: do-things-that-dont-scale/current-user-count-or-traction-metrics
   framework: do-things-that-dont-scale
   doc: current user count or traction metrics
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: earlyvangelists/customer-research
   framework: earlyvangelists
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: earlyvangelists/product-description
   framework: earlyvangelists
   doc: product description
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: earnestness-filter/product-description
   framework: earnestness-filter
   doc: product description
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: earnestness-filter/founding-story-or-motivation
   framework: earnestness-filter
   doc: founding story or motivation
@@ -171,23 +178,24 @@
   kind: helpful
   from: outside
   confidence: guess
-  reason: Competitive Battle Card writes a landscape, but it is B2B and needs positioning first. At market-type
-    time this is the founder's own research.
+  reason: 'Competitive Battle Card writes a landscape, but it is B2B and needs positioning first. At market-type
+    time this is the founder''s own research. Guess: a plugin framework might write it.'
 - id: four-market-types/market-research
   framework: four-market-types
   doc: market research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Desk research on the market. No framework writes it.
+  confidence: sure
+  reason: 'Desk research on the market. No framework writes it. Sure: this is the user''s own material.'
 - id: four-quadrant-focus/product-description
   framework: four-quadrant-focus
   doc: product description
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: growth-hacking-process/a-product-market-fit-survey-result-of-40-or-more-very-disappointed
   framework: growth-hacking-process
   doc: a product-market fit survey result of 40% or more "very disappointed"
@@ -202,15 +210,16 @@
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: growth-hacking-process/business-metrics
   framework: growth-hacking-process
   doc: business metrics
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: ice-prioritization/business-goals
   framework: ice-prioritization
   doc: business goals
@@ -226,23 +235,26 @@
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: jobs-to-be-done/product-description
   framework: jobs-to-be-done
   doc: product description
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: jolt-effect/deal-notes
   framework: jolt-effect
   doc: deal notes
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The rep's own notes and records of the deal. No framework writes them.
+  confidence: sure
+  reason: 'The rep''s own notes and records of the deal. No framework writes them. Sure: this is the user''s
+    own material.'
 - id: jolt-effect/stakeholder-map
   framework: jolt-effect
   doc: stakeholder map
@@ -256,36 +268,39 @@
   doc: discovery call transcripts
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Recordings of the rep's calls. No framework writes them.
+  confidence: sure
+  reason: 'Recordings of the rep''s calls. No framework writes them. Sure: this is the user''s own material.'
 - id: mobilizer-taxonomy/stakeholder-map
   framework: mobilizer-taxonomy
   doc: stakeholder map
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Mobilizer Taxonomy writes the committee map itself, so the first roster comes from the rep.
+  confidence: sure
+  reason: 'Mobilizer Taxonomy writes the committee map itself, so the first roster comes from the rep.
+    Sure: this is the user''s own material.'
 - id: mobilizer-taxonomy/deal-notes
   framework: mobilizer-taxonomy
   doc: deal notes
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The rep's own notes and records of the deal. No framework writes them.
+  confidence: sure
+  reason: 'The rep''s own notes and records of the deal. No framework writes them. Sure: this is the user''s
+    own material.'
 - id: mobilizer-taxonomy/discovery-call-transcripts
   framework: mobilizer-taxonomy
   doc: discovery call transcripts
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Recordings of the rep's calls. No framework writes them.
+  confidence: sure
+  reason: 'Recordings of the rep''s calls. No framework writes them. Sure: this is the user''s own material.'
 - id: mobilizer-taxonomy/email-threads-with-the-buying-committee
   framework: mobilizer-taxonomy
   doc: email threads with the buying committee
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The rep's own notes and records of the deal. No framework writes them.
+  confidence: sure
+  reason: 'The rep''s own notes and records of the deal. No framework writes them. Sure: this is the user''s
+    own material.'
 - id: kernel-of-good-strategy/company-strategy
   framework: kernel-of-good-strategy
   doc: company strategy
@@ -308,60 +323,66 @@
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: leap-of-faith-assumptions/customer-research
   framework: leap-of-faith-assumptions
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: pivot-or-persevere/product-description
   framework: pivot-or-persevere
   doc: product description
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: pivot-or-persevere/customer-research
   framework: pivot-or-persevere
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: pivot-or-persevere/business-metrics
   framework: pivot-or-persevere
   doc: business metrics
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: product-market-fit-test/survey-results-from-at-least-40-active-users
   framework: product-market-fit-test
   doc: survey results from at least 40 active users
   kind: required
   from: outside
-  confidence: guess
-  reason: The founder sends the survey. Product-Market Fit Test explains how, but no framework writes
-    the results.
+  confidence: sure
+  reason: 'The founder sends the survey. Product-Market Fit Test explains how, but no framework writes
+    the results. Sure: this is the user''s own material.'
 - id: product-market-fit-test/product-description
   framework: product-market-fit-test
   doc: product description
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: product-market-fit-test/customer-research
   framework: product-market-fit-test
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: proximate-objectives/company-strategy
   framework: proximate-objectives
   doc: company strategy
@@ -377,22 +398,24 @@
   doc: business goals
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Proximate Objectives writes near-term goals itself. The wider business goals come from the team.
+  confidence: sure
+  reason: 'Proximate Objectives writes near-term goals itself. The wider business goals come from the
+    team. Sure: this is the user''s own material.'
 - id: root-cause-analysis/prior-diagnoses
   framework: root-cause-analysis
   doc: prior diagnoses
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Earlier diagnoses, often from past runs of this framework, which cannot be its own source.
+  confidence: sure
+  reason: 'Earlier diagnoses, often from past runs of this framework, which cannot be its own source.
+    Sure: this is the user''s own material.'
 - id: root-cause-analysis/relevant-data-or-examples
   framework: root-cause-analysis
   doc: relevant data or examples
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: sales-pitch-structure/positioning-statement
   framework: sales-pitch-structure
   doc: positioning statement
@@ -412,8 +435,9 @@
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: smallest-viable-audience/positioning
   framework: smallest-viable-audience
   doc: positioning
@@ -460,8 +484,8 @@
   kind: required
   from: outside
   confidence: guess
-  reason: A memo, talk or sales call that names the market shift. Kernel of Good Strategy's diagnosis
-    comes close but does not describe a shift in the world.
+  reason: 'A memo, talk or sales call that names the market shift. Kernel of Good Strategy''s diagnosis
+    comes close but does not describe a shift in the world. Guess: a plugin framework might write it.'
 - id: strategic-narrative/positioning-statement
   framework: strategic-narrative
   doc: positioning statement
@@ -484,15 +508,17 @@
   doc: account research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Research the rep does on the account. No framework writes it.
+  confidence: sure
+  reason: 'Research the rep does on the account. No framework writes it. Sure: this is the user''s own
+    material.'
 - id: teach-tailor-take-control/buyer-s-recent-public-statements-or-writing
   framework: teach-tailor-take-control
   doc: buyer's recent public statements or writing
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The buyer's own posts, talks and writing. No framework writes them.
+  confidence: sure
+  reason: 'The buyer''s own posts, talks and writing. No framework writes them. Sure: this is the user''s
+    own material.'
 - id: teach-tailor-take-control/pitch-deck-or-meeting-agenda
   framework: teach-tailor-take-control
   doc: pitch deck or meeting agenda
@@ -508,8 +534,9 @@
   doc: deal notes
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The rep's own notes and records of the deal. No framework writes them.
+  confidence: sure
+  reason: 'The rep''s own notes and records of the deal. No framework writes them. Sure: this is the user''s
+    own material.'
 - id: value-metric/strategy
   framework: value-metric
   doc: strategy
@@ -532,9 +559,9 @@
   doc: product description
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Working Backwards writes the press release that describes the product, so the starting description
-    comes from the founder.
+  confidence: sure
+  reason: 'Working Backwards writes the press release that describes the product, so the starting description
+    comes from the founder. Sure: this is the user''s own material.'
 - id: insane-honesty/positioning
   framework: insane-honesty
   doc: positioning
@@ -555,44 +582,45 @@
   doc: revenue metrics
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: bowtie-funnel/customer-segmentation
   framework: bowtie-funnel
   doc: customer segmentation
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The company's own customer data. Smallest Viable Audience picks one audience but does not write
-    a segmentation.
+  confidence: sure
+  reason: 'The company''s own customer data. Smallest Viable Audience picks one audience but does not
+    write a segmentation. Sure: this is the user''s own material.'
 - id: 6-elements-sdr/current-sdr-org-chart
   framework: 6-elements-sdr
   doc: current SDR org chart
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The SDR team as it is today. Rules of Structure designs a company structure, not the SDR team.
+  confidence: sure
+  reason: 'The SDR team as it is today. Rules of Structure designs a company structure, not the SDR team.
+    Sure: this is the user''s own material.'
 - id: 6-elements-sdr/sdr-quota-and-comp-plan
   framework: 6-elements-sdr
   doc: SDR quota and comp plan
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: 6-elements-sdr/ramp-and-tenure-data
   framework: 6-elements-sdr
   doc: ramp and tenure data
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: 6-elements-sdr/last-90-days-meetings-held-and-opportunity-conversion
   framework: 6-elements-sdr
   doc: last 90 days meetings-held and opportunity conversion
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: 5-gtm-motions-digital-health/current-pitch-deck
   framework: 5-gtm-motions-digital-health
   doc: current pitch deck
@@ -608,8 +636,8 @@
   doc: sales pipeline by segment
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: 5-gtm-motions-digital-health/clinical-evidence-inventory-case-studies-outcomes-data-rcts
   framework: 5-gtm-motions-digital-health
   doc: clinical evidence inventory (case studies / outcomes data / RCTs)
@@ -623,52 +651,55 @@
   doc: runway and fundraising plan
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: 5-gtm-motions-digital-health/integration-roadmap-ehr-payer-revenue-cycle
   framework: 5-gtm-motions-digital-health
   doc: integration roadmap (EHR / payer / revenue-cycle)
   kind: helpful
   from: outside
   confidence: guess
-  reason: Frame Shape Bet writes a product roadmap, but not an integration roadmap for EHR, payer and
-    revenue-cycle systems.
+  reason: 'Frame Shape Bet writes a product roadmap, but not an integration roadmap for EHR, payer and
+    revenue-cycle systems. Guess: a plugin framework might write it.'
 - id: reverse-engineered-brand/a-public-url-for-the-org-homepage-or-about-page-or-a-local-folder-of-source-material
   framework: reverse-engineered-brand
   doc: a public URL for the org (homepage or About page) OR a local folder of source material
   kind: required
   from: outside
-  confidence: guess
-  reason: The org's own site or source files. Nothing writes them.
+  confidence: sure
+  reason: 'The org''s own site or source files. Nothing writes them. Sure: this is the user''s own material.'
 - id: reverse-engineered-brand/a-local-folder-path-with-supplementary-content-past-decks-customer-interviews-sample-copy-internal-docs
   framework: reverse-engineered-brand
   doc: a local folder path with supplementary content (past decks, customer interviews, sample copy, internal
     docs)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: buyer-persona/customer-interview-transcripts-including-the-customer-s-role
   framework: buyer-persona
   doc: customer interview transcripts including the customer's role
   kind: required
   from: outside
-  confidence: guess
-  reason: Recordings of customer interviews. No framework writes them.
+  confidence: sure
+  reason: 'Recordings of customer interviews. No framework writes them. Sure: this is the user''s own
+    material.'
 - id: buyer-persona/customer-research
   framework: buyer-persona
   doc: customer research
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: buyer-persona/interview-transcripts
   framework: buyer-persona
   doc: interview transcripts
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Recordings of customer interviews. No framework writes them.
+  confidence: sure
+  reason: 'Recordings of customer interviews. No framework writes them. Sure: this is the user''s own
+    material.'
 - id: buyer-persona/competitor-positioning
   framework: buyer-persona
   doc: competitor positioning
@@ -710,22 +741,22 @@
   doc: sample existing copy
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Copy the org already uses. No framework writes it.
+  confidence: sure
+  reason: 'Copy the org already uses. No framework writes it. Sure: this is the user''s own material.'
 - id: brand-voice/3-10-sample-pieces-of-existing-copy-homepage-blog-posts-founder-tweets-sales-emails
   framework: brand-voice
   doc: 3–10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales emails)
   kind: required
   from: outside
-  confidence: guess
-  reason: Copy the org already uses. No framework writes it.
+  confidence: sure
+  reason: 'Copy the org already uses. No framework writes it. Sure: this is the user''s own material.'
 - id: brand-voice/competitor-copy-samples
   framework: brand-voice
   doc: competitor copy samples
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Competitors' own copy. No framework writes it.
+  confidence: sure
+  reason: 'Competitors'' own copy. No framework writes it. Sure: this is the user''s own material.'
 - id: brand-voice/category-name-and-tagline-from-messaging-md
   framework: brand-voice
   doc: category-name and tagline from messaging.md
@@ -739,36 +770,37 @@
   kind: required
   from: outside
   confidence: guess
-  reason: Copy already in use. Storybrand Homepage or Insane Honesty could have written it, but the audit
-    reads whatever is live.
+  reason: 'Copy already in use. Storybrand Homepage or Insane Honesty could have written it, but the audit
+    reads whatever is live. Guess: a plugin framework might write it.'
 - id: proof-points-audit/customer-interview-transcripts
   framework: proof-points-audit
   doc: customer interview transcripts
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Recordings of customer interviews. No framework writes them.
+  confidence: sure
+  reason: 'Recordings of customer interviews. No framework writes them. Sure: this is the user''s own
+    material.'
 - id: proof-points-audit/case-study-drafts
   framework: proof-points-audit
   doc: case study drafts
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: proof-points-audit/third-party-reports
   framework: proof-points-audit
   doc: third-party reports
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Reports by outside firms. No framework writes them.
+  confidence: sure
+  reason: 'Reports by outside firms. No framework writes them. Sure: this is the user''s own material.'
 - id: proof-points-audit/regulatory-filings
   framework: proof-points-audit
   doc: regulatory filings
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Filings with regulators. No framework writes them.
+  confidence: sure
+  reason: 'Filings with regulators. No framework writes them. Sure: this is the user''s own material.'
 - id: competitive-battle-card/completed-strategy-positioning-md-component-1-competitive-alternatives
   framework: competitive-battle-card
   doc: 'completed strategy/positioning.md (Component 1: competitive alternatives)'
@@ -788,43 +820,47 @@
   doc: customer win/loss interviews
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews with won and lost buyers. No framework writes them.
+  confidence: sure
+  reason: 'Interviews with won and lost buyers. No framework writes them. Sure: this is the user''s own
+    material.'
 - id: competitive-battle-card/competitor-public-materials
   framework: competitive-battle-card
   doc: competitor public materials
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Competitors' own sites and decks. No framework writes them.
+  confidence: sure
+  reason: 'Competitors'' own sites and decks. No framework writes them. Sure: this is the user''s own
+    material.'
 - id: 3b-behavioral-design/product-analytics
   framework: 3b-behavioral-design
   doc: product analytics
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: 3b-behavioral-design/user-research-notes
   framework: 3b-behavioral-design
   doc: user research notes
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: 3b-behavioral-design/the-specific-flow-or-screen-in-question
   framework: 3b-behavioral-design
   doc: the specific flow or screen in question
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The live product flow or screen. No framework writes it.
+  confidence: sure
+  reason: 'The live product flow or screen. No framework writes it. Sure: this is the user''s own material.'
 - id: mochary-weekly-check-in/existing-meeting-agenda-or-team-operating-cadence
   framework: mochary-weekly-check-in
   doc: existing meeting agenda or team operating cadence
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The team's current meeting habits. No framework writes them.
+  confidence: sure
+  reason: 'The team''s current meeting habits. No framework writes them. Sure: this is the user''s own
+    material.'
 - id: mochary-weekly-check-in/okrs-or-quarterly-goals
   framework: mochary-weekly-check-in
   doc: OKRs or quarterly goals
@@ -838,15 +874,15 @@
   doc: existing operating review agenda or meeting format
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The team's current meeting format. No framework writes it.
+  confidence: sure
+  reason: 'The team''s current meeting format. No framework writes it. Sure: this is the user''s own material.'
 - id: chj-operating-review/current-metrics-or-scorecard
   framework: chj-operating-review
   doc: current metrics or scorecard
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: chj-operating-review/okrs-or-quarterly-priorities
   framework: chj-operating-review
   doc: OKRs or quarterly priorities
@@ -860,8 +896,9 @@
   doc: current org chart
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The org chart as it is today. Rules of Structure redesigns it, so it cannot be its own source.
+  confidence: sure
+  reason: 'The org chart as it is today. Rules of Structure redesigns it, so it cannot be its own source.
+    Sure: this is the user''s own material.'
 - id: rules-of-structure/strategy-or-plan-for-the-next-stage
   framework: rules-of-structure
   doc: strategy or plan for the next stage
@@ -877,15 +914,16 @@
   doc: list of open roles and recent hires
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: psiu-role-fit/job-description-or-role-description-for-the-seat
   framework: psiu-role-fit
   doc: job description or role description for the seat
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The current job description. PSIU Role Fit writes a new role description itself.
+  confidence: sure
+  reason: 'The current job description. PSIU Role Fit writes a new role description itself. Sure: this
+    is the user''s own material.'
 - id: psiu-role-fit/org-chart-showing-where-the-role-sits
   framework: psiu-role-fit
   doc: org chart showing where the role sits
@@ -899,59 +937,63 @@
   doc: performance history for the seat (previous holders)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: lifecycle-strategy/product-list-with-revenue-by-product
   framework: lifecycle-strategy
   doc: product list with revenue by product
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: lifecycle-strategy/customer-list-or-segment-breakdown
   framework: lifecycle-strategy
   doc: customer list or segment breakdown
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: lifecycle-strategy/org-chart
   framework: lifecycle-strategy
   doc: org chart
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The org chart as it is today. Rules of Structure redesigns it, but it comes after this analysis.
+  confidence: sure
+  reason: 'The org chart as it is today. Rules of Structure redesigns it, but it comes after this analysis.
+    Sure: this is the user''s own material.'
 - id: blue-ocean-value-props/current-product-or-service-description-and-pricing
   framework: blue-ocean-value-props
   doc: current product or service description and pricing
   kind: helpful
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: blue-ocean-value-props/list-of-competitors-and-the-other-things-buyers-use-instead
   framework: blue-ocean-value-props
   doc: list of competitors and the other things buyers use instead
   kind: helpful
   from: outside
   confidence: guess
-  reason: 5 Components lists competitive alternatives, but this framework usually runs before positioning.
-    The list comes from the team.
+  reason: '5 Components lists competitive alternatives, but this framework usually runs before positioning.
+    The list comes from the team. Guess: a plugin framework might write it.'
 - id: blue-ocean-value-props/customer-interviews-win-loss-notes-or-sales-call-notes
   framework: blue-ocean-value-props
   doc: customer interviews, win/loss notes, or sales call notes
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: blue-ocean-value-props/notes-on-people-who-looked-at-the-product-and-did-not-buy
   framework: blue-ocean-value-props
   doc: notes on people who looked at the product and did not buy
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: frame-shape-bet/the-current-roadmap-backlog-or-list-of-planned-features
   framework: frame-shape-bet
   doc: the current roadmap, backlog, or list of planned features
@@ -974,79 +1016,80 @@
   doc: any dates that can't move (launches, events, contract dates) and what happens on them
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: frame-shape-bet/promises-already-made-to-customers-in-decks-contracts-or-emails
   framework: frame-shape-bet
   doc: promises already made to customers, in decks, contracts, or emails
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: frame-shape-bet/who-builds-and-how-much-of-their-time-goes-to-project-work
   framework: frame-shape-bet
   doc: who builds, and how much of their time goes to project work
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: ten-steps-blueprint/a-description-of-the-job-or-situation-where-people-must-use-the-skill
   framework: ten-steps-blueprint
   doc: a description of the job or situation where people must use the skill
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: ten-steps-blueprint/the-current-program-outline-curriculum-or-session-plan-if-one-exists
   framework: ten-steps-blueprint
   doc: the current program outline, curriculum, or session plan, if one exists
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The program as it runs today. Ten Steps Blueprint writes a new blueprint itself.
+  confidence: sure
+  reason: 'The program as it runs today. Ten Steps Blueprint writes a new blueprint itself. Sure: this
+    is the user''s own material.'
 - id: ten-steps-blueprint/examples-of-people-doing-the-skill-well-and-badly
   framework: ten-steps-blueprint
   doc: examples of people doing the skill well and badly
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: ten-steps-blueprint/how-the-program-measures-success-today
   framework: ten-steps-blueprint
   doc: how the program measures success today
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: behavior-gap-diagnosis/the-training-request-program-outline-or-learning-objectives
   framework: behavior-gap-diagnosis
   doc: the training request, program outline, or learning objectives
   kind: helpful
   from: outside
   confidence: guess
-  reason: The request or program as it stands. Ten Steps Blueprint writes a program, but this diagnosis
-    usually runs first to decide whether training is the fix.
+  reason: 'The request or program as it stands. Ten Steps Blueprint writes a program, but this diagnosis
+    usually runs first to decide whether training is the fix. Guess: a plugin framework might write it.'
 - id: behavior-gap-diagnosis/what-people-currently-do-instead-observations-examples-complaints
   framework: behavior-gap-diagnosis
   doc: what people currently do instead (observations, examples, complaints)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: behavior-gap-diagnosis/how-the-behavior-is-measured-rewarded-or-noticed-today
   framework: behavior-gap-diagnosis
   doc: how the behavior is measured, rewarded, or noticed today
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Live numbers from the business. No framework writes them.
+  confidence: sure
+  reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
 - id: behavior-gap-diagnosis/notes-from-people-who-tried-the-behavior-and-stopped
   framework: behavior-gap-diagnosis
   doc: notes from people who tried the behavior and stopped
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: assigning-ai-roles/the-learning-goal-or-curriculum-for-the-moment-being-designed
   framework: assigning-ai-roles
   doc: the learning goal or curriculum for the moment being designed
@@ -1060,129 +1103,129 @@
   doc: any existing AI prompt or system prompt for this moment
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: assigning-ai-roles/notes-on-who-the-learners-are-and-what-they-already-know
   framework: assigning-ai-roles
   doc: notes on who the learners are and what they already know
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: assigning-ai-roles/transcripts-or-examples-of-learners-using-an-ai-tool-today
   framework: assigning-ai-roles
   doc: transcripts or examples of learners using an AI tool today
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: complex-contagion-rollout/a-description-of-the-practice-or-behavior-being-rolled-out
   framework: complex-contagion-rollout
   doc: a description of the practice or behavior being rolled out
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: complex-contagion-rollout/an-org-chart-or-list-of-teams-with-rough-sizes
   framework: complex-contagion-rollout
   doc: an org chart or list of teams, with rough sizes
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The teams as they are today. Rules of Structure designs functions, not the team list with sizes
-    this needs.
+  confidence: sure
+  reason: 'The teams as they are today. Rules of Structure designs functions, not the team list with sizes
+    this needs. Sure: this is the user''s own material.'
 - id: complex-contagion-rollout/any-record-of-who-works-with-whom-shared-projects-recurring-meetings-slack-channels-collaboration-data
   framework: complex-contagion-rollout
   doc: any record of who works with whom (shared projects, recurring meetings, Slack channels, collaboration
     data)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: complex-contagion-rollout/the-current-rollout-or-pilot-plan-if-one-exists
   framework: complex-contagion-rollout
   doc: the current rollout or pilot plan, if one exists
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: complex-contagion-rollout/notes-on-which-managers-support-the-change-and-which-do-not
   framework: complex-contagion-rollout
   doc: notes on which managers support the change and which do not
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: close-the-loop/the-project-s-claude-md-and-any-claude-md-files-in-subfolders
   framework: close-the-loop
   doc: the project's CLAUDE.md (and any CLAUDE.md files in subfolders)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Files in the user's own project. No framework writes them.
+  confidence: sure
+  reason: 'Files in the user''s own project. No framework writes them. Sure: this is the user''s own material.'
 - id: close-the-loop/the-project-s-claude-code-settings-file-including-permission-rules-and-hooks
   framework: close-the-loop
   doc: the project's Claude Code settings file, including permission rules and hooks
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Files in the user's own project. No framework writes them.
+  confidence: sure
+  reason: 'Files in the user''s own project. No framework writes them. Sure: this is the user''s own material.'
 - id: close-the-loop/the-list-of-custom-slash-commands-skills-subagents-and-plugins-in-use
   framework: close-the-loop
   doc: the list of custom slash commands, skills, subagents, and plugins in use
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Files in the user's own project. No framework writes them.
+  confidence: sure
+  reason: 'Files in the user''s own project. No framework writes them. Sure: this is the user''s own material.'
 - id: close-the-loop/a-recent-session-where-claude-got-the-work-wrong-or-the-user-s-description-of-what-went-wrong
   framework: close-the-loop
   doc: a recent session where Claude got the work wrong, or the user's description of what went wrong
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: close-the-loop/how-the-project-is-tested-built-and-checked-today-test-command-linter-ci
   framework: close-the-loop
   doc: how the project is tested, built, and checked today (test command, linter, CI)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Files in the user's own project. No framework writes them.
+  confidence: sure
+  reason: 'Files in the user''s own project. No framework writes them. Sure: this is the user''s own material.'
 - id: proven-process/a-description-of-the-method-or-service-as-it-is-delivered-today-even-a-rough-one
   framework: proven-process
   doc: a description of the method or service as it is delivered today, even a rough one
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: proven-process/notes-agendas-or-recordings-from-the-last-two-or-three-client-engagements
   framework: proven-process
   doc: notes, agendas, or recordings from the last two or three client engagements
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: proven-process/the-tools-worksheets-or-exercises-used-in-sessions
   framework: proven-process
   doc: the tools, worksheets, or exercises used in sessions
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: proven-process/any-assessment-or-survey-the-client-fills-out-before-or-during-the-work
   framework: proven-process
   doc: any assessment or survey the client fills out before or during the work
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: proven-process/current-pricing-and-who-the-clients-have-been
   framework: proven-process
   doc: current pricing and who the clients have been
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: customer-problem-presentation/business-plan-or-positioning-draft
   framework: customer-problem-presentation
   doc: business plan or positioning draft
@@ -1213,16 +1256,17 @@
   doc: notes on what the user does today, in their own words (interviews, support threads, a session recording)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: user-story-map/any-existing-screens-specs-or-access-rules-so-the-map-can-be-checked-against-them-afterward
   framework: user-story-map
   doc: any existing screens, specs, or access rules, so the map can be checked against them afterward
   kind: helpful
   from: outside
   confidence: guess
-  reason: Screens and specs already in the product. Breadboard to Pages writes screens, but after the
-    map, from it.
+  reason: 'Screens and specs already in the product. Breadboard to Pages writes screens, but after the
+    map, from it. Guess: a plugin framework might write it.'
 - id: user-story-map/the-project-s-design-principles-md-so-the-map-is-drawn-in-the-project-s-colors-and-type
   framework: user-story-map
   doc: the project's design-principles.md, so the map is drawn in the project's colors and type
@@ -1258,15 +1302,16 @@
   doc: 'real content: actual names, emails, labels, and the longest values the app allows'
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: interface-inventory/an-app-that-already-exists-as-a-url-a-running-dev-server-a-codebase-or-a-folder-of-screenshots
   framework: interface-inventory
   doc: an app that already exists, as a URL, a running dev server, a codebase, or a folder of screenshots
   kind: required
   from: outside
-  confidence: guess
-  reason: The user's running app or codebase. No framework writes it.
+  confidence: sure
+  reason: 'The user''s running app or codebase. No framework writes it. Sure: this is the user''s own
+    material.'
 - id: interface-inventory/the-project-s-design-principles-md-so-every-pattern-can-be-checked-against-the-tokens
   framework: interface-inventory
   doc: the project's design-principles.md, so every pattern can be checked against the tokens
@@ -1279,8 +1324,8 @@
   doc: a list of the app's pages or routes
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: logic-check/a-design-principles-md-or-an-existing-screen-as-a-url-a-running-dev-server-code-or-a-screenshot
   framework: logic-check
   doc: a design-principles.md, or an existing screen as a URL, a running dev server, code, or a screenshot
@@ -1313,15 +1358,16 @@
   doc: the launch's decisions file, once the first sitting has run
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Launch Bet writes this file itself in its first sitting, so it cannot be its own source.
+  confidence: sure
+  reason: 'Launch Bet writes this file itself in its first sitting, so it cannot be its own source. Sure:
+    this is the user''s own material.'
 - id: launch-bet/what-the-first-customer-did-for-the-second-sitting
   framework: launch-bet
   doc: what the first customer did, for the second sitting
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: getting-real-cut/a-feature-list-a-spec-or-a-design-for-something-not-yet-built
   framework: getting-real-cut
   doc: a feature list, a spec, or a design for something not yet built
@@ -1354,101 +1400,106 @@
   doc: the URL of one page that doesn't rank, and the query it should rank for
   kind: required
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: why-my-page-doesnt-rank/access-to-google-search-console-for-the-site
   framework: why-my-page-doesnt-rank
   doc: access to Google Search Console for the site
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Access to a Google tool. No framework writes it.
+  confidence: sure
+  reason: 'Access to a Google tool. No framework writes it. Sure: this is the user''s own material.'
 - id: why-my-page-doesnt-rank/a-pagespeed-insights-report-for-the-page
   framework: why-my-page-doesnt-rank
   doc: a PageSpeed Insights report for the page
   kind: helpful
   from: outside
-  confidence: guess
-  reason: A report from a Google tool. No framework writes it.
+  confidence: sure
+  reason: 'A report from a Google tool. No framework writes it. Sure: this is the user''s own material.'
 - id: ai-search-optimization-checklist/the-site-s-url-and-what-it-sells-or-offers
   framework: ai-search-optimization-checklist
   doc: the site's URL and what it sells or offers
   kind: required
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: ai-search-optimization-checklist/a-list-of-the-questions-customers-ask-before-they-buy-or-sign-up
   framework: ai-search-optimization-checklist
   doc: a list of the questions customers ask before they buy or sign up
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Interviews and notes the team gathers from customers. No framework writes raw customer research.
+  confidence: sure
+  reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
+    Sure: this is the user''s own material.'
 - id: ai-search-optimization-checklist/access-to-google-search-console-and-the-site-s-analytics
   framework: ai-search-optimization-checklist
   doc: access to Google Search Console and the site's analytics
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Access to Google and analytics tools. No framework writes it.
+  confidence: sure
+  reason: 'Access to Google and analytics tools. No framework writes it. Sure: this is the user''s own
+    material.'
 - id: few-hiccupps-review/a-design-doc-a-feature-description-or-an-existing-screen-to-review
   framework: few-hiccupps-review
   doc: a design doc, a feature description, or an existing screen to review
   kind: required
   from: outside
   confidence: guess
-  reason: A design doc or spec from the team's own build process. Frame Shape Bet and Breadboard to Pages
-    write related things, but no framework writes a design doc.
+  reason: 'A design doc or spec from the team''s own build process. Frame Shape Bet and Breadboard to
+    Pages write related things, but no framework writes a design doc. Guess: a plugin framework might
+    write it.'
 - id: few-hiccupps-review/the-codebase-the-design-doc-describes-open-so-files-can-be-read-during-the-review
   framework: few-hiccupps-review
   doc: the codebase the design doc describes, open so files can be read during the review
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The user's own code. No framework writes it.
+  confidence: sure
+  reason: 'The user''s own code. No framework writes it. Sure: this is the user''s own material.'
 - id: few-hiccupps-review/the-existing-tests-checks-for-the-area-the-design-touches
   framework: few-hiccupps-review
   doc: the existing tests (checks) for the area the design touches
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The user's own tests. No framework writes them.
+  confidence: sure
+  reason: 'The user''s own tests. No framework writes them. Sure: this is the user''s own material.'
 - id: few-hiccupps-review/past-bug-reports-or-incidents-in-the-same-area
   framework: few-hiccupps-review
   doc: past bug reports or incidents in the same area
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: four-question-threat-model/a-design-doc-spec-or-feature-description-for-something-being-worked-on-now
   framework: four-question-threat-model
   doc: a design doc, spec, or feature description for something being worked on now
   kind: required
   from: outside
   confidence: guess
-  reason: A design doc or spec from the team's own build process. Frame Shape Bet and Breadboard to Pages
-    write related things, but no framework writes a design doc.
+  reason: 'A design doc or spec from the team''s own build process. Frame Shape Bet and Breadboard to
+    Pages write related things, but no framework writes a design doc. Guess: a plugin framework might
+    write it.'
 - id: four-question-threat-model/a-sketch-or-diagram-of-the-parts-and-how-data-moves-between-them
   framework: four-question-threat-model
   doc: a sketch or diagram of the parts and how data moves between them
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: four-question-threat-model/the-database-schema-and-its-row-level-security-policies
   framework: four-question-threat-model
   doc: the database schema and its row-level security policies
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The user's own schema and policies. No framework writes them.
+  confidence: sure
+  reason: 'The user''s own schema and policies. No framework writes them. Sure: this is the user''s own
+    material.'
 - id: four-question-threat-model/the-list-of-third-party-services-webhooks-hooks-or-mcp-servers-it-touches
   framework: four-question-threat-model
   doc: the list of third-party services, webhooks, hooks, or MCP servers it touches
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: phantom-b-llm-threats/a-design-spec-or-running-system-where-code-calls-an-llm-an-app-feature-a-claude-code-hook-or-plugin-an-agent-with-tools
   framework: phantom-b-llm-threats
   doc: a design, spec, or running system where code calls an LLM (an app feature, a Claude Code hook or
@@ -1456,23 +1507,24 @@
   kind: required
   from: outside
   confidence: guess
-  reason: A design doc or spec from the team's own build process. Frame Shape Bet and Breadboard to Pages
-    write related things, but no framework writes a design doc.
+  reason: 'A design doc or spec from the team''s own build process. Frame Shape Bet and Breadboard to
+    Pages write related things, but no framework writes a design doc. Guess: a plugin framework might
+    write it.'
 - id: phantom-b-llm-threats/a-sketch-of-the-system-with-the-llm-calls-marked
   framework: phantom-b-llm-threats
   doc: a sketch of the system with the LLM calls marked
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: phantom-b-llm-threats/the-system-prompt-the-tools-or-mcp-servers-the-model-can-use-and-what-data-it-can-read
   framework: phantom-b-llm-threats
   doc: the system prompt, the tools or MCP servers the model can use, and what data it can read
   kind: helpful
   from: outside
   confidence: guess
-  reason: The system's own prompt and tools. Assigning AI Roles writes a tested prompt, but only for learning
-    tools.
+  reason: 'The system''s own prompt and tools. Assigning AI Roles writes a tested prompt, but only for
+    learning tools. Guess: a plugin framework might write it.'
 - id: phantom-b-llm-threats/the-threat-model-from-four-question-threat-model-if-one-exists
   framework: phantom-b-llm-threats
   doc: the threat model from four-question-threat-model, if one exists
@@ -1486,15 +1538,16 @@
   kind: required
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: boil-it-down/the-product-s-name-and-any-existing-logo-colors-or-typefaces
   framework: boil-it-down
   doc: the product's name and any existing logo, colors, or typefaces
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: boil-it-down/the-design-rules-the-product-already-follows-including-any-looks-it-bans
   framework: boil-it-down
   doc: the design rules the product already follows, including any looks it bans
@@ -1508,30 +1561,31 @@
   doc: the places the mark has to appear (app icon, favicon, printed piece, packaging, signage)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: boil-it-down/marks-from-competitors-or-from-the-category
   framework: boil-it-down
   doc: marks from competitors or from the category
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Competitors' own marks. No framework writes them.
+  confidence: sure
+  reason: 'Competitors'' own marks. No framework writes them. Sure: this is the user''s own material.'
 - id: how-much-siblings-share/a-short-description-of-each-product-who-buys-it-and-who-uses-it
   framework: how-much-siblings-share
   doc: a short description of each product, who buys it, and who uses it
   kind: required
   from: outside
   confidence: guess
-  reason: The founder's own description of what they are building. Working Backwards writes a press release
-    that could stand in, but no framework names this as its output.
+  reason: 'The founder''s own description of what they are building. Working Backwards writes a press
+    release that could stand in, but no framework names this as its output. Guess: a plugin framework
+    might write it.'
 - id: how-much-siblings-share/each-product-s-name-domain-and-any-existing-logo-colors-or-typefaces
   framework: how-much-siblings-share
   doc: each product's name, domain, and any existing logo, colors, or typefaces
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: how-much-siblings-share/the-design-rules-the-parent-already-follows
   framework: how-much-siblings-share
   doc: the design rules the parent already follows
@@ -1544,15 +1598,15 @@
   doc: places where the two products meet (a shared checkout, account, footer, email, or printed piece)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: how-much-siblings-share/how-many-people-know-the-parent-s-name-today
   framework: how-much-siblings-share
   doc: how many people know the parent's name today
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: small-size-and-print-test/the-mark-or-marks-to-test-as-an-image-a-file-or-a-description-precise-enough-to-draw
   framework: small-size-and-print-test
   doc: the mark or marks to test, as an image, a file, or a description precise enough to draw
@@ -1574,29 +1628,29 @@
   kind: helpful
   from: outside
   confidence: guess
-  reason: Boil It Down asks about placements but writes only the hardest one. The full list comes from
-    the team.
+  reason: 'Boil It Down asks about placements but writes only the hardest one. The full list comes from
+    the team. Guess: a plugin framework might write it.'
 - id: small-size-and-print-test/how-it-will-be-printed-full-color-one-color-on-what-paper
   framework: small-size-and-print-test
   doc: how it will be printed (full color, one color, on what paper)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: small-size-and-print-test/the-name-and-any-wordmark-that-goes-with-the-mark
   framework: small-size-and-print-test
   doc: the name and any wordmark that goes with the mark
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: choose-an-effective-visual/the-data-to-show-a-table-a-file-or-a-description-of-the-columns-and-rows
   framework: choose-an-effective-visual
   doc: the data to show (a table, a file, or a description of the columns and rows)
   kind: required
   from: outside
-  confidence: guess
-  reason: The user's own data. No framework writes it.
+  confidence: sure
+  reason: 'The user''s own data. No framework writes it. Sure: this is the user''s own material.'
 - id: choose-an-effective-visual/who-will-look-at-the-chart-and-what-they-need-to-know-or-do-after-seeing-it
   framework: choose-an-effective-visual
   doc: who will look at the chart and what they need to know or do after seeing it
@@ -1610,66 +1664,68 @@
   doc: the current chart, if there is one, as an image or a description
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: choose-an-effective-visual/where-the-chart-will-be-seen-a-slide-a-report-a-dashboard-tile-a-phone-screen
   framework: choose-an-effective-visual
   doc: where the chart will be seen (a slide, a report, a dashboard tile, a phone screen)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: choose-an-effective-visual/the-tool-that-will-draw-it-excel-a-charting-library-a-bi-tool
   framework: choose-an-effective-visual
   doc: the tool that will draw it (Excel, a charting library, a BI tool)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: big-idea-and-takeaway-title/the-page-report-slide-or-chart-to-work-on-as-an-image-a-file-a-link-or-a-description-of-each-chart-and-what-it-shows
   framework: big-idea-and-takeaway-title
   doc: the page, report, slide or chart to work on, as an image, a file, a link, or a description of each
     chart and what it shows
   kind: required
   from: outside
-  confidence: guess
-  reason: The user's existing page or report. No framework writes it.
+  confidence: sure
+  reason: 'The user''s existing page or report. No framework writes it. Sure: this is the user''s own
+    material.'
 - id: big-idea-and-takeaway-title/who-will-look-at-it-and-what-they-decide-or-do-after-looking
   framework: big-idea-and-takeaway-title
   doc: who will look at it, and what they decide or do after looking
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Big Idea and Takeaway Title works this out itself, so it cannot be its own source.
+  confidence: sure
+  reason: 'Big Idea and Takeaway Title works this out itself, so it cannot be its own source. Sure: this
+    is the user''s own material.'
 - id: big-idea-and-takeaway-title/the-data-behind-each-chart-or-the-numbers-that-matter-most
   framework: big-idea-and-takeaway-title
   doc: the data behind each chart, or the numbers that matter most
   kind: helpful
   from: outside
-  confidence: guess
-  reason: The user's own data. No framework writes it.
+  confidence: sure
+  reason: 'The user''s own data. No framework writes it. Sure: this is the user''s own material.'
 - id: big-idea-and-takeaway-title/the-current-title-of-each-chart
   framework: big-idea-and-takeaway-title
   doc: the current title of each chart
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: big-idea-and-takeaway-title/how-it-will-be-seen-a-live-dashboard-a-sent-report-a-slide-in-a-meeting-a-phone-screen
   framework: big-idea-and-takeaway-title
   doc: how it will be seen (a live dashboard, a sent report, a slide in a meeting, a phone screen)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: declutter-and-focus/the-chart-to-fix-an-image-the-chart-code-or-a-description-of-every-part-of-it
   framework: declutter-and-focus
   doc: the chart to fix (an image, the chart code, or a description of every part of it)
   kind: required
   from: outside
   confidence: guess
-  reason: The user's existing chart. Choose an Effective Visual picks a chart type but does not draw the
-    chart.
+  reason: 'The user''s existing chart. Choose an Effective Visual picks a chart type but does not draw
+    the chart. Guess: a plugin framework might write it.'
 - id: declutter-and-focus/the-one-point-the-chart-is-meant-to-make-or-the-question-it-answers
   framework: declutter-and-focus
   doc: the one point the chart is meant to make, or the question it answers
@@ -1682,8 +1738,8 @@
   doc: who sees the chart and where (a slide, a report, a dashboard, a phone)
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
 - id: declutter-and-focus/the-brand-or-product-color-palette
   framework: declutter-and-focus
   doc: the brand or product color palette
@@ -1696,5 +1752,5 @@
   doc: the tool or library the chart is built in
   kind: helpful
   from: outside
-  confidence: guess
-  reason: Material the user already has. No framework writes it.
+  confidence: sure
+  reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
