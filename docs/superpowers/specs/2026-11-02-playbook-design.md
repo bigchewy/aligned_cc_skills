@@ -185,7 +185,7 @@ The documents replace it, so there is one source for arrows. Before it goes, the
 - No framework needs its own output.
 - Required links never loop. A loop through helpful links is allowed and drawn once.
 - A framework tagged with a market must feed at least one framework that is either untagged or tagged with the same market. A writer tagged B2C that feeds only B2B frameworks fails. This is how `origin-story-interview` was caught: it was tagged B2C and fed only B2B frameworks. (Claire Hughes Johnson)
-- Every link in the registry has a matching entry in `link-review.yaml`, and every entry there matches a link in the registry.
+- Every entry in `link-review.yaml` matches a link in the registry (same id, kind and `from`). The check runs one way only: the review file is a one-time review that shrinks as I answer links, and nothing writes it when a framework is added, so the registry may have links the file lacks.
 - `prompt.md` frontmatter keeps plain document names, so the runner reads it unchanged. A test checks the names match the registry, and `tools/sync_framework_frontmatter.py` writes them.
 
 ## Part 3: Stage and market tags
@@ -258,7 +258,7 @@ Eric reviews the 226 drafted links on an editable page, not in YAML. (Eric, 2026
 ## Tests
 
 - New: `e2e/tests/test_playbook.py` (map checks, start-here checks, document links, required loops, market tags against arrows, the build matches what is committed, the hook rebuilds). It uses a small fake registry with a branch, a helpful loop and a required loop.
-- New: `e2e/tests/test_link_review.py` (every registry link has one review entry and every entry has a link; confidence is sure, likely or guess; `generate-link-review.py` orders guess, likely, sure).
+- New: `e2e/tests/test_link_review.py` (every review entry matches a registry link, one way only; confidence is sure, likely or guess; `generate-link-review.py` orders guess, likely, sure).
 - New: `e2e/tests/test_framework_tags.py` (stage and market values).
 - Changed: `test_registry_schemas.py`, `test_framework_handoffs.py`, the five tests that read `follow_on_frameworks` (`test_four_question_threat_model.py`, `test_advisor_cleanup.py`, `test_phantom_b_llm_threats.py`, `test_why_my_page_doesnt_rank.py`, `test_getting_real_cut.py`), `test_readme_freshness.py`, `test_resolve_framework_source.py`, `test_add_skills_checked.py`, the 12 framework tests that check `category`, and `test_org_chart.py` if the hook test shares code.
 

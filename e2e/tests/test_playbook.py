@@ -593,6 +593,7 @@ def _fake_repo(tmp_path, generator_body):
     py.chmod(0o755)
     (fake_root / "scripts").mkdir()
     (fake_root / "scripts" / "generate-playbook.py").write_text(generator_body)
+    (fake_root / "scripts" / "generate-org-chart.py").write_text("# imported by the playbook generator\n")
     return fake_root
 
 
@@ -652,3 +653,31 @@ def test_hook_warns_when_no_python_for_playbook(tmp_path):
     )
     assert result.returncode == 0
     assert "playbook NOT rebuilt" in result.stdout + result.stderr
+
+
+def test_hook_skips_playbook_when_org_chart_helper_cannot_be_parsed(tmp_path):
+    # generate-playbook.py imports generate-org-chart.py, so the python must parse both.
+    stub = "from pathlib import Path\nPath('built').write_text('x')\n"
+    fake_root = _fake_repo(tmp_path, stub)
+    (fake_root / "scripts" / "generate-org-chart.py").write_text("def broken(:\n")
+    result = _source_hook(fake_root, tmp_path)
+    out = result.stdout + result.stderr
+    assert result.returncode == 0, out
+    assert "playbook NOT rebuilt" in out
+    assert not (tmp_path / "built").exists()
+
+
+def test_hook_org_chart_needs_only_its_own_generator(tmp_path):
+    stub = "print('ok')\n"
+    fake_root = _fake_repo(tmp_path, stub)
+    (fake_root / "scripts" / "generate-org-chart.py").write_text(stub)
+    (fake_root / "scripts" / "generate-playbook.py").write_text("def broken(:\n")
+    _git(fake_root, "init", "-q")
+    result = subprocess.run(
+        ["/bin/bash", "-c", f'source "{HOOK}"; rebuild_org_chart; echo "after=$?"'],
+        capture_output=True, text=True, cwd=fake_root,
+        env={"PATH": "/usr/bin:/bin", "REPO_ROOT": str(fake_root), "HOME": str(fake_root)},
+    )
+    out = result.stdout + result.stderr
+    assert "after=0" in result.stdout
+    assert "NOT rebuilt" not in out, out

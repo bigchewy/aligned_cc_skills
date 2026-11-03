@@ -860,6 +860,8 @@ def test_skill_description_stays_on_org_chart_requests():
     assert "org chart" in desc
     assert "not hired" in desc
     assert "use-framework" in desc
+    assert "picking one for a problem" not in desc
+    assert "playbook" in desc
     assert "such as sales, marketing, hiring, or strategy" not in desc
 
 

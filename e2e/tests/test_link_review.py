@@ -1,4 +1,4 @@
-"""docs/framework-flows/link-review.yaml: one review entry per document link in the registry."""
+"""docs/framework-flows/link-review.yaml: every review entry matches a document link in the registry."""
 import importlib.util
 import json
 import re
@@ -48,22 +48,17 @@ def test_review_ids_are_unique_and_built_from_framework_and_doc():
         assert e["id"] == f"{e['framework']}/{slug(e['doc'])}"
 
 
-def test_every_registry_link_has_one_matching_review_entry():
-    links = registry_links()
-    by_id = {e["id"]: e for e in review_entries()}
-    for lid, link in links.items():
-        assert lid in by_id, f"no review entry for {lid}"
-        e = by_id[lid]
-        assert e["framework"] == link["framework"]
-        assert e["doc"] == link["doc"]
-        assert e["kind"] == link["kind"], lid
-        assert e["from"] == link["from"], lid
-
-
-def test_every_review_entry_has_a_registry_link():
+def test_every_review_entry_matches_a_registry_link():
+    # One way only: the review file shrinks as links are answered and nothing
+    # writes it when a framework is added, so the registry may have more links.
     links = registry_links()
     for e in review_entries():
         assert e["id"] in links, f"review entry {e['id']} has no registry link"
+        link = links[e["id"]]
+        assert e["framework"] == link["framework"]
+        assert e["doc"] == link["doc"]
+        assert e["kind"] == link["kind"], e["id"]
+        assert e["from"] == link["from"], e["id"]
 
 
 def test_confidence_is_sure_likely_or_guess():
@@ -159,12 +154,12 @@ def test_sentence_outside():
     assert hlp["sentence"] == "Alpha Framework is helped by notes, from outside the plugin."
 
 
-def test_real_review_counts_sum_to_registry_links():
+def test_real_review_counts_sum_to_review_entries():
     g = load_glr()
     registry = yaml.safe_load(FRAMEWORKS.read_text())
     out = g.ordered(review_entries(), registry)
     counts = g.count_by_confidence(out)
-    assert sum(counts.values()) == len(registry_links())
+    assert sum(counts.values()) == len(review_entries())
     assert list(counts) == ["guess", "likely", "sure"]
     rank = {"guess": 0, "likely": 1, "sure": 2}
     ranks = [rank[e["confidence"]] for e in out]

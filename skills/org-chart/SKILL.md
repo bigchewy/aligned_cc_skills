@@ -1,6 +1,6 @@
 ---
 name: org-chart
-description: "Use when a CEO asks to see the org chart, asks about the seats in a company and which ones the plugin covers, or asks what to do about a role they have not hired for yet. Opens the prebuilt B2B and B2C org chart pages, where every seat lists its jobs and the command to run for each. For running a specific framework or picking one for a problem, use use-framework instead."
+description: "Use when a CEO asks to see the org chart, asks about the seats in a company and which ones the plugin covers, or asks what to do about a role they have not hired for yet. Opens the prebuilt B2B and B2C org chart pages, where every seat lists its jobs and the command to run for each. For where do I start requests, or which framework to start with for a problem, use the playbook skill instead. For running a named framework, use use-framework."
 ---
 
 # Org Chart

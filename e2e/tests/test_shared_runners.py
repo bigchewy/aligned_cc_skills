@@ -121,6 +121,18 @@ def test_use_framework_invokes_shared_runner():
     )
 
 
+def test_framework_runner_describes_both_document_forms():
+    text = read("skills/_shared/framework-runner.md")
+    assert "plain name" in text
+    assert "{doc, from}" in text
+
+
+def test_framework_runner_suggests_a_writer_only_when_from_names_a_framework():
+    text = read("skills/_shared/framework-runner.md")
+    assert "only when `from` names a framework" in text
+    assert "never when it is `outside`" in text
+
+
 def test_framework_runner_documents_empty_prompt_error_path():
     """Design L207: framework runner with empty prompt.md."""
     text = read("skills/_shared/framework-runner.md")

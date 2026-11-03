@@ -64,6 +64,6 @@ Also removed later on 2026-11-02: Oli Gardner, whose only framework was landing-
    structures only on the org chart (`seats.yaml`). The playbook tags each framework with a
    `market` of b2b or b2c where it matters. See `docs/superpowers/specs/2026-11-02-playbook-design.md`.
 5. ~~Pre-PMF "We" gap~~ — decided 2026-11-02: leave it. No framework for cofounders agreeing on roles.
-6. Category set: personal frameworks are filed under `leadership`/`psychology`/`strategy`; decide whether
-   I / We / It becomes a field, or the categories get redrawn.
+6. ~~Category set~~ — decided 2026-11-02: I / We / It is a separate map file, `skills/playbook/layers.yaml`,
+   and `category` was removed from the registry.
 7. Then write `flows.yaml` (validated like `skills/org-chart/seats.yaml`) and build the playbook visual from it.

@@ -150,6 +150,12 @@ def test_resolver_documents_error_paths():
     assert "fail closed" in text or "fails closed" in text or "fail-close" in text
 
 
+def test_resolver_describes_both_document_forms():
+    text = read(RESOLVER)
+    assert "plain name" in text
+    assert "{doc, from}" in text
+
+
 def test_resolver_documents_return_contract():
     text = read(RESOLVER)
     assert "`category`" not in read(RESOLVER)

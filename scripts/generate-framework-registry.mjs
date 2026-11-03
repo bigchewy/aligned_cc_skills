@@ -5,6 +5,7 @@
 // Requires: ANTHROPIC_API_KEY environment variable (for Pass 2 LLM classification)
 // Document lists are written as {doc, from}. `from` is carried over from the current
 // frameworks/registry.yaml when the framework id and the document name both match; otherwise `outside`.
+// `stages` and `market` are carried over from the current registry by framework id.
 
 import fs from 'fs';
 import path from 'path';
@@ -211,12 +212,12 @@ async function pass2(frameworks) {
   return enriched;
 }
 
-// Read the document mappings in a registry.yaml, keyed by framework id and document name.
-// Returns Map of `${id}\u0000${doc}` -> `from` (an id, a list of ids, or 'outside').
-// Reads the layout the registry is written in: two-space list items, folded scalars indented
-// six spaces, and `from` as a plain value or a block list.
-export function loadExistingFroms(text) {
-  const froms = new Map();
+// Read a registry.yaml (or a draft this script wrote) into one record per framework:
+// {id, froms: [{key, doc, from}], stages, market}. It reads two layouts: the registry's
+// (entries start `- `, keys indented two, lists at the key's indent) and the script's own
+// (entries start `  - id:`, keys indented four, list items two deeper than their key).
+// `from` is an id, a list of ids, or 'outside'.
+function parseRegistry(text) {
   const unquote = s => {
     s = s.trim();
     if (s.length >= 2 && s.startsWith("'") && s.endsWith("'")) return s.slice(1, -1).replace(/''/g, "'");
@@ -225,61 +226,108 @@ export function loadExistingFroms(text) {
     }
     return s;
   };
+  const inlineList = v => v.slice(1, -1).split(',').map(s => unquote(s)).filter(Boolean);
 
   const readEntry = lines => {
-    let id = null;
-    for (const line of lines) {
-      const m = line.match(/^(?:- |  )id:\s*(\S+)\s*$/);
-      if (m) { id = unquote(m[1]); break; }
-    }
-    if (!id) return;
-
-    let inDocs = false;
+    if (lines.length === 0) return null;
+    const keyIndent = lines[0].startsWith('- ') ? 2 : 4;
+    const rec = { id: null, docs: [], stages: null, market: null };
+    let section = null;
     let cur = null;
+    let curListKey = null;
     const finish = () => {
-      if (cur) froms.set(`${id}\u0000${unquote(cur.doc)}`, cur.from === null ? 'outside' : cur.from);
+      if (cur) rec.docs.push({ key: curListKey, doc: unquote(cur.doc), from: cur.from === null ? 'outside' : cur.from });
       cur = null;
     };
-    for (const line of lines) {
+    lines.forEach((line, i) => {
+      const km = line.match(/^(\s*)(- )?([A-Za-z_]+):\s?(.*)$/);
+      const isKey = km && (i === 0 ? Boolean(km[2]) : !km[2] && km[1].length === keyIndent);
+      if (isKey) {
+        finish();
+        section = null;
+        const [, , , key, rawValue] = km;
+        const value = rawValue.trim();
+        if (key === 'id') rec.id = unquote(value);
+        else if (key === 'market') rec.market = unquote(value);
+        else if (key === 'stages') {
+          rec.stages = value.startsWith('[') && value.endsWith(']') ? inlineList(value) : [];
+          if (!value) section = 'stages';
+        } else if (key === 'required_documents' || key === 'helpful_documents') {
+          section = 'docs';
+          curListKey = key;
+        }
+        return;
+      }
       let m;
-      if ((m = line.match(/^  (?:required_documents|helpful_documents):\s*$/))) {
+      if (section === 'stages' && (m = line.match(/^\s*- (.+)$/))) {
+        rec.stages.push(unquote(m[1]));
+      } else if (section === 'docs' && (m = line.match(/^(\s*)- doc:\s?(.*)$/))) {
         finish();
-        inDocs = true;
-      } else if (/^(?:- |  )[A-Za-z_]+:/.test(line)) {
-        finish();
-        inDocs = false;
-      } else if (inDocs && (m = line.match(/^  - doc:\s?(.*)$/))) {
-        finish();
-        cur = { doc: m[1], from: null, listing: false };
-      } else if (inDocs && cur && (m = line.match(/^    from:\s?(.*)$/))) {
+        cur = { doc: m[2], from: null, listing: false, dash: m[1].length };
+      } else if (section === 'docs' && cur && (m = line.match(/^\s+from:\s?(.*)$/))) {
         const v = m[1].trim();
         if (!v) {
           cur.from = [];
           cur.listing = true;
         } else if (v.startsWith('[') && v.endsWith(']')) {
-          cur.from = v.slice(1, -1).split(',').map(s => unquote(s)).filter(Boolean);
+          cur.from = inlineList(v);
         } else {
           cur.from = unquote(v);
         }
-      } else if (inDocs && cur && cur.listing && (m = line.match(/^    - (.+)$/))) {
+      } else if (section === 'docs' && cur && cur.listing && (m = line.match(/^\s*- (.+)$/))) {
         cur.from.push(unquote(m[1]));
-      } else if (inDocs && cur && cur.from === null && /^      \S/.test(line)) {
+      } else if (section === 'docs' && cur && cur.from === null && line.search(/\S/) >= cur.dash + 4) {
         cur.doc += ' ' + line.trim();
       }
-    }
+    });
     finish();
+    return rec.id ? rec : null;
   };
 
+  const records = [];
   let entry = [];
   for (const line of text.split('\n')) {
-    if (line.startsWith('- ')) {
-      readEntry(entry);
+    if (line.startsWith('- ') || /^  - id:/.test(line)) {
+      const rec = readEntry(entry);
+      if (rec) records.push(rec);
       entry = [];
     }
     entry.push(line);
   }
-  readEntry(entry);
+  const last = readEntry(entry);
+  if (last) records.push(last);
+  return records;
+}
+
+// Map of `${id}\u0000${doc}` -> `from` for every document in a registry or draft.
+export function loadExistingFroms(text) {
+  const froms = new Map();
+  for (const rec of parseRegistry(text)) {
+    for (const d of rec.docs) froms.set(`${rec.id}\u0000${d.doc}`, d.from);
+  }
   return froms;
+}
+
+// Map of id -> {stages?, market?} for every framework that has either field.
+export function loadExistingMeta(text) {
+  const meta = new Map();
+  for (const rec of parseRegistry(text)) {
+    const m = {};
+    if (rec.market) m.market = rec.market;
+    if (rec.stages && rec.stages.length > 0) m.stages = rec.stages;
+    if (Object.keys(m).length > 0) meta.set(rec.id, m);
+  }
+  return meta;
+}
+
+// `market` and `stages` for one framework as registry YAML, or '' when it has neither.
+export function metaYaml(id, meta) {
+  const m = meta.get(id);
+  if (!m) return '';
+  let out = '';
+  if (m.market) out += `    market: ${m.market}\n`;
+  if (m.stages) out += `    stages:\n${m.stages.map(s => `      - ${s}\n`).join('')}`;
+  return out;
 }
 
 // One document list as registry YAML: [{doc, from}], four-space key, six-space items.
@@ -295,9 +343,9 @@ export function documentsYaml(key, docs, id, froms) {
 
 // Pass 3: Merge and write YAML
 function pass3(frameworks, outputPath) {
-  const froms = fs.existsSync(REGISTRY_PATH)
-    ? loadExistingFroms(fs.readFileSync(REGISTRY_PATH, 'utf8'))
-    : new Map();
+  const existing = fs.existsSync(REGISTRY_PATH) ? fs.readFileSync(REGISTRY_PATH, 'utf8') : '';
+  const froms = loadExistingFroms(existing);
+  const meta = loadExistingMeta(existing);
 
   // Remove internal fields
   const cleaned = frameworks.map(fw => {
@@ -320,6 +368,7 @@ function pass3(frameworks, outputPath) {
     yaml += `    purpose: "${fw.purpose.replace(/"/g, '\\"')}"\n`;
     yaml += `    domains: [${fw.domains.map(d => `"${d}"`).join(', ')}]\n`;
     yaml += `    use_when: "${fw.use_when.replace(/"/g, '\\"')}"\n`;
+    yaml += metaYaml(fw.id, meta);
     if (fw.required_documents && fw.required_documents.length > 0) {
       yaml += documentsYaml('required_documents', fw.required_documents, fw.id, froms);
     }

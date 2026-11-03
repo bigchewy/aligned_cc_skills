@@ -21,10 +21,10 @@ REPO_ROOT=${REPO_ROOT:-$(git rev-parse --show-toplevel)}
 #
 # Python is picked in this order: this checkout's e2e/.venv, the main
 # checkout's e2e/.venv (a git worktree has no venv of its own), then python3.
-# A candidate is used only if it has PyYAML and can parse the generator, so an
-# old system python3 is skipped instead of failing on newer syntax.
+# A candidate is used only if it has PyYAML and can parse every file passed in
+# (the generator and any generator it imports), so an old system python3 is
+# skipped instead of failing on newer syntax.
 pick_python() {
-  local generator="$1"
   local main_venv=""
   local common
   if common=$(git -C "$REPO_ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
@@ -34,7 +34,9 @@ pick_python() {
   local candidate
   for candidate in "$REPO_ROOT/e2e/.venv/bin/python" $main_venv python3; do
     if command -v "$candidate" >/dev/null 2>&1 \
-      && "$candidate" -c 'import ast, sys, yaml; ast.parse(open(sys.argv[1]).read())' "$generator" >/dev/null 2>&1; then
+      && "$candidate" -c 'import ast, sys, yaml
+for path in sys.argv[1:]:
+    ast.parse(open(path).read())' "$@" >/dev/null 2>&1; then
       echo "$candidate"
       return 0
     fi
@@ -44,12 +46,19 @@ pick_python() {
 
 # Run one page generator and stage its pages. Warns and returns 0 on any problem.
 # Arguments: what the pages are called in a warning ("org chart"), the same
-# capitalized ("Org chart"), the generator's file name, the pages dir.
+# capitalized ("Org chart"), the generator's file name, the pages dir, then any
+# other generator files it imports (each must parse under the chosen python).
 rebuild_pages() {
   local what="$1" What="$2" script="$3" pages="$4"
+  shift 4
   local generator="$REPO_ROOT/scripts/$script"
+  local to_parse=("$generator")
+  local extra
+  for extra in "$@"; do
+    to_parse+=("$REPO_ROOT/scripts/$extra")
+  done
   local py
-  if ! py=$(pick_python "$generator"); then
+  if ! py=$(pick_python "${to_parse[@]}"); then
     echo "[pre-commit] no python with PyYAML that can run scripts/$script; $what NOT rebuilt"
     return 0
   fi
@@ -74,7 +83,7 @@ rebuild_org_chart() {
 }
 
 rebuild_playbook() {
-  rebuild_pages "playbook" "Playbook" generate-playbook.py skills/playbook/pages
+  rebuild_pages "playbook" "Playbook" generate-playbook.py skills/playbook/pages generate-org-chart.py
 }
 
 # Do nothing more when this file is sourced (the tests source it to call
