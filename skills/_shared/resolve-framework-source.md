@@ -70,6 +70,9 @@ Return a single object. Callers couple to this shape — do not vary it.
 - A local registry entry MUST carry the full framework schema (`id`, `name`, `advisor`,
   `purpose`, `category`, `domains`, `use_when`). The `?` fields are optional.
 - Unregistered local folders get `registered: false` and only the fields step 3 fills in.
+- Each `required_documents` and `helpful_documents` entry is either a plain name or a mapping
+  `{doc, from}`. Pass entries through as written; readers use `doc` as the name. `from` is a
+  framework id, a list of ids, or `outside`. A local `from` may name a local framework id.
 
 ## Error paths
 

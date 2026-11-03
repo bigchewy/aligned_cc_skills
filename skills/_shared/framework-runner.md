@@ -45,6 +45,8 @@ If `prompt.md` is missing or empty, report the error and stop. Do not attempt to
 
 If the framework's registry entry (or its `prompt.md` YAML frontmatter) lists `required_documents`:
 
+Each document entry is either a plain name or a mapping `{doc, from}`. Use `doc` as the document's name. `from` names the framework that writes the document (a framework id, a list of ids, or `outside`); when a document is missing, you may suggest running that framework.
+
 - **`advisory` mode (default):** Note the missing documents to the user as a one-line observation; proceed with Phase 1 regardless. Preserves existing `use-framework` behavior.
 - **`strict` mode:** Pause and prompt the user with the missing-document list. Options the user can pick from:
   - Provide a path to each missing document

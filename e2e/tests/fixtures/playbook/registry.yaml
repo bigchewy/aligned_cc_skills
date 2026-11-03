@@ -1,0 +1,77 @@
+# Small fake registry for the document-link checks in test_playbook.py.
+# Good cases: a branch (two writers into one framework), a helpful loop, a
+# plain-string entry, a b2b writer that feeds a framework with no market.
+# Bad cases: a required loop, a from list with one unknown id, a self-link,
+# a b2c writer that feeds only b2b frameworks.
+frameworks:
+- id: writer-a
+  name: Writer A
+- id: writer-b
+  name: Writer B
+- id: branch
+  name: Branch
+  required_documents:
+  - doc: doc x
+    from: writer-a
+  helpful_documents:
+  - doc: doc y
+    from: writer-b
+  - doc: doc z
+    from:
+    - writer-a
+    - writer-b
+- id: help-1
+  name: Help 1
+  helpful_documents:
+  - doc: help doc 1
+    from: help-2
+- id: help-2
+  name: Help 2
+  helpful_documents:
+  - doc: help doc 2
+    from: help-1
+- id: loop-1
+  name: Loop 1
+  required_documents:
+  - doc: loop doc 1
+    from: loop-2
+- id: loop-2
+  name: Loop 2
+  required_documents:
+  - doc: loop doc 2
+    from: loop-1
+- id: plain
+  name: Plain
+  helpful_documents:
+  - a plain string doc
+- id: unknown-from
+  name: Unknown From
+  helpful_documents:
+  - doc: list doc
+    from:
+    - writer-a
+    - ghost
+- id: self-link
+  name: Self Link
+  helpful_documents:
+  - doc: self doc
+    from: self-link
+- id: b2c-writer
+  name: B2C Writer
+  market: b2c
+- id: b2b-reader
+  name: B2B Reader
+  market: b2b
+  helpful_documents:
+  - doc: b2c doc
+    from: b2c-writer
+  - doc: b2b doc
+    from: b2b-writer
+- id: b2b-writer
+  name: B2B Writer
+  market: b2b
+- id: any-reader
+  name: Any Reader
+  helpful_documents:
+  - doc: b2b doc too
+    from: b2b-writer

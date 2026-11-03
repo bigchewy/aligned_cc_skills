@@ -84,3 +84,94 @@ def test_handles_quoted_name_field_with_embedded_quotes(tmp_path):
     sync_framework_frontmatter(registry, tmp_path / "frameworks")
     fm, _ = parse_frontmatter((fw / "prompt.md").read_text())
     assert fm["deliverable_type"] == "content"
+
+
+DOC_REGISTRY = textwrap.dedent('''\
+    frameworks:
+      - id: zeta
+        deliverable_type: plan
+        required_documents:
+          - doc: "positioning.md (Component 1: alternatives)"
+            from: 5-components-positioning
+        helpful_documents:
+          - doc: customer research
+            from: outside
+          - doc: company strategy
+            from: [kernel-of-good-strategy, lifecycle-strategy]
+          - plain old name
+    ''')
+
+
+def test_mirrors_plain_doc_names_in_registry_order(tmp_path):
+    fw = tmp_path / "frameworks" / "zeta"
+    write(fw / "prompt.md", "---\nrequired_documents:\n- stale\nhelpful_documents: []\n---\nbody\n")
+    registry = tmp_path / "registry.yaml"
+    write(registry, DOC_REGISTRY)
+
+    sync_framework_frontmatter(registry, tmp_path / "frameworks")
+
+    fm, body = parse_frontmatter((fw / "prompt.md").read_text())
+    assert fm["required_documents"] == ["positioning.md (Component 1: alternatives)"]
+    assert fm["helpful_documents"] == ["customer research", "company strategy", "plain old name"]
+    assert body == "body\n"
+
+
+def test_doc_sync_is_idempotent(tmp_path):
+    fw = tmp_path / "frameworks" / "zeta"
+    write(fw / "prompt.md", "body\n")
+    registry = tmp_path / "registry.yaml"
+    write(registry, DOC_REGISTRY)
+
+    sync_framework_frontmatter(registry, tmp_path / "frameworks")
+    first = (fw / "prompt.md").read_text()
+    sync_framework_frontmatter(registry, tmp_path / "frameworks")
+    assert (fw / "prompt.md").read_text() == first
+
+
+def test_prompt_without_lists_gets_none_added_when_registry_has_none(tmp_path):
+    fw = tmp_path / "frameworks" / "eta"
+    write(fw / "prompt.md", "---\ndeliverable_type: plan\n---\nbody\n")
+    registry = tmp_path / "registry.yaml"
+    write(registry, "frameworks:\n  - id: eta\n    deliverable_type: plan\n")
+
+    sync_framework_frontmatter(registry, tmp_path / "frameworks")
+
+    fm, _ = parse_frontmatter((fw / "prompt.md").read_text())
+    assert "required_documents" not in fm
+    assert "helpful_documents" not in fm
+
+
+def test_empty_lists_stay_empty_when_registry_has_none(tmp_path):
+    fw = tmp_path / "frameworks" / "theta"
+    text = "---\ndeliverable_type: plan\nrequired_documents: []\nhelpful_documents: []\n---\nbody\n"
+    write(fw / "prompt.md", text)
+    registry = tmp_path / "registry.yaml"
+    write(registry, "frameworks:\n  - id: theta\n    deliverable_type: plan\n")
+
+    sync_framework_frontmatter(registry, tmp_path / "frameworks")
+    assert (fw / "prompt.md").read_text() == text
+
+
+def test_stale_list_is_emptied_when_registry_has_none(tmp_path):
+    fw = tmp_path / "frameworks" / "iota"
+    write(fw / "prompt.md", "---\ndeliverable_type: plan\nhelpful_documents:\n- gone\n---\nbody\n")
+    registry = tmp_path / "registry.yaml"
+    write(registry, "frameworks:\n  - id: iota\n    deliverable_type: plan\n")
+
+    sync_framework_frontmatter(registry, tmp_path / "frameworks")
+    fm, _ = parse_frontmatter((fw / "prompt.md").read_text())
+    assert fm["helpful_documents"] == []
+
+
+def test_real_prompts_match_registry_doc_names():
+    root = Path(__file__).resolve().parent.parent
+    registry = yaml.safe_load((root / "frameworks" / "registry.yaml").read_text())
+    for entry in registry["frameworks"]:
+        prompt = root / "frameworks" / entry["id"] / "prompt.md"
+        if not prompt.exists():
+            continue
+        fm, _ = parse_frontmatter(prompt.read_text())
+        for key in ("required_documents", "helpful_documents"):
+            want = [d["doc"] if isinstance(d, dict) else d for d in entry.get(key) or []]
+            if key in fm or want:
+                assert (fm.get(key) or []) == want, f"{entry['id']} {key}"

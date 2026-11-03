@@ -1,4 +1,9 @@
-"""Mirror deliverable_type from frameworks/registry.yaml into each framework's prompt.md YAML frontmatter.
+"""Mirror registry fields into each framework's prompt.md YAML frontmatter.
+
+Mirrors deliverable_type, and the plain document names of required_documents and
+helpful_documents. Registry document entries are a name or a {doc, from} mapping;
+the frontmatter keeps only the names, in registry order. A prompt that has no
+document list gets none added when the registry has none.
 
 Idempotent. Safe to re-run. Logs warnings for missing prompt.md or missing registry entries.
 
@@ -29,8 +34,18 @@ def parse_frontmatter(text: str):
 
 
 def write_frontmatter(fm: dict, body: str) -> str:
-    fm_text = yaml.safe_dump(fm, sort_keys=False).rstrip()
+    # No line wrapping: one list item per line, so line-based readers of the
+    # frontmatter (scripts/generate-framework-registry.mjs) see whole names.
+    fm_text = yaml.safe_dump(fm, sort_keys=False, allow_unicode=True, width=10**6).rstrip()
     return f"---\n{fm_text}\n---\n{body}"
+
+
+DOC_KEYS = ("required_documents", "helpful_documents")
+
+
+def doc_names(entries) -> list:
+    """Plain document names from registry entries, which are names or {doc, from} mappings."""
+    return [e["doc"] if isinstance(e, dict) else e for e in entries or []]
 
 
 def sync_framework_frontmatter(registry_path: Path, frameworks_dir: Path) -> None:
@@ -45,9 +60,6 @@ def sync_framework_frontmatter(registry_path: Path, frameworks_dir: Path) -> Non
         if entry is None:
             LOG.warning("no registry entry for framework folder: %s", fid)
             continue
-        if "deliverable_type" not in entry:
-            LOG.warning("registry entry %s missing deliverable_type — skipping", fid)
-            continue
 
         prompt = folder / "prompt.md"
         if not prompt.exists():
@@ -56,11 +68,22 @@ def sync_framework_frontmatter(registry_path: Path, frameworks_dir: Path) -> Non
 
         text = prompt.read_text()
         fm, body = parse_frontmatter(text)
-        if fm.get("deliverable_type") == entry["deliverable_type"]:
+        new_fm = dict(fm)
+
+        if "deliverable_type" in entry:
+            new_fm["deliverable_type"] = entry["deliverable_type"]
+        else:
+            LOG.warning("registry entry %s missing deliverable_type — not mirrored", fid)
+
+        for key in DOC_KEYS:
+            names = doc_names(entry.get(key))
+            if names or key in new_fm:
+                new_fm[key] = names
+
+        if new_fm == fm:
             continue  # idempotent: nothing to change
-        fm["deliverable_type"] = entry["deliverable_type"]
-        prompt.write_text(write_frontmatter(fm, body))
-        LOG.info("updated %s with deliverable_type=%s", fid, entry["deliverable_type"])
+        prompt.write_text(write_frontmatter(new_fm, body))
+        LOG.info("updated %s", fid)
 
 
 def main(argv=None):

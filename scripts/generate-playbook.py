@@ -81,11 +81,141 @@ def check_layers(layers, registry):
     return errors
 
 
+DOC_KINDS = (("required_documents", "required"), ("helpful_documents", "helpful"))
+OUTSIDE = "outside"
+
+
+def _is_link(entry):
+    """True when a document entry is a plain name or a {doc, from} mapping with the right types."""
+    if isinstance(entry, str):
+        return bool(entry)
+    if not isinstance(entry, dict) or set(entry) != {"doc", "from"}:
+        return False
+    if not isinstance(entry["doc"], str) or not entry["doc"]:
+        return False
+    src = entry["from"]
+    if isinstance(src, str):
+        return bool(src)
+    return isinstance(src, list) and bool(src) and all(isinstance(s, str) and s for s in src)
+
+
+def doc_links(entry):
+    """List one framework's document links, required first, in file order.
+
+    Each link is {"doc": str, "from": list[str], "kind": "required" | "helpful"}.
+    A plain-string entry (allowed in project-local registries) reads as from: ["outside"].
+    Malformed entries are skipped here; check_links reports them.
+    """
+    links = []
+    for key, kind in DOC_KINDS:
+        for item in entry.get(key) or []:
+            if not _is_link(item):
+                continue
+            if isinstance(item, str):
+                links.append({"doc": item, "from": [OUTSIDE], "kind": kind})
+                continue
+            src = item["from"]
+            links.append({"doc": item["doc"], "from": [src] if isinstance(src, str) else list(src), "kind": kind})
+    return links
+
+
+def _required_loops(frameworks):
+    """Find each loop made only of required links. Return a list of [(fid, doc, writer), ...] paths."""
+    edges = {}
+    for f in frameworks:
+        for link in doc_links(f):
+            if link["kind"] != "required":
+                continue
+            for writer in link["from"]:
+                if writer != OUTSIDE and writer != f["id"]:
+                    edges.setdefault(f["id"], []).append((link["doc"], writer))
+
+    loops, seen = [], set()
+
+    def walk(start, node, path, on_path):
+        for doc, writer in edges.get(node, []):
+            step = path + [(node, doc, writer)]
+            if writer == start:
+                key = frozenset(step)
+                if key not in seen:
+                    seen.add(key)
+                    loops.append(step)
+            elif writer not in on_path and writer > start:
+                walk(start, writer, step, on_path | {writer})
+
+    for start in sorted(edges):
+        walk(start, start, [], {start})
+    return loops
+
+
+def check_links(registry):
+    """Check every document link in the registry. Return a list of ERROR strings.
+
+    registry is the parsed registry file: {"frameworks": [{"id": ...}, ...]}.
+    Checks: each entry is a name or {doc, from}; every from is a known id or
+    'outside'; no framework names itself; no loop made only of required links;
+    a framework with a market that writes for others feeds at least one
+    framework of the same market or of no market.
+    """
+    frameworks = registry.get("frameworks") or []
+    known = {f["id"] for f in frameworks}
+    market = {f["id"]: f.get("market") for f in frameworks}
+    errors = []
+    readers = {}  # writer id -> [(reader id, doc)]
+
+    for f in frameworks:
+        fid = f["id"]
+        for key, _ in DOC_KINDS:
+            for item in f.get(key) or []:
+                if not _is_link(item):
+                    errors.append(
+                        f"ERROR: '{fid}' has a {key} entry that is neither a name nor "
+                        f"a mapping with doc and from: {item!r}"
+                    )
+        for link in doc_links(f):
+            for writer in link["from"]:
+                if writer == OUTSIDE:
+                    continue
+                if writer == fid:
+                    errors.append(f"ERROR: '{fid}' document '{link['doc']}' has from '{writer}', which is itself")
+                elif writer not in known:
+                    errors.append(f"ERROR: '{fid}' document '{link['doc']}' has unknown from '{writer}'")
+                else:
+                    readers.setdefault(writer, []).append((fid, link["doc"]))
+
+    for loop in _required_loops(frameworks):
+        steps = " -> ".join(f"'{fid}' needs '{doc}' from '{writer}'" for fid, doc, writer in loop)
+        errors.append(f"ERROR: required loop: {steps}")
+
+    for writer, fed in readers.items():
+        m = market.get(writer)
+        if not m:
+            continue
+        if any(market.get(reader) in (None, m) for reader, _ in fed):
+            continue
+        pairs = ", ".join(f"'{doc}' for '{reader}' ({market.get(reader)})" for reader, doc in fed)
+        errors.append(
+            f"ERROR: '{writer}' has market {m} but writes only for frameworks of another market: {pairs}"
+        )
+
+    return errors
+
+
+def outside_required(registry):
+    """List (framework id, doc) for every required document whose from is only 'outside'."""
+    out = []
+    for f in registry.get("frameworks") or []:
+        for link in doc_links(f):
+            if link["kind"] == "required" and link["from"] == [OUTSIDE]:
+                out.append((f["id"], link["doc"]))
+    return out
+
+
 def load_and_validate(layers_path, frameworks_path):
     """Load the layers file and the registry. Return (data, errors)."""
     layers = _read_yaml(layers_path)
     registry = _read_yaml(frameworks_path)
-    errors = check_layers(layers, registry)
+    errors = check_layers(layers, registry) + check_links(registry)
     data = {
         "layers": layers,
         "frameworks": {f["id"]: f for f in registry.get("frameworks") or []},

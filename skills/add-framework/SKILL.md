@@ -209,8 +209,12 @@ Append one entry to the `frameworks` list in the registry file:
     category: {category}
     domains: [{domains}]
     use_when: "{trigger phrase}"
-    required_documents: [{list from frontmatter, or omit if empty}]
-    helpful_documents: [{list from frontmatter, or omit if empty}]
+    required_documents:            # omit if empty
+      - doc: "{document name from frontmatter}"
+        from: {framework id that writes it, or outside}
+    helpful_documents:             # omit if empty
+      - doc: "{document name from frontmatter}"
+        from: {framework id that writes it, or outside}
 ```
 
 Derive field values:
@@ -219,7 +223,7 @@ Derive field values:
 - **category:** Pick an existing category from the registry's other entries. A new category needs the user's yes first: ask, naming the closest existing category and why it doesn't fit.
 - **domains:** 2-5 expertise tags, derived from the framework's content
 - **use_when:** Natural language trigger phrase for when to use this framework
-- **required_documents, helpful_documents:** From `prompt.md` YAML frontmatter; omit keys if lists are empty
+- **required_documents, helpful_documents:** From `prompt.md` YAML frontmatter; omit keys if lists are empty. The frontmatter keeps plain names; the registry writes each as `{doc, from}`, with `doc` the same name. `from` is the id of the framework that writes the document (a local id is allowed), a list of ids when more than one can, or `outside` when none does. If you can't tell which framework writes it, use `outside`.
 
 **Post-append validation:** After appending, parse the full registry file you wrote. If YAML parsing fails, revert the append and report the error. Restore the previous content; if you just created the file, it is untracked, so delete the newly created file instead of restoring it from git. One bad entry must not corrupt the registry for all consumers.
 

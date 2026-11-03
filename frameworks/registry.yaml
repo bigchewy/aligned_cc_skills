@@ -28,14 +28,17 @@ frameworks:
   - messaging-distillation
   - sales-pitch-structure
   helpful_documents:
-  - competitive landscape
-  - customer research
+  - doc: competitive landscape
+    from: outside
+  - doc: customer research
+    from: outside
   id: 5-components-positioning
   name: 5 Components of Positioning
   purpose: a sequential process that builds differentiated positioning from the ground
     up
   required_documents:
-  - the alternatives recent buyers almost chose instead of you
+  - doc: the alternatives recent buyers almost chose instead of you
+    from: outside
   stages:
   - nail-it
   - scale-it
@@ -51,8 +54,12 @@ frameworks:
   - operational-planning
   - mindset
   helpful_documents:
-  - company strategy
-  - business goals
+  - doc: company strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
+  - doc: business goals
+    from: proximate-objectives
   id: 6-step-process
   name: 6-Step Process
   purpose: a structured approach to solving operational problems that starts with
@@ -74,7 +81,8 @@ frameworks:
   follow_on_frameworks:
   - zone-of-genius
   helpful_documents:
-  - business goals
+  - doc: business goals
+    from: proximate-objectives
   id: 80-20-audit
   name: 80/20 Audit
   purpose: a ruthless Pareto analysis of their work and life to identify what to double
@@ -136,9 +144,12 @@ frameworks:
   follow_on_frameworks:
   - pivot-or-persevere
   helpful_documents:
-  - product description
-  - customer research
-  - leap-of-faith-assumptions results
+  - doc: product description
+    from: outside
+  - doc: customer research
+    from: outside
+  - doc: leap-of-faith-assumptions results
+    from: leap-of-faith-assumptions
   id: build-measure-learn
   name: Build-Measure-Learn
   purpose: designing a learning cycle that starts with what you need to learn, then
@@ -173,7 +184,10 @@ frameworks:
   - business-model
   - content-first
   helpful_documents:
-  - strategy
+  - doc: strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
   id: content-inc-model
   name: Content Inc. Model
   purpose: a six-step audience-first model for building a content-driven business
@@ -206,8 +220,10 @@ frameworks:
   - founder-hustle
   - validation
   helpful_documents:
-  - product description
-  - current user count or traction metrics
+  - doc: product description
+    from: outside
+  - doc: current user count or traction metrics
+    from: outside
   id: do-things-that-dont-scale
   name: Do Things That Don't Scale
   purpose: identifying the unscalable work a founder should be doing right now to
@@ -226,8 +242,10 @@ frameworks:
   - product-market-fit
   - sales
   helpful_documents:
-  - customer research
-  - product description
+  - doc: customer research
+    from: outside
+  - doc: product description
+    from: outside
   id: earlyvangelists
   name: Earlyvangelists
   purpose: scoring real prospects against five criteria (has the problem, knows it,
@@ -247,8 +265,10 @@ frameworks:
   - self-assessment
   - motivation
   helpful_documents:
-  - product description
-  - founding story or motivation
+  - doc: product description
+    from: outside
+  - doc: founding story or motivation
+    from: origin-story-interview
   id: earnestness-filter
   name: Earnestness Filter
   purpose: pressure-testing whether a founder is genuinely earnest about their startup
@@ -305,7 +325,10 @@ frameworks:
   - kernel-of-good-strategy
   - proximate-objectives
   helpful_documents:
-  - company strategy
+  - doc: company strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
   id: finding-the-crux
   name: Finding the Crux
   purpose: identifying the single most critical challenge that unlocks progress
@@ -334,7 +357,8 @@ frameworks:
   - elimination
   - discipline
   helpful_documents:
-  - business goals
+  - doc: business goals
+    from: proximate-objectives
   id: focus-through-saying-no
   name: Focus Through Saying No
   purpose: a ruthless focus exercise that forces a not-doing list by cutting everything
@@ -356,8 +380,12 @@ frameworks:
   - value-metric
   - storybrand-homepage
   helpful_documents:
-  - strategy
-  - positioning
+  - doc: strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
+  - doc: positioning
+    from: 5-components-positioning
   id: forever-promise
   market: b2c
   name: Forever Promise
@@ -381,8 +409,10 @@ frameworks:
   - earlyvangelists
   - leap-of-faith-assumptions
   helpful_documents:
-  - competitive landscape
-  - market research
+  - doc: competitive landscape
+    from: outside
+  - doc: market research
+    from: outside
   id: four-market-types
   name: Four Market Types
   purpose: diagnosing which market type you're entering and aligning your tactics
@@ -401,7 +431,8 @@ frameworks:
   - simplification
   - focus
   helpful_documents:
-  - product description
+  - doc: product description
+    from: outside
   id: four-quadrant-focus
   name: Four-Quadrant Focus
   purpose: clarifying product portfolio using a 2x2 grid of your key dimensions
@@ -425,15 +456,18 @@ frameworks:
   follow_on_frameworks:
   - ice-prioritization
   helpful_documents:
-  - product description
-  - business metrics
+  - doc: product description
+    from: outside
+  - doc: business metrics
+    from: outside
   id: growth-hacking-process
   name: Growth Hacking Process
   purpose: 'setting up a growth engine after product-market fit: a North Star metric,
     an experiment velocity target, a growth team, an ICE-scored backlog, and a weekly
     test cadence'
   required_documents:
-  - a product-market fit survey result of 40% or more "very disappointed"
+  - doc: a product-market fit survey result of 40% or more "very disappointed"
+    from: product-market-fit-test
   stages:
   - nail-it
   - scale-it
@@ -453,7 +487,10 @@ frameworks:
   follow_on_frameworks:
   - growth-hacking-process
   helpful_documents:
-  - business goals
+  - doc: business goals
+    from:
+    - proximate-objectives
+    - growth-hacking-process
   id: ice-prioritization
   name: ICE Prioritization
   purpose: a simple but ruthless scoring system to prioritize growth experiments.
@@ -474,8 +511,10 @@ frameworks:
   - innovation
   - demand-analysis
   helpful_documents:
-  - customer research
-  - product description
+  - doc: customer research
+    from: outside
+  - doc: product description
+    from: outside
   id: jobs-to-be-done
   name: Jobs to Be Done
   purpose: uncovering the functional, emotional, and social progress a customer is
@@ -492,9 +531,12 @@ frameworks:
   - customer-indecision
   - late-stage-deals
   helpful_documents:
-  - deal notes
-  - stakeholder map
-  - discovery call transcripts
+  - doc: deal notes
+    from: outside
+  - doc: stakeholder map
+    from: mobilizer-taxonomy
+  - doc: discovery call transcripts
+    from: outside
   id: jolt-effect
   market: b2b
   name: JOLT Effect
@@ -521,10 +563,14 @@ frameworks:
   - teach-tailor-take-control
   - jolt-effect
   helpful_documents:
-  - stakeholder map
-  - deal notes
-  - discovery call transcripts
-  - email threads with the buying committee
+  - doc: stakeholder map
+    from: outside
+  - doc: deal notes
+    from: outside
+  - doc: discovery call transcripts
+    from: outside
+  - doc: email threads with the buying committee
+    from: outside
   id: mobilizer-taxonomy
   market: b2b
   name: Mobilizer Taxonomy
@@ -551,8 +597,10 @@ frameworks:
   - proximate-objectives
   - mochary-weekly-check-in
   helpful_documents:
-  - company strategy
-  - business goals
+  - doc: company strategy
+    from: lifecycle-strategy
+  - doc: business goals
+    from: proximate-objectives
   id: kernel-of-good-strategy
   name: Kernel of Good Strategy
   purpose: 'writing a strategy at page size with Rumelt''s kernel: a one-sentence
@@ -571,8 +619,10 @@ frameworks:
   follow_on_frameworks:
   - build-measure-learn
   helpful_documents:
-  - product description
-  - customer research
+  - doc: product description
+    from: outside
+  - doc: customer research
+    from: outside
   id: leap-of-faith-assumptions
   name: Leap of Faith Assumptions
   purpose: identifying and testing the riskiest assumptions underlying a business
@@ -692,9 +742,12 @@ frameworks:
   - validated-learning
   - lean-startup
   helpful_documents:
-  - product description
-  - customer research
-  - business metrics
+  - doc: product description
+    from: outside
+  - doc: customer research
+    from: outside
+  - doc: business metrics
+    from: outside
   id: pivot-or-persevere
   name: Pivot or Persevere
   purpose: a structured decision process for determining whether to change strategy,
@@ -730,14 +783,17 @@ frameworks:
   - growth-hacking-process
   - pivot-or-persevere
   helpful_documents:
-  - product description
-  - customer research
+  - doc: product description
+    from: outside
+  - doc: customer research
+    from: outside
   id: product-market-fit-test
   name: Product-Market Fit Test
   purpose: a diagnostic to determine if you should scale or iterate based on user
     love, not vanity metrics
   required_documents:
-  - survey results from at least 40 active users
+  - doc: survey results from at least 40 active users
+    from: outside
   stages:
   - idea
   - pilot
@@ -752,8 +808,12 @@ frameworks:
   - momentum
   - achievable-targets
   helpful_documents:
-  - company strategy
-  - business goals
+  - doc: company strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
+  - doc: business goals
+    from: outside
   id: proximate-objectives
   name: Proximate Objectives
   purpose: setting objectives that are achievable and create momentum for harder goals
@@ -797,8 +857,10 @@ frameworks:
   - strategic-diagnosis
   - decision-making
   helpful_documents:
-  - prior diagnoses
-  - relevant data or examples
+  - doc: prior diagnoses
+    from: outside
+  - doc: relevant data or examples
+    from: outside
   id: root-cause-analysis
   name: Root Cause Analysis
   purpose: a four-phase diagnostic process — Gap → Obstacles → Root Causes → Solutions
@@ -814,15 +876,18 @@ frameworks:
   - positioning
   - buyer-enablement
   helpful_documents:
-  - competitive landscape
-  - customer research
+  - doc: competitive landscape
+    from: competitive-battle-card
+  - doc: customer research
+    from: outside
   id: sales-pitch-structure
   market: b2b
   name: Sales Pitch Structure
   purpose: transforming positioning work into a story that helps buyers make confident
     decisions
   required_documents:
-  - positioning statement
+  - doc: positioning statement
+    from: 5-components-positioning
   stages:
   - nail-it
   - scale-it
@@ -838,8 +903,12 @@ frameworks:
   - marketing-philosophy
   - minimum-viable-audience
   helpful_documents:
-  - positioning
-  - strategy
+  - doc: positioning
+    from: 5-components-positioning
+  - doc: strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
   id: smallest-viable-audience
   name: Smallest Viable Audience
   purpose: defining the smallest group you could serve so well that they would actively
@@ -855,9 +924,12 @@ frameworks:
   - storytelling
   - copywriting
   helpful_documents:
-  - positioning statement
-  - brand voice guide
-  - strategic narrative
+  - doc: positioning statement
+    from: 5-components-positioning
+  - doc: brand voice guide
+    from: brand-voice
+  - doc: strategic narrative
+    from: strategic-narrative
   id: storybrand-homepage
   name: StoryBrand Homepage Wireframe
   purpose: building a homepage that passes the grunt test using story structure
@@ -882,8 +954,12 @@ frameworks:
   - messaging-distillation
   - storybrand-homepage
   helpful_documents:
-  - positioning statement
-  - company strategy
+  - doc: positioning statement
+    from: 5-components-positioning
+  - doc: company strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
   id: strategic-narrative
   market: b2b
   name: Five-Element Strategic Narrative
@@ -891,8 +967,9 @@ frameworks:
     in the world, the stakes, the promised land, the obstacles, and the magic gifts
     that get the customer there'
   required_documents:
-  - an internal strategy memo, talk transcript, or sales conversation describing the
-    market shift the brand sees
+  - doc: an internal strategy memo, talk transcript, or sales conversation describing
+      the market shift the brand sees
+    from: outside
   stages:
   - nail-it
   - scale-it
@@ -921,10 +998,16 @@ frameworks:
   - discovery
   - enterprise-pitch
   helpful_documents:
-  - account research
-  - buyer's recent public statements or writing
-  - pitch deck or meeting agenda
-  - deal notes
+  - doc: account research
+    from: outside
+  - doc: buyer's recent public statements or writing
+    from: outside
+  - doc: pitch deck or meeting agenda
+    from:
+    - sales-pitch-structure
+    - strategic-narrative
+  - doc: deal notes
+    from: outside
   id: teach-tailor-take-control
   market: b2b
   name: Teach-Tailor-Take Control (TTTC)
@@ -991,8 +1074,12 @@ frameworks:
   - monetization
   - customer-value
   helpful_documents:
-  - strategy
-  - positioning
+  - doc: strategy
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
+  - doc: positioning
+    from: 5-components-positioning
   id: value-metric
   market: b2b
   name: Value Metric Framework
@@ -1029,7 +1116,8 @@ frameworks:
   follow_on_frameworks:
   - getting-real-cut
   helpful_documents:
-  - product description
+  - doc: product description
+    from: outside
   id: working-backwards
   name: Working Backwards
   purpose: starting from the customer experience and writing the press release before
@@ -1060,8 +1148,10 @@ frameworks:
   - thought-leadership
   - sales-enablement
   helpful_documents:
-  - positioning
-  - brand-voice
+  - doc: positioning
+    from: 5-components-positioning
+  - doc: brand-voice
+    from: brand-voice
   id: insane-honesty
   market: b2b
   name: Insane Honesty
@@ -1083,8 +1173,10 @@ frameworks:
   - customer-success
   - saas-metrics
   helpful_documents:
-  - revenue metrics
-  - customer segmentation
+  - doc: revenue metrics
+    from: outside
+  - doc: customer segmentation
+    from: outside
   id: bowtie-funnel
   market: b2b
   name: Bowtie Funnel
@@ -1108,10 +1200,14 @@ frameworks:
   - sales-enablement
   - b2b-sales
   helpful_documents:
-  - current SDR org chart
-  - SDR quota and comp plan
-  - ramp and tenure data
-  - last 90 days meetings-held and opportunity conversion
+  - doc: current SDR org chart
+    from: outside
+  - doc: SDR quota and comp plan
+    from: outside
+  - doc: ramp and tenure data
+    from: outside
+  - doc: last 90 days meetings-held and opportunity conversion
+    from: outside
   id: 6-elements-sdr
   market: b2b
   name: 6 Elements of Sales Development
@@ -1137,11 +1233,18 @@ frameworks:
   - healthcare-product-strategy
   - payer-provider-sales
   helpful_documents:
-  - current pitch deck
-  - sales pipeline by segment
-  - clinical evidence inventory (case studies / outcomes data / RCTs)
-  - runway and fundraising plan
-  - integration roadmap (EHR / payer / revenue-cycle)
+  - doc: current pitch deck
+    from:
+    - sales-pitch-structure
+    - strategic-narrative
+  - doc: sales pipeline by segment
+    from: outside
+  - doc: clinical evidence inventory (case studies / outcomes data / RCTs)
+    from: proof-points-audit
+  - doc: runway and fundraising plan
+    from: outside
+  - doc: integration roadmap (EHR / payer / revenue-cycle)
+    from: outside
   id: 5-gtm-motions-digital-health
   market: b2b
   name: 5 GTM Motions for Digital Health
@@ -1171,8 +1274,9 @@ frameworks:
   - proof-points
   - design
   helpful_documents:
-  - a local folder path with supplementary content (past decks, customer interviews,
-    sample copy, internal docs)
+  - doc: a local folder path with supplementary content (past decks, customer interviews,
+      sample copy, internal docs)
+    from: outside
   id: reverse-engineered-brand
   market: b2b
   name: Reverse-Engineered Brand
@@ -1182,8 +1286,9 @@ frameworks:
     inference and gap as an Open Question reviewable in an interactive HTML document
     with paste-back-to-Claude-Code prompts
   required_documents:
-  - a public URL for the org (homepage or About page) OR a local folder of source
-    material
+  - doc: a public URL for the org (homepage or About page) OR a local folder of source
+      material
+    from: outside
   stages:
   - nail-it
   - scale-it
@@ -1202,9 +1307,12 @@ frameworks:
   - messaging-distillation
   - teach-tailor-take-control
   helpful_documents:
-  - customer research
-  - interview transcripts
-  - competitor positioning
+  - doc: customer research
+    from: outside
+  - doc: interview transcripts
+    from: outside
+  - doc: competitor positioning
+    from: competitive-battle-card
   id: buyer-persona
   market: b2b
   name: Buyer Persona
@@ -1212,7 +1320,8 @@ frameworks:
     evaluation criteria, skepticism triggers, language resonance, and common objections
     — anchored in the Challenger commercial-insight frame
   required_documents:
-  - customer interview transcripts including the customer's role
+  - doc: customer interview transcripts including the customer's role
+    from: outside
   stages:
   - nail-it
   - scale-it
@@ -1231,17 +1340,22 @@ frameworks:
   - competitive-battle-card
   - sales-pitch-structure
   helpful_documents:
-  - strategy/narrative.md
-  - personas/*.md
-  - proof/proof-points.md
-  - sample existing copy
+  - doc: strategy/narrative.md
+    from: strategic-narrative
+  - doc: personas/*.md
+    from: buyer-persona
+  - doc: proof/proof-points.md
+    from: proof-points-audit
+  - doc: sample existing copy
+    from: outside
   id: messaging-distillation
   name: Messaging Distillation
   purpose: distills positioning and narrative into a language/messaging.md file with
     slices for category name, tagline, elevator-pitch variants, value-prop phrasings,
     value-prop-to-persona map, key phrases, and (optional) pricing language
   required_documents:
-  - completed strategy/positioning.md (5-components output)
+  - doc: completed strategy/positioning.md (5-components output)
+    from: 5-components-positioning
   use_when: positioning and narrative are complete and the org needs copy-ready language
     for decks, pages, emails, and one-pagers
 - advisor: steve-krug
@@ -1254,16 +1368,19 @@ frameworks:
   - brand-language
   - copywriting
   helpful_documents:
-  - competitor copy samples
-  - category-name and tagline from messaging.md
+  - doc: competitor copy samples
+    from: outside
+  - doc: category-name and tagline from messaging.md
+    from: messaging-distillation
   id: brand-voice
   name: Brand Voice
   purpose: 'extracting a brand voice file from 3 to 10 samples of existing copy: tone
     principles, a register table, dos and don''ts, banned phrases and terms, a glossary,
     and how to name competitors'
   required_documents:
-  - 3–10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales
-    emails)
+  - doc: 3–10 sample pieces of existing copy (homepage, blog posts, founder tweets,
+      sales emails)
+    from: outside
   stages:
   - nail-it
   - scale-it
@@ -1281,17 +1398,22 @@ frameworks:
   follow_on_frameworks:
   - messaging-distillation
   helpful_documents:
-  - customer interview transcripts
-  - case study drafts
-  - third-party reports
-  - regulatory filings
+  - doc: customer interview transcripts
+    from: outside
+  - doc: case study drafts
+    from: outside
+  - doc: third-party reports
+    from: outside
+  - doc: regulatory filings
+    from: outside
   id: proof-points-audit
   name: Proof Points Audit
   purpose: pulling every claim out of customer-facing copy, tracing each to a source
     and date, rating how well it is supported, and reporting the claims that have
     no proof
   required_documents:
-  - existing customer-facing copy (homepage, deck, one-pager)
+  - doc: existing customer-facing copy (homepage, deck, one-pager)
+    from: outside
   stages:
   - nail-it
   - scale-it
@@ -1309,8 +1431,10 @@ frameworks:
   follow_on_frameworks:
   - sales-pitch-structure
   helpful_documents:
-  - customer win/loss interviews
-  - competitor public materials
+  - doc: customer win/loss interviews
+    from: outside
+  - doc: competitor public materials
+    from: outside
   id: competitive-battle-card
   market: b2b
   name: Competitive Battle Card
@@ -1318,8 +1442,10 @@ frameworks:
     real advantages and disadvantages, myths to correct, and each common objection
     with the concern behind it, a response, and a question to ask'
   required_documents:
-  - 'completed strategy/positioning.md (Component 1: competitive alternatives)'
-  - completed language/messaging.md (value-prop phrasings)
+  - doc: 'completed strategy/positioning.md (Component 1: competitive alternatives)'
+    from: 5-components-positioning
+  - doc: completed language/messaging.md (value-prop phrasings)
+    from: messaging-distillation
   stages:
   - nail-it
   - scale-it
@@ -1339,9 +1465,12 @@ frameworks:
   - onboarding
   - conversion
   helpful_documents:
-  - product analytics
-  - user research notes
-  - the specific flow or screen in question
+  - doc: product analytics
+    from: outside
+  - doc: user research notes
+    from: outside
+  - doc: the specific flow or screen in question
+    from: outside
   id: 3b-behavioral-design
   name: 3B Framework (Behavior, Barriers, Benefits)
   purpose: a behavioral-science diagnostic for product behavior problems that names
@@ -1364,8 +1493,10 @@ frameworks:
   - okrs
   - executive-coaching
   helpful_documents:
-  - existing meeting agenda or team operating cadence
-  - OKRs or quarterly goals
+  - doc: existing meeting agenda or team operating cadence
+    from: outside
+  - doc: OKRs or quarterly goals
+    from: proximate-objectives
   id: mochary-weekly-check-in
   name: The Weekly Check-In
   purpose: replace status meetings with an async written update covering emotional
@@ -1388,9 +1519,12 @@ frameworks:
   - decision-making
   - written-communication
   helpful_documents:
-  - existing operating review agenda or meeting format
-  - current metrics or scorecard
-  - OKRs or quarterly priorities
+  - doc: existing operating review agenda or meeting format
+    from: outside
+  - doc: current metrics or scorecard
+    from: outside
+  - doc: OKRs or quarterly priorities
+    from: proximate-objectives
   id: chj-operating-review
   name: Operating Review Design
   purpose: transform a status-presentation meeting into a decision-focused operating
@@ -1417,9 +1551,14 @@ frameworks:
   follow_on_frameworks:
   - psiu-role-fit
   helpful_documents:
-  - current org chart
-  - strategy or plan for the next stage
-  - list of open roles and recent hires
+  - doc: current org chart
+    from: outside
+  - doc: strategy or plan for the next stage
+    from:
+    - kernel-of-good-strategy
+    - lifecycle-strategy
+  - doc: list of open roles and recent hires
+    from: outside
   id: rules-of-structure
   name: The Rules of Structure
   purpose: redesigning an organization's structure from its strategy and lifecycle
@@ -1445,9 +1584,12 @@ frameworks:
   - psiu
   - org-design
   helpful_documents:
-  - job description or role description for the seat
-  - org chart showing where the role sits
-  - performance history for the seat (previous holders)
+  - doc: job description or role description for the seat
+    from: outside
+  - doc: org chart showing where the role sits
+    from: rules-of-structure
+  - doc: performance history for the seat (previous holders)
+    from: outside
   id: psiu-role-fit
   name: PSIU Role Fit
   purpose: coding a role before you hire, promote, or diagnose someone who is struggling
@@ -1470,9 +1612,12 @@ frameworks:
   follow_on_frameworks:
   - rules-of-structure
   helpful_documents:
-  - product list with revenue by product
-  - customer list or segment breakdown
-  - org chart
+  - doc: product list with revenue by product
+    from: outside
+  - doc: customer list or segment breakdown
+    from: outside
+  - doc: org chart
+    from: outside
   id: lifecycle-strategy
   name: Lifecycle Strategy
   purpose: finding out where each product, its market, and the company's ability to
@@ -1497,10 +1642,14 @@ frameworks:
   - 5-components-positioning
   - value-metric
   helpful_documents:
-  - current product or service description and pricing
-  - list of competitors and the other things buyers use instead
-  - customer interviews, win/loss notes, or sales call notes
-  - notes on people who looked at the product and did not buy
+  - doc: current product or service description and pricing
+    from: outside
+  - doc: list of competitors and the other things buyers use instead
+    from: outside
+  - doc: customer interviews, win/loss notes, or sales call notes
+    from: outside
+  - doc: notes on people who looked at the product and did not buy
+    from: outside
   id: blue-ocean-value-props
   name: Blue Ocean Value Props
   purpose: deciding what one offering will eliminate, reduce, raise, and create so
@@ -1525,12 +1674,19 @@ frameworks:
   - prioritization
   - fixed-deadlines
   helpful_documents:
-  - the current roadmap, backlog, or list of planned features
-  - the company strategy, or the diagnosis and guiding policy if one exists
-  - any dates that can't move (launches, events, contract dates) and what happens
-    on them
-  - promises already made to customers, in decks, contracts, or emails
-  - who builds, and how much of their time goes to project work
+  - doc: the current roadmap, backlog, or list of planned features
+    from:
+    - getting-real-cut
+    - user-story-map
+  - doc: the company strategy, or the diagnosis and guiding policy if one exists
+    from: kernel-of-good-strategy
+  - doc: any dates that can't move (launches, events, contract dates) and what happens
+      on them
+    from: outside
+  - doc: promises already made to customers, in decks, contracts, or emails
+    from: outside
+  - doc: who builds, and how much of their time goes to project work
+    from: outside
   id: frame-shape-bet
   name: Frame, Shape, Bet
   purpose: turning a list of planned work into a dated roadmap of problem areas and
@@ -1554,10 +1710,14 @@ frameworks:
   follow_on_frameworks:
   - 3b-behavioral-design
   helpful_documents:
-  - a description of the job or situation where people must use the skill
-  - the current program outline, curriculum, or session plan, if one exists
-  - examples of people doing the skill well and badly
-  - how the program measures success today
+  - doc: a description of the job or situation where people must use the skill
+    from: outside
+  - doc: the current program outline, curriculum, or session plan, if one exists
+    from: outside
+  - doc: examples of people doing the skill well and badly
+    from: outside
+  - doc: how the program measures success today
+    from: outside
   id: ten-steps-blueprint
   name: Ten Steps Blueprint
   purpose: designing a program for a complex skill people use at work, built from
@@ -1583,10 +1743,14 @@ frameworks:
   - instructional-design
   - training-transfer
   helpful_documents:
-  - the training request, program outline, or learning objectives
-  - what people currently do instead (observations, examples, complaints)
-  - how the behavior is measured, rewarded, or noticed today
-  - notes from people who tried the behavior and stopped
+  - doc: the training request, program outline, or learning objectives
+    from: outside
+  - doc: what people currently do instead (observations, examples, complaints)
+    from: outside
+  - doc: how the behavior is measured, rewarded, or noticed today
+    from: outside
+  - doc: notes from people who tried the behavior and stopped
+    from: outside
   id: behavior-gap-diagnosis
   name: Behavior Gap Diagnosis
   purpose: finding out why people aren't doing a target behavior, whether training
@@ -1611,10 +1775,14 @@ frameworks:
   - ai-coaching
   - learning-design
   helpful_documents:
-  - the learning goal or curriculum for the moment being designed
-  - any existing AI prompt or system prompt for this moment
-  - notes on who the learners are and what they already know
-  - transcripts or examples of learners using an AI tool today
+  - doc: the learning goal or curriculum for the moment being designed
+    from: ten-steps-blueprint
+  - doc: any existing AI prompt or system prompt for this moment
+    from: outside
+  - doc: notes on who the learners are and what they already know
+    from: outside
+  - doc: transcripts or examples of learners using an AI tool today
+    from: outside
   id: assigning-ai-roles
   name: Assigning AI Roles
   purpose: choosing the one role an AI should play in a learning or coaching moment,
@@ -1640,12 +1808,17 @@ frameworks:
   - rollout-sequencing
   - social-networks
   helpful_documents:
-  - a description of the practice or behavior being rolled out
-  - an org chart or list of teams, with rough sizes
-  - any record of who works with whom (shared projects, recurring meetings, Slack
-    channels, collaboration data)
-  - the current rollout or pilot plan, if one exists
-  - notes on which managers support the change and which do not
+  - doc: a description of the practice or behavior being rolled out
+    from: outside
+  - doc: an org chart or list of teams, with rough sizes
+    from: outside
+  - doc: any record of who works with whom (shared projects, recurring meetings, Slack
+      channels, collaboration data)
+    from: outside
+  - doc: the current rollout or pilot plan, if one exists
+    from: outside
+  - doc: notes on which managers support the change and which do not
+    from: outside
   id: complex-contagion-rollout
   name: Complex Contagion Rollout
   purpose: planning how a costly, risky, or norm-breaking practice spreads through
@@ -1672,12 +1845,18 @@ frameworks:
   - developer-workflow
   - verification
   helpful_documents:
-  - the project's CLAUDE.md (and any CLAUDE.md files in subfolders)
-  - the project's Claude Code settings file, including permission rules and hooks
-  - the list of custom slash commands, skills, subagents, and plugins in use
-  - a recent session where Claude got the work wrong, or the user's description of
-    what went wrong
-  - how the project is tested, built, and checked today (test command, linter, CI)
+  - doc: the project's CLAUDE.md (and any CLAUDE.md files in subfolders)
+    from: outside
+  - doc: the project's Claude Code settings file, including permission rules and hooks
+    from: outside
+  - doc: the list of custom slash commands, skills, subagents, and plugins in use
+    from: outside
+  - doc: a recent session where Claude got the work wrong, or the user's description
+      of what went wrong
+    from: outside
+  - doc: how the project is tested, built, and checked today (test command, linter,
+      CI)
+    from: outside
   id: close-the-loop
   name: Close the Loop
   purpose: reviewing how someone uses Claude Code on one kind of work, so that Claude
@@ -1698,12 +1877,17 @@ frameworks:
   - service-design
   - eos
   helpful_documents:
-  - a description of the method or service as it is delivered today, even a rough
-    one
-  - notes, agendas, or recordings from the last two or three client engagements
-  - the tools, worksheets, or exercises used in sessions
-  - any assessment or survey the client fills out before or during the work
-  - current pricing and who the clients have been
+  - doc: a description of the method or service as it is delivered today, even a rough
+      one
+    from: outside
+  - doc: notes, agendas, or recordings from the last two or three client engagements
+    from: outside
+  - doc: the tools, worksheets, or exercises used in sessions
+    from: outside
+  - doc: any assessment or survey the client fills out before or during the work
+    from: outside
+  - doc: current pricing and who the clients have been
+    from: outside
   id: proven-process
   market: b2b
   name: Proven Process
@@ -1724,9 +1908,14 @@ frameworks:
   - problem-validation
   - customer-interviews
   helpful_documents:
-  - business plan or positioning draft
-  - list of people to talk to
-  - existing pitch deck
+  - doc: business plan or positioning draft
+    from: 5-components-positioning
+  - doc: list of people to talk to
+    from: earlyvangelists
+  - doc: existing pitch deck
+    from:
+    - sales-pitch-structure
+    - strategic-narrative
   id: customer-problem-presentation
   name: Customer Problem Presentation
   purpose: building a short presentation of the problems they think a customer has,
@@ -1752,12 +1941,15 @@ frameworks:
   follow_on_frameworks:
   - breadboard-to-pages
   helpful_documents:
-  - notes on what the user does today, in their own words (interviews, support threads,
-    a session recording)
-  - any existing screens, specs, or access rules, so the map can be checked against
-    them afterward
-  - the project's design-principles.md, so the map is drawn in the project's colors
-    and type
+  - doc: notes on what the user does today, in their own words (interviews, support
+      threads, a session recording)
+    from: outside
+  - doc: any existing screens, specs, or access rules, so the map can be checked against
+      them afterward
+    from: outside
+  - doc: the project's design-principles.md, so the map is drawn in the project's
+      colors and type
+    from: design-principles
   id: user-story-map
   name: User Story Map
   purpose: building a shared, visual map of what a user does start to finish on one
@@ -1782,9 +1974,12 @@ frameworks:
   - design-tokens
   - responsiveness
   helpful_documents:
-  - the story map the breadboard came from (docs/story-maps/{slug}.md), so the screens
-    can be walked against it
-  - 'real content: actual names, emails, labels, and the longest values the app allows'
+  - doc: the story map the breadboard came from (docs/story-maps/{slug}.md), so the
+      screens can be walked against it
+    from: user-story-map
+  - doc: 'real content: actual names, emails, labels, and the longest values the app
+      allows'
+    from: outside
   id: breadboard-to-pages
   name: Breadboard to Pages
   purpose: turning a breadboard of places and actions into exact static screens built
@@ -1792,9 +1987,11 @@ frameworks:
     the cases that break it, at phone and desktop widths, and walking the screens
     against the story map
   required_documents:
-  - 'a breadboard of the slice to build: each place, what the user can do there, and
-    where each action leads'
-  - the project's design-principles.md, so every screen uses the project's tokens
+  - doc: 'a breadboard of the slice to build: each place, what the user can do there,
+      and where each action leads'
+    from: user-story-map
+  - doc: the project's design-principles.md, so every screen uses the project's tokens
+    from: design-principles
   use_when: a breadboard or Slice 1 of a story map is agreed and needs finished screens
     to guide the build, an AI agent keeps inventing styles instead of using the design
     system, screens were drawn with placeholder content or only the happy path, or
@@ -1813,9 +2010,11 @@ frameworks:
   follow_on_frameworks:
   - logic-check
   helpful_documents:
-  - the project's design-principles.md, so every pattern can be checked against the
-    tokens
-  - a list of the app's pages or routes
+  - doc: the project's design-principles.md, so every pattern can be checked against
+      the tokens
+    from: design-principles
+  - doc: a list of the app's pages or routes
+    from: outside
   id: interface-inventory
   name: Interface Inventory
   purpose: collecting every distinct pattern in an app that already exists, category
@@ -1823,8 +2022,9 @@ frameworks:
     is a recipe, and what stays a snowflake, so the app is rebuilt from one system
     instead of many one-offs
   required_documents:
-  - an app that already exists, as a URL, a running dev server, a codebase, or a folder
-    of screenshots
+  - doc: an app that already exists, as a URL, a running dev server, a codebase, or
+      a folder of screenshots
+    from: outside
   use_when: an existing app has grown several looks for the same job (buttons, grays,
     text fields), an AI agent has been inventing styles, someone is about to redesign
     or write design principles for an app that already exists, or the UI feels inconsistent
@@ -1841,16 +2041,20 @@ frameworks:
   - accessibility
   - colour-systems
   helpful_documents:
-  - the project's design-principles.md, when checking a screen, so choices made on
-    purpose are respected
+  - doc: the project's design-principles.md, when checking a screen, so choices made
+      on purpose are respected
+    from: design-principles
   id: logic-check
   name: Logic Check
   purpose: reading a design principles file or an existing screen, naming the rule
     behind every visual value, and listing every value picked by feel with the rule
     that fixes it
   required_documents:
-  - a design-principles.md, or an existing screen as a URL, a running dev server,
-    code, or a screenshot
+  - doc: a design-principles.md, or an existing screen as a URL, a running dev server,
+      code, or a screenshot
+    from:
+    - design-principles
+    - breadboard-to-pages
   use_when: a screen looks amateur and nobody can say why, an AI agent keeps picking
     colours, sizes, or weights by feel, a design principles file needs checking before
     screens are built from it, or text contrast, button hierarchy, or colour-only
@@ -1869,9 +2073,14 @@ frameworks:
   follow_on_frameworks:
   - pivot-or-persevere
   helpful_documents:
-  - a short brief of what is launching and for whom
-  - the launch's decisions file, once the first sitting has run
-  - what the first customer did, for the second sitting
+  - doc: a short brief of what is launching and for whom
+    from:
+    - getting-real-cut
+    - working-backwards
+  - doc: the launch's decisions file, once the first sitting has run
+    from: outside
+  - doc: what the first customer did, for the second sitting
+    from: outside
   id: launch-bet
   name: Launch Bet
   purpose: treating a launch with one real customer as one bet, writing the success
@@ -1900,14 +2109,21 @@ frameworks:
   - frame-shape-bet
   - launch-bet
   helpful_documents:
-  - the product's brief or positioning, for the big idea
-  - a story map or breadboard, if one exists
+  - doc: the product's brief or positioning, for the big idea
+    from:
+    - 5-components-positioning
+    - working-backwards
+  - doc: a story map or breadboard, if one exists
+    from: user-story-map
   id: getting-real-cut
   name: Getting Real Cut
   purpose: taking a feature list, a spec, or a design and cutting it to the half that
     kicks ass, built from its epicenter outward, before anyone builds it
   required_documents:
-  - a feature list, a spec, or a design for something not yet built
+  - doc: a feature list, a spec, or a design for something not yet built
+    from:
+    - working-backwards
+    - user-story-map
   use_when: a version one or a new feature has a long list and needs cutting before
     the build, a design keeps growing, settings or scale work are creeping in, or
     the founder can't say what the product can't live without
@@ -1925,15 +2141,18 @@ frameworks:
   follow_on_frameworks:
   - ai-search-optimization-checklist
   helpful_documents:
-  - access to Google Search Console for the site
-  - a PageSpeed Insights report for the page
+  - doc: access to Google Search Console for the site
+    from: outside
+  - doc: a PageSpeed Insights report for the page
+    from: outside
   id: why-my-page-doesnt-rank
   name: Why My Page Doesn't Rank
   purpose: running the ten diagnostic questions from LearningSEO.io in order on one
     page of a small or new site, with free tools, until the reason it doesn't rank
     is found and one fix is chosen first
   required_documents:
-  - the URL of one page that doesn't rank, and the query it should rank for
+  - doc: the URL of one page that doesn't rank, and the query it should rank for
+    from: outside
   use_when: a page doesn't rank in Google, or ranks lower than it should, for a query
     that matters; a new site's pages aren't showing up; or someone wants backlinks
     before checking the page is indexed
@@ -1951,8 +2170,10 @@ frameworks:
   follow_on_frameworks:
   - why-my-page-doesnt-rank
   helpful_documents:
-  - a list of the questions customers ask before they buy or sign up
-  - access to Google Search Console and the site's analytics
+  - doc: a list of the questions customers ask before they buy or sign up
+    from: outside
+  - doc: access to Google Search Console and the site's analytics
+    from: outside
   id: ai-search-optimization-checklist
   name: AI Search Optimization Checklist
   purpose: her twelve steps for showing up, being described accurately, and being
@@ -1960,7 +2181,8 @@ frameworks:
     measured before anything is changed and scaled down for one person on a small
     site
   required_documents:
-  - the site's URL and what it sells or offers
+  - doc: the site's URL and what it sells or offers
+    from: outside
   use_when: a site wants to show up or be cited in ChatGPT, Gemini, Perplexity or
     Google AI answers; someone asks about GEO, AEO or LLMO; or a founder is about
     to try llms.txt, hidden prompts or other AI-visibility tricks before measuring
@@ -1979,16 +2201,21 @@ frameworks:
   follow_on_frameworks:
   - four-question-threat-model
   helpful_documents:
-  - the codebase the design doc describes, open so files can be read during the review
-  - the existing tests (checks) for the area the design touches
-  - past bug reports or incidents in the same area
+  - doc: the codebase the design doc describes, open so files can be read during the
+      review
+    from: outside
+  - doc: the existing tests (checks) for the area the design touches
+    from: outside
+  - doc: past bug reports or incidents in the same area
+    from: outside
   id: few-hiccupps-review
   name: FEW HICCUPPS Review
   purpose: running a design doc, a feature, or an existing screen through the FEW
     HICCUPPS consistency oracles to find problems before they're built, and checking
     what the doc claims about the codebase against the code
   required_documents:
-  - a design doc, a feature description, or an existing screen to review
+  - doc: a design doc, a feature description, or an existing screen to review
+    from: outside
   use_when: a design doc is about to be built and its claims about the codebase need
     checking against the code, the tests all pass but nobody has asked what they miss,
     a feature needs its edge cases and failure modes found before the build, or an
@@ -2008,16 +2235,21 @@ frameworks:
   follow_on_frameworks:
   - phantom-b-llm-threats
   helpful_documents:
-  - a sketch or diagram of the parts and how data moves between them
-  - the database schema and its row-level security policies
-  - the list of third-party services, webhooks, hooks, or MCP servers it touches
+  - doc: a sketch or diagram of the parts and how data moves between them
+    from: outside
+  - doc: the database schema and its row-level security policies
+    from: outside
+  - doc: the list of third-party services, webhooks, hooks, or MCP servers it touches
+    from: outside
   id: four-question-threat-model
   name: Four Question Threat Model
   purpose: one person threat modeling one design doc in under an hour, by asking the
     Four Question Framework in order with STRIDE as the checklist for what can go
     wrong
   required_documents:
-  - a design doc, spec, or feature description for something being worked on now
+  - doc: a design doc, spec, or feature description for something being worked on
+      now
+    from: outside
   use_when: a design or feature touches login, permissions, user data, row-level security,
     secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server,
     and nobody has asked what can go wrong before it ships
@@ -2035,18 +2267,22 @@ frameworks:
   follow_on_frameworks:
   - four-question-threat-model
   helpful_documents:
-  - a sketch of the system with the LLM calls marked
-  - the system prompt, the tools or MCP servers the model can use, and what data it
-    can read
-  - the threat model from four-question-threat-model, if one exists
+  - doc: a sketch of the system with the LLM calls marked
+    from: outside
+  - doc: the system prompt, the tools or MCP servers the model can use, and what data
+      it can read
+    from: outside
+  - doc: the threat model from four-question-threat-model, if one exists
+    from: four-question-threat-model
   id: phantom-b-llm-threats
   name: PHANTOM-B LLM Threats
   purpose: one person finding what can go wrong with the parts of a system that call
     an LLM, using the eight PHANTOM-B threats as prompts, then deciding what to do
     about each
   required_documents:
-  - a design, spec, or running system where code calls an LLM (an app feature, a Claude
-    Code hook or plugin, an agent with tools)
+  - doc: a design, spec, or running system where code calls an LLM (an app feature,
+      a Claude Code hook or plugin, an agent with tools)
+    from: outside
   use_when: a feature, hook, plugin, or agent sends text to an LLM and acts on what
     comes back, reads text someone else wrote (emails, PRs, web pages, tool results),
     or lets the model call tools, and nobody has asked what can go wrong with the
@@ -2064,18 +2300,23 @@ frameworks:
   follow_on_frameworks:
   - small-size-and-print-test
   helpful_documents:
-  - the product's name and any existing logo, colors, or typefaces
-  - the design rules the product already follows, including any looks it bans
-  - the places the mark has to appear (app icon, favicon, printed piece, packaging,
-    signage)
-  - marks from competitors or from the category
+  - doc: the product's name and any existing logo, colors, or typefaces
+    from: outside
+  - doc: the design rules the product already follows, including any looks it bans
+    from: design-principles
+  - doc: the places the mark has to appear (app icon, favicon, printed piece, packaging,
+      signage)
+    from: outside
+  - doc: marks from competitors or from the category
+    from: outside
   id: boil-it-down
   name: Boil It Down
   purpose: finding a mark in something the product already has, throwing out the category
     cliché, and cutting it down until it looks almost unfinished, so the result is
     one mark described well enough to draw
   required_documents:
-  - a short description of the product and who uses it
+  - doc: a short description of the product and who uses it
+    from: outside
   use_when: a product needs a logo or mark, the current mark is the category cliché
     or a pile of decoration, a team has several logo directions and can't pick, or
     a mark needs to work as an app icon, a favicon, and in print
@@ -2093,18 +2334,23 @@ frameworks:
   - boil-it-down
   - small-size-and-print-test
   helpful_documents:
-  - each product's name, domain, and any existing logo, colors, or typefaces
-  - the design rules the parent already follows
-  - places where the two products meet (a shared checkout, account, footer, email,
-    or printed piece)
-  - how many people know the parent's name today
+  - doc: each product's name, domain, and any existing logo, colors, or typefaces
+    from: outside
+  - doc: the design rules the parent already follows
+    from: design-principles
+  - doc: places where the two products meet (a shared checkout, account, footer, email,
+      or printed piece)
+    from: outside
+  - doc: how many people know the parent's name today
+    from: outside
   id: how-much-siblings-share
   name: How Much the Siblings Share
   purpose: deciding how a new product looks next to the product it came from, by picking
     one of three types of brand family and then listing exactly which of name, mark,
     type, and color the sibling shares
   required_documents:
-  - a short description of each product, who buys it, and who uses it
+  - doc: a short description of each product, who buys it, and who uses it
+    from: outside
   stages:
   - nail-it
   - scale-it
@@ -2124,20 +2370,25 @@ frameworks:
   - brand-color
   - contrast
   helpful_documents:
-  - the color values (hex) of the mark, its background, and the colors it sits next
-    to
-  - the places the mark has to appear and their sizes (favicon, app icon, book cover
-    or spine, packaging)
-  - how it will be printed (full color, one color, on what paper)
-  - the name and any wordmark that goes with the mark
+  - doc: the color values (hex) of the mark, its background, and the colors it sits
+      next to
+    from: design-principles
+  - doc: the places the mark has to appear and their sizes (favicon, app icon, book
+      cover or spine, packaging)
+    from: outside
+  - doc: how it will be printed (full color, one color, on what paper)
+    from: outside
+  - doc: the name and any wordmark that goes with the mark
+    from: outside
   id: small-size-and-print-test
   name: The Small-Size and Print Test
   purpose: running a mark through Sagi Haviv's three tests, the draw-it-from-memory
     test, the smallest and hardest places it has to live, one-color print, and Josef
     Albers's rule for color, and ending with pass, fix, or redraw for each
   required_documents:
-  - the mark or marks to test, as an image, a file, or a description precise enough
-    to draw
+  - doc: the mark or marks to test, as an image, a file, or a description precise
+      enough to draw
+    from: boil-it-down
   use_when: a mark is about to ship and nobody has seen it at 16 pixels, as a phone
     icon, in one color, or on a book spine; a new brand color has been picked on its
     own; or a team argues about a logo on taste
@@ -2154,17 +2405,24 @@ frameworks:
   follow_on_frameworks:
   - declutter-and-focus
   helpful_documents:
-  - the current chart, if there is one, as an image or a description
-  - where the chart will be seen (a slide, a report, a dashboard tile, a phone screen)
-  - the tool that will draw it (Excel, a charting library, a BI tool)
+  - doc: the current chart, if there is one, as an image or a description
+    from: outside
+  - doc: where the chart will be seen (a slide, a report, a dashboard tile, a phone
+      screen)
+    from: outside
+  - doc: the tool that will draw it (Excel, a charting library, a BI tool)
+    from: outside
   id: choose-an-effective-visual
   name: Choose an Effective Visual
   purpose: picking one chart type for one point by starting from the audience, naming
     the comparison the chart has to show, and then choosing bar, line, slopegraph
     or dot plot, or pie, with the reason and what was ruled out
   required_documents:
-  - the data to show (a table, a file, or a description of the columns and rows)
-  - who will look at the chart and what they need to know or do after seeing it
+  - doc: the data to show (a table, a file, or a description of the columns and rows)
+    from: outside
+  - doc: who will look at the chart and what they need to know or do after seeing
+      it
+    from: big-idea-and-takeaway-title
   use_when: someone has data and doesn't know which chart to draw, a chart is the
     wrong type for its point (a line across categories, a pie for change over time,
     a spaghetti graph of crossing lines), or a team argues about whether to use a
@@ -2184,11 +2442,15 @@ frameworks:
   - choose-an-effective-visual
   - declutter-and-focus
   helpful_documents:
-  - who will look at it, and what they decide or do after looking
-  - the data behind each chart, or the numbers that matter most
-  - the current title of each chart
-  - how it will be seen (a live dashboard, a sent report, a slide in a meeting, a
-    phone screen)
+  - doc: who will look at it, and what they decide or do after looking
+    from: outside
+  - doc: the data behind each chart, or the numbers that matter most
+    from: outside
+  - doc: the current title of each chart
+    from: outside
+  - doc: how it will be seen (a live dashboard, a sent report, a slide in a meeting,
+      a phone screen)
+    from: outside
   id: big-idea-and-takeaway-title
   name: The Big Idea and Takeaway Title
   purpose: deciding whether a page is for exploring or for explaining, naming who
@@ -2196,8 +2458,9 @@ frameworks:
     and then in one sentence, and rewriting every chart title as the takeaway, the
     "so what?"
   required_documents:
-  - the page, report, slide or chart to work on, as an image, a file, a link, or a
-    description of each chart and what it shows
+  - doc: the page, report, slide or chart to work on, as an image, a file, a link,
+      or a description of each chart and what it shows
+    from: outside
   use_when: a dashboard, report or slide shows data but nobody acts on it; chart titles
     only say what the chart is ("Revenue by month"); or someone needs to say the point
     of their data before picking or cleaning up a chart
@@ -2213,9 +2476,12 @@ frameworks:
   - decluttering
   - visual-emphasis
   helpful_documents:
-  - who sees the chart and where (a slide, a report, a dashboard, a phone)
-  - the brand or product color palette
-  - the tool or library the chart is built in
+  - doc: who sees the chart and where (a slide, a report, a dashboard, a phone)
+    from: outside
+  - doc: the brand or product color palette
+    from: design-principles
+  - doc: the tool or library the chart is built in
+    from: outside
   id: declutter-and-focus
   name: Declutter and Focus
   purpose: taking one existing chart, pushing everything to gray, cutting the clutter,
@@ -2223,9 +2489,11 @@ frameworks:
     the result with the "where are your eyes drawn?" test, so the result is a list
     of changes to the chart, in order
   required_documents:
-  - the chart to fix (an image, the chart code, or a description of every part of
-    it)
-  - the one point the chart is meant to make, or the question it answers
+  - doc: the chart to fix (an image, the chart code, or a description of every part
+      of it)
+    from: outside
+  - doc: the one point the chart is meant to make, or the question it answers
+    from: big-idea-and-takeaway-title
   use_when: a chart is busy or uses the tool's default colors, gridlines, legend and
     labels; it looks fine but people miss its point; or a chart needs one series to
     stand out and a title that says the takeaway

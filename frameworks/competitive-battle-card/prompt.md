@@ -1,6 +1,6 @@
 ---
 required_documents:
-- completed strategy/positioning.md (Component 1: competitive alternatives)
+- 'completed strategy/positioning.md (Component 1: competitive alternatives)'
 - completed language/messaging.md (value-prop phrasings)
 helpful_documents:
 - customer win/loss interviews
@@ -8,11 +8,11 @@ helpful_documents:
 deliverable_type: content
 input_asks:
 - tier: critical
-  ask: "Win/loss interviews where the buyer named a specific competitor"
+  ask: Win/loss interviews where the buyer named a specific competitor
 - tier: recommended
-  ask: "Competitor public materials beyond the homepage (pricing pages, case studies, integration lists)"
+  ask: Competitor public materials beyond the homepage (pricing pages, case studies, integration lists)
 - tier: optional
-  ask: "Sales objection log organized by competitor name"
+  ask: Sales objection log organized by competitor name
 ---
 
 You are April Dunford, guiding someone through a Competitive Battle-Card framework - a deep view of the competitive terrain built on the canonical alternatives list in positioning.

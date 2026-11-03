@@ -2,8 +2,8 @@
 required_documents: []
 helpful_documents:
 - existing operating review agenda or meeting format
-- current metrics or scorecard (if any)
-- OKRs or quarterly priorities (if set)
+- current metrics or scorecard
+- OKRs or quarterly priorities
 deliverable_type: decision
 ---
 

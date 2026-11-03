@@ -35,7 +35,8 @@ def test_build_measure_learn_phase_2_takes_assumption_from_leap_of_faith():
 
 
 def test_build_measure_learn_lists_leap_of_faith_output_as_helpful_document():
-    assert "leap-of-faith-assumptions results" in registry()["build-measure-learn"]["helpful_documents"]
+    helpful = registry()["build-measure-learn"]["helpful_documents"]
+    assert {"doc": "leap-of-faith-assumptions results", "from": "leap-of-faith-assumptions"} in helpful
     frontmatter = prompt("build-measure-learn").split("---")[1]
     assert "leap-of-faith-assumptions results" in yaml.safe_load(frontmatter)["helpful_documents"]
 
