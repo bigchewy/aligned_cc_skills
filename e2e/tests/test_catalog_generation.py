@@ -64,3 +64,48 @@ def test_template_has_no_category_field_and_reads_document_names():
     assert "groupBy" not in text
     assert "function docName" in text
     assert 'type: "docs"' in text
+
+
+def _run_doc_functions(tmp_path, body):
+    import shutil
+    import subprocess
+
+    if shutil.which("node") is None:
+        pytest.skip("node not installed")
+    text = TEMPLATE.read_text(encoding="utf-8")
+    start = text.index("function docName")
+    end = text.index("function renderRow")
+    harness = tmp_path / "docs.js"
+    harness.write_text(text[start:end] + "\n" + body)
+    result = subprocess.run(["node", str(harness)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout)
+
+
+def test_document_name_with_a_comma_round_trips_with_its_from(tmp_path):
+    out = _run_doc_functions(
+        tmp_path,
+        """
+        const original = [
+          { doc: "real content: names, emails, labels", from: ["a", "b"] },
+          "plain, with comma",
+          { doc: "business goals", from: "proximate-objectives" },
+        ];
+        const text = docsToString(original);
+        const same = stringToDocs(text, original);
+        const edited = stringToDocs(text + "\\nbrand new, doc", original);
+        console.log(JSON.stringify({ text, same, edited }));
+        """,
+    )
+    assert out["text"].split("\n") == [
+        "real content: names, emails, labels",
+        "plain, with comma",
+        "business goals",
+    ]
+    assert out["same"] == [
+        {"doc": "real content: names, emails, labels", "from": ["a", "b"]},
+        "plain, with comma",
+        {"doc": "business goals", "from": "proximate-objectives"},
+    ]
+    assert out["edited"][-1] == {"doc": "brand new, doc", "from": "outside"}
+    assert out["edited"][:3] == out["same"]

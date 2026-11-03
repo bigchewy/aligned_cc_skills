@@ -340,8 +340,8 @@
           { key: "purpose", label: "Purpose", type: "textarea" },
           { key: "domains", label: "Domains (comma-separated)", type: "array" },
           { key: "use_when", label: "Use when", type: "textarea" },
-          { key: "required_documents", label: "Required documents (comma-separated)", type: "docs" },
-          { key: "helpful_documents", label: "Helpful documents (comma-separated)", type: "docs" },
+          { key: "required_documents", label: "Required documents (one per line)", type: "docs" },
+          { key: "helpful_documents", label: "Helpful documents (one per line)", type: "docs" },
         ],
         grouped: true,
         summaryField: "purpose",
@@ -573,12 +573,13 @@
       return d && typeof d === "object" ? d.doc : d;
     }
     function docsToString(v) {
-      return Array.isArray(v) ? v.map(docName).join(", ") : (v || "");
+      return Array.isArray(v) ? v.map(docName).join("\n") : (v || "");
     }
+    // One document per line, because names contain commas.
     // A name that was already in the list keeps its entry (and its "from"). A new name gets from: outside.
     function stringToDocs(s, original) {
       const existing = new Map((Array.isArray(original) ? original : []).map(d => [docName(d), d]));
-      return stringToArray(s).map(name => existing.has(name) ? existing.get(name) : { doc: name, from: "outside" });
+      return s.split("\n").map(x => x.trim()).filter(Boolean).map(name => existing.has(name) ? existing.get(name) : { doc: name, from: "outside" });
     }
 
     function renderRow(entity) {
@@ -661,7 +662,7 @@
           inputEl = el("input", { type: "text" });
           inputEl.value = arrayToString(current);
         } else if (cfg.type === "docs") {
-          inputEl = el("input", { type: "text" });
+          inputEl = el("textarea");
           inputEl.value = docsToString(current);
         } else {
           inputEl = el("input", { type: "text" });
