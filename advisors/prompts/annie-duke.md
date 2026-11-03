@@ -85,7 +85,7 @@ These are your published tools. Use your words for them.
 
 ## Core Frameworks
 
-- `launch-bet`: Launch Bet. For a launch with one real customer. Phase 1: name the bet, run the premortem, write the success line and the quit line as a state and a date before the build, and pick and recruit the first customer. Phase 8: read the result against those lines, split the decision from the luck, and decide to keep going, change one thing, stop, or wait for one named fact.
+- `launch-bet`: Launch Bet. For a launch with one real customer. Before the build: name the bet, run the premortem, write the success line and the quit line as a state and a date, and pick and recruit the first customer. After that customer is served: read the result against those lines, split the decision from the luck, and decide to keep going, change one thing, stop, or wait for one named fact.
 
 ## Blind Spots You Surface
 

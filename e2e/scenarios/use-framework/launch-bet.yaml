@@ -3,7 +3,7 @@
 # System context is embedded in the prompt (file:// resolves in prompt vars,
 # not in provider config).
 
-description: "Framework: Launch Bet, Phase 1 of a one-couple launch"
+description: "Framework: Launch Bet, first sitting of a one-customer launch"
 
 providers:
   - file://../../providers/claude-login.yaml
@@ -19,28 +19,28 @@ defaultTest:
     - type: llm-rubric
       value: |
         Score 1-5 on PHASE DISCIPLINE: The founder has given the bet and the
-        candidate couples but nothing else. Does the response work on the
+        candidate clinics but nothing else. Does the response work on the
         early step (pinning down the bet, its confidence, or the backcast or
         premortem) and then STOP with a question, instead of running every
         step and handing over a finished plan with success numbers, a
-        checklist, and a chosen couple? A complete plan with no question
+        checklist, and a chosen clinic? A complete plan with no question
         scores 1-2.
       weight: 1
     - type: llm-rubric
       value: |
-        Score 1-5 on WRITING THE BET DOWN: The founder's bet is "people will
-        love it" and they want to "launch and see." Does the response refuse
-        that as a bet, ask what people will do that can be counted, and ask
-        for a confidence as a percentage? Does it say the success line and
-        quit line will be written as a state and a date before the build?
-        Accepting "love it" or "launch and see" scores 1-2.
+        Score 1-5 on WRITING THE BET DOWN: The founder's bet is "the staff
+        will love it" and they want to "launch and see." Does the response
+        refuse that as a bet, ask what people will do that can be counted,
+        and ask for a confidence as a percentage? Does it say the success
+        line and quit line will be written as a state and a date before the
+        build? Accepting "love it" or "launch and see" scores 1-2.
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on SMALL NUMBERS: The founder mentions "a 40% conversion
+        Score 1-5 on SMALL NUMBERS: The founder mentions "a 70% adoption
         rate." Does the response turn the rate into a count of people out of
-        about fifty, or say one couple is a sample of one, rather than talking
-        about funnels, benchmarks, or conversion? Endorsing the 40% rate as
+        twelve, or say one clinic is a sample of one, rather than talking
+        about funnels, benchmarks, or conversion? Endorsing the 70% rate as
         the target scores 1-2. Picking a number for the founder instead of
         asking them for one scores 1-2.
       weight: 2
@@ -62,24 +62,23 @@ tests:
       arm: full-stack
     vars:
       system_context: file://../../../frameworks/launch-bet/prompt.md
-      task_prompt: "\n\n---\n\nThis is Phase 1 of the launch. Nothing is built yet. Here's where I am. I'll answer step by step."
+      task_prompt: "\n\n---\n\nThis is the first sitting. Nothing is built yet. Here's where I am. I'll answer step by step."
       product_brief: &brief |
-        The site: a couple's friends and family write illustrated memories of
-        them, delivered a few a day for the weeks before the wedding. The
-        first launch is one couple and about fifty of their people.
+        The product: a booking tool for small physical therapy clinics, so the
+        front desk books patients online instead of by phone. The first launch
+        is one clinic and its twelve front-desk staff.
 
-        My bet: people will love it. Honestly I want to just launch and see.
-        If I need a number, maybe a 40% conversion rate from invite to
-        memory. Possible first couples: my cousin and her fiancé (wedding in
-        the fall), or a couple from my running club (June wedding, about sixty
-        guests).
+        My bet: the staff will love it. Honestly I want to just launch and see.
+        If I need a number, maybe a 70% adoption rate. Possible first
+        customers: my friend's clinic, or a clinic across town that just lost a
+        receptionist (busy season starts in March).
 
   - description: "vanilla baseline"
     metadata:
       arm: vanilla
     vars:
       system_context: ""
-      task_prompt: "I'm about to launch a site with one real customer. Nothing is built yet. Help me plan the launch. I'll answer step by step."
+      task_prompt: "I'm about to launch a product with one real customer. Nothing is built yet. Help me plan the launch. I'll answer step by step."
       product_brief: *brief
 
   - description: "aware-but-unaided (names expert in prompt)"
@@ -87,5 +86,5 @@ tests:
       arm: aware
     vars:
       system_context: ""
-      task_prompt: "You are Annie Duke, author of Thinking in Bets and Quit. I'm about to launch a site with one real customer. Nothing is built yet. Help me plan the launch. I'll answer step by step."
+      task_prompt: "You are Annie Duke, author of Thinking in Bets and Quit. I'm about to launch a product with one real customer. Nothing is built yet. Help me plan the launch. I'll answer step by step."
       product_brief: *brief

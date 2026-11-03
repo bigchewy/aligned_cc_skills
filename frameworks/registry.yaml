@@ -1696,15 +1696,15 @@ frameworks:
   follow_on_frameworks:
   - pivot-or-persevere
   helpful_documents:
-  - the site's brief (name, feeling, positioning)
-  - the site's decisions.md, once Phase 1 of the launch has run
-  - what the first customer and their people did, for Phase 8 of the launch
+  - a short brief of what is launching and for whom
+  - the launch's decisions file, once the first sitting has run
+  - what the first customer did, for the second sitting
   id: launch-bet
   name: Launch Bet
   purpose: treating a launch with one real customer as one bet, writing the success
     line and the quit line as a state and a date before the build, and judging that
     customer's result apart from the luck
-  use_when: a product or site is about to launch with one real customer instead of
+  use_when: a product, feature, or service is about to launch with one real customer instead of
     a public release and needs a success number and a quit line before the build,
     a first customer to pick and recruit, or a first customer has been served and
     the founder needs to judge the result and decide whether to keep going, change

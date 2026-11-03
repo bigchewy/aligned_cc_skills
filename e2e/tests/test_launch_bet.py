@@ -1,9 +1,9 @@
 """Launch Bet: Annie Duke runs a launch with one real customer as one bet.
 
-Phase 1 of a site launch names the bet, runs a premortem whose controlled
+The first sitting names the bet, runs a premortem whose controlled
 reasons become the launch checklist, writes the success line and the quit
 line as a state and a date before the build, and picks and recruits the
-first customer. Phase 8 reads the result against those lines, separates the
+first customer. The second sitting reads the result against those lines, separates the
 decision from the luck, and decides: keep going, change one thing, stop, or
 wait for one named fact. Recruiting is not Duke's published method, so the
 prompt says so and names Rob Fitzpatrick's commitment test as the source.
@@ -61,9 +61,32 @@ def test_every_phase_waits_for_the_user():
 
 
 def test_prompt_has_both_launch_sittings():
-    text = _read(PROMPT)
-    assert "Phase 1 of the launch" in text and "Phase 8 of the launch" in text
-    assert "decisions.md" in text
+    text = _read(PROMPT).lower()
+    assert "first sitting" in text and "second sitting" in text
+    assert "decisions file" in text
+
+
+# The plugin's launch-bet works for any product. The site-launch version, with
+# its phase 1 and phase 8 and its couple and guests, lives in the moments repo.
+SITE_LAUNCH_WORDS = re.compile(
+    r"Phase [18] of the launch|Phase 8|couple|wedding|guest|docs/sites|the site's", re.IGNORECASE
+)
+
+
+def test_launch_bet_names_no_site_launch_process():
+    reg = (REPO_ROOT / "frameworks" / "registry.yaml")
+    entry = {x["id"]: x for x in yaml.safe_load(_read(reg))["frameworks"]}["launch-bet"]
+    texts = {
+        "prompt.md": _read(PROMPT),
+        "examples.md": _read(EXAMPLES),
+        "anti-examples.md": _read(ANTI),
+        "scenario": _read(SCENARIO),
+        "registry entry": yaml.safe_dump(entry),
+    }
+    advisor_line = [l for l in _read(ADVISOR).splitlines() if "`launch-bet`:" in l]
+    texts["annie-duke.md"] = "\n".join(advisor_line)
+    hits = [f"{name}: {m.group(0)}" for name, t in texts.items() for m in SITE_LAUNCH_WORDS.finditer(t)]
+    assert not hits, "launch-bet still names the site launch:\n" + "\n".join(hits)
 
 
 def test_prompt_writes_the_lines_before_the_build():
