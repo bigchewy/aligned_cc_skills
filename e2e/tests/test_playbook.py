@@ -492,6 +492,16 @@ def test_writers_on_held_frameworks_are_not_linked():
     assert "Held" in page and 'href="held.html"' not in page
 
 
+def test_no_attribute_is_glued_to_a_closing_quote():
+    for files in (pages(), gp.build(gp.load_and_validate(LAYERS, FRAMEWORKS)[0])):
+        for rel, body in files.items():
+            if rel.endswith(".html"):
+                # A whole attribute value, then a name with no space between.
+                # (A bare '"[a-z-]+=' also hits opening quotes like content="width=.)
+                glued = re.search(r'="[^"]*"[a-z-]+=', body)
+                assert glued is None, f"{rel}: {body[glued.start() - 40 : glued.end() + 10]!r}"
+
+
 def test_build_is_deterministic():
     assert pages() == pages()
 

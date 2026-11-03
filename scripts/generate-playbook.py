@@ -531,7 +531,7 @@ def render_graph(fid, edges, data):
         # The title holds the full name, which a wrapped box may cut short.
         shape = (
             f"<g><title>{text(full)}</title>"
-            f'<rect class="{cls}"x="{n(x)}" y="{n(y)}" width="{BOX_W}" height="{BOX_H}" rx="5" '
+            f'<rect class="{cls}" x="{n(x)}" y="{n(y)}" width="{BOX_W}" height="{BOX_H}" rx="5" '
             f'fill="none" stroke="currentColor"/><text text-anchor="middle">{tspans}</text></g>'
         )
         if node != fid and node in data["homes"]:
