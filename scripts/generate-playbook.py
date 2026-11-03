@@ -96,7 +96,12 @@ def _is_link(entry):
     src = entry["from"]
     if isinstance(src, str):
         return bool(src)
-    return isinstance(src, list) and bool(src) and all(isinstance(s, str) and s for s in src)
+    # A list names several writing frameworks; 'outside' stands alone, never inside a list.
+    return (
+        isinstance(src, list)
+        and bool(src)
+        and all(isinstance(s, str) and s and s != OUTSIDE for s in src)
+    )
 
 
 def doc_links(entry):
@@ -170,7 +175,8 @@ def check_links(registry):
                 if not _is_link(item):
                     errors.append(
                         f"ERROR: '{fid}' has a {key} entry that is neither a name nor "
-                        f"a mapping with doc and from: {item!r}"
+                        f"a mapping with doc and from (a from list holds framework ids only, "
+                        f"never 'outside'): {item!r}"
                     )
         for link in doc_links(f):
             for writer in link["from"]:

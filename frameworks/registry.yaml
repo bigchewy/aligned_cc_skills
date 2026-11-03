@@ -55,9 +55,7 @@ frameworks:
   - mindset
   helpful_documents:
   - doc: company strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   - doc: business goals
     from: proximate-objectives
   id: 6-step-process
@@ -185,9 +183,7 @@ frameworks:
   - content-first
   helpful_documents:
   - doc: strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   id: content-inc-model
   name: Content Inc. Model
   purpose: a six-step audience-first model for building a content-driven business
@@ -326,9 +322,7 @@ frameworks:
   - proximate-objectives
   helpful_documents:
   - doc: company strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   id: finding-the-crux
   name: Finding the Crux
   purpose: identifying the single most critical challenge that unlocks progress
@@ -381,9 +375,7 @@ frameworks:
   - storybrand-homepage
   helpful_documents:
   - doc: strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   - doc: positioning
     from: 5-components-positioning
   id: forever-promise
@@ -598,7 +590,7 @@ frameworks:
   - mochary-weekly-check-in
   helpful_documents:
   - doc: company strategy
-    from: lifecycle-strategy
+    from: outside
   - doc: business goals
     from: proximate-objectives
   id: kernel-of-good-strategy
@@ -809,9 +801,7 @@ frameworks:
   - achievable-targets
   helpful_documents:
   - doc: company strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   - doc: business goals
     from: outside
   id: proximate-objectives
@@ -906,9 +896,7 @@ frameworks:
   - doc: positioning
     from: 5-components-positioning
   - doc: strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   id: smallest-viable-audience
   name: Smallest Viable Audience
   purpose: defining the smallest group you could serve so well that they would actively
@@ -957,9 +945,7 @@ frameworks:
   - doc: positioning statement
     from: 5-components-positioning
   - doc: company strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   id: strategic-narrative
   market: b2b
   name: Five-Element Strategic Narrative
@@ -1075,9 +1061,7 @@ frameworks:
   - customer-value
   helpful_documents:
   - doc: strategy
-    from:
-    - kernel-of-good-strategy
-    - lifecycle-strategy
+    from: kernel-of-good-strategy
   - doc: positioning
     from: 5-components-positioning
   id: value-metric
@@ -1309,8 +1293,6 @@ frameworks:
   helpful_documents:
   - doc: customer research
     from: outside
-  - doc: interview transcripts
-    from: outside
   - doc: competitor positioning
     from: competitive-battle-card
   id: buyer-persona
@@ -1495,7 +1477,7 @@ frameworks:
   helpful_documents:
   - doc: existing meeting agenda or team operating cadence
     from: outside
-  - doc: OKRs or quarterly goals
+  - doc: OKRs or quarterly goals (if set)
     from: proximate-objectives
   id: mochary-weekly-check-in
   name: The Weekly Check-In
@@ -1521,9 +1503,9 @@ frameworks:
   helpful_documents:
   - doc: existing operating review agenda or meeting format
     from: outside
-  - doc: current metrics or scorecard
+  - doc: current metrics or scorecard (if any)
     from: outside
-  - doc: OKRs or quarterly priorities
+  - doc: OKRs or quarterly priorities (if set)
     from: proximate-objectives
   id: chj-operating-review
   name: Operating Review Design
@@ -1947,8 +1929,8 @@ frameworks:
   - doc: any existing screens, specs, or access rules, so the map can be checked against
       them afterward
     from: outside
-  - doc: the project's design-principles.md, so the map is drawn in the project's
-      colors and type
+  - doc: the project's design-principles.md, so the map and the screens are drawn
+      in the project's colors and type
     from: design-principles
   id: user-story-map
   name: User Story Map
@@ -2077,7 +2059,8 @@ frameworks:
     from:
     - getting-real-cut
     - working-backwards
-  - doc: the launch's decisions file, once the first sitting has run
+  - doc: the launch's decisions file, which holds the bet, the lines, and the first
+      customer once the first sitting has run
     from: outside
   - doc: what the first customer did, for the second sitting
     from: outside

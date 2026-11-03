@@ -3,7 +3,7 @@ required_documents: []
 helpful_documents:
 - notes on what the user does today, in their own words (interviews, support threads, a session recording)
 - any existing screens, specs, or access rules, so the map can be checked against them afterward
-- the project's design-principles.md, so the map is drawn in the project's colors and type
+- the project's design-principles.md, so the map and the screens are drawn in the project's colors and type
 deliverable_type: plan
 ---
 

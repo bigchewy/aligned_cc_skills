@@ -30,12 +30,9 @@
   framework: 6-step-process
   doc: company strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: 6-step-process/business-goals
   framework: 6-step-process
   doc: business goals
@@ -81,12 +78,9 @@
   framework: content-inc-model
   doc: strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: do-things-that-dont-scale/product-description
   framework: do-things-that-dont-scale
   doc: product description
@@ -141,12 +135,9 @@
   framework: finding-the-crux
   doc: company strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: focus-through-saying-no/business-goals
   framework: focus-through-saying-no
   doc: business goals
@@ -159,12 +150,9 @@
   framework: forever-promise
   doc: strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: forever-promise/positioning
   framework: forever-promise
   doc: positioning
@@ -305,10 +293,10 @@
   framework: kernel-of-good-strategy
   doc: company strategy
   kind: helpful
-  from: lifecycle-strategy
-  confidence: guess
-  reason: Kernel rewrites the existing strategy, so it cannot come from Kernel itself. Lifecycle Strategy
-    is the only other writer, and its output is a stage analysis, not a strategy.
+  from: outside
+  confidence: sure
+  reason: 'The user''s existing strategy, which Kernel rewrites, so it cannot come from Kernel itself.
+    Sure: this is the user''s own material.'
 - id: kernel-of-good-strategy/business-goals
   framework: kernel-of-good-strategy
   doc: business goals
@@ -387,12 +375,9 @@
   framework: proximate-objectives
   doc: company strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: proximate-objectives/business-goals
   framework: proximate-objectives
   doc: business goals
@@ -449,12 +434,9 @@
   framework: smallest-viable-audience
   doc: strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: storybrand-homepage/positioning-statement
   framework: storybrand-homepage
   doc: positioning statement
@@ -497,12 +479,9 @@
   framework: strategic-narrative
   doc: company strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: teach-tailor-take-control/account-research
   framework: teach-tailor-take-control
   doc: account research
@@ -541,12 +520,9 @@
   framework: value-metric
   doc: strategy
   kind: helpful
-  from:
-  - kernel-of-good-strategy
-  - lifecycle-strategy
-  confidence: likely
-  reason: Kernel of Good Strategy writes the company strategy. Lifecycle Strategy writes the stage analysis
-    a strategy rests on.
+  from: kernel-of-good-strategy
+  confidence: sure
+  reason: Kernel of Good Strategy writes the company strategy as its output.
 - id: value-metric/positioning
   framework: value-metric
   doc: positioning
@@ -692,14 +668,6 @@
   confidence: sure
   reason: 'Interviews and notes the team gathers from customers. No framework writes raw customer research.
     Sure: this is the user''s own material.'
-- id: buyer-persona/interview-transcripts
-  framework: buyer-persona
-  doc: interview transcripts
-  kind: helpful
-  from: outside
-  confidence: sure
-  reason: 'Recordings of customer interviews. No framework writes them. Sure: this is the user''s own
-    material.'
 - id: buyer-persona/competitor-positioning
   framework: buyer-persona
   doc: competitor positioning
@@ -861,9 +829,9 @@
   confidence: sure
   reason: 'The team''s current meeting habits. No framework writes them. Sure: this is the user''s own
     material.'
-- id: mochary-weekly-check-in/okrs-or-quarterly-goals
+- id: mochary-weekly-check-in/okrs-or-quarterly-goals-if-set
   framework: mochary-weekly-check-in
-  doc: OKRs or quarterly goals
+  doc: OKRs or quarterly goals (if set)
   kind: helpful
   from: proximate-objectives
   confidence: likely
@@ -876,16 +844,16 @@
   from: outside
   confidence: sure
   reason: 'The team''s current meeting format. No framework writes it. Sure: this is the user''s own material.'
-- id: chj-operating-review/current-metrics-or-scorecard
+- id: chj-operating-review/current-metrics-or-scorecard-if-any
   framework: chj-operating-review
-  doc: current metrics or scorecard
+  doc: current metrics or scorecard (if any)
   kind: helpful
   from: outside
   confidence: sure
   reason: 'Live numbers from the business. No framework writes them. Sure: this is the user''s own material.'
-- id: chj-operating-review/okrs-or-quarterly-priorities
+- id: chj-operating-review/okrs-or-quarterly-priorities-if-set
   framework: chj-operating-review
-  doc: OKRs or quarterly priorities
+  doc: OKRs or quarterly priorities (if set)
   kind: helpful
   from: proximate-objectives
   confidence: likely
@@ -1267,9 +1235,10 @@
   confidence: guess
   reason: 'Screens and specs already in the product. Breadboard to Pages writes screens, but after the
     map, from it. Guess: a plugin framework might write it.'
-- id: user-story-map/the-project-s-design-principles-md-so-the-map-is-drawn-in-the-project-s-colors-and-type
+- id: user-story-map/the-project-s-design-principles-md-so-the-map-and-the-screens-are-drawn-in-the-project-s-colors-and-type
   framework: user-story-map
-  doc: the project's design-principles.md, so the map is drawn in the project's colors and type
+  doc: the project's design-principles.md, so the map and the screens are drawn in the project's colors
+    and type
   kind: helpful
   from: design-principles
   confidence: sure
@@ -1353,9 +1322,10 @@
   confidence: guess
   reason: Getting Real Cut writes the cut with its big idea, and Working Backwards a press release naming
     the customer. Either can serve as the brief.
-- id: launch-bet/the-launch-s-decisions-file-once-the-first-sitting-has-run
+- id: launch-bet/the-launch-s-decisions-file-which-holds-the-bet-the-lines-and-the-first-customer-once-the-first-sitting-has-run
   framework: launch-bet
-  doc: the launch's decisions file, once the first sitting has run
+  doc: the launch's decisions file, which holds the bet, the lines, and the first customer once the first
+    sitting has run
   kind: helpful
   from: outside
   confidence: sure
@@ -1619,7 +1589,7 @@
   doc: the color values (hex) of the mark, its background, and the colors it sits next to
   kind: helpful
   from: design-principles
-  confidence: likely
+  confidence: guess
   reason: Design Principles writes the hex palette. The mark's own colors may come from Boil It Down's
     spec instead.
 - id: small-size-and-print-test/the-places-the-mark-has-to-appear-and-their-sizes-favicon-app-icon-book-cover-or-spine-packaging

@@ -2,7 +2,7 @@
 required_documents: []
 helpful_documents:
 - existing meeting agenda or team operating cadence
-- OKRs or quarterly goals
+- OKRs or quarterly goals (if set)
 deliverable_type: plan
 ---
 

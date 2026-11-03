@@ -5,7 +5,6 @@ required_documents:
 - customer interview transcripts including the customer's role
 helpful_documents:
 - customer research
-- interview transcripts
 - competitor positioning
 deliverable_type: analysis
 input_asks:

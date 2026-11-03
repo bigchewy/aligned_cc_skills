@@ -2,7 +2,7 @@
 # Good cases: a branch (two writers into one framework), a helpful loop, a
 # plain-string entry, a b2b writer that feeds a framework with no market.
 # Bad cases: a required loop, a from list with one unknown id, a self-link,
-# a b2c writer that feeds only b2b frameworks.
+# a b2c writer that feeds only b2b frameworks, 'outside' inside a from list.
 frameworks:
 - id: writer-a
   name: Writer A
@@ -75,3 +75,10 @@ frameworks:
   helpful_documents:
   - doc: b2b doc too
     from: b2b-writer
+- id: mixed-outside
+  name: Mixed Outside
+  helpful_documents:
+  - doc: mixed doc
+    from:
+    - writer-a
+    - outside

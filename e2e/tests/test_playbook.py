@@ -187,7 +187,9 @@ def test_doc_links_on_framework_with_no_documents_is_empty():
 def test_good_fixture_cases_raise_no_errors():
     errors = gp.check_links(link_fixture())
     for fid in ("branch", "help-1", "help-2", "plain", "writer-a", "writer-b", "b2b-writer", "any-reader"):
-        assert errors_about(errors, fid) == [], fid
+        # Errors about a framework start with its id; a loop error names it after "needs".
+        about = [e for e in errors if e.startswith(f"ERROR: '{fid}'") or ("needs" in e and f"'{fid}'" in e)]
+        assert about == [], fid
 
 
 def test_unknown_from_names_framework_doc_and_bad_id():
@@ -227,8 +229,20 @@ def test_b2c_writer_feeding_only_b2b_is_an_error():
     assert msg.startswith("ERROR:") and "b2c" in msg and "'b2c doc'" in msg and "'b2b-reader'" in msg
 
 
-def test_fixture_has_exactly_the_four_planted_errors():
-    assert len(gp.check_links(link_fixture())) == 4
+def test_outside_inside_a_from_list_is_an_error():
+    errors = gp.check_links(link_fixture())
+    hits = errors_about(errors, "mixed-outside")
+    assert len(hits) == 1
+    msg = hits[0]
+    assert msg.startswith("ERROR:") and "'mixed doc'" in msg and "'outside'" in msg
+
+
+def test_doc_links_skips_outside_inside_a_list():
+    assert gp.doc_links(fixture_entry("mixed-outside")) == []
+
+
+def test_fixture_has_exactly_the_five_planted_errors():
+    assert len(gp.check_links(link_fixture())) == 5
 
 
 def test_entry_that_is_neither_string_nor_mapping_errors():
@@ -280,7 +294,7 @@ def test_real_registry_single_writer_is_plain_id_not_one_item_list():
 
 def test_check_ins_take_quarterly_goals_from_proximate_objectives():
     by_id = {f["id"]: f for f in real_registry()["frameworks"]}
-    for fid, doc in (("mochary-weekly-check-in", "OKRs or quarterly goals"),
-                     ("chj-operating-review", "OKRs or quarterly priorities")):
+    for fid, doc in (("mochary-weekly-check-in", "OKRs or quarterly goals (if set)"),
+                     ("chj-operating-review", "OKRs or quarterly priorities (if set)")):
         links = {l["doc"]: l for l in gp.doc_links(by_id[fid])}
         assert links[doc]["from"] == ["proximate-objectives"]

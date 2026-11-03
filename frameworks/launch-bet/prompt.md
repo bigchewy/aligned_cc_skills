@@ -2,7 +2,7 @@
 required_documents: []
 helpful_documents:
 - a short brief of what is launching and for whom
-- the launch's decisions file, once the first sitting has run
+- the launch's decisions file, which holds the bet, the lines, and the first customer once the first sitting has run
 - what the first customer did, for the second sitting
 deliverable_type: decision
 ---
