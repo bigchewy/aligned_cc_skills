@@ -1,0 +1,124 @@
+# DRAFT for Eric's review (2026-11-03). Becomes layers.yaml once the design is approved.
+# Layer -> area -> framework ids. A framework usually sits in one area and may sit in more.
+# start: the one framework a CEO runs first in that area. It must be in the area's list.
+# Frameworks that belong in no area go on the holding list with a reason.
+
+layers:
+  - id: i
+    name: I
+    does: Work on yourself.
+    areas:
+      - id: energy
+        name: Energy
+        note: Jim Loehr's energy system.
+        start: energy-audit
+        frameworks: [energy-audit, stress-recovery-oscillation, personal-credo]
+      - id: responsibility
+        name: Presence and responsibility
+        note: Conscious Leadership. Arrive, notice when you are reacting, and own your part.
+        start: above-below-the-line
+        frameworks: [presence-check-in, quadrinity, above-below-the-line, 100-percent-responsibility, pillars-of-integrity]
+      - id: courage
+        name: Courage and values
+        note: Brene Brown. Name what you value and act on it when it is hard.
+        start: living-into-values
+        frameworks: [vulnerability-check, living-into-values]
+      - id: focus
+        name: Focus
+        note: Where your time goes, and what only you should do.
+        start: personal-resource-allocation
+        frameworks: [personal-resource-allocation, 80-20-audit, zone-of-genius, focus-through-saying-no]
+      - id: decisions
+        name: Decisions
+        note: Make a hard call, check you are the founder for this idea, and learn from the calls that went wrong.
+        start: type-1-type-2-decisions
+        frameworks: [type-1-type-2-decisions, first-principles-thinking, fear-setting, regret-minimization, pain-plus-reflection, earnestness-filter]
+
+  - id: we
+    name: We
+    does: Work on the team.
+    areas:
+      - id: trust
+        name: Trust and clearing
+        note: Rebuild trust and clear what is between two people.
+        start: braving-trust-inventory
+        frameworks: [braving-trust-inventory, clearing-model]
+      - id: team-problems
+        name: Solving problems together
+        note: Problems that keep coming back, and who makes which call.
+        start: root-cause-analysis
+        frameworks: [root-cause-analysis, 6-step-process, believability-weighted-decision-making, type-1-type-2-decisions]
+      - id: operating-rhythm
+        name: Operating rhythm
+        note: The weekly and monthly meetings that run the company's goals.
+        start: mochary-weekly-check-in
+        frameworks: [mochary-weekly-check-in, chj-operating-review]
+      - id: org-design
+        name: Org design and people
+        note: Who owns what, whether each person is in the right seat, and whether they work at the level the seat needs.
+        start: rules-of-structure
+        frameworks: [rules-of-structure, psiu-role-fit, performance-standards-by-level]
+      - id: learning
+        name: Learning and change
+        note: When people know what to do and still do not do it.
+        start: behavior-gap-diagnosis
+        frameworks: [behavior-gap-diagnosis, ten-steps-blueprint, complex-contagion-rollout]
+
+  - id: it
+    name: It
+    does: Work on the company and the product.
+    areas:
+      - id: strategy
+        name: Strategy
+        note: Which stage the company is in, what is hard, and what we will do about it.
+        start: lifecycle-strategy
+        frameworks: [lifecycle-strategy, finding-the-crux, kernel-of-good-strategy, proximate-objectives, four-quadrant-focus]
+      - id: operations
+        name: Operations
+        note: Fix a process that keeps breaking.
+        start: the-algorithm
+        frameworks: [the-algorithm, 6-step-process]
+      - id: pmf
+        name: Product-market fit
+        note: Find out whether anyone needs this badly enough.
+        start: four-market-types
+        frameworks: [four-market-types, jobs-to-be-done, smallest-viable-audience, leap-of-faith-assumptions, build-measure-learn, customer-problem-presentation, earlyvangelists, do-things-that-dont-scale, product-market-fit-test, pivot-or-persevere, launch-bet]
+      - id: offer
+        name: Offer and pricing
+        note: What we sell, what we charge for, and what we stop offering.
+        start: blue-ocean-value-props
+        frameworks: [blue-ocean-value-props, value-metric, forever-promise, proven-process]
+      - id: positioning
+        name: Positioning and messaging
+        note: Why we win, said the same way everywhere. Reverse-Engineered Brand runs the whole area at once.
+        start: 5-components-positioning
+        frameworks: [5-components-positioning, origin-story-interview, strategic-narrative, proof-points-audit, messaging-distillation, competitive-battle-card, reverse-engineered-brand]
+      - id: brand
+        name: Brand
+        note: Voice, the mark, and the story the brand tells.
+        start: brand-voice
+        frameworks: [brand-voice, how-much-siblings-share, boil-it-down, small-size-and-print-test, the-carousel]
+      - id: marketing
+        name: Marketing and growth
+        note: Get found, turn visitors into customers, and run growth experiments.
+        start: storybrand-homepage
+        frameworks: [storybrand-homepage, content-inc-model, why-my-page-doesnt-rank, ai-search-optimization-checklist, insane-honesty, growth-hacking-process, ice-prioritization, 3b-behavioral-design]
+      - id: sales
+        name: Sales
+        note: Find where revenue leaks and fix it.
+        start: bowtie-funnel
+        frameworks: [bowtie-funnel, 5-gtm-motions-digital-health, buyer-persona, 6-elements-sdr, mobilizer-taxonomy, sales-pitch-structure, teach-tailor-take-control, jolt-effect]
+      - id: product
+        name: Product
+        note: Decide what to build next, cut it to fit, design it on one system, check it is safe, and ship it.
+        start: frame-shape-bet
+        frameworks: [frame-shape-bet, working-backwards, getting-real-cut, user-story-map, breadboard-to-pages, few-hiccupps-review, design-principles, interface-inventory, logic-check, four-question-threat-model, phantom-b-llm-threats, assigning-ai-roles]
+      - id: data
+        name: Data
+        note: Make a chart change a decision.
+        start: big-idea-and-takeaway-title
+        frameworks: [big-idea-and-takeaway-title, choose-an-effective-visual, declutter-and-focus]
+
+holding:
+  - id: close-the-loop
+    why: How a team sets up Claude Code. It lives on the CTO and software engineer seats, outside the I / We / It map.

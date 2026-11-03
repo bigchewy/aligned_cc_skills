@@ -51,8 +51,9 @@ Also removed later on 2026-11-02: Oli Gardner, whose only framework was landing-
 2. ~~The unplaced frameworks~~ — decided above.
 3. ~~Portability~~ — done 2026-11-02. launch-bet now works for any one-customer launch; the moments
    site-launch version lives in the moments repo as a local framework. landing-page-assembly is deleted.
-4. ~~B2C~~ — decided 2026-11-02: post-PMF B2C gets its own flows. It is different enough from B2B
-   that a filter isn't enough.
+4. ~~B2C~~ — decided 2026-11-02, then changed the same day: B2B and B2C get different
+   structures only on the org chart (`seats.yaml`). The playbook tags each framework with a
+   `market` of b2b or b2c where it matters. See `docs/superpowers/specs/2026-11-02-playbook-design.md`.
 5. ~~Pre-PMF "We" gap~~ — decided 2026-11-02: leave it. No framework for cofounders agreeing on roles.
 6. Category set: personal frameworks are filed under `leadership`/`psychology`/`strategy`; decide whether
    I / We / It becomes a field, or the categories get redrawn.
