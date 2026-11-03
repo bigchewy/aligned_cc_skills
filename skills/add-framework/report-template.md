@@ -27,6 +27,10 @@ framework folder and the registry path.
    a quoted error.
 8. **Counts.** Writing to the plugin: the counts in `README.md`, both manifests and
    `frameworks/README.md` match the registry.
+9. **Playbook.** Writing to the plugin, with `skills/playbook/layers.yaml` present: the framework
+   is in an area or on the `holding` list, every document in its registry entry has a `from`
+   (a framework id, a list of ids, or `outside`), and any `stages` and `market` values are valid.
+   In a project repo, only the `from` on each document.
 
 Return `problems`: one specific sentence each, naming the file and what's wrong. Return an empty
 list if you found none.

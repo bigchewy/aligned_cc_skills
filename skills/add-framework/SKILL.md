@@ -223,6 +223,22 @@ Derive field values:
 - **use_when:** Natural language trigger phrase for when to use this framework
 - **required_documents, helpful_documents:** From `prompt.md` YAML frontmatter; omit keys if lists are empty. The frontmatter keeps plain names; the registry writes each as `{doc, from}`, with `doc` the same name. `from` is the id of the framework that writes the document (a local id is allowed), a list of ids when more than one can, or `outside` when none does. If you can't tell which framework writes it, use `outside`.
 
+**Place the framework on the playbook.** Ask these questions before you validate. The seat question comes later, in Step 7.
+
+For each document in `required_documents` and `helpful_documents`, ask which framework writes it: a framework id, several ids if more than one can, or `outside` if the user brings it themselves. Offer your best guess from the registry and keep `outside` as the default. This applies to every framework, plugin or project.
+
+For a framework going into the plugin, also ask:
+
+- Its area. Name the choices from `skills/playbook/layers.yaml` (layer, then area). If it fits no area, ask for a reason to hold it, and add it to the `holding` list with that reason. It may sit in more than one area. If it becomes the best first pick for an area, change that area's `start`.
+- Its stages: one or more of `idea`, `pilot`, `nail-it`, `scale-it`, `milk-it`, or none for any stage. Add them as `stages: [...]` on the registry entry.
+- Its market: `b2b` or `b2c`, or neither for both. Add it as `market: b2b` on the registry entry.
+
+Then add the framework's row to `frameworks/README.md`, under its area's table. `e2e/tests/test_readme_freshness.py` fails if a placed framework is missing.
+
+For a project-local framework, ask only the document question. The playbook shows plugin frameworks only, so skip the area, stages and market.
+
+When `scripts/generate-playbook.py` exists, run it after the registry and `layers.yaml` are updated, then run `e2e/tests/test_playbook.py`. It fails and names the id if the framework is neither placed nor held, or if a document link is wrong. When the script does not exist (the plugin was installed elsewhere), skip this silently.
+
 **Post-append validation:** After appending, parse the full registry file you wrote. If YAML parsing fails, revert the append and report the error. Restore the previous content; if you just created the file, it is untracked, so delete the newly created file instead of restoring it from git. One bad entry must not corrupt the registry for all consumers.
 
 ### 6. Create Eval Scenario
