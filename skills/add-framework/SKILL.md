@@ -227,7 +227,7 @@ Derive field values:
 
 For each document in `required_documents` and `helpful_documents`, ask which framework writes it: a framework id, several ids if more than one can, or `outside` if the user brings it themselves. Offer your best guess from the registry and keep `outside` as the default. This applies to every framework, plugin or project.
 
-For a framework going into the plugin, also ask:
+For a framework going into the plugin, also ask these three, but only when `skills/playbook/layers.yaml` exists. When it does not (the plugin was installed elsewhere), skip them silently:
 
 - Its area. Name the choices from `skills/playbook/layers.yaml` (layer, then area). If it fits no area, ask for a reason to hold it, and add it to the `holding` list with that reason. It may sit in more than one area. If it becomes the best first pick for an area, change that area's `start`.
 - Its stages: one or more of `idea`, `pilot`, `nail-it`, `scale-it`, `milk-it`, or none for any stage. Add them as `stages: [...]` on the registry entry.
@@ -237,7 +237,7 @@ Then add the framework's row to `frameworks/README.md`, under its area's table. 
 
 For a project-local framework, ask only the document question. The playbook shows plugin frameworks only, so skip the area, stages and market.
 
-When `scripts/generate-playbook.py` exists, run it after the registry and `layers.yaml` are updated, then run `e2e/tests/test_playbook.py`. It fails and names the id if the framework is neither placed nor held, or if a document link is wrong. When the script does not exist (the plugin was installed elsewhere), skip this silently.
+When `scripts/generate-playbook.py` exists, run it after the registry and `layers.yaml` are updated and the post-append validation below passes, then run `e2e/tests/test_playbook.py`. It fails and names the id if the framework is neither placed nor held, or if a document link is wrong. When the script does not exist (the plugin was installed elsewhere), skip this silently.
 
 **Post-append validation:** After appending, parse the full registry file you wrote. If YAML parsing fails, revert the append and report the error. Restore the previous content; if you just created the file, it is untracked, so delete the newly created file instead of restoring it from git. One bad entry must not corrupt the registry for all consumers.
 

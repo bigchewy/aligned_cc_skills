@@ -27,8 +27,20 @@ def test_plugin_framework_gets_an_area_or_a_reason_to_hold_it():
 
 
 def test_plugin_framework_is_asked_its_seat():
-    text = read(SKILL)
-    assert "skills/org-chart/seats.yaml" in text
+    block = section(read(SKILL), "Place the framework on the org chart")
+    assert "skills/org-chart/seats.yaml" in block
+    assert "seat" in block
+
+
+def test_area_stages_and_market_questions_are_guarded_on_layers_yaml():
+    block = section(read(SKILL), "Place the framework on the playbook")
+    assert "only when `skills/playbook/layers.yaml` exists" in block
+    assert "skip them silently" in block
+
+
+def test_generator_runs_after_validation_passes():
+    block = section(read(SKILL), "Place the framework on the playbook")
+    assert "post-append validation below passes" in block
 
 
 def test_plugin_framework_is_asked_stages_and_market():
