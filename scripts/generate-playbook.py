@@ -430,7 +430,9 @@ def doc_section(title, links, data):
 
 # Graph geometry, in SVG units (1 unit = 1 CSS pixel at natural size).
 # PAD_LEFT leaves room for the brackets that join two boxes in one column.
-BOX_W, BOX_H, COL_GAP, ROW_GAP, PAD, PAD_LEFT, BRACKET = 150, 46, 52, 14, 10, 34, 26
+# BRACKET stays well short of COL_GAP / 2, where the forward lines bend, so a
+# bracket never lies on top of a bend.
+BOX_W, BOX_H, COL_GAP, ROW_GAP, PAD, PAD_LEFT, BRACKET = 150, 46, 52, 14, 10, 24, 13
 LINE_CHARS = 19
 
 
@@ -518,16 +520,19 @@ def render_graph(fid, edges, data):
 
     boxes = []
     for node, (x, y) in pos.items():
-        lines = _wrap(name_of(node, data))
+        full = name_of(node, data)
+        lines = _wrap(full)
         first = y + BOX_H / 2 - (len(lines) - 1) * 8 + 5
         tspans = "".join(
             f'<tspan x="{n(x + BOX_W / 2)}" y="{n(first + i * 16)}">{text(line)}</tspan>'
             for i, line in enumerate(lines)
         )
         cls = "node self" if node == fid else "node"
+        # The title holds the full name, which a wrapped box may cut short.
         shape = (
-            f'<rect class="{cls}" x="{n(x)}" y="{n(y)}" width="{BOX_W}" height="{BOX_H}" rx="5" '
-            f'fill="none" stroke="currentColor"/><text text-anchor="middle">{tspans}</text>'
+            f"<g><title>{text(full)}</title>"
+            f'<rect class="{cls}"x="{n(x)}" y="{n(y)}" width="{BOX_W}" height="{BOX_H}" rx="5" '
+            f'fill="none" stroke="currentColor"/><text text-anchor="middle">{tspans}</text></g>'
         )
         if node != fid and node in data["homes"]:
             shape = f'<a href="{text(node)}.html">{shape}</a>'

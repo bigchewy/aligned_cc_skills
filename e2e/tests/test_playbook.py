@@ -467,6 +467,17 @@ def test_graph_draws_solid_required_dashed_helpful_and_links_boxes():
     assert "bank statements" not in svg
 
 
+def test_every_graph_box_has_a_title_with_the_full_name():
+    data = pages_data()
+    long = "A Very Long Framework Name That Will Not Fit In Two Short Lines"
+    data["frameworks"]["help-2"]["name"] = long
+    svg = gp.build(data)["frameworks/it-reader.html"].split("<svg")[1].split("</svg>")[0]
+    assert "…" in svg
+    assert f"<title>{long}</title>" in svg
+    boxes = re.findall(r"<rect class=\"node", svg)
+    assert len(re.findall(r"<title>[^<]+</title>", svg)) == len(boxes) == 5
+
+
 def test_no_graph_without_upstream_edges():
     files = pages()
     for fid in ("solo", "we-writer", "we-reader"):
@@ -555,10 +566,12 @@ def test_readme_lists_playbook():
 
 def test_hook_rebuilds_playbook_on_its_inputs():
     text = HOOK.read_text()
-    assert "rebuild_playbook" in text
-    for path in ("frameworks/registry.yaml", "skills/playbook/layers.yaml",
-                 "scripts/generate-playbook.py", "scripts/playbook-templates"):
-        assert path in text
+    start = text.index("PLAYBOOK_INPUTS=")
+    block = text[start : text.index("rebuild_playbook\n", start)]
+    for path in ("frameworks/registry.yaml", "advisors/registry.yaml", "skills/playbook/layers.yaml",
+                 "scripts/generate-playbook.py", "scripts/playbook-templates",
+                 "scripts/org-chart-templates/style.css", "scripts/generate-org-chart.py"):
+        assert path in block, path
 
 
 def _fake_repo(tmp_path, generator_body):
