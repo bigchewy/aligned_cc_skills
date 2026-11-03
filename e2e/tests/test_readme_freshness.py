@@ -32,6 +32,13 @@ GONE_IDS = [
     "recommendation-readiness-checklist", "social-media-queen-method",
     "thirty-minute-daily-instagram", "three-by-three-content-batching",
     "big-bat-board-assessment", "organizational-readiness",
+    # removed or moved to ~/Documents/aligned on 2026-11-02 (framework overlap cleanup)
+    "lara-hogan", "shirin-oreizy", "chris-voss",
+    "5-step-process", "positioning-canvas", "start-with-experience",
+    "leadership-pipeline-passages", "management-level-progression",
+    "landing-page-assembly", "past-year-review",
+    "science-of-design", "homer-vs-spock", "cognitive-friction-audit",
+    "accusation-audit", "calibrated-questions", "tactical-empathy-labeling",
     # retired archetype, replaced by brad-frost
     "the-designer",
     # retired archetype, replaced by jason-fried

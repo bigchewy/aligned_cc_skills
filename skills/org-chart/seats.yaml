@@ -60,12 +60,9 @@ seats:
       - do: Spend your week on the work only you can do
         framework: zone-of-genius
         also: [80-20-audit, personal-resource-allocation]
-      - do: Look back on the past year and decide what to keep doing
-        framework: past-year-review
-        also: [the-story-so-far]
       - do: Give your coach the full picture of you and your company
         framework: professional-context-intake
-        also: [personal-context-intake]
+        also: [personal-context-intake, the-story-so-far]
 
   - id: board
     dept: lead
@@ -91,7 +88,7 @@ seats:
         framework: chj-operating-review
       - do: Fix a process that keeps breaking
         framework: the-algorithm
-        also: [5-step-process]
+        also: [6-step-process]
       - do: Turn a service your team delivers by hand into a package clients can buy
         framework: proven-process
     also_ask: []
@@ -115,7 +112,7 @@ seats:
       - do: Decide what the product does that no rival does
         framework: blue-ocean-value-props
       - do: Start from what the customer sees and work back to the build
-        framework: start-with-experience
+        framework: working-backwards
     also_ask: [garry-tan]
 
   - id: product-managers
@@ -156,8 +153,7 @@ seats:
       - do: List every pattern the app already uses
         framework: interface-inventory
       - do: Find the steps where users stall or quit
-        framework: cognitive-friction-audit
-        also: [homer-vs-spock]
+        framework: 3b-behavioral-design
     also_ask: [steve-krug]
 
   - id: user-researcher
@@ -173,8 +169,8 @@ seats:
       - do: Find out what job customers hire the product for
         framework: jobs-to-be-done
       - do: Study how users decide, apart from what they say
-        framework: science-of-design
-    also_ask: [kristen-berman]
+        framework: 3b-behavioral-design
+    also_ask: []
 
   # ---------------------------------------------------------------- Engineering
   - id: cto
@@ -200,16 +196,13 @@ seats:
     name: Engineering managers
     people: {b2b: 5, b2c: 5}
     reports_to: cto
-    coverage: covered
+    coverage: thin
     does: Run teams of five to seven engineers, with one-on-ones, hiring, and getting work out the door.
     jobs:
-      - do: Spell out what each rung of the engineering manager ladder expects
-        framework: management-level-progression
-      - do: Help an engineer make the jump to manager
-        framework: leadership-pipeline-passages
-      - do: Catch a manager still doing the job below their title, and plan the fix
+      - do: Find the level a manager is working at and plan the jump to the next one
         framework: performance-standards-by-level
     also_ask: []
+    missing: Running one-on-ones, giving feedback week to week, and hiring engineers.
 
   - id: software-engineers
     dept: eng
@@ -298,11 +291,9 @@ seats:
     coverage: covered
     does: Writes the messaging, pricing pages, battle cards, and launch plans.
     jobs:
-      - do: Put your positioning on one page the team can use
-        framework: positioning-canvas
-        also: [origin-story-interview]
       - do: Write the messaging every page and pitch pulls from
         framework: messaging-distillation
+        also: [origin-story-interview]
       - do: Arm the team against each competitor
         framework: competitive-battle-card
       - do: Write down who buys and how they decide
@@ -342,11 +333,9 @@ seats:
       - do: Run growth experiments every week and pick the next one by score
         framework: growth-hacking-process
         also: [ice-prioritization]
-      - do: Build a landing page that turns visitors into leads
-        framework: landing-page-assembly
       - do: Rewrite the homepage so a visitor gets it in five seconds
         framework: storybrand-homepage
-    also_ask: [julian-shapiro, rob-walling, shirin-oreizy]
+    also_ask: [julian-shapiro, rob-walling, oli-gardner]
 
   - id: brand-and-design
     dept: mkt
@@ -389,9 +378,9 @@ seats:
         framework: growth-hacking-process
         also: [ice-prioritization]
       - do: Build a landing page that turns ad clicks into signups
-        framework: landing-page-assembly
+        framework: storybrand-homepage
       - do: Cut the steps between install and first use
-        framework: cognitive-friction-audit
+        framework: 3b-behavioral-design
     also_ask: [julian-shapiro, joanna-wiebe]
     missing: >-
       Buying ads on each platform, app store listings and ratings, and tracking
@@ -471,9 +460,6 @@ seats:
         framework: mobilizer-taxonomy
       - do: Save a deal that stalls because the buyer can't decide
         framework: jolt-effect
-      - do: Handle a hard call without giving ground
-        framework: calibrated-questions
-        also: [tactical-empathy-labeling, accusation-audit]
     also_ask: []
 
   - id: sales-development-reps
@@ -488,7 +474,7 @@ seats:
         framework: 6-elements-sdr
       - do: Write cold email a buyer trusts
         framework: insane-honesty
-    also_ask: [chris-voss]
+    also_ask: []
     missing: >-
       Get outside help with a daily prospecting playbook: cold call openers,
       email sequences, and answers to the first objection.
@@ -529,16 +515,13 @@ seats:
     name: Partnerships
     people: {b2c: 1}
     reports_to: ceo
-    coverage: thin
+    coverage: none
     does: Finds partners, signs distribution deals, and keeps them working.
-    jobs:
-      - do: Negotiate a partner deal
-        framework: calibrated-questions
-        also: [tactical-empathy-labeling, accusation-audit]
+    jobs: []
     also_ask: []
     missing: >-
-      Finding the right partners, setting deal terms, and running a partner
-      program after the deal is signed.
+      Finding the right partners, negotiating the deal, setting deal terms, and
+      running a partner program after the deal is signed.
 
   # ---------------------------------------------------------------- Customers
   - id: head-of-customer-success
@@ -585,8 +568,6 @@ seats:
         framework: forever-promise
       - do: Get customers to use the product the way it works best
         framework: 3b-behavioral-design
-      - do: Talk a customer out of canceling
-        framework: calibrated-questions
     also_ask: []
     missing: >-
       Customer onboarding plans, quarterly business reviews, and saving an account

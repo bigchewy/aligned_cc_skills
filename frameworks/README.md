@@ -1,6 +1,6 @@
 # Framework Registry
 
-115 frameworks across 25 categories
+102 frameworks across 23 categories
 
 | Category | Count |
 |----------|-------|
@@ -8,26 +8,24 @@
 | brand | 1 |
 | competitive-analysis | 1 |
 | content-strategy | 2 |
-| conversion | 4 |
 | copywriting | 1 |
 | customer | 1 |
 | data-visualization | 3 |
 | developer-tooling | 1 |
 | evidence | 1 |
 | growth | 5 |
-| leadership | 11 |
+| leadership | 9 |
 | learning-design | 3 |
 | marketing | 2 |
-| negotiation | 3 |
 | operating-cadence | 2 |
-| positioning | 8 |
+| positioning | 7 |
 | pricing | 1 |
 | product-design | 6 |
 | psychology | 12 |
 | sales | 5 |
 | security | 2 |
 | startup | 9 |
-| strategy | 27 |
+| strategy | 24 |
 | visual-identity | 3 |
 
 ## Quick Reference
@@ -36,17 +34,13 @@
 |----|------|---------|----------|----------|
 | 100-percent-responsibility | 100% Responsibility | diana-chapman | leadership | someone is blaming others or external circumstances for their situation and needs to reclaim agency |
 | 5-components-positioning | 5 Components of Positioning | april-dunford | positioning | a business needs to define or refine its market positioning from scratch using a structured methodology |
-| 5-step-process | 5-Step Process | ray-dalio | strategy | someone wants a systematic process for setting goals, identifying problems, diagnosing root causes, designing solutions, and executing |
 | 6-step-process | 6-Step Process | coach-eric | strategy | someone wants a systematic process for setting goals, diagnosing problems, designing solutions, and executing with mindset alignment |
 | 80-20-audit | an 80/20 Audit | tim-ferriss | strategy | someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results |
 | above-below-the-line | Above/Below the Line | diana-chapman | leadership | someone is reactive or defensive and needs to check whether they are operating from above or below the line |
-| accusation-audit | an Accusation Audit | chris-voss | negotiation | someone is entering a conversation where the other party likely has negative assumptions and needs to preemptively defuse them |
 | believability-weighted-decision-making | Believability-Weighted Decision Making | ray-dalio | strategy | a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise |
 | braving-trust-inventory | BRAVING Trust Inventory | brene-brown | leadership | someone needs to assess the state of trust in a relationship or team using a structured framework |
 | build-measure-learn | Build-Measure-Learn | eric-ries | startup | a team needs to design a rapid learning cycle for a product initiative to validate assumptions quickly |
-| calibrated-questions | Calibrated Questions | chris-voss | negotiation | someone needs to steer a negotiation or conversation by asking how/what questions that shift the problem to the other party |
 | clearing-model | The Clearing Model to resolve relationship tensions | diana-chapman | leadership | two people have unresolved tension and need a structured process to clear it without blame |
-| cognitive-friction-audit | the Cognitive Friction Audit | shirin-oreizy | conversion | a product or page has high drop-off and someone needs to identify and remove cognitive friction points in the user journey |
 | content-inc-model | the Content Inc | joe-pulizzi | content-strategy | someone wants to build a business by establishing a content platform and audience before creating products |
 | design-principles | Design Principles | steve-jobs | strategy | someone needs guiding design principles for a product that prioritize simplicity, elegance, and user experience |
 | do-things-that-dont-scale | Do Things That Don't Scale | paul-graham | startup | a founder is in the earliest stage and needs to identify the unscalable manual things they should be doing to get traction |
@@ -61,28 +55,22 @@
 | four-market-types | Four Market Types | eric-ries | startup | a startup needs to identify whether they are entering an existing, resegmented, new, or clone market to set the right strategy |
 | four-quadrant-focus | Four-Quadrant Focus | steve-jobs | strategy | someone has a bloated product line and needs a 2x2 grid to simplify down to the essential offerings |
 | growth-hacking-process | the Growth Hacking Process | sean-ellis | growth | a product team needs a repeatable process for generating, prioritizing, testing, and scaling growth experiments |
-| homer-vs-spock | the Homer vs Spock Framework | shirin-oreizy | conversion | someone's marketing leads with features and logic and they need to understand why emotional appeal must come first |
 | ice-prioritization | ICE Prioritization | sean-ellis | growth | a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones |
 | idiot-index | the Idiot Index to identify cost reduction opportunities | elon-musk | strategy | someone needs to identify cost reduction opportunities by comparing current costs to theoretical minimums |
 | jobs-to-be-done | Jobs to Be Done | clayton-christensen | strategy | someone needs to understand the underlying progress their customer is trying to make rather than focusing on product features |
 | jolt-effect | the JOLT Effect | matt-dixon | sales | a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy |
 | mobilizer-taxonomy | the Mobilizer Taxonomy | matt-dixon | sales | a complex B2B deal has multiple stakeholders and the rep needs to distinguish real consensus-builders from accessible-but-inert stakeholders, especially when a 'champion' feels responsive but the deal isn't advancing |
 | kernel-of-good-strategy | building a complete strategy using the kernel | richard-rumelt | strategy | someone's strategy is really just a list of goals and they need to build a real strategy with diagnosis, policy, and actions |
-| landing-page-assembly | Landing Page Assembly | oli-gardner | conversion | someone needs to build or improve a landing page using a structured stage-by-stage assembly process |
-| leadership-pipeline-passages | the Leadership Pipeline Passages | ram-charan | leadership | a leader is struggling at a new level and needs to understand what skills, time allocation, and values must shift |
 | leap-of-faith-assumptions | Leap of Faith Assumptions | eric-ries | startup | a startup needs to identify which untested assumptions are most critical to their business and design experiments to test them |
 | living-into-values | Living Into Values | brene-brown | psychology | someone knows their values abstractly but struggles to live them consistently in daily decisions and behavior |
-| management-level-progression | the Management Level Progression framework | lara-hogan | leadership | an engineering manager needs to understand what's expected at their current level or prepare for the next one |
 | origin-story-interview | Origin Story Interview | april-dunford | positioning | someone needs to extract and articulate their origin story as a foundation for positioning and brand narrative |
 | pain-plus-reflection | Pain + Reflection = Progress | ray-dalio | psychology | someone has experienced a painful failure and needs a structured way to extract lessons and turn it into growth |
-| past-year-review | the Past Year Review (PYR) | tim-ferriss | strategy | someone wants to review their past year systematically to make data-driven decisions about the next year |
 | performance-standards-by-level | Performance Standards by Level | ram-charan | leadership | a leader's performance doesn't match their level and they need to identify which leadership passage they are actually operating at |
 | personal-context-intake | Personal Context Intake | coach-eric | psychology | a new user needs an initial session to share their personal context, history, and goals before working with advisors |
 | personal-credo | Personal Credo | jim-loehr | psychology | someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose |
 | personal-resource-allocation | Personal Resource Allocation | clayton-christensen | strategy | someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions |
 | pillars-of-integrity | the Four Pillars of Integrity | jim-dethmer | leadership | someone feels fragmented or out of alignment and needs to identify where their integrity is broken |
 | pivot-or-persevere | Pivot or Persevere | eric-ries | startup | a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one |
-| positioning-canvas | Positioning Canvas | april-dunford | positioning | a team has completed positioning work and needs to capture it in a single-page format for alignment and reference |
 | presence-check-in | a Presence Check-In | matt-chapman | psychology | someone is distracted or disconnected and needs to arrive fully in the present moment before starting deeper work |
 | product-market-fit-test | the Product-Market Fit Test | sean-ellis | growth | a startup needs to measure whether they have product-market fit before investing in scaling |
 | professional-context-intake | Professional Context Intake | coach-eric | strategy | a new user needs an initial session to share their professional and business context before working with business advisors |
@@ -91,13 +79,10 @@
 | regret-minimization | Regret Minimization Framework | jeff-bezos | strategy | someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret |
 | root-cause-analysis | Root Cause Analysis | coach-eric | strategy | something isn't working and the user needs to diagnose why before proposing fixes; the deliverable is a diagnostic document, not a brainstorm |
 | sales-pitch-structure | Sales Pitch Structure | april-dunford | positioning | someone has completed positioning work and needs to translate it into a compelling sales narrative |
-| science-of-design | the Science of Design Methodology | shirin-oreizy | conversion | someone needs a systematic approach to understand and influence how customers make decisions using behavioral science |
 | smallest-viable-audience | Smallest Viable Audience | seth-godin | growth | someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve |
-| start-with-experience | Start With Experience | steve-jobs | strategy | a team is starting with technology and working forward instead of starting with the desired customer experience |
 | storybrand-homepage | StoryBrand Homepage Wireframe | donald-miller | marketing | someone needs to build or rewrite a homepage that turns visitors into customers by following story structure |
 | strategic-narrative | Five-Element Strategic Narrative | andy-raskin | positioning | someone needs to build a sales deck or company narrative that opens with a shift in the world, not a product pitch |
 | stress-recovery-oscillation | Stress-Recovery Oscillation | jim-loehr | psychology | someone is running on fumes without recovery rituals and needs to design deliberate oscillation between stress and renewal |
-| tactical-empathy-labeling | Tactical Empathy & Labeling | chris-voss | negotiation | someone needs to build rapport and influence by accurately labeling the other person's emotions in a conversation |
 | teach-tailor-take-control | Teach-Tailor-Take Control (TTTC) | matt-dixon | sales | a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps |
 | the-algorithm | The Algorithm | elon-musk | strategy | someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach |
 | the-carousel | The Carousel | don-draper | positioning | someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible |
@@ -169,13 +154,6 @@
 - **content-inc-model** — the Content Inc (joe-pulizzi)
 - **why-my-page-doesnt-rank** — Why My Page Doesn't Rank (aleyda-solis)
 
-### Conversion (4)
-
-- **cognitive-friction-audit** — the Cognitive Friction Audit (shirin-oreizy)
-- **homer-vs-spock** — the Homer vs Spock Framework (shirin-oreizy)
-- **landing-page-assembly** — Landing Page Assembly (oli-gardner)
-- **science-of-design** — the Science of Design Methodology (shirin-oreizy)
-
 ### Copywriting (1)
 
 - **insane-honesty** — Insane Honesty (doug-kessler)
@@ -206,15 +184,13 @@
 - **product-market-fit-test** — the Product-Market Fit Test (sean-ellis)
 - **smallest-viable-audience** — Smallest Viable Audience (seth-godin)
 
-### Leadership (11)
+### Leadership (9)
 
 - **100-percent-responsibility** — 100% Responsibility (diana-chapman)
 - **above-below-the-line** — Above/Below the Line (diana-chapman)
 - **braving-trust-inventory** — BRAVING Trust Inventory (brene-brown)
 - **clearing-model** — The Clearing Model to resolve relationship tensions (diana-chapman)
 - **complex-contagion-rollout** — Complex Contagion Rollout (damon-centola)
-- **leadership-pipeline-passages** — the Leadership Pipeline Passages (ram-charan)
-- **management-level-progression** — the Management Level Progression framework (lara-hogan)
 - **performance-standards-by-level** — Performance Standards by Level (ram-charan)
 - **pillars-of-integrity** — the Four Pillars of Integrity (jim-dethmer)
 - **psiu-role-fit** — PSIU Role Fit (lex-sisney)
@@ -231,23 +207,16 @@
 - **ai-search-optimization-checklist** — AI Search Optimization Checklist (aleyda-solis)
 - **storybrand-homepage** — StoryBrand Homepage Wireframe (donald-miller)
 
-### Negotiation (3)
-
-- **accusation-audit** — an Accusation Audit (chris-voss)
-- **calibrated-questions** — Calibrated Questions (chris-voss)
-- **tactical-empathy-labeling** — Tactical Empathy & Labeling (chris-voss)
-
 ### Operating Cadence (2)
 
 - **mochary-weekly-check-in** — The Weekly Check-In (matt-mochary)
 - **chj-operating-review** — Operating Review Design (claire-hughes-johnson)
 
-### Positioning (8)
+### Positioning (7)
 
 - **5-components-positioning** — 5 Components of Positioning (april-dunford)
 - **messaging-distillation** — Messaging Distillation (april-dunford)
 - **origin-story-interview** — Origin Story Interview (april-dunford)
-- **positioning-canvas** — Positioning Canvas (april-dunford)
 - **reverse-engineered-brand** — Reverse-Engineered Brand (april-dunford)
 - **sales-pitch-structure** — Sales Pitch Structure (april-dunford)
 - **strategic-narrative** — Five-Element Strategic Narrative (andy-raskin)
@@ -306,9 +275,8 @@
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
 
-### Strategy (27)
+### Strategy (24)
 
-- **5-step-process** — 5-Step Process (ray-dalio)
 - **6-step-process** — 6-Step Process (coach-eric)
 - **80-20-audit** — an 80/20 Audit (tim-ferriss)
 - **believability-weighted-decision-making** — Believability-Weighted Decision Making (ray-dalio)
@@ -324,14 +292,12 @@
 - **jobs-to-be-done** — Jobs to Be Done (clayton-christensen)
 - **kernel-of-good-strategy** — building a complete strategy using the kernel (richard-rumelt)
 - **lifecycle-strategy** — Lifecycle Strategy (lex-sisney)
-- **past-year-review** — the Past Year Review (PYR) (tim-ferriss)
 - **personal-resource-allocation** — Personal Resource Allocation (clayton-christensen)
 - **professional-context-intake** — Professional Context Intake (coach-eric)
 - **proven-process** — Proven Process (gino-wickman)
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
 - **regret-minimization** — Regret Minimization Framework (jeff-bezos)
 - **root-cause-analysis** — Root Cause Analysis (coach-eric)
-- **start-with-experience** — Start With Experience (steve-jobs)
 - **the-algorithm** — The Algorithm (elon-musk)
 - **type-1-type-2-decisions** — Type 1 vs Type 2 Decisions (jeff-bezos)
 - **working-backwards** — Working Backwards (jeff-bezos)

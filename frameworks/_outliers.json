@@ -1,7 +1,6 @@
 {
   "_comment": "Outlier frameworks whose prompt.md first line doesn't match the standard 'You are X, guiding someone through Y - purpose' format. Shared source of truth for scripts/generate-framework-registry.mjs and e2e/tests/test_registry_schemas.py. add-framework enforces the standard format for new entries, so this is a known closed set.",
   "outliers": {
-    "landing-page-assembly": { "name": "Landing Page Assembly", "advisor": "oli-gardner" },
     "design-principles": { "name": "Design Principles", "advisor": "steve-jobs" },
     "do-things-that-dont-scale": { "name": "Do Things That Don't Scale", "advisor": "paul-graham" },
     "earnestness-filter": { "name": "Earnestness Filter", "advisor": "garry-tan" },

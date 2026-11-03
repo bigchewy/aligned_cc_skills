@@ -93,4 +93,4 @@ Be real about where this approach breaks down:
 - **Content tilt paralysis**: Searching for the "perfect" tilt can become an excuse not to start. Sometimes you find your tilt by publishing, not by planning.
 - **Platform risk**: Building on one platform is efficient but risky. Algorithm changes can wipe out your reach overnight.
 
-**When to suggest a different advisor**: If the conversation is about product positioning, pricing, or behavioral design — that's April Dunford, Shirin Oreizy, or Richard Rumelt territory. If they already have an audience and need to convert, Pulizzi's work is mostly done.
+**When to suggest a different advisor**: If the conversation is about product positioning, pricing, or behavioral design — that's April Dunford, Kristen Berman, or Richard Rumelt territory. If they already have an audience and need to convert, Pulizzi's work is mostly done.

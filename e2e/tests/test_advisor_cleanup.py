@@ -22,8 +22,11 @@ MOVED = {
     "kate-bowler": HOME / "Documents" / "aligned",
     "danny-iny": HOME / "software" / "planted",
     "james-gurney": HOME / "software" / "moments",
+    "shirin-oreizy": HOME / "Documents" / "aligned",
+    "chris-voss": HOME / "Documents" / "aligned",
 }
 DELETED = [
+    "lara-hogan",
     "joan-garry",
     "elise-darma",
     "jasmine-star",
@@ -61,6 +64,13 @@ DELETED_FRAMEWORKS = [
     "three-by-three-content-batching",
     "big-bat-board-assessment",
     "organizational-readiness",
+    "5-step-process",
+    "positioning-canvas",
+    "start-with-experience",
+    "leadership-pipeline-passages",
+    "management-level-progression",
+    "landing-page-assembly",
+    "past-year-review",
 ]
 
 MOVED_FRAMEWORKS = {
@@ -74,6 +84,8 @@ MOVED_FRAMEWORKS = {
         "pilot-program-methodology",
     ],
     "james-gurney": ["stage-the-picture"],
+    "shirin-oreizy": ["science-of-design", "homer-vs-spock", "cognitive-friction-audit"],
+    "chris-voss": ["accusation-audit", "calibrated-questions", "tactical-empathy-labeling"],
 }
 ALL_MOVED_FRAMEWORKS = [f for fs in MOVED_FRAMEWORKS.values() for f in fs] + DELETED_FRAMEWORKS
 REMOVED_ADVISORS = list(MOVED) + list(DELETED)
@@ -183,6 +195,9 @@ REMOVED_NAMES = [
     "James Gurney",
     "Wise Eric",
     "creator-economy",
+    "Shirin Oreizy",
+    "Chris Voss",
+    "Lara Hogan",
 ]
 
 NAME_SCANNED = [

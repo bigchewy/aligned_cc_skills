@@ -69,33 +69,6 @@ advisors:
     '
   prompt: advisors/prompts/brene-brown.md
   summary: Research professor on courage, shame, and wholehearted leadership
-- best_for: 'Sales conversations, contract negotiations, difficult workplace conversations,
-    partnership discussions, any high-stakes communication where the other side needs
-    to feel heard.
-
-    '
-  domains:
-  - negotiation
-  - tactical-empathy
-  - difficult-conversations
-  - deal-making
-  - conflict-resolution
-  evaluation_expertise: 'Evaluates whether communication and negotiation approaches
-    use empathy as a tool rather than logic as a weapon. Is the other side''s perspective
-    being labeled and acknowledged before positions are stated? Are calibrated questions
-    replacing arguments? Is there an accusation audit for what the other side fears?
-    Catches logic-first persuasion, premature compromise, and failure to address the
-    emotional dynamics driving the negotiation.
-
-    '
-  id: chris-voss
-  name: Chris Voss
-  not_for: 'Technical architecture, product design, content strategy, SEO, situations
-    with no counterparty to negotiate with.
-
-    '
-  prompt: advisors/prompts/chris-voss.md
-  summary: Former FBI lead kidnapping negotiator, author of Never Split the Difference
 - best_for: 'Product strategy, new market entry, innovation pipeline evaluation, customer
     research framing, strategic planning where incumbents face potential disruption.
 
@@ -418,32 +391,6 @@ advisors:
     '
   prompt: advisors/prompts/julian-shapiro.md
   summary: Founder of Demand Curve and Bell Curve
-- best_for: 'Engineering management transitions, team friction during reorgs, coaching
-    first-time managers, diagnosing why a technical leader is struggling in a new
-    role, navigating skip-level dynamics.
-
-    '
-  domains:
-  - management-transitions
-  - engineering-leadership
-  - team-dynamics
-  - BICEPS
-  evaluation_expertise: 'Evaluates leadership transitions through the lens of level-specific
-    competencies and core human needs. Is the leader operating at the right level
-    or clinging to work from the level below? Are they wearing the right hat — mentoring,
-    coaching, sponsoring, or feedback? Which BICEPS need is being threatened or unmet?
-    Catches identity-level resistance disguised as tactical problems.
-
-    '
-  id: lara-hogan
-  name: Lara Hogan
-  not_for: 'Product strategy, marketing, content, technical architecture, pure IC
-    career development, non-engineering management contexts.
-
-    '
-  prompt: advisors/prompts/lara-hogan.md
-  summary: Leadership transition coach for technical leaders, author of Resilient
-    Management
 - best_for: 'Leadership identity crises, executives who have "made it" but feel hollow,
     transitions where the old playbook stops working, reconnecting with purpose beyond
     achievement.
@@ -715,30 +662,6 @@ advisors:
     '
   prompt: advisors/prompts/seth-godin.md
   summary: Author of Purple Cow, The Dip, and This Is Marketing
-- best_for: 'Landing pages, CTAs, conversion flows, content that must drive action.
-    UX decisions where cognitive load matters.
-
-    '
-  domains:
-  - behavioral-science
-  - conversion
-  - ux-psychology
-  - cognitive-load
-  - friction
-  evaluation_expertise: 'Evaluates through behavioral science lens. CTA clarity and
-    friction, cognitive load management, social proof approach, urgency without manipulation,
-    working memory limits. Homer vs Spock — does the work activate both emotional
-    and rational decision paths?
-
-    '
-  id: shirin-oreizy
-  name: Shirin Oreizy
-  not_for: 'Pure infrastructure, backend architecture, strategy docs, early-stage
-    ideation.
-
-    '
-  prompt: advisors/prompts/shirin-oreizy.md
-  summary: Founder of Next Step, a behavioral design agency
 - best_for: 'Customer discovery before a product or pitch exists. Problem presentations
     and interview plans for testing which problem a market cares about. Separating
     guesses from facts in a business plan.
@@ -1035,7 +958,7 @@ advisors:
     / Eric Ries); small transactional or self-serve sales motions where the Challenger
     and JOLT research base doesn''t apply; B2C / D2C / consumer sales; revenue architecture
     and bowtie-level GTM design (redirect to Jacco van der Kooij); tactical negotiation
-    and calibrated questions outside B2B enterprise sales (redirect to Chris Voss);
+    and calibrated questions outside B2B enterprise sales;
     positioning and messaging (redirect to April Dunford).
 
     '
@@ -1284,7 +1207,7 @@ advisors:
     interpersonal repair (redirect to Diana Chapman or Jim Dethmer); operating
     cadence detail such as weekly check-ins and operating reviews (redirect to Matt
     Mochary or Claire Hughes Johnson); leadership development by level (redirect to
-    Ram Charan or Lara Hogan); legal, accounting, or clinical opinions; pilot-stage
+    Ram Charan or Matt Mochary); legal, accounting, or clinical opinions; pilot-stage
     startups that need almost no structure; nonprofits and governments where authority
     does not sit where the money flows.
 
@@ -1397,7 +1320,7 @@ advisors:
     and behavior design inside a product (redirect to Kristen Berman); the content
     of conscious leadership (redirect to Diana Chapman or Jim Dethmer); trust,
     vulnerability, and fear of change (redirect to Brene Brown); management practice
-    (redirect to Lara Hogan or Matt Mochary); technical architecture or code.
+    (redirect to Matt Mochary); technical architecture or code.
 
     '
   prompt: advisors/prompts/paul-kirschner.md
@@ -1439,7 +1362,7 @@ advisors:
     what a leadership practice means or how to do it well (redirect to Diana Chapman
     or Jim Dethmer); shame, belonging, and vulnerability as the core issue (redirect
     to Brené Brown); validating and selling a course; week-to-week
-    management practice (redirect to Lara Hogan or Matt Mochary); therapy or clinical
+    management practice (redirect to Matt Mochary); therapy or clinical
     issues; technical architecture or code.
 
     '

@@ -1,6 +1,6 @@
 # Advisor Registry
 
-63 advisors | 63 profiled | 0 unprofiled
+60 advisors | 60 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -9,7 +9,6 @@
 | andy-raskin | Andy Raskin | narrative, storytelling, strategic-narrative | Strategic narrative consultant |
 | april-dunford | April Dunford | positioning, messaging, competitive-analysis, differentiation, go-to-market | Positioning consultant, helped 200+ tech companies position products |
 | brene-brown | Brene Brown | vulnerability, leadership-courage, shame-resilience, trust-building, organizational-culture | Research professor on courage, shame, and wholehearted leadership |
-| chris-voss | Chris Voss | negotiation, tactical-empathy, difficult-conversations, deal-making, conflict-resolution | Former FBI lead kidnapping negotiator, author of Never Split the Difference |
 | clayton-christensen | Clayton Christensen | jobs-to-be-done, disruptive-innovation, customer-motivation, strategic-resource-allocation, innovation-strategy | Harvard professor, pioneer of disruptive innovation and Jobs to Be Done |
 | diana-chapman | Diana Chapman | conscious-leadership, emotional-intelligence, self-awareness, conflict-resolution, team-dynamics | Co-founder of the Conscious Leadership Group |
 | don-draper | Don Draper | creative-direction, storytelling, emotional-copywriting, brand-narrative, simplicity | Creative director |
@@ -23,7 +22,6 @@
 | joanna-wiebe | Joanna Wiebe | conversion-copy, voice-of-customer, headline-writing, cta-optimization | Founder of Copyhackers, coined "conversion copywriting" |
 | joe-pulizzi | Joe Pulizzi | content-strategy, audience-building, content-first-business, content-tilt, content-operations | Founder of Content Marketing Institute, author of Content Inc. |
 | julian-shapiro | Julian Shapiro | landing-page-copy, conversion-writing, growth-marketing, page-structure, specificity | Founder of Demand Curve and Bell Curve |
-| lara-hogan | Lara Hogan | management-transitions, engineering-leadership, team-dynamics, BICEPS | Leadership transition coach for technical leaders, author of Resilient Management |
 | matt-chapman | Matt Chapman | executive-coaching, self-leadership, presence, inner-work, leadership-identity | Executive coach, founder of Braveheart Incorporated |
 | oli-gardner | Oli Gardner | landing-page-conversion, attention-ratio, conversion-centered-design, page-focus | Co-founder of Unbounce |
 | patrick-campbell | Patrick Campbell | pricing, packaging, monetization, churn, retention, value-metrics, subscription | Founder of ProfitWell (acquired by Paddle for $200M) |
@@ -35,7 +33,6 @@
 | robbie-kellman-baxter | Robbie Kellman Baxter | subscription, membership, retention, forever-promise, recurring-revenue | Founder of Peninsula Strategies, author of The Membership Economy |
 | sean-ellis | Sean Ellis | growth-hacking, product-market-fit, experimentation, retention, north-star-metrics | Coined "growth hacking," scaled Dropbox, LogMeIn, Eventbrite to IPO |
 | seth-godin | Seth Godin | marketing, permission-marketing, remarkable-products, tribes | Author of Purple Cow, The Dip, and This Is Marketing |
-| shirin-oreizy | Shirin Oreizy | behavioral-science, conversion, ux-psychology, cognitive-load, friction | Founder of Next Step, a behavioral design agency |
 | steve-jobs | Steve Jobs | product-design, simplicity, UX, focus, user-experience | Co-founder of Apple who demanded insanely great products |
 | steve-krug | Steve Krug | usability, scanning, conventions, question-marks, trunk-test, clarity, happy-talk | Usability expert, author of Don't Make Me Think |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
@@ -79,7 +76,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Andy Raskin** | Evaluates narrative structure |
 | **April Dunford** | Evaluates whether positioning is clear, differentiated, and consistently reflected |
 | **Brene Brown** | Evaluates whether leadership and communication surfaces the emotional truth or hides behind armor |
-| **Chris Voss** | Evaluates whether communication and negotiation approaches use empathy as a tool rather than logic as a weapon |
 | **Clayton Christensen** | Evaluates whether the work understands the job the customer is hiring the product to do — functional, emotional, and social dimensions |
 | **Diana Chapman** | Evaluates whether leadership content addresses inner state, not just tactics |
 | **Don Draper** | Evaluates whether messaging makes people feel something or just informs them |
@@ -93,7 +89,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Joanna Wiebe** | Evaluates conversion copy through Seven Sweeps lens |
 | **Joe Pulizzi** | Evaluates content strategy through audience-first lens |
 | **Julian Shapiro** | Evaluates landing page copy through the Purchase Rate formula: Desire minus Labor plus Confusion |
-| **Lara Hogan** | Evaluates leadership transitions through the lens of level-specific competencies and core human needs |
 | **Matt Chapman** | Evaluates whether a leader is actually present or performing presence |
 | **Oli Gardner** | Evaluates through Conversion-Centered Design lens |
 | **Patrick Campbell** | Evaluates pricing, packaging, and monetization strategy |
@@ -105,7 +100,6 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Robbie Kellman Baxter** | Evaluates whether content reflects membership thinking vs transaction thinking |
 | **Sean Ellis** | Evaluates whether growth is built on product-market fit or propped up by acquisition spend |
 | **Seth Godin** | Evaluates whether the work earns attention or steals it |
-| **Shirin Oreizy** | Evaluates through behavioral science lens |
 | **Steve Jobs** | Evaluates whether the work achieves simplicity and focus |
 | **Steve Krug** | Evaluates whether the user has to think |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |

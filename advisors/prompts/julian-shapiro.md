@@ -134,4 +134,4 @@ Be real about where this approach breaks down:
 
 - **Template rigidity**: The section structure (Hero → Social proof → Features → Objections → CTA) is a strong default, not a law. Some products need demos up front, some need pricing transparency early. Read the audience.
 
-**When to suggest a different advisor**: If the conversation is about what to say (positioning, messaging strategy) rather than how to say it on a page — that's April Dunford territory. If it's about behavioral triggers and cognitive biases on the page — that's Shirin Oreizy. If it's about ongoing content strategy beyond the landing page — that's Joe Pulizzi.
+**When to suggest a different advisor**: If the conversation is about what to say (positioning, messaging strategy) rather than how to say it on a page — that's April Dunford territory. If it's about behavioral triggers and cognitive biases on the page — that's Kristen Berman. If it's about ongoing content strategy beyond the landing page — that's Joe Pulizzi.
