@@ -25,7 +25,8 @@ frameworks:
   - product-marketing
   follow_on_frameworks:
   - strategic-narrative
-  - landing-page-assembly
+  - messaging-distillation
+  - sales-pitch-structure
   helpful_documents:
   - competitive landscape
   - customer research
@@ -34,7 +35,7 @@ frameworks:
   purpose: a sequential process that builds differentiated positioning from the ground
     up
   required_documents:
-  - positioning statement
+  - the alternatives recent buyers almost chose instead of you
   use_when: a business needs to define or refine its market positioning from scratch
     using a structured methodology
 - advisor: ray-dalio
@@ -50,7 +51,6 @@ frameworks:
   - decision-making
   follow_on_frameworks:
   - believability-weighted-decision-making
-  - finding-the-crux
   helpful_documents:
   - business goals
   id: 5-step-process
@@ -77,7 +77,7 @@ frameworks:
   use_when: someone wants a systematic process for setting goals, diagnosing problems,
     designing solutions, and executing with mindset alignment
 - advisor: tim-ferriss
-  category: strategy
+  category: leadership
   deliverable_type: analysis
   domains:
   - productivity
@@ -87,7 +87,7 @@ frameworks:
   helpful_documents:
   - business goals
   id: 80-20-audit
-  name: an 80/20 Audit
+  name: 80/20 Audit
   purpose: a ruthless Pareto analysis of their work and life to identify what to double
     down on and what to eliminate
   use_when: someone feels overwhelmed or spread thin and needs to identify the vital
@@ -115,7 +115,7 @@ frameworks:
   - communication
   - persuasion
   id: accusation-audit
-  name: an Accusation Audit
+  name: Accusation Audit
   purpose: a technique for disarming negativity by naming it before the other person
     can
   use_when: someone is entering a conversation where the other party likely has negative
@@ -159,8 +159,7 @@ frameworks:
   - product-development
   - validated-learning
   follow_on_frameworks:
-  - earlyvangelists
-  - four-market-types
+  - pivot-or-persevere
   helpful_documents:
   - product description
   - customer research
@@ -193,7 +192,7 @@ frameworks:
   - conscious-leadership
   - relationships
   id: clearing-model
-  name: The Clearing Model to resolve relationship tensions
+  name: The Clearing Model
   purpose: a structured process for clearing withholds and resentments using unarguable
     statements to restore connection
   use_when: two people have unresolved tension and need a structured process to clear
@@ -211,12 +210,12 @@ frameworks:
   - conversion-optimization
   - decision-architecture
   follow_on_frameworks:
-  - landing-page-assembly
+  - science-of-design
   helpful_documents:
   - customer research
   - product description
   id: cognitive-friction-audit
-  name: the Cognitive Friction Audit
+  name: Cognitive Friction Audit
   purpose: a systematic process for identifying and eliminating decision-making barriers
     in user journeys. Every friction point costs conversions
   use_when: a product or page has high drop-off and someone needs to identify and
@@ -231,8 +230,10 @@ frameworks:
   - audience-building
   - business-model
   - content-first
+  helpful_documents:
+  - strategy
   id: content-inc-model
-  name: the Content Inc
+  name: Content Inc. Model
   purpose: a six-step audience-first model for building a content-driven business
     before monetizing
   use_when: someone wants to build a business by establishing a content platform and
@@ -268,7 +269,7 @@ frameworks:
     learn and recruit users by hand
   use_when: a founder is in the earliest stage and needs to identify the unscalable
     manual things they should be doing to get traction
-- advisor: eric-ries
+- advisor: steve-blank
   category: startup
   deliverable_type: analysis
   domains:
@@ -281,11 +282,12 @@ frameworks:
   - product description
   id: earlyvangelists
   name: Earlyvangelists
-  purpose: specifically, whether they've identified customers who will actually buy
-    versus those who are simply being polite
+  purpose: scoring real prospects against five criteria (has the problem, knows it,
+    is searching, has built a workaround, has budget) to find the customers who will
+    actually buy rather than the ones being polite
   use_when: a startup needs to distinguish between customers who will actually pay
     versus those giving polite but uncommitted feedback
-- advisor: paul-graham
+- advisor: garry-tan
   category: startup
   deliverable_type: analysis
   domains:
@@ -329,8 +331,9 @@ frameworks:
   - risk-assessment
   id: fear-setting
   name: Fear-Setting
-  purpose: the Stoic exercise of premeditatio malorum that you call "the most valuable
-    exercise I do every month."
+  purpose: defining the worst cases of a decision, how to prevent and repair each,
+    the benefits of trying, and the cost of not acting at 6, 12, and 36 months, then
+    committing to a decision and a first step
   use_when: someone is paralyzed by fear about a decision and needs to systematically
     define, prevent, and repair the worst-case scenarios
 - advisor: richard-rumelt
@@ -346,7 +349,7 @@ frameworks:
   - critical-thinking
   follow_on_frameworks:
   - kernel-of-good-strategy
-  - 5-step-process
+  - proximate-objectives
   helpful_documents:
   - company strategy
   id: finding-the-crux
@@ -396,13 +399,13 @@ frameworks:
   - retention
   - value-proposition
   follow_on_frameworks:
-  - 5-components-positioning
-  - strategic-narrative
+  - value-metric
+  - storybrand-homepage
   helpful_documents:
   - strategy
   - positioning
   id: forever-promise
-  name: the Forever Promise Framework
+  name: Forever Promise
   purpose: the process of defining the ongoing value commitment that turns a subscription
     into a real membership relationship
   use_when: someone is building a subscription or membership business and needs to
@@ -415,6 +418,9 @@ frameworks:
   - startup-strategy
   - competitive-positioning
   - market-entry
+  follow_on_frameworks:
+  - earlyvangelists
+  - leap-of-faith-assumptions
   helpful_documents:
   - competitive landscape
   - market research
@@ -456,9 +462,12 @@ frameworks:
   - product description
   - business metrics
   id: growth-hacking-process
-  name: the Growth Hacking Process
-  purpose: a systematic five-step methodology for achieving sustainable growth. This
-    process scaled Dropbox, LogMeIn, and Eventbrite
+  name: Growth Hacking Process
+  purpose: 'setting up a growth engine after product-market fit: a North Star metric,
+    an experiment velocity target, a growth team, an ICE-scored backlog, and a weekly
+    test cadence'
+  required_documents:
+  - a product-market fit survey result of 40% or more "very disappointed"
   use_when: a product team needs a repeatable process for generating, prioritizing,
     testing, and scaling growth experiments
 - advisor: shirin-oreizy
@@ -473,11 +482,9 @@ frameworks:
   - customer research
   - sales materials
   id: homer-vs-spock
-  name: the Homer vs Spock Framework
-  purpose: a behavioral science approach to understanding how people actually make
-    decisions. People decide with Homer (emotional brain) first, then justify with
-    Spock (rational brain). Marketing to Spock first fails; marketing to Homer first
-    then giving Spock justification converts
+  name: Homer vs Spock
+  purpose: checking whether copy speaks to emotion (Homer) before logic (Spock), finding
+    the emotional hook, and restructuring the page, email, or pitch Homer-first
   use_when: someone's marketing leads with features and logic and they need to understand
     why emotional appeal must come first
 - advisor: sean-ellis
@@ -512,7 +519,7 @@ frameworks:
   helpful_documents:
   - product description
   id: idiot-index
-  name: the Idiot Index to identify cost reduction opportunities
+  name: Idiot Index
   purpose: comparing finished cost to raw material cost to expose hidden inefficiency
     and cost reduction opportunities
   use_when: someone needs to identify cost reduction opportunities by comparing current
@@ -548,7 +555,7 @@ frameworks:
   - stakeholder map
   - discovery call transcripts
   id: jolt-effect
-  name: the JOLT Effect
+  name: JOLT Effect
   purpose: a four-move tactical playbook for rescuing late-stage B2B enterprise deals
     stalled by customer indecision — Judge the indecision type, Offer a specific recommendation,
     Limit exploration, Take risk off the table
@@ -564,13 +571,16 @@ frameworks:
   - enterprise-deals
   - stakeholder-mapping
   - discovery
+  follow_on_frameworks:
+  - teach-tailor-take-control
+  - jolt-effect
   helpful_documents:
   - stakeholder map
   - deal notes
   - discovery call transcripts
   - email threads with the buying committee
   id: mobilizer-taxonomy
-  name: the Mobilizer Taxonomy
+  name: Mobilizer Taxonomy
   purpose: assigning each person in a B2B buying committee to one of seven Dixon archetypes
     — separating the three Mobilizers (Go-Getter, Teacher, Skeptic) who drive consensus
     from the four Talkers (Guide, Friend, Climber, Blocker) who feel accessible but
@@ -586,13 +596,17 @@ frameworks:
   - diagnosis
   - guiding-policy
   - coherent-action
+  follow_on_frameworks:
+  - proximate-objectives
+  - mochary-weekly-check-in
   helpful_documents:
   - company strategy
   - business goals
   id: kernel-of-good-strategy
   name: Kernel of Good Strategy
-  purpose: the irreducible core that distinguishes actual strategy from goal-setting
-    dressed up as strategy
+  purpose: 'writing a strategy at page size with Rumelt''s kernel: a one-sentence
+    diagnosis of the challenge, a guiding policy, three owned coordinated actions,
+    a kill list, and the assumptions to test'
   use_when: someone's strategy is really just a list of goals and they need to build
     a real strategy with diagnosis, policy, and actions
 - advisor: oli-gardner
@@ -624,7 +638,7 @@ frameworks:
   - management
   - organizational-design
   id: leadership-pipeline-passages
-  name: the Leadership Pipeline Passages
+  name: Leadership Pipeline Passages
   purpose: diagnosing which passage transition they're navigating and what must shift
     in their skills, time application, and work values
   use_when: a leader is struggling at a new level and needs to understand what skills,
@@ -637,6 +651,8 @@ frameworks:
   - validation
   - risk-reduction
   - lean-startup
+  follow_on_frameworks:
+  - build-measure-learn
   helpful_documents:
   - product description
   - customer research
@@ -668,7 +684,7 @@ frameworks:
   - leadership-skills
   - level-progression
   id: management-level-progression
-  name: the Management Level Progression framework
+  name: Management Level Progression
   purpose: diagnosing where they are on the engineering management ladder and what
     needs to shift to succeed at their current (or next) level
   use_when: an engineering manager needs to understand what's expected at their current
@@ -681,6 +697,9 @@ frameworks:
   - storytelling
   - founder-narrative
   - brand-story
+  follow_on_frameworks:
+  - 5-components-positioning
+  - strategic-narrative
   id: origin-story-interview
   name: Origin Story Interview
   purpose: extracting a founder's origin story and use cases for positioning
@@ -688,7 +707,7 @@ frameworks:
     for positioning and brand narrative
 - advisor: ray-dalio
   category: psychology
-  deliverable_type: analysis
+  deliverable_type: plan
   domains:
   - resilience
   - learning-from-failure
@@ -701,7 +720,7 @@ frameworks:
   use_when: someone has experienced a painful failure and needs a structured way to
     extract lessons and turn it into growth
 - advisor: tim-ferriss
-  category: strategy
+  category: leadership
   deliverable_type: analysis
   domains:
   - annual-review
@@ -709,13 +728,13 @@ frameworks:
   - goal-setting
   - life-design
   id: past-year-review
-  name: the Past Year Review (PYR)
+  name: Past Year Review
   purpose: a data-driven alternative to vague New Year's resolutions
   use_when: someone wants to review their past year systematically to make data-driven
     decisions about the next year
 - advisor: ram-charan
   category: leadership
-  deliverable_type: analysis
+  deliverable_type: plan
   domains:
   - performance-management
   - leadership-assessment
@@ -755,7 +774,7 @@ frameworks:
   use_when: someone needs to articulate a personal mission statement that reflects
     their deepest values and sense of purpose
 - advisor: clayton-christensen
-  category: strategy
+  category: leadership
   deliverable_type: analysis
   domains:
   - resource-allocation
@@ -777,7 +796,7 @@ frameworks:
   - authenticity
   - self-assessment
   id: pillars-of-integrity
-  name: the Four Pillars of Integrity
+  name: Four Pillars of Integrity
   purpose: helping them identify where their integrity is fractured and restore full
     energetic wholeness
   use_when: someone feels fragmented or out of alignment and needs to identify where
@@ -809,11 +828,12 @@ frameworks:
   - strategy-documentation
   - one-pager
   helpful_documents:
-  - positioning statement
   - competitive landscape
   id: positioning-canvas
   name: Positioning Canvas
   purpose: capturing positioning work in a one-page canvas for team alignment
+  required_documents:
+  - completed positioning (5 Components of Positioning output or equivalent)
   use_when: a team has completed positioning work and needs to capture it in a single-page
     format for alignment and reference
 - advisor: matt-chapman
@@ -825,26 +845,31 @@ frameworks:
   - grounding
   - self-awareness
   id: presence-check-in
-  name: a Presence Check-In
+  name: Presence Check-In
   purpose: helping them arrive fully in this moment, notice where they actually are,
     and reconnect with what matters
   use_when: someone is distracted or disconnected and needs to arrive fully in the
     present moment before starting deeper work
 - advisor: sean-ellis
-  category: growth
+  category: startup
   deliverable_type: decision
   domains:
   - product-market-fit
   - survey-methodology
   - growth-readiness
   - user-love
+  follow_on_frameworks:
+  - growth-hacking-process
+  - pivot-or-persevere
   helpful_documents:
   - product description
   - customer research
   id: product-market-fit-test
-  name: the Product-Market Fit Test
+  name: Product-Market Fit Test
   purpose: a diagnostic to determine if you should scale or iterate based on user
     love, not vanity metrics
+  required_documents:
+  - survey results from at least 40 active users
   use_when: a startup needs to measure whether they have product-market fit before
     investing in scaling
 - advisor: coach-eric
@@ -877,7 +902,7 @@ frameworks:
   purpose: setting objectives that are achievable and create momentum for harder goals
   use_when: someone has ambitious goals but no traction and needs to identify achievable
     near-term objectives that build momentum
-- advisor: jim-dethmer
+- advisor: diana-chapman
   category: psychology
   deliverable_type: analysis
   domains:
@@ -892,7 +917,7 @@ frameworks:
   use_when: someone needs to check in with all four aspects of self — physical, emotional,
     intellectual, and spiritual
 - advisor: jeff-bezos
-  category: strategy
+  category: leadership
   deliverable_type: decision
   domains:
   - decision-making
@@ -924,7 +949,7 @@ frameworks:
   use_when: something isn't working and the user needs to diagnose why before proposing
     fixes; the deliverable is a diagnostic document, not a brainstorm
 - advisor: april-dunford
-  category: positioning
+  category: sales
   deliverable_type: content
   domains:
   - sales-pitch
@@ -944,7 +969,7 @@ frameworks:
     a compelling sales narrative
 - advisor: shirin-oreizy
   category: conversion
-  deliverable_type: analysis
+  deliverable_type: plan
   domains:
   - behavioral-science
   - experimentation
@@ -954,19 +979,23 @@ frameworks:
   - customer research
   - product description
   id: science-of-design
-  name: the Science of Design Methodology
-  purpose: a 4-phase behavioral science framework for understanding and influencing
-    customer decisions through systematic experimentation
+  name: Science of Design
+  purpose: 'a six-phase behavioral science method: learn Homer vs Spock, find the
+    friction in a conversion path, pick behavioral interventions, design an A/B test,
+    read the results, and keep a toolkit of quick wins'
   use_when: someone needs a systematic approach to understand and influence how customers
     make decisions using behavioral science
 - advisor: seth-godin
-  category: growth
+  category: positioning
   deliverable_type: analysis
   domains:
   - audience-strategy
   - niche-focus
   - marketing-philosophy
   - minimum-viable-audience
+  helpful_documents:
+  - positioning
+  - strategy
   id: smallest-viable-audience
   name: Smallest Viable Audience
   purpose: defining the smallest group you could serve so well that they would actively
@@ -974,8 +1003,8 @@ frameworks:
   use_when: someone is trying to appeal to everyone and needs to focus on the smallest
     group they can meaningfully serve
 - advisor: steve-jobs
-  category: strategy
-  deliverable_type: plan
+  category: product-design
+  deliverable_type: decision
   domains:
   - product-design
   - customer-experience
@@ -1018,20 +1047,24 @@ frameworks:
   - storytelling
   - positioning
   follow_on_frameworks:
-  - 5-components-positioning
+  - messaging-distillation
   - landing-page-assembly
   helpful_documents:
   - positioning statement
   - company strategy
   id: strategic-narrative
   name: Five-Element Strategic Narrative
-  purpose: the framework that transformed Zuora's positioning and has been used by
-    companies like Gong, Drift, and Salesforce
+  purpose: 'building a strategic narrative from five elements: the undeniable change
+    in the world, the stakes, the promised land, the obstacles, and the magic gifts
+    that get the customer there'
+  required_documents:
+  - an internal strategy memo, talk transcript, or sales conversation describing the
+    market shift the brand sees
   use_when: someone needs to build a sales deck or company narrative that opens with
     a shift in the world, not a product pitch
 - advisor: jim-loehr
   category: psychology
-  deliverable_type: analysis
+  deliverable_type: plan
   domains:
   - energy-management
   - recovery
@@ -1093,7 +1126,7 @@ frameworks:
   use_when: someone needs to dramatically improve a process or product using a systematic
     question-delete-simplify-accelerate-automate approach
 - advisor: don-draper
-  category: positioning
+  category: brand
   deliverable_type: content
   domains:
   - emotional-marketing
@@ -1102,8 +1135,8 @@ frameworks:
   - nostalgia
   id: the-carousel
   name: The Carousel
-  purpose: the feeling that makes people lean in, not the feature that makes them
-    nod
+  purpose: 'finding the feeling behind a product: one real person, what they feel,
+    a true moment from their story, and a one-sentence idea an ad or page can carry'
   use_when: someone is selling features and benefits but hasn't found the emotional
     truth that makes their offering irresistible
 - advisor: coach-eric
@@ -1142,9 +1175,14 @@ frameworks:
   - value-metric
   - monetization
   - customer-value
+  helpful_documents:
+  - strategy
+  - positioning
   id: value-metric
   name: Value Metric Framework
-  purpose: how their customer pays and what they pay for
+  purpose: choosing the value metric a price scales with by brainstorming candidates,
+    scoring them on alignment, simplicity, and growth, and planning how to validate
+    the winner with customers
   use_when: someone needs to identify the right value metric for their pricing model
     — the unit of value customers pay for
 - advisor: brene-brown
@@ -1185,7 +1223,7 @@ frameworks:
   - purpose
   - career-alignment
   id: zone-of-genius
-  name: the Zone of Genius discovery process
+  name: Zone of Genius
   purpose: identifying your unique genius and distinguishing it from the Zone of Excellence
     trap where most high achievers get stuck
   use_when: someone wants to identify their zone of genius to align their work with
@@ -1209,7 +1247,7 @@ frameworks:
   use_when: writing B2B professional services copy — cold emails, thought leadership,
     landing pages, sales enablement — that needs to stand out from corporate noise
 - advisor: jacco-van-der-kooij
-  category: strategy
+  category: sales
   deliverable_type: analysis
   domains:
   - revenue-architecture
@@ -1221,7 +1259,7 @@ frameworks:
   - revenue metrics
   - customer segmentation
   id: bowtie-funnel
-  name: the Bowtie Funnel
+  name: Bowtie Funnel
   purpose: a diagnostic walk through the end-to-end recurring-revenue architecture
     — six stages from Awareness through Expansion — to find where revenue is actually
     leaking
@@ -1243,7 +1281,7 @@ frameworks:
   - ramp and tenure data
   - last 90 days meetings-held and opportunity conversion
   id: 6-elements-sdr
-  name: the 6 Elements of the Sales Development Playbook
+  name: 6 Elements of Sales Development
   purpose: a full-function diagnostic and redesign of a B2B sales development organization
     across six design elements — Strategy, Specialization, Recruiting, Retention,
     Execution, and Leadership — producing a ranked fix list that stops leaders from
@@ -1268,7 +1306,7 @@ frameworks:
   - runway and fundraising plan
   - integration roadmap (EHR / payer / revenue-cycle)
   id: 5-gtm-motions-digital-health
-  name: the 5 GTM Motions for Digital Health
+  name: 5 GTM Motions for Digital Health
   purpose: a motion-commitment diagnostic that forces a digital health founder to
     pick one primary go-to-market motion — B2C2B, B2SMB, Risk-based contracting, Two-sided
     networks, or Distribution through aggregators — for the next 18 months, and confirms
@@ -1301,17 +1339,21 @@ frameworks:
     inference and gap as an Open Question reviewable in an interactive HTML document
     with paste-back-to-Claude-Code prompts
   required_documents:
-  - a public URL for the org (homepage or About page) OR a local folder of source material
+  - a public URL for the org (homepage or About page) OR a local folder of source
+    material
   use_when: an organization is building its first canonical brand/ folder from a public
     URL and optional supplementary content
 - advisor: matt-dixon
-  category: customer
+  category: sales
   deliverable_type: analysis
   domains:
   - buyer-persona
   - buying-committee
   - sales-strategy
   - customer-research
+  follow_on_frameworks:
+  - messaging-distillation
+  - teach-tailor-take-control
   helpful_documents:
   - customer research
   - interview transcripts
@@ -1322,7 +1364,7 @@ frameworks:
     evaluation criteria, skepticism triggers, language resonance, and common objections
     — anchored in the Challenger commercial-insight frame
   required_documents:
-  - the role being profiled (e.g., CMO, VP-Ops, Chief People Officer)
+  - customer interview transcripts including the customer's role
   use_when: an organization needs to characterize a specific role on the buying committee
     (champion, mobilizer, blocker, approver)
 - advisor: april-dunford
@@ -1333,6 +1375,9 @@ frameworks:
   - copywriting
   - positioning
   - value-propositions
+  follow_on_frameworks:
+  - competitive-battle-card
+  - sales-pitch-structure
   helpful_documents:
   - strategy/narrative.md
   - personas/*.md
@@ -1361,9 +1406,9 @@ frameworks:
   - category-name and tagline from messaging.md
   id: brand-voice
   name: Brand Voice
-  purpose: extracts a complete language/voice.md from 3–10 sample pieces of existing
-    copy, with seven slices (tone-principles, register-table, dos-and-donts, banned-phrases,
-    banned-terms, glossary, competitor-naming)
+  purpose: 'extracting a brand voice file from 3 to 10 samples of existing copy: tone
+    principles, a register table, dos and don''ts, banned phrases and terms, a glossary,
+    and how to name competitors'
   required_documents:
   - 3–10 sample pieces of existing copy (homepage, blog posts, founder tweets, sales
     emails)
@@ -1377,6 +1422,8 @@ frameworks:
   - evidence
   - claims-substantiation
   - brand-credibility
+  follow_on_frameworks:
+  - messaging-distillation
   helpful_documents:
   - customer interview transcripts
   - case study drafts
@@ -1384,9 +1431,9 @@ frameworks:
   - regulatory filings
   id: proof-points-audit
   name: Proof Points Audit
-  purpose: produces proof/proof-points.md with structured, sourced, dated claims;
-    conditionally splits into proof/clinical-evidence.md and proof/compliance.md when
-    the org has clinical evidence or compliance certifications
+  purpose: pulling every claim out of customer-facing copy, tracing each to a source
+    and date, rating how well it is supported, and reporting the claims that have
+    no proof
   required_documents:
   - existing customer-facing copy (homepage, deck, one-pager)
   use_when: an organization needs to inventory and verify every quantitative or proof-shaped
@@ -1399,14 +1446,16 @@ frameworks:
   - battle-cards
   - sales-enablement
   - objection-handling
+  follow_on_frameworks:
+  - sales-pitch-structure
   helpful_documents:
   - customer win/loss interviews
   - competitor public materials
   id: competitive-battle-card
   name: Competitive Battle Card
-  purpose: produces market/competitive.md with competitive-landscape, differentiators,
-    and common-objections slices; declares depends_on against strategy/positioning#competitive-alternatives
-    so drift is detectable
+  purpose: 'writing a battle card for each competitive alternative: the landscape,
+    real advantages and disadvantages, myths to correct, and each common objection
+    with the concern behind it, a response, and a question to ask'
   required_documents:
   - 'completed strategy/positioning.md (Component 1: competitive alternatives)'
   - completed language/messaging.md (value-prop phrasings)
@@ -1438,7 +1487,7 @@ frameworks:
     or changing the target behavior itself
 - advisor: matt-mochary
   category: operating-cadence
-  deliverable_type: decision
+  deliverable_type: plan
   domains:
   - operating-cadence
   - meeting-design
@@ -1471,8 +1520,8 @@ frameworks:
   id: chj-operating-review
   name: Operating Review Design
   purpose: transform a status-presentation meeting into a decision-focused operating
-    review through pre-reads, discussion-only meeting norms, decision logs, and
-    strategy-connected metrics
+    review through pre-reads, discussion-only meeting norms, decision logs, and strategy-connected
+    metrics
   use_when: a leadership team is running operating reviews (monthly, quarterly) that
     produce presentations but not decisions, or where decisions made in the meeting
     get relitigated because nothing was written down
@@ -1499,9 +1548,9 @@ frameworks:
   purpose: redesigning an organization's structure from its strategy and lifecycle
     stage, with every name off the paper
   use_when: a scaling company cannot reach escape velocity despite a clear strategy,
-    keeps repeating the same execution mistakes, has one seat that keeps failing
-    hires, or has a founder who is still the bottleneck on decisions the structure
-    should have taken off them
+    keeps repeating the same execution mistakes, has one seat that keeps failing hires,
+    or has a founder who is still the bottleneck on decisions the structure should
+    have taken off them
 - advisor: lex-sisney
   category: leadership
   default_critic_advisors:
@@ -1545,8 +1594,8 @@ frameworks:
   - org chart
   id: lifecycle-strategy
   name: Lifecycle Strategy
-  purpose: finding out where each product, its market, and the company's ability
-    to execute actually sit on their lifecycles, and whether the three are aligned
+  purpose: finding out where each product, its market, and the company's ability to
+    execute actually sit on their lifecycles, and whether the three are aligned
   use_when: a company is deciding whether to launch or spin out a second product,
     is building scale infrastructure for a product that may not have product-market
     fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow
@@ -1580,7 +1629,7 @@ frameworks:
     what an offering should stop doing as well as what it should do; also for a new
     offering that needs its value proposition set before positioning
 - advisor: ryan-singer
-  category: strategy
+  category: product-design
   default_critic_advisors:
   - ryan-singer
   - richard-rumelt
@@ -1719,8 +1768,6 @@ frameworks:
   - organizational-change
   - rollout-sequencing
   - social-networks
-  follow_on_frameworks:
-  - build-measure-learn
   helpful_documents:
   - a description of the practice or behavior being rolled out
   - an org chart or list of teams, with rough sizes
@@ -1737,8 +1784,8 @@ frameworks:
   use_when: a company is rolling out a new team practice, culture program, or way
     of working that people find risky or awkward to start; a pilot or launch got good
     survey scores and then faded; someone plans to launch with an all-hands announcement,
-    one champion per team, or everyone at once; or a leader needs to decide which teams
-    go first and in what order
+    one champion per team, or everyone at once; or a leader needs to decide which
+    teams go first and in what order
 - advisor: boris-cherny
   category: developer-tooling
   default_critic_advisors:
@@ -1823,6 +1870,8 @@ frameworks:
   - product-discovery
   - user-journeys
   - release-slicing
+  follow_on_frameworks:
+  - breadboard-to-pages
   helpful_documents:
   - notes on what the user does today, in their own words (interviews, support threads,
     a session recording)
@@ -1854,7 +1903,6 @@ frameworks:
   - design-tokens
   - responsiveness
   helpful_documents:
-  - the project's design-principles.md, so every screen uses the project's tokens
   - the story map the breadboard came from (docs/story-maps/{slug}.md), so the screens
     can be walked against it
   - 'real content: actual names, emails, labels, and the longest values the app allows'
@@ -1867,6 +1915,7 @@ frameworks:
   required_documents:
   - 'a breadboard of the slice to build: each place, what the user can do there, and
     where each action leads'
+  - the project's design-principles.md, so every screen uses the project's tokens
   use_when: a breadboard or Slice 1 of a story map is agreed and needs finished screens
     to guide the build, an AI agent keeps inventing styles instead of using the design
     system, screens were drawn with placeholder content or only the happy path, or
@@ -1882,6 +1931,8 @@ frameworks:
   - interface-inventory
   - component-consistency
   - design-tokens
+  follow_on_frameworks:
+  - logic-check
   helpful_documents:
   - the project's design-principles.md, so every pattern can be checked against the
     tokens
@@ -1923,8 +1974,8 @@ frameworks:
     code, or a screenshot
   use_when: a screen looks amateur and nobody can say why, an AI agent keeps picking
     colours, sizes, or weights by feel, a design principles file needs checking before
-    screens are built from it, or text contrast, button hierarchy, or colour-only signals
-    need checking
+    screens are built from it, or text contrast, button hierarchy, or colour-only
+    signals need checking
 - advisor: annie-duke
   category: startup
   default_critic_advisors:
@@ -1976,8 +2027,8 @@ frameworks:
   required_documents:
   - a feature list, a spec, or a design for something not yet built
   use_when: a version one or a new feature has a long list and needs cutting before
-    the build, a design keeps growing, settings or scale work are creeping in, or the
-    founder can't say what the product can't live without
+    the build, a design keeps growing, settings or scale work are creeping in, or
+    the founder can't say what the product can't live without
 - advisor: aleyda-solis
   category: content-strategy
   default_critic_advisors:
@@ -1991,7 +2042,6 @@ frameworks:
   - search-optimization
   follow_on_frameworks:
   - ai-search-optimization-checklist
-  - content-inc-model
   helpful_documents:
   - access to Google Search Console for the site
   - a PageSpeed Insights report for the page
@@ -2030,8 +2080,8 @@ frameworks:
   required_documents:
   - the site's URL and what it sells or offers
   use_when: a site wants to show up or be cited in ChatGPT, Gemini, Perplexity or
-    Google AI answers; someone asks about GEO, AEO or LLMO; or a founder is about to
-    try llms.txt, hidden prompts or other AI-visibility tricks before measuring
+    Google AI answers; someone asks about GEO, AEO or LLMO; or a founder is about
+    to try llms.txt, hidden prompts or other AI-visibility tricks before measuring
 - advisor: michael-bolton
   category: product-design
   default_critic_advisors:
@@ -2045,7 +2095,7 @@ frameworks:
   - design-review
   - test-strategy
   follow_on_frameworks:
-  - proof-points-audit
+  - four-question-threat-model
   helpful_documents:
   - the codebase the design doc describes, open so files can be read during the review
   - the existing tests (checks) for the area the design touches
@@ -2082,7 +2132,8 @@ frameworks:
   id: four-question-threat-model
   name: Four Question Threat Model
   purpose: one person threat modeling one design doc in under an hour, by asking the
-    Four Question Framework in order with STRIDE as the checklist for what can go wrong
+    Four Question Framework in order with STRIDE as the checklist for what can go
+    wrong
   required_documents:
   - a design doc, spec, or feature description for something being worked on now
   use_when: a design or feature touches login, permissions, user data, row-level security,
@@ -2109,14 +2160,15 @@ frameworks:
   id: phantom-b-llm-threats
   name: PHANTOM-B LLM Threats
   purpose: one person finding what can go wrong with the parts of a system that call
-    an LLM, using the eight PHANTOM-B threats as prompts, then deciding what to do about
-    each
+    an LLM, using the eight PHANTOM-B threats as prompts, then deciding what to do
+    about each
   required_documents:
   - a design, spec, or running system where code calls an LLM (an app feature, a Claude
     Code hook or plugin, an agent with tools)
-  use_when: a feature, hook, plugin, or agent sends text to an LLM and acts on what comes
-    back, reads text someone else wrote (emails, PRs, web pages, tool results), or lets
-    the model call tools, and nobody has asked what can go wrong with the model part
+  use_when: a feature, hook, plugin, or agent sends text to an LLM and acts on what
+    comes back, reads text someone else wrote (emails, PRs, web pages, tool results),
+    or lets the model call tools, and nobody has asked what can go wrong with the
+    model part
 - advisor: michael-bierut
   category: visual-identity
   default_critic_advisors:
@@ -2132,18 +2184,19 @@ frameworks:
   helpful_documents:
   - the product's name and any existing logo, colors, or typefaces
   - the design rules the product already follows, including any looks it bans
-  - the places the mark has to appear (app icon, favicon, printed piece, packaging, signage)
+  - the places the mark has to appear (app icon, favicon, printed piece, packaging,
+    signage)
   - marks from competitors or from the category
   id: boil-it-down
   name: Boil It Down
   purpose: finding a mark in something the product already has, throwing out the category
-    cliché, and cutting it down until it looks almost unfinished, so the result is one mark
-    described well enough to draw
+    cliché, and cutting it down until it looks almost unfinished, so the result is
+    one mark described well enough to draw
   required_documents:
   - a short description of the product and who uses it
-  use_when: a product needs a logo or mark, the current mark is the category cliché or a pile
-    of decoration, a team has several logo directions and can't pick, or a mark needs to work
-    as an app icon, a favicon, and in print
+  use_when: a product needs a logo or mark, the current mark is the category cliché
+    or a pile of decoration, a team has several logo directions and can't pick, or
+    a mark needs to work as an app icon, a favicon, and in print
 - advisor: michael-bierut
   category: visual-identity
   default_critic_advisors:
@@ -2160,19 +2213,19 @@ frameworks:
   helpful_documents:
   - each product's name, domain, and any existing logo, colors, or typefaces
   - the design rules the parent already follows
-  - places where the two products meet (a shared checkout, account, footer, email, or printed
-    piece)
+  - places where the two products meet (a shared checkout, account, footer, email,
+    or printed piece)
   - how many people know the parent's name today
   id: how-much-siblings-share
   name: How Much the Siblings Share
-  purpose: deciding how a new product looks next to the product it came from, by picking one
-    of three types of brand family and then listing exactly which of name, mark, type, and
-    color the sibling shares
+  purpose: deciding how a new product looks next to the product it came from, by picking
+    one of three types of brand family and then listing exactly which of name, mark,
+    type, and color the sibling shares
   required_documents:
   - a short description of each product, who buys it, and who uses it
-  use_when: a company is launching a second product or a spin-off and has to decide whether
-    it shares the parent's name and look, carries a small 'from' line, or stands alone; or
-    two related products already look either too alike or unrelated
+  use_when: a company is launching a second product or a spin-off and has to decide
+    whether it shares the parent's name and look, carries a small 'from' line, or
+    stands alone; or two related products already look either too alike or unrelated
 - advisor: michael-bierut
   category: visual-identity
   default_critic_advisors:
@@ -2185,21 +2238,23 @@ frameworks:
   - brand-color
   - contrast
   helpful_documents:
-  - the color values (hex) of the mark, its background, and the colors it sits next to
-  - the places the mark has to appear and their sizes (favicon, app icon, book cover or spine,
-    packaging)
+  - the color values (hex) of the mark, its background, and the colors it sits next
+    to
+  - the places the mark has to appear and their sizes (favicon, app icon, book cover
+    or spine, packaging)
   - how it will be printed (full color, one color, on what paper)
   - the name and any wordmark that goes with the mark
   id: small-size-and-print-test
   name: The Small-Size and Print Test
-  purpose: running a mark through Sagi Haviv's three tests, the draw-it-from-memory test,
-    the smallest and hardest places it has to live, one-color print, and Josef Albers's rule
-    for color, and ending with pass, fix, or redraw for each
+  purpose: running a mark through Sagi Haviv's three tests, the draw-it-from-memory
+    test, the smallest and hardest places it has to live, one-color print, and Josef
+    Albers's rule for color, and ending with pass, fix, or redraw for each
   required_documents:
-  - the mark or marks to test, as an image, a file, or a description precise enough to draw
-  use_when: a mark is about to ship and nobody has seen it at 16 pixels, as a phone icon,
-    in one color, or on a book spine; a new brand color has been picked on its own; or a team
-    argues about a logo on taste
+  - the mark or marks to test, as an image, a file, or a description precise enough
+    to draw
+  use_when: a mark is about to ship and nobody has seen it at 16 pixels, as a phone
+    icon, in one color, or on a book spine; a new brand color has been picked on its
+    own; or a team argues about a logo on taste
 - advisor: cole-nussbaumer-knaflic
   category: data-visualization
   default_critic_advisors:
@@ -2212,22 +2267,22 @@ frameworks:
   - dashboards
   follow_on_frameworks:
   - declutter-and-focus
-  - big-idea-and-takeaway-title
   helpful_documents:
   - the current chart, if there is one, as an image or a description
   - where the chart will be seen (a slide, a report, a dashboard tile, a phone screen)
   - the tool that will draw it (Excel, a charting library, a BI tool)
   id: choose-an-effective-visual
   name: Choose an Effective Visual
-  purpose: picking one chart type for one point by starting from the audience, naming the
-    comparison the chart has to show, and then choosing bar, line, slopegraph or dot plot,
-    or pie, with the reason and what was ruled out
+  purpose: picking one chart type for one point by starting from the audience, naming
+    the comparison the chart has to show, and then choosing bar, line, slopegraph
+    or dot plot, or pie, with the reason and what was ruled out
   required_documents:
   - the data to show (a table, a file, or a description of the columns and rows)
   - who will look at the chart and what they need to know or do after seeing it
-  use_when: someone has data and doesn't know which chart to draw, a chart is the wrong type
-    for its point (a line across categories, a pie for change over time, a spaghetti graph
-    of crossing lines), or a team argues about whether to use a pie
+  use_when: someone has data and doesn't know which chart to draw, a chart is the
+    wrong type for its point (a line across categories, a pie for change over time,
+    a spaghetti graph of crossing lines), or a team argues about whether to use a
+    pie
 - advisor: cole-nussbaumer-knaflic
   category: data-visualization
   default_critic_advisors:
@@ -2246,18 +2301,20 @@ frameworks:
   - who will look at it, and what they decide or do after looking
   - the data behind each chart, or the numbers that matter most
   - the current title of each chart
-  - how it will be seen (a live dashboard, a sent report, a slide in a meeting, a phone screen)
+  - how it will be seen (a live dashboard, a sent report, a slide in a meeting, a
+    phone screen)
   id: big-idea-and-takeaway-title
   name: The Big Idea and Takeaway Title
-  purpose: deciding whether a page is for exploring or for explaining, naming who it is for
-    and what they should know or do, telling the story in three minutes and then in one sentence,
-    and rewriting every chart title as the takeaway, the "so what?"
+  purpose: deciding whether a page is for exploring or for explaining, naming who
+    it is for and what they should know or do, telling the story in three minutes
+    and then in one sentence, and rewriting every chart title as the takeaway, the
+    "so what?"
   required_documents:
-  - the page, report, slide or chart to work on, as an image, a file, a link, or a description
-    of each chart and what it shows
-  use_when: a dashboard, report or slide shows data but nobody acts on it; chart titles only
-    say what the chart is ("Revenue by month"); or someone needs to say the point of their
-    data before picking or cleaning up a chart
+  - the page, report, slide or chart to work on, as an image, a file, a link, or a
+    description of each chart and what it shows
+  use_when: a dashboard, report or slide shows data but nobody acts on it; chart titles
+    only say what the chart is ("Revenue by month"); or someone needs to say the point
+    of their data before picking or cleaning up a chart
 - advisor: cole-nussbaumer-knaflic
   category: data-visualization
   default_critic_advisors:
@@ -2269,22 +2326,20 @@ frameworks:
   - chart-design
   - decluttering
   - visual-emphasis
-  follow_on_frameworks:
-  - choose-an-effective-visual
-  - big-idea-and-takeaway-title
   helpful_documents:
   - who sees the chart and where (a slide, a report, a dashboard, a phone)
   - the brand or product color palette
   - the tool or library the chart is built in
   id: declutter-and-focus
   name: Declutter and Focus
-  purpose: taking one existing chart, pushing everything to gray, cutting the clutter, then
-    adding one accent color and a title that states the takeaway, and checking the result with
-    the "where are your eyes drawn?" test, so the result is a list of changes to the chart, in
-    order
+  purpose: taking one existing chart, pushing everything to gray, cutting the clutter,
+    then adding one accent color and a title that states the takeaway, and checking
+    the result with the "where are your eyes drawn?" test, so the result is a list
+    of changes to the chart, in order
   required_documents:
-  - the chart to fix (an image, the chart code, or a description of every part of it)
+  - the chart to fix (an image, the chart code, or a description of every part of
+    it)
   - the one point the chart is meant to make, or the question it answers
-  use_when: a chart is busy or uses the tool's default colors, gridlines, legend and labels; it
-    looks fine but people miss its point; or a chart needs one series to stand out and a title
-    that says the takeaway
+  use_when: a chart is busy or uses the tool's default colors, gridlines, legend and
+    labels; it looks fine but people miss its point; or a chart needs one series to
+    stand out and a title that says the takeaway

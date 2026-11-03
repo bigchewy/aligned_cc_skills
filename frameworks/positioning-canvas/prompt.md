@@ -1,7 +1,7 @@
 ---
-required_documents: []
+required_documents:
+- completed positioning (5 Components of Positioning output or equivalent)
 helpful_documents:
-- positioning statement
 - competitive landscape
 deliverable_type: content
 ---

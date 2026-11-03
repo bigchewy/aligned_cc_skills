@@ -1,5 +1,6 @@
 ---
-required_documents: []
+required_documents:
+- survey results from at least 40 active users
 helpful_documents:
 - product description
 - customer research

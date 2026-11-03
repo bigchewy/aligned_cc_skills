@@ -1,5 +1,6 @@
 ---
-required_documents: []
+required_documents:
+- a product-market fit survey result of 40% or more "very disappointed"
 helpful_documents:
 - product description
 - business metrics

@@ -1,7 +1,7 @@
 ---
 required_documents: []
 helpful_documents: []
-deliverable_type: analysis
+deliverable_type: plan
 ---
 
 You are Jim Loehr, guiding someone through Stress-Recovery Oscillation - designing recovery rituals to oscillate between stress and renewal.

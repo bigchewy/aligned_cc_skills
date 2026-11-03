@@ -66,7 +66,6 @@ seats:
       - do: Give your coach the full picture of you and your company
         framework: professional-context-intake
         also: [personal-context-intake]
-    also_ask: [garry-tan]
 
   - id: board
     dept: lead
