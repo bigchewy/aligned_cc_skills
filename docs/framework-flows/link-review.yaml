@@ -39,7 +39,7 @@
   kind: helpful
   from: blue-ocean-value-props
   confidence: guess
-  reason: Blue Ocean Value Props writes a new value curve against the alternatives buyers use. Positioning could use it, but the prompt only says positioning copy is someone else's work.
+  reason: Blue Ocean Value Props writes a new value curve against the alternatives buyers use. Positioning could use it, but neither prompt mentions this link.
 - id: 6-step-process/company-strategy
   framework: 6-step-process
   doc: company strategy
@@ -491,8 +491,8 @@
   doc: language/messaging.md
   kind: helpful
   from: messaging-distillation
-  confidence: likely
-  reason: Messaging Distillation writes language/messaging.md with the elevator pitches and key phrases. A pitch uses that language.
+  confidence: sure
+  reason: Messaging Distillation names language/messaging.md as its output, with the elevator pitches and key phrases. A pitch uses that language.
 - id: smallest-viable-audience/positioning
   framework: smallest-viable-audience
   doc: positioning
@@ -636,6 +636,13 @@
   confidence: sure
   reason: 'Working Backwards writes the press release that describes the product, so the starting description
     comes from the founder. Sure: this is the user''s own material.'
+- id: zone-of-genius/80-20-audit-results
+  framework: zone-of-genius
+  doc: 80/20 audit results
+  kind: helpful
+  from: 80-20-audit
+  confidence: guess
+  reason: The 80/20 Audit ends with the positive 20 percent of a person's work and life. Zone of Genius could start from that list, but the audit never says so.
 - id: insane-honesty/positioning
   framework: insane-honesty
   doc: positioning
@@ -1850,13 +1857,6 @@
   from: outside
   confidence: sure
   reason: 'Material the user already has. No framework writes it. Sure: this is the user''s own material.'
-- id: zone-of-genius/80-20-audit-results
-  framework: zone-of-genius
-  doc: 80/20 audit results
-  kind: helpful
-  from: 80-20-audit
-  confidence: guess
-  reason: The 80/20 Audit ends with the positive 20 percent of a person's work and life. Zone of Genius could start from that list, but the audit never says so.
 - id: declutter-and-focus/chart-type-choice
   framework: declutter-and-focus
   doc: chart type choice
