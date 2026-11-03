@@ -126,7 +126,7 @@ To add an advisor, run `/aligned:add-advisor`.
 
 ### Frameworks
 
-102 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy, psychology, leadership, startup, and positioning, followed by product design, growth, and sales. Browse them in `docs/framework-catalog.html`.
+102 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (19), leadership (12), psychology (12), startup (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
 
 Framework prompts are interactive scripts with hard WAIT points. Run them through `/aligned:use-framework`, one question at a time.
 

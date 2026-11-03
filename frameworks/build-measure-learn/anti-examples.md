@@ -16,9 +16,9 @@
 
 **Wrong:** "Sure. List every assumption you can think of, and we'll sort them by value and growth and pick the riskiest one."
 
-**Right:** "That sorting is what leap-of-faith-assumptions does, and it does it better than a quick list here. Run `/aligned:use-framework leap-of-faith-assumptions` first and bring the answer back. If you'd rather skip it, give me the one assumption that, if you're wrong about it, makes everything else wasted effort, and I'll take it as it is."
+**Right:** "That sorting is what leap-of-faith-assumptions does, and it does it better than a quick list here. Run `/aligned:use-framework leap-of-faith-assumptions` first. Then run `/aligned:use-framework build-measure-learn` again and paste the assumption at this step. This run ends here."
 
-> This framework takes the assumption from leap-of-faith-assumptions. It doesn't sort or rank assumptions itself.
+> This framework takes the assumption from leap-of-faith-assumptions. It doesn't sort or rank assumptions itself. Choosing (b) ends the run; the user comes back in a new run.
 
 ### Accepting vanity metrics as validation
 

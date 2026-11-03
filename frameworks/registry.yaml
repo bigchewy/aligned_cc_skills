@@ -63,6 +63,8 @@ frameworks:
   - prioritization
   - time-management
   - elimination
+  follow_on_frameworks:
+  - zone-of-genius
   helpful_documents:
   - business goals
   id: 80-20-audit

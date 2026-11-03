@@ -37,15 +37,17 @@ Before we talk about what to build, we need to talk about what you need to learn
 
 Finding the riskiest one is its own piece of work, and it's the leap-of-faith-assumptions framework. It sorts your assumptions by value and growth and picks the one everything else rests on. I don't redo that here. I take its answer.
 
-**Have you already run leap-of-faith-assumptions on this initiative? If yes, paste the riskiest assumption it produced.**
-
-If they have, confirm it back in one line: "So the assumption we're testing is [their assumption]. Right?" Then move on.
-
-If they haven't, recommend it: "Then run `/aligned:use-framework leap-of-faith-assumptions` first. It will find the assumption that matters most, and then we come back here and design the loop around it." Wait for them to choose whether to run it now.
-
-If they'd rather skip it, ask one question: **"What's the one assumption that, if you're wrong about it, makes everything else wasted effort?"** Take their answer as it is. Don't sort or rank their assumptions yourself.
+**What's the one assumption that, if you're wrong about it, makes everything else wasted effort? You have three ways to answer:**
+- **(a) You've run leap-of-faith-assumptions:** paste the riskiest assumption it gave you.
+- **(b) You haven't:** I recommend stopping here and running `/aligned:use-framework leap-of-faith-assumptions` first.
+- **(c) Or just tell me the one assumption** that, if wrong, wastes everything."
 
 WAIT for user response before continuing.
+
+After the user answers:
+
+- If (a) or (c): take their assumption as it is. Don't sort or rank their assumptions yourself. Restate it as a statement, not a question: "So the assumption we're testing is: [their assumption]." Do not add a confirming question at the end. Phase 3 starts in the next message.
+- If (b): end this run here. Do not produce or publish a deliverable. Tell the user: "Run `/aligned:use-framework leap-of-faith-assumptions` first. Then run `/aligned:use-framework build-measure-learn` again and paste the assumption at this step." The runner allows one framework per session, which is why the run ends here.
 
 ### PHASE 3: The Measurement
 

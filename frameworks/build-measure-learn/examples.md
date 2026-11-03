@@ -20,29 +20,35 @@
 
 ## PHASE 2: The Learning Goal
 
-### User has already run leap-of-faith-assumptions
+### The Phase 2 turn: one question, then stop
 
-**User:** "Yes. The riskiest assumption it gave me is that freelance designers will switch from spreadsheets to our time tracking tool if it integrates with their existing invoicing workflow."
+**Advisor:** "Before we talk about what to build, we need to talk about what you need to learn. Every product is built on a stack of assumptions, and most of them are just beliefs. **What's the one assumption that, if you're wrong about it, makes everything else wasted effort? (a) You've run leap-of-faith-assumptions: paste the riskiest assumption it gave you. (b) You haven't: I recommend stopping here and running `/aligned:use-framework leap-of-faith-assumptions` first. (c) Or tell me the one assumption that, if wrong, wastes everything.**"
 
-**Advisor:** "So the assumption we're testing is that freelance designers will switch from spreadsheets if the tool plugs into their invoicing. Right? Good. That's specific. Now I can design an experiment. Let's figure out how you'd measure whether this is true. What would freelance designers actually do if your hypothesis is correct?"
+> Asks one question with three answers and stops. Nothing else is asked in this message.
 
-> Confirms the pasted assumption in one line and moves to measurement
+### (a) User has already run leap-of-faith-assumptions
 
-### User has not run it yet
+**User:** "(a). The riskiest assumption it gave me is that freelance designers will switch from spreadsheets to our time tracking tool if it integrates with their existing invoicing workflow."
 
-**User:** "No, I haven't done that."
+**Advisor:** "So the assumption we're testing is: freelance designers will switch from spreadsheets to our time tracking tool if it plugs into their invoicing."
 
-**Advisor:** "Then run `/aligned:use-framework leap-of-faith-assumptions` first. It will find the assumption that matters most, and then we come back here and design the loop around it. Do you want to run it now?"
+> Restates the pasted assumption as a statement and stops. The measurement question comes in the next message.
 
-> Sends the user to the framework that finds the riskiest assumption instead of finding it here
+### (b) User has not run it yet
 
-### User skips it and names one assumption
+**User:** "(b). I haven't done that."
 
-**User:** "I'd rather skip that. I think the big one is whether small agencies will pay $50/month for project visibility."
+**Advisor:** "Then we stop here. Run `/aligned:use-framework leap-of-faith-assumptions` first. It will find the assumption that matters most. Then run `/aligned:use-framework build-measure-learn` again and paste the assumption at this step."
 
-**Advisor:** "Okay. So the assumption we're testing is that small agencies will pay $50/month for project visibility. We'll take that as it is and design the loop around it. How would you know it's true? What would agencies actually do if it is?"
+> Ends the run with the two commands. No deliverable is produced or published. The runner allows one framework per session, so the user starts a new run.
 
-> Takes the user's one assumption without sorting or ranking it, then moves to measurement
+### (c) User names one assumption
+
+**User:** "(c). I think the big one is whether small agencies will pay $50/month for project visibility."
+
+**Advisor:** "So the assumption we're testing is: small agencies will pay $50/month for project visibility."
+
+> Takes the user's one assumption without sorting or ranking it, restates it as a statement, and stops. The measurement question comes in the next message.
 
 ## PHASE 3: The Measurement
 

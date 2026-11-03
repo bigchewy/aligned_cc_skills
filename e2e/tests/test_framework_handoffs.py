@@ -29,6 +29,9 @@ def test_build_measure_learn_phase_2_takes_assumption_from_leap_of_faith():
     assert "/aligned:use-framework leap-of-faith-assumptions" in phase2
     assert "What's the riskiest assumption in your initiative right now?" not in text
     assert "WAIT for user response before continuing." in phase2
+    assert phase2.count("WAIT for user response before continuing.") == 1
+    assert "/aligned:use-framework build-measure-learn" in phase2
+    assert "Right?" not in phase2
 
 
 def test_build_measure_learn_lists_leap_of_faith_output_as_helpful_document():

@@ -74,6 +74,58 @@ def test_framework_readme_headline_count_matches_registry():
     assert str(n) in text.splitlines()[2], f"frameworks/README.md headline must show {n} frameworks"
 
 
+def _registry_category_counts():
+    from collections import Counter
+
+    with open(REPO / "frameworks" / "registry.yaml") as f:
+        entries = yaml.safe_load(f)["frameworks"]
+    return Counter(e["category"] for e in entries)
+
+
+def test_framework_readme_category_table_matches_registry():
+    import re
+
+    counts = _registry_category_counts()
+    text = (REPO / "frameworks" / "README.md").read_text()
+    table = dict(
+        (m.group(1), int(m.group(2)))
+        for m in re.finditer(r"^\| ([a-z-]+) \| (\d+) \|$", text, re.M)
+    )
+    assert table == dict(counts), "frameworks/README.md category table must match registry categories"
+    assert f"across {len(counts)} categories" in text.splitlines()[2]
+
+
+def test_framework_readme_category_sections_match_registry():
+    import re
+
+    counts = _registry_category_counts()
+    text = (REPO / "frameworks" / "README.md").read_text()
+    sections = {
+        m.group(1).lower().replace(" ", "-"): int(m.group(2))
+        for m in re.finditer(r"^### ([A-Za-z ]+) \((\d+)\)$", text, re.M)
+    }
+    assert sections == dict(counts), "frameworks/README.md section headers must match registry categories"
+    assert _bullets_per_section(text) == dict(counts), "frameworks/README.md section lists must hold the registry's frameworks"
+
+
+def _bullets_per_section(text):
+    """Count '- **id**' bullets under each '### Title (n)' header."""
+    import re
+
+    result = {}
+    current = None
+    for line in text.splitlines():
+        m = re.match(r"^### ([A-Za-z ]+) \((\d+)\)$", line)
+        if m:
+            current = m.group(1).lower().replace(" ", "-")
+            result[current] = 0
+        elif current and line.startswith("- **"):
+            result[current] += 1
+        elif line.startswith("---"):
+            current = None
+    return result
+
+
 def test_readmes_drop_migrated_and_phantom_ids():
     adv = (REPO / "advisors" / "README.md").read_text()
     fw = (REPO / "frameworks" / "README.md").read_text()

@@ -1,31 +1,30 @@
 # Framework Registry
 
-102 frameworks across 23 categories
+102 frameworks across 22 categories
 
 | Category | Count |
 |----------|-------|
 | behavioral-design | 1 |
-| brand | 1 |
+| brand | 2 |
 | competitive-analysis | 1 |
 | content-strategy | 2 |
 | copywriting | 1 |
-| customer | 1 |
 | data-visualization | 3 |
 | developer-tooling | 1 |
 | evidence | 1 |
-| growth | 5 |
-| leadership | 9 |
+| growth | 3 |
+| leadership | 12 |
 | learning-design | 3 |
 | marketing | 2 |
 | operating-cadence | 2 |
-| positioning | 7 |
+| positioning | 6 |
 | pricing | 1 |
-| product-design | 6 |
+| product-design | 7 |
 | psychology | 12 |
-| sales | 5 |
+| sales | 8 |
 | security | 2 |
-| startup | 9 |
-| strategy | 24 |
+| startup | 10 |
+| strategy | 19 |
 | visual-identity | 3 |
 
 ## Quick Reference
@@ -35,7 +34,7 @@
 | 100-percent-responsibility | 100% Responsibility | diana-chapman | leadership | someone is blaming others or external circumstances for their situation and needs to reclaim agency |
 | 5-components-positioning | 5 Components of Positioning | april-dunford | positioning | a business needs to define or refine its market positioning from scratch using a structured methodology |
 | 6-step-process | 6-Step Process | coach-eric | strategy | someone wants a systematic process for setting goals, diagnosing problems, designing solutions, and executing with mindset alignment |
-| 80-20-audit | an 80/20 Audit | tim-ferriss | strategy | someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results |
+| 80-20-audit | an 80/20 Audit | tim-ferriss | leadership | someone feels overwhelmed or spread thin and needs to identify the vital few activities driving most of their results |
 | above-below-the-line | Above/Below the Line | diana-chapman | leadership | someone is reactive or defensive and needs to check whether they are operating from above or below the line |
 | believability-weighted-decision-making | Believability-Weighted Decision Making | ray-dalio | strategy | a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise |
 | braving-trust-inventory | BRAVING Trust Inventory | brene-brown | leadership | someone needs to assess the state of trust in a relationship or team using a structured framework |
@@ -68,24 +67,24 @@
 | performance-standards-by-level | Performance Standards by Level | ram-charan | leadership | a leader's performance doesn't match their level and they need to identify which leadership passage they are actually operating at |
 | personal-context-intake | Personal Context Intake | coach-eric | psychology | a new user needs an initial session to share their personal context, history, and goals before working with advisors |
 | personal-credo | Personal Credo | jim-loehr | psychology | someone needs to articulate a personal mission statement that reflects their deepest values and sense of purpose |
-| personal-resource-allocation | Personal Resource Allocation | clayton-christensen | strategy | someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions |
+| personal-resource-allocation | Personal Resource Allocation | clayton-christensen | leadership | someone's stated priorities don't match where they actually spend time and energy, revealing a gap between intentions and actions |
 | pillars-of-integrity | the Four Pillars of Integrity | jim-dethmer | leadership | someone feels fragmented or out of alignment and needs to identify where their integrity is broken |
 | pivot-or-persevere | Pivot or Persevere | eric-ries | startup | a startup has data from experiments and needs to decide whether to pivot to a new direction or persevere with the current one |
 | presence-check-in | a Presence Check-In | matt-chapman | psychology | someone is distracted or disconnected and needs to arrive fully in the present moment before starting deeper work |
-| product-market-fit-test | the Product-Market Fit Test | sean-ellis | growth | a startup needs to measure whether they have product-market fit before investing in scaling |
+| product-market-fit-test | the Product-Market Fit Test | sean-ellis | startup | a startup needs to measure whether they have product-market fit before investing in scaling |
 | professional-context-intake | Professional Context Intake | coach-eric | strategy | a new user needs an initial session to share their professional and business context before working with business advisors |
 | proximate-objectives | Proximate Objectives | richard-rumelt | strategy | someone has ambitious goals but no traction and needs to identify achievable near-term objectives that build momentum |
 | quadrinity | Quadrinity Process | jim-dethmer | psychology | someone needs to check in with all four aspects of self — physical, emotional, intellectual, and spiritual |
-| regret-minimization | Regret Minimization Framework | jeff-bezos | strategy | someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret |
+| regret-minimization | Regret Minimization Framework | jeff-bezos | leadership | someone faces a major irreversible life decision and needs to project to age 80 to evaluate which choice minimizes regret |
 | root-cause-analysis | Root Cause Analysis | coach-eric | strategy | something isn't working and the user needs to diagnose why before proposing fixes; the deliverable is a diagnostic document, not a brainstorm |
-| sales-pitch-structure | Sales Pitch Structure | april-dunford | positioning | someone has completed positioning work and needs to translate it into a compelling sales narrative |
-| smallest-viable-audience | Smallest Viable Audience | seth-godin | growth | someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve |
+| sales-pitch-structure | Sales Pitch Structure | april-dunford | sales | someone has completed positioning work and needs to translate it into a compelling sales narrative |
+| smallest-viable-audience | Smallest Viable Audience | seth-godin | positioning | someone is trying to appeal to everyone and needs to focus on the smallest group they can meaningfully serve |
 | storybrand-homepage | StoryBrand Homepage Wireframe | donald-miller | marketing | someone needs to build or rewrite a homepage that turns visitors into customers by following story structure |
 | strategic-narrative | Five-Element Strategic Narrative | andy-raskin | positioning | someone needs to build a sales deck or company narrative that opens with a shift in the world, not a product pitch |
 | stress-recovery-oscillation | Stress-Recovery Oscillation | jim-loehr | psychology | someone is running on fumes without recovery rituals and needs to design deliberate oscillation between stress and renewal |
 | teach-tailor-take-control | Teach-Tailor-Take Control (TTTC) | matt-dixon | sales | a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps |
 | the-algorithm | The Algorithm | elon-musk | strategy | someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach |
-| the-carousel | The Carousel | don-draper | positioning | someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible |
+| the-carousel | The Carousel | don-draper | brand | someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible |
 | the-story-so-far | The Story So Far | coach-eric | psychology | a user wants to reflect on their journey and progress with the Virtual Board over time |
 | type-1-type-2-decisions | Type 1 vs Type 2 Decisions | jeff-bezos | strategy | someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices |
 | value-metric | Value Metric Framework | patrick-campbell | pricing | someone needs to identify the right value metric for their pricing model — the unit of value customers pay for |
@@ -93,11 +92,11 @@
 | working-backwards | Working Backwards | jeff-bezos | strategy | a team needs to define a new product or feature by writing the press release first and working backwards to what must be built |
 | zone-of-genius | the Zone of Genius discovery process | coach-eric | psychology | someone wants to identify their zone of genius to align their work with their unique abilities and passions |
 | insane-honesty | Insane Honesty | doug-kessler | copywriting | writing B2B professional services copy — cold emails, thought leadership, landing pages, sales enablement — that needs to stand out from corporate noise |
-| bowtie-funnel | the Bowtie Funnel | jacco-van-der-kooij | strategy | a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math |
+| bowtie-funnel | the Bowtie Funnel | jacco-van-der-kooij | sales | a founder or revenue leader needs to diagnose where their recurring-revenue business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage conversion math |
 | 6-elements-sdr | the 6 Elements of the Sales Development Playbook | trish-bertuzzi | sales | a revenue leader needs to diagnose why their SDR / pipeline-generation function is underperforming — pipeline shortfall, rep churn, scale transition — and wants a structured walk through the six design elements before hiring more reps |
 | 5-gtm-motions-digital-health | the 5 GTM Motions for Digital Health | julie-yoo | sales | a digital health founder is selecting or refining their go-to-market motion, running multiple motions in parallel with unclear progress, or preparing for a fundraise and needs to commit to a single primary motion backed by matching product, evidence, buyer, and runway assumptions |
 | reverse-engineered-brand | Reverse-Engineered Brand | april-dunford | positioning | an organization is building its first canonical brand/ folder from a public URL and optional supplementary content |
-| buyer-persona | Buyer Persona | matt-dixon | customer | an organization needs to characterize a specific role on the buying committee (champion, mobilizer, blocker, approver) |
+| buyer-persona | Buyer Persona | matt-dixon | sales | an organization needs to characterize a specific role on the buying committee (champion, mobilizer, blocker, approver) |
 | messaging-distillation | Messaging Distillation | april-dunford | positioning | positioning and narrative are complete and the org needs copy-ready language for decks, pages, emails, and one-pagers |
 | brand-voice | Brand Voice | steve-krug | brand | an organization has existing copy and needs to extract a documented brand voice + terminology contract |
 | proof-points-audit | Proof Points Audit | michael-bolton | evidence | an organization needs to inventory and verify every quantitative or proof-shaped claim in its customer-facing copy |
@@ -109,7 +108,7 @@
 | psiu-role-fit | PSIU Role Fit | lex-sisney | leadership | a leader is about to hire or promote into a key seat, is deciding whether a struggling executive is the wrong person or in the wrong seat, or has a board and hiring manager who cannot agree on what a role requires |
 | lifecycle-strategy | Lifecycle Strategy | lex-sisney | strategy | a company is deciding whether to launch or spin out a second product, is building scale infrastructure for a product that may not have product-market fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow execution is a product, market, or company-stage problem |
 | blue-ocean-value-props | Blue Ocean Value Props | kim-mauborgne | strategy | a product looks like its competitors, buyers choose on price, the team keeps adding features without changing what buyers see, or someone needs to decide what an offering should stop doing as well as what it should do; also for a new offering that needs its value proposition set before positioning |
-| frame-shape-bet | Frame, Shape, Bet | ryan-singer | strategy | a team needs a product roadmap, has a draft roadmap or feature list with no sense of what fits, faces a launch or contract date that can't move, has made promises to customers that aren't on the calendar, or keeps letting projects run over |
+| frame-shape-bet | Frame, Shape, Bet | ryan-singer | product-design | a team needs a product roadmap, has a draft roadmap or feature list with no sense of what fits, faces a launch or contract date that can't move, has made promises to customers that aren't on the calendar, or keeps letting projects run over |
 | ten-steps-blueprint | Ten Steps Blueprint | paul-kirschner | learning-design | someone is designing a training, coaching, or learning program that runs over weeks or months and must change what people do at work; the draft is organized one topic per session, people pass the sessions but don't use the skill, support never fades, or an app or AI is expected to make it stick |
 | behavior-gap-diagnosis | Behavior Gap Diagnosis | julie-dirksen | learning-design | someone asks for a training or workshop, a program is popular but behavior between sessions does not change, people know what to do and still do not do it, or a team needs to decide whether a behavior problem calls for practice, an environment change, a leader going first, or motivation work instead of more content |
 | assigning-ai-roles | Assigning AI Roles | ethan-mollick | learning-design | someone is building an AI tutor, AI coach, role-play practice partner, or AI feedback tool for a course or program; an existing AI learning tool gets good ratings but behavior does not change; or a team needs to decide what the AI should and should not do for learners |
@@ -141,9 +140,10 @@
 
 - **3b-behavioral-design** — 3B Framework (Behavior, Barriers, Benefits) (kristen-berman)
 
-### Brand (1)
+### Brand (2)
 
 - **brand-voice** — Brand Voice (steve-krug)
+- **the-carousel** — The Carousel (don-draper)
 
 ### Competitive Analysis (1)
 
@@ -157,10 +157,6 @@
 ### Copywriting (1)
 
 - **insane-honesty** — Insane Honesty (doug-kessler)
-
-### Customer (1)
-
-- **buyer-persona** — Buyer Persona (matt-dixon)
 
 ### Data Visualization (3)
 
@@ -176,24 +172,25 @@
 
 - **proof-points-audit** — Proof Points Audit (michael-bolton)
 
-### Growth (5)
+### Growth (3)
 
 - **forever-promise** — the Forever Promise Framework (robbie-kellman-baxter)
 - **growth-hacking-process** — the Growth Hacking Process (sean-ellis)
 - **ice-prioritization** — ICE Prioritization (sean-ellis)
-- **product-market-fit-test** — the Product-Market Fit Test (sean-ellis)
-- **smallest-viable-audience** — Smallest Viable Audience (seth-godin)
 
-### Leadership (9)
+### Leadership (12)
 
 - **100-percent-responsibility** — 100% Responsibility (diana-chapman)
+- **80-20-audit** — an 80/20 Audit (tim-ferriss)
 - **above-below-the-line** — Above/Below the Line (diana-chapman)
 - **braving-trust-inventory** — BRAVING Trust Inventory (brene-brown)
 - **clearing-model** — The Clearing Model to resolve relationship tensions (diana-chapman)
 - **complex-contagion-rollout** — Complex Contagion Rollout (damon-centola)
 - **performance-standards-by-level** — Performance Standards by Level (ram-charan)
+- **personal-resource-allocation** — Personal Resource Allocation (clayton-christensen)
 - **pillars-of-integrity** — the Four Pillars of Integrity (jim-dethmer)
 - **psiu-role-fit** — PSIU Role Fit (lex-sisney)
+- **regret-minimization** — Regret Minimization Framework (jeff-bezos)
 - **rules-of-structure** — The Rules of Structure (lex-sisney)
 
 ### Learning Design (3)
@@ -209,27 +206,27 @@
 
 ### Operating Cadence (2)
 
-- **mochary-weekly-check-in** — The Weekly Check-In (matt-mochary)
 - **chj-operating-review** — Operating Review Design (claire-hughes-johnson)
+- **mochary-weekly-check-in** — The Weekly Check-In (matt-mochary)
 
-### Positioning (7)
+### Positioning (6)
 
 - **5-components-positioning** — 5 Components of Positioning (april-dunford)
 - **messaging-distillation** — Messaging Distillation (april-dunford)
 - **origin-story-interview** — Origin Story Interview (april-dunford)
 - **reverse-engineered-brand** — Reverse-Engineered Brand (april-dunford)
-- **sales-pitch-structure** — Sales Pitch Structure (april-dunford)
+- **smallest-viable-audience** — Smallest Viable Audience (seth-godin)
 - **strategic-narrative** — Five-Element Strategic Narrative (andy-raskin)
-- **the-carousel** — The Carousel (don-draper)
 
 ### Pricing (1)
 
 - **value-metric** — Value Metric Framework (patrick-campbell)
 
-### Product Design (6)
+### Product Design (7)
 
 - **breadboard-to-pages** — Breadboard to Pages (brad-frost)
 - **few-hiccupps-review** — FEW HICCUPPS Review (michael-bolton)
+- **frame-shape-bet** — Frame, Shape, Bet (ryan-singer)
 - **getting-real-cut** — Getting Real Cut (jason-fried)
 - **interface-inventory** — Interface Inventory (brad-frost)
 - **logic-check** — Logic Check (adham-dannaway)
@@ -250,12 +247,15 @@
 - **vulnerability-check** — Vulnerability Check (brene-brown)
 - **zone-of-genius** — the Zone of Genius discovery process (coach-eric)
 
-### Sales (5)
+### Sales (8)
 
 - **5-gtm-motions-digital-health** — the 5 GTM Motions for Digital Health (julie-yoo)
 - **6-elements-sdr** — the 6 Elements of the Sales Development Playbook (trish-bertuzzi)
+- **bowtie-funnel** — the Bowtie Funnel (jacco-van-der-kooij)
+- **buyer-persona** — Buyer Persona (matt-dixon)
 - **jolt-effect** — the JOLT Effect (matt-dixon)
 - **mobilizer-taxonomy** — the Mobilizer Taxonomy (matt-dixon)
+- **sales-pitch-structure** — Sales Pitch Structure (april-dunford)
 - **teach-tailor-take-control** — Teach-Tailor-Take Control (TTTC) (matt-dixon)
 
 ### Security (2)
@@ -263,7 +263,7 @@
 - **four-question-threat-model** — Four Question Threat Model (adam-shostack)
 - **phantom-b-llm-threats** — PHANTOM-B LLM Threats (adam-shostack)
 
-### Startup (9)
+### Startup (10)
 
 - **build-measure-learn** — Build-Measure-Learn (eric-ries)
 - **customer-problem-presentation** — Customer Problem Presentation (steve-blank)
@@ -274,29 +274,25 @@
 - **launch-bet** — Launch Bet (annie-duke)
 - **leap-of-faith-assumptions** — Leap of Faith Assumptions (eric-ries)
 - **pivot-or-persevere** — Pivot or Persevere (eric-ries)
+- **product-market-fit-test** — the Product-Market Fit Test (sean-ellis)
 
-### Strategy (24)
+### Strategy (19)
 
 - **6-step-process** — 6-Step Process (coach-eric)
-- **80-20-audit** — an 80/20 Audit (tim-ferriss)
 - **believability-weighted-decision-making** — Believability-Weighted Decision Making (ray-dalio)
 - **blue-ocean-value-props** — Blue Ocean Value Props (kim-mauborgne)
-- **bowtie-funnel** — the Bowtie Funnel (jacco-van-der-kooij)
 - **design-principles** — Design Principles (steve-jobs)
 - **finding-the-crux** — Finding the Crux (richard-rumelt)
 - **first-principles-thinking** — First Principles Thinking (elon-musk)
 - **focus-through-saying-no** — Focus Through Saying No (steve-jobs)
-- **frame-shape-bet** — Frame, Shape, Bet (ryan-singer)
 - **four-quadrant-focus** — Four-Quadrant Focus (steve-jobs)
 - **idiot-index** — the Idiot Index to identify cost reduction opportunities (elon-musk)
 - **jobs-to-be-done** — Jobs to Be Done (clayton-christensen)
 - **kernel-of-good-strategy** — building a complete strategy using the kernel (richard-rumelt)
 - **lifecycle-strategy** — Lifecycle Strategy (lex-sisney)
-- **personal-resource-allocation** — Personal Resource Allocation (clayton-christensen)
 - **professional-context-intake** — Professional Context Intake (coach-eric)
 - **proven-process** — Proven Process (gino-wickman)
 - **proximate-objectives** — Proximate Objectives (richard-rumelt)
-- **regret-minimization** — Regret Minimization Framework (jeff-bezos)
 - **root-cause-analysis** — Root Cause Analysis (coach-eric)
 - **the-algorithm** — The Algorithm (elon-musk)
 - **type-1-type-2-decisions** — Type 1 vs Type 2 Decisions (jeff-bezos)
