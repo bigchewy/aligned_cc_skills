@@ -1,6 +1,5 @@
 frameworks:
 - advisor: diana-chapman
-  category: leadership
   deliverable_type: decision
   domains:
   - accountability
@@ -13,7 +12,6 @@ frameworks:
   use_when: someone is blaming others or external circumstances for their situation
     and needs to reclaim agency
 - advisor: april-dunford
-  category: positioning
   default_critic_advisors:
   - april-dunford
   - steve-krug
@@ -46,7 +44,6 @@ frameworks:
   use_when: a business needs to define or refine its market positioning from scratch
     using a structured methodology
 - advisor: coach-eric
-  category: strategy
   deliverable_type: plan
   domains:
   - goal-setting
@@ -69,7 +66,6 @@ frameworks:
   use_when: someone wants a systematic process for setting goals, diagnosing problems,
     designing solutions, and executing with mindset alignment
 - advisor: tim-ferriss
-  category: leadership
   deliverable_type: analysis
   domains:
   - productivity
@@ -86,7 +82,6 @@ frameworks:
   use_when: someone feels overwhelmed or spread thin and needs to identify the vital
     few activities driving most of their results
 - advisor: diana-chapman
-  category: leadership
   deliverable_type: decision
   domains:
   - conscious-leadership
@@ -100,7 +95,6 @@ frameworks:
   use_when: someone is reactive or defensive and needs to check whether they are operating
     from above or below the line
 - advisor: ray-dalio
-  category: strategy
   deliverable_type: decision
   domains:
   - decision-making
@@ -114,7 +108,6 @@ frameworks:
   use_when: a team needs to make a high-stakes decision and wants to weight input
     by each person's track record and expertise
 - advisor: brene-brown
-  category: leadership
   deliverable_type: analysis
   domains:
   - trust
@@ -127,7 +120,6 @@ frameworks:
   use_when: someone needs to assess the state of trust in a relationship or team using
     a structured framework
 - advisor: eric-ries
-  category: startup
   default_critic_advisors:
   - eric-ries
   - paul-graham
@@ -154,7 +146,6 @@ frameworks:
   use_when: a team needs to design a rapid learning cycle for a product initiative
     to validate assumptions quickly
 - advisor: diana-chapman
-  category: leadership
   deliverable_type: plan
   domains:
   - conflict-resolution
@@ -168,7 +159,6 @@ frameworks:
   use_when: two people have unresolved tension and need a structured process to clear
     it without blame
 - advisor: joe-pulizzi
-  category: content-strategy
   default_critic_advisors:
   - joe-pulizzi
   deliverable_type: plan
@@ -190,7 +180,6 @@ frameworks:
   use_when: someone wants to build a business by establishing a content platform and
     audience before creating products
 - advisor: steve-jobs
-  category: strategy
   deliverable_type: content
   domains:
   - product-design
@@ -204,7 +193,6 @@ frameworks:
   use_when: someone needs guiding design principles for a product that prioritize
     simplicity, elegance, and user experience
 - advisor: paul-graham
-  category: startup
   deliverable_type: plan
   domains:
   - early-stage
@@ -226,7 +214,6 @@ frameworks:
   use_when: a founder is in the earliest stage and needs to identify the unscalable
     manual things they should be doing to get traction
 - advisor: steve-blank
-  category: startup
   deliverable_type: analysis
   domains:
   - customer-validation
@@ -251,7 +238,6 @@ frameworks:
   use_when: a startup needs to distinguish between customers who will actually pay
     versus those giving polite but uncommitted feedback
 - advisor: garry-tan
-  category: startup
   deliverable_type: analysis
   domains:
   - founder-mindset
@@ -273,7 +259,6 @@ frameworks:
   use_when: a founder needs to honestly assess whether they are genuinely committed
     to their startup or just performing the role
 - advisor: jim-loehr
-  category: psychology
   deliverable_type: analysis
   domains:
   - energy-management
@@ -287,7 +272,6 @@ frameworks:
   use_when: someone feels depleted or imbalanced and needs to assess which energy
     dimension — physical, emotional, mental, or spiritual — needs attention
 - advisor: tim-ferriss
-  category: psychology
   default_critic_advisors:
   - tim-ferriss
   - diana-chapman
@@ -305,7 +289,6 @@ frameworks:
   use_when: someone is paralyzed by fear about a decision and needs to systematically
     define, prevent, and repair the worst-case scenarios
 - advisor: richard-rumelt
-  category: strategy
   default_critic_advisors:
   - richard-rumelt
   - paul-graham
@@ -324,7 +307,6 @@ frameworks:
   use_when: someone faces a complex strategic situation and needs to identify the
     single most important challenge to address first
 - advisor: elon-musk
-  category: strategy
   deliverable_type: analysis
   domains:
   - problem-solving
@@ -338,7 +320,6 @@ frameworks:
   use_when: someone is stuck in conventional thinking and needs to decompose a problem
     to its fundamental truths to find novel solutions
 - advisor: steve-jobs
-  category: strategy
   deliverable_type: decision
   domains:
   - focus
@@ -355,7 +336,6 @@ frameworks:
   use_when: someone has too many projects or commitments and needs to ruthlessly cut
     to focus on what truly matters
 - advisor: robbie-kellman-baxter
-  category: growth
   default_critic_advisors:
   - robbie-kellman-baxter
   - april-dunford
@@ -382,7 +362,6 @@ frameworks:
   use_when: someone is building a subscription or membership business and needs to
     articulate the ongoing value commitment that keeps members
 - advisor: eric-ries
-  category: startup
   deliverable_type: analysis
   domains:
   - market-analysis
@@ -404,7 +383,6 @@ frameworks:
   use_when: a startup needs to identify whether they are entering an existing, resegmented,
     new, or clone market to set the right strategy
 - advisor: steve-jobs
-  category: strategy
   deliverable_type: analysis
   domains:
   - product-strategy
@@ -424,7 +402,6 @@ frameworks:
   use_when: someone has a bloated product line and needs a 2x2 grid to simplify down
     to the essential offerings
 - advisor: sean-ellis
-  category: growth
   default_critic_advisors:
   - sean-ellis
   - garry-tan
@@ -456,7 +433,6 @@ frameworks:
   use_when: a product team needs a repeatable process for generating, prioritizing,
     testing, and scaling growth experiments
 - advisor: sean-ellis
-  category: growth
   default_critic_advisors:
   - sean-ellis
   deliverable_type: decision
@@ -482,7 +458,6 @@ frameworks:
   use_when: a team has too many growth experiment ideas and needs a fast scoring system
     to pick the highest-impact ones
 - advisor: clayton-christensen
-  category: strategy
   deliverable_type: analysis
   domains:
   - customer-research
@@ -501,7 +476,6 @@ frameworks:
   use_when: someone needs to understand the underlying progress their customer is
     trying to make rather than focusing on product features
 - advisor: matt-dixon
-  category: sales
   deliverable_type: plan
   domains:
   - b2b-sales
@@ -531,7 +505,6 @@ frameworks:
     Lack of Information, or Outcome Uncertainty indecision and apply the matching
     remedy
 - advisor: matt-dixon
-  category: sales
   deliverable_type: analysis
   domains:
   - b2b-sales
@@ -562,7 +535,6 @@ frameworks:
     real consensus-builders from accessible-but-inert stakeholders, especially when
     a 'champion' feels responsive but the deal isn't advancing
 - advisor: richard-rumelt
-  category: strategy
   deliverable_type: plan
   domains:
   - strategic-planning
@@ -584,7 +556,6 @@ frameworks:
   use_when: someone's strategy is really just a list of goals and they need to build
     a real strategy with diagnosis, policy, and actions
 - advisor: eric-ries
-  category: startup
   deliverable_type: plan
   domains:
   - assumption-testing
@@ -608,7 +579,6 @@ frameworks:
   use_when: a startup needs to identify which untested assumptions are most critical
     to their business and design experiments to test them
 - advisor: brene-brown
-  category: psychology
   deliverable_type: plan
   domains:
   - values
@@ -621,7 +591,6 @@ frameworks:
   use_when: someone knows their values abstractly but struggles to live them consistently
     in daily decisions and behavior
 - advisor: april-dunford
-  category: positioning
   deliverable_type: content
   domains:
   - positioning
@@ -634,7 +603,6 @@ frameworks:
   use_when: someone needs to extract and articulate their origin story as a foundation
     for positioning and brand narrative
 - advisor: ray-dalio
-  category: psychology
   deliverable_type: plan
   domains:
   - resilience
@@ -648,7 +616,6 @@ frameworks:
   use_when: someone has experienced a painful failure and needs a structured way to
     extract lessons and turn it into growth
 - advisor: ram-charan
-  category: leadership
   deliverable_type: plan
   domains:
   - performance-management
@@ -665,7 +632,6 @@ frameworks:
   use_when: a leader's performance doesn't match their level and they need to identify
     which leadership passage they are actually operating at
 - advisor: jim-loehr
-  category: psychology
   deliverable_type: content
   domains:
   - mission-statement
@@ -678,7 +644,6 @@ frameworks:
   use_when: someone needs to articulate a personal mission statement that reflects
     their deepest values and sense of purpose
 - advisor: clayton-christensen
-  category: leadership
   deliverable_type: analysis
   domains:
   - resource-allocation
@@ -692,7 +657,6 @@ frameworks:
   use_when: someone's stated priorities don't match where they actually spend time
     and energy, revealing a gap between intentions and actions
 - advisor: jim-dethmer
-  category: leadership
   deliverable_type: analysis
   domains:
   - integrity
@@ -706,7 +670,6 @@ frameworks:
   use_when: someone feels fragmented or out of alignment and needs to identify where
     their integrity is broken
 - advisor: eric-ries
-  category: startup
   deliverable_type: decision
   domains:
   - pivot-decision
@@ -736,7 +699,6 @@ frameworks:
   use_when: a startup has data from experiments and needs to decide whether to pivot
     to a new direction or persevere with the current one
 - advisor: matt-chapman
-  category: psychology
   deliverable_type: analysis
   domains:
   - mindfulness
@@ -750,7 +712,6 @@ frameworks:
   use_when: someone is distracted or disconnected and needs to arrive fully in the
     present moment before starting deeper work
 - advisor: sean-ellis
-  category: startup
   deliverable_type: decision
   domains:
   - product-market-fit
@@ -775,7 +736,6 @@ frameworks:
   use_when: a startup needs to measure whether they have product-market fit before
     investing in scaling
 - advisor: richard-rumelt
-  category: strategy
   deliverable_type: plan
   domains:
   - goal-setting
@@ -793,7 +753,6 @@ frameworks:
   use_when: someone has ambitious goals but no traction and needs to identify achievable
     near-term objectives that build momentum
 - advisor: diana-chapman
-  category: psychology
   deliverable_type: analysis
   domains:
   - body-mind-integration
@@ -807,7 +766,6 @@ frameworks:
   use_when: someone needs to check in with all four aspects of self — physical, emotional,
     intellectual, and spiritual
 - advisor: jeff-bezos
-  category: leadership
   deliverable_type: decision
   domains:
   - decision-making
@@ -821,7 +779,6 @@ frameworks:
   use_when: someone faces a major irreversible life decision and needs to project
     to age 80 to evaluate which choice minimizes regret
 - advisor: coach-eric
-  category: strategy
   deliverable_type: analysis
   domains:
   - diagnosis
@@ -841,7 +798,6 @@ frameworks:
   use_when: something isn't working and the user needs to diagnose why before proposing
     fixes; the deliverable is a diagnostic document, not a brainstorm
 - advisor: april-dunford
-  category: sales
   deliverable_type: content
   domains:
   - sales-pitch
@@ -870,7 +826,6 @@ frameworks:
   use_when: someone has completed positioning work and needs to translate it into
     a compelling sales narrative
 - advisor: seth-godin
-  category: positioning
   deliverable_type: analysis
   domains:
   - audience-strategy
@@ -889,7 +844,6 @@ frameworks:
   use_when: someone is trying to appeal to everyone and needs to focus on the smallest
     group they can meaningfully serve
 - advisor: donald-miller
-  category: marketing
   deliverable_type: content
   domains:
   - homepage
@@ -913,7 +867,6 @@ frameworks:
   use_when: someone needs to build or rewrite a homepage that turns visitors into
     customers by following story structure
 - advisor: andy-raskin
-  category: positioning
   default_critic_advisors:
   - andy-raskin
   - joanna-wiebe
@@ -947,7 +900,6 @@ frameworks:
   use_when: someone needs to build a sales deck or company narrative that opens with
     a shift in the world, not a product pitch
 - advisor: jim-loehr
-  category: psychology
   deliverable_type: plan
   domains:
   - energy-management
@@ -960,7 +912,6 @@ frameworks:
   use_when: someone is running on fumes without recovery rituals and needs to design
     deliberate oscillation between stress and renewal
 - advisor: matt-dixon
-  category: sales
   deliverable_type: plan
   domains:
   - b2b-sales
@@ -997,7 +948,6 @@ frameworks:
     whether it's adapted to this buyer, and whether they have a plan for holding commercial
     ground around pricing and next steps
 - advisor: elon-musk
-  category: strategy
   deliverable_type: plan
   domains:
   - process-improvement
@@ -1011,7 +961,6 @@ frameworks:
   use_when: someone needs to dramatically improve a process or product using a systematic
     question-delete-simplify-accelerate-automate approach
 - advisor: don-draper
-  category: brand
   deliverable_type: content
   domains:
   - emotional-marketing
@@ -1026,7 +975,6 @@ frameworks:
   use_when: someone is selling features and benefits but hasn't found the emotional
     truth that makes their offering irresistible
 - advisor: jeff-bezos
-  category: strategy
   deliverable_type: decision
   domains:
   - decision-making
@@ -1040,7 +988,6 @@ frameworks:
   use_when: someone is applying the same heavyweight decision process to every decision
     and needs to distinguish reversible from irreversible choices
 - advisor: patrick-campbell
-  category: pricing
   deliverable_type: analysis
   domains:
   - pricing-strategy
@@ -1067,7 +1014,6 @@ frameworks:
   use_when: someone needs to identify the right value metric for their pricing model
     — the unit of value customers pay for
 - advisor: brene-brown
-  category: psychology
   deliverable_type: analysis
   domains:
   - vulnerability
@@ -1080,7 +1026,6 @@ frameworks:
   use_when: someone is avoiding vulnerability or armoring up and needs to explore
     what they are protecting and what it costs
 - advisor: jeff-bezos
-  category: strategy
   deliverable_type: plan
   domains:
   - product-development
@@ -1097,7 +1042,6 @@ frameworks:
   use_when: a team needs to define a new product or feature by writing the press release
     first and working backwards to what must be built
 - advisor: coach-eric
-  category: psychology
   deliverable_type: analysis
   domains:
   - self-discovery
@@ -1114,7 +1058,6 @@ frameworks:
   use_when: someone wants to identify their zone of genius to align their work with
     their unique abilities and passions
 - advisor: doug-kessler
-  category: copywriting
   deliverable_type: content
   domains:
   - b2b-copywriting
@@ -1139,7 +1082,6 @@ frameworks:
   use_when: writing B2B professional services copy — cold emails, thought leadership,
     landing pages, sales enablement — that needs to stand out from corporate noise
 - advisor: jacco-van-der-kooij
-  category: sales
   deliverable_type: analysis
   domains:
   - revenue-architecture
@@ -1166,7 +1108,6 @@ frameworks:
     business is leaking — acquisition, onboarding, or expansion — using named stage-by-stage
     conversion math
 - advisor: trish-bertuzzi
-  category: sales
   deliverable_type: plan
   domains:
   - sales-development
@@ -1199,7 +1140,6 @@ frameworks:
     — and wants a structured walk through the six design elements before hiring more
     reps
 - advisor: julie-yoo
-  category: sales
   deliverable_type: plan
   domains:
   - digital-health
@@ -1236,7 +1176,6 @@ frameworks:
     fundraise and needs to commit to a single primary motion backed by matching product,
     evidence, buyer, and runway assumptions
 - advisor: april-dunford
-  category: positioning
   deliverable_type: analysis
   domains:
   - brand-folder
@@ -1271,7 +1210,6 @@ frameworks:
   use_when: an organization is building its first canonical brand/ folder from a public
     URL and optional supplementary content
 - advisor: matt-dixon
-  category: sales
   deliverable_type: analysis
   domains:
   - buyer-persona
@@ -1299,7 +1237,6 @@ frameworks:
   use_when: an organization needs to characterize a specific role on the buying committee
     (champion, mobilizer, blocker, approver)
 - advisor: april-dunford
-  category: positioning
   deliverable_type: content
   domains:
   - messaging
@@ -1326,7 +1263,6 @@ frameworks:
   use_when: positioning and narrative are complete and the org needs copy-ready language
     for decks, pages, emails, and one-pagers
 - advisor: steve-krug
-  category: brand
   deliverable_type: content
   domains:
   - voice
@@ -1355,7 +1291,6 @@ frameworks:
   use_when: an organization has existing copy and needs to extract a documented brand
     voice + terminology contract
 - advisor: michael-bolton
-  category: evidence
   deliverable_type: analysis
   domains:
   - proof-points
@@ -1386,7 +1321,6 @@ frameworks:
   use_when: an organization needs to inventory and verify every quantitative or proof-shaped
     claim in its customer-facing copy
 - advisor: april-dunford
-  category: competitive-analysis
   deliverable_type: content
   domains:
   - competitive-analysis
@@ -1416,7 +1350,6 @@ frameworks:
   use_when: positioning and messaging are complete and the org needs a salesperson's
     working battle card for the named competitors
 - advisor: kristen-berman
-  category: behavioral-design
   default_critic_advisors:
   - kristen-berman
   - the-architect
@@ -1447,7 +1380,6 @@ frameworks:
     and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit,
     or changing the target behavior itself
 - advisor: matt-mochary
-  category: operating-cadence
   deliverable_type: plan
   domains:
   - operating-cadence
@@ -1473,7 +1405,6 @@ frameworks:
     with no written record of commitments or decisions, or needs to establish a repeatable
     operating rhythm tied to OKRs
 - advisor: claire-hughes-johnson
-  category: operating-cadence
   deliverable_type: decision
   domains:
   - operating-cadence
@@ -1500,7 +1431,6 @@ frameworks:
     produce presentations but not decisions, or where decisions made in the meeting
     get relitigated because nothing was written down
 - advisor: lex-sisney
-  category: leadership
   default_critic_advisors:
   - lex-sisney
   - claire-hughes-johnson
@@ -1533,7 +1463,6 @@ frameworks:
     or has a founder who is still the bottleneck on decisions the structure should
     have taken off them
 - advisor: lex-sisney
-  category: leadership
   default_critic_advisors:
   - lex-sisney
   - matt-mochary
@@ -1559,7 +1488,6 @@ frameworks:
     a struggling executive is the wrong person or in the wrong seat, or has a board
     and hiring manager who cannot agree on what a role requires
 - advisor: lex-sisney
-  category: strategy
   default_critic_advisors:
   - lex-sisney
   - eric-ries
@@ -1586,7 +1514,6 @@ frameworks:
     fit yet, is mature and calm with nothing in pilot, or cannot tell whether slow
     execution is a product, market, or company-stage problem
 - advisor: kim-mauborgne
-  category: strategy
   default_critic_advisors:
   - kim-mauborgne
   - april-dunford
@@ -1619,7 +1546,6 @@ frameworks:
     what an offering should stop doing as well as what it should do; also for a new
     offering that needs its value proposition set before positioning
 - advisor: ryan-singer
-  category: product-design
   default_critic_advisors:
   - ryan-singer
   - richard-rumelt
@@ -1653,7 +1579,6 @@ frameworks:
     promises to customers that aren't on the calendar, or keeps letting projects run
     over
 - advisor: paul-kirschner
-  category: learning-design
   default_critic_advisors:
   - paul-kirschner
   deliverable_type: plan
@@ -1686,7 +1611,6 @@ frameworks:
     one topic per session, people pass the sessions but don't use the skill, support
     never fades, or an app or AI is expected to make it stick
 - advisor: julie-dirksen
-  category: learning-design
   default_critic_advisors:
   - julie-dirksen
   - kristen-berman
@@ -1718,7 +1642,6 @@ frameworks:
     or a team needs to decide whether a behavior problem calls for practice, an environment
     change, a leader going first, or motivation work instead of more content
 - advisor: ethan-mollick
-  category: learning-design
   default_critic_advisors:
   - ethan-mollick
   - kristen-berman
@@ -1751,7 +1674,6 @@ frameworks:
     good ratings but behavior does not change; or a team needs to decide what the
     AI should and should not do for learners
 - advisor: damon-centola
-  category: leadership
   default_critic_advisors:
   - damon-centola
   - lex-sisney
@@ -1789,7 +1711,6 @@ frameworks:
     one champion per team, or everyone at once; or a leader needs to decide which
     teams go first and in what order
 - advisor: boris-cherny
-  category: developer-tooling
   default_critic_advisors:
   - boris-cherny
   deliverable_type: plan
@@ -1821,7 +1742,6 @@ frameworks:
     that isn't preventing mistakes, approves the same commands over and over, or wants
     to know how the Claude Code team works today
 - advisor: gino-wickman
-  category: strategy
   default_critic_advisors:
   - gino-wickman
   deliverable_type: plan
@@ -1855,7 +1775,6 @@ frameworks:
     EOS, needs an assessment that scores a client before and after, or wants their
     method out of their own head so others can deliver it
 - advisor: steve-blank
-  category: startup
   deliverable_type: content
   domains:
   - customer-discovery
@@ -1882,7 +1801,6 @@ frameworks:
     pitch is settled, needs to test which problem a market cares about, wants a discovery
     deck rather than a sales deck, or has competing problem guesses to compare
 - advisor: jeff-patton
-  category: product-design
   default_critic_advisors:
   - jeff-patton
   - jason-fried
@@ -1914,7 +1832,6 @@ frameworks:
     team can't agree what the first release must include, or someone needs a story
     map built and agreed before any screens
 - advisor: brad-frost
-  category: product-design
   default_critic_advisors:
   - brad-frost
   - steve-krug
@@ -1949,7 +1866,6 @@ frameworks:
     system, screens were drawn with placeholder content or only the happy path, or
     someone needs each screen tied back to the place and action it comes from
 - advisor: brad-frost
-  category: product-design
   default_critic_advisors:
   - brad-frost
   - steve-krug
@@ -1980,7 +1896,6 @@ frameworks:
     or write design principles for an app that already exists, or the UI feels inconsistent
     and nobody can say where
 - advisor: adham-dannaway
-  category: product-design
   default_critic_advisors:
   - adham-dannaway
   - steve-krug
@@ -2010,7 +1925,6 @@ frameworks:
     screens are built from it, or text contrast, button hierarchy, or colour-only
     signals need checking
 - advisor: annie-duke
-  category: startup
   default_critic_advisors:
   - annie-duke
   - eric-ries
@@ -2044,7 +1958,6 @@ frameworks:
     the founder needs to judge the result and decide whether to keep going, change
     one thing, stop, or wait
 - advisor: jason-fried
-  category: product-design
   default_critic_advisors:
   - jason-fried
   - ryan-singer
@@ -2074,7 +1987,6 @@ frameworks:
     the build, a design keeps growing, settings or scale work are creeping in, or
     the founder can't say what the product can't live without
 - advisor: aleyda-solis
-  category: content-strategy
   default_critic_advisors:
   - aleyda-solis
   - joe-pulizzi
@@ -2101,7 +2013,6 @@ frameworks:
     that matters; a new site's pages aren't showing up; or someone wants backlinks
     before checking the page is indexed
 - advisor: aleyda-solis
-  category: marketing
   default_critic_advisors:
   - aleyda-solis
   - april-dunford
@@ -2131,7 +2042,6 @@ frameworks:
     Google AI answers; someone asks about GEO, AEO or LLMO; or a founder is about
     to try llms.txt, hidden prompts or other AI-visibility tricks before measuring
 - advisor: michael-bolton
-  category: product-design
   default_critic_advisors:
   - michael-bolton
   - the-architect
@@ -2163,7 +2073,6 @@ frameworks:
     a feature needs its edge cases and failure modes found before the build, or an
     existing screen feels wrong and nobody can say which expectation it breaks
 - advisor: adam-shostack
-  category: security
   default_critic_advisors:
   - adam-shostack
   - boris-cherny
@@ -2196,7 +2105,6 @@ frameworks:
     secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server,
     and nobody has asked what can go wrong before it ships
 - advisor: adam-shostack
-  category: security
   default_critic_advisors:
   - adam-shostack
   - boris-cherny
@@ -2228,7 +2136,6 @@ frameworks:
     or lets the model call tools, and nobody has asked what can go wrong with the
     model part
 - advisor: michael-bierut
-  category: visual-identity
   default_critic_advisors:
   - michael-bierut
   - steve-jobs
@@ -2261,7 +2168,6 @@ frameworks:
     or a pile of decoration, a team has several logo directions and can't pick, or
     a mark needs to work as an app icon, a favicon, and in print
 - advisor: michael-bierut
-  category: visual-identity
   default_critic_advisors:
   - michael-bierut
   - april-dunford
@@ -2296,7 +2202,6 @@ frameworks:
     whether it shares the parent's name and look, carries a small 'from' line, or
     stands alone; or two related products already look either too alike or unrelated
 - advisor: michael-bierut
-  category: visual-identity
   default_critic_advisors:
   - michael-bierut
   deliverable_type: analysis
@@ -2332,7 +2237,6 @@ frameworks:
     icon, in one color, or on a book spine; a new brand color has been picked on its
     own; or a team argues about a logo on taste
 - advisor: cole-nussbaumer-knaflic
-  category: data-visualization
   default_critic_advisors:
   - cole-nussbaumer-knaflic
   deliverable_type: decision
@@ -2365,7 +2269,6 @@ frameworks:
     a spaghetti graph of crossing lines), or a team argues about whether to use a
     pie
 - advisor: cole-nussbaumer-knaflic
-  category: data-visualization
   default_critic_advisors:
   - cole-nussbaumer-knaflic
   deliverable_type: content
@@ -2399,7 +2302,6 @@ frameworks:
     only say what the chart is ("Revenue by month"); or someone needs to say the point
     of their data before picking or cleaning up a chart
 - advisor: cole-nussbaumer-knaflic
-  category: data-visualization
   default_critic_advisors:
   - cole-nussbaumer-knaflic
   - steve-krug

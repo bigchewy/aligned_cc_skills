@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Generate interactive HTML catalogs for frameworks and advisors.
 
-Reads frameworks/registry.yaml and advisors/registry.yaml, embeds the data
+Reads frameworks/registry.yaml and advisors/registry.yaml (and, for frameworks,
+skills/playbook/layers.yaml to group them by layer and area), embeds the data
 into a shared template at scripts/catalog-template.html, and writes the
 output to docs/framework-catalog.html and docs/advisor-catalog.html.
 
@@ -17,6 +18,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_PATH = REPO_ROOT / "scripts" / "catalog-template.html"
+LAYERS_PATH = REPO_ROOT / "skills" / "playbook" / "layers.yaml"
 OUTPUTS = [
     {
         "title": "Framework Catalog",
@@ -31,6 +33,37 @@ OUTPUTS = [
         "output_path": REPO_ROOT / "docs" / "advisor-catalog.html",
     },
 ]
+
+
+def load_playbook() -> dict:
+    """Layers, areas and the holding list from skills/playbook/layers.yaml, for grouping frameworks."""
+    with LAYERS_PATH.open("r", encoding="utf-8") as fh:
+        data = yaml.safe_load(fh)
+    return {
+        "layers": [
+            {
+                "id": layer["id"],
+                "name": layer["name"],
+                "areas": [
+                    {"id": a["id"], "name": a["name"], "frameworks": list(a["frameworks"])}
+                    for a in layer["areas"]
+                ],
+            }
+            for layer in data["layers"]
+        ],
+        "holding": data.get("holding", []),
+    }
+
+
+def build_config(entity_type: str, registry: dict, generated_at: str) -> dict:
+    config = {
+        "entityType": entity_type,
+        "registry": registry,
+        "generatedAt": generated_at,
+    }
+    if entity_type == "framework":
+        config["playbook"] = load_playbook()
+    return config
 
 
 def main() -> int:
@@ -49,11 +82,7 @@ def main() -> int:
         with spec["registry_path"].open("r", encoding="utf-8") as fh:
             registry = yaml.safe_load(fh)
 
-        config = {
-            "entityType": spec["entity_type"],
-            "registry": registry,
-            "generatedAt": generated_at,
-        }
+        config = build_config(spec["entity_type"], registry, generated_at)
         config_json = json.dumps(config, ensure_ascii=False)
         # Defensive: escape any "</script>" sequences inside JSON so the
         # embedded <script type="application/json"> block stays well-formed.

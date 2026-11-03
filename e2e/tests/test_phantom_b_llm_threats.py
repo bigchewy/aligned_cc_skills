@@ -45,7 +45,9 @@ def test_registry_entry():
         e = {x["id"]: x for x in yaml.safe_load(f)["frameworks"]}["phantom-b-llm-threats"]
     assert e["advisor"] == "adam-shostack"
     assert e["name"] == "PHANTOM-B LLM Threats"
-    assert e["category"] == "security"
+    with open(REPO_ROOT / "skills" / "playbook" / "layers.yaml") as f:
+        areas = {a["id"]: a["frameworks"] for layer in yaml.safe_load(f)["layers"] for a in layer["areas"]}
+    assert "phantom-b-llm-threats" in areas["product"]
     assert e["deliverable_type"] == "analysis"
     assert "follow_on_frameworks" not in e
     with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:

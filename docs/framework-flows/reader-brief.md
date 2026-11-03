@@ -6,7 +6,7 @@ Goal of the overall pass: organize all 116 frameworks into a set of **flows** (c
 ## Your job
 For EACH framework id in your chunk file:
 1. Read `frameworks/<id>/prompt.md` in full (frontmatter + body). Skim examples.md only if the prompt is unclear.
-2. Read that framework's entry in `frameworks/registry.yaml` (fields: name, advisor, category, deliverable_type, domains, purpose, use_when, follow_on_frameworks, required_documents, helpful_documents, default_critic_advisors).
+2. Read that framework's entry in `frameworks/registry.yaml` (fields: name, advisor, deliverable_type, domains, purpose, use_when, follow_on_frameworks, required_documents, helpful_documents, default_critic_advisors).
 3. Record one JSON object (schema below). Judge from what the prompt actually makes the user do and produce.
 
 You may glance at other frameworks' registry entries (purpose/use_when) to name upstream/downstream/overlap ids — those ids must be real ids from registry.yaml.
@@ -45,7 +45,7 @@ strategy | positioning-messaging | brand-identity | content-seo | growth-marketi
 
 Rules:
 - Evidence over vibes. If the prompt names another framework or a document produced by one, that is a `requires` or `helps` edge. If you infer a logical edge, mark it `helps` and say why.
-- Report registry issues only when real (wrong category, purpose that doesn't match the body, follow_on that points somewhere illogical, missing obvious required doc, wrong deliverable_type). Empty list is fine.
+- Report registry issues only when real (purpose that doesn't match the body, follow_on that points somewhere illogical, missing obvious required doc, wrong deliverable_type). Empty list is fine.
 - Keep strings short. No prose outside the JSON.
 - Do NOT edit any repo files.
 

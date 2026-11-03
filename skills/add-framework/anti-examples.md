@@ -20,13 +20,6 @@ specific to just this one repo."
 Right: a framework for one product goes in that project's `frameworks/`. And it has to be the
 expert's own method (see above).
 
-## A category made up without asking
-
-Wrong: one run created a new `visual-identity` category, and another picked `startup` for a deck
-framework. Neither asked the user.
-
-Right: pick an existing category from the registry. A new one needs the user's yes.
-
 ## README counts missed
 
 Wrong: a run updated the counts in `README.md` and the two manifests, but not

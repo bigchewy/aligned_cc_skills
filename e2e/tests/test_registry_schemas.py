@@ -9,7 +9,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 ADVISOR_REQUIRED_FIELDS = {"id", "name", "summary", "prompt", "domains"}
-FRAMEWORK_REQUIRED_FIELDS = {"id", "name", "advisor", "purpose", "category", "domains", "use_when"}
+FRAMEWORK_REQUIRED_FIELDS = {"id", "name", "advisor", "purpose", "domains", "use_when"}
 
 
 def _load_outliers():
@@ -215,6 +215,13 @@ class TestFrameworkRegistrySchema:
         assert not have, f"document links replaced follow_on_frameworks; still on: {have}"
 
 
+    def test_no_entry_has_category(self):
+        with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
+            data = yaml.safe_load(f)
+        have = [e["id"] for e in data["frameworks"] if "category" in e]
+        assert not have, f"layers and areas in layers.yaml replaced category; still on: {have}"
+
+
 class TestLocalAdvisorRegistrySchema:
     """A project-local advisor registry must satisfy the same required-fields schema,
     with prompt paths resolved against its OWN root (not REPO_ROOT)."""
@@ -286,6 +293,10 @@ class TestLocalFrameworkRegistrySchema:
             assert entry["advisor"] in ids, (
                 f"Local framework {entry['id']}: advisor {entry['advisor']} not in plugin or local advisors"
             )
+
+    def test_local_entries_have_no_category(self, registry):
+        have = [e["id"] for e in registry["frameworks"] if "category" in e]
+        assert not have, f"category was removed from the framework schema; still on: {have}"
 
 
 def test_deliverable_type_frontmatter_matches_registry():

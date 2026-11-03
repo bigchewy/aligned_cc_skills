@@ -63,7 +63,7 @@ On the filtered candidate set, apply these priority rules in order:
 | Hard exclusion | `not_for` | *(none)* |
 | Primary match | `best_for` | `use_when` |
 | Domain overlap | `domains` | `domains` |
-| Disambiguation | `evaluation_expertise`, `summary` | `purpose`, `category` |
+| Disambiguation | `evaluation_expertise`, `summary` | `purpose` |
 
 ### Priority rules
 
@@ -73,7 +73,7 @@ On the filtered candidate set, apply these priority rules in order:
 
 3. **Domain depth** — Among remaining entries, those with more domain tag overlap rank higher. Tiebreaker only.
 
-4. **Disambiguation** — When steps 2-3 produce a tie, use finer-grained fields (`evaluation_expertise`/`summary` for advisors, `purpose`/`category` for frameworks) for additional context.
+4. **Disambiguation** — When steps 2-3 produce a tie, use finer-grained fields (`evaluation_expertise`/`summary` for advisors, `purpose` for frameworks) for additional context.
 
 ## Multi-Entity Mode (entity type: `framework-or-advisor`)
 
@@ -85,7 +85,7 @@ When the calling skill passes entity type `framework-or-advisor`, run Stages 1-2
 |---|---|---|
 | Primary match | `use_when` | `best_for` |
 | Domain overlap | `domains` | `domains` |
-| Disambiguation | `purpose`, `category` | `evaluation_expertise`, `summary` |
+| Disambiguation | `purpose` | `evaluation_expertise`, `summary` |
 
 Each entry carries its entity type into the merged list (so the caller knows whether to dispatch the framework runner or the advisor runner).
 

@@ -22,8 +22,7 @@ framework folder and the registry path.
    `examples.md` appears in `sources.md` with a URL.
 5. **Place.** A framework for one product, brand or codebase is in the project repo, not the
    plugin.
-6. **Registry.** The registry parses as YAML. The entry's category already exists in the
-   registry, or the user approved a new one.
+6. **Registry.** The registry parses as YAML.
 7. **Eval.** If the repo has `e2e/run_evals.py`, a scenario exists and the run shows a score or
    a quoted error.
 8. **Counts.** Writing to the plugin: the counts in `README.md`, both manifests and

@@ -117,7 +117,6 @@ def test_proof_points_audit_moves_to_michael_bolton():
     assert "Claims" in prompt and "oracle" in prompt.lower()
     readme = (REPO_ROOT / "frameworks" / "README.md").read_text(encoding="utf-8")
     assert "| proof-points-audit | Proof Points Audit | michael-bolton |" in readme
-    assert "- **proof-points-audit** — Proof Points Audit (michael-bolton)" in readme
 
 
 def test_proof_points_audit_keeps_its_seven_phases_and_waits():

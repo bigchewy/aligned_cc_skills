@@ -184,7 +184,7 @@ framework and listing the rest as names is not done.
 When frameworks for the same advisor, or for advisors built together, hand off to each other,
 add a line in each `prompt.md` naming the other framework and when to switch to it.
 
-> **Critical:** The add-framework skill updates the framework registry as part of its registry-entry step (`<project-cwd>/frameworks/registry.yaml` in a project repo; create it if absent, with a one-line comment header and a `frameworks:` list key; the plugin's `frameworks/registry.yaml` when writing to the plugin itself). If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to that registry with id, name, advisor, purpose, category, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
+> **Critical:** The add-framework skill updates the framework registry as part of its registry-entry step (`<project-cwd>/frameworks/registry.yaml` in a project repo; create it if absent, with a one-line comment header and a `frameworks:` list key; the plugin's `frameworks/registry.yaml` when writing to the plugin itself). If you write the framework `prompt.md` directly instead of invoking the skill, you MUST also append an entry to that registry with id, name, advisor, purpose, domains, and use_when fields. A framework that exists on disk but not in the registry will have degraded discovery — use-framework falls back to filesystem glob but loses metadata-based matching and routing.
 
 ### 6. Create Eval Scenario
 
@@ -245,7 +245,7 @@ Count the actual advisors and frameworks in the plugin directory and update all 
    - `.claude-plugin/plugin.json` — `description` field
    - `.claude-plugin/marketplace.json` — `description` field
    - `advisors/README.md` — the count in the headline, and a row for the new advisor in Quick Reference
-   - `frameworks/README.md` — the count in the headline, and the category table, for each framework added
+   - `frameworks/README.md` — the count in the headline, and the layer and area tables, for each framework added
 
 The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
 

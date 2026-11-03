@@ -72,7 +72,6 @@ def merge_frameworks(plugin_root, project_root):
             "name": name or folder,
             "advisor": advisor or "",
             "purpose": "",
-            "category": "",
             "domains": [],
             "use_when": "",
         }
@@ -153,8 +152,9 @@ def test_resolver_documents_error_paths():
 
 def test_resolver_documents_return_contract():
     text = read(RESOLVER)
+    assert "`category`" not in read(RESOLVER)
     for field in [
-        "id", "name", "advisor", "purpose", "category", "domains", "use_when",
+        "id", "name", "advisor", "purpose", "domains", "use_when",
         "deliverable_type", "default_critic_advisors", "required_documents",
         "helpful_documents", "absolute_framework_dir", "absolute_prompt_path",
         "source", "registered",
@@ -252,11 +252,11 @@ def test_unregistered_folder_without_header_uses_folder_name():
     assert find_advisor(_merged_advisors(), entry["advisor"]) is None
 
 
-def test_unregistered_entries_have_empty_purpose_category_domains_use_when():
+def test_unregistered_entries_have_empty_purpose_domains_use_when():
     entries, _ = merge_frameworks(PLUGIN, FIXTURE)
     for fid in ["unregistered-local-framework", "no-header-local-framework"]:
         e = _by_id(entries)[fid]
-        assert e["purpose"] == "" and e["category"] == ""
+        assert e["purpose"] == "" and "category" not in e
         assert e["domains"] == [] and e["use_when"] == ""
 
 

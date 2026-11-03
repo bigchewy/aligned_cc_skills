@@ -206,7 +206,6 @@ Append one entry to the `frameworks` list in the registry file:
     name: "{framework-display-name}"
     advisor: {advisor-slug}
     purpose: "{purpose from first line of prompt.md}"
-    category: {category}
     domains: [{domains}]
     use_when: "{trigger phrase}"
     required_documents:            # omit if empty
@@ -220,7 +219,6 @@ Append one entry to the `frameworks` list in the registry file:
 Derive field values:
 - **id:** The framework's directory name (kebab-case slug)
 - **name, advisor, purpose:** Parsed from the first line of `prompt.md` (`You are {Advisor}, guiding someone through {Name} - {purpose}.`)
-- **category:** Pick an existing category from the registry's other entries. A new category needs the user's yes first: ask, naming the closest existing category and why it doesn't fit.
 - **domains:** 2-5 expertise tags, derived from the framework's content
 - **use_when:** Natural language trigger phrase for when to use this framework
 - **required_documents, helpful_documents:** From `prompt.md` YAML frontmatter; omit keys if lists are empty. The frontmatter keeps plain names; the registry writes each as `{doc, from}`, with `doc` the same name. `from` is the id of the framework that writes the document (a local id is allowed), a list of ids when more than one can, or `outside` when none does. If you can't tell which framework writes it, use `outside`.
@@ -256,7 +254,7 @@ Count the actual advisors and frameworks in the plugin directory and update all 
    - `README.md` — opening description, "How It Works" bullets, and Advisors section
    - `.claude-plugin/plugin.json` — `description` field
    - `.claude-plugin/marketplace.json` — `description` field
-   - `frameworks/README.md` — the count in the headline, and the category table
+   - `frameworks/README.md` — the count in the headline, and the layer and area tables
    - `advisors/README.md` — only if an advisor was added too
 
 The description pattern is: `"{N} advisor personas, {M} frameworks"`. Also update standalone references like `"{N} expert advisors"` and `"{N} advisor prompts"` in `README.md`.
@@ -287,7 +285,7 @@ Then report to the user in the template's shape. The report always ends with
 
 `anti-examples.md` shows each one with what to do instead. In short: phases invented for an
 expert who never wrote them, someone else's method voiced as the advisor's, a one-product
-framework put in the plugin, a category made up without asking, and the README counts missed.
+framework put in the plugin, and the README counts missed.
 
 ## Notes
 

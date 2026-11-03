@@ -43,7 +43,9 @@ def test_registry_entry():
         e = {x["id"]: x for x in yaml.safe_load(f)["frameworks"]}["why-my-page-doesnt-rank"]
     assert e["advisor"] == "aleyda-solis"
     assert e["name"] == "Why My Page Doesn't Rank"
-    assert e["category"] == "content-strategy"
+    with open(REPO_ROOT / "skills" / "playbook" / "layers.yaml") as f:
+        areas = {a["id"]: a["frameworks"] for layer in yaml.safe_load(f)["layers"] for a in layer["areas"]}
+    assert "why-my-page-doesnt-rank" in areas["marketing"]
     assert e["deliverable_type"] == "analysis"
     assert "follow_on_frameworks" not in e
     with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:

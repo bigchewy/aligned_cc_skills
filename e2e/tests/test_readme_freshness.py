@@ -78,56 +78,86 @@ def test_framework_readme_headline_count_matches_registry():
     assert str(n) in text.splitlines()[2], f"frameworks/README.md headline must show {n} frameworks"
 
 
-def _registry_category_counts():
-    from collections import Counter
+def _layers():
+    with open(REPO / "skills" / "playbook" / "layers.yaml") as f:
+        return yaml.safe_load(f)
 
+
+def _readme_sections(text):
+    """Map (layer name, area name) -> (count in header, ids in the table rows); 'held' -> same for Held."""
+    import re
+
+    ids = set()
     with open(REPO / "frameworks" / "registry.yaml") as f:
-        entries = yaml.safe_load(f)["frameworks"]
-    return Counter(e["category"] for e in entries)
-
-
-def test_framework_readme_category_table_matches_registry():
-    import re
-
-    counts = _registry_category_counts()
-    text = (REPO / "frameworks" / "README.md").read_text()
-    table = dict(
-        (m.group(1), int(m.group(2)))
-        for m in re.finditer(r"^\| ([a-z-]+) \| (\d+) \|$", text, re.M)
-    )
-    assert table == dict(counts), "frameworks/README.md category table must match registry categories"
-    assert f"across {len(counts)} categories" in text.splitlines()[2]
-
-
-def test_framework_readme_category_sections_match_registry():
-    import re
-
-    counts = _registry_category_counts()
-    text = (REPO / "frameworks" / "README.md").read_text()
-    sections = {
-        m.group(1).lower().replace(" ", "-"): int(m.group(2))
-        for m in re.finditer(r"^### ([A-Za-z ]+) \((\d+)\)$", text, re.M)
-    }
-    assert sections == dict(counts), "frameworks/README.md section headers must match registry categories"
-    assert _bullets_per_section(text) == dict(counts), "frameworks/README.md section lists must hold the registry's frameworks"
-
-
-def _bullets_per_section(text):
-    """Count '- **id**' bullets under each '### Title (n)' header."""
-    import re
-
+        ids = {e["id"] for e in yaml.safe_load(f)["frameworks"]}
     result = {}
-    current = None
+    layer = area = None
     for line in text.splitlines():
-        m = re.match(r"^### ([A-Za-z ]+) \((\d+)\)$", line)
+        m = re.match(r"^### (.+?)(?: \((\d+)\))?$", line)
         if m:
-            current = m.group(1).lower().replace(" ", "-")
-            result[current] = 0
-        elif current and line.startswith("- **"):
-            result[current] += 1
-        elif line.startswith("---"):
-            current = None
+            layer, area = m.group(1), None
+            if layer == "Held":
+                area = "held"
+                result[("held",)] = (int(m.group(2)), [])
+            continue
+        m = re.match(r"^#### (.+) \((\d+)\)$", line)
+        if m and layer:
+            area = m.group(1)
+            result[(layer, area)] = (int(m.group(2)), [])
+            continue
+        if line.startswith("---"):
+            layer = area = None
+            continue
+        m = re.match(r"^\| ([a-z0-9-]+) \|", line)
+        if m and area and m.group(1) in ids:
+            key = ("held",) if area == "held" else (layer, area)
+            result[key][1].append(m.group(1))
     return result
+
+
+def test_framework_readme_headline_counts_layers_and_areas():
+    data = _layers()
+    n_areas = sum(len(layer["areas"]) for layer in data["layers"])
+    text = (REPO / "frameworks" / "README.md").read_text()
+    headline = text.splitlines()[2]
+    assert f"across {len(data['layers'])} layers and {n_areas} areas" in headline
+    assert "| Category |" not in text and "## By Category" not in text, "README must not group by category"
+
+
+def test_framework_readme_groups_by_layer_and_area_in_layers_yaml_order():
+    data = _layers()
+    text = (REPO / "frameworks" / "README.md").read_text()
+    sections = _readme_sections(text)
+    expected = {}
+    for layer in data["layers"]:
+        for area in layer["areas"]:
+            expected[(layer["name"], area["name"])] = (len(area["frameworks"]), list(area["frameworks"]))
+    got = {k: v for k, v in sections.items() if k != ("held",)}
+    assert got == expected, "frameworks/README.md layer and area tables must match layers.yaml, in order"
+    order = [k for k in sections if k != ("held",)]
+    assert order == list(expected), "areas must appear in layers.yaml order"
+
+
+def test_framework_readme_lists_every_placed_framework():
+    data = _layers()
+    text = (REPO / "frameworks" / "README.md").read_text()
+    with open(REPO / "frameworks" / "registry.yaml") as f:
+        all_ids = {e["id"] for e in yaml.safe_load(f)["frameworks"]}
+    placed = {i for layer in data["layers"] for a in layer["areas"] for i in a["frameworks"]}
+    held = {h["id"] for h in data["holding"]}
+    sections = _readme_sections(text)
+    listed = {i for ids in (v[1] for k, v in sections.items() if k != ("held",)) for i in ids}
+    assert listed == placed
+    assert placed | held == all_ids
+
+
+def test_framework_readme_held_section_lists_the_holding_list():
+    data = _layers()
+    text = (REPO / "frameworks" / "README.md").read_text()
+    sections = _readme_sections(text)
+    count, ids = sections[("held",)]
+    assert ids == [h["id"] for h in data["holding"]]
+    assert count == len(ids)
 
 
 def test_readmes_drop_migrated_and_phantom_ids():

@@ -3,6 +3,8 @@
 // Run: node scripts/generate-framework-registry.mjs [--pass1-only]
 // Output is always a draft — review, then rename to registry.yaml.
 // Requires: ANTHROPIC_API_KEY environment variable (for Pass 2 LLM classification)
+// Document lists are written as {doc, from}. `from` is carried over from the current
+// frameworks/registry.yaml when the framework id and the document name both match; otherwise `outside`.
 
 import fs from 'fs';
 import path from 'path';
@@ -11,6 +13,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
 const FRAMEWORKS_DIR = path.join(REPO_ROOT, 'frameworks');
+const REGISTRY_PATH = path.join(REPO_ROOT, 'frameworks', 'registry.yaml');
 const DRAFT_PATH = path.join(REPO_ROOT, 'frameworks', 'registry.draft.yaml');
 const PASS1_DRAFT_PATH = path.join(REPO_ROOT, 'frameworks', 'registry.draft.pass1.yaml');
 const BATCH_SIZE = 10;
@@ -22,15 +25,13 @@ const OUTLIER_MAP = JSON.parse(
   fs.readFileSync(path.join(REPO_ROOT, 'frameworks', '_outliers.json'), 'utf8')
 ).outliers;
 
-// Starter categories to guide LLM classification (free-form, not enforced as enum)
-const STARTER_CATEGORIES = [
-  'positioning', 'startup', 'content-strategy', 'social-media', 'pricing',
-  'growth', 'podcasting', 'negotiation', 'leadership', 'strategy',
-  'psychology', 'health-autonomic', 'health-movement', 'health-fitness',
-  'conversion', 'onboarding',
-];
+// A frontmatter name may be wrapped in single or double quotes. Return it without them.
+function stripQuotes(s) {
+  const m = s.match(/^(['"])(.*)\1$/);
+  return m ? m[2] : s;
+}
 
-function parseFrontmatter(content) {
+export function parseFrontmatter(content) {
   const lines = content.split('\n');
   if (lines[0].trim() !== '---') return { frontmatter: {}, body: content };
   let endIdx = -1;
@@ -47,12 +48,12 @@ function parseFrontmatter(content) {
   const helpEmpty = fmLines.match(/helpful_documents:\s*\[\s*\]/);
 
   if (reqMatch) {
-    fm.required_documents = reqMatch[1].trim().split('\n').map(l => l.replace(/^\s*-\s*/, '').trim()).filter(Boolean);
+    fm.required_documents = reqMatch[1].trim().split('\n').map(l => stripQuotes(l.replace(/^\s*-\s*/, '').trim())).filter(Boolean);
   } else if (reqEmpty) {
     fm.required_documents = [];
   }
   if (helpMatch) {
-    fm.helpful_documents = helpMatch[1].trim().split('\n').map(l => l.replace(/^\s*-\s*/, '').trim()).filter(Boolean);
+    fm.helpful_documents = helpMatch[1].trim().split('\n').map(l => stripQuotes(l.replace(/^\s*-\s*/, '').trim())).filter(Boolean);
   } else if (helpEmpty) {
     fm.helpful_documents = [];
   }
@@ -129,7 +130,6 @@ function pass1() {
     }
 
     // Placeholder fields for Pass 2 (LLM classification)
-    entry.category = 'NEEDS_CLASSIFICATION';
     entry.domains = [];
     entry.use_when = 'NEEDS_CLASSIFICATION';
 
@@ -143,7 +143,7 @@ function pass1() {
   return frameworks;
 }
 
-// Pass 2: LLM classification (category, domains, use_when)
+// Pass 2: LLM classification (domains, use_when)
 async function pass2(frameworks) {
   const Anthropic = (await import('@anthropic-ai/sdk')).default;
   const client = new Anthropic();
@@ -168,10 +168,9 @@ async function pass2(frameworks) {
       messages: [{
         role: 'user',
         content: `For each framework below, classify:\n` +
-          `1. "category" — one of: ${STARTER_CATEGORIES.join(', ')} (or suggest a new one if none fit)\n` +
-          `2. "domains" — 2-5 freeform tags describing expertise areas\n` +
-          `3. "use_when" — a natural language sentence describing WHEN to use this framework\n\n` +
-          `Output valid JSON array. Each element: {"id": "...", "category": "...", "domains": [...], "use_when": "..."}\n` +
+          `1. "domains" — 2-5 freeform tags describing expertise areas\n` +
+          `2. "use_when" — a natural language sentence describing WHEN to use this framework\n\n` +
+          `Output valid JSON array. Each element: {"id": "...", "domains": [...], "use_when": "..."}\n` +
           `No markdown fencing. Just the JSON array.\n\n` +
           batchInput
       }]
@@ -184,7 +183,6 @@ async function pass2(frameworks) {
       for (const result of results) {
         const fw = batch.find(f => f.id === result.id);
         if (fw) {
-          fw.category = result.category || 'uncategorized';
           fw.domains = result.domains || [];
           fw.use_when = result.use_when || '';
           enriched.push(fw);
@@ -194,7 +192,6 @@ async function pass2(frameworks) {
       for (const fw of batch) {
         if (!enriched.find(e => e.id === fw.id)) {
           console.warn(`  WARNING: LLM missed framework ${fw.id}, using fallback`);
-          fw.category = 'uncategorized';
           fw.domains = [];
           fw.use_when = '';
           enriched.push(fw);
@@ -203,7 +200,6 @@ async function pass2(frameworks) {
     } catch (e) {
       console.error(`  Failed to parse LLM response for batch ${batchNum}: ${e.message}`);
       for (const fw of batch) {
-        fw.category = 'uncategorized';
         fw.domains = [];
         fw.use_when = '';
         enriched.push(fw);
@@ -215,8 +211,94 @@ async function pass2(frameworks) {
   return enriched;
 }
 
+// Read the document mappings in a registry.yaml, keyed by framework id and document name.
+// Returns Map of `${id}\u0000${doc}` -> `from` (an id, a list of ids, or 'outside').
+// Reads the layout the registry is written in: two-space list items, folded scalars indented
+// six spaces, and `from` as a plain value or a block list.
+export function loadExistingFroms(text) {
+  const froms = new Map();
+  const unquote = s => {
+    s = s.trim();
+    if (s.length >= 2 && s.startsWith("'") && s.endsWith("'")) return s.slice(1, -1).replace(/''/g, "'");
+    if (s.length >= 2 && s.startsWith('"') && s.endsWith('"')) {
+      try { return JSON.parse(s); } catch (e) { return s.slice(1, -1); }
+    }
+    return s;
+  };
+
+  const readEntry = lines => {
+    let id = null;
+    for (const line of lines) {
+      const m = line.match(/^(?:- |  )id:\s*(\S+)\s*$/);
+      if (m) { id = unquote(m[1]); break; }
+    }
+    if (!id) return;
+
+    let inDocs = false;
+    let cur = null;
+    const finish = () => {
+      if (cur) froms.set(`${id}\u0000${unquote(cur.doc)}`, cur.from === null ? 'outside' : cur.from);
+      cur = null;
+    };
+    for (const line of lines) {
+      let m;
+      if ((m = line.match(/^  (?:required_documents|helpful_documents):\s*$/))) {
+        finish();
+        inDocs = true;
+      } else if (/^(?:- |  )[A-Za-z_]+:/.test(line)) {
+        finish();
+        inDocs = false;
+      } else if (inDocs && (m = line.match(/^  - doc:\s?(.*)$/))) {
+        finish();
+        cur = { doc: m[1], from: null, listing: false };
+      } else if (inDocs && cur && (m = line.match(/^    from:\s?(.*)$/))) {
+        const v = m[1].trim();
+        if (!v) {
+          cur.from = [];
+          cur.listing = true;
+        } else if (v.startsWith('[') && v.endsWith(']')) {
+          cur.from = v.slice(1, -1).split(',').map(s => unquote(s)).filter(Boolean);
+        } else {
+          cur.from = unquote(v);
+        }
+      } else if (inDocs && cur && cur.listing && (m = line.match(/^    - (.+)$/))) {
+        cur.from.push(unquote(m[1]));
+      } else if (inDocs && cur && cur.from === null && /^      \S/.test(line)) {
+        cur.doc += ' ' + line.trim();
+      }
+    }
+    finish();
+  };
+
+  let entry = [];
+  for (const line of text.split('\n')) {
+    if (line.startsWith('- ')) {
+      readEntry(entry);
+      entry = [];
+    }
+    entry.push(line);
+  }
+  readEntry(entry);
+  return froms;
+}
+
+// One document list as registry YAML: [{doc, from}], four-space key, six-space items.
+export function documentsYaml(key, docs, id, froms) {
+  let out = `    ${key}:\n`;
+  for (const d of docs) {
+    const from = froms.get(`${id}\u0000${d}`) ?? 'outside';
+    out += `      - doc: ${JSON.stringify(d)}\n`;
+    out += Array.isArray(from) ? `        from: [${from.join(', ')}]\n` : `        from: ${from}\n`;
+  }
+  return out;
+}
+
 // Pass 3: Merge and write YAML
 function pass3(frameworks, outputPath) {
+  const froms = fs.existsSync(REGISTRY_PATH)
+    ? loadExistingFroms(fs.readFileSync(REGISTRY_PATH, 'utf8'))
+    : new Map();
+
   // Remove internal fields
   const cleaned = frameworks.map(fw => {
     const { _content_excerpt, ...rest } = fw;
@@ -236,14 +318,13 @@ function pass3(frameworks, outputPath) {
     yaml += `    name: "${fw.name.replace(/"/g, '\\"')}"\n`;
     yaml += `    advisor: ${fw.advisor}\n`;
     yaml += `    purpose: "${fw.purpose.replace(/"/g, '\\"')}"\n`;
-    yaml += `    category: ${fw.category}\n`;
     yaml += `    domains: [${fw.domains.map(d => `"${d}"`).join(', ')}]\n`;
     yaml += `    use_when: "${fw.use_when.replace(/"/g, '\\"')}"\n`;
     if (fw.required_documents && fw.required_documents.length > 0) {
-      yaml += `    required_documents: [${fw.required_documents.map(d => `"${d}"`).join(', ')}]\n`;
+      yaml += documentsYaml('required_documents', fw.required_documents, fw.id, froms);
     }
     if (fw.helpful_documents && fw.helpful_documents.length > 0) {
-      yaml += `    helpful_documents: [${fw.helpful_documents.map(d => `"${d}"`).join(', ')}]\n`;
+      yaml += documentsYaml('helpful_documents', fw.helpful_documents, fw.id, froms);
     }
     yaml += '\n';
   }
@@ -252,23 +333,29 @@ function pass3(frameworks, outputPath) {
   console.log(`Pass 3: Wrote ${cleaned.length} frameworks to ${outputPath}`);
 }
 
-// Main
-const args = process.argv.slice(2);
-const pass1Only = args.includes('--pass1-only');
+// Main (skipped when another file imports this one, as the tests do)
+function main() {
+  const args = process.argv.slice(2);
+  const pass1Only = args.includes('--pass1-only');
 
-const frameworks = pass1();
+  const frameworks = pass1();
 
-if (pass1Only) {
-  console.log('\n--pass1-only: Skipping Pass 2 (LLM classification)');
-  pass3(frameworks, PASS1_DRAFT_PATH);
-  process.exit(0);
+  if (pass1Only) {
+    console.log('\n--pass1-only: Skipping Pass 2 (LLM classification)');
+    pass3(frameworks, PASS1_DRAFT_PATH);
+    process.exit(0);
+  }
+
+  pass2(frameworks).then(enriched => {
+    pass3(enriched, DRAFT_PATH);
+    console.log(`\nDraft written to ${DRAFT_PATH}`);
+    console.log('Review the draft, then rename to registry.yaml when satisfied.');
+  }).catch(e => {
+    console.error(`Build failed: ${e.message}`);
+    process.exit(1);
+  });
 }
 
-pass2(frameworks).then(enriched => {
-  pass3(enriched, DRAFT_PATH);
-  console.log(`\nDraft written to ${DRAFT_PATH}`);
-  console.log('Review the draft, then rename to registry.yaml when satisfied.');
-}).catch(e => {
-  console.error(`Build failed: ${e.message}`);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main();
+}

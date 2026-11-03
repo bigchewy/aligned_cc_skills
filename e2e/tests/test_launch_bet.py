@@ -43,7 +43,9 @@ def test_registry_entry():
         e = {x["id"]: x for x in yaml.safe_load(f)["frameworks"]}["launch-bet"]
     assert e["advisor"] == "annie-duke"
     assert e["name"] == "Launch Bet"
-    assert e["category"] == "startup"
+    with open(REPO_ROOT / "skills" / "playbook" / "layers.yaml") as f:
+        areas = {a["id"]: a["frameworks"] for layer in yaml.safe_load(f)["layers"] for a in layer["areas"]}
+    assert "launch-bet" in areas["pmf"]
     assert e["deliverable_type"] == "decision"
     assert "follow_on_frameworks" not in e
     with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:

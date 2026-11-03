@@ -47,7 +47,9 @@ def test_registry_entry():
         e = {x["id"]: x for x in yaml.safe_load(f)["frameworks"]}["few-hiccupps-review"]
     assert e["advisor"] == "michael-bolton"
     assert e["name"] == "FEW HICCUPPS Review"
-    assert e["category"] == "product-design"
+    with open(REPO_ROOT / "skills" / "playbook" / "layers.yaml") as f:
+        areas = {a["id"]: a["frameworks"] for layer in yaml.safe_load(f)["layers"] for a in layer["areas"]}
+    assert "few-hiccupps-review" in areas["product"]
     assert e["deliverable_type"] == "analysis"
     assert "michael-bolton" in e.get("default_critic_advisors", [])
 
@@ -55,7 +57,6 @@ def test_registry_entry():
 def test_readme_lists_the_framework():
     readme = _read(REPO_ROOT / "frameworks" / "README.md")
     assert "| few-hiccupps-review | FEW HICCUPPS Review | michael-bolton |" in readme
-    assert "- **few-hiccupps-review** — FEW HICCUPPS Review (michael-bolton)" in readme
 
 
 def test_prompt_opens_in_the_standard_form():

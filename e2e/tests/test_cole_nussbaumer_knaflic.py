@@ -167,7 +167,9 @@ def test_framework_registry_entry(fid):
     e = _framework_entries()[fid]
     assert e["advisor"] == "cole-nussbaumer-knaflic"
     assert e["name"] == name
-    assert e["category"] == "data-visualization"
+    with open(REPO_ROOT / "skills" / "playbook" / "layers.yaml") as f:
+        areas = {a["id"]: a["frameworks"] for layer in yaml.safe_load(f)["layers"] for a in layer["areas"]}
+    assert fid in areas["data"]
     assert e["deliverable_type"] == deliverable
     assert "cole-nussbaumer-knaflic" in e.get("default_critic_advisors", [])
 
@@ -176,8 +178,7 @@ def test_framework_registry_entry(fid):
 def test_framework_readme_lists_it(fid):
     name, _ = FRAMEWORKS[fid]
     readme = _read(REPO_ROOT / "frameworks" / "README.md")
-    assert f"| {fid} | {name} | cole-nussbaumer-knaflic | data-visualization |" in readme
-    assert f"- **{fid}** — {name} (cole-nussbaumer-knaflic)" in readme
+    assert f"| {fid} | {name} | cole-nussbaumer-knaflic |" in readme
 
 
 @pytest.mark.parametrize("fid", FRAMEWORKS)

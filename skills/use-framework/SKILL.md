@@ -16,7 +16,7 @@ Guide the user through a framework's phases interactively.
 
 **Step 1a: Resolve the merged framework set**
 
-Read `skills/_shared/resolve-framework-source.md` (plugin-relative path) and follow its procedure to obtain the merged framework set (plugin global + project-local, deduped, local-wins). Use the returned `frameworks` list as the listing source. Each entry carries `id`, `name`, `advisor`, `purpose`, `category`, `domains`, `use_when`, `absolute_framework_dir`, `source`, and `registered`.
+Read `skills/_shared/resolve-framework-source.md` (plugin-relative path) and follow its procedure to obtain the merged framework set (plugin global + project-local, deduped, local-wins). Use the returned `frameworks` list as the listing source. Each entry carries `id`, `name`, `advisor`, `purpose`, `domains`, `use_when`, `absolute_framework_dir`, `source`, and `registered`.
 
 > The resolver's own error paths already handle degradation (absent local registry → plugin-only result; malformed local YAML → degrade and warn). No additional fallback is needed here — a resolver file that cannot be read indicates a plugin installation failure, which is a distinct failure mode and not something `use-framework` should silently paper over.
 

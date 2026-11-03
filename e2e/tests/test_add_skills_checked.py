@@ -120,10 +120,10 @@ def test_add_framework_writes_sources_for_every_phase():
     assert "Added:" in text
 
 
-def test_add_framework_does_not_invent_categories():
-    text = read(FRAMEWORK / "SKILL.md").lower()
-    assert "existing category" in text
-    assert "new category" in text
+def test_add_framework_does_not_write_a_category():
+    for name in ["SKILL.md", "anti-examples.md", "report-template.md"]:
+        text = read(FRAMEWORK / name).lower()
+        assert "category" not in text, f"{name} still mentions category"
 
 
 def test_add_framework_check_tests_the_first_line_loads():

@@ -290,7 +290,7 @@
     <p class="subtitle" id="header-subtitle"></p>
     <div class="controls">
       <input id="search" type="text" placeholder="Search by id, name, or any field..." autocomplete="off">
-      <div class="filter-pills" id="category-pills"></div>
+      <div class="filter-pills" id="group-pills"></div>
     </div>
   </header>
 
@@ -338,13 +338,12 @@
         editable: [
           { key: "name", label: "Name", type: "input" },
           { key: "purpose", label: "Purpose", type: "textarea" },
-          { key: "category", label: "Category", type: "input" },
           { key: "domains", label: "Domains (comma-separated)", type: "array" },
           { key: "use_when", label: "Use when", type: "textarea" },
-          { key: "required_documents", label: "Required documents (comma-separated)", type: "array" },
-          { key: "helpful_documents", label: "Helpful documents (comma-separated)", type: "array" },
+          { key: "required_documents", label: "Required documents (comma-separated)", type: "docs" },
+          { key: "helpful_documents", label: "Helpful documents (comma-separated)", type: "docs" },
         ],
-        groupBy: "category",
+        grouped: true,
         summaryField: "purpose",
         secondaryBadge: "advisor",
       },
@@ -358,12 +357,34 @@
           { key: "best_for", label: "Best for", type: "textarea" },
           { key: "not_for", label: "Not for", type: "textarea" },
         ],
-        groupBy: null,
+        grouped: false,
         summaryField: "summary",
         secondaryBadge: null,
       },
     };
     const SCHEMA = SCHEMAS[ENTITY_TYPE];
+
+    // Frameworks are grouped by layer and area, read from skills/playbook/layers.yaml at build time.
+    // A framework in more than one area appears under each.
+    const NOT_PLACED = "(not placed)";
+    const GROUP_ORDER = [];
+    const GROUPS_OF = {};
+    if (SCHEMA.grouped && CONFIG.playbook) {
+      for (const layer of CONFIG.playbook.layers) {
+        for (const area of layer.areas) {
+          const label = `${layer.name} / ${area.name}`;
+          GROUP_ORDER.push(label);
+          for (const id of area.frameworks) (GROUPS_OF[id] = GROUPS_OF[id] || []).push(label);
+        }
+      }
+      if ((CONFIG.playbook.holding || []).length) {
+        GROUP_ORDER.push("Held");
+        for (const h of CONFIG.playbook.holding) (GROUPS_OF[h.id] = GROUPS_OF[h.id] || []).push("Held");
+      }
+    }
+    function groupsOf(entity) {
+      return GROUPS_OF[entity.id] || [NOT_PLACED];
+    }
 
     // ========== State management ==========
     function loadPending() {
@@ -478,19 +499,18 @@
       sub.textContent = `${total} entries · generated ${GENERATED_AT.slice(0, 10)}`;
     }
 
-    function renderCategoryPills() {
-      const container = document.getElementById("category-pills");
+    function renderGroupPills() {
+      const container = document.getElementById("group-pills");
       while (container.firstChild) container.removeChild(container.firstChild);
-      if (!SCHEMA.groupBy) {
+      if (!SCHEMA.grouped) {
         container.style.display = "none";
         return;
       }
       const counts = {};
       for (const e of ENTITIES) {
-        const cat = e[SCHEMA.groupBy] || "(uncategorized)";
-        counts[cat] = (counts[cat] || 0) + 1;
+        for (const cat of groupsOf(e)) counts[cat] = (counts[cat] || 0) + 1;
       }
-      const sorted = Object.keys(counts).sort();
+      const sorted = orderedGroups(Object.keys(counts));
       const allBtn = el("button", { class: "pill active", dataset: { cat: "__ALL__" } });
       allBtn.appendChild(document.createTextNode("All "));
       const allCount = el("span", { class: "count" }, String(ENTITIES.length));
@@ -508,17 +528,23 @@
         if (!target) return;
         document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
         target.classList.add("active");
-        currentFilter.category = target.dataset.cat;
+        currentFilter.group = target.dataset.cat;
         renderRows();
       });
     }
 
-    const currentFilter = { search: "", category: "__ALL__" };
+    // Layers.yaml order first, then anything else (such as "(not placed)") at the end.
+    function orderedGroups(names) {
+      const known = GROUP_ORDER.filter(g => names.includes(g));
+      const rest = names.filter(g => !GROUP_ORDER.includes(g)).sort();
+      return known.concat(rest);
+    }
+
+    const currentFilter = { search: "", group: "__ALL__" };
 
     function matchesFilter(entity) {
-      if (SCHEMA.groupBy && currentFilter.category !== "__ALL__") {
-        const cat = entity[SCHEMA.groupBy] || "(uncategorized)";
-        if (cat !== currentFilter.category) return false;
+      if (SCHEMA.grouped && currentFilter.group !== "__ALL__") {
+        if (!groupsOf(entity).includes(currentFilter.group)) return false;
       }
       if (currentFilter.search) {
         const q = currentFilter.search.toLowerCase();
@@ -526,7 +552,7 @@
           entity.id || "",
           entity.name || "",
           entity[SCHEMA.summaryField] || "",
-          entity[SCHEMA.groupBy] || "",
+          SCHEMA.grouped ? groupsOf(entity).join(" ") : "",
           (entity.domains || []).join(" "),
         ].join(" ").toLowerCase();
         if (!haystack.includes(q)) return false;
@@ -540,6 +566,19 @@
     }
     function stringToArray(s) {
       return s.split(",").map(x => x.trim()).filter(Boolean);
+    }
+
+    // Document lists hold plain names or {doc, from} mappings. The form shows names only.
+    function docName(d) {
+      return d && typeof d === "object" ? d.doc : d;
+    }
+    function docsToString(v) {
+      return Array.isArray(v) ? v.map(docName).join(", ") : (v || "");
+    }
+    // A name that was already in the list keeps its entry (and its "from"). A new name gets from: outside.
+    function stringToDocs(s, original) {
+      const existing = new Map((Array.isArray(original) ? original : []).map(d => [docName(d), d]));
+      return stringToArray(s).map(name => existing.has(name) ? existing.get(name) : { doc: name, from: "outside" });
     }
 
     function renderRow(entity) {
@@ -563,9 +602,8 @@
       const header = el("div", { class: "row-header" }, info);
 
       // Badges
-      if (SCHEMA.groupBy) {
-        const cat = getCurrentValue(entity, SCHEMA.groupBy) || "(uncategorized)";
-        header.appendChild(el("span", { class: "row-badge" }, cat));
+      if (SCHEMA.grouped) {
+        for (const cat of groupsOf(entity)) header.appendChild(el("span", { class: "row-badge" }, cat));
       }
       if (SCHEMA.secondaryBadge && entity[SCHEMA.secondaryBadge]) {
         header.appendChild(el("span", { class: "row-badge advisor" }, entity[SCHEMA.secondaryBadge]));
@@ -622,6 +660,9 @@
         } else if (cfg.type === "array") {
           inputEl = el("input", { type: "text" });
           inputEl.value = arrayToString(current);
+        } else if (cfg.type === "docs") {
+          inputEl = el("input", { type: "text" });
+          inputEl.value = docsToString(current);
         } else {
           inputEl = el("input", { type: "text" });
           inputEl.value = current == null ? "" : current;
@@ -630,6 +671,7 @@
         inputEl.addEventListener("input", () => {
           let newValue = inputEl.value;
           if (cfg.type === "array") newValue = stringToArray(newValue);
+          else if (cfg.type === "docs") newValue = stringToDocs(newValue, original);
           setUpdate(entity.id, cfg.key, original, newValue);
           row.classList.toggle("modified", isModified(entity));
           f.classList.toggle("modified", !!(pending.updates[entity.id] && cfg.key in (pending.updates[entity.id] || {})));
@@ -694,14 +736,15 @@
       }
       empty.style.display = "none";
 
-      if (SCHEMA.groupBy && currentFilter.category === "__ALL__") {
+      if (SCHEMA.grouped && currentFilter.group === "__ALL__") {
         const groups = {};
         for (const e of matches) {
-          const cat = e[SCHEMA.groupBy] || "(uncategorized)";
-          if (!groups[cat]) groups[cat] = [];
-          groups[cat].push(e);
+          for (const cat of groupsOf(e)) {
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(e);
+          }
         }
-        const sortedCats = Object.keys(groups).sort();
+        const sortedCats = orderedGroups(Object.keys(groups));
         for (const cat of sortedCats) {
           container.appendChild(el("h2", { class: "group-heading" }, `${cat} (${groups[cat].length})`));
           for (const entity of groups[cat]) container.appendChild(renderRow(entity));
@@ -789,7 +832,7 @@
 
     // Initial render
     renderHeader();
-    renderCategoryPills();
+    renderGroupPills();
     renderRows();
     updatePendingBar();
   </script>

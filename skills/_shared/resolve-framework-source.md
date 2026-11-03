@@ -26,7 +26,7 @@ the framework-side parallel of `skills/_shared/resolve-advisor-source.md`.
    `prompt.md` (skip any frontmatter); it follows the standard format
    `You are {Advisor}, guiding someone through {Framework} - {purpose}.` Take `advisor` and
    `name` from it. If the first line does not match that format, use the folder name as `name`
-   and leave `advisor` empty. Set `purpose`, `category`, `domains`, and `use_when` to empty.
+   and leave `advisor` empty. Set `purpose`, `domains`, and `use_when` to empty.
    If the folder name matches a plugin `id`, local still wins.
 
 4. **Compute the absolute paths for every entry.**
@@ -59,7 +59,7 @@ Return a single object. Callers couple to this shape — do not vary it.
 ```
 {
   frameworks: [
-    { id, name, advisor, purpose, category, domains, use_when,
+    { id, name, advisor, purpose, domains, use_when,
       deliverable_type?, default_critic_advisors?, required_documents?, helpful_documents?,
       absolute_framework_dir, absolute_prompt_path, source: "plugin" | "local",
       registered: true | false }
@@ -68,7 +68,7 @@ Return a single object. Callers couple to this shape — do not vary it.
 ```
 
 - A local registry entry MUST carry the full framework schema (`id`, `name`, `advisor`,
-  `purpose`, `category`, `domains`, `use_when`). The `?` fields are optional.
+  `purpose`, `domains`, `use_when`). The `?` fields are optional.
 - Unregistered local folders get `registered: false` and only the fields step 3 fills in.
 - Each `required_documents` and `helpful_documents` entry is either a plain name or a mapping
   `{doc, from}`. Pass entries through as written; readers use `doc` as the name. `from` is a
