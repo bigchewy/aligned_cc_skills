@@ -1198,3 +1198,163 @@ def test_row_layout_makes_room_for_a_tail_and_a_stack_together():
     assert out["tailTops"] == [0, 60, 120]
     assert out["items"][0]["solutionTops"] == [115]
     assert out["items"][0]["top"] == 65
+
+
+AUTOSAVER_RUNNER = r"""
+const logic = %(logic)s;
+const script = %(script)s;
+(new Function(logic))();
+const L = globalThis.MapLogic;
+const tick = () => new Promise(r => setImmediate(r));
+
+(async () => {
+  const pending = [];
+  const log = [];
+  let count = 0;
+  const write = async () => {
+    const n = ++count;
+    log.push('start' + n);
+    await new Promise(res => pending.push(res));
+    log.push('end' + n);
+    const outcome = script.outcomes[n - 1] || 'ok';
+    if (outcome === 'throw') throw new Error('boom');
+    if (outcome === 'fail') return { ok: false, reason: 'write-failed' };
+    return { ok: true };
+  };
+  const saver = L.createAutosaver(write);
+  const results = [];
+  const settleAll = async () => {
+    for (let i = 0; i < 50; i++) {
+      await tick();
+      while (pending.length) { pending.shift()(); await tick(); }
+    }
+  };
+  for (const step of script.steps) {
+    if (step === 'request') {
+      const slot = results.length;
+      results.push(null);
+      saver.request().then(r => { results[slot] = r; });
+    } else if (step === 'release') {
+      await tick();
+      if (pending.length) pending.shift()();
+    } else if (step === 'settle') {
+      await settleAll();
+    }
+    await tick();
+  }
+  await settleAll();
+  process.stdout.write(JSON.stringify({ writes: count, log, results }));
+})().catch(e => { process.stderr.write(String(e && e.stack || e)); process.exit(1); });
+"""
+
+
+def run_autosaver(script):
+    """script: {"outcomes": [...per write: ok|fail|throw], "steps": [request|release|settle]}.
+
+    Each write stays open until a release step (or the final settle) frees it.
+    """
+    program = AUTOSAVER_RUNNER % {
+        "logic": json.dumps(logic_source()),
+        "script": json.dumps(script),
+    }
+    proc = subprocess.run(
+        ["node", "-"], input=program, capture_output=True, text=True, cwd=REPO
+    )
+    assert proc.returncode == 0, proc.stderr
+    return json.loads(proc.stdout)
+
+
+SAVE_DOWNLOADS = "Save to Downloads"
+NOT_SAVING = "Changes aren't being saved yet."
+PAUSED = "Saving is paused."
+
+
+def status(**state):
+    full = {"picker": True, "connected": False, "remembered": False,
+            "dirty": False, "writing": False, "failed": False}
+    full.update(state)
+    return call("saveStatus", full)["result"]
+
+
+def test_save_status_table():
+    rows = [
+        (dict(picker=False, dirty=False), "", "", SAVE_DOWNLOADS),
+        (dict(picker=False, dirty=True), "Not saved yet.", "unsaved", SAVE_DOWNLOADS),
+        (dict(dirty=False), NOT_SAVING, "", "Turn on saving"),
+        (dict(dirty=True), NOT_SAVING, "unsaved", "Turn on saving"),
+        (dict(remembered=True, dirty=False), PAUSED, "", "Turn saving back on"),
+        (dict(remembered=True, dirty=True), PAUSED, "unsaved", "Turn saving back on"),
+        (dict(connected=True, dirty=False, writing=False, failed=False), "All changes saved", "saved", ""),
+        (dict(connected=True, dirty=True, writing=False, failed=False), "Saving...", "", ""),
+        (dict(connected=True, dirty=False, writing=True, failed=False), "Saving...", "", ""),
+        (dict(connected=True, dirty=True, writing=False, failed=True), "Not saved", "unsaved", ""),
+    ]
+    for state, text, tone, button in rows:
+        assert status(**state) == {"text": text, "tone": tone, "button": button}, state
+
+
+def test_handle_key_differs_by_folder():
+    a = call("handleKey", "/a/m-map.html", "id1")["result"]
+    b = call("handleKey", "/b/m-map.html", "id1")["result"]
+    c = call("handleKey", "/a/m-map.html", "id2")["result"]
+    assert a != b
+    assert a != c
+    assert a == call("handleKey", "/a/m-map.html", "id1")["result"]
+
+
+def test_connect_never_writes():
+    out = call("connectToHandle", "__HANDLE__", make_map(),
+               handle={"content": page(make_map())})
+    assert out["result"] == {"ok": True}
+    assert out["writes"] == 0
+    assert out["permissionMode"] == "readwrite"
+
+
+def test_connect_refusals():
+    src = page(make_map())
+    cases = [
+        ({"content": page(make_map(map_id="other"))}, "wrong-map"),
+        ({"content": "not a map at all"}, "not-a-map"),
+        ({"content": page(make_map(revision=9))}, "stale"),
+        ({"content": src, "permission": "denied"}, "permission"),
+        ({"content": src, "permission": "throw"}, "permission"),
+        ({"content": src, "getFileFails": True}, "unreadable"),
+    ]
+    for handle, reason in cases:
+        out = call("connectToHandle", "__HANDLE__", make_map(), handle=handle)
+        assert out["result"] == {"ok": False, "reason": reason}, handle
+        assert out["writes"] in (0, None)
+
+
+def test_autosaver_runs_one_write_at_a_time():
+    out = run_autosaver({"outcomes": [], "steps": ["request", "request", "request", "release"]})
+    assert out["writes"] == 2
+    assert out["log"] == ["start1", "end1", "start2", "end2"]
+
+
+def test_autosaver_writes_again_for_edits_made_during_a_write():
+    out = run_autosaver({"outcomes": [], "steps": ["request", "request"]})
+    assert out["writes"] == 2
+    assert out["results"] == [{"ok": True}, {"ok": True}]
+
+
+def test_autosaver_drops_the_queued_write_after_a_failure():
+    out = run_autosaver({"outcomes": ["fail"], "steps": ["request", "request"]})
+    assert out["writes"] == 1
+    assert out["results"][0]["ok"] is False
+
+
+def test_autosaver_retries_on_the_next_request_after_a_failure():
+    out = run_autosaver({"outcomes": ["fail", "ok"],
+                         "steps": ["request", "settle", "request", "settle"]})
+    assert out["writes"] == 2
+    assert out["results"][0]["ok"] is False
+    assert out["results"][1] == {"ok": True}
+
+
+def test_autosaver_reports_a_thrown_write_as_write_failed():
+    out = run_autosaver({"outcomes": ["throw", "ok"],
+                         "steps": ["request", "settle", "request", "settle"]})
+    assert out["results"][0] == {"ok": False, "reason": "write-failed"}
+    assert out["writes"] == 2
+    assert out["results"][1] == {"ok": True}

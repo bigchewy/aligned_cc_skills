@@ -777,7 +777,8 @@ footer {
     return { ok: true };
   }
 
-  async function saveToHandle(handle, sourceHtml, map) {
+  // Asks for write permission, reads the file and checks it is this map. Never writes.
+  async function openTarget(handle, map) {
     var granted;
     try {
       granted = await handle.requestPermission({ mode: 'readwrite' });
@@ -796,6 +797,74 @@ footer {
 
     var check = checkTarget(fileHtml, map);
     if (!check.ok) return check;
+    return { ok: true, fileHtml: fileHtml };
+  }
+
+  async function connectToHandle(handle, map) {
+    var opened = await openTarget(handle, map);
+    return opened.ok ? { ok: true } : opened;
+  }
+
+  function handleKey(pathname, mapId) {
+    return JSON.stringify([mapId, pathname]);
+  }
+
+  function saveStatus(s) {
+    if (!s.picker) {
+      return s.dirty
+        ? { text: 'Not saved yet.', tone: 'unsaved', button: 'Save to Downloads' }
+        : { text: '', tone: '', button: 'Save to Downloads' };
+    }
+    var tone = s.dirty ? 'unsaved' : '';
+    if (!s.connected) {
+      return s.remembered
+        ? { text: 'Saving is paused.', tone: tone, button: 'Turn saving back on' }
+        : { text: "Changes aren't being saved yet.", tone: tone, button: 'Turn on saving' };
+    }
+    if (s.failed) return { text: 'Not saved', tone: 'unsaved', button: '' };
+    if (s.writing || s.dirty) return { text: 'Saving...', tone: '', button: '' };
+    return { text: 'All changes saved', tone: 'saved', button: '' };
+  }
+
+  // One write at a time. Requests that arrive during a write share one follow-up write.
+  // A failed write drops the follow-up, and the next request tries again.
+  function createAutosaver(write) {
+    var running = false;
+    var queued = false;
+    var waiters = [];
+
+    async function run() {
+      running = true;
+      var last;
+      do {
+        queued = false;
+        try {
+          last = await write();
+        } catch (e) {
+          last = { ok: false, reason: 'write-failed' };
+        }
+        if (!last || !last.ok) queued = false;
+      } while (queued);
+      running = false;
+      var done = waiters;
+      waiters = [];
+      done.forEach(function (resolve) { resolve(last); });
+    }
+
+    return {
+      request: function () {
+        var promise = new Promise(function (resolve) { waiters.push(resolve); });
+        if (running) queued = true;
+        else run();
+        return promise;
+      }
+    };
+  }
+
+  async function saveToHandle(handle, sourceHtml, map) {
+    var opened = await openTarget(handle, map);
+    if (!opened.ok) return opened;
+    var fileHtml = opened.fileHtml;
 
     // Claude can move baseline in the file and leave revision alone, so the file's copy wins.
     var next = copy(map);
@@ -859,7 +928,11 @@ footer {
     replaceMapData: replaceMapData,
     copyHtml: copyHtml,
     checkTarget: checkTarget,
-    saveToHandle: saveToHandle
+    saveToHandle: saveToHandle,
+    connectToHandle: connectToHandle,
+    handleKey: handleKey,
+    saveStatus: saveStatus,
+    createAutosaver: createAutosaver
   };
 })();
 </script>
