@@ -56,7 +56,7 @@ One map holds one goal, and each map is one person's. You write it when the goal
   "map_id": "",
   "revision": 1,
   "person": "",
-  "goal": {"text": "", "from": "", "to": "", "by": ""},
+  "goal": {"text": ""},
   "obstacles": [
     {"id": "o1", "text": "", "whys": [""], "root_cause": "", "solution_ids": ["s1"], "solution_at": {"s1": "why:0"}}
   ],
@@ -118,7 +118,8 @@ If the documents point to a goal, ask this instead: propose the goal in one sent
 **WAIT until the goal is confirmed.** A goal they state themselves counts as confirmed.
 
 - If the goal comes in stages, like a funnel, they pick one stage. More than one stage means one run per stage, each with its own map.
-- "From" can stay unknown, and finding it becomes the first Execute item.
+- Write the answer as one sentence in `goal.text`, such as "80% in-office attendance by end of Q2, up from 40%".
+- "From" can stay unknown. Write "starting point not known yet" into the sentence, and finding it becomes the first Execute item.
 - If they can't put a number on it, take the goal without one.
 
 If you don't know their first name, ask for it now, because the map shows it, and **WAIT for their name.**
@@ -220,7 +221,7 @@ With a table on screen, ask which ratings are wrong.
 
 ## Step 5: Execute
 
-For each starred solution, one per turn, ask for the first move, a proposed owner, and what other people need to decide. If "from" is still unknown, the first Execute item is finding today's number, with no star. An Execute row needs a solution, so add one for it, tied to an obstacle that says today's number is unknown, and put its row first.
+For each starred solution, one per turn, ask for the first move, a proposed owner, and what other people need to decide. If the starting point isn't known, the first Execute item is finding today's number, with no star. An Execute row needs a solution, so add one for it, tied to an obstacle that says today's number is unknown, and put its row first.
 
 **WAIT for their answer.** If an edit left a solution untied, tie it before going on.
 

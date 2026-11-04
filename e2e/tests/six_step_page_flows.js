@@ -11,7 +11,7 @@ const pageSrc = /<script id="map-page">([\s\S]*?)<\/script>/.exec(HTML)[1];
 const SLOT = /(<script id="map-data" type="application\/json">)([\s\S]*?)(<\/script>)/;
 
 function mapHtml(rev, goal, id) {
-  const data = { map_id: id || 'm1', revision: rev, person: 'Pat', goal: { text: goal || 'g', from: '', to: '', by: '' },
+  const data = { map_id: id || 'm1', revision: rev, person: 'Pat', goal: { text: goal || 'g' },
     obstacles: [], solutions: [], key_actions: [], execute: [], feedback: { number: '', check_on: '', redraw_if: '' }, baseline: {} };
   return HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify(data) + c);
 }
@@ -324,7 +324,7 @@ const flows = {
     assert.equal(f.writes, 1); assert.equal(parse(f.html).obstacles[0].text, 'blocker');
   },
   async 'star wording shows in the solution editor'() {
-    const html = HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify({ map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g', from: '', to: '', by: '' },
+    const html = HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify({ map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g' },
       obstacles: [], solutions: [{ id: 's1', text: 'sol', star: true }], key_actions: [], execute: [], feedback: {}, baseline: {} }) + c);
     const p = page({ html }); await settle();
     p.openRef({ kind: 'solution', sid: 's1' });
@@ -523,6 +523,14 @@ const flows = {
     p.typeAndDone(''); await settle();
     assert.equal(parse(f.html).goal.text, 'two'); assert.deepEqual(parse(f.html).obstacles, []);
     assert.equal(p.status(), 'All changes saved');
+  },
+  async 'editing the goal writes one sentence and nothing else into the file'() {
+    const f = fakeHandle(mapHtml(1)); const p = page({ picker: f }); await settle();
+    p.clickSave(); await settle();
+    p.edit('80% in-office attendance by end of Q2, up from 40%'); await settle();
+    assert.deepEqual(parse(f.html).goal, { text: '80% in-office attendance by end of Q2, up from 40%' });
+    p.openGoal();
+    assert.equal(p.sandbox.document.getElementById('editor').querySelectorAll('[data-field]').length, 1);
   }
 };
 

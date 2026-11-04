@@ -106,7 +106,7 @@ def make_map(**over):
         "map_id": "m-1",
         "revision": 1,
         "person": "Pat",
-        "goal": {"text": "g", "from": "", "to": "", "by": ""},
+        "goal": {"text": "g"},
         "obstacles": [
             {"id": "o1", "text": "a", "whys": ["w1", "w2"], "root_cause": "", "solution_ids": ["s1", "s2"]},
             {"id": "o2", "text": "b", "whys": [], "root_cause": "", "solution_ids": ["s2"]},
@@ -467,8 +467,8 @@ def test_array_order_still_counts_as_a_change():
 
 def test_a_nested_baseline_field_is_still_content():
     # Only the top-level baseline is left out of the comparison.
-    saved = make_map(revision=2, goal={"text": "g", "from": "", "to": "", "by": "", "baseline": "40%"})
-    other = make_map(revision=2, goal={"text": "g", "from": "", "to": "", "by": "", "baseline": "50%"})
+    saved = make_map(revision=2, goal={"text": "g", "baseline": "40%"})
+    other = make_map(revision=2, goal={"text": "g", "baseline": "50%"})
     out = call("connectToHandle", "__HANDLE__", saved, json.dumps(saved), handle={"content": page(other)})
     assert out["result"] == {"ok": False, "reason": "stale"}
 
@@ -566,8 +566,8 @@ def test_set_item_text_for_each_kind():
     assert obstacle(m, "o1")["root_cause"] == "R"
 
 
-def test_set_goal_replaces_all_goal_fields():
-    goal = {"text": "t", "from": "", "to": "80%", "by": "Q2"}
+def test_set_goal_replaces_the_goal():
+    goal = {"text": "80% attendance by Q2, up from 40%"}
     assert call("setGoal", make_map(), goal)["result"]["goal"] == goal
 
 
@@ -708,38 +708,6 @@ def test_other_refusals_keep_the_move_message():
         assert call("copyMessage", path, reason)["result"] == move, reason
 
 
-def goal(**over):
-    base = {"text": "t", "from": "", "to": "", "by": ""}
-    base.update(over)
-    return base
-
-
-def test_goal_line_with_nothing_is_empty():
-    assert call("goalLine", goal())["result"] == ""
-
-
-def test_goal_line_with_only_by_reads_naturally():
-    assert call("goalLine", goal(by="March"))["result"] == "By March"
-
-
-def test_goal_line_with_every_part():
-    out = call("goalLine", goal(**{"from": "40%", "to": "80%", "by": "Q2"}))["result"]
-    assert out == "From 40% to 80% by Q2"
-
-
-def test_goal_line_says_from_is_unknown_only_when_there_is_a_target():
-    assert call("goalLine", goal(to="80%"))["result"] == "From: not known yet. To 80%"
-    assert call("goalLine", goal(to="80%", by="Q2"))["result"] == "From: not known yet. To 80% by Q2"
-
-
-def test_goal_line_with_from_and_no_target():
-    assert call("goalLine", goal(**{"from": "40%"}))["result"] == "From 40%"
-    assert call("goalLine", goal(**{"from": "40%", "by": "Q2"}))["result"] == "From 40%, by Q2"
-
-
-def test_goal_line_with_from_and_target_only():
-    assert call("goalLine", goal(**{"from": "40%", "to": "80%"}))["result"] == "From 40% to 80%"
-
 
 def test_map_problem_is_null_for_a_good_map():
     assert call("mapProblem", make_map())["result"] is None
@@ -771,7 +739,16 @@ def test_map_problem_refuses_a_revision_that_is_not_a_number():
 
 def test_map_problem_refuses_a_broken_goal():
     assert call("mapProblem", make_map(goal=None))["result"] == "The goal is missing."
-    assert call("mapProblem", make_map(goal={"text": "t"}))["result"] == "The goal is missing its from."
+    assert call("mapProblem", make_map(goal={}))["result"] == "The goal is missing its text."
+    assert call("mapProblem", make_map(goal={"text": 3}))["result"] == "The goal is missing its text."
+
+
+def test_map_with_only_goal_text_passes_the_shape_check():
+    assert call("mapProblem", make_map(goal={"text": "80% attendance by Q2, up from 40%"}))["result"] is None
+
+
+def test_the_logic_block_has_no_goal_line():
+    assert "goalLine" not in TEMPLATE.read_text()
 
 
 def test_map_problem_names_the_obstacle_missing_its_whys():

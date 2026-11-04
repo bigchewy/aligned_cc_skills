@@ -114,7 +114,6 @@ header {
   font-size: 21px;
   font-weight: 700;
 }
-.goal-line { display: block; margin-top: 8px; font-size: 16px; font-weight: 400; }
 .star { color: var(--star); margin-right: 4px; }
 .repeat { color: var(--muted); font-weight: 700; margin-left: 6px; white-space: nowrap; }
 .blank { color: var(--muted); font-weight: 400; font-style: italic; }
@@ -221,7 +220,7 @@ header {
 </style>
 </head>
 <body>
-<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":"","from":"","to":"","by":""},"obstacles":[],"solutions":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
+<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":""},"obstacles":[],"solutions":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
 <div id="data-problem" role="alert" hidden>
   <h1>This map can't be drawn.</h1>
   <p id="data-problem-reason"></p>
@@ -658,18 +657,6 @@ header {
     return reason === 'stale' ? staleCopyMessage(pathname) : moveCopyMessage(pathname);
   }
 
-  // "From: not known yet" only makes sense when there is a number to get to.
-  function goalLine(goal) {
-    var from = goal.from ? 'From ' + goal.from : '';
-    if (!goal.to) {
-      if (from && goal.by) return from + ', by ' + goal.by;
-      if (from) return from;
-      return goal.by ? 'By ' + goal.by : '';
-    }
-    var start = from ? from + ' to ' : 'From: not known yet. To ';
-    return start + goal.to + (goal.by ? ' by ' + goal.by : '');
-  }
-
   function isObject(value) {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
   }
@@ -722,10 +709,7 @@ header {
     if (!map.map_id || !isText(map.map_id)) return 'The map has no id.';
     if (typeof map.revision !== 'number') return 'The map has no revision number.';
     if (!isObject(map.goal)) return 'The goal is missing.';
-    var goalFields = ['text', 'from', 'to', 'by'];
-    for (var g = 0; g < goalFields.length; g += 1) {
-      if (!isText(map.goal[goalFields[g]])) return 'The goal is missing its ' + goalFields[g] + '.';
-    }
+    if (!isText(map.goal.text)) return 'The goal is missing its text.';
     for (var r = 0; r < ROW_RULES.length; r += 1) {
       var problem = rowsProblem(ROW_RULES[r], map[ROW_RULES[r].field]);
       if (problem) return problem;
@@ -940,7 +924,6 @@ header {
     shouldWarnOnClose: shouldWarnOnClose,
     moveCopyMessage: moveCopyMessage,
     copyMessage: copyMessage,
-    goalLine: goalLine,
     mapProblem: mapProblem,
     solutionsOn: solutionsOn,
     sideOf: sideOf,
@@ -1074,8 +1057,6 @@ header {
   function makeGoal() {
     var box = makeItem({ kind: 'goal' }, 'goal');
     fillText(box, map.goal.text, 'Click here to name the goal');
-    var line = L.goalLine(map.goal);
-    if (line) box.appendChild(make('span', 'goal-line', line));
     return box;
   }
 
@@ -1469,14 +1450,6 @@ header {
     return label;
   }
 
-  function goalInput(name, value) {
-    var input = make('input');
-    input.type = 'text';
-    input.value = value;
-    input.dataset.field = name;
-    return input;
-  }
-
   function actionButton(text, className, onClick) {
     var b = make('button', className, text);
     b.type = 'button';
@@ -1508,10 +1481,7 @@ header {
       return;
     }
     if (e.ref.kind === 'goal') {
-      var goal = {};
-      el.editor.querySelectorAll('[data-field]').forEach(function (input) {
-        goal[input.dataset.field] = input.value.trim();
-      });
+      var goal = { text: el.editor.querySelector('textarea').value.trim() };
       closeEditor();
       setMap(L.setGoal(map, goal));
       return;
@@ -1626,9 +1596,6 @@ header {
       text.dataset.field = 'text';
       first = text;
       el.editor.appendChild(labeled('Goal', text));
-      el.editor.appendChild(labeled('From', goalInput('from', map.goal.from)));
-      el.editor.appendChild(labeled('To', goalInput('to', map.goal.to)));
-      el.editor.appendChild(labeled('By', goalInput('by', map.goal.by)));
     } else if (ref.kind === 'missing') {
       el.editor.appendChild(make('p', 'note', 'This map points to a solution that is not in the file (' + ref.sid + ').'));
     } else {

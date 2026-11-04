@@ -316,10 +316,25 @@ def test_page_shows_a_message_when_the_data_cant_be_drawn():
     assert "return;" in guard
 
 
-def test_page_takes_its_goal_line_from_the_logic_block():
-    html = template()
-    assert "L.goalLine(map.goal)" in html
-    assert "function goalLine() {" not in html
+def test_goal_editor_has_one_box():
+    editor = whole_function("openEditor")
+    goal_branch = editor[editor.index("ref.kind === 'goal'"):editor.index("ref.kind === 'missing'")]
+    for label in ("'From'", "'To'", "'By'"):
+        assert label not in goal_branch
+    assert "goalInput" not in template()
+    assert "goal-line" not in template()
+
+
+def test_prompt_json_goal_has_only_text():
+    rules = section("## The map file")
+    assert '"goal": {"text": ""}' in rules
+    assert '"from": ""' not in rules
+
+
+def test_prompt_puts_the_goal_in_one_sentence():
+    goal = section("## Step 2: Goal")
+    assert "one sentence" in goal
+    assert "starting point not known yet" in goal
 
 
 def test_template_holds_no_escape_a_file_tool_could_decode():
