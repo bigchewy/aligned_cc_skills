@@ -246,6 +246,8 @@ For a project-local framework it asks only the document question, since the play
 
 ## Part 7: The link review page
 
+Done 2026-11-03: Eric reviewed the links, the answers are applied in the registry, and the review files and generator were deleted.
+
 Eric reviews the 226 drafted links on an editable page, not in YAML. (Eric, 2026-11-03.)
 
 - **What it shows.** Each link is one sentence: "Sales Pitch Structure needs *positioning statement*, written by 5 Components of Positioning (must have)." Under it is the builder's reason, then Approve, Reject and a notes box.

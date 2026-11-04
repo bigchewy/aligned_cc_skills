@@ -67,7 +67,6 @@ RETIRED_FOLLOW_ONS = [
     ("build-measure-learn", "pivot-or-persevere"),
     ("finding-the-crux", "kernel-of-good-strategy"),
     ("four-market-types", "earlyvangelists"),
-    ("four-market-types", "leap-of-faith-assumptions"),
     ("ice-prioritization", "growth-hacking-process"),
     ("mobilizer-taxonomy", "teach-tailor-take-control"),
     ("origin-story-interview", "5-components-positioning"),

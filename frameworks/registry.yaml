@@ -443,9 +443,7 @@ frameworks:
   - decision-making
   helpful_documents:
   - doc: business goals
-    from:
-    - proximate-objectives
-    - growth-hacking-process
+    from: outside
   id: ice-prioritization
   name: ICE Prioritization
   purpose: a simple but ruthless scoring system to prioritize growth experiments.
@@ -568,7 +566,7 @@ frameworks:
   - doc: customer research
     from: outside
   - doc: market type diagnosis
-    from: four-market-types
+    from: outside
   id: leap-of-faith-assumptions
   name: Leap of Faith Assumptions
   purpose: identifying and testing the riskiest assumptions underlying a business
@@ -678,7 +676,7 @@ frameworks:
   - lean-startup
   helpful_documents:
   - doc: product description
-    from: outside
+    from: 5-components-positioning
   - doc: customer research
     from: outside
   - doc: business metrics
@@ -1557,9 +1555,7 @@ frameworks:
   - fixed-deadlines
   helpful_documents:
   - doc: the current roadmap, backlog, or list of planned features
-    from:
-    - getting-real-cut
-    - user-story-map
+    from: outside
   - doc: the company strategy, or the diagnosis and guiding policy if one exists
     from: kernel-of-good-strategy
   - doc: any dates that can't move (launches, events, contract dates) and what happens
@@ -1784,11 +1780,9 @@ frameworks:
   - doc: business plan or positioning draft
     from: 5-components-positioning
   - doc: list of people to talk to
-    from: earlyvangelists
+    from: outside
   - doc: existing pitch deck
-    from:
-    - sales-pitch-structure
-    - strategic-narrative
+    from: outside
   id: customer-problem-presentation
   name: Customer Problem Presentation
   purpose: building a short presentation of the problems they think a customer has,
@@ -1917,9 +1911,7 @@ frameworks:
   required_documents:
   - doc: a design-principles.md, or an existing screen as a URL, a running dev server,
       code, or a screenshot
-    from:
-    - design-principles
-    - breadboard-to-pages
+    from: outside
   use_when: a screen looks amateur and nobody can say why, an AI agent keeps picking
     colours, sizes, or weights by feel, a design principles file needs checking before
     screens are built from it, or text contrast, button hierarchy, or colour-only
@@ -1936,9 +1928,7 @@ frameworks:
   - small-samples
   helpful_documents:
   - doc: a short brief of what is launching and for whom
-    from:
-    - getting-real-cut
-    - working-backwards
+    from: outside
   - doc: the launch's decisions file, which holds the bet, the lines, and the first
       customer once the first sitting has run
     from: outside
@@ -1980,9 +1970,7 @@ frameworks:
     kicks ass, built from its epicenter outward, before anyone builds it
   required_documents:
   - doc: a feature list, a spec, or a design for something not yet built
-    from:
-    - working-backwards
-    - user-story-map
+    from: outside
   use_when: a version one or a new feature has a long list and needs cutting before
     the build, a design keeps growing, settings or scale work are creeping in, or
     the founder can't say what the product can't live without
@@ -2214,7 +2202,7 @@ frameworks:
   helpful_documents:
   - doc: the color values (hex) of the mark, its background, and the colors it sits
       next to
-    from: design-principles
+    from: outside
   - doc: the places the mark has to appear and their sizes (favicon, app icon, book
       cover or spine, packaging)
     from: outside
