@@ -632,9 +632,10 @@ def test_reload_line_warns_about_unsaved_edits():
     rules = section("## The map file")
     line = next(line for line in rules.splitlines() if "reload the page" in line)
     assert "drops" in line
-    assert "Not saved yet" in line
-    assert "press Save first" in line
+    assert "Not saved" in line
+    assert "changes aren't being saved" in line
     assert "Save a copy" in line
+    assert "Save to Downloads" in line
     assert "another name" in line
 
 
@@ -704,7 +705,12 @@ def test_no_change_reply_exists():
     assert "doesn't have your edits" in pick_up
     assert "somewhere else" in pick_up
     assert "Downloads" in pick_up
-    assert pick_up.index("press Save first") < pick_up.index("Downloads")
+    assert pick_up.index("Turn on saving") < pick_up.index("Downloads")
+
+
+def test_prompt_no_longer_says_press_save():
+    assert "press Save" not in PROMPT.read_text()
+    assert "press Save" not in EXAMPLES.read_text()
 
 
 def test_no_change_reply_needs_them_to_have_said_they_changed_it():

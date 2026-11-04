@@ -47,7 +47,7 @@ One map holds one goal, and each map is one person's. You write it when the goal
 - Set `baseline` to a copy of the JSON you are writing, with that copy's own `baseline` empty (`{}`).
 - Write every less-than sign in the JSON as six characters: a backslash, then the letters `u003c`. The file must hold those six characters and never the less-than sign itself. This covers text in the person's own words, because a `</script>` inside a map item would end the data block and break the page.
 - Read the data block back. It must parse as JSON and hold no less-than sign. It must also match the JSON below: a non-empty `map_id`, a number in `revision`, and every field present with the same kind of value, so each obstacle has `whys` and `solution_ids` as lists, even when they're empty. Only `solution_at` can be left out. The page can't draw a map with a missing field, and it shows the person a message instead. If the shape is wrong, fix it and read it back again. Some file tools turn those six characters back into a less-than sign as they write. If the read-back finds one, fix it with a shell command. With no shell, write the words "less than" in its place and tell the person.
-- Say in one line what changed. After a rewrite, tell them to reload the page if it's open. Reloading drops edits not yet saved on the page, so if it shows Not saved yet they should press Save first. You just wrote a newer version, so Save will refuse and offer Save a copy. That copy goes in the folder under another name, and they tell you the name.
+- Say in one line what changed. After a rewrite, tell them to reload the page if it's open. Reloading drops edits that are not yet in the file. If the page shows Not saved, or says changes aren't being saved, those edits are not in the file. They should use Save a copy, or Save to Downloads in Safari or Firefox. That copy goes in the folder under another name, and they tell you the name.
 
 **The JSON.** `example-map.html` in this framework's folder shows a finished one.
 
@@ -237,7 +237,7 @@ Say:
 
 ## Close
 
-Give the full path. Say Steps 5 and 6 are planned, not done. Say the map is theirs to edit and show to others, and that if they change it they should save and tell you. If the goal has other stages, say each one gets its own run. End there.
+Give the full path. Say Steps 5 and 6 are planned, not done. Say the map is theirs to edit and show to others, and that to keep their edits they click Turn on saving once in Chrome. When they change it, they tell you. If the goal has other stages, say each one gets its own run. End there.
 
 ## Picking up edits
 
@@ -250,7 +250,7 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 **If they name a copy with a lower `revision` than the map,** the page refused that save because the map had newer content. The copy's own `baseline` hides what the map gained, so don't compare against it. Find the map the copy came from, which has the same `map_id`, and ask for its name if you can't tell. Compare the copy with the map, list what differs in plain words, and ask which of the differences to bring into the map. **WAIT for their yes.** Then bring in only what they agreed to and use "Write the map" on the map, not the copy. Say the copy can go once they've checked the map.
 
 **If the file shows no changes and they said they changed it,** say:
-"The file in your folder doesn't have your edits, so the save probably went somewhere else. If the page is still open and shows Not saved yet, press Save first. Otherwise look in Downloads, including for a copy with (1) in its name, and put it back in the folder under its original name, replacing the old one, then tell me. If the page said the map has newer changes, don't replace it. Put the copy in the folder under another name and tell me that name."
+"The file in your folder doesn't have your edits, so the save probably went somewhere else. If the page is still open and says changes aren't being saved, click Turn on saving or Turn saving back on first. Otherwise look in Downloads, including for a copy with (1) in its name, and put it back in the folder under its original name, replacing the old one, then tell me. If the page said the map has newer changes, don't replace it. Put the copy in the folder under another name and tell me that name."
 
 **WAIT for their answer,** then read the file again. If they say they made no edits, or the second read shows none, say so in one line and go to "Resuming" below.
 

@@ -153,7 +153,7 @@ Which ratings are wrong?"
 
 **User:** "In-office attendance, every week. If it's under 55% by the middle of Q2, I come back and redraw this."
 
-**Advisor:** "Your map is at `~/attendance/office-attendance-maya-map.html`. Steps 5 and 6 are planned, not done. The map is yours to edit and show to others. If you change it, save it and tell me."
+**Advisor:** "Your map is at `~/attendance/office-attendance-maya-map.html`. Steps 5 and 6 are planned, not done. The map is yours to edit and show to others. To keep your edits, click Turn on saving once in Chrome. When you change it, tell me."
 
 > A number, a date and a result that sends them back. The close ends there.
 
@@ -187,7 +187,7 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "The file in your folder doesn't have your edits, so the save probably went somewhere else. If the page is still open and shows Not saved yet, press Save first. Otherwise look in Downloads, including for a copy with (1) in its name, and put it back in the folder under its original name, replacing the old one, then tell me. If the page said the map has newer changes, don't replace it. Put the copy in the folder under another name and tell me that name."
+**Advisor:** "The file in your folder doesn't have your edits, so the save probably went somewhere else. If the page is still open and says changes aren't being saved, click Turn on saving or Turn saving back on first. Otherwise look in Downloads, including for a copy with (1) in its name, and put it back in the folder under its original name, replacing the old one, then tell me. If the page said the map has newer changes, don't replace it. Put the copy in the folder under another name and tell me that name."
 
 > Claude says what it found and where to look, and doesn't guess at edits.
 
