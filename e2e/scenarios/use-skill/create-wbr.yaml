@@ -55,10 +55,13 @@ tests:
     assert:
       - type: llm-rubric
         value: |
-          Score 1-5 on VAGUE WORD ASKED ONCE: Does the reply ask how "promising"
-          was defined (what test it has), asking it as a single question, and
-          without piling on other questions? No question about the vague word = 1.
-          Asks about the definition of "promising" once, in one question = 5.
+          Score 1-5 on VAGUE WORD ASKED ONCE: The skill pushes for the number and
+          the comparison on a vague word: how many, and compared with what. Does the
+          reply ask once, about "promising", for the number and what it is compared
+          with? Asking for a number and a comparison in one sentence counts as one
+          question. A reply that does not address the vague word = 1. A reply that
+          asks once for the number and the comparison = 5. Piling on unrelated
+          questions scores low, 2 or below.
 
   - description: "create-wbr-c: a recorded definition is not asked about again"
     metadata:
@@ -183,7 +186,7 @@ tests:
       wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
       team_page: file://../../../skills/_shared/operating-cadence/team-page.md
       team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
-      scenario_description: "The team's tool is not connected. The person already pasted last week's WBR, the key action codes (1A, 1B, 2A) and their open action items. Every goal has a clear test. The session has just started."
+      scenario_description: "The team's tool is not connected. The person already pasted last week's WBR, the key action codes (1A, 1B, 2A) and their open action items. The person named their workstream. Every goal has a clear test. The session has just started."
       user_message: "That's everything from last week. Let's do my WBR."
     assert:
       - type: llm-rubric
@@ -201,7 +204,7 @@ tests:
       wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
       team_page: file://../../../skills/_shared/operating-cadence/team-page.md
       team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
-      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). Every goal has a clear test, and last week's WBR carries the Definition line for its one vague word. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
+      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). The person named their workstream. Every goal has a clear test, and last week's WBR carries the Definition line for its one vague word. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
       user_message: "Both commitments from last week shipped. 1A, 1B and 2A are all green, and every date is holding."
     assert:
       - type: llm-rubric
@@ -221,7 +224,7 @@ tests:
       wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
       team_page: file://../../../skills/_shared/operating-cadence/team-page.md
       team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
-      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). Both of last week's commitments were honored. 1A, 1B and 2A are green and every date holds. Every goal has a clear test. The job asked for new commitments, and this message is the answer."
+      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). The person named their workstream. Both of last week's commitments were honored. 1A, 1B and 2A are green and every date holds. Every goal has a clear test. The job asked for new commitments, and this message is the answer."
       user_message: "One new one. I'll sign the two remaining pilot customers. Success is both contracts signed, due the 14th, code 1A."
     assert:
       - type: llm-rubric
@@ -240,7 +243,7 @@ tests:
       wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
       team_page: file://../../../skills/_shared/operating-cadence/team-page.md
       team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
-      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's WBR has no Definition line. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
+      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). The person named their workstream. Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's WBR has no Definition line. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
       user_message: "Both commitments from last week shipped. 1A, 1B and 2A are all green, and every date is holding."
     assert:
       - type: llm-rubric

@@ -237,6 +237,20 @@ def test_create_wbr_scenario_pushes_a_vague_word_once_then_writes_not_defined():
     assert "one push" in test["vars"]["scenario_description"].lower()
 
 
+def test_create_wbr_green_week_scenarios_say_the_person_named_their_workstream():
+    for prefix in ("create-wbr-i-1", "create-wbr-i-2", "create-wbr-i-3", "create-wbr-j"):
+        test = _scenario_tests("use-skill/create-wbr.yaml", prefix)[0]
+        assert "named their workstream" in test["vars"]["scenario_description"], prefix
+
+
+def test_create_wbr_b_asks_for_the_number_and_the_comparison():
+    rubric = " ".join(_rubric(_scenario_tests("use-skill/create-wbr.yaml", "create-wbr-b")[0]).split())
+    assert "number" in rubric and "compared with" in rubric
+    assert "one question" in rubric
+    assert "how \"promising\" was defined" not in rubric
+    assert "unrelated" in rubric
+
+
 def test_rollup_scenarios_cover_not_received_the_trend_flag_and_week_one():
     tests = _scenario_tests("use-skill/wbr-rollup.yaml", "rollup-")
     assert len(tests) >= 3

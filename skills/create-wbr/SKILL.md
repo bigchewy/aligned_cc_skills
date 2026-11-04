@@ -91,7 +91,7 @@ Flag anything that ties to no code as soon as you hear it. Ask once which key ac
 
 Off strategy is a flag. It is not a gate, and the person may keep it.
 
-Also ask for any asks of other teams. Each one names the team, the ask and a code.
+Ask one question that covers the new commitments and any asks of other teams together. Each ask of another team names the team, the ask and a code. If the answer names no asks, there are none: don't ask again, and go on.
 
 **WAIT for the person to respond.**
 

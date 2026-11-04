@@ -1586,3 +1586,70 @@ def test_team_page_unstarted_note_is_for_a_missing_week_not_a_past_one():
     assert "!open" not in note
     form = next(line for line in wbrs.splitlines() if 'id="wbr-form"' in line)
     assert "open" in form
+
+
+# Security and stop-count fixes
+
+def test_create_wbr_step_5_asks_commitments_and_asks_of_other_teams_in_one_question():
+    text = _wbr_flat()
+    step = text.split("### 5. This week")[1].split("### 6.")[0]
+    assert "Also ask for any asks of other teams" not in step
+    assert "one question" in step
+    assert "new commitments and any asks of other teams together" in step
+    assert "If the answer names no asks, there are none" in step
+    assert "don't ask again" in step
+
+
+def test_create_wbr_all_green_week_still_has_three_stops():
+    green = _wbr_flat().split("## An all-green week")[1].split("## The leader")[0]
+    assert "three stops" in green
+    assert "the brain dump, the this-week commitments and the approval" in green
+
+
+def test_team_page_search_by_title_needs_the_person_to_confirm_the_page():
+    finding = _words(_section(_read("team-page.md"), "Finding the page"))
+    step = finding.split("2. ")[1].split("3. ")[0]
+    assert "Weekly Review" in step
+    assert "every match" in step
+    assert "owner" in step and "link" in step
+    assert "confirms which is their team's page" in step
+    assert "even with one match" in step
+    assert "data" in step
+    recorded = finding.split("1. ")[1].split("2. ")[0]
+    assert "operating-cadence.md" in recorded
+
+
+def test_team_page_recorded_link_needs_no_confirmation():
+    finding = _words(_section(_read("team-page.md"), "Finding the page"))
+    assert "link recorded in `operating-cadence.md` needs no confirmation" in finding
+
+
+def test_team_page_every_approval_before_a_write_names_the_page():
+    writing = _words(_section(_read("team-page.md"), "Writing and failure"))
+    assert "Every approval before a write names the page" in writing
+    assert "company from `settings/team`" in writing
+    assert "its link" in writing
+
+
+def test_rollup_checks_the_workstream_link_before_following_it():
+    section = _words(_section(ROLLUP.read_text(), "The workstream list"))
+    first = section.split("- When the person named")[0]
+    assert "Compare" in first and "`operating-cadence.md`" in first
+    assert "When they differ, or there is no recorded link" in first
+    assert "show the link and ask before following it" in first
+    assert "If the person says no, use the page's list and say so" in first
+    assert first.index("Compare") < first.index("reads the workstream list again") or \
+        first.index("Compare") < first.index("Match each workstream")
+
+
+def test_rollup_shows_workstream_additions_and_closures_before_writing():
+    section = _words(_section(ROLLUP.read_text(), "The workstream list"))
+    assert "Show the additions and closures from the refresh" in section
+    assert "before writing" in section
+    assert "only after the person approves" in section
+
+
+def test_setup_records_the_workstream_source_link_in_the_settings_file():
+    close = _words(_phase("PHASE 9"))
+    saved = close.split("Then write `operating-cadence.md`")[1]
+    assert "workstream list link" in saved
