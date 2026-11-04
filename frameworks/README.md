@@ -1,6 +1,6 @@
 # Framework Registry
 
-98 frameworks across 3 layers and 20 areas
+96 frameworks across 3 layers and 20 areas
 
 Frameworks are grouped by layer and area, in the order of `skills/playbook/layers.yaml`. A framework that sits in more than one area is listed under each.
 
@@ -186,14 +186,13 @@ Why we win, said the same way everywhere. Reverse-Engineered Brand runs the whol
 | competitive-battle-card | Competitive Battle Card | april-dunford | positioning and messaging are complete and the org needs a salesperson's working battle card for the named competitors |
 | reverse-engineered-brand | Reverse-Engineered Brand | april-dunford | an organization is building its first canonical brand/ folder from a public URL and optional supplementary content |
 
-#### Brand (5)
+#### Brand (4)
 
 Voice, the mark, and the story the brand tells.
 
 | ID | Name | Advisor | Use When |
 |----|------|---------|----------|
 | brand-voice | Brand Voice | steve-krug | an organization has existing copy and needs to extract a documented brand voice + terminology contract |
-| how-much-siblings-share | How Much the Siblings Share | michael-bierut | a company is launching a second product or a spin-off and has to decide whether it shares the parent's name and look, carries a small 'from' line, or stands alone; or two related products already look either too alike or unrelated |
 | boil-it-down | Boil It Down | michael-bierut | a product needs a logo or mark, the current mark is the category cliché or a pile of decoration, a team has several logo directions and can't pick, or a mark needs to work as an app icon, a favicon, and in print |
 | small-size-and-print-test | The Small-Size and Print Test | michael-bierut | a mark is about to ship and nobody has seen it at 16 pixels, as a phone icon, in one color, or on a book spine; a new brand color has been picked on its own; or a team argues about a logo on taste |
 | the-carousel | The Carousel | don-draper | someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible |
@@ -228,7 +227,7 @@ Find where revenue leaks and fix it.
 | teach-tailor-take-control | Teach-Tailor-Take Control (TTTC) | matt-dixon | a rep is prepping a specific upcoming B2B discovery call, exec pitch, or advancement meeting and needs to pressure-test whether they have a real insight, whether it's adapted to this buyer, and whether they have a plan for holding commercial ground around pricing and next steps |
 | jolt-effect | JOLT Effect | matt-dixon | a complex B2B deal has stalled in late stage because the buyer is actively engaged but cannot commit, and the rep needs to diagnose whether it's Valuation, Lack of Information, or Outcome Uncertainty indecision and apply the matching remedy |
 
-#### Product (12)
+#### Product (11)
 
 Decide what to build next, cut it to fit, design it on one system, check it is safe, and ship it.
 
@@ -244,7 +243,6 @@ Decide what to build next, cut it to fit, design it on one system, check it is s
 | interface-inventory | Interface Inventory | brad-frost | an existing app has grown several looks for the same job (buttons, grays, text fields), an AI agent has been inventing styles, someone is about to redesign or write design principles for an app that already exists, or the UI feels inconsistent and nobody can say where |
 | logic-check | Logic Check | adham-dannaway | a screen looks amateur and nobody can say why, an AI agent keeps picking colours, sizes, or weights by feel, a design principles file needs checking before screens are built from it, or text contrast, button hierarchy, or colour-only signals need checking |
 | four-question-threat-model | Four Question Threat Model | adam-shostack | a design or feature touches login, permissions, user data, row-level security, secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server, and nobody has asked what can go wrong before it ships |
-| phantom-b-llm-threats | PHANTOM-B LLM Threats | adam-shostack | a feature, hook, plugin, or agent sends text to an LLM and acts on what comes back, reads text someone else wrote (emails, PRs, web pages, tool results), or lets the model call tools, and nobody has asked what can go wrong with the model part |
 | assigning-ai-roles | Assigning AI Roles | ethan-mollick | someone is building an AI tutor, AI coach, role-play practice partner, or AI feedback tool for a course or program; an existing AI learning tool gets good ratings but behavior does not change; or a team needs to decide what the AI should and should not do for learners |
 
 #### Data (3)

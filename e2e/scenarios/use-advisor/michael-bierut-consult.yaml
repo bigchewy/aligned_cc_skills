@@ -33,15 +33,14 @@ defaultTest:
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on HOW MUCH THE SIBLINGS SHARE: Does the response decide
+        Score 1-5 on THE SIBLING RELATIONSHIP: Does the response decide
         how Before You Came Along relates to Moments With using a reason, not
         taste? The strongest answers ask or reason whether the parent's name
         adds anything to a wedding buyer (it is new and unknown) and whether
-        the wedding product needs its own name, then name one type of brand
-        family (one look everywhere, own look with the parent shown behind
-        it, or fully separate) and say which of name, mark, type, and color
-        are shared. Credit to Wally Olins or David Aaker is a plus, not
-        required. A list of pros and cons with no pick scores 1-2.
+        the wedding product needs its own name, then pick one relationship
+        (one look everywhere, own look with the parent shown behind it, or
+        fully separate) and say which of name, mark, type, and color are
+        shared. A list of pros and cons with no pick scores 1-2.
       weight: 2
     - type: llm-rubric
       value: |
@@ -57,8 +56,8 @@ defaultTest:
         Bierut: plain words, warm, a little self-deprecating, crediting the
         client, uninterested in cleverness, with no branding jargon ("brand
         essence", "elevate", "touchpoints", "visual language that resonates")?
-        Naming a borrowed rule with credit (David Aaker's test, Wally Olins's
-        three types, Sagi Haviv's tests) is how he credits sources and is not
+        Naming a borrowed rule with credit (Sagi Haviv's tests, Josef Albers's
+        rule for color) is how he credits sources and is not
         jargon. Invented quotes attributed to him score 1. These are real and not
         invented: "You're doing them a huge service by making sure their
         mark's not a complicated hot mess every time it appears", "The way a

@@ -4,7 +4,7 @@ One person, one design doc, under an hour. The phases are his four questions,
 word for word: What are we working on? What can go wrong? What are we going
 to do about it? Did we do a good job? STRIDE is the checklist for the second
 question. Threats get a decision (mitigate, eliminate, accept, transfer, or
-don't build it), not only a fix. LLM parts hand to PHANTOM-B.
+don't build it), not only a fix. LLM parts are STRIDEd like any other part.
 """
 
 import re
@@ -49,15 +49,6 @@ def test_registry_entry():
     assert "four-question-threat-model" in areas["product"]
     assert e["deliverable_type"] == "analysis"
     assert "follow_on_frameworks" not in e
-    with open(REPO_ROOT / "frameworks" / "registry.yaml") as f:
-        b = {x["id"]: x for x in yaml.safe_load(f)["frameworks"]}["phantom-b-llm-threats"]
-    writers = [
-        w
-        for k in ("required_documents", "helpful_documents")
-        for d in b.get(k) or []
-        for w in ([d["from"]] if isinstance(d["from"], str) else d["from"])
-    ]
-    assert "four-question-threat-model" in writers
 
 
 def test_prompt_opens_in_the_standard_form():
@@ -95,7 +86,7 @@ def test_what_to_do_is_more_than_fix_it():
 
 def test_prompt_hands_off_what_the_framework_does_not_cover():
     text = _read(PROMPT)
-    for handoff in ("`phantom-b-llm-threats`", "Kim Wuyts", "Boris Cherny"):
+    for handoff in ("Kim Wuyts", "Boris Cherny"):
         assert handoff in text
     assert "## Key Rules" in text
 

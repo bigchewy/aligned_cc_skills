@@ -127,7 +127,7 @@ To add an advisor, run `/aligned:add-advisor`.
 
 ### Frameworks
 
-98 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (17), leadership (12), startup (10), psychology (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
+96 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (17), leadership (12), startup (10), psychology (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
 
 Framework prompts are interactive scripts with hard WAIT points. Run them through `/aligned:use-framework`, one question at a time.
 
@@ -172,7 +172,7 @@ Semver, pre-1.0. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.js
 - New `/aligned:org-chart` skill with B2B and B2C org chart pages: every seat, its coverage, its jobs, and the command for each.
 - Narrowed to business and advisory work. Advisors built for single clients moved to those clients' repos as project-local advisors; nonprofit and solo-creator advisors were removed. Coach Eric is now a CEO coach.
 - New advisors since 0.33.1 include Adham Dannaway, Annie Duke, Jason Fried, Aleyda Solis, Michael Bolton, Adam Shostack, Michael Bierut, and Cole Nussbaumer Knaflic.
-- **59 advisors, 98 frameworks, 14 skills, 3 agents.**
+- **59 advisors, 96 frameworks, 14 skills, 3 agents.**
 
 #### 0.33.1: Green Suite (2026-08-14)
 - Test suite is fully green: fixed the `advisors/prompts/**` eval-surface

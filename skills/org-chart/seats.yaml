@@ -243,8 +243,6 @@ seats:
     jobs:
       - do: Find what can go wrong in a new design before you build it
         framework: four-question-threat-model
-      - do: Find what can go wrong where the product calls an AI model
-        framework: phantom-b-llm-threats
     also_ask: []
     missing: >-
       Get outside help with SOC 2 and the security questionnaires that enterprise
@@ -345,8 +343,6 @@ seats:
       - do: Find a logo in something the product already has
         framework: boil-it-down
         also: [small-size-and-print-test]
-      - do: Decide how a new product looks next to the old one
-        framework: how-much-siblings-share
       - do: Write down how the company sounds
         framework: brand-voice
       - do: Find the feeling that makes people lean in
@@ -593,8 +589,6 @@ seats:
     jobs:
       - do: Find how people could abuse a new feature before it ships
         framework: four-question-threat-model
-      - do: Find how people could misuse the AI parts of the product
-        framework: phantom-b-llm-threats
       - do: Design the nudges that steer users away from bad behavior
         framework: 3b-behavioral-design
     also_ask: []

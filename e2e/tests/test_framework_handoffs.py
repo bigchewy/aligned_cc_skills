@@ -77,9 +77,6 @@ RETIRED_FOLLOW_ONS = [
     ("blue-ocean-value-props", "5-components-positioning"),
     ("blue-ocean-value-props", "value-metric"),
     ("launch-bet", "pivot-or-persevere"),
-    ("phantom-b-llm-threats", "four-question-threat-model"),
-    ("how-much-siblings-share", "boil-it-down"),
-    ("how-much-siblings-share", "small-size-and-print-test"),
     ("choose-an-effective-visual", "declutter-and-focus"),
     ("why-my-page-doesnt-rank", "ai-search-optimization-checklist"),
 ]

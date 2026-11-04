@@ -2078,8 +2078,6 @@ frameworks:
     from: outside
   - doc: the list of third-party services, webhooks, hooks, or MCP servers it touches
     from: outside
-  - doc: LLM threats list
-    from: phantom-b-llm-threats
   id: four-question-threat-model
   name: Four Question Threat Model
   purpose: one person threat modeling one design doc in under an hour, by asking the
@@ -2092,37 +2090,6 @@ frameworks:
   use_when: a design or feature touches login, permissions, user data, row-level security,
     secrets, webhooks, a third-party API, or a Claude Code hook, plugin, or MCP server,
     and nobody has asked what can go wrong before it ships
-- advisor: adam-shostack
-  default_critic_advisors:
-  - adam-shostack
-  - boris-cherny
-  deliverable_type: analysis
-  domains:
-  - llm-security
-  - prompt-injection
-  - threat-modeling
-  - ai-agents
-  helpful_documents:
-  - doc: a sketch of the system with the LLM calls marked
-    from: outside
-  - doc: the system prompt, the tools or MCP servers the model can use, and what data
-      it can read
-    from: outside
-  - doc: the threat model from four-question-threat-model, if one exists
-    from: four-question-threat-model
-  id: phantom-b-llm-threats
-  name: PHANTOM-B LLM Threats
-  purpose: one person finding what can go wrong with the parts of a system that call
-    an LLM, using the eight PHANTOM-B threats as prompts, then deciding what to do
-    about each
-  required_documents:
-  - doc: a design, spec, or running system where code calls an LLM (an app feature,
-      a Claude Code hook or plugin, an agent with tools)
-    from: outside
-  use_when: a feature, hook, plugin, or agent sends text to an LLM and acts on what
-    comes back, reads text someone else wrote (emails, PRs, web pages, tool results),
-    or lets the model call tools, and nobody has asked what can go wrong with the
-    model part
 - advisor: michael-bierut
   default_critic_advisors:
   - michael-bierut
@@ -2142,8 +2109,6 @@ frameworks:
     from: outside
   - doc: marks from competitors or from the category
     from: outside
-  - doc: sibling sharing decision
-    from: how-much-siblings-share
   id: boil-it-down
   name: Boil It Down
   purpose: finding a mark in something the product already has, throwing out the category
@@ -2155,40 +2120,6 @@ frameworks:
   use_when: a product needs a logo or mark, the current mark is the category cliché
     or a pile of decoration, a team has several logo directions and can't pick, or
     a mark needs to work as an app icon, a favicon, and in print
-- advisor: michael-bierut
-  default_critic_advisors:
-  - michael-bierut
-  - april-dunford
-  deliverable_type: decision
-  domains:
-  - brand-architecture
-  - sibling-brands
-  - visual-identity
-  helpful_documents:
-  - doc: each product's name, domain, and any existing logo, colors, or typefaces
-    from: outside
-  - doc: the design rules the parent already follows
-    from: design-principles
-  - doc: places where the two products meet (a shared checkout, account, footer, email,
-      or printed piece)
-    from: outside
-  - doc: how many people know the parent's name today
-    from: outside
-  id: how-much-siblings-share
-  name: How Much the Siblings Share
-  purpose: deciding how a new product looks next to the product it came from, by picking
-    one of three types of brand family and then listing exactly which of name, mark,
-    type, and color the sibling shares
-  required_documents:
-  - doc: a short description of each product, who buys it, and who uses it
-    from: outside
-  stages:
-  - nail-it
-  - scale-it
-  - milk-it
-  use_when: a company is launching a second product or a spin-off and has to decide
-    whether it shares the parent's name and look, carries a small 'from' line, or
-    stands alone; or two related products already look either too alike or unrelated
 - advisor: michael-bierut
   default_critic_advisors:
   - michael-bierut
@@ -2210,8 +2141,6 @@ frameworks:
     from: outside
   - doc: the name and any wordmark that goes with the mark
     from: outside
-  - doc: sibling sharing decision
-    from: how-much-siblings-share
   id: small-size-and-print-test
   name: The Small-Size and Print Test
   purpose: running a mark through Sagi Haviv's three tests, the draw-it-from-memory

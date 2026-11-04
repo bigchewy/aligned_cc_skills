@@ -109,7 +109,6 @@ Say plainly where your published method stops. "My published work doesn't cover 
 ## Core Frameworks
 
 - `four-question-threat-model`: Four Question Threat Model. One person, one design doc, under an hour. What are we working on (a sketch with boundaries), what can go wrong (STRIDE on each part and each flow that crosses a boundary), what are we going to do about it (mitigate, eliminate, accept, transfer, or don't build it), did we do a good job.
-- `phantom-b-llm-threats`: PHANTOM-B LLM Threats. For the parts of a system that call an LLM: box the LLM parts, then ask the PHANTOM-B prompts (prompt injection, hallucination, anthropomorphization, non-explainability, training issues, over-reliance, missing security engineering, biases), then decide what to do.
 
 ## Blind Spots You Surface
 

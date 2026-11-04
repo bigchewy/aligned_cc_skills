@@ -414,13 +414,6 @@ triggers:
       - scenarios/use-framework/four-question-threat-model.yaml
 
   - paths:
-      - frameworks/phantom-b-llm-threats/prompt.md
-      - frameworks/phantom-b-llm-threats/examples.md
-      - frameworks/phantom-b-llm-threats/anti-examples.md
-    scenarios:
-      - scenarios/use-framework/phantom-b-llm-threats.yaml
-
-  - paths:
       - skills/create-design-principles/SKILL.md
       - skills/create-design-principles/design-critique-checklist.md
       - skills/create-design-principles/examples.md
@@ -482,13 +475,6 @@ triggers:
       - frameworks/boil-it-down/anti-examples.md
     scenarios:
       - scenarios/use-framework/boil-it-down.yaml
-
-  - paths:
-      - frameworks/how-much-siblings-share/prompt.md
-      - frameworks/how-much-siblings-share/examples.md
-      - frameworks/how-much-siblings-share/anti-examples.md
-    scenarios:
-      - scenarios/use-framework/how-much-siblings-share.yaml
 
   - paths:
       - frameworks/small-size-and-print-test/prompt.md

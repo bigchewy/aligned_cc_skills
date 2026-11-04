@@ -1,11 +1,9 @@
 """Michael Bierut: the board's first visual identity advisor.
 
-He makes logo marks, decides how a set of sibling brands look next to each other, and judges
-whether a mark still works at 16 pixels and on a book spine. He ships with three frameworks:
-Boil It Down (find what the product already has and cut it down to a mark), How Much the
-Siblings Share (Olins's three types and Aaker's test, then a share list), and The Small-Size and
-Print Test (Haviv's three tests, the doodle test, sizes, one-color print, and Albers's rule for
-color). Borrowed rules are credited by name. Quotes the research could not confirm stay out of
+He makes logo marks and judges whether a mark still works at 16 pixels and on a book spine. He
+ships with two frameworks: Boil It Down (find what the product already has and cut it down to a
+mark) and The Small-Size and Print Test (Haviv's three tests, the doodle test, sizes, one-color
+print, and Albers's rule for color). Borrowed rules are credited by name. Quotes the research could not confirm stay out of
 every prompt.
 """
 
@@ -23,7 +21,6 @@ TRIGGER_MAP = REPO_ROOT / "e2e" / "trigger-map.yaml"
 
 FRAMEWORKS = {
     "boil-it-down": ("Boil It Down", "plan"),
-    "how-much-siblings-share": ("How Much the Siblings Share", "decision"),
     "small-size-and-print-test": ("The Small-Size and Print Test", "analysis"),
 }
 
@@ -77,7 +74,7 @@ def test_advisor_registry_entry():
     assert e["name"] == "Michael Bierut"
     assert e["prompt"] == "advisors/prompts/michael-bierut.md"
     assert "visual-identity" in e["domains"]
-    for word in ("logo", "sibling", "small", "color"):
+    for word in ("logo", "small", "color"):
         assert word in e["best_for"].lower(), f"best_for should mention {word}"
     for name in HANDOFFS:
         assert name in e["not_for"], f"not_for should send work to {name}"
@@ -98,7 +95,7 @@ def test_advisor_prompt_has_standard_sections():
         assert section in text, f"advisor prompt missing {section}"
 
 
-def test_advisor_prompt_lists_all_three_frameworks():
+def test_advisor_prompt_lists_all_frameworks():
     text = _read(ADVISOR)
     for fid in FRAMEWORKS:
         assert f"`{fid}`" in text
@@ -118,7 +115,7 @@ def test_advisor_hands_off_to_neighbors():
 
 def test_borrowed_rules_are_credited():
     text = _all_prompt_text()
-    for name in ("Sagi Haviv", "Wally Olins", "David Aaker", "Josef Albers", "Penguin"):
+    for name in ("Sagi Haviv", "Josef Albers"):
         assert name in text, f"prompts should credit {name}"
 
 
@@ -237,15 +234,6 @@ def test_boil_it_down_starts_from_the_product_and_bans_the_category_cliche():
     assert "cliché" in lower or "cliche" in lower
     assert "almost unfinished" in lower
     assert "if you have a great idea but can't make it work, it isn't a great idea" in lower
-
-
-def test_siblings_uses_olins_types_aaker_test_and_a_share_list():
-    lower = _read(REPO_ROOT / "frameworks" / "how-much-siblings-share" / "prompt.md").lower()
-    for word in ("monolithic", "endorsed", "branded"):
-        assert word in lower
-    assert "add anything" in lower and "own name" in lower
-    for part in ("name", "mark", "type", "color"):
-        assert f"**{part}:**" in lower, f"share list should cover {part}"
 
 
 def test_small_size_test_covers_sizes_print_and_color():

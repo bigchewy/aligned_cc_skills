@@ -6,7 +6,6 @@ helpful_documents:
 - the design rules the product already follows, including any looks it bans
 - the places the mark has to appear (app icon, favicon, printed piece, packaging, signage)
 - marks from competitors or from the category
-- sibling sharing decision
 deliverable_type: plan
 ---
 

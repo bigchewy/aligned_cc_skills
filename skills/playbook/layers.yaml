@@ -96,7 +96,7 @@ layers:
         name: Brand
         note: Voice, the mark, and the story the brand tells.
         start: brand-voice
-        frameworks: [brand-voice, how-much-siblings-share, boil-it-down, small-size-and-print-test, the-carousel]
+        frameworks: [brand-voice, boil-it-down, small-size-and-print-test, the-carousel]
       - id: marketing
         name: Marketing and growth
         note: Get found, turn visitors into customers, and run growth experiments.
@@ -111,7 +111,7 @@ layers:
         name: Product
         note: Decide what to build next, cut it to fit, design it on one system, check it is safe, and ship it.
         start: frame-shape-bet
-        frameworks: [frame-shape-bet, working-backwards, getting-real-cut, user-story-map, breadboard-to-pages, few-hiccupps-review, design-principles, interface-inventory, logic-check, four-question-threat-model, phantom-b-llm-threats, assigning-ai-roles]
+        frameworks: [frame-shape-bet, working-backwards, getting-real-cut, user-story-map, breadboard-to-pages, few-hiccupps-review, design-principles, interface-inventory, logic-check, four-question-threat-model, assigning-ai-roles]
       - id: data
         name: Data
         note: Make a chart change a decision.

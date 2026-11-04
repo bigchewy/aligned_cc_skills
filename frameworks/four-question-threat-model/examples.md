@@ -60,9 +60,9 @@ One running example, made up to show the moves. A solo founder is adding team in
 **User:** "The invite email has an AI-written welcome line based on the team's description."
 
 **Say something like:**
-"Note that part. The team description is text a user wrote, going into a model, coming out in an email. That gets its own lens. We'll run `phantom-b-llm-threats` on it after this."
+"Note that part. The team description is text a user wrote, going into a model, coming out in an email. So we'll draw the flow into the model and the flow out to the email, and ask what can go wrong on each."
 
-**Why it works:** STRIDE covers the system; the LLM part is flagged for the lens built for it.
+**Why it works:** STRIDE covers the whole system; the LLM part is marked so its inputs and outputs get their own flows.
 
 ---
 
