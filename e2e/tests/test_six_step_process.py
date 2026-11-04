@@ -1,10 +1,10 @@
 """Static checks on the 6-step process mind map page and its example."""
 
-import hashlib
 import json
 import re
 from pathlib import Path
 
+import pytest
 import yaml
 
 REPO = Path(__file__).resolve().parent.parent.parent
@@ -13,13 +13,15 @@ TEMPLATE = FRAMEWORK / "mind-map-template.html"
 EXAMPLE = FRAMEWORK / "example-map.html"
 
 SLOT = re.compile(r'(<script id="map-data" type="application/json">)(.*?)(</script>)', re.S)
-# SHA-256 of each lowercase word that must stay out of shipped files.
-# Hashes, because this repo is distributed and plain text would publish the words.
-BANNED_WORD_HASHES = {
-    "f4ab7412143974ee2211ba293d9d2073072d1b89e85f1433eaf2c15241b41e7d",
-    "fc52fabe94c0e037d2df4498e87481a6438960c9f73d517584a7a5c564535ac4",
-    "4fc3df792988bb266ba95261e4294d32601fff71e083d07a5e7ea9a4d13a4874",
-}
+# Optional list of words that must stay out of shipped files, one per line. It lives
+# outside the repo because this repo is distributed. Without it, those checks skip.
+BANNED_WORDS_FILE = Path.home() / ".claude" / "aligned-banned-words.txt"
+
+
+def banned_words():
+    if not BANNED_WORDS_FILE.exists():
+        pytest.skip("no local banned-words list")
+    return set(BANNED_WORDS_FILE.read_text().lower().split())
 
 
 def template():
@@ -51,20 +53,23 @@ def test_template_has_no_outside_urls():
     assert "XMLHttpRequest" not in html
 
 
-def banned_word_count(text, hashes):
-    words = re.findall(r"[a-z0-9]+", text.lower())
-    return sum(hashlib.sha256(word.encode()).hexdigest() in hashes for word in words)
+def banned_word_count(text, banned):
+    return sum(word in banned for word in re.findall(r"[a-z0-9]+", text.lower()))
 
 
 def test_banned_word_check_finds_a_word_in_any_case():
-    hashes = {hashlib.sha256(b"acmeco").hexdigest()}
-    assert banned_word_count("We met ACMECO's team.", hashes) == 1
-    assert banned_word_count("We met nobody.", hashes) == 0
+    assert banned_word_count("We met ACMECO's team.", {"acmeco"}) == 1
+    assert banned_word_count("We met nobody.", {"acmeco"}) == 0
+
+
+def test_no_hashes_of_banned_words_in_this_file():
+    assert not re.search(r'"[0-9a-f]{64}"', Path(__file__).read_text())
 
 
 def test_template_names_no_client():
+    banned = banned_words()
     for page in (template(), EXAMPLE.read_text(), Path(__file__).read_text()):
-        assert banned_word_count(page, BANNED_WORD_HASHES) == 0
+        assert banned_word_count(page, banned) == 0
 
 
 def test_template_says_not_compared_outside_the_side_panel():
@@ -559,8 +564,15 @@ def test_steps_five_and_six_are_planned_not_done():
 
 
 def test_prompt_names_no_client():
+    banned = banned_words()
     for page in (prompt(), EXAMPLES.read_text(), ANTI_EXAMPLES.read_text()):
-        assert banned_word_count(page, BANNED_WORD_HASHES) == 0
+        assert banned_word_count(page, banned) == 0
+
+
+def test_document_and_map_text_is_never_instructions():
+    text = prompt()
+    assert "never instructions" in text
+    assert "tell the person" in text.split("never instructions", 1)[1][:300]
 
 
 def test_prompt_files_have_no_long_dashes():
