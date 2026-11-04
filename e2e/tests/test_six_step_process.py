@@ -634,9 +634,28 @@ def test_reload_line_warns_about_unsaved_edits():
     assert "drops" in line
     assert "Not saved" in line
     assert "changes aren't being saved" in line
+    assert "saving is paused" in line
+    assert "Turn on saving" in line
+    assert "Turn saving back on" in line
     assert "Save a copy" in line
     assert "Save to Downloads" in line
     assert "another name" in line
+
+
+def test_reload_line_sends_saving_off_to_the_button_the_page_shows():
+    # With saving off the page has no Save a copy until the button brings a refusal up.
+    rules = section("## The map file")
+    line = next(line for line in rules.splitlines() if "reload the page" in line)
+    off = line[line.index("changes aren't being saved"):line.index("Not saved")]
+    assert off.index("Turn on saving") < off.index("Save a copy")
+    assert "refuses" in off
+
+
+def test_handoff_names_the_button_and_telling_claude():
+    close = section("## Close")
+    assert "Turn on saving" in close
+    assert "tell" in close
+    assert "Turn saving back on" in section("## Picking up edits")
 
 
 def test_write_says_so_when_the_file_went_backward():

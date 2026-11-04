@@ -393,6 +393,135 @@ def test_save_success_does_not_abort():
     assert out["aborted"] is False
 
 
+# The page says what it last loaded or wrote, so a file Claude rewrote can't slip past on its revision.
+
+def test_save_refuses_a_lower_revision_with_other_content():
+    # Page at rev 3, Claude read rev 1 and wrote rev 2.
+    saved = make_map(revision=3, person="Page")
+    claude = page(make_map(revision=2, person="Claude"))
+    tab = make_map(revision=3, person="Edited")
+    out = call("saveToHandle", "__HANDLE__", page(saved), tab, json.dumps(saved), handle={"content": claude})
+    assert out["result"] == {"ok": False, "reason": "stale"}
+    assert out["file"] == claude
+    assert out["writes"] == 0
+
+
+def test_save_refuses_the_same_revision_with_other_content():
+    saved = make_map(revision=2, person="Page")
+    claude = page(make_map(revision=2, person="Claude"))
+    tab = make_map(revision=2, person="Edited")
+    out = call("saveToHandle", "__HANDLE__", page(saved), tab, json.dumps(saved), handle={"content": claude})
+    assert out["result"] == {"ok": False, "reason": "stale"}
+    assert out["file"] == claude
+    assert out["writes"] == 0
+
+
+def test_connect_refuses_the_same_revision_with_other_content():
+    saved = make_map(revision=2, person="Page")
+    claude = page(make_map(revision=2, person="Claude"))
+    out = call("connectToHandle", "__HANDLE__", saved, json.dumps(saved), handle={"content": claude})
+    assert out["result"] == {"ok": False, "reason": "stale"}
+    assert out["file"] == claude
+    assert out["writes"] == 0
+
+
+def test_save_with_the_file_the_page_knows_goes_through():
+    saved = make_map(revision=2)
+    tab = make_map(revision=2, person="Edited")
+    out = call("saveToHandle", "__HANDLE__", page(saved), tab, json.dumps(saved), handle={"content": page(saved)})
+    assert out["result"]["ok"] is True
+    assert out["writes"] == 1
+    assert call("parseMapData", out["file"])["result"]["person"] == "Edited"
+
+
+def test_baseline_only_change_is_not_refused_when_the_page_says_what_it_knows():
+    saved = make_map(revision=2, baseline={"person": "Old"})
+    moved = {"person": "Read by Claude"}
+    tab = make_map(revision=2, person="Edited", baseline={"person": "Old"})
+    file_html = page(make_map(revision=2, baseline=moved))
+    out = call("saveToHandle", "__HANDLE__", page(saved), tab, json.dumps(saved), handle={"content": file_html})
+    assert out["result"] == {"ok": True, "revision": 3, "baseline": moved}
+    assert call("parseMapData", out["file"])["result"]["baseline"] == moved
+    assert call("connectToHandle", "__HANDLE__", saved, json.dumps(saved),
+                handle={"content": file_html})["result"] == {"ok": True}
+
+
+def test_formatting_and_key_order_do_not_count_as_a_change():
+    saved = make_map(revision=2)
+    reordered = {k: saved[k] for k in reversed(list(saved))}
+    reordered["goal"] = {k: saved["goal"][k] for k in reversed(list(saved["goal"]))}
+    file_html = page(make_map()).replace(
+        json.dumps(make_map()), json.dumps(reordered, indent=2))
+    assert call("parseMapData", file_html)["result"]["revision"] == 2
+    out = call("connectToHandle", "__HANDLE__", saved, json.dumps(saved), handle={"content": file_html})
+    assert out["result"] == {"ok": True}
+
+
+def test_array_order_still_counts_as_a_change():
+    saved = make_map(revision=2)
+    moved = make_map(revision=2)
+    moved["obstacles"].reverse()
+    out = call("connectToHandle", "__HANDLE__", saved, json.dumps(saved), handle={"content": page(moved)})
+    assert out["result"] == {"ok": False, "reason": "stale"}
+
+
+def test_a_nested_baseline_field_is_still_content():
+    # Only the top-level baseline is left out of the comparison.
+    saved = make_map(revision=2, goal={"text": "g", "from": "", "to": "", "by": "", "baseline": "40%"})
+    other = make_map(revision=2, goal={"text": "g", "from": "", "to": "", "by": "", "baseline": "50%"})
+    out = call("connectToHandle", "__HANDLE__", saved, json.dumps(saved), handle={"content": page(other)})
+    assert out["result"] == {"ok": False, "reason": "stale"}
+
+
+def test_other_refusals_come_before_the_comparison():
+    saved = make_map(revision=2)
+    src = page(saved)
+    cases = [
+        ({"content": page(make_map(map_id="other"))}, "wrong-map"),
+        ({"content": "not a map at all"}, "not-a-map"),
+        ({"content": src, "permission": "denied"}, "permission"),
+        ({"content": src, "permission": "throw"}, "permission"),
+        ({"content": src, "getFileFails": True}, "unreadable"),
+    ]
+    for handle, reason in cases:
+        out = call("saveToHandle", "__HANDLE__", src, saved, json.dumps(saved), handle=handle)
+        assert out["result"] == {"ok": False, "reason": reason}, handle
+        assert out["writes"] == 0
+
+
+def test_write_failure_with_a_known_file_keeps_the_file_intact():
+    saved = make_map(revision=2)
+    src = page(saved)
+    out = call("saveToHandle", "__HANDLE__", src, make_map(revision=2, person="Edited"), json.dumps(saved),
+               handle={"content": src, "writeFails": "close"})
+    assert out["result"] == {"ok": False, "reason": "write-failed"}
+    assert out["file"] == src
+
+
+def test_a_copy_the_page_made_counts_as_known():
+    # The person moved the page's own copy over the file, so nothing of Claude's is at risk.
+    saved = make_map(revision=2)
+    copied = make_map(revision=2, person="In the copy")
+    file_html = page(copied)
+    tab = make_map(revision=2, person="After the copy")
+    out = call("saveToHandle", "__HANDLE__", page(saved), tab, json.dumps(saved), json.dumps(copied),
+               handle={"content": file_html})
+    assert out["result"]["ok"] is True
+    assert call("connectToHandle", "__HANDLE__", copied, json.dumps(saved), json.dumps(copied),
+                handle={"content": file_html})["result"] == {"ok": True}
+
+
+def test_a_copy_the_page_made_does_not_excuse_other_content():
+    saved = make_map(revision=2)
+    copied = make_map(revision=2, person="In the copy")
+    claude = page(make_map(revision=2, person="Claude"))
+    tab = make_map(revision=2, person="Edited")
+    out = call("saveToHandle", "__HANDLE__", page(saved), tab, json.dumps(saved), json.dumps(copied),
+               handle={"content": claude})
+    assert out["result"] == {"ok": False, "reason": "stale"}
+    assert out["file"] == claude
+
+
 def obstacle(m, oid):
     return next(o for o in m["obstacles"] if o["id"] == oid)
 

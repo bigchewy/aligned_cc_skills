@@ -779,8 +779,32 @@ footer {
     return { ok: true };
   }
 
+  // One string per set of values, so spacing and key order make no difference.
+  function canonicalJson(value) {
+    if (Array.isArray(value)) return '[' + value.map(canonicalJson).join(',') + ']';
+    if (!isObject(value)) return JSON.stringify(value);
+    return '{' + Object.keys(value).sort().map(function (key) {
+      return JSON.stringify(key) + ':' + canonicalJson(value[key]);
+    }).join(',') + '}';
+  }
+
+  // Claude can move baseline in the file and leave everything else alone, so it doesn't count.
+  function mapContent(data) {
+    var content = copy(data);
+    delete content.baseline;
+    return canonicalJson(content);
+  }
+
+  // Each autosave raises the page's revision, so a revision check alone misses a rewrite by Claude.
+  // The file must hold what the page last loaded or wrote, or a copy the page made for this file.
+  function fileIsKnown(fileHtml, savedJson, copiedJson) {
+    var file = mapContent(parseMapData(fileHtml));
+    return file === mapContent(JSON.parse(savedJson)) ||
+      (typeof copiedJson === 'string' && file === mapContent(JSON.parse(copiedJson)));
+  }
+
   // Asks for write permission, reads the file and checks it is this map. Never writes.
-  async function openTarget(handle, map) {
+  async function openTarget(handle, map, savedJson, copiedJson) {
     var granted;
     try {
       granted = await handle.requestPermission({ mode: 'readwrite' });
@@ -799,11 +823,14 @@ footer {
 
     var check = checkTarget(fileHtml, map);
     if (!check.ok) return check;
+    if (typeof savedJson === 'string' && !fileIsKnown(fileHtml, savedJson, copiedJson)) {
+      return { ok: false, reason: 'stale' };
+    }
     return { ok: true, fileHtml: fileHtml };
   }
 
-  async function connectToHandle(handle, map) {
-    var opened = await openTarget(handle, map);
+  async function connectToHandle(handle, map, savedJson, copiedJson) {
+    var opened = await openTarget(handle, map, savedJson, copiedJson);
     return opened.ok ? { ok: true } : opened;
   }
 
@@ -863,8 +890,8 @@ footer {
     };
   }
 
-  async function saveToHandle(handle, sourceHtml, map) {
-    var opened = await openTarget(handle, map);
+  async function saveToHandle(handle, sourceHtml, map, savedJson, copiedJson) {
+    var opened = await openTarget(handle, map, savedJson, copiedJson);
     if (!opened.ok) return opened;
     var fileHtml = opened.fileHtml;
 
@@ -961,6 +988,11 @@ footer {
   var autosaver = L.createAutosaver(writeToFile);
   var writing = false;
   var failed = false;
+  var failedReason = null;
+  // The JSON of the last copy this page made. The person may move that copy over the file.
+  var copiedJson = null;
+  // The refusal reason of the copy message on screen, so the same refusal doesn't cover it.
+  var copyMessageFor = null;
   // The JSON of the last write, so a refused write isn't sent again until the map changes.
   var lastTried = null;
   var toldToTellClaude = false;
@@ -1399,6 +1431,11 @@ footer {
     var json = L.serializeMap(map);
     if (json === savedJson) {
       lastTried = null;
+      // The page matches the file again, so a failed write no longer matters. A stale file is really newer.
+      if (failed && failedReason === 'write-failed') {
+        failed = false;
+        hideMessage();
+      }
       return;
     }
     if (json !== lastTried) autosaver.request();
@@ -1639,6 +1676,7 @@ footer {
   /* Saving */
 
   function showMessage(text, refusal) {
+    copyMessageFor = null;
     el.message.textContent = '';
     el.message.hidden = false;
     el.message.classList.toggle('refusal', Boolean(refusal));
@@ -1647,6 +1685,7 @@ footer {
   }
 
   function hideMessage() {
+    copyMessageFor = null;
     el.message.hidden = true;
     el.message.textContent = '';
   }
@@ -1671,20 +1710,28 @@ footer {
 
   function markSaved(savedMap) {
     savedJson = L.serializeMap(savedMap);
+    copiedJson = null;
     showStatus();
   }
 
   // The copy keeps this page's revision, so once moved it can't look newer than the page.
   // The file in the folder still lacks these edits, so the page stays marked unsaved.
+  // Save a copy stays on the message, because the refusal won't come back to offer it for later edits.
   function saveACopy(reason) {
+    copiedJson = L.serializeMap(map);
     download(L.replaceMapData(SOURCE, map));
-    showMessage(L.copyMessage(location.pathname, reason));
+    var box = showMessage(L.copyMessage(location.pathname, reason));
+    box.appendChild(quietButton('Save a copy', function () { saveACopy(reason); }));
+    if (reason === 'stale') box.appendChild(quietButton('Reload', function () { location.reload(); }));
+    copyMessageFor = reason;
   }
 
   function showRefusal(reason) {
+    if (copyMessageFor === reason) return;
     var box = showMessage(REFUSALS[reason] + ' Your edits are still on this page.', true);
     box.appendChild(quietButton('Save a copy', function () { saveACopy(reason); }));
     if (reason === 'stale') box.appendChild(quietButton('Reload', function () { location.reload(); }));
+    if (reason === 'permission') box.appendChild(quietButton('Choose the file', pickThenConnect));
   }
 
   // A bad file is forgotten, lost permission pauses saving, and anything else stays connected and
@@ -1701,6 +1748,7 @@ footer {
       remembered = file;
       rememberHandle(file);
       failed = true;
+      failedReason = reason;
     }
   }
 
@@ -1713,12 +1761,14 @@ footer {
   // The autosaver reads the result, so this returns it on both paths. An edit made during the write
   // still shows as unsaved afterward, because savedJson comes from the map this write sent.
   async function writeToFile() {
+    // A queued write can start while a new item is still blank. The render that closes its editor asks again.
+    if (holdingNewItem()) return { ok: true };
     var saving = map;
     var target = handle;
     lastTried = L.serializeMap(saving);
     writing = true;
     showStatus();
-    var result = await L.saveToHandle(target, SOURCE, saving);
+    var result = await L.saveToHandle(target, SOURCE, saving, savedJson, copiedJson);
     writing = false;
     if (!result.ok) {
       refuse(result.reason, target);
@@ -1755,7 +1805,7 @@ footer {
 
   async function connect(file) {
     el.save.disabled = true;
-    var result = await L.connectToHandle(file, map);
+    var result = await L.connectToHandle(file, map, savedJson, copiedJson);
     el.save.disabled = false;
     if (result.ok) {
       hideMessage();
@@ -1857,7 +1907,7 @@ footer {
     }
     if (permission === 'granted') {
       el.save.disabled = true;
-      var result = await L.connectToHandle(found, map);
+      var result = await L.connectToHandle(found, map, savedJson, copiedJson);
       el.save.disabled = false;
       if (result.ok) startSaving(found);
       else if (result.reason !== 'stale') applyRefusal(result.reason, found);
