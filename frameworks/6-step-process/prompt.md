@@ -46,7 +46,7 @@ One map holds one goal, and each map is one person's. You write it when the goal
 
 - Set `baseline` to a copy of the JSON you are writing, with that copy's own `baseline` empty (`{}`).
 - Write every less-than sign in the JSON as six characters: a backslash, then the letters `u003c`. The file must hold those six characters and never the less-than sign itself. This covers text in the person's own words, because a `</script>` inside a map item would end the data block and break the page.
-- Read the data block back. It must parse as JSON and hold no less-than sign. It must also match the JSON below: a non-empty `map_id`, a number in `revision`, and every field present with the same kind of value, so each obstacle has `whys` and `solution_ids` as lists, even when they're empty. Only `solution_at` can be left out. The page can't draw a map with a missing field, and it shows the person a message instead. If the shape is wrong, fix it and read it back again. Some file tools turn those six characters back into a less-than sign as they write. If the read-back finds one, fix it with a shell command. With no shell, write the words "less than" in its place and tell the person.
+- Read the data block back. It must parse as JSON and hold no less-than sign. It must also match the JSON below: a non-empty `map_id`, a number in `revision`, and every field present with the same kind of value. So at every depth, each item has an `id`, `solution_ids` and `children` as lists, even when they're empty, and `root_cause` as true or false. No two items share an id, and a root cause has no children. The page can't draw a map with a missing field, and it shows the person a message instead. If the shape is wrong, fix it and read it back again. Some file tools turn those six characters back into a less-than sign as they write. If the read-back finds one, fix it with a shell command. With no shell, write the words "less than" in its place and tell the person.
 - Say in one line what changed. After a rewrite, tell them to reload the page if it's open. Reloading drops edits that are not yet in the file. If the page says changes aren't being saved or saving is paused, those edits are not in the file. They click Turn on saving or Turn saving back on, and the page then refuses because the file changed, and offers Save a copy. If the page shows Not saved, they use Save a copy. In Safari or Firefox, they use Save to Downloads. That copy goes in the folder under another name, and they tell you the name.
 
 **The JSON.** `example-map.html` in this framework's folder shows a finished one.
@@ -58,7 +58,9 @@ One map holds one goal, and each map is one person's. You write it when the goal
   "person": "",
   "goal": {"text": ""},
   "obstacles": [
-    {"id": "o1", "text": "", "whys": [""], "root_cause": "", "solution_ids": ["s1"], "solution_at": {"s1": "why:0"}}
+    {"id": "o1", "text": "", "root_cause": false, "solution_ids": [], "children": [
+      {"id": "o2", "text": "", "root_cause": true, "solution_ids": ["s1"], "children": []}
+    ]}
   ],
   "solutions": [{"id": "s1", "text": "", "star": false}],
   "key_actions": [{"text": "", "risk": "high", "solution_ids": ["s1"]}],
@@ -68,11 +70,15 @@ One map holds one goal, and each map is one person's. You write it when the goal
 }
 ```
 
-`whys` holds the chain of answers and `root_cause` holds the final one. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists.
+`obstacles` is the top level of a tree, and an item at any depth has the same five fields. `children` holds the sub-obstacles under an item. Every id is different from every other, across the whole tree. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists.
 
-`solution_at` is optional, and it says where a solution sits in its chain. `solution_ids` still says which solutions are on the obstacle, so a solution needs its id there either way. Each entry maps a solution id to `"obstacle"`, which puts it directly under the obstacle, or to `"why:N"`, which puts it directly under the why at index N, counting from 0. A solution with no entry sits at the end of the chain, in the column past the root cause if there is one, else the last why, else the obstacle. So a solution on the root cause never has an entry. Leave the field out when it would be empty.
+`root_cause` is true or false. Only an item with no children can be a root cause, because a root cause ends its branch. One obstacle can have several root causes in different branches.
 
-A solution on several obstacles has its own place on each one. When you change a chain yourself, keep `solution_at` right. If you delete a why, drop the entries for it and shift entries for later whys down by one. If you move the last why into `root_cause`, drop the entries for that why, because that item is now the root cause. If you take a solution off an obstacle, drop its entry there. The page does the same when the person edits.
+Labels come from position. The first level goes 1, 2, 3, the level under that goes A, B, C, the next goes 1, 2, 3, and deeper levels keep alternating. They join with no separator, so `1B3` is under `1B`, and `1B3A` is under `1B3`. Past Z, letters go AA, AB. Never store a label in the file, because deleting an item renumbers its later siblings. Solutions get no labels. When you talk about an item, use its label, as in "1B3."
+
+`solution_ids` says which solutions sit on an item. On an item with children, a solution draws directly under that item. On an item with no children, it draws in the next column out. A solution on several items is listed on each one.
+
+Deleting an item deletes everything under it. Any solution left with no item stays in `solutions`, and the page shows it in its tray. The page does the same when the person edits.
 
 ## Opening
 
@@ -160,11 +166,13 @@ After "done," show your picks, with one line on why for each. Ask where they dif
 
 Ask why on the picked obstacles only, one question per turn. There is no fixed number of rounds, and a couple of rounds usually goes deep enough. Stop when the person can act on the answer. The person can stop it sooner.
 
-Put the answer in bold and ask if that's it. The answer ends the chain.
+Each answer to "why" becomes a child of the item you asked about, and the next why asks about that child. When the person gives two different reasons, each becomes its own child, and you take them one at a time. Name items by their labels, like "1B."
+
+Put the answer in bold and ask if that's it. The answer ends its branch, so set its `root_cause` to true. One obstacle can have several root causes.
 
 **WAIT at each why and at each root cause.**
 
-**Write the map.** Do this after each confirmed root cause. If they stopped before a root cause, keep the whys and leave `root_cause` empty. Obstacles they didn't pick stay plain items.
+**Write the map.** Do this after each confirmed root cause. If they stopped before a root cause, keep the children and leave `root_cause` false. Obstacles they didn't pick stay plain items.
 
 When the last picked obstacle is done, start 4a in the same message.
 
@@ -179,7 +187,7 @@ If the holding list has anything on it, remind them it counts and that you alrea
 
 **WAIT for "done".** End your turn here.
 
-After "done," build your list from the documents, the goal and the root causes, with each solution tied to the obstacle it serves. Show it as what they suggest. Ask what they'd change and what they have that isn't there.
+After "done," build your list from the documents, the goal and the root causes, with each solution tied to the item it serves. Show it as what they suggest. Ask what they'd change and what they have that isn't there.
 
 **WAIT for their reaction.** Then show the merged list, with the holding list pulled in.
 
@@ -187,7 +195,7 @@ After "done," build your list from the documents, the goal and the root causes, 
 
 In the same message, start tying, because every solution gets tied. Take untied solutions one per turn. Nudge them to name the obstacle it gets past, and help them find it. If none fits, name an obstacle that was missed and add it with their yes. If they still can't tie it, ask whether a new obstacle belongs on the map or the solution comes off. A solution that serves several obstacles sits on each one.
 
-The solutions you tie go at the end of the chain, with no `solution_at` entry. If the person says a solution belongs under a specific item, write that place in `solution_at`. Don't ask where each solution goes, and a place never stands in for the tie.
+Tie each solution to the item it gets past, usually a root cause. If the person names a different item, put it there.
 
 **WAIT for their answer at each one.**
 
@@ -257,7 +265,7 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 
 **If the file shows no changes and they didn't say they changed it,** they have no edits to find, so go to "Resuming" below.
 
-**If it shows changes,** list them in plain words. A different `solution_at` counts as a change, even when `solution_ids` is the same, so name the item the solution now sits under. Then:
+**If it shows changes,** list them in plain words. Compare items by `id`, because a label can change when an item before it is deleted. A solution moved to another item counts as a change, so name the item it now sits on by its label. Then:
 
 - Nudge any untied solution toward an obstacle, the same way as 4a.
 - Ask about any star with no Step 5 row, once the run has reached Step 5.
@@ -270,7 +278,7 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 
 **WAIT if you asked anything,** then go to "Resuming."
 
-**Resuming.** In this conversation, carry on from the step you were on. In a new conversation, read the documents as in the opening. If the map has no obstacles, start 3a. Otherwise say what the map shows and ask which step to resume, naming the earliest step it can't prove ran. The map doesn't record picks, so it can't prove every picked obstacle got its whys. Solutions only in the tray never count as 4a done, and they become the holding list when 4a runs. **WAIT for their answer.** Every step keeps its private stops.
+**Resuming.** In this conversation, carry on from the step you were on. In a new conversation, read the documents as in the opening. If the map has no obstacles, start 3a. Otherwise say what the map shows and ask which step to resume, naming the earliest step it can't prove ran. The map doesn't record picks, so it can't prove every picked obstacle got asked why. Solutions only in the tray never count as 4a done, and they become the holding list when 4a runs. **WAIT for their answer.** Every step keeps its private stops.
 
 ## Artifact
 

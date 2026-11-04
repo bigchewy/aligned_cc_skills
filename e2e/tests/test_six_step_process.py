@@ -656,7 +656,7 @@ def test_read_back_checks_the_shape():
     rules = section("## The map file")
     read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
     assert "non-empty `map_id`" in read_back
-    assert "`whys`" in read_back
+    assert "`children`" in read_back
     assert "`solution_ids`" in read_back
     assert re.search(r"fix it", read_back)
 
@@ -882,114 +882,189 @@ def test_no_edit_example_never_says_the_save_went_astray():
     assert "doesn't have your edits" not in body
 
 
-# Where a solution sits in its chain
+# The tree in the page and the prompt
 
 def page_function(name, next_name):
     html = template()
     return html[html.index("function " + name + "("):html.index("function " + next_name + "(")]
 
 
-def test_every_chain_item_offers_add_a_solution():
+def example_items():
+    data = json.loads(SLOT.search(EXAMPLE.read_text()).group(2))
+    labels = {}
+
+    def walk(items, depth, prefix):
+        for i, it in enumerate(items):
+            label = prefix + (str(i + 1) if depth % 2 == 0 else chr(65 + i))
+            labels[label] = it
+            walk(it["children"], depth + 1, label)
+
+    walk(data["obstacles"], 0, "")
+    return data, labels
+
+
+def test_every_item_offers_add_a_solution():
     body = page_function("editorActions", "openEditor")
     line = body[body.rindex("if (", 0, body.index("add('Add a solution'")):body.index("add('Add a solution'")]
-    for kind in ("obstacle", "why", "root"):
-        assert "'" + kind + "'" in line, kind
-    assert "isLastWhy" not in line
+    assert "item" in line
+    assert "root_cause" not in line
 
 
-def test_page_records_the_selected_item_when_it_adds_a_solution():
-    assert "L.placeForItem(ref)" in page_function("addSolutionTo", "moveControl")
+def test_the_editor_offers_sub_obstacles_except_on_a_root_cause():
+    body = page_function("editorActions", "openEditor")
+    at = body.index("add('Add a sub-obstacle'")
+    line = body[body.rindex("if (", 0, at):at]
+    assert "!item.root_cause" in line
 
 
-def test_page_move_control_offers_items_and_sends_the_place():
+def test_the_editor_offers_the_root_cause_mark_only_with_no_children():
+    body = page_function("editorActions", "openEditor")
+    assert "Mark as root cause" in body
+    at = body.index("Mark as root cause")
+    line = body[body.rindex("if (", 0, at):at]
+    assert "!item.children.length" in line
+
+
+def test_the_delete_control_says_how_many_sub_items_go():
+    body = page_function("deleteLabel", "editorActions")
+    assert "L.subItemCount(map, " in body
+    assert "sub-item" in body
+    assert "deleteLabel(ref)" in page_function("editorActions", "openEditor")
+
+
+def test_page_move_control_lists_items_by_label_and_text():
     body = page_function("moveControl", "editorActions")
-    assert "L.moveTargets(map, ref.sid, ref.oid" in body
-    assert "target.place" in body
+    assert "L.moveTargets(map, ref.sid)" in body
     assert "L.moveTargetName(target)" in body
-    assert "Choose an obstacle" not in body
+    assert "target.id" in body
 
 
-def test_both_layouts_draw_solutions_by_chain_item():
-    assert "L.solutionSpots(map, o.id)" in page_function("makeRow", "place")
-    wide = page_function("layOutWide", "layOutNarrow")
-    assert "L.rowLayout(" in wide
-    assert "row.tail" in wide
-    assert "row.tail" in page_function("layOutNarrow", "scaleFor")
+def test_both_layouts_use_the_pure_layout_code():
+    assert "L.wideLayout(" in page_function("layOutWide", "layOutNarrow")
+    narrow = page_function("layOutNarrow", "scaleFor")
+    assert "L.narrowPlaces(" in narrow
+    assert "L.narrowLayout(" in narrow
 
 
-def test_wide_layout_gives_the_tail_its_own_column_only_when_it_has_solutions():
-    wide = page_function("layOutWide", "layOutNarrow")
-    assert "row.depth = row.chain.length + (row.tail.length ? 1 : 0)" in wide
+def test_narrow_layout_sets_widths_before_it_measures():
+    narrow = page_function("layOutNarrow", "scaleFor")
+    assert narrow.index("style.width") < narrow.index("offsetHeight")
 
 
-def test_prompt_json_names_solution_at_and_says_what_it_means():
+def test_labels_have_a_muted_bold_style():
+    rule = re.search(r"\.label \{([^}]*)\}", template())
+    assert rule
+    assert "var(--muted)" in rule.group(1)
+    assert "font-weight" in rule.group(1)
+
+
+def test_template_has_no_chain_code_left():
+    html = template()
+    for gone in ("whys", "solution_at", "addWhy", "deleteWhy", "markRootCause", "chainPlaces", "function rowLayout"):
+        assert gone not in html.replace("'whys' in item", "").replace("'solution_at' in item", ""), gone
+
+
+def test_example_map_shows_real_branching():
+    data, labels = example_items()
+    assert "attendance" in data["goal"]["text"].lower()
+    for label in ("1A", "1B", "1B1"):
+        assert label in labels, label
+    assert any(it["root_cause"] for it in labels.values())
+    assert sum(it["root_cause"] for it in labels["1"]["children"] + labels["1B"]["children"]) >= 2
+    assert any(it["children"] and it["solution_ids"] for it in labels.values())
+    assert data["baseline"]["obstacles"] == data["obstacles"]
+
+
+def test_prompt_json_shape_is_the_tree():
     rules = section("## The map file")
-    assert '"solution_at"' in rules
-    line = next(line for line in rules.splitlines() if line.startswith("`solution_at`"))
-    assert "optional" in line
-    assert '`"obstacle"`' in line
-    assert '`"why:N"`' in line
-    assert "end of the chain" in line
-    assert "root cause" in line
+    block = rules[rules.index("```json"):rules.index("```\n", rules.index("```json") + 8)]
+    assert '"root_cause": false' in block
+    assert '"children": [' in block
+    assert '"solution_ids": ["s1"]' in block
+    data = json.loads(block[len("```json"):])
+    top = data["obstacles"][0]
+    assert sorted(top) == ["children", "id", "root_cause", "solution_ids", "text"]
+    assert sorted(top["children"][0]) == sorted(top)
+    assert top["children"][0]["root_cause"] is True
 
 
-def test_read_back_lets_solution_at_be_left_out():
+def test_prompt_no_longer_names_whys_or_solution_at():
+    text = prompt()
+    assert "whys" not in text
+    assert "solution_at" not in text
+    assert "why:" not in text
+    assert "end of the chain" not in text
+    for page in (EXAMPLES.read_text(), ANTI_EXAMPLES.read_text()):
+        assert "whys" not in page
+        assert "solution_at" not in page
+        assert "end of the chain" not in page
+
+
+def test_read_back_checks_the_tree_at_every_depth():
     rules = section("## The map file")
     read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
-    assert "`solution_at`" in read_back
+    assert "`children`" in read_back
+    assert "`solution_ids`" in read_back
+    assert "`root_cause`" in read_back
+    assert "every depth" in read_back
+    assert "id" in read_back
 
 
-def test_prompt_says_how_claude_keeps_places_right_when_it_changes_a_chain():
+def test_prompt_explains_labels_and_says_never_to_store_them():
     rules = section("## The map file")
-    line = next(line for line in rules.splitlines() if "shift" in line and "solution_at" in line)
-    assert "root cause" in line
-    assert "own place" in rules
+    assert "`1B3`" in rules
+    assert "AA" in rules
+    assert re.search(r"Never store a label", rules)
+    assert "Solutions get no labels" in rules
 
 
-def test_solutions_default_to_the_end_of_the_chain_unless_the_person_says():
+def test_prompt_says_where_solutions_draw_and_what_delete_does():
+    rules = section("## The map file")
+    assert "directly under" in rules
+    assert "next column out" in rules
+    assert "tray" in rules
+    assert "everything under it" in rules
+
+
+def test_root_cause_step_builds_children_and_splits_two_reasons():
+    step = section("### 3c: Root cause")
+    assert "becomes a child of the item" in step
+    assert "two different reasons" in step
+    assert "its own child" in step
+    assert "one question per turn" in step
+    assert "Stop when the person can act on the answer" in step
+    assert "The person can stop it sooner" in step
+    assert "**WAIT at each why and at each root cause.**" in step
+    assert "**Write the map.**" in step
+    assert "`root_cause` to true" in step
+    assert '"1B"' in step or "1B" in step
+
+
+def test_tying_goes_on_the_item_it_gets_past():
     solutions = section("### 4a: Solutions")
-    line = next(line for line in solutions.splitlines() if "`solution_at`" in line)
-    assert "end of the chain" in line
-    assert "the person says" in line
-    # A place never replaces the tie, and the turn rules stay.
+    line = next(line for line in solutions.splitlines() if "usually a root cause" in line)
+    assert "the item it gets past" in line
     assert "every solution gets tied" in solutions
     assert "one per turn" in solutions
-    assert line.index("end of the chain") < line.index("the person says")
 
 
-def test_placing_a_solution_comes_with_no_new_question():
-    solutions = section("### 4a: Solutions")
-    line = next(line for line in solutions.splitlines() if "`solution_at`" in line)
-    assert "Don't ask" in line
-
-
-def test_pick_up_treats_a_changed_place_as_a_change():
+def test_pick_up_compares_by_id_and_names_a_moved_solution():
     pick_up = section("## Picking up edits")
-    line = next(line for line in pick_up.splitlines() if "`solution_at`" in line)
-    assert "counts as a change" in line
-    assert line.index("`solution_at`") < line.index("counts as a change")
+    line = next(line for line in pick_up.splitlines() if "counts as a change" in line)
+    assert "another item" in line
+    assert "`id`" in line
+    assert "label" in line
 
 
-def test_example_map_shows_a_solution_under_a_middle_item():
-    data = json.loads(SLOT.search(EXAMPLE.read_text()).group(2))
-    placed = [o for o in data["obstacles"] if o.get("solution_at")]
-    assert placed
-    o = placed[0]
-    sid, place = next(iter(o["solution_at"].items()))
-    assert sid in o["solution_ids"]
-    index = int(place.split(":")[1])
-    # A middle item: the chain carries on past it.
-    assert index < len(o["whys"]) - 1 or o["root_cause"]
-    assert data["baseline"]["obstacles"] == data["obstacles"]
-    assert "attendance" in data["goal"]["text"].lower()
-
-
-def test_examples_show_a_place_the_person_names_and_a_changed_place():
+def test_examples_show_branches_labels_and_a_moved_solution():
     examples = EXAMPLES.read_text()
-    assert "### 4a: A solution under a specific item" in examples
-    start = examples.index("### 4a: A solution under a specific item")
-    body = examples[start:examples.index("\n### ", start + 1)]
-    assert "solution_at" in body
-    assert '"why:1"' in body
-    assert "end of the chain" in body
+    assert "### 3c: Two reasons become two branches" in examples
+    assert "### 4a: A solution on a specific item" in examples
     assert "### A solution moved to another item" in examples
+    assert "1B" in examples
+
+
+def test_anti_examples_cover_two_reasons_in_one_item():
+    anti = ANTI_EXAMPLES.read_text()
+    assert "### Putting two reasons in one item" in anti
+    assert "### Adding under a root cause" in anti

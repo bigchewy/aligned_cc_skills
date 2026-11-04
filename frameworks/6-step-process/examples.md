@@ -94,7 +94,17 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **Advisor:** "**We haven't defined what the office is for.** You can do something about that one. Is that it?"
 
-> Two rounds, and the person can act on the answer. The answer goes in bold and ends the chain.
+> Two rounds, and the person can act on the answer. Each answer is a child of the item before it, and the last one goes in bold and ends its branch.
+
+### 3c: Two reasons become two branches
+
+**Advisor:** "1: People don't want to commute. Why not?"
+
+**User:** "Two things. The commute got longer for people who moved, and the value of being in the office hasn't kept up."
+
+**Advisor:** "That's two branches: 1A, the commute got longer, and 1B, the value of the office hasn't kept up. Take 1B first. Why hasn't it kept up?"
+
+> Each reason becomes its own child of the item Claude asked about. Claude uses the labels and takes one branch at a time, and one question per turn still holds.
 
 ## Step 4: Solutions
 
@@ -112,15 +122,15 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 > Claude nudges, then helps find the obstacle. By the end of 4a, every solution is tied.
 
-### 4a: A solution under a specific item
+### 4a: A solution on a specific item
 
 **Advisor:** "Which obstacle does create in-person-only experiences get past?"
 
-**User:** "People don't want to commute. Put it right under the part about the value of the office not keeping up, because that's what it fixes."
+**User:** "People don't want to commute. Put it on 1B, the value of the office not keeping up, because that's what it fixes."
 
-**Advisor:** "It's on that obstacle, directly under that why. Next: which obstacle does set clear expectations with managers get past?"
+**Advisor:** "It's on 1B. Next: which obstacle does set clear expectations with managers get past?"
 
-> The person named an item, so Claude writes `"solution_at": {"s3": "why:1"}` on that obstacle and keeps `s3` in `solution_ids`. Claude didn't ask where it goes. A solution nobody places stays at the end of the chain with no entry.
+> The person named an item, so Claude adds `s3` to that item's `solution_ids`. 1B has children, so the page draws the solution directly under it. On an item with no children, it draws in the next column out. Without a named item, Claude ties a solution to what it gets past, usually a root cause.
 
 ### 4b: Picks and the key-action table
 
@@ -163,7 +173,7 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "You renamed the noise obstacle, deleted the productivity obstacle, and added a why under expectations. The pulse survey sat on the productivity obstacle, so it's untied now. Which obstacle does it get past?"
+**Advisor:** "You renamed the noise obstacle, deleted the productivity obstacle, and added 4A under expectations. The pulse survey sat on the productivity obstacle, so it's untied now. Which obstacle does it get past?"
 
 > Claude compares the file with `baseline`, lists the changes in plain words, and nudges the untied solution. If it only lists them, it moves `baseline` in the file to this version and leaves `revision` alone, so the next pick-up sees only newer edits.
 
@@ -171,9 +181,9 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "You moved create in-person-only experiences on the commute obstacle. It now sits directly under the obstacle, and before it sat under the why about the value of the office. That's the only change. Which step do you want to resume?"
+**Advisor:** "You moved create in-person-only experiences from 1B to 1, the commute obstacle itself. That's the only change. Which step do you want to resume?"
 
-> The solution stayed on the same obstacle, so `solution_ids` didn't change. A different `solution_at` still counts as a change, and Claude names the item.
+> `solution_ids` changed on both items, and Claude names them by label. Claude compares items by `id`, because a label can change when an item before it is deleted.
 
 ### No edits, and they didn't say they changed it
 

@@ -76,6 +76,26 @@
 
 > Ask why on the picks only, and stop when the person can act on the answer.
 
+### Putting two reasons in one item
+
+**User:** "Two things. The commute got longer for people who moved, and the value of being in the office hasn't kept up."
+
+**Wrong:** Writing one child: "The commute got longer, and the value of the office hasn't kept up."
+
+**Right:** "That's two branches: 1A, the commute got longer, and 1B, the value of the office hasn't kept up. Take 1B first. Why hasn't it kept up?"
+
+> Each reason gets its own child, so each can reach its own root cause.
+
+### Adding under a root cause
+
+**User:** "We haven't defined what the office is for."
+
+**Wrong:** Marking 1B1 as a root cause, then adding another answer under it as 1B1A.
+
+**Right:** "**We haven't defined what the office is for.** You can do something about that one. Is that it?" If they say no, unmark it and keep asking why.
+
+> A root cause ends its branch. An item with children can't be one, and the page won't draw a file that has one.
+
 ### Rewriting the map without reading it first
 
 **Wrong:** Writing the Step 5 rows over the file from what you remember, which wipes out the obstacle the person renamed on the page.

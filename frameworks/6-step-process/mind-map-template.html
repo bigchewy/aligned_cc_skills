@@ -115,6 +115,7 @@ header {
   font-weight: 700;
 }
 .star { color: var(--star); margin-right: 4px; }
+.label { color: var(--muted); font-weight: 700; margin-right: 5px; }
 .repeat { color: var(--muted); font-weight: 700; margin-left: 6px; white-space: nowrap; }
 .blank { color: var(--muted); font-weight: 400; font-style: italic; }
 .item.goal .blank { color: var(--goal-ink); }
@@ -258,10 +259,60 @@ header {
     return JSON.parse(JSON.stringify(map));
   }
 
+  // Runs fn on every item in the tree, each parent before its children.
+  function eachItem(items, fn, depth) {
+    items.forEach(function (item) {
+      fn(item, depth || 0);
+      eachItem(item.children, fn, (depth || 0) + 1);
+    });
+  }
+
+  function findItem(map, itemId) {
+    var found = null;
+    eachItem(map.obstacles, function (item) {
+      if (item.id === itemId) found = item;
+    });
+    return found;
+  }
+
+  // Runs fn on the item with this id, in a copy of the map.
+  function withItem(map, itemId, fn) {
+    var next = copy(map);
+    var item = findItem(next, itemId);
+    if (item) fn(item);
+    return next;
+  }
+
+  // A, B ... Z, AA, AB.
+  function letters(index) {
+    var text = '';
+    for (var n = index + 1; n > 0; n = Math.floor((n - 1) / 26)) {
+      text = String.fromCharCode(65 + (n - 1) % 26) + text;
+    }
+    return text;
+  }
+
+  function labelPart(depth, index) {
+    return depth % 2 === 0 ? String(index + 1) : letters(index);
+  }
+
+  function addLabels(items, depth, prefix, labels) {
+    items.forEach(function (item, i) {
+      labels[item.id] = prefix + labelPart(depth, i);
+      addLabels(item.children, depth + 1, labels[item.id], labels);
+    });
+    return labels;
+  }
+
+  // Labels come from position and are never stored, so deleting an item renumbers its later siblings.
+  function itemLabels(map) {
+    return addLabels(map.obstacles, 0, '', {});
+  }
+
   function tiedIds(map) {
     var tied = {};
-    map.obstacles.forEach(function (o) {
-      o.solution_ids.forEach(function (id) { tied[id] = true; });
+    eachItem(map.obstacles, function (item) {
+      item.solution_ids.forEach(function (id) { tied[id] = true; });
     });
     return tied;
   }
@@ -274,83 +325,39 @@ header {
   }
 
   function repeatCount(map, solutionId) {
-    return map.obstacles.filter(function (o) {
-      return o.solution_ids.indexOf(solutionId) !== -1;
-    }).length;
+    var count = 0;
+    eachItem(map.obstacles, function (item) {
+      if (item.solution_ids.indexOf(solutionId) !== -1) count += 1;
+    });
+    return count;
   }
 
-  // Runs fn on the obstacle with this id, in a copy of the map.
-  function withObstacle(map, obstacleId, fn) {
-    var next = copy(map);
-    next.obstacles.forEach(function (o) {
-      if (o.id === obstacleId) fn(o);
+  // The solution stays in map.solutions, so one left with no item shows in the tray.
+  function deleteSolutionFromObstacle(map, itemId, solutionId) {
+    return withItem(map, itemId, function (item) {
+      item.solution_ids = item.solution_ids.filter(function (id) { return id !== solutionId; });
     });
+  }
+
+  function withoutItem(items, itemId) {
+    return items.filter(function (item) { return item.id !== itemId; }).map(function (item) {
+      item.children = withoutItem(item.children, itemId);
+      return item;
+    });
+  }
+
+  // The whole branch goes. Its solutions stay in map.solutions, so any left with no item show in the tray.
+  function deleteItem(map, itemId) {
+    var next = copy(map);
+    next.obstacles = withoutItem(next.obstacles, itemId);
     return next;
   }
 
-  // Every item in a chain, in order. A root cause has no place, because no place means the end of the chain.
-  function chainPlaces(o) {
-    var items = [{ place: 'obstacle', kind: 'obstacle', text: o.text }];
-    o.whys.forEach(function (why, i) {
-      items.push({ place: 'why:' + i, kind: 'why', text: why });
-    });
-    if (o.root_cause) items.push({ place: null, kind: 'root', text: o.root_cause });
-    return items;
-  }
-
-  // The chain item a place points at, or -1 when it points at nothing still there.
-  function placeIndex(o, place) {
-    if (place === 'obstacle') return 0;
-    var m = typeof place === 'string' ? /^why:(\d+)$/.exec(place) : null;
-    return m && Number(m[1]) < o.whys.length ? Number(m[1]) + 1 : -1;
-  }
-
-  // The field goes when it empties, so an edit that ends where it began shows no change to Claude.
-  function setPlace(o, solutionId, place) {
-    var at = isObject(o.solution_at) ? o.solution_at : {};
-    if (place) at[solutionId] = place;
-    else delete at[solutionId];
-    if (Object.keys(at).length) o.solution_at = at;
-    else delete o.solution_at;
-  }
-
-  // Run this before a chain changes. It also drops places that point at nothing, so none comes alive later.
-  function rewritePlaces(o, rewrite) {
-    if (o.solution_at === undefined) return;
-    var at = isObject(o.solution_at) ? o.solution_at : {};
-    delete o.solution_at;
-    Object.keys(at).forEach(function (id) {
-      if (placeIndex(o, at[id]) === -1 || o.solution_ids.indexOf(id) === -1) return;
-      setPlace(o, id, rewrite(at[id]));
-    });
-  }
-
-  function keepPlace(place) {
-    return place;
-  }
-
-  // The solution stays in map.solutions, so one left with no obstacle shows in the tray.
-  function deleteSolutionFromObstacle(map, obstacleId, solutionId) {
-    return withObstacle(map, obstacleId, function (o) {
-      o.solution_ids = o.solution_ids.filter(function (id) { return id !== solutionId; });
-      setPlace(o, solutionId, null);
-    });
-  }
-
-  function deleteObstacle(map, obstacleId) {
-    var next = copy(map);
-    next.obstacles = next.obstacles.filter(function (o) { return o.id !== obstacleId; });
-    return next;
-  }
-
-  // A solution placed under the last why now sits under the root cause, which takes no place.
-  function markRootCause(map, obstacleId) {
-    return withObstacle(map, obstacleId, function (o) {
-      if (o.whys.length === 0) return;
-      var last = 'why:' + (o.whys.length - 1);
-      rewritePlaces(o, function (place) { return place === last ? null : place; });
-      o.root_cause = o.whys.pop();
-    });
+  function subItemCount(map, itemId) {
+    var item = findItem(map, itemId);
+    var count = 0;
+    if (item) eachItem(item.children, function () { count += 1; });
+    return count;
   }
 
   // Scans the whole file, so an id still named in the side panel or baseline is never reused.
@@ -363,36 +370,27 @@ header {
     return prefix + (highest + 1);
   }
 
+  function newItem(id, text) {
+    return { id: id, text: text, root_cause: false, solution_ids: [], children: [] };
+  }
+
   function addObstacle(map, id, text) {
     var next = copy(map);
-    next.obstacles.push({ id: id, text: text, whys: [], root_cause: '', solution_ids: [] });
+    next.obstacles.push(newItem(id, text));
     return next;
   }
 
-  // A root cause ends the chain, so a why can't follow it.
-  function addWhy(map, obstacleId, text) {
-    return withObstacle(map, obstacleId, function (o) {
-      if (o.root_cause) return;
-      rewritePlaces(o, keepPlace);
-      o.whys.push(text);
+  // A root cause ends its branch, so it can't take a child.
+  function addChild(map, parentId, id, text) {
+    return withItem(map, parentId, function (item) {
+      if (!item.root_cause) item.children.push(newItem(id, text));
     });
   }
 
-  // Solutions under the deleted why go to the end of the chain, and later whys move up one.
-  function deleteWhy(map, obstacleId, index) {
-    return withObstacle(map, obstacleId, function (o) {
-      rewritePlaces(o, function (place) {
-        var at = placeIndex(o, place) - 1;
-        if (at === index) return null;
-        return at > index ? 'why:' + (at - 1) : place;
-      });
-      o.whys.splice(index, 1);
-    });
-  }
-
-  function deleteRootCause(map, obstacleId) {
-    return withObstacle(map, obstacleId, function (o) {
-      o.root_cause = '';
+  // Only an item with no children can be a root cause.
+  function setRootCause(map, itemId, isRoot) {
+    return withItem(map, itemId, function (item) {
+      if (!isRoot || !item.children.length) item.root_cause = Boolean(isRoot);
     });
   }
 
@@ -404,10 +402,8 @@ header {
       });
       return next;
     }
-    return withObstacle(map, ref.oid, function (o) {
-      if (ref.kind === 'obstacle') o.text = text;
-      if (ref.kind === 'why') o.whys[ref.index] = text;
-      if (ref.kind === 'root') o.root_cause = text;
+    return withItem(map, ref.oid, function (item) {
+      item.text = text;
     });
   }
 
@@ -417,61 +413,64 @@ header {
     return next;
   }
 
-  // The place a solution gets when this item is the one selected.
-  function placeForItem(ref) {
-    if (ref.kind === 'obstacle') return 'obstacle';
-    return ref.kind === 'why' ? 'why:' + ref.index : null;
-  }
-
-  function addSolution(map, obstacleId, id, text, place) {
-    var next = withObstacle(map, obstacleId, function (o) {
-      o.solution_ids.push(id);
-      setPlace(o, id, place);
+  function addSolution(map, itemId, id, text) {
+    var next = withItem(map, itemId, function (item) {
+      item.solution_ids.push(id);
     });
     next.solutions.push({ id: id, text: text, star: false });
     return next;
   }
 
-  // A move inside one obstacle changes only the place, so the solutions keep their order.
-  function moveSolution(map, fromObstacleId, toObstacleId, solutionId, place) {
-    var next = fromObstacleId === toObstacleId
-      ? copy(map)
-      : deleteSolutionFromObstacle(map, fromObstacleId, solutionId);
-    return withObstacle(next, toObstacleId, function (o) {
-      if (o.solution_ids.indexOf(solutionId) === -1) o.solution_ids.push(solutionId);
-      setPlace(o, solutionId, place);
+  function moveSolution(map, fromId, toId, solutionId) {
+    var next = fromId === toId ? copy(map) : deleteSolutionFromObstacle(map, fromId, solutionId);
+    return withItem(next, toId, function (item) {
+      if (item.solution_ids.indexOf(solutionId) === -1) item.solution_ids.push(solutionId);
     });
   }
 
   function deleteSolution(map, solutionId) {
     var next = copy(map);
     next.solutions = next.solutions.filter(function (s) { return s.id !== solutionId; });
-    next.obstacles.forEach(function (o) {
-      o.solution_ids = o.solution_ids.filter(function (id) { return id !== solutionId; });
-      setPlace(o, solutionId, null);
+    eachItem(next.obstacles, function (item) {
+      item.solution_ids = item.solution_ids.filter(function (id) { return id !== solutionId; });
     });
     return next;
   }
 
+  // Each solution's name in the plan panel, with the labels of the items it sits on.
+  function solutionNames(map) {
+    var labels = itemLabels(map);
+    var places = Object.create(null);
+    eachItem(map.obstacles, function (item) {
+      item.solution_ids.forEach(function (id) {
+        (places[id] = places[id] || []).push(labels[item.id]);
+      });
+    });
+    var names = {};
+    map.solutions.forEach(function (s) {
+      names[s.id] = places[s.id] ? s.text + ' (' + places[s.id].join(', ') + ')' : s.text;
+    });
+    return names;
+  }
+
   // Ids that no longer exist drop out here. Claude cleans them up when it picks up edits.
   function panelRows(map) {
-    var textById = {};
-    map.solutions.forEach(function (s) { textById[s.id] = s.text; });
+    var names = solutionNames(map);
     return {
       key_actions: map.key_actions.map(function (k) {
         return {
           text: k.text,
           risk: k.risk,
           solutions: k.solution_ids
-            .filter(function (id) { return id in textById; })
-            .map(function (id) { return textById[id]; })
+            .filter(function (id) { return id in names; })
+            .map(function (id) { return names[id]; })
         };
       }),
       execute: map.execute
-        .filter(function (e) { return e.solution_id in textById; })
+        .filter(function (e) { return e.solution_id in names; })
         .map(function (e) {
           return {
-            solution: textById[e.solution_id],
+            solution: names[e.solution_id],
             first_move: e.first_move,
             owner: e.owner,
             others_decide: e.others_decide
@@ -485,12 +484,10 @@ header {
     if (ref.kind === 'goal') return true;
     var solutionIsListed = map.solutions.some(function (s) { return s.id === ref.sid; });
     if (ref.kind === 'solution' && !ref.oid) return solutionIsListed;
-    var o = map.obstacles.filter(function (item) { return item.id === ref.oid; })[0];
-    if (!o) return false;
-    if (ref.kind === 'why') return ref.index < o.whys.length;
-    if (ref.kind === 'root') return Boolean(o.root_cause);
-    if (ref.kind === 'solution') return solutionIsListed && o.solution_ids.indexOf(ref.sid) !== -1;
-    if (ref.kind === 'missing') return o.solution_ids.indexOf(ref.sid) !== -1;
+    var item = findItem(map, ref.oid);
+    if (!item) return false;
+    if (ref.kind === 'solution') return solutionIsListed && item.solution_ids.indexOf(ref.sid) !== -1;
+    if (ref.kind === 'missing') return item.solution_ids.indexOf(ref.sid) !== -1;
     return true;
   }
 
@@ -505,101 +502,217 @@ header {
   }
 
   // An id with no solution stays in the list, marked missing, so the map can show it.
-  function solutionsOn(map, obstacleId) {
+  function solutionsOn(map, itemId) {
     var byId = {};
     map.solutions.forEach(function (s) { byId[s.id] = s; });
-    var ids = [];
-    map.obstacles.forEach(function (o) {
-      if (o.id === obstacleId) ids = o.solution_ids;
-    });
-    return ids.map(function (id) {
+    var item = findItem(map, itemId);
+    return (item ? item.solution_ids : []).map(function (id) {
       return byId[id] || { id: id, missing: true };
     });
   }
 
-  function obstacleWithId(map, obstacleId) {
-    return map.obstacles.filter(function (o) { return o.id === obstacleId; })[0];
-  }
-
-  // Everywhere this solution can move to: directly under each item with a place, and the end of the
-  // chain, which has none. A root cause takes no place, so the end stands for it. Another obstacle
-  // that already holds the solution is left out, as moving onto it would take a repeat away. The
-  // spot it sits in now is left out too.
-  function moveTargets(map, solutionId, fromObstacleId) {
+  // Every item a solution can move to. An item that already holds it is left out, because moving
+  // onto it would take a repeat away. That includes the item it sits on now.
+  function moveTargets(map, solutionId) {
+    var labels = itemLabels(map);
     var targets = [];
-    map.obstacles.forEach(function (o) {
-      var isFrom = o.id === fromObstacleId;
-      if (!isFrom && o.solution_ids.indexOf(solutionId) !== -1) return;
-      var at = isObject(o.solution_at) ? o.solution_at[solutionId] : undefined;
-      var current = placeIndex(o, at);
-      var items = chainPlaces(o);
-      var last = items[items.length - 1];
-      items.filter(function (item) { return item.place; }).concat([
-        { place: null, kind: 'end', after: last.kind, text: last.text }
-      ]).forEach(function (item) {
-        if (isFrom && placeIndex(o, item.place) === current) return;
-        targets.push({
-          oid: o.id, obstacle: o.text, place: item.place, kind: item.kind, after: item.after, text: item.text
-        });
-      });
+    eachItem(map.obstacles, function (item) {
+      if (item.solution_ids.indexOf(solutionId) !== -1) return;
+      targets.push({ id: item.id, label: labels[item.id], text: item.text });
     });
     return targets;
   }
 
-  // Words for the Move to list, so "under this item" reads differently from "at the end".
   function moveTargetName(target) {
-    if (target.kind === 'obstacle') return 'Directly under the obstacle';
-    if (target.kind === 'why') return 'Directly under the why: ' + target.text;
-    if (target.after === 'root') return 'At the end, past the root cause: ' + target.text;
-    return target.after === 'why' ? 'At the end, past the last why' : 'At the end, past the obstacle';
+    return target.label + ' ' + target.text;
   }
 
-  // Where each solution draws. A good recorded place goes under its item. Anything else goes in
-  // the tail, the column past the end of the chain.
-  function solutionSpots(map, obstacleId) {
-    var o = obstacleWithId(map, obstacleId);
-    if (!o) return { under: [], tail: [] };
-    var at = isObject(o.solution_at) ? o.solution_at : {};
-    var under = chainPlaces(o).map(function () { return []; });
-    var tail = [];
-    solutionsOn(map, obstacleId).forEach(function (s) {
-      var index = placeIndex(o, at[s.id]);
-      if (index === -1) tail.push(s);
-      else under[index].push(s);
-    });
-    return { under: under, tail: tail };
+  // The first half of the top-level obstacles go on the right. An odd count puts the extra one there.
+  function sideOf(index, count) {
+    return index < Math.ceil(count / 2) ? 'right' : 'left';
   }
 
-  // Tops within one row. Chain boxes and the tail center on one line, and each item's placed
-  // solutions stack below it. With nothing placed, the row is the taller of chain and tail.
-  function rowLayout(chainHeights, stackHeights, gap, tailHeights) {
-    var tail = tailHeights || [];
-    var tailH = tail.reduce(function (sum, h) { return sum + h + gap; }, -gap);
-    var above = Math.max(Math.max.apply(null, chainHeights), tailH) / 2;
-    var bottom = above * 2;
-    var items = chainHeights.map(function (h, c) {
-      var top = above - h / 2;
-      var y = top + h;
-      var solutionTops = stackHeights[c].map(function (stackH) {
-        var solutionTop = y + gap;
-        y = solutionTop + stackH;
-        return solutionTop;
+  // A solution can show on several items, and more than once on a broken one, so its box goes by place.
+  function solutionKey(itemId, index) {
+    return itemId + '|' + index;
+  }
+
+  // Every box under the goal in reading order: each item, then its solutions, then its children.
+  function drawnRows(map) {
+    var rows = [];
+    function addRows(items, depth, prefix, parentKey) {
+      items.forEach(function (item, i) {
+        var label = prefix + labelPart(depth, i);
+        rows.push({ kind: 'item', key: item.id, parent: parentKey, depth: depth, label: label, item: item });
+        solutionsOn(map, item.id).forEach(function (solution, s) {
+          rows.push({
+            kind: 'solution',
+            key: solutionKey(item.id, s),
+            parent: item.id,
+            depth: depth + 1,
+            item: item,
+            solution: solution
+          });
+        });
+        addRows(item.children, depth + 1, label, item.id);
       });
-      bottom = Math.max(bottom, y);
-      return { top: top, solutionTops: solutionTops };
-    });
-    var tailY = above - tailH / 2;
-    var tailTops = tail.map(function (h) {
-      var tailTop = tailY;
-      tailY += h + gap;
-      return tailTop;
-    });
-    return { height: bottom, lineY: above, items: items, tailTops: tailTops };
+    }
+    addRows(map.obstacles, 0, '', null);
+    return rows;
   }
 
-  // Order alone picks the side, so adding a why never moves an obstacle across.
-  function sideOf(index) {
-    return index % 2 === 0 ? 'left' : 'right';
+  function stackHeight(heights, gap) {
+    return heights.length ? heights.reduce(function (sum, h) { return sum + h + gap; }, -gap) : 0;
+  }
+
+  function curve(x1, y1, x2, y2) {
+    var mid = (x1 + x2) / 2;
+    return 'M' + x1 + ' ' + y1 + ' C' + mid + ' ' + y1 + ' ' + mid + ' ' + y2 + ' ' + x2 + ' ' + y2;
+  }
+
+  // One item and all it holds, in a band of rows of its own. Bands never share rows, so branches can't
+  // overlap however deep or wide they get. The item centers on what sits in the next column out, and
+  // on an item with children, its solutions stack below it in its own column.
+  function itemBand(item, heights, gap) {
+    var height = heights[item.id];
+    var solutions = item.solution_ids.map(function (id, s) {
+      var key = solutionKey(item.id, s);
+      return { key: key, height: heights[key] };
+    });
+    var solutionHeights = solutions.map(function (s) { return s.height; });
+    var kids = item.children.map(function (child) { return itemBand(child, heights, gap); });
+    var hasKids = kids.length > 0;
+    var outerHeight = stackHeight(hasKids ? kids.map(function (k) { return k.height; }) : solutionHeights, gap);
+    var underHeight = hasKids ? stackHeight(solutionHeights, gap) + (solutions.length ? gap : 0) : 0;
+    var lineY = Math.max(height, outerHeight) / 2;
+    var deepestKid = Math.max.apply(null, [0].concat(kids.map(function (k) { return k.columns; })));
+    return {
+      id: item.id,
+      boxHeight: height,
+      solutions: solutions,
+      kids: kids,
+      lineY: lineY,
+      outerHeight: outerHeight,
+      height: Math.max(lineY + height / 2 + underHeight, lineY + outerHeight / 2),
+      columns: 1 + (hasKids ? deepestKid : solutions.length ? 1 : 0)
+    };
+  }
+
+  // Sizes in pixels: boxW, goalW, goalH, colGap, goalGap, rowGap, stackGap, pad.
+  function wideLayout(map, heights, sizes) {
+    var bands = { right: [], left: [] };
+    map.obstacles.forEach(function (item, i) {
+      bands[sideOf(i, map.obstacles.length)].push(itemBand(item, heights, sizes.stackGap));
+    });
+    function columns(side) {
+      return Math.max.apply(null, [0].concat(side.map(function (b) { return b.columns; })));
+    }
+    function sideHeight(side) {
+      return stackHeight(side.map(function (b) { return b.height; }), sizes.rowGap);
+    }
+
+    var step = sizes.boxW + sizes.colGap;
+    // Both sides take the width of the deeper one, so the goal sits at the true center.
+    var deepest = Math.max(columns(bands.left), columns(bands.right));
+    var sideW = deepest ? deepest * step - sizes.colGap + sizes.goalGap : 0;
+    var goalX = sizes.pad + sideW;
+    var height = Math.max(sideHeight(bands.left), sideHeight(bands.right), sizes.goalH) + sizes.pad * 2;
+    var width = goalX + sizes.goalW + sideW + sizes.pad;
+    var midY = height / 2;
+
+    var boxes = [];
+    var lines = [];
+
+    function layOutSide(side, dir) {
+      var inner = dir > 0 ? goalX + sizes.goalW + sizes.goalGap : goalX - sizes.goalGap - sizes.boxW;
+      function columnX(c) { return inner + dir * c * step; }
+      // The edge of a box in column c that faces the goal, and the edge that faces away.
+      function nearEdge(c) { return dir > 0 ? columnX(c) : columnX(c) + sizes.boxW; }
+      function farEdge(c) { return dir > 0 ? columnX(c) + sizes.boxW : columnX(c); }
+
+      function placeBand(band, column, top, parentKey, fromX, fromY) {
+        var lineY = top + band.lineY;
+        var boxTop = lineY - band.boxHeight / 2;
+        boxes.push({ key: band.id, x: columnX(column), y: boxTop, height: band.boxHeight });
+        lines.push({ from: parentKey, to: band.id, d: curve(fromX, fromY, nearEdge(column), lineY) });
+        var outerY = lineY - band.outerHeight / 2;
+
+        if (band.kids.length) {
+          // A short line runs down the middle of the column, through the stack.
+          var lineX = columnX(column) + sizes.boxW / 2;
+          var above = boxTop + band.boxHeight;
+          band.solutions.forEach(function (solution) {
+            var solutionTop = above + sizes.stackGap;
+            boxes.push({ key: solution.key, x: columnX(column), y: solutionTop, height: solution.height });
+            lines.push({ from: band.id, to: solution.key, d: 'M' + lineX + ' ' + above + ' V' + solutionTop });
+            above = solutionTop + solution.height;
+          });
+          band.kids.forEach(function (kid) {
+            placeBand(kid, column + 1, outerY, band.id, farEdge(column), lineY);
+            outerY += kid.height + sizes.stackGap;
+          });
+          return;
+        }
+        band.solutions.forEach(function (solution) {
+          boxes.push({ key: solution.key, x: columnX(column + 1), y: outerY, height: solution.height });
+          lines.push({
+            from: band.id,
+            to: solution.key,
+            d: curve(farEdge(column), lineY, nearEdge(column + 1), outerY + solution.height / 2)
+          });
+          outerY += solution.height + sizes.stackGap;
+        });
+      }
+
+      var y = (height - sideHeight(side)) / 2;
+      side.forEach(function (band) {
+        placeBand(band, 0, y, 'goal', dir > 0 ? goalX + sizes.goalW : goalX, midY);
+        y += band.height + sizes.rowGap;
+      });
+    }
+    layOutSide(bands.right, 1);
+    layOutSide(bands.left, -1);
+
+    return { width: width, height: height, goal: { x: goalX, y: midY - sizes.goalH / 2 }, boxes: boxes, lines: lines };
+  }
+
+  var NARROW = { trunk: 8, firstIndent: 16, indent: 14, maxIndents: 5, gap: 8, goalGap: 12 };
+
+  // Where each row goes across a phone, and how wide it is, so the page can measure it at that width.
+  // Past the deepest indent, the label still says how deep an item is.
+  function narrowPlaces(map, width) {
+    return {
+      goal: { x: NARROW.trunk, width: width - NARROW.trunk * 2 },
+      rows: drawnRows(map).map(function (row) {
+        var x = NARROW.trunk + NARROW.firstIndent + Math.min(row.depth, NARROW.maxIndents) * NARROW.indent;
+        return { key: row.key, parent: row.parent, x: x, width: width - x - NARROW.trunk };
+      })
+    };
+  }
+
+  // One column, top to bottom. A line drops from each parent just left of everything under it, so it
+  // never crosses a box. Past the deepest indent, there's no room under the parent for the line to
+  // start, so it leaves the parent's left edge instead.
+  function narrowLayout(places, heights, goalHeight) {
+    var goal = { x: places.goal.x, y: NARROW.trunk, height: goalHeight };
+    var y = goal.y + goalHeight + NARROW.goalGap;
+    var placed = {};
+    var boxes = [];
+    var lines = [];
+    places.rows.forEach(function (row) {
+      if (!row.parent && boxes.length) y += NARROW.gap;
+      var height = heights[row.key];
+      var parent = row.parent ? placed[row.parent] : goal;
+      var mid = y + height / 2;
+      var d = row.x > parent.x
+        ? 'M' + (parent.x + 8) + ' ' + (parent.y + parent.height) + ' V' + mid + ' H' + row.x
+        : 'M' + parent.x + ' ' + (parent.y + parent.height / 2) + ' H' + (row.x - 4) + ' V' + mid + ' H' + row.x;
+      lines.push({ from: row.parent || 'goal', to: row.key, d: d });
+      placed[row.key] = { key: row.key, x: row.x, y: y, height: height };
+      boxes.push(placed[row.key]);
+      y += height + NARROW.gap;
+    });
+    return { width: places.goal.width + NARROW.trunk * 2, height: y + NARROW.gap, goal: goal, boxes: boxes, lines: lines };
   }
 
   function fitScale(mapWidth, mapHeight, availableWidth, availableHeight, floor) {
@@ -669,15 +782,8 @@ header {
     return Array.isArray(value) && value.every(isText);
   }
 
-  // Each list the page draws, and each field a row needs for the page to draw it.
+  // Each flat list the page draws, and each field a row needs for the page to draw it.
   var ROW_RULES = [
-    { field: 'obstacles', list: 'obstacles', row: 'Obstacle', needs: [
-      ['id', isText, 'id'],
-      ['text', isText, 'text'],
-      ['whys', isTextList, 'list of whys'],
-      ['root_cause', isText, 'root cause'],
-      ['solution_ids', isTextList, 'list of solutions']
-    ] },
     { field: 'solutions', list: 'solutions', row: 'Solution', needs: [
       ['id', isText, 'id'],
       ['text', isText, 'text']
@@ -703,6 +809,29 @@ header {
     return null;
   }
 
+  // The first problem anywhere in the tree, named by the label the item would have. seen maps each id
+  // to the label of the item that has it, and has no built-in names, so any id is safe in it.
+  function itemsProblem(items, depth, prefix, seen) {
+    for (var i = 0; i < items.length; i += 1) {
+      var item = items[i];
+      var label = prefix + labelPart(depth, i);
+      var name = 'Obstacle ' + label;
+      if (!isObject(item)) return name + ' is missing.';
+      if ('whys' in item || 'solution_at' in item) return name + ' uses the old map shape.';
+      if (!item.id || !isText(item.id)) return name + ' is missing its id.';
+      if (!isText(item.text)) return name + ' is missing its text.';
+      if (typeof item.root_cause !== 'boolean') return name + ' needs true or false for its root cause.';
+      if (!isTextList(item.solution_ids)) return name + ' is missing its list of solutions.';
+      if (!Array.isArray(item.children)) return name + ' is missing its list of sub-obstacles.';
+      if (item.root_cause && item.children.length) return name + " is a root cause, so it can't have sub-obstacles.";
+      if (seen[item.id]) return 'Obstacles ' + seen[item.id] + ' and ' + label + ' both use the id ' + item.id + '.';
+      seen[item.id] = label;
+      var problem = itemsProblem(item.children, depth + 1, label, seen);
+      if (problem) return problem;
+    }
+    return null;
+  }
+
   // One plain sentence on the first thing that stops the page drawing or saving this map, or null.
   function mapProblem(map) {
     if (!isObject(map)) return "The data in this file can't be read as a map.";
@@ -710,6 +839,9 @@ header {
     if (typeof map.revision !== 'number') return 'The map has no revision number.';
     if (!isObject(map.goal)) return 'The goal is missing.';
     if (!isText(map.goal.text)) return 'The goal is missing its text.';
+    if (!Array.isArray(map.obstacles)) return 'The map is missing its list of obstacles.';
+    var treeProblem = itemsProblem(map.obstacles, 0, '', Object.create(null));
+    if (treeProblem) return treeProblem;
     for (var r = 0; r < ROW_RULES.length; r += 1) {
       var problem = rowsProblem(ROW_RULES[r], map[ROW_RULES[r].field]);
       if (problem) return problem;
@@ -901,24 +1033,26 @@ header {
   globalThis.MapLogic = {
     untiedSolutionIds: untiedSolutionIds,
     repeatCount: repeatCount,
+    itemLabels: itemLabels,
+    findItem: findItem,
     deleteSolutionFromObstacle: deleteSolutionFromObstacle,
-    deleteObstacle: deleteObstacle,
-    markRootCause: markRootCause,
+    deleteItem: deleteItem,
+    subItemCount: subItemCount,
     nextId: nextId,
     addObstacle: addObstacle,
-    addWhy: addWhy,
-    deleteWhy: deleteWhy,
-    deleteRootCause: deleteRootCause,
+    addChild: addChild,
+    setRootCause: setRootCause,
     setItemText: setItemText,
     setGoal: setGoal,
-    placeForItem: placeForItem,
     addSolution: addSolution,
     moveSolution: moveSolution,
     deleteSolution: deleteSolution,
-    solutionSpots: solutionSpots,
     moveTargets: moveTargets,
     moveTargetName: moveTargetName,
-    rowLayout: rowLayout,
+    drawnRows: drawnRows,
+    wideLayout: wideLayout,
+    narrowPlaces: narrowPlaces,
+    narrowLayout: narrowLayout,
     panelRows: panelRows,
     itemExists: itemExists,
     shouldWarnOnClose: shouldWarnOnClose,
@@ -1027,15 +1161,11 @@ header {
   }
 
   function refKey(ref) {
-    return [ref.kind, ref.oid || '', ref.index === undefined ? '' : ref.index, ref.sid || ''].join('|');
+    return [ref.kind, ref.oid || '', ref.sid || ''].join('|');
   }
 
   function solutionById(id) {
     return map.solutions.filter(function (s) { return s.id === id; })[0];
-  }
-
-  function obstacleById(id) {
-    return map.obstacles.filter(function (o) { return o.id === id; })[0];
   }
 
   /* Boxes */
@@ -1077,36 +1207,24 @@ header {
     return box;
   }
 
-  function chainItems(o) {
-    var items = [{ ref: { kind: 'obstacle', oid: o.id }, text: o.text, cls: 'obstacle', blank: 'New obstacle' }];
-    o.whys.forEach(function (why, i) {
-      items.push({ ref: { kind: 'why', oid: o.id, index: i }, text: why, cls: 'why', blank: 'New why' });
-    });
-    if (o.root_cause) items.push({ ref: { kind: 'root', oid: o.id }, text: o.root_cause, cls: 'root', blank: '' });
-    return items;
+  function makeObstacle(row) {
+    var cls = (row.depth === 0 ? 'obstacle' : 'sub') + (row.item.root_cause ? ' root' : '');
+    var box = makeItem({ kind: 'obstacle', oid: row.item.id }, cls);
+    box.appendChild(make('span', 'label', row.label));
+    fillText(box, row.item.text, row.depth === 0 ? 'New obstacle' : 'New sub-obstacle');
+    return box;
   }
 
-  // Adds every box for one obstacle to the canvas, so it can be measured.
-  function makeRow(o, width) {
-    var chain = chainItems(o).map(function (item) {
-      var box = makeItem(item.ref, item.cls);
-      fillText(box, item.text, item.blank);
-      box.style.width = width + 'px';
+  // Adds every box under the goal to the canvas, so each can be measured. The list keeps reading order.
+  function makeBoxes() {
+    return L.drawnRows(map).map(function (row) {
+      var box;
+      if (row.kind === 'item') box = makeObstacle(row);
+      else if (row.solution.missing) box = makeMissing(row.solution.id, row.item.id);
+      else box = makeSolution(row.solution, row.item.id);
       el.canvas.appendChild(box);
-      return box;
+      return { key: row.key, box: box };
     });
-    function solutionBox(s) {
-      var box = s.missing ? makeMissing(s.id, o.id) : makeSolution(s, o.id);
-      box.style.width = width + 'px';
-      el.canvas.appendChild(box);
-      return box;
-    }
-    var spots = L.solutionSpots(map, o.id);
-    return {
-      chain: chain,
-      solutions: spots.under.map(function (item) { return item.map(solutionBox); }),
-      tail: spots.tail.map(solutionBox)
-    };
   }
 
   function place(box, x, y) {
@@ -1114,141 +1232,58 @@ header {
     box.style.top = y + 'px';
   }
 
-  /* Layout: goal in the middle, one row per obstacle, each chain growing outward. Solutions with a place sit
-     below their items, and the rest fan out in a column past the end of the chain. */
-
-  function curve(x1, y1, x2, y2) {
-    var mid = (x1 + x2) / 2;
-    return 'M' + x1 + ' ' + y1 + ' C' + mid + ' ' + y1 + ' ' + mid + ' ' + y2 + ' ' + x2 + ' ' + y2;
+  // Puts each box where the layout says, and the layout's goal where it says.
+  function placeAll(made, goal, layout) {
+    var byKey = {};
+    made.forEach(function (m) { byKey[m.key] = m.box; });
+    layout.boxes.forEach(function (b) { place(byKey[b.key], b.x, b.y); });
+    place(goal, layout.goal.x, layout.goal.y);
   }
+
+  /* Layout: the code that works out positions is in the logic block, where tests can check it. These two
+     only make the boxes, measure them and put them where it says. */
 
   function layOutWide() {
     var goal = makeGoal();
     goal.style.width = GOAL_W + 'px';
     el.canvas.appendChild(goal);
-
-    var rows = map.obstacles.map(function (o) {
-      var row = makeRow(o, BOX_W);
-      row.layout = L.rowLayout(
-        row.chain.map(function (b) { return b.offsetHeight; }),
-        row.solutions.map(function (item) { return item.map(function (b) { return b.offsetHeight; }); }),
-        STACK_GAP,
-        row.tail.map(function (b) { return b.offsetHeight; })
-      );
-      row.height = row.layout.height;
-      row.depth = row.chain.length + (row.tail.length ? 1 : 0);
-      return row;
+    var made = makeBoxes();
+    var heights = {};
+    made.forEach(function (m) {
+      m.box.style.width = BOX_W + 'px';
+      heights[m.key] = m.box.offsetHeight;
     });
-
-    var left = rows.filter(function (r, i) { return L.sideOf(i) === 'left'; });
-    var right = rows.filter(function (r, i) { return L.sideOf(i) === 'right'; });
-
-    function columns(side) {
-      return Math.max.apply(null, [0].concat(side.map(function (r) { return r.depth; })));
-    }
-    function sideHeight(side) {
-      return side.reduce(function (sum, r) { return sum + r.height + ROW_GAP; }, -ROW_GAP);
-    }
-
-    var step = BOX_W + COL_GAP;
-    // Both sides take the width of the deeper one, so the goal sits at the true center.
-    var deepest = Math.max(columns(left), columns(right));
-    var sideW = deepest ? deepest * step - COL_GAP + GOAL_GAP : 0;
-    var goalX = PAD + sideW;
-    var height = Math.max(sideHeight(left), sideHeight(right), goal.offsetHeight) + PAD * 2;
-    var width = goalX + GOAL_W + sideW + PAD;
-    var midY = height / 2;
-    place(goal, goalX, midY - goal.offsetHeight / 2);
-
-    var paths = [];
-    function layOutSide(side, dir) {
-      var inner = dir > 0 ? goalX + GOAL_W + GOAL_GAP : goalX - GOAL_GAP - BOX_W;
-      var goalEdge = dir > 0 ? goalX + GOAL_W : goalX;
-      var y = (height - sideHeight(side)) / 2;
-      side.forEach(function (row) {
-        var lineY = y + row.layout.lineY;
-        function columnX(c) { return inner + dir * c * step; }
-        // The edge of a box in column c that faces the goal, and the edge that faces away.
-        function nearEdge(c) { return dir > 0 ? columnX(c) : columnX(c) + BOX_W; }
-        function farEdge(c) { return dir > 0 ? columnX(c) + BOX_W : columnX(c); }
-
-        row.chain.forEach(function (box, c) {
-          var item = row.layout.items[c];
-          place(box, columnX(c), y + item.top);
-          var fromX = c === 0 ? goalEdge : farEdge(c - 1);
-          var fromY = c === 0 ? midY : lineY;
-          paths.push(curve(fromX, fromY, nearEdge(c), lineY));
-
-          // A short line runs down the middle of the column, through the stack.
-          var lineX = columnX(c) + BOX_W / 2;
-          var above = y + item.top + box.offsetHeight;
-          row.solutions[c].forEach(function (solution, s) {
-            var top = y + item.solutionTops[s];
-            place(solution, columnX(c), top);
-            paths.push('M' + lineX + ' ' + above + ' V' + top);
-            above = top + solution.offsetHeight;
-          });
-        });
-
-        var last = row.chain.length;
-        row.tail.forEach(function (box, s) {
-          var top = y + row.layout.tailTops[s];
-          place(box, columnX(last), top);
-          paths.push(curve(farEdge(last - 1), lineY, nearEdge(last), top + box.offsetHeight / 2));
-        });
-        y += row.height + ROW_GAP;
-      });
-    }
-    layOutSide(right, 1);
-    layOutSide(left, -1);
-    return { width: width, height: height, paths: paths };
+    var layout = L.wideLayout(map, heights, {
+      boxW: BOX_W,
+      goalW: GOAL_W,
+      goalH: goal.offsetHeight,
+      colGap: COL_GAP,
+      goalGap: GOAL_GAP,
+      rowGap: ROW_GAP,
+      stackGap: STACK_GAP,
+      pad: PAD
+    });
+    placeAll(made, goal, layout);
+    return layout;
   }
 
-  // On a phone the map reads top to bottom, with a line down the left of each chain.
+  // On a phone the map reads top to bottom, indented by depth. Width comes first, because it sets each box's height.
   function layOutNarrow() {
-    var width = el.map.clientWidth;
-    var TRUNK = 8;
-    var INDENT = 12;
-    var MAX_INDENT = 36;
+    var places = L.narrowPlaces(map, el.map.clientWidth);
     var goal = makeGoal();
-    goal.style.width = (width - TRUNK * 2) + 'px';
+    goal.style.width = places.goal.width + 'px';
     el.canvas.appendChild(goal);
-    place(goal, TRUNK, TRUNK);
-    var y = TRUNK + goal.offsetHeight + 12;
-    var paths = [];
-    var goalBottom = y - 12;
-
-    function stack(box, x, parentX, parentBottom) {
-      box.style.width = (width - x - TRUNK) + 'px';
-      place(box, x, y);
-      var mid = y + box.offsetHeight / 2;
-      paths.push('M' + parentX + ' ' + parentBottom + ' V' + mid + ' H' + x);
-      y += box.offsetHeight + 8;
-    }
-
-    map.obstacles.forEach(function (o) {
-      var row = makeRow(o, 200);
-      var parentX = TRUNK + 8;
-      var parentBottom = goalBottom;
-      var x = TRUNK + 16;
-      row.chain.forEach(function (box, c) {
-        stack(box, x, parentX, parentBottom);
-        var nextX = Math.min(x + INDENT, TRUNK + 16 + MAX_INDENT);
-        // Past the deepest indent, the line runs just left of the boxes so it never crosses one.
-        parentX = nextX > x ? x + 8 : x - 4;
-        parentBottom = y - 8;
-        x = nextX;
-        // The next chain item hangs from the same line, so the chain carries on past these.
-        row.solutions[c].forEach(function (solution) {
-          stack(solution, x, parentX, parentBottom);
-        });
-      });
-      row.tail.forEach(function (box) {
-        stack(box, x, parentX, parentBottom);
-      });
-      y += 8;
+    var made = makeBoxes();
+    var heights = {};
+    made.forEach(function (m, i) {
+      m.box.style.width = places.rows[i].width + 'px';
     });
-    return { width: width, height: y + 8, paths: paths };
+    made.forEach(function (m) {
+      heights[m.key] = m.box.offsetHeight;
+    });
+    var layout = L.narrowLayout(places, heights, goal.offsetHeight);
+    placeAll(made, goal, layout);
+    return layout;
   }
 
   function scaleFor(layout) {
@@ -1276,7 +1311,7 @@ header {
     var narrow = isNarrow();
     var layout = narrow ? layOutNarrow() : layOutWide();
     var svg = '<svg id="lines" width="' + layout.width + '" height="' + layout.height + '" aria-hidden="true">' +
-      layout.paths.map(function (d) { return '<path d="' + d + '"></path>'; }).join('') + '</svg>';
+      layout.lines.map(function (line) { return '<path d="' + line.d + '"></path>'; }).join('') + '</svg>';
     el.canvas.insertAdjacentHTML('afterbegin', svg);
 
     scale = narrow ? 1 : scaleFor(layout);
@@ -1438,10 +1473,7 @@ header {
 
   function itemText(ref) {
     if (ref.kind === 'solution') return solutionById(ref.sid).text;
-    var o = obstacleById(ref.oid);
-    if (ref.kind === 'obstacle') return o.text;
-    if (ref.kind === 'why') return o.whys[ref.index];
-    return o.root_cause;
+    return L.findItem(map, ref.oid).text;
   }
 
   function labeled(labelText, control) {
@@ -1457,10 +1489,8 @@ header {
     return b;
   }
 
-  function deleteItem(ref, isNew) {
-    if (ref.kind === 'obstacle') return L.deleteObstacle(map, ref.oid);
-    if (ref.kind === 'why') return L.deleteWhy(map, ref.oid, ref.index);
-    if (ref.kind === 'root') return L.deleteRootCause(map, ref.oid);
+  function removeRef(ref, isNew) {
+    if (ref.kind === 'obstacle') return L.deleteItem(map, ref.oid);
     if (ref.kind === 'missing') return L.deleteSolutionFromObstacle(map, ref.oid, ref.sid);
     if (ref.oid && !isNew) return L.deleteSolutionFromObstacle(map, ref.oid, ref.sid);
     return L.deleteSolution(map, ref.sid);
@@ -1489,14 +1519,14 @@ header {
     var text = el.editor.querySelector('textarea').value.trim();
     closeEditor();
     if (text) setMap(L.setItemText(map, e.ref, text));
-    else if (e.isNew) setMap(deleteItem(e.ref, true));
+    else if (e.isNew) setMap(removeRef(e.ref, true));
     else render();
   }
 
   function cancelEdit() {
     var e = editing;
     closeEditor();
-    if (e.isNew) setMap(deleteItem(e.ref, true));
+    if (e.isNew) setMap(removeRef(e.ref, true));
     else render();
   }
 
@@ -1513,14 +1543,15 @@ header {
     };
   }
 
-  function addWhyTo(ref) {
-    map = L.addWhy(map, ref.oid, '');
-    openEditor({ kind: 'why', oid: ref.oid, index: obstacleById(ref.oid).whys.length - 1 }, true);
+  function addChildTo(ref) {
+    var id = L.nextId(map, 'o');
+    map = L.addChild(map, ref.oid, id, '');
+    openEditor({ kind: 'obstacle', oid: id }, true);
   }
 
   function addSolutionTo(ref) {
     var id = L.nextId(map, 's');
-    map = L.addSolution(map, ref.oid, id, '', L.placeForItem(ref));
+    map = L.addSolution(map, ref.oid, id, '');
     openEditor({ kind: 'solution', oid: ref.oid, sid: id }, true);
   }
 
@@ -1528,66 +1559,68 @@ header {
     return text.length > 60 ? text.slice(0, 60) + '...' : text;
   }
 
-  // One group per obstacle, so a solution can go under any item in any chain, or to its end.
+  // Every item in the tree, by label and text, so a solution can go on any of them.
   function moveControl(ref) {
-    var targets = L.moveTargets(map, ref.sid, ref.oid || null);
+    var targets = L.moveTargets(map, ref.sid);
     if (!targets.length) return null;
     var select = make('select');
-    select.appendChild(make('option', '', 'Choose where it goes'));
-    select.options[0].value = '';
-    var group = null;
+    var choose = make('option', '', 'Choose where it goes');
+    choose.value = '';
+    select.appendChild(choose);
     targets.forEach(function (target, i) {
-      if (!group || group.dataset.oid !== target.oid) {
-        group = make('optgroup');
-        group.dataset.oid = target.oid;
-        group.label = shortText(target.obstacle);
-        select.appendChild(group);
-      }
       var option = make('option', '', shortText(L.moveTargetName(target)));
       option.value = String(i);
-      group.appendChild(option);
+      select.appendChild(option);
     });
     select.addEventListener('change', function () {
       if (!select.value) return;
       var target = targets[Number(select.value)];
       afterCommit(function (r) {
-        setMap(L.moveSolution(map, r.oid || null, target.oid, r.sid, target.place));
+        setMap(L.moveSolution(map, r.oid || null, target.id, r.sid));
       })();
     });
     return labeled('Move to', select);
   }
 
+  function deleteLabel(ref) {
+    if ((ref.kind === 'solution' && ref.oid) || ref.kind === 'missing') return 'Delete from this obstacle';
+    var count = ref.kind === 'obstacle' ? L.subItemCount(map, ref.oid) : 0;
+    if (count === 1) return 'Delete this and its sub-item';
+    return count ? 'Delete this and its ' + count + ' sub-items' : 'Delete';
+  }
+
   function editorActions(ref) {
     var actions = make('div', 'actions');
     function add(text, className, onClick) { actions.appendChild(actionButton(text, className, onClick)); }
-    var o = ref.oid ? obstacleById(ref.oid) : null;
-    var isPlainObstacle = ref.kind === 'obstacle' && !o.whys.length && !o.root_cause;
-    var isLastWhy = ref.kind === 'why' && ref.index === o.whys.length - 1 && !o.root_cause;
+    var item = ref.kind === 'obstacle' ? L.findItem(map, ref.oid) : null;
 
-    if (isPlainObstacle || isLastWhy) add('Add a why', '', afterCommit(addWhyTo));
-    if (isLastWhy) {
-      add('Mark as root cause', '', afterCommit(function (r) { setMap(L.markRootCause(map, r.oid)); }));
+    if (item && !item.root_cause) add('Add a sub-obstacle', '', afterCommit(addChildTo));
+    if (item && !item.children.length) {
+      add(item.root_cause ? 'Unmark root cause' : 'Mark as root cause', '', afterCommit(function (r) {
+        setMap(L.setRootCause(map, r.oid, !item.root_cause));
+      }));
     }
-    if (ref.kind === 'obstacle' || ref.kind === 'why' || ref.kind === 'root') {
-      add('Add a solution', '', afterCommit(addSolutionTo));
-    }
+    if (item) add('Add a solution', '', afterCommit(addSolutionTo));
     if (ref.kind !== 'goal') {
-      var onObstacle = (ref.kind === 'solution' && ref.oid) || ref.kind === 'missing';
-      var deleteLabel = onObstacle ? 'Delete from this obstacle' : 'Delete';
-      add(deleteLabel, 'delete', function () {
+      add(deleteLabel(ref), 'delete', function () {
         var e = editing;
         closeEditor();
-        setMap(deleteItem(e.ref, e.isNew));
+        setMap(removeRef(e.ref, e.isNew));
       });
     }
     add('Done', 'done', commitEdit);
     return actions;
   }
 
+  function itemHeading(ref) {
+    if (ref.kind === 'solution') return 'Solution';
+    var item = L.findItem(map, ref.oid);
+    return (item.root_cause ? 'Root cause ' : 'Obstacle ') + L.itemLabels(map)[ref.oid];
+  }
+
   function openEditor(ref, isNew) {
     closeEditor();
     editing = { ref: ref, isNew: Boolean(isNew) };
-    var names = { goal: 'Goal', obstacle: 'Obstacle', why: 'Why', root: 'Root cause', solution: 'Solution' };
     var first;
 
     if (ref.kind === 'goal') {
@@ -1601,7 +1634,7 @@ header {
     } else {
       first = make('textarea');
       first.value = itemText(ref);
-      el.editor.appendChild(labeled(names[ref.kind], first));
+      el.editor.appendChild(labeled(itemHeading(ref), first));
       if (ref.kind === 'solution') {
         var count = L.repeatCount(map, ref.sid);
         if (count > 1) {
