@@ -99,6 +99,7 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | use-framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
 | brainstorming | `/aligned:brainstorming` | Explore ideas and strategies across three modes: authoring, research, roadmap |
 | root-cause-analysis | `/aligned:root-cause-analysis` | Root cause investigation for business and process problems, with an optional multi-agent mode |
+| leadership-meeting | `/aligned:leadership-meeting` | Set up a weekly leadership meeting, write each person's update, and get feedback on the real meeting from its transcript and agenda |
 | persona-panel | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
 | create-design-principles | `/aligned:create-design-principles` | Interactive design discovery producing tokens, patterns, and anti-patterns for a brand or product |
 | create-image | `/aligned:create-image` | Diagrams, charts, icons, illustrations, and brand visuals |
@@ -127,7 +128,7 @@ To add an advisor, run `/aligned:add-advisor`.
 
 ### Frameworks
 
-96 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (17), leadership (12), startup (10), psychology (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
+97 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (17), leadership (12), startup (10), psychology (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
 
 Framework prompts are interactive scripts with hard WAIT points. Run them through `/aligned:use-framework`, one question at a time.
 

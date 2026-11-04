@@ -15,6 +15,7 @@ patterns:
   - skills/use-framework/SKILL.md
   - skills/brainstorming/SKILL.md
   - skills/create-design-principles/*.md
+  - skills/leadership-meeting/*.md
   - skills/brainstorming/modes/authoring.md
   - skills/brainstorming/modes/roadmap.md
   - skills/_shared/contextual-recommendation.md

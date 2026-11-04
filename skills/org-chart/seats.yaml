@@ -83,6 +83,8 @@ seats:
         framework: mochary-weekly-check-in
       - do: Run a monthly review that ends in decisions
         framework: chj-operating-review
+      - do: Put a weekly leadership meeting in place and get feedback on it
+        framework: leadership-meeting
       - do: Fix a process that keeps breaking
         framework: the-algorithm
         also: [6-step-process]

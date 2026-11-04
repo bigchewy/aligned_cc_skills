@@ -1,6 +1,6 @@
 # Framework Registry
 
-96 frameworks across 3 layers and 20 areas
+97 frameworks across 3 layers and 20 areas
 
 Frameworks are grouped by layer and area, in the order of `skills/playbook/layers.yaml`. A framework that sits in more than one area is listed under each.
 
@@ -89,7 +89,7 @@ Problems that keep coming back, and who makes which call.
 | believability-weighted-decision-making | Believability-Weighted Decision Making | ray-dalio | a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise |
 | type-1-type-2-decisions | Type 1 vs Type 2 Decisions | jeff-bezos | someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices |
 
-#### Operating rhythm (2)
+#### Operating rhythm (3)
 
 The weekly and monthly meetings that run the company's goals.
 
@@ -97,6 +97,7 @@ The weekly and monthly meetings that run the company's goals.
 |----|------|---------|----------|
 | mochary-weekly-check-in | The Weekly Check-In | matt-mochary | a leadership team or manager-report pair is running status-heavy meetings with no written record of commitments or decisions, or needs to establish a repeatable operating rhythm tied to OKRs |
 | chj-operating-review | Operating Review Design | claire-hughes-johnson | a leadership team is running operating reviews (monthly, quarterly) that produce presentations but not decisions, or where decisions made in the meeting get relitigated because nothing was written down |
+| leadership-meeting | The Leadership Meeting | matt-mochary | a leadership team has no regular meeting, runs on verbal status, or wants one standard weekly meeting tied to its key actions, with feedback on how it is running |
 
 #### Org design and people (3)
 

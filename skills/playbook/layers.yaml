@@ -51,7 +51,7 @@ layers:
         name: Operating rhythm
         note: The weekly and monthly meetings that run the company's goals.
         start: mochary-weekly-check-in
-        frameworks: [mochary-weekly-check-in, chj-operating-review]
+        frameworks: [mochary-weekly-check-in, chj-operating-review, leadership-meeting]
       - id: org-design
         name: Org design and people
         note: Who owns what, whether each person is in the right seat, and whether they work at the level the seat needs.

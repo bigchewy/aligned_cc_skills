@@ -59,6 +59,18 @@ triggers:
       - scenarios/use-skill/authoring-sizing-playback.yaml
 
   - paths:
+      - skills/leadership-meeting/weekly-update.md
+      - skills/leadership-meeting/template.md
+    scenarios:
+      - scenarios/use-skill/leadership-meeting-update.yaml
+
+  - paths:
+      - skills/leadership-meeting/meeting-feedback.md
+      - skills/leadership-meeting/template.md
+    scenarios:
+      - scenarios/use-skill/leadership-meeting-feedback.yaml
+
+  - paths:
       - skills/_shared/framework-runner.md
       - skills/_shared/resolve-design-principles.md
     scenarios:
@@ -118,6 +130,13 @@ triggers:
       - frameworks/jolt-effect/anti-examples.md
     scenarios:
       - scenarios/use-framework/jolt-effect.yaml
+
+  - paths:
+      - frameworks/leadership-meeting/prompt.md
+      - frameworks/leadership-meeting/examples.md
+      - frameworks/leadership-meeting/anti-examples.md
+    scenarios:
+      - scenarios/use-framework/leadership-meeting.yaml
 
   - paths:
       - frameworks/mobilizer-taxonomy/prompt.md

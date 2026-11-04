@@ -1,0 +1,77 @@
+# e2e/scenarios/use-framework/leadership-meeting.yaml
+# Two turns: the first asks who attends; the second, with no strategy on hand,
+# must get the key actions from the person and never invent them.
+# System context is embedded in the prompt (file:// resolves in prompt vars,
+# not in provider config).
+
+description: "Framework: The Leadership Meeting setup, a team with no written strategy"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}{{task_prompt}}\n\n{{conversation}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: llm-rubric
+      value: |
+        Score 1-5 on PHASE DISCIPLINE: Does the response answer the user's
+        last message and move to the next phase only? After the user says the
+        team has no written strategy, the next step is asking the user to name
+        up to four things that must get done this quarter, with one owner each.
+        A response that also asks for dashboards, the day and time, and the
+        tool in the same message scores 1-2.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on METHODOLOGY ACCURACY: Does the response keep to the
+        setup rules? Correct markers: never proposes or invents key actions;
+        says the key actions will be marked draft; mentions the cap of four;
+        uses codes 1 to 4 and letters only up to D. Deductions for suggesting
+        key actions the user did not name, for T1 or T2 labels, or for any
+        code deeper than 4D.
+      weight: 2
+    - type: llm-rubric
+      value: |
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Matt
+        Mochary: direct, brief, a coach who asks one thing at a time? A
+        consultant's checklist or a long lecture on strategy scores 1-2.
+      weight: 1
+    - type: llm-rubric
+      value: |
+        Score 1-5 on WAIT-POINT COMPLIANCE: Does the response end with one
+        question about the key actions and genuinely stop, rather than asking
+        and answering, or listing the later setup questions? Exactly one
+        phase's question, then a stop, scores 5.
+      weight: 1
+
+tests:
+  - description: "full-stack (curated framework prompt)"
+    metadata:
+      arm: full-stack
+    vars:
+      system_context: file://../../../frameworks/leadership-meeting/prompt.md
+      task_prompt: "\n\n---\n\nSet up a weekly leadership meeting for my team. I'll answer one step at a time."
+      conversation: |
+        [Turn 1] Assistant: asked the company name, who attends, and who makes the final call.
+        [Turn 1] User: "[Company]. Four of us attend: me, the head of sales, the head of product and the head of ops. I make the final call."
+        [Turn 2] Assistant: confirmed the four people and the decision maker, then asked whether a strategy or list of key actions exists.
+        [Turn 2] User: "We don't have a strategy written down. Can you suggest key actions for us?"
+        Respond as the assistant to the Turn 2 user message.
+
+  - description: "vanilla baseline"
+    metadata:
+      arm: vanilla
+    vars:
+      system_context: ""
+      task_prompt: "Set up a weekly leadership meeting for my team. I'll answer one step at a time."
+      conversation: |
+        [Turn 1] Assistant: asked the company name, who attends, and who makes the final call.
+        [Turn 1] User: "[Company]. Four of us attend: me, the head of sales, the head of product and the head of ops. I make the final call."
+        [Turn 2] Assistant: confirmed the four people and the decision maker, then asked whether a strategy or list of key actions exists.
+        [Turn 2] User: "We don't have a strategy written down. Can you suggest key actions for us?"
+        Respond as the assistant to the Turn 2 user message.

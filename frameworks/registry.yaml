@@ -1404,6 +1404,31 @@ frameworks:
   use_when: a leadership team or manager-report pair is running status-heavy meetings
     with no written record of commitments or decisions, or needs to establish a repeatable
     operating rhythm tied to OKRs
+- advisor: matt-mochary
+  deliverable_type: plan
+  domains:
+  - operating-cadence
+  - meeting-design
+  - written-communication
+  helpful_documents:
+  - doc: key actions from a finished strategy (if one exists)
+    from: kernel-of-good-strategy
+  - doc: quarterly goals (if set)
+    from: proximate-objectives
+  - doc: the team's current meeting agenda
+    from: outside
+  id: leadership-meeting
+  name: The Leadership Meeting
+  purpose: putting a weekly leadership meeting in place with written updates, tied
+    to key actions
+  stages:
+  - pilot
+  - nail-it
+  - scale-it
+  - milk-it
+  use_when: a leadership team has no regular meeting, runs on verbal status, or wants
+    one standard weekly meeting tied to its key actions, with feedback on how it is
+    running
 - advisor: claire-hughes-johnson
   deliverable_type: decision
   domains:

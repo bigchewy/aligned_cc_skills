@@ -61,7 +61,7 @@ Building the first chart (https://claude.ai/artifact/Gy9Hz3geUxwRmzMWrkxJaL) sho
 |---|---|---|---|
 | Joan Garry | Big BAT Board Assessment, Organizational Readiness | Deleted. Git history keeps her at `012f043`. | Built for one nonprofit prospect. |
 | Jonathan Baker | Sellability Index | `~/Documents/nextstep/advisors/` and `frameworks/` | Belongs with the nextstep sale. |
-| Robb Wolf | none | `~/Documents/aligned/advisors/` | Belongs with Vindara Health. Eric starts Vindara sessions from `~/Documents/aligned`. |
+| Robb Wolf | none | `~/Documents/aligned/advisors/` | Belongs with one client's work. Eric starts that client's sessions from `~/Documents/aligned`. |
 | Kate Bowler | Permission Blessing | `~/Documents/aligned/advisors/` and `frameworks/` | Same. |
 | Danny Iny | Audience-First Business Model, Integrative Piloting Process, Leveraged Learning, Pilot Program Methodology | `~/software/planted/advisors/` and `frameworks/` | Belongs with Planted. |
 | Elise Darma, Jasmine Star, Sue B. Zimmerman, Rachel Pedersen, Jenna Kutcher | 13 Instagram frameworks | Deleted. | Built for solo service businesses. |
@@ -236,7 +236,7 @@ Updated tests:
 - Every CEO sees the same chart. (Eric)
 - There is a B2B chart and a B2C chart. (Eric)
 - The advisor moves, deletions, and the Coach Eric rename in Part 1. (Eric)
-- Robb Wolf and Kate Bowler go to `~/Documents/aligned`, where Eric starts Vindara sessions. (Eric)
+- Robb Wolf and Kate Bowler go to `~/Documents/aligned`, where Eric starts that client's sessions. (Eric)
 - Seat pages are organized by jobs, each with one framework and its command. (proposed to Eric, not objected to)
 - The gap list and holding list live on an author page that never ships. (builder check and architect review)
 

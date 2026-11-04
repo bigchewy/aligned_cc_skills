@@ -19,3 +19,5 @@ docs/kanban/board.html
 __pycache__/
 .ralph-blocked-snapshot
 .superpowers/
+e2e/tests/.banned-words.local
+e2e/tests/.client-names.local

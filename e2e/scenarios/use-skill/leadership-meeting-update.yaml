@@ -1,0 +1,214 @@
+# e2e/scenarios/use-skill/leadership-meeting-update.yaml
+# Validates the leadership-meeting weekly update job: an all-green week skips
+# probing, a vague word is asked once and not again, uncoded work goes to
+# Off strategy / drop / question, codes past 4D are flagged, pushback gets one
+# push, a missing record is asked for rather than invented, and a not-done
+# item gets one line with no debate. A whole all-green week stops only three times,
+# and a vague word with no Definition line adds the one stop for that word.
+# Loads the live weekly-update.md so a run against the old file is a real baseline.
+
+description: "Skill: leadership-meeting weekly update job"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nYou are running the weekly update job as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "update-a: all green moves straight to new commitments and gives credit"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The tool is not connected. The person pasted last week's update and the key action codes (1A, 1B, 2A). Last week's commitments are in the paste. The person has finished the brain dump: every commitment from last week was honored, all three key actions are green, and every date is holding. The goals have clear tests already."
+      user_message: "That's the week. Everything shipped, all three are green and the dates are holding."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ALL-GREEN RULE: Does the reply (1) give the person credit,
+          (2) NOT probe or ask follow-up questions about any green item or
+          honored commitment, and (3) move on to asking for new commitments for
+          this week? Probing a green item = 1. Credit given, no probing, and asks
+          about new commitments = 5.
+
+  - description: "update-b: a vague word with no test is asked about once"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The person pasted last week's update. Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's update has no Definition line for any word. The brain dump and last week's commitments are settled. The job is at the Vague words stop."
+      user_message: "1A is yellow because the pilot is only partly there. We have two customers using it."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on VAGUE WORD ASKED ONCE: Does the reply ask how "promising"
+          was defined (what test it has), asking it as a single question, and
+          without piling on other questions? No question about the vague word = 1.
+          Asks about the definition of "promising" once, in one question = 5.
+
+  - description: "update-c: a recorded definition is not asked about again"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The person pasted last week's update. Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's update has the line: Definition: \"promising\" means five paying customers using it weekly. The brain dump, last week's commitments and status are settled. The job is at the Vague words stop."
+      user_message: "Right, so we are at two paying customers using it weekly."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on DEFINITION REUSED: Does the reply avoid asking again how
+          "promising" is defined, and instead use the recorded definition (five
+          paying customers using it weekly) or move on to the next step? Asking
+          for the definition again = 1. Uses or keeps the recorded definition
+          and moves on = 5.
+
+  - description: "update-d: work with no key action is asked once, then offered three choices"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The person pasted the key action codes (1A, 1B, 2A). The job is at the New commitments stop. The person has described a new piece of work, redesigning the office kitchen, that fits none of the three key actions. The job has not yet asked which key action it moves."
+      user_message: "I also want to commit to getting the office kitchen redesigned by the end of the month."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on UNCODED WORK: Does the reply ask which key action this
+          work moves, in a single question? A 5 also offers the three choices
+          when the answer is none (keep it as Off strategy with a line on why it
+          can't wait, drop it, or turn it into a question to answer), or says it
+          will offer them if the answer is none. Assigns a code without asking,
+          or silently accepts it = 1. Asks which key action = 4. Asks which key
+          action and names Off strategy, drop and question as the options = 5.
+
+  - description: "update-e: a code past 4D is flagged"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The person pasted the key action codes (1A, 1B, 2A). The job is at the New commitments stop. The person is giving a new commitment and has supplied the details except for the code."
+      user_message: "Put it under 1C3. Implementer is me, success is signed contracts from the top five customers, due the 14th."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on CODE LIMIT: Does the reply say that codes stop at 1A to 4D
+          (so 1C3 is not a valid code) and ask which code they mean? Accepting
+          1C3 = 1. Flags it but does not ask which one = 3. Flags that codes stop
+          at 1A to 4D and asks which one = 5.
+
+  - description: "update-f: pushback on a date gets one push, then it is recorded"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The person's key action 2A moved from the 10th to the 24th. The job already asked once whether the 24th is a real date. The person answered that they think so. The job pushed once more, and now the person is pushing back again: they say the 24th is the date and they want to move on."
+      user_message: "I told you, it's the 24th. I'm not going to defend it again. Can we move on?"
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ONE PUSH: Does the reply stop pushing, record the date as
+          the person gave it (the 24th, moved from the 10th), and move on to the
+          next step? Pushing a third time or arguing about the date = 1. Records
+          what they said and moves on without further challenge = 5.
+
+  - description: "update-g: no connector and no prior update asks for a paste or confirms week one"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The session starts. No team tool is connected, there is no leadership-meeting.md file, no file with last week's update, and the person has pasted nothing. The person has just asked for help with their weekly update."
+      user_message: "Help me write my weekly update."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NO RECORD: Does the reply ask the person to paste last
+          week's update (and the key action codes or open action items), or ask
+          whether this is week one, WITHOUT inventing any commitments, key
+          actions, or statuses? Inventing commitments = 1. Asks for a paste or
+          confirms week one, invents nothing = 5.
+
+  - description: "update-h: a not-done item records one line on why, with no debate"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The job is at the Last week's commitments stop. One of last week's commitments, 'Send the pricing proposal to the top five customers', was not done. The brain dump did not mention it. The person is explaining why."
+      user_message: "I didn't get to it. The week got eaten by the board prep and I ran out of time."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NOT DONE RECORDED: Does the reply record the reason in one
+          line (board prep took the week), and move on or ask only about the next
+          item, WITHOUT debating the excuse, challenging it, or asking how the
+          person feels? Debating, lecturing, or asking about feelings = 1.
+          Records one line and moves on = 5. A reply that also asks about the
+          new date or what they need from the group is acceptable.
+
+  - description: "update-i-1: a whole all-green week, stop 1 of 3, the brain dump"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The tool is not connected. The person already pasted last week's update, the key action codes (1A, 1B, 2A) and their open action items. Every goal has a clear test. The session has just started."
+      user_message: "That's everything from last week. Let's do my update."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on FIRST STOP: Does the reply ask only for the brain dump, about
+          two minutes on what happened on their key actions this week? Asking about
+          commitments, status or colors before the brain dump = 1. Asks for the brain
+          dump and nothing else = 5.
+
+  - description: "update-i-2: a whole all-green week, stop 2 of 3, new commitments with no stops in between"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The tool is not connected. The person pasted last week's update and the key action codes (1A, 1B, 2A). Every goal has a clear test, and last week's update carries the Definition line for its one vague word. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
+      user_message: "Both commitments from last week shipped. 1A, 1B and 2A are all green, and every date is holding."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NO EXTRA STOPS: Does the reply give credit and go straight to
+          asking for new commitments, as the second stop of the week? Stopping to ask
+          about last week's commitments, a color, a date, or a vague word = 1. It
+          proposes the colors in passing without asking anything about them, and asks
+          for new commitments = 5. Moving to the draft with no question about new
+          commitments = 2.
+
+  - description: "update-i-3: a whole all-green week, stop 3 of 3, the draft for approval"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The tool is not connected. The person pasted last week's update and the key action codes (1A, 1B, 2A). Both of last week's commitments were honored. 1A, 1B and 2A are green and every date holds. Every goal has a clear test. The job asked for new commitments, and this message is the answer."
+      user_message: "One new one. I'll sign the two remaining pilot customers. Success is both contracts signed, due the 14th, code 1A."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on APPROVAL STOP: Does the reply show a short draft update, about
+          three lines of content, and ask the person to edit and approve it? Asking
+          for a proposal, a question to answer, or anything about a green item before
+          the draft = 1. Shows the draft and asks for approval, with no other question
+          = 5. Posting anywhere before approval = 1.
+
+  - description: "update-j: a vague word with no Definition line stops an otherwise green week once"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/leadership-meeting/weekly-update.md
+      scenario_description: "The tool is not connected. The person pasted last week's update and the key action codes (1A, 1B, 2A). Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's update has no Definition line. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
+      user_message: "Both commitments from last week shipped. 1A, 1B and 2A are all green, and every date is holding."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on VAGUE WORD IN A GREEN WEEK: Does the reply give credit and then
+          ask how "promising" was defined, in one question, before it moves to new
+          commitments? Going to new commitments with no question about the word = 1.
+          Asks about the word and also about something else = 3. Credit and one
+          question about the word = 5.
