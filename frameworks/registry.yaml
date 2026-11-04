@@ -57,14 +57,16 @@ frameworks:
     from: proximate-objectives
   id: 6-step-process
   name: 6-Step Process
-  purpose: a structured approach to solving operational problems that starts with
-    a mindset check before goal-setting, diagnosis, and planning
+  purpose: a six-step walk from where a person stands, through a goal, the root causes
+    of what blocks it, solutions, execution, and feedback, ending in a mind map they
+    can edit on their own machine
   stages:
   - nail-it
   - scale-it
   - milk-it
-  use_when: someone wants a systematic process for setting goals, diagnosing problems,
-    designing solutions, and executing with mindset alignment
+  use_when: someone has a goal or a problem and wants to work through it step by step,
+    with Claude as the other member of the group, and end with a mind map they can
+    edit on their own machine
 - advisor: tim-ferriss
   deliverable_type: analysis
   domains:

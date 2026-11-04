@@ -72,6 +72,8 @@ A phase is complete when: (a) the scripted content for that phase has been deliv
 
 Skip this step when `publish_artifact` is `no`.
 
+Skip it too when the prompt's `## Artifact` section names a local file as the result. Give the user that file's path, and nothing else in this step applies. Publishing stays the default for every other framework.
+
 Publish after the last phase is complete, never earlier. Every WAIT point comes first. If the
 user stops partway, ask whether to publish what's done, with the open parts marked open.
 

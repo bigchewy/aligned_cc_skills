@@ -131,7 +131,8 @@ reader should do with it.}
 Every framework ends with an artifact: the framework runner publishes the result in the
 project's brand once the last phase is done. The `## Artifact` section tells it what to put on
 the page. Write it as the deliverable the expert's own method produces, not a transcript of the
-session.
+session. If the result is the user's own work and belongs in a local file, say so in the section
+and name the file. The runner then publishes nothing and gives the path.
 
 ### 3. Create examples.md
 

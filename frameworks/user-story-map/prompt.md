@@ -342,6 +342,10 @@ Write the screens page's file name, `{slug}-screens.html`, into the story map Ma
 Then give both file paths, the map and the screens, and close with something like:
 "That's the map, the Slice 1 breadboard, and the screens, linked to each other. Before you build, Steve Krug can tell you whether people can use these screens, and The Architect can work out how the system enforces the rules underneath."
 
+## Artifact
+
+The result is a local file: the map at `docs/story-maps/{slug}.html`, rebuilt from the Markdown at `docs/story-maps/{slug}.md`. It is never published, to claude.ai or anywhere else. Give the user the path.
+
 ## Key Rules
 
 - Complete each phase fully before moving to the next. ALWAYS pause and wait at the marked points.

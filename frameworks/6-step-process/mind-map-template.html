@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mind map</title>
+<style>
+:root {
+  --bg: #f7f6f2;
+  --ink: #1f2328;
+  --muted: #5c636b;
+  --line: #8f98a3;
+  --edge: #d9d8d2;
+  --box: #ffffff;
+  --box-line: #bfc5cc;
+  --goal: #1f3a5f;
+  --goal-ink: #ffffff;
+  --root: #fff1cc;
+  --root-line: #a86a00;
+  --solution: #e4f2ed;
+  --solution-line: #3f8a72;
+  --star: #9a5a00;
+  --focus: #2563eb;
+  --warn: #9b2c1f;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16191d;
+    --ink: #eceff2;
+    --muted: #a3abb3;
+    --line: #76808b;
+    --edge: #33383e;
+    --box: #22262b;
+    --box-line: #4c535b;
+    --goal: #2f5d94;
+    --goal-ink: #ffffff;
+    --root: #3a2d10;
+    --root-line: #e0a93a;
+    --solution: #15302a;
+    --solution-line: #4fae92;
+    --star: #f0b64a;
+    --focus: #7aa7ff;
+    --warn: #ff9c8c;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.28 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+button, select, input, textarea { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+#data-problem { max-width: 560px; margin: auto; padding: 24px 16px; }
+#data-problem h1 { font-size: 21px; margin: 0 0 8px; color: var(--warn); }
+#data-problem p { margin: 0 0 8px; overflow-wrap: anywhere; }
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+}
+#who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-right: auto; min-width: 0; }
+#person { font-weight: 600; overflow-wrap: anywhere; }
+#strategy-note { font-size: 14px; color: var(--muted); }
+.quiet {
+  background: none;
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  padding: 3px 10px;
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+#workspace { flex: 1; min-height: 0; display: flex; }
+#map { flex: 1; min-width: 0; overflow: auto; display: flex; padding: 4px 0 16px; position: relative; }
+#canvas-frame { margin: auto; flex: none; position: relative; }
+#canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#lines { position: absolute; left: 0; top: 0; pointer-events: none; }
+#lines path { fill: none; stroke: var(--line); stroke-width: 2; }
+
+.item {
+  position: absolute;
+  display: block;
+  margin: 0;
+  padding: 7px 10px;
+  text-align: left;
+  border-radius: 8px;
+  border: 1px solid var(--box-line);
+  background: var(--box);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.item.obstacle { font-weight: 600; border-width: 2px; }
+.item.root { font-weight: 800; background: var(--root); border: 2px solid var(--root-line); }
+.item.solution { background: var(--solution); border-color: var(--solution-line); border-radius: 16px; }
+.item.missing { color: var(--warn); border: 2px dashed var(--warn); border-radius: 16px; }
+.item.goal {
+  background: var(--goal);
+  color: var(--goal-ink);
+  border: 0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 21px;
+  font-weight: 700;
+}
+.goal-line { display: block; margin-top: 8px; font-size: 16px; font-weight: 400; }
+.star { color: var(--star); margin-right: 4px; }
+.repeat { color: var(--muted); font-weight: 700; margin-left: 6px; white-space: nowrap; }
+.blank { color: var(--muted); font-weight: 400; font-style: italic; }
+.item.goal .blank { color: var(--goal-ink); }
+.selected { outline: 3px solid var(--focus); outline-offset: 2px; }
+.item:focus-visible, .quiet:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+#panel {
+  flex: none;
+  width: 340px;
+  overflow: auto;
+  padding: 4px 16px 16px;
+  border-left: 1px solid var(--edge);
+  font-size: 15px;
+}
+#panel h2 { font-size: 16px; margin: 14px 0 6px; }
+#panel h2 small { font-size: 14px; font-weight: 400; color: var(--muted); }
+#panel table { width: 100%; border-collapse: collapse; }
+#panel th { text-align: left; font-weight: 600; color: var(--muted); font-size: 14px; }
+#panel th, #panel td { padding: 4px 6px 4px 0; vertical-align: top; border-bottom: 1px solid var(--edge); overflow-wrap: break-word; }
+#panel dl { margin: 0 0 10px; }
+#panel dt { color: var(--muted); font-size: 14px; }
+#panel dd { margin: 0 0 4px; overflow-wrap: anywhere; }
+.row-title { font-weight: 600; margin: 8px 0 2px; overflow-wrap: anywhere; }
+.none { color: var(--muted); margin: 0; }
+
+#tray {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 10px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--edge);
+}
+#tray-count { font-weight: 600; flex-basis: 100%; }
+#tray .item { position: static; width: 220px; }
+
+footer {
+  padding: 5px 16px 7px;
+  border-top: 1px solid var(--edge);
+  font-size: 13px;
+  color: var(--muted);
+}
+#save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+#save-row p, footer > p { margin: 0; }
+#message { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; color: var(--ink); margin-top: 4px; }
+#message.refusal { color: var(--warn); }
+#message span { flex: 0 1 auto; }
+#browser-note { margin-top: 4px; }
+
+#editor {
+  position: fixed;
+  z-index: 10;
+  width: 340px;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  padding: 10px;
+  background: var(--box);
+  border: 1px solid var(--box-line);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+  font-size: 16px;
+}
+#editor label { display: block; font-size: 14px; color: var(--muted); margin: 6px 0 2px; }
+#editor textarea, #editor input, #editor select {
+  display: block;
+  width: 100%;
+  margin-top: 2px;
+  padding: 6px 8px;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--box-line);
+  border-radius: 6px;
+}
+#editor textarea { min-height: 76px; resize: vertical; }
+#editor .note { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+#editor .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+#editor .actions button {
+  background: none;
+  border: 1px solid var(--box-line);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 15px;
+}
+#editor .actions .done { background: var(--goal); color: var(--goal-ink); border-color: var(--goal); margin-left: auto; }
+#editor .actions .delete { color: var(--warn); }
+
+@media (max-width: 759px) {
+  html, body { height: auto; }
+  #workspace { display: block; }
+  #map { display: block; overflow: visible; }
+  #canvas-frame { margin: 0; }
+  #panel { width: auto; border-left: 0; border-top: 1px solid var(--edge); overflow: visible; }
+  #toggle-plan, #zoom-out, #zoom-in, #zoom-fit { display: none; }
+  #tray .item { width: 100%; }
+  #editor {
+    left: 0 !important;
+    right: 0;
+    top: auto !important;
+    bottom: 0;
+    width: auto;
+    max-height: 70vh;
+    border-radius: 12px 12px 0 0;
+  }
+}
+</style>
+</head>
+<body>
+<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":"","from":"","to":"","by":""},"obstacles":[],"solutions":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
+<div id="data-problem" role="alert" hidden>
+  <h1>This map can't be drawn.</h1>
+  <p id="data-problem-reason"></p>
+  <p>Nothing in the file has changed. Tell Claude what this page says, and Claude can fix the file.</p>
+</div>
+<header>
+  <div id="who">
+    <div id="person"></div>
+    <div id="strategy-note" hidden>Not compared to strategy.</div>
+  </div>
+  <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
+  <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
+  <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
+  <button type="button" class="quiet" id="add-obstacle">Add an obstacle</button>
+  <button type="button" class="quiet" id="toggle-plan">Show plan</button>
+</header>
+<div id="workspace">
+  <div id="map"><div id="canvas-frame"><div id="canvas"></div></div></div>
+  <aside id="panel" hidden></aside>
+</div>
+<section id="tray" hidden></section>
+<footer>
+  <div id="save-row">
+    <button type="button" class="quiet" id="save">Save</button>
+    <p id="dirty" hidden>Not saved yet.</p>
+    <p>Click any item to edit it. To change a star, tell Claude. After saving, tell Claude you changed the map.</p>
+  </div>
+  <div id="message" role="status" hidden></div>
+  <p id="browser-note" hidden>Open this file in Chrome (right-click, Open With) and it saves in place. Otherwise, saves go to Downloads, and you move the file back into the folder under its original name, replacing the old one.</p>
+</footer>
+<div id="editor" hidden></div>
+<script id="map-logic">
+(function () {
+  'use strict';
+
+  function copy(map) {
+    return JSON.parse(JSON.stringify(map));
+  }
+
+  function tiedIds(map) {
+    var tied = {};
+    map.obstacles.forEach(function (o) {
+      o.solution_ids.forEach(function (id) { tied[id] = true; });
+    });
+    return tied;
+  }
+
+  function untiedSolutionIds(map) {
+    var tied = tiedIds(map);
+    return map.solutions
+      .map(function (s) { return s.id; })
+      .filter(function (id) { return !tied[id]; });
+  }
+
+  function repeatCount(map, solutionId) {
+    return map.obstacles.filter(function (o) {
+      return o.solution_ids.indexOf(solutionId) !== -1;
+    }).length;
+  }
+
+  // Runs fn on the obstacle with this id, in a copy of the map.
+  function withObstacle(map, obstacleId, fn) {
+    var next = copy(map);
+    next.obstacles.forEach(function (o) {
+      if (o.id === obstacleId) fn(o);
+    });
+    return next;
+  }
+
+  // Every item in a chain, in order. A root cause has no place, because no place means the end of the chain.
+  function chainPlaces(o) {
+    var items = [{ place: 'obstacle', kind: 'obstacle', text: o.text }];
+    o.whys.forEach(function (why, i) {
+      items.push({ place: 'why:' + i, kind: 'why', text: why });
+    });
+    if (o.root_cause) items.push({ place: null, kind: 'root', text: o.root_cause });
+    return items;
+  }
+
+  // The chain item a place points at, or -1 when it points at nothing still there.
+  function placeIndex(o, place) {
+    if (place === 'obstacle') return 0;
+    var m = typeof place === 'string' ? /^why:(\d+)$/.exec(place) : null;
+    return m && Number(m[1]) < o.whys.length ? Number(m[1]) + 1 : -1;
+  }
+
+  // The field goes when it empties, so an edit that ends where it began shows no change to Claude.
+  function setPlace(o, solutionId, place) {
+    var at = isObject(o.solution_at) ? o.solution_at : {};
+    if (place) at[solutionId] = place;
+    else delete at[solutionId];
+    if (Object.keys(at).length) o.solution_at = at;
+    else delete o.solution_at;
+  }
+
+  // Run this before a chain changes. It also drops places that point at nothing, so none comes alive later.
+  function rewritePlaces(o, rewrite) {
+    if (o.solution_at === undefined) return;
+    var at = isObject(o.solution_at) ? o.solution_at : {};
+    delete o.solution_at;
+    Object.keys(at).forEach(function (id) {
+      if (placeIndex(o, at[id]) === -1 || o.solution_ids.indexOf(id) === -1) return;
+      setPlace(o, id, rewrite(at[id]));
+    });
+  }
+
+  function keepPlace(place) {
+    return place;
+  }
+
+  // The solution stays in map.solutions, so one left with no obstacle shows in the tray.
+  function deleteSolutionFromObstacle(map, obstacleId, solutionId) {
+    return withObstacle(map, obstacleId, function (o) {
+      o.solution_ids = o.solution_ids.filter(function (id) { return id !== solutionId; });
+      setPlace(o, solutionId, null);
+    });
+  }
+
+  function deleteObstacle(map, obstacleId) {
+    var next = copy(map);
+    next.obstacles = next.obstacles.filter(function (o) { return o.id !== obstacleId; });
+    return next;
+  }
+
+  // A solution placed under the last why now sits under the root cause, which takes no place.
+  function markRootCause(map, obstacleId) {
+    return withObstacle(map, obstacleId, function (o) {
+      if (o.whys.length === 0) return;
+      var last = 'why:' + (o.whys.length - 1);
+      rewritePlaces(o, function (place) { return place === last ? null : place; });
+      o.root_cause = o.whys.pop();
+    });
+  }
+
+  // Scans the whole file, so an id still named in the side panel or baseline is never reused.
+  function nextId(map, prefix) {
+    var pattern = new RegExp('\\b' + prefix + '(\\d+)\\b', 'g');
+    var json = JSON.stringify(map);
+    var highest = 0;
+    var m;
+    while ((m = pattern.exec(json))) highest = Math.max(highest, Number(m[1]));
+    return prefix + (highest + 1);
+  }
+
+  function addObstacle(map, id, text) {
+    var next = copy(map);
+    next.obstacles.push({ id: id, text: text, whys: [], root_cause: '', solution_ids: [] });
+    return next;
+  }
+
+  // A root cause ends the chain, so a why can't follow it.
+  function addWhy(map, obstacleId, text) {
+    return withObstacle(map, obstacleId, function (o) {
+      if (o.root_cause) return;
+      rewritePlaces(o, keepPlace);
+      o.whys.push(text);
+    });
+  }
+
+  // Solutions under the deleted why go to the end of the chain, and later whys move up one.
+  function deleteWhy(map, obstacleId, index) {
+    return withObstacle(map, obstacleId, function (o) {
+      rewritePlaces(o, function (place) {
+        var at = placeIndex(o, place) - 1;
+        if (at === index) return null;
+        return at > index ? 'why:' + (at - 1) : place;
+      });
+      o.whys.splice(index, 1);
+    });
+  }
+
+  function deleteRootCause(map, obstacleId) {
+    return withObstacle(map, obstacleId, function (o) {
+      o.root_cause = '';
+    });
+  }
+
+  function setItemText(map, ref, text) {
+    if (ref.kind === 'solution') {
+      var next = copy(map);
+      next.solutions.forEach(function (s) {
+        if (s.id === ref.sid) s.text = text;
+      });
+      return next;
+    }
+    return withObstacle(map, ref.oid, function (o) {
+      if (ref.kind === 'obstacle') o.text = text;
+      if (ref.kind === 'why') o.whys[ref.index] = text;
+      if (ref.kind === 'root') o.root_cause = text;
+    });
+  }
+
+  function setGoal(map, goal) {
+    var next = copy(map);
+    next.goal = goal;
+    return next;
+  }
+
+  // The place a solution gets when this item is the one selected.
+  function placeForItem(ref) {
+    if (ref.kind === 'obstacle') return 'obstacle';
+    return ref.kind === 'why' ? 'why:' + ref.index : null;
+  }
+
+  function addSolution(map, obstacleId, id, text, place) {
+    var next = withObstacle(map, obstacleId, function (o) {
+      o.solution_ids.push(id);
+      setPlace(o, id, place);
+    });
+    next.solutions.push({ id: id, text: text, star: false });
+    return next;
+  }
+
+  // A move inside one obstacle changes only the place, so the solutions keep their order.
+  function moveSolution(map, fromObstacleId, toObstacleId, solutionId, place) {
+    var next = fromObstacleId === toObstacleId
+      ? copy(map)
+      : deleteSolutionFromObstacle(map, fromObstacleId, solutionId);
+    return withObstacle(next, toObstacleId, function (o) {
+      if (o.solution_ids.indexOf(solutionId) === -1) o.solution_ids.push(solutionId);
+      setPlace(o, solutionId, place);
+    });
+  }
+
+  function deleteSolution(map, solutionId) {
+    var next = copy(map);
+    next.solutions = next.solutions.filter(function (s) { return s.id !== solutionId; });
+    next.obstacles.forEach(function (o) {
+      o.solution_ids = o.solution_ids.filter(function (id) { return id !== solutionId; });
+      setPlace(o, solutionId, null);
+    });
+    return next;
+  }
+
+  // Ids that no longer exist drop out here. Claude cleans them up when it picks up edits.
+  function panelRows(map) {
+    var textById = {};
+    map.solutions.forEach(function (s) { textById[s.id] = s.text; });
+    return {
+      key_actions: map.key_actions.map(function (k) {
+        return {
+          text: k.text,
+          risk: k.risk,
+          solutions: k.solution_ids
+            .filter(function (id) { return id in textById; })
+            .map(function (id) { return textById[id]; })
+        };
+      }),
+      execute: map.execute
+        .filter(function (e) { return e.solution_id in textById; })
+        .map(function (e) {
+          return {
+            solution: textById[e.solution_id],
+            first_move: e.first_move,
+            owner: e.owner,
+            others_decide: e.others_decide
+          };
+        })
+    };
+  }
+
+  // A click can land on a box whose item the same click just removed.
+  function itemExists(map, ref) {
+    if (ref.kind === 'goal') return true;
+    var solutionIsListed = map.solutions.some(function (s) { return s.id === ref.sid; });
+    if (ref.kind === 'solution' && !ref.oid) return solutionIsListed;
+    var o = map.obstacles.filter(function (item) { return item.id === ref.oid; })[0];
+    if (!o) return false;
+    if (ref.kind === 'why') return ref.index < o.whys.length;
+    if (ref.kind === 'root') return Boolean(o.root_cause);
+    if (ref.kind === 'solution') return solutionIsListed && o.solution_ids.indexOf(ref.sid) !== -1;
+    if (ref.kind === 'missing') return o.solution_ids.indexOf(ref.sid) !== -1;
+    return true;
+  }
+
+  // A commit that fails may have lost typed text, so the person still gets the warning.
+  function shouldWarnOnClose(commit, hasChanges) {
+    try {
+      commit();
+    } catch (e) {
+      return true;
+    }
+    return hasChanges();
+  }
+
+  // An id with no solution stays in the list, marked missing, so the map can show it.
+  function solutionsOn(map, obstacleId) {
+    var byId = {};
+    map.solutions.forEach(function (s) { byId[s.id] = s; });
+    var ids = [];
+    map.obstacles.forEach(function (o) {
+      if (o.id === obstacleId) ids = o.solution_ids;
+    });
+    return ids.map(function (id) {
+      return byId[id] || { id: id, missing: true };
+    });
+  }
+
+  function obstacleWithId(map, obstacleId) {
+    return map.obstacles.filter(function (o) { return o.id === obstacleId; })[0];
+  }
+
+  // Everywhere this solution can move to: directly under each item with a place, and the end of the
+  // chain, which has none. A root cause takes no place, so the end stands for it. Another obstacle
+  // that already holds the solution is left out, as moving onto it would take a repeat away. The
+  // spot it sits in now is left out too.
+  function moveTargets(map, solutionId, fromObstacleId) {
+    var targets = [];
+    map.obstacles.forEach(function (o) {
+      var isFrom = o.id === fromObstacleId;
+      if (!isFrom && o.solution_ids.indexOf(solutionId) !== -1) return;
+      var at = isObject(o.solution_at) ? o.solution_at[solutionId] : undefined;
+      var current = placeIndex(o, at);
+      var items = chainPlaces(o);
+      var last = items[items.length - 1];
+      items.filter(function (item) { return item.place; }).concat([
+        { place: null, kind: 'end', after: last.kind, text: last.text }
+      ]).forEach(function (item) {
+        if (isFrom && placeIndex(o, item.place) === current) return;
+        targets.push({
+          oid: o.id, obstacle: o.text, place: item.place, kind: item.kind, after: item.after, text: item.text
+        });
+      });
+    });
+    return targets;
+  }
+
+  // Words for the Move to list, so "under this item" reads differently from "at the end".
+  function moveTargetName(target) {
+    if (target.kind === 'obstacle') return 'Directly under the obstacle';
+    if (target.kind === 'why') return 'Directly under the why: ' + target.text;
+    if (target.after === 'root') return 'At the end, past the root cause: ' + target.text;
+    return target.after === 'why' ? 'At the end, past the last why' : 'At the end, past the obstacle';
+  }
+
+  // Where each solution draws. A good recorded place goes under its item. Anything else goes in
+  // the tail, the column past the end of the chain.
+  function solutionSpots(map, obstacleId) {
+    var o = obstacleWithId(map, obstacleId);
+    if (!o) return { under: [], tail: [] };
+    var at = isObject(o.solution_at) ? o.solution_at : {};
+    var under = chainPlaces(o).map(function () { return []; });
+    var tail = [];
+    solutionsOn(map, obstacleId).forEach(function (s) {
+      var index = placeIndex(o, at[s.id]);
+      if (index === -1) tail.push(s);
+      else under[index].push(s);
+    });
+    return { under: under, tail: tail };
+  }
+
+  // Tops within one row. Chain boxes and the tail center on one line, and each item's placed
+  // solutions stack below it. With nothing placed, the row is the taller of chain and tail.
+  function rowLayout(chainHeights, stackHeights, gap, tailHeights) {
+    var tail = tailHeights || [];
+    var tailH = tail.reduce(function (sum, h) { return sum + h + gap; }, -gap);
+    var above = Math.max(Math.max.apply(null, chainHeights), tailH) / 2;
+    var bottom = above * 2;
+    var items = chainHeights.map(function (h, c) {
+      var top = above - h / 2;
+      var y = top + h;
+      var solutionTops = stackHeights[c].map(function (stackH) {
+        var solutionTop = y + gap;
+        y = solutionTop + stackH;
+        return solutionTop;
+      });
+      bottom = Math.max(bottom, y);
+      return { top: top, solutionTops: solutionTops };
+    });
+    var tailY = above - tailH / 2;
+    var tailTops = tail.map(function (h) {
+      var tailTop = tailY;
+      tailY += h + gap;
+      return tailTop;
+    });
+    return { height: bottom, lineY: above, items: items, tailTops: tailTops };
+  }
+
+  // Order alone picks the side, so adding a why never moves an obstacle across.
+  function sideOf(index) {
+    return index % 2 === 0 ? 'left' : 'right';
+  }
+
+  function fitScale(mapWidth, mapHeight, availableWidth, availableHeight, floor) {
+    var fit = Math.min(availableWidth / mapWidth, availableHeight / mapHeight);
+    return Math.min(1, Math.max(floor, fit));
+  }
+
+  function stepScale(scale, direction) {
+    var next = Math.round((scale + direction * 0.1) * 10) / 10;
+    return Math.min(1.5, Math.max(0.4, next));
+  }
+
+  function pathParts(pathname) {
+    var decoded;
+    try {
+      decoded = decodeURIComponent(pathname);
+    } catch (e) {
+      decoded = pathname;
+    }
+    return decoded.split('/').filter(Boolean);
+  }
+
+  function fileName(pathname) {
+    var parts = pathParts(pathname);
+    return parts.length ? parts[parts.length - 1] : 'map.html';
+  }
+
+  function pickMessage(pathname) {
+    var parts = pathParts(pathname);
+    var file = fileName(pathname);
+    return parts.length > 1
+      ? 'Pick ' + file + ' in the ' + parts[parts.length - 2] + ' folder.'
+      : 'Pick ' + file + '.';
+  }
+
+  function moveCopyMessage(pathname) {
+    var parts = pathParts(pathname);
+    var folder = parts.length > 1 ? 'the ' + parts[parts.length - 2] + ' folder' : "the map's folder";
+    return 'Your browser should have saved a copy to Downloads. Move it into ' + folder +
+      ' as ' + fileName(pathname) + ', replacing the old one.';
+  }
+
+  // A copy from a stale tab is older than the map, so replacing the map would lose its newer changes.
+  // The suggested name still ends in -map.html, so Claude skips it while reading documents.
+  function staleCopyMessage(pathname) {
+    var parts = pathParts(pathname);
+    var folder = parts.length > 1 ? 'the ' + parts[parts.length - 2] + ' folder' : "the map's folder";
+    var copyName = fileName(pathname).replace(/(-map)?( ?\(\d+\))?\.html$/, '-copy-map.html');
+    return 'Your browser should have saved a copy to Downloads. The map has newer changes, ' +
+      "so don't replace it. Put the copy in " + folder + ' under another name, such as ' +
+      copyName + ', and tell Claude.';
+  }
+
+  function copyMessage(pathname, reason) {
+    return reason === 'stale' ? staleCopyMessage(pathname) : moveCopyMessage(pathname);
+  }
+
+  // "From: not known yet" only makes sense when there is a number to get to.
+  function goalLine(goal) {
+    var from = goal.from ? 'From ' + goal.from : '';
+    if (!goal.to) {
+      if (from && goal.by) return from + ', by ' + goal.by;
+      if (from) return from;
+      return goal.by ? 'By ' + goal.by : '';
+    }
+    var start = from ? from + ' to ' : 'From: not known yet. To ';
+    return start + goal.to + (goal.by ? ' by ' + goal.by : '');
+  }
+
+  function isObject(value) {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function isText(value) {
+    return typeof value === 'string';
+  }
+
+  function isTextList(value) {
+    return Array.isArray(value) && value.every(isText);
+  }
+
+  // Each list the page draws, and each field a row needs for the page to draw it.
+  var ROW_RULES = [
+    { field: 'obstacles', list: 'obstacles', row: 'Obstacle', needs: [
+      ['id', isText, 'id'],
+      ['text', isText, 'text'],
+      ['whys', isTextList, 'list of whys'],
+      ['root_cause', isText, 'root cause'],
+      ['solution_ids', isTextList, 'list of solutions']
+    ] },
+    { field: 'solutions', list: 'solutions', row: 'Solution', needs: [
+      ['id', isText, 'id'],
+      ['text', isText, 'text']
+    ] },
+    { field: 'key_actions', list: 'key actions', row: 'Key action', needs: [
+      ['solution_ids', isTextList, 'list of solutions']
+    ] },
+    { field: 'execute', list: 'execute rows', row: 'Execute row', needs: [
+      ['solution_id', isText, 'solution']
+    ] }
+  ];
+
+  function rowsProblem(rule, rows) {
+    if (!Array.isArray(rows)) return 'The map is missing its list of ' + rule.list + '.';
+    for (var i = 0; i < rows.length; i += 1) {
+      var name = rule.row + ' ' + (i + 1);
+      if (!isObject(rows[i])) return name + ' is missing.';
+      for (var n = 0; n < rule.needs.length; n += 1) {
+        var need = rule.needs[n];
+        if (!need[1](rows[i][need[0]])) return name + ' is missing its ' + need[2] + '.';
+      }
+    }
+    return null;
+  }
+
+  // One plain sentence on the first thing that stops the page drawing or saving this map, or null.
+  function mapProblem(map) {
+    if (!isObject(map)) return "The data in this file can't be read as a map.";
+    if (!map.map_id || !isText(map.map_id)) return 'The map has no id.';
+    if (typeof map.revision !== 'number') return 'The map has no revision number.';
+    if (!isObject(map.goal)) return 'The goal is missing.';
+    var goalFields = ['text', 'from', 'to', 'by'];
+    for (var g = 0; g < goalFields.length; g += 1) {
+      if (!isText(map.goal[goalFields[g]])) return 'The goal is missing its ' + goalFields[g] + '.';
+    }
+    for (var r = 0; r < ROW_RULES.length; r += 1) {
+      var problem = rowsProblem(ROW_RULES[r], map[ROW_RULES[r].field]);
+      if (problem) return problem;
+    }
+    return isObject(map.feedback) ? null : 'The feedback section is missing.';
+  }
+
+  // Every "<" becomes the JSON escape. It is built in two parts so a file tool can't decode it here.
+  function serializeMap(map) {
+    return JSON.stringify(map).replace(/</g, '\\' + 'u003c');
+  }
+
+  var SLOT = /(<script\b[^>]*\bid="map-data"[^>]*>)([\s\S]*?)(<\/script>)/;
+
+  function parseMapData(html) {
+    var m = SLOT.exec(html);
+    if (!m) return null;
+    try {
+      var data = JSON.parse(m[2]);
+      return data && typeof data === 'object' ? data : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // A function replacer keeps "$&", "$1" and similar text literal.
+  function replaceMapData(sourceHtml, map) {
+    var json = serializeMap(map);
+    return sourceHtml.replace(SLOT, function (whole, open, body, close) {
+      return open + json + close;
+    });
+  }
+
+  function copyHtml(sourceHtml, map) {
+    var next = copy(map);
+    next.revision = map.revision + 1;
+    return replaceMapData(sourceHtml, next);
+  }
+
+  function checkTarget(fileHtml, map) {
+    var file = parseMapData(fileHtml);
+    if (!file || !file.map_id || typeof file.revision !== 'number') {
+      return { ok: false, reason: 'not-a-map' };
+    }
+    if (file.map_id !== map.map_id) return { ok: false, reason: 'wrong-map' };
+    if (file.revision > map.revision) return { ok: false, reason: 'stale' };
+    return { ok: true };
+  }
+
+  async function saveToHandle(handle, sourceHtml, map) {
+    var granted;
+    try {
+      granted = await handle.requestPermission({ mode: 'readwrite' });
+    } catch (e) {
+      return { ok: false, reason: 'permission' };
+    }
+    if (granted !== 'granted') return { ok: false, reason: 'permission' };
+
+    var fileHtml;
+    try {
+      var file = await handle.getFile();
+      fileHtml = await file.text();
+    } catch (e) {
+      return { ok: false, reason: 'unreadable' };
+    }
+
+    var check = checkTarget(fileHtml, map);
+    if (!check.ok) return check;
+
+    // Claude can move baseline in the file and leave revision alone, so the file's copy wins.
+    var next = copy(map);
+    var fileBaseline = parseMapData(fileHtml).baseline;
+    if (fileBaseline) next.baseline = fileBaseline;
+
+    var writable;
+    try {
+      writable = await handle.createWritable();
+      await writable.write(copyHtml(sourceHtml, next));
+      await writable.close();
+    } catch (e) {
+      if (writable && typeof writable.abort === 'function') {
+        try {
+          await writable.abort();
+        } catch (ignored) {
+          // The write already failed, and that is the error the person needs to hear.
+        }
+      }
+      return { ok: false, reason: 'write-failed' };
+    }
+    return { ok: true, revision: map.revision + 1, baseline: next.baseline };
+  }
+
+  globalThis.MapLogic = {
+    untiedSolutionIds: untiedSolutionIds,
+    repeatCount: repeatCount,
+    deleteSolutionFromObstacle: deleteSolutionFromObstacle,
+    deleteObstacle: deleteObstacle,
+    markRootCause: markRootCause,
+    nextId: nextId,
+    addObstacle: addObstacle,
+    addWhy: addWhy,
+    deleteWhy: deleteWhy,
+    deleteRootCause: deleteRootCause,
+    setItemText: setItemText,
+    setGoal: setGoal,
+    placeForItem: placeForItem,
+    addSolution: addSolution,
+    moveSolution: moveSolution,
+    deleteSolution: deleteSolution,
+    solutionSpots: solutionSpots,
+    moveTargets: moveTargets,
+    moveTargetName: moveTargetName,
+    rowLayout: rowLayout,
+    panelRows: panelRows,
+    itemExists: itemExists,
+    shouldWarnOnClose: shouldWarnOnClose,
+    moveCopyMessage: moveCopyMessage,
+    copyMessage: copyMessage,
+    goalLine: goalLine,
+    mapProblem: mapProblem,
+    solutionsOn: solutionsOn,
+    sideOf: sideOf,
+    fitScale: fitScale,
+    stepScale: stepScale,
+    fileName: fileName,
+    pickMessage: pickMessage,
+    serializeMap: serializeMap,
+    parseMapData: parseMapData,
+    replaceMapData: replaceMapData,
+    copyHtml: copyHtml,
+    checkTarget: checkTarget,
+    saveToHandle: saveToHandle
+  };
+})();
+</script>
+<script id="map-page">
+(function () {
+  'use strict';
+
+  // Captured before any drawing, so a saved file holds no drawn map.
+  var SOURCE = '<!doctype html>\n' + document.documentElement.outerHTML;
+
+  var L = globalThis.MapLogic;
+  var map = L.parseMapData(SOURCE);
+  var dataProblem = L.mapProblem(map);
+  if (dataProblem) {
+    showDataProblem(dataProblem);
+    return;
+  }
+  var savedJson = L.serializeMap(map);
+  var handle = null;
+  var editing = null;
+  var panelOpen = window.innerWidth >= 2400;
+  var drawnOnce = false;
+  // 'readable' fits the window but stops at MIN_SCALE, 'whole' shows the whole map, a number is the person's choice.
+  var zoom = 'readable';
+  var scale = 1;
+
+  var BOX_W = 170;
+  var GOAL_W = 220;
+  var COL_GAP = 26;
+  var GOAL_GAP = 56;
+  var ROW_GAP = 18;
+  var STACK_GAP = 8;
+  var PAD = 14;
+  var MIN_SCALE = 0.8;
+  var WHOLE_MAP_FLOOR = 0.1;
+
+  var REFUSALS = {
+    'wrong-map': 'That file holds a different map, so nothing was saved.',
+    'not-a-map': 'That file is not a map, so nothing was saved.',
+    'stale': 'The file has a newer version than this page, so nothing was saved.',
+    'permission': 'Chrome did not get permission to change the file, so nothing was saved.',
+    'unreadable': 'Chrome could not read that file, so nothing was saved.',
+    'write-failed': 'Chrome could not write to the file, so the save did not finish.'
+  };
+
+  function showDataProblem(problem) {
+    document.getElementById('data-problem-reason').textContent = problem;
+    document.getElementById('data-problem').hidden = false;
+    document.querySelectorAll('header, #workspace, #tray, footer').forEach(function (part) {
+      part.hidden = true;
+    });
+  }
+
+  var el = {};
+  ['person', 'strategy-note', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'dirty', 'message',
+    'browser-note', 'editor', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+    el[id] = document.getElementById(id);
+  });
+
+  function isNarrow() {
+    return window.matchMedia('(max-width: 759px)').matches;
+  }
+
+  function make(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function refKey(ref) {
+    return [ref.kind, ref.oid || '', ref.index === undefined ? '' : ref.index, ref.sid || ''].join('|');
+  }
+
+  function solutionById(id) {
+    return map.solutions.filter(function (s) { return s.id === id; })[0];
+  }
+
+  function obstacleById(id) {
+    return map.obstacles.filter(function (o) { return o.id === id; })[0];
+  }
+
+  /* Boxes */
+
+  function makeItem(ref, className) {
+    var box = make('button', 'item ' + className);
+    box.type = 'button';
+    box.dataset.ref = JSON.stringify(ref);
+    box.dataset.key = refKey(ref);
+    if (editing && refKey(editing.ref) === refKey(ref)) box.classList.add('selected');
+    return box;
+  }
+
+  function fillText(box, text, blankText) {
+    if (text) box.appendChild(document.createTextNode(text));
+    else box.appendChild(make('span', 'blank', blankText));
+  }
+
+  function makeGoal() {
+    var box = makeItem({ kind: 'goal' }, 'goal');
+    fillText(box, map.goal.text, 'Click here to name the goal');
+    var line = L.goalLine(map.goal);
+    if (line) box.appendChild(make('span', 'goal-line', line));
+    return box;
+  }
+
+  function makeSolution(solution, obstacleId) {
+    var ref = { kind: 'solution', sid: solution.id };
+    if (obstacleId) ref.oid = obstacleId;
+    var box = makeItem(ref, 'solution');
+    if (solution.star) box.appendChild(make('span', 'star', '★'));
+    fillText(box, solution.text, 'New solution');
+    var count = L.repeatCount(map, solution.id);
+    if (count > 1) box.appendChild(make('span', 'repeat', '×' + count));
+    return box;
+  }
+
+  function makeMissing(id, obstacleId) {
+    var box = makeItem({ kind: 'missing', oid: obstacleId, sid: id }, 'missing');
+    box.textContent = 'This solution is missing (' + id + '). Delete it, or tell Claude.';
+    return box;
+  }
+
+  function chainItems(o) {
+    var items = [{ ref: { kind: 'obstacle', oid: o.id }, text: o.text, cls: 'obstacle', blank: 'New obstacle' }];
+    o.whys.forEach(function (why, i) {
+      items.push({ ref: { kind: 'why', oid: o.id, index: i }, text: why, cls: 'why', blank: 'New why' });
+    });
+    if (o.root_cause) items.push({ ref: { kind: 'root', oid: o.id }, text: o.root_cause, cls: 'root', blank: '' });
+    return items;
+  }
+
+  // Adds every box for one obstacle to the canvas, so it can be measured.
+  function makeRow(o, width) {
+    var chain = chainItems(o).map(function (item) {
+      var box = makeItem(item.ref, item.cls);
+      fillText(box, item.text, item.blank);
+      box.style.width = width + 'px';
+      el.canvas.appendChild(box);
+      return box;
+    });
+    function solutionBox(s) {
+      var box = s.missing ? makeMissing(s.id, o.id) : makeSolution(s, o.id);
+      box.style.width = width + 'px';
+      el.canvas.appendChild(box);
+      return box;
+    }
+    var spots = L.solutionSpots(map, o.id);
+    return {
+      chain: chain,
+      solutions: spots.under.map(function (item) { return item.map(solutionBox); }),
+      tail: spots.tail.map(solutionBox)
+    };
+  }
+
+  function place(box, x, y) {
+    box.style.left = x + 'px';
+    box.style.top = y + 'px';
+  }
+
+  /* Layout: goal in the middle, one row per obstacle, each chain growing outward. Solutions with a place sit
+     below their items, and the rest fan out in a column past the end of the chain. */
+
+  function curve(x1, y1, x2, y2) {
+    var mid = (x1 + x2) / 2;
+    return 'M' + x1 + ' ' + y1 + ' C' + mid + ' ' + y1 + ' ' + mid + ' ' + y2 + ' ' + x2 + ' ' + y2;
+  }
+
+  function layOutWide() {
+    var goal = makeGoal();
+    goal.style.width = GOAL_W + 'px';
+    el.canvas.appendChild(goal);
+
+    var rows = map.obstacles.map(function (o) {
+      var row = makeRow(o, BOX_W);
+      row.layout = L.rowLayout(
+        row.chain.map(function (b) { return b.offsetHeight; }),
+        row.solutions.map(function (item) { return item.map(function (b) { return b.offsetHeight; }); }),
+        STACK_GAP,
+        row.tail.map(function (b) { return b.offsetHeight; })
+      );
+      row.height = row.layout.height;
+      row.depth = row.chain.length + (row.tail.length ? 1 : 0);
+      return row;
+    });
+
+    var left = rows.filter(function (r, i) { return L.sideOf(i) === 'left'; });
+    var right = rows.filter(function (r, i) { return L.sideOf(i) === 'right'; });
+
+    function columns(side) {
+      return Math.max.apply(null, [0].concat(side.map(function (r) { return r.depth; })));
+    }
+    function sideHeight(side) {
+      return side.reduce(function (sum, r) { return sum + r.height + ROW_GAP; }, -ROW_GAP);
+    }
+
+    var step = BOX_W + COL_GAP;
+    // Both sides take the width of the deeper one, so the goal sits at the true center.
+    var deepest = Math.max(columns(left), columns(right));
+    var sideW = deepest ? deepest * step - COL_GAP + GOAL_GAP : 0;
+    var goalX = PAD + sideW;
+    var height = Math.max(sideHeight(left), sideHeight(right), goal.offsetHeight) + PAD * 2;
+    var width = goalX + GOAL_W + sideW + PAD;
+    var midY = height / 2;
+    place(goal, goalX, midY - goal.offsetHeight / 2);
+
+    var paths = [];
+    function layOutSide(side, dir) {
+      var inner = dir > 0 ? goalX + GOAL_W + GOAL_GAP : goalX - GOAL_GAP - BOX_W;
+      var goalEdge = dir > 0 ? goalX + GOAL_W : goalX;
+      var y = (height - sideHeight(side)) / 2;
+      side.forEach(function (row) {
+        var lineY = y + row.layout.lineY;
+        function columnX(c) { return inner + dir * c * step; }
+        // The edge of a box in column c that faces the goal, and the edge that faces away.
+        function nearEdge(c) { return dir > 0 ? columnX(c) : columnX(c) + BOX_W; }
+        function farEdge(c) { return dir > 0 ? columnX(c) + BOX_W : columnX(c); }
+
+        row.chain.forEach(function (box, c) {
+          var item = row.layout.items[c];
+          place(box, columnX(c), y + item.top);
+          var fromX = c === 0 ? goalEdge : farEdge(c - 1);
+          var fromY = c === 0 ? midY : lineY;
+          paths.push(curve(fromX, fromY, nearEdge(c), lineY));
+
+          // A short line runs down the middle of the column, through the stack.
+          var lineX = columnX(c) + BOX_W / 2;
+          var above = y + item.top + box.offsetHeight;
+          row.solutions[c].forEach(function (solution, s) {
+            var top = y + item.solutionTops[s];
+            place(solution, columnX(c), top);
+            paths.push('M' + lineX + ' ' + above + ' V' + top);
+            above = top + solution.offsetHeight;
+          });
+        });
+
+        var last = row.chain.length;
+        row.tail.forEach(function (box, s) {
+          var top = y + row.layout.tailTops[s];
+          place(box, columnX(last), top);
+          paths.push(curve(farEdge(last - 1), lineY, nearEdge(last), top + box.offsetHeight / 2));
+        });
+        y += row.height + ROW_GAP;
+      });
+    }
+    layOutSide(right, 1);
+    layOutSide(left, -1);
+    return { width: width, height: height, paths: paths };
+  }
+
+  // On a phone the map reads top to bottom, with a line down the left of each chain.
+  function layOutNarrow() {
+    var width = el.map.clientWidth;
+    var TRUNK = 8;
+    var INDENT = 12;
+    var MAX_INDENT = 36;
+    var goal = makeGoal();
+    goal.style.width = (width - TRUNK * 2) + 'px';
+    el.canvas.appendChild(goal);
+    place(goal, TRUNK, TRUNK);
+    var y = TRUNK + goal.offsetHeight + 12;
+    var paths = [];
+    var goalBottom = y - 12;
+
+    function stack(box, x, parentX, parentBottom) {
+      box.style.width = (width - x - TRUNK) + 'px';
+      place(box, x, y);
+      var mid = y + box.offsetHeight / 2;
+      paths.push('M' + parentX + ' ' + parentBottom + ' V' + mid + ' H' + x);
+      y += box.offsetHeight + 8;
+    }
+
+    map.obstacles.forEach(function (o) {
+      var row = makeRow(o, 200);
+      var parentX = TRUNK + 8;
+      var parentBottom = goalBottom;
+      var x = TRUNK + 16;
+      row.chain.forEach(function (box, c) {
+        stack(box, x, parentX, parentBottom);
+        var nextX = Math.min(x + INDENT, TRUNK + 16 + MAX_INDENT);
+        // Past the deepest indent, the line runs just left of the boxes so it never crosses one.
+        parentX = nextX > x ? x + 8 : x - 4;
+        parentBottom = y - 8;
+        x = nextX;
+        // The next chain item hangs from the same line, so the chain carries on past these.
+        row.solutions[c].forEach(function (solution) {
+          stack(solution, x, parentX, parentBottom);
+        });
+      });
+      row.tail.forEach(function (box) {
+        stack(box, x, parentX, parentBottom);
+      });
+      y += 8;
+    });
+    return { width: width, height: y + 8, paths: paths };
+  }
+
+  function scaleFor(layout) {
+    if (typeof zoom === 'number') return zoom;
+    var floor = zoom === 'whole' ? WHOLE_MAP_FLOOR : MIN_SCALE;
+    var style = window.getComputedStyle(el.map);
+    var availableHeight = el.map.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    return L.fitScale(layout.width, layout.height, el.map.clientWidth, availableHeight, floor);
+  }
+
+  // Keeps the same part of the map in the middle of the window.
+  function zoomTo(nextZoom) {
+    var m = el.map;
+    var frame = el['canvas-frame'];
+    var centerX = (m.scrollLeft + m.clientWidth / 2 - frame.offsetLeft) / scale;
+    var centerY = (m.scrollTop + m.clientHeight / 2 - frame.offsetTop) / scale;
+    zoom = nextZoom;
+    render();
+    m.scrollLeft = centerX * scale + frame.offsetLeft - m.clientWidth / 2;
+    m.scrollTop = centerY * scale + frame.offsetTop - m.clientHeight / 2;
+  }
+
+  function drawMap() {
+    el.canvas.textContent = '';
+    var narrow = isNarrow();
+    var layout = narrow ? layOutNarrow() : layOutWide();
+    var svg = '<svg id="lines" width="' + layout.width + '" height="' + layout.height + '" aria-hidden="true">' +
+      layout.paths.map(function (d) { return '<path d="' + d + '"></path>'; }).join('') + '</svg>';
+    el.canvas.insertAdjacentHTML('afterbegin', svg);
+
+    scale = narrow ? 1 : scaleFor(layout);
+    el.canvas.style.width = layout.width + 'px';
+    el.canvas.style.height = layout.height + 'px';
+    el.canvas.style.transform = scale === 1 ? '' : 'scale(' + scale + ')';
+    el['canvas-frame'].style.width = layout.width * scale + 'px';
+    el['canvas-frame'].style.height = layout.height * scale + 'px';
+
+    if (!drawnOnce) {
+      drawnOnce = true;
+      el.map.scrollLeft = (layout.width * scale - el.map.clientWidth) / 2;
+      el.map.scrollTop = (layout.height * scale - el.map.clientHeight) / 2;
+    }
+  }
+
+  /* Tray and side panel */
+
+  function drawTray() {
+    var ids = L.untiedSolutionIds(map);
+    el.tray.hidden = ids.length === 0;
+    el.tray.textContent = '';
+    if (!ids.length) return;
+    var count = ids.length === 1
+      ? '1 solution is not tied to an obstacle yet.'
+      : ids.length + ' solutions are not tied to an obstacle yet.';
+    el.tray.appendChild(make('div', '', count)).id = 'tray-count';
+    ids.forEach(function (id) {
+      el.tray.appendChild(makeSolution(solutionById(id), null));
+    });
+  }
+
+  function heading(text, label) {
+    var h = make('h2', '', text);
+    if (label) {
+      h.appendChild(document.createTextNode(' '));
+      h.appendChild(make('small', '', label));
+    }
+    return h;
+  }
+
+  function fieldList(pairs) {
+    var dl = make('dl');
+    pairs.forEach(function (pair) {
+      if (!pair[1]) return;
+      dl.appendChild(make('dt', '', pair[0]));
+      dl.appendChild(make('dd', '', pair[1]));
+    });
+    return dl;
+  }
+
+  function drawPanel() {
+    var narrow = isNarrow();
+    el.panel.hidden = !(panelOpen || narrow);
+    el['toggle-plan'].textContent = panelOpen ? 'Hide plan' : 'Show plan';
+    el.panel.textContent = '';
+    var rows = L.panelRows(map);
+
+    el.panel.appendChild(heading('Key actions'));
+    if (rows.key_actions.length) {
+      var table = make('table');
+      var head = make('tr');
+      ['Action', 'Risk', 'Solutions'].forEach(function (t) { head.appendChild(make('th', '', t)); });
+      table.appendChild(head);
+      rows.key_actions.forEach(function (k) {
+        var tr = make('tr');
+        tr.appendChild(make('td', '', k.text));
+        tr.appendChild(make('td', '', k.risk));
+        tr.appendChild(make('td', '', k.solutions.join('; ')));
+        table.appendChild(tr);
+      });
+      el.panel.appendChild(table);
+    } else {
+      el.panel.appendChild(make('p', 'none', 'Not compared to strategy.'));
+    }
+
+    el.panel.appendChild(heading('Step 5, Execute:', 'planned, not done'));
+    if (!rows.execute.length) el.panel.appendChild(make('p', 'none', 'Nothing planned yet.'));
+    rows.execute.forEach(function (e) {
+      el.panel.appendChild(make('p', 'row-title', e.solution));
+      el.panel.appendChild(fieldList([
+        ['First move', e.first_move],
+        ['Owner', e.owner],
+        ['Others need to decide', e.others_decide]
+      ]));
+    });
+
+    el.panel.appendChild(heading('Step 6, Feedback:', 'planned, not done'));
+    var f = map.feedback;
+    if (!f.number && !f.check_on && !f.redraw_if) {
+      el.panel.appendChild(make('p', 'none', 'Nothing planned yet.'));
+    } else {
+      el.panel.appendChild(fieldList([
+        ['Number to check', f.number],
+        ['Check on', f.check_on],
+        ['Redraw if', f.redraw_if]
+      ]));
+    }
+  }
+
+  function isDirty() {
+    return L.serializeMap(map) !== savedJson;
+  }
+
+  function render() {
+    el.person.textContent = map.person;
+    el['strategy-note'].hidden = map.key_actions.length > 0;
+    drawMap();
+    drawTray();
+    drawPanel();
+    el.dirty.hidden = !isDirty();
+    positionEditor();
+  }
+
+  function setMap(next) {
+    map = next;
+    render();
+  }
+
+  /* Editing */
+
+  function itemText(ref) {
+    if (ref.kind === 'solution') return solutionById(ref.sid).text;
+    var o = obstacleById(ref.oid);
+    if (ref.kind === 'obstacle') return o.text;
+    if (ref.kind === 'why') return o.whys[ref.index];
+    return o.root_cause;
+  }
+
+  function labeled(labelText, control) {
+    var label = make('label', '', labelText);
+    label.appendChild(control);
+    return label;
+  }
+
+  function goalInput(name, value) {
+    var input = make('input');
+    input.type = 'text';
+    input.value = value;
+    input.dataset.field = name;
+    return input;
+  }
+
+  function actionButton(text, className, onClick) {
+    var b = make('button', className, text);
+    b.type = 'button';
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function deleteItem(ref, isNew) {
+    if (ref.kind === 'obstacle') return L.deleteObstacle(map, ref.oid);
+    if (ref.kind === 'why') return L.deleteWhy(map, ref.oid, ref.index);
+    if (ref.kind === 'root') return L.deleteRootCause(map, ref.oid);
+    if (ref.kind === 'missing') return L.deleteSolutionFromObstacle(map, ref.oid, ref.sid);
+    if (ref.oid && !isNew) return L.deleteSolutionFromObstacle(map, ref.oid, ref.sid);
+    return L.deleteSolution(map, ref.sid);
+  }
+
+  function closeEditor() {
+    editing = null;
+    el.editor.hidden = true;
+    el.editor.textContent = '';
+  }
+
+  function commitEdit() {
+    if (!editing) return;
+    var e = editing;
+    if (e.ref.kind === 'missing') {
+      closeEditor();
+      render();
+      return;
+    }
+    if (e.ref.kind === 'goal') {
+      var goal = {};
+      el.editor.querySelectorAll('[data-field]').forEach(function (input) {
+        goal[input.dataset.field] = input.value.trim();
+      });
+      closeEditor();
+      setMap(L.setGoal(map, goal));
+      return;
+    }
+    var text = el.editor.querySelector('textarea').value.trim();
+    closeEditor();
+    if (text) setMap(L.setItemText(map, e.ref, text));
+    else if (e.isNew) setMap(deleteItem(e.ref, true));
+    else render();
+  }
+
+  function cancelEdit() {
+    var e = editing;
+    closeEditor();
+    if (e.isNew) setMap(deleteItem(e.ref, true));
+    else render();
+  }
+
+  // Keeps what was typed, then does the action. A new item needs its text first.
+  function afterCommit(action) {
+    return function () {
+      var e = editing;
+      if (e.isNew && !el.editor.querySelector('textarea').value.trim()) {
+        el.editor.querySelector('textarea').focus();
+        return;
+      }
+      commitEdit();
+      action(e.ref);
+    };
+  }
+
+  function addWhyTo(ref) {
+    map = L.addWhy(map, ref.oid, '');
+    openEditor({ kind: 'why', oid: ref.oid, index: obstacleById(ref.oid).whys.length - 1 }, true);
+  }
+
+  function addSolutionTo(ref) {
+    var id = L.nextId(map, 's');
+    map = L.addSolution(map, ref.oid, id, '', L.placeForItem(ref));
+    openEditor({ kind: 'solution', oid: ref.oid, sid: id }, true);
+  }
+
+  function shortText(text) {
+    return text.length > 60 ? text.slice(0, 60) + '...' : text;
+  }
+
+  // One group per obstacle, so a solution can go under any item in any chain, or to its end.
+  function moveControl(ref) {
+    var targets = L.moveTargets(map, ref.sid, ref.oid || null);
+    if (!targets.length) return null;
+    var select = make('select');
+    select.appendChild(make('option', '', 'Choose where it goes'));
+    select.options[0].value = '';
+    var group = null;
+    targets.forEach(function (target, i) {
+      if (!group || group.dataset.oid !== target.oid) {
+        group = make('optgroup');
+        group.dataset.oid = target.oid;
+        group.label = shortText(target.obstacle);
+        select.appendChild(group);
+      }
+      var option = make('option', '', shortText(L.moveTargetName(target)));
+      option.value = String(i);
+      group.appendChild(option);
+    });
+    select.addEventListener('change', function () {
+      if (!select.value) return;
+      var target = targets[Number(select.value)];
+      afterCommit(function (r) {
+        setMap(L.moveSolution(map, r.oid || null, target.oid, r.sid, target.place));
+      })();
+    });
+    return labeled('Move to', select);
+  }
+
+  function editorActions(ref) {
+    var actions = make('div', 'actions');
+    function add(text, className, onClick) { actions.appendChild(actionButton(text, className, onClick)); }
+    var o = ref.oid ? obstacleById(ref.oid) : null;
+    var isPlainObstacle = ref.kind === 'obstacle' && !o.whys.length && !o.root_cause;
+    var isLastWhy = ref.kind === 'why' && ref.index === o.whys.length - 1 && !o.root_cause;
+
+    if (isPlainObstacle || isLastWhy) add('Add a why', '', afterCommit(addWhyTo));
+    if (isLastWhy) {
+      add('Mark as root cause', '', afterCommit(function (r) { setMap(L.markRootCause(map, r.oid)); }));
+    }
+    if (ref.kind === 'obstacle' || ref.kind === 'why' || ref.kind === 'root') {
+      add('Add a solution', '', afterCommit(addSolutionTo));
+    }
+    if (ref.kind !== 'goal') {
+      var onObstacle = (ref.kind === 'solution' && ref.oid) || ref.kind === 'missing';
+      var deleteLabel = onObstacle ? 'Delete from this obstacle' : 'Delete';
+      add(deleteLabel, 'delete', function () {
+        var e = editing;
+        closeEditor();
+        setMap(deleteItem(e.ref, e.isNew));
+      });
+    }
+    add('Done', 'done', commitEdit);
+    return actions;
+  }
+
+  function openEditor(ref, isNew) {
+    closeEditor();
+    editing = { ref: ref, isNew: Boolean(isNew) };
+    var names = { goal: 'Goal', obstacle: 'Obstacle', why: 'Why', root: 'Root cause', solution: 'Solution' };
+    var first;
+
+    if (ref.kind === 'goal') {
+      var text = make('textarea');
+      text.value = map.goal.text;
+      text.dataset.field = 'text';
+      first = text;
+      el.editor.appendChild(labeled('Goal', text));
+      el.editor.appendChild(labeled('From', goalInput('from', map.goal.from)));
+      el.editor.appendChild(labeled('To', goalInput('to', map.goal.to)));
+      el.editor.appendChild(labeled('By', goalInput('by', map.goal.by)));
+    } else if (ref.kind === 'missing') {
+      el.editor.appendChild(make('p', 'note', 'This map points to a solution that is not in the file (' + ref.sid + ').'));
+    } else {
+      first = make('textarea');
+      first.value = itemText(ref);
+      el.editor.appendChild(labeled(names[ref.kind], first));
+      if (ref.kind === 'solution') {
+        var count = L.repeatCount(map, ref.sid);
+        if (count > 1) {
+          el.editor.appendChild(make('p', 'note',
+            'This solution is on ' + count + ' obstacles. Editing the text changes all of them.'));
+        }
+        var move = moveControl(ref);
+        if (move) el.editor.appendChild(move);
+      }
+    }
+    el.editor.appendChild(editorActions(ref));
+    el.editor.hidden = false;
+    render();
+    if (first) {
+      first.focus();
+      first.setSelectionRange(first.value.length, first.value.length);
+    }
+  }
+
+  function positionEditor() {
+    if (!editing || isNarrow()) return;
+    var box = el.canvas.querySelector('[data-key="' + refKey(editing.ref) + '"]') ||
+      el.tray.querySelector('[data-key="' + refKey(editing.ref) + '"]');
+    if (!box) return;
+    var rect = box.getBoundingClientRect();
+    var w = el.editor.offsetWidth;
+    var h = el.editor.offsetHeight;
+    var top = rect.bottom + 8;
+    if (top + h > window.innerHeight - 12) top = rect.top - h - 8;
+    el.editor.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - w - 12)) + 'px';
+    el.editor.style.top = Math.max(12, top) + 'px';
+  }
+
+  /* Saving */
+
+  function showMessage(text, refusal) {
+    el.message.textContent = '';
+    el.message.hidden = false;
+    el.message.classList.toggle('refusal', Boolean(refusal));
+    el.message.appendChild(make('span', '', text));
+    return el.message;
+  }
+
+  function hideMessage() {
+    el.message.hidden = true;
+    el.message.textContent = '';
+  }
+
+  function quietButton(text, onClick) {
+    var b = make('button', 'quiet', text);
+    b.type = 'button';
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function download(html) {
+    var url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    var a = make('a');
+    a.href = url;
+    a.download = L.fileName(location.pathname);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+  }
+
+  function markSaved(savedMap) {
+    savedJson = L.serializeMap(savedMap);
+    el.dirty.hidden = !isDirty();
+  }
+
+  // The copy keeps this page's revision, so once moved it can't look newer than the page.
+  // The file in the folder still lacks these edits, so the page stays marked unsaved.
+  function saveACopy(reason) {
+    download(L.replaceMapData(SOURCE, map));
+    showMessage(L.copyMessage(location.pathname, reason));
+  }
+
+  function showRefusal(reason) {
+    var box = showMessage(REFUSALS[reason] + ' Your edits are still on this page.', true);
+    box.appendChild(quietButton('Save a copy', function () { saveACopy(reason); }));
+  }
+
+  async function writeToFile() {
+    var saving = map;
+    el.save.disabled = true;
+    var result = await L.saveToHandle(handle, SOURCE, saving);
+    el.save.disabled = false;
+    if (!result.ok) {
+      if (result.reason !== 'stale' && result.reason !== 'write-failed') handle = null;
+      showRefusal(result.reason);
+      return;
+    }
+    saving.revision = result.revision;
+    map.revision = result.revision;
+    saving.baseline = result.baseline;
+    map.baseline = result.baseline;
+    markSaved(saving);
+    showMessage('Saved. Now tell Claude you changed the map.');
+  }
+
+  async function pickThenWrite() {
+    var picked;
+    try {
+      picked = await window.showOpenFilePicker({
+        multiple: false,
+        types: [{ description: 'Map page', accept: { 'text/html': ['.html'] } }]
+      });
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        hideMessage();
+        return;
+      }
+      showRefusal('permission');
+      return;
+    }
+    handle = picked[0];
+    await writeToFile();
+  }
+
+  function onSave() {
+    hideMessage();
+    if (!window.showOpenFilePicker) {
+      download(L.copyHtml(SOURCE, map));
+      map.revision += 1;
+      markSaved(map);
+      showMessage(L.moveCopyMessage(location.pathname));
+      return;
+    }
+    if (handle) {
+      writeToFile();
+      return;
+    }
+    var box = showMessage(L.pickMessage(location.pathname));
+    box.appendChild(quietButton('Pick the file', pickThenWrite));
+    box.appendChild(quietButton('Cancel', hideMessage));
+  }
+
+  /* Events */
+
+  // Capture runs first, so what was typed is kept before any other click acts on the map.
+  document.addEventListener('click', function (e) {
+    if (editing && !el.editor.contains(e.target)) commitEdit();
+  }, true);
+
+  document.addEventListener('click', function (e) {
+    var box = e.target.closest('[data-ref]');
+    if (!box) return;
+    var ref = JSON.parse(box.dataset.ref);
+    if (L.itemExists(map, ref)) openEditor(ref);
+  });
+
+  el.editor.addEventListener('keydown', function (e) {
+    var typing = e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT';
+    if (e.key === 'Escape') cancelEdit();
+    else if (e.key === 'Enter' && !e.shiftKey && typing) {
+      e.preventDefault();
+      commitEdit();
+    }
+  });
+
+  el['add-obstacle'].addEventListener('click', function () {
+    var id = L.nextId(map, 'o');
+    map = L.addObstacle(map, id, '');
+    openEditor({ kind: 'obstacle', oid: id }, true);
+  });
+
+  el['toggle-plan'].addEventListener('click', function () {
+    panelOpen = !panelOpen;
+    render();
+  });
+
+  el['zoom-out'].addEventListener('click', function () { zoomTo(L.stepScale(scale, -1)); });
+  el['zoom-in'].addEventListener('click', function () { zoomTo(L.stepScale(scale, 1)); });
+  el['zoom-fit'].addEventListener('click', function () { zoomTo('whole'); });
+
+  el.save.addEventListener('click', onSave);
+  el.map.addEventListener('scroll', positionEditor);
+  window.addEventListener('resize', render);
+
+  window.addEventListener('beforeunload', function (e) {
+    if (L.shouldWarnOnClose(commitEdit, isDirty)) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  el['browser-note'].hidden = Boolean(window.showOpenFilePicker);
+  render();
+})();
+</script>
+</body>
+</html>

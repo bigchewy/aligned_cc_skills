@@ -206,6 +206,10 @@ Then close with something like:
 
 **WAIT for the user to respond.**
 
+## Artifact
+
+The result is a local file: the screens at `docs/story-maps/{slug}-screens.html`, or `docs/screens/{slug}-screens.html` with no story map, rebuilt from the matching Markdown. It is never published, to claude.ai or anywhere else. Give the user the path.
+
 ## Key Rules
 
 - Complete each phase fully before moving to the next. ALWAYS pause and wait at the marked points.

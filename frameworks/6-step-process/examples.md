@@ -1,130 +1,208 @@
 # 6-Step Process Examples
 
-## Phase 1: Mindset Check
+All of these follow one case: Maya wants 80% in-office attendance by the end of Q2, up from 40%. `example-map.html` in this folder shows a map from the same case.
 
-### User who is genuinely open
+## Opening
 
-**User:** "I'm feeling pretty open actually. I'm frustrated with the situation but curious about what I might be missing."
+### A new run
 
-**Advisor:** "Good. Frustrated but curious - that's a workable place. The frustration tells you something matters, and the curiosity means you're ready to see it clearly. Let's move to defining your goal."
+**Advisor:** "We'll work through six steps: locate, goal, root-cause the problems, solutions, execute, feedback. You'll leave with a map you can edit and show to others. First, are you here to pick up a map you already have? If so, tell me the file name. If not, say new."
 
-> Accepts open mindset and moves forward without delay
+**User:** "New."
 
-### User who is defensive
+**Advisor:** "I read your strategy and your goals document. Right now, on this, are you above the line (open and curious) or below it (defensive, frustrated, afraid)?"
 
-**User:** "I'm pretty annoyed about this. I've tried everything and nothing works. I'm starting to think the problem is just my team."
+> One question, then a stop. Reading the documents asks nothing, and the one line names them without saying what's in them.
 
-**Advisor:** "I hear the frustration. But here's the thing - when we're annoyed and already assigning blame, we don't see clearly. We react instead of respond. Any plan we make from that place will be compromised. Before we do the 6-Step Process, I'd recommend spending some time with Diana Chapman to shift your mindset. She's excellent at helping you move from reactive to creative. Want me to connect you with her instead?"
+## Step 1: Locate
 
-> Recognizes reactive state and offers Diana Chapman before proceeding
+### Above the line
 
-### User who insists they're ready when they're not
+**User:** "Above. I'm frustrated with the situation, but I'm curious what I'm missing."
 
-**User:** "No, I'm fine. Let's just do this. I don't need to work on mindset."
+**Advisor:** "What outcome do you want, with a number if you can? From what, to what, by when?"
 
-**Advisor:** "I appreciate the eagerness, but let me push back once. You described being annoyed and thinking the problem is your team. That's a sign you're seeing from a limited perspective. The 6-Step Process works best when you're genuinely open to discovering what YOU might need to change. Are you actually ready for that, or would a few minutes with Diana help?"
+> The person decided. Claude trusts it and moves on.
 
-> Gently challenges once before accepting user's choice
+### Below the line, and they want to continue
 
-## Phase 2: Define the Goal
+**User:** "Below. I've tried everything, and I'm starting to think the problem is my team."
 
-### User with specific goal
+**Advisor:** "`above-below-the-line` is the playbook's first pick for this, and it works on presence and responsibility. Do you want to run that, or continue here?"
 
-**User:** "I want 80% in-office attendance by end of Q2. Right now we're at about 40%."
+**User:** "Continue here."
 
-**Advisor:** "Good. 40% to 80%, end of Q2. That's specific, measurable, and time-bound. I can work with that. Now let's find what's blocking you from getting there."
+**Advisor:** "What outcome do you want, with a number if you can? From what, to what, by when?"
 
-> Accepts well-defined goal and moves to problem identification
+> One offer. When they choose to continue, Claude continues without comment.
 
-### User with vague goal
+## Step 2: Goal
+
+### A goal with a number
+
+**User:** "80% in-office attendance by the end of Q2. Right now we're at about 40%."
+
+**Advisor:** "40% to 80% by the end of Q2. Your map is at `~/attendance/office-attendance-maya-map.html`. Double-click it to open it. Write your own list of what stands between you and this goal. Use paper or a note, not here, and don't tell me what's on it. If I share first, you'll gravitate toward what I said. Say "done" when you have it."
+
+> The confirmed goal starts the file. The message ends at the next stop.
+
+### A vague goal
 
 **User:** "I want my team to be more collaborative and engaged."
 
-**Advisor:** "That's a start. Can you make it more concrete? What would success actually look like? How would you measure collaboration or engagement? If we talked at the end of Q2 and you'd succeeded, what would be different that we could actually observe?"
+**Advisor:** "If we talked at the end of Q2 and you'd succeeded, what would you be able to count?"
 
-> Pushes for specificity while acknowledging the direction
+> One nudge toward a number. If none comes, Claude takes the goal without one.
 
-## Phase 3: Identify Problems
+## Step 3: Root-cause the problems
 
-### User with individual perspective
+### 3a: Claude's list comes after "done"
 
-**User:** "The problems are: people don't want to commute, the office is too noisy, and I think some managers aren't enforcing the policy."
+**User:** "Done."
 
-**Advisor:** "Those are what you see. But here's the thing: the people closest to the work often see problems leadership misses. Have you run this exercise with your team? The wisdom of the group will surface things you didn't consider. What problems might they identify that aren't on your list?"
+**Advisor:** "The documents and the goal suggest these: expectations are unclear, there's no reason to come in since meetings are still remote, and some people feel less productive in the office. What would you change, and what do you have that isn't here?"
 
-> Introduces wisdom-of-the-group concept
+**User:** "Those are good, and they aren't on my list. I had people don't want to commute, the office is too noisy, and some managers aren't enforcing the policy."
 
-### User who's already consulted the team
+**Advisor:** "That makes six: people don't want to commute, expectations are unclear, the office is too noisy, some people feel less productive in the office, some managers aren't enforcing the policy, and there's no reason to come in since meetings are still remote. Is that the list?"
 
-**User:** "I actually did ask my team. They added: unclear expectations, no reason to come in since meetings are still remote, and some people feel less productive in the office."
+> Claude built its list after "done," and the person added theirs. The merged list shows no order of importance and doesn't say who wrote what.
 
-**Advisor:** "Good - you got the group's input. Unclear expectations, no in-person value, productivity concerns. Those are different problems than yours. Let me summarize what we have: commute resistance, noise, manager enforcement, unclear expectations, no in-office value, and productivity concerns. Did I capture them all?"
+### 3a: They type their list instead
 
-> Validates team input and reflects problems back
+**User:** "My list is people don't want to commute, the office is too noisy, and some managers aren't enforcing the policy."
 
-## Phase 4: Diagnose Root Causes
+**Advisor:** "I'll take those as yours, and I've now heard them. The documents and the goal suggest these as well: expectations are unclear, there's no reason to come in since meetings are still remote, and some people feel less productive in the office. What would you change, and what's missing?"
 
-### User stopping at surface level
+> Claude says it has heard the list and still shows its own.
+
+### 3a: A solution comes early
+
+**User:** "We should run a monthly pulse survey."
+
+**Advisor:** "That's in the holding list, and we'll get to it in Step 4. Back to your list: say "done" when you have it."
+
+> One line, then back to the current step.
+
+### 3c: Pushing past a circular answer
 
 **User:** "People don't want to commute because commuting sucks."
 
-**Advisor:** "Okay, but that's circular. Why does commuting 'suck' more now than it did three years ago? Is it that it always sucked and people realized they don't need to tolerate it? Is it that the value proposition of being in office hasn't kept up with the cost? Keep asking why until you hit something you can actually change."
+**Advisor:** "Why does it cost more than the office gives back now?"
 
-> Pushes past tautological answer
+**User:** "The value of being in the office hasn't kept up. We haven't defined what the office is for."
 
-### User reaching root cause
+**Advisor:** "**We haven't defined what the office is for.** You can do something about that one. Is that it?"
 
-**User:** "I think the root cause is we haven't defined what the office is FOR. Before, it was just where work happened. Now work can happen anywhere, so we need a reason. And we haven't given them one."
+> Two rounds, and the person can act on the answer. The answer goes in bold and ends the chain.
 
-**Advisor:** "That sounds like a root cause - something you can actually do something about. You can define what the office is for. You can create experiences that only happen in person. That's actionable. Are there other root causes we should diagnose, or should we move to designing a plan?"
+## Step 4: Solutions
 
-> Confirms actionable root cause and offers to continue
+### 4a: Tying a solution with no obstacle
 
-## Phase 5: Design a Plan
+**User:** "And the monthly pulse survey from the holding list."
 
-### User with high-level plan
+**Advisor:** "Which obstacle does the pulse survey get past?"
 
-**User:** "The plan is: 1) Define the purpose of in-office time and communicate it. 2) Redesign the office to support that purpose. 3) Create in-person-only experiences. 4) Set clear expectations with managers."
+**User:** "I don't know. I just want to hear how people feel."
 
-**Advisor:** "Good high-level structure. Who needs to be involved in each of these? What's the first thing that needs to happen? And most importantly - how will you know if it's working? What feedback loop can you create so you're not flying blind? When will you check in on progress and adjust?"
+**Advisor:** "One obstacle on the map is that some people feel less productive in the office. The survey would tell you how many and why. Does it belong there, or is something missing from the map?"
 
-> Affirms plan and adds feedback loop requirement
+**User:** "It belongs there."
 
-## Phase 6: Execute with Feedback Loops
+> Claude nudges, then helps find the obstacle. By the end of 4a, every solution is tied.
 
-### User understanding the loop
+### 4a: A solution under a specific item
 
-**User:** "I'm going to check attendance weekly and do a pulse survey monthly. If things aren't moving, I'll come back to this process - is the goal still right? Are there new problems? Did we miss a root cause?"
+**Advisor:** "Which obstacle does create in-person-only experiences get past?"
 
-**Advisor:** "Exactly. The 6-Step Process isn't a one-time thing. Weekly attendance check, monthly pulse - those are your feedback loops. When something isn't working, you don't just push harder. You ask: what are we missing? The teams that win aren't the ones with perfect plans. They're the ones who learn and adapt fastest."
+**User:** "People don't want to commute. Put it right under the part about the value of the office not keeping up, because that's what it fixes."
 
-> Reinforces iterative nature of the process
+**Advisor:** "It's on that obstacle, directly under that why. Next: which obstacle does set clear expectations with managers get past?"
 
-## Phase 7: Summary
+> The person named an item, so Claude writes `"solution_at": {"s3": "why:1"}` on that obstacle and keeps `s3` in `solution_ids`. Claude didn't ask where it goes. A solution nobody places stays at the end of the chain with no entry.
 
-### Complete summary
+### 4b: Picks and the key-action table
 
-**Advisor:** "Let me summarize what we've got:
+**User:** "Done."
 
-**Goal:** 80% in-office attendance by end of Q2, up from 40%
+**Advisor:** "The documents and the goal suggest starring two: define the purpose of in-office time and communicate it, because the root cause sits there, and create in-person-only experiences, because meetings are still remote. Where do your picks differ?"
 
-**Key Problems:**
-- Commute resistance
-- No clear in-office value proposition
-- Unclear expectations
+**User:** "They don't. I picked the same two."
 
-**Root Causes:**
-- Haven't defined what the office is FOR
-- No in-person-only experiences
+**Advisor:** "Here's how those two compare to the strategy.
 
-**Plan:**
-- Define purpose and communicate
-- Redesign office for purpose
-- Create in-person-only experiences
-- Set expectations with managers
+| Key action | Risk | Solutions that touch it |
+|---|---|---|
+| Say what the office is for | High | Define the purpose of in-office time |
+| Give each team a reason to meet in person | Medium | Create in-person-only experiences, set clear expectations with managers |
 
-**Feedback Loop:** Weekly attendance tracking, monthly pulse surveys
+Which ratings are wrong?"
 
-Take this and put it somewhere your team can see it. And remember - if you haven't done this with your team yet, consider running them through the same process. What questions do you have before you execute?"
+> One ask per turn. Claude rates risk first because the rating comes from the documents. The person corrects it, Claude asks whether the table changes the picks, and the agreed picks get stars.
 
-> Provides complete, formatted summary for reference
+## Step 5: Execute
+
+**Advisor:** "Define the purpose of in-office time: what's the first move, who owns it, and what do other people need to decide?"
+
+**User:** "I draft one page on what the office is for. I own it. The leadership team approves the page."
+
+> One starred solution per turn. The map marks these as planned, not done.
+
+## Step 6: Feedback
+
+**User:** "In-office attendance, every week. If it's under 55% by the middle of Q2, I come back and redraw this."
+
+**Advisor:** "Your map is at `~/attendance/office-attendance-maya-map.html`. Steps 5 and 6 are planned, not done. The map is yours to edit and show to others. If you change it, save it and tell me."
+
+> A number, a date and a result that sends them back. The close ends there.
+
+## Picking up edits
+
+### The file has edits
+
+**User:** "I changed the map."
+
+**Advisor:** "You renamed the noise obstacle, deleted the productivity obstacle, and added a why under expectations. The pulse survey sat on the productivity obstacle, so it's untied now. Which obstacle does it get past?"
+
+> Claude compares the file with `baseline`, lists the changes in plain words, and nudges the untied solution. If it only lists them, it moves `baseline` in the file to this version and leaves `revision` alone, so the next pick-up sees only newer edits.
+
+### A solution moved to another item
+
+**User:** "I changed the map."
+
+**Advisor:** "You moved create in-person-only experiences on the commute obstacle. It now sits directly under the obstacle, and before it sat under the why about the value of the office. That's the only change. Which step do you want to resume?"
+
+> The solution stayed on the same obstacle, so `solution_ids` didn't change. A different `solution_at` still counts as a change, and Claude names the item.
+
+### No edits, and they didn't say they changed it
+
+**User:** "I want to keep going on `office-attendance-maya-map.html`."
+
+**Advisor:** "The map shows six obstacles, two with root causes, one solution in the tray, and no stars. The tray doesn't tell me you wrote your solutions list, so I'd resume at 4a. Which step do you want to resume?"
+
+> They stopped early and came back, so the file having no edits is expected. Claude doesn't mention a lost save. The map can't prove 4a ran, so Claude says what it shows and asks.
+
+### They said they changed it, and the file has no edits
+
+**User:** "I changed the map."
+
+**Advisor:** "The file in your folder doesn't have your edits, so the save probably went somewhere else. If the page is still open and shows Not saved yet, press Save first. Otherwise look in Downloads, including for a copy with (1) in its name, and put it back in the folder under its original name, replacing the old one, then tell me. If the page said the map has newer changes, don't replace it. Put the copy in the folder under another name and tell me that name."
+
+> Claude says what it found and where to look, and doesn't guess at edits.
+
+### The second read still shows no edits
+
+**User:** "I looked, and I can't find anything. Maybe I never saved."
+
+**Advisor:** "The file still shows no edits, so I'll go from what it holds. The map shows six obstacles, two with root causes, one solution in the tray, and no stars. I'd resume at 4a. Which step do you want to resume?"
+
+> Claude asks where to look once. After that, it resumes from the file.
+
+### A copy with a lower revision than the map
+
+**User:** "The page wouldn't save, so I put a copy in the folder as `office-attendance-maya-copy-map.html`."
+
+**Advisor:** "That copy is older than the map. The copy renames the noise obstacle. The map has the Step 5 rows I wrote after your tab opened, and the copy doesn't. Should I bring the new name into the map and keep the Step 5 rows?"
+
+> Claude compares the copy with the map, not with the copy's own `baseline`, which would hide the Step 5 rows. It merges into the map after their yes.

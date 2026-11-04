@@ -67,3 +67,24 @@ def test_add_framework_requires_an_artifact_section():
     assert "## Artifact" in text
     check = read("skills/add-framework/report-template.md")
     assert "## Artifact" in check
+
+
+def test_runner_skips_publish_for_local_file_artifact_section():
+    step = section(read("skills/_shared/framework-runner.md"), "## Step 4: Publish the Result as an Artifact")
+    assert "local file" in step
+    assert "## Artifact" in step
+    assert "nothing else in this step applies" in step
+
+
+def test_add_framework_allows_local_file_result():
+    skill = read("skills/add-framework/SKILL.md")
+    assert "local file" in skill.split("Every framework ends with", 1)[1].split("### 3.", 1)[0]
+    assert "local file" in read("skills/add-framework/report-template.md")
+
+
+def test_story_map_and_breadboard_declare_local_file():
+    for fw in ["6-step-process", "user-story-map", "breadboard-to-pages"]:
+        text = read(f"frameworks/{fw}/prompt.md")
+        art = section(text, "\n## Artifact")
+        assert "local file" in art, fw
+        assert "never published" in art.lower(), fw
