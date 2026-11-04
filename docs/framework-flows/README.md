@@ -15,7 +15,7 @@ Factual registry fixes are applied (see the `fix: framework registry matches wha
 - `skills/playbook/layers.yaml` is the map: Layer, then Area, then Framework. `/aligned:playbook` opens the pages built from it.
 - `link-review.yaml` holds one entry per document link in the registry. Each has a confidence (`sure`, `likely` or `guess`) and a reason.
 - `link-review.json` is the same data, ordered least sure first, with a plain sentence per link. `scripts/generate-link-review.py` writes it.
-- `follow-on-report.md` lists the old "run next" links that have no document. Eric decides which to keep and which to drop.
+- The 8 old "run next" links that had no document behind them were dropped (Eric, 2026-11-03).
 
 The area and tag drafts were applied to the map and the registry, then deleted.
 
