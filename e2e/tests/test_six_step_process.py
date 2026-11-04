@@ -1029,7 +1029,8 @@ def test_read_back_checks_the_tree_at_every_depth():
     assert "`solution_ids`" in read_back
     assert "`root_cause`" in read_back
     assert "every depth" in read_back
-    assert "id" in read_back
+    assert "`id`" in read_back
+    assert "`text`" in read_back
 
 
 def test_prompt_explains_labels_and_says_never_to_store_them():
@@ -1090,3 +1091,43 @@ def test_anti_examples_cover_two_reasons_in_one_item():
     anti = ANTI_EXAMPLES.read_text()
     assert "### Putting two reasons in one item" in anti
     assert "### Adding under a root cause" in anti
+
+
+def test_pick_up_uses_current_labels_and_names_deleted_items_by_text():
+    pick_up = section("## Picking up edits")
+    assert "Use labels from the file as it is now" in pick_up
+    assert "Name a deleted item by its text and say how many sub-items went with it" in pick_up
+    assert "stopped being a root cause" in pick_up
+    assert "3c may need another look" in pick_up
+
+
+def test_stale_copy_comparison_matches_by_id_and_reissues_clashing_ids():
+    pick_up = section("## Picking up edits")
+    line = next(line for line in pick_up.splitlines() if "lower `revision`" in line)
+    assert "Match items by `id`" in line
+    assert "new id" in line
+    assert "by their text" in line
+
+
+def test_read_back_names_the_item_fields_exactly():
+    rules = section("## The map file")
+    read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
+    assert "`id` and `text` as strings" in read_back
+    assert "`solution_ids` and `children` as lists even when they're empty" in read_back
+
+
+def test_root_cause_is_set_only_after_the_person_confirms():
+    step = section("### 3c: Root cause")
+    assert "set its `root_cause` to true only after they confirm" in step
+    assert "If they say no, leave it false and keep asking why." in step
+
+
+def test_mid_run_edits_point_to_the_pick_up_checks():
+    rules = section("## The map file")
+    line = next(line for line in rules.splitlines() if "differs from `baseline`" in line)
+    assert "Picking up edits" in line
+
+
+def test_step_five_row_is_written_with_the_person():
+    pick_up = section("## Picking up edits")
+    assert "you write the Step 5 row with the person" in pick_up

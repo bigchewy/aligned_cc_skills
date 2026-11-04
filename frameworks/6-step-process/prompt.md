@@ -38,7 +38,7 @@ One map holds one goal, and each map is one person's. You write it when the goal
 **Every point marked "Write the map" after that.**
 
 1. Before each rewrite, read the JSON now in the file. If its `revision` is lower than the one you last wrote, a copy has probably replaced your newer version. Say so before building on it, name what the file has lost, and ask whether to put that back. **WAIT for their answer.**
-2. If the JSON differs from `baseline`, the person saved edits. Build on their version and say in one line what you kept.
+2. If the JSON differs from `baseline`, the person saved edits. Build on their version and say in one line what you kept. They may also have changed picks, untied solutions or removed items without telling you, so run the checks in "Picking up edits" on what differs.
 3. Add what this step produced. Set `revision` to one more than the higher of the file's number and the one you last wrote.
 4. Replace only the JSON in the data block.
 
@@ -46,7 +46,7 @@ One map holds one goal, and each map is one person's. You write it when the goal
 
 - Set `baseline` to a copy of the JSON you are writing, with that copy's own `baseline` empty (`{}`).
 - Write every less-than sign in the JSON as six characters: a backslash, then the letters `u003c`. The file must hold those six characters and never the less-than sign itself. This covers text in the person's own words, because a `</script>` inside a map item would end the data block and break the page.
-- Read the data block back. It must parse as JSON and hold no less-than sign. It must also match the JSON below: a non-empty `map_id`, a number in `revision`, and every field present with the same kind of value. So at every depth, each item has an `id`, `solution_ids` and `children` as lists, even when they're empty, and `root_cause` as true or false. No two items share an id, and a root cause has no children. The page can't draw a map with a missing field, and it shows the person a message instead. If the shape is wrong, fix it and read it back again. Some file tools turn those six characters back into a less-than sign as they write. If the read-back finds one, fix it with a shell command. With no shell, write the words "less than" in its place and tell the person.
+- Read the data block back. It must parse as JSON and hold no less-than sign. It must also match the JSON below: a non-empty `map_id`, a number in `revision`, and every field present with the same kind of value. So at every depth, each item has `id` and `text` as strings, `solution_ids` and `children` as lists even when they're empty, and `root_cause` as true or false. No two items share an id, and a root cause has no children. The page can't draw a map with a missing field, and it shows the person a message instead. If the shape is wrong, fix it and read it back again. Some file tools turn those six characters back into a less-than sign as they write. If the read-back finds one, fix it with a shell command. With no shell, write the words "less than" in its place and tell the person.
 - Say in one line what changed. After a rewrite, tell them to reload the page if it's open. Reloading drops edits that are not yet in the file. If the page says changes aren't being saved or saving is paused, those edits are not in the file. They click Turn on saving or Turn saving back on, and the page then refuses because the file changed, and offers Save a copy. If the page shows Not saved, they use Save a copy. In Safari or Firefox, they use Save to Downloads. That copy goes in the folder under another name, and they tell you the name.
 
 **The JSON.** `example-map.html` in this framework's folder shows a finished one.
@@ -168,7 +168,7 @@ Ask why on the picked obstacles only, one question per turn. There is no fixed n
 
 Each answer to "why" becomes a child of the item you asked about, and the next why asks about that child. When the person gives two different reasons, each becomes its own child, and you take them one at a time. Name items by their labels, like "1B."
 
-Put the answer in bold and ask if that's it. The answer ends its branch, so set its `root_cause` to true. One obstacle can have several root causes.
+Put the answer in bold and ask if that's it. The answer ends its branch, so set its `root_cause` to true only after they confirm. If they say no, leave it false and keep asking why. One obstacle can have several root causes.
 
 **WAIT at each why and at each root cause.**
 
@@ -256,7 +256,7 @@ Read the JSON from `<script id="map-data">` and compare it with `baseline`, igno
 
 Look in the folder for a `(1)` copy of this file, by name only. If there is one, say so in your reply and ask which one holds their latest edits. **WAIT for their answer.**
 
-**If they name a copy with a lower `revision` than the map,** the page refused that save because the map had newer content. The copy's own `baseline` hides what the map gained, so don't compare against it. Find the map the copy came from, which has the same `map_id`, and ask for its name if you can't tell. Compare the copy with the map, list what differs in plain words, and ask which of the differences to bring into the map. **WAIT for their yes.** Then bring in only what they agreed to and use "Write the map" on the map, not the copy. Say the copy can go once they've checked the map.
+**If they name a copy with a lower `revision` than the map,** the page refused that save because the map had newer content. The copy's own `baseline` hides what the map gained, so don't compare against it. Find the map the copy came from, which has the same `map_id`, and ask for its name if you can't tell. Compare the copy with the map, Match items by `id`. If the same id holds different text in the copy and the map, they are two items, so give the copy's item a new id. Labels differ between the two files, so name items by their text. List what differs in plain words, and ask which of the differences to bring into the map. **WAIT for their yes.** Then bring in only what they agreed to and use "Write the map" on the map, not the copy. Say the copy can go once they've checked the map.
 
 **If the file shows no changes and they said they changed it,** say:
 "The file in your folder doesn't have your edits, so the save probably went somewhere else. If the page is still open and says changes aren't being saved, click Turn on saving or Turn saving back on first. Otherwise look in Downloads, including for a copy with (1) in its name, and put it back in the folder under its original name, replacing the old one, then tell me. If the page said the map has newer changes, don't replace it. Put the copy in the folder under another name and tell me that name."
@@ -265,7 +265,7 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 
 **If the file shows no changes and they didn't say they changed it,** they have no edits to find, so go to "Resuming" below.
 
-**If it shows changes,** list them in plain words. Compare items by `id`, because a label can change when an item before it is deleted. A solution moved to another item counts as a change, so name the item it now sits on by its label. Then:
+**If it shows changes,** list them in plain words. Compare items by `id`, because a label can change when an item before it is deleted. A solution moved to another item counts as a change, so name the item it now sits on by its label. Use labels from the file as it is now. Name a deleted item by its text and say how many sub-items went with it. Say when an item stopped being a root cause, because that part of 3c may need another look. Then:
 
 - Nudge any untied solution toward an obstacle, the same way as 4a.
 - The person can change picks on the page, with the box "This is one of my picks." Ask about any new pick with no Step 5 row, once the run has reached Step 5. If they removed a pick that has a Step 5 row, ask whether to drop the Step 5 row. List each one in plain words, by the solution's text.
@@ -274,7 +274,7 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 
 **When you only list their edits,** update `baseline` in the file to the version you just read, with its own `baseline` empty (`{}`), and leave `revision` alone. Touch nothing else, and keep the less-than and read-back rules. An open tab can still save, so no reload is needed. The next pick-up compares against this version, so a later save that went astray shows as no changes.
 
-**When you change content,** use "Write the map," which bumps `revision` and updates `baseline`. Agreed picks in Step 4b still get their stars from you, and you write the Step 5 row with them.
+**When you change content,** use "Write the map," which bumps `revision` and updates `baseline`. Agreed picks in Step 4b still get their stars from you, and you write the Step 5 row with the person.
 
 **WAIT if you asked anything,** then go to "Resuming."
 
