@@ -341,12 +341,43 @@ const flows = {
     p.typeAndDone('blocker'); await settle();
     assert.equal(f.writes, 1); assert.equal(parse(f.html).obstacles[0].text, 'blocker');
   },
-  async 'star wording shows in the solution editor'() {
+  async 'the picks checkbox shows in the solution editor, ticked for a star'() {
     const html = HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify({ map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g' },
       obstacles: [], solutions: [{ id: 's1', text: 'sol', star: true }], key_actions: [], execute: [], feedback: {}, baseline: {} }) + c);
     const p = page({ html }); await settle();
     p.openRef({ kind: 'solution', sid: 's1' });
-    assert.ok(p.sandbox.document.getElementById('editor').textContent.includes('To change a star, tell Claude.'));
+    const ed = p.sandbox.document.getElementById('editor');
+    assert.ok(ed.textContent.includes('This is one of my picks'));
+    assert.ok(!ed.textContent.includes('tell Claude.'));
+    assert.equal(ed.querySelector('input').checked, true);
+  },
+  async 'star key shows only with stars'() {
+    const sols = (star) => [{ id: 's1', text: 'sol', star }];
+    const data = (star) => ({ map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g' },
+      obstacles: [node('o1', 'ob', [], ['s1'])], solutions: sols(star), key_actions: [], execute: [], feedback: {}, baseline: {} });
+    const none = page({ html: withData(HTML, data(false)) }); await settle();
+    assert.equal(none.sandbox.document.getElementById('picks-key').hidden, true);
+    const some = page({ html: withData(HTML, data(true)) }); await settle();
+    assert.equal(some.sandbox.document.getElementById('picks-key').hidden, false);
+  },
+  async 'ticking the picks box saves the star and shows the key'() {
+    const data = { map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g' }, obstacles: [node('o1', 'ob', [], ['s1'])],
+      solutions: [{ id: 's1', text: 'sol', star: false }], key_actions: [], execute: [], feedback: {}, baseline: {} };
+    const f = fakeHandle(withData(HTML, data)); const p = page({ picker: f, html: withData(HTML, data) }); await settle();
+    p.clickSave(); await settle();
+    const key = p.sandbox.document.getElementById('picks-key');
+    assert.equal(key.hidden, true);
+    p.openRef({ kind: 'solution', oid: 'o1', sid: 's1' });
+    const box = p.editorEl().querySelector('input');
+    assert.equal(box.checked, false);
+    box.checked = true; box.listeners.change[0](); await settle();
+    assert.equal(f.writes, 1);
+    assert.equal(parse(f.html).solutions[0].star, true);
+    assert.equal(key.hidden, false);
+    assert.equal(p.status(), 'All changes saved');
+    box.checked = false; box.listeners.change[0](); await settle();
+    assert.equal(parse(f.html).solutions[0].star, false);
+    assert.equal(key.hidden, true);
   },
 
   // A file Claude rewrote must never be overwritten, whatever its revision says.

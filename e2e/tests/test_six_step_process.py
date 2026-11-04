@@ -130,13 +130,26 @@ def test_a_map_that_cant_be_drawn_hides_the_save_messages():
     assert "'header, #notices, #workspace, #tray'" in template()
 
 
-def test_star_wording_moved_to_the_solution_editor():
+def test_editor_offers_the_picks_checkbox():
     html = template()
     body = html[html.index("<body>"):html.index('<script id="map-logic">')]
     assert "To change a star" not in body
+    assert "To change a star" not in html
     editor = whole_function("openEditor")
     solution_branch = editor[editor.index("if (ref.kind === 'solution')"):]
-    assert "To change a star, tell Claude." in solution_branch
+    assert "picksControl(ref)" in solution_branch
+    control = whole_function("picksControl")
+    assert "This is one of my picks" in control
+    assert "type = 'checkbox'" in control
+    assert "L.setStar(map, ref.sid, box.checked)" in control
+
+
+def test_header_has_the_picks_key_before_the_map_controls():
+    html = template()
+    header = html[html.index("<header>"):html.index("</header>")]
+    assert "★ My picks" in header
+    assert header.index("★ My picks") < header.index('id="zoom-out"')
+    assert header.index("★ My picks") > header.index('id="edit-hint"')
 
 
 def test_browser_note_says_chrome_saves_by_itself():
@@ -351,7 +364,6 @@ def test_template_has_downloads_note():
 def test_template_tells_person_to_tell_claude():
     html = template()
     assert "tell Claude you changed the map" in html
-    assert "To change a star, tell Claude" in html
 
 
 def test_template_copy_has_no_long_dashes():
@@ -729,6 +741,16 @@ def test_pick_up_covers_every_check():
     assert "Rewrite the file only when" not in pick_up
     assert "When you only list their edits" in pick_up
     assert "When you change content" in pick_up
+
+
+def test_prompt_handles_a_pick_removed_on_the_page():
+    pick_up = section("## Picking up edits")
+    assert "Stars change only through you" not in prompt()
+    assert "change picks on the page" in pick_up
+    assert re.search(r"new pick.*no Step 5 row", pick_up)
+    assert "whether to drop the Step 5 row" in pick_up
+    assert "Agreed picks in Step 4b still get their stars from you" in pick_up
+    assert "★ My picks" in prompt()
 
 
 def test_second_pick_up_compares_with_what_claude_last_read():

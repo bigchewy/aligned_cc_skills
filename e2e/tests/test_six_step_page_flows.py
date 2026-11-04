@@ -26,3 +26,13 @@ def test_page_flows(page):
     assert proc.returncode == 0, proc.stdout + proc.stderr
     passed = [line for line in proc.stdout.splitlines() if line.startswith("ok   ")]
     assert len(passed) >= MIN_FLOWS, proc.stdout
+
+
+@pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
+def test_star_key_shows_only_with_stars(page):
+    proc = subprocess.run(
+        ["node", str(DRIVER), str(FRAMEWORK / page)],
+        capture_output=True, text=True, cwd=TESTS,
+    )
+    assert "ok   star key shows only with stars" in proc.stdout, proc.stdout
+    assert "ok   ticking the picks box saves the star and shows the key" in proc.stdout, proc.stdout

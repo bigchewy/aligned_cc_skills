@@ -223,7 +223,7 @@ With a table on screen, ask which ratings are wrong.
 
 **WAIT for their corrections.** Then ask whether the table changes their picks.
 
-**WAIT until the stars are agreed.** Only agreed picks get stars, and every one of them is already tied.
+**WAIT until the stars are agreed.** Only agreed picks get stars, and every one of them is already tied. When you first add stars, say in one line that a star marks one of their picks, the page shows "★ My picks" as the key, and they can tick or untick "This is one of my picks" on any solution.
 
 **Write the map.** Then start Step 5 in the same message.
 
@@ -268,13 +268,13 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 **If it shows changes,** list them in plain words. Compare items by `id`, because a label can change when an item before it is deleted. A solution moved to another item counts as a change, so name the item it now sits on by its label. Then:
 
 - Nudge any untied solution toward an obstacle, the same way as 4a.
-- Ask about any star with no Step 5 row, once the run has reached Step 5.
+- The person can change picks on the page, with the box "This is one of my picks." Ask about any new pick with no Step 5 row, once the run has reached Step 5. If they removed a pick that has a Step 5 row, ask whether to drop the Step 5 row. List each one in plain words, by the solution's text.
 - Clean ids that no longer exist out of `key_actions` and `execute`.
 - If obstacles or solutions changed and the map has a key-action table, offer to redo it.
 
 **When you only list their edits,** update `baseline` in the file to the version you just read, with its own `baseline` empty (`{}`), and leave `revision` alone. Touch nothing else, and keep the less-than and read-back rules. An open tab can still save, so no reload is needed. The next pick-up compares against this version, so a later save that went astray shows as no changes.
 
-**When you change content,** use "Write the map," which bumps `revision` and updates `baseline`. Stars change only through you, and you write the Step 5 row with them.
+**When you change content,** use "Write the map," which bumps `revision` and updates `baseline`. Agreed picks in Step 4b still get their stars from you, and you write the Step 5 row with them.
 
 **WAIT if you asked anything,** then go to "Resuming."
 

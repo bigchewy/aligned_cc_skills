@@ -70,6 +70,7 @@ header {
 }
 #who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-right: auto; min-width: 0; }
 #edit-hint { margin: 0; font-size: 14px; color: var(--muted); }
+#picks-key { margin: 0; font-size: 14px; color: var(--star); font-weight: 600; white-space: nowrap; }
 #person { font-weight: 600; overflow-wrap: anywhere; }
 #strategy-note { font-size: 14px; color: var(--muted); }
 .quiet {
@@ -188,6 +189,8 @@ header {
   border-radius: 6px;
 }
 #editor textarea { min-height: 76px; resize: vertical; }
+#editor label.check { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--ink); margin: 8px 0 0; }
+#editor label.check input { display: inline-block; width: auto; margin: 0; padding: 0; }
 #editor .note { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
 #editor .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 #editor .actions button {
@@ -233,6 +236,7 @@ header {
     <div id="strategy-note" hidden>Not compared to strategy.</div>
   </div>
   <p id="edit-hint">Click any item to edit it.</p>
+  <p id="picks-key" hidden>★ My picks</p>
   <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
   <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
   <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
@@ -418,6 +422,14 @@ header {
       item.solution_ids.push(id);
     });
     next.solutions.push({ id: id, text: text, star: false });
+    return next;
+  }
+
+  function setStar(map, solutionId, isStar) {
+    var next = copy(map);
+    next.solutions.forEach(function (s) {
+      if (s.id === solutionId) s.star = Boolean(isStar);
+    });
     return next;
   }
 
@@ -1045,6 +1057,7 @@ header {
     setItemText: setItemText,
     setGoal: setGoal,
     addSolution: addSolution,
+    setStar: setStar,
     moveSolution: moveSolution,
     deleteSolution: deleteSolution,
     moveTargets: moveTargets,
@@ -1144,7 +1157,7 @@ header {
   }
 
   var el = {};
-  ['person', 'strategy-note', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
+  ['person', 'strategy-note', 'picks-key', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
     'browser-note', 'editor', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
@@ -1456,6 +1469,7 @@ header {
   function render() {
     el.person.textContent = map.person;
     el['strategy-note'].hidden = map.key_actions.length > 0;
+    el['picks-key'].hidden = !map.solutions.some(function (s) { return s.star; });
     drawMap();
     drawTray();
     drawPanel();
@@ -1582,6 +1596,20 @@ header {
     return labeled('Move to', select);
   }
 
+  // A star means the person picked this solution in Step 4b. Ticking the box is an ordinary edit.
+  function picksControl(ref) {
+    var box = make('input');
+    box.type = 'checkbox';
+    box.checked = Boolean(solutionById(ref.sid).star);
+    box.addEventListener('change', function () {
+      setMap(L.setStar(map, ref.sid, box.checked));
+    });
+    var label = make('label', 'check');
+    label.appendChild(box);
+    label.appendChild(make('span', '', 'This is one of my picks'));
+    return label;
+  }
+
   function deleteLabel(ref) {
     if ((ref.kind === 'solution' && ref.oid) || ref.kind === 'missing') return 'Delete from this obstacle';
     var count = ref.kind === 'obstacle' ? L.subItemCount(map, ref.oid) : 0;
@@ -1643,7 +1671,7 @@ header {
         }
         var move = moveControl(ref);
         if (move) el.editor.appendChild(move);
-        el.editor.appendChild(make('p', 'note', 'To change a star, tell Claude.'));
+        el.editor.appendChild(picksControl(ref));
       }
     }
     el.editor.appendChild(editorActions(ref));

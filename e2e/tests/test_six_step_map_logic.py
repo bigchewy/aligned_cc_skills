@@ -601,6 +601,16 @@ def test_delete_solution_removes_it_from_the_map():
     assert call("untiedSolutionIds", m)["result"] == []
 
 
+def test_set_star_changes_only_that_solution():
+    m = call("setStar", make_map(), "s1", True)["result"]
+    stars = {s["id"]: s["star"] for s in m["solutions"]}
+    assert stars == {"s1": True, "s2": True, "s3": False}
+    m = call("setStar", m, "s2", False)["result"]
+    stars = {s["id"]: s["star"] for s in m["solutions"]}
+    assert stars == {"s1": True, "s2": False, "s3": False}
+    assert m["obstacles"] == make_map()["obstacles"]
+
+
 def test_panel_rows_ignore_ids_that_no_longer_exist():
     m = make_map(
         key_actions=[{"text": "k", "risk": "high", "solution_ids": ["s1", "gone"]}],
