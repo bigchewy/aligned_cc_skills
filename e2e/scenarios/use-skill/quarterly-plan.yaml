@@ -1,0 +1,81 @@
+# e2e/scenarios/use-skill/quarterly-plan.yaml
+# Validates the quarterly-plan job: it asks who runs the offsite and which quarter, one
+# question at a time, before it reads anything; it lists an issue raised in two recaps that
+# vanished with no decision, flags a key action off target for three or more weeks, and
+# pauses for correction before the agenda; and it asks which workstreams make up a
+# department instead of guessing.
+# Loads the live SKILL.md and the team page rules, because a model running the scenario
+# can't read them otherwise. The page record is a made-up team's.
+
+description: "Skill: quarterly-plan job"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-page.md:\n\n{{team_page}}\n\n---\n\nThe team page record, as this session reads it:\n\n{{page_record}}\n\n---\n\nYou are running the quarterly-plan job as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "quarterly-a: asks who runs the offsite first, one question at a time"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/quarterly-plan/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person has not said who runs the offsite or which quarter."
+      user_message: "Help me get ready for the quarterly offsite."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ASK FIRST: Does the reply ask who runs the offsite (the exec
+          team, or which department) as a single question, and then stop, saving the
+          quarter question for the next message? Reading the record or drafting
+          anything before the answers = 1. Asks both questions in one message = 3.
+          Asks only who runs it = 5.
+
+  - description: "quarterly-b: an issue raised in two recaps that vanished is listed, then the job pauses"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/quarterly-plan/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person said the exec team runs the offsite and named the quarter 2026-Q4. The job has read the weeks from 2026-W41 on, their WBRs and recaps, and the decision log."
+      user_message: "Exec team, 2026-Q4."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on VANISHED ISSUES: The mid-size renewal discount came up as an open
+          item in the recaps for 2026-W42 and 2026-W44, and the decision log holds no
+          decision about it. A 5 means the reply lists that issue by name as one that
+          vanished, gives the weeks it appeared, does not judge whether it matters,
+          flags that key action 2 (the self-serve checkout) was off target for three or
+          more weeks running and says which weeks, and then asks the person what is
+          wrong, missing or already settled, and stops without drafting the agenda.
+          Drafting the agenda in the same reply = 2. Leaving out the vanished issue = 1.
+          Listing the issue but arguing it is important or unimportant = 3.
+
+  - description: "quarterly-c: a department's key actions are not guessed"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/quarterly-plan/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The job asked who runs the offsite and which quarter. The person answered both, and said the offsite is for the customer side of the company. The page has three workstreams: sales, product and support. The person has not said which of them are the customer side."
+      user_message: "The customer side of the company, 2026-Q4."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on DEPARTMENT SCOPE: "The customer side" could mean support, or
+          sales, or both. A 5 means the reply asks which workstreams belong to the
+          customer side, naming the three on the page, and does not pick key actions
+          for the department by itself. Choosing key actions or workstreams without
+          asking, and going on to the pre-read = 1. Asks which workstreams but also
+          starts the pre-read = 3.

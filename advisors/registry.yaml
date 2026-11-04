@@ -1091,7 +1091,7 @@ advisors:
     '
   prompt: advisors/prompts/kristen-berman.md
   summary: CEO and co-founder of Irrational Labs; behavioral-product-design practitioner
-- best_for: 'Weekly business reviews, operating cadence design, leadership team check-ins,
+- best_for: 'The individual written check-in and the 1-3-1, leadership team check-ins,
     OKR implementation, meeting culture reform, executive prioritization. Anyone running
     a leadership team that has too many status meetings and too few real decisions.
 
@@ -1471,7 +1471,9 @@ advisors:
 - best_for: 'Operating systems for growing companies: getting a leadership team on
     the same page about where the company is going, the right people in the right
     seats, a weekly Scorecard, 90-day Rocks, solving issues instead of discussing them,
-    and a weekly leadership meeting that runs the same way every time. Diagnosing a
+    and a weekly leadership meeting that runs the same way every time, including an
+    operating cadence of written WBRs, a monthly review, and a quarterly and annual
+    plan. Diagnosing a
     company against the Six Key Components (Vision, People, Data, Issues, Process,
     Traction). Productizing a methodology into a repeatable implementation: naming
     the components it strengthens, writing a checkup that scores them, fixing the
@@ -1502,8 +1504,8 @@ advisors:
   name: Gino Wickman
   not_for: 'Emotion-first coaching, presence, self-awareness, and individual consciousness
     work, including the inner layer of an operating system (redirect to Diana Chapman
-    or Jim Dethmer); weekly written-culture mechanics such as the async check-in and
-    1-3-1 (redirect to Matt Mochary); org structure physics, which function sits where
+    or Jim Dethmer); the individual written check-in and the 1-3-1 (redirect to Matt
+    Mochary); org structure physics, which function sits where
     and the forces a role needs (redirect to Lex Sisney); positioning (redirect to
     April Dunford); pricing (redirect to Patrick Campbell).
 

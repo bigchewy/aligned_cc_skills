@@ -1,0 +1,81 @@
+# e2e/scenarios/use-skill/monthly-review.yaml
+# Validates the monthly-review job: it asks which month and waits before reading any week,
+# it finds the key action that was red but never discussed and calls the gap the signal, and
+# it says so in plain words when a month has a short record.
+# Loads the live SKILL.md and the team page rules, because a model running the scenario
+# can't read them otherwise. The page record is a made-up team's.
+
+description: "Skill: monthly-review job"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-page.md:\n\n{{team_page}}\n\n---\n\nThe team page record, as this session reads it:\n\n{{page_record}}\n\n---\n\nYou are running the monthly-review job as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "monthly-a: asks which month and waits before reading any week"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/monthly-review/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person is the COO. They have not named a month."
+      user_message: "Run the monthly review."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on WHICH MONTH: Does the reply ask which month, offering October
+          2026, the month that just ended, as the default, and then stop without
+          reporting on any week, trend or issue? Starting the review or listing key
+          action trends before the month is named = 1. Asks which month but also
+          summarizes the record = 3. Asks which month with October as the default and
+          nothing else = 5.
+
+  - description: "monthly-b: a key action that was red and never discussed is the signal"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/monthly-review/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person is the COO. They named October 2026 as the month. The job has read the weeks whose meeting date falls in October: 2026-W41, W42, W43 and W44."
+      user_message: "October."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on RED AGAINST DISCUSSED: In October the self-serve checkout, key
+          action 2, went from yellow in 2026-W41 to red in W42, W43 and W44, and none
+          of the four October recaps mention it. The mid-size renewal discount was
+          discussed in two recaps. A 5 means the reply names key action 2 as red or
+          slipping in those weeks, says it never came up in a recap, treats that gap
+          as the signal, and brings it to the person as a candidate with its evidence,
+          asking for their read, before it writes the review or recommends anything.
+          Says the checkout was discussed = 1. Names the red key action but not the gap
+          = 3. Writes the whole review without asking for the person's read = 3.
+
+  - description: "monthly-c: a month with a short record says so and does not guess the missing recap"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/monthly-review/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person is the COO. They named November 2026 as the month. The meetings for 2026-W45 (November 3) and 2026-W46 (November 10) have both happened. Those are the weeks whose meeting date falls in November so far."
+      user_message: "November."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on SHORT HISTORY: The page holds two weeks for November. Week
+          2026-W45 has a recap, and week 2026-W46 has WBRs but no recap. A 5 means the
+          reply says in plain words, near the top, that the month has only two weeks
+          of record, and that W46 has no recap so it cannot tell what the team
+          discussed that week, and it invents no discussion, decision or trend for the
+          missing recap. Presenting what W46's meeting discussed or decided = 1.
+          Working with the two weeks but never saying the record is short = 3.

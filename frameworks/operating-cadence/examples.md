@@ -1,4 +1,4 @@
-# Leadership Meeting Examples
+# Operating Cadence Examples
 
 Company names, people and key actions below use the placeholder form. Fill them from the person's own answers.
 
@@ -6,7 +6,7 @@ Company names, people and key actions below use the placeholder form. Fill them 
 
 ### User names the group and the decision maker
 
-**User:** "[EXAMPLE NEEDED: a company name]. Four of us attend: me, [name], [name] and [name]. I make the final call."
+**User:** "Northwind Supply. Four of us attend: me, Dana, Priya and Marcus. I make the final call."
 
 **Advisor:** "Four people and one decision maker. That's the right size. The decision maker ranks the questions in step 3, so that's you. Who facilitates? It rotates, and the CEO doesn't facilitate. We'll set the first one at the end."
 
@@ -16,7 +16,7 @@ Company names, people and key actions below use the placeholder form. Fill them 
 
 **User:** "Everyone on the management team, so about twenty."
 
-**Advisor:** "Twenty is too many for a decision meeting. It works at 3 to 15. Who has to be in the room to decide? The rest read the updates and the team page."
+**Advisor:** "Twenty is too many for a decision meeting. It works at 3 to 15. Who has to be in the room to decide? The rest read the WBRs and the team page."
 
 > Holds the 3 to 15 range without refusing the meeting.
 
@@ -50,7 +50,7 @@ Company names, people and key actions below use the placeholder form. Fill them 
 
 ### User gives owners and links
 
-**User:** "1 is mine. 2 is [name]. The dashboard for 1 is [link]. Two has no dashboard yet."
+**User:** "1 is mine. 2 is Dana. The dashboard for 1 is [link]. Two has no dashboard yet."
 
 **Advisor:** "Got it. 1 has an owner and a link. 2 has an owner, and the dashboard stays open in the table. You can add the link the day it exists."
 
@@ -64,7 +64,7 @@ Company names, people and key actions below use the placeholder form. Fill them 
 
 > Corrects the code without arguing about structure.
 
-## PHASE 5: The Team's Tool
+## PHASE 5: The Team's Tool and the Workstreams
 
 ### User names a tool the session can write to
 
@@ -82,6 +82,22 @@ Company names, people and key actions below use the placeholder form. Fill them 
 
 > Uses the no-connector path from the tool file.
 
+### User keeps the workstream list as a portfolio
+
+**User:** "Our workstreams are the projects in an Asana portfolio. Here's the link."
+
+**Advisor:** "I'll read the link through the connector and show you the list before saving anything. Each project becomes a workstream, with its owner."
+
+> Reads the list from where the team keeps it, and shows it before anything is saved.
+
+### User has no list and a small team
+
+**User:** "There's no list. There are five of us."
+
+**Advisor:** "A small team can use each key action owner as a workstream. That's the simplest start. You can add more later. Do you want to start that way?"
+
+> Offers the simple default and leaves the choice with the person.
+
 ## PHASE 7: Approval
 
 ### User asks for a change instead of approving
@@ -98,6 +114,16 @@ Company names, people and key actions below use the placeholder form. Fill them 
 
 **User:** "Let's start tomorrow."
 
-**Advisor:** "Updates are due a day before. Can everyone write one by tonight? If not, move it out a week. You can also go first for two weeks while the others say their status in step 2A."
+**Advisor:** "WBRs are due a day before. Can everyone write one by tonight? If not, move it out a week. You can also go first for two weeks while the others say their status in step 2A."
 
 > Protects the day-before rule and gives the leader-first option.
+
+## PHASE 9: Close
+
+### A teammate can't write to the page
+
+**User:** "Priya says the page won't let her save."
+
+**Advisor:** "The page may not be shared as Contributor yet. Open Share on the page and check that general access is set to Contributor. The page also has to come from an account in your own organization, on a Team or Enterprise plan. I haven't tested that on a real account, so tell me what Priya sees. Until it's fixed, she can paste her WBR into the page's form."
+
+> Says what to check, admits what is untested, and gives a way to keep going.

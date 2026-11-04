@@ -36,29 +36,10 @@ At most 4 key actions, each with at most 4 letters.
 
 ## A day before the meeting
 
-- Each key action owner posts a written update.
-- The decision maker posts the overall update. It is the narrative for the dashboard review.
-- The facilitator copies this agenda, moves the questions from the updates into Questions to answer, and lists the action items that are due.
-- Everyone reads the updates before the meeting.
-
-### Written update
-
-    [Name], week of [date]
-
-    STATUS
-    [Code] [key action]: Green | Yellow | Red, due [date]
-      Date moved: was [old], now [new]
-      Yellow or red: [one line on what is wrong]
-      Definition: "[word]" means [test]
-
-    LAST WEEK
-    [Code] [item]: Honored | Renegotiated, now [date], agreed with [name] | Not done, [why]
-
-    THIS WEEK
-    [Code or Off strategy] [item]. Implementer: [name]. Success: [what it looks like]. Due [date].
-
-    QUESTIONS TO ANSWER
-    1. [One sentence]. Proposal: [what I recommend].
+- Each workstream owner posts a WBR (weekly business review). The form is in `wbr-template.md`, in the same folder as this file.
+- The decision maker posts the overall WBR. It is the narrative for the dashboard review.
+- The facilitator copies this agenda, moves the questions from the WBRs into Questions to answer, and lists the action items that are due.
+- Everyone reads the WBRs before the meeting.
 
 ## Agenda
 
@@ -99,7 +80,7 @@ Each action item lives where its work lives and also shows here.
 
 ## Questions to answer
 
-Questions from the written updates, plus anything raised during the meeting.
+Questions from the WBRs, plus anything raised during the meeting.
 
 ## Key decisions
 

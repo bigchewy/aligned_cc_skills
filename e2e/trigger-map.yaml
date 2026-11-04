@@ -59,18 +59,6 @@ triggers:
       - scenarios/use-skill/authoring-sizing-playback.yaml
 
   - paths:
-      - skills/leadership-meeting/weekly-update.md
-      - skills/leadership-meeting/template.md
-    scenarios:
-      - scenarios/use-skill/leadership-meeting-update.yaml
-
-  - paths:
-      - skills/leadership-meeting/meeting-feedback.md
-      - skills/leadership-meeting/template.md
-    scenarios:
-      - scenarios/use-skill/leadership-meeting-feedback.yaml
-
-  - paths:
       - skills/_shared/framework-runner.md
       - skills/_shared/resolve-design-principles.md
     scenarios:
@@ -132,11 +120,63 @@ triggers:
       - scenarios/use-framework/jolt-effect.yaml
 
   - paths:
-      - frameworks/leadership-meeting/prompt.md
-      - frameworks/leadership-meeting/examples.md
-      - frameworks/leadership-meeting/anti-examples.md
+      - frameworks/operating-cadence/prompt.md
+      - frameworks/operating-cadence/examples.md
+      - frameworks/operating-cadence/anti-examples.md
     scenarios:
-      - scenarios/use-framework/leadership-meeting.yaml
+      - scenarios/use-framework/operating-cadence.yaml
+
+  # The shared files are read by every operating cadence skill and by the setup framework,
+  # so a change to one of them runs every scenario.
+  - paths:
+      - skills/_shared/operating-cadence/meeting-template.md
+      - skills/_shared/operating-cadence/wbr-template.md
+      - skills/_shared/operating-cadence/team-page.md
+      - skills/_shared/operating-cadence/team-tool.md
+    scenarios:
+      - scenarios/use-framework/operating-cadence.yaml
+      - scenarios/use-skill/create-wbr.yaml
+      - scenarios/use-skill/wbr-rollup.yaml
+      - scenarios/use-skill/wbr-recap.yaml
+      - scenarios/use-skill/wbr-feedback.yaml
+      - scenarios/use-skill/monthly-review.yaml
+      - scenarios/use-skill/quarterly-plan.yaml
+      - scenarios/use-skill/annual-plan.yaml
+
+  - paths:
+      - skills/create-wbr/SKILL.md
+    scenarios:
+      - scenarios/use-skill/create-wbr.yaml
+
+  - paths:
+      - skills/wbr-rollup/SKILL.md
+    scenarios:
+      - scenarios/use-skill/wbr-rollup.yaml
+
+  - paths:
+      - skills/wbr-recap/SKILL.md
+    scenarios:
+      - scenarios/use-skill/wbr-recap.yaml
+
+  - paths:
+      - skills/wbr-feedback/SKILL.md
+    scenarios:
+      - scenarios/use-skill/wbr-feedback.yaml
+
+  - paths:
+      - skills/monthly-review/SKILL.md
+    scenarios:
+      - scenarios/use-skill/monthly-review.yaml
+
+  - paths:
+      - skills/quarterly-plan/SKILL.md
+    scenarios:
+      - scenarios/use-skill/quarterly-plan.yaml
+
+  - paths:
+      - skills/annual-plan/SKILL.md
+    scenarios:
+      - scenarios/use-skill/annual-plan.yaml
 
   - paths:
       - frameworks/mobilizer-taxonomy/prompt.md

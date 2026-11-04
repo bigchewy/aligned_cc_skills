@@ -95,9 +95,9 @@ The weekly and monthly meetings that run the company's goals.
 
 | ID | Name | Advisor | Use When |
 |----|------|---------|----------|
+| operating-cadence | The Operating Cadence | gino-wickman | a leadership team has no regular meeting, runs on verbal status, or wants one standard weekly meeting tied to its key actions, with a shared page for the weekly record |
 | mochary-weekly-check-in | The Weekly Check-In | matt-mochary | a leadership team or manager-report pair is running status-heavy meetings with no written record of commitments or decisions, or needs to establish a repeatable operating rhythm tied to OKRs |
 | chj-operating-review | Operating Review Design | claire-hughes-johnson | a leadership team is running operating reviews (monthly, quarterly) that produce presentations but not decisions, or where decisions made in the meeting get relitigated because nothing was written down |
-| leadership-meeting | The Leadership Meeting | matt-mochary | a leadership team has no regular meeting, runs on verbal status, or wants one standard weekly meeting tied to its key actions, with feedback on how it is running |
 
 #### Org design and people (3)
 

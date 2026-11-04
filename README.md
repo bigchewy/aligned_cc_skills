@@ -99,7 +99,13 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | use-framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
 | brainstorming | `/aligned:brainstorming` | Explore ideas and strategies across three modes: authoring, research, roadmap |
 | root-cause-analysis | `/aligned:root-cause-analysis` | Root cause investigation for business and process problems, with an optional multi-agent mode |
-| leadership-meeting | `/aligned:leadership-meeting` | Set up a weekly leadership meeting, write each person's update, and get feedback on the real meeting from its transcript and agenda |
+| create-wbr | `/aligned:create-wbr` | Write your workstream's weekly business review (WBR) and save it to the team page |
+| wbr-rollup | `/aligned:wbr-rollup` | Turn the week's WBRs into one pre-read and agenda a day before the leadership meeting |
+| wbr-recap | `/aligned:wbr-recap` | Turn the meeting's notes or transcript into a recap, a decision log and a list of actions on the team page |
+| wbr-feedback | `/aligned:wbr-feedback` | Grade the real meeting against the template from its transcript and agenda, and write the team page and a private note |
+| monthly-review | `/aligned:monthly-review` | Read the month's weeks and prepare the monthly review, with 2 to 3 issues to decide |
+| quarterly-plan | `/aligned:quarterly-plan` | Prepare the quarterly offsite from the record: what slipped, what vanished, and the agenda |
+| annual-plan | `/aligned:annual-plan` | Prepare the annual planning offsite from the year's record |
 | persona-panel | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
 | create-design-principles | `/aligned:create-design-principles` | Interactive design discovery producing tokens, patterns, and anti-patterns for a brand or product |
 | create-image | `/aligned:create-image` | Diagrams, charts, icons, illustrations, and brand visuals |

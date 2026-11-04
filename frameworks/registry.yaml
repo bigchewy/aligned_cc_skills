@@ -1404,7 +1404,7 @@ frameworks:
   use_when: a leadership team or manager-report pair is running status-heavy meetings
     with no written record of commitments or decisions, or needs to establish a repeatable
     operating rhythm tied to OKRs
-- advisor: matt-mochary
+- advisor: gino-wickman
   deliverable_type: plan
   domains:
   - operating-cadence
@@ -1417,18 +1417,18 @@ frameworks:
     from: proximate-objectives
   - doc: the team's current meeting agenda
     from: outside
-  id: leadership-meeting
-  name: The Leadership Meeting
-  purpose: putting a weekly leadership meeting in place with written updates, tied
-    to key actions
+  id: operating-cadence
+  name: The Operating Cadence
+  purpose: putting a weekly leadership meeting in place with a written WBR from each
+    workstream, tied to key actions, and one shared team page that holds the record
   stages:
   - pilot
   - nail-it
   - scale-it
   - milk-it
   use_when: a leadership team has no regular meeting, runs on verbal status, or wants
-    one standard weekly meeting tied to its key actions, with feedback on how it is
-    running
+    one standard weekly meeting tied to its key actions, with a shared page for the
+    weekly record
 - advisor: claire-hughes-johnson
   deliverable_type: decision
   domains:

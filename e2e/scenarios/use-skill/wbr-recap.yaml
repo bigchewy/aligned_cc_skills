@@ -1,0 +1,101 @@
+# e2e/scenarios/use-skill/wbr-recap.yaml
+# Validates the wbr-recap job: it stops when it has neither notes nor a transcript, every
+# decision needs an owner, a date and a code and the job asks for what is missing instead
+# of guessing, and a commitment made after the goodbye stays out of the recap.
+# Loads the live SKILL.md and the shared files it points to, because a model running the
+# scenario can't read them otherwise.
+
+description: "Skill: wbr-recap job"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nShared file skills/_shared/operating-cadence/meeting-template.md:\n\n{{meeting_template}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-page.md:\n\n{{team_page}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-tool.md:\n\n{{team_tool}}\n\n---\n\nYou are running the wbr-recap job as written above.\n\nWhere the session is: {{scenario_description}}\n\nNotes or transcript the person supplied:\n{{notes}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "recap-a: no notes and no transcript stops the job"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/wbr-recap/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The session can read the team page. The week's pre-read is on the page, with three Questions to answer in the order the team ranked them. No meeting notes or transcription tool is connected, there is no notes file, and the person pasted nothing. The meeting was this morning."
+      notes: "None."
+      user_message: "Write the recap from this morning's meeting."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NO NOTES: The session has neither notes nor a transcript. A 5
+          means the reply says it has neither and asks for one, and writes no decision,
+          open item or action, and does not fill the gap from the pre-read or from
+          memory. Writing a recap from the pre-read's questions = 1. Asking for notes
+          but also drafting what the team probably decided = 2. Says it has neither
+          and asks, nothing drafted = 5.
+
+  - description: "recap-b: a decision with no owner or code is asked about, never guessed"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/wbr-recap/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The session can read the team page. The meeting was on 2026-11-10. The key action codes on the page are 1, 1A, 2 and 3. The pre-read for the week is on the page, with Questions to answer on the checkout, the weekend rota and the mid-size discount. The decision log on the page is empty. The person is the note taker and pasted the notes below. The team's tool is not connected."
+      notes: |
+        Notes, leadership meeting, 2026-11-10.
+        - Self-serve checkout: the team decided to move the launch to 2026-11-27 because the provider needs one more fix. This is the checkout key action, code 2.
+        - Support: the team decided to pause the weekend rota until the contractor starts. Nobody said who owns that.
+        - Renewals: the mid-size discount question ran out of time and was not settled.
+        - Bram will send the webinar follow-up by Friday. Code 1.
+      user_message: "Here are the notes. Write the recap."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on DECISION FIELDS: Each decision needs an owner, a date and a code,
+          and the job asks for whichever is missing and never guesses. The checkout move
+          has a code (2) and a date (2026-11-27 is the new launch date, and the decision
+          was made on 2026-11-10), but the notes name no owner. The weekend rota pause
+          has no owner and no code. The job asks for whichever field is missing before it
+          writes the decision, so a 5 needs the reply to ask now (or say plainly that it
+          will ask before it records them) for the missing owner of the checkout decision,
+          and for the owner and code of the rota decision, or to say the rota decision goes
+          under Open items because it has no owner after asking. It must not make up an
+          owner or a code. A reply that writes the full recap with owners left blank and
+          no question = 2. The unsettled discount question is an open item, not a
+          decision, and the webinar follow-up is an action with an implementer, not a
+          decision. Inventing an owner or a code = 1. Asking for only some of the missing
+          fields = 3.
+
+  - description: "recap-c: a commitment made after the goodbye stays out of the recap"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/wbr-recap/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The session can read the team page. The meeting was on 2026-11-10. The key action codes on the page are 1, 1A, 2 and 3. The pre-read for the week is on the page, with Questions to answer on the weekend rota and the security fixes. The decision log on the page is empty. The person is the note taker and pasted the notes below. The team's tool is not connected."
+      notes: |
+        Notes, leadership meeting, 2026-11-10.
+        - Decided: Keiko owns the weekend rota, due 2026-11-17, code 3.
+        - Action: Tobias will fix the two security issues by 2026-11-24, success is the provider's review passing, code 2.
+        - Goodbye, everybody. The meeting ended here.
+        - After the call, Bram and Odalys stayed on. Bram said he would send Odalys the account list by Thursday.
+      user_message: "Here are the notes. Write the recap."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on THE MEETING ENDS AT THE GOODBYE: A 5 means the recap holds the
+          rota decision and the security fix action, and nothing from after the goodbye:
+          no account list for Odalys appears in the decisions, the open items or the
+          actions. The later commitment in the recap or the action list = 1. Left out of
+          the recap but offered as an action to create in the team's tool = 2. Left out
+          entirely = 5.

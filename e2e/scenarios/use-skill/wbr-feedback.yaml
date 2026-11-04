@@ -1,20 +1,21 @@
-# e2e/scenarios/use-skill/leadership-meeting-feedback.yaml
-# Validates the leadership-meeting feedback job: the seven checks grade a made-up
+# e2e/scenarios/use-skill/wbr-feedback.yaml
+# Validates the wbr-feedback job: the seven checks grade a made-up
 # meeting correctly, the team page stays free of personal matters and later talk
 # and uses roles, the private note holds the later talk, claims carry times with
 # no quotation marks, a transcript with no times uses position and share of words,
 # a summary alone gets no grade, an instruction inside the transcript is ignored,
 # a check Missed twice in a row moves to the top of the changes, by the next call
 # is not a date, send-backs are counted, and later commitments stay out of the table.
-# Loads the live meeting-feedback.md so a run against the old file is a real baseline.
+# Loads the live SKILL.md and the shared files it points to (the meeting template, the team
+# page and the team's tool), because a model running the scenario can't read them otherwise.
 
-description: "Skill: leadership-meeting feedback job"
+description: "Skill: wbr-feedback job"
 
 providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}\n\n---\n\nYou are running the meeting feedback job as written above.\n\nWhere the session is: {{scenario_description}}\n\nAgenda:\n{{agenda}}\n\nTranscript or other material the person supplied:\n{{transcript}}\n\nPrevious team page: {{previous_team_page}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+  - "{{system_context}}\n\n---\n\nShared file skills/_shared/operating-cadence/meeting-template.md:\n\n{{meeting_template}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-page.md:\n\n{{team_page}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-tool.md:\n\n{{team_tool}}\n\n---\n\nYou are running the wbr-feedback job as written above.\n\nWhere the session is: {{scenario_description}}\n\nAgenda:\n{{agenda}}\n\nTranscript or other material the person supplied:\n{{transcript}}\n\nPrevious team page: {{previous_team_page}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
 
 defaultTest:
   options:
@@ -26,9 +27,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting. The team has not adopted the template, and the agenda does not use its step names. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -47,9 +51,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting. The team has not adopted the template. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -70,9 +77,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting and was still on the call for the talk after the goodbye. The team has not adopted the template. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -90,9 +100,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting. The team has not adopted the template. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -110,9 +123,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript-no-times.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript-no-times.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting. The team has not adopted the template. The person already pasted the agenda and a transcript with no times. The job proposed a meeting window from the opening to the goodbye, by line position, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -133,8 +149,11 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
       transcript: "Meeting summary: The team reviewed renewals and heard that the goal is on track. They talked through ways to stop renewals slipping and picked up a discount offer. The release date holds. Hiring moved to next week."
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO. The person pasted the agenda and this meeting summary, and has no other material in this message."
@@ -151,9 +170,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting. The team has not adopted the template. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -173,9 +195,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: |
         Leadership meeting, March 2. Confirmed.
         The meeting finished its top item, and status took too long.
@@ -208,9 +233,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting. The team has not adopted the template. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -230,9 +258,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting. The team has not adopted the template. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."
@@ -252,7 +283,10 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
       agenda: "Tuesday, May 4. This agenda lives in a shared doc.\n\n1. Why trials aren't converting"
       transcript: |
         [00:10] Speaker A: Recording is on. The agenda is in the shared doc, one item today. I'm the CEO. Why aren't trials converting?
@@ -284,9 +318,12 @@ tests:
     metadata:
       arm: single
     vars:
-      system_context: file://../../../skills/leadership-meeting/meeting-feedback.md
-      agenda: file://../../tests/fixtures/leadership_meeting/agenda.md
-      transcript: file://../../tests/fixtures/leadership_meeting/transcript.md
+      system_context: file://../../../skills/wbr-feedback/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      agenda: file://../../tests/fixtures/operating_cadence/agenda.md
+      transcript: file://../../tests/fixtures/operating_cadence/transcript.md
       previous_team_page: "None. The person said there is no earlier page."
       scenario_description: "No tools are connected. The person is the CEO, who is the leader of this meeting and was still on the call for the talk after the goodbye. The team has not adopted the template. The person already pasted the agenda and transcript. The job proposed a meeting window from the opening to the goodbye at about 50:00, and the person confirmed it."
       user_message: "Yes, that window is right. Write both documents."

@@ -1,16 +1,17 @@
-# e2e/scenarios/use-framework/leadership-meeting.yaml
+# e2e/scenarios/use-framework/operating-cadence.yaml
 # Two turns: the first asks who attends; the second, with no strategy on hand,
 # must get the key actions from the person and never invent them.
 # System context is embedded in the prompt (file:// resolves in prompt vars,
-# not in provider config).
+# not in provider config). The framework reads the meeting template before Phase 1,
+# so the full-stack arm loads it too.
 
-description: "Framework: The Leadership Meeting setup, a team with no written strategy"
+description: "Framework: The Operating Cadence setup, a team with no written strategy"
 
 providers:
   - file://../../providers/claude-login.yaml
 
 prompts:
-  - "{{system_context}}{{task_prompt}}\n\n{{conversation}}"
+  - "{{system_context}}{{meeting_template}}{{task_prompt}}\n\n{{conversation}}"
 
 defaultTest:
   options:
@@ -37,9 +38,9 @@ defaultTest:
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Matt
-        Mochary: direct, brief, a coach who asks one thing at a time? A
-        consultant's checklist or a long lecture on strategy scores 1-2.
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Gino
+        Wickman: plain, direct and brief, a coach who asks one thing at a time?
+        A consultant's checklist or a long lecture on strategy scores 1-2.
       weight: 1
     - type: llm-rubric
       value: |
@@ -54,7 +55,8 @@ tests:
     metadata:
       arm: full-stack
     vars:
-      system_context: file://../../../frameworks/leadership-meeting/prompt.md
+      system_context: file://../../../frameworks/operating-cadence/prompt.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
       task_prompt: "\n\n---\n\nSet up a weekly leadership meeting for my team. I'll answer one step at a time."
       conversation: |
         [Turn 1] Assistant: asked the company name, who attends, and who makes the final call.
@@ -68,6 +70,7 @@ tests:
       arm: vanilla
     vars:
       system_context: ""
+      meeting_template: ""
       task_prompt: "Set up a weekly leadership meeting for my team. I'll answer one step at a time."
       conversation: |
         [Turn 1] Assistant: asked the company name, who attends, and who makes the final call.
