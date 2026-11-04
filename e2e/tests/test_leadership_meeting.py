@@ -115,19 +115,10 @@ def test_no_file_for_this_skill_names_a_client():
         scenarios / "use-framework" / "leadership-meeting.yaml",
         scenarios / "use-skill" / "leadership-meeting-update.yaml",
         scenarios / "use-skill" / "leadership-meeting-feedback.yaml",
-        REPO_ROOT / "docs" / "superpowers" / "plans" / "2026-11-03-leadership-meeting.md",
     ]
-    assert len(files) >= 13
+    assert len(files) >= 12
     for path in files:
         assert _banned_hits(path.read_text()) == [], path
-
-
-def test_plan_carries_no_meeting_id_and_points_to_the_spec():
-    plan = (REPO_ROOT / "docs" / "superpowers" / "plans"
-            / "2026-11-03-leadership-meeting.md").read_text()
-    assert not re.search(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", plan)
-    assert "the test reads the list from a git-ignored local file" in plan
-    assert "The Nov 3 test" in plan
 
 
 def test_skill_is_in_the_root_readme():

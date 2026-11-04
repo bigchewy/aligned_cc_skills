@@ -210,7 +210,7 @@ Semver, pre-1.0. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.js
 - **154 frameworks** (+6)
 
 #### 0.26.0: Manual Deploy Artifact Catalog
-- **Manual-deploy artifact catalog** (`skills/_shared/manual-deploy-artifact-catalog.md`): detects files whose creation requires a manual production step (v1: Supabase migrations, env-var additions). Consumed by `writing-plans` (auto-populates the plan's Post-Automation section) and `finishing-a-development-branch` (Step 0.5 hard-gates merge on missing evidence). See the design doc at `docs/plans/2026-04-20-manual-deploy-artifacts-rca-design.md`.
+- **Manual-deploy artifact catalog** (`skills/_shared/manual-deploy-artifact-catalog.md`): detects files whose creation requires a manual production step (v1: Supabase migrations, env-var additions). Consumed by `writing-plans` (auto-populates the plan's Post-Automation section) and `finishing-a-development-branch` (Step 0.5 hard-gates merge on missing evidence).
 
 #### 0.22.0: Remove create-new-skill
 - Removed `create-new-skill` skill — no longer used

@@ -12,6 +12,7 @@ aligned-cowork.zip
 .env*
 *.plugin
 docs/plans/
+docs/superpowers/
 docs/investigations/
 docs/kanban/board.html
 *.draft.yaml
