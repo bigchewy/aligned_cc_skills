@@ -100,22 +100,40 @@ def whole_function(name):
     return match.group(0)
 
 
-def test_footer_has_no_save_button_or_dirty_line():
+def test_saving_sits_in_the_top_right_and_the_page_has_no_footer():
     html = template()
-    footer = html[html.index("<footer>"):html.index("</footer>")]
+    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    assert "<footer" not in body
+    header = body[body.index("<header>"):body.index("</header>")]
     assert 'id="dirty"' not in html
     assert "el.dirty" not in html
-    assert "Not saved yet." not in footer
-    assert ">Save<" not in footer
-    assert footer.count('id="save"') == 1
-    assert footer.count("<button") == 1
-    assert "Click any item to edit it." in footer
+    assert "Not saved yet." not in header
+    assert ">Save<" not in header
+    assert header.count('id="save"') == 1
+    assert "Click any item to edit it." in header
+    # The status and its button take the far right, after every other control.
+    assert header.index('id="toggle-plan"') < header.index('id="save-status"') < header.index('id="save"')
+    assert header.rindex("<button") == header.index('id="save"') - len('<button type="button" class="quiet" ')
 
 
-def test_star_wording_moved_from_the_footer_to_the_solution_editor():
+def test_save_messages_appear_under_the_top_right_controls():
     html = template()
-    footer = html[html.index("<footer>"):html.index("</footer>")]
-    assert "To change a star" not in footer
+    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    assert body.index("</header>") < body.index('id="notices"') < body.index('id="workspace"')
+    notices = body[body.index('id="notices"'):body.index('id="workspace"')]
+    assert 'id="message"' in notices
+    assert 'id="browser-note"' in notices
+    assert re.search(r"#notices \{[^}]*text-align: right", html)
+
+
+def test_a_map_that_cant_be_drawn_hides_the_save_messages():
+    assert "'header, #notices, #workspace, #tray'" in template()
+
+
+def test_star_wording_moved_to_the_solution_editor():
+    html = template()
+    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    assert "To change a star" not in body
     editor = whole_function("openEditor")
     solution_branch = editor[editor.index("if (ref.kind === 'solution')"):]
     assert "To change a star, tell Claude." in solution_branch
@@ -123,7 +141,7 @@ def test_star_wording_moved_from_the_footer_to_the_solution_editor():
 
 def test_browser_note_says_chrome_saves_by_itself():
     html = template()
-    note = html[html.index('id="browser-note"'):html.index("</footer>")]
+    note = html[html.index('id="browser-note"'):html.index('id="workspace"')]
     assert "saves by itself" in note
     assert "Open With" in note
     assert "Downloads" in note

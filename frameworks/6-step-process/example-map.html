@@ -62,11 +62,14 @@ button, select, input, textarea { font: inherit; color: inherit; }
 
 header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 8px 12px;
   padding: 8px 16px;
 }
 #who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-right: auto; min-width: 0; }
+#edit-hint { margin: 0; font-size: 14px; color: var(--muted); }
 #person { font-weight: 600; overflow-wrap: anywhere; }
 #strategy-note { font-size: 14px; color: var(--muted); }
 .quiet {
@@ -149,20 +152,15 @@ header {
 #tray-count { font-weight: 600; flex-basis: 100%; }
 #tray .item { position: static; width: 220px; }
 
-footer {
-  padding: 5px 16px 7px;
-  border-top: 1px solid var(--edge);
-  font-size: 13px;
-  color: var(--muted);
-}
-#save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
-#save-row p, footer > p { margin: 0; }
+#save-status { margin: 0; font-size: 14px; color: var(--muted); min-width: 125px; text-align: right; }
 #save-status.saved { color: var(--ink); }
 #save-status.unsaved { color: var(--warn); font-weight: 600; }
-#message { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; color: var(--ink); margin-top: 4px; }
+#save { background: var(--goal); border-color: var(--goal); color: var(--goal-ink); font-weight: 600; }
+#notices { padding: 0 16px; font-size: 14px; color: var(--muted); text-align: right; }
+#notices p { margin: 0 0 8px; }
+#message { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px 10px; color: var(--ink); margin-bottom: 8px; }
 #message.refusal { color: var(--warn); }
 #message span { flex: 0 1 auto; }
-#browser-note { margin-top: 4px; }
 
 #editor {
   position: fixed;
@@ -234,26 +232,24 @@ footer {
     <div id="person"></div>
     <div id="strategy-note" hidden>Not compared to strategy.</div>
   </div>
+  <p id="edit-hint">Click any item to edit it.</p>
   <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
   <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
   <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
   <button type="button" class="quiet" id="add-obstacle">Add an obstacle</button>
   <button type="button" class="quiet" id="toggle-plan">Show plan</button>
+  <p id="save-status" role="status"></p>
+  <button type="button" class="quiet" id="save" hidden></button>
 </header>
+<div id="notices">
+  <div id="message" role="status" hidden></div>
+  <p id="browser-note" hidden>Open this file in Chrome (right-click, Open With) and it saves by itself. Otherwise, saves go to Downloads, and you move the file back into the folder under its original name, replacing the old one.</p>
+</div>
 <div id="workspace">
   <div id="map"><div id="canvas-frame"><div id="canvas"></div></div></div>
   <aside id="panel" hidden></aside>
 </div>
 <section id="tray" hidden></section>
-<footer>
-  <div id="save-row">
-    <p id="save-status" role="status"></p>
-    <button type="button" class="quiet" id="save" hidden></button>
-    <p>Click any item to edit it.</p>
-  </div>
-  <div id="message" role="status" hidden></div>
-  <p id="browser-note" hidden>Open this file in Chrome (right-click, Open With) and it saves by itself. Otherwise, saves go to Downloads, and you move the file back into the folder under its original name, replacing the old one.</p>
-</footer>
 <div id="editor" hidden></div>
 <script id="map-logic">
 (function () {
@@ -1025,7 +1021,7 @@ footer {
   function showDataProblem(problem) {
     document.getElementById('data-problem-reason').textContent = problem;
     document.getElementById('data-problem').hidden = false;
-    document.querySelectorAll('header, #workspace, #tray, footer').forEach(function (part) {
+    document.querySelectorAll('header, #notices, #workspace, #tray').forEach(function (part) {
       part.hidden = true;
     });
   }
