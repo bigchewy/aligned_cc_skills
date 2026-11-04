@@ -91,6 +91,194 @@ def test_refusal_passes_its_reason_to_the_copy():
     assert "saveACopy(reason)" in body
 
 
+def whole_function(name):
+    """The source of one function in the page code, up to the next function at the same indent."""
+    html = template()
+    page = html[html.index('id="map-page"'):]
+    match = re.search(r"\n  (async )?function " + name + r"\(.*?\n  \}\n", page, re.S)
+    assert match, name
+    return match.group(0)
+
+
+def test_footer_has_no_save_button_or_dirty_line():
+    html = template()
+    footer = html[html.index("<footer>"):html.index("</footer>")]
+    assert 'id="dirty"' not in html
+    assert "el.dirty" not in html
+    assert "Not saved yet." not in footer
+    assert ">Save<" not in footer
+    assert footer.count('id="save"') == 1
+    assert footer.count("<button") == 1
+    assert "Click any item to edit it." in footer
+
+
+def test_star_wording_moved_from_the_footer_to_the_solution_editor():
+    html = template()
+    footer = html[html.index("<footer>"):html.index("</footer>")]
+    assert "To change a star" not in footer
+    editor = whole_function("openEditor")
+    solution_branch = editor[editor.index("if (ref.kind === 'solution')"):]
+    assert "To change a star, tell Claude." in solution_branch
+
+
+def test_browser_note_says_chrome_saves_by_itself():
+    html = template()
+    note = html[html.index('id="browser-note"'):html.index("</footer>")]
+    assert "saves by itself" in note
+    assert "Open With" in note
+    assert "Downloads" in note
+
+
+def test_status_line_comes_from_the_logic_block():
+    assert "L.saveStatus(" in whole_function("showStatus")
+    assert "showStatus()" in whole_function("render")
+
+
+def test_status_does_not_call_a_blank_new_item_unsaved():
+    assert "holdingNewItem()" in whole_function("showStatus")
+
+
+def test_autosave_guards_against_retrying_the_same_json():
+    assert "askToWrite()" in whole_function("render")
+    body = whole_function("askToWrite")
+    assert "if (!handle" in body
+    assert body.index("savedJson") < body.index("autosaver.request()")
+    assert body.index("lastTried") < body.index("autosaver.request()")
+    assert "lastTried = L.serializeMap(saving)" in whole_function("writeToFile")
+
+
+def test_blank_new_item_stays_out_of_the_file_until_it_has_text():
+    assert "holdingNewItem()" in whole_function("askToWrite")
+
+
+def test_write_returns_its_result_so_the_autosaver_keeps_or_drops_its_queue():
+    body = whole_function("writeToFile")
+    assert body.count("return result;") == 2
+
+
+def test_edit_that_lands_on_the_old_file_contents_still_gets_written():
+    body = whole_function("writeToFile")
+    assert body.index("markSaved(saving)") < body.index("askToWrite()")
+    assert body.index("if (!result.ok)") < body.index("askToWrite()")
+
+
+def test_first_write_tells_the_person_to_tell_claude_once():
+    body = whole_function("writeToFile")
+    assert "When you finish, tell Claude you changed the map." in body
+    assert "toldToTellClaude = true" in body
+    assert "if (!toldToTellClaude)" in body
+
+
+def test_good_write_clears_a_failure():
+    assert "failed = false" in whole_function("writeToFile")
+
+
+def test_handle_store_is_keyed_by_path_and_map_id():
+    html = template()
+    page = html[html.index('id="map-page"'):]
+    assert "L.handleKey(location.pathname, map.map_id)" in page
+
+
+def test_handle_store_survives_a_storage_failure():
+    html = template()
+    page = html[html.index('id="map-page"'):]
+    uses = [m.start() for m in re.finditer(r"\bindexedDB\b", page)]
+    assert uses
+    for at in uses:
+        before = page[:at]
+        top_level_function = before.rindex("\n  async function ")
+        opened = before[top_level_function:]
+        assert opened.count("try {") > opened.count("} catch")
+
+
+def test_bad_files_are_forgotten():
+    body = whole_function("applyRefusal")
+    branch = body[:body.index("reason === 'permission'")]
+    for reason in ("wrong-map", "not-a-map", "unreadable"):
+        assert "'" + reason + "'" in branch
+    assert "forgetHandle()" in branch
+    assert "remembered = null" in branch
+
+
+def test_lost_permission_keeps_the_remembered_file():
+    body = whole_function("applyRefusal")
+    branch = body[body.index("reason === 'permission'"):body.index("} else {")]
+    assert "handle = null" in branch
+    assert "remembered = null" not in branch
+    assert "forgetHandle" not in branch
+
+
+def test_stale_and_failed_writes_stay_connected_and_marked_failed():
+    body = whole_function("applyRefusal")
+    assert "failed = true" in body[body.index("} else {"):]
+
+
+def test_stale_refusal_uses_the_approved_words():
+    assert (
+        "'stale': 'Claude changed this map, so your last edit is not in the file. "
+        "Reload to get the new version.'"
+    ) in template()
+
+
+def test_only_a_stale_refusal_offers_reload():
+    body = whole_function("showRefusal")
+    assert "reason === 'stale'" in body
+    assert "location.reload()" in body
+    assert body.index("reason === 'stale'") < body.index("location.reload()")
+
+
+def test_first_click_opens_the_picker_with_no_step_before_it():
+    body = whole_function("pickThenConnect")
+    assert "L.pickMessage(location.pathname)" in body
+    assert "await" not in body[:body.index("picked = await window.showOpenFilePicker")]
+    assert "connect(picked[0])" in body
+    assert "AbortError" in body
+
+
+def test_button_uses_the_remembered_file_before_any_dialog():
+    body = whole_function("onSave")
+    picker_gone = body.index("!window.showOpenFilePicker")
+    remembered = body.index("connect(remembered)")
+    pick = body.index("pickThenConnect()")
+    assert picker_gone < remembered < pick
+
+
+def test_connecting_remembers_the_file_then_writes_only_through_the_guard():
+    body = whole_function("startSaving")
+    assert "handle = file" in body
+    assert "rememberHandle(file)" in body
+    assert "askToWrite()" in body
+    assert "writeToFile" not in body
+
+
+def test_load_connects_only_when_permission_is_already_granted():
+    body = whole_function("reconnectOnLoad")
+    assert "queryPermission({ mode: 'readwrite' })" in body
+    assert body.index("queryPermission") < body.index("L.connectToHandle")
+    assert body.index("=== 'granted'") < body.index("L.connectToHandle")
+    assert "requestPermission" not in body
+
+
+def test_load_treats_a_stale_file_as_paused():
+    body = whole_function("reconnectOnLoad")
+    assert "result.reason !== 'stale'" in body
+    assert "showRefusal" not in body
+
+
+def test_load_and_autosave_code_stays_off_without_the_picker():
+    html = template()
+    assert "if (window.showOpenFilePicker) reconnectOnLoad();" in html
+
+
+def test_close_warning_is_unchanged():
+    assert "L.shouldWarnOnClose(commitEdit, isDirty)" in template()
+
+
+def test_no_save_file_picker():
+    assert "showSaveFilePicker" not in template()
+    assert "showSaveFilePicker" not in EXAMPLE.read_text()
+
+
 def test_browser_without_the_picker_names_the_folder_and_file():
     html = template()
     body = html[html.index("function onSave()"):html.index("/* Events */")]
@@ -154,7 +342,7 @@ def test_template_has_quiet_zoom_controls():
 
 def test_page_takes_the_baseline_from_the_save_result():
     html = template()
-    body = html[html.index("async function writeToFile()"):html.index("async function pickThenWrite()")]
+    body = html[html.index("async function writeToFile()"):html.index("async function pickThenConnect()")]
     assert "saving.baseline = result.baseline" in body
     assert "map.baseline = result.baseline" in body
     assert body.index("map.baseline = result.baseline") < body.index("markSaved(saving)")

@@ -752,11 +752,11 @@ def test_step_scale_moves_by_a_tenth_and_stays_in_range():
 
 def test_pick_message_names_file_and_folder():
     out = call("pickMessage", "/Users/pat/Goals/step%203-pat-map.html")["result"]
-    assert out == "Pick step 3-pat-map.html in the Goals folder."
+    assert out == "Choose step 3-pat-map.html in the Goals folder."
 
 
 def test_pick_message_with_no_folder():
-    assert call("pickMessage", "/m-map.html")["result"] == "Pick m-map.html."
+    assert call("pickMessage", "/m-map.html")["result"] == "Choose m-map.html."
 
 
 def test_file_name_survives_a_bad_escape():

@@ -157,6 +157,8 @@ footer {
 }
 #save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 #save-row p, footer > p { margin: 0; }
+#save-status.saved { color: var(--ink); }
+#save-status.unsaved { color: var(--warn); font-weight: 600; }
 #message { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; color: var(--ink); margin-top: 4px; }
 #message.refusal { color: var(--warn); }
 #message span { flex: 0 1 auto; }
@@ -245,12 +247,12 @@ footer {
 <section id="tray" hidden></section>
 <footer>
   <div id="save-row">
-    <button type="button" class="quiet" id="save">Save</button>
-    <p id="dirty" hidden>Not saved yet.</p>
-    <p>Click any item to edit it. To change a star, tell Claude. After saving, tell Claude you changed the map.</p>
+    <p id="save-status" role="status"></p>
+    <button type="button" class="quiet" id="save" hidden></button>
+    <p>Click any item to edit it.</p>
   </div>
   <div id="message" role="status" hidden></div>
-  <p id="browser-note" hidden>Open this file in Chrome (right-click, Open With) and it saves in place. Otherwise, saves go to Downloads, and you move the file back into the folder under its original name, replacing the old one.</p>
+  <p id="browser-note" hidden>Open this file in Chrome (right-click, Open With) and it saves by itself. Otherwise, saves go to Downloads, and you move the file back into the folder under its original name, replacing the old one.</p>
 </footer>
 <div id="editor" hidden></div>
 <script id="map-logic">
@@ -634,8 +636,8 @@ footer {
     var parts = pathParts(pathname);
     var file = fileName(pathname);
     return parts.length > 1
-      ? 'Pick ' + file + ' in the ' + parts[parts.length - 2] + ' folder.'
-      : 'Pick ' + file + '.';
+      ? 'Choose ' + file + ' in the ' + parts[parts.length - 2] + ' folder.'
+      : 'Choose ' + file + '.';
   }
 
   function moveCopyMessage(pathname) {
@@ -951,7 +953,17 @@ footer {
     return;
   }
   var savedJson = L.serializeMap(map);
+  var handleKey = L.handleKey(location.pathname, map.map_id);
+  // The file writes go to. Null means saving is off or paused.
   var handle = null;
+  // The file to use when saving turns back on. It outlives handle while saving is paused.
+  var remembered = null;
+  var autosaver = L.createAutosaver(writeToFile);
+  var writing = false;
+  var failed = false;
+  // The JSON of the last write, so a refused write isn't sent again until the map changes.
+  var lastTried = null;
+  var toldToTellClaude = false;
   var editing = null;
   var panelOpen = window.innerWidth >= 2400;
   var drawnOnce = false;
@@ -972,7 +984,7 @@ footer {
   var REFUSALS = {
     'wrong-map': 'That file holds a different map, so nothing was saved.',
     'not-a-map': 'That file is not a map, so nothing was saved.',
-    'stale': 'The file has a newer version than this page, so nothing was saved.',
+    'stale': 'Claude changed this map, so your last edit is not in the file. Reload to get the new version.',
     'permission': 'Chrome did not get permission to change the file, so nothing was saved.',
     'unreadable': 'Chrome could not read that file, so nothing was saved.',
     'write-failed': 'Chrome could not write to the file, so the save did not finish.'
@@ -987,7 +999,7 @@ footer {
   }
 
   var el = {};
-  ['person', 'strategy-note', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'dirty', 'message',
+  ['person', 'strategy-note', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
     'browser-note', 'editor', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
@@ -1360,13 +1372,46 @@ footer {
     return L.serializeMap(map) !== savedJson;
   }
 
+  // A new item has no text until its editor closes, so there is nothing to save yet.
+  function holdingNewItem() {
+    return Boolean(editing && editing.isNew);
+  }
+
+  function showStatus() {
+    var status = L.saveStatus({
+      picker: Boolean(window.showOpenFilePicker),
+      connected: Boolean(handle),
+      remembered: Boolean(remembered),
+      dirty: isDirty() && !holdingNewItem(),
+      writing: writing,
+      failed: failed
+    });
+    el['save-status'].textContent = status.text;
+    el['save-status'].className = status.tone;
+    el.save.textContent = status.button;
+    el.save.hidden = !status.button;
+  }
+
+  // Comparing with the last write is what stops a refused write from looping. Going back to what the
+  // file holds clears it, so making the same edit again gets another try.
+  function askToWrite() {
+    if (!handle || holdingNewItem()) return;
+    var json = L.serializeMap(map);
+    if (json === savedJson) {
+      lastTried = null;
+      return;
+    }
+    if (json !== lastTried) autosaver.request();
+  }
+
   function render() {
     el.person.textContent = map.person;
     el['strategy-note'].hidden = map.key_actions.length > 0;
     drawMap();
     drawTray();
     drawPanel();
-    el.dirty.hidden = !isDirty();
+    askToWrite();
+    showStatus();
     positionEditor();
   }
 
@@ -1565,6 +1610,7 @@ footer {
         }
         var move = moveControl(ref);
         if (move) el.editor.appendChild(move);
+        el.editor.appendChild(make('p', 'note', 'To change a star, tell Claude.'));
       }
     }
     el.editor.appendChild(editorActions(ref));
@@ -1625,7 +1671,7 @@ footer {
 
   function markSaved(savedMap) {
     savedJson = L.serializeMap(savedMap);
-    el.dirty.hidden = !isDirty();
+    showStatus();
   }
 
   // The copy keeps this page's revision, so once moved it can't look newer than the page.
@@ -1638,27 +1684,92 @@ footer {
   function showRefusal(reason) {
     var box = showMessage(REFUSALS[reason] + ' Your edits are still on this page.', true);
     box.appendChild(quietButton('Save a copy', function () { saveACopy(reason); }));
+    if (reason === 'stale') box.appendChild(quietButton('Reload', function () { location.reload(); }));
   }
 
+  // A bad file is forgotten, lost permission pauses saving, and anything else stays connected and
+  // shows as not saved. The edits stay on the page either way.
+  function applyRefusal(reason, file) {
+    if (reason === 'wrong-map' || reason === 'not-a-map' || reason === 'unreadable') {
+      handle = null;
+      remembered = null;
+      forgetHandle();
+    } else if (reason === 'permission') {
+      handle = null;
+    } else {
+      handle = file;
+      remembered = file;
+      rememberHandle(file);
+      failed = true;
+    }
+  }
+
+  function refuse(reason, file) {
+    applyRefusal(reason, file);
+    showRefusal(reason);
+    showStatus();
+  }
+
+  // The autosaver reads the result, so this returns it on both paths. An edit made during the write
+  // still shows as unsaved afterward, because savedJson comes from the map this write sent.
   async function writeToFile() {
     var saving = map;
-    el.save.disabled = true;
-    var result = await L.saveToHandle(handle, SOURCE, saving);
-    el.save.disabled = false;
+    var target = handle;
+    lastTried = L.serializeMap(saving);
+    writing = true;
+    showStatus();
+    var result = await L.saveToHandle(target, SOURCE, saving);
+    writing = false;
     if (!result.ok) {
-      if (result.reason !== 'stale' && result.reason !== 'write-failed') handle = null;
-      showRefusal(result.reason);
-      return;
+      refuse(result.reason, target);
+      return result;
     }
     saving.revision = result.revision;
     map.revision = result.revision;
     saving.baseline = result.baseline;
     map.baseline = result.baseline;
+    if (failed) {
+      failed = false;
+      hideMessage();
+    }
     markSaved(saving);
-    showMessage('Saved. Now tell Claude you changed the map.');
+    if (!toldToTellClaude) {
+      toldToTellClaude = true;
+      showMessage('When you finish, tell Claude you changed the map.');
+    }
+    // An edit back to what the file held before this write had no reason to ask, so ask now.
+    askToWrite();
+    return result;
   }
 
-  async function pickThenWrite() {
+  // A write happens here only if the page already has edits.
+  function startSaving(file) {
+    handle = file;
+    remembered = file;
+    failed = false;
+    lastTried = null;
+    rememberHandle(file);
+    askToWrite();
+    showStatus();
+  }
+
+  async function connect(file) {
+    el.save.disabled = true;
+    var result = await L.connectToHandle(file, map);
+    el.save.disabled = false;
+    if (result.ok) {
+      hideMessage();
+      startSaving(file);
+      return;
+    }
+    if (result.reason === 'stale') lastTried = L.serializeMap(map);
+    refuse(result.reason, file);
+  }
+
+  // The click must reach the picker with no wait before it, or Chrome refuses to open the dialog.
+  async function pickThenConnect() {
+    showMessage(L.pickMessage(location.pathname));
+    el.save.disabled = true;
     var picked;
     try {
       picked = await window.showOpenFilePicker({
@@ -1666,6 +1777,7 @@ footer {
         types: [{ description: 'Map page', accept: { 'text/html': ['.html'] } }]
       });
     } catch (e) {
+      el.save.disabled = false;
       if (e.name === 'AbortError') {
         hideMessage();
         return;
@@ -1673,8 +1785,7 @@ footer {
       showRefusal('permission');
       return;
     }
-    handle = picked[0];
-    await writeToFile();
+    await connect(picked[0]);
   }
 
   function onSave() {
@@ -1686,13 +1797,72 @@ footer {
       showMessage(L.moveCopyMessage(location.pathname));
       return;
     }
-    if (handle) {
-      writeToFile();
+    if (remembered) {
+      connect(remembered);
       return;
     }
-    var box = showMessage(L.pickMessage(location.pathname));
-    box.appendChild(quietButton('Pick the file', pickThenWrite));
-    box.appendChild(quietButton('Cancel', hideMessage));
+    pickThenConnect();
+  }
+
+  /* Remembering the file */
+
+  // Any failure here means nothing is remembered, and the person chooses the file after each reload.
+  async function handleStore(mode, act) {
+    try {
+      var db = await new Promise(function (resolve, reject) {
+        var open = indexedDB.open('six-step-map', 1);
+        open.onupgradeneeded = function () { open.result.createObjectStore('handles'); };
+        open.onsuccess = function () { resolve(open.result); };
+        open.onerror = function () { reject(open.error); };
+      });
+      try {
+        return await new Promise(function (resolve, reject) {
+          var tx = db.transaction('handles', mode);
+          var request = act(tx.objectStore('handles'));
+          tx.oncomplete = function () { resolve(request.result); };
+          tx.onerror = function () { reject(tx.error); };
+          tx.onabort = function () { reject(tx.error); };
+        });
+      } finally {
+        db.close();
+      }
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  function recallHandle() {
+    return handleStore('readonly', function (store) { return store.get(handleKey); });
+  }
+
+  function rememberHandle(file) {
+    return handleStore('readwrite', function (store) { return store.put(file, handleKey); });
+  }
+
+  function forgetHandle() {
+    return handleStore('readwrite', function (store) { return store.delete(handleKey); });
+  }
+
+  // No click happens here, so it connects only if Chrome already has permission. Without it, the
+  // status says paused and the button asks. A newer file can't happen in normal use, so it pauses too.
+  async function reconnectOnLoad() {
+    var found = await recallHandle();
+    if (!found || remembered) return;
+    remembered = found;
+    var permission;
+    try {
+      permission = await found.queryPermission({ mode: 'readwrite' });
+    } catch (e) {
+      permission = 'prompt';
+    }
+    if (permission === 'granted') {
+      el.save.disabled = true;
+      var result = await L.connectToHandle(found, map);
+      el.save.disabled = false;
+      if (result.ok) startSaving(found);
+      else if (result.reason !== 'stale') applyRefusal(result.reason, found);
+    }
+    showStatus();
   }
 
   /* Events */
@@ -1745,6 +1915,7 @@ footer {
   });
 
   el['browser-note'].hidden = Boolean(window.showOpenFilePicker);
+  if (window.showOpenFilePicker) reconnectOnLoad();
   render();
 })();
 </script>
