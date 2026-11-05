@@ -6,6 +6,8 @@ The 6-step mind map should edit like a Miro mind map: click an item, press a plu
 
 Eric finds the current map harder to use than a Miro mind map. He likes that the page knows obstacles from solutions and that picks carry a star. He wants those kept and the editing made simpler. He also wants to break any solution down into the obstacles standing in its way.
 
+**Changes from Eric on 2026-11-05, which win over anything below:** root causes, the tray, the header add button and the Move to list are gone. Every item takes both pluses, including the goal. Items have five fields, with no root_cause. A solution with no obstacle yet sits directly under the goal. Dragging onto a box is how items move, and there is no keyboard way to move one and no reordering under the same parent. Saving is one pick on the first edit for the local file, not built yet. A move to a Claude artifact is being checked.
+
 The framework is a skill people run on their own machines. Each person ends up with one HTML file they open in Chrome, and nothing else to install or run.
 
 ## Goals
