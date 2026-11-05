@@ -105,7 +105,6 @@ header {
 .item.obstacle { font-weight: 600; border-width: 2px; }
 .item.root { font-weight: 800; background: var(--root); border: 2px solid var(--root-line); }
 .item.solution { background: var(--solution); border-color: var(--solution-line); border-radius: 16px; }
-.item.missing { color: var(--warn); border: 2px dashed var(--warn); border-radius: 16px; }
 .item.goal {
   background: var(--goal);
   color: var(--goal-ink);
@@ -117,7 +116,6 @@ header {
 }
 .star { color: var(--star); margin-right: 4px; }
 .label { color: var(--muted); font-weight: 700; margin-right: 5px; }
-.repeat { color: var(--muted); font-weight: 700; margin-left: 6px; white-space: nowrap; }
 .blank { color: var(--muted); font-weight: 400; font-style: italic; }
 .item.goal .blank { color: var(--goal-ink); }
 .selected { outline: 3px solid var(--focus); outline-offset: 2px; }
@@ -203,28 +201,10 @@ header {
 #editor .actions .done { background: var(--goal); color: var(--goal-ink); border-color: var(--goal); margin-left: auto; }
 #editor .actions .delete { color: var(--warn); }
 
-@media (max-width: 759px) {
-  html, body { height: auto; }
-  #workspace { display: block; }
-  #map { display: block; overflow: visible; }
-  #canvas-frame { margin: 0; }
-  #panel { width: auto; border-left: 0; border-top: 1px solid var(--edge); overflow: visible; }
-  #toggle-plan, #zoom-out, #zoom-in, #zoom-fit { display: none; }
-  #tray .item { width: 100%; }
-  #editor {
-    left: 0 !important;
-    right: 0;
-    top: auto !important;
-    bottom: 0;
-    width: auto;
-    max-height: 70vh;
-    border-radius: 12px 12px 0 0;
-  }
-}
 </style>
 </head>
 <body>
-<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":""},"obstacles":[],"solutions":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
+<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":""},"obstacles":[],"unplaced":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
 <div id="data-problem" role="alert" hidden>
   <h1>This map can't be drawn.</h1>
   <p id="data-problem-reason"></p>
@@ -263,30 +243,6 @@ header {
     return JSON.parse(JSON.stringify(map));
   }
 
-  // Runs fn on every item in the tree, each parent before its children.
-  function eachItem(items, fn, depth) {
-    items.forEach(function (item) {
-      fn(item, depth || 0);
-      eachItem(item.children, fn, (depth || 0) + 1);
-    });
-  }
-
-  function findItem(map, itemId) {
-    var found = null;
-    eachItem(map.obstacles, function (item) {
-      if (item.id === itemId) found = item;
-    });
-    return found;
-  }
-
-  // Runs fn on the item with this id, in a copy of the map.
-  function withItem(map, itemId, fn) {
-    var next = copy(map);
-    var item = findItem(next, itemId);
-    if (item) fn(item);
-    return next;
-  }
-
   // A, B ... Z, AA, AB.
   function letters(index) {
     var text = '';
@@ -300,47 +256,98 @@ header {
     return depth % 2 === 0 ? String(index + 1) : letters(index);
   }
 
-  function addLabels(items, depth, prefix, labels) {
-    items.forEach(function (item, i) {
-      labels[item.id] = prefix + labelPart(depth, i);
-      addLabels(item.children, depth + 1, labels[item.id], labels);
+  // Each obstacle owns a counter, and so does the goal.
+  function labelOwner(depth, prefix) {
+    return { depth: depth, prefix: prefix, count: 0 };
+  }
+
+  // Runs fn(item, place) on every item, each parent before its children, and stops at the first truthy
+  // result. This is the one place labels come from. An obstacle takes the next number from its owner and
+  // starts a counter of its own. A solution takes nothing, and its children count on the same counter, so
+  // labels can't repeat. The page's check walks unchecked data with this, so a broken item counts as an
+  // obstacle and a bad children field isn't followed.
+  function eachItem(items, fn, owner, depth, parent) {
+    var counter = owner || labelOwner(0, '');
+    for (var i = 0; i < items.length; i += 1) {
+      var item = items[i];
+      var isObstacle = !(isObject(item) && item.kind === 'solution');
+      var label = isObstacle ? counter.prefix + labelPart(counter.depth, counter.count++) : null;
+      var stop = fn(item, { label: label, depth: depth || 0, parent: parent || null });
+      if (stop) return stop;
+      if (isObject(item) && Array.isArray(item.children)) {
+        var next = isObstacle ? labelOwner(counter.depth + 1, label) : counter;
+        stop = eachItem(item.children, fn, next, (depth || 0) + 1, item);
+        if (stop) return stop;
+      }
+    }
+    return null;
+  }
+
+  function copy(map) {
+    return JSON.parse(JSON.stringify(map));
+  }
+
+  // Finds an item in the tree or the tray.
+  function findItem(map, itemId) {
+    function match(item) {
+      return item.id === itemId ? item : null;
+    }
+    return eachItem(map.obstacles, match) || eachItem(map.unplaced, match);
+  }
+
+  // The id of the item above this one, 'goal' at the top level, or null for the tray and unknown ids.
+  function parentOf(map, itemId) {
+    return eachItem(map.obstacles, function (item, place) {
+      if (item.id !== itemId) return null;
+      return place.parent ? place.parent.id : 'goal';
     });
-    return labels;
+  }
+
+  function hasChildOfKind(item, kind) {
+    return item.children.some(function (child) {
+      return isObject(child) && child.kind === kind;
+    });
   }
 
   // Labels come from position and are never stored, so deleting an item renumbers its later siblings.
   function itemLabels(map) {
-    return addLabels(map.obstacles, 0, '', {});
-  }
-
-  function tiedIds(map) {
-    var tied = {};
-    eachItem(map.obstacles, function (item) {
-      item.solution_ids.forEach(function (id) { tied[id] = true; });
+    var labels = {};
+    eachItem(map.obstacles, function (item, place) {
+      if (place.label) labels[item.id] = place.label;
     });
-    return tied;
+    return labels;
   }
 
-  function untiedSolutionIds(map) {
-    var tied = tiedIds(map);
-    return map.solutions
-      .map(function (s) { return s.id; })
-      .filter(function (id) { return !tied[id]; });
+  // The plus table: what can sit directly under what. Tray solutions take nothing until they're attached.
+  function canAdd(map, parentId, kind) {
+    if (kind !== 'obstacle' && kind !== 'solution') return false;
+    if (parentId === 'goal') return kind === 'obstacle';
+    if (parentOf(map, parentId) === null) return false;
+    var parent = findItem(map, parentId);
+    if (parent.kind === 'solution') return kind === 'obstacle';
+    return kind === 'solution' || !parent.root_cause;
   }
 
-  function repeatCount(map, solutionId) {
-    var count = 0;
-    eachItem(map.obstacles, function (item) {
-      if (item.solution_ids.indexOf(solutionId) !== -1) count += 1;
-    });
-    return count;
+  function newItem(id, kind, text) {
+    return { id: id, kind: kind, text: text, root_cause: false, star: false, children: [] };
   }
 
-  // The solution stays in map.solutions, so one left with no item shows in the tray.
-  function deleteSolutionFromObstacle(map, itemId, solutionId) {
-    return withItem(map, itemId, function (item) {
-      item.solution_ids = item.solution_ids.filter(function (id) { return id !== solutionId; });
-    });
+  function attach(map, parentId, item) {
+    (parentId === 'goal' ? map.obstacles : findItem(map, parentId).children).push(item);
+  }
+
+  function addItem(map, parentId, id, kind, text) {
+    var next = copy(map);
+    if (canAdd(map, parentId, kind)) attach(next, parentId, newItem(id, kind, text));
+    return next;
+  }
+
+  // The drop table is the plus table, plus no drop on the item itself, under itself, or on its own parent.
+  function canMove(map, itemId, targetId) {
+    var item = findItem(map, itemId);
+    if (!item || itemId === targetId) return false;
+    if (!canAdd(map, targetId, item.kind) || parentOf(map, itemId) === targetId) return false;
+    return !eachItem(item.children, function (under) { return under.id === targetId; });
   }
 
   function withoutItem(items, itemId) {
@@ -350,18 +357,76 @@ header {
     });
   }
 
-  // The whole branch goes. Its solutions stay in map.solutions, so any left with no item show in the tray.
-  function deleteItem(map, itemId) {
+  function takeOut(map, itemId) {
+    map.obstacles = withoutItem(map.obstacles, itemId);
+    map.unplaced = map.unplaced.filter(function (item) { return item.id !== itemId; });
+  }
+
+  // The item goes last under its target, and takes what sits under it along.
+  function moveItem(map, itemId, targetId) {
     var next = copy(map);
-    next.obstacles = withoutItem(next.obstacles, itemId);
+    if (!canMove(map, itemId, targetId)) return next;
+    var moving = findItem(next, itemId);
+    takeOut(next, itemId);
+    attach(next, targetId, moving);
     return next;
   }
 
-  function subItemCount(map, itemId) {
+  function moveTargets(map, itemId) {
+    var targets = [];
+    if (canMove(map, itemId, 'goal')) targets.push({ id: 'goal', name: 'The goal' });
+    eachItem(map.obstacles, function (target, place) {
+      if (!canMove(map, itemId, target.id)) return;
+      targets.push({ id: target.id, name: place.label ? place.label + ' ' + target.text : target.text });
+    });
+    return targets;
+  }
+
+  // The item and everything under it, in reading order.
+  function itemsFrom(item) {
+    var items = [];
+    eachItem([item], function (each) { items.push(each); });
+    return items;
+  }
+
+  function goneIds(item) {
+    var ids = Object.create(null);
+    itemsFrom(item).forEach(function (each) { ids[each.id] = true; });
+    return ids;
+  }
+
+  // The whole branch goes, with each solution's Execute row and its ids on key actions. A key action
+  // stays even with no solutions left, because it comes from the strategy.
+  function deleteItem(map, itemId) {
+    var next = copy(map);
+    var item = findItem(next, itemId);
+    if (!item) return next;
+    var gone = goneIds(item);
+    takeOut(next, itemId);
+    next.execute = next.execute.filter(function (row) { return !gone[row.solution_id]; });
+    next.key_actions.forEach(function (action) {
+      action.solution_ids = action.solution_ids.filter(function (id) { return !gone[id]; });
+    });
+    return next;
+  }
+
+  // What a delete would take with it, so the page can say so first.
+  function deleteEffects(map, itemId) {
     var item = findItem(map, itemId);
-    var count = 0;
-    if (item) eachItem(item.children, function () { count += 1; });
-    return count;
+    if (!item) return { subItems: 0, picks: [], rows: [] };
+    var gone = goneIds(item);
+    var items = itemsFrom(item);
+    var moves = map.execute
+      .filter(function (row) { return gone[row.solution_id]; })
+      .map(function (row) { return row.first_move; });
+    var actions = map.key_actions
+      .filter(function (action) { return action.solution_ids.some(function (id) { return gone[id]; }); })
+      .map(function (action) { return action.text; });
+    return {
+      subItems: items.length - 1,
+      picks: items.filter(function (each) { return each.star; }).map(function (each) { return each.text; }),
+      rows: moves.concat(actions)
+    };
   }
 
   // Scans the whole file, so an id still named in the side panel or baseline is never reused.
@@ -374,41 +439,39 @@ header {
     return prefix + (highest + 1);
   }
 
-  function newItem(id, text) {
-    return { id: id, text: text, root_cause: false, solution_ids: [], children: [] };
+  // A root cause can't have an obstacle directly under it. A solution under it can have obstacles of its own.
+  function canBeRootCause(map, itemId) {
+    var item = findItem(map, itemId);
+    return Boolean(item) && item.kind === 'obstacle' && !hasChildOfKind(item, 'obstacle');
   }
 
-  function addObstacle(map, id, text) {
+  function setRootCause(map, itemId, isRoot) {
     var next = copy(map);
-    next.obstacles.push(newItem(id, text));
+    if (canBeRootCause(map, itemId)) findItem(next, itemId).root_cause = Boolean(isRoot);
     return next;
   }
 
-  // A root cause ends its branch, so it can't take a child.
-  function addChild(map, parentId, id, text) {
-    return withItem(map, parentId, function (item) {
-      if (!item.root_cause) item.children.push(newItem(id, text));
-    });
+  // Tray solutions can't be picks until they're attached.
+  function canPick(map, itemId) {
+    var item = findItem(map, itemId);
+    return Boolean(item) && item.kind === 'solution' && parentOf(map, itemId) !== null;
   }
 
-  // Only an item with no children can be a root cause.
-  function setRootCause(map, itemId, isRoot) {
-    return withItem(map, itemId, function (item) {
-      if (!isRoot || !item.children.length) item.root_cause = Boolean(isRoot);
-    });
+  function setStar(map, itemId, isStar) {
+    var next = copy(map);
+    if (canPick(map, itemId)) findItem(next, itemId).star = Boolean(isStar);
+    return next;
   }
 
-  function setItemText(map, ref, text) {
-    if (ref.kind === 'solution') {
-      var next = copy(map);
-      next.solutions.forEach(function (s) {
-        if (s.id === ref.sid) s.text = text;
-      });
-      return next;
-    }
-    return withItem(map, ref.oid, function (item) {
-      item.text = text;
-    });
+  function hasPicks(map) {
+    return Boolean(eachItem(map.obstacles, function (item) { return item.star; }));
+  }
+
+  function setItemText(map, itemId, text) {
+    var next = copy(map);
+    var item = findItem(next, itemId);
+    if (item) item.text = text;
+    return next;
   }
 
   function setGoal(map, goal) {
@@ -417,55 +480,18 @@ header {
     return next;
   }
 
-  function addSolution(map, itemId, id, text) {
-    var next = withItem(map, itemId, function (item) {
-      item.solution_ids.push(id);
-    });
-    next.solutions.push({ id: id, text: text, star: false });
-    return next;
-  }
-
-  function setStar(map, solutionId, isStar) {
-    var next = copy(map);
-    next.solutions.forEach(function (s) {
-      if (s.id === solutionId) s.star = Boolean(isStar);
-    });
-    return next;
-  }
-
-  function moveSolution(map, fromId, toId, solutionId) {
-    var next = fromId === toId ? copy(map) : deleteSolutionFromObstacle(map, fromId, solutionId);
-    return withItem(next, toId, function (item) {
-      if (item.solution_ids.indexOf(solutionId) === -1) item.solution_ids.push(solutionId);
-    });
-  }
-
-  function deleteSolution(map, solutionId) {
-    var next = copy(map);
-    next.solutions = next.solutions.filter(function (s) { return s.id !== solutionId; });
-    eachItem(next.obstacles, function (item) {
-      item.solution_ids = item.solution_ids.filter(function (id) { return id !== solutionId; });
-    });
-    return next;
-  }
-
-  // Each solution's name in the plan panel, with the labels of the items it sits on.
+  // Each solution's name in the plan panel, with the label of the obstacle it sits under.
   function solutionNames(map) {
+    var names = Object.create(null);
     var labels = itemLabels(map);
-    var places = Object.create(null);
-    eachItem(map.obstacles, function (item) {
-      item.solution_ids.forEach(function (id) {
-        (places[id] = places[id] || []).push(labels[item.id]);
-      });
+    eachItem(map.obstacles, function (item, place) {
+      if (item.kind === 'solution') names[item.id] = item.text + ' (' + labels[place.parent.id] + ')';
     });
-    var names = {};
-    map.solutions.forEach(function (s) {
-      names[s.id] = places[s.id] ? s.text + ' (' + places[s.id].join(', ') + ')' : s.text;
-    });
+    map.unplaced.forEach(function (item) { names[item.id] = item.text; });
     return names;
   }
 
-  // Ids that no longer exist drop out here. Claude cleans them up when it picks up edits.
+  // The page's check refuses a plan row naming a missing solution, so every id here has a name.
   function panelRows(map) {
     var names = solutionNames(map);
     return {
@@ -473,34 +499,23 @@ header {
         return {
           text: k.text,
           risk: k.risk,
-          solutions: k.solution_ids
-            .filter(function (id) { return id in names; })
-            .map(function (id) { return names[id]; })
+          solutions: k.solution_ids.map(function (id) { return names[id]; })
         };
       }),
-      execute: map.execute
-        .filter(function (e) { return e.solution_id in names; })
-        .map(function (e) {
-          return {
-            solution: names[e.solution_id],
-            first_move: e.first_move,
-            owner: e.owner,
-            others_decide: e.others_decide
-          };
-        })
+      execute: map.execute.map(function (e) {
+        return {
+          solution: names[e.solution_id],
+          first_move: e.first_move,
+          owner: e.owner,
+          others_decide: e.others_decide
+        };
+      })
     };
   }
 
   // A click can land on a box whose item the same click just removed.
   function itemExists(map, ref) {
-    if (ref.kind === 'goal') return true;
-    var solutionIsListed = map.solutions.some(function (s) { return s.id === ref.sid; });
-    if (ref.kind === 'solution' && !ref.oid) return solutionIsListed;
-    var item = findItem(map, ref.oid);
-    if (!item) return false;
-    if (ref.kind === 'solution') return solutionIsListed && item.solution_ids.indexOf(ref.sid) !== -1;
-    if (ref.kind === 'missing') return item.solution_ids.indexOf(ref.sid) !== -1;
-    return true;
+    return ref.kind === 'goal' || Boolean(findItem(map, ref.id));
   }
 
   // A commit that fails may have lost typed text, so the person still gets the warning.
@@ -513,63 +528,14 @@ header {
     return hasChanges();
   }
 
-  // An id with no solution stays in the list, marked missing, so the map can show it.
-  function solutionsOn(map, itemId) {
-    var byId = {};
-    map.solutions.forEach(function (s) { byId[s.id] = s; });
-    var item = findItem(map, itemId);
-    return (item ? item.solution_ids : []).map(function (id) {
-      return byId[id] || { id: id, missing: true };
-    });
-  }
-
-  // Every item a solution can move to. An item that already holds it is left out, because moving
-  // onto it would take a repeat away. That includes the item it sits on now.
-  function moveTargets(map, solutionId) {
-    var labels = itemLabels(map);
-    var targets = [];
-    eachItem(map.obstacles, function (item) {
-      if (item.solution_ids.indexOf(solutionId) !== -1) return;
-      targets.push({ id: item.id, label: labels[item.id], text: item.text });
-    });
-    return targets;
-  }
-
-  function moveTargetName(target) {
-    return target.label + ' ' + target.text;
-  }
-
-  // The first half of the top-level obstacles go on the right. An odd count puts the extra one there.
-  function sideOf(index, count) {
-    return index < Math.ceil(count / 2) ? 'right' : 'left';
-  }
-
-  // A solution can show on several items, and more than once on a broken one, so its box goes by place.
-  function solutionKey(itemId, index) {
-    return itemId + '|' + index;
-  }
-
-  // Every box under the goal in reading order: each item, then its solutions, then its children.
+  // Every box under the goal in reading order. Only obstacles have a label.
   function drawnRows(map) {
     var rows = [];
-    function addRows(items, depth, prefix, parentKey) {
-      items.forEach(function (item, i) {
-        var label = prefix + labelPart(depth, i);
-        rows.push({ kind: 'item', key: item.id, parent: parentKey, depth: depth, label: label, item: item });
-        solutionsOn(map, item.id).forEach(function (solution, s) {
-          rows.push({
-            kind: 'solution',
-            key: solutionKey(item.id, s),
-            parent: item.id,
-            depth: depth + 1,
-            item: item,
-            solution: solution
-          });
-        });
-        addRows(item.children, depth + 1, label, item.id);
-      });
-    }
-    addRows(map.obstacles, 0, '', null);
+    eachItem(map.obstacles, function (item, place) {
+      var row = { kind: item.kind, key: item.id, parent: place.parent ? place.parent.id : null, depth: place.depth, item: item };
+      if (place.label) row.label = place.label;
+      rows.push(row);
+    });
     return rows;
   }
 
@@ -583,148 +549,58 @@ header {
   }
 
   // One item and all it holds, in a band of rows of its own. Bands never share rows, so branches can't
-  // overlap however deep or wide they get. The item centers on what sits in the next column out, and
-  // on an item with children, its solutions stack below it in its own column.
+  // overlap however deep or wide they get. The item centers on what sits in the next column out.
   function itemBand(item, heights, gap) {
-    var height = heights[item.id];
-    var solutions = item.solution_ids.map(function (id, s) {
-      var key = solutionKey(item.id, s);
-      return { key: key, height: heights[key] };
-    });
-    var solutionHeights = solutions.map(function (s) { return s.height; });
     var kids = item.children.map(function (child) { return itemBand(child, heights, gap); });
-    var hasKids = kids.length > 0;
-    var outerHeight = stackHeight(hasKids ? kids.map(function (k) { return k.height; }) : solutionHeights, gap);
-    var underHeight = hasKids ? stackHeight(solutionHeights, gap) + (solutions.length ? gap : 0) : 0;
-    var lineY = Math.max(height, outerHeight) / 2;
+    var kidsHeight = stackHeight(kids.map(function (k) { return k.height; }), gap);
+    var height = Math.max(heights[item.id], kidsHeight);
     var deepestKid = Math.max.apply(null, [0].concat(kids.map(function (k) { return k.columns; })));
     return {
       id: item.id,
-      boxHeight: height,
-      solutions: solutions,
+      kind: item.kind,
+      boxHeight: heights[item.id],
       kids: kids,
-      lineY: lineY,
-      outerHeight: outerHeight,
-      height: Math.max(lineY + height / 2 + underHeight, lineY + outerHeight / 2),
-      columns: 1 + (hasKids ? deepestKid : solutions.length ? 1 : 0)
+      kidsHeight: kidsHeight,
+      height: height,
+      columns: 1 + deepestKid
     };
   }
 
-  // Sizes in pixels: boxW, goalW, goalH, colGap, goalGap, rowGap, stackGap, pad.
+  // Sizes in pixels: boxW, goalW, goalH, colGap, goalGap, rowGap, stackGap, pad. The goal sits on the left,
+  // everything runs right, and each item sits one column out from its parent.
   function wideLayout(map, heights, sizes) {
-    var bands = { right: [], left: [] };
-    map.obstacles.forEach(function (item, i) {
-      bands[sideOf(i, map.obstacles.length)].push(itemBand(item, heights, sizes.stackGap));
-    });
-    function columns(side) {
-      return Math.max.apply(null, [0].concat(side.map(function (b) { return b.columns; })));
-    }
-    function sideHeight(side) {
-      return stackHeight(side.map(function (b) { return b.height; }), sizes.rowGap);
-    }
-
+    var bands = map.obstacles.map(function (item) { return itemBand(item, heights, sizes.stackGap); });
+    var bandsHeight = stackHeight(bands.map(function (b) { return b.height; }), sizes.rowGap);
+    var columns = Math.max.apply(null, [0].concat(bands.map(function (b) { return b.columns; })));
     var step = sizes.boxW + sizes.colGap;
-    // Both sides take the width of the deeper one, so the goal sits at the true center.
-    var deepest = Math.max(columns(bands.left), columns(bands.right));
-    var sideW = deepest ? deepest * step - sizes.colGap + sizes.goalGap : 0;
-    var goalX = sizes.pad + sideW;
-    var height = Math.max(sideHeight(bands.left), sideHeight(bands.right), sizes.goalH) + sizes.pad * 2;
-    var width = goalX + sizes.goalW + sideW + sizes.pad;
+    var goalRight = sizes.pad + sizes.goalW;
+    var firstColumn = goalRight + sizes.goalGap;
+    var width = (columns ? firstColumn + columns * step - sizes.colGap : goalRight) + sizes.pad;
+    var height = Math.max(bandsHeight, sizes.goalH) + sizes.pad * 2;
     var midY = height / 2;
 
     var boxes = [];
     var lines = [];
 
-    function layOutSide(side, dir) {
-      var inner = dir > 0 ? goalX + sizes.goalW + sizes.goalGap : goalX - sizes.goalGap - sizes.boxW;
-      function columnX(c) { return inner + dir * c * step; }
-      // The edge of a box in column c that faces the goal, and the edge that faces away.
-      function nearEdge(c) { return dir > 0 ? columnX(c) : columnX(c) + sizes.boxW; }
-      function farEdge(c) { return dir > 0 ? columnX(c) + sizes.boxW : columnX(c); }
-
-      function placeBand(band, column, top, parentKey, fromX, fromY) {
-        var lineY = top + band.lineY;
-        var boxTop = lineY - band.boxHeight / 2;
-        boxes.push({ key: band.id, x: columnX(column), y: boxTop, height: band.boxHeight });
-        lines.push({ from: parentKey, to: band.id, d: curve(fromX, fromY, nearEdge(column), lineY) });
-        var outerY = lineY - band.outerHeight / 2;
-
-        if (band.kids.length) {
-          // A short line runs down the middle of the column, through the stack.
-          var lineX = columnX(column) + sizes.boxW / 2;
-          var above = boxTop + band.boxHeight;
-          band.solutions.forEach(function (solution) {
-            var solutionTop = above + sizes.stackGap;
-            boxes.push({ key: solution.key, x: columnX(column), y: solutionTop, height: solution.height });
-            lines.push({ from: band.id, to: solution.key, d: 'M' + lineX + ' ' + above + ' V' + solutionTop });
-            above = solutionTop + solution.height;
-          });
-          band.kids.forEach(function (kid) {
-            placeBand(kid, column + 1, outerY, band.id, farEdge(column), lineY);
-            outerY += kid.height + sizes.stackGap;
-          });
-          return;
-        }
-        band.solutions.forEach(function (solution) {
-          boxes.push({ key: solution.key, x: columnX(column + 1), y: outerY, height: solution.height });
-          lines.push({
-            from: band.id,
-            to: solution.key,
-            d: curve(farEdge(column), lineY, nearEdge(column + 1), outerY + solution.height / 2)
-          });
-          outerY += solution.height + sizes.stackGap;
-        });
-      }
-
-      var y = (height - sideHeight(side)) / 2;
-      side.forEach(function (band) {
-        placeBand(band, 0, y, 'goal', dir > 0 ? goalX + sizes.goalW : goalX, midY);
-        y += band.height + sizes.rowGap;
+    function placeBand(band, column, top, parentKey, fromX, fromY) {
+      var x = firstColumn + column * step;
+      var lineY = top + band.height / 2;
+      boxes.push({ key: band.id, x: x, y: lineY - band.boxHeight / 2, height: band.boxHeight });
+      lines.push({ from: parentKey, to: band.id, kind: band.kind, d: curve(fromX, fromY, x, lineY) });
+      var kidTop = lineY - band.kidsHeight / 2;
+      band.kids.forEach(function (kid) {
+        placeBand(kid, column + 1, kidTop, band.id, x + sizes.boxW, lineY);
+        kidTop += kid.height + sizes.stackGap;
       });
     }
-    layOutSide(bands.right, 1);
-    layOutSide(bands.left, -1);
 
-    return { width: width, height: height, goal: { x: goalX, y: midY - sizes.goalH / 2 }, boxes: boxes, lines: lines };
-  }
-
-  var NARROW = { trunk: 8, firstIndent: 16, indent: 14, maxIndents: 5, gap: 8, goalGap: 12 };
-
-  // Where each row goes across a phone, and how wide it is, so the page can measure it at that width.
-  // Past the deepest indent, the label still says how deep an item is.
-  function narrowPlaces(map, width) {
-    return {
-      goal: { x: NARROW.trunk, width: width - NARROW.trunk * 2 },
-      rows: drawnRows(map).map(function (row) {
-        var x = NARROW.trunk + NARROW.firstIndent + Math.min(row.depth, NARROW.maxIndents) * NARROW.indent;
-        return { key: row.key, parent: row.parent, x: x, width: width - x - NARROW.trunk };
-      })
-    };
-  }
-
-  // One column, top to bottom. A line drops from each parent just left of everything under it, so it
-  // never crosses a box. Past the deepest indent, there's no room under the parent for the line to
-  // start, so it leaves the parent's left edge instead.
-  function narrowLayout(places, heights, goalHeight) {
-    var goal = { x: places.goal.x, y: NARROW.trunk, height: goalHeight };
-    var y = goal.y + goalHeight + NARROW.goalGap;
-    var placed = {};
-    var boxes = [];
-    var lines = [];
-    places.rows.forEach(function (row) {
-      if (!row.parent && boxes.length) y += NARROW.gap;
-      var height = heights[row.key];
-      var parent = row.parent ? placed[row.parent] : goal;
-      var mid = y + height / 2;
-      var d = row.x > parent.x
-        ? 'M' + (parent.x + 8) + ' ' + (parent.y + parent.height) + ' V' + mid + ' H' + row.x
-        : 'M' + parent.x + ' ' + (parent.y + parent.height / 2) + ' H' + (row.x - 4) + ' V' + mid + ' H' + row.x;
-      lines.push({ from: row.parent || 'goal', to: row.key, d: d });
-      placed[row.key] = { key: row.key, x: row.x, y: y, height: height };
-      boxes.push(placed[row.key]);
-      y += height + NARROW.gap;
+    var y = (height - bandsHeight) / 2;
+    bands.forEach(function (band) {
+      placeBand(band, 0, y, 'goal', goalRight, midY);
+      y += band.height + sizes.rowGap;
     });
-    return { width: places.goal.width + NARROW.trunk * 2, height: y + NARROW.gap, goal: goal, boxes: boxes, lines: lines };
+
+    return { width: width, height: height, goal: { x: sizes.pad, y: midY - sizes.goalH / 2 }, boxes: boxes, lines: lines };
   }
 
   function fitScale(mapWidth, mapHeight, availableWidth, availableHeight, floor) {
@@ -796,10 +672,6 @@ header {
 
   // Each flat list the page draws, and each field a row needs for the page to draw it.
   var ROW_RULES = [
-    { field: 'solutions', list: 'solutions', row: 'Solution', needs: [
-      ['id', isText, 'id'],
-      ['text', isText, 'text']
-    ] },
     { field: 'key_actions', list: 'key actions', row: 'Key action', needs: [
       ['solution_ids', isTextList, 'list of solutions']
     ] },
@@ -821,25 +693,92 @@ header {
     return null;
   }
 
-  // The first problem anywhere in the tree, named by the label the item would have. seen maps each id
-  // to the label of the item that has it, and has no built-in names, so any id is safe in it.
-  function itemsProblem(items, depth, prefix, seen) {
+  // Solutions have no label, so a sentence names one by its text, or by its id if it has no text.
+  function solutionName(item) {
+    return 'Solution ' + (item.text && isText(item.text) ? '"' + item.text + '"' : item.id);
+  }
+
+  // Every item has the same six fields.
+  function fieldsProblem(item, name) {
+    if (!isObject(item)) return name + ' is missing.';
+    if ('whys' in item || 'solution_at' in item || 'solution_ids' in item) return name + ' uses the old map shape.';
+    if (!item.id || !isText(item.id)) return name + ' is missing its id.';
+    if (!('kind' in item)) return name + ' is missing its kind.';
+    if (item.kind !== 'obstacle' && item.kind !== 'solution') return name + ' needs a kind of obstacle or solution.';
+    if (!isText(item.text)) return name + ' is missing its text.';
+    if (typeof item.root_cause !== 'boolean') return name + ' needs true or false for its root cause.';
+    if (typeof item.star !== 'boolean') return name + ' needs true or false for its star.';
+    if (!Array.isArray(item.children)) return name + ' is missing its list of what sits under it.';
+    return null;
+  }
+
+  // seen maps each id to the name of the item that has it, and has no built-in names, so any id is safe in it.
+  function idProblem(item, name, seen) {
+    if (seen[item.id]) return seen[item.id] + ' and ' + name + ' both use the id ' + item.id + '.';
+    seen[item.id] = name;
+    return null;
+  }
+
+  function rootCauseKindProblem(item, name) {
+    return item.root_cause && item.kind !== 'obstacle'
+      ? name + ' is marked as a root cause, but only an obstacle can be one.'
+      : null;
+  }
+
+  function placedRulesProblem(item, name, place) {
+    if (place.depth === 0 && item.kind === 'solution') return name + ' sits at the top level, but only an obstacle can.';
+    if (item.star && item.kind !== 'solution') return name + ' has a star, but only a solution can be a pick.';
+    if (item.root_cause && hasChildOfKind(item, 'obstacle')) {
+      return name + " is a root cause, so it can't have an obstacle directly under it.";
+    }
+    if (item.kind === 'solution' && hasChildOfKind(item, 'solution')) return name + ' has a solution directly under it.';
+    return null;
+  }
+
+  // The first problem anywhere in the tree, named by the label the item would have.
+  function treeProblem(items, seen) {
+    return eachItem(items, function (item, place) {
+      var name = isObject(item) && item.kind === 'solution' ? solutionName(item) : 'Obstacle ' + place.label;
+      return fieldsProblem(item, name) || idProblem(item, name, seen) ||
+        rootCauseKindProblem(item, name) || placedRulesProblem(item, name, place);
+    });
+  }
+
+  function trayProblem(items, seen) {
     for (var i = 0; i < items.length; i += 1) {
       var item = items[i];
-      var label = prefix + labelPart(depth, i);
-      var name = 'Obstacle ' + label;
-      if (!isObject(item)) return name + ' is missing.';
-      if ('whys' in item || 'solution_at' in item) return name + ' uses the old map shape.';
-      if (!item.id || !isText(item.id)) return name + ' is missing its id.';
-      if (!isText(item.text)) return name + ' is missing its text.';
-      if (typeof item.root_cause !== 'boolean') return name + ' needs true or false for its root cause.';
-      if (!isTextList(item.solution_ids)) return name + ' is missing its list of solutions.';
-      if (!Array.isArray(item.children)) return name + ' is missing its list of sub-obstacles.';
-      if (item.root_cause && item.children.length) return name + " is a root cause, so it can't have sub-obstacles.";
-      if (seen[item.id]) return 'Obstacles ' + seen[item.id] + ' and ' + label + ' both use the id ' + item.id + '.';
-      seen[item.id] = label;
-      var problem = itemsProblem(item.children, depth + 1, label, seen);
+      var position = 'Tray item ' + (i + 1);
+      var name = isObject(item) && item.kind === 'solution' ? solutionName(item) : position;
+      var problem = fieldsProblem(item, name) || idProblem(item, name, seen) || rootCauseKindProblem(item, name);
       if (problem) return problem;
+      if (item.kind !== 'solution') return position + ' is an obstacle, but only a solution can be in the tray.';
+      if (item.children.length) return name + " is in the tray, so it can't have anything under it.";
+      if (item.star) return name + " is in the tray, so it can't be a pick.";
+    }
+    return null;
+  }
+
+  // A plan row can name a solution in the tree or the tray.
+  function planProblem(map) {
+    var solutions = Object.create(null);
+    function note(item) {
+      if (item.kind === 'solution') solutions[item.id] = true;
+    }
+    eachItem(map.obstacles, note);
+    map.unplaced.forEach(note);
+    function missing(name, id) {
+      return solutions[id] ? null : name + " names a solution that isn't on the map (" + id + ').';
+    }
+    for (var k = 0; k < map.key_actions.length; k += 1) {
+      var ids = map.key_actions[k].solution_ids;
+      for (var s = 0; s < ids.length; s += 1) {
+        var action = missing('Key action ' + (k + 1), ids[s]);
+        if (action) return action;
+      }
+    }
+    for (var e = 0; e < map.execute.length; e += 1) {
+      var row = missing('Execute row ' + (e + 1), map.execute[e].solution_id);
+      if (row) return row;
     }
     return null;
   }
@@ -851,13 +790,18 @@ header {
     if (typeof map.revision !== 'number') return 'The map has no revision number.';
     if (!isObject(map.goal)) return 'The goal is missing.';
     if (!isText(map.goal.text)) return 'The goal is missing its text.';
+    if ('solutions' in map) return 'The map uses the old map shape.';
     if (!Array.isArray(map.obstacles)) return 'The map is missing its list of obstacles.';
-    var treeProblem = itemsProblem(map.obstacles, 0, '', Object.create(null));
-    if (treeProblem) return treeProblem;
+    if (!Array.isArray(map.unplaced)) return 'The map is missing its list of unplaced solutions.';
+    var seen = Object.create(null);
+    var problem = treeProblem(map.obstacles, seen) || trayProblem(map.unplaced, seen);
+    if (problem) return problem;
     for (var r = 0; r < ROW_RULES.length; r += 1) {
-      var problem = rowsProblem(ROW_RULES[r], map[ROW_RULES[r].field]);
+      problem = rowsProblem(ROW_RULES[r], map[ROW_RULES[r].field]);
       if (problem) return problem;
     }
+    problem = planProblem(map);
+    if (problem) return problem;
     return isObject(map.feedback) ? null : 'The feedback section is missing.';
   }
 
@@ -1043,37 +987,31 @@ header {
   }
 
   globalThis.MapLogic = {
-    untiedSolutionIds: untiedSolutionIds,
-    repeatCount: repeatCount,
     itemLabels: itemLabels,
     findItem: findItem,
-    deleteSolutionFromObstacle: deleteSolutionFromObstacle,
+    canAdd: canAdd,
+    addItem: addItem,
+    canMove: canMove,
+    moveItem: moveItem,
+    moveTargets: moveTargets,
     deleteItem: deleteItem,
-    subItemCount: subItemCount,
+    deleteEffects: deleteEffects,
     nextId: nextId,
-    addObstacle: addObstacle,
-    addChild: addChild,
+    canBeRootCause: canBeRootCause,
     setRootCause: setRootCause,
+    canPick: canPick,
+    setStar: setStar,
+    hasPicks: hasPicks,
     setItemText: setItemText,
     setGoal: setGoal,
-    addSolution: addSolution,
-    setStar: setStar,
-    moveSolution: moveSolution,
-    deleteSolution: deleteSolution,
-    moveTargets: moveTargets,
-    moveTargetName: moveTargetName,
     drawnRows: drawnRows,
     wideLayout: wideLayout,
-    narrowPlaces: narrowPlaces,
-    narrowLayout: narrowLayout,
     panelRows: panelRows,
     itemExists: itemExists,
     shouldWarnOnClose: shouldWarnOnClose,
     moveCopyMessage: moveCopyMessage,
     copyMessage: copyMessage,
     mapProblem: mapProblem,
-    solutionsOn: solutionsOn,
-    sideOf: sideOf,
     fitScale: fitScale,
     stepScale: stepScale,
     fileName: fileName,
@@ -1162,10 +1100,6 @@ header {
     el[id] = document.getElementById(id);
   });
 
-  function isNarrow() {
-    return window.matchMedia('(max-width: 759px)').matches;
-  }
-
   function make(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -1174,11 +1108,7 @@ header {
   }
 
   function refKey(ref) {
-    return [ref.kind, ref.oid || '', ref.sid || ''].join('|');
-  }
-
-  function solutionById(id) {
-    return map.solutions.filter(function (s) { return s.id === id; })[0];
+    return [ref.kind, ref.id || ''].join('|');
   }
 
   /* Boxes */
@@ -1203,26 +1133,16 @@ header {
     return box;
   }
 
-  function makeSolution(solution, obstacleId) {
-    var ref = { kind: 'solution', sid: solution.id };
-    if (obstacleId) ref.oid = obstacleId;
-    var box = makeItem(ref, 'solution');
-    if (solution.star) box.appendChild(make('span', 'star', '★'));
-    fillText(box, solution.text, 'New solution');
-    var count = L.repeatCount(map, solution.id);
-    if (count > 1) box.appendChild(make('span', 'repeat', '×' + count));
-    return box;
-  }
-
-  function makeMissing(id, obstacleId) {
-    var box = makeItem({ kind: 'missing', oid: obstacleId, sid: id }, 'missing');
-    box.textContent = 'This solution is missing (' + id + '). Delete it, or tell Claude.';
+  function makeSolution(item) {
+    var box = makeItem({ kind: 'solution', id: item.id }, 'solution');
+    if (item.star) box.appendChild(make('span', 'star', '★'));
+    fillText(box, item.text, 'New solution');
     return box;
   }
 
   function makeObstacle(row) {
     var cls = (row.depth === 0 ? 'obstacle' : 'sub') + (row.item.root_cause ? ' root' : '');
-    var box = makeItem({ kind: 'obstacle', oid: row.item.id }, cls);
+    var box = makeItem({ kind: 'obstacle', id: row.item.id }, cls);
     box.appendChild(make('span', 'label', row.label));
     fillText(box, row.item.text, row.depth === 0 ? 'New obstacle' : 'New sub-obstacle');
     return box;
@@ -1231,10 +1151,7 @@ header {
   // Adds every box under the goal to the canvas, so each can be measured. The list keeps reading order.
   function makeBoxes() {
     return L.drawnRows(map).map(function (row) {
-      var box;
-      if (row.kind === 'item') box = makeObstacle(row);
-      else if (row.solution.missing) box = makeMissing(row.solution.id, row.item.id);
-      else box = makeSolution(row.solution, row.item.id);
+      var box = row.kind === 'solution' ? makeSolution(row.item) : makeObstacle(row);
       el.canvas.appendChild(box);
       return { key: row.key, box: box };
     });
@@ -1253,8 +1170,8 @@ header {
     place(goal, layout.goal.x, layout.goal.y);
   }
 
-  /* Layout: the code that works out positions is in the logic block, where tests can check it. These two
-     only make the boxes, measure them and put them where it says. */
+  /* Layout: the code that works out positions is in the logic block, where tests can check it. This only
+     makes the boxes, measures them and puts them where it says. */
 
   function layOutWide() {
     var goal = makeGoal();
@@ -1276,25 +1193,6 @@ header {
       stackGap: STACK_GAP,
       pad: PAD
     });
-    placeAll(made, goal, layout);
-    return layout;
-  }
-
-  // On a phone the map reads top to bottom, indented by depth. Width comes first, because it sets each box's height.
-  function layOutNarrow() {
-    var places = L.narrowPlaces(map, el.map.clientWidth);
-    var goal = makeGoal();
-    goal.style.width = places.goal.width + 'px';
-    el.canvas.appendChild(goal);
-    var made = makeBoxes();
-    var heights = {};
-    made.forEach(function (m, i) {
-      m.box.style.width = places.rows[i].width + 'px';
-    });
-    made.forEach(function (m) {
-      heights[m.key] = m.box.offsetHeight;
-    });
-    var layout = L.narrowLayout(places, heights, goal.offsetHeight);
     placeAll(made, goal, layout);
     return layout;
   }
@@ -1321,13 +1219,12 @@ header {
 
   function drawMap() {
     el.canvas.textContent = '';
-    var narrow = isNarrow();
-    var layout = narrow ? layOutNarrow() : layOutWide();
+    var layout = layOutWide();
     var svg = '<svg id="lines" width="' + layout.width + '" height="' + layout.height + '" aria-hidden="true">' +
       layout.lines.map(function (line) { return '<path d="' + line.d + '"></path>'; }).join('') + '</svg>';
     el.canvas.insertAdjacentHTML('afterbegin', svg);
 
-    scale = narrow ? 1 : scaleFor(layout);
+    scale = scaleFor(layout);
     el.canvas.style.width = layout.width + 'px';
     el.canvas.style.height = layout.height + 'px';
     el.canvas.style.transform = scale === 1 ? '' : 'scale(' + scale + ')';
@@ -1336,7 +1233,6 @@ header {
 
     if (!drawnOnce) {
       drawnOnce = true;
-      el.map.scrollLeft = (layout.width * scale - el.map.clientWidth) / 2;
       el.map.scrollTop = (layout.height * scale - el.map.clientHeight) / 2;
     }
   }
@@ -1344,16 +1240,16 @@ header {
   /* Tray and side panel */
 
   function drawTray() {
-    var ids = L.untiedSolutionIds(map);
-    el.tray.hidden = ids.length === 0;
+    var items = map.unplaced;
+    el.tray.hidden = items.length === 0;
     el.tray.textContent = '';
-    if (!ids.length) return;
-    var count = ids.length === 1
+    if (!items.length) return;
+    var count = items.length === 1
       ? '1 solution is not tied to an obstacle yet.'
-      : ids.length + ' solutions are not tied to an obstacle yet.';
+      : items.length + ' solutions are not tied to an obstacle yet.';
     el.tray.appendChild(make('div', '', count)).id = 'tray-count';
-    ids.forEach(function (id) {
-      el.tray.appendChild(makeSolution(solutionById(id), null));
+    items.forEach(function (item) {
+      el.tray.appendChild(makeSolution(item));
     });
   }
 
@@ -1377,8 +1273,7 @@ header {
   }
 
   function drawPanel() {
-    var narrow = isNarrow();
-    el.panel.hidden = !(panelOpen || narrow);
+    el.panel.hidden = !panelOpen;
     el['toggle-plan'].textContent = panelOpen ? 'Hide plan' : 'Show plan';
     el.panel.textContent = '';
     var rows = L.panelRows(map);
@@ -1469,7 +1364,7 @@ header {
   function render() {
     el.person.textContent = map.person;
     el['strategy-note'].hidden = map.key_actions.length > 0;
-    el['picks-key'].hidden = !map.solutions.some(function (s) { return s.star; });
+    el['picks-key'].hidden = !L.hasPicks(map);
     drawMap();
     drawTray();
     drawPanel();
@@ -1485,11 +1380,6 @@ header {
 
   /* Editing */
 
-  function itemText(ref) {
-    if (ref.kind === 'solution') return solutionById(ref.sid).text;
-    return L.findItem(map, ref.oid).text;
-  }
-
   function labeled(labelText, control) {
     var label = make('label', '', labelText);
     label.appendChild(control);
@@ -1503,13 +1393,6 @@ header {
     return b;
   }
 
-  function removeRef(ref, isNew) {
-    if (ref.kind === 'obstacle') return L.deleteItem(map, ref.oid);
-    if (ref.kind === 'missing') return L.deleteSolutionFromObstacle(map, ref.oid, ref.sid);
-    if (ref.oid && !isNew) return L.deleteSolutionFromObstacle(map, ref.oid, ref.sid);
-    return L.deleteSolution(map, ref.sid);
-  }
-
   function closeEditor() {
     editing = null;
     el.editor.hidden = true;
@@ -1519,11 +1402,6 @@ header {
   function commitEdit() {
     if (!editing) return;
     var e = editing;
-    if (e.ref.kind === 'missing') {
-      closeEditor();
-      render();
-      return;
-    }
     if (e.ref.kind === 'goal') {
       var goal = { text: el.editor.querySelector('textarea').value.trim() };
       closeEditor();
@@ -1532,15 +1410,15 @@ header {
     }
     var text = el.editor.querySelector('textarea').value.trim();
     closeEditor();
-    if (text) setMap(L.setItemText(map, e.ref, text));
-    else if (e.isNew) setMap(removeRef(e.ref, true));
+    if (text) setMap(L.setItemText(map, e.ref.id, text));
+    else if (e.isNew) setMap(L.deleteItem(map, e.ref.id));
     else render();
   }
 
   function cancelEdit() {
     var e = editing;
     closeEditor();
-    if (e.isNew) setMap(removeRef(e.ref, true));
+    if (e.isNew) setMap(L.deleteItem(map, e.ref.id));
     else render();
   }
 
@@ -1559,30 +1437,30 @@ header {
 
   function addChildTo(ref) {
     var id = L.nextId(map, 'o');
-    map = L.addChild(map, ref.oid, id, '');
-    openEditor({ kind: 'obstacle', oid: id }, true);
+    map = L.addItem(map, ref.id, id, 'obstacle', '');
+    openEditor({ kind: 'obstacle', id: id }, true);
   }
 
   function addSolutionTo(ref) {
     var id = L.nextId(map, 's');
-    map = L.addSolution(map, ref.oid, id, '');
-    openEditor({ kind: 'solution', oid: ref.oid, sid: id }, true);
+    map = L.addItem(map, ref.id, id, 'solution', '');
+    openEditor({ kind: 'solution', id: id }, true);
   }
 
   function shortText(text) {
     return text.length > 60 ? text.slice(0, 60) + '...' : text;
   }
 
-  // Every item in the tree, by label and text, so a solution can go on any of them.
+  // Every place this solution can go, in reading order.
   function moveControl(ref) {
-    var targets = L.moveTargets(map, ref.sid);
+    var targets = L.moveTargets(map, ref.id);
     if (!targets.length) return null;
     var select = make('select');
     var choose = make('option', '', 'Choose where it goes');
     choose.value = '';
     select.appendChild(choose);
     targets.forEach(function (target, i) {
-      var option = make('option', '', shortText(L.moveTargetName(target)));
+      var option = make('option', '', shortText(target.name));
       option.value = String(i);
       select.appendChild(option);
     });
@@ -1590,7 +1468,7 @@ header {
       if (!select.value) return;
       var target = targets[Number(select.value)];
       afterCommit(function (r) {
-        setMap(L.moveSolution(map, r.oid || null, target.id, r.sid));
+        setMap(L.moveItem(map, r.id, target.id));
       })();
     });
     return labeled('Move to', select);
@@ -1600,9 +1478,9 @@ header {
   function picksControl(ref) {
     var box = make('input');
     box.type = 'checkbox';
-    box.checked = Boolean(solutionById(ref.sid).star);
+    box.checked = L.findItem(map, ref.id).star;
     box.addEventListener('change', function () {
-      setMap(L.setStar(map, ref.sid, box.checked));
+      setMap(L.setStar(map, ref.id, box.checked));
     });
     var label = make('label', 'check');
     label.appendChild(box);
@@ -1611,8 +1489,7 @@ header {
   }
 
   function deleteLabel(ref) {
-    if ((ref.kind === 'solution' && ref.oid) || ref.kind === 'missing') return 'Delete from this obstacle';
-    var count = ref.kind === 'obstacle' ? L.subItemCount(map, ref.oid) : 0;
+    var count = L.deleteEffects(map, ref.id).subItems;
     if (count === 1) return 'Delete this and its sub-item';
     return count ? 'Delete this and its ' + count + ' sub-items' : 'Delete';
   }
@@ -1620,20 +1497,22 @@ header {
   function editorActions(ref) {
     var actions = make('div', 'actions');
     function add(text, className, onClick) { actions.appendChild(actionButton(text, className, onClick)); }
-    var item = ref.kind === 'obstacle' ? L.findItem(map, ref.oid) : null;
+    var item = ref.kind === 'goal' ? null : L.findItem(map, ref.id);
 
-    if (item && !item.root_cause) add('Add a sub-obstacle', '', afterCommit(addChildTo));
-    if (item && !item.children.length) {
+    if (item && L.canAdd(map, item.id, 'obstacle')) {
+      add(item.kind === 'solution' ? 'Add an obstacle' : 'Add a sub-obstacle', '', afterCommit(addChildTo));
+    }
+    if (item && L.canBeRootCause(map, item.id)) {
       add(item.root_cause ? 'Unmark root cause' : 'Mark as root cause', '', afterCommit(function (r) {
-        setMap(L.setRootCause(map, r.oid, !item.root_cause));
+        setMap(L.setRootCause(map, r.id, !item.root_cause));
       }));
     }
-    if (item) add('Add a solution', '', afterCommit(addSolutionTo));
-    if (ref.kind !== 'goal') {
+    if (item && L.canAdd(map, item.id, 'solution')) add('Add a solution', '', afterCommit(addSolutionTo));
+    if (item) {
       add(deleteLabel(ref), 'delete', function () {
         var e = editing;
         closeEditor();
-        setMap(removeRef(e.ref, e.isNew));
+        setMap(L.deleteItem(map, e.ref.id));
       });
     }
     add('Done', 'done', commitEdit);
@@ -1642,8 +1521,8 @@ header {
 
   function itemHeading(ref) {
     if (ref.kind === 'solution') return 'Solution';
-    var item = L.findItem(map, ref.oid);
-    return (item.root_cause ? 'Root cause ' : 'Obstacle ') + L.itemLabels(map)[ref.oid];
+    var item = L.findItem(map, ref.id);
+    return (item.root_cause ? 'Root cause ' : 'Obstacle ') + L.itemLabels(map)[ref.id];
   }
 
   function openEditor(ref, isNew) {
@@ -1657,34 +1536,25 @@ header {
       text.dataset.field = 'text';
       first = text;
       el.editor.appendChild(labeled('Goal', text));
-    } else if (ref.kind === 'missing') {
-      el.editor.appendChild(make('p', 'note', 'This map points to a solution that is not in the file (' + ref.sid + ').'));
     } else {
       first = make('textarea');
-      first.value = itemText(ref);
+      first.value = L.findItem(map, ref.id).text;
       el.editor.appendChild(labeled(itemHeading(ref), first));
       if (ref.kind === 'solution') {
-        var count = L.repeatCount(map, ref.sid);
-        if (count > 1) {
-          el.editor.appendChild(make('p', 'note',
-            'This solution is on ' + count + ' obstacles. Editing the text changes all of them.'));
-        }
         var move = moveControl(ref);
         if (move) el.editor.appendChild(move);
-        el.editor.appendChild(picksControl(ref));
+        if (L.canPick(map, ref.id)) el.editor.appendChild(picksControl(ref));
       }
     }
     el.editor.appendChild(editorActions(ref));
     el.editor.hidden = false;
     render();
-    if (first) {
-      first.focus();
-      first.setSelectionRange(first.value.length, first.value.length);
-    }
+    first.focus();
+    first.setSelectionRange(first.value.length, first.value.length);
   }
 
   function positionEditor() {
-    if (!editing || isNarrow()) return;
+    if (!editing) return;
     var box = el.canvas.querySelector('[data-key="' + refKey(editing.ref) + '"]') ||
       el.tray.querySelector('[data-key="' + refKey(editing.ref) + '"]');
     if (!box) return;
@@ -1964,8 +1834,8 @@ header {
 
   el['add-obstacle'].addEventListener('click', function () {
     var id = L.nextId(map, 'o');
-    map = L.addObstacle(map, id, '');
-    openEditor({ kind: 'obstacle', oid: id }, true);
+    map = L.addItem(map, 'goal', id, 'obstacle', '');
+    openEditor({ kind: 'obstacle', id: id }, true);
   });
 
   el['toggle-plan'].addEventListener('click', function () {

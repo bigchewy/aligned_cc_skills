@@ -12,13 +12,14 @@ const SLOT = /(<script id="map-data" type="application\/json">)([\s\S]*?)(<\/scr
 
 function mapHtml(rev, goal, id) {
   const data = { map_id: id || 'm1', revision: rev, person: 'Pat', goal: { text: goal || 'g' },
-    obstacles: [], solutions: [], key_actions: [], execute: [], feedback: { number: '', check_on: '', redraw_if: '' }, baseline: {} };
+    obstacles: [], unplaced: [], key_actions: [], execute: [], feedback: { number: '', check_on: '', redraw_if: '' }, baseline: {} };
   return HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify(data) + c);
 }
 const parse = (html) => JSON.parse(SLOT.exec(html)[2]);
-const node = (id, text, children, solutions, root) => ({ id, text, root_cause: Boolean(root), solution_ids: solutions || [], children: children || [] });
-function treeHtml(obstacles, solutions, more) {
-  const data = Object.assign(parse(mapHtml(1)), { obstacles, solutions: solutions || [] }, more || {});
+const node = (id, text, children, root) => ({ id, kind: 'obstacle', text, root_cause: Boolean(root), star: false, children: children || [] });
+const sol = (id, text, children, star) => ({ id, kind: 'solution', text, root_cause: false, star: Boolean(star), children: children || [] });
+function treeHtml(obstacles, unplaced, more) {
+  const data = Object.assign(parse(mapHtml(1)), { obstacles, unplaced: unplaced || [] }, more || {});
   return HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify(data) + c);
 }
 function findIn(items, id) {
@@ -101,7 +102,6 @@ function page(opts) {
   const sandbox = { document, console, setTimeout, Promise, JSON, Math, RegExp, Object, Array, Number, String, Boolean, decodeURIComponent, Date,
     innerWidth: 1200, innerHeight: 800,
     location: { pathname: opts.path || '/a/b/m-map.html', reload() { sandbox.reloaded = (sandbox.reloaded || 0) + 1; } },
-    matchMedia: () => ({ matches: Boolean(opts.narrow) }),
     getComputedStyle: () => ({ paddingTop: '0', paddingBottom: '0' }),
     addEventListener(t, f) { (winListeners[t] = winListeners[t] || []).push(f); },
     URL: { createObjectURL() { return 'x'; }, revokeObjectURL() {} },
@@ -134,7 +134,8 @@ function page(opts) {
     canvasText() { return document.getElementById('canvas').textContent; },
     trayText() { const t = document.getElementById('tray'); return t.hidden ? '' : t.textContent; },
     panelText() { return document.getElementById('panel').textContent; },
-    openItem(id) { api.openRef({ kind: 'obstacle', oid: id }); },
+    openItem(id) { api.openRef({ kind: 'obstacle', id }); },
+    openSolution(id) { api.openRef({ kind: 'solution', id }); },
     press(name) { const b = document.getElementById('editor').button(name); assert.ok(b, 'no button: ' + name); b.listeners.click[0](); },
     pressDone() { api.press('Done'); },
     boxes() { return document.getElementById('canvas').kids.filter((k) => k.dataset.key).map((k) => ({
@@ -342,41 +343,45 @@ const flows = {
     assert.equal(f.writes, 1); assert.equal(parse(f.html).obstacles[0].text, 'blocker');
   },
   async 'the picks checkbox shows in the solution editor, ticked for a star'() {
-    const html = HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify({ map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g' },
-      obstacles: [], solutions: [{ id: 's1', text: 'sol', star: true }], key_actions: [], execute: [], feedback: {}, baseline: {} }) + c);
+    const html = treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], true)])]);
     const p = page({ html }); await settle();
-    p.openRef({ kind: 'solution', sid: 's1' });
-    const ed = p.sandbox.document.getElementById('editor');
+    p.openSolution('s1');
+    const ed = p.editorEl();
     assert.ok(ed.textContent.includes('This is one of my picks'));
     assert.ok(!ed.textContent.includes('tell Claude.'));
     assert.equal(ed.querySelector('input').checked, true);
   },
+  async 'a tray solution offers no pick and no obstacle until it is attached'() {
+    const html = treeHtml([node('o1', 'ob')], [sol('s1', 'tray')]);
+    const p = page({ html }); await settle();
+    p.openSolution('s1');
+    const ed = p.editorEl();
+    assert.ok(!ed.textContent.includes('This is one of my picks'));
+    assert.ok(!ed.button('Add an obstacle'));
+    assert.ok(ed.button('Delete'));
+  },
   async 'star key shows only with stars'() {
-    const sols = (star) => [{ id: 's1', text: 'sol', star }];
-    const data = (star) => ({ map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g' },
-      obstacles: [node('o1', 'ob', [], ['s1'])], solutions: sols(star), key_actions: [], execute: [], feedback: {}, baseline: {} });
-    const none = page({ html: withData(HTML, data(false)) }); await settle();
+    const none = page({ html: treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], false)])]) }); await settle();
     assert.equal(none.sandbox.document.getElementById('picks-key').hidden, true);
-    const some = page({ html: withData(HTML, data(true)) }); await settle();
+    const some = page({ html: treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], true)])]) }); await settle();
     assert.equal(some.sandbox.document.getElementById('picks-key').hidden, false);
   },
   async 'ticking the picks box saves the star and shows the key'() {
-    const data = { map_id: 'm1', revision: 1, person: 'P', goal: { text: 'g' }, obstacles: [node('o1', 'ob', [], ['s1'])],
-      solutions: [{ id: 's1', text: 'sol', star: false }], key_actions: [], execute: [], feedback: {}, baseline: {} };
-    const f = fakeHandle(withData(HTML, data)); const p = page({ picker: f, html: withData(HTML, data) }); await settle();
+    const html = treeHtml([node('o1', 'ob', [sol('s1', 'sol')])]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     const key = p.sandbox.document.getElementById('picks-key');
     assert.equal(key.hidden, true);
-    p.openRef({ kind: 'solution', oid: 'o1', sid: 's1' });
+    p.openSolution('s1');
     const box = p.editorEl().querySelector('input');
     assert.equal(box.checked, false);
     box.checked = true; box.listeners.change[0](); await settle();
     assert.equal(f.writes, 1);
-    assert.equal(parse(f.html).solutions[0].star, true);
+    assert.equal(findIn(parse(f.html).obstacles, 's1').star, true);
     assert.equal(key.hidden, false);
     assert.equal(p.status(), 'All changes saved');
     box.checked = false; box.listeners.change[0](); await settle();
-    assert.equal(parse(f.html).solutions[0].star, false);
+    assert.equal(findIn(parse(f.html).obstacles, 's1').star, false);
     assert.equal(key.hidden, true);
   },
 
@@ -584,7 +589,7 @@ const flows = {
     assert.ok(p.canvasText().includes('why one'));
     const saved = parse(f.html).obstacles[0];
     assert.equal(saved.children.length, 1); assert.equal(saved.children[0].text, 'why one');
-    assert.deepEqual(Object.keys(saved.children[0]).sort(), ['children', 'id', 'root_cause', 'solution_ids', 'text']);
+    assert.deepEqual(Object.keys(saved.children[0]).sort(), ['children', 'id', 'kind', 'root_cause', 'star', 'text']);
     assert.ok(!JSON.stringify(parse(f.html).obstacles).includes('1A'));
     p.openItem(saved.children[0].id); p.press('Add a sub-obstacle'); await settle();
     p.typeAndDone('deeper'); await settle();
@@ -597,7 +602,7 @@ const flows = {
     p.openItem('o7'); p.press('Add a sub-obstacle'); p.typeAndDone('deep');
     p.addObstacle(); p.typeAndDone('top');
     const canvas = p.sandbox.document.getElementById('canvas').kids.map((k) => k.dataset.ref).filter(Boolean).map(JSON.parse);
-    const ids = canvas.filter((r) => r.kind === 'obstacle').map((r) => r.oid);
+    const ids = canvas.filter((r) => r.kind === 'obstacle').map((r) => r.id);
     assert.deepEqual(ids.slice().sort(), ['o1', 'o10', 'o11', 'o7']);
   },
   async 'a blank new sub-item stays out of the file until it has text'() {
@@ -633,25 +638,77 @@ const flows = {
     p.typeAndDone('kid'); await settle();
     assert.equal(parse(f.html).goal.text, 'two'); assert.equal(parse(f.html).obstacles[0].children[0].text, 'kid');
   },
-  async 'delete a branch: the whole branch goes, lone solutions go to the tray, later siblings renumber'() {
-    const sols = [{ id: 's1', text: 'lone' }, { id: 's2', text: 'shared' }];
+  async 'delete a branch: the whole branch goes, its solutions with it, later siblings renumber'() {
     const html = treeHtml([
       node('o1', 'first', [
-        node('o2', 'kid a', [node('o3', 'grandkid', [], ['s1', 's2'])]),
+        node('o2', 'kid a', [node('o3', 'grandkid', [sol('s1', 'gone with it')])]),
         node('o4', 'kid b')
       ]),
-      node('o5', 'other', [], ['s2'])
-    ], sols);
+      node('o5', 'other', [sol('s2', 'stays')])
+    ]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openItem('o2'); p.press('Delete this and its sub-item'); await settle();
+    p.openItem('o2'); p.press('Delete this and its 2 sub-items'); await settle();
     const saved = parse(f.html);
-    assert.equal(findIn(saved.obstacles, 'o2'), null); assert.equal(findIn(saved.obstacles, 'o3'), null);
-    assert.equal(saved.solutions.length, 2);
-    assert.ok(p.trayText().includes('lone')); assert.ok(!p.trayText().includes('shared'));
-    assert.ok(p.trayText().includes('1 solution is not tied'));
+    assert.equal(findIn(saved.obstacles, 'o2'), null); assert.equal(findIn(saved.obstacles, 's1'), null);
+    assert.deepEqual(saved.unplaced, []); assert.equal(p.trayText(), '');
+    assert.ok(findIn(saved.obstacles, 's2'));
     assert.ok(p.canvasText().includes('1A'), p.canvasText()); assert.ok(p.canvasText().includes('kid b'));
     assert.ok(!p.canvasText().includes('1B'));
+  },
+  async 'delete an item and see its plan row go, while the key action stays'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other fix')])], [], {
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }],
+      execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' },
+        { solution_id: 's2', first_move: 'the other move', owner: 'o', others_decide: '' }]
+    });
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
+    assert.ok(p.panelText().includes('the first move'));
+    p.openSolution('s1'); p.press('Delete'); await settle();
+    assert.ok(!p.panelText().includes('the first move'));
+    assert.ok(p.panelText().includes('the other move'));
+    assert.ok(p.panelText().includes('the action'));
+    const saved = parse(f.html);
+    assert.deepEqual(saved.execute.map((e) => e.solution_id), ['s2']);
+    assert.deepEqual(saved.key_actions[0].solution_ids, ['s2']);
+  },
+  async 'add an obstacle under a solution and see its label continue the numbering'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid a'), node('o3', 'kid b', [node('o4', 'child'), sol('s1', 'the fix')])])]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.openSolution('s1'); p.press('Add an obstacle'); await settle();
+    p.typeAndDone('in the way'); await settle();
+    assert.ok(p.canvasText().includes('1B1'), p.canvasText());
+    assert.ok(p.canvasText().includes('1B2'), p.canvasText());
+    const under = findIn(parse(f.html).obstacles, 's1').children[0];
+    assert.equal(under.text, 'in the way'); assert.equal(under.kind, 'obstacle');
+  },
+  async 'attach a tray solution through the form'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])], [sol('s1', 'from the tray')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    assert.ok(p.trayText().includes('from the tray'));
+    p.openSolution('s1');
+    const select = p.editorEl().querySelector('select');
+    assert.deepEqual(select.kids.map((k) => k.textContent), ['Choose where it goes', '1 first', '1A kid']);
+    select.value = '1'; select.listeners.change[0](); await settle();
+    const saved = parse(f.html);
+    assert.deepEqual(saved.unplaced, []);
+    assert.deepEqual(findIn(saved.obstacles, 'o2').children.map((c) => c.id), ['s1']);
+    assert.equal(p.trayText(), '');
+    assert.ok(p.canvasText().includes('from the tray'));
+  },
+  async 'a blank new solution stays out of the file, and closing it empty leaves no trace'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.openItem('o1'); p.press('Add a solution'); await settle();
+    assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
+    p.typeAndDone(''); await settle();
+    assert.equal(f.writes, 0); assert.equal(p.warnsOnClose(), false);
+    assert.deepEqual(parse(f.html).obstacles[0].children, []);
   },
   async 'the delete control counts everything that goes with the item'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'a', [node('o3', 'b')]), node('o4', 'c')])]);
@@ -661,28 +718,14 @@ const flows = {
     p.pressDone(); p.openItem('o4');
     assert.ok(p.editorEl().button('Delete'));
   },
-  async 'a solution on several items shows its count, and removing one place leaves the others'() {
-    const sols = [{ id: 's1', text: 'shared' }];
-    const html = treeHtml([
-      node('o1', 'first', [node('o2', 'kid', [], ['s1'])], ['s1']),
-      node('o3', 'other', [node('o4', 'kid two', [], ['s1'])])
-    ], sols);
-    const p = page({ html }); await settle();
-    assert.ok(p.canvasText().includes('×3'), p.canvasText());
-    p.openRef({ kind: 'solution', oid: 'o2', sid: 's1' });
-    assert.ok(p.editorEl().textContent.includes('This solution is on 3 obstacles.'));
-    p.press('Delete from this obstacle');
-    assert.ok(p.canvasText().includes('×2'));
-    assert.ok(!p.canvasText().includes('×3'));
-    assert.equal(p.trayText(), '');
-  },
-  async 'a root cause can be marked and unmarked, and offers no sub-obstacle'() {
+  async 'a root cause can be marked and unmarked, and offers only a solution'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     p.openItem('o1');
     assert.ok(!p.editorEl().button('Mark as root cause'));
     assert.ok(p.editorEl().button('Add a sub-obstacle'));
+    assert.ok(p.editorEl().button('Add a solution'));
     p.pressDone();
     p.openItem('o2'); p.press('Mark as root cause'); await settle();
     assert.equal(parse(f.html).obstacles[0].children[0].root_cause, true);
@@ -691,38 +734,49 @@ const flows = {
     p.press('Unmark root cause'); await settle();
     assert.equal(parse(f.html).obstacles[0].children[0].root_cause, false);
   },
-  async 'Move to lists every item by label and text, and moving works at depth'() {
-    const sols = [{ id: 's1', text: 'sol' }];
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [], ['s1']), node('o3', 'kid two')]), node('o4', 'other')], sols);
+  async 'an obstacle with only a solution under it can still be a root cause'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix', [node('o2', 'in the way')])])]);
+    const p = page({ html }); await settle();
+    p.openItem('o1');
+    assert.ok(p.editorEl().button('Mark as root cause'));
+    p.pressDone();
+    p.openItem('o2');
+    assert.ok(p.editorEl().button('Mark as root cause'));
+  },
+  async 'a solution offers an obstacle and no solution, and Move to lists where it can go'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'sol')]), node('o3', 'kid two')]), node('o4', 'other')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openRef({ kind: 'solution', oid: 'o2', sid: 's1' });
+    p.openSolution('s1');
+    assert.ok(p.editorEl().button('Add an obstacle')); assert.ok(!p.editorEl().button('Add a solution'));
+    assert.ok(!p.editorEl().textContent.includes('obstacles. Editing'));
     const select = p.editorEl().querySelector('select');
     const names = select.kids.map((k) => k.textContent);
     assert.deepEqual(names, ['Choose where it goes', '1 first', '1B kid two', '2 other']);
     select.value = String(1);
     select.listeners.change[0](); await settle();
     const saved = parse(f.html);
-    assert.deepEqual(findIn(saved.obstacles, 'o2').solution_ids, []);
-    assert.deepEqual(findIn(saved.obstacles, 'o3').solution_ids, ['s1']);
+    assert.deepEqual(findIn(saved.obstacles, 'o2').children, []);
+    assert.deepEqual(findIn(saved.obstacles, 'o3').children.map((c) => c.id), ['s1']);
   },
   async 'the plan panel names items by label'() {
-    const sols = [{ id: 's1', text: 'sol', star: true }];
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [], ['s1'])])], sols,
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'sol', [], true)])])], [],
       { key_actions: [{ text: 'act', risk: 'low', solution_ids: ['s1'] }],
         execute: [{ solution_id: 's1', first_move: 'm', owner: 'o', others_decide: '' }] });
     const p = page({ html }); await settle();
     assert.ok(p.panelText().includes('sol (1A)'), p.panelText());
   },
-  async 'the wide map draws every box apart from every other, with the goal in the middle'() {
+  async 'the wide map draws every box apart from every other, right of the goal'() {
     const html = treeHtml([
-      node('a1', 'x', [node('a2', 'y', [node('a3', 'z', [node('a4', 'w', [], ['s1'])], ['s1'])], ['s1']), node('a5', 'v', [], ['s1'])]),
+      node('a1', 'x', [node('a2', 'y', [node('a3', 'z', [node('a4', 'w', [sol('s1', 'sol')]), sol('s2', 'sol')]), sol('s3', 'sol')]), node('a5', 'v', [sol('s4', 'sol', [node('a6', 'u')])])]),
       node('b1', 'x', [node('b2', 'y'), node('b3', 'z'), node('b4', 'w'), node('b5', 'v')]),
-      node('c1', 'x', [], ['s1'])
-    ], [{ id: 's1', text: 'sol' }]);
+      node('c1', 'x', [sol('s5', 'sol')])
+    ]);
     const p = page({ html }); await settle();
     const boxes = p.boxes();
-    assert.equal(boxes.length, 17);
+    assert.equal(boxes.length, 18);
+    const goal = boxes.find((b) => b.key === 'goal|');
+    boxes.filter((b) => b !== goal).forEach((b) => assert.ok(b.x > goal.x + goal.w, b.key));
     for (let i = 0; i < boxes.length; i++) {
       for (let j = i + 1; j < boxes.length; j++) {
         const a = boxes[i]; const b = boxes[j];
@@ -731,25 +785,27 @@ const flows = {
       }
     }
   },
-  async 'the phone map draws one indented column with labels and no overlaps'() {
-    const html = treeHtml([
-      node('a1', 'x', [node('a2', 'y', [node('a3', 'z', [node('a4', 'w', [node('a5', 'u', [node('a6', 't', [node('a7', 's', [], ['s1'])])])])])], ['s1'])]),
-      node('b1', 'x')
-    ], [{ id: 's1', text: 'sol' }]);
-    const p = page({ html, narrow: true }); await settle();
-    const boxes = p.boxes().slice().sort((a, b) => a.y - b.y);
-    assert.equal(boxes.length, 11);
-    for (let i = 1; i < boxes.length; i++) assert.ok(boxes[i - 1].y + boxes[i - 1].h <= boxes[i].y, boxes[i].key);
-    boxes.forEach((b) => assert.ok(b.x + b.w <= 1000, b.key));
-    const text = p.canvasText();
-    ['1A', '1A1', '1A1A', '1A1A1', '1A1A1A', '1A1A1A1', '2'].forEach((label) => assert.ok(text.includes(label), label));
-  },
   async 'a map in the old shape shows the message and draws nothing'() {
     const html = treeHtml([{ id: 'o1', text: 'old', whys: ['w'], root_cause: 'r', solution_ids: [] }]);
     const p = page({ html }); await settle();
     const doc = p.sandbox.document;
     assert.equal(doc.getElementById('data-problem').hidden, false);
     assert.ok(doc.getElementById('data-problem-reason').textContent.startsWith('Obstacle 1 '));
+    assert.equal(doc.getElementById('canvas').kids.length, 0);
+  },
+  async 'a map with the old solutions list shows the message and draws nothing'() {
+    const html = treeHtml([], [], { solutions: [] });
+    const p = page({ html }); await settle();
+    const doc = p.sandbox.document;
+    assert.equal(doc.getElementById('data-problem').hidden, false);
+    assert.equal(doc.getElementById('data-problem-reason').textContent, 'The map uses the old map shape.');
+    assert.equal(doc.getElementById('canvas').kids.length, 0);
+  },
+  async 'a plan row naming a missing solution shows the message and draws nothing'() {
+    const html = treeHtml([], [], { execute: [{ solution_id: 'gone', first_move: 'm', owner: '', others_decide: '' }] });
+    const p = page({ html }); await settle();
+    const doc = p.sandbox.document;
+    assert.ok(doc.getElementById('data-problem-reason').textContent.includes('gone'));
     assert.equal(doc.getElementById('canvas').kids.length, 0);
   },
 

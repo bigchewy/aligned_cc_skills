@@ -101,9 +101,13 @@ def call(fn, *args, handle=None):
     return json.loads(proc.stdout)
 
 
-def item(id, text="", children=(), solutions=(), root=False):
-    return {"id": id, "text": text, "root_cause": root,
-            "solution_ids": list(solutions), "children": list(children)}
+def item(id, text="", children=(), kind="obstacle", root=False, star=False):
+    return {"id": id, "kind": kind, "text": text, "root_cause": root, "star": star,
+            "children": list(children)}
+
+
+def sol(id, text="", children=(), star=False):
+    return item(id, text, children, kind="solution", star=star)
 
 
 def make_map(**over):
@@ -113,14 +117,10 @@ def make_map(**over):
         "person": "Pat",
         "goal": {"text": "g"},
         "obstacles": [
-            item("o1", "a", [item("o3", "w1", [item("o4", "w2")])], ["s1", "s2"]),
-            item("o2", "b", solutions=["s2"]),
+            item("o1", "a", [item("o3", "w1", [item("o4", "w2")]), sol("s1", "one"), sol("s2", "two", star=True)]),
+            item("o2", "b", [sol("s4", "four")]),
         ],
-        "solutions": [
-            {"id": "s1", "text": "one", "star": False},
-            {"id": "s2", "text": "two", "star": True},
-            {"id": "s3", "text": "three", "star": False},
-        ],
+        "unplaced": [sol("s3", "three")],
         "key_actions": [],
         "execute": [],
         "feedback": {"number": "", "check_on": "", "redraw_if": ""},
@@ -136,42 +136,6 @@ def page(map_obj, extra=""):
         "<html><body>" + extra + '<script id="map-data" type="application/json">'
         + data + "</script></body></html>"
     )
-
-
-def test_untied_ids():
-    out = call("untiedSolutionIds", make_map())["result"]
-    assert out == ["s3"]
-
-
-def test_repeat_count():
-    m = make_map()
-    assert call("repeatCount", m, "s2")["result"] == 2
-    assert call("repeatCount", m, "s1")["result"] == 1
-    assert call("repeatCount", m, "s3")["result"] == 0
-
-
-def test_delete_repeated_solution_only_leaves_that_obstacle():
-    m = call("deleteSolutionFromObstacle", make_map(), "o1", "s2")["result"]
-    by_id = {o["id"]: o for o in m["obstacles"]}
-    assert by_id["o1"]["solution_ids"] == ["s1"]
-    assert by_id["o2"]["solution_ids"] == ["s2"]
-    assert any(s["id"] == "s2" for s in m["solutions"])
-    assert "s2" not in call("untiedSolutionIds", m)["result"]
-
-
-def test_delete_last_tie_sends_solution_to_tray():
-    m = call("deleteSolutionFromObstacle", make_map(), "o1", "s1")["result"]
-    assert any(s["id"] == "s1" for s in m["solutions"])
-    assert "s1" in call("untiedSolutionIds", m)["result"]
-
-
-def test_delete_obstacle_keeps_solution_shared_elsewhere():
-    m = call("deleteItem", make_map(), "o1")["result"]
-    assert [o["id"] for o in m["obstacles"]] == ["o2"]
-    untied = call("untiedSolutionIds", m)["result"]
-    assert "s1" in untied
-    assert "s2" not in untied
-    assert len(m["solutions"]) == 3
 
 
 def test_set_root_cause_marks_an_item_with_no_children():
@@ -539,124 +503,13 @@ def test_next_id_skips_ids_used_anywhere_in_the_file():
     m = make_map(execute=[{"solution_id": "s9"}], baseline={"obstacles": [{"id": "o7"}]})
     assert call("nextId", m, "s")["result"] == "s10"
     assert call("nextId", m, "o")["result"] == "o8"
-    empty = make_map(obstacles=[], solutions=[])
+    empty = make_map(obstacles=[])
     assert call("nextId", empty, "o")["result"] == "o1"
-
-
-def test_add_obstacle():
-    m = call("addObstacle", make_map(), "o5", "new")["result"]
-    assert m["obstacles"][-1] == {
-        "id": "o5", "text": "new", "root_cause": False, "solution_ids": [], "children": []}
-
-
-def test_set_item_text_at_any_depth():
-    m = call("setItemText", make_map(), {"kind": "obstacle", "oid": "o1"}, "A")["result"]
-    assert obstacle(m, "o1")["text"] == "A"
-    m = call("setItemText", make_map(), {"kind": "obstacle", "oid": "o4"}, "W")["result"]
-    assert obstacle(m, "o4")["text"] == "W"
-    assert obstacle(m, "o3")["text"] == "w1"
 
 
 def test_set_goal_replaces_the_goal():
     goal = {"text": "80% attendance by Q2, up from 40%"}
     assert call("setGoal", make_map(), goal)["result"]["goal"] == goal
-
-
-def test_editing_a_repeated_solution_edits_it_everywhere():
-    m = call("setItemText", make_map(), {"kind": "solution", "sid": "s2"}, "changed")["result"]
-    assert [s["text"] for s in m["solutions"] if s["id"] == "s2"] == ["changed"]
-    assert call("repeatCount", m, "s2")["result"] == 2
-
-
-def test_add_solution_with_and_without_obstacle():
-    m = call("addSolution", make_map(), "o2", "s4", "four")["result"]
-    assert {"id": "s4", "text": "four", "star": False} in m["solutions"]
-    assert "s4" in obstacle(m, "o2")["solution_ids"]
-    m = call("addSolution", make_map(), None, "s4", "four")["result"]
-    assert "s4" in call("untiedSolutionIds", m)["result"]
-
-
-def test_move_solution_between_obstacles():
-    m = call("moveSolution", make_map(), "o1", "o2", "s1")["result"]
-    assert call("repeatCount", m, "s1")["result"] == 1
-    assert obstacle(m, "o1")["solution_ids"] == ["s2"]
-    assert obstacle(m, "o2")["solution_ids"] == ["s2", "s1"]
-
-
-def test_move_solution_out_of_the_tray():
-    m = call("moveSolution", make_map(), None, "o2", "s3")["result"]
-    assert "s3" in obstacle(m, "o2")["solution_ids"]
-    assert call("untiedSolutionIds", m)["result"] == []
-
-
-def test_move_solution_onto_an_obstacle_that_has_it_does_not_repeat_it():
-    m = call("moveSolution", make_map(), "o1", "o2", "s2")["result"]
-    assert obstacle(m, "o1")["solution_ids"] == ["s1"]
-    assert obstacle(m, "o2")["solution_ids"] == ["s2"]
-
-
-def test_delete_solution_removes_it_from_the_map():
-    m = call("deleteSolution", make_map(), "s3")["result"]
-    assert all(s["id"] != "s3" for s in m["solutions"])
-    assert call("untiedSolutionIds", m)["result"] == []
-
-
-def test_set_star_changes_only_that_solution():
-    m = call("setStar", make_map(), "s1", True)["result"]
-    stars = {s["id"]: s["star"] for s in m["solutions"]}
-    assert stars == {"s1": True, "s2": True, "s3": False}
-    m = call("setStar", m, "s2", False)["result"]
-    stars = {s["id"]: s["star"] for s in m["solutions"]}
-    assert stars == {"s1": True, "s2": False, "s3": False}
-    assert m["obstacles"] == make_map()["obstacles"]
-
-
-def test_panel_rows_ignore_ids_that_no_longer_exist():
-    m = make_map(
-        key_actions=[{"text": "k", "risk": "high", "solution_ids": ["s1", "gone"]}],
-        execute=[
-            {"solution_id": "gone", "first_move": "x", "owner": "y", "others_decide": ""},
-            {"solution_id": "s2", "first_move": "m", "owner": "o", "others_decide": "d"},
-        ],
-    )
-    rows = call("panelRows", m)["result"]
-    assert rows["key_actions"] == [{"text": "k", "risk": "high", "solutions": ["one (1)"]}]
-    assert rows["execute"] == [
-        {"solution": "two (1, 2)", "first_move": "m", "owner": "o", "others_decide": "d"}]
-
-
-def test_item_exists_for_each_kind():
-    m = make_map()
-    m["obstacles"][1]["solution_ids"].append("gone")
-    obstacle(m, "o4")["solution_ids"].append("s3")
-    present = [
-        {"kind": "goal"},
-        {"kind": "obstacle", "oid": "o1"},
-        {"kind": "obstacle", "oid": "o4"},
-        {"kind": "solution", "oid": "o1", "sid": "s1"},
-        {"kind": "solution", "oid": "o4", "sid": "s3"},
-        {"kind": "solution", "sid": "s3"},
-        {"kind": "missing", "oid": "o2", "sid": "gone"},
-    ]
-    absent = [
-        {"kind": "obstacle", "oid": "o9"},
-        {"kind": "solution", "oid": "o1", "sid": "s9"},
-        {"kind": "solution", "oid": "o2", "sid": "s1"},
-        {"kind": "solution", "sid": "s9"},
-        {"kind": "missing", "oid": "o1", "sid": "gone"},
-    ]
-    for ref in present:
-        assert call("itemExists", m, ref)["result"] is True, ref
-    for ref in absent:
-        assert call("itemExists", m, ref)["result"] is False, ref
-
-
-def test_item_exists_is_false_after_a_blank_new_item_is_removed():
-    m = call("addChild", make_map(), "o4", "o5", "")["result"]
-    ref = {"kind": "obstacle", "oid": "o5"}
-    assert call("itemExists", m, ref)["result"] is True
-    m = call("deleteItem", m, "o5")["result"]
-    assert call("itemExists", m, ref)["result"] is False
 
 
 def test_close_warning_still_runs_when_the_commit_throws():
@@ -711,7 +564,7 @@ def test_other_refusals_keep_the_move_message():
 
 def test_map_problem_is_null_for_a_good_map():
     assert call("mapProblem", make_map())["result"] is None
-    empty = make_map(obstacles=[], solutions=[])
+    empty = make_map(obstacles=[])
     assert call("mapProblem", empty)["result"] is None
 
 
@@ -754,22 +607,7 @@ def test_the_logic_block_has_no_goal_line():
 def test_map_problem_names_the_obstacle_missing_its_children():
     m = make_map()
     del m["obstacles"][1]["children"]
-    assert call("mapProblem", m)["result"] == "Obstacle 2 is missing its list of sub-obstacles."
-
-
-def test_map_problem_refuses_a_row_of_the_wrong_kind():
-    assert call("mapProblem", make_map(solutions=[None]))["result"] == "Solution 1 is missing."
-    m = make_map()
-    m["obstacles"][0]["solution_ids"] = "s1"
-    assert call("mapProblem", m)["result"] == "Obstacle 1 is missing its list of solutions."
-
-
-def test_map_problem_refuses_each_missing_list():
-    for field, label in (("obstacles", "obstacles"), ("solutions", "solutions"),
-                         ("key_actions", "key actions"), ("execute", "execute rows")):
-        m = make_map()
-        del m[field]
-        assert call("mapProblem", m)["result"] == "The map is missing its list of " + label + ".", field
+    assert call("mapProblem", m)["result"] == "Obstacle 2 is missing its list of what sits under it."
 
 
 def test_map_problem_checks_key_action_and_execute_rows():
@@ -801,33 +639,6 @@ def test_refusal_copy_leaves_a_newer_file_refused():
     m = make_map(revision=3)
     out = call("checkTarget", page(make_map(revision=4)), m)["result"]
     assert out == {"ok": False, "reason": "stale"}
-
-
-def test_solutions_on_returns_the_solutions_in_order():
-    out = call("solutionsOn", make_map(), "o1")["result"]
-    assert [s["id"] for s in out] == ["s1", "s2"]
-    assert not any(s.get("missing") for s in out)
-
-
-def test_solutions_on_keeps_an_id_with_no_solution_as_a_missing_item():
-    m = make_map()
-    m["obstacles"][1]["solution_ids"] = ["s2", "gone"]
-    out = call("solutionsOn", m, "o2")["result"]
-    assert [s["id"] for s in out] == ["s2", "gone"]
-    assert out[1]["missing"] is True
-
-
-def test_missing_item_can_be_deleted_from_its_obstacle():
-    m = make_map()
-    m["obstacles"][1]["solution_ids"] = ["s2", "gone"]
-    m = call("deleteSolutionFromObstacle", m, "o2", "gone")["result"]
-    assert call("solutionsOn", m, "o2")["result"] == [{"id": "s2", "text": "two", "star": True}]
-
-
-def test_panel_rows_still_ignore_an_id_drawn_as_missing_on_the_map():
-    m = make_map(key_actions=[{"text": "k", "risk": "low", "solution_ids": ["gone"]}])
-    m["obstacles"][1]["solution_ids"] = ["gone"]
-    assert call("panelRows", m)["result"]["key_actions"][0]["solutions"] == []
 
 
 def test_fit_scale_shrinks_to_the_tighter_of_width_and_height():
@@ -895,7 +706,7 @@ def test_item_labels_alternate_by_depth():
 
 
 def test_item_labels_past_z():
-    m = make_map(obstacles=[item("o1", "a", [item("k%d" % i) for i in range(28)])], solutions=[])
+    m = make_map(obstacles=[item("o1", "a", [item("k%d" % i) for i in range(28)])])
     labels = call("itemLabels", m)["result"]
     assert labels["k25"] == "1Z"
     assert labels["k26"] == "1AA"
@@ -904,7 +715,7 @@ def test_item_labels_past_z():
 
 def test_item_labels_past_z_at_a_deeper_letter_level():
     kids = [item("k%d" % i) for i in range(53)]
-    m = make_map(obstacles=[item("o1", "a", [item("o2", "b", [item("o3", "c", kids)])])], solutions=[])
+    m = make_map(obstacles=[item("o1", "a", [item("o2", "b", [item("o3", "c", kids)])])])
     labels = call("itemLabels", m)["result"]
     assert labels["o3"] == "1A1"
     assert labels["k26"] == "1A1AA"
@@ -921,67 +732,6 @@ def test_labels_are_never_stored_and_later_siblings_renumber():
 
 
 # Adding and removing branches
-
-def test_add_child_goes_under_the_parent_at_any_depth():
-    m = call("addChild", labeled_tree(), "o7", "o8", "new")["result"]
-    assert obstacle(m, "o7")["children"] == [item("o8", "new")]
-    assert call("itemLabels", m)["result"]["o8"] == "1B2A1"
-
-
-def test_add_child_to_an_unknown_item_changes_nothing():
-    m = labeled_tree()
-    assert call("addChild", m, "nope", "o8", "new")["result"] == m
-
-
-def test_delete_item_removes_the_branch_and_returns_lone_solutions_to_the_tray():
-    m = make_map(obstacles=[
-        item("o1", "a", [item("o2", "b", [item("o3", "c", solutions=["s1"])], ["s2"])]),
-    ], solutions=[{"id": "s1", "text": "one"}, {"id": "s2", "text": "two"}])
-    m = call("deleteItem", m, "o2")["result"]
-    assert m["obstacles"] == [item("o1", "a")]
-    assert len(m["solutions"]) == 2
-    assert call("untiedSolutionIds", m)["result"] == ["s1", "s2"]
-
-
-def test_delete_item_keeps_a_solution_tied_elsewhere():
-    m = make_map(obstacles=[
-        item("o1", "a", [item("o2", "b", solutions=["s1"])]),
-        item("o3", "c", [item("o4", "d", solutions=["s1"])]),
-    ], solutions=[{"id": "s1", "text": "one"}])
-    m = call("deleteItem", m, "o1")["result"]
-    assert call("untiedSolutionIds", m)["result"] == []
-    assert call("repeatCount", m, "s1")["result"] == 1
-
-
-def test_delete_a_top_level_item():
-    m = call("deleteItem", make_map(), "o1")["result"]
-    assert [o["id"] for o in m["obstacles"]] == ["o2"]
-
-
-def test_sub_item_count_counts_everything_under_an_item():
-    m = labeled_tree()
-    assert call("subItemCount", m, "o1")["result"] == 5
-    assert call("subItemCount", m, "o4")["result"] == 3
-    assert call("subItemCount", m, "o7")["result"] == 0
-
-
-def test_root_cause_cannot_have_children():
-    # A root cause refuses a child.
-    m = call("setRootCause", labeled_tree(), "o5", True)["result"]
-    assert obstacle(m, "o5")["root_cause"] is True
-    assert call("addChild", m, "o5", "o8", "new")["result"] == m
-    # An item with children refuses to become a root cause.
-    m = call("setRootCause", labeled_tree(), "o4", True)["result"]
-    assert obstacle(m, "o4")["root_cause"] is False
-
-
-def test_unmarking_a_root_cause_lets_it_take_children_again():
-    m = call("setRootCause", labeled_tree(), "o5", True)["result"]
-    m = call("setRootCause", m, "o5", False)["result"]
-    assert obstacle(m, "o5")["root_cause"] is False
-    m = call("addChild", m, "o5", "o8", "new")["result"]
-    assert [c["id"] for c in obstacle(m, "o5")["children"]] == ["o8"]
-
 
 def test_an_obstacle_can_have_several_root_causes_in_different_branches():
     m = call("setRootCause", labeled_tree(), "o3", True)["result"]
@@ -1007,75 +757,6 @@ def test_a_file_changed_deep_in_the_tree_is_refused_as_stale():
     assert out["file"] == src
 
 
-# Solutions anywhere in the tree
-
-def on_two_levels():
-    return make_map(obstacles=[
-        item("o1", "a", [item("o2", "b", solutions=["s1"]), item("o3", "c", solutions=["s1", "s2"])]),
-        item("o4", "d", [item("o5", "e", [item("o6", "f", solutions=["s1"])])]),
-    ], solutions=[{"id": "s1", "text": "one"}, {"id": "s2", "text": "two"}, {"id": "s3", "text": "three"}])
-
-
-def test_repeat_count_covers_the_whole_tree():
-    m = on_two_levels()
-    assert call("repeatCount", m, "s1")["result"] == 3
-    assert call("repeatCount", m, "s2")["result"] == 1
-    assert call("repeatCount", m, "s3")["result"] == 0
-    assert call("untiedSolutionIds", m)["result"] == ["s3"]
-
-
-def test_removing_a_repeated_solution_from_one_item_leaves_the_others():
-    m = call("deleteSolutionFromObstacle", on_two_levels(), "o6", "s1")["result"]
-    assert obstacle(m, "o6")["solution_ids"] == []
-    assert obstacle(m, "o2")["solution_ids"] == ["s1"]
-    assert call("repeatCount", m, "s1")["result"] == 2
-
-
-def test_deleting_a_solution_removes_it_at_every_depth():
-    m = call("deleteSolution", on_two_levels(), "s1")["result"]
-    assert call("repeatCount", m, "s1")["result"] == 0
-    assert obstacle(m, "o3")["solution_ids"] == ["s2"]
-    assert all(s["id"] != "s1" for s in m["solutions"])
-
-
-def test_move_solution_between_items_at_different_depths():
-    m = call("moveSolution", on_two_levels(), "o3", "o6", "s2")["result"]
-    assert obstacle(m, "o3")["solution_ids"] == ["s1"]
-    assert obstacle(m, "o6")["solution_ids"] == ["s1", "s2"]
-
-
-def test_move_targets_list_every_item_by_label_and_text():
-    m = make_map(obstacles=[
-        item("o1", "a", [item("o2", "b", solutions=["s1"]), item("o3", "c")]),
-        item("o4", "d"),
-    ], solutions=[{"id": "s1", "text": "one"}])
-    targets = call("moveTargets", m, "s1")["result"]
-    assert [t["id"] for t in targets] == ["o1", "o3", "o4"]
-    assert [call("moveTargetName", t)["result"] for t in targets] == ["1 a", "1B c", "2 d"]
-
-
-def test_move_targets_from_the_tray_list_every_item():
-    targets = call("moveTargets", make_map(), "s3")["result"]
-    assert [t["id"] for t in targets] == ["o1", "o3", "o4", "o2"]
-
-
-def test_move_targets_leave_out_every_item_that_holds_it():
-    assert [t["id"] for t in call("moveTargets", on_two_levels(), "s1")["result"]] == ["o1", "o4", "o5"]
-
-
-def test_solutions_on_finds_an_item_at_depth():
-    assert [s["id"] for s in call("solutionsOn", on_two_levels(), "o3")["result"]] == ["s1", "s2"]
-
-
-def test_panel_rows_name_the_items_a_solution_sits_on_by_label():
-    m = on_two_levels()
-    m["key_actions"] = [{"text": "k", "risk": "low", "solution_ids": ["s1", "s3"]}]
-    m["execute"] = [{"solution_id": "s2", "first_move": "m", "owner": "o", "others_decide": ""}]
-    rows = call("panelRows", m)["result"]
-    assert rows["key_actions"][0]["solutions"] == ["one (1A, 1B, 2A1)", "three"]
-    assert rows["execute"][0]["solution"] == "two (1B)"
-
-
 # Shape check
 
 def test_shape_check_rejects_old_shape():
@@ -1095,55 +776,9 @@ def test_shape_check_rejects_a_new_item_with_an_old_field():
     assert "Obstacle 1A1 " in call("mapProblem", m)["result"]
 
 
-def test_shape_check_rejects_a_bad_child_at_depth():
-    m = labeled_tree()
-    del obstacle(m, "o7")["children"]
-    assert call("mapProblem", m)["result"] == "Obstacle 1B2A is missing its list of sub-obstacles."
-    m = labeled_tree()
-    obstacle(m, "o6")["children"] = [None]
-    assert call("mapProblem", m)["result"] == "Obstacle 1B2A is missing."
-    m = labeled_tree()
-    obstacle(m, "o5")["text"] = 3
-    assert call("mapProblem", m)["result"] == "Obstacle 1B1 is missing its text."
-    m = labeled_tree()
-    obstacle(m, "o5")["solution_ids"] = "s1"
-    assert call("mapProblem", m)["result"] == "Obstacle 1B1 is missing its list of solutions."
-    m = labeled_tree()
-    obstacle(m, "o5")["root_cause"] = "because"
-    assert "Obstacle 1B1 " in call("mapProblem", m)["result"]
-    assert "root cause" in call("mapProblem", m)["result"]
-    m = labeled_tree()
-    obstacle(m, "o5")["id"] = ""
-    assert call("mapProblem", m)["result"] == "Obstacle 1B1 is missing its id."
-
-
-def test_shape_check_rejects_duplicate_ids():
-    m = labeled_tree()
-    obstacle(m, "o7")["id"] = "o2"
-    assert call("mapProblem", m)["result"] == "Obstacles 1B2A and 2 both use the id o2."
-
-
 def test_shape_check_is_not_fooled_by_an_id_like_a_built_in_name():
-    m = make_map(obstacles=[item("constructor", "a"), item("__proto__", "b")], solutions=[])
+    m = make_map(obstacles=[item("constructor", "a"), item("__proto__", "b")])
     assert call("mapProblem", m)["result"] is None
-
-
-def test_shape_check_rejects_a_root_cause_with_children():
-    m = labeled_tree()
-    obstacle(m, "o4")["root_cause"] = True
-    assert call("mapProblem", m)["result"] == "Obstacle 1B is a root cause, so it can't have sub-obstacles."
-
-
-# Sides
-
-def test_sides_put_first_half_on_the_right():
-    def sides(count):
-        return [call("sideOf", i, count)["result"] for i in range(count)]
-    assert sides(1) == ["right"]
-    assert sides(2) == ["right", "left"]
-    assert sides(3) == ["right", "right", "left"]
-    assert sides(6) == ["right", "right", "right", "left", "left", "left"]
-    assert sides(7) == ["right", "right", "right", "right", "left", "left", "left"]
 
 
 # Wide layout. Every test here checks real positions, with boxes of uneven heights.
@@ -1179,101 +814,8 @@ def wide_rects(layout):
     return rects
 
 
-def busy_tree():
-    """Deep on one side and wide on both, with solutions on items with and without children."""
-    def deep(prefix, levels, solutions=()):
-        kids = [deep(prefix, levels - 1, solutions)] if levels > 1 else []
-        return item(prefix + str(levels), "deep", kids, solutions)
-
-    wide_kids = [item("w%d" % i, "wide", [], ["s1", "s2"] if i % 2 else []) for i in range(9)]
-    branchy = item("b1", "branchy", [
-        item("b2", "x", [item("b3", "y", [], ["s1", "s2", "s3"]), item("b4", "z", [item("b5", "q")], ["s3"])], ["s1"]),
-        deep("d", 7, ["s2"]),
-        item("b6", "plain", [], ["s3"]),
-    ], ["s1", "s2", "s3"])
-    return make_map(obstacles=[
-        branchy,
-        item("t2", "two", wide_kids, ["s1"]),
-        item("t3", "three", solutions=["s1", "s2", "s3"]),
-        item("t4", "four", [item("t5", "kid", [], ["s1"]), deep("e", 3)]),
-        item("t6", "six"),
-    ])
-
-
-def test_wide_layout_never_overlaps_on_a_deep_and_wide_tree():
-    m = busy_tree()
-    assert overlaps(wide_rects(wide(m))) == []
-
-
-def test_wide_layout_draws_every_item_and_every_solution_once():
-    m = busy_tree()
-    rows = call("drawnRows", m)["result"]
-    assert sorted(b["key"] for b in wide(m)["boxes"]) == sorted(r["key"] for r in rows)
-
-
-def test_wide_layout_stays_apart_when_one_box_is_very_tall():
-    m = busy_tree()
-    heights = uneven_heights(m)
-    heights["b3"] = 700
-    heights["w4"] = 500
-    heights[call("drawnRows", m)["result"][1]["key"]] = 400
-    assert overlaps(wide_rects(wide(m, heights))) == []
-
-
-def test_wide_layout_keeps_the_goal_in_the_true_center():
-    for m in (busy_tree(), make_map(), make_map(obstacles=[], solutions=[])):
-        out = wide(m)
-        assert out["goal"]["x"] + SIZES["goalW"] / 2 == out["width"] / 2
-        assert out["goal"]["y"] + SIZES["goalH"] / 2 == out["height"] / 2
-
-
-def test_wide_layout_fits_every_box_inside_the_canvas():
-    out = wide(busy_tree())
-    for b in out["boxes"]:
-        assert b["x"] >= 0 and b["x"] + SIZES["boxW"] <= out["width"], b["key"]
-        assert b["y"] >= 0 and b["y"] + b["height"] <= out["height"], b["key"]
-
-
-def test_wide_layout_reads_1_2_3_down_the_right_and_4_5_6_down_the_left():
-    m = make_map(obstacles=[item("o%d" % i, "x") for i in range(1, 7)], solutions=[])
-    out = wide(m)
-    boxes = {b["key"]: b for b in out["boxes"]}
-    goal_x = out["goal"]["x"]
-    for key in ("o1", "o2", "o3"):
-        assert boxes[key]["x"] > goal_x, key
-    for key in ("o4", "o5", "o6"):
-        assert boxes[key]["x"] < goal_x, key
-    assert boxes["o1"]["y"] < boxes["o2"]["y"] < boxes["o3"]["y"]
-    assert boxes["o4"]["y"] < boxes["o5"]["y"] < boxes["o6"]["y"]
-
-
 def box_map(layout):
     return {b["key"]: b for b in layout["boxes"]}
-
-
-def test_a_solution_on_an_item_with_children_sits_directly_under_it():
-    m = make_map(obstacles=[item("o1", "a", [item("o2", "b")], ["s1", "s2"])])
-    out = wide(m)
-    boxes = box_map(out)
-    first, second = boxes["o1|0"], boxes["o1|1"]
-    assert first["x"] == boxes["o1"]["x"] == second["x"]
-    assert first["y"] >= boxes["o1"]["y"] + boxes["o1"]["height"]
-    assert second["y"] >= first["y"] + first["height"]
-
-
-def test_a_solution_on_an_item_with_no_children_sits_in_the_next_column_out():
-    for side_count, sign in ((1, 1), (2, -1)):
-        obstacles = [item("o%d" % i, "x") for i in range(1, side_count)] + [item("o9", "a", [], ["s1"])]
-        out = wide(make_map(obstacles=obstacles))
-        boxes = box_map(out)
-        assert boxes["o9|0"]["x"] - boxes["o9"]["x"] == sign * (SIZES["boxW"] + SIZES["colGap"])
-
-
-def test_both_sides_get_the_width_of_the_deeper_side():
-    deep = item("o1", "a", [item("o2", "b", [item("o3", "c", [item("o4", "d")])])])
-    out = wide(make_map(obstacles=[deep, item("o5", "e")]))
-    step = SIZES["boxW"] + SIZES["colGap"]
-    assert out["width"] == 2 * (SIZES["pad"] + 4 * step - SIZES["colGap"] + SIZES["goalGap"]) + SIZES["goalW"]
 
 
 def line_points(d):
@@ -1295,55 +837,6 @@ def line_ends(d):
     return points[0], points[-1]
 
 
-def test_wide_layout_connects_every_box_to_its_parent():
-    m = busy_tree()
-    out = wide(m)
-    boxes = box_map(out)
-    goal = out["goal"]
-    rows = call("drawnRows", m)["result"]
-    lines = {line["to"]: line for line in out["lines"]}
-    assert len(out["lines"]) == len(rows)
-    for row in rows:
-        key = row["key"]
-        line = lines[key]
-        assert line["from"] == (row["parent"] or "goal")
-        start, end = line_ends(line["d"])
-        box = boxes[key]
-        goes_right = box["x"] > goal["x"]
-        if " V" in line["d"]:
-            # A short line down a column, into the top of the box.
-            assert end == (box["x"] + SIZES["boxW"] / 2, box["y"]), key
-            continue
-        near = box["x"] if goes_right else box["x"] + SIZES["boxW"]
-        assert end == (near, box["y"] + box["height"] / 2), key
-        if row["parent"]:
-            parent = boxes[row["parent"]]
-            far = parent["x"] + SIZES["boxW"] if goes_right else parent["x"]
-            assert start == (far, parent["y"] + parent["height"] / 2), key
-        else:
-            far = goal["x"] + SIZES["goalW"] if goes_right else goal["x"]
-            assert start == (far, goal["y"] + SIZES["goalH"] / 2), key
-
-
-def test_a_stack_line_starts_on_the_box_above_it():
-    m = make_map(obstacles=[item("o1", "a", [item("o2", "b")], ["s1", "s2"])])
-    out = wide(m)
-    boxes = box_map(out)
-    lines = {line["to"]: line for line in out["lines"]}
-    start, _ = line_ends(lines["o1|0"]["d"])
-    assert start[1] == boxes["o1"]["y"] + boxes["o1"]["height"]
-    start, _ = line_ends(lines["o1|1"]["d"])
-    assert start[1] == boxes["o1|0"]["y"] + boxes["o1|0"]["height"]
-
-
-def test_a_missing_solution_still_gets_a_box_and_keeps_its_mark():
-    m = make_map(obstacles=[item("o1", "a", solutions=["gone"])])
-    rows = call("drawnRows", m)["result"]
-    assert rows[1]["key"] == "o1|0"
-    assert rows[1]["solution"] == {"id": "gone", "missing": True}
-    assert "o1|0" in box_map(wide(m))
-
-
 def test_drawn_rows_give_each_item_its_label_and_depth():
     rows = call("drawnRows", labeled_tree())["result"]
     assert [(r["key"], r["label"], r["depth"]) for r in rows] == [
@@ -1351,87 +844,608 @@ def test_drawn_rows_give_each_item_its_label_and_depth():
         ("o7", "1B2A", 3), ("o2", "2", 0)]
 
 
+# The one tree: every item has the same six fields, and everything hangs off the goal.
+
+def label_case():
+    """1B has a child obstacle, then a solution holding an obstacle."""
+    return make_map(obstacles=[
+        item("o1", "one", [
+            item("oa", "1A"),
+            item("ob", "1B", [
+                item("c1", "child"),
+                sol("sx", "fix", [item("c2", "in the way of fix")]),
+            ]),
+        ]),
+    ])
+
+
+def mixed_tree():
+    """Deep and wide, with obstacles under solutions at several depths."""
+    def deep(prefix, levels):
+        kids = [deep(prefix, levels - 1)] if levels > 1 else []
+        return item(prefix + str(levels), "deep", kids + [sol(prefix + "s" + str(levels), "fix")])
+
+    wide_kids = [item("w%d" % i, "wide", [sol("ws%d" % i, "fix")] if i % 2 else []) for i in range(9)]
+    branchy = item("b1", "branchy", [
+        sol("bs1", "fix"),
+        item("b2", "x", [
+            item("b3", "y", [sol("bs2", "fix", [item("b7", "in the way", [sol("bs3", "fix")])])]),
+            sol("bs4", "fix", [item("b8", "a"), item("b9", "b", [item("b10", "c")])]),
+            item("b11", "after the solution"),
+        ]),
+        deep("d", 7),
+        item("b6", "plain", root=True, children=[sol("bs5", "fix", [item("b12", "under a root cause's solution")])]),
+    ])
+    return make_map(obstacles=[
+        branchy,
+        item("t2", "two", wide_kids),
+        item("t3", "three", [sol("ts1", "fix"), sol("ts2", "fix"), sol("ts3", "fix")]),
+        item("t4", "four", [item("t5", "kid", [sol("ts4", "fix")]), deep("e", 3)]),
+        item("t6", "six"),
+    ], unplaced=[sol("tray1", "in the tray")])
+
+
+def test_labels_count_across_solutions():
+    labels = call("itemLabels", label_case())["result"]
+    assert labels["ob"] == "1B"
+    assert labels["c1"] == "1B1"
+    assert labels["c2"] == "1B2"
+
+
+def test_labels_have_no_duplicates_on_a_deep_mixed_tree():
+    labels = call("itemLabels", mixed_tree())["result"]
+    assert len(set(labels.values())) == len(labels)
+    assert len(labels) > 25
+
+
+def test_labels_skip_solutions_and_unplaced():
+    m = make_map(obstacles=[
+        item("o1", "a", [sol("s1", "fix"), item("o2", "b"), sol("s2", "fix"), item("o3", "c")]),
+        item("o4", "d"),
+    ], unplaced=[sol("s3", "tray")])
+    assert call("itemLabels", m)["result"] == {"o1": "1", "o2": "1A", "o3": "1B", "o4": "2"}
+
+
+def test_label_under_a_solution_under_a_root_cause_continues_the_root_cause():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix", [item("o2", "b")])], root=True)])
+    assert call("itemLabels", m)["result"] == {"o1": "1", "o2": "1A"}
+
+
 def test_solutions_get_no_labels():
-    rows = call("drawnRows", on_two_levels())["result"]
+    rows = call("drawnRows", mixed_tree())["result"]
     assert all("label" not in r for r in rows if r["kind"] == "solution")
+    assert all(r["label"] for r in rows if r["kind"] == "obstacle")
 
 
-# Phone width: one column, indented by depth
-
-def narrow(m, width=320, heights=None):
-    places = call("narrowPlaces", m, width)["result"]
-    h = heights or uneven_heights(m)
-    return places, call("narrowLayout", places, h, 70)["result"]
-
-
-def narrow_rects(places, layout):
-    width_of = {row["key"]: row["width"] for row in places["rows"]}
-    rects = [{"key": b["key"], "x": b["x"], "y": b["y"], "w": width_of[b["key"]], "h": b["height"]}
-             for b in layout["boxes"]]
-    rects.append({"key": "the goal", "x": layout["goal"]["x"], "y": layout["goal"]["y"],
-                  "w": places["goal"]["width"], "h": 70})
-    return rects
+def rule_map():
+    """A goal, a plain obstacle, a root cause and a solution, with two items free to move onto them."""
+    return make_map(obstacles=[
+        item("holder", "holds the movers", [item("mo", "moving obstacle"), sol("ms", "moving solution")]),
+        item("ob", "plain", [sol("so", "a solution")]),
+        item("rc", "root", root=True),
+    ], unplaced=[sol("tray", "in the tray")])
 
 
-def test_narrow_layout_never_overlaps_and_stays_inside_the_width():
-    places, out = narrow(busy_tree(), 320)
-    rects = narrow_rects(places, out)
-    assert overlaps(rects) == []
-    for r in rects:
-        assert r["x"] + r["w"] <= 320, r["key"]
-        assert r["w"] >= 180, r["key"]
-    assert out["height"] >= max(r["y"] + r["h"] for r in rects)
+def test_plus_rules():
+    table = {
+        "goal": {"obstacle": True, "solution": False},
+        "ob": {"obstacle": True, "solution": True},
+        "rc": {"obstacle": False, "solution": True},
+        "so": {"obstacle": True, "solution": False},
+    }
+    m = rule_map()
+    for parent, cells in table.items():
+        for kind, allowed in cells.items():
+            assert call("canAdd", m, parent, kind)["result"] is allowed, (parent, kind)
 
 
-def test_narrow_layout_indents_by_depth():
-    places, _ = narrow(labeled_tree())
-    x = {row["key"]: row["x"] for row in places["rows"]}
-    assert x["o1"] == x["o2"]
-    assert x["o1"] < x["o3"] == x["o4"] < x["o5"] == x["o6"] < x["o7"]
+def test_plus_refuses_the_tray_and_unknown_items():
+    m = rule_map()
+    for kind in ("obstacle", "solution"):
+        assert call("canAdd", m, "tray", kind)["result"] is False
+        assert call("canAdd", m, "nope", kind)["result"] is False
+    assert call("canAdd", m, "ob", "note")["result"] is False
 
 
-def test_narrow_layout_puts_a_solution_right_after_its_item_and_before_its_children():
-    m = make_map(obstacles=[item("o1", "a", [item("o2", "b")], ["s1"])])
-    places, _ = narrow(m)
-    assert [row["key"] for row in places["rows"]] == ["o1", "o1|0", "o2"]
+def test_add_item_builds_all_six_fields_at_the_top_and_at_depth():
+    m = call("addItem", make_map(), "goal", "o5", "obstacle", "new")["result"]
+    assert m["obstacles"][-1] == {"id": "o5", "kind": "obstacle", "text": "new", "root_cause": False,
+                                  "star": False, "children": []}
+    m = call("addItem", rule_map(), "so", "o9", "obstacle", "new")["result"]
+    assert obstacle(m, "so")["children"] == [item("o9", "new")]
+    m = call("addItem", rule_map(), "rc", "s9", "solution", "new")["result"]
+    assert obstacle(m, "rc")["children"] == [sol("s9", "new")]
 
 
-def test_narrow_layout_connects_every_row_to_its_parent_without_crossing_a_box():
-    m = busy_tree()
-    places, out = narrow(m)
-    boxes = {b["key"]: b for b in out["boxes"]}
+def test_add_item_changes_nothing_when_the_plus_rule_says_no():
+    m = rule_map()
+    assert call("addItem", m, "rc", "o9", "obstacle", "new")["result"] == m
+    assert call("addItem", m, "so", "s9", "solution", "new")["result"] == m
+    assert call("addItem", m, "goal", "s9", "solution", "new")["result"] == m
+    assert call("addItem", m, "tray", "o9", "obstacle", "new")["result"] == m
+    assert call("addItem", m, "nope", "o9", "obstacle", "new")["result"] == m
+
+
+def test_move_rules():
+    table = {
+        "mo": {"goal": True, "ob": True, "rc": False, "so": True},
+        "ms": {"goal": False, "ob": True, "rc": True, "so": False},
+    }
+    m = rule_map()
+    for mover, cells in table.items():
+        for target, allowed in cells.items():
+            assert call("canMove", m, mover, target)["result"] is allowed, (mover, target)
+
+
+def test_move_refuses_self_descendant_and_current_parent():
+    m = make_map(obstacles=[item("o1", "a", [item("o2", "b", [sol("s1", "fix", [item("o3", "c")])])]), item("o4", "d")])
+    assert call("canMove", m, "o2", "o2")["result"] is False
+    assert call("canMove", m, "o2", "s1")["result"] is False
+    assert call("canMove", m, "o2", "o3")["result"] is False
+    assert call("canMove", m, "o2", "o1")["result"] is False
+    assert call("canMove", m, "o1", "goal")["result"] is False
+    assert call("canMove", m, "o2", "o4")["result"] is True
+
+
+def test_move_refuses_the_tray_and_unknown_items():
+    m = rule_map()
+    assert call("canMove", m, "ms", "tray")["result"] is False
+    assert call("canMove", m, "mo", "tray")["result"] is False
+    assert call("canMove", m, "nope", "ob")["result"] is False
+    assert call("canMove", m, "ms", "nope")["result"] is False
+
+
+def test_move_item_changes_nothing_when_refused():
+    m = rule_map()
+    assert call("moveItem", m, "mo", "rc")["result"] == m
+    assert call("moveItem", m, "ms", "tray")["result"] == m
+    assert call("moveItem", m, "nope", "ob")["result"] == m
+
+
+def test_move_attaches_last():
+    m = call("moveItem", rule_map(), "mo", "ob")["result"]
+    assert [c["id"] for c in obstacle(m, "ob")["children"]] == ["so", "mo"]
+    assert [c["id"] for c in obstacle(m, "holder")["children"]] == ["ms"]
+    m = call("moveItem", rule_map(), "mo", "goal")["result"]
+    assert [o["id"] for o in m["obstacles"]] == ["holder", "ob", "rc", "mo"]
+
+
+def test_move_takes_what_sits_under_the_item_with_it():
+    m = make_map(obstacles=[item("o1", "a", [item("o2", "b", [sol("s1", "fix")])]), item("o3", "c")])
+    m = call("moveItem", m, "o2", "o3")["result"]
+    assert obstacle(m, "o3")["children"] == [item("o2", "b", [sol("s1", "fix")])]
+
+
+def test_move_out_of_unplaced_removes_it_from_the_tray():
+    m = call("moveItem", rule_map(), "tray", "rc")["result"]
+    assert m["unplaced"] == []
+    assert obstacle(m, "rc")["children"] == [sol("tray", "in the tray")]
+
+
+def test_move_targets_list_every_allowed_target_in_reading_order():
+    m = rule_map()
+    assert call("moveTargets", m, "ms")["result"] == [
+        {"id": "mo", "name": "1A moving obstacle"}, {"id": "ob", "name": "2 plain"}, {"id": "rc", "name": "3 root"}]
+    assert call("moveTargets", m, "mo")["result"] == [
+        {"id": "goal", "name": "The goal"}, {"id": "ms", "name": "moving solution"},
+        {"id": "ob", "name": "2 plain"}, {"id": "so", "name": "a solution"}]
+    assert call("moveTargets", m, "tray")["result"] == [
+        {"id": "holder", "name": "1 holds the movers"}, {"id": "mo", "name": "1A moving obstacle"},
+        {"id": "ob", "name": "2 plain"}, {"id": "rc", "name": "3 root"}]
+
+
+def plan_map():
+    return make_map(
+        obstacles=[
+            item("o1", "a", [
+                sol("s1", "one", [item("o2", "b", [sol("s2", "two", star=True)])], star=True),
+                sol("s4", "stays"),
+            ]),
+        ],
+        unplaced=[sol("s3", "tray")],
+        key_actions=[
+            {"text": "both", "risk": "high", "solution_ids": ["s1", "s2", "s4"]},
+            {"text": "only two", "risk": "low", "solution_ids": ["s2"]},
+            {"text": "stays whole", "risk": "low", "solution_ids": ["s4"]},
+        ],
+        execute=[
+            {"solution_id": "s1", "first_move": "move one", "owner": "", "others_decide": ""},
+            {"solution_id": "s2", "first_move": "move two", "owner": "", "others_decide": ""},
+            {"solution_id": "s4", "first_move": "move four", "owner": "", "others_decide": ""},
+        ],
+    )
+
+
+def test_delete_removes_rows_and_ids_but_keeps_key_actions():
+    m = call("deleteItem", plan_map(), "s1")["result"]
+    assert obstacle(m, "o1")["children"] == [sol("s4", "stays")]
+    assert [e["solution_id"] for e in m["execute"]] == ["s4"]
+    assert [(k["text"], k["solution_ids"]) for k in m["key_actions"]] == [
+        ("both", ["s4"]), ("only two", []), ("stays whole", ["s4"])]
+
+
+def test_delete_of_an_obstacle_takes_the_solutions_under_it():
+    m = call("deleteItem", plan_map(), "o2")["result"]
+    assert [e["solution_id"] for e in m["execute"]] == ["s1", "s4"]
+    assert m["key_actions"][1]["solution_ids"] == []
+    assert obstacle(m, "s1")["children"] == []
+
+
+def test_delete_works_on_a_tray_item_and_clears_its_ids():
+    m = plan_map()
+    m["key_actions"][0]["solution_ids"].append("s3")
+    m["execute"].append({"solution_id": "s3", "first_move": "tray move", "owner": "", "others_decide": ""})
+    out = call("deleteItem", m, "s3")["result"]
+    assert out["unplaced"] == []
+    assert "s3" not in out["key_actions"][0]["solution_ids"]
+    assert all(e["solution_id"] != "s3" for e in out["execute"])
+
+
+def test_delete_a_top_level_item_and_an_unknown_one():
+    m = call("deleteItem", plan_map(), "o1")["result"]
+    assert m["obstacles"] == []
+    assert m["unplaced"] == [sol("s3", "tray")]
+    m = plan_map()
+    assert call("deleteItem", m, "nope")["result"] == m
+
+
+def test_delete_effects_name_picks_and_rows():
+    out = call("deleteEffects", plan_map(), "s1")["result"]
+    assert out["subItems"] == 2
+    assert out["picks"] == ["one", "two"]
+    assert out["rows"] == ["move one", "move two", "both", "only two"]
+
+
+def test_delete_effects_of_an_item_with_nothing_to_lose():
+    m = plan_map()
+    assert call("deleteEffects", m, "s3")["result"] == {"subItems": 0, "picks": [], "rows": []}
+    assert call("deleteEffects", m, "nope")["result"] == {"subItems": 0, "picks": [], "rows": []}
+
+
+def test_root_cause_rule_looks_only_at_direct_children():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix", [item("o2", "b")])], root=True)])
+    assert call("mapProblem", m)["result"] is None
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix", [item("o2", "b")])])])
+    assert obstacle(call("setRootCause", m, "o1", True)["result"], "o1")["root_cause"] is True
+
+
+def test_root_cause_refused_with_an_obstacle_directly_under_or_on_a_solution():
+    m = labeled_tree()
+    assert obstacle(call("setRootCause", m, "o4", True)["result"], "o4")["root_cause"] is False
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix")])], unplaced=[sol("s3", "tray")])
+    assert call("setRootCause", m, "s1", True)["result"] == m
+    assert call("setRootCause", m, "s3", True)["result"] == m
+    assert call("setRootCause", m, "nope", True)["result"] == m
+
+
+def test_unmarking_a_root_cause_lets_it_take_an_obstacle_again():
+    m = call("setRootCause", labeled_tree(), "o5", True)["result"]
+    assert call("canAdd", m, "o5", "obstacle")["result"] is False
+    m = call("setRootCause", m, "o5", False)["result"]
+    assert obstacle(m, "o5")["root_cause"] is False
+    m = call("addItem", m, "o5", "o8", "obstacle", "new")["result"]
+    assert [c["id"] for c in obstacle(m, "o5")["children"]] == ["o8"]
+
+
+def test_star_changes_only_that_solution():
+    m = make_map()
+    out = call("setStar", m, "s1", True)["result"]
+    assert obstacle(out, "s1")["star"] is True
+    assert obstacle(out, "s2")["star"] is True
+    out = call("setStar", out, "s2", False)["result"]
+    assert obstacle(out, "s2")["star"] is False
+
+
+def test_star_refused_in_tray_and_on_obstacles():
+    m = make_map()
+    assert call("setStar", m, "s3", True)["result"] == m
+    assert call("setStar", m, "o1", True)["result"] == m
+    assert call("setStar", m, "nope", True)["result"] == m
+
+
+def test_has_picks_looks_at_the_whole_tree():
+    assert call("hasPicks", make_map())["result"] is True
+    assert call("hasPicks", labeled_tree())["result"] is False
+
+
+def test_next_id_is_unique_across_the_tree_and_unplaced():
+    m = make_map(obstacles=[item("o3", "a", [sol("s2", "fix")])], unplaced=[sol("s7", "tray")])
+    assert call("nextId", m, "s")["result"] == "s8"
+    assert call("nextId", m, "o")["result"] == "o4"
+
+
+def test_set_item_text_at_any_depth_and_in_the_tray():
+    m = call("setItemText", make_map(), "o1", "A")["result"]
+    assert obstacle(m, "o1")["text"] == "A"
+    m = call("setItemText", make_map(), "o4", "W")["result"]
+    assert obstacle(m, "o4")["text"] == "W"
+    assert obstacle(m, "o3")["text"] == "w1"
+    m = call("setItemText", make_map(), "s1", "changed")["result"]
+    assert obstacle(m, "s1")["text"] == "changed"
+    m = call("setItemText", make_map(), "s3", "changed")["result"]
+    assert m["unplaced"][0]["text"] == "changed"
+
+
+def test_item_exists_for_each_kind():
+    m = make_map()
+    for ref in ({"kind": "goal"}, {"kind": "obstacle", "id": "o1"}, {"kind": "obstacle", "id": "o4"},
+                {"kind": "solution", "id": "s1"}, {"kind": "solution", "id": "s3"}):
+        assert call("itemExists", m, ref)["result"] is True, ref
+    for ref in ({"kind": "obstacle", "id": "o9"}, {"kind": "solution", "id": "s9"}):
+        assert call("itemExists", m, ref)["result"] is False, ref
+
+
+def test_item_exists_is_false_after_a_blank_new_item_is_removed():
+    m = call("addItem", make_map(), "o4", "o5", "obstacle", "")["result"]
+    ref = {"kind": "obstacle", "id": "o5"}
+    assert call("itemExists", m, ref)["result"] is True
+    m = call("deleteItem", m, "o5")["result"]
+    assert call("itemExists", m, ref)["result"] is False
+
+
+def test_panel_rows_name_a_solution_by_the_obstacle_it_sits_under():
+    m = make_map(
+        obstacles=[item("o1", "a", [item("o2", "b", [sol("s1", "one")]), sol("s2", "two")])],
+        unplaced=[sol("s3", "three")],
+        key_actions=[{"text": "k", "risk": "low", "solution_ids": ["s1", "s3"]}],
+        execute=[{"solution_id": "s2", "first_move": "m", "owner": "o", "others_decide": "d"}],
+    )
+    rows = call("panelRows", m)["result"]
+    assert rows["key_actions"] == [{"text": "k", "risk": "low", "solutions": ["one (1A)", "three"]}]
+    assert rows["execute"] == [{"solution": "two (1)", "first_move": "m", "owner": "o", "others_decide": "d"}]
+
+
+# The check. Each case the spec lists, with a plain sentence naming the item.
+
+def test_check_passes_a_good_map_with_every_rule_in_play():
+    assert call("mapProblem", mixed_tree())["result"] is None
+
+
+def test_check_refuses_a_repeated_id_in_the_tree():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix")]), item("o2", "b", [sol("s1", "fix")])])
+    assert "both use the id s1" in call("mapProblem", m)["result"]
+
+
+def test_check_refuses_an_id_repeated_between_the_tree_and_unplaced():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix")])], unplaced=[sol("s1", "tray")])
+    assert "both use the id s1" in call("mapProblem", m)["result"]
+
+
+def test_check_refuses_each_missing_field():
+    names = {"id": "its id", "kind": "its kind", "text": "its text", "children": "its list of what sits under it"}
+    for field, words in names.items():
+        m = make_map(obstacles=[item("o1", "a"), item("o2", "b")], unplaced=[])
+        del m["obstacles"][1][field]
+        assert call("mapProblem", m)["result"] == "Obstacle 2 is missing " + words + ".", field
+    for field, words in (("root_cause", "root cause"), ("star", "star")):
+        m = make_map(obstacles=[item("o1", "a")], unplaced=[])
+        del m["obstacles"][0][field]
+        out = call("mapProblem", m)["result"]
+        assert out == "Obstacle 1 needs true or false for its " + words + ".", field
+
+
+def test_check_refuses_a_missing_field_on_a_tray_item():
+    m = make_map(obstacles=[], unplaced=[sol("s1", "tray")])
+    del m["unplaced"][0]["star"]
+    assert call("mapProblem", m)["result"] == 'Solution "tray" needs true or false for its star.'
+
+
+def test_check_refuses_any_other_kind():
+    m = make_map(obstacles=[item("o1", "a", kind="note")], unplaced=[])
+    assert call("mapProblem", m)["result"] == "Obstacle 1 needs a kind of obstacle or solution."
+
+
+def test_check_refuses_the_old_solutions_list():
+    m = make_map(solutions=[])
+    assert call("mapProblem", m)["result"] == "The map uses the old map shape."
+
+
+def test_check_refuses_an_item_with_old_solution_ids():
+    m = make_map(obstacles=[item("o1", "a")], unplaced=[])
+    m["obstacles"][0]["solution_ids"] = []
+    assert call("mapProblem", m)["result"] == "Obstacle 1 uses the old map shape."
+
+
+def test_check_refuses_a_root_cause_with_an_obstacle_under_it():
+    m = labeled_tree()
+    obstacle(m, "o4")["root_cause"] = True
+    assert call("mapProblem", m)["result"] == "Obstacle 1B is a root cause, so it can't have an obstacle directly under it."
+
+
+def test_check_refuses_a_non_obstacle_marked_as_a_root_cause():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "the fix")])], unplaced=[])
+    obstacle(m, "s1")["root_cause"] = True
+    assert call("mapProblem", m)["result"] == 'Solution "the fix" is marked as a root cause, but only an obstacle can be one.'
+
+
+def test_check_refuses_a_solution_directly_under_a_solution():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "the fix", [sol("s2", "other")])])], unplaced=[])
+    assert call("mapProblem", m)["result"] == 'Solution "the fix" has a solution directly under it.'
+
+
+def test_check_refuses_an_unplaced_item_with_children():
+    m = make_map(obstacles=[], unplaced=[sol("s1", "tray", [item("o1", "a")])])
+    assert call("mapProblem", m)["result"] == 'Solution "tray" is in the tray, so it can\'t have anything under it.'
+
+
+def test_check_refuses_a_non_solution_with_a_star():
+    m = make_map(obstacles=[item("o1", "a", star=True)], unplaced=[])
+    assert call("mapProblem", m)["result"] == "Obstacle 1 has a star, but only a solution can be a pick."
+
+
+def test_check_refuses_an_unplaced_item_with_a_star():
+    m = make_map(obstacles=[], unplaced=[sol("s1", "tray", star=True)])
+    assert call("mapProblem", m)["result"] == 'Solution "tray" is in the tray, so it can\'t be a pick.'
+
+
+def test_check_refuses_a_plan_row_naming_a_missing_solution():
+    m = make_map(execute=[{"solution_id": "gone", "first_move": "x", "owner": "", "others_decide": ""}])
+    assert call("mapProblem", m)["result"] == "Execute row 1 names a solution that isn't on the map (gone)."
+    m = make_map(key_actions=[{"text": "k", "risk": "low", "solution_ids": ["s1", "gone"]}])
+    assert call("mapProblem", m)["result"] == "Key action 1 names a solution that isn't on the map (gone)."
+
+
+def test_check_refuses_a_plan_row_naming_an_obstacle():
+    m = make_map(execute=[{"solution_id": "o1", "first_move": "x", "owner": "", "others_decide": ""}])
+    assert call("mapProblem", m)["result"] == "Execute row 1 names a solution that isn't on the map (o1)."
+
+
+def test_check_lets_a_plan_row_name_a_tray_solution():
+    m = make_map(execute=[{"solution_id": "s3", "first_move": "x", "owner": "", "others_decide": ""}])
+    assert call("mapProblem", m)["result"] is None
+
+
+def test_check_names_a_solution_with_no_text_by_its_id():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "", [sol("s2", "")])])], unplaced=[])
+    assert call("mapProblem", m)["result"] == "Solution s1 has a solution directly under it."
+
+
+def test_check_refuses_a_solution_at_the_top_level_and_an_obstacle_in_the_tray():
+    m = make_map(obstacles=[sol("s1", "the fix")], unplaced=[])
+    assert call("mapProblem", m)["result"] == 'Solution "the fix" sits at the top level, but only an obstacle can.'
+    m = make_map(obstacles=[], unplaced=[item("o1", "a")])
+    assert call("mapProblem", m)["result"] == "Tray item 1 is an obstacle, but only a solution can be in the tray."
+
+
+def test_map_problem_refuses_each_missing_list():
+    for field, label in (("obstacles", "obstacles"), ("unplaced", "unplaced solutions"),
+                         ("key_actions", "key actions"), ("execute", "execute rows")):
+        m = make_map()
+        del m[field]
+        assert call("mapProblem", m)["result"] == "The map is missing its list of " + label + ".", field
+
+
+def test_map_problem_refuses_a_row_of_the_wrong_kind():
+    assert call("mapProblem", make_map(unplaced=[None]))["result"] == "Tray item 1 is missing."
+    assert call("mapProblem", make_map(execute=[None]))["result"] == "Execute row 1 is missing."
+
+
+def test_shape_check_rejects_a_bad_child_at_depth():
+    m = labeled_tree()
+    del obstacle(m, "o7")["children"]
+    assert call("mapProblem", m)["result"] == "Obstacle 1B2A is missing its list of what sits under it."
+    m = labeled_tree()
+    obstacle(m, "o6")["children"] = [None]
+    assert call("mapProblem", m)["result"] == "Obstacle 1B2A is missing."
+    m = labeled_tree()
+    obstacle(m, "o5")["text"] = 3
+    assert call("mapProblem", m)["result"] == "Obstacle 1B1 is missing its text."
+    m = labeled_tree()
+    obstacle(m, "o5")["root_cause"] = "because"
+    assert "Obstacle 1B1 " in call("mapProblem", m)["result"]
+    assert "root cause" in call("mapProblem", m)["result"]
+    m = labeled_tree()
+    obstacle(m, "o5")["id"] = ""
+    assert call("mapProblem", m)["result"] == "Obstacle 1B1 is missing its id."
+
+
+def test_shape_check_rejects_duplicate_ids():
+    m = labeled_tree()
+    obstacle(m, "o7")["id"] = "o2"
+    assert call("mapProblem", m)["result"] == "Obstacle 1B2A and Obstacle 2 both use the id o2."
+
+
+# The wide layout: the goal on the left, and every item one column out from its parent.
+
+def test_layout_has_no_overlaps_on_a_deep_mixed_tree():
+    assert overlaps(wide_rects(wide(mixed_tree()))) == []
+
+
+def test_layout_stays_apart_when_one_box_is_very_tall():
+    m = mixed_tree()
+    heights = uneven_heights(m)
+    heights["b3"] = 700
+    heights["w4"] = 500
+    heights["bs1"] = 400
+    assert overlaps(wide_rects(wide(m, heights))) == []
+
+
+def test_layout_draws_every_item_once_and_leaves_the_tray_out():
+    m = mixed_tree()
+    rows = call("drawnRows", m)["result"]
+    keys = sorted(b["key"] for b in wide(m)["boxes"])
+    assert keys == sorted(r["key"] for r in rows)
+    assert "tray1" not in keys
+
+
+def test_layout_keeps_a_line_per_item_with_its_kind():
+    m = mixed_tree()
+    out = wide(m)
+    rows = {r["key"]: r for r in call("drawnRows", m)["result"]}
+    assert sorted(line["to"] for line in out["lines"]) == sorted(rows)
+    for line in out["lines"]:
+        assert line["kind"] == rows[line["to"]]["kind"], line["to"]
+        assert line["d"].startswith("M")
+
+
+def test_layout_puts_the_goal_on_the_left_and_everything_to_its_right():
+    for m in (mixed_tree(), make_map()):
+        out = wide(m)
+        assert out["goal"]["x"] == SIZES["pad"]
+        assert out["goal"]["y"] + SIZES["goalH"] / 2 == out["height"] / 2
+        first = SIZES["pad"] + SIZES["goalW"] + SIZES["goalGap"]
+        assert all(b["x"] >= first for b in out["boxes"])
+
+
+def test_layout_of_an_empty_map_is_the_goal_alone():
+    out = wide(make_map(obstacles=[]))
+    assert out["boxes"] == [] and out["lines"] == []
+    assert out["width"] == SIZES["pad"] * 2 + SIZES["goalW"]
+    assert out["height"] == SIZES["pad"] * 2 + SIZES["goalH"]
+
+
+def test_layout_sits_every_item_one_column_out_from_its_parent():
+    m = mixed_tree()
+    out = wide(m)
+    boxes = box_map(out)
+    step = SIZES["boxW"] + SIZES["colGap"]
+    first = SIZES["pad"] + SIZES["goalW"] + SIZES["goalGap"]
+    for row in call("drawnRows", m)["result"]:
+        if row["parent"]:
+            assert boxes[row["key"]]["x"] - boxes[row["parent"]]["x"] == step, row["key"]
+        else:
+            assert boxes[row["key"]]["x"] == first, row["key"]
+
+
+def test_layout_reads_top_level_order_straight_down():
+    m = make_map(obstacles=[item("o%d" % i, "x") for i in range(1, 7)])
+    boxes = box_map(wide(m))
+    assert len({boxes["o%d" % i]["x"] for i in range(1, 7)}) == 1
+    ys = [boxes["o%d" % i]["y"] for i in range(1, 7)]
+    assert ys == sorted(ys)
+
+
+def test_layout_width_fits_the_deepest_column():
+    deep = item("o1", "a", [item("o2", "b", [sol("s1", "c", [item("o4", "d")])])])
+    out = wide(make_map(obstacles=[deep, item("o5", "e")]))
+    step = SIZES["boxW"] + SIZES["colGap"]
+    assert out["width"] == SIZES["pad"] * 2 + SIZES["goalW"] + SIZES["goalGap"] + 4 * step - SIZES["colGap"]
+
+
+def test_layout_fits_every_box_inside_the_canvas():
+    out = wide(mixed_tree())
+    for b in out["boxes"]:
+        assert b["x"] >= 0 and b["x"] + SIZES["boxW"] <= out["width"], b["key"]
+        assert b["y"] >= 0 and b["y"] + b["height"] <= out["height"], b["key"]
+
+
+def test_layout_connects_every_item_to_its_parent():
+    m = mixed_tree()
+    out = wide(m)
+    boxes = box_map(out)
+    goal = out["goal"]
     lines = {line["to"]: line for line in out["lines"]}
-    rects = narrow_rects(places, out)
-    assert len(out["lines"]) == len(places["rows"])
-    for row in places["rows"]:
-        line = lines[row["key"]]
-        box = boxes[row["key"]]
+    for row in call("drawnRows", m)["result"]:
+        key = row["key"]
+        line = lines[key]
         assert line["from"] == (row["parent"] or "goal")
         start, end = line_ends(line["d"])
-        assert end == (box["x"], box["y"] + box["height"] / 2), row["key"]
-        parent = boxes[row["parent"]] if row["parent"] else {**out["goal"], "height": 70}
-        parent_width = places["goal"]["width"] if not row["parent"] else next(
-            r["width"] for r in places["rows"] if r["key"] == row["parent"])
-        # The line starts on the parent's box.
-        assert parent["x"] <= start[0] <= parent["x"] + parent_width, row["key"]
-        assert parent["y"] <= start[1] <= parent["y"] + parent["height"], row["key"]
-        # The vertical run stays clear of every box.
-        points = line_points(line["d"])
-        for (x1, y1), (x2, y2) in zip(points, points[1:]):
-            if x1 != x2:
-                continue
-            for r in rects:
-                crosses_x = r["x"] < x1 < r["x"] + r["w"]
-                crosses_y = r["y"] < y2 and y1 < r["y"] + r["h"]
-                assert not (crosses_x and crosses_y), (row["key"], r["key"])
-
-
-def test_narrow_layout_handles_an_empty_map():
-    places, out = narrow(make_map(obstacles=[], solutions=[]))
-    assert places["rows"] == []
-    assert out["boxes"] == []
-    assert out["lines"] == []
-    assert out["height"] >= out["goal"]["y"] + 70
+        assert end == (boxes[key]["x"], boxes[key]["y"] + boxes[key]["height"] / 2), key
+        if row["parent"]:
+            parent = boxes[row["parent"]]
+            assert start == (parent["x"] + SIZES["boxW"], parent["y"] + parent["height"] / 2), key
+        else:
+            assert start == (goal["x"] + SIZES["goalW"], goal["y"] + SIZES["goalH"] / 2), key
 
 
 AUTOSAVER_RUNNER = r"""

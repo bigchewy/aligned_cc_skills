@@ -30,7 +30,7 @@
 
 > Say you heard it, and still show your own.
 
-### Leaving a solution untied
+### Leaving a solution in the tray
 
 **User:** "Let's also run a monthly pulse survey. I don't know which obstacle it goes with."
 
@@ -38,7 +38,17 @@
 
 **Right:** "Which obstacle does it get past? One on the map is that some people feel less productive in the office, and the survey would show how many. If none fits, we may have missed an obstacle."
 
-> Solutions can come in any order, but every one is tied by the end of 4a.
+> Solutions can come in any order, but every one is placed by the end of 4a.
+
+### Writing the same solution on two obstacles
+
+**User:** "Set clear expectations with managers. That helps with two of the obstacles."
+
+**Wrong:** Writing the solution under both obstacles without asking.
+
+**Right:** "A solution lives in one place. Which obstacle does it belong to, or should it be two separate solutions?"
+
+> Two items with the same text look like one solution, and picks and plan rows can only follow one of them.
 
 ### Pushing back on someone who chose to continue
 
@@ -94,7 +104,7 @@
 
 **Right:** "**We haven't defined what the office is for.** You can do something about that one. Is that it?" If they say no, unmark it and keep asking why.
 
-> A root cause ends its branch. An item with children can't be one, and the page won't draw a file that has one.
+> A root cause can't have an obstacle directly under it, and the page won't draw a file that has one. A solution can sit under a root cause, and that solution can have obstacles of its own.
 
 ### Rewriting the map without reading it first
 

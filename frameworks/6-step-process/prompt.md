@@ -21,9 +21,9 @@ Follow the steps in order. "The person's folder" means the folder they gave you 
 
 ## Solutions that come early
 
-Some people find solutions easier to think about than obstacles, and they can offer one at any time. A solution offered during Steps 1 to 3 goes in a holding list. Say so in one line and return to the current step. Each write of the map puts held solutions in `solutions`, tied to nothing, so the page shows them in its tray. Step 4a pulls in the holding list with everything else.
+Some people find solutions easier to think about than obstacles, and they can offer one at any time. A solution offered during Steps 1 to 3 goes in a holding list. Say so in one line and return to the current step. Each write of the map puts held solutions in `unplaced`, so the page shows them in its tray. Step 4a pulls in the holding list with everything else.
 
-An opportunity is a solution. It gets no separate type and gets tied the same way.
+An opportunity is a solution. It gets no separate type and gets placed the same way.
 
 ## The map file
 
@@ -38,7 +38,7 @@ One map holds one goal, and each map is one person's. You write it when the goal
 **Every point marked "Write the map" after that.**
 
 1. Before each rewrite, read the JSON now in the file. If its `revision` is lower than the one you last wrote, a copy has probably replaced your newer version. Say so before building on it, name what the file has lost, and ask whether to put that back. **WAIT for their answer.**
-2. If the JSON differs from `baseline`, the person saved edits. Build on their version and say in one line what you kept. They may also have changed picks, untied solutions or removed items without telling you, so run the checks in "Picking up edits" on what differs.
+2. If the JSON differs from `baseline`, the person saved edits. Build on their version and say in one line what you kept. They may also have changed picks, moved items or removed items without telling you, so run the checks in "Picking up edits" on what differs.
 3. Add what this step produced. Set `revision` to one more than the higher of the file's number and the one you last wrote.
 4. Replace only the JSON in the data block.
 
@@ -46,7 +46,7 @@ One map holds one goal, and each map is one person's. You write it when the goal
 
 - Set `baseline` to a copy of the JSON you are writing, with that copy's own `baseline` empty (`{}`).
 - Write every less-than sign in the JSON as six characters: a backslash, then the letters `u003c`. The file must hold those six characters and never the less-than sign itself. This covers text in the person's own words, because a `</script>` inside a map item would end the data block and break the page.
-- Read the data block back. It must parse as JSON and hold no less-than sign. It must also match the JSON below: a non-empty `map_id`, a number in `revision`, and every field present with the same kind of value. So at every depth, each item has `id` and `text` as strings, `solution_ids` and `children` as lists even when they're empty, and `root_cause` as true or false. No two items share an id, and a root cause has no children. The page can't draw a map with a missing field, and it shows the person a message instead. If the shape is wrong, fix it and read it back again. Some file tools turn those six characters back into a less-than sign as they write. If the read-back finds one, fix it with a shell command. With no shell, write the words "less than" in its place and tell the person.
+- Read the data block back. It must parse as JSON and hold no less-than sign. It must also match the JSON below: a non-empty `map_id`, a number in `revision`, and every field present with the same kind of value. So at every depth and in `unplaced`, each item has `id` and `text` as strings, `kind` as obstacle or solution, `root_cause` and `star` as true or false, and `children` as a list even when it's empty. No two items share an id, anywhere in the tree or `unplaced`. A root cause has no obstacle directly under it, a solution has no solution directly under it, and only obstacles sit at the top level. Only a solution in the tree has a star, and items in `unplaced` are solutions with no children. Every id named in `key_actions` and `execute` belongs to a solution in the file, and the file has no list of solutions apart from the tree and `unplaced`. The page can't draw a map with a missing field, and it shows the person a message instead. If the shape is wrong, fix it and read it back again. Some file tools turn those six characters back into a less-than sign as they write. If the read-back finds one, fix it with a shell command. With no shell, write the words "less than" in its place and tell the person.
 - Say in one line what changed. After a rewrite, tell them to reload the page if it's open. Reloading drops edits that are not yet in the file. If the page says changes aren't being saved or saving is paused, those edits are not in the file. They click Turn on saving or Turn saving back on, and the page then refuses because the file changed, and offers Save a copy. If the page shows Not saved, they use Save a copy. In Safari or Firefox, they use Save to Downloads. That copy goes in the folder under another name, and they tell you the name.
 
 **The JSON.** `example-map.html` in this framework's folder shows a finished one.
@@ -58,11 +58,17 @@ One map holds one goal, and each map is one person's. You write it when the goal
   "person": "",
   "goal": {"text": ""},
   "obstacles": [
-    {"id": "o1", "text": "", "root_cause": false, "solution_ids": [], "children": [
-      {"id": "o2", "text": "", "root_cause": true, "solution_ids": ["s1"], "children": []}
+    {"id": "o1", "kind": "obstacle", "text": "", "root_cause": false, "star": false, "children": [
+      {"id": "o2", "kind": "obstacle", "text": "", "root_cause": true, "star": false, "children": [
+        {"id": "s1", "kind": "solution", "text": "", "root_cause": false, "star": false, "children": [
+          {"id": "o3", "kind": "obstacle", "text": "", "root_cause": false, "star": false, "children": []}
+        ]}
+      ]}
     ]}
   ],
-  "solutions": [{"id": "s1", "text": "", "star": false}],
+  "unplaced": [
+    {"id": "s2", "kind": "solution", "text": "", "root_cause": false, "star": false, "children": []}
+  ],
   "key_actions": [{"text": "", "risk": "high", "solution_ids": ["s1"]}],
   "execute": [{"solution_id": "s1", "first_move": "", "owner": "", "others_decide": ""}],
   "feedback": {"number": "", "check_on": "", "redraw_if": ""},
@@ -70,15 +76,19 @@ One map holds one goal, and each map is one person's. You write it when the goal
 }
 ```
 
-`obstacles` is the top level of a tree, and an item at any depth has the same five fields. `children` holds the sub-obstacles under an item. Every id is different from every other, across the whole tree. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists.
+`obstacles` is the top level of a tree, and an item at any depth has the same six fields. `kind` is obstacle or solution. `children` holds what sits under an item. An obstacle can hold obstacles and solutions. A solution can hold only obstacles, the ones standing in its way, and those can hold solutions, to any depth. Only obstacles sit at the top level. Every id is different from every other, across the whole tree and `unplaced`. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists.
 
-`root_cause` is true or false. Only an item with no children can be a root cause, because a root cause ends its branch. One obstacle can have several root causes in different branches.
+`unplaced` holds solutions that aren't placed yet, and the page shows them in its tray. Items there have no children and no star, because they have no number to continue.
 
-Labels come from position. The first level goes 1, 2, 3, the level under that goes A, B, C, the next goes 1, 2, 3, and deeper levels keep alternating. They join with no separator, so `1B3` is under `1B`, and `1B3A` is under `1B3`. Past Z, letters go AA, AB. Never store a label in the file, because deleting an item renumbers its later siblings. Solutions get no labels. When you talk about an item, use its label, as in "1B3."
+`root_cause` is true or false, and only an obstacle can be one. A root cause has no obstacle directly under it, because it ends that line of asking why. A solution under a root cause can still have obstacles of its own. One obstacle can have several root causes in different branches.
 
-`solution_ids` says which solutions sit on an item. On an item with children, a solution draws directly under that item. On an item with no children, it draws in the next column out. A solution on several items is listed on each one.
+`star` is true only on a solution in the tree.
 
-Deleting an item deletes everything under it. Any solution left with no item stays in `solutions`, and the page shows it in its tray. The page does the same when the person edits.
+Labels come from position. The first level goes 1, 2, 3, the level under that goes A, B, C, the next goes 1, 2, 3, and deeper levels keep alternating. They join with no separator, so `1B3` is under `1B`, and `1B3A` is under `1B3`. Past Z, letters go AA, AB. Never store a label in the file, because deleting an item renumbers its later siblings. Solutions get no labels. An obstacle under a solution continues the numbering of the nearest obstacle above it, so 1B2 can be an answer to why on 1B or an obstacle in the way of a solution on 1B. The map shows which. When you talk about an item, use its label, as in "1B3."
+
+A solution lives in one place, under the item it gets past. `key_actions` and `execute` name solutions by id.
+
+Deleting an item deletes everything under it, each deleted solution's Execute row, and each deleted solution's id on any key action. The key action stays, even with no solutions left, because it comes from the strategy. The page does the same when the person edits.
 
 ## Opening
 
@@ -168,7 +178,7 @@ Ask why on the picked obstacles only, one question per turn. There is no fixed n
 
 Each answer to "why" becomes a child of the item you asked about, and the next why asks about that child. When the person gives two different reasons, each becomes its own child, and you take them one at a time. Name items by their labels, like "1B."
 
-Put the answer in bold and ask if that's it. The answer ends its branch, so set its `root_cause` to true only after they confirm. If they say no, leave it false and keep asking why. One obstacle can have several root causes.
+Put the answer in bold and ask if that's it. The answer ends that line of asking why, so set its `root_cause` to true only after they confirm. If they say no, leave it false and keep asking why. One obstacle can have several root causes.
 
 **WAIT at each why and at each root cause.**
 
@@ -187,21 +197,21 @@ If the holding list has anything on it, remind them it counts and that you alrea
 
 **WAIT for "done".** End your turn here.
 
-After "done," build your list from the documents, the goal and the root causes, with each solution tied to the item it serves. Show it as what they suggest. Ask what they'd change and what they have that isn't there.
+After "done," build your list from the documents, the goal and the root causes, with each solution placed under the item it serves. Show it as what they suggest. Ask what they'd change and what they have that isn't there.
 
 **WAIT for their reaction.** Then show the merged list, with the holding list pulled in.
 
-**Write the map.** Anything still untied sits in the page's tray for now.
+**Write the map.** Anything not placed yet goes in `unplaced`, and the page shows it in its tray for now.
 
-In the same message, start tying, because every solution gets tied. Take untied solutions one per turn. Nudge them to name the obstacle it gets past, and help them find it. If none fits, name an obstacle that was missed and add it with their yes. If they still can't tie it, ask whether a new obstacle belongs on the map or the solution comes off. A solution that serves several obstacles sits on each one.
+In the same message, start placing, because every solution gets placed. Take unplaced solutions one per turn. Nudge them to name the obstacle it gets past, and help them find it. If none fits, name an obstacle that was missed and add it with their yes. If they still can't place it, ask whether a new obstacle belongs on the map or the solution comes off. If a solution serves several obstacles, ask which obstacle it belongs to, or whether it should be two separate solutions. Never write two items with the same text without asking.
 
-Tie each solution to the item it gets past, usually a root cause. If the person names a different item, put it there.
+Place each solution under the item it gets past, usually a root cause. If the person names a different item, put it there. If they name something standing in the way of a solution, add it as an obstacle under that solution.
 
 **WAIT for their answer at each one.**
 
-When nothing is untied, ask if that's the list.
+When nothing is left in `unplaced`, ask if that's the list.
 
-**WAIT for their yes.** Don't start 4b with anything untied.
+**WAIT for their yes.** Don't start 4b with anything in `unplaced`.
 
 **Write the map.** Then start 4b in the same message.
 
@@ -223,15 +233,15 @@ With a table on screen, ask which ratings are wrong.
 
 **WAIT for their corrections.** Then ask whether the table changes their picks.
 
-**WAIT until the stars are agreed.** Only agreed picks get stars, and every one of them is already tied. When you first add stars, say in one line that a star marks one of their picks, the page shows "★ My picks" as the key, and they can tick or untick "This is one of my picks" on any solution.
+**WAIT until the stars are agreed.** Only agreed picks get stars, and every one of them is already placed. When you first add stars, say in one line that a star marks one of their picks, the page shows "★ My picks" as the key, and they can tick or untick "This is one of my picks" on any placed solution.
 
 **Write the map.** Then start Step 5 in the same message.
 
 ## Step 5: Execute
 
-For each starred solution, one per turn, ask for the first move, a proposed owner, and what other people need to decide. If the starting point isn't known, the first Execute item is finding today's number, with no star. An Execute row needs a solution, so add one for it, tied to an obstacle that says today's number is unknown, and put its row first.
+For each starred solution, one per turn, ask for the first move, a proposed owner, and what other people need to decide. If the starting point isn't known, the first Execute item is finding today's number, with no star. An Execute row needs a solution, so add one for it, placed under an obstacle that says today's number is unknown, and put its row first.
 
-**WAIT for their answer.** If an edit left a solution untied, tie it before going on.
+**WAIT for their answer.** If a solution is still in `unplaced`, place it before going on.
 
 **Write the map.** Do this after each row. These are planned, not done, and the page says so.
 
@@ -265,11 +275,11 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 
 **If the file shows no changes and they didn't say they changed it,** they have no edits to find, so go to "Resuming" below.
 
-**If it shows changes,** list them in plain words. Compare items by `id`, because a label can change when an item before it is deleted. A solution moved to another item counts as a change, so name the item it now sits on by its label. Use labels from the file as it is now. Name a deleted item by its text and say how many sub-items went with it. Say when an item stopped being a root cause, because that part of 3c may need another look. Then:
+**If it shows changes,** list them in plain words. Compare items by `id` and parent, because a label can change when an item before it is deleted. Report a moved obstacle with what's under it, a moved solution with the label of the item it now sits under, and a deleted item with what went with it. Use labels from the file as it is now. Name a deleted item by its text and say how many sub-items went with it, including any picks and Step 5 rows. Say when an item stopped being a root cause, because that part of 3c may need another look. Then:
 
-- Nudge any untied solution toward an obstacle, the same way as 4a.
+- Nudge any solution in `unplaced` toward an obstacle, the same way as 4a.
 - The person can change picks on the page, with the box "This is one of my picks." Ask about any new pick with no Step 5 row, once the run has reached Step 5. If they removed a pick that has a Step 5 row, ask whether to drop the Step 5 row. List each one in plain words, by the solution's text.
-- Clean ids that no longer exist out of `key_actions` and `execute`.
+- The page takes a deleted solution's row out of `execute` and its id off `key_actions` by itself, so those lists still match the map.
 - If obstacles or solutions changed and the map has a key-action table, offer to redo it.
 
 **When you only list their edits,** update `baseline` in the file to the version you just read, with its own `baseline` empty (`{}`), and leave `revision` alone. Touch nothing else, and keep the less-than and read-back rules. An open tab can still save, so no reload is needed. The next pick-up compares against this version, so a later save that went astray shows as no changes.

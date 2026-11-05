@@ -108,7 +108,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 ## Step 4: Solutions
 
-### 4a: Tying a solution with no obstacle
+### 4a: Placing a solution with no obstacle
 
 **User:** "And the monthly pulse survey from the holding list."
 
@@ -120,7 +120,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "It belongs there."
 
-> Claude nudges, then helps find the obstacle. By the end of 4a, every solution is tied.
+> Claude nudges, then helps find the obstacle. By the end of 4a, every solution is placed.
 
 ### 4a: A solution on a specific item
 
@@ -130,7 +130,23 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **Advisor:** "It's on 1B. Next: which obstacle does set clear expectations with managers get past?"
 
-> The person named an item, so Claude adds `s3` to that item's `solution_ids`. 1B has children, so the page draws the solution directly under it. On an item with no children, it draws in the next column out. Without a named item, Claude ties a solution to what it gets past, usually a root cause.
+> The person named an item, so Claude adds the solution to that item's `children`. The page draws it one column out from 1B. Without a named item, Claude places a solution under what it gets past, usually a root cause.
+
+### 4a: A solution that serves two obstacles
+
+**User:** "Set clear expectations with managers. That helps with managers not enforcing the policy, and with expectations being unclear."
+
+**Advisor:** "A solution lives in one place. Which obstacle does it belong to, or should it be two separate solutions?"
+
+> Claude asks, and doesn't write two items with the same text without asking.
+
+### 4a: An obstacle in the way of a solution
+
+**User:** "Creating in-person-only experiences won't work, because teams have no budget for getting together."
+
+**Advisor:** "That goes under the solution as an obstacle, and it's 1B3. Do you want a solution for it now?"
+
+> An obstacle under a solution continues the numbering of the nearest obstacle above it. 1B already has 1B1 and 1B2, so this one is 1B3. The map shows it sits under the solution and isn't an answer to why on 1B.
 
 ### 4b: Picks and the key-action table
 
@@ -173,9 +189,9 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "You renamed the noise obstacle, deleted the productivity obstacle, and added 4A under expectations. The pulse survey sat on the productivity obstacle, so it's untied now. Which obstacle does it get past?"
+**Advisor:** "You renamed the noise obstacle, deleted the productivity obstacle and the pulse survey under it, and added 4A under expectations. The pulse survey had no Step 5 row, so nothing else went with it. Which step do you want to resume?"
 
-> Claude compares the file with `baseline`, lists the changes in plain words, and nudges the untied solution. If it only lists them, it moves `baseline` in the file to this version and leaves `revision` alone, so the next pick-up sees only newer edits.
+> Claude compares the file with `baseline` and lists the changes in plain words, including what went with a deleted item. If it only lists them, it moves `baseline` in the file to this version and leaves `revision` alone, so the next pick-up sees only newer edits.
 
 ### A solution moved to another item
 
@@ -183,7 +199,15 @@ Which ratings are wrong?"
 
 **Advisor:** "You moved create in-person-only experiences from 1B to 1, the commute obstacle itself. That's the only change. Which step do you want to resume?"
 
-> `solution_ids` changed on both items, and Claude names them by label. Claude compares items by `id`, because a label can change when an item before it is deleted.
+> The solution's parent changed, and Claude names both items by label. Claude compares items by `id` and parent, because a label can change when an item before it is deleted.
+
+### An obstacle moved to another item
+
+**User:** "I changed the map."
+
+**Advisor:** "You moved the value of the office not keeping up from 1 to 5, along with the two root causes and the solutions under it. It's 5B now. Which step do you want to resume?"
+
+> A moved obstacle gets reported with what's under it.
 
 ### No edits, and they didn't say they changed it
 
