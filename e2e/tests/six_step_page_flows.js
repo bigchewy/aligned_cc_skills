@@ -1181,6 +1181,55 @@ const flows = {
     p.release(); p.clickAfter();
     assert.ok(p.canvasText().includes('1A'), p.canvasText());
   },
+  async 'a press whose release was lost cannot start a drag from a press outside the canvas'() {
+    const html = treeHtml([node('o1', 'first'), node('o2', 'other')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.press('o1');
+    p.fire(p.el('zoom-out'), 'pointerdown', { button: 0, buttons: 1, clientX: 10, clientY: 10 });
+    p.pointerTo('o2');
+    assert.equal(p.ghost().hidden, true);
+    assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    p.release(); await settle();
+    assert.equal(f.writes, 0);
+    p.press('o1'); p.pointerTo('o2');
+    assert.equal(p.ghost().hidden, false);
+    // The same goes for a drag whose release was lost: the next press ends it, and nothing moves.
+    p.fire(p.el('zoom-out'), 'pointerdown', { button: 0, buttons: 1, clientX: 10, clientY: 10 });
+    assert.equal(p.ghost().hidden, true);
+    p.release(); await settle();
+    assert.equal(f.writes, 0);
+  },
+  async 'a drop while a save runs reaches the file in the follow-up write'() {
+    const html = treeHtml([node('a', 'A'), node('b', 'B'), node('c', 'C')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    let open; f.gate = new Promise((r) => { open = r; });
+    p.typeOn('a'); p.typeAndEnter('A2'); await settle();
+    const before = f.writes;
+    p.dragOnto('b', 'c'); await settle();
+    assert.equal(f.writes, before);
+    open(); f.gate = null; await settle();
+    assert.equal(f.writes, before + 2);
+    const saved = parse(f.html);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['a', 'c']);
+    assert.equal(findIn(saved.obstacles, 'c').children[0].id, 'b');
+    assert.equal(findIn(saved.obstacles, 'a').text, 'A2');
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'closing during a drag warns only for real changes and leaves the drag whole'() {
+    const html = treeHtml([node('a', 'A'), node('b', 'B'), node('c', 'C')]);
+    const p = page({ html }); await settle();
+    p.press('b'); p.pointerTo('c');
+    assert.equal(p.warnsOnClose(), false);
+    assert.equal(p.ghost().hidden, false);
+    p.release(); p.clickAfter(); await settle();
+    p.press('c'); p.pointerTo('a');
+    assert.equal(p.warnsOnClose(), true);
+    assert.equal(p.ghost().hidden, false);
+    p.fire(p.el('map'), 'keydown', { key: 'Escape' });
+    assert.equal(p.ghost().hidden, true);
+  },
 
   // Selecting, pressing a plus and typing in place.
   async 'a click selects and writes nothing'() {

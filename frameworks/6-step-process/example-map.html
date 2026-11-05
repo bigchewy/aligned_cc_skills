@@ -99,6 +99,7 @@ header {
 .blank { color: var(--muted); font-weight: 400; font-style: italic; }
 .selected { outline: 1px solid var(--focus); outline-offset: 2px; }
 .item:focus-visible, .quiet:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.item:not(.goal) { cursor: grab; }
 body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 .drag-source { opacity: 0.4; }
 .drop-target { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -220,7 +221,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     <div id="strategy-note" hidden>Not compared to strategy.</div>
   </div>
   <p id="first-hint" hidden>Click the goal, then press a + to add the first obstacle or solution. Double-click to change its words.</p>
-  <p id="edit-hint">Click an item, then press a + to add under it. Double-click to change its words.</p>
+  <p id="edit-hint">Click an item, then press a + to add under it. Double-click to change its words. Drag it onto a box to move it.</p>
   <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
   <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
   <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
@@ -2005,8 +2006,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     press = { ref: ref, x: e.clientX, y: e.clientY };
   });
 
-  // Every press starts fresh, because a redraw or a lost window can mean the click after a drag never came.
-  document.addEventListener('pointerdown', function () { afterDrag = false; }, true);
+  // Every press starts fresh, because a redraw or a lost window can mean the click after a drag never came,
+  // and a lost release can leave an old press or drag behind. The canvas listener runs after this one.
+  document.addEventListener('pointerdown', function () {
+    afterDrag = false;
+    cancelDrag();
+  }, true);
 
   // No buttons held means the release was missed, as with a Control-click on a Mac.
   document.addEventListener('pointermove', function (e) {

@@ -111,7 +111,7 @@ def test_saving_sits_in_the_top_right_and_the_page_has_no_footer():
     assert "Not saved yet." not in header
     assert ">Save<" not in header
     assert header.count('id="save"') == 1
-    assert "Click an item, then press a + to add under it. Double-click to change its words." in header
+    assert "Click an item, then press a + to add under it. Double-click to change its words. Drag it onto a box to move it." in header
     # The status and its button take the far right, after every other control.
     assert header.index('id="toggle-plan"') < header.index('id="save-status"') < header.index('id="save"')
     assert header.rindex("<button") == header.index('id="save"') - len('<button type="button" class="quiet" ')
@@ -1023,6 +1023,17 @@ def test_the_drag_ghost_sits_outside_the_canvas_and_takes_no_pointer():
     assert target and "var(--focus)" in target.group(1)
     dragging = re.search(r"body\.dragging[^{]*\{([^}]*)\}", html)
     assert dragging and "user-select: none" in dragging.group(1)
+
+
+def test_items_show_they_can_be_grabbed_but_the_goal_does_not():
+    html = template()
+    rule = re.search(r"\.item:not\(\.goal\) \{([^}]*)\}", html)
+    assert rule and "cursor: grab" in rule.group(1)
+
+
+def test_the_first_write_tells_the_person_they_can_drag():
+    first_write = next(line for line in section("## Step 2: Goal").splitlines() if "This is the first write" in line)
+    assert "they can drag an item onto a box to move it" in first_write
 
 
 def test_solutions_under_the_goal_get_one_nudge_unless_they_said_it_belongs():

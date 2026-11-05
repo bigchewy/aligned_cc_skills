@@ -134,7 +134,7 @@ If the documents point to a goal, ask this instead: propose the goal in one sent
 
 If you don't know their first name, ask for it now, because the map shows it, and **WAIT for their name.**
 
-**Write the map.** This is the first write. Give the full path and say to double-click it. Then start 3a in the same message.
+**Write the map.** This is the first write. Give the full path and say to double-click it. Say in one line that they can drag an item onto a box to move it. Then start 3a in the same message.
 
 ## Step 3: Root-cause the problems
 
