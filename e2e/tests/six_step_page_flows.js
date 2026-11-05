@@ -924,6 +924,84 @@ const flows = {
     p.resize(); await settle();
     assert.equal(text.value, 'half new'); assert.equal(p.active(), text); assert.equal(f.writes, 1);
   },
+  async 'enter on the box of a blank new item goes back to typing, and nothing reaches the file'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.addObstacle(); await settle();
+    p.box('o2').focus();
+    const e = p.fire(p.box('o2'), 'keydown', { key: 'Enter' }); await settle();
+    assert.ok(e.prevented); assert.equal(p.active(), p.el('typing'));
+    assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    p.resize(); await settle();
+    assert.equal(f.writes, 0); assert.deepEqual(parse(f.html).obstacles.map((o) => o.id), ['o1']);
+    assert.ok(!p.canvasText().includes('New obstacle'));
+  },
+  async 'enter on the box of a new item keeps what was typed'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.addObstacle(); p.el('typing').value = 'typed words';
+    p.fire(p.box('o2'), 'keydown', { key: 'Enter' }); await settle();
+    assert.equal(p.el('typing').value, 'typed words'); assert.equal(p.active(), p.el('typing'));
+    assert.equal(f.writes, 0);
+  },
+  async 'enter on the box of an existing item keeps what was typed'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const p = page({ html }); await settle();
+    p.typeOn('o1'); p.el('typing').value = 'half typed';
+    p.box('o1').focus();
+    p.fire(p.box('o1'), 'keydown', { key: 'Enter' }); await settle();
+    assert.equal(p.el('typing').value, 'half typed'); assert.equal(p.active(), p.el('typing'));
+    p.box('o1').focus();
+    p.fire(p.box('o1'), 'keydown', { key: ' ' }); await settle();
+    assert.equal(p.el('typing').value, 'half typed'); assert.equal(p.active(), p.el('typing'));
+  },
+  async 'starting to type on another item finishes the open text box first'() {
+    const html = treeHtml([node('o1', 'first'), node('o2', 'other')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.typeOn('o1'); p.el('typing').value = 'kept';
+    p.fire(p.box('o2'), 'dblclick'); await settle();
+    assert.equal(parse(f.html).obstacles[0].text, 'kept');
+    assert.equal(p.el('typing').value, 'other'); assert.equal(p.isSelected('o2'), true);
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    const writes = f.writes;
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    p.fire(p.box('o2'), 'dblclick'); await settle();
+    assert.equal(f.writes, writes); assert.equal(p.el('typing').value, 'other');
+    assert.ok(!p.canvasText().includes('1A'));
+  },
+  async 'adding while a blank new item is open removes it, and neither blank reaches the file'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.addObstacle(); await settle();
+    p.el('add-obstacle').listeners.click[0](); await settle();
+    assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
+    p.typeAndEnter('second'); await settle();
+    assert.deepEqual(parse(f.html).obstacles.map((o) => o.text), ['first', 'second']);
+  },
+  async 'escape cancels typing even after focus left the text box'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.typeOn('o1'); p.el('typing').value = 'changed';
+    p.box('o1').focus();
+    p.fire(p.box('o1'), 'keydown', { key: 'Escape' }); await settle();
+    assert.equal(p.el('typing').hidden, true); assert.equal(f.writes, 0);
+    assert.ok(p.canvasText().includes('first')); assert.equal(p.isSelected('o1'), true);
+  },
+  async 'escape on an item from the header add returns focus to that button'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const p = page({ html }); await settle();
+    p.addObstacle();
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' });
+    assert.equal(p.active(), p.el('add-obstacle'));
+    p.addObstacle(); p.pressEnter();
+    assert.equal(p.active(), p.el('add-obstacle'));
+  },
   async 'root cause shows only the green plus'() {
     const html = treeHtml([node('o1', 'first', [], true)]);
     const p = page({ html }); await settle();

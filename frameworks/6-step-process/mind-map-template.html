@@ -1595,7 +1595,10 @@ header {
   }
 
   // A new item gets drawn while the old selection is still set, so the old selection holds still on screen.
+  // One text box at a time, so what's open finishes first. Finishing can remove a blank new item.
   function startTyping(ref, isNew) {
+    if (editing) finishTyping();
+    if (!L.itemExists(map, ref)) return;
     editing = { ref: ref, isNew: Boolean(isNew), from: selected };
     el.typing.value = ref.kind === 'goal' ? map.goal.text : L.findItem(map, ref.id).text;
     el.typing.setAttribute('aria-label', itemHeading(ref));
@@ -1615,10 +1618,12 @@ header {
     el.typing.value = '';
   }
 
-  // A blank new item was never in the file, so taking it out asks for no write.
+  // A blank new item was never in the file, so taking it out asks for no write. With nothing selected
+  // before it, the item came from the header's button, so focus goes back there.
   function dropNewItem(e) {
     selected = e.from;
     setMap(L.deleteItem(map, e.ref.id));
+    if (!selected) el['add-obstacle'].focus({ preventScroll: true });
   }
 
   function finishTyping() {
@@ -1644,7 +1649,9 @@ header {
     restoreFocus();
   }
 
+  // Finishes first, because the item added here must be the one holding back writes.
   function addUnder(parentId, kind) {
+    if (editing) finishTyping();
     var id = L.nextId(map, kind === 'solution' ? 's' : 'o');
     map = L.addItem(map, parentId, id, kind, '');
     startTyping({ kind: kind, id: id }, true);
@@ -1933,6 +1940,8 @@ header {
     if (e.target === el.typing) return;
     if (e.key === 'Tab') {
       tabThroughControls(e);
+    } else if (e.key === 'Escape' && editing) {
+      cancelTyping();
     } else if (e.key === 'Escape' && selected) {
       var was = selected;
       select(null);
@@ -1941,6 +1950,11 @@ header {
       var ref = refAt(e.target);
       if (!ref) return;
       e.preventDefault();
+      // Focus can leave the text box for the item's own box. Starting again there would lose the typing.
+      if (editing && refKey(editing.ref) === refKey(ref)) {
+        el.typing.focus();
+        return;
+      }
       if (e.repeat) return;
       if (e.key === 'Enter' && selected && refKey(selected) === refKey(ref)) startTyping(ref);
       else select(ref);
