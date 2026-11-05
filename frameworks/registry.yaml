@@ -1404,7 +1404,7 @@ frameworks:
   use_when: a leadership team or manager-report pair is running status-heavy meetings
     with no written record of commitments or decisions, or needs to establish a repeatable
     operating rhythm tied to OKRs
-- advisor: gino-wickman
+- advisor: coach-eric
   deliverable_type: plan
   domains:
   - operating-cadence

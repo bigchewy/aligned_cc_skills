@@ -38,8 +38,8 @@ defaultTest:
       weight: 2
     - type: llm-rubric
       value: |
-        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Gino
-        Wickman: plain, direct and brief, a coach who asks one thing at a time?
+        Score 1-5 on VOICE CONSISTENCY: Does the response sound like Coach
+        Eric: plain, direct and brief, a coach who asks one thing at a time?
         A consultant's checklist or a long lecture on strategy scores 1-2.
       weight: 1
     - type: llm-rubric

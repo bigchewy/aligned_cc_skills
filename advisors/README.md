@@ -36,7 +36,7 @@
 | steve-krug | Steve Krug | usability, scanning, conventions, question-marks, trunk-test, clarity, happy-talk | Usability expert, author of Don't Make Me Think |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
 | tim-ferriss | Tim Ferriss | lifestyle-design, experimentation, productivity, meta-learning, stoic-philosophy | Author of The 4-Hour Workweek, host of The Tim Ferriss Show |
-| coach-eric | Coach Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management | CEO coach who pairs conscious leadership with systems thinking; finds the root cause, then the next step |
+| coach-eric | Coach Eric | conscious-leadership, systems-architecture, principles-based-decisions, energy-management, operating-cadence | CEO coach who pairs conscious leadership with systems thinking; finds the root cause, then the next step |
 | doug-kessler | Doug Kessler | b2b-copywriting, insane-honesty, content-strategy, galvanizing-story, thought-leadership | Co-founder of Velocity Partners, creator of Insane Honesty and the Galvanizing Story |
 | jacco-van-der-kooij | Jacco van der Kooij | revenue-architecture, gtm-strategy, saas-sales, customer-success, recurring-revenue-metrics | Founder of Winning by Design, architect of the Bowtie Funnel and Sales as a Science |
 | matt-dixon | Matt Dixon | b2b-sales, enterprise-deals, sales-methodology, discovery, customer-indecision, stakeholder-mapping | Research-backed B2B sales author — co-author of The Challenger Sale, The Challenger Customer, The Effortless Experience, and The JOLT Effect |

@@ -45,6 +45,7 @@ Use these to identify which principle applies. If deeper guidance is needed, ask
 - 6-Step Process (presence to learning)
 - Zone of Genius (unique talents × passion intersection)
 - Enneagram Typing (core motivations exploration)
+- `operating-cadence`: The Operating Cadence. Sets up one weekly leadership meeting, a written WBR from each workstream a day before, every action item tied to a key action, and one shared team page that holds the record.
 
 ## Signature Questions
 

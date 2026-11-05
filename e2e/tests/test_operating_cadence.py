@@ -1116,9 +1116,9 @@ def test_local_word_list_is_git_ignored():
     assert ".banned-words.local" in (REPO_ROOT / ".gitignore").read_text()
 
 
-def test_registry_entry_is_wickman_and_replaces_the_old_id():
+def test_registry_entry_is_coach_eric_and_replaces_the_old_id():
     entry = _registry_entry()
-    assert entry["advisor"] == "gino-wickman"
+    assert entry["advisor"] == "coach-eric"
     assert entry["deliverable_type"] == "plan"
     assert not entry.get("required_documents")
     helpful = {d["from"] for d in entry["helpful_documents"]}
@@ -1148,23 +1148,33 @@ def test_coo_seat_points_to_operating_cadence():
             assert "leadership-meeting" not in [job.get("framework"), *job.get("also", [])]
 
 
-def test_wickman_best_for_names_the_cadence_and_not_for_sends_only_individual_check_ins_to_mochary():
+def test_coach_eric_owns_the_cadence_and_wickman_sends_it_to_him():
     data = yaml.safe_load((REPO_ROOT / "advisors" / "registry.yaml").read_text())
-    wickman = next(a for a in data["advisors"] if a["id"] == "gino-wickman")
-    assert "operating cadence" in " ".join(wickman["best_for"].split()).lower()
+    advisors = {a["id"]: a for a in data["advisors"]}
+    coach = advisors["coach-eric"]
+    assert "operating cadence" in " ".join(coach["best_for"].split()).lower()
+    assert "operating-cadence" in coach["domains"]
+    wickman = advisors["gino-wickman"]
+    assert "operating cadence" not in " ".join(wickman["best_for"].split()).lower()
     not_for = " ".join(wickman["not_for"].split())
     assert "individual written check-in and the 1-3-1 (redirect to Matt Mochary)" in not_for
+    assert "written WBRs and the team page (redirect to Coach Eric)" in not_for
     assert "weekly written-culture mechanics" not in not_for
     assert "async check-in" not in not_for
 
 
-def test_wickman_prompt_no_longer_sends_all_written_cadence_to_mochary():
+def test_coach_eric_prompt_lists_the_framework():
+    text = (REPO_ROOT / "advisors" / "prompts" / "coach-eric.md").read_text()
+    assert "`operating-cadence`" in text
+
+
+def test_wickman_prompt_keeps_the_level_10_and_gives_wbrs_to_coach_eric():
     text = " ".join((REPO_ROOT / "advisors" / "prompts" / "gino-wickman.md").read_text().split())
     assert "not the written-cadence guy" not in text
     assert "async operating rhythm" not in text
-    assert ("The individual written check-in and the 1-3-1 are Matt Mochary's. The leadership "
-            "meeting, the written WBRs from workstreams, and the monthly, quarterly and annual "
-            "rhythm are yours.") in text
+    assert "The leadership meeting, the written WBRs" not in text
+    assert ("The individual written check-in and the 1-3-1 are Matt Mochary's. The written WBRs "
+            "and the team page are Coach Eric's. The Level 10 Meeting is yours.") in text
 
 
 def test_setup_calls_it_the_weekly_review_not_a_level_10():
@@ -1172,9 +1182,16 @@ def test_setup_calls_it_the_weekly_review_not_a_level_10():
     assert "call it the Weekly Review, in the team's words, and not a Level 10" in text
 
 
-def test_prompt_opens_as_wickman_and_explains_skills_paths():
+def test_framework_files_do_not_speak_as_wickman():
+    for name in ("prompt.md", "examples.md", "anti-examples.md"):
+        text = (FRAMEWORK_DIR / name).read_text()
+        assert "Wickman" not in text, name
+        assert "Gino" not in text, name
+
+
+def test_prompt_opens_as_coach_eric_and_explains_skills_paths():
     text = _prompt()
-    assert "You are Gino Wickman" in text
+    assert "You are Coach Eric" in text
     assert ("Paths starting with `skills/` are relative to the plugin root, the parent of the "
             "`frameworks/` folder that holds this prompt.") in text
 
