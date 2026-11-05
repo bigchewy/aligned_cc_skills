@@ -27,7 +27,7 @@
 1. Deleting an item with a pick or plan row: the page asks and names what goes, and a no changes nothing. A yes removes the Execute rows, takes the ids off key actions and keeps the key actions. Pinned in Task 4.
 2. A blank new item never reaches the file, including when the person selects something else or Escapes out. Pinned in Task 3.
 3. A redraw while typing, from a window resize or a status change, keeps the typed text and the focus. Pinned in Task 3.
-4. A deep tree with obstacles under solutions has no overlapping items, keeps its lines, and works at phone width. Pinned in Task 1.
+4. A deep tree with obstacles under solutions has no overlapping items and keeps its lines. Pinned in Task 1.
 5. A tray solution attaches once, numbers correctly afterward, and can't become a pick before that. Pinned in Tasks 1 and 4.
 
 ---
@@ -55,7 +55,7 @@
 **Decisions:**
 - **Label algorithm:** each obstacle owns one counter, and so does the goal. Walk its children in order. An obstacle child takes the next value at the owner's depth plus one and starts its own counter. A solution child adds nothing and its children count on the same counter. So `1B` with a child obstacle, then a solution holding an obstacle, gives `1B1` and `1B2`.
 - **Layout:** the goal sits on the left and everything runs right. Every item sits one column out from its parent. Remove `sideOf`, the left side, and the rule that puts solutions under their obstacle. The band model stays. Top-level order reads straight down.
-- **Phone width:** indent by depth in the tree, keeping the existing clamp. Add `→` before the text of a solution past the clamp so it keeps a depth cue.
+- **No phone layout:** remove `narrowLayout`, `narrowPlaces`, `isNarrow`, the narrow CSS and any tests that only protect them. A small browser window uses the same layout with its existing zoom and scrolling.
 - **The check refuses**, each with a plain sentence naming the item: every case in the spec's "The page's check refuses a map when" list. A map with `solutions` gets the existing old-shape wording. A plan row naming a missing id is refused here, so remove the page's "missing solution" drawing (`makeMissing`, `kind: 'missing'`) and the panel's filtering of unknown ids.
 - **Form, minimal:** it keeps working on the new data. Obstacles offer "Add a sub-obstacle" and "Add a solution", root causes only "Add a solution", solutions "Add an obstacle". `moveControl` lists targets from `moveTargets`, for solutions only. Remove the "on N obstacles" note. Don't improve anything else, because Task 3 replaces it.
 - **`prompt.md`:** update line by line:
@@ -78,7 +78,6 @@
   - `test_star_refused_in_tray_and_on_obstacles`
   - One `test_check_refuses_*` for each spec case.
   - `test_layout_has_no_overlaps_on_a_deep_mixed_tree` and `test_layout_keeps_a_line_per_item_with_its_kind`
-  - `test_narrow_layout_indents_by_tree_depth`
 
   In the process file: `test_prompt_json_is_the_one_tree`, `test_prompt_no_longer_names_solution_ids_or_a_solutions_list`, `test_prompt_asks_when_a_solution_serves_two_obstacles`, `test_prompt_explains_numbers_under_solutions`, `test_pick_up_covers_moved_obstacles`.
 
@@ -123,13 +122,11 @@
 - **Selection is separate from typing.** A click selects, shows the controls and changes nothing in the map. Clicking empty space clears it.
 - **Overlay, unscaled, outside `#canvas`.** The text box, the plus buttons and the toolbar live outside the canvas like today's `#editor`, because `render` clears the canvas. They get positioned over the selected item, including on scroll, zoom and resize. A redraw must not touch them.
 - **Plus buttons:** real buttons beside the item, one orange and one green, shown by `canAdd`. Names: `Add an obstacle under 1B`, `Add a solution under 1B`. On a solution with no label, use its text.
-- **Typing:** a double-click, Enter while selected, or the toolbar's "Edit text" button starts it. A new item opens ready to type. Enter finishes, Shift+Enter adds a line, Escape cancels. Finishing selects the item.
-- **"Edit text" is my addition to the spec,** because a phone has no double-click and no Enter on a selected item. Log it as a ruling.
+- **Typing:** a double-click or Enter while selected starts it. A new item opens ready to type. Enter finishes, Shift+Enter adds a line, Escape cancels. Finishing selects the item.
 - **Holding back:** `holdingNewItem` is true only for a blank new item being typed. Selecting something else with a blank new item open removes it and writes nothing. Selection alone never asks for a write.
-- **Toolbar on the selected item:** Pick checkbox labeled "This is one of my picks" on placed solutions, Mark or Unmark root cause on obstacles that `setRootCause` allows, Edit text, Delete. Goal shows Edit text only. Task 4 adds the ask on delete and "Move to".
+- **Toolbar on the selected item:** Pick checkbox labeled "This is one of my picks" on placed solutions, Mark or Unmark root cause on obstacles that `setRootCause` allows, Delete. The goal shows no toolbar. Task 4 adds the ask on delete and "Move to".
 - **Keyboard:** items take focus with Tab and select with Enter or Space. After every render, focus returns to the selected item or the open text box, found by id. Escape clears the selection.
 - **Scroll:** after each render, the selected item stays in the same place on screen. Keep the existing first-load scroll.
-- **Phone width:** the toolbar and plus buttons dock like today's editor does there.
 - The form's `openEditor`, `editorActions`, `fieldList` parts and `moveControl` go when nothing calls them.
 
 - [ ] **Step 1: Write failing tests.** Extend the stub DOM for `closest`, `contains` and `dblclick` as these need. In the flows:
@@ -160,7 +157,7 @@
 **Decisions:**
 - **Delete with nothing at stake** deletes straight away, even with sub-items. With a pick or a row in `deleteEffects`, the toolbar swaps to a question inside the page, because this must not rely on `confirm()`. Wording: "Delete this? It would also remove: " then each pick and row by its text, with buttons "Delete" and "Keep". Keep changes nothing.
 - **"Move to"** is a select in the toolbar on any item but the goal, listing `moveTargets` by label and text. Choosing one moves the item, keeps it selected and writes. Hide it when there are no targets.
-- **Tray:** selecting a tray solution shows Edit text, Delete and "Move to". It shows no pick box and no plus buttons.
+- **Tray:** selecting a tray solution shows Delete and "Move to", and double-click or Enter still edits its text. It shows no pick box and no plus buttons.
 
 - [ ] **Step 1: Write failing tests** in the flows:
   - `delete with a pick asks, and keep changes nothing`
@@ -177,6 +174,6 @@
 ### After the tasks (controller)
 
 - Whole-branch review of these four tasks.
-- Look at the example map in real Chrome over localhost, at wide and phone widths, with a blank new item open, and with a resize while typing.
-- Refresh the check map on the Desktop for Eric, and report the rulings, including "Edit text".
+- Look at the example map in real Chrome over localhost, with a blank new item open, and with a resize while typing.
+- Refresh the check map on the Desktop for Eric, and report the rulings.
 - Stop there. Stage 3 waits for Eric to look at stage 2.

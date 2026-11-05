@@ -23,6 +23,7 @@ The framework is a skill people run on their own machines. Each person ends up w
 - Repeated solutions. A solution lives in one place. If two obstacles need the same fix, each gets its own separate copy.
 - Converting old maps. No real maps exist in the old format, and an old file shows the "can't be drawn" message.
 - Changing how saving works.
+- Phones. Eric ruled that nobody will use this on one, so the phone layout comes out. A small browser window uses the same layout with zoom and scrolling.
 
 ## Anti-goals
 
@@ -38,7 +39,7 @@ The work has failed, even if every feature runs, if any of these is true:
 - One self-contained HTML file, no outside URLs.
 - Saving rules stay: no write over a file Claude changed, and no write of a blank new item.
 - Claude and the page read and write the same JSON, so the data format, the page's check, and `prompt.md` change together.
-- Works at phone width and by keyboard.
+- Works by keyboard.
 - No em or en dashes in the template or example map. No client names in any file.
 
 ## Approaches
@@ -83,9 +84,9 @@ The architect saw no third option worth considering. Eric asked whether this is 
 | An obstacle | Yes | Yes | No | Yes |
 | A solution | No | Yes | Yes | No |
 
-Dropping on the item's own parent, on itself or on anything beneath it does nothing. A drop anywhere else does nothing either. On a phone, only an item already selected can drag, so a swipe still scrolls the page.
+Dropping on the item's own parent, on itself or on anything beneath it does nothing. A drop anywhere else does nothing either.
 
-**Moving by list.** "Move to" stays and now covers obstacles too. It does what a drag does, for keyboard users and for phones.
+**Moving by list.** "Move to" stays and now covers obstacles too. It does what a drag does, for keyboard users.
 
 **Deleting.** Delete removes the item and everything under it. If that holds a pick or a plan row, the page asks first and names what would go. Otherwise it deletes straight away. After a yes, each deleted solution's Execute row goes too, and its id comes off any key action. The key action itself stays, even with no solutions left, because it comes from the strategy.
 
@@ -158,7 +159,7 @@ Each stage's tests are written first.
 - `e2e/tests/test_six_step_process.py`: the rules and the JSON in `prompt.md`, and the template's page source.
 - `e2e/tests/test_six_step_page_flows.py` and `e2e/tests/six_step_page_flows.js`: add, type, delete and move through the page code.
 - Real Chrome on localhost: the stub page can't simulate gestures, so these get checked by hand, first thing in stage 3:
-  - with a blank new item open, press another item and drag it, at 0.8 zoom and at phone width
+  - with a blank new item open, press another item and drag it, at 0.8 zoom
   - resize the window while typing
 
 ## Calls I made
