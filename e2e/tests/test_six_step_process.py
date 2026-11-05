@@ -1326,7 +1326,7 @@ def test_read_back_gives_the_page_refusal_as_the_reason_for_every_rule():
 
 
 def test_template_defines_each_logic_function_once():
-    logic = template()[template().index('id="map-logic"'):template().index('id="map-page"')]
+    logic = template()[template().index('id="map-logic"'):template().index('id="map-store"')]
     names = re.findall(r"^  (?:async )?function (\w+)\(", logic, re.M)
     assert len(names) == len(set(names)), [n for n in names if names.count(n) > 1]
 

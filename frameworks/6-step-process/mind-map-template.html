@@ -980,6 +980,280 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   };
 })();
 </script>
+<script id="map-store">
+(function () {
+  'use strict';
+
+  var FORMAT_VERSION = 1;
+  var ID_PATTERN = /^[a-z0-9]+$/;
+  var DIGITS = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+  function isObject(value) {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function text(value) {
+    return typeof value === 'string' ? value : '';
+  }
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  // Keys come from other people's data, so a key like __proto__ is set as a plain property.
+  function put(target, key, value) {
+    Object.defineProperty(target, key, { value: value, writable: true, enumerable: true, configurable: true });
+  }
+
+  function has(target, key) {
+    return Object.prototype.hasOwnProperty.call(target, key);
+  }
+
+  // Eight random lowercase letters and digits, so two people adding at once can't collide.
+  function newId() {
+    var out = '';
+    var bytes = null;
+    if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.getRandomValues) {
+      bytes = globalThis.crypto.getRandomValues(new Uint8Array(8));
+    }
+    for (var i = 0; i < 8; i += 1) {
+      var n = bytes ? bytes[i] : Math.floor(Math.random() * 256);
+      out += DIGITS.charAt(n % DIGITS.length);
+    }
+    return out;
+  }
+
+  function validId(id) {
+    return typeof id === 'string' && id !== 'goal' && ID_PATTERN.test(id);
+  }
+
+  // Every item under its parent, with order counting from 1 under each one.
+  function flatItems(map) {
+    var items = Object.create(null);
+    function walk(list, parentId) {
+      list.forEach(function (item, index) {
+        items[item.id] = { kind: item.kind, text: item.text, star: item.star, parent: parentId, order: index + 1 };
+        walk(item.children, item.id);
+      });
+    }
+    walk(map.obstacles, 'goal');
+    return items;
+  }
+
+  function flatten(map) {
+    var items = flatItems(map);
+    return {
+      version: FORMAT_VERSION,
+      person: map.person,
+      goal: { text: map.goal.text },
+      items: items,
+      key_actions: clone(map.key_actions),
+      execute: clone(map.execute),
+      feedback: clone(map.feedback)
+    };
+  }
+
+  function orderOf(node) {
+    return typeof node.order === 'number' && isFinite(node.order) ? node.order : Infinity;
+  }
+
+  function byOrderThenId(a, b) {
+    var x = orderOf(a);
+    var y = orderOf(b);
+    if (x !== y) return x < y ? -1 : 1;
+    if (a.id === b.id) return 0;
+    return a.id < b.id ? -1 : 1;
+  }
+
+  // Readers repair what they find and never write the repair back, so every tab draws the same tree.
+  function readNodes(rawItems) {
+    var nodes = Object.create(null);
+    Object.keys(rawItems).forEach(function (id) {
+      var raw = rawItems[id];
+      if (!validId(id) || !isObject(raw)) return;
+      if (raw.kind !== 'obstacle' && raw.kind !== 'solution') return;
+      nodes[id] = {
+        id: id,
+        kind: raw.kind,
+        text: text(raw.text),
+        star: raw.kind === 'solution' && raw.star === true,
+        children: [],
+        parent: typeof raw.parent === 'string' ? raw.parent : 'goal',
+        order: raw.order
+      };
+    });
+    return nodes;
+  }
+
+  function stringsOnly(list) {
+    return Array.isArray(list) ? list.filter(function (v) { return typeof v === 'string'; }) : [];
+  }
+
+  function withText(row, fields) {
+    var next = Object.assign({}, row);
+    fields.forEach(function (f) { next[f] = text(row[f]); });
+    return next;
+  }
+
+  function inflate(doc) {
+    var source = isObject(doc) ? doc : {};
+    var nodes = readNodes(isObject(source.items) ? source.items : {});
+    var ids = Object.keys(nodes).sort();
+
+    var under = Object.create(null);
+    function attach(id, parentId) {
+      (under[parentId] = under[parentId] || []).push(nodes[id]);
+    }
+    ids.forEach(function (id) {
+      var parentId = nodes[id].parent;
+      attach(id, parentId !== 'goal' && nodes[parentId] ? parentId : 'goal');
+    });
+
+    var reached = Object.create(null);
+    var obstacles = [];
+    function walk(parentId, into) {
+      (under[parentId] || []).slice().sort(byOrderThenId).forEach(function (node) {
+        if (reached[node.id]) return;
+        reached[node.id] = true;
+        into.push({ id: node.id, kind: node.kind, text: node.text, star: node.star, children: [] });
+        walk(node.id, into[into.length - 1].children);
+      });
+    }
+    walk('goal', obstacles);
+    // What is left hangs under a loop. The lowest id goes to the goal and the walk continues from there.
+    ids.forEach(function (id) {
+      if (reached[id]) return;
+      var held = { id: id, kind: nodes[id].kind, text: nodes[id].text, star: nodes[id].star, children: [] };
+      reached[id] = true;
+      walk(id, held.children);
+      obstacles.push(held);
+    });
+    obstacles = sortTop(obstacles, nodes);
+
+    var solutions = Object.create(null);
+    ids.forEach(function (id) { if (nodes[id].kind === 'solution') solutions[id] = true; });
+
+    return {
+      map_id: '',
+      revision: 1,
+      person: text(source.person),
+      goal: { text: isObject(source.goal) ? text(source.goal.text) : '' },
+      obstacles: obstacles,
+      key_actions: (Array.isArray(source.key_actions) ? source.key_actions : []).filter(isObject).map(function (row) {
+        var next = withText(row, ['text', 'risk']);
+        next.solution_ids = stringsOnly(row.solution_ids).filter(function (id) { return solutions[id]; });
+        return next;
+      }),
+      execute: (Array.isArray(source.execute) ? source.execute : []).filter(function (row) {
+        return isObject(row) && typeof row.solution_id === 'string' && solutions[row.solution_id];
+      }).map(function (row) {
+        return withText(row, ['first_move', 'owner', 'others_decide']);
+      }),
+      feedback: withText(isObject(source.feedback) ? source.feedback : {}, ['number', 'check_on', 'redraw_if']),
+      baseline: {}
+    };
+  }
+
+  // Loop leftovers join the goal's own children, so the top level is put back in order.
+  function sortTop(top, nodes) {
+    return top.slice().sort(function (a, b) { return byOrderThenId(nodes[a.id], nodes[b.id]); });
+  }
+
+  // Each change merges onto the document the way an update does: objects merge, anything else replaces,
+  // and {__delete__: true} removes the key.
+  function overlay(doc, changes) {
+    var next = clone(doc);
+    function merge(target, change) {
+      Object.keys(change).forEach(function (key) {
+        var value = change[key];
+        if (isObject(value) && value.__delete__ === true) {
+          delete target[key];
+        } else if (isObject(value)) {
+          if (!has(target, key) || !isObject(target[key])) put(target, key, {});
+          merge(target[key], value);
+        } else {
+          put(target, key, clone(value));
+        }
+      });
+    }
+    changes.forEach(function (change) { merge(next, change); });
+    return next;
+  }
+
+  function highestOrders(doc) {
+    var highest = Object.create(null);
+    var items = isObject(doc) && isObject(doc.items) ? doc.items : {};
+    Object.keys(items).forEach(function (id) {
+      var entry = items[id];
+      if (!isObject(entry) || typeof entry.order !== 'number' || !isFinite(entry.order)) return;
+      if (typeof entry.parent !== 'string') return;
+      if (!(entry.parent in highest) || entry.order > highest[entry.parent]) highest[entry.parent] = entry.order;
+    });
+    return highest;
+  }
+
+  // Exactly what the action changed, as a nested object. It never names the plan, and a new or moved
+  // item goes last under its parent, one above the highest order the stored document has there.
+  function changeBetween(doc, before, after, skipId) {
+    var was = flatItems(before);
+    var now = flatItems(after);
+    var highest = highestOrders(doc);
+    var items = Object.create(null);
+    var any = false;
+
+    function last(parent) {
+      highest[parent] = (parent in highest ? highest[parent] : 0) + 1;
+      return highest[parent];
+    }
+    function note(id, fields) {
+      items[id] = fields;
+      any = true;
+    }
+
+    Object.keys(now).forEach(function (id) {
+      if (id === skipId) return;
+      var item = now[id];
+      if (!has(was, id)) {
+        note(id, { kind: item.kind, text: item.text, star: item.star, parent: item.parent, order: last(item.parent) });
+        return;
+      }
+      var old = was[id];
+      var fields = {};
+      var changed = false;
+      if (item.text !== old.text) { fields.text = item.text; changed = true; }
+      if (item.star !== old.star) { fields.star = item.star; changed = true; }
+      if (item.parent !== old.parent) {
+        fields.parent = item.parent;
+        fields.order = last(item.parent);
+        changed = true;
+      }
+      if (changed) note(id, fields);
+    });
+    Object.keys(was).forEach(function (id) {
+      if (id !== skipId && !has(now, id)) note(id, { __delete__: true });
+    });
+
+    var change = {};
+    if (any) change.items = items;
+    if (before.goal.text !== after.goal.text) change.goal = { text: after.goal.text };
+    return Object.keys(change).length ? change : null;
+  }
+
+  function unknownVersion(doc) {
+    return !isObject(doc) || doc.version !== FORMAT_VERSION;
+  }
+
+  globalThis.MapStore = {
+    FORMAT_VERSION: FORMAT_VERSION,
+    newId: newId,
+    flatten: flatten,
+    inflate: inflate,
+    overlay: overlay,
+    changeBetween: changeBetween,
+    unknownVersion: unknownVersion
+  };
+})();
+</script>
 <script id="map-page">
 (function () {
   'use strict';
