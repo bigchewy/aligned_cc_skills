@@ -412,7 +412,7 @@ const flows = {
     p.clickItem('o1'); p.tool('delete-item'); await settle();
     assert.equal(p.el('delete-question').hidden, false);
     const said = p.el('delete-question').textContent;
-    assert.ok(said.includes('Delete this? It would also remove: '), said);
+    assert.ok(said.includes('Delete this and its sub-item? It would also remove: '), said);
     assert.ok(said.includes('the picked fix'), said);
     assert.ok(!said.includes('These key actions'), said);
     assert.equal(p.el('delete-item').hidden, true); assert.equal(p.el('delete-yes').textContent, 'Delete');
@@ -493,16 +493,47 @@ const flows = {
     p.fire(p.box('o1'), 'keydown', { key: 'Tab' });
     assert.equal(p.active(), p.el('plus-obstacle'));
   },
+  async 'the question counts the sub-items that go too'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'picked', [], true)])])]);
+    const p = page({ html }); await settle();
+    p.clickItem('o1'); p.tool('delete-item');
+    const said = p.el('delete-question').textContent;
+    assert.ok(said.includes('Delete this and its 2 sub-items? It would also remove: '), said);
+  },
+  async 'a question with only key actions skips the also-remove paragraph and its empty list'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other')])], [], {
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }]
+    });
+    const p = page({ html }); await settle();
+    p.clickItem('s1'); p.tool('delete-item');
+    const q = p.el('delete-question');
+    assert.ok(q.textContent.includes('Delete this?'), q.textContent);
+    assert.ok(!q.textContent.includes('also remove'), q.textContent);
+    assert.ok(q.textContent.includes('These key actions would lose a solution: '), q.textContent);
+    assert.equal(q.walk().filter((k) => k.tag === 'UL').length, 1);
+  },
+  async 'a plus pressed while the question shows closes it and opens the new item, with no write'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'picked', [], true)])]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.tool('delete-item');
+    p.plus('obstacle'); await settle();
+    assert.equal(p.el('delete-question').hidden, true);
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
+    assert.equal(f.writes, 0); assert.ok(findIn(parse(f.html).obstacles, 's1'));
+  },
   async 'move to moves an obstacle with what is under it and renumbers'() {
     const html = treeHtml([node('o1', 'first'), node('o2', 'second', [node('o3', 'kid')]), node('o4', 'third')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
+    assert.equal(f.writes, 0);
     p.clickItem('o2');
     const choices = p.el('move-to').walk().filter((k) => k.tag === 'OPTION' && k.value).map((k) => k.value);
     assert.deepEqual(choices, ['o1', 'o4']);
     assert.ok(p.el('move-to').walk().some((k) => k.tag === 'OPTION' && k.textContent.includes('third')));
     p.el('move-to').focus();
     p.el('move-to').value = 'o4'; p.fire(p.el('move-to'), 'change'); await settle();
+    assert.equal(f.writes, 1);
     const saved = parse(f.html);
     assert.deepEqual(saved.obstacles.map((o) => o.id), ['o1', 'o4']);
     assert.deepEqual(saved.obstacles[1].children.map((o) => o.id), ['o2']);

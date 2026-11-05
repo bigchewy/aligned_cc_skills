@@ -36,3 +36,16 @@ def test_star_key_shows_only_with_stars(page):
     )
     assert "ok   star key shows only with stars" in proc.stdout, proc.stdout
     assert "ok   the pick box changes the star and the key" in proc.stdout, proc.stdout
+
+
+@pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
+def test_select_uses_the_page_colors_in_both_themes(page):
+    # The browser draws a select on white by default, so dark mode got faint text on a white ground.
+    # The page's colors are tokens that change in dark mode, so styling select with them covers both.
+    import re
+    css = re.search(r"<style>([\s\S]*?)</style>", (FRAMEWORK / page).read_text()).group(1)
+    rule = re.search(r"(?m)^select \{([^}]*)\}", css)
+    assert rule, "no select rule"
+    assert "background: var(--box)" in rule.group(1)
+    assert "color: var(--ink)" in rule.group(1)
+    assert "prefers-color-scheme: dark" in css and "--box:" in css.split("prefers-color-scheme: dark")[1]

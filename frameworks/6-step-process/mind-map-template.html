@@ -50,6 +50,8 @@ body {
   font: 17px/1.28 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 button, select, input, textarea { font: inherit; color: inherit; }
+select { background: var(--box); color: var(--ink); border: 1px solid var(--box-line); border-radius: 4px; }
+select option { background: var(--box); color: var(--ink); }
 [hidden] { display: none !important; }
 
 #data-problem { max-width: 560px; margin: auto; padding: 24px 16px; }
@@ -188,28 +190,31 @@ header {
   position: fixed;
   z-index: 10;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 6px 10px;
-  max-width: 420px;
-  padding: 6px 8px;
+  gap: 4px 8px;
+  padding: 2px 6px;
+  white-space: nowrap;
   background: var(--box);
   border: 1px solid var(--box-line);
-  border-radius: 10px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
-  font-size: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  line-height: 1.2;
 }
+#item-tools.asking { flex-wrap: wrap; max-width: 420px; white-space: normal; padding: 6px 8px; }
 #item-tools button {
   background: none;
   border: 1px solid var(--box-line);
   border-radius: 6px;
-  padding: 4px 10px;
+  padding: 1px 8px;
 }
-#pick-control, #move-control { display: flex; align-items: center; gap: 6px; }
-#move-to { max-width: 220px; font: inherit; }
+#pick-control, #move-control { display: flex; align-items: center; gap: 4px; }
+#move-to { max-width: 180px; }
 #delete-item, #delete-yes { color: var(--warn); }
 #delete-question { flex-basis: 100%; }
-#delete-question ul { margin: 4px 0; padding-left: 20px; }
+#delete-question p { margin: 0; }
+#delete-question ul { margin: 2px 0 4px; padding-left: 20px; }
 .plus:focus-visible, #item-tools button:focus-visible, #pick-box:focus-visible, #move-to:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
@@ -1526,6 +1531,7 @@ header {
     showMoveList(item && !questioning ? item.id : null);
     el['delete-item'].hidden = !item || questioning;
     if (item) el['delete-item'].textContent = deleteLabel(selected);
+    el['item-tools'].classList.toggle('asking', questioning);
     showQuestion(questioning);
     positionControls();
   }
@@ -1565,8 +1571,16 @@ header {
     var effects = L.deleteEffects(map, asking);
     var box = el['delete-question'];
     box.textContent = '';
-    box.appendChild(make('p', '', 'Delete this? It would also remove: '));
-    box.appendChild(listOf(effects.picks.concat(effects.rows)));
+    var things = effects.picks.concat(effects.rows);
+    var lead = 'Delete this';
+    if (effects.subItems === 1) lead += ' and its sub-item';
+    else if (effects.subItems) lead += ' and its ' + effects.subItems + ' sub-items';
+    if (things.length) {
+      box.appendChild(make('p', '', lead + '? It would also remove: '));
+      box.appendChild(listOf(things));
+    } else {
+      box.appendChild(make('p', '', lead + '?'));
+    }
     if (effects.keyActions.length) {
       box.appendChild(make('p', '', 'These key actions would lose a solution: '));
       box.appendChild(listOf(effects.keyActions));
