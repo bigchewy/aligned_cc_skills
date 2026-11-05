@@ -31,25 +31,46 @@ const tick = () => new Promise((r) => setImmediate(r));
 async function settle() { for (let i = 0; i < 12; i++) await tick(); }
 
 class El {
-  constructor(tag) { this.tag = (tag || 'div').toUpperCase(); this.kids = []; this.style = {}; this.dataset = {}; this.listeners = {};
+  constructor(tag) { this.tag = (tag || 'div').toUpperCase(); this.kids = []; this.parent = null; this.style = {}; this.dataset = {}; this.listeners = {}; this.attrs = {};
     this.hidden = false; this.value = ''; this.className = ''; this._text = ''; this.options = [];
-    this.classList = { add() {}, toggle() {} }; this.offsetHeight = 20; this.offsetWidth = 100; this.clientWidth = 1000; this.clientHeight = 800; this.offsetLeft = 0; this.offsetTop = 0; this.scrollLeft = 0; this.scrollTop = 0; }
+    const self = this;
+    const names = () => self.className.split(' ').filter(Boolean);
+    this.classList = {
+      add(c) { if (!names().includes(c)) self.className = names().concat(c).join(' '); },
+      remove(c) { self.className = names().filter((n) => n !== c).join(' '); },
+      toggle(c, on) { if (on) self.classList.add(c); else self.classList.remove(c); },
+      contains(c) { return names().includes(c); } };
+    this.offsetHeight = 20; this.offsetWidth = 100; this.clientWidth = 1000; this.clientHeight = 800; this.scrollHeight = 20; this.offsetLeft = 0; this.offsetTop = 0; this.scrollLeft = 0; this.scrollTop = 0; }
   get textContent() { return this._text + this.kids.map((k) => k.textContent).join(' '); }
-  set textContent(t) { this._text = t === undefined || t === null ? '' : String(t); this.kids = []; }
-  appendChild(k) { this.kids.push(k); return k; }
+  // Removing a focused element drops the focus, as a browser does.
+  set textContent(t) { if (El.active && El.active !== this && this.contains(El.active)) El.active = null;
+    this._text = t === undefined || t === null ? '' : String(t); this.kids = []; }
+  appendChild(k) { k.parent = this; this.kids.push(k); return k; }
   remove() {}
   click() {}
-  focus() {}
+  focus() { El.active = this; }
+  blur() { if (El.active === this) El.active = null; }
+  scrollIntoView() {}
   setSelectionRange() {}
   insertAdjacentHTML() {}
-  contains() { return false; }
-  closest() { return null; }
-  getBoundingClientRect() { return { left: 0, top: 0, bottom: 20, right: 100 }; }
+  setAttribute(k, v) { this.attrs[k] = String(v); }
+  getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
+  contains(other) { for (let n = other; n; n = n.parent) { if (n === this) return true; } return false; }
+  closest(s) { const attr = /^\[data-(\w+)\]$/.exec(s)[1]; for (let n = this; n; n = n.parent) { if (n.dataset[attr]) return n; } return null; }
+  // A box sits where its style puts it, moved by how far the map has scrolled.
+  getBoundingClientRect() {
+    if (this === El.scroller) return { left: 0, top: 0, right: 1000, bottom: 800, width: 1000, height: 800 };
+    const left = (parseFloat(this.style.left) || 0) - El.scroller.scrollLeft;
+    const top = (parseFloat(this.style.top) || 0) - El.scroller.scrollTop;
+    return { left, top, right: left + 100, bottom: top + 20, width: 100, height: 20 };
+  }
   addEventListener(t, f) { (this.listeners[t] = this.listeners[t] || []).push(f); }
   walk() { return [this].concat(...this.kids.map((k) => k.walk())); }
   querySelector(s) { return this.querySelectorAll(s)[0] || null; }
   querySelectorAll(s) {
-    if (s === '[data-field]') return this.walk().filter((k) => k.dataset.field);
+    const keyed = /^\[data-key="(.*)"\]$/.exec(s);
+    if (keyed) return this.walk().filter((k) => k.dataset.key === keyed[1]);
+    if (s === '[data-ref]') return this.walk().filter((k) => k.dataset.ref);
     return this.walk().filter((k) => k.tag === s.toUpperCase());
   }
   button(text) { return this.walk().find((k) => k.tag === 'BUTTON' && k.textContent === text); }
@@ -91,12 +112,18 @@ function page(opts) {
   const document = {
     documentElement: { outerHTML: opts.html || mapHtml(1, 'g') },
     body: new El('body'),
+    get activeElement() { return El.active || this.body; },
     getElementById(id) { return els[id] || (els[id] = new El()); },
     createElement(t) { return new El(t); },
     createTextNode(t) { const n = new El('text'); n.textContent = t; return n; },
     querySelectorAll() { return []; },
     addEventListener(t, f, cap) { (docListeners[t] = docListeners[t] || []).push({ f, cap }); }
   };
+  // The parts of the page's HTML the flows need in their real places.
+  El.active = null;
+  El.scroller = document.getElementById('map');
+  El.scroller.appendChild(document.getElementById('canvas-frame')).appendChild(document.getElementById('canvas'));
+  document.getElementById('typing').hidden = true;
   let idbUses = 0;
   const idb = fakeIdb(opts.store || new Map(), opts);
   const sandbox = { document, console, setTimeout, Promise, JSON, Math, RegExp, Object, Array, Number, String, Boolean, decodeURIComponent, Date,
@@ -125,22 +152,40 @@ function page(opts) {
     message: () => { const m = document.getElementById('message'); return m.hidden ? '' : m.textContent; },
     idbUses: () => idbUses,
     clickSave() { docListeners.click.filter((l) => l.cap).forEach((l) => l.f({ target: document.getElementById('save') })); document.getElementById('save').listeners.click[0](); },
-    openRef(ref) { const box = new El('button'); box.dataset.ref = JSON.stringify(ref); box.closest = () => box;
-      docListeners.click.filter((l) => !l.cap).forEach((l) => l.f({ target: box })); },
-    openGoal() { api.openRef({ kind: 'goal' }); },
-    edit(text) { api.openGoal(); document.getElementById('editor').querySelector('textarea').value = text; document.getElementById('editor').button('Done').listeners.click[0](); },
-    addObstacle() { document.getElementById('add-obstacle').listeners.click[0](); },
-    editorEl() { return document.getElementById('editor'); },
+    el(id) { return document.getElementById(id); },
+    active() { return document.activeElement; },
+    // Capture listeners, then the target and what holds it, then bubble listeners on the document.
+    fire(target, type, more) {
+      const e = Object.assign({ target, preventDefault() { e.prevented = true; } }, more);
+      (docListeners[type] || []).filter((l) => l.cap).forEach((l) => l.f(e));
+      for (let n = target; n; n = n.parent) (n.listeners[type] || []).forEach((f) => f(e));
+      (docListeners[type] || []).filter((l) => !l.cap).forEach((l) => l.f(e));
+      return e;
+    },
+    box(id) {
+      const end = id === 'goal' ? 'goal|' : '|' + id;
+      const all = api.el('canvas').walk().concat(api.el('tray').walk());
+      const box = all.find((k) => k.dataset.key && k.dataset.key.endsWith(end));
+      assert.ok(box, 'no box: ' + id);
+      return box;
+    },
+    clickItem(id) { api.fire(api.box(id), 'click'); },
+    clickEmpty() { api.fire(api.el('map'), 'click'); },
+    typeOn(id) { api.clickItem(id); api.fire(api.box(id), 'dblclick'); },
+    openGoal() { api.typeOn('goal'); },
+    pressEnter() { return api.fire(api.el('typing'), 'keydown', { key: 'Enter' }); },
+    typeAndEnter(text) { api.el('typing').value = text; api.pressEnter(); },
+    edit(text) { api.openGoal(); api.typeAndEnter(text); },
+    plus(kind) { const b = api.el('plus-' + kind); assert.equal(b.hidden, false, 'no ' + kind + ' plus'); api.fire(b, 'click'); },
+    tool(id) { const b = api.el(id); assert.equal(b.hidden, false, 'no tool: ' + id); api.fire(b, 'click'); },
+    pluses() { return ['obstacle', 'solution'].filter((k) => !api.el('plus-' + k).hidden); },
+    isSelected(id) { return api.box(id).classList.contains('selected'); },
+    addObstacle() { api.fire(document.getElementById('add-obstacle'), 'click'); },
     canvasText() { return document.getElementById('canvas').textContent; },
     trayText() { const t = document.getElementById('tray'); return t.hidden ? '' : t.textContent; },
     panelText() { return document.getElementById('panel').textContent; },
-    openItem(id) { api.openRef({ kind: 'obstacle', id }); },
-    openSolution(id) { api.openRef({ kind: 'solution', id }); },
-    press(name) { const b = document.getElementById('editor').button(name); assert.ok(b, 'no button: ' + name); b.listeners.click[0](); },
-    pressDone() { api.press('Done'); },
     boxes() { return document.getElementById('canvas').kids.filter((k) => k.dataset.key).map((k) => ({
       key: k.dataset.key, x: parseFloat(k.style.left), y: parseFloat(k.style.top), w: parseFloat(k.style.width), h: k.offsetHeight })); },
-    typeAndDone(text) { document.getElementById('editor').querySelector('textarea').value = text; document.getElementById('editor').button('Done').listeners.click[0](); },
     resize() { winListeners.resize[0](); },
     msgButton(t) { return document.getElementById('message').button(t); },
     warnsOnClose() { const e = { preventDefault() { e.prevented = true; } }; winListeners.beforeunload[0](e); return Boolean(e.prevented); }
@@ -212,7 +257,7 @@ const flows = {
     assert.ok(p.message().startsWith('Claude changed this map, so your last edit is not in the file. Reload to get the new version.'));
     assert.ok(p.msgButton('Save a copy')); assert.ok(p.msgButton('Reload'));
     p.msgButton('Reload').listeners.click[0](); assert.equal(p.sandbox.reloaded, 1);
-    p.resize(); p.openGoal(); p.sandbox.document.getElementById('editor').button('Done').listeners.click[0]();
+    p.resize(); p.openGoal(); p.pressEnter();
     await settle(); assert.equal(reads, 1);
     p.edit('y'); await settle(); assert.equal(reads, 2); assert.equal(p.status(), 'Not saved'); assert.equal(f.writes, 0);
     f.html = mapHtml(1);
@@ -339,26 +384,26 @@ const flows = {
     p.clickSave(); await settle();
     p.addObstacle(); await settle();
     assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
-    p.typeAndDone('blocker'); await settle();
+    p.typeAndEnter('blocker'); await settle();
     assert.equal(f.writes, 1); assert.equal(parse(f.html).obstacles[0].text, 'blocker');
   },
-  async 'the picks checkbox shows in the solution editor, ticked for a star'() {
+  async 'the pick box shows on a placed solution, ticked for a star'() {
     const html = treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], true)])]);
     const p = page({ html }); await settle();
-    p.openSolution('s1');
-    const ed = p.editorEl();
-    assert.ok(ed.textContent.includes('This is one of my picks'));
-    assert.ok(!ed.textContent.includes('tell Claude.'));
-    assert.equal(ed.querySelector('input').checked, true);
+    p.clickItem('s1');
+    assert.equal(p.el('pick-control').hidden, false);
+    assert.equal(p.el('pick-box').checked, true);
+    p.clickItem('o1');
+    assert.equal(p.el('pick-control').hidden, true);
   },
-  async 'a tray solution offers no pick and no obstacle until it is attached'() {
+  async 'a tray solution shows Delete, and no pick box or plus until it is attached'() {
     const html = treeHtml([node('o1', 'ob')], [sol('s1', 'tray')]);
     const p = page({ html }); await settle();
-    p.openSolution('s1');
-    const ed = p.editorEl();
-    assert.ok(!ed.textContent.includes('This is one of my picks'));
-    assert.ok(!ed.button('Add an obstacle'));
-    assert.ok(ed.button('Delete'));
+    p.clickItem('s1');
+    assert.equal(p.isSelected('s1'), true);
+    assert.equal(p.el('pick-control').hidden, true);
+    assert.deepEqual(p.pluses(), []);
+    assert.equal(p.el('delete-item').hidden, false);
   },
   async 'star key shows only with stars'() {
     const none = page({ html: treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], false)])]) }); await settle();
@@ -366,21 +411,23 @@ const flows = {
     const some = page({ html: treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], true)])]) }); await settle();
     assert.equal(some.sandbox.document.getElementById('picks-key').hidden, false);
   },
-  async 'ticking the picks box saves the star and shows the key'() {
+  async 'the pick box changes the star and the key'() {
     const html = treeHtml([node('o1', 'ob', [sol('s1', 'sol')])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     const key = p.sandbox.document.getElementById('picks-key');
     assert.equal(key.hidden, true);
-    p.openSolution('s1');
-    const box = p.editorEl().querySelector('input');
+    p.clickItem('s1');
+    const box = p.el('pick-box');
     assert.equal(box.checked, false);
-    box.checked = true; box.listeners.change[0](); await settle();
+    box.checked = true; box.focus(); p.fire(box, 'change'); await settle();
     assert.equal(f.writes, 1);
     assert.equal(findIn(parse(f.html).obstacles, 's1').star, true);
     assert.equal(key.hidden, false);
     assert.equal(p.status(), 'All changes saved');
-    box.checked = false; box.listeners.change[0](); await settle();
+    assert.equal(p.isSelected('s1'), true);
+    assert.equal(p.active(), box);
+    box.checked = false; p.fire(box, 'change'); await settle();
     assert.equal(findIn(parse(f.html).obstacles, 's1').star, false);
     assert.equal(key.hidden, true);
   },
@@ -562,7 +609,7 @@ const flows = {
     p.addObstacle(); await settle();
     f.gate = null; release(); await settle();
     assert.deepEqual(parse(f.html).obstacles, []); assert.equal(parse(f.html).goal.text, 'one');
-    p.typeAndDone('blocker'); await settle();
+    p.typeAndEnter('blocker'); await settle();
     assert.equal(parse(f.html).goal.text, 'two'); assert.equal(parse(f.html).obstacles[0].text, 'blocker');
     assert.equal(p.status(), 'All changes saved'); assert.equal(p.warnsOnClose(), false);
   },
@@ -574,7 +621,7 @@ const flows = {
     p.edit('two'); await settle();
     p.addObstacle(); await settle();
     f.gate = null; release(); await settle();
-    p.typeAndDone(''); await settle();
+    p.typeAndEnter(''); await settle();
     assert.equal(parse(f.html).goal.text, 'two'); assert.deepEqual(parse(f.html).obstacles, []);
     assert.equal(p.status(), 'All changes saved');
   },
@@ -583,24 +630,24 @@ const flows = {
     const html = treeHtml([node('o1', 'first')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openItem('o1'); p.press('Add a sub-obstacle'); await settle();
-    p.typeAndDone('why one'); await settle();
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    p.typeAndEnter('why one'); await settle();
     assert.ok(p.canvasText().includes('1A'), p.canvasText());
     assert.ok(p.canvasText().includes('why one'));
     const saved = parse(f.html).obstacles[0];
     assert.equal(saved.children.length, 1); assert.equal(saved.children[0].text, 'why one');
     assert.deepEqual(Object.keys(saved.children[0]).sort(), ['children', 'id', 'kind', 'root_cause', 'star', 'text']);
     assert.ok(!JSON.stringify(parse(f.html).obstacles).includes('1A'));
-    p.openItem(saved.children[0].id); p.press('Add a sub-obstacle'); await settle();
-    p.typeAndDone('deeper'); await settle();
+    p.clickItem(saved.children[0].id); p.plus('obstacle'); await settle();
+    p.typeAndEnter('deeper'); await settle();
     assert.ok(p.canvasText().includes('1A1'), p.canvasText());
     assert.equal(p.status(), 'All changes saved');
   },
   async 'a new obstacle and a new sub-obstacle get ids nothing else in the file uses'() {
     const html = treeHtml([node('o1', 'first', [node('o7', 'kid')])], [], { baseline: { obstacles: [{ id: 'o9' }] } });
     const p = page({ html }); await settle();
-    p.openItem('o7'); p.press('Add a sub-obstacle'); p.typeAndDone('deep');
-    p.addObstacle(); p.typeAndDone('top');
+    p.clickItem('o7'); p.plus('obstacle'); p.typeAndEnter('deep');
+    p.addObstacle(); p.typeAndEnter('top');
     const canvas = p.sandbox.document.getElementById('canvas').kids.map((k) => k.dataset.ref).filter(Boolean).map(JSON.parse);
     const ids = canvas.filter((r) => r.kind === 'obstacle').map((r) => r.id);
     assert.deepEqual(ids.slice().sort(), ['o1', 'o10', 'o11', 'o7']);
@@ -609,19 +656,19 @@ const flows = {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openItem('o2'); p.press('Add a sub-obstacle'); await settle();
+    p.clickItem('o2'); p.plus('obstacle'); await settle();
     assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
     assert.equal(parse(f.html).obstacles[0].children[0].children.length, 0);
-    p.typeAndDone('now it has text'); await settle();
+    p.typeAndEnter('now it has text'); await settle();
     assert.equal(f.writes, 1); assert.equal(parse(f.html).obstacles[0].children[0].children[0].text, 'now it has text');
   },
   async 'a blank new sub-item closed empty leaves no trace in the file or on the page'() {
     const html = treeHtml([node('o1', 'first')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openItem('o1'); p.press('Add a sub-obstacle'); await settle();
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
     assert.ok(p.canvasText().includes('1A'));
-    p.typeAndDone(''); await settle();
+    p.typeAndEnter(''); await settle();
     assert.ok(!p.canvasText().includes('1A'));
     assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved'); assert.equal(p.warnsOnClose(), false);
   },
@@ -632,10 +679,10 @@ const flows = {
     let release; f.gate = new Promise((r) => { release = r; });
     p.edit('one'); await settle();
     p.edit('two'); await settle();
-    p.openItem('o1'); p.press('Add a sub-obstacle'); await settle();
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
     f.gate = null; release(); await settle();
     assert.deepEqual(parse(f.html).obstacles[0].children, []); assert.equal(parse(f.html).goal.text, 'one');
-    p.typeAndDone('kid'); await settle();
+    p.typeAndEnter('kid'); await settle();
     assert.equal(parse(f.html).goal.text, 'two'); assert.equal(parse(f.html).obstacles[0].children[0].text, 'kid');
   },
   async 'delete a branch: the whole branch goes, its solutions with it, later siblings renumber'() {
@@ -648,7 +695,8 @@ const flows = {
     ]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openItem('o2'); p.press('Delete this and its 2 sub-items'); await settle();
+    p.clickItem('o2'); assert.equal(p.el('delete-item').textContent, 'Delete this and its 2 sub-items');
+    p.tool('delete-item'); await settle();
     const saved = parse(f.html);
     assert.equal(findIn(saved.obstacles, 'o2'), null); assert.equal(findIn(saved.obstacles, 's1'), null);
     assert.deepEqual(saved.unplaced, []); assert.equal(p.trayText(), '');
@@ -666,7 +714,7 @@ const flows = {
     p.clickSave(); await settle();
     p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
     assert.ok(p.panelText().includes('the first move'));
-    p.openSolution('s1'); p.press('Delete'); await settle();
+    p.clickItem('s1'); p.tool('delete-item'); await settle();
     assert.ok(!p.panelText().includes('the first move'));
     assert.ok(p.panelText().includes('the other move'));
     assert.ok(p.panelText().includes('the action'));
@@ -678,103 +726,302 @@ const flows = {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid a'), node('o3', 'kid b', [node('o4', 'child'), sol('s1', 'the fix')])])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openSolution('s1'); p.press('Add an obstacle'); await settle();
-    p.typeAndDone('in the way'); await settle();
+    p.clickItem('s1'); p.plus('obstacle'); await settle();
+    p.typeAndEnter('in the way'); await settle();
     assert.ok(p.canvasText().includes('1B1'), p.canvasText());
     assert.ok(p.canvasText().includes('1B2'), p.canvasText());
     const under = findIn(parse(f.html).obstacles, 's1').children[0];
     assert.equal(under.text, 'in the way'); assert.equal(under.kind, 'obstacle');
   },
-  async 'attach a tray solution beside a child, add an obstacle under it, and its label continues'() {
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])], [sol('s1', 'from the tray')]);
-    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
-    p.clickSave(); await settle();
-    p.openSolution('s1');
-    const select = p.editorEl().querySelector('select');
-    select.value = '0'; select.listeners.change[0](); await settle();
-    assert.ok(!p.canvasText().includes('1B'), p.canvasText());
-    p.openSolution('s1'); p.press('Add an obstacle'); await settle();
-    p.typeAndDone('in the way'); await settle();
-    const text = p.canvasText();
-    assert.ok(text.includes('1A'), text); assert.ok(text.includes('1B'), text);
-    const saved = parse(f.html);
-    assert.deepEqual(findIn(saved.obstacles, 'o1').children.map((c) => c.id), ['o2', 's1']);
-    assert.equal(findIn(saved.obstacles, 's1').children[0].text, 'in the way');
-    assert.ok(!JSON.stringify(saved.obstacles).includes('1B'));
-  },
-  async 'attach a tray solution through the form'() {
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])], [sol('s1', 'from the tray')]);
-    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
-    p.clickSave(); await settle();
-    assert.ok(p.trayText().includes('from the tray'));
-    p.openSolution('s1');
-    const select = p.editorEl().querySelector('select');
-    assert.deepEqual(select.kids.map((k) => k.textContent), ['Choose where it goes', '1 first', '1A kid']);
-    select.value = '1'; select.listeners.change[0](); await settle();
-    const saved = parse(f.html);
-    assert.deepEqual(saved.unplaced, []);
-    assert.deepEqual(findIn(saved.obstacles, 'o2').children.map((c) => c.id), ['s1']);
-    assert.equal(p.trayText(), '');
-    assert.ok(p.canvasText().includes('from the tray'));
-  },
   async 'a blank new solution stays out of the file, and closing it empty leaves no trace'() {
     const html = treeHtml([node('o1', 'first')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openItem('o1'); p.press('Add a solution'); await settle();
+    p.clickItem('o1'); p.plus('solution'); await settle();
     assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
-    p.typeAndDone(''); await settle();
+    p.typeAndEnter(''); await settle();
     assert.equal(f.writes, 0); assert.equal(p.warnsOnClose(), false);
     assert.deepEqual(parse(f.html).obstacles[0].children, []);
   },
   async 'the delete control counts everything that goes with the item'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'a', [node('o3', 'b')]), node('o4', 'c')])]);
     const p = page({ html }); await settle();
-    p.openItem('o1');
-    assert.ok(p.editorEl().button('Delete this and its 3 sub-items'));
-    p.pressDone(); p.openItem('o4');
-    assert.ok(p.editorEl().button('Delete'));
+    p.clickItem('o1');
+    assert.equal(p.el('delete-item').textContent, 'Delete this and its 3 sub-items');
+    p.clickItem('o4');
+    assert.equal(p.el('delete-item').textContent, 'Delete');
   },
   async 'a root cause can be marked and unmarked, and offers only a solution'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openItem('o1');
-    assert.ok(!p.editorEl().button('Mark as root cause'));
-    assert.ok(p.editorEl().button('Add a sub-obstacle'));
-    assert.ok(p.editorEl().button('Add a solution'));
-    p.pressDone();
-    p.openItem('o2'); p.press('Mark as root cause'); await settle();
+    p.clickItem('o1');
+    assert.equal(p.el('root-toggle').hidden, true);
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    p.clickItem('o2');
+    assert.equal(p.el('root-toggle').textContent, 'Mark as root cause');
+    p.tool('root-toggle'); await settle();
     assert.equal(parse(f.html).obstacles[0].children[0].root_cause, true);
-    p.openItem('o2');
-    assert.ok(!p.editorEl().button('Add a sub-obstacle')); assert.ok(p.editorEl().button('Add a solution'));
-    p.press('Unmark root cause'); await settle();
+    assert.equal(p.isSelected('o2'), true);
+    assert.deepEqual(p.pluses(), ['solution']);
+    assert.equal(p.el('root-toggle').textContent, 'Unmark root cause');
+    p.tool('root-toggle'); await settle();
     assert.equal(parse(f.html).obstacles[0].children[0].root_cause, false);
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
   },
   async 'an obstacle with only a solution under it can still be a root cause'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'fix', [node('o2', 'in the way')])])]);
     const p = page({ html }); await settle();
-    p.openItem('o1');
-    assert.ok(p.editorEl().button('Mark as root cause'));
-    p.pressDone();
-    p.openItem('o2');
-    assert.ok(p.editorEl().button('Mark as root cause'));
+    p.clickItem('o1');
+    assert.equal(p.el('root-toggle').hidden, false);
+    p.clickItem('o2');
+    assert.equal(p.el('root-toggle').hidden, false);
   },
-  async 'a solution offers an obstacle and no solution, and Move to lists where it can go'() {
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'sol')]), node('o3', 'kid two')]), node('o4', 'other')]);
+
+  // Selecting, pressing a plus and typing in place.
+  async 'a click selects and writes nothing'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.openSolution('s1');
-    assert.ok(p.editorEl().button('Add an obstacle')); assert.ok(!p.editorEl().button('Add a solution'));
-    assert.ok(!p.editorEl().textContent.includes('obstacles. Editing'));
-    const select = p.editorEl().querySelector('select');
-    const names = select.kids.map((k) => k.textContent);
-    assert.deepEqual(names, ['Choose where it goes', '1 first', '1B kid two', '2 other']);
-    select.value = String(1);
-    select.listeners.change[0](); await settle();
-    const saved = parse(f.html);
-    assert.deepEqual(findIn(saved.obstacles, 'o2').children, []);
-    assert.deepEqual(findIn(saved.obstacles, 'o3').children.map((c) => c.id), ['s1']);
+    let reads = 0; const getFile = f.getFile; f.getFile = async () => { reads++; return getFile(); };
+    p.clickItem('o2'); await settle();
+    assert.equal(p.isSelected('o2'), true);
+    assert.equal(p.el('typing').hidden, true);
+    assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under 1A');
+    assert.equal(p.el('plus-solution').getAttribute('aria-label'), 'Add a solution under 1A');
+    assert.equal(p.el('item-tools').hidden, false);
+    p.clickItem('o1'); await settle();
+    assert.equal(p.isSelected('o2'), false); assert.equal(p.isSelected('o1'), true);
+    p.clickEmpty(); await settle();
+    assert.equal(p.isSelected('o1'), false);
+    assert.deepEqual(p.pluses(), []); assert.equal(p.el('item-tools').hidden, true);
+    assert.equal(f.writes, 0); assert.equal(reads, 0); assert.equal(p.status(), 'All changes saved');
+  },
+  async 'selecting while a write was refused does not try the write again'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    f.failWrite = true; p.edit('x'); await settle(); f.failWrite = false;
+    let reads = 0; const getFile = f.getFile; f.getFile = async () => { reads++; return getFile(); };
+    p.clickItem('o1'); p.clickItem('goal'); p.clickEmpty(); await settle();
+    assert.equal(reads, 0); assert.equal(p.status(), 'Not saved');
+  },
+  async 'plus adds an obstacle, typing fills it, and only then the file changes'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    const text = p.el('typing');
+    assert.equal(text.hidden, false); assert.equal(text.value, ''); assert.equal(p.active(), text);
+    assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
+    assert.deepEqual(p.pluses(), []); assert.equal(p.el('item-tools').hidden, true);
+    p.typeAndEnter('  why one  '); await settle();
+    assert.equal(f.writes, 1);
+    const child = parse(f.html).obstacles[0].children[0];
+    assert.equal(child.text, 'why one'); assert.equal(child.kind, 'obstacle');
+    assert.equal(text.hidden, true);
+    assert.equal(p.isSelected(child.id), true); assert.equal(p.isSelected('o1'), false);
+    assert.equal(p.active(), p.box(child.id));
+  },
+  async 'plus adds a solution under an obstacle, and the goal plus adds at the top'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.plus('solution'); p.typeAndEnter('the fix'); await settle();
+    assert.equal(parse(f.html).obstacles[0].children[0].kind, 'solution');
+    p.clickItem('goal'); p.plus('obstacle'); p.typeAndEnter('second'); await settle();
+    assert.equal(parse(f.html).obstacles[1].text, 'second');
+  },
+  async 'a blank new item is removed when something else is selected, with no write'() {
+    const html = treeHtml([node('o1', 'first'), node('o2', 'other')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    assert.ok(p.canvasText().includes('1A'));
+    p.clickItem('o2'); await settle();
+    assert.ok(!p.canvasText().includes('1A'));
+    assert.equal(p.isSelected('o2'), true); assert.equal(p.el('typing').hidden, true);
+    assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved'); assert.equal(p.warnsOnClose(), false);
+    assert.deepEqual(parse(f.html).obstacles[0].children, []);
+  },
+  async 'selecting something else keeps text typed on a new item'() {
+    const html = treeHtml([node('o1', 'first'), node('o2', 'other')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.plus('obstacle');
+    p.el('typing').value = 'kept';
+    p.clickItem('o2'); await settle();
+    assert.equal(parse(f.html).obstacles[0].children[0].text, 'kept');
+    assert.equal(p.isSelected('o2'), true);
+  },
+  async 'clicking empty space with a blank new item removes it and clears the selection'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.plus('obstacle');
+    p.clickEmpty(); await settle();
+    assert.ok(!p.canvasText().includes('1A')); assert.equal(p.isSelected('o1'), false);
+    assert.equal(f.writes, 0);
+  },
+  async 'escape on a new item removes it, with no write'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.plus('obstacle');
+    p.el('typing').value = 'typed then dropped';
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    assert.ok(!p.canvasText().includes('1A')); assert.ok(!p.canvasText().includes('typed then dropped'));
+    assert.equal(p.el('typing').hidden, true);
+    assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
+    assert.equal(p.isSelected('o1'), true); assert.equal(p.active(), p.box('o1'));
+  },
+  async 'escape on an existing item keeps its old text'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.typeOn('o1');
+    assert.equal(p.el('typing').value, 'first');
+    p.el('typing').value = 'changed';
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    assert.equal(f.writes, 0); assert.ok(p.canvasText().includes('first'));
+    assert.equal(p.isSelected('o1'), true); assert.equal(p.active(), p.box('o1'));
+  },
+  async 'a double-click types on an item, and clicking away keeps the text'() {
+    const html = treeHtml([node('o1', 'first'), node('o2', 'other')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.typeOn('o1');
+    assert.equal(p.active(), p.el('typing'));
+    p.el('typing').value = 'better';
+    p.clickItem('o2'); await settle();
+    assert.equal(parse(f.html).obstacles[0].text, 'better');
+    assert.equal(p.isSelected('o2'), true);
+  },
+  async 'clearing an existing item keeps its old text'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.typeOn('o1'); p.typeAndEnter('   '); await settle();
+    assert.equal(f.writes, 0); assert.ok(p.canvasText().includes('first'));
+  },
+  async 'shift and enter adds a line instead of finishing'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const p = page({ html }); await settle();
+    p.typeOn('o1');
+    const e = p.fire(p.el('typing'), 'keydown', { key: 'Enter', shiftKey: true });
+    assert.equal(p.el('typing').hidden, false); assert.ok(!e.prevented);
+  },
+  async 'a resize while typing keeps the text and focus'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.typeOn('o1');
+    const text = p.el('typing'); text.value = 'half typed';
+    p.resize(); await settle();
+    assert.equal(text.hidden, false); assert.equal(text.value, 'half typed'); assert.equal(p.active(), text);
+    assert.equal(f.writes, 0);
+    p.clickItem('goal'); p.plus('obstacle'); text.value = 'half new';
+    p.resize(); await settle();
+    assert.equal(text.value, 'half new'); assert.equal(p.active(), text); assert.equal(f.writes, 1);
+  },
+  async 'root cause shows only the green plus'() {
+    const html = treeHtml([node('o1', 'first', [], true)]);
+    const p = page({ html }); await settle();
+    p.clickItem('o1');
+    assert.deepEqual(p.pluses(), ['solution']);
+  },
+  async 'solution shows only the orange plus'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'the fix')])]);
+    const p = page({ html }); await settle();
+    p.clickItem('s1');
+    assert.deepEqual(p.pluses(), ['obstacle']);
+    assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under the fix');
+  },
+  async 'the goal shows only the orange plus and no toolbar'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const p = page({ html }); await settle();
+    p.clickItem('goal');
+    assert.deepEqual(p.pluses(), ['obstacle']);
+    assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under the goal');
+    assert.equal(p.el('item-tools').hidden, true);
+  },
+  async 'selection returns focus after a render'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const p = page({ html }); await settle();
+    p.clickItem('o1');
+    const before = p.box('o1');
+    assert.equal(p.active(), before);
+    p.resize();
+    assert.notEqual(p.box('o1'), before);
+    assert.equal(p.active(), p.box('o1')); assert.equal(p.isSelected('o1'), true);
+  },
+  async 'a render leaves focus on a header button'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const p = page({ html }); await settle();
+    p.clickItem('o1');
+    const zoom = p.el('zoom-in'); zoom.focus();
+    p.fire(zoom, 'click');
+    assert.equal(p.active(), zoom); assert.equal(p.isSelected('o1'), true);
+  },
+  async 'the keyboard selects, types and clears'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    const enter = p.fire(p.box('o1'), 'keydown', { key: 'Enter' });
+    assert.ok(enter.prevented); assert.equal(p.isSelected('o1'), true); assert.equal(p.el('typing').hidden, true);
+    p.fire(p.box('o1'), 'keydown', { key: 'Enter' });
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
+    p.typeAndEnter('new words'); await settle();
+    assert.equal(parse(f.html).obstacles[0].text, 'new words');
+    assert.equal(p.el('typing').hidden, true); assert.equal(p.active(), p.box('o1'));
+    p.fire(p.box('o1'), 'keydown', { key: 'Escape' });
+    assert.equal(p.isSelected('o1'), false); assert.equal(p.active(), p.box('o1'));
+    p.fire(p.box('o1'), 'keydown', { key: ' ' });
+    assert.equal(p.isSelected('o1'), true); assert.equal(p.el('typing').hidden, true);
+  },
+  async 'tab goes from the selected item through its controls to the next item'() {
+    const html = treeHtml([node('o1', 'first'), node('o2', 'other')]);
+    const p = page({ html }); await settle();
+    p.clickItem('o1');
+    const tab = (target, shiftKey) => p.fire(target, 'keydown', { key: 'Tab', shiftKey });
+    assert.ok(tab(p.box('o1')).prevented); assert.equal(p.active(), p.el('plus-obstacle'));
+    assert.ok(!tab(p.el('plus-obstacle')).prevented);
+    assert.ok(tab(p.el('plus-obstacle'), true).prevented); assert.equal(p.active(), p.box('o1'));
+    p.el('delete-item').focus();
+    assert.ok(tab(p.el('delete-item')).prevented); assert.equal(p.active(), p.box('o2'));
+  },
+  async 'the selected item stays in the same place on screen after a render'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid')]), node('o3', 'other')]);
+    const p = page({ html }); await settle();
+    p.clickItem('o1');
+    const top = p.box('o1').getBoundingClientRect().top;
+    const y = parseFloat(p.box('o1').style.top);
+    p.plus('obstacle');
+    assert.notEqual(parseFloat(p.box('o1').style.top), y);
+    assert.equal(p.box('o1').getBoundingClientRect().top, top);
+  },
+  async 'controls follow the item, and hide when it scrolls out of the map'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const p = page({ html }); await settle();
+    p.clickItem('o1');
+    const plus = p.el('plus-obstacle');
+    assert.notEqual(plus.style.visibility, 'hidden');
+    const left = parseFloat(plus.style.left);
+    p.el('map').scrollLeft = 50;
+    p.el('map').listeners.scroll.forEach((f) => f());
+    assert.equal(parseFloat(plus.style.left), left - 50);
+    p.el('map').scrollLeft = 5000;
+    p.el('map').listeners.scroll.forEach((f) => f());
+    assert.equal(plus.style.visibility, 'hidden'); assert.equal(p.el('item-tools').style.visibility, 'hidden');
+  },
+  async 'deleting from the toolbar clears the selection and puts focus on the goal'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.tool('delete-item'); await settle();
+    assert.deepEqual(parse(f.html).obstacles, []);
+    assert.deepEqual(p.pluses(), []); assert.equal(p.el('item-tools').hidden, true);
+    assert.equal(p.active(), p.box('goal'));
   },
   async 'the plan panel names items by label'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'sol', [], true)])])], [],
@@ -832,7 +1079,7 @@ const flows = {
     p.edit('80% in-office attendance by end of Q2, up from 40%'); await settle();
     assert.deepEqual(parse(f.html).goal, { text: '80% in-office attendance by end of Q2, up from 40%' });
     p.openGoal();
-    assert.equal(p.sandbox.document.getElementById('editor').querySelectorAll('[data-field]').length, 1);
+    assert.equal(p.el('typing').value, '80% in-office attendance by end of Q2, up from 40%');
   }
 };
 

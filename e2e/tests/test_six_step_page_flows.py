@@ -35,4 +35,4 @@ def test_star_key_shows_only_with_stars(page):
         capture_output=True, text=True, cwd=TESTS,
     )
     assert "ok   star key shows only with stars" in proc.stdout, proc.stdout
-    assert "ok   ticking the picks box saves the star and shows the key" in proc.stdout, proc.stdout
+    assert "ok   the pick box changes the star and the key" in proc.stdout, proc.stdout

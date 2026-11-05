@@ -111,7 +111,7 @@ def test_saving_sits_in_the_top_right_and_the_page_has_no_footer():
     assert "Not saved yet." not in header
     assert ">Save<" not in header
     assert header.count('id="save"') == 1
-    assert "Click any item to edit it." in header
+    assert "Click an item, then press a + to add under it. Double-click to change its words." in header
     # The status and its button take the far right, after every other control.
     assert header.index('id="toggle-plan"') < header.index('id="save-status"') < header.index('id="save"')
     assert header.rindex("<button") == header.index('id="save"') - len('<button type="button" class="quiet" ')
@@ -131,18 +131,15 @@ def test_a_map_that_cant_be_drawn_hides_the_save_messages():
     assert "'header, #notices, #workspace, #tray'" in template()
 
 
-def test_editor_offers_the_picks_checkbox():
+def test_toolbar_offers_the_picks_checkbox():
     html = template()
     body = html[html.index("<body>"):html.index('<script id="map-logic">')]
-    assert "To change a star" not in body
     assert "To change a star" not in html
-    editor = whole_function("openEditor")
-    solution_branch = editor[editor.index("if (ref.kind === 'solution')"):]
-    assert "picksControl(ref)" in solution_branch
-    control = whole_function("picksControl")
-    assert "This is one of my picks" in control
-    assert "type = 'checkbox'" in control
-    assert "L.setStar(map, ref.id, box.checked)" in control
+    tools = body[body.index('id="item-tools"'):]
+    assert "This is one of my picks" in tools
+    assert 'type="checkbox"' in tools
+    assert "L.canPick(map, " in whole_function("showControls")
+    assert "L.setStar(map, selected.id, el['pick-box'].checked)" in html
 
 
 def test_header_has_the_picks_key_before_the_map_controls():
@@ -303,7 +300,7 @@ def test_load_and_autosave_code_stays_off_without_the_picker():
 
 
 def test_close_warning_is_unchanged():
-    assert "L.shouldWarnOnClose(commitEdit, isDirty)" in template()
+    assert "L.shouldWarnOnClose(finishTyping, isDirty)" in template()
 
 
 def test_no_save_file_picker():
@@ -330,13 +327,10 @@ def test_page_shows_a_message_when_the_data_cant_be_drawn():
     assert "return;" in guard
 
 
-def test_goal_editor_has_one_box():
-    editor = whole_function("openEditor")
-    goal_branch = editor[editor.index("ref.kind === 'goal'"):editor.index("} else {")]
-    for label in ("'From'", "'To'", "'By'"):
-        assert label not in goal_branch
+def test_goal_has_one_text_box():
     assert "goalInput" not in template()
     assert "goal-line" not in template()
+    assert "L.setGoal(map, { text: text })" in whole_function("finishTyping")
 
 
 def test_prompt_json_goal_has_only_text():
@@ -405,7 +399,7 @@ def test_template_no_longer_draws_a_missing_solution():
 def test_template_has_no_repeated_solution_code_left():
     html = template()
     for gone in ("repeatCount", "untiedSolutionIds", "solutionsOn", "sideOf", "moveSolution", "map.solutions",
-                 "This solution is on", ".repeat"):
+                 "This solution is on", ".repeat {", ".item.repeat"):
         assert gone not in html, gone
 
 
@@ -953,35 +947,50 @@ def every_item(items):
         yield from every_item(it["children"])
 
 
-def test_the_editor_offers_additions_from_the_plus_rules():
-    body = page_function("editorActions", "openEditor")
-    assert "L.canAdd(map, item.id, 'obstacle')" in body
-    assert "L.canAdd(map, item.id, 'solution')" in body
-    assert "'Add an obstacle'" in body
-    assert "'Add a sub-obstacle'" in body
-    assert "'Add a solution'" in body
+def test_the_plus_buttons_come_from_the_plus_rules():
+    body = whole_function("showControls")
+    assert "L.canAdd(map, parentId, 'obstacle')" in body
+    assert "L.canAdd(map, parentId, 'solution')" in body
+    assert "'Add an obstacle under '" in body
+    assert "'Add a solution under '" in body
 
 
-def test_the_editor_offers_the_root_cause_mark_from_the_one_rule():
-    body = page_function("editorActions", "openEditor")
+def test_the_toolbar_offers_the_root_cause_mark_from_the_one_rule():
+    body = whole_function("showControls")
     assert "Mark as root cause" in body
-    at = body.index("Mark as root cause")
-    line = body[body.rindex("if (", 0, at):at]
-    assert "L.canBeRootCause(map, item.id)" in line
+    assert "L.canBeRootCause(map, item.id)" in body
 
 
 def test_the_delete_control_says_how_many_sub_items_go():
-    body = page_function("deleteLabel", "editorActions")
+    body = whole_function("deleteLabel")
     assert "L.deleteEffects(map, ref.id).subItems" in body
     assert "sub-item" in body
-    assert "deleteLabel(ref)" in page_function("editorActions", "openEditor")
+    assert "deleteLabel(selected)" in whole_function("showControls")
 
 
-def test_page_move_control_lists_targets_from_the_logic():
-    body = page_function("moveControl", "editorActions")
-    assert "L.moveTargets(map, ref.id)" in body
-    assert "target.name" in body
-    assert "L.moveItem(map, r.id, target.id)" in body
+def test_page_has_no_form_editor_left():
+    html = template()
+    for gone in ("openEditor", "editorActions", "moveControl", "closeEditor", "commitEdit", "cancelEdit",
+                 "positionEditor", "afterCommit", "actionButton", "labeled(", 'id="editor"', "#editor", "el.editor",
+                 "Click any item", "Click here"):
+        assert gone not in html, gone
+
+
+def test_the_controls_sit_outside_the_canvas():
+    html = template()
+    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    workspace = body[body.index('id="workspace"'):body.index('id="tray"')]
+    for part in ('id="typing"', 'id="plus-obstacle"', 'id="plus-solution"', 'id="item-tools"'):
+        assert part in body, part
+        assert part not in workspace, part
+
+
+def test_selecting_never_draws_the_map_or_asks_for_a_write():
+    for name in ("select", "markSelected", "showControls", "positionControls"):
+        body = whole_function(name)
+        assert "render()" not in body, name
+        assert "setMap(" not in body, name
+        assert "askToWrite" not in body, name
 
 
 def test_the_layout_uses_the_pure_layout_code():

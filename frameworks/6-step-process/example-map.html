@@ -157,45 +157,57 @@ header {
 #message.refusal { color: var(--warn); }
 #message span { flex: 0 1 auto; }
 
-#editor {
+#typing {
+  position: fixed;
+  z-index: 11;
+  max-height: 60vh;
+  padding: 7px 10px;
+  resize: none;
+  color: var(--ink);
+  background: var(--box);
+  border: 2px solid var(--focus);
+  border-radius: 8px;
+  outline: none;
+}
+.plus {
   position: fixed;
   z-index: 10;
-  width: 340px;
-  max-height: calc(100vh - 24px);
-  overflow: auto;
-  padding: 10px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: var(--box);
+  border: 2px solid;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+#plus-obstacle { color: var(--obstacle-line); border-color: var(--obstacle-line); }
+#plus-solution { color: var(--solution-line); border-color: var(--solution-line); }
+#item-tools {
+  position: fixed;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  max-width: 420px;
+  padding: 6px 8px;
   background: var(--box);
   border: 1px solid var(--box-line);
   border-radius: 10px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
-  font-size: 16px;
+  font-size: 15px;
 }
-#editor label { display: block; font-size: 14px; color: var(--muted); margin: 6px 0 2px; }
-#editor textarea, #editor input, #editor select {
-  display: block;
-  width: 100%;
-  margin-top: 2px;
-  padding: 6px 8px;
-  font-size: 16px;
-  color: var(--ink);
-  background: var(--bg);
-  border: 1px solid var(--box-line);
-  border-radius: 6px;
-}
-#editor textarea { min-height: 76px; resize: vertical; }
-#editor label.check { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--ink); margin: 8px 0 0; }
-#editor label.check input { display: inline-block; width: auto; margin: 0; padding: 0; }
-#editor .note { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
-#editor .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-#editor .actions button {
+#item-tools button {
   background: none;
   border: 1px solid var(--box-line);
   border-radius: 6px;
   padding: 4px 10px;
-  font-size: 15px;
 }
-#editor .actions .done { background: var(--goal); color: var(--goal-ink); border-color: var(--goal); margin-left: auto; }
-#editor .actions .delete { color: var(--warn); }
+#pick-control { display: flex; align-items: center; gap: 6px; }
+#delete-item { color: var(--warn); }
+.plus:focus-visible, #item-tools button:focus-visible, #pick-box:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
 </head>
@@ -211,7 +223,7 @@ header {
     <div id="person"></div>
     <div id="strategy-note" hidden>Not compared to strategy.</div>
   </div>
-  <p id="edit-hint">Click any item to edit it.</p>
+  <p id="edit-hint">Click an item, then press a + to add under it. Double-click to change its words.</p>
   <p id="picks-key" hidden>★ My picks</p>
   <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
   <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
@@ -230,7 +242,15 @@ header {
   <aside id="panel" hidden></aside>
 </div>
 <section id="tray" hidden></section>
-<div id="editor" hidden></div>
+<textarea id="typing" rows="1" placeholder="Type here" hidden></textarea>
+<button type="button" class="plus" id="plus-obstacle" hidden>+</button>
+<button type="button" class="plus" id="plus-solution" hidden>+</button>
+<div id="item-tools" role="toolbar" aria-label="What you can do with this item" hidden>
+  <label id="pick-control"><input type="checkbox" id="pick-box"> This is one of my picks</label>
+  <button type="button" id="root-toggle"></button>
+  <!-- "Move to" goes here, before Delete. -->
+  <button type="button" id="delete-item"></button>
+</div>
 <script id="map-logic">
 (function () {
   'use strict';
@@ -1054,7 +1074,10 @@ header {
   // The JSON of the last write, so a refused write isn't sent again until the map changes.
   var lastTried = null;
   var toldToTellClaude = false;
+  // The item being typed on: { ref, isNew, from }, where from is what was selected before.
   var editing = null;
+  // The selected item as a ref, or null. Selecting changes nothing in the map and draws nothing.
+  var selected = null;
   var panelOpen = window.innerWidth >= 2400;
   var drawnOnce = false;
   // 'readable' fits the window but stops at MIN_SCALE, 'whole' shows the whole map, a number is the person's choice.
@@ -1070,6 +1093,10 @@ header {
   var PAD = 14;
   var MIN_SCALE = 0.8;
   var WHOLE_MAP_FLOOR = 0.1;
+  var TYPING_MIN_W = 220;
+  var PLUS_SIZE = 26;
+  var CONTROL_GAP = 6;
+  var WINDOW_EDGE = 12;
 
   var REFUSALS = {
     'wrong-map': 'That file holds a different map, so nothing was saved.',
@@ -1090,7 +1117,8 @@ header {
 
   var el = {};
   ['person', 'strategy-note', 'picks-key', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
-    'browser-note', 'editor', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+    'browser-note', 'typing', 'plus-obstacle', 'plus-solution', 'item-tools', 'pick-control', 'pick-box', 'root-toggle',
+    'delete-item', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -1112,7 +1140,7 @@ header {
     box.type = 'button';
     box.dataset.ref = JSON.stringify(ref);
     box.dataset.key = refKey(ref);
-    if (editing && refKey(editing.ref) === refKey(ref)) box.classList.add('selected');
+    if (selected && refKey(selected) === refKey(ref)) box.classList.add('selected');
     return box;
   }
 
@@ -1123,7 +1151,7 @@ header {
 
   function makeGoal() {
     var box = makeItem({ kind: 'goal' }, 'goal');
-    fillText(box, map.goal.text, 'Click here to name the goal');
+    fillText(box, map.goal.text, 'Double-click to name the goal');
     return box;
   }
 
@@ -1209,6 +1237,7 @@ header {
     render();
     m.scrollLeft = centerX * scale + frame.offsetLeft - m.clientWidth / 2;
     m.scrollTop = centerY * scale + frame.offsetTop - m.clientHeight / 2;
+    positionControls();
   }
 
   function drawMap() {
@@ -1318,7 +1347,7 @@ header {
     return L.serializeMap(map) !== savedJson;
   }
 
-  // A new item has no text until its editor closes, so there is nothing to save yet.
+  // A new item has no text until typing finishes, so there is nothing to save yet.
   function holdingNewItem() {
     return Boolean(editing && editing.isNew);
   }
@@ -1356,6 +1385,7 @@ header {
   }
 
   function render() {
+    var spot = spotOnScreen(selected);
     el.person.textContent = map.person;
     el['strategy-note'].hidden = map.key_actions.length > 0;
     el['picks-key'].hidden = !L.hasPicks(map);
@@ -1364,7 +1394,9 @@ header {
     drawPanel();
     askToWrite();
     showStatus();
-    positionEditor();
+    keepOnScreen(spot);
+    showControls();
+    restoreFocus();
   }
 
   function setMap(next) {
@@ -1372,114 +1404,74 @@ header {
     render();
   }
 
-  /* Editing */
+  /* Selecting */
 
-  function labeled(labelText, control) {
-    var label = make('label', '', labelText);
-    label.appendChild(control);
-    return label;
+  function boxFor(ref) {
+    var selector = '[data-key="' + refKey(ref) + '"]';
+    return el.canvas.querySelector(selector) || el.tray.querySelector(selector);
   }
 
-  function actionButton(text, className, onClick) {
-    var b = make('button', className, text);
-    b.type = 'button';
-    b.addEventListener('click', onClick);
-    return b;
+  function focusBox(ref) {
+    var box = ref && boxFor(ref);
+    if (box) box.focus({ preventScroll: true });
   }
 
-  function closeEditor() {
-    editing = null;
-    el.editor.hidden = true;
-    el.editor.textContent = '';
+  // Where a box on the map is on screen. The tray doesn't scroll with the map, so its boxes have no spot.
+  function spotOnScreen(ref) {
+    var box = ref && el.canvas.querySelector('[data-key="' + refKey(ref) + '"]');
+    if (!box) return null;
+    var rect = box.getBoundingClientRect();
+    return { ref: ref, left: rect.left, top: rect.top };
   }
 
-  function commitEdit() {
-    if (!editing) return;
-    var e = editing;
-    if (e.ref.kind === 'goal') {
-      var goal = { text: el.editor.querySelector('textarea').value.trim() };
-      closeEditor();
-      setMap(L.setGoal(map, goal));
+  function keepOnScreen(spot) {
+    var now = spot && spotOnScreen(spot.ref);
+    if (!now) return;
+    el.map.scrollLeft += now.left - spot.left;
+    el.map.scrollTop += now.top - spot.top;
+  }
+
+  function markSelected(ref) {
+    var old = selected && boxFor(selected);
+    if (old) old.classList.remove('selected');
+    selected = ref;
+    var box = ref && boxFor(ref);
+    if (box) box.classList.add('selected');
+  }
+
+  // Draws nothing, so the boxes stay put between the two clicks of a double-click, and no write gets asked for.
+  function select(ref) {
+    if (editing) finishTyping();
+    markSelected(ref && L.itemExists(map, ref) ? ref : null);
+    showControls();
+    focusBox(selected);
+  }
+
+  // A render removes the focused box. Focus anywhere else is the person's, so it stays.
+  function restoreFocus() {
+    if (editing) {
+      if (document.activeElement !== el.typing) el.typing.focus({ preventScroll: true });
       return;
     }
-    var text = el.editor.querySelector('textarea').value.trim();
-    closeEditor();
-    if (text) setMap(L.setItemText(map, e.ref.id, text));
-    else if (e.isNew) setMap(L.deleteItem(map, e.ref.id));
-    else render();
+    var active = document.activeElement;
+    if (!active || active === document.body) focusBox(selected);
   }
 
-  function cancelEdit() {
-    var e = editing;
-    closeEditor();
-    if (e.isNew) setMap(L.deleteItem(map, e.ref.id));
-    else render();
-  }
-
-  // Keeps what was typed, then does the action. A new item needs its text first.
-  function afterCommit(action) {
-    return function () {
-      var e = editing;
-      if (e.isNew && !el.editor.querySelector('textarea').value.trim()) {
-        el.editor.querySelector('textarea').focus();
-        return;
-      }
-      commitEdit();
-      action(e.ref);
-    };
-  }
-
-  function addChildTo(ref) {
-    var id = L.nextId(map, 'o');
-    map = L.addItem(map, ref.id, id, 'obstacle', '');
-    openEditor({ kind: 'obstacle', id: id }, true);
-  }
-
-  function addSolutionTo(ref) {
-    var id = L.nextId(map, 's');
-    map = L.addItem(map, ref.id, id, 'solution', '');
-    openEditor({ kind: 'solution', id: id }, true);
-  }
+  /* The controls on the selected item. They sit outside the canvas, so a render doesn't touch them and zoom
+     doesn't shrink them. */
 
   function shortText(text) {
     return text.length > 60 ? text.slice(0, 60) + '...' : text;
   }
 
-  // Every place this solution can go, in reading order.
-  function moveControl(ref) {
-    var targets = L.moveTargets(map, ref.id);
-    if (!targets.length) return null;
-    var select = make('select');
-    var choose = make('option', '', 'Choose where it goes');
-    choose.value = '';
-    select.appendChild(choose);
-    targets.forEach(function (target, i) {
-      var option = make('option', '', shortText(target.name));
-      option.value = String(i);
-      select.appendChild(option);
-    });
-    select.addEventListener('change', function () {
-      if (!select.value) return;
-      var target = targets[Number(select.value)];
-      afterCommit(function (r) {
-        setMap(L.moveItem(map, r.id, target.id));
-      })();
-    });
-    return labeled('Move to', select);
+  function addTarget(ref) {
+    return ref.kind === 'goal' ? 'goal' : ref.id;
   }
 
-  // A star means the person picked this solution in Step 4b. Ticking the box is an ordinary edit.
-  function picksControl(ref) {
-    var box = make('input');
-    box.type = 'checkbox';
-    box.checked = L.findItem(map, ref.id).star;
-    box.addEventListener('change', function () {
-      setMap(L.setStar(map, ref.id, box.checked));
-    });
-    var label = make('label', 'check');
-    label.appendChild(box);
-    label.appendChild(make('span', '', 'This is one of my picks'));
-    return label;
+  // Solutions have no label, so they go by their text.
+  function itemName(ref) {
+    if (ref.kind === 'goal') return 'the goal';
+    return L.itemLabels(map)[ref.id] || shortText(L.findItem(map, ref.id).text);
   }
 
   function deleteLabel(ref) {
@@ -1488,77 +1480,174 @@ header {
     return count ? 'Delete this and its ' + count + ' sub-items' : 'Delete';
   }
 
-  function editorActions(ref) {
-    var actions = make('div', 'actions');
-    function add(text, className, onClick) { actions.appendChild(actionButton(text, className, onClick)); }
-    var item = ref.kind === 'goal' ? null : L.findItem(map, ref.id);
-
-    if (item && L.canAdd(map, item.id, 'obstacle')) {
-      add(item.kind === 'solution' ? 'Add an obstacle' : 'Add a sub-obstacle', '', afterCommit(addChildTo));
-    }
-    if (item && L.canBeRootCause(map, item.id)) {
-      add(item.root_cause ? 'Unmark root cause' : 'Mark as root cause', '', afterCommit(function (r) {
-        setMap(L.setRootCause(map, r.id, !item.root_cause));
-      }));
-    }
-    if (item && L.canAdd(map, item.id, 'solution')) add('Add a solution', '', afterCommit(addSolutionTo));
-    if (item) {
-      add(deleteLabel(ref), 'delete', function () {
-        var e = editing;
-        closeEditor();
-        setMap(L.deleteItem(map, e.ref.id));
-      });
-    }
-    add('Done', 'done', commitEdit);
-    return actions;
+  function showPlus(button, show, name) {
+    button.hidden = !show;
+    if (!show) return;
+    button.setAttribute('aria-label', name);
+    button.title = name;
   }
 
+  // Changes the controls in place, so a checkbox or button keeps its focus through a render.
+  function showControls() {
+    var open = selected && !editing;
+    var parentId = open ? addTarget(selected) : null;
+    var item = open && selected.kind !== 'goal' ? L.findItem(map, selected.id) : null;
+    var name = open ? itemName(selected) : '';
+    showPlus(el['plus-obstacle'], open && L.canAdd(map, parentId, 'obstacle'), 'Add an obstacle under ' + name);
+    showPlus(el['plus-solution'], open && L.canAdd(map, parentId, 'solution'), 'Add a solution under ' + name);
+
+    el['item-tools'].hidden = !item;
+    var canPick = Boolean(item) && L.canPick(map, item.id);
+    el['pick-control'].hidden = !canPick;
+    el['pick-box'].hidden = !canPick;
+    el['pick-box'].checked = canPick && item.star;
+    var canMark = Boolean(item) && L.canBeRootCause(map, item.id);
+    el['root-toggle'].hidden = !canMark;
+    if (canMark) el['root-toggle'].textContent = item.root_cause ? 'Unmark root cause' : 'Mark as root cause';
+    el['delete-item'].hidden = !item;
+    if (item) el['delete-item'].textContent = deleteLabel(selected);
+    positionControls();
+  }
+
+  function clamp(value, low, high) {
+    return Math.max(low, Math.min(value, high));
+  }
+
+  function positionTyping(rect) {
+    var box = el.typing;
+    var width = Math.max(rect.width, TYPING_MIN_W);
+    box.style.width = width + 'px';
+    box.style.height = 'auto';
+    var height = Math.max(rect.height, box.scrollHeight + 4);
+    box.style.height = height + 'px';
+    box.style.left = clamp(rect.left, WINDOW_EDGE, window.innerWidth - width - WINDOW_EDGE) + 'px';
+    box.style.top = clamp(rect.top, WINDOW_EDGE, window.innerHeight - height - WINDOW_EDGE) + 'px';
+  }
+
+  function positionPluses(rect) {
+    var shown = [el['plus-obstacle'], el['plus-solution']].filter(function (b) { return !b.hidden; });
+    var x = Math.min(rect.right + CONTROL_GAP, window.innerWidth - PLUS_SIZE - WINDOW_EDGE);
+    var y = (rect.top + rect.bottom) / 2 - (shown.length * PLUS_SIZE + (shown.length - 1) * CONTROL_GAP) / 2;
+    shown.forEach(function (button, i) {
+      button.style.left = x + 'px';
+      button.style.top = y + i * (PLUS_SIZE + CONTROL_GAP) + 'px';
+    });
+  }
+
+  // The toolbar goes above the item, or below it where above would cover the header.
+  function positionToolbar(rect, mapRect) {
+    var tools = el['item-tools'];
+    var top = rect.top - tools.offsetHeight - CONTROL_GAP;
+    if (top < mapRect.top) top = rect.bottom + CONTROL_GAP;
+    tools.style.left = clamp(rect.left, WINDOW_EDGE, window.innerWidth - tools.offsetWidth - WINDOW_EDGE) + 'px';
+    tools.style.top = top + 'px';
+  }
+
+  function positionControls() {
+    var ref = editing ? editing.ref : selected;
+    var box = ref && boxFor(ref);
+    if (!box) return;
+    var rect = box.getBoundingClientRect();
+    if (editing) {
+      positionTyping(rect);
+      return;
+    }
+    var mapRect = el.map.getBoundingClientRect();
+    var inView = !el.map.contains(box) ||
+      (rect.bottom > mapRect.top && rect.top < mapRect.bottom && rect.right > mapRect.left && rect.left < mapRect.right);
+    [el['plus-obstacle'], el['plus-solution'], el['item-tools']].forEach(function (part) {
+      part.style.visibility = inView ? 'visible' : 'hidden';
+    });
+    positionPluses(rect);
+    positionToolbar(rect, mapRect);
+  }
+
+  // The controls sit at the end of the page, so Tab needs help to reach them from the selected item.
+  function controlsInOrder() {
+    return [el['plus-obstacle'], el['plus-solution'], el['pick-box'], el['root-toggle'], el['delete-item']]
+      .filter(function (control) { return !control.hidden; });
+  }
+
+  function tabThroughControls(e) {
+    var box = selected && boxFor(selected);
+    if (!box || editing) return;
+    var controls = controlsInOrder();
+    var active = document.activeElement;
+    var next = null;
+    if (active === box && !e.shiftKey) next = controls[0];
+    else if (active === controls[0] && e.shiftKey) next = box;
+    else if (active === controls[controls.length - 1] && !e.shiftKey) {
+      var boxes = Array.from(el.canvas.querySelectorAll('[data-ref]')).concat(Array.from(el.tray.querySelectorAll('[data-ref]')));
+      next = boxes[boxes.indexOf(box) + 1];
+    }
+    if (!next) return;
+    e.preventDefault();
+    next.focus({ preventScroll: true });
+  }
+
+  /* Typing */
+
   function itemHeading(ref) {
+    if (ref.kind === 'goal') return 'Goal';
     if (ref.kind === 'solution') return 'Solution';
     var item = L.findItem(map, ref.id);
     return (item.root_cause ? 'Root cause ' : 'Obstacle ') + L.itemLabels(map)[ref.id];
   }
 
-  function openEditor(ref, isNew) {
-    closeEditor();
-    editing = { ref: ref, isNew: Boolean(isNew) };
-    var first;
-
-    if (ref.kind === 'goal') {
-      var text = make('textarea');
-      text.value = map.goal.text;
-      text.dataset.field = 'text';
-      first = text;
-      el.editor.appendChild(labeled('Goal', text));
-    } else {
-      first = make('textarea');
-      first.value = L.findItem(map, ref.id).text;
-      el.editor.appendChild(labeled(itemHeading(ref), first));
-      if (ref.kind === 'solution') {
-        var move = moveControl(ref);
-        if (move) el.editor.appendChild(move);
-        if (L.canPick(map, ref.id)) el.editor.appendChild(picksControl(ref));
-      }
-    }
-    el.editor.appendChild(editorActions(ref));
-    el.editor.hidden = false;
-    render();
-    first.focus();
-    first.setSelectionRange(first.value.length, first.value.length);
+  // A new item gets drawn while the old selection is still set, so the old selection holds still on screen.
+  function startTyping(ref, isNew) {
+    editing = { ref: ref, isNew: Boolean(isNew), from: selected };
+    el.typing.value = ref.kind === 'goal' ? map.goal.text : L.findItem(map, ref.id).text;
+    el.typing.setAttribute('aria-label', itemHeading(ref));
+    el.typing.hidden = false;
+    if (isNew) render();
+    markSelected(ref);
+    boxFor(ref).scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    showControls();
+    el.typing.focus({ preventScroll: true });
+    el.typing.setSelectionRange(el.typing.value.length, el.typing.value.length);
   }
 
-  function positionEditor() {
+  function closeTyping() {
+    editing = null;
+    el.typing.blur();
+    el.typing.hidden = true;
+    el.typing.value = '';
+  }
+
+  // A blank new item was never in the file, so taking it out asks for no write.
+  function dropNewItem(e) {
+    selected = e.from;
+    setMap(L.deleteItem(map, e.ref.id));
+  }
+
+  function finishTyping() {
     if (!editing) return;
-    var box = el.canvas.querySelector('[data-key="' + refKey(editing.ref) + '"]') ||
-      el.tray.querySelector('[data-key="' + refKey(editing.ref) + '"]');
-    if (!box) return;
-    var rect = box.getBoundingClientRect();
-    var w = el.editor.offsetWidth;
-    var h = el.editor.offsetHeight;
-    var top = rect.bottom + 8;
-    if (top + h > window.innerHeight - 12) top = rect.top - h - 8;
-    el.editor.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - w - 12)) + 'px';
-    el.editor.style.top = Math.max(12, top) + 'px';
+    var e = editing;
+    var text = el.typing.value.trim();
+    closeTyping();
+    if (e.ref.kind === 'goal') setMap(L.setGoal(map, { text: text }));
+    else if (text) setMap(L.setItemText(map, e.ref.id, text));
+    else if (e.isNew) dropNewItem(e);
+    else render();
+  }
+
+  function cancelTyping() {
+    if (!editing) return;
+    var e = editing;
+    closeTyping();
+    if (e.isNew) {
+      dropNewItem(e);
+      return;
+    }
+    showControls();
+    restoreFocus();
+  }
+
+  function addUnder(parentId, kind) {
+    var id = L.nextId(map, kind === 'solution' ? 's' : 'o');
+    map = L.addItem(map, parentId, id, kind, '');
+    startTyping({ kind: kind, id: id }, true);
   }
 
   /* Saving */
@@ -1649,7 +1738,7 @@ header {
   // The autosaver reads the result, so this returns it on both paths. An edit made during the write
   // still shows as unsaved afterward, because savedJson comes from the map this write sent.
   async function writeToFile() {
-    // A queued write can start while a new item is still blank. The render that closes its editor asks again.
+    // A queued write can start while a new item is still blank. The render that finishes typing asks again.
     if (holdingNewItem()) return { ok: true };
     var saving = map;
     var target = handle;
@@ -1805,32 +1894,78 @@ header {
 
   /* Events */
 
+  function refAt(target) {
+    var box = target.closest('[data-ref]');
+    return box ? JSON.parse(box.dataset.ref) : null;
+  }
+
   // Capture runs first, so what was typed is kept before any other click acts on the map.
   document.addEventListener('click', function (e) {
-    if (editing && !el.editor.contains(e.target)) commitEdit();
+    if (editing && e.target !== el.typing) finishTyping();
   }, true);
 
+  // Finishing can redraw the map under this click, so select finds the item again by id.
   document.addEventListener('click', function (e) {
-    var box = e.target.closest('[data-ref]');
-    if (!box) return;
-    var ref = JSON.parse(box.dataset.ref);
-    if (L.itemExists(map, ref)) openEditor(ref);
+    var ref = refAt(e.target);
+    if (ref) select(ref);
+    else if (el.map.contains(e.target) || el.tray.contains(e.target)) select(null);
   });
 
-  el.editor.addEventListener('keydown', function (e) {
-    var typing = e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT';
-    if (e.key === 'Escape') cancelEdit();
-    else if (e.key === 'Enter' && !e.shiftKey && typing) {
+  document.addEventListener('dblclick', function (e) {
+    var ref = refAt(e.target);
+    if (ref && L.itemExists(map, ref)) startTyping(ref);
+  });
+
+  el.typing.addEventListener('keydown', function (e) {
+    if (e.isComposing) return;
+    if (e.key === 'Escape') {
       e.preventDefault();
-      commitEdit();
+      cancelTyping();
+    } else if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      finishTyping();
     }
   });
 
-  el['add-obstacle'].addEventListener('click', function () {
-    var id = L.nextId(map, 'o');
-    map = L.addItem(map, 'goal', id, 'obstacle', '');
-    openEditor({ kind: 'obstacle', id: id }, true);
+  el.typing.addEventListener('input', positionControls);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target === el.typing) return;
+    if (e.key === 'Tab') {
+      tabThroughControls(e);
+    } else if (e.key === 'Escape' && selected) {
+      var was = selected;
+      select(null);
+      focusBox(was);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      var ref = refAt(e.target);
+      if (!ref) return;
+      e.preventDefault();
+      if (e.repeat) return;
+      if (e.key === 'Enter' && selected && refKey(selected) === refKey(ref)) startTyping(ref);
+      else select(ref);
+    }
   });
+
+  el['plus-obstacle'].addEventListener('click', function () { addUnder(addTarget(selected), 'obstacle'); });
+  el['plus-solution'].addEventListener('click', function () { addUnder(addTarget(selected), 'solution'); });
+
+  el['pick-box'].addEventListener('change', function () {
+    setMap(L.setStar(map, selected.id, el['pick-box'].checked));
+  });
+
+  el['root-toggle'].addEventListener('click', function () {
+    setMap(L.setRootCause(map, selected.id, !L.findItem(map, selected.id).root_cause));
+  });
+
+  el['delete-item'].addEventListener('click', function () {
+    var id = selected.id;
+    selected = null;
+    setMap(L.deleteItem(map, id));
+    focusBox({ kind: 'goal' });
+  });
+
+  el['add-obstacle'].addEventListener('click', function () { addUnder('goal', 'obstacle'); });
 
   el['toggle-plan'].addEventListener('click', function () {
     panelOpen = !panelOpen;
@@ -1842,11 +1977,13 @@ header {
   el['zoom-fit'].addEventListener('click', function () { zoomTo('whole'); });
 
   el.save.addEventListener('click', onSave);
-  el.map.addEventListener('scroll', positionEditor);
+  el.map.addEventListener('scroll', positionControls);
   window.addEventListener('resize', render);
+  // A save message or a wrapped header moves the map with no scroll and no window resize.
+  if (window.ResizeObserver) new ResizeObserver(positionControls).observe(el.map);
 
   window.addEventListener('beforeunload', function (e) {
-    if (L.shouldWarnOnClose(commitEdit, isDirty)) {
+    if (L.shouldWarnOnClose(finishTyping, isDirty)) {
       e.preventDefault();
       e.returnValue = '';
     }
