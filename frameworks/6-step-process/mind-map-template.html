@@ -32,9 +32,7 @@ body {
   color: var(--ink);
   font: 17px/1.28 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
-button, select, input, textarea { font: inherit; color: inherit; }
-select { background: var(--box); color: var(--ink); border: 1px solid var(--box-line); border-radius: 4px; }
-select option { background: var(--box); color: var(--ink); }
+button, input, textarea { font: inherit; color: inherit; }
 [hidden] { display: none !important; }
 
 #data-problem { max-width: 560px; margin: auto; padding: 24px 16px; }
@@ -101,6 +99,22 @@ header {
 .blank { color: var(--muted); font-weight: 400; font-style: italic; }
 .selected { outline: 1px solid var(--focus); outline-offset: 2px; }
 .item:focus-visible, .quiet:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
+.drag-source { opacity: 0.4; }
+.drop-target { outline: 2px solid var(--focus); outline-offset: 2px; }
+#drag-ghost {
+  position: fixed;
+  z-index: 12;
+  max-width: 240px;
+  padding: 7px 10px;
+  pointer-events: none;
+  background: var(--box);
+  border: 1px solid var(--box-line);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
 
 #panel {
   flex: none;
@@ -185,13 +199,11 @@ header {
 #star-button[aria-pressed="true"] svg { fill: var(--star); }
 #star-button { color: var(--star); }
 #item-tools button.icon { display: flex; align-items: center; padding: 2px 6px; }
-#move-control { display: flex; align-items: center; gap: 4px; }
-#move-to { max-width: 180px; }
 #delete-item, #delete-yes { color: var(--warn); }
 #delete-question { flex-basis: 100%; max-height: min(40vh, 280px); overflow: auto; }
 #delete-question p { margin: 0; }
 #delete-question ul { margin: 2px 0 4px; padding-left: 20px; }
-.plus:focus-visible, #item-tools button:focus-visible, #move-to:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.plus:focus-visible, #item-tools button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
 </head>
@@ -225,11 +237,11 @@ header {
   <aside id="panel" hidden></aside>
 </div>
 <textarea id="typing" rows="1" placeholder="Type here" hidden></textarea>
+<div id="drag-ghost" aria-hidden="true" hidden></div>
 <button type="button" class="plus" id="plus-obstacle" hidden>+</button>
 <button type="button" class="plus" id="plus-solution" hidden>+</button>
 <div id="item-tools" role="toolbar" aria-label="What you can do with this item" hidden>
   <button type="button" id="star-button" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
-  <label id="move-control">Move to <select id="move-to"></select></label>
   <button type="button" id="delete-item" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
   <div id="delete-question" role="group" aria-label="Delete this item?" hidden></div>
   <button type="button" id="delete-yes" hidden></button>
@@ -352,14 +364,9 @@ header {
     return next;
   }
 
-  function moveTargets(map, itemId) {
-    var targets = [];
-    if (canMove(map, itemId, 'goal')) targets.push({ id: 'goal', name: 'The goal' });
-    eachItem(map.obstacles, function (target, place) {
-      if (!canMove(map, itemId, target.id)) return;
-      targets.push({ id: target.id, name: place.label ? place.label + ' ' + target.text : target.text });
-    });
-    return targets;
+  // A press that moves less than this is still a click, so a shaky hand can still double-click.
+  function isDragDistance(dx, dy) {
+    return dx * dx + dy * dy >= 25;
   }
 
   // The item and everything under it, in reading order.
@@ -394,12 +401,10 @@ header {
   // move, and the page still has to name it, so it goes by its solution's text then.
   function deleteEffects(map, itemId) {
     var item = findItem(map, itemId);
-    if (!item) return { subItems: 0, picks: [], rows: [], keyActions: [] };
+    if (!item) return { picks: [], rows: [], keyActions: [] };
     var gone = goneIds(item);
-    var items = itemsFrom(item);
     return {
-      subItems: items.length - 1,
-      picks: items.filter(function (each) { return each.star; }).map(function (each) { return each.text; }),
+      picks: itemsFrom(item).filter(function (each) { return each.star; }).map(function (each) { return each.text; }),
       rows: map.execute
         .filter(function (row) { return gone[row.solution_id]; })
         .map(function (row) { return row.first_move || findItem(map, row.solution_id).text; }),
@@ -932,7 +937,7 @@ header {
     addItem: addItem,
     canMove: canMove,
     moveItem: moveItem,
-    moveTargets: moveTargets,
+    isDragDistance: isDragDistance,
     deleteItem: deleteItem,
     deleteEffects: deleteEffects,
     nextId: nextId,
@@ -1002,8 +1007,12 @@ header {
   var selected = null;
   // The id of the item whose delete question is showing, or null.
   var asking = null;
-  // What the "Move to" list holds now, so it is only rebuilt when that changes.
-  var moveListKey = null;
+  // A press on an item that may become a drag: { ref, x, y }.
+  var press = null;
+  // The drag under way, or null: { ref, target, x, y, frame }, where target is the highlighted box's ref.
+  var drag = null;
+  // A drag happened, so the click the browser sends when the button comes up must do nothing.
+  var afterDrag = false;
   var panelOpen = window.innerWidth >= 2400;
   var drawnOnce = false;
   // 'readable' fits the window but stops at MIN_SCALE, 'whole' shows the whole map, a number is the person's choice.
@@ -1023,6 +1032,9 @@ header {
   var PLUS_SIZE = 26;
   var CONTROL_GAP = 6;
   var WINDOW_EDGE = 12;
+  var GHOST_GAP = 12;
+  var SCROLL_EDGE = 40;
+  var SCROLL_STEP = 8;
 
   var REFUSALS = {
     'wrong-map': 'That file holds a different map, so nothing was saved.',
@@ -1043,8 +1055,8 @@ header {
 
   var el = {};
   ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save', 'save-status', 'message',
-    'browser-note', 'typing', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
-    'move-control', 'move-to', 'delete-question', 'delete-yes', 'delete-keep', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+    'browser-note', 'typing', 'drag-ghost', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
+    'delete-question', 'delete-yes', 'delete-keep', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -1067,6 +1079,9 @@ header {
     box.dataset.ref = JSON.stringify(ref);
     box.dataset.key = refKey(ref);
     if (selected && refKey(selected) === refKey(ref)) box.classList.add('selected');
+    // A redraw during a drag replaces every box.
+    if (drag && refKey(drag.ref) === refKey(ref)) box.classList.add('drag-source');
+    if (drag && drag.target && refKey(drag.target) === refKey(ref)) box.classList.add('drop-target');
     return box;
   }
 
@@ -1392,9 +1407,9 @@ header {
     button.title = name;
   }
 
-  // Changes the controls in place, so a checkbox or button keeps its focus through a render.
+  // Changes the controls in place, so a button keeps its focus through a render.
   function showControls() {
-    var open = selected && !editing;
+    var open = selected && !editing && !drag;
     var parentId = open ? addTarget(selected) : null;
     var item = open && selected.kind !== 'goal' ? L.findItem(map, selected.id) : null;
     var name = open ? itemName(selected) : '';
@@ -1409,27 +1424,10 @@ header {
     var questioning = asking !== null;
     // A question replaces the item's own tools, so only a Keep or a Delete is in reach.
     if (questioning) el['star-button'].hidden = true;
-    showMoveList(item && !questioning ? item.id : null);
     el['delete-item'].hidden = !item || questioning;
     el['item-tools'].classList.toggle('asking', questioning);
     showQuestion(questioning);
     positionControls();
-  }
-
-  // The list is rebuilt only when its choices change, so a focused list keeps its focus.
-  function showMoveList(itemId) {
-    var targets = itemId ? L.moveTargets(map, itemId) : [];
-    el['move-control'].hidden = targets.length === 0;
-    el['move-to'].hidden = targets.length === 0;
-    var key = JSON.stringify(targets);
-    if (key === moveListKey) return;
-    moveListKey = key;
-    el['move-to'].textContent = '';
-    el['move-to'].appendChild(make('option', '', 'Choose where')).value = '';
-    targets.forEach(function (target) {
-      el['move-to'].appendChild(make('option', '', shortText(target.name))).value = target.id;
-    });
-    el['move-to'].value = '';
   }
 
   function listOf(texts) {
@@ -1520,7 +1518,7 @@ header {
 
   // The controls sit at the end of the page, so Tab needs help to reach them from the selected item.
   function controlsInOrder() {
-    return [el['plus-obstacle'], el['plus-solution'], el['star-button'], el['move-to'],
+    return [el['plus-obstacle'], el['plus-solution'], el['star-button'],
       el['delete-item'], el['delete-yes'], el['delete-keep']]
       .filter(function (control) { return !control.hidden; });
   }
@@ -1610,6 +1608,94 @@ header {
     var id = L.nextId(map, kind === 'solution' ? 's' : 'o');
     map = L.addItem(map, parentId, id, kind, '');
     startTyping({ kind: kind, id: id }, true);
+  }
+
+  /* Dragging an item onto a box. elementFromPoint finds the box, so the zoom scale never comes into it.
+     The ghost sits outside the canvas, so it isn't scaled either. */
+
+  function setDropTarget(ref) {
+    var old = drag.target && boxFor(drag.target);
+    if (old) old.classList.remove('drop-target');
+    drag.target = ref;
+    var box = ref && boxFor(ref);
+    if (box) box.classList.add('drop-target');
+  }
+
+  function findDropTarget() {
+    var under = document.elementFromPoint(drag.x, drag.y);
+    var ref = under && refAt(under);
+    setDropTarget(ref && L.canMove(map, drag.ref.id, addTarget(ref)) ? ref : null);
+  }
+
+  // Finishing can redraw the map and can remove a blank new item, which may be the item being dragged.
+  function startDrag() {
+    var ref = press.ref;
+    afterDrag = true;
+    if (editing) finishTyping();
+    if (!L.itemExists(map, ref)) {
+      press = null;
+      return;
+    }
+    asking = null;
+    drag = { ref: ref, target: null, x: press.x, y: press.y, frame: requestAnimationFrame(dragFrame) };
+    boxFor(ref).classList.add('drag-source');
+    el['drag-ghost'].textContent = L.findItem(map, ref.id).text || 'A blank item';
+    el['drag-ghost'].hidden = false;
+    document.body.classList.add('dragging');
+    showControls();
+  }
+
+  function moveDrag(e) {
+    drag.x = e.clientX;
+    drag.y = e.clientY;
+    el['drag-ghost'].style.left = drag.x + GHOST_GAP + 'px';
+    el['drag-ghost'].style.top = drag.y + GHOST_GAP + 'px';
+    findDropTarget();
+  }
+
+  function edgeStep(at, low, high) {
+    if (at < low + SCROLL_EDGE) return -SCROLL_STEP;
+    return at > high - SCROLL_EDGE ? SCROLL_STEP : 0;
+  }
+
+  // Runs on every frame, because a pointer held still near an edge keeps the map moving under it.
+  function dragFrame() {
+    var mapRect = el.map.getBoundingClientRect();
+    el.map.scrollLeft += edgeStep(drag.x, mapRect.left, mapRect.right);
+    el.map.scrollTop += edgeStep(drag.y, mapRect.top, mapRect.bottom);
+    findDropTarget();
+    drag.frame = requestAnimationFrame(dragFrame);
+  }
+
+  function endDrag() {
+    setDropTarget(null);
+    var box = boxFor(drag.ref);
+    if (box) box.classList.remove('drag-source');
+    cancelAnimationFrame(drag.frame);
+    el['drag-ghost'].hidden = true;
+    document.body.classList.remove('dragging');
+    drag = null;
+    press = null;
+  }
+
+  function cancelDrag() {
+    press = null;
+    if (!drag) return;
+    endDrag();
+    showControls();
+    focusBox(selected);
+  }
+
+  // The box it landed on is selected during the redraw, so that box holds still under the pointer.
+  function dropOn(ref, target) {
+    endDrag();
+    selected = target;
+    setMap(L.moveItem(map, ref.id, addTarget(target)));
+    markSelected(ref);
+    showControls();
+    focusBox(ref);
+    boxFor(ref).scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    positionControls();
   }
 
   /* Saving */
@@ -1871,6 +1957,12 @@ header {
   }, true);
 
   document.addEventListener('click', function (e) {
+    // A click from the keyboard has a detail of 0, and no drag sent it.
+    if (afterDrag && e.detail !== 0) {
+      afterDrag = false;
+      e.stopPropagation();
+      return;
+    }
     skipClick = Boolean(editing) && e.target !== el.typing &&
       (pressedInTyping || (editing.isNew && e.detail > 1));
     pressedInTyping = false;
@@ -1906,7 +1998,49 @@ header {
 
   el.typing.addEventListener('input', positionControls);
 
+  // The text box and the controls sit outside the canvas, so a press on them never gets here.
+  el.canvas.addEventListener('pointerdown', function (e) {
+    var ref = refAt(e.target);
+    if (e.button !== 0 || !ref || ref.kind === 'goal') return;
+    press = { ref: ref, x: e.clientX, y: e.clientY };
+  });
+
+  // Every press starts fresh, because a redraw or a lost window can mean the click after a drag never came.
+  document.addEventListener('pointerdown', function () { afterDrag = false; }, true);
+
+  // No buttons held means the release was missed, as with a Control-click on a Mac.
+  document.addEventListener('pointermove', function (e) {
+    if (!press) return;
+    if (!(e.buttons & 1)) {
+      cancelDrag();
+      return;
+    }
+    if (!drag && L.isDragDistance(e.clientX - press.x, e.clientY - press.y)) startDrag();
+    if (drag) moveDrag(e);
+  });
+
+  document.addEventListener('pointerup', function (e) {
+    if (!drag) {
+      press = null;
+      return;
+    }
+    moveDrag(e);
+    if (drag.target) dropOn(drag.ref, drag.target);
+    else cancelDrag();
+  });
+
+  document.addEventListener('pointercancel', cancelDrag);
+  window.addEventListener('blur', cancelDrag);
+  document.addEventListener('selectstart', function (e) {
+    if (press) e.preventDefault();
+  });
+
   document.addEventListener('keydown', function (e) {
+    if (drag) {
+      e.preventDefault();
+      if (e.key === 'Escape') cancelDrag();
+      return;
+    }
     if (e.target === el.typing) return;
     if (e.key === 'Tab') {
       tabThroughControls(e);
@@ -1944,17 +2078,6 @@ header {
 
   el['star-button'].addEventListener('click', function () {
     setMap(L.setStar(map, selected.id, el['star-button'].getAttribute('aria-pressed') !== 'true'));
-  });
-
-  // Moves the item and keeps it selected, with focus still on the list. The item may now be off screen.
-  el['move-to'].addEventListener('change', function () {
-    var target = el['move-to'].value;
-    el['move-to'].value = '';
-    if (!target || !selected) return;
-    setMap(L.moveItem(map, selected.id, target));
-    var box = boxFor(selected);
-    if (box) box.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    positionControls();
   });
 
   function deleteNow() {

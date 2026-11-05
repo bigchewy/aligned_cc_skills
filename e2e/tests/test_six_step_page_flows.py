@@ -38,16 +38,12 @@ def test_star_button_flow_runs(page):
 
 
 @pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
-def test_select_uses_the_page_colors(page):
-    # The browser draws a select on white by default. The page is always light, and styling select with the
-    # page's own tokens keeps the list readable if those tokens ever change.
+def test_the_page_is_always_light_and_has_no_list_to_style(page):
     import re
     css = re.search(r"<style>([\s\S]*?)</style>", (FRAMEWORK / page).read_text()).group(1)
-    rule = re.search(r"(?m)^select \{([^}]*)\}", css)
-    assert rule, "no select rule"
-    assert "background: var(--box)" in rule.group(1)
-    assert "color: var(--ink)" in rule.group(1)
+    assert not re.search(r"(?m)^select", css)
     assert "prefers-color-scheme" not in css and "color-scheme: light" in css
+
 
 @pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
 def test_delete_question_scrolls_inside_the_window(page):

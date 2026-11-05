@@ -152,7 +152,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "Done."
 
-**Advisor:** "The documents and the goal suggest starring two: define the purpose of in-office time and communicate it, because the deepest obstacle sits there, and create in-person-only experiences, because meetings are still remote. Where do your picks differ?"
+**Advisor:** "The documents and the goal suggest starring two: define the purpose of in-office time and communicate it, because that obstacle sits there, and create in-person-only experiences, because meetings are still remote. Where do your picks differ?"
 
 **User:** "They don't. I picked the same two."
 

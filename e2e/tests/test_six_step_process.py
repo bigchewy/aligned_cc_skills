@@ -808,7 +808,8 @@ def test_new_conversation_asks_which_step_when_the_map_cant_prove_it():
     assert "no stars means 4b" not in pick_up
     assert "say what the map shows and ask which step to resume" in pick_up
     assert "doesn't record picks" in pick_up
-    assert "Solutions only directly under the goal never count as 4a done" in pick_up
+    assert "If the only solutions are directly under the goal, that doesn't show 4a ran, and 4a nudges them when it runs." in pick_up
+    assert "never count as 4a done" not in pick_up
 
 
 def test_no_change_reply_exists():
@@ -1001,6 +1002,40 @@ def test_page_has_no_form_editor_left():
                  "positionEditor", "afterCommit", "actionButton", "labeled(", 'id="editor"', "#editor", "el.editor",
                  "Click any item", "Click here"):
         assert gone not in html, gone
+
+
+def test_page_has_no_move_to():
+    for page in (template(), EXAMPLE.read_text()):
+        for gone in ("move-to", "move-control", "moveControl", "showMoveList", "moveListKey", "moveTargets", "Move to",
+                     "<select", "subItems", "checkbox"):
+            assert gone not in page, gone
+        assert "canMove" in page
+
+
+def test_the_drag_ghost_sits_outside_the_canvas_and_takes_no_pointer():
+    html = template()
+    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    workspace = body[body.index('id="workspace"'):body.index('id="typing"')]
+    assert 'id="drag-ghost"' in body and 'id="drag-ghost"' not in workspace
+    rule = re.search(r"#drag-ghost \{([^}]*)\}", html)
+    assert rule and "pointer-events: none" in rule.group(1) and "position: fixed" in rule.group(1)
+    target = re.search(r"\.drop-target \{([^}]*)\}", html)
+    assert target and "var(--focus)" in target.group(1)
+    dragging = re.search(r"body\.dragging[^{]*\{([^}]*)\}", html)
+    assert dragging and "user-select: none" in dragging.group(1)
+
+
+def test_solutions_under_the_goal_get_one_nudge_unless_they_said_it_belongs():
+    said = "unless they already said in this conversation that it belongs there"
+    step5 = section("## Step 5: Execute")
+    assert "nudge it once" in step5 and said in step5
+    pick_up = section("## Picking up edits")
+    assert "directly under the goal toward an obstacle once" in pick_up and said in pick_up
+
+
+def test_the_example_says_that_obstacle_sits_there():
+    assert "because that obstacle sits there" in EXAMPLES.read_text()
+    assert "because the deepest obstacle sits there" not in EXAMPLES.read_text()
 
 
 def test_the_controls_sit_outside_the_canvas():

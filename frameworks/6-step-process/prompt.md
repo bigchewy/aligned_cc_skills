@@ -235,7 +235,7 @@ With a table on screen, ask which ratings are wrong.
 
 For each starred solution, one per turn, ask for the first move, a proposed owner, and what other people need to decide. If the starting point isn't known, the first Execute item is finding today's number, with no star. An Execute row needs a solution, so add one for it, placed under an obstacle that says today's number is unknown, and put its row first.
 
-**WAIT for their answer.** If a solution sits directly under the goal and they haven't said it belongs there, nudge it the same way as 4a before going on.
+**WAIT for their answer.** If a solution sits directly under the goal, nudge it once, the same way as 4a, before going on, unless they already said in this conversation that it belongs there.
 
 **Write the map.** Do this after each row. These are planned, not done, and the page says so.
 
@@ -271,7 +271,7 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 
 **If it shows changes,** list them in plain words. Compare items by `id` and parent, because a label can change when an item before it is deleted. Report a moved obstacle with what's under it, a moved solution with the label of the item it now sits under, and a deleted item with what went with it. Use labels from the file as it is now. Name a deleted item by its text and say how many sub-items went with it, including any picks and Step 5 rows. Then:
 
-- Nudge any solution directly under the goal toward an obstacle, the same way as 4a.
+- Nudge any solution directly under the goal toward an obstacle once, the same way as 4a, unless they already said in this conversation that it belongs there.
 - The person can change picks on the page, by clicking the star on a solution. Ask about any new pick with no Step 5 row, once the run has reached Step 5. If they removed a pick that has a Step 5 row, ask whether to drop the Step 5 row. List each one in plain words, by the solution's text.
 - The page takes a deleted solution's row out of `execute` and its id off `key_actions` by itself, so those lists still match the map.
 - If obstacles or solutions changed and the map has a key-action table, offer to redo it.
@@ -282,7 +282,7 @@ Look in the folder for a `(1)` copy of this file, by name only. If there is one,
 
 **WAIT if you asked anything,** then go to "Resuming."
 
-**Resuming.** In this conversation, carry on from the step you were on. In a new conversation, read the documents as in the opening. If the map has no obstacles, start 3a. Otherwise say what the map shows and ask which step to resume, naming the earliest step it can't prove ran. The map doesn't record picks, so it can't prove every picked obstacle got asked why. Solutions only directly under the goal never count as 4a done, and 4a pulls them in when it runs. **WAIT for their answer.** Every step keeps its private stops.
+**Resuming.** In this conversation, carry on from the step you were on. In a new conversation, read the documents as in the opening. If the map has no obstacles, start 3a. Otherwise say what the map shows and ask which step to resume, naming the earliest step it can't prove ran. The map doesn't record picks, so it can't prove every picked obstacle got asked why. If the only solutions are directly under the goal, that doesn't show 4a ran, and 4a nudges them when it runs. **WAIT for their answer.** Every step keeps its private stops.
 
 ## Artifact
 

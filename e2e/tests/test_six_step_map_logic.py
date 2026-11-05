@@ -1020,19 +1020,11 @@ def test_a_solution_moves_onto_the_goal_and_back():
     assert [o["id"] for o in m["obstacles"]] == ["holder", "ob", "other"]
 
 
-def test_move_targets_list_every_allowed_target_in_reading_order():
-    m = rule_map()
-    assert call("moveTargets", m, "ms")["result"] == [
-        {"id": "goal", "name": "The goal"}, {"id": "mo", "name": "1A moving obstacle"},
-        {"id": "ob", "name": "2 plain"}, {"id": "so", "name": "a solution"},
-        {"id": "other", "name": "3 other"}]
-    assert call("moveTargets", m, "mo")["result"] == [
-        {"id": "goal", "name": "The goal"}, {"id": "ms", "name": "moving solution"},
-        {"id": "ob", "name": "2 plain"}, {"id": "so", "name": "a solution"},
-        {"id": "other", "name": "3 other"}]
-    assert call("moveTargets", m, "ob")["result"] == [
-        {"id": "holder", "name": "1 holds the movers"}, {"id": "mo", "name": "1A moving obstacle"},
-        {"id": "ms", "name": "moving solution"}, {"id": "other", "name": "3 other"}]
+def test_drag_distance_threshold():
+    for dx, dy in ((5, 0), (0, 5), (-5, 0), (0, -5), (3, 4), (-3, -4), (100, 100)):
+        assert call("isDragDistance", dx, dy)["result"] is True, (dx, dy)
+    for dx, dy in ((0, 0), (4, 0), (0, -4), (3, 3), (-3, 3)):
+        assert call("isDragDistance", dx, dy)["result"] is False, (dx, dy)
 
 
 def plan_map():
@@ -1091,7 +1083,7 @@ def test_delete_a_top_level_item_and_an_unknown_one():
 
 def test_delete_effects_name_picks_and_rows():
     out = call("deleteEffects", plan_map(), "s1")["result"]
-    assert out["subItems"] == 2
+    assert "subItems" not in out
     assert out["picks"] == ["one", "two"]
     assert out["rows"] == ["move one", "move two"]
     assert out["keyActions"] == ["both", "only two"]
@@ -1106,7 +1098,7 @@ def test_delete_effects_name_a_row_with_a_blank_first_move_by_its_solution():
 
 def test_delete_effects_of_an_item_with_nothing_to_lose():
     m = plan_map()
-    nothing = {"subItems": 0, "picks": [], "rows": [], "keyActions": []}
+    nothing = {"picks": [], "rows": [], "keyActions": []}
     assert call("deleteEffects", m, "s3")["result"] == nothing
     assert call("deleteEffects", m, "nope")["result"] == nothing
 
