@@ -1234,3 +1234,21 @@ def test_mid_run_edits_point_to_the_pick_up_checks():
 def test_step_five_row_is_written_with_the_person():
     pick_up = section("## Picking up edits")
     assert "you write the Step 5 row with the person" in pick_up
+
+
+def test_lines_carry_their_kind():
+    page = page_function("drawMap", "drawTray")
+    assert "<path class=\"' + line.kind" in page
+    css = template()
+    assert "#lines path.obstacle" in css
+    assert "#lines path.solution" in css
+
+
+def test_template_defines_line_colors_for_both_themes():
+    html = template()
+    light, dark = html.split("prefers-color-scheme: dark", 1)
+    dark = dark.split("* { box-sizing", 1)[0]
+    assert "--obstacle-line: #c9502a;" in light and "--solution-line: #4a9a2d;" in light
+    assert "--obstacle-line: #ef7d57;" in dark and "--solution-line: #7fce62;" in dark
+    assert re.search(r"#lines path\.obstacle\s*\{[^}]*var\(--obstacle-line\)", html)
+    assert re.search(r"#lines path\.solution\s*\{[^}]*var\(--solution-line\)", html)
