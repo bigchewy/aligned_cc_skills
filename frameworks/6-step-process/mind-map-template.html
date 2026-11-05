@@ -205,9 +205,12 @@ header {
   border-radius: 6px;
   padding: 4px 10px;
 }
-#pick-control { display: flex; align-items: center; gap: 6px; }
-#delete-item { color: var(--warn); }
-.plus:focus-visible, #item-tools button:focus-visible, #pick-box:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+#pick-control, #move-control { display: flex; align-items: center; gap: 6px; }
+#move-to { max-width: 220px; font: inherit; }
+#delete-item, #delete-yes { color: var(--warn); }
+#delete-question { flex-basis: 100%; }
+#delete-question ul { margin: 4px 0; padding-left: 20px; }
+.plus:focus-visible, #item-tools button:focus-visible, #pick-box:focus-visible, #move-to:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
 </head>
@@ -248,8 +251,11 @@ header {
 <div id="item-tools" role="toolbar" aria-label="What you can do with this item" hidden>
   <label id="pick-control"><input type="checkbox" id="pick-box"> This is one of my picks</label>
   <button type="button" id="root-toggle"></button>
-  <!-- "Move to" goes here, before Delete. -->
+  <label id="move-control">Move to <select id="move-to"></select></label>
   <button type="button" id="delete-item"></button>
+  <div id="delete-question" role="group" aria-label="Delete this item?" hidden></div>
+  <button type="button" id="delete-yes" hidden></button>
+  <button type="button" id="delete-keep" hidden></button>
 </div>
 <script id="map-logic">
 (function () {
@@ -1078,6 +1084,10 @@ header {
   var editing = null;
   // The selected item as a ref, or null. Selecting changes nothing in the map and draws nothing.
   var selected = null;
+  // The id of the item whose delete question is showing, or null.
+  var asking = null;
+  // What the "Move to" list holds now, so it is only rebuilt when that changes.
+  var moveListKey = null;
   var panelOpen = window.innerWidth >= 2400;
   var drawnOnce = false;
   // 'readable' fits the window but stops at MIN_SCALE, 'whole' shows the whole map, a number is the person's choice.
@@ -1118,7 +1128,7 @@ header {
   var el = {};
   ['person', 'strategy-note', 'picks-key', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
     'browser-note', 'typing', 'plus-obstacle', 'plus-solution', 'item-tools', 'pick-control', 'pick-box', 'root-toggle',
-    'delete-item', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+    'move-control', 'move-to', 'delete-question', 'delete-yes', 'delete-keep', 'delete-item', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -1268,8 +1278,8 @@ header {
     el.tray.textContent = '';
     if (!items.length) return;
     var count = items.length === 1
-      ? '1 solution is not tied to an obstacle yet.'
-      : items.length + ' solutions are not tied to an obstacle yet.';
+      ? '1 solution is not on the map yet.'
+      : items.length + ' solutions are not on the map yet.';
     el.tray.appendChild(make('div', '', count)).id = 'tray-count';
     items.forEach(function (item) {
       el.tray.appendChild(makeSolution(item));
@@ -1442,6 +1452,7 @@ header {
   // Draws nothing, so the boxes stay put between the two clicks of a double-click, and no write gets asked for.
   function select(ref) {
     if (editing) finishTyping();
+    asking = null;
     markSelected(ref && L.itemExists(map, ref) ? ref : null);
     showControls();
     focusBox(selected);
@@ -1504,9 +1515,62 @@ header {
     var canMark = Boolean(item) && L.canBeRootCause(map, item.id);
     el['root-toggle'].hidden = !canMark;
     if (canMark) el['root-toggle'].textContent = item.root_cause ? 'Unmark root cause' : 'Mark as root cause';
-    el['delete-item'].hidden = !item;
+    if (!item || asking !== item.id) asking = null;
+    var questioning = asking !== null;
+    // A question replaces the item's own tools, so only a Keep or a Delete is in reach.
+    if (questioning) {
+      el['pick-control'].hidden = true;
+      el['pick-box'].hidden = true;
+      el['root-toggle'].hidden = true;
+    }
+    showMoveList(item && !questioning ? item.id : null);
+    el['delete-item'].hidden = !item || questioning;
     if (item) el['delete-item'].textContent = deleteLabel(selected);
+    showQuestion(questioning);
     positionControls();
+  }
+
+  // The list is rebuilt only when its choices change, so a focused list keeps its focus.
+  function showMoveList(itemId) {
+    var targets = itemId ? L.moveTargets(map, itemId) : [];
+    el['move-control'].hidden = targets.length === 0;
+    el['move-to'].hidden = targets.length === 0;
+    var key = JSON.stringify(targets);
+    if (key === moveListKey) return;
+    moveListKey = key;
+    el['move-to'].textContent = '';
+    el['move-to'].appendChild(make('option', '', 'Choose where')).value = '';
+    targets.forEach(function (target) {
+      el['move-to'].appendChild(make('option', '', shortText(target.name))).value = target.id;
+    });
+    el['move-to'].value = '';
+  }
+
+  function listOf(texts) {
+    var list = make('ul');
+    texts.forEach(function (text) { list.appendChild(make('li', '', text || 'A blank item')); });
+    return list;
+  }
+
+  function showQuestion(show) {
+    el['delete-question'].hidden = !show;
+    el['delete-yes'].hidden = !show;
+    el['delete-keep'].hidden = !show;
+    if (!show) {
+      el['delete-question'].textContent = '';
+      return;
+    }
+    el['delete-yes'].textContent = 'Delete';
+    el['delete-keep'].textContent = 'Keep';
+    var effects = L.deleteEffects(map, asking);
+    var box = el['delete-question'];
+    box.textContent = '';
+    box.appendChild(make('p', '', 'Delete this? It would also remove: '));
+    box.appendChild(listOf(effects.picks.concat(effects.rows)));
+    if (effects.keyActions.length) {
+      box.appendChild(make('p', '', 'These key actions would lose a solution: '));
+      box.appendChild(listOf(effects.keyActions));
+    }
   }
 
   function clamp(value, low, high) {
@@ -1564,7 +1628,8 @@ header {
 
   // The controls sit at the end of the page, so Tab needs help to reach them from the selected item.
   function controlsInOrder() {
-    return [el['plus-obstacle'], el['plus-solution'], el['pick-box'], el['root-toggle'], el['delete-item']]
+    return [el['plus-obstacle'], el['plus-solution'], el['pick-box'], el['root-toggle'], el['move-to'],
+      el['delete-item'], el['delete-yes'], el['delete-keep']]
       .filter(function (control) { return !control.hidden; });
   }
 
@@ -1942,6 +2007,8 @@ header {
       tabThroughControls(e);
     } else if (e.key === 'Escape' && editing) {
       cancelTyping();
+    } else if (e.key === 'Escape' && asking !== null) {
+      stopAsking();
     } else if (e.key === 'Escape' && selected) {
       var was = selected;
       select(null);
@@ -1972,12 +2039,45 @@ header {
     setMap(L.setRootCause(map, selected.id, !L.findItem(map, selected.id).root_cause));
   });
 
-  el['delete-item'].addEventListener('click', function () {
+  // Moves the item and keeps it selected, with focus still on the list. The item may now be off screen.
+  el['move-to'].addEventListener('change', function () {
+    var target = el['move-to'].value;
+    el['move-to'].value = '';
+    if (!target || !selected) return;
+    setMap(L.moveItem(map, selected.id, target));
+    var box = boxFor(selected);
+    if (box) box.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    positionControls();
+  });
+
+  function deleteNow() {
     var id = selected.id;
+    asking = null;
     selected = null;
     setMap(L.deleteItem(map, id));
     focusBox({ kind: 'goal' });
+  }
+
+  function stopAsking() {
+    asking = null;
+    showControls();
+    el['delete-item'].focus({ preventScroll: true });
+  }
+
+  // Nothing at stake deletes straight away. Otherwise the question shows and nothing is written.
+  el['delete-item'].addEventListener('click', function () {
+    var effects = L.deleteEffects(map, selected.id);
+    if (!effects.picks.length && !effects.rows.length && !effects.keyActions.length) {
+      deleteNow();
+      return;
+    }
+    asking = selected.id;
+    showControls();
+    el['delete-keep'].focus({ preventScroll: true });
   });
+
+  el['delete-yes'].addEventListener('click', deleteNow);
+  el['delete-keep'].addEventListener('click', stopAsking);
 
   el['add-obstacle'].addEventListener('click', function () { addUnder('goal', 'obstacle'); });
 
