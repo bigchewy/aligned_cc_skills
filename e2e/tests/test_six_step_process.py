@@ -839,6 +839,11 @@ def test_no_shell_copy_checks_the_whole_file():
     assert "`<script id=\"map-logic\">` block" not in rules
 
 
+def test_no_shell_copy_says_to_read_the_whole_long_template():
+    rules = section("## The map file")
+    assert "longer than one default read, so read all of it before writing it out" in rules
+
+
 def test_steps_five_and_six_are_planned_not_done():
     assert "planned, not done" in prompt()
 

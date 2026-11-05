@@ -212,7 +212,7 @@ header {
 #pick-control, #move-control { display: flex; align-items: center; gap: 4px; }
 #move-to { max-width: 180px; }
 #delete-item, #delete-yes { color: var(--warn); }
-#delete-question { flex-basis: 100%; }
+#delete-question { flex-basis: 100%; max-height: min(40vh, 280px); overflow: auto; }
 #delete-question p { margin: 0; }
 #delete-question ul { margin: 2px 0 4px; padding-left: 20px; }
 .plus:focus-visible, #item-tools button:focus-visible, #pick-box:focus-visible, #move-to:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
@@ -728,6 +728,8 @@ header {
     if (!isObject(item)) return name + ' is missing.';
     if ('whys' in item || 'solution_at' in item || 'solution_ids' in item) return name + ' uses the old map shape.';
     if (!item.id || !isText(item.id)) return name + ' is missing its id.';
+    if (item.id === 'goal') return name + ' uses the id goal, which the page keeps for the goal.';
+    if (item.id.indexOf('"') !== -1) return name + ' has a quote mark in its id.';
     if (!('kind' in item)) return name + ' is missing its kind.';
     if (item.kind !== 'obstacle' && item.kind !== 'solution') return name + ' needs a kind of obstacle or solution.';
     if (!isText(item.text)) return name + ' is missing its text.';
@@ -1151,7 +1153,7 @@ header {
   /* Boxes */
 
   function makeItem(ref, className) {
-    var box = make('button', 'item ' + className);
+    var box = make('button', className ? 'item ' + className : 'item');
     box.type = 'button';
     box.dataset.ref = JSON.stringify(ref);
     box.dataset.key = refKey(ref);
@@ -1171,14 +1173,14 @@ header {
   }
 
   function makeSolution(item) {
-    var box = makeItem({ kind: 'solution', id: item.id }, 'solution');
+    var box = makeItem({ kind: 'solution', id: item.id }, '');
     if (item.star) box.appendChild(make('span', 'star', '★'));
     fillText(box, item.text, 'New solution');
     return box;
   }
 
   function makeObstacle(row) {
-    var cls = (row.depth === 0 ? 'obstacle' : 'sub') + (row.item.root_cause ? ' root' : '');
+    var cls = row.item.root_cause ? 'root' : '';
     var box = makeItem({ kind: 'obstacle', id: row.item.id }, cls);
     box.appendChild(make('span', 'label', row.label));
     fillText(box, row.item.text, row.depth === 0 ? 'New obstacle' : 'New sub-obstacle');
@@ -1571,7 +1573,8 @@ header {
     var effects = L.deleteEffects(map, asking);
     var box = el['delete-question'];
     box.textContent = '';
-    var things = effects.picks.concat(effects.rows);
+    // A picked solution with a plan row can be named twice, so each text shows once.
+    var things = effects.picks.concat(effects.rows).filter(function (text, i, all) { return all.indexOf(text) === i; });
     var lead = 'Delete this';
     if (effects.subItems === 1) lead += ' and its sub-item';
     else if (effects.subItems) lead += ' and its ' + effects.subItems + ' sub-items';
@@ -1617,6 +1620,7 @@ header {
     var tools = el['item-tools'];
     var top = rect.top - tools.offsetHeight - CONTROL_GAP;
     if (top < mapRect.top) top = rect.bottom + CONTROL_GAP;
+    top = clamp(top, WINDOW_EDGE, window.innerHeight - tools.offsetHeight - WINDOW_EDGE);
     tools.style.left = clamp(rect.left, WINDOW_EDGE, window.innerWidth - tools.offsetWidth - WINDOW_EDGE) + 'px';
     tools.style.top = top + 'px';
   }
@@ -1986,12 +1990,27 @@ header {
   }
 
   // Capture runs first, so what was typed is kept before any other click acts on the map.
+  // A press that starts in the text box and ends outside it is a text selection, not a click on the map.
+  // A double-click on a plus opens the new item on the first click, and the second click must not close it.
+  var pressedInTyping = false;
+  var skipClick = false;
+  document.addEventListener('mousedown', function (e) {
+    pressedInTyping = e.target === el.typing;
+  }, true);
+
   document.addEventListener('click', function (e) {
-    if (editing && e.target !== el.typing) finishTyping();
+    skipClick = Boolean(editing) && e.target !== el.typing &&
+      (pressedInTyping || (editing.isNew && e.detail > 1));
+    pressedInTyping = false;
+    if (editing && e.target !== el.typing && !skipClick) finishTyping();
   }, true);
 
   // Finishing can redraw the map under this click, so select finds the item again by id.
   document.addEventListener('click', function (e) {
+    if (skipClick) {
+      skipClick = false;
+      return;
+    }
     var ref = refAt(e.target);
     if (ref) select(ref);
     else if (el.map.contains(e.target) || el.tray.contains(e.target)) select(null);

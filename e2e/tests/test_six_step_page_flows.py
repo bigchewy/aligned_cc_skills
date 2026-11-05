@@ -49,3 +49,11 @@ def test_select_uses_the_page_colors_in_both_themes(page):
     assert "background: var(--box)" in rule.group(1)
     assert "color: var(--ink)" in rule.group(1)
     assert "prefers-color-scheme: dark" in css and "--box:" in css.split("prefers-color-scheme: dark")[1]
+
+
+@pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
+def test_delete_question_scrolls_inside_the_window(page):
+    import re
+    css = re.search(r"<style>([\s\S]*?)</style>", (FRAMEWORK / page).read_text()).group(1)
+    rule = re.search(r"(?m)^#delete-question \{([^}]*)\}", css)
+    assert rule and "max-height: min(40vh" in rule.group(1) and "overflow: auto" in rule.group(1)

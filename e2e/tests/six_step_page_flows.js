@@ -1300,6 +1300,52 @@ const flows = {
       }
     }
   },
+  async 'a press that starts in the text box and ends outside it keeps the box open'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.typeOn('o1');
+    p.el('typing').value = 'half typed';
+    p.fire(p.el('typing'), 'mousedown');
+    p.fire(p.el('map'), 'click', { detail: 1 }); await settle();
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.el('typing').value, 'half typed');
+    assert.equal(f.writes, 0);
+    p.fire(p.el('map'), 'click', { detail: 1 }); await settle();
+    assert.equal(p.el('typing').hidden, true); assert.equal(parse(f.html).obstacles[0].text, 'half typed');
+  },
+  async 'the second click of a double-click on a plus does not close the new item'() {
+    const html = treeHtml([node('o1', 'first')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1');
+    p.fire(p.el('plus-solution'), 'click', { detail: 1 });
+    assert.equal(p.el('typing').hidden, false);
+    p.fire(p.el('map'), 'click', { detail: 2 }); await settle();
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
+    p.typeAndEnter('a fix'); await settle();
+    assert.equal(parse(f.html).obstacles[0].children[0].text, 'a fix');
+  },
+  async 'a starred solution with a plan row is listed once in the question'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'the fix', [], true)])], [], {
+      execute: [{ solution_id: 's1', first_move: '', owner: 'o', others_decide: '' }]
+    });
+    const p = page({ html }); await settle();
+    p.clickItem('s1'); p.tool('delete-item');
+    assert.equal(p.el('delete-question').walk().filter((k) => k.tag === 'LI').length, 1);
+  },
+  async 'a map with an item id of goal is refused with a plain sentence'() {
+    const p = page({ html: treeHtml([node('goal', 'x')]) }); await settle();
+    const reason = p.sandbox.document.getElementById('data-problem-reason').textContent;
+    assert.equal(p.sandbox.document.getElementById('data-problem').hidden, false);
+    assert.ok(reason.includes('uses the id goal'), reason);
+    assert.equal(p.sandbox.document.getElementById('canvas').kids.length, 0);
+  },
+  async 'a map with a quote mark in an item id is refused with a plain sentence'() {
+    const p = page({ html: treeHtml([node('o"1', 'x')]) }); await settle();
+    const reason = p.sandbox.document.getElementById('data-problem-reason').textContent;
+    assert.equal(p.sandbox.document.getElementById('data-problem').hidden, false);
+    assert.ok(reason.includes('quote mark in its id'), reason);
+  },
   async 'a map in the old shape shows the message and draws nothing'() {
     const html = treeHtml([{ id: 'o1', text: 'old', whys: ['w'], root_cause: 'r', solution_ids: [] }]);
     const p = page({ html }); await settle();
