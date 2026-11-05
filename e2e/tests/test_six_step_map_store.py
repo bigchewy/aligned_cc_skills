@@ -23,8 +23,9 @@ const D = %(data)s;
 const L = globalThis.MapLogic;
 const S = globalThis.MapStore;
 const body = %(code)s;
-const result = (new Function('L', 'S', 'D', body))(L, S, D);
-process.stdout.write(JSON.stringify(result === undefined ? null : result));
+Promise.resolve((new Function('L', 'S', 'D', body))(L, S, D)).then((result) => {
+  process.stdout.write(JSON.stringify(result === undefined ? null : result));
+}, (e) => { console.error(String(e && e.stack || e)); process.exit(1); });
 """
 
 
@@ -344,3 +345,196 @@ def test_unknown_version():
     assert run("return S.unknownVersion({version: 2});") is True
     assert run("return S.unknownVersion({});") is True
     assert run("return S.unknownVersion(null);") is True
+
+
+# Write queue and status text. Each snippet builds a fake store whose write calls
+# are held until the test settles them, and a fake wait that records the delay.
+QUEUE_SETUP = r"""
+const flush = () => new Promise((r) => setTimeout(r, 0));
+const writes = [];
+const waits = [];
+const events = [];
+const write = (change) => new Promise((resolve, reject) => { writes.push({ change, resolve, reject }); });
+const wait = (ms) => new Promise((resolve) => { waits.push({ ms, resolve }); });
+const q = S.createChangeQueue({ write, wait, onChange: (s) => events.push(s) });
+const last = () => events[events.length - 1];
+const err = (code) => Object.assign(new Error(code), { code });
+"""
+
+
+def queue(code):
+    return run(QUEUE_SETUP + "return " + code.strip())
+
+
+def test_queue_sends_one_write_at_a_time_in_order():
+    r = queue("""(async () => {
+      q.add({n: 1}); q.add({n: 2}); q.add({n: 3});
+      await flush();
+      const first = writes.length;
+      writes[0].resolve(); await flush();
+      const second = writes.length;
+      writes[1].resolve(); await flush();
+      writes[2].resolve(); await flush();
+      return { first, second, order: writes.map((w) => w.change.n), left: q.pending().length };
+    })()""")
+    assert r == {"first": 1, "second": 2, "order": [1, 2, 3], "left": 0}
+
+
+def test_queue_keeps_a_change_pending_until_its_write_confirms():
+    r = queue("""(async () => {
+      q.add({n: 1}); q.add({n: 2});
+      await flush();
+      const during = q.pending().map((c) => c.n);
+      const savingDuring = last().saving;
+      writes[0].resolve(); await flush();
+      const after = q.pending().map((c) => c.n);
+      writes[1].resolve(); await flush();
+      return { during, savingDuring, after, done: q.pending().length, savingDone: last().saving, failed: last().failed };
+    })()""")
+    assert r == {"during": [1, 2], "savingDuring": True, "after": [2], "done": 0, "savingDone": False, "failed": False}
+
+
+def test_queue_retries_unavailable_once_after_a_delay():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('unavailable')); await flush();
+      const failedAfterFirst = last().failed;
+      const delay = waits[0].ms;
+      const writesBefore = writes.length;
+      waits[0].resolve(); await flush();
+      const writesAfter = writes.length;
+      writes[1].resolve(); await flush();
+      return { failedAfterFirst, delay, writesBefore, writesAfter, left: q.pending().length, failed: last().failed };
+    })()""")
+    assert r["failedAfterFirst"] is False
+    assert 1000 <= r["delay"] <= 2000
+    assert (r["writesBefore"], r["writesAfter"], r["left"], r["failed"]) == (1, 2, 0, False)
+
+
+def test_queue_keeps_trying_every_30s_after_a_second_failure():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('unavailable')); await flush();
+      waits[0].resolve(); await flush();
+      writes[1].reject(err('unavailable')); await flush();
+      const failed = last().failed, code = last().code, delay = waits[1].ms;
+      waits[1].resolve(); await flush();
+      writes[2].reject(err('unavailable')); await flush();
+      const stillFailed = last().failed, delay2 = waits[2].ms;
+      waits[2].resolve(); await flush();
+      writes[3].resolve(); await flush();
+      return { failed, code, delay, stillFailed, delay2, left: q.pending().length, failedEnd: last().failed, codeEnd: last().code };
+    })()""")
+    assert r == {"failed": True, "code": "unavailable", "delay": 30000, "stillFailed": True,
+                 "delay2": 30000, "left": 0, "failedEnd": False, "codeEnd": None}
+
+
+def test_queue_treats_an_unknown_code_as_unavailable():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('something_new')); await flush();
+      const retried = waits.length === 1 && waits[0].ms >= 1000 && waits[0].ms <= 2000;
+      waits[0].resolve(); await flush();
+      writes[1].reject(new Error('no code at all')); await flush();
+      return { retried, failed: last().failed, code: last().code, delay: waits[1].ms, left: q.pending().length };
+    })()""")
+    assert r == {"retried": True, "failed": True, "code": "unavailable", "delay": 30000, "left": 1}
+
+
+def test_queue_stops_on_invalid_argument():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('invalid_argument')); await flush();
+      const failed = last().failed, code = last().code, waited = waits.length, kept = q.pending().length;
+      q.add({n: 2}); await flush();
+      const retriedOnAdd = writes.length === 2 && writes[1].change.n === 1;
+      writes[1].reject(err('invalid_argument')); await flush();
+      q.retryNow(); await flush();
+      const retriedNow = writes.length === 3;
+      writes[2].resolve(); await flush();
+      writes[3].resolve(); await flush();
+      return { failed, code, waited, kept, retriedOnAdd, retriedNow, left: q.pending().length, failedEnd: last().failed };
+    })()""")
+    assert r == {"failed": True, "code": "invalid_argument", "waited": 0, "kept": 1,
+                 "retriedOnAdd": True, "retriedNow": True, "left": 0, "failedEnd": False}
+
+
+def test_queue_stops_on_revoked_and_quota_exceeded():
+    for code in ("revoked", "quota_exceeded"):
+        r = queue("""(async () => {
+          q.add({n: 1}); await flush();
+          writes[0].reject(err(%s)); await flush();
+          return { failed: last().failed, code: last().code, waited: waits.length, writes: writes.length, kept: q.pending().length };
+        })()""" % json.dumps(code))
+        assert r == {"failed": True, "code": code, "waited": 0, "writes": 1, "kept": 1}
+
+
+def test_queue_resource_exhausted_waits_30s_without_a_fast_retry():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('resource_exhausted')); await flush();
+      return { failed: last().failed, code: last().code, delay: waits[0].ms };
+    })()""")
+    assert r == {"failed": True, "code": "resource_exhausted", "delay": 30000}
+
+
+def test_queue_does_not_start_a_second_write_while_one_hangs():
+    r = queue("""(async () => {
+      q.add({n: 1}); q.add({n: 2}); q.retryNow(); q.retryNow(); await flush();
+      return { writes: writes.length, waits: waits.length };
+    })()""")
+    assert r == {"writes": 1, "waits": 0}
+
+
+def test_queue_retry_now_skips_the_30s_wait():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('unavailable')); await flush();
+      waits[0].resolve(); await flush();
+      writes[1].reject(err('unavailable')); await flush();
+      q.retryNow(); await flush();
+      const now = writes.length;
+      waits[1].resolve(); await flush();
+      return { now, afterOldTimer: writes.length };
+    })()""")
+    assert r == {"now": 3, "afterOldTimer": 3}
+
+
+def status(**flags):
+    base = dict(ready=True, readOnly=False, unreachable=False, stale=False, saving=False, slow=False, failed=False)
+    base.update(flags)
+    return run("return S.hostedStatus(D.f);", f=base)
+
+
+def test_status_says_saved_only_with_nothing_waiting():
+    assert status() == {"text": "All changes saved", "tone": "saved"}
+    assert status(saving=True)["text"] != "All changes saved"
+    assert status(failed=True)["text"] != "All changes saved"
+    assert status(ready=False)["text"] != "All changes saved"
+
+
+def test_status_says_saving_while_waiting():
+    assert status(saving=True) == {"text": "Saving...", "tone": ""}
+    slow = status(saving=True, slow=True)
+    assert slow["text"] not in ("Saving...", "All changes saved")
+    assert "saving" in slow["text"].lower()
+
+
+def test_status_says_not_saved_when_failed():
+    assert status(saving=True, failed=True) == {"text": "Not saved", "tone": "unsaved"}
+
+
+def test_status_says_out_of_date_when_stale():
+    s = status(stale=True)
+    assert "out of date" in s["text"].lower() and s["tone"] == "unsaved"
+
+
+def test_status_says_cant_open_when_unreachable():
+    s = status(ready=False, unreachable=True)
+    assert "can't open" in s["text"].lower() and s["tone"] == "unsaved"
+
+
+def test_status_says_view_only():
+    s = status(readOnly=True)
+    assert "view only" in s["text"].lower()
+    assert "reload" not in s["text"].lower() and "file" not in s["text"].lower()

@@ -1242,7 +1242,114 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return !isObject(doc) || doc.version !== FORMAT_VERSION;
   }
 
+  var STOP_CODES = { invalid_argument: true, revoked: true, quota_exceeded: true };
+  var FIRST_RETRY_MIN = 1000;
+  var FIRST_RETRY_SPREAD = 1000;
+  var SLOW_RETRY = 30000;
+
+  // Changes go to the store one at a time, oldest first. A change stays pending until its
+  // write confirms. A write that never answers blocks the ones behind it, so no second
+  // write starts. The error code decides what happens next: stopping codes wait for the
+  // next add or retryNow, resource_exhausted waits 30s, and any other code (including an
+  // unknown one) counts as unavailable: one quick retry, then a try every 30s.
+  function createChangeQueue(options) {
+    var list = [];
+    var writing = false;
+    var failed = false;
+    var code = null;
+    var stopped = false;
+    var misses = 0;
+    var timer = 0;
+
+    function notify() {
+      options.onChange({ saving: list.length > 0, failed: failed, code: code });
+    }
+
+    function waitThenPump(ms) {
+      var mine = timer;
+      options.wait(ms).then(function () {
+        if (mine === timer) pump();
+      });
+    }
+
+    function pump() {
+      if (writing || stopped || list.length === 0) return;
+      writing = true;
+      var change = list[0];
+      var done = false;
+      function settle(error, ok) {
+        if (done) return;
+        done = true;
+        writing = false;
+        if (ok) {
+          list.shift();
+          failed = false;
+          code = null;
+          misses = 0;
+          notify();
+          pump();
+          return;
+        }
+        var errorCode = error && typeof error.code === 'string' ? error.code : 'unavailable';
+        if (errorCode !== 'resource_exhausted' && !has(STOP_CODES, errorCode)) errorCode = 'unavailable';
+        misses += 1;
+        if (has(STOP_CODES, errorCode)) {
+          stopped = true;
+          failed = true;
+          code = errorCode;
+          notify();
+          return;
+        }
+        if (errorCode === 'unavailable' && misses === 1) {
+          notify();
+          waitThenPump(FIRST_RETRY_MIN + Math.floor(Math.random() * FIRST_RETRY_SPREAD));
+          return;
+        }
+        failed = true;
+        code = errorCode;
+        notify();
+        waitThenPump(SLOW_RETRY);
+      }
+      var result;
+      try {
+        result = options.write(change);
+      } catch (error) {
+        settle(error, false);
+        return;
+      }
+      Promise.resolve(result).then(function () { settle(null, true); }, function (error) { settle(error, false); });
+    }
+
+    return {
+      add: function (change) {
+        list.push(change);
+        stopped = false;
+        notify();
+        pump();
+      },
+      pending: function () { return list.slice(); },
+      retryNow: function () {
+        timer += 1;
+        stopped = false;
+        pump();
+      }
+    };
+  }
+
+  function hostedStatus(s) {
+    if (s.readOnly) return { text: 'View only. Your changes are not saved.', tone: '' };
+    if (s.unreachable) return { text: "Can't open the saved map right now.", tone: 'unsaved' };
+    if (s.stale) return { text: 'This page is out of date. Open the newest version to keep editing.', tone: 'unsaved' };
+    if (!s.ready) return { text: 'Opening...', tone: '' };
+    if (s.failed) return { text: 'Not saved', tone: 'unsaved' };
+    if (s.saving && s.slow) return { text: 'Still saving. This is taking longer than usual.', tone: 'unsaved' };
+    if (s.saving) return { text: 'Saving...', tone: '' };
+    return { text: 'All changes saved', tone: 'saved' };
+  }
+
   globalThis.MapStore = {
+    createChangeQueue: createChangeQueue,
+    hostedStatus: hostedStatus,
     FORMAT_VERSION: FORMAT_VERSION,
     newId: newId,
     flatten: flatten,
