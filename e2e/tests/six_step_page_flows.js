@@ -685,6 +685,23 @@ const flows = {
     const under = findIn(parse(f.html).obstacles, 's1').children[0];
     assert.equal(under.text, 'in the way'); assert.equal(under.kind, 'obstacle');
   },
+  async 'attach a tray solution beside a child, add an obstacle under it, and its label continues'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])], [sol('s1', 'from the tray')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.openSolution('s1');
+    const select = p.editorEl().querySelector('select');
+    select.value = '0'; select.listeners.change[0](); await settle();
+    assert.ok(!p.canvasText().includes('1B'), p.canvasText());
+    p.openSolution('s1'); p.press('Add an obstacle'); await settle();
+    p.typeAndDone('in the way'); await settle();
+    const text = p.canvasText();
+    assert.ok(text.includes('1A'), text); assert.ok(text.includes('1B'), text);
+    const saved = parse(f.html);
+    assert.deepEqual(findIn(saved.obstacles, 'o1').children.map((c) => c.id), ['o2', 's1']);
+    assert.equal(findIn(saved.obstacles, 's1').children[0].text, 'in the way');
+    assert.ok(!JSON.stringify(saved.obstacles).includes('1B'));
+  },
   async 'attach a tray solution through the form'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])], [sol('s1', 'from the tray')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();

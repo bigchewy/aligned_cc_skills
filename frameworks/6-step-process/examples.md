@@ -94,7 +94,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **Advisor:** "**We haven't defined what the office is for.** You can do something about that one. Is that it?"
 
-> Two rounds, and the person can act on the answer. Each answer is a child of the item before it, and the last one goes in bold and ends its branch.
+> Two rounds, and the person can act on the answer. Each answer is a child of the item before it, and the last one goes in bold and ends that line of asking why.
 
 ### 3c: Two reasons become two branches
 

@@ -1093,13 +1093,22 @@ def test_delete_effects_name_picks_and_rows():
     out = call("deleteEffects", plan_map(), "s1")["result"]
     assert out["subItems"] == 2
     assert out["picks"] == ["one", "two"]
-    assert out["rows"] == ["move one", "move two", "both", "only two"]
+    assert out["rows"] == ["move one", "move two"]
+    assert out["keyActions"] == ["both", "only two"]
+
+
+def test_delete_effects_name_a_row_with_a_blank_first_move_by_its_solution():
+    m = plan_map()
+    m["execute"][1]["first_move"] = ""
+    out = call("deleteEffects", m, "s1")["result"]
+    assert out["rows"] == ["move one", "two"]
 
 
 def test_delete_effects_of_an_item_with_nothing_to_lose():
     m = plan_map()
-    assert call("deleteEffects", m, "s3")["result"] == {"subItems": 0, "picks": [], "rows": []}
-    assert call("deleteEffects", m, "nope")["result"] == {"subItems": 0, "picks": [], "rows": []}
+    nothing = {"subItems": 0, "picks": [], "rows": [], "keyActions": []}
+    assert call("deleteEffects", m, "s3")["result"] == nothing
+    assert call("deleteEffects", m, "nope")["result"] == nothing
 
 
 def test_root_cause_rule_looks_only_at_direct_children():
@@ -1293,6 +1302,16 @@ def test_check_refuses_a_plan_row_naming_an_obstacle():
 def test_check_lets_a_plan_row_name_a_tray_solution():
     m = make_map(execute=[{"solution_id": "s3", "first_move": "x", "owner": "", "others_decide": ""}])
     assert call("mapProblem", m)["result"] is None
+
+
+def test_check_names_a_solution_with_no_text_and_no_id_plainly():
+    m = make_map(obstacles=[item("o1", "a", [sol("", "")])], unplaced=[])
+    assert call("mapProblem", m)["result"] == "A solution is missing its id."
+    del m["obstacles"][0]["children"][0]["id"]
+    assert call("mapProblem", m)["result"] == "A solution is missing its id."
+    m = make_map(obstacles=[], unplaced=[sol("", "")])
+    del m["unplaced"][0]["id"]
+    assert call("mapProblem", m)["result"] == "Tray item 1 is missing its id."
 
 
 def test_check_names_a_solution_with_no_text_by_its_id():

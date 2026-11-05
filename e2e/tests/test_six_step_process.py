@@ -1200,6 +1200,25 @@ def test_read_back_names_the_item_fields_exactly():
     assert "`children` as a list even when it's empty" in read_back
 
 
+def test_read_back_gives_the_page_refusal_as_the_reason_for_every_rule():
+    rules = section("## The map file")
+    read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
+    assert "The page can't draw a map that breaks any of these" in read_back
+    assert "The page can't draw a map with a missing field" not in read_back
+    assert "no item has a `solution_ids` field" in read_back
+
+
+def test_template_defines_each_logic_function_once():
+    logic = template()[template().index('id="map-logic"'):template().index('id="map-page"')]
+    names = re.findall(r"^  (?:async )?function (\w+)\(", logic, re.M)
+    assert len(names) == len(set(names)), [n for n in names if names.count(n) > 1]
+
+
+def test_examples_no_longer_say_a_root_cause_ends_its_branch():
+    assert "ends its branch" not in EXAMPLES.read_text()
+    assert "ends that line of asking why" in EXAMPLES.read_text()
+
+
 def test_root_cause_is_set_only_after_the_person_confirms():
     step = section("### 3c: Root cause")
     assert "set its `root_cause` to true only after they confirm" in step

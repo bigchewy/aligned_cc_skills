@@ -239,10 +239,6 @@ header {
 (function () {
   'use strict';
 
-  function copy(map) {
-    return JSON.parse(JSON.stringify(map));
-  }
-
   // A, B ... Z, AA, AB.
   function letters(index) {
     var text = '';
@@ -410,22 +406,22 @@ header {
     return next;
   }
 
-  // What a delete would take with it, so the page can say so first.
+  // What a delete would take with it, so the page can say so first. An Execute row can have a blank first
+  // move, and the page still has to name it, so it goes by its solution's text then.
   function deleteEffects(map, itemId) {
     var item = findItem(map, itemId);
-    if (!item) return { subItems: 0, picks: [], rows: [] };
+    if (!item) return { subItems: 0, picks: [], rows: [], keyActions: [] };
     var gone = goneIds(item);
     var items = itemsFrom(item);
-    var moves = map.execute
-      .filter(function (row) { return gone[row.solution_id]; })
-      .map(function (row) { return row.first_move; });
-    var actions = map.key_actions
-      .filter(function (action) { return action.solution_ids.some(function (id) { return gone[id]; }); })
-      .map(function (action) { return action.text; });
     return {
       subItems: items.length - 1,
       picks: items.filter(function (each) { return each.star; }).map(function (each) { return each.text; }),
-      rows: moves.concat(actions)
+      rows: map.execute
+        .filter(function (row) { return gone[row.solution_id]; })
+        .map(function (row) { return row.first_move || findItem(map, row.solution_id).text; }),
+      keyActions: map.key_actions
+        .filter(function (action) { return action.solution_ids.some(function (id) { return gone[id]; }); })
+        .map(function (action) { return action.text; })
     };
   }
 
@@ -693,9 +689,11 @@ header {
     return null;
   }
 
-  // Solutions have no label, so a sentence names one by its text, or by its id if it has no text.
-  function solutionName(item) {
-    return 'Solution ' + (item.text && isText(item.text) ? '"' + item.text + '"' : item.id);
+  // Solutions have no label, so a sentence names one by its text, or by its id if it has no text. A broken
+  // item can have neither, so the caller says what to call it then.
+  function solutionName(item, fallback) {
+    if (item.text && isText(item.text)) return 'Solution "' + item.text + '"';
+    return item.id && isText(item.id) ? 'Solution ' + item.id : fallback;
   }
 
   // Every item has the same six fields.
@@ -738,7 +736,7 @@ header {
   // The first problem anywhere in the tree, named by the label the item would have.
   function treeProblem(items, seen) {
     return eachItem(items, function (item, place) {
-      var name = isObject(item) && item.kind === 'solution' ? solutionName(item) : 'Obstacle ' + place.label;
+      var name = isObject(item) && item.kind === 'solution' ? solutionName(item, 'A solution') : 'Obstacle ' + place.label;
       return fieldsProblem(item, name) || idProblem(item, name, seen) ||
         rootCauseKindProblem(item, name) || placedRulesProblem(item, name, place);
     });
@@ -748,7 +746,7 @@ header {
     for (var i = 0; i < items.length; i += 1) {
       var item = items[i];
       var position = 'Tray item ' + (i + 1);
-      var name = isObject(item) && item.kind === 'solution' ? solutionName(item) : position;
+      var name = isObject(item) && item.kind === 'solution' ? solutionName(item, position) : position;
       var problem = fieldsProblem(item, name) || idProblem(item, name, seen) || rootCauseKindProblem(item, name);
       if (problem) return problem;
       if (item.kind !== 'solution') return position + ' is an obstacle, but only a solution can be in the tray.';
