@@ -131,23 +131,23 @@ def test_a_map_that_cant_be_drawn_hides_the_save_messages():
     assert "'header, #notices, #workspace, #tray'" in template()
 
 
-def test_toolbar_offers_the_picks_checkbox():
+def test_toolbar_offers_a_star_button_with_no_words():
     html = template()
     body = html[html.index("<body>"):html.index('<script id="map-logic">')]
-    assert "To change a star" not in html
     tools = body[body.index('id="item-tools"'):]
-    assert "This is one of my picks" in tools
-    assert 'type="checkbox"' in tools
+    star = tools[tools.index('id="star-button"'):tools.index("</button>", tools.index('id="star-button"'))]
+    assert "<svg" in star and "currentColor" in star
+    assert re.sub(r"<svg.*?</svg>", "", star, flags=re.S).split(">", 1)[1].strip() == ""
+    assert "This is one of my picks" not in html and 'type="checkbox"' not in html
     assert "L.canPick(map, " in whole_function("showControls")
-    assert "L.setStar(map, selected.id, el['pick-box'].checked)" in html
+    assert "aria-pressed" in whole_function("showControls")
+    assert "L.setStar(map, selected.id," in html
+    assert "['star-button', 'Star']" in html
 
 
-def test_header_has_the_picks_key_before_the_map_controls():
+def test_header_has_no_picks_key():
     html = template()
-    header = html[html.index("<header>"):html.index("</header>")]
-    assert "★ My picks" in header
-    assert header.index("★ My picks") < header.index('id="zoom-out"')
-    assert header.index("★ My picks") > header.index('id="edit-hint"')
+    assert "My picks" not in html and "picks-key" not in html
 
 
 def test_browser_note_says_chrome_saves_by_itself():
@@ -409,12 +409,28 @@ def test_template_has_no_phone_layout_left():
         assert gone not in html, gone
 
 
-def test_template_defines_light_and_dark_tokens():
+def test_template_is_always_light():
     html = template()
     assert ":root {" in html
-    assert "prefers-color-scheme: dark" in html
+    assert "prefers-color-scheme" not in html
+    assert "color-scheme: light;" in html
+    root = re.search(r":root \{(.*?)\}", html, re.S).group(1)
+    assert "--bg: #ffffff;" in root and "--box: #ffffff;" in root
     body_rule = re.search(r"\nbody \{(.*?)\}", html, re.S)
-    assert body_rule and "background:" in body_rule.group(1)
+    assert body_rule and "background: var(--bg)" in body_rule.group(1)
+
+
+def test_the_goal_is_a_white_box_with_an_orange_border_and_round_corners():
+    html = template()
+    goal = re.search(r"\.item\.goal \{(.*?)\}", html, re.S).group(1)
+    assert "background: var(--box)" in goal
+    assert "border: 2px solid var(--obstacle-line)" in goal
+    assert "border-radius: 28px" in goal
+
+
+def test_item_boxes_are_wide_so_text_wraps_less():
+    html = template()
+    assert "var BOX_W = 240;" in html
 
 
 def test_refusal_messages_cover_every_save_reason():
@@ -762,7 +778,8 @@ def test_prompt_handles_a_pick_removed_on_the_page():
     assert re.search(r"new pick.*no Step 5 row", pick_up)
     assert "whether to drop the Step 5 row" in pick_up
     assert "Agreed picks in Step 4b still get their stars from you" in pick_up
-    assert "★ My picks" in prompt()
+    assert "My picks" not in prompt()
+    assert "clicking the star on a solution" in pick_up
 
 
 def test_second_pick_up_compares_with_what_claude_last_read():
@@ -966,11 +983,14 @@ def test_the_toolbar_offers_the_root_cause_mark_from_the_one_rule():
     assert "L.canBeRootCause(map, item.id)" in body
 
 
-def test_the_delete_control_says_how_many_sub_items_go():
-    body = whole_function("deleteLabel")
-    assert "L.deleteEffects(map, ref.id).subItems" in body
-    assert "sub-item" in body
-    assert "deleteLabel(selected)" in whole_function("showControls")
+def test_the_delete_control_is_a_trash_icon_with_no_words():
+    html = template()
+    tools = html[html.index('id="item-tools"'):html.index('<script id="map-logic">')]
+    button = tools[tools.index('id="delete-item"'):tools.index("</button>", tools.index('id="delete-item"'))]
+    assert "<svg" in button and "currentColor" in button
+    assert "deleteLabel" not in html and "sub-item" not in html
+    assert "['delete-item', 'Delete']" in html
+
 
 
 def test_page_has_no_form_editor_left():
@@ -1258,19 +1278,28 @@ def test_lines_carry_their_kind():
     assert "#lines path.solution" in css
 
 
-def test_template_defines_line_colors_for_both_themes():
+def test_template_defines_line_colors_for_the_one_theme():
     html = template()
-    light, dark = html.split("prefers-color-scheme: dark", 1)
-    dark = dark.split("* { box-sizing", 1)[0]
-    assert "--obstacle-line: #c9502a;" in light and "--solution-line: #4a9a2d;" in light
-    assert "--obstacle-line: #ef7d57;" in dark and "--solution-line: #7fce62;" in dark
+    assert "--obstacle-line: #ef6c46;" in html and "--solution-line: #77c94b;" in html
+    assert "--focus: #3b5bdb;" in html
     assert re.search(r"#lines path\.obstacle\s*\{[^}]*var\(--obstacle-line\)", html)
     assert re.search(r"#lines path\.solution\s*\{[^}]*var\(--solution-line\)", html)
 
 
 def test_only_a_root_cause_is_bold():
     html = template()
-    obstacle = re.findall(r"\.item\.obstacle\s*\{([^}]*)\}", html)
-    assert not any("font-weight" in rule for rule in obstacle)
+    item = re.search(r"\n\.item \{([^}]*)\}", html)
+    assert item and "font-weight" not in item.group(1)
     root = re.search(r"\.item\.root\s*\{([^}]*)\}", html)
     assert root and "font-weight: 700" in root.group(1)
+    kinds = re.findall(r"\.item\.(?:obstacle|sub|solution)\s*\{[^}]*font-weight", html)
+    assert not kinds
+    assert "var cls = row.item.root_cause ? 'root' : '';" in html
+
+
+def test_prompt_lets_a_solution_sit_under_a_solution_and_explains_the_star():
+    text = prompt()
+    assert "a solution has no solution directly under it" not in text
+    assert "A solution can sit directly under a solution." in text
+    assert "click the star in the toolbar on any placed solution to add or remove a pick" in text
+    assert "a star marks one of their picks" in text

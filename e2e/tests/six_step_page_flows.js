@@ -387,21 +387,23 @@ const flows = {
     p.typeAndEnter('blocker'); await settle();
     assert.equal(f.writes, 1); assert.equal(parse(f.html).obstacles[0].text, 'blocker');
   },
-  async 'the pick box shows on a placed solution, ticked for a star'() {
+  async 'the star button shows on a placed solution, pressed for a star'() {
     const html = treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], true)])]);
     const p = page({ html }); await settle();
     p.clickItem('s1');
-    assert.equal(p.el('pick-control').hidden, false);
-    assert.equal(p.el('pick-box').checked, true);
+    assert.equal(p.el('star-button').hidden, false);
+    assert.equal(p.el('star-button').getAttribute('aria-pressed'), 'true');
+    assert.equal(p.el('star-button').getAttribute('aria-label'), 'Star');
+    assert.equal(p.el('star-button').textContent, '');
     p.clickItem('o1');
-    assert.equal(p.el('pick-control').hidden, true);
+    assert.equal(p.el('star-button').hidden, true);
   },
-  async 'a tray solution shows Delete, and no pick box or plus until it is attached'() {
+  async 'a tray solution shows Delete, and no star or plus until it is attached'() {
     const html = treeHtml([node('o1', 'ob')], [sol('s1', 'tray')]);
     const p = page({ html }); await settle();
     p.clickItem('s1');
     assert.equal(p.isSelected('s1'), true);
-    assert.equal(p.el('pick-control').hidden, true);
+    assert.equal(p.el('star-button').hidden, true);
     assert.deepEqual(p.pluses(), []);
     assert.equal(p.el('delete-item').hidden, false);
   },
@@ -412,7 +414,7 @@ const flows = {
     p.clickItem('o1'); p.tool('delete-item'); await settle();
     assert.equal(p.el('delete-question').hidden, false);
     const said = p.el('delete-question').textContent;
-    assert.ok(said.includes('Delete this and its sub-item? It would also remove: '), said);
+    assert.ok(said.includes('Delete this? It would also remove: '), said);
     assert.ok(said.includes('the picked fix'), said);
     assert.ok(!said.includes('These key actions'), said);
     assert.equal(p.el('delete-item').hidden, true); assert.equal(p.el('delete-yes').textContent, 'Delete');
@@ -493,12 +495,13 @@ const flows = {
     p.fire(p.box('o1'), 'keydown', { key: 'Tab' });
     assert.equal(p.active(), p.el('plus-obstacle'));
   },
-  async 'the question counts the sub-items that go too'() {
+  async 'the question names what goes and does not count sub-items'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'picked', [], true)])])]);
     const p = page({ html }); await settle();
     p.clickItem('o1'); p.tool('delete-item');
     const said = p.el('delete-question').textContent;
-    assert.ok(said.includes('Delete this and its 2 sub-items? It would also remove: '), said);
+    assert.ok(said.includes('Delete this? It would also remove: '), said);
+    assert.ok(!said.includes('sub-item'), said);
   },
   async 'a question with only key actions skips the also-remove paragraph and its empty list'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other')])], [], {
@@ -563,11 +566,11 @@ const flows = {
     assert.equal(p.trayText(), ''); assert.equal(p.isSelected('s1'), true);
     assert.ok(p.canvasText().includes('loose fix'));
   },
-  async 'a tray solution offers no pick box or plus'() {
+  async 'a tray solution offers no star or plus'() {
     const html = treeHtml([node('o1', 'first')], [sol('s1', 'loose fix')]);
     const p = page({ html }); await settle();
     p.clickItem('s1');
-    assert.equal(p.el('pick-control').hidden, true); assert.equal(p.el('pick-box').hidden, true);
+    assert.equal(p.el('star-button').hidden, true);
     assert.deepEqual(p.pluses(), []);
     assert.equal(p.el('move-control').hidden, false); assert.equal(p.el('delete-item').hidden, false);
   },
@@ -578,31 +581,23 @@ const flows = {
     assert.equal(two.trayText().includes('2 solutions are not on the map yet.'), true, two.trayText());
     assert.ok(!two.trayText().includes('tied'));
   },
-  async 'star key shows only with stars'() {
-    const none = page({ html: treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], false)])]) }); await settle();
-    assert.equal(none.sandbox.document.getElementById('picks-key').hidden, true);
-    const some = page({ html: treeHtml([node('o1', 'ob', [sol('s1', 'sol', [], true)])]) }); await settle();
-    assert.equal(some.sandbox.document.getElementById('picks-key').hidden, false);
-  },
-  async 'the pick box changes the star and the key'() {
+  async 'the star button changes the star, keeps focus, and has no key in the header'() {
     const html = treeHtml([node('o1', 'ob', [sol('s1', 'sol')])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    const key = p.sandbox.document.getElementById('picks-key');
-    assert.equal(key.hidden, true);
+    assert.ok(!p.sandbox.document.documentElement.outerHTML.includes('My picks'));
     p.clickItem('s1');
-    const box = p.el('pick-box');
-    assert.equal(box.checked, false);
-    box.checked = true; box.focus(); p.fire(box, 'change'); await settle();
+    const star = p.el('star-button');
+    assert.equal(star.getAttribute('aria-pressed'), 'false');
+    star.focus(); p.fire(star, 'click'); await settle();
     assert.equal(f.writes, 1);
     assert.equal(findIn(parse(f.html).obstacles, 's1').star, true);
-    assert.equal(key.hidden, false);
+    assert.equal(star.getAttribute('aria-pressed'), 'true');
     assert.equal(p.status(), 'All changes saved');
-    assert.equal(p.isSelected('s1'), true);
-    assert.equal(p.active(), box);
-    box.checked = false; p.fire(box, 'change'); await settle();
+    assert.equal(p.isSelected('s1'), true); assert.equal(p.active(), star);
+    p.fire(star, 'click'); await settle();
     assert.equal(findIn(parse(f.html).obstacles, 's1').star, false);
-    assert.equal(key.hidden, true);
+    assert.equal(star.getAttribute('aria-pressed'), 'false');
   },
 
   // A file Claude rewrote must never be overwritten, whatever its revision says.
@@ -868,7 +863,7 @@ const flows = {
     ]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.clickItem('o2'); assert.equal(p.el('delete-item').textContent, 'Delete this and its 2 sub-items');
+    p.clickItem('o2');
     p.tool('delete-item'); await settle();
     const saved = parse(f.html);
     assert.equal(findIn(saved.obstacles, 'o2'), null); assert.equal(findIn(saved.obstacles, 's1'), null);
@@ -916,13 +911,15 @@ const flows = {
     assert.equal(f.writes, 0); assert.equal(p.warnsOnClose(), false);
     assert.deepEqual(parse(f.html).obstacles[0].children, []);
   },
-  async 'the delete control counts everything that goes with the item'() {
+  async 'the delete control is an icon with no visible words'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'a', [node('o3', 'b')]), node('o4', 'c')])]);
     const p = page({ html }); await settle();
-    p.clickItem('o1');
-    assert.equal(p.el('delete-item').textContent, 'Delete this and its 3 sub-items');
-    p.clickItem('o4');
-    assert.equal(p.el('delete-item').textContent, 'Delete');
+    for (const id of ['o1', 'o4']) {
+      p.clickItem(id);
+      assert.equal(p.el('delete-item').textContent, '');
+      assert.equal(p.el('delete-item').getAttribute('aria-label'), 'Delete');
+      assert.equal(p.el('delete-item').title, 'Delete');
+    }
   },
   async 'a root cause can be marked and unmarked, and offers only a solution'() {
     const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])]);
@@ -1181,12 +1178,15 @@ const flows = {
     p.clickItem('o1');
     assert.deepEqual(p.pluses(), ['solution']);
   },
-  async 'solution shows only the orange plus'() {
+  async 'a solution shows both pluses, and a solution can go under a solution'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'the fix')])]);
     const p = page({ html }); await settle();
     p.clickItem('s1');
-    assert.deepEqual(p.pluses(), ['obstacle']);
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
     assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under the fix');
+    assert.equal(p.el('plus-solution').getAttribute('aria-label'), 'Add a solution under the fix');
+    p.plus('solution'); p.typeAndEnter('nested');
+    assert.equal(p.canvasText().includes('nested'), true);
   },
   async 'the goal shows only the orange plus and no toolbar'() {
     const html = treeHtml([node('o1', 'first')]);

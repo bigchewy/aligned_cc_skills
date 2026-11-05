@@ -29,27 +29,25 @@ def test_page_flows(page):
 
 
 @pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
-def test_star_key_shows_only_with_stars(page):
+def test_star_button_flow_runs(page):
     proc = subprocess.run(
         ["node", str(DRIVER), str(FRAMEWORK / page)],
         capture_output=True, text=True, cwd=TESTS,
     )
-    assert "ok   star key shows only with stars" in proc.stdout, proc.stdout
-    assert "ok   the pick box changes the star and the key" in proc.stdout, proc.stdout
+    assert "ok   the star button changes the star, keeps focus, and has no key in the header" in proc.stdout, proc.stdout
 
 
 @pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
-def test_select_uses_the_page_colors_in_both_themes(page):
-    # The browser draws a select on white by default, so dark mode got faint text on a white ground.
-    # The page's colors are tokens that change in dark mode, so styling select with them covers both.
+def test_select_uses_the_page_colors(page):
+    # The browser draws a select on white by default. The page is always light, and styling select with the
+    # page's own tokens keeps the list readable if those tokens ever change.
     import re
     css = re.search(r"<style>([\s\S]*?)</style>", (FRAMEWORK / page).read_text()).group(1)
     rule = re.search(r"(?m)^select \{([^}]*)\}", css)
     assert rule, "no select rule"
     assert "background: var(--box)" in rule.group(1)
     assert "color: var(--ink)" in rule.group(1)
-    assert "prefers-color-scheme: dark" in css and "--box:" in css.split("prefers-color-scheme: dark")[1]
-
+    assert "prefers-color-scheme" not in css and "color-scheme: light" in css
 
 @pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
 def test_delete_question_scrolls_inside_the_window(page):

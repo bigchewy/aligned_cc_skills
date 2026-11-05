@@ -6,38 +6,21 @@
 <title>Mind map</title>
 <style>
 :root {
-  --bg: #f7f6f2;
+  color-scheme: light;
+  --bg: #ffffff;
   --ink: #1f2328;
-  --muted: #5c636b;
+  --muted: #565d65;
   --line: #8f98a3;
-  --edge: #d9d8d2;
+  --edge: #e3e6ea;
   --box: #ffffff;
-  --box-line: #bfc5cc;
+  --box-line: #c9ced4;
   --goal: #1f3a5f;
   --goal-ink: #ffffff;
-  --obstacle-line: #c9502a;
-  --solution-line: #4a9a2d;
-  --star: #9a5a00;
-  --focus: #2563eb;
+  --obstacle-line: #ef6c46;
+  --solution-line: #77c94b;
+  --star: #b7791f;
+  --focus: #3b5bdb;
   --warn: #9b2c1f;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16191d;
-    --ink: #eceff2;
-    --muted: #a3abb3;
-    --line: #76808b;
-    --edge: #33383e;
-    --box: #22262b;
-    --box-line: #4c535b;
-    --goal: #2f5d94;
-    --goal-ink: #ffffff;
-    --obstacle-line: #ef7d57;
-    --solution-line: #7fce62;
-    --star: #f0b64a;
-    --focus: #7aa7ff;
-    --warn: #ff9c8c;
-  }
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
@@ -65,10 +48,11 @@ header {
   justify-content: flex-end;
   gap: 8px 12px;
   padding: 8px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--edge);
 }
 #who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-right: auto; min-width: 0; }
 #edit-hint { margin: 0; font-size: 14px; color: var(--muted); }
-#picks-key { margin: 0; font-size: 14px; color: var(--star); font-weight: 600; white-space: nowrap; }
 #person { font-weight: 600; overflow-wrap: anywhere; }
 #strategy-note { font-size: 14px; color: var(--muted); }
 .quiet {
@@ -108,8 +92,8 @@ header {
   background: var(--box);
   color: var(--ink);
   border: 2px solid var(--obstacle-line);
-  border-radius: 12px;
-  padding: 14px 16px;
+  border-radius: 28px;
+  padding: 16px 22px;
   font-size: 21px;
   font-weight: 700;
 }
@@ -145,9 +129,10 @@ header {
   gap: 8px 10px;
   padding: 8px 16px;
   border-top: 1px solid var(--edge);
+  background: var(--bg);
 }
 #tray-count { font-weight: 600; flex-basis: 100%; }
-#tray .item { position: static; width: 220px; }
+#tray .item { position: static; width: 240px; }
 
 #save-status { margin: 0; font-size: 14px; color: var(--muted); min-width: 125px; text-align: right; }
 #save-status.saved { color: var(--ink); }
@@ -209,13 +194,17 @@ header {
   border-radius: 6px;
   padding: 1px 8px;
 }
-#pick-control, #move-control { display: flex; align-items: center; gap: 4px; }
+#star-button svg { fill: none; }
+#star-button[aria-pressed="true"] svg { fill: var(--star); }
+#star-button { color: var(--star); }
+#item-tools button.icon { display: flex; align-items: center; padding: 2px 6px; }
+#move-control { display: flex; align-items: center; gap: 4px; }
 #move-to { max-width: 180px; }
 #delete-item, #delete-yes { color: var(--warn); }
 #delete-question { flex-basis: 100%; max-height: min(40vh, 280px); overflow: auto; }
 #delete-question p { margin: 0; }
 #delete-question ul { margin: 2px 0 4px; padding-left: 20px; }
-.plus:focus-visible, #item-tools button:focus-visible, #pick-box:focus-visible, #move-to:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.plus:focus-visible, #item-tools button:focus-visible, #move-to:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
 </head>
@@ -232,7 +221,6 @@ header {
     <div id="strategy-note" hidden>Not compared to strategy.</div>
   </div>
   <p id="edit-hint">Click an item, then press a + to add under it. Double-click to change its words.</p>
-  <p id="picks-key" hidden>★ My picks</p>
   <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
   <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
   <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
@@ -254,10 +242,10 @@ header {
 <button type="button" class="plus" id="plus-obstacle" hidden>+</button>
 <button type="button" class="plus" id="plus-solution" hidden>+</button>
 <div id="item-tools" role="toolbar" aria-label="What you can do with this item" hidden>
-  <label id="pick-control"><input type="checkbox" id="pick-box"> This is one of my picks</label>
+  <button type="button" id="star-button" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
   <button type="button" id="root-toggle"></button>
   <label id="move-control">Move to <select id="move-to"></select></label>
-  <button type="button" id="delete-item"></button>
+  <button type="button" id="delete-item" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
   <div id="delete-question" role="group" aria-label="Delete this item?" hidden></div>
   <button type="button" id="delete-yes" hidden></button>
   <button type="button" id="delete-keep" hidden></button>
@@ -347,7 +335,7 @@ header {
     if (parentId === 'goal') return kind === 'obstacle';
     if (parentOf(map, parentId) === null) return false;
     var parent = findItem(map, parentId);
-    if (parent.kind === 'solution') return kind === 'obstacle';
+    if (parent.kind === 'solution') return true;
     return kind === 'solution' || !parent.root_cause;
   }
 
@@ -484,10 +472,6 @@ header {
     var next = copy(map);
     if (canPick(map, itemId)) findItem(next, itemId).star = Boolean(isStar);
     return next;
-  }
-
-  function hasPicks(map) {
-    return Boolean(eachItem(map.obstacles, function (item) { return item.star; }));
   }
 
   function setItemText(map, itemId, text) {
@@ -758,7 +742,6 @@ header {
     if (item.root_cause && hasChildOfKind(item, 'obstacle')) {
       return name + " is a root cause, so it can't have an obstacle directly under it.";
     }
-    if (item.kind === 'solution' && hasChildOfKind(item, 'solution')) return name + ' has a solution directly under it.';
     return null;
   }
 
@@ -1028,7 +1011,6 @@ header {
     setRootCause: setRootCause,
     canPick: canPick,
     setStar: setStar,
-    hasPicks: hasPicks,
     setItemText: setItemText,
     setGoal: setGoal,
     drawnRows: drawnRows,
@@ -1101,8 +1083,8 @@ header {
   var zoom = 'readable';
   var scale = 1;
 
-  var BOX_W = 170;
-  var GOAL_W = 220;
+  var BOX_W = 240;
+  var GOAL_W = 280;
   var COL_GAP = 26;
   var GOAL_GAP = 56;
   var ROW_GAP = 18;
@@ -1110,7 +1092,7 @@ header {
   var PAD = 14;
   var MIN_SCALE = 0.8;
   var WHOLE_MAP_FLOOR = 0.1;
-  var TYPING_MIN_W = 220;
+  var TYPING_MIN_W = 240;
   var PLUS_SIZE = 26;
   var CONTROL_GAP = 6;
   var WINDOW_EDGE = 12;
@@ -1133,8 +1115,8 @@ header {
   }
 
   var el = {};
-  ['person', 'strategy-note', 'picks-key', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
-    'browser-note', 'typing', 'plus-obstacle', 'plus-solution', 'item-tools', 'pick-control', 'pick-box', 'root-toggle',
+  ['person', 'strategy-note', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
+    'browser-note', 'typing', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button', 'root-toggle',
     'move-control', 'move-to', 'delete-question', 'delete-yes', 'delete-keep', 'delete-item', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
@@ -1405,7 +1387,6 @@ header {
     var spot = spotOnScreen(selected);
     el.person.textContent = map.person;
     el['strategy-note'].hidden = map.key_actions.length > 0;
-    el['picks-key'].hidden = !L.hasPicks(map);
     drawMap();
     drawTray();
     drawPanel();
@@ -1492,12 +1473,6 @@ header {
     return L.itemLabels(map)[ref.id] || shortText(L.findItem(map, ref.id).text);
   }
 
-  function deleteLabel(ref) {
-    var count = L.deleteEffects(map, ref.id).subItems;
-    if (count === 1) return 'Delete this and its sub-item';
-    return count ? 'Delete this and its ' + count + ' sub-items' : 'Delete';
-  }
-
   function showPlus(button, show, name) {
     button.hidden = !show;
     if (!show) return;
@@ -1516,9 +1491,8 @@ header {
 
     el['item-tools'].hidden = !item;
     var canPick = Boolean(item) && L.canPick(map, item.id);
-    el['pick-control'].hidden = !canPick;
-    el['pick-box'].hidden = !canPick;
-    el['pick-box'].checked = canPick && item.star;
+    el['star-button'].hidden = !canPick;
+    el['star-button'].setAttribute('aria-pressed', String(canPick && item.star));
     var canMark = Boolean(item) && L.canBeRootCause(map, item.id);
     el['root-toggle'].hidden = !canMark;
     if (canMark) el['root-toggle'].textContent = item.root_cause ? 'Unmark root cause' : 'Mark as root cause';
@@ -1526,13 +1500,11 @@ header {
     var questioning = asking !== null;
     // A question replaces the item's own tools, so only a Keep or a Delete is in reach.
     if (questioning) {
-      el['pick-control'].hidden = true;
-      el['pick-box'].hidden = true;
+      el['star-button'].hidden = true;
       el['root-toggle'].hidden = true;
     }
     showMoveList(item && !questioning ? item.id : null);
     el['delete-item'].hidden = !item || questioning;
-    if (item) el['delete-item'].textContent = deleteLabel(selected);
     el['item-tools'].classList.toggle('asking', questioning);
     showQuestion(questioning);
     positionControls();
@@ -1575,14 +1547,11 @@ header {
     box.textContent = '';
     // A picked solution with a plan row can be named twice, so each text shows once.
     var things = effects.picks.concat(effects.rows).filter(function (text, i, all) { return all.indexOf(text) === i; });
-    var lead = 'Delete this';
-    if (effects.subItems === 1) lead += ' and its sub-item';
-    else if (effects.subItems) lead += ' and its ' + effects.subItems + ' sub-items';
     if (things.length) {
-      box.appendChild(make('p', '', lead + '? It would also remove: '));
+      box.appendChild(make('p', '', 'Delete this? It would also remove: '));
       box.appendChild(listOf(things));
     } else {
-      box.appendChild(make('p', '', lead + '?'));
+      box.appendChild(make('p', '', 'Delete this?'));
     }
     if (effects.keyActions.length) {
       box.appendChild(make('p', '', 'These key actions would lose a solution: '));
@@ -1646,7 +1615,7 @@ header {
 
   // The controls sit at the end of the page, so Tab needs help to reach them from the selected item.
   function controlsInOrder() {
-    return [el['plus-obstacle'], el['plus-solution'], el['pick-box'], el['root-toggle'], el['move-to'],
+    return [el['plus-obstacle'], el['plus-solution'], el['star-button'], el['root-toggle'], el['move-to'],
       el['delete-item'], el['delete-yes'], el['delete-keep']]
       .filter(function (control) { return !control.hidden; });
   }
@@ -2064,8 +2033,14 @@ header {
   el['plus-obstacle'].addEventListener('click', function () { addUnder(addTarget(selected), 'obstacle'); });
   el['plus-solution'].addEventListener('click', function () { addUnder(addTarget(selected), 'solution'); });
 
-  el['pick-box'].addEventListener('change', function () {
-    setMap(L.setStar(map, selected.id, el['pick-box'].checked));
+  // The two icon buttons have no words on them, so their names are set here for keyboard and screen reader users.
+  [['star-button', 'Star'], ['delete-item', 'Delete']].forEach(function (pair) {
+    el[pair[0]].setAttribute('aria-label', pair[1]);
+    el[pair[0]].title = pair[1];
+  });
+
+  el['star-button'].addEventListener('click', function () {
+    setMap(L.setStar(map, selected.id, el['star-button'].getAttribute('aria-pressed') !== 'true'));
   });
 
   el['root-toggle'].addEventListener('click', function () {
