@@ -52,7 +52,7 @@ The work has failed if any of these is true:
 
 | Way to build it | What it costs | Result |
 |---|---|---|
-| Shared data, with one document holding items by id, and writes that send only what changed | Page needs a tree-to-flat step and a comparison | Picked |
+| Shared data, with one document holding items by id, and writes that send only what changed | Page needs a tree-to-flat step and a queue of changes | Picked |
 | Shared data, with the whole map in one document | Silently loses edits, as tested | Dropped |
 | Shared data, with one document per item | Claude's rewrite stops at 50 writes per batch, so it can't be one step on a big map | Dropped |
 | The page republishes itself on each edit | A conflict reloads every open page and drops the edit | Dropped |
