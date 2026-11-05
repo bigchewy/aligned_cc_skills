@@ -12,14 +12,14 @@ const SLOT = /(<script id="map-data" type="application\/json">)([\s\S]*?)(<\/scr
 
 function mapHtml(rev, goal, id) {
   const data = { map_id: id || 'm1', revision: rev, person: 'Pat', goal: { text: goal || 'g' },
-    obstacles: [], unplaced: [], key_actions: [], execute: [], feedback: { number: '', check_on: '', redraw_if: '' }, baseline: {} };
+    obstacles: [], key_actions: [], execute: [], feedback: { number: '', check_on: '', redraw_if: '' }, baseline: {} };
   return HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify(data) + c);
 }
 const parse = (html) => JSON.parse(SLOT.exec(html)[2]);
-const node = (id, text, children, root) => ({ id, kind: 'obstacle', text, root_cause: Boolean(root), star: false, children: children || [] });
-const sol = (id, text, children, star) => ({ id, kind: 'solution', text, root_cause: false, star: Boolean(star), children: children || [] });
-function treeHtml(obstacles, unplaced, more) {
-  const data = Object.assign(parse(mapHtml(1)), { obstacles, unplaced: unplaced || [] }, more || {});
+const node = (id, text, children) => ({ id, kind: 'obstacle', text, star: false, children: children || [] });
+const sol = (id, text, children, star) => ({ id, kind: 'solution', text, star: Boolean(star), children: children || [] });
+function treeHtml(obstacles, more) {
+  const data = Object.assign(parse(mapHtml(1)), { obstacles }, more || {});
   return HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify(data) + c);
 }
 function findIn(items, id) {
@@ -164,8 +164,7 @@ function page(opts) {
     },
     box(id) {
       const end = id === 'goal' ? 'goal|' : '|' + id;
-      const all = api.el('canvas').walk().concat(api.el('tray').walk());
-      const box = all.find((k) => k.dataset.key && k.dataset.key.endsWith(end));
+      const box = api.el('canvas').walk().find((k) => k.dataset.key && k.dataset.key.endsWith(end));
       assert.ok(box, 'no box: ' + id);
       return box;
     },
@@ -180,9 +179,8 @@ function page(opts) {
     tool(id) { const b = api.el(id); assert.equal(b.hidden, false, 'no tool: ' + id); api.fire(b, 'click'); },
     pluses() { return ['obstacle', 'solution'].filter((k) => !api.el('plus-' + k).hidden); },
     isSelected(id) { return api.box(id).classList.contains('selected'); },
-    addObstacle() { api.fire(document.getElementById('add-obstacle'), 'click'); },
+    addObstacle() { api.clickItem('goal'); api.plus('obstacle'); },
     canvasText() { return document.getElementById('canvas').textContent; },
-    trayText() { const t = document.getElementById('tray'); return t.hidden ? '' : t.textContent; },
     panelText() { return document.getElementById('panel').textContent; },
     boxes() { return document.getElementById('canvas').kids.filter((k) => k.dataset.key).map((k) => ({
       key: k.dataset.key, x: parseFloat(k.style.left), y: parseFloat(k.style.top), w: parseFloat(k.style.width), h: k.offsetHeight })); },
@@ -398,15 +396,6 @@ const flows = {
     p.clickItem('o1');
     assert.equal(p.el('star-button').hidden, true);
   },
-  async 'a tray solution shows Delete, and no star or plus until it is attached'() {
-    const html = treeHtml([node('o1', 'ob')], [sol('s1', 'tray')]);
-    const p = page({ html }); await settle();
-    p.clickItem('s1');
-    assert.equal(p.isSelected('s1'), true);
-    assert.equal(p.el('star-button').hidden, true);
-    assert.deepEqual(p.pluses(), []);
-    assert.equal(p.el('delete-item').hidden, false);
-  },
   async 'delete with a pick asks, and keep changes nothing'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'the picked fix', [], true)])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
@@ -429,7 +418,7 @@ const flows = {
     assert.ok(p.canvasText().includes('the picked fix'));
   },
   async 'delete with a plan row asks, and yes removes the row but keeps the key action'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other fix')])], [], {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other fix')])], {
       key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }],
       execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' },
         { solution_id: 's2', first_move: 'the other move', owner: 'o', others_decide: '' }]
@@ -504,7 +493,7 @@ const flows = {
     assert.ok(!said.includes('sub-item'), said);
   },
   async 'a question with only key actions skips the also-remove paragraph and its empty list'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other')])], [], {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other')])], {
       key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }]
     });
     const p = page({ html }); await settle();
@@ -553,33 +542,6 @@ const flows = {
     assert.deepEqual(p.el('move-to').walk().filter((k) => k.tag === 'OPTION' && k.value).map((k) => k.value), ['goal']);
     p.clickItem('o1');
     assert.equal(p.el('move-control').hidden, true); assert.equal(p.el('move-to').hidden, true);
-  },
-  async 'a tray solution attaches through move to and leaves the tray'() {
-    const html = treeHtml([node('o1', 'first')], [sol('s1', 'loose fix')]);
-    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
-    p.clickSave(); await settle();
-    p.clickItem('s1');
-    assert.deepEqual(p.el('move-to').walk().filter((k) => k.tag === 'OPTION' && k.value).map((k) => k.value), ['o1']);
-    p.el('move-to').value = 'o1'; p.fire(p.el('move-to'), 'change'); await settle();
-    const saved = parse(f.html);
-    assert.deepEqual(saved.unplaced, []); assert.equal(saved.obstacles[0].children[0].id, 's1');
-    assert.equal(p.trayText(), ''); assert.equal(p.isSelected('s1'), true);
-    assert.ok(p.canvasText().includes('loose fix'));
-  },
-  async 'a tray solution offers no star or plus'() {
-    const html = treeHtml([node('o1', 'first')], [sol('s1', 'loose fix')]);
-    const p = page({ html }); await settle();
-    p.clickItem('s1');
-    assert.equal(p.el('star-button').hidden, true);
-    assert.deepEqual(p.pluses(), []);
-    assert.equal(p.el('move-control').hidden, false); assert.equal(p.el('delete-item').hidden, false);
-  },
-  async 'the tray says the solution is not on the map yet'() {
-    const one = page({ html: treeHtml([node('o1', 'first')], [sol('s1', 'a')]) }); await settle();
-    assert.equal(one.trayText().includes('1 solution is not on the map yet.'), true, one.trayText());
-    const two = page({ html: treeHtml([node('o1', 'first')], [sol('s1', 'a'), sol('s2', 'b')]) }); await settle();
-    assert.equal(two.trayText().includes('2 solutions are not on the map yet.'), true, two.trayText());
-    assert.ok(!two.trayText().includes('tied'));
   },
   async 'the star button changes the star, keeps focus, and has no key in the header'() {
     const html = treeHtml([node('o1', 'ob', [sol('s1', 'sol')])]);
@@ -804,7 +766,7 @@ const flows = {
     assert.ok(p.canvasText().includes('why one'));
     const saved = parse(f.html).obstacles[0];
     assert.equal(saved.children.length, 1); assert.equal(saved.children[0].text, 'why one');
-    assert.deepEqual(Object.keys(saved.children[0]).sort(), ['children', 'id', 'kind', 'root_cause', 'star', 'text']);
+    assert.deepEqual(Object.keys(saved.children[0]).sort(), ['children', 'id', 'kind', 'star', 'text']);
     assert.ok(!JSON.stringify(parse(f.html).obstacles).includes('1A'));
     p.clickItem(saved.children[0].id); p.plus('obstacle'); await settle();
     p.typeAndEnter('deeper'); await settle();
@@ -812,7 +774,7 @@ const flows = {
     assert.equal(p.status(), 'All changes saved');
   },
   async 'a new obstacle and a new sub-obstacle get ids nothing else in the file uses'() {
-    const html = treeHtml([node('o1', 'first', [node('o7', 'kid')])], [], { baseline: { obstacles: [{ id: 'o9' }] } });
+    const html = treeHtml([node('o1', 'first', [node('o7', 'kid')])], { baseline: { obstacles: [{ id: 'o9' }] } });
     const p = page({ html }); await settle();
     p.clickItem('o7'); p.plus('obstacle'); p.typeAndEnter('deep');
     p.addObstacle(); p.typeAndEnter('top');
@@ -867,13 +829,12 @@ const flows = {
     p.tool('delete-item'); await settle();
     const saved = parse(f.html);
     assert.equal(findIn(saved.obstacles, 'o2'), null); assert.equal(findIn(saved.obstacles, 's1'), null);
-    assert.deepEqual(saved.unplaced, []); assert.equal(p.trayText(), '');
     assert.ok(findIn(saved.obstacles, 's2'));
     assert.ok(p.canvasText().includes('1A'), p.canvasText()); assert.ok(p.canvasText().includes('kid b'));
     assert.ok(!p.canvasText().includes('1B'));
   },
   async 'delete an item and see its plan row go, while the key action stays'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other fix')])], [], {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other fix')])], {
       key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }],
       execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' },
         { solution_id: 's2', first_move: 'the other move', owner: 'o', others_decide: '' }]
@@ -920,32 +881,6 @@ const flows = {
       assert.equal(p.el('delete-item').getAttribute('aria-label'), 'Delete');
       assert.equal(p.el('delete-item').title, 'Delete');
     }
-  },
-  async 'a root cause can be marked and unmarked, and offers only a solution'() {
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid')])]);
-    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
-    p.clickSave(); await settle();
-    p.clickItem('o1');
-    assert.equal(p.el('root-toggle').hidden, true);
-    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
-    p.clickItem('o2');
-    assert.equal(p.el('root-toggle').textContent, 'Mark as root cause');
-    p.tool('root-toggle'); await settle();
-    assert.equal(parse(f.html).obstacles[0].children[0].root_cause, true);
-    assert.equal(p.isSelected('o2'), true);
-    assert.deepEqual(p.pluses(), ['solution']);
-    assert.equal(p.el('root-toggle').textContent, 'Unmark root cause');
-    p.tool('root-toggle'); await settle();
-    assert.equal(parse(f.html).obstacles[0].children[0].root_cause, false);
-    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
-  },
-  async 'an obstacle with only a solution under it can still be a root cause'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix', [node('o2', 'in the way')])])]);
-    const p = page({ html }); await settle();
-    p.clickItem('o1');
-    assert.equal(p.el('root-toggle').hidden, false);
-    p.clickItem('o2');
-    assert.equal(p.el('root-toggle').hidden, false);
   },
 
   // Selecting, pressing a plus and typing in place.
@@ -1148,7 +1083,7 @@ const flows = {
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     p.addObstacle(); await settle();
-    p.el('add-obstacle').listeners.click[0](); await settle();
+    p.addObstacle(); await settle();
     assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
     p.typeAndEnter('second'); await settle();
     assert.deepEqual(parse(f.html).obstacles.map((o) => o.text), ['first', 'second']);
@@ -1163,20 +1098,72 @@ const flows = {
     assert.equal(p.el('typing').hidden, true); assert.equal(f.writes, 0);
     assert.ok(p.canvasText().includes('first')); assert.equal(p.isSelected('o1'), true);
   },
-  async 'escape on an item from the header add returns focus to that button'() {
-    const html = treeHtml([node('o1', 'first')]);
+  async 'escape on a new item returns focus to its parent'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix')])]);
     const p = page({ html }); await settle();
     p.addObstacle();
     p.fire(p.el('typing'), 'keydown', { key: 'Escape' });
-    assert.equal(p.active(), p.el('add-obstacle'));
-    p.addObstacle(); p.pressEnter();
-    assert.equal(p.active(), p.el('add-obstacle'));
+    assert.equal(p.active(), p.box('goal')); assert.equal(p.isSelected('goal'), true);
+    p.plus('solution'); p.pressEnter();
+    assert.equal(p.active(), p.box('goal')); assert.equal(p.isSelected('goal'), true);
+    p.clickItem('s1'); p.plus('obstacle');
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' });
+    assert.equal(p.active(), p.box('s1')); assert.equal(p.isSelected('s1'), true);
+    assert.ok(!p.canvasText().includes('1A'), p.canvasText());
   },
-  async 'root cause shows only the green plus'() {
-    const html = treeHtml([node('o1', 'first', [], true)]);
+  async 'add the first obstacle on an empty map from the goal'() {
+    const f = fakeHandle(mapHtml(1)); const p = page({ picker: f }); await settle();
+    p.clickSave(); await settle();
+    assert.equal(p.el('first-hint').hidden, false); assert.equal(p.el('edit-hint').hidden, true);
+    p.clickItem('goal');
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    p.plus('obstacle'); p.typeAndEnter('the first one'); await settle();
+    const saved = parse(f.html);
+    assert.equal(saved.obstacles.length, 1); assert.equal(saved.obstacles[0].text, 'the first one');
+    assert.ok(p.canvasText().includes('1'), p.canvasText());
+    assert.equal(p.el('first-hint').hidden, true); assert.equal(p.el('edit-hint').hidden, false);
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'add the first solution on an empty map from the goal'() {
+    const f = fakeHandle(mapHtml(1)); const p = page({ picker: f }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('goal'); p.plus('solution'); p.typeAndEnter('a fix first'); await settle();
+    const saved = parse(f.html);
+    assert.equal(saved.obstacles[0].kind, 'solution'); assert.equal(saved.obstacles[0].text, 'a fix first');
+    assert.equal(p.el('first-hint').hidden, true);
+    assert.ok(p.canvasText().includes('a fix first'), p.canvasText());
+  },
+  async 'a solution on the goal has a star, both pluses, move to and delete'() {
+    const html = treeHtml([node('o1', 'first'), sol('s1', 'on the goal')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('s1');
+    assert.equal(p.el('star-button').hidden, false);
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    assert.equal(p.el('delete-item').hidden, false);
+    assert.deepEqual(p.el('move-to').walk().filter((k) => k.tag === 'OPTION' && k.value).map((k) => k.value), ['o1']);
+    p.el('move-to').value = 'o1'; p.fire(p.el('move-to'), 'change'); await settle();
+    const saved = parse(f.html);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['o1']); assert.equal(saved.obstacles[0].children[0].id, 's1');
+    assert.equal(p.isSelected('s1'), true);
+  },
+  async 'the plan panel draws a solution on the goal and a solution under a solution'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'outer', [sol('s2', 'inner')])]), sol('s3', 'on the goal')],
+      { execute: [{ solution_id: 's2', first_move: 'm', owner: '', others_decide: '' }, { solution_id: 's3', first_move: 'n', owner: '', others_decide: '' }] });
     const p = page({ html }); await settle();
-    p.clickItem('o1');
-    assert.deepEqual(p.pluses(), ['solution']);
+    assert.ok(p.panelText().includes('inner (1)'), p.panelText());
+    assert.ok(p.panelText().includes('on the goal'), p.panelText());
+    assert.ok(!p.panelText().includes('undefined'), p.panelText());
+  },
+  async 'a map with an old field shows the message and draws nothing'() {
+    const html = treeHtml([Object.assign(node('o1', 'old'), { root_cause: false })]);
+    const p = page({ html }); await settle();
+    const doc = p.sandbox.document;
+    assert.equal(doc.getElementById('data-problem').hidden, false);
+    assert.equal(doc.getElementById('data-problem-reason').textContent, 'Obstacle 1 uses the old map shape.');
+    const oldList = withData(html, Object.assign(parse(mapHtml(1)), { unplaced: [] }));
+    const q = page({ html: oldList }); await settle();
+    assert.equal(q.sandbox.document.getElementById('data-problem-reason').textContent, 'The map uses the old map shape.');
   },
   async 'a solution shows both pluses, and a solution can go under a solution'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'the fix')])]);
@@ -1188,12 +1175,13 @@ const flows = {
     p.plus('solution'); p.typeAndEnter('nested');
     assert.equal(p.canvasText().includes('nested'), true);
   },
-  async 'the goal shows only the orange plus and no toolbar'() {
+  async 'the goal shows both pluses and no toolbar'() {
     const html = treeHtml([node('o1', 'first')]);
     const p = page({ html }); await settle();
     p.clickItem('goal');
-    assert.deepEqual(p.pluses(), ['obstacle']);
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
     assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under the goal');
+    assert.equal(p.el('plus-solution').getAttribute('aria-label'), 'Add a solution under the goal');
     assert.equal(p.el('item-tools').hidden, true);
   },
   async 'selection returns focus after a render'() {
@@ -1275,7 +1263,7 @@ const flows = {
     assert.equal(p.active(), p.box('goal'));
   },
   async 'the plan panel names items by label'() {
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'sol', [], true)])])], [],
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'sol', [], true)])])],
       { key_actions: [{ text: 'act', risk: 'low', solution_ids: ['s1'] }],
         execute: [{ solution_id: 's1', first_move: 'm', owner: 'o', others_decide: '' }] });
     const p = page({ html }); await settle();
@@ -1326,7 +1314,7 @@ const flows = {
     assert.equal(parse(f.html).obstacles[0].children[0].text, 'a fix');
   },
   async 'a starred solution with a plan row is listed once in the question'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'the fix', [], true)])], [], {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'the fix', [], true)])], {
       execute: [{ solution_id: 's1', first_move: '', owner: 'o', others_decide: '' }]
     });
     const p = page({ html }); await settle();
@@ -1355,7 +1343,7 @@ const flows = {
     assert.equal(doc.getElementById('canvas').kids.length, 0);
   },
   async 'a map with the old solutions list shows the message and draws nothing'() {
-    const html = treeHtml([], [], { solutions: [] });
+    const html = treeHtml([], { solutions: [] });
     const p = page({ html }); await settle();
     const doc = p.sandbox.document;
     assert.equal(doc.getElementById('data-problem').hidden, false);
@@ -1363,7 +1351,7 @@ const flows = {
     assert.equal(doc.getElementById('canvas').kids.length, 0);
   },
   async 'a plan row naming a missing solution shows the message and draws nothing'() {
-    const html = treeHtml([], [], { execute: [{ solution_id: 'gone', first_move: 'm', owner: '', others_decide: '' }] });
+    const html = treeHtml([], { execute: [{ solution_id: 'gone', first_move: 'm', owner: '', others_decide: '' }] });
     const p = page({ html }); await settle();
     const doc = p.sandbox.document;
     assert.ok(doc.getElementById('data-problem-reason').textContent.includes('gone'));

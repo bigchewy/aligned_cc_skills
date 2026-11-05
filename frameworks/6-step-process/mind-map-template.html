@@ -52,7 +52,7 @@ header {
   border-bottom: 1px solid var(--edge);
 }
 #who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-right: auto; min-width: 0; }
-#edit-hint { margin: 0; font-size: 14px; color: var(--muted); }
+#edit-hint, #first-hint { margin: 0; font-size: 14px; color: var(--muted); }
 #person { font-weight: 600; overflow-wrap: anywhere; }
 #strategy-note { font-size: 14px; color: var(--muted); }
 .quiet {
@@ -87,7 +87,6 @@ header {
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
-.item.root { font-weight: 700; }
 .item.goal {
   background: var(--box);
   color: var(--ink);
@@ -121,18 +120,6 @@ header {
 #panel dd { margin: 0 0 4px; overflow-wrap: anywhere; }
 .row-title { font-weight: 600; margin: 8px 0 2px; overflow-wrap: anywhere; }
 .none { color: var(--muted); margin: 0; }
-
-#tray {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 8px 10px;
-  padding: 8px 16px;
-  border-top: 1px solid var(--edge);
-  background: var(--bg);
-}
-#tray-count { font-weight: 600; flex-basis: 100%; }
-#tray .item { position: static; width: 240px; }
 
 #save-status { margin: 0; font-size: 14px; color: var(--muted); min-width: 125px; text-align: right; }
 #save-status.saved { color: var(--ink); }
@@ -209,7 +196,7 @@ header {
 </style>
 </head>
 <body>
-<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":""},"obstacles":[],"unplaced":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
+<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":""},"obstacles":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
 <div id="data-problem" role="alert" hidden>
   <h1>This map can't be drawn.</h1>
   <p id="data-problem-reason"></p>
@@ -220,11 +207,11 @@ header {
     <div id="person"></div>
     <div id="strategy-note" hidden>Not compared to strategy.</div>
   </div>
+  <p id="first-hint" hidden>Click the goal, then press a + to add the first obstacle or solution. Double-click to change its words.</p>
   <p id="edit-hint">Click an item, then press a + to add under it. Double-click to change its words.</p>
   <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
   <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
   <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
-  <button type="button" class="quiet" id="add-obstacle">Add an obstacle</button>
   <button type="button" class="quiet" id="toggle-plan">Show plan</button>
   <p id="save-status" role="status"></p>
   <button type="button" class="quiet" id="save" hidden></button>
@@ -237,13 +224,11 @@ header {
   <div id="map"><div id="canvas-frame"><div id="canvas"></div></div></div>
   <aside id="panel" hidden></aside>
 </div>
-<section id="tray" hidden></section>
 <textarea id="typing" rows="1" placeholder="Type here" hidden></textarea>
 <button type="button" class="plus" id="plus-obstacle" hidden>+</button>
 <button type="button" class="plus" id="plus-solution" hidden>+</button>
 <div id="item-tools" role="toolbar" aria-label="What you can do with this item" hidden>
   <button type="button" id="star-button" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
-  <button type="button" id="root-toggle"></button>
   <label id="move-control">Move to <select id="move-to"></select></label>
   <button type="button" id="delete-item" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
   <div id="delete-question" role="group" aria-label="Delete this item?" hidden></div>
@@ -298,25 +283,17 @@ header {
     return JSON.parse(JSON.stringify(map));
   }
 
-  // Finds an item in the tree or the tray.
   function findItem(map, itemId) {
-    function match(item) {
+    return eachItem(map.obstacles, function (item) {
       return item.id === itemId ? item : null;
-    }
-    return eachItem(map.obstacles, match) || eachItem(map.unplaced, match);
+    });
   }
 
-  // The id of the item above this one, 'goal' at the top level, or null for the tray and unknown ids.
+  // The id of the item above this one, 'goal' at the top level, or null for an unknown id.
   function parentOf(map, itemId) {
     return eachItem(map.obstacles, function (item, place) {
       if (item.id !== itemId) return null;
       return place.parent ? place.parent.id : 'goal';
-    });
-  }
-
-  function hasChildOfKind(item, kind) {
-    return item.children.some(function (child) {
-      return isObject(child) && child.kind === kind;
     });
   }
 
@@ -329,18 +306,14 @@ header {
     return labels;
   }
 
-  // The plus table: what can sit directly under what. Tray solutions take nothing until they're attached.
+  // The goal and every item can hold obstacles and solutions, at any depth.
   function canAdd(map, parentId, kind) {
     if (kind !== 'obstacle' && kind !== 'solution') return false;
-    if (parentId === 'goal') return kind === 'obstacle';
-    if (parentOf(map, parentId) === null) return false;
-    var parent = findItem(map, parentId);
-    if (parent.kind === 'solution') return true;
-    return kind === 'solution' || !parent.root_cause;
+    return parentId === 'goal' || Boolean(findItem(map, parentId));
   }
 
   function newItem(id, kind, text) {
-    return { id: id, kind: kind, text: text, root_cause: false, star: false, children: [] };
+    return { id: id, kind: kind, text: text, star: false, children: [] };
   }
 
   function attach(map, parentId, item) {
@@ -353,7 +326,8 @@ header {
     return next;
   }
 
-  // The drop table is the plus table, plus no drop on the item itself, under itself, or on its own parent.
+  // An item can go on the goal or any other item, except itself, anything under it and its own parent.
+  // The goal has no item of its own, so it can't move.
   function canMove(map, itemId, targetId) {
     var item = findItem(map, itemId);
     if (!item || itemId === targetId) return false;
@@ -368,17 +342,12 @@ header {
     });
   }
 
-  function takeOut(map, itemId) {
-    map.obstacles = withoutItem(map.obstacles, itemId);
-    map.unplaced = map.unplaced.filter(function (item) { return item.id !== itemId; });
-  }
-
   // The item goes last under its target, and takes what sits under it along.
   function moveItem(map, itemId, targetId) {
     var next = copy(map);
     if (!canMove(map, itemId, targetId)) return next;
     var moving = findItem(next, itemId);
-    takeOut(next, itemId);
+    next.obstacles = withoutItem(next.obstacles, itemId);
     attach(next, targetId, moving);
     return next;
   }
@@ -413,7 +382,7 @@ header {
     var item = findItem(next, itemId);
     if (!item) return next;
     var gone = goneIds(item);
-    takeOut(next, itemId);
+    next.obstacles = withoutItem(next.obstacles, itemId);
     next.execute = next.execute.filter(function (row) { return !gone[row.solution_id]; });
     next.key_actions.forEach(function (action) {
       action.solution_ids = action.solution_ids.filter(function (id) { return !gone[id]; });
@@ -450,22 +419,9 @@ header {
     return prefix + (highest + 1);
   }
 
-  // A root cause can't have an obstacle directly under it. A solution under it can have obstacles of its own.
-  function canBeRootCause(map, itemId) {
-    var item = findItem(map, itemId);
-    return Boolean(item) && item.kind === 'obstacle' && !hasChildOfKind(item, 'obstacle');
-  }
-
-  function setRootCause(map, itemId, isRoot) {
-    var next = copy(map);
-    if (canBeRootCause(map, itemId)) findItem(next, itemId).root_cause = Boolean(isRoot);
-    return next;
-  }
-
-  // Tray solutions can't be picks until they're attached.
   function canPick(map, itemId) {
     var item = findItem(map, itemId);
-    return Boolean(item) && item.kind === 'solution' && parentOf(map, itemId) !== null;
+    return Boolean(item) && item.kind === 'solution';
   }
 
   function setStar(map, itemId, isStar) {
@@ -487,14 +443,16 @@ header {
     return next;
   }
 
-  // Each solution's name in the plan panel, with the label of the obstacle it sits under.
+  // Each solution's name in the plan panel, with the label of the nearest obstacle above it. A solution
+  // with no obstacle above it goes by its text alone.
   function solutionNames(map) {
     var names = Object.create(null);
-    var labels = itemLabels(map);
+    var nearest = Object.create(null);
     eachItem(map.obstacles, function (item, place) {
-      if (item.kind === 'solution') names[item.id] = item.text + ' (' + labels[place.parent.id] + ')';
+      nearest[item.id] = place.label || (place.parent ? nearest[place.parent.id] : '');
+      if (item.kind !== 'solution') return;
+      names[item.id] = nearest[item.id] ? item.text + ' (' + nearest[item.id] + ')' : item.text;
     });
-    map.unplaced.forEach(function (item) { names[item.id] = item.text; });
     return names;
   }
 
@@ -707,17 +665,18 @@ header {
     return item.id && isText(item.id) ? 'Solution ' + item.id : fallback;
   }
 
-  // Every item has the same six fields.
+  // Every item has the same five fields.
   function fieldsProblem(item, name) {
     if (!isObject(item)) return name + ' is missing.';
-    if ('whys' in item || 'solution_at' in item || 'solution_ids' in item) return name + ' uses the old map shape.';
+    if ('whys' in item || 'solution_at' in item || 'solution_ids' in item || 'root_cause' in item) {
+      return name + ' uses the old map shape.';
+    }
     if (!item.id || !isText(item.id)) return name + ' is missing its id.';
     if (item.id === 'goal') return name + ' uses the id goal, which the page keeps for the goal.';
     if (item.id.indexOf('"') !== -1) return name + ' has a quote mark in its id.';
     if (!('kind' in item)) return name + ' is missing its kind.';
     if (item.kind !== 'obstacle' && item.kind !== 'solution') return name + ' needs a kind of obstacle or solution.';
     if (!isText(item.text)) return name + ' is missing its text.';
-    if (typeof item.root_cause !== 'boolean') return name + ' needs true or false for its root cause.';
     if (typeof item.star !== 'boolean') return name + ' needs true or false for its star.';
     if (!Array.isArray(item.children)) return name + ' is missing its list of what sits under it.';
     return null;
@@ -730,52 +689,24 @@ header {
     return null;
   }
 
-  function rootCauseKindProblem(item, name) {
-    return item.root_cause && item.kind !== 'obstacle'
-      ? name + ' is marked as a root cause, but only an obstacle can be one.'
-      : null;
-  }
-
-  function placedRulesProblem(item, name, place) {
-    if (place.depth === 0 && item.kind === 'solution') return name + ' sits at the top level, but only an obstacle can.';
-    if (item.star && item.kind !== 'solution') return name + ' has a star, but only a solution can be a pick.';
-    if (item.root_cause && hasChildOfKind(item, 'obstacle')) {
-      return name + " is a root cause, so it can't have an obstacle directly under it.";
-    }
-    return null;
+  function starProblem(item, name) {
+    return item.star && item.kind !== 'solution' ? name + ' has a star, but only a solution can be a pick.' : null;
   }
 
   // The first problem anywhere in the tree, named by the label the item would have.
   function treeProblem(items, seen) {
     return eachItem(items, function (item, place) {
       var name = isObject(item) && item.kind === 'solution' ? solutionName(item, 'A solution') : 'Obstacle ' + place.label;
-      return fieldsProblem(item, name) || idProblem(item, name, seen) ||
-        rootCauseKindProblem(item, name) || placedRulesProblem(item, name, place);
+      return fieldsProblem(item, name) || idProblem(item, name, seen) || starProblem(item, name);
     });
   }
 
-  function trayProblem(items, seen) {
-    for (var i = 0; i < items.length; i += 1) {
-      var item = items[i];
-      var position = 'Tray item ' + (i + 1);
-      var name = isObject(item) && item.kind === 'solution' ? solutionName(item, position) : position;
-      var problem = fieldsProblem(item, name) || idProblem(item, name, seen) || rootCauseKindProblem(item, name);
-      if (problem) return problem;
-      if (item.kind !== 'solution') return position + ' is an obstacle, but only a solution can be in the tray.';
-      if (item.children.length) return name + " is in the tray, so it can't have anything under it.";
-      if (item.star) return name + " is in the tray, so it can't be a pick.";
-    }
-    return null;
-  }
-
-  // A plan row can name a solution in the tree or the tray.
   function planProblem(map) {
     var solutions = Object.create(null);
     function note(item) {
       if (item.kind === 'solution') solutions[item.id] = true;
     }
     eachItem(map.obstacles, note);
-    map.unplaced.forEach(note);
     function missing(name, id) {
       return solutions[id] ? null : name + " names a solution that isn't on the map (" + id + ').';
     }
@@ -800,11 +731,9 @@ header {
     if (typeof map.revision !== 'number') return 'The map has no revision number.';
     if (!isObject(map.goal)) return 'The goal is missing.';
     if (!isText(map.goal.text)) return 'The goal is missing its text.';
-    if ('solutions' in map) return 'The map uses the old map shape.';
+    if ('solutions' in map || 'unplaced' in map) return 'The map uses the old map shape.';
     if (!Array.isArray(map.obstacles)) return 'The map is missing its list of obstacles.';
-    if (!Array.isArray(map.unplaced)) return 'The map is missing its list of unplaced solutions.';
-    var seen = Object.create(null);
-    var problem = treeProblem(map.obstacles, seen) || trayProblem(map.unplaced, seen);
+    var problem = treeProblem(map.obstacles, Object.create(null));
     if (problem) return problem;
     for (var r = 0; r < ROW_RULES.length; r += 1) {
       problem = rowsProblem(ROW_RULES[r], map[ROW_RULES[r].field]);
@@ -1007,8 +936,6 @@ header {
     deleteItem: deleteItem,
     deleteEffects: deleteEffects,
     nextId: nextId,
-    canBeRootCause: canBeRootCause,
-    setRootCause: setRootCause,
     canPick: canPick,
     setStar: setStar,
     setItemText: setItemText,
@@ -1109,15 +1036,15 @@ header {
   function showDataProblem(problem) {
     document.getElementById('data-problem-reason').textContent = problem;
     document.getElementById('data-problem').hidden = false;
-    document.querySelectorAll('header, #notices, #workspace, #tray').forEach(function (part) {
+    document.querySelectorAll('header, #notices, #workspace').forEach(function (part) {
       part.hidden = true;
     });
   }
 
   var el = {};
-  ['person', 'strategy-note', 'map', 'canvas-frame', 'canvas', 'panel', 'tray', 'save', 'save-status', 'message',
-    'browser-note', 'typing', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button', 'root-toggle',
-    'move-control', 'move-to', 'delete-question', 'delete-yes', 'delete-keep', 'delete-item', 'add-obstacle', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+  ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save', 'save-status', 'message',
+    'browser-note', 'typing', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
+    'move-control', 'move-to', 'delete-question', 'delete-yes', 'delete-keep', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -1162,8 +1089,7 @@ header {
   }
 
   function makeObstacle(row) {
-    var cls = row.item.root_cause ? 'root' : '';
-    var box = makeItem({ kind: 'obstacle', id: row.item.id }, cls);
+    var box = makeItem({ kind: 'obstacle', id: row.item.id }, '');
     box.appendChild(make('span', 'label', row.label));
     fillText(box, row.item.text, row.depth === 0 ? 'New obstacle' : 'New sub-obstacle');
     return box;
@@ -1259,21 +1185,7 @@ header {
     }
   }
 
-  /* Tray and side panel */
-
-  function drawTray() {
-    var items = map.unplaced;
-    el.tray.hidden = items.length === 0;
-    el.tray.textContent = '';
-    if (!items.length) return;
-    var count = items.length === 1
-      ? '1 solution is not on the map yet.'
-      : items.length + ' solutions are not on the map yet.';
-    el.tray.appendChild(make('div', '', count)).id = 'tray-count';
-    items.forEach(function (item) {
-      el.tray.appendChild(makeSolution(item));
-    });
-  }
+  /* Side panel */
 
   function heading(text, label) {
     var h = make('h2', '', text);
@@ -1387,8 +1299,9 @@ header {
     var spot = spotOnScreen(selected);
     el.person.textContent = map.person;
     el['strategy-note'].hidden = map.key_actions.length > 0;
+    el['first-hint'].hidden = map.obstacles.length > 0;
+    el['edit-hint'].hidden = map.obstacles.length === 0;
     drawMap();
-    drawTray();
     drawPanel();
     askToWrite();
     showStatus();
@@ -1405,8 +1318,7 @@ header {
   /* Selecting */
 
   function boxFor(ref) {
-    var selector = '[data-key="' + refKey(ref) + '"]';
-    return el.canvas.querySelector(selector) || el.tray.querySelector(selector);
+    return el.canvas.querySelector('[data-key="' + refKey(ref) + '"]');
   }
 
   function focusBox(ref) {
@@ -1414,9 +1326,9 @@ header {
     if (box) box.focus({ preventScroll: true });
   }
 
-  // Where a box on the map is on screen. The tray doesn't scroll with the map, so its boxes have no spot.
+  // Where a box on the map is on screen.
   function spotOnScreen(ref) {
-    var box = ref && el.canvas.querySelector('[data-key="' + refKey(ref) + '"]');
+    var box = ref && boxFor(ref);
     if (!box) return null;
     var rect = box.getBoundingClientRect();
     return { ref: ref, left: rect.left, top: rect.top };
@@ -1493,16 +1405,10 @@ header {
     var canPick = Boolean(item) && L.canPick(map, item.id);
     el['star-button'].hidden = !canPick;
     el['star-button'].setAttribute('aria-pressed', String(canPick && item.star));
-    var canMark = Boolean(item) && L.canBeRootCause(map, item.id);
-    el['root-toggle'].hidden = !canMark;
-    if (canMark) el['root-toggle'].textContent = item.root_cause ? 'Unmark root cause' : 'Mark as root cause';
     if (!item || asking !== item.id) asking = null;
     var questioning = asking !== null;
     // A question replaces the item's own tools, so only a Keep or a Delete is in reach.
-    if (questioning) {
-      el['star-button'].hidden = true;
-      el['root-toggle'].hidden = true;
-    }
+    if (questioning) el['star-button'].hidden = true;
     showMoveList(item && !questioning ? item.id : null);
     el['delete-item'].hidden = !item || questioning;
     el['item-tools'].classList.toggle('asking', questioning);
@@ -1604,8 +1510,7 @@ header {
       return;
     }
     var mapRect = el.map.getBoundingClientRect();
-    var inView = !el.map.contains(box) ||
-      (rect.bottom > mapRect.top && rect.top < mapRect.bottom && rect.right > mapRect.left && rect.left < mapRect.right);
+    var inView = rect.bottom > mapRect.top && rect.top < mapRect.bottom && rect.right > mapRect.left && rect.left < mapRect.right;
     [el['plus-obstacle'], el['plus-solution'], el['item-tools']].forEach(function (part) {
       part.style.visibility = inView ? 'visible' : 'hidden';
     });
@@ -1615,7 +1520,7 @@ header {
 
   // The controls sit at the end of the page, so Tab needs help to reach them from the selected item.
   function controlsInOrder() {
-    return [el['plus-obstacle'], el['plus-solution'], el['star-button'], el['root-toggle'], el['move-to'],
+    return [el['plus-obstacle'], el['plus-solution'], el['star-button'], el['move-to'],
       el['delete-item'], el['delete-yes'], el['delete-keep']]
       .filter(function (control) { return !control.hidden; });
   }
@@ -1629,7 +1534,7 @@ header {
     if (active === box && !e.shiftKey) next = controls[0];
     else if (active === controls[0] && e.shiftKey) next = box;
     else if (active === controls[controls.length - 1] && !e.shiftKey) {
-      var boxes = Array.from(el.canvas.querySelectorAll('[data-ref]')).concat(Array.from(el.tray.querySelectorAll('[data-ref]')));
+      var boxes = Array.from(el.canvas.querySelectorAll('[data-ref]'));
       next = boxes[boxes.indexOf(box) + 1];
     }
     if (!next) return;
@@ -1642,8 +1547,7 @@ header {
   function itemHeading(ref) {
     if (ref.kind === 'goal') return 'Goal';
     if (ref.kind === 'solution') return 'Solution';
-    var item = L.findItem(map, ref.id);
-    return (item.root_cause ? 'Root cause ' : 'Obstacle ') + L.itemLabels(map)[ref.id];
+    return 'Obstacle ' + L.itemLabels(map)[ref.id];
   }
 
   // A new item gets drawn while the old selection is still set, so the old selection holds still on screen.
@@ -1670,12 +1574,11 @@ header {
     el.typing.value = '';
   }
 
-  // A blank new item was never in the file, so taking it out asks for no write. With nothing selected
-  // before it, the item came from the header's button, so focus goes back there.
+  // A blank new item was never in the file, so taking it out asks for no write. The selection goes back
+  // to the item it came from, and the render puts focus there.
   function dropNewItem(e) {
     selected = e.from;
     setMap(L.deleteItem(map, e.ref.id));
-    if (!selected) el['add-obstacle'].focus({ preventScroll: true });
   }
 
   function finishTyping() {
@@ -1982,7 +1885,7 @@ header {
     }
     var ref = refAt(e.target);
     if (ref) select(ref);
-    else if (el.map.contains(e.target) || el.tray.contains(e.target)) select(null);
+    else if (el.map.contains(e.target)) select(null);
   });
 
   document.addEventListener('dblclick', function (e) {
@@ -2043,10 +1946,6 @@ header {
     setMap(L.setStar(map, selected.id, el['star-button'].getAttribute('aria-pressed') !== 'true'));
   });
 
-  el['root-toggle'].addEventListener('click', function () {
-    setMap(L.setRootCause(map, selected.id, !L.findItem(map, selected.id).root_cause));
-  });
-
   // Moves the item and keeps it selected, with focus still on the list. The item may now be off screen.
   el['move-to'].addEventListener('change', function () {
     var target = el['move-to'].value;
@@ -2086,8 +1985,6 @@ header {
 
   el['delete-yes'].addEventListener('click', deleteNow);
   el['delete-keep'].addEventListener('click', stopAsking);
-
-  el['add-obstacle'].addEventListener('click', function () { addUnder('goal', 'obstacle'); });
 
   el['toggle-plan'].addEventListener('click', function () {
     panelOpen = !panelOpen;

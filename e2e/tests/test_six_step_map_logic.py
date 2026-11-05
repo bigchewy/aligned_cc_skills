@@ -101,9 +101,8 @@ def call(fn, *args, handle=None):
     return json.loads(proc.stdout)
 
 
-def item(id, text="", children=(), kind="obstacle", root=False, star=False):
-    return {"id": id, "kind": kind, "text": text, "root_cause": root, "star": star,
-            "children": list(children)}
+def item(id, text="", children=(), kind="obstacle", star=False):
+    return {"id": id, "kind": kind, "text": text, "star": star, "children": list(children)}
 
 
 def sol(id, text="", children=(), star=False):
@@ -119,8 +118,8 @@ def make_map(**over):
         "obstacles": [
             item("o1", "a", [item("o3", "w1", [item("o4", "w2")]), sol("s1", "one"), sol("s2", "two", star=True)]),
             item("o2", "b", [sol("s4", "four")]),
+            sol("s3", "three"),
         ],
-        "unplaced": [sol("s3", "three")],
         "key_actions": [],
         "execute": [],
         "feedback": {"number": "", "check_on": "", "redraw_if": ""},
@@ -136,17 +135,6 @@ def page(map_obj, extra=""):
         "<html><body>" + extra + '<script id="map-data" type="application/json">'
         + data + "</script></body></html>"
     )
-
-
-def test_set_root_cause_marks_an_item_with_no_children():
-    m = call("setRootCause", make_map(), "o4", True)["result"]
-    assert obstacle(m, "o4")["root_cause"] is True
-    assert obstacle(m, "o3")["root_cause"] is False
-
-
-def test_a_top_level_item_with_no_children_can_be_a_root_cause():
-    m = call("setRootCause", make_map(), "o2", True)["result"]
-    assert m["obstacles"][1]["root_cause"] is True
 
 
 def test_script_close_tag_round_trips():
@@ -733,12 +721,6 @@ def test_labels_are_never_stored_and_later_siblings_renumber():
 
 # Adding and removing branches
 
-def test_an_obstacle_can_have_several_root_causes_in_different_branches():
-    m = call("setRootCause", labeled_tree(), "o3", True)["result"]
-    m = call("setRootCause", m, "o5", True)["result"]
-    assert call("mapProblem", m)["result"] is None
-
-
 def test_a_tree_survives_a_save():
     m = labeled_tree()
     src = page(m)
@@ -844,7 +826,7 @@ def test_drawn_rows_give_each_item_its_label_and_depth():
         ("o7", "1B2A", 3), ("o2", "2", 0)]
 
 
-# The one tree: every item has the same six fields, and everything hangs off the goal.
+# The one tree: every item has the same five fields, and everything hangs off the goal.
 
 def label_case():
     """1B has a child obstacle, then a solution holding an obstacle."""
@@ -874,7 +856,7 @@ def mixed_tree():
             item("b11", "after the solution"),
         ]),
         deep("d", 7),
-        item("b6", "plain", root=True, children=[sol("bs5", "fix", [item("b12", "under a root cause's solution")])]),
+        item("b6", "plain", [sol("bs5", "fix", [item("b12", "in the way of the fix")])]),
     ])
     return make_map(obstacles=[
         branchy,
@@ -882,7 +864,8 @@ def mixed_tree():
         item("t3", "three", [sol("ts1", "fix"), sol("ts2", "fix"), sol("ts3", "fix")]),
         item("t4", "four", [item("t5", "kid", [sol("ts4", "fix")]), deep("e", 3)]),
         item("t6", "six"),
-    ], unplaced=[sol("tray1", "in the tray")])
+        sol("top1", "directly under the goal", [item("t7", "in its way", [sol("ts5", "fix")])]),
+    ])
 
 
 def test_labels_count_across_solutions():
@@ -898,17 +881,22 @@ def test_labels_have_no_duplicates_on_a_deep_mixed_tree():
     assert len(labels) > 25
 
 
-def test_labels_skip_solutions_and_unplaced():
+def test_labels_skip_solutions():
     m = make_map(obstacles=[
         item("o1", "a", [sol("s1", "fix"), item("o2", "b"), sol("s2", "fix"), item("o3", "c")]),
         item("o4", "d"),
-    ], unplaced=[sol("s3", "tray")])
+    ])
     assert call("itemLabels", m)["result"] == {"o1": "1", "o2": "1A", "o3": "1B", "o4": "2"}
 
 
-def test_label_under_a_solution_under_a_root_cause_continues_the_root_cause():
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix", [item("o2", "b")])], root=True)])
+def test_label_under_a_solution_continues_the_obstacle_above_it():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix", [item("o2", "b")])])])
     assert call("itemLabels", m)["result"] == {"o1": "1", "o2": "1A"}
+
+
+def test_label_under_a_solution_on_the_goal_takes_the_next_top_level_number():
+    m = make_map(obstacles=[item("o1", "a"), sol("s1", "fix", [item("o2", "b")]), item("o3", "c")])
+    assert call("itemLabels", m)["result"] == {"o1": "1", "o2": "2", "o3": "3"}
 
 
 def test_solutions_get_no_labels():
@@ -918,62 +906,72 @@ def test_solutions_get_no_labels():
 
 
 def rule_map():
-    """A goal, a plain obstacle, a root cause and a solution, with two items free to move onto them."""
+    """A goal, two obstacles and a solution, with two items free to move onto them."""
     return make_map(obstacles=[
         item("holder", "holds the movers", [item("mo", "moving obstacle"), sol("ms", "moving solution")]),
         item("ob", "plain", [sol("so", "a solution")]),
-        item("rc", "root", root=True),
-    ], unplaced=[sol("tray", "in the tray")])
+        item("other", "other"),
+    ])
 
 
-def test_plus_rules():
-    table = {
-        "goal": {"obstacle": True, "solution": False},
-        "ob": {"obstacle": True, "solution": True},
-        "rc": {"obstacle": False, "solution": True},
-        "so": {"obstacle": True, "solution": True},
-    }
-    m = rule_map()
-    for parent, cells in table.items():
-        for kind, allowed in cells.items():
-            assert call("canAdd", m, parent, kind)["result"] is allowed, (parent, kind)
+def test_every_item_takes_both_pluses():
+    m = make_map(obstacles=[
+        item("o1", "a", [item("o2", "b", [sol("s1", "c", [sol("s2", "d", [item("o3", "e")])])])]),
+        sol("s3", "on the goal", [sol("s4", "f")]),
+    ])
+    for parent in ("o1", "o2", "s1", "s2", "o3", "s3", "s4"):
+        for kind in ("obstacle", "solution"):
+            assert call("canAdd", m, parent, kind)["result"] is True, (parent, kind)
+    added = call("addItem", m, "s2", "s9", "solution", "new")["result"]
+    assert [c["id"] for c in obstacle(added, "s2")["children"]] == ["o3", "s9"]
+    assert call("mapProblem", added)["result"] is None
 
 
-def test_plus_refuses_the_tray_and_unknown_items():
+def test_goal_takes_a_solution():
+    m = make_map(obstacles=[item("o1", "a")])
+    assert call("canAdd", m, "goal", "obstacle")["result"] is True
+    assert call("canAdd", m, "goal", "solution")["result"] is True
+    added = call("addItem", m, "goal", "s9", "solution", "new")["result"]
+    assert added["obstacles"][-1] == sol("s9", "new")
+    assert call("mapProblem", added)["result"] is None
+    assert call("drawnRows", added)["result"][-1]["parent"] is None
+
+
+def test_plus_refuses_unknown_items():
     m = rule_map()
     for kind in ("obstacle", "solution"):
-        assert call("canAdd", m, "tray", kind)["result"] is False
         assert call("canAdd", m, "nope", kind)["result"] is False
     assert call("canAdd", m, "ob", "note")["result"] is False
 
 
-def test_add_item_builds_all_six_fields_at_the_top_and_at_depth():
+def test_add_item_builds_all_five_fields_at_the_top_and_at_depth():
     m = call("addItem", make_map(), "goal", "o5", "obstacle", "new")["result"]
-    assert m["obstacles"][-1] == {"id": "o5", "kind": "obstacle", "text": "new", "root_cause": False,
-                                  "star": False, "children": []}
+    assert m["obstacles"][-1] == {"id": "o5", "kind": "obstacle", "text": "new", "star": False, "children": []}
     m = call("addItem", rule_map(), "so", "o9", "obstacle", "new")["result"]
     assert obstacle(m, "so")["children"] == [item("o9", "new")]
-    m = call("addItem", rule_map(), "rc", "s9", "solution", "new")["result"]
-    assert obstacle(m, "rc")["children"] == [sol("s9", "new")]
+    m = call("addItem", rule_map(), "other", "s9", "solution", "new")["result"]
+    assert obstacle(m, "other")["children"] == [sol("s9", "new")]
 
 
 def test_add_item_changes_nothing_when_the_plus_rule_says_no():
     m = rule_map()
-    assert call("addItem", m, "rc", "o9", "obstacle", "new")["result"] == m
-    assert call("addItem", m, "goal", "s9", "solution", "new")["result"] == m
-    assert call("addItem", m, "tray", "o9", "obstacle", "new")["result"] == m
     assert call("addItem", m, "nope", "o9", "obstacle", "new")["result"] == m
+    assert call("addItem", m, "goal", "x9", "note", "new")["result"] == m
 
 
-def test_move_rules():
-    table = {
-        "mo": {"goal": True, "ob": True, "rc": False, "so": True},
-        "ms": {"goal": False, "ob": True, "rc": True, "so": True},
-    }
+def test_an_item_can_move_onto_the_goal_or_any_other_item():
     m = rule_map()
-    for mover, cells in table.items():
-        for target, allowed in cells.items():
-            assert call("canMove", m, mover, target)["result"] is allowed, (mover, target)
+    for mover in ("mo", "ms"):
+        for target in ("goal", "ob", "other", "so"):
+            assert call("canMove", m, mover, target)["result"] is True, (mover, target)
+    assert call("canMove", m, "mo", "ms")["result"] is True
+    assert call("canMove", m, "ms", "mo")["result"] is True
+
+
+def test_the_goal_cannot_move():
+    m = rule_map()
+    for target in ("ob", "goal", "mo"):
+        assert call("canMove", m, "goal", target)["result"] is False, target
 
 
 def test_move_refuses_self_descendant_and_current_parent():
@@ -986,18 +984,16 @@ def test_move_refuses_self_descendant_and_current_parent():
     assert call("canMove", m, "o2", "o4")["result"] is True
 
 
-def test_move_refuses_the_tray_and_unknown_items():
+def test_move_refuses_unknown_items():
     m = rule_map()
-    assert call("canMove", m, "ms", "tray")["result"] is False
-    assert call("canMove", m, "mo", "tray")["result"] is False
     assert call("canMove", m, "nope", "ob")["result"] is False
     assert call("canMove", m, "ms", "nope")["result"] is False
 
 
 def test_move_item_changes_nothing_when_refused():
     m = rule_map()
-    assert call("moveItem", m, "mo", "rc")["result"] == m
-    assert call("moveItem", m, "ms", "tray")["result"] == m
+    assert call("moveItem", m, "mo", "holder")["result"] == m
+    assert call("moveItem", m, "holder", "mo")["result"] == m
     assert call("moveItem", m, "nope", "ob")["result"] == m
 
 
@@ -1006,7 +1002,7 @@ def test_move_attaches_last():
     assert [c["id"] for c in obstacle(m, "ob")["children"]] == ["so", "mo"]
     assert [c["id"] for c in obstacle(m, "holder")["children"]] == ["ms"]
     m = call("moveItem", rule_map(), "mo", "goal")["result"]
-    assert [o["id"] for o in m["obstacles"]] == ["holder", "ob", "rc", "mo"]
+    assert [o["id"] for o in m["obstacles"]] == ["holder", "ob", "other", "mo"]
 
 
 def test_move_takes_what_sits_under_the_item_with_it():
@@ -1015,24 +1011,28 @@ def test_move_takes_what_sits_under_the_item_with_it():
     assert obstacle(m, "o3")["children"] == [item("o2", "b", [sol("s1", "fix")])]
 
 
-def test_move_out_of_unplaced_removes_it_from_the_tray():
-    m = call("moveItem", rule_map(), "tray", "rc")["result"]
-    assert m["unplaced"] == []
-    assert obstacle(m, "rc")["children"] == [sol("tray", "in the tray")]
+def test_a_solution_moves_onto_the_goal_and_back():
+    m = call("moveItem", rule_map(), "ms", "goal")["result"]
+    assert m["obstacles"][-1] == sol("ms", "moving solution")
+    assert call("mapProblem", m)["result"] is None
+    m = call("moveItem", m, "ms", "other")["result"]
+    assert obstacle(m, "other")["children"] == [sol("ms", "moving solution")]
+    assert [o["id"] for o in m["obstacles"]] == ["holder", "ob", "other"]
 
 
 def test_move_targets_list_every_allowed_target_in_reading_order():
     m = rule_map()
     assert call("moveTargets", m, "ms")["result"] == [
-        {"id": "mo", "name": "1A moving obstacle"}, {"id": "ob", "name": "2 plain"},
-        {"id": "so", "name": "a solution"}, {"id": "rc", "name": "3 root"}]
+        {"id": "goal", "name": "The goal"}, {"id": "mo", "name": "1A moving obstacle"},
+        {"id": "ob", "name": "2 plain"}, {"id": "so", "name": "a solution"},
+        {"id": "other", "name": "3 other"}]
     assert call("moveTargets", m, "mo")["result"] == [
         {"id": "goal", "name": "The goal"}, {"id": "ms", "name": "moving solution"},
-        {"id": "ob", "name": "2 plain"}, {"id": "so", "name": "a solution"}]
-    assert call("moveTargets", m, "tray")["result"] == [
+        {"id": "ob", "name": "2 plain"}, {"id": "so", "name": "a solution"},
+        {"id": "other", "name": "3 other"}]
+    assert call("moveTargets", m, "ob")["result"] == [
         {"id": "holder", "name": "1 holds the movers"}, {"id": "mo", "name": "1A moving obstacle"},
-        {"id": "ms", "name": "moving solution"}, {"id": "ob", "name": "2 plain"},
-        {"id": "so", "name": "a solution"}, {"id": "rc", "name": "3 root"}]
+        {"id": "ms", "name": "moving solution"}, {"id": "other", "name": "3 other"}]
 
 
 def plan_map():
@@ -1042,8 +1042,8 @@ def plan_map():
                 sol("s1", "one", [item("o2", "b", [sol("s2", "two", star=True)])], star=True),
                 sol("s4", "stays"),
             ]),
+            sol("s3", "on the goal"),
         ],
-        unplaced=[sol("s3", "tray")],
         key_actions=[
             {"text": "both", "risk": "high", "solution_ids": ["s1", "s2", "s4"]},
             {"text": "only two", "risk": "low", "solution_ids": ["s2"]},
@@ -1072,20 +1072,19 @@ def test_delete_of_an_obstacle_takes_the_solutions_under_it():
     assert obstacle(m, "s1")["children"] == []
 
 
-def test_delete_works_on_a_tray_item_and_clears_its_ids():
+def test_delete_works_on_a_solution_on_the_goal_and_clears_its_ids():
     m = plan_map()
     m["key_actions"][0]["solution_ids"].append("s3")
-    m["execute"].append({"solution_id": "s3", "first_move": "tray move", "owner": "", "others_decide": ""})
+    m["execute"].append({"solution_id": "s3", "first_move": "its move", "owner": "", "others_decide": ""})
     out = call("deleteItem", m, "s3")["result"]
-    assert out["unplaced"] == []
+    assert [o["id"] for o in out["obstacles"]] == ["o1"]
     assert "s3" not in out["key_actions"][0]["solution_ids"]
     assert all(e["solution_id"] != "s3" for e in out["execute"])
 
 
 def test_delete_a_top_level_item_and_an_unknown_one():
     m = call("deleteItem", plan_map(), "o1")["result"]
-    assert m["obstacles"] == []
-    assert m["unplaced"] == [sol("s3", "tray")]
+    assert m["obstacles"] == [sol("s3", "on the goal")]
     m = plan_map()
     assert call("deleteItem", m, "nope")["result"] == m
 
@@ -1112,31 +1111,6 @@ def test_delete_effects_of_an_item_with_nothing_to_lose():
     assert call("deleteEffects", m, "nope")["result"] == nothing
 
 
-def test_root_cause_rule_looks_only_at_direct_children():
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix", [item("o2", "b")])], root=True)])
-    assert call("mapProblem", m)["result"] is None
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix", [item("o2", "b")])])])
-    assert obstacle(call("setRootCause", m, "o1", True)["result"], "o1")["root_cause"] is True
-
-
-def test_root_cause_refused_with_an_obstacle_directly_under_or_on_a_solution():
-    m = labeled_tree()
-    assert obstacle(call("setRootCause", m, "o4", True)["result"], "o4")["root_cause"] is False
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix")])], unplaced=[sol("s3", "tray")])
-    assert call("setRootCause", m, "s1", True)["result"] == m
-    assert call("setRootCause", m, "s3", True)["result"] == m
-    assert call("setRootCause", m, "nope", True)["result"] == m
-
-
-def test_unmarking_a_root_cause_lets_it_take_an_obstacle_again():
-    m = call("setRootCause", labeled_tree(), "o5", True)["result"]
-    assert call("canAdd", m, "o5", "obstacle")["result"] is False
-    m = call("setRootCause", m, "o5", False)["result"]
-    assert obstacle(m, "o5")["root_cause"] is False
-    m = call("addItem", m, "o5", "o8", "obstacle", "new")["result"]
-    assert [c["id"] for c in obstacle(m, "o5")["children"]] == ["o8"]
-
-
 def test_star_changes_only_that_solution():
     m = make_map()
     out = call("setStar", m, "s1", True)["result"]
@@ -1146,20 +1120,26 @@ def test_star_changes_only_that_solution():
     assert obstacle(out, "s2")["star"] is False
 
 
-def test_star_refused_in_tray_and_on_obstacles():
+def test_star_works_on_every_solution():
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "b", [sol("s2", "c")])]), sol("s3", "on the goal")])
+    for sid in ("s1", "s2", "s3"):
+        assert call("canPick", m, sid)["result"] is True, sid
+        assert obstacle(call("setStar", m, sid, True)["result"], sid)["star"] is True, sid
+
+
+def test_star_refused_on_obstacles():
     m = make_map()
-    assert call("setStar", m, "s3", True)["result"] == m
     assert call("setStar", m, "o1", True)["result"] == m
     assert call("setStar", m, "nope", True)["result"] == m
 
 
-def test_next_id_is_unique_across_the_tree_and_unplaced():
-    m = make_map(obstacles=[item("o3", "a", [sol("s2", "fix")])], unplaced=[sol("s7", "tray")])
+def test_next_id_is_unique_across_the_tree():
+    m = make_map(obstacles=[item("o3", "a", [sol("s2", "fix")]), sol("s7", "on the goal")])
     assert call("nextId", m, "s")["result"] == "s8"
     assert call("nextId", m, "o")["result"] == "o4"
 
 
-def test_set_item_text_at_any_depth_and_in_the_tray():
+def test_set_item_text_at_any_depth_and_on_the_goal():
     m = call("setItemText", make_map(), "o1", "A")["result"]
     assert obstacle(m, "o1")["text"] == "A"
     m = call("setItemText", make_map(), "o4", "W")["result"]
@@ -1168,7 +1148,7 @@ def test_set_item_text_at_any_depth_and_in_the_tray():
     m = call("setItemText", make_map(), "s1", "changed")["result"]
     assert obstacle(m, "s1")["text"] == "changed"
     m = call("setItemText", make_map(), "s3", "changed")["result"]
-    assert m["unplaced"][0]["text"] == "changed"
+    assert obstacle(m, "s3")["text"] == "changed"
 
 
 def test_item_exists_for_each_kind():
@@ -1190,14 +1170,33 @@ def test_item_exists_is_false_after_a_blank_new_item_is_removed():
 
 def test_panel_rows_name_a_solution_by_the_obstacle_it_sits_under():
     m = make_map(
-        obstacles=[item("o1", "a", [item("o2", "b", [sol("s1", "one")]), sol("s2", "two")])],
-        unplaced=[sol("s3", "three")],
+        obstacles=[item("o1", "a", [item("o2", "b", [sol("s1", "one")]), sol("s2", "two")]), sol("s3", "three")],
         key_actions=[{"text": "k", "risk": "low", "solution_ids": ["s1", "s3"]}],
         execute=[{"solution_id": "s2", "first_move": "m", "owner": "o", "others_decide": "d"}],
     )
     rows = call("panelRows", m)["result"]
     assert rows["key_actions"] == [{"text": "k", "risk": "low", "solutions": ["one (1A)", "three"]}]
     assert rows["execute"] == [{"solution": "two (1)", "first_move": "m", "owner": "o", "others_decide": "d"}]
+
+
+def test_panel_rows_name_a_nested_solution_by_the_nearest_obstacle():
+    m = make_map(
+        obstacles=[
+            item("o1", "a", [sol("s1", "one", [sol("s2", "two")])]),
+            sol("s3", "three", [sol("s4", "four")]),
+        ],
+        key_actions=[{"text": "k", "risk": "low", "solution_ids": ["s2", "s3", "s4"]}],
+    )
+    rows = call("panelRows", m)["result"]
+    assert rows["key_actions"][0]["solutions"] == ["two (1)", "three", "four"]
+
+
+def test_panel_rows_handle_ids_like_built_in_names():
+    m = make_map(
+        obstacles=[item("constructor", "a", [sol("__proto__", "one", [sol("toString", "two")])])],
+        key_actions=[{"text": "k", "risk": "low", "solution_ids": ["__proto__", "toString"]}],
+    )
+    assert call("panelRows", m)["result"]["key_actions"][0]["solutions"] == ["one (1)", "two (1)"]
 
 
 # The check. Each case the spec lists, with a plain sentence naming the item.
@@ -1211,32 +1210,42 @@ def test_check_refuses_a_repeated_id_in_the_tree():
     assert "both use the id s1" in call("mapProblem", m)["result"]
 
 
-def test_check_refuses_an_id_repeated_between_the_tree_and_unplaced():
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "fix")])], unplaced=[sol("s1", "tray")])
-    assert "both use the id s1" in call("mapProblem", m)["result"]
+def test_check_refuses_root_cause_and_unplaced_fields():
+    m = make_map()
+    m["unplaced"] = []
+    assert call("mapProblem", m)["result"] == "The map uses the old map shape."
+    m = make_map()
+    obstacle(m, "o4")["root_cause"] = False
+    assert call("mapProblem", m)["result"] == "Obstacle 1A1 uses the old map shape."
+    m = make_map()
+    obstacle(m, "s1")["root_cause"] = True
+    assert call("mapProblem", m)["result"] == 'Solution "one" uses the old map shape.'
+
+
+def test_check_accepts_a_solution_directly_under_the_goal():
+    m = make_map(obstacles=[sol("s1", "the fix", [item("o1", "in the way")])])
+    assert call("mapProblem", m)["result"] is None
 
 
 def test_check_refuses_each_missing_field():
     names = {"id": "its id", "kind": "its kind", "text": "its text", "children": "its list of what sits under it"}
     for field, words in names.items():
-        m = make_map(obstacles=[item("o1", "a"), item("o2", "b")], unplaced=[])
+        m = make_map(obstacles=[item("o1", "a"), item("o2", "b")])
         del m["obstacles"][1][field]
         assert call("mapProblem", m)["result"] == "Obstacle 2 is missing " + words + ".", field
-    for field, words in (("root_cause", "root cause"), ("star", "star")):
-        m = make_map(obstacles=[item("o1", "a")], unplaced=[])
-        del m["obstacles"][0][field]
-        out = call("mapProblem", m)["result"]
-        assert out == "Obstacle 1 needs true or false for its " + words + ".", field
+    m = make_map(obstacles=[item("o1", "a")])
+    del m["obstacles"][0]["star"]
+    assert call("mapProblem", m)["result"] == "Obstacle 1 needs true or false for its star."
 
 
-def test_check_refuses_a_missing_field_on_a_tray_item():
-    m = make_map(obstacles=[], unplaced=[sol("s1", "tray")])
-    del m["unplaced"][0]["star"]
-    assert call("mapProblem", m)["result"] == 'Solution "tray" needs true or false for its star.'
+def test_check_refuses_a_missing_field_on_a_solution_on_the_goal():
+    m = make_map(obstacles=[sol("s1", "top")])
+    del m["obstacles"][0]["star"]
+    assert call("mapProblem", m)["result"] == 'Solution "top" needs true or false for its star.'
 
 
 def test_check_refuses_any_other_kind():
-    m = make_map(obstacles=[item("o1", "a", kind="note")], unplaced=[])
+    m = make_map(obstacles=[item("o1", "a", kind="note")])
     assert call("mapProblem", m)["result"] == "Obstacle 1 needs a kind of obstacle or solution."
 
 
@@ -1246,25 +1255,13 @@ def test_check_refuses_the_old_solutions_list():
 
 
 def test_check_refuses_an_item_with_old_solution_ids():
-    m = make_map(obstacles=[item("o1", "a")], unplaced=[])
+    m = make_map(obstacles=[item("o1", "a")])
     m["obstacles"][0]["solution_ids"] = []
     assert call("mapProblem", m)["result"] == "Obstacle 1 uses the old map shape."
 
 
-def test_check_refuses_a_root_cause_with_an_obstacle_under_it():
-    m = labeled_tree()
-    obstacle(m, "o4")["root_cause"] = True
-    assert call("mapProblem", m)["result"] == "Obstacle 1B is a root cause, so it can't have an obstacle directly under it."
-
-
-def test_check_refuses_a_non_obstacle_marked_as_a_root_cause():
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "the fix")])], unplaced=[])
-    obstacle(m, "s1")["root_cause"] = True
-    assert call("mapProblem", m)["result"] == 'Solution "the fix" is marked as a root cause, but only an obstacle can be one.'
-
-
 def test_check_accepts_a_solution_directly_under_a_solution():
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "the fix", [sol("s2", "other")])])], unplaced=[])
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "the fix", [sol("s2", "other")])])])
     assert call("mapProblem", m)["result"] is None
 
 
@@ -1274,7 +1271,7 @@ def test_add_item_puts_a_solution_under_a_solution():
 
 
 def test_move_puts_a_solution_under_a_solution_but_not_under_itself_or_its_parent():
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "x", [sol("s2", "y")]), sol("s3", "z")])], unplaced=[])
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "x", [sol("s2", "y")]), sol("s3", "z")])])
     assert call("canMove", m, "s3", "s1")["result"] is True
     assert call("canMove", m, "s1", "s1")["result"] is False
     assert call("canMove", m, "s1", "s2")["result"] is False
@@ -1285,24 +1282,14 @@ def test_move_puts_a_solution_under_a_solution_but_not_under_itself_or_its_paren
 
 def test_an_obstacle_under_a_nested_solution_continues_the_numbering():
     m = make_map(obstacles=[item("o1", "a", [item("o2", "b", [
-        sol("s1", "x", [sol("s2", "y", [item("o3", "c")])]), item("o4", "d")])])], unplaced=[])
+        sol("s1", "x", [sol("s2", "y", [item("o3", "c")])]), item("o4", "d")])])])
     labels = call("itemLabels", m)["result"]
     assert labels["o2"] == "1A" and labels["o3"] == "1A1" and labels["o4"] == "1A2"
 
 
-def test_check_refuses_an_unplaced_item_with_children():
-    m = make_map(obstacles=[], unplaced=[sol("s1", "tray", [item("o1", "a")])])
-    assert call("mapProblem", m)["result"] == 'Solution "tray" is in the tray, so it can\'t have anything under it.'
-
-
 def test_check_refuses_a_non_solution_with_a_star():
-    m = make_map(obstacles=[item("o1", "a", star=True)], unplaced=[])
+    m = make_map(obstacles=[item("o1", "a", star=True)])
     assert call("mapProblem", m)["result"] == "Obstacle 1 has a star, but only a solution can be a pick."
-
-
-def test_check_refuses_an_unplaced_item_with_a_star():
-    m = make_map(obstacles=[], unplaced=[sol("s1", "tray", star=True)])
-    assert call("mapProblem", m)["result"] == 'Solution "tray" is in the tray, so it can\'t be a pick.'
 
 
 def test_check_refuses_a_plan_row_naming_a_missing_solution():
@@ -1317,44 +1304,32 @@ def test_check_refuses_a_plan_row_naming_an_obstacle():
     assert call("mapProblem", m)["result"] == "Execute row 1 names a solution that isn't on the map (o1)."
 
 
-def test_check_lets_a_plan_row_name_a_tray_solution():
+def test_check_lets_a_plan_row_name_a_solution_on_the_goal():
     m = make_map(execute=[{"solution_id": "s3", "first_move": "x", "owner": "", "others_decide": ""}])
     assert call("mapProblem", m)["result"] is None
 
 
 def test_check_names_a_solution_with_no_text_and_no_id_plainly():
-    m = make_map(obstacles=[item("o1", "a", [sol("", "")])], unplaced=[])
+    m = make_map(obstacles=[item("o1", "a", [sol("", "")])])
     assert call("mapProblem", m)["result"] == "A solution is missing its id."
     del m["obstacles"][0]["children"][0]["id"]
     assert call("mapProblem", m)["result"] == "A solution is missing its id."
-    m = make_map(obstacles=[], unplaced=[sol("", "")])
-    del m["unplaced"][0]["id"]
-    assert call("mapProblem", m)["result"] == "Tray item 1 is missing its id."
 
 
 def test_check_names_a_solution_with_no_text_by_its_id():
-    m = make_map(obstacles=[item("o1", "a", [sol("s1", "")])], unplaced=[])
-    obstacle(m, "s1")["root_cause"] = True
-    assert call("mapProblem", m)["result"] == "Solution s1 is marked as a root cause, but only an obstacle can be one."
-
-
-def test_check_refuses_a_solution_at_the_top_level_and_an_obstacle_in_the_tray():
-    m = make_map(obstacles=[sol("s1", "the fix")], unplaced=[])
-    assert call("mapProblem", m)["result"] == 'Solution "the fix" sits at the top level, but only an obstacle can.'
-    m = make_map(obstacles=[], unplaced=[item("o1", "a")])
-    assert call("mapProblem", m)["result"] == "Tray item 1 is an obstacle, but only a solution can be in the tray."
+    m = make_map(obstacles=[item("o1", "a", [sol("s1", "")])])
+    obstacle(m, "s1")["star"] = "yes"
+    assert call("mapProblem", m)["result"] == "Solution s1 needs true or false for its star."
 
 
 def test_map_problem_refuses_each_missing_list():
-    for field, label in (("obstacles", "obstacles"), ("unplaced", "unplaced solutions"),
-                         ("key_actions", "key actions"), ("execute", "execute rows")):
+    for field, label in (("obstacles", "obstacles"), ("key_actions", "key actions"), ("execute", "execute rows")):
         m = make_map()
         del m[field]
         assert call("mapProblem", m)["result"] == "The map is missing its list of " + label + ".", field
 
 
 def test_map_problem_refuses_a_row_of_the_wrong_kind():
-    assert call("mapProblem", make_map(unplaced=[None]))["result"] == "Tray item 1 is missing."
     assert call("mapProblem", make_map(execute=[None]))["result"] == "Execute row 1 is missing."
 
 
@@ -1369,9 +1344,8 @@ def test_shape_check_rejects_a_bad_child_at_depth():
     obstacle(m, "o5")["text"] = 3
     assert call("mapProblem", m)["result"] == "Obstacle 1B1 is missing its text."
     m = labeled_tree()
-    obstacle(m, "o5")["root_cause"] = "because"
-    assert "Obstacle 1B1 " in call("mapProblem", m)["result"]
-    assert "root cause" in call("mapProblem", m)["result"]
+    obstacle(m, "o5")["star"] = "because"
+    assert call("mapProblem", m)["result"] == "Obstacle 1B1 needs true or false for its star."
     m = labeled_tree()
     obstacle(m, "o5")["id"] = ""
     assert call("mapProblem", m)["result"] == "Obstacle 1B1 is missing its id."
@@ -1398,12 +1372,12 @@ def test_layout_stays_apart_when_one_box_is_very_tall():
     assert overlaps(wide_rects(wide(m, heights))) == []
 
 
-def test_layout_draws_every_item_once_and_leaves_the_tray_out():
+def test_layout_draws_every_item_once():
     m = mixed_tree()
     rows = call("drawnRows", m)["result"]
     keys = sorted(b["key"] for b in wide(m)["boxes"])
     assert keys == sorted(r["key"] for r in rows)
-    assert "tray1" not in keys
+    assert "top1" in keys
 
 
 def test_layout_keeps_a_line_per_item_with_its_kind():

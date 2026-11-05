@@ -38,7 +38,7 @@ def test_template_has_data_and_logic_blocks():
 def test_template_data_is_an_empty_starter_map():
     data = json.loads(SLOT.search(template()).group(2))
     assert data["obstacles"] == []
-    assert data["unplaced"] == []
+    assert "unplaced" not in data
     assert "solutions" not in data
     assert data["revision"] == 1
 
@@ -128,7 +128,23 @@ def test_save_messages_appear_under_the_top_right_controls():
 
 
 def test_a_map_that_cant_be_drawn_hides_the_save_messages():
-    assert "'header, #notices, #workspace, #tray'" in template()
+    assert "'header, #notices, #workspace'" in template()
+
+
+def test_page_has_no_root_cause_tray_or_add_obstacle_button():
+    for page in (template(), EXAMPLE.read_text()):
+        # The check names the two old fields, to refuse a map that still has them.
+        html = page.replace("'root_cause' in item", "").replace("'unplaced' in map", "")
+        for gone in ("root_cause", "root-toggle", "setRootCause", "canBeRootCause", ".item.root", "Root cause",
+                     "root cause", "unplaced", "#tray", 'id="tray"', "el.tray", "drawTray", "add-obstacle",
+                     "Add an obstacle<", "hasChildOfKind"):
+            assert gone not in html, gone
+
+
+def test_empty_map_hint_points_at_the_goal():
+    html = template()
+    header = html[html.index("<header>"):html.index("</header>")]
+    assert re.search(r'id="first-hint"[^>]*>Click the goal, then press a \+ to add the first obstacle or solution\.', header)
 
 
 def test_toolbar_offers_a_star_button_with_no_words():
@@ -560,8 +576,7 @@ def test_every_solution_placed_by_end():
     assert re.search(r"every solution", solutions, re.I)
     assert "placed" in solutions
     assert "missed" in solutions
-    assert "already placed" in section("### 4b: Pick the solutions")
-    assert "`unplaced`" in section("## Step 5: Execute")
+    assert "directly under the goal" in section("## Step 5: Execute")
 
 
 def test_placing_takes_one_solution_per_turn_and_waits_before_4b():
@@ -606,13 +621,6 @@ def test_unknown_from_is_a_first_execute_item_with_no_star():
     assert "first Execute item" in execute
     assert "no star" in execute
     assert "starred solution for it" not in execute
-
-
-def test_free_form_solutions_go_in_a_holding_list():
-    rules = section("## Solutions that come early")
-    assert "holding list" in rules
-    assert "one line" in rules
-    assert "holding list" in section("### 4a: Solutions")
 
 
 def test_skips_map_files():
@@ -763,7 +771,7 @@ def test_pick_up_covers_every_check():
     pick_up = section("## Picking up edits")
     assert "baseline" in pick_up
     assert "(1)" in pick_up
-    assert "`unplaced`" in pick_up
+    assert "directly under the goal" in pick_up
     assert re.search(r"star.*Step 5", pick_up)
     assert "key-action table" in pick_up
     assert "Rewrite the file only when" not in pick_up
@@ -800,7 +808,7 @@ def test_new_conversation_asks_which_step_when_the_map_cant_prove_it():
     assert "no stars means 4b" not in pick_up
     assert "say what the map shows and ask which step to resume" in pick_up
     assert "doesn't record picks" in pick_up
-    assert "Solutions only in the tray never count as 4a done" in pick_up
+    assert "Solutions only directly under the goal never count as 4a done" in pick_up
 
 
 def test_no_change_reply_exists():
@@ -908,7 +916,7 @@ def test_anti_examples_drop_challenge_solo():
     assert "Challenge solo" not in anti
     assert "Not pushing for group wisdom" not in anti
     assert "### Sharing your list before the person writes" in anti
-    assert "### Leaving a solution in the tray" in anti
+    assert "### Leaving a solution on the goal without asking" in anti
     assert "### Pushing back on someone who chose to continue" in anti
 
 
@@ -977,12 +985,6 @@ def test_the_plus_buttons_come_from_the_plus_rules():
     assert "'Add a solution under '" in body
 
 
-def test_the_toolbar_offers_the_root_cause_mark_from_the_one_rule():
-    body = whole_function("showControls")
-    assert "Mark as root cause" in body
-    assert "L.canBeRootCause(map, item.id)" in body
-
-
 def test_the_delete_control_is_a_trash_icon_with_no_words():
     html = template()
     tools = html[html.index('id="item-tools"'):html.index('<script id="map-logic">')]
@@ -1004,7 +1006,7 @@ def test_page_has_no_form_editor_left():
 def test_the_controls_sit_outside_the_canvas():
     html = template()
     body = html[html.index("<body>"):html.index('<script id="map-logic">')]
-    workspace = body[body.index('id="workspace"'):body.index('id="tray"')]
+    workspace = body[body.index('id="workspace"'):body.index('id="typing"')]
     for part in ('id="typing"', 'id="plus-obstacle"', 'id="plus-solution"', 'id="item-tools"'):
         assert part in body, part
         assert part not in workspace, part
@@ -1040,8 +1042,6 @@ def test_example_map_shows_real_branching():
     assert "attendance" in data["goal"]["text"].lower()
     for label in ("1A", "1B", "1B1"):
         assert label in labels, label
-    assert any(it["root_cause"] for it in labels.values())
-    assert sum(it["root_cause"] for it in labels["1"]["children"] + labels["1B"]["children"]) >= 2
     assert data["baseline"]["obstacles"] == data["obstacles"]
 
 
@@ -1049,16 +1049,17 @@ def test_example_map_shows_the_new_format():
     data, _ = example_items()
     assert "solutions" not in data
     items = list(every_item(data["obstacles"]))
-    for it in items + data["unplaced"]:
-        assert sorted(it) == ["children", "id", "kind", "root_cause", "star", "text"]
+    assert "unplaced" not in data
+    for it in items:
+        assert sorted(it) == ["children", "id", "kind", "star", "text"]
     solutions = [it for it in items if it["kind"] == "solution"]
     assert any(c["kind"] == "obstacle" for it in solutions for c in it["children"]), "an obstacle under a solution"
-    assert any(c["kind"] == "solution" for it in items if it["root_cause"] for c in it["children"]), "a solution under a root cause"
+    assert any(c["kind"] == "solution" for it in solutions for c in it["children"]), "a solution under a solution"
+    assert any(it["text"] == "Run a monthly pulse survey" for it in items), "the pulse survey is on the map"
     assert any(it["star"] for it in solutions), "a pick"
-    assert [it["kind"] for it in data["unplaced"]] and all(it["kind"] == "solution" for it in data["unplaced"])
-    texts = [it["text"] for it in items + data["unplaced"]]
+    texts = [it["text"] for it in items]
     assert len(texts) == len(set(texts)), "no repeated items"
-    ids = {it["id"] for it in solutions + data["unplaced"]}
+    ids = {it["id"] for it in solutions}
     assert all(row["solution_id"] in ids for row in data["execute"])
     assert all(i in ids for action in data["key_actions"] for i in action["solution_ids"])
     assert data["execute"], "plan rows"
@@ -1072,19 +1073,19 @@ def prompt_json():
 
 def test_prompt_json_is_the_one_tree():
     block, data = prompt_json()
-    assert '"root_cause": false' in block
+    assert "root_cause" not in block
+    assert "unplaced" not in data
     assert '"children": [' in block
     top = data["obstacles"][0]
-    fields = ["children", "id", "kind", "root_cause", "star", "text"]
+    fields = ["children", "id", "kind", "star", "text"]
     assert sorted(top) == fields
     assert top["kind"] == "obstacle"
-    root = top["children"][0]
-    assert sorted(root) == fields
-    assert root["root_cause"] is True
-    assert root["children"][0]["kind"] == "solution"
-    assert root["children"][0]["children"][0]["kind"] == "obstacle"
-    assert sorted(data["unplaced"][0]) == fields
-    assert data["unplaced"][0]["kind"] == "solution"
+    kid = top["children"][0]
+    assert sorted(kid) == fields
+    assert kid["children"][0]["kind"] == "solution"
+    assert kid["children"][0]["children"][0]["kind"] == "obstacle"
+    assert data["obstacles"][1]["kind"] == "solution", "a solution directly under the goal"
+    assert sorted(data["obstacles"][1]) == fields
 
 
 def test_prompt_no_longer_names_solution_ids_or_a_solutions_list():
@@ -1113,12 +1114,47 @@ def test_prompt_explains_numbers_under_solutions():
             "an answer to why on 1B or an obstacle in the way of a solution on 1B. The map shows which.") in rules
 
 
-def test_prompt_states_the_root_cause_rule_and_the_tray():
+def test_prompt_lets_any_item_hold_either_kind():
     rules = section("## The map file")
-    assert "no obstacle directly under" in rules
-    assert "A solution under a root cause can still have obstacles of its own" in rules
-    assert "`unplaced`" in rules
-    assert "no children" in rules
+    assert "Any item can hold obstacles and solutions, at any depth, and so can the goal" in rules
+    assert "same five fields" in rules
+    assert "Only obstacles sit at the top level" not in rules
+    assert "A solution can hold only obstacles" not in rules
+
+
+def test_prompt_never_marks_a_root_cause():
+    for page in (prompt(), EXAMPLES.read_text(), ANTI_EXAMPLES.read_text()):
+        assert "root_cause" not in page
+        assert "unplaced" not in page
+    step = section("### 3c: Root cause")
+    assert "Don't mark anything as a root cause" in step
+    assert "The person decides when to stop" in step
+    assert "becomes a child of the item" in step
+    assert "**WAIT at each why.**" in step
+    assert "### 3c: Root cause" in prompt()
+    assert "## Step 3: Root-cause the problems" in prompt()
+    assert "stopped being a root cause" not in prompt()
+    assert "Is that it?" not in EXAMPLES.read_text()
+
+
+def test_prompt_puts_early_solutions_under_the_goal():
+    rules = section("## Solutions that come early")
+    assert "directly under the goal" in rules
+    assert "one line" in rules
+    assert "the obstacle it gets past" in rules
+    solutions = section("### 4a: Solutions")
+    assert "directly under the goal" in solutions
+    assert "one per turn" in solutions
+    for page in (prompt(), EXAMPLES.read_text(), ANTI_EXAMPLES.read_text()):
+        assert "holding list" not in page
+        assert not re.search(r"\btray\b", page)
+
+
+def test_solutions_go_under_the_deepest_obstacle_they_get_past():
+    assert "the deepest obstacle it gets past" in section("### 4a: Solutions")
+    assert "usually a root cause" not in prompt()
+    assert "usually a root cause" not in EXAMPLES.read_text()
+    assert "the deepest obstacle it gets past" in EXAMPLES.read_text()
 
 
 def test_pick_up_covers_moved_obstacles():
@@ -1148,7 +1184,8 @@ def test_read_back_checks_the_tree_at_every_depth():
     read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
     assert "`children`" in read_back
     assert "`kind`" in read_back
-    assert "`root_cause`" in read_back
+    assert "`root_cause`" not in read_back
+    assert "no other fields" in read_back
     assert "every depth" in read_back
     assert "`id`" in read_back
     assert "`text`" in read_back
@@ -1164,7 +1201,6 @@ def test_prompt_explains_labels_and_says_never_to_store_them():
 
 def test_prompt_says_what_delete_does():
     rules = section("## The map file")
-    assert "tray" in rules
     assert "everything under it" in rules
     assert "Execute row" in rules
 
@@ -1175,18 +1211,15 @@ def test_root_cause_step_builds_children_and_splits_two_reasons():
     assert "two different reasons" in step
     assert "its own child" in step
     assert "one question per turn" in step
-    assert "Stop when the person can act on the answer" in step
-    assert "The person can stop it sooner" in step
-    assert "**WAIT at each why and at each root cause.**" in step
+    assert "When the person can act on the answer" in step
     assert "**Write the map.**" in step
-    assert "`root_cause` to true" in step
     assert '"1B"' in step or "1B" in step
 
 
 def test_placing_goes_under_the_item_it_gets_past():
     solutions = section("### 4a: Solutions")
-    line = next(line for line in solutions.splitlines() if "usually a root cause" in line)
-    assert "the item it gets past" in line
+    line = next(line for line in solutions.splitlines() if "the deepest obstacle it gets past" in line)
+    assert "If the person names a different item, put it there" in line
     assert "every solution gets placed" in solutions
     assert "one per turn" in solutions
 
@@ -1208,15 +1241,14 @@ def test_examples_show_branches_labels_and_a_moved_solution():
 def test_anti_examples_cover_two_reasons_in_one_item():
     anti = ANTI_EXAMPLES.read_text()
     assert "### Putting two reasons in one item" in anti
-    assert "### Adding under a root cause" in anti
+    assert "### Adding under a root cause" not in anti
 
 
 def test_pick_up_uses_current_labels_and_names_deleted_items_by_text():
     pick_up = section("## Picking up edits")
     assert "Use labels from the file as it is now" in pick_up
     assert "Name a deleted item by its text and say how many sub-items went with it" in pick_up
-    assert "stopped being a root cause" in pick_up
-    assert "3c may need another look" in pick_up
+    assert "3c may need another look" not in pick_up
 
 
 def test_stale_copy_comparison_matches_by_id_and_reissues_clashing_ids():
@@ -1250,13 +1282,7 @@ def test_template_defines_each_logic_function_once():
 
 def test_examples_no_longer_say_a_root_cause_ends_its_branch():
     assert "ends its branch" not in EXAMPLES.read_text()
-    assert "ends that line of asking why" in EXAMPLES.read_text()
-
-
-def test_root_cause_is_set_only_after_the_person_confirms():
-    step = section("### 3c: Root cause")
-    assert "set its `root_cause` to true only after they confirm" in step
-    assert "If they say no, leave it false and keep asking why." in step
+    assert "ends that line of asking why" not in EXAMPLES.read_text()
 
 
 def test_mid_run_edits_point_to_the_pick_up_checks():
@@ -1271,7 +1297,7 @@ def test_step_five_row_is_written_with_the_person():
 
 
 def test_lines_carry_their_kind():
-    page = page_function("drawMap", "drawTray")
+    page = page_function("drawMap", "heading")
     assert "<path class=\"' + line.kind" in page
     css = template()
     assert "#lines path.obstacle" in css
@@ -1286,20 +1312,9 @@ def test_template_defines_line_colors_for_the_one_theme():
     assert re.search(r"#lines path\.solution\s*\{[^}]*var\(--solution-line\)", html)
 
 
-def test_only_a_root_cause_is_bold():
-    html = template()
-    item = re.search(r"\n\.item \{([^}]*)\}", html)
-    assert item and "font-weight" not in item.group(1)
-    root = re.search(r"\.item\.root\s*\{([^}]*)\}", html)
-    assert root and "font-weight: 700" in root.group(1)
-    kinds = re.findall(r"\.item\.(?:obstacle|sub|solution)\s*\{[^}]*font-weight", html)
-    assert not kinds
-    assert "var cls = row.item.root_cause ? 'root' : '';" in html
-
-
 def test_prompt_lets_a_solution_sit_under_a_solution_and_explains_the_star():
     text = prompt()
     assert "a solution has no solution directly under it" not in text
-    assert "A solution can sit directly under a solution." in text
-    assert "click the star in the toolbar on any placed solution to add or remove a pick" in text
+    assert "Any item can hold obstacles and solutions" in text
+    assert "click the star in the toolbar on any solution to add or remove a pick" in text
     assert "a star marks one of their picks" in text

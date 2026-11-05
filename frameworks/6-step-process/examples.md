@@ -80,7 +80,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "We should run a monthly pulse survey."
 
-**Advisor:** "That's in the holding list, and we'll get to it in Step 4. Back to your list: say "done" when you have it."
+**Advisor:** "That goes on the map directly under the goal for now, and we'll get to it in Step 4. Back to your list: say "done" when you have it."
 
 > One line, then back to the current step.
 
@@ -92,9 +92,9 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "The value of being in the office hasn't kept up. We haven't defined what the office is for."
 
-**Advisor:** "**We haven't defined what the office is for.** You can do something about that one. Is that it?"
+**Advisor:** "**We haven't defined what the office is for.** You can do something about that one. Do you want to stop there?"
 
-> Two rounds, and the person can act on the answer. Each answer is a child of the item before it, and the last one goes in bold and ends that line of asking why.
+> Two rounds, and the person can act on the answer. Each answer is a child of the item before it, and the last one goes in bold. Claude marks nothing, and the person decides when to stop.
 
 ### 3c: Two reasons become two branches
 
@@ -110,7 +110,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 ### 4a: Placing a solution with no obstacle
 
-**User:** "And the monthly pulse survey from the holding list."
+**User:** "And the monthly pulse survey that's under the goal."
 
 **Advisor:** "Which obstacle does the pulse survey get past?"
 
@@ -130,7 +130,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **Advisor:** "It's on 1B. Next: which obstacle does set clear expectations with managers get past?"
 
-> The person named an item, so Claude adds the solution to that item's `children`. The page draws it one column out from 1B. Without a named item, Claude places a solution under what it gets past, usually a root cause.
+> The person named an item, so Claude adds the solution to that item's `children`. The page draws it one column out from 1B. Without a named item, Claude places a solution under the deepest obstacle it gets past.
 
 ### 4a: A solution that serves two obstacles
 
@@ -152,7 +152,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "Done."
 
-**Advisor:** "The documents and the goal suggest starring two: define the purpose of in-office time and communicate it, because the root cause sits there, and create in-person-only experiences, because meetings are still remote. Where do your picks differ?"
+**Advisor:** "The documents and the goal suggest starring two: define the purpose of in-office time and communicate it, because the deepest obstacle sits there, and create in-person-only experiences, because meetings are still remote. Where do your picks differ?"
 
 **User:** "They don't. I picked the same two."
 
@@ -205,7 +205,7 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "You moved the value of the office not keeping up from 1 to 5, along with the two root causes and the solutions under it. It's 5B now. Which step do you want to resume?"
+**Advisor:** "You moved the value of the office not keeping up from 1 to 5, along with the two sub-obstacles and the solutions under it. It's 5B now. Which step do you want to resume?"
 
 > A moved obstacle gets reported with what's under it.
 
@@ -213,7 +213,7 @@ Which ratings are wrong?"
 
 **User:** "I want to keep going on `office-attendance-maya-map.html`."
 
-**Advisor:** "The map shows six obstacles, two with root causes, one solution in the tray, and no stars. The tray doesn't tell me you wrote your solutions list, so I'd resume at 4a. Which step do you want to resume?"
+**Advisor:** "The map shows six obstacles, two with answers to why under them, one solution directly under the goal, and no stars. That doesn't tell me you wrote your solutions list, so I'd resume at 4a. Which step do you want to resume?"
 
 > They stopped early and came back, so the file having no edits is expected. Claude doesn't mention a lost save. The map can't prove 4a ran, so Claude says what it shows and asks.
 
@@ -229,7 +229,7 @@ Which ratings are wrong?"
 
 **User:** "I looked, and I can't find anything. Maybe I never saved."
 
-**Advisor:** "The file still shows no edits, so I'll go from what it holds. The map shows six obstacles, two with root causes, one solution in the tray, and no stars. I'd resume at 4a. Which step do you want to resume?"
+**Advisor:** "The file still shows no edits, so I'll go from what it holds. The map shows six obstacles, two with answers to why under them, one solution directly under the goal, and no stars. I'd resume at 4a. Which step do you want to resume?"
 
 > Claude asks where to look once. After that, it resumes from the file.
 

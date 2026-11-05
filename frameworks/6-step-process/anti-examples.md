@@ -30,15 +30,15 @@
 
 > Say you heard it, and still show your own.
 
-### Leaving a solution in the tray
+### Leaving a solution on the goal without asking
 
 **User:** "Let's also run a monthly pulse survey. I don't know which obstacle it goes with."
 
-**Wrong:** "Fine, I'll leave it in the tray and we can move on to picking."
+**Wrong:** "Fine, I'll leave it under the goal and we can move on to picking."
 
 **Right:** "Which obstacle does it get past? One on the map is that some people feel less productive in the office, and the survey would show how many. If none fits, we may have missed an obstacle."
 
-> Solutions can come in any order, but every one is placed by the end of 4a.
+> Solutions can come in any order, but each one gets its nudge by the end of 4a.
 
 ### Writing the same solution on two obstacles
 
@@ -94,17 +94,7 @@
 
 **Right:** "That's two branches: 1A, the commute got longer, and 1B, the value of the office hasn't kept up. Take 1B first. Why hasn't it kept up?"
 
-> Each reason gets its own child, so each can reach its own root cause.
-
-### Adding under a root cause
-
-**User:** "We haven't defined what the office is for."
-
-**Wrong:** Marking 1B1 as a root cause, then adding another answer under it as 1B1A.
-
-**Right:** "**We haven't defined what the office is for.** You can do something about that one. Is that it?" If they say no, unmark it and keep asking why.
-
-> A root cause can't have an obstacle directly under it, and the page won't draw a file that has one. A solution can sit under a root cause, and that solution can have obstacles of its own.
+> Each reason gets its own child, so you can ask why on each one.
 
 ### Rewriting the map without reading it first
 
