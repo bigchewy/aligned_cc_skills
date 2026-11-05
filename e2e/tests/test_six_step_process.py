@@ -1252,3 +1252,11 @@ def test_template_defines_line_colors_for_both_themes():
     assert "--obstacle-line: #ef7d57;" in dark and "--solution-line: #7fce62;" in dark
     assert re.search(r"#lines path\.obstacle\s*\{[^}]*var\(--obstacle-line\)", html)
     assert re.search(r"#lines path\.solution\s*\{[^}]*var\(--solution-line\)", html)
+
+
+def test_only_a_root_cause_is_bold():
+    html = template()
+    obstacle = re.findall(r"\.item\.obstacle\s*\{([^}]*)\}", html)
+    assert not any("font-weight" in rule for rule in obstacle)
+    root = re.search(r"\.item\.root\s*\{([^}]*)\}", html)
+    assert root and "font-weight: 700" in root.group(1)
