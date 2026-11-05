@@ -46,7 +46,7 @@
 - `moveItem(map, itemId, targetId) -> map`. Attaches last under the target and also takes items out of `unplaced`.
 - `moveTargets(map, itemId) -> [{id, name}]`, every target `canMove` allows, in reading order.
 - `deleteItem(map, itemId) -> map`. Removes the item, everything under it, each removed solution's Execute rows and its ids on key actions. Key actions stay. Also works on `unplaced` items.
-- `deleteEffects(map, itemId) -> {subItems: number, picks: [text], rows: [text]}`. `rows` lists the first move of each Execute row that would go and the text of each key action that would lose a solution.
+- `deleteEffects(map, itemId) -> {subItems: number, picks: [text], rows: [text], keyActions: [text]}`. `rows` lists each Execute row that would go by its first move, or the solution text when that is blank. `keyActions` lists each key action that would lose a solution.
 - `setRootCause(map, id, isRoot)`, refused unless the item is an obstacle with no obstacle directly under it.
 - `setStar(map, id, isStar)`, refused unless the item is a solution in the tree.
 - `nextId(map, prefix)`, unique across the tree and `unplaced`.
@@ -155,7 +155,7 @@
 - Consumes `deleteItem`, `deleteEffects`, `moveItem`, `moveTargets` from Task 1, and `#item-tools` from Task 3.
 
 **Decisions:**
-- **Delete with nothing at stake** deletes straight away, even with sub-items. With a pick or a row in `deleteEffects`, the toolbar swaps to a question inside the page, because this must not rely on `confirm()`. Wording: "Delete this? It would also remove: " then each pick and row by its text, with buttons "Delete" and "Keep". Keep changes nothing.
+- **Delete with nothing at stake** deletes straight away, even with sub-items. With a pick, a row or a key action in `deleteEffects`, the toolbar swaps to a question inside the page, because this must not rely on `confirm()`. Wording: "Delete this? It would also remove: " then each pick and row by its text, then "These key actions would lose a solution: " with each one if there are any. Buttons: "Delete" and "Keep". Keep changes nothing.
 - **"Move to"** is a select in the toolbar on any item but the goal, listing `moveTargets` by label and text. Choosing one moves the item, keeps it selected and writes. Hide it when there are no targets.
 - **Tray:** selecting a tray solution shows Delete and "Move to", and double-click or Enter still edits its text. It shows no pick box and no plus buttons.
 
