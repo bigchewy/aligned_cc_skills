@@ -11,6 +11,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
 TEMPLATE = REPO / "frameworks" / "6-step-process" / "mind-map-template.html"
+EXAMPLE = REPO / "frameworks" / "6-step-process" / "example-map.html"
 
 RUNNER = r"""
 const logic = %(logic)s;
@@ -1018,6 +1019,54 @@ def test_a_solution_moves_onto_the_goal_and_back():
     m = call("moveItem", m, "ms", "other")["result"]
     assert obstacle(m, "other")["children"] == [sol("ms", "moving solution")]
     assert [o["id"] for o in m["obstacles"]] == ["holder", "ob", "other"]
+
+
+EVERY_MOVE = r"""
+const logic = %(logic)s;
+const data = %(data)s;
+(new Function(logic))();
+const L = globalThis.MapLogic;
+function places(map) {
+  const out = {};
+  (function walk(items, parent) {
+    items.forEach((it, i) => { out[it.id] = { parent, i }; walk(it.children, it.id); });
+  })(map.obstacles, 'goal');
+  return out;
+}
+const before = places(data);
+const ids = Object.keys(before);
+let allowed = 0;
+const bad = [];
+ids.forEach((moved) => ['goal'].concat(ids).forEach((target) => {
+  if (!L.canMove(data, moved, target)) return;
+  allowed += 1;
+  const name = moved + ' onto ' + target + ': ';
+  const after = places(L.moveItem(data, moved, target));
+  if (Object.keys(after).length !== ids.length) bad.push(name + 'the item count changed');
+  ids.forEach((id) => {
+    if (!after[id]) bad.push(name + 'lost ' + id);
+    else if (id === moved) { if (after[id].parent !== target) bad.push(name + 'landed under ' + after[id].parent); }
+    else if (after[id].parent !== before[id].parent) bad.push(name + id + ' changed parent');
+  });
+  const siblings = Object.values(after).filter((place) => place.parent === target).length;
+  if (after[moved] && after[moved].i !== siblings - 1) bad.push(name + 'not last under its target');
+}));
+process.stdout.write(JSON.stringify({ allowed, bad }));
+"""
+
+
+def every_move_problems(html):
+    data = re.search(r'<script id="map-data" type="application/json">(.*?)</script>', html, re.S).group(1)
+    program = EVERY_MOVE % {"logic": json.dumps(logic_block(html)), "data": data}
+    proc = subprocess.run(["node", "-"], input=program, capture_output=True, text=True, cwd=REPO)
+    assert proc.returncode == 0, proc.stderr
+    return json.loads(proc.stdout)
+
+
+def test_every_allowed_move_on_the_example_moves_only_that_item_and_lands_it_last():
+    out = every_move_problems(EXAMPLE.read_text())
+    assert out["allowed"] > 0
+    assert out["bad"] == []
 
 
 def test_drag_distance_threshold():

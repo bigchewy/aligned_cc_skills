@@ -52,7 +52,7 @@ class El {
   blur() { if (El.active === this) El.active = null; }
   scrollIntoView() {}
   setSelectionRange() {}
-  insertAdjacentHTML() {}
+  insertAdjacentHTML(where, html) { this.inserted = html; }
   setAttribute(k, v) { this.attrs[k] = String(v); }
   getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
   contains(other) { for (let n = other; n; n = n.parent) { if (n === this) return true; } return false; }
@@ -211,6 +211,9 @@ function page(opts) {
     runFrame() { const ids = Array.from(frames.keys()); if (!ids.length) return false; const n = ids[ids.length - 1]; const f = frames.get(n); frames.delete(n); f(); return true; },
     loseWindow() { winListeners.blur.forEach((f) => f()); },
     ghost() { return api.el('drag-ghost'); },
+    // The ids of the dim boxes, and the kinds of the dim lines, as the page drew them.
+    dimBoxes() { return api.el('canvas').walk().filter((k) => k.dataset.ref && k.classList.contains('drag-source')).map((k) => JSON.parse(k.dataset.ref).id).sort(); },
+    dimLines() { return (api.el('canvas').inserted.match(/<path class="\w+ drag-source"/g) || []).map((m) => /"(\w+) /.exec(m)[1]).sort(); },
     msgButton(t) { return document.getElementById('message').button(t); },
     warnsOnClose() { const e = { preventDefault() { e.prevented = true; } }; winListeners.beforeunload[0](e); return Boolean(e.prevented); }
   };
@@ -1229,6 +1232,47 @@ const flows = {
     assert.equal(p.ghost().hidden, false);
     p.fire(p.el('map'), 'keydown', { key: 'Escape' });
     assert.equal(p.ghost().hidden, true);
+  },
+  async 'a drag dims the whole set of sub-items and no others, and cancelling clears it'() {
+    const tree = () => treeHtml([node('o1', 'top', [node('o2', 'kid', [node('o3', 'a'), sol('s1', 'b', [node('o4', 'c')])]), node('o5', 'next')]), node('o6', 'other')]);
+    const f = fakeHandle(tree()); const p = page({ picker: f, html: tree() }); await settle();
+    p.clickSave(); await settle();
+    const stops = [
+      () => p.fire(p.el('map'), 'keydown', { key: 'Escape' }),
+      () => p.fire(p.el('map'), 'pointercancel'),
+      () => p.loseWindow(),
+      () => { p.pointerTo(undefined); p.release(); }
+    ];
+    for (const stop of stops) {
+      p.press('o2'); p.pointerTo('o6');
+      assert.deepEqual(p.dimBoxes(), ['o2', 'o3', 'o4', 's1']);
+      assert.deepEqual(p.dimLines(), ['obstacle', 'obstacle', 'obstacle', 'solution']);
+      p.resize();
+      assert.deepEqual(p.dimBoxes(), ['o2', 'o3', 'o4', 's1']);
+      assert.deepEqual(p.dimLines(), ['obstacle', 'obstacle', 'obstacle', 'solution']);
+      stop();
+      assert.deepEqual(p.dimBoxes(), []); assert.deepEqual(p.dimLines(), []);
+      p.release(); p.clickAfter(); await settle();
+    }
+    assert.equal(f.writes, 0);
+    p.dragOnto('o2', 'o6'); await settle();
+    assert.deepEqual(p.dimBoxes(), []); assert.deepEqual(p.dimLines(), []);
+    assert.equal(f.writes, 1);
+  },
+  async 'a drag of a single item dims only that item and its own line'() {
+    const html = treeHtml([node('o1', 'top', [node('o2', 'kid')]), node('o3', 'other')]);
+    const p = page({ html }); await settle();
+    p.press('o2'); p.pointerTo('o3');
+    assert.deepEqual(p.dimBoxes(), ['o2']); assert.deepEqual(p.dimLines(), ['obstacle']);
+  },
+  async 'the ghost looks stacked only when items sit under the dragged item'() {
+    const html = treeHtml([node('o1', 'top', [node('o2', 'kid')]), node('o3', 'other')]);
+    const p = page({ html }); await settle();
+    p.press('o1'); p.pointerTo('o3');
+    assert.equal(p.ghost().classList.contains('stacked'), true); assert.equal(p.ghost().textContent, 'top');
+    p.fire(p.el('map'), 'keydown', { key: 'Escape' }); p.release(); p.clickAfter();
+    p.press('o2'); p.pointerTo('o3');
+    assert.equal(p.ghost().classList.contains('stacked'), false); assert.equal(p.ghost().textContent, 'kid');
   },
 
   // Selecting, pressing a plus and typing in place.

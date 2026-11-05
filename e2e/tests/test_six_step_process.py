@@ -1025,6 +1025,11 @@ def test_the_drag_ghost_sits_outside_the_canvas_and_takes_no_pointer():
     assert dragging and "user-select: none" in dragging.group(1)
 
 
+def test_a_stacked_ghost_is_drawn_with_css_and_no_words():
+    rule = re.search(r"#drag-ghost\.stacked \{([^}]*)\}", template())
+    assert rule and "box-shadow" in rule.group(1) and "content" not in rule.group(1)
+
+
 def test_items_show_they_can_be_grabbed_but_the_goal_does_not():
     html = template()
     rule = re.search(r"\.item:not\(\.goal\) \{([^}]*)\}", html)
@@ -1343,8 +1348,9 @@ def test_step_five_row_is_written_with_the_person():
 
 
 def test_lines_carry_their_kind():
-    page = page_function("drawMap", "heading")
-    assert "<path class=\"' + line.kind" in page
+    page = page_function("drawLines", "drawMap")
+    assert "<path class=\"' + kind" in page
+    assert "line.kind + ' drag-source' : line.kind" in page
     css = template()
     assert "#lines path.obstacle" in css
     assert "#lines path.solution" in css

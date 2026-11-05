@@ -116,6 +116,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
+#drag-ghost.stacked {
+  box-shadow: 4px 4px 0 -1px var(--box), 4px 4px 0 0 var(--box-line), 8px 8px 0 -1px var(--box), 8px 8px 0 0 var(--box-line), 0 2px 8px rgba(0, 0, 0, 0.25);
+}
 
 #panel {
   flex: none;
@@ -381,6 +384,11 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     var ids = Object.create(null);
     itemsFrom(item).forEach(function (each) { ids[each.id] = true; });
     return ids;
+  }
+
+  // The item and everything under it, as a set of ids. A move takes all of them along.
+  function idsFrom(map, itemId) {
+    return goneIds(findItem(map, itemId));
   }
 
   // The whole branch goes, with each solution's Execute row and its ids on key actions. A key action
@@ -939,6 +947,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     canMove: canMove,
     moveItem: moveItem,
     isDragDistance: isDragDistance,
+    idsFrom: idsFrom,
     deleteItem: deleteItem,
     deleteEffects: deleteEffects,
     nextId: nextId,
@@ -1010,12 +1019,15 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var asking = null;
   // A press on an item that may become a drag: { ref, x, y }.
   var press = null;
-  // The drag under way, or null: { ref, target, x, y, frame }, where target is the highlighted box's ref.
+  // The drag under way, or null: { ref, moving, target, x, y, frame }. moving holds the ids of the item and
+  // everything under it, and target is the highlighted box's ref.
   var drag = null;
   // A drag happened, so the click the browser sends when the button comes up must do nothing.
   var afterDrag = false;
   var panelOpen = window.innerWidth >= 2400;
   var drawnOnce = false;
+  // The layout on screen, so the lines can be drawn again when a drag starts or ends.
+  var drawnLayout = null;
   // 'readable' fits the window but stops at MIN_SCALE, 'whole' shows the whole map, a number is the person's choice.
   var zoom = 'readable';
   var scale = 1;
@@ -1074,6 +1086,11 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   /* Boxes */
 
+  // True for the dragged item and everything under it.
+  function isMoving(id) {
+    return Boolean(drag && id && drag.moving[id]);
+  }
+
   function makeItem(ref, className) {
     var box = make('button', className ? 'item ' + className : 'item');
     box.type = 'button';
@@ -1081,7 +1098,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     box.dataset.key = refKey(ref);
     if (selected && refKey(selected) === refKey(ref)) box.classList.add('selected');
     // A redraw during a drag replaces every box.
-    if (drag && refKey(drag.ref) === refKey(ref)) box.classList.add('drag-source');
+    if (isMoving(ref.id)) box.classList.add('drag-source');
     if (drag && drag.target && refKey(drag.target) === refKey(ref)) box.classList.add('drop-target');
     return box;
   }
@@ -1181,12 +1198,24 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     positionControls();
   }
 
+  // The lines hold no ids, so an id can't change what this string means.
+  function drawLines() {
+    var old = el.canvas.querySelector('#lines');
+    if (old) old.remove();
+    var layout = drawnLayout;
+    var svg = '<svg id="lines" width="' + layout.width + '" height="' + layout.height + '" aria-hidden="true">' +
+      layout.lines.map(function (line) {
+        var kind = isMoving(line.to) ? line.kind + ' drag-source' : line.kind;
+        return '<path class="' + kind + '" d="' + line.d + '"></path>';
+      }).join('') + '</svg>';
+    el.canvas.insertAdjacentHTML('afterbegin', svg);
+  }
+
   function drawMap() {
     el.canvas.textContent = '';
     var layout = layOutWide();
-    var svg = '<svg id="lines" width="' + layout.width + '" height="' + layout.height + '" aria-hidden="true">' +
-      layout.lines.map(function (line) { return '<path class="' + line.kind + '" d="' + line.d + '"></path>'; }).join('') + '</svg>';
-    el.canvas.insertAdjacentHTML('afterbegin', svg);
+    drawnLayout = layout;
+    drawLines();
 
     scale = scaleFor(layout);
     el.canvas.style.width = layout.width + 'px';
@@ -1628,6 +1657,14 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     setDropTarget(ref && L.canMove(map, drag.ref.id, addTarget(ref)) ? ref : null);
   }
 
+  // Dims the item and all that moves with it, or clears that once the drag is over.
+  function showMoving() {
+    el.canvas.querySelectorAll('[data-ref]').forEach(function (box) {
+      box.classList.toggle('drag-source', isMoving(JSON.parse(box.dataset.ref).id));
+    });
+    drawLines();
+  }
+
   // Finishing can redraw the map and can remove a blank new item, which may be the item being dragged.
   function startDrag() {
     var ref = press.ref;
@@ -1638,9 +1675,11 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       return;
     }
     asking = null;
-    drag = { ref: ref, target: null, x: press.x, y: press.y, frame: requestAnimationFrame(dragFrame) };
-    boxFor(ref).classList.add('drag-source');
-    el['drag-ghost'].textContent = L.findItem(map, ref.id).text || 'A blank item';
+    var item = L.findItem(map, ref.id);
+    drag = { ref: ref, moving: L.idsFrom(map, ref.id), target: null, x: press.x, y: press.y, frame: requestAnimationFrame(dragFrame) };
+    showMoving();
+    el['drag-ghost'].textContent = item.text || 'A blank item';
+    el['drag-ghost'].classList.toggle('stacked', item.children.length > 0);
     el['drag-ghost'].hidden = false;
     document.body.classList.add('dragging');
     showControls();
@@ -1670,13 +1709,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   function endDrag() {
     setDropTarget(null);
-    var box = boxFor(drag.ref);
-    if (box) box.classList.remove('drag-source');
     cancelAnimationFrame(drag.frame);
     el['drag-ghost'].hidden = true;
     document.body.classList.remove('dragging');
     drag = null;
     press = null;
+    showMoving();
   }
 
   function cancelDrag() {
