@@ -14,7 +14,7 @@ The framework is a skill people run on their own machines. Each person ends up w
 - Type an item's text in place. The form editor goes away.
 - Drag an item onto another item to attach it there. The page keeps the layout tidy.
 - Any solution can have obstacles under it, and those can have solutions, to any depth.
-- Text on orange lines for obstacles and green lines for solutions. The goal sits in a box on the left, and everything runs to the right.
+- A white page, with text on orange lines for obstacles and green lines for solutions. The goal sits in a box on the left, and everything runs to the right.
 
 ## Non-goals
 
@@ -55,7 +55,8 @@ The architect saw no third option worth considering. Eric asked whether this is 
 
 - The goal is in a rounded box on the left. Top-level obstacles run down its right side as 1, 2, 3.
 - Obstacles have orange lines and solutions have green lines. Items are plain text with no box, except the selected item, which gets a thin outline.
-- A root cause is bold. A pick shows a star. The "★ My picks" key stays in the header.
+- The page is always white, with no dark mode.
+- A root cause is bold. A pick shows a star, with no key or label explaining it.
 - Every item sits in the next column out from its parent, including solutions. This drops today's rule that puts some solutions directly under their obstacle, and it makes maps wider.
 
 ## How editing works
@@ -69,11 +70,11 @@ The architect saw no third option worth considering. Eric asked whether this is 
 | The goal | Yes | No |
 | An obstacle | Yes | Yes |
 | A root cause | No | Yes |
-| A solution | Yes | No |
+| A solution | Yes | Yes |
 
 **Typing.** A new item opens ready to type. Typing on an existing item starts from a double-click, or from Enter while it's selected. Enter finishes and Escape cancels. A new item stays out of the file until it has text.
 
-**Toolbar on the selected item.** Pick (placed solutions), Root cause (obstacles with no obstacle directly under them), Delete and the "Move to" list.
+**Toolbar on the selected item.** A star to click on and off (placed solutions), Root cause (obstacles with no obstacle directly under them), a trash can icon and the "Move to" list.
 
 **The root cause rule, everywhere.** A root cause can't have an obstacle directly under it. A solution under a root cause can still have obstacles of its own. The toolbar, the plus buttons, drops, "Move to" and the page's check all use this one rule.
 
@@ -82,7 +83,7 @@ The architect saw no third option worth considering. Eric asked whether this is 
 | Dropped | On a goal | On an obstacle | On a root cause | On a solution |
 |---|---|---|---|---|
 | An obstacle | Yes | Yes | No | Yes |
-| A solution | No | Yes | Yes | No |
+| A solution | No | Yes | Yes | Yes |
 
 Dropping on the item's own parent, on itself or on anything beneath it does nothing. A drop anywhere else does nothing either.
 
@@ -120,7 +121,6 @@ The page's check refuses a map when:
 - a field is missing, or `kind` is anything else
 - the old `solutions` list is present
 - a root cause has an obstacle under it, or a non-obstacle is marked as one
-- a solution has a solution directly under it
 - an `unplaced` item has children
 - a non-solution has a star, or an `unplaced` item has one
 - a plan row names a solution id that doesn't exist
@@ -167,7 +167,7 @@ Each stage's tests are written first.
 - Double-click or Enter starts typing on an existing item.
 - A drop attaches an item as its parent's last child. Reordering items under the same parent uses "Move to" or waits for a later change.
 - The goal takes the orange plus only, because the map's top level is obstacles.
-- A solution can't be dropped on the goal or on another solution.
+- A solution can't be dropped on the goal.
 - Plan rows keep working as they do now, and the page's check now refuses one that names a missing solution.
 - After a yes on delete, Execute rows go with their solutions, and key actions stay.
 - The tray is attach-only, and tray solutions can't be picks.
