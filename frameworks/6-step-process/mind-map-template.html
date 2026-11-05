@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<script>
+document.documentElement.lang = 'en';
+if (!window.claude) document.title = 'Mind map';
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mind map</title>
 <style>
 :root {
   color-scheme: light;
@@ -210,8 +211,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 .plus:focus-visible, #item-tools button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
-</head>
-<body>
 <script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":""},"obstacles":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
 <div id="data-problem" role="alert" hidden>
   <h1>This map can't be drawn.</h1>
@@ -2453,5 +2452,3 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   render();
 })();
 </script>
-</body>
-</html>

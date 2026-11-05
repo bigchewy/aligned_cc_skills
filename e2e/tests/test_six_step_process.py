@@ -35,6 +35,20 @@ def test_template_has_data_and_logic_blocks():
     assert html.index('id="map-data"') < html.index('id="map-logic"') < html.index('id="map-page"')
 
 
+def test_template_has_no_wrapper_tags():
+    html = template()
+    assert not re.search(r"</?(html|head|body|title)[\s>]", html, re.I)
+    assert html.startswith("<!DOCTYPE html>\n")
+
+
+def test_template_sets_its_language_and_title_by_script():
+    html = template()
+    assert "document.documentElement.lang = 'en'" in html
+    assert "if (!window.claude) document.title = 'Mind map'" in html
+    assert html.index("document.documentElement.lang") < html.index("<style>")
+    assert html.index("document.title") < html.index('id="map-data"')
+
+
 def test_template_data_is_an_empty_starter_map():
     data = json.loads(SLOT.search(template()).group(2))
     assert data["obstacles"] == []
@@ -103,7 +117,7 @@ def whole_function(name):
 
 def test_saving_sits_in_the_top_right_and_the_page_has_no_footer():
     html = template()
-    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
     assert "<footer" not in body
     header = body[body.index("<header>"):body.index("</header>")]
     assert 'id="dirty"' not in html
@@ -119,7 +133,7 @@ def test_saving_sits_in_the_top_right_and_the_page_has_no_footer():
 
 def test_save_messages_appear_under_the_top_right_controls():
     html = template()
-    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
     assert body.index("</header>") < body.index('id="notices"') < body.index('id="workspace"')
     notices = body[body.index('id="notices"'):body.index('id="workspace"')]
     assert 'id="message"' in notices
@@ -149,7 +163,7 @@ def test_empty_map_hint_points_at_the_goal():
 
 def test_toolbar_offers_a_star_button_with_no_words():
     html = template()
-    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
     tools = body[body.index('id="item-tools"'):]
     star = tools[tools.index('id="star-button"'):tools.index("</button>", tools.index('id="star-button"'))]
     assert "<svg" in star and "currentColor" in star
@@ -1014,7 +1028,7 @@ def test_page_has_no_move_to():
 
 def test_the_drag_ghost_sits_outside_the_canvas_and_takes_no_pointer():
     html = template()
-    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
     workspace = body[body.index('id="workspace"'):body.index('id="typing"')]
     assert 'id="drag-ghost"' in body and 'id="drag-ghost"' not in workspace
     rule = re.search(r"#drag-ghost \{([^}]*)\}", html)
@@ -1056,7 +1070,7 @@ def test_the_example_says_that_obstacle_sits_there():
 
 def test_the_controls_sit_outside_the_canvas():
     html = template()
-    body = html[html.index("<body>"):html.index('<script id="map-logic">')]
+    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
     workspace = body[body.index('id="workspace"'):body.index('id="typing"')]
     for part in ('id="typing"', 'id="plus-obstacle"', 'id="plus-solution"', 'id="item-tools"'):
         assert part in body, part

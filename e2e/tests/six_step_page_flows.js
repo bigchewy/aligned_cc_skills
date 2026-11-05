@@ -247,6 +247,23 @@ const flows = {
     p.clickSave(); await settle();
     assert.equal(f.writes, 1); assert.equal(parse(f.html).goal.text, 'before'); assert.equal(p.status(), 'All changes saved');
   },
+  async 'a save writes a whole page: every script, the doctype and the map data'() {
+    // A browser rebuilds the document with html, head and body tags around the template.
+    const wrapped = '<html lang="en"><head>' + mapHtml(1) + '</head><body></body></html>';
+    for (const html of [undefined, wrapped]) {
+      const f = fakeHandle(mapHtml(1));
+      const p = page({ picker: f, html }); await settle();
+      p.edit('saved'); p.clickSave(); await settle();
+      assert.equal(f.writes, 1);
+      assert.ok(f.html.startsWith('<!doctype html>') || f.html.startsWith('<!DOCTYPE html>'), 'doctype kept');
+      for (const id of ['map-data', 'map-logic', 'map-store', 'map-page']) {
+        assert.ok(f.html.includes('<script id="' + id + '"'), id + ' kept');
+      }
+      assert.ok(f.html.includes("document.documentElement.lang = 'en'"), 'language line kept');
+      assert.ok(f.html.includes("document.title = 'Mind map'"), 'title line kept');
+      assert.equal(parse(f.html).goal.text, 'saved');
+    }
+  },
   async 'picker cancelled: nothing changes'() {
     const f = fakeHandle(mapHtml(1)); const p = page({ picker: f, pickAbort: true }); await settle();
     p.clickSave(); await settle();
