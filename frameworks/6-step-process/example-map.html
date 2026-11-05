@@ -1260,16 +1260,34 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     var stopped = false;
     var misses = 0;
     var timer = 0;
+    var waiting = false;
 
+    // A page callback that throws must not stop the queue.
     function notify() {
-      options.onChange({ saving: list.length > 0, failed: failed, code: code });
+      try {
+        options.onChange({ saving: list.length > 0, failed: failed, code: code });
+      } catch (error) {
+        // ignored on purpose
+      }
     }
 
+    // Only the newest wait counts. A wait that ends in a rejection counts as ended.
     function waitThenPump(ms) {
+      timer += 1;
       var mine = timer;
-      options.wait(ms).then(function () {
-        if (mine === timer) pump();
-      });
+      waiting = true;
+      function ended() {
+        if (mine !== timer) return;
+        waiting = false;
+        pump();
+      }
+      var promise;
+      try {
+        promise = Promise.resolve(options.wait(ms));
+      } catch (error) {
+        promise = Promise.resolve();
+      }
+      promise.then(ended, ended);
     }
 
     function pump() {
@@ -1325,11 +1343,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
         list.push(change);
         stopped = false;
         notify();
-        pump();
+        if (!waiting) pump();
       },
       pending: function () { return list.slice(); },
       retryNow: function () {
         timer += 1;
+        waiting = false;
         stopped = false;
         pump();
       }

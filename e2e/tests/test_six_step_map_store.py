@@ -538,3 +538,96 @@ def test_status_says_view_only():
     s = status(readOnly=True)
     assert "view only" in s["text"].lower()
     assert "reload" not in s["text"].lower() and "file" not in s["text"].lower()
+
+
+def test_queue_add_during_a_wait_only_appends():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('unavailable')); await flush();
+      q.add({n: 2}); q.add({n: 3}); await flush();
+      const writesDuring = writes.length;
+      const pendingDuring = q.pending().map((c) => c.n);
+      const timers = waits.length;
+      waits[0].resolve(); await flush();
+      writes[1].resolve(); await flush();
+      writes[2].resolve(); await flush();
+      writes[3].resolve(); await flush();
+      return { writesDuring, pendingDuring, timers, order: writes.map((w) => w.change.n), left: q.pending().length };
+    })()""")
+    assert r == {"writesDuring": 1, "pendingDuring": [1, 2, 3], "timers": 1, "order": [1, 1, 2, 3], "left": 0}
+
+
+def test_queue_only_the_newest_wait_can_start_a_write():
+    r = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('unavailable')); await flush();
+      q.retryNow(); await flush();
+      writes[1].reject(err('unavailable')); await flush();
+      waits[0].resolve(); await flush();
+      const afterOld = writes.length;
+      waits[1].resolve(); await flush();
+      return { afterOld, afterNew: writes.length };
+    })()""")
+    assert r == {"afterOld": 2, "afterNew": 3}
+
+
+def test_queue_quick_retry_only_for_a_first_unavailable_after_success():
+    after_exhausted = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('resource_exhausted')); await flush();
+      waits[0].resolve(); await flush();
+      writes[1].reject(err('unavailable')); await flush();
+      return waits[1].ms;
+    })()""")
+    assert after_exhausted == 30000
+    after_stop = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('invalid_argument')); await flush();
+      q.retryNow(); await flush();
+      writes[1].reject(err('unavailable')); await flush();
+      return waits[0].ms;
+    })()""")
+    assert after_stop == 30000
+    after_success = queue("""(async () => {
+      q.add({n: 1}); await flush();
+      writes[0].reject(err('unavailable')); await flush();
+      waits[0].resolve(); await flush();
+      writes[1].reject(err('unavailable')); await flush();
+      waits[1].resolve(); await flush();
+      writes[2].resolve(); await flush();
+      q.add({n: 2}); await flush();
+      writes[3].reject(err('unavailable')); await flush();
+      return waits[2].ms;
+    })()""")
+    assert 1000 <= after_success <= 2000
+
+
+def test_queue_carries_on_when_a_wait_rejects():
+    r = queue("""(async () => {
+      const w = [];
+      const q2 = S.createChangeQueue({
+        write: (c) => new Promise((resolve, reject) => { writes.push({ change: c, resolve, reject }); }),
+        wait: (ms) => new Promise((resolve, reject) => { w.push({ ms, reject }); }),
+        onChange: () => {}
+      });
+      q2.add({n: 1}); await flush();
+      writes[0].reject(err('unavailable')); await flush();
+      w[0].reject(new Error('timer broke')); await flush();
+      return { writes: writes.length };
+    })()""")
+    assert r == {"writes": 2}
+
+
+def test_queue_carries_on_when_on_change_throws():
+    r = queue("""(async () => {
+      const q2 = S.createChangeQueue({
+        write: (c) => new Promise((resolve, reject) => { writes.push({ change: c, resolve, reject }); }),
+        wait,
+        onChange: () => { throw new Error('render broke'); }
+      });
+      q2.add({n: 1}); q2.add({n: 2}); await flush();
+      writes[0].resolve(); await flush();
+      writes[1].resolve(); await flush();
+      return { writes: writes.length, left: q2.pending().length };
+    })()""")
+    assert r == {"writes": 2, "left": 0}
