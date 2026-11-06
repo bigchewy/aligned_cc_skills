@@ -540,6 +540,29 @@ def test_status_says_view_only():
     assert "reload" not in s["text"].lower() and "file" not in s["text"].lower()
 
 
+def test_status_keeps_saved_first_then_names_out_of_date_or_lost_live_updates():
+    old = status(outOfDate=True)
+    assert old["text"].startswith("All changes saved") and "out of date" in old["text"] and old["tone"] == "unsaved"
+    lost = status(lost=True)
+    assert lost["text"].startswith("All changes saved") and "live updates" in lost["text"].lower()
+    # A write still out, or a failed one, outranks both notes.
+    assert status(saving=True, outOfDate=True, lost=True) == {"text": "Saving...", "tone": ""}
+    assert status(failed=True, lost=True) == {"text": "Not saved", "tone": "unsaved"}
+
+
+def test_queue_says_when_a_write_is_out_and_counts_them():
+    r = queue("""(async () => {
+      q.add({n: 1}); q.add({n: 2});
+      await flush();
+      const first = { writing: last().writing, sent: last().sent };
+      writes[0].resolve(); await flush();
+      const second = { writing: last().writing, sent: last().sent };
+      writes[1].resolve(); await flush();
+      return { first, second, idle: { writing: last().writing, sent: last().sent } };
+    })()""")
+    assert r == {"first": {"writing": True, "sent": 1}, "second": {"writing": True, "sent": 2}, "idle": {"writing": False, "sent": 2}}
+
+
 def test_queue_add_during_a_wait_only_appends():
     r = queue("""(async () => {
       q.add({n: 1}); await flush();

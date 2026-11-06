@@ -604,6 +604,291 @@ const flows = {
     timers.run((x) => x.ms < 10000); await settle();
     assert.equal(p.status(), 'All changes saved');
     assert.deepEqual(s.writes, [{ items: { a1: { text: 'kept' } } }]);
+  },
+  async 'status goes Saving... then All changes saved only after the write confirms'() {
+    const { p, s } = await opened(undefined, { hold: true });
+    assert.equal(p.status(), 'All changes saved');
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    // The store has echoed the edit back as a pending write. That is not a confirmation.
+    assert.equal(p.status(), 'Saving...');
+    s.release(); await settle();
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a write held past 15 seconds says so and keeps the edit'() {
+    const { p, s, timers } = await opened(undefined, { hold: true, echo: false });
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    assert.equal(timers.has(15000), true, 'no 15 second timer');
+    assert.equal(p.status(), 'Saving...');
+    timers.run((x) => x.ms === 15000); await settle();
+    assert.notEqual(p.status(), 'Saving...'); assert.notEqual(p.status(), 'All changes saved');
+    assert.ok(/longer/i.test(p.status()), p.status());
+    assert.ok(p.canvasText().includes('one'));
+    // A second edit queues behind it and the slow note stays.
+    p.typeOn('a2'); p.typeAndEnter('two'); await settle();
+    assert.ok(/longer/i.test(p.status()), p.status());
+    assert.equal(s.writes.length, 1);
+    s.release(); await settle();
+    assert.equal(s.writes.length, 2);
+    assert.equal(p.status(), 'Saving...', 'the next write is fresh');
+    s.release(); await settle();
+    assert.equal(p.status(), 'All changes saved');
+    assert.equal(timers.has(15000), false, 'a timer was left');
+  },
+  async 'a slow write that then fails shows not saved, and the slow note is gone when it settles'() {
+    const { p, s, timers } = await opened(undefined, { hold: true, echo: false });
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    timers.run((x) => x.ms === 15000); await settle();
+    s.reject('invalid_argument'); await settle();
+    assert.equal(p.status(), 'Not saved');
+    assert.ok(p.canvasText().includes('one'));
+  },
+  async 'a refused write keeps the edit on screen, marked not saved, with a plain message'() {
+    const { p, s } = await opened(undefined, { refuse: ['invalid_argument'] });
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.equal(p.status(), 'Not saved');
+    assert.ok(p.box('s1').textContent.includes('★'));
+    const m = p.message();
+    assert.ok(/isn't saved/.test(m) && /still on this page/.test(m), m);
+    assert.ok(!/reload|file|copy/i.test(m), m);
+    assert.equal(s.writes.length, 1);
+  },
+  async 'a failed-write message stays through the next action while the failure is still true, and clears once a write confirms'() {
+    const { p, s } = await opened(undefined, { refuse: ['invalid_argument'] });
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    const m = p.message();
+    assert.ok(m.length > 0);
+    s.hold = true; s.echo = false;
+    p.typeOn('a2'); p.typeAndEnter('next'); await settle();
+    assert.equal(s.writes.length, 2);
+    assert.equal(p.message(), m, 'the message went while still true');
+    assert.equal(p.status(), 'Not saved');
+    s.release(); await settle();
+    assert.equal(p.message(), '', 'the star went through, so the failure is over');
+    assert.equal(p.status(), 'Saving...');
+    s.release(); await settle();
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a notice about someone else\'s change does not hide a failed-write message'() {
+    const { p, s } = await opened(undefined, { refuse: ['quota_exceeded', 'quota_exceeded'] });
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.ok(/full/i.test(p.message()), p.message());
+    p.typeOn('a1');
+    s.remote({ items: { a1: { text: 'their words' } } }); await settle();
+    p.typeAndEnter('my words'); await settle();
+    // The star is sent again first and refused again, so the failure is still true.
+    assert.equal(s.writes.length, 2);
+    assert.ok(/full/i.test(p.message()), p.message());
+  },
+  async 'can("data.write") false hides pluses, toolbar and dragging, and draws live'() {
+    const { p, s } = await opened(undefined, { can: { 'data.write': false } });
+    assert.ok(p.canvasText().includes('first'));
+    assert.ok(/view only/i.test(p.status()), p.status());
+    p.clickItem('a1');
+    assert.equal(p.isSelected('a1'), true);
+    assertNoEditing(p, s, 'a1');
+    s.remote({ items: { a1: { text: 'their words' } } }); await settle();
+    assert.ok(p.canvasText().includes('their words'));
+    assert.equal(s.writes.length, 0);
+  },
+  async 'can("data.write") null keeps editing until invalid_argument, then goes read-only for the visit'() {
+    const { p, s } = await opened(undefined, { can: { 'data.write': null }, refuse: ['invalid_argument'] });
+    p.typeOn('a1'); assert.equal(p.el('typing').hidden, false); p.pressEnter();
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.equal(s.writes.length, 1);
+    assert.ok(/view only/i.test(p.status()), p.status());
+    assert.ok(p.box('s1').textContent.includes('★'), 'the edit left the screen');
+    assert.ok(/isn't saved/.test(p.message()) || /view/i.test(p.message()), p.message());
+    assertNoEditing(p, s, 'a1');
+    s.remote({ items: { a2: { text: 'live' } } }); await settle();
+    assert.ok(p.canvasText().includes('live'));
+  },
+  async 'a missing user capability counts as not told, and a refusal makes it read-only'() {
+    const s = fakeStore(twoItems(), { refuse: ['invalid_argument'] });
+    s.claude.use = (name) => { s.useNames.push(name); return Promise.resolve(name === 'db' ? s.db : null); };
+    const timers = fakeTimers();
+    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear }); await settle();
+    s.deliver(s.body); await settle();
+    p.typeOn('a1'); assert.equal(p.el('typing').hidden, false); p.pressEnter();
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.ok(/view only/i.test(p.status()), p.status());
+    assertNoEditing(p, s, 'a1');
+  },
+  async 'a user capability that throws counts as not told'() {
+    const s = fakeStore(twoItems()); const timers = fakeTimers();
+    s.claude.use = (name) => (name === 'db' ? Promise.resolve(s.db) : Promise.reject(new Error('no')));
+    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear }); await settle();
+    s.deliver(s.body); await settle();
+    p.typeOn('a1'); assert.equal(p.el('typing').hidden, false);
+  },
+  async 'invalid_argument with can("data.write") true stays editable and says not saved'() {
+    const { p, s } = await opened(undefined, { can: { 'data.write': true }, refuse: ['invalid_argument'] });
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.equal(p.status(), 'Not saved');
+    p.typeOn('a2'); assert.equal(p.el('typing').hidden, false);
+    p.typeAndEnter('again'); await settle();
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a write rejected as revoked shows the map can\'t be reached and allows no edits'() {
+    const { p, s } = await opened(undefined, { refuse: ['revoked'] });
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.equal(p.status(), CANT_OPEN);
+    assert.ok(p.canvasText().includes('first'));
+    assertNoEditing(p, s, 'a1');
+  },
+  async '10 seconds with no fromCache:false says the map may be out of date, and the next definitive snapshot clears it'() {
+    const s = fakeStore(twoItems()); const timers = fakeTimers();
+    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear }); await settle();
+    s.deliver(s.body, { fromCache: true }); await settle();
+    assert.equal(p.status(), 'All changes saved');
+    timers.run((x) => x.ms === 10000); await settle();
+    assert.ok(/out of date/i.test(p.status()), p.status());
+    assert.ok(p.canvasText().includes('first'));
+    p.typeOn('a1'); assert.equal(p.el('typing').hidden, false);
+    p.pressEnter();
+    s.deliver(s.body); await settle();
+    assert.equal(p.status(), 'All changes saved');
+    assert.equal(s.subscribes, 1);
+  },
+  async 'a listener ended with unavailable subscribes again once, and a second end says live updates stopped'() {
+    const { p, s } = await opened();
+    s.error({ code: 'unavailable', message: 'x' }); await settle();
+    assert.equal(s.subscribes, 2);
+    assert.equal(p.status(), 'All changes saved');
+    s.deliver(s.body); await settle();
+    s.error({ code: 'unavailable', message: 'x' }); await settle();
+    assert.equal(s.subscribes, 2, 'subscribed a third time');
+    assert.ok(/live updates/i.test(p.status()), p.status());
+    assert.ok(p.canvasText().includes('first'));
+    p.typeOn('a1'); assert.equal(p.el('typing').hidden, false);
+  },
+  async 'a terminal code other than unavailable does not subscribe again'() {
+    const { p, s } = await opened();
+    s.error({ code: 'resource_exhausted', message: 'x' }); await settle();
+    assert.equal(s.subscribes, 1);
+    assert.ok(/live updates/i.test(p.status()), p.status());
+  },
+  async 'revoked shows the map can\'t be reached and allows no edits'() {
+    const { p, s } = await opened();
+    p.typeOn('a1'); p.el('typing').value = 'half typed';
+    s.error({ code: 'revoked', message: 'x' }); await settle();
+    assert.equal(s.subscribes, 1);
+    assert.equal(p.status(), CANT_OPEN);
+    assert.ok(p.canvasText().includes('first'));
+    assert.equal(p.el('typing').hidden, true);
+    assertNoEditing(p, s, 'a1');
+  },
+  async 'a change to an item someone deleted is dropped from the screen with no throw'() {
+    const { p, s } = await opened(undefined, { hold: true, echo: false });
+    p.typeOn('a2'); p.typeAndEnter('late edit'); await settle();
+    s.remote({ items: { a2: { __delete__: true } } }); await settle();
+    assert.equal(hasBox(p, 'a2'), false);
+    assert.ok(!p.canvasText().includes('late edit'));
+    s.release(); await settle();
+    s.deliver(s.body); await settle();
+    assert.equal(hasBox(p, 'a2'), false);
+    assert.equal(p.status(), 'All changes saved');
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.deepEqual(s.writes[1], { items: { s1: { star: true } } });
+  },
+  async 'the hosted page hides Save a copy, Turn on saving and the browser note, and shows no reload or file-name text'() {
+    const { p, s, timers } = await opened(undefined, { hold: true, echo: false });
+    const seen = [];
+    const look = () => { seen.push(p.status(), p.message()); assert.equal(p.el('save').hidden, true); assert.equal(p.el('browser-note').hidden, true); };
+    look();
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle(); look();
+    timers.run((x) => x.ms === 15000); await settle(); look();
+    s.reject('invalid_argument'); await settle(); look();
+    p.typeOn('a2'); p.typeAndEnter('two'); await settle();
+    s.reject('quota_exceeded'); await settle(); look();
+    s.error({ code: 'unavailable' }); await settle(); look();
+    s.error({ code: 'unavailable' }); await settle(); look();
+    s.error({ code: 'revoked' }); await settle(); look();
+    for (const t of seen) assert.ok(!/reload|\.html|file|save a copy|turn on saving|picker|download/i.test(t), t);
+    assert.equal(p.button(), '');
+  },
+  async 'closing the tab warns only while a change is unconfirmed'() {
+    const { p, s } = await opened(undefined, { hold: true, echo: false });
+    assert.equal(p.warnsOnClose(), false);
+    p.typeOn('a1'); p.el('typing').value = 'half typed';
+    assert.equal(p.warnsOnClose(), true, 'an open box with new text');
+    assert.equal(p.el('typing').hidden, true);
+    assert.equal(s.writes.length, 1, 'closing the tab sends the open box text as one change');
+    s.release(); await settle();
+    assert.equal(p.warnsOnClose(), false);
+  },
+  async 'closing the tab warns when a write failed and the edit is not saved'() {
+    const { p, s } = await opened(undefined, { refuse: ['invalid_argument'] });
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.equal(p.warnsOnClose(), true);
+  },
+  async 'a box left open with unchanged text does not make closing warn'() {
+    const { p } = await opened();
+    p.typeOn('a1');
+    assert.equal(p.warnsOnClose(), false);
+  },
+  async 'after a write confirms and before any snapshot shows it, the next action sends only its own change'() {
+    const { p, s } = await opened(undefined, { echo: false });
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.deepEqual(s.writes, [{ items: { a1: { text: 'one' } } }, { items: { s1: { star: true } } }]);
+    assert.ok(p.canvasText().includes('one'));
+    s.deliver(s.body); await settle();
+    assert.ok(p.canvasText().includes('one'));
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a confirmed change leaves the overlay when a snapshot arrives after it, even one without it'() {
+    const { p, s } = await opened(undefined, { echo: false });
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    assert.ok(p.canvasText().includes('one'));
+    // Someone else's later write replaced it. The page shows what the store holds.
+    s.remote({ items: { a1: { text: 'theirs' } } }); await settle();
+    assert.ok(p.canvasText().includes('theirs'), p.canvasText());
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.deepEqual(s.writes[1], { items: { s1: { star: true } } });
+  },
+  async 'finishing text that is exactly what the item already holds shows no notice'() {
+    const { p, s } = await opened();
+    p.typeOn('a1');
+    s.remote({ items: { a1: { text: 'same' } } }); await settle();
+    p.typeAndEnter('same'); await settle();
+    assert.equal(s.writes.length, 0);
+    assert.equal(p.message(), '');
+  },
+  async 'typing elsewhere during a held new item'() {
+    const a = await opened();
+    a.p.clickItem('a1'); a.p.plus('obstacle');
+    const id = JSON.parse(a.p.el('canvas').walk().find((k) => k.classList.contains('selected')).dataset.ref).id;
+    a.p.typeOn('a2');
+    await settle();
+    assert.equal(a.p.el('typing').hidden, false); assert.equal(a.p.el('typing').value, 'second');
+    assert.equal(hasBox(a.p, id), false, 'the blank item stayed');
+    assert.equal(a.s.writes.length, 0);
+
+    const b = await opened();
+    b.p.clickItem('a1'); b.p.plus('obstacle');
+    b.p.el('typing').value = 'kept';
+    b.p.typeOn('a2');
+    await settle();
+    assert.equal(b.p.el('typing').value, 'second');
+    assert.equal(b.s.writes.length, 1);
+    const ids = Object.keys(b.s.writes[0].items);
+    assert.equal(ids.length, 1);
+    assert.deepEqual(b.s.writes[0].items[ids[0]], { kind: 'obstacle', text: 'kept', star: false, parent: 'a1', order: 2 });
+    assert.ok(b.p.canvasText().includes('kept'));
+  },
+  async 'dragging during a held new item'() {
+    const a = await opened();
+    a.p.clickItem('a1'); a.p.plus('obstacle');
+    a.p.press('a2'); a.p.pointerTo('s1'); a.p.release(); a.p.clickAfter(); await settle();
+    assert.deepEqual(a.s.writes, [{ items: { a2: { parent: 's1', order: 1 } } }]);
+
+    const b = await opened();
+    b.p.clickItem('a1'); b.p.plus('obstacle'); b.p.el('typing').value = 'kept';
+    b.p.press('a2'); b.p.pointerTo('s1'); b.p.release(); b.p.clickAfter(); await settle();
+    assert.equal(b.s.writes.length, 2);
+    const ids = Object.keys(b.s.writes[0].items);
+    assert.deepEqual(b.s.writes[0].items[ids[0]], { kind: 'obstacle', text: 'kept', star: false, parent: 'a1', order: 2 });
+    assert.deepEqual(b.s.writes[1], { items: { a2: { parent: 's1', order: 1 } } });
   }
 };
 

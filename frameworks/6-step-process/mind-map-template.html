@@ -1261,11 +1261,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     var misses = 0;
     var timer = 0;
     var waiting = false;
+    var sent = 0;
 
     // A page callback that throws must not stop the queue.
     function notify() {
       try {
-        options.onChange({ saving: list.length > 0, failed: failed, code: code });
+        options.onChange({ saving: list.length > 0, failed: failed, code: code, writing: writing, sent: sent });
       } catch (error) {
         // ignored on purpose
       }
@@ -1293,8 +1294,10 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     function pump() {
       if (writing || stopped || list.length === 0) return;
       writing = true;
+      sent += 1;
       var change = list[0];
       var done = false;
+      notify();
       function settle(error, ok) {
         if (done) return;
         done = true;
@@ -1363,6 +1366,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     if (s.failed) return { text: 'Not saved', tone: 'unsaved' };
     if (s.saving && s.slow) return { text: 'Still saving. This is taking longer than usual.', tone: 'unsaved' };
     if (s.saving) return { text: 'Saving...', tone: '' };
+    if (s.lost) return { text: "All changes saved. Live updates have stopped, so other people's changes may not show.", tone: 'unsaved' };
+    if (s.outOfDate) return { text: 'All changes saved. This map may be out of date.', tone: 'unsaved' };
     return { text: 'All changes saved', tone: 'saved' };
   }
 
@@ -1404,7 +1409,26 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   // The maps/main reference and the queue of changes still waiting to be confirmed.
   var mapRef = null;
   var queue = null;
-  var queueState = { saving: false, failed: false };
+  var queueState = { saving: false, failed: false, code: null, writing: false, sent: 0 };
+  // Changes whose write confirmed, kept on screen until a snapshot arrives that came after the confirmation.
+  // Until then the stored data may not hold them yet, and the next action would send them again.
+  var confirmed = [];
+  var snapCount = 0;
+  // What the platform said about writing shared data: 'asking' until it answers, then true, false or null (not told).
+  var mayWrite = 'asking';
+  // Set when the platform refused a write it hadn't told us about, or the grant was withdrawn.
+  var refusedForVisit = false;
+  var revoked = false;
+  // The 10 second wait ran out over a map already on screen, or the live connection ended.
+  var outOfDate = false;
+  var liveLost = false;
+  var resubscribed = false;
+  // A write has been out for 15 seconds without an answer.
+  var slow = false;
+  var slowTimer = null;
+  var slowFor = 0;
+  // A short note about someone else's change, shown when no failed write needs the space.
+  var notice = '';
   // ready: a map has arrived. unreachable: no answer or no store. notSetUp: the store says there is no map.
   // stale: the map's version is newer than this page.
   var ready = false;
@@ -1466,6 +1490,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var SCROLL_EDGE = 40;
   var SCROLL_STEP = 8;
   var SILENCE_MS = 10000;
+  var SLOW_MS = 15000;
 
   var REFUSALS = {
     'wrong-map': 'That file holds a different map, so nothing was saved.',
@@ -1718,7 +1743,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   function isDirty() {
-    return !hosted && L.serializeMap(map) !== savedJson;
+    if (hosted) return queue.pending().length > 0;
+    return L.serializeMap(map) !== savedJson;
   }
 
   // A new item has no text until typing finishes, so there is nothing to save yet.
@@ -1729,10 +1755,14 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   function showHostedStatus() {
     var status = notSetUp ? { text: "This map isn't set up yet.", tone: 'unsaved' } : S.hostedStatus({
       ready: ready,
-      unreachable: unreachable,
+      readOnly: viewOnly(),
+      unreachable: unreachable || revoked,
       stale: stale,
       saving: queueState.saving,
-      failed: queueState.failed
+      slow: slow,
+      failed: queueState.failed,
+      outOfDate: outOfDate,
+      lost: liveLost
     });
     el['save-status'].textContent = status.text;
     el['save-status'].className = status.tone;
@@ -1793,8 +1823,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   function setMap(next) {
     if (hosted) {
-      hideMessage();
+      notice = '';
       sendChange(next);
+      showHostedMessage();
       rebuildMap();
     } else {
       map = next;
@@ -1807,11 +1838,17 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   // True on the file path. In the viewer, true once a map has arrived that this page can read.
   function canEdit() {
-    return !hosted || (ready && !stale);
+    return !hosted || (ready && !stale && mayWrite !== 'asking' && !viewOnly() && !revoked);
+  }
+
+  // The platform said this person can't write, or a write it hadn't promised was refused as not allowed.
+  // Not being told anything leaves editing on, so a refused write decides.
+  function viewOnly() {
+    return mayWrite === false || refusedForVisit;
   }
 
   function storedWithPending() {
-    return S.overlay(doc || {}, queue.pending());
+    return S.overlay(doc || {}, confirmed.map(function (c) { return c.change; }).concat(queue.pending()));
   }
 
   function view() {
@@ -1880,9 +1917,15 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   // Nothing here writes. A cached view with no map may only mean the store hasn't answered yet.
   function onSnapshot(snap) {
-    var confirmed = !snap.metadata.fromCache;
-    if (confirmed) stopSilenceTimer();
-    if (!snap.exists && !confirmed) return;
+    var definitive = !snap.metadata.fromCache;
+    // This snapshot came after every write confirmed so far, so the data now holds those changes.
+    snapCount += 1;
+    confirmed = confirmed.filter(function (c) { return c.after >= snapCount; });
+    if (definitive) {
+      stopSilenceTimer();
+      outOfDate = false;
+    }
+    if (!snap.exists && !definitive) return;
     doc = snap.exists ? snap.data() : null;
     ready = snap.exists;
     notSetUp = !snap.exists;
@@ -1898,20 +1941,129 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     render();
   }
 
-  function onSnapshotError() {
+  // Over a map already on screen, the silence only means it may be out of date.
+  function onSilence() {
+    silenceTimer = null;
+    if (!ready) {
+      cantReach();
+      return;
+    }
+    outOfDate = true;
+    showStatus();
+  }
+
+  // A listener that ended with unavailable gets one fresh subscription. Any other end, or a second one,
+  // leaves the map on screen and says the live updates stopped. Revoked allows no more edits.
+  function onSnapshotError(error) {
     stopSilenceTimer();
-    cantReach();
+    var code = error && error.code;
+    if (code === 'revoked') {
+      revoked = true;
+      if (ready) showSnapshot();
+      else cantReach();
+      return;
+    }
+    if (code === 'unavailable' && !resubscribed) {
+      resubscribed = true;
+      listen();
+      return;
+    }
+    if (!ready) {
+      cantReach();
+      return;
+    }
+    liveLost = true;
+    render();
+  }
+
+  function listen() {
+    silenceTimer = setTimeout(onSilence, SILENCE_MS);
+    mapRef.onSnapshot(onSnapshot, onSnapshotError);
   }
 
   function subscribe(db) {
     mapRef = db.doc('maps/main');
-    silenceTimer = setTimeout(cantReach, SILENCE_MS);
-    mapRef.onSnapshot(onSnapshot, onSnapshotError);
+    listen();
   }
 
   // The store gets plain objects, because the page builds some of its changes with no prototype.
+  // A confirmed change stays in the overlay until a snapshot arrives after the confirmation.
   function writeChange(change) {
-    return mapRef.update(JSON.parse(JSON.stringify(change)));
+    var result = mapRef.update(JSON.parse(JSON.stringify(change)));
+    return Promise.resolve(result).then(function () {
+      confirmed.push({ change: change, after: snapCount });
+    });
+  }
+
+  function failureText(state) {
+    var kept = " Your edit is still on this page.";
+    if (state.code === 'invalid_argument') {
+      return (viewOnly() ? "You can only view this map, so that change isn't saved." : "The shared map refused that change, so it isn't saved.") + kept;
+    }
+    if (state.code === 'quota_exceeded') return "The shared map is full, so that change isn't saved." + kept;
+    if (state.code === 'revoked') return "You no longer have access to this map, so that change isn't saved." + kept;
+    if (state.code === 'resource_exhausted') return "Too many changes at once, so that change isn't saved yet." + kept + ' It will be sent again.';
+    return "Can't reach the saved map, so that change isn't saved yet." + kept + ' It will be sent again.';
+  }
+
+  // A failed write that is still true keeps its message. Only when none is left does a notice or nothing show.
+  function showHostedMessage() {
+    if (queueState.failed) showMessage(failureText(queueState), true);
+    else if (notice) showMessage(notice);
+    else hideMessage();
+  }
+
+  // Only the write that is out right now is timed. A new write starts a new count.
+  function watchSlow(state) {
+    if (!state.writing) {
+      clearTimeout(slowTimer);
+      slowTimer = null;
+      slow = false;
+      slowFor = 0;
+      return;
+    }
+    if (state.sent === slowFor) return;
+    clearTimeout(slowTimer);
+    slow = false;
+    slowFor = state.sent;
+    slowTimer = setTimeout(function () {
+      slowTimer = null;
+      slow = true;
+      showStatus();
+    }, SLOW_MS);
+  }
+
+  function onQueueChange(state) {
+    queueState = state;
+    watchSlow(state);
+    var closed = false;
+    if (state.failed && state.code === 'revoked' && !revoked) {
+      revoked = true;
+      closed = true;
+    }
+    // Not being told anything about writing, and then a refused write, means this person can only view.
+    if (state.failed && state.code === 'invalid_argument' && mayWrite === null && !refusedForVisit) {
+      refusedForVisit = true;
+      closed = true;
+    }
+    showHostedMessage();
+    if (closed) showSnapshot();
+    else showStatus();
+  }
+
+  // Whether this person may write. Any trouble asking counts as not told.
+  function askMayWrite() {
+    new Promise(function (resolve) { resolve(window.claude.use('user')); }).then(function (user) {
+      return user ? user.can('data.write') : null;
+    }).then(function (answer) {
+      return answer === true || answer === false ? answer : null;
+    }, function () {
+      return null;
+    }).then(function (answer) {
+      mayWrite = answer;
+      if (ready) showSnapshot();
+      else render();
+    });
   }
 
   // The platform's first answer comes after this script's first run, and may be null.
@@ -1919,11 +2071,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     queue = S.createChangeQueue({
       write: writeChange,
       wait: function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); },
-      onChange: function (state) {
-        queueState = state;
-        showStatus();
-      }
+      onChange: onQueueChange
     });
+    askMayWrite();
     new Promise(function (resolve) { resolve(window.claude.use('db')); }).then(function (db) {
       if (db) subscribe(db);
       else cantReach();
@@ -2197,9 +2347,14 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       else render();
       return;
     }
-    var overwrote = hosted && !e.isNew && textOf(e.ref) !== e.openedText;
+    // Only a real overwrite earns the notice: someone else changed it, and these words are not what it holds now.
+    var current = textOf(e.ref);
+    var overwrote = hosted && !e.isNew && current !== e.openedText && current !== text;
     setMap(e.ref.kind === 'goal' ? L.setGoal(map, { text: text }) : L.setItemText(map, e.ref.id, text));
-    if (overwrote) showMessage('Someone else changed this while you were typing. Your words replaced theirs.');
+    if (overwrote) {
+      notice = 'Someone else changed this while you were typing. Your words replaced theirs.';
+      showHostedMessage();
+    }
   }
 
   function cancelTyping() {
