@@ -262,121 +262,120 @@ const flows = {
     p.clickItem('o1');
     assert.equal(p.el('star-button').hidden, true);
   },
-  async 'delete with a pick asks, and keep changes nothing'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'the picked fix', [], true)])]);
+  async 'the trash can asks every time, with nothing written until Delete'() {
+    const html = treeHtml([node('o1', 'plain', []), node('o2', 'first', [sol('s1', 'picked', [], true)])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.clickItem('o1'); p.tool('delete-item'); await settle();
-    assert.equal(p.el('delete-question').hidden, false);
-    const said = p.el('delete-question').textContent;
-    assert.ok(said.includes('Delete this? It would also remove: '), said);
-    assert.ok(said.includes('the picked fix'), said);
-    assert.ok(!said.includes('These key actions'), said);
-    assert.equal(p.el('delete-item').hidden, true); assert.equal(p.el('delete-yes').textContent, 'Delete');
-    assert.equal(p.el('delete-keep').textContent, 'Keep');
-    assert.equal(f.writes, 0); assert.equal(p.status(), 'All changes saved');
-    assert.equal(p.active(), p.el('delete-keep'));
-    p.tool('delete-keep'); await settle();
-    assert.equal(p.el('delete-question').hidden, true); assert.equal(p.el('delete-item').hidden, false);
-    assert.equal(f.writes, 0); assert.equal(p.isSelected('o1'), true);
-    assert.equal(p.active(), p.el('delete-item'));
-    assert.ok(findIn(parse(f.html).obstacles, 's1'));
-    assert.ok(p.canvasText().includes('the picked fix'));
+    for (const id of ['o1', 'o2']) {
+      p.clickItem(id); assert.equal(p.el('delete-card').hidden, true, id);
+      p.tool('delete-item'); await settle();
+      assert.equal(p.el('delete-card').hidden, false, id);
+      assert.equal(f.writes, 0, id); assert.equal(p.status(), 'All changes saved');
+      assert.ok(findIn(parse(f.html).obstacles, id));
+    }
   },
-  async 'delete with a plan row asks, and yes removes the row but keeps the key action'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other fix')])], {
-      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }],
-      execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' },
-        { solution_id: 's2', first_move: 'the other move', owner: 'o', others_decide: '' }]
+  async 'the card says Confirm Delete and has one Delete button, with no list of effects'() {
+    const html = treeHtml([node('o1', 'first', [sol('s1', 'the picked fix', [], true)])], {
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1'] }],
+      execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' }]
+    });
+    const p = page({ html }); await settle();
+    p.clickItem('o1'); p.tool('delete-item');
+    const card = p.el('delete-card');
+    assert.equal(p.el('delete-title').textContent, 'Confirm Delete');
+    assert.equal(p.el('delete-yes').textContent, 'Delete');
+    assert.ok(p.el('delete-yes').getAttribute('aria-label').startsWith('Delete'));
+    assert.ok(p.el('delete-yes').getAttribute('aria-label').includes('first'));
+    assert.ok(card.getAttribute('aria-label').includes('first'));
+    assert.equal(p.active(), p.el('delete-yes'));
+    assert.equal(p.el('delete-item').hidden, false, 'the toolbar keeps its size, so the map does not jump');
+    assert.equal(p.el('item-tools').classList.contains('asking'), false);
+  },
+  async 'Delete deletes the item and everything under it, and sends one change'() {
+    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [node('o3', 'grandkid')]), sol('s1', 'picked', [], true)]), node('o4', 'other')], {
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1'] }],
+      execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' }]
     });
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.clickItem('s1'); p.tool('delete-item'); await settle();
-    const said = p.el('delete-question').textContent;
-    assert.ok(said.includes('the first move'), said);
-    assert.ok(said.includes('These key actions would lose a solution: '), said);
-    assert.ok(said.includes('the action'), said);
+    p.clickItem('o1'); p.tool('delete-item'); await settle();
     assert.equal(f.writes, 0);
     p.tool('delete-yes'); await settle();
     const saved = parse(f.html);
-    assert.equal(findIn(saved.obstacles, 's1'), null);
-    assert.deepEqual(saved.execute.map((e) => e.solution_id), ['s2']);
-    assert.equal(saved.key_actions.length, 1); assert.deepEqual(saved.key_actions[0].solution_ids, ['s2']);
-    assert.equal(p.el('delete-question').hidden, true); assert.equal(p.active(), p.box('goal'));
-  },
-  async 'delete with nothing at stake deletes straight away, including sub-items'() {
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [node('o3', 'grandkid')])]), node('o4', 'other')]);
-    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
-    p.clickSave(); await settle();
-    p.clickItem('o1'); p.tool('delete-item'); await settle();
-    assert.equal(p.el('delete-question').hidden, true);
-    const saved = parse(f.html);
     assert.deepEqual(saved.obstacles.map((o) => o.id), ['o4']);
+    assert.deepEqual(saved.execute, []);
+    assert.equal(saved.key_actions.length, 1); assert.deepEqual(saved.key_actions[0].solution_ids, []);
     assert.equal(f.writes, 1);
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.active(), p.box('goal'));
   },
-  async 'escape closes the question and changes nothing, and focus returns to Delete'() {
+  async 'Escape cancels, writes nothing, and puts focus back on the trash can'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'picked', [], true)])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     p.clickItem('o1'); p.tool('delete-item');
-    p.fire(p.el('delete-keep'), 'keydown', { key: 'Escape' });
-    assert.equal(p.el('delete-question').hidden, true); assert.equal(p.el('delete-item').hidden, false);
+    p.fire(p.el('delete-yes'), 'keydown', { key: 'Escape' });
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('delete-item').hidden, false);
     assert.equal(p.isSelected('o1'), true); assert.equal(p.active(), p.el('delete-item'));
     assert.equal(f.writes, 0);
   },
-  async 'selecting another item or clicking empty space closes the question and deletes nothing'() {
+  async 'clicking elsewhere cancels and writes nothing'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'picked', [], true)]), node('o2', 'other')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     p.clickItem('o1'); p.tool('delete-item');
     p.clickItem('o2');
-    assert.equal(p.el('delete-question').hidden, true);
-    p.clickItem('o1'); assert.equal(p.el('delete-question').hidden, true); assert.equal(p.el('delete-item').hidden, false);
+    assert.equal(p.el('delete-card').hidden, true);
+    p.clickItem('o1'); assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('delete-item').hidden, false);
     p.tool('delete-item'); p.clickEmpty();
-    assert.equal(p.el('delete-question').hidden, true); assert.equal(p.el('item-tools').hidden, true);
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('item-tools').hidden, true);
+    p.clickItem('o1'); p.tool('delete-item'); p.fire(p.el('zoom-in'), 'click');
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('item-tools').hidden, false);
+    p.tool('delete-item'); p.fire(p.el('delete-card'), 'click');
+    assert.equal(p.el('delete-card').hidden, false, 'a click on the card itself keeps it open');
     assert.equal(f.writes, 0); assert.ok(findIn(parse(f.html).obstacles, 's1'));
   },
-  async 'tab reaches the question buttons, and a render keeps the question showing'() {
+  async 'Enter on the focused Delete button is left to the button, and Delete then deletes'() {
+    const html = treeHtml([node('o1', 'first'), node('o2', 'other')]);
+    const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
+    p.clickSave(); await settle();
+    p.clickItem('o1'); p.tool('delete-item');
+    assert.equal(p.active(), p.el('delete-yes'));
+    assert.ok(!p.fire(p.el('delete-yes'), 'keydown', { key: 'Enter' }).prevented, 'the page must not swallow Enter');
+    assert.equal(f.writes, 0);
+    p.fire(p.el('delete-yes'), 'click'); await settle();
+    assert.deepEqual(parse(f.html).obstacles.map((o) => o.id), ['o2']); assert.equal(f.writes, 1);
+  },
+  async 'Tab and Shift+Tab stay on the Delete button while the card is open'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'picked', [], true)]), node('o2', 'other')]);
     const p = page({ html }); await settle();
     const tab = (target, shiftKey) => p.fire(target, 'keydown', { key: 'Tab', shiftKey });
     p.clickItem('o1'); p.tool('delete-item');
     p.resize();
-    assert.equal(p.el('delete-question').hidden, false); assert.equal(p.active(), p.el('delete-keep'));
-    assert.ok(tab(p.el('delete-keep')).prevented); assert.equal(p.active(), p.box('s1'));
-    p.el('delete-yes').focus();
-    assert.ok(!tab(p.el('delete-yes')).prevented);
+    assert.equal(p.el('delete-card').hidden, false); assert.equal(p.active(), p.el('delete-yes'));
+    assert.ok(tab(p.el('delete-yes')).prevented); assert.equal(p.active(), p.el('delete-yes'));
+    assert.ok(tab(p.el('delete-yes'), true).prevented); assert.equal(p.active(), p.el('delete-yes'));
     p.box('o1').focus();
-    p.fire(p.box('o1'), 'keydown', { key: 'Tab' });
-    assert.equal(p.active(), p.el('plus-obstacle'));
+    assert.ok(tab(p.box('o1')).prevented); assert.equal(p.active(), p.el('delete-yes'));
   },
-  async 'the question names what goes and does not count sub-items'() {
-    const html = treeHtml([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'picked', [], true)])])]);
+  async 'the card sits by the trash can and stays inside the window'() {
+    const html = treeHtml([node('o1', 'first')]);
     const p = page({ html }); await settle();
     p.clickItem('o1'); p.tool('delete-item');
-    const said = p.el('delete-question').textContent;
-    assert.ok(said.includes('Delete this? It would also remove: '), said);
-    assert.ok(!said.includes('sub-item'), said);
+    const card = p.el('delete-card');
+    const left = parseFloat(card.style.left), top = parseFloat(card.style.top);
+    assert.ok(left >= 12 && left <= p.sandbox.innerWidth - card.offsetWidth - 12, String(left));
+    assert.ok(top >= 12 && top <= p.sandbox.innerHeight - card.offsetHeight - 12, String(top));
+    p.el('map').scrollLeft = 5000;
+    p.el('map').listeners.scroll.forEach((f) => f());
+    assert.equal(card.style.visibility, 'hidden');
   },
-  async 'a question with only key actions skips the also-remove paragraph and its empty list'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other')])], {
-      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }]
-    });
-    const p = page({ html }); await settle();
-    p.clickItem('s1'); p.tool('delete-item');
-    const q = p.el('delete-question');
-    assert.ok(q.textContent.includes('Delete this?'), q.textContent);
-    assert.ok(!q.textContent.includes('also remove'), q.textContent);
-    assert.ok(q.textContent.includes('These key actions would lose a solution: '), q.textContent);
-    assert.equal(q.walk().filter((k) => k.tag === 'UL').length, 1);
-  },
-  async 'a plus pressed while the question shows closes it and opens the new item, with no write'() {
+  async 'a plus pressed while the card shows closes it and opens the new item, with no write'() {
     const html = treeHtml([node('o1', 'first', [sol('s1', 'picked', [], true)])]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     p.clickItem('o1'); p.tool('delete-item');
     p.plus('obstacle'); await settle();
-    assert.equal(p.el('delete-question').hidden, true);
+    assert.equal(p.el('delete-card').hidden, true);
     assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
     assert.equal(f.writes, 0); assert.ok(findIn(parse(f.html).obstacles, 's1'));
   },
@@ -663,7 +662,7 @@ const flows = {
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     p.clickItem('o2');
-    p.tool('delete-item'); await settle();
+    p.tool('delete-item'); p.tool('delete-yes'); await settle();
     const saved = parse(f.html);
     assert.equal(findIn(saved.obstacles, 'o2'), null); assert.equal(findIn(saved.obstacles, 's1'), null);
     assert.ok(findIn(saved.obstacles, 's2'));
@@ -963,11 +962,11 @@ const flows = {
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
     p.clickItem('o1'); p.tool('delete-item');
-    assert.equal(p.el('delete-question').hidden, false);
+    assert.equal(p.el('delete-card').hidden, false);
     p.press('o2'); p.pointerTo('o1');
-    assert.equal(p.el('delete-question').hidden, true); assert.equal(p.el('item-tools').hidden, true); assert.deepEqual(p.pluses(), []);
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('item-tools').hidden, true); assert.deepEqual(p.pluses(), []);
     p.fire(p.box('o2'), 'keydown', { key: 'Escape' });
-    assert.equal(p.el('delete-question').hidden, true); assert.equal(p.el('delete-item').hidden, false);
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('delete-item').hidden, false);
     assert.equal(p.isSelected('o1'), true); assert.equal(f.writes, 0);
   },
   async 'text cannot be selected from a press on an item'() {
@@ -1485,7 +1484,7 @@ const flows = {
     const html = treeHtml([node('o1', 'first')]);
     const f = fakeHandle(html); const p = page({ picker: f, html }); await settle();
     p.clickSave(); await settle();
-    p.clickItem('o1'); p.tool('delete-item'); await settle();
+    p.clickItem('o1'); p.tool('delete-item'); p.tool('delete-yes'); await settle();
     assert.deepEqual(parse(f.html).obstacles, []);
     assert.deepEqual(p.pluses(), []); assert.equal(p.el('item-tools').hidden, true);
     assert.equal(p.active(), p.box('goal'));
@@ -1540,14 +1539,6 @@ const flows = {
     assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
     p.typeAndEnter('a fix'); await settle();
     assert.equal(parse(f.html).obstacles[0].children[0].text, 'a fix');
-  },
-  async 'a starred solution with a plan row is listed once in the question'() {
-    const html = treeHtml([node('o1', 'first', [sol('s1', 'the fix', [], true)])], {
-      execute: [{ solution_id: 's1', first_move: '', owner: 'o', others_decide: '' }]
-    });
-    const p = page({ html }); await settle();
-    p.clickItem('s1'); p.tool('delete-item');
-    assert.equal(p.el('delete-question').walk().filter((k) => k.tag === 'LI').length, 1);
   },
   async 'a map with an item id of goal is refused with a plain sentence'() {
     const p = page({ html: treeHtml([node('goal', 'x')]) }); await settle();

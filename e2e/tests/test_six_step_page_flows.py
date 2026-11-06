@@ -46,8 +46,9 @@ def test_the_page_is_always_light_and_has_no_list_to_style(page):
 
 
 @pytest.mark.parametrize("page", ["mind-map-template.html", "example-map.html"])
-def test_delete_question_scrolls_inside_the_window(page):
+def test_the_delete_card_floats_above_the_map_and_has_no_scrolling_list(page):
     import re
     css = re.search(r"<style>([\s\S]*?)</style>", (FRAMEWORK / page).read_text()).group(1)
-    rule = re.search(r"(?m)^#delete-question \{([^}]*)\}", css)
-    assert rule and "max-height: min(40vh" in rule.group(1) and "overflow: auto" in rule.group(1)
+    rule = re.search(r"(?m)^#delete-card \{([^}]*)\}", css)
+    assert rule and "position: fixed" in rule.group(1) and "z-index: 13" in rule.group(1)
+    assert "overflow" not in rule.group(1)

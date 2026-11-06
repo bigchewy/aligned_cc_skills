@@ -193,7 +193,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   font-size: 14px;
   line-height: 1.2;
 }
-#item-tools.asking { flex-wrap: wrap; max-width: 420px; white-space: normal; padding: 6px 8px; }
 #item-tools button {
   background: none;
   border: 1px solid var(--box-line);
@@ -204,11 +203,33 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 #star-button[aria-pressed="true"] svg { fill: var(--star); }
 #star-button { color: var(--star); }
 #item-tools button.icon { display: flex; align-items: center; padding: 2px 6px; }
-#delete-item, #delete-yes { color: var(--warn); }
-#delete-question { flex-basis: 100%; max-height: min(40vh, 280px); overflow: auto; }
-#delete-question p { margin: 0; }
-#delete-question ul { margin: 2px 0 4px; padding-left: 20px; }
+#delete-item { color: var(--warn); }
 .plus:focus-visible, #item-tools button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+#delete-card {
+  position: fixed;
+  z-index: 13;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 12px 12px 16px;
+  white-space: nowrap;
+  background: var(--box);
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(31, 35, 40, 0.16), 0 1px 3px rgba(31, 35, 40, 0.1);
+}
+#delete-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+#delete-yes {
+  padding: 6px 16px;
+  color: #fff;
+  background: #c7311f;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+#delete-yes:hover { background: #a82818; }
+#delete-yes:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
 <script id="map-data" type="application/json">{"map_id":"example-attendance","revision":1,"person":"Maya","goal":{"text":"80% in-office attendance by end of Q2, up from 40%"},"obstacles":[{"id":"o1","kind":"obstacle","text":"People don't want to commute","star":false,"children":[{"id":"o7","kind":"obstacle","text":"The commute got longer for people who moved","star":false,"children":[{"id":"s6","kind":"solution","text":"Let people who moved start later on office days","star":false,"children":[]}]},{"id":"o8","kind":"obstacle","text":"The value of being in the office hasn't kept up","star":false,"children":[{"id":"o9","kind":"obstacle","text":"We haven't defined what the office is for","star":false,"children":[{"id":"s1","kind":"solution","text":"Define the purpose of in-office time and communicate it","star":true,"children":[]}]},{"id":"o10","kind":"obstacle","text":"An office day looks just like a day at home","star":false,"children":[{"id":"s2","kind":"solution","text":"Redesign the office to support that purpose","star":false,"children":[]}]},{"id":"s3","kind":"solution","text":"Create in-person-only experiences","star":true,"children":[{"id":"o13","kind":"obstacle","text":"Teams have no budget for getting together","star":false,"children":[{"id":"s7","kind":"solution","text":"Set aside a small budget for each team's office days","star":false,"children":[]}]},{"id":"s11","kind":"solution","text":"Start with one in-person session a month for each team","star":false,"children":[]}]}]}]},{"id":"o2","kind":"obstacle","text":"The office is too noisy","star":false,"children":[{"id":"s8","kind":"solution","text":"Add quiet rooms on each floor","star":false,"children":[]}]},{"id":"o3","kind":"obstacle","text":"Some managers aren't enforcing the policy","star":false,"children":[{"id":"s4","kind":"solution","text":"Set clear expectations with managers","star":false,"children":[]}]},{"id":"o4","kind":"obstacle","text":"Expectations are unclear","star":false,"children":[{"id":"s9","kind":"solution","text":"Publish which days each team is in","star":false,"children":[]}]},{"id":"o5","kind":"obstacle","text":"No reason to come in, since meetings are still remote","star":false,"children":[{"id":"o11","kind":"obstacle","text":"Nothing we do needs people in the same room","star":false,"children":[{"id":"o12","kind":"obstacle","text":"We have no in-person-only meetings","star":false,"children":[{"id":"s10","kind":"solution","text":"Move each team's planning meeting to an office day","star":false,"children":[]}]}]}]},{"id":"o6","kind":"obstacle","text":"Some people feel less productive in the office","star":false,"children":[{"id":"s5","kind":"solution","text":"Run a monthly pulse survey","star":false,"children":[]}]}],"key_actions":[{"text":"Say what the office is for","risk":"high","solution_ids":["s1"]},{"text":"Give each team a reason to meet in person","risk":"medium","solution_ids":["s3","s4"]}],"execute":[{"solution_id":"s1","first_move":"Draft one page on what the office is for","owner":"Maya","others_decide":"The leadership team approves the page"},{"solution_id":"s3","first_move":"Ask each team for one thing they only do in person","owner":"Team leads","others_decide":""}],"feedback":{"number":"In-office attendance","check_on":"Every week","redraw_if":"Attendance is under 55% by the middle of Q2"},"baseline":{"map_id":"example-attendance","revision":1,"person":"Maya","goal":{"text":"80% in-office attendance by end of Q2, up from 40%"},"obstacles":[{"id":"o1","kind":"obstacle","text":"People don't want to commute","star":false,"children":[{"id":"o7","kind":"obstacle","text":"The commute got longer for people who moved","star":false,"children":[{"id":"s6","kind":"solution","text":"Let people who moved start later on office days","star":false,"children":[]}]},{"id":"o8","kind":"obstacle","text":"The value of being in the office hasn't kept up","star":false,"children":[{"id":"o9","kind":"obstacle","text":"We haven't defined what the office is for","star":false,"children":[{"id":"s1","kind":"solution","text":"Define the purpose of in-office time and communicate it","star":true,"children":[]}]},{"id":"o10","kind":"obstacle","text":"An office day looks just like a day at home","star":false,"children":[{"id":"s2","kind":"solution","text":"Redesign the office to support that purpose","star":false,"children":[]}]},{"id":"s3","kind":"solution","text":"Create in-person-only experiences","star":true,"children":[{"id":"o13","kind":"obstacle","text":"Teams have no budget for getting together","star":false,"children":[{"id":"s7","kind":"solution","text":"Set aside a small budget for each team's office days","star":false,"children":[]}]},{"id":"s11","kind":"solution","text":"Start with one in-person session a month for each team","star":false,"children":[]}]}]}]},{"id":"o2","kind":"obstacle","text":"The office is too noisy","star":false,"children":[{"id":"s8","kind":"solution","text":"Add quiet rooms on each floor","star":false,"children":[]}]},{"id":"o3","kind":"obstacle","text":"Some managers aren't enforcing the policy","star":false,"children":[{"id":"s4","kind":"solution","text":"Set clear expectations with managers","star":false,"children":[]}]},{"id":"o4","kind":"obstacle","text":"Expectations are unclear","star":false,"children":[{"id":"s9","kind":"solution","text":"Publish which days each team is in","star":false,"children":[]}]},{"id":"o5","kind":"obstacle","text":"No reason to come in, since meetings are still remote","star":false,"children":[{"id":"o11","kind":"obstacle","text":"Nothing we do needs people in the same room","star":false,"children":[{"id":"o12","kind":"obstacle","text":"We have no in-person-only meetings","star":false,"children":[{"id":"s10","kind":"solution","text":"Move each team's planning meeting to an office day","star":false,"children":[]}]}]}]},{"id":"o6","kind":"obstacle","text":"Some people feel less productive in the office","star":false,"children":[{"id":"s5","kind":"solution","text":"Run a monthly pulse survey","star":false,"children":[]}]}],"key_actions":[{"text":"Say what the office is for","risk":"high","solution_ids":["s1"]},{"text":"Give each team a reason to meet in person","risk":"medium","solution_ids":["s3","s4"]}],"execute":[{"solution_id":"s1","first_move":"Draft one page on what the office is for","owner":"Maya","others_decide":"The leadership team approves the page"},{"solution_id":"s3","first_move":"Ask each team for one thing they only do in person","owner":"Team leads","others_decide":""}],"feedback":{"number":"In-office attendance","check_on":"Every week","redraw_if":"Attendance is under 55% by the middle of Q2"},"baseline":{}}}</script>
@@ -246,9 +267,10 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 <div id="item-tools" role="toolbar" aria-label="What you can do with this item" hidden>
   <button type="button" id="star-button" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
   <button type="button" id="delete-item" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
-  <div id="delete-question" role="group" aria-label="Delete this item?" hidden></div>
-  <button type="button" id="delete-yes" hidden></button>
-  <button type="button" id="delete-keep" hidden></button>
+</div>
+<div id="delete-card" role="alertdialog" aria-modal="true" aria-label="Confirm Delete" hidden>
+  <span id="delete-title">Confirm Delete</span>
+  <button type="button" id="delete-yes">Delete</button>
 </div>
 <script id="map-logic">
 (function () {
@@ -403,23 +425,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       action.solution_ids = action.solution_ids.filter(function (id) { return !gone[id]; });
     });
     return next;
-  }
-
-  // What a delete would take with it, so the page can say so first. An Execute row can have a blank first
-  // move, and the page still has to name it, so it goes by its solution's text then.
-  function deleteEffects(map, itemId) {
-    var item = findItem(map, itemId);
-    if (!item) return { picks: [], rows: [], keyActions: [] };
-    var gone = goneIds(item);
-    return {
-      picks: itemsFrom(item).filter(function (each) { return each.star; }).map(function (each) { return each.text; }),
-      rows: map.execute
-        .filter(function (row) { return gone[row.solution_id]; })
-        .map(function (row) { return row.first_move || findItem(map, row.solution_id).text; }),
-      keyActions: map.key_actions
-        .filter(function (action) { return action.solution_ids.some(function (id) { return gone[id]; }); })
-        .map(function (action) { return action.text; })
-    };
   }
 
   // Scans the whole file, so an id still named in the side panel or baseline is never reused.
@@ -948,7 +953,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     isDragDistance: isDragDistance,
     idsFrom: idsFrom,
     deleteItem: deleteItem,
-    deleteEffects: deleteEffects,
     nextId: nextId,
     canPick: canPick,
     setStar: setStar,
@@ -1514,7 +1518,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var el = {};
   ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save', 'save-status', 'message',
     'browser-note', 'typing', 'drag-ghost', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
-    'delete-question', 'delete-yes', 'delete-keep', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+    'delete-card', 'delete-title', 'delete-yes', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -2197,45 +2201,17 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     el['star-button'].setAttribute('aria-pressed', String(canPick && item.star));
     if (!item || asking !== item.id) asking = null;
     var questioning = asking !== null;
-    // A question replaces the item's own tools, so only a Keep or a Delete is in reach.
-    if (questioning) el['star-button'].hidden = true;
-    el['delete-item'].hidden = !item || questioning;
-    el['item-tools'].classList.toggle('asking', questioning);
-    showQuestion(questioning);
+    // The toolbar stays as it is, so the map does not jump. The card floats beside it.
+    el['delete-card'].hidden = !questioning;
+    if (questioning) nameCard(item);
     positionControls();
   }
 
-  function listOf(texts) {
-    var list = make('ul');
-    texts.forEach(function (text) { list.appendChild(make('li', '', text || 'A blank item')); });
-    return list;
-  }
-
-  function showQuestion(show) {
-    el['delete-question'].hidden = !show;
-    el['delete-yes'].hidden = !show;
-    el['delete-keep'].hidden = !show;
-    if (!show) {
-      el['delete-question'].textContent = '';
-      return;
-    }
-    el['delete-yes'].textContent = 'Delete';
-    el['delete-keep'].textContent = 'Keep';
-    var effects = L.deleteEffects(map, asking);
-    var box = el['delete-question'];
-    box.textContent = '';
-    // A picked solution with a plan row can be named twice, so each text shows once.
-    var things = effects.picks.concat(effects.rows).filter(function (text, i, all) { return all.indexOf(text) === i; });
-    if (things.length) {
-      box.appendChild(make('p', '', 'Delete this? It would also remove: '));
-      box.appendChild(listOf(things));
-    } else {
-      box.appendChild(make('p', '', 'Delete this?'));
-    }
-    if (effects.keyActions.length) {
-      box.appendChild(make('p', '', 'These key actions would lose a solution: '));
-      box.appendChild(listOf(effects.keyActions));
-    }
+  // The card shows two words. A screen reader also hears which item is going.
+  function nameCard(item) {
+    var name = (item.kind === 'solution' ? 'solution ' : 'obstacle ') + '"' + shortText(String(item.text || '') || 'with no words') + '"';
+    el['delete-card'].setAttribute('aria-label', 'Confirm Delete ' + name);
+    el['delete-yes'].setAttribute('aria-label', 'Delete ' + name);
   }
 
   function clamp(value, low, high) {
@@ -2289,16 +2265,35 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     });
     positionPluses(rect);
     positionToolbar(rect, mapRect);
+    positionCard();
+  }
+
+  // The card hangs under the toolbar with the trash can, or above the toolbar where there is no room below.
+  function positionCard() {
+    var card = el['delete-card'];
+    card.style.visibility = el['item-tools'].style.visibility;
+    if (card.hidden) return;
+    var tools = el['item-tools'].getBoundingClientRect();
+    var top = tools.bottom + CONTROL_GAP;
+    if (top + card.offsetHeight > window.innerHeight - WINDOW_EDGE) top = tools.top - card.offsetHeight - CONTROL_GAP;
+    card.style.top = clamp(top, WINDOW_EDGE, window.innerHeight - card.offsetHeight - WINDOW_EDGE) + 'px';
+    card.style.left = clamp(tools.left, WINDOW_EDGE, window.innerWidth - card.offsetWidth - WINDOW_EDGE) + 'px';
   }
 
   // The controls sit at the end of the page, so Tab needs help to reach them from the selected item.
   function controlsInOrder() {
     return [el['plus-obstacle'], el['plus-solution'], el['star-button'],
-      el['delete-item'], el['delete-yes'], el['delete-keep']]
+      el['delete-item']]
       .filter(function (control) { return !control.hidden; });
   }
 
   function tabThroughControls(e) {
+    // The open card holds the keyboard: the one button is the only place Tab can go.
+    if (asking !== null) {
+      e.preventDefault();
+      el['delete-yes'].focus({ preventScroll: true });
+      return;
+    }
     var box = selected && boxFor(selected);
     if (!box || editing) return;
     var controls = controlsInOrder();
@@ -2908,21 +2903,24 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     el['delete-item'].focus({ preventScroll: true });
   }
 
-  // Nothing at stake deletes straight away. Otherwise the question shows and nothing is written.
+  // Every delete asks first, and nothing is written until Delete is pressed on the card.
   el['delete-item'].addEventListener('click', function () {
     if (!canEdit()) return;
-    var effects = L.deleteEffects(map, selected.id);
-    if (!effects.picks.length && !effects.rows.length && !effects.keyActions.length) {
-      deleteNow();
-      return;
-    }
     asking = selected.id;
     showControls();
-    el['delete-keep'].focus({ preventScroll: true });
+    el['delete-yes'].focus({ preventScroll: true });
   });
 
   el['delete-yes'].addEventListener('click', deleteNow);
-  el['delete-keep'].addEventListener('click', stopAsking);
+  el['delete-title'].textContent = 'Confirm Delete';
+  el['delete-yes'].textContent = 'Delete';
+
+  // A click anywhere else closes the card. A click on the card or on the trash can does not.
+  document.addEventListener('click', function (e) {
+    if (asking === null || el['delete-card'].contains(e.target) || el['delete-item'].contains(e.target)) return;
+    asking = null;
+    showControls();
+  });
 
   el['toggle-plan'].addEventListener('click', function () {
     panelOpen = !panelOpen;

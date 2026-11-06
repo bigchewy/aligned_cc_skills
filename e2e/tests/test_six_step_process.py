@@ -859,6 +859,25 @@ def test_the_delete_control_is_a_trash_icon_with_no_words():
     assert "['delete-item', 'Delete']" in html
 
 
+def test_the_delete_card_is_a_small_white_card_with_one_red_button():
+    html = template()
+    css = html[html.index("<style>"):html.index("</style>")]
+    card_css = css[css.index("#delete-card {"):]
+    card_css = card_css[:card_css.index("}")]
+    assert "position: fixed" in card_css and "border-radius" in card_css and "box-shadow" in card_css
+    assert "background: var(--box)" in card_css
+    yes_css = css[css.index("#delete-yes {"):]
+    yes_css = yes_css[:yes_css.index("}")]
+    assert "color: #fff" in yes_css and "background:" in yes_css
+    assert "#delete-yes:focus-visible" in css
+    markup = html[html.index('id="delete-card"'):html.index('<script id="map-logic">')]
+    assert 'role="alertdialog"' in html[html.index('id="delete-card"') - 20:html.index('id="delete-card"') + 120]
+    assert markup.count("<button") == 1
+    inside = markup[markup.index(">") + 1:markup.index("</div>")]
+    words = re.sub(r"<[^>]+>", " ", inside)
+    assert " ".join(words.split()) == "Confirm Delete Delete"
+
+
 def test_page_has_no_form_editor_left():
     html = template()
     for gone in ("openEditor", "editorActions", "moveControl", "closeEditor", "commitEdit", "cancelEdit",

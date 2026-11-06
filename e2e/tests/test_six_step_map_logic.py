@@ -1130,26 +1130,10 @@ def test_delete_a_top_level_item_and_an_unknown_one():
     assert call("deleteItem", m, "nope")["result"] == m
 
 
-def test_delete_effects_name_picks_and_rows():
-    out = call("deleteEffects", plan_map(), "s1")["result"]
-    assert "subItems" not in out
-    assert out["picks"] == ["one", "two"]
-    assert out["rows"] == ["move one", "move two"]
-    assert out["keyActions"] == ["both", "only two"]
-
-
-def test_delete_effects_name_a_row_with_a_blank_first_move_by_its_solution():
-    m = plan_map()
-    m["execute"][1]["first_move"] = ""
-    out = call("deleteEffects", m, "s1")["result"]
-    assert out["rows"] == ["move one", "two"]
-
-
-def test_delete_effects_of_an_item_with_nothing_to_lose():
-    m = plan_map()
-    nothing = {"picks": [], "rows": [], "keyActions": []}
-    assert call("deleteEffects", m, "s3")["result"] == nothing
-    assert call("deleteEffects", m, "nope")["result"] == nothing
+def test_the_delete_card_has_no_list_of_effects_behind_it():
+    page = TEMPLATE.read_text()
+    for gone in ("deleteEffects", "listOf", "delete-keep", "delete-question"):
+        assert gone not in page, gone
 
 
 def test_star_changes_only_that_solution():

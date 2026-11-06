@@ -258,7 +258,7 @@ const flows = {
   },
   async 'a delete sends the item and everything under it'() {
     const { p, s } = await opened();
-    p.clickItem('a1'); p.tool('delete-item'); await settle();
+    p.clickItem('a1'); p.tool('delete-item'); p.tool('delete-yes'); await settle();
     assert.deepEqual(s.writes, [{ items: { a1: { __delete__: true }, s1: { __delete__: true } } }]);
     assert.equal(hasBox(p, 'a1'), false); assert.equal(hasBox(p, 's1'), false);
     assert.equal(p.active(), p.box('goal'));
@@ -290,7 +290,7 @@ const flows = {
   },
   async 'a snapshot that drops a change in flight keeps it on screen'() {
     const { p, s } = await opened(undefined, { hold: true, echo: false });
-    p.clickItem('a2'); p.tool('delete-item'); await settle();
+    p.clickItem('a2'); p.tool('delete-item'); p.tool('delete-yes'); await settle();
     s.deliver(s.body); await settle();
     assert.equal(hasBox(p, 'a2'), false);
     assert.equal(s.writes.length, 1);
@@ -482,24 +482,36 @@ const flows = {
     p.resize(); await settle();
     assert.equal(p.el('item-tools').hidden, true);
   },
-  async 'a remote delete while the delete question is open closes the question'() {
+  async 'a remote delete of that item closes the card'() {
     const doc = mapDoc({ a1: item('obstacle', 'first', 'goal', 1), s1: item('solution', 'fix', 'a1', 1, { star: true }) });
     const { p, s } = await opened(doc);
     p.clickItem('a1'); p.tool('delete-item');
-    assert.equal(p.el('delete-question').hidden, false);
+    assert.equal(p.el('delete-card').hidden, false);
     s.remote({ items: { a1: { __delete__: true }, s1: { __delete__: true } } }); await settle();
-    assert.equal(p.el('delete-question').hidden, true);
-    assert.equal(p.el('delete-yes').hidden, true);
+    assert.equal(p.el('delete-card').hidden, true);
     assert.equal(p.el('item-tools').hidden, true);
     assert.equal(s.writes.length, 0);
   },
-  async 'a live update keeps the delete question open and rechecks what it would remove'() {
+  async 'a refused delete keeps the item gone on screen, says not saved, and closes the card'() {
+    const doc = mapDoc({ a1: item('obstacle', 'first', 'goal', 1), a2: item('obstacle', 'second', 'goal', 2) });
+    const { p, s } = await opened(doc, { refuse: ['invalid_argument'] });
+    p.clickItem('a1'); p.tool('delete-item'); await settle();
+    assert.equal(s.writes.length, 0, 'asking wrote something');
+    p.tool('delete-yes'); await settle();
+    assert.deepEqual(s.writes, [{ items: { a1: { __delete__: true } } }]);
+    assert.equal(p.status(), 'Not saved');
+    assert.equal(p.el('delete-card').hidden, true);
+    assert.ok(!p.canvasText().includes('first'), p.canvasText());
+    assert.ok(p.canvasText().includes('second'));
+    await settle();
+    assert.equal(s.writes.length, 1, 'a refused delete went again by itself');
+  },
+  async 'a live update keeps the card open, and Delete takes what is under the item by then'() {
     const doc = mapDoc({ a1: item('obstacle', 'first', 'goal', 1), s1: item('solution', 'fix', 'a1', 1, { star: true }) });
     const { p, s } = await opened(doc);
     p.clickItem('a1'); p.tool('delete-item');
     s.remote({ items: { s2: item('solution', 'their pick', 'a1', 2, { star: true }) } }); await settle();
-    assert.equal(p.el('delete-question').hidden, false);
-    assert.ok(p.el('delete-question').textContent.includes('their pick'), p.el('delete-question').textContent);
+    assert.equal(p.el('delete-card').hidden, false);
     p.tool('delete-yes'); await settle();
     assert.deepEqual(s.writes, [{ items: { a1: { __delete__: true }, s1: { __delete__: true }, s2: { __delete__: true } } }]);
   },
@@ -531,7 +543,6 @@ const flows = {
     const { p, s } = await opened(doc);
     assert.ok(p.panelText().includes('the first move'));
     p.clickItem('s1'); p.tool('delete-item');
-    assert.ok(p.el('delete-question').textContent.includes('the first move'));
     p.tool('delete-yes'); await settle();
     assert.deepEqual(s.writes, [{ items: { s1: { __delete__: true } } }]);
     assert.ok(!p.panelText().includes('the first move'), p.panelText());
