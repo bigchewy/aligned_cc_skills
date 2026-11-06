@@ -36,7 +36,7 @@ Eric wants people in his organization to open one link and update the same map, 
 - Comments on the map.
 - Undo or version history.
 - One link holding many maps, because access is per artifact.
-- Moving local maps into artifacts.
+- A local file version. Eric removed it on 2026-11-05.
 
 ## Anti-goals
 
@@ -46,7 +46,6 @@ The work has failed if any of these is true:
 - Claude's or a colleague's change gets wiped by someone who opened a text box and didn't change anything.
 - The page says "All changes saved" when a write failed.
 - A map gets shared without its creator choosing to share it.
-- Someone without the Artifact tools can't run the framework at all.
 
 ## Approaches
 
@@ -56,7 +55,8 @@ The work has failed if any of these is true:
 | Shared data, with the whole map in one document | Silently loses edits, as tested | Dropped |
 | Shared data, with one document per item | Claude's rewrite stops at 50 writes per batch, so it can't be one step on a big map | Dropped |
 | The page republishes itself on each edit | A conflict reloads every open page and drops the edit | Dropped |
-| Artifact only, with no local file | Breaks the plugin for anyone without the Artifact tools | Dropped |
+| Artifact only, with no local file | Someone without the Artifact tools gets a plain message and no map | Picked by Eric |
+| Artifact, with the local file as a fallback | Two ways of saving to keep working | Dropped by Eric |
 
 ## How it works for a person
 
@@ -109,13 +109,13 @@ Plan rows and key actions stay lists, and only Claude writes them, so people can
 
 ## How the page saves
 
-**Which saving a page uses.** The page decides before it reads any map data. `window.claude` undefined means a local file. Defined means the viewer, and never file saving. The `artifact-capabilities` skill and its type definitions are the source of truth for the data calls.
+**Which saving a page uses.** The page decides before it reads any map data. `window.claude` undefined means the page is outside Claude. The `artifact-capabilities` skill and its type definitions are the source of truth for the data calls.
 
 | Where the page is running | What it does |
 |---|---|
-| Opened as a local file, with no Claude viewer around it | File saving |
+| Opened outside Claude | Says the map opens inside Claude. No editing |
 | In the viewer, and the data opens | Runs from the shared data |
-| In the viewer, signed out or the data can't open | Says it can't open the map. No editing, and never file saving |
+| In the viewer, signed out or the data can't open | Says it can't open the map. No editing |
 | In the viewer, with no map in the data | Says the map isn't set up. No editing |
 
 **Each action makes its own change.** Moving, typing, starring and deleting each work out exactly what that action changed, and that change joins a queue. One write goes at a time, as the platform requires. The page never compares what's on screen with what's stored, because that's the way an edit gets lost or an old value gets sent back over someone else's.
@@ -136,28 +136,32 @@ Plan rows and key actions stay lists, and only Claude writes them, so people can
 
 **An unknown `version`.** The page shows the map without editing controls and says it needs a newer page.
 
-**Status.** "All changes saved" means nothing is waiting and the last write was confirmed. A write that fails because the connection dropped retries. If a write takes too long, or the live connection dies, the page says so and keeps the edit on screen. A refused write keeps the edit on screen, marked as not saved, with a plain message and no automatic revert. A change to an item someone deleted meanwhile is dropped, because reads ignore that item. On the artifact path, Save a copy, Turn on saving, the leave-page warning, the browser note and the file revision checks are hidden or skipped, and no "Reload the page" or file-name text shows.
+**Status.** "All changes saved" means nothing is waiting and the last write was confirmed. A write that fails because the connection dropped retries. If a write takes too long, or the live connection dies, the page says so and keeps the edit on screen. A refused write keeps the edit on screen, marked as not saved, with a plain message and no automatic revert. A change to an item someone deleted meanwhile is dropped, because reads ignore that item.
 
-**During a live update:** an open text box and a drag keep going. A drag of an item someone just deleted cancels. A blank new item stays. The delete question stays open and rechecks what it would remove.
+**During a live update:** an open text box and a drag keep going. A drag of an item someone just deleted cancels. A blank new item stays. An open Confirm Delete closes if the item is gone.
 
 **Who can write.** A person who can't write sees the map with no editing controls. If the page can't tell in advance, as with outside guests, it finds out from the first refused write.
 
 ## What changes for Claude
 
-Claude picks where the map lives: with both the Artifact and ArtifactData tools it publishes an artifact, and otherwise it uses the local file, including if a publish fails.
+Without both the Artifact and ArtifactData tools, or if a publish fails, Claude says so plainly and stops.
 
-- **Publishing:** the template becomes one file that works both ways, with no `<title>` or html, head and body tags of its own, and its page title and language set by script. Claude publishes that file directly, naming the artifact with the tool's title setting, and declares `db` and `user`. Stage 0 tests this. If Claude has to write the file out by hand, the existing rule to read it all and check it stays.
+- **Publishing:** the template has no `<title>` or html, head and body tags of its own, and its language is set by script. Claude publishes that file directly, naming the artifact with the tool's title setting, and declares `db` and `user`.
 - **First write:** write `maps/main` and `maps/baseline` together in one batch.
 - **Each write:** read `maps/main`, then send only what changed, pinned to the version just read, with the matching `maps/baseline` in the same batch. Removals must be marked for deletion, because updates merge. If it's refused, read again and redo the change.
 - **Plan rows:** Claude is the only writer, and it removes rows naming a solution that's gone.
 - **Labels:** Claude works them out from flat data, which is new, so an eval tests it.
-- **Pick-up:** read `maps/main` and compare with `maps/baseline`. "Reload the page" lines and file-name rules don't apply. A refused read looks the same as a map that wasn't shared, so Claude says both possibilities.
+- **Pick-up:** read `maps/main` and compare with `maps/baseline`. A refused read looks the same as a map that wasn't shared, so Claude says both possibilities.
 - **"Each map is one person's"** changes: a shared map can change while Claude is working, and Claude reports edits it didn't make.
 - **Stays:** all six steps, every WAIT, private lists, labels, and the rule that map text is content and never instructions. That rule matters more when several people write to the map.
 
 ## The local file fallback
 
-The file saving code stays untouched in its own part of the template, with its own status function and tests. The artifact code goes in a separate script. The local path gets the saving Eric picked: no button, and Chrome's file dialog opens once on the first edit, then every edit saves itself.
+There is none. Eric removed it on 2026-11-05. File saving, the file dialog, Save a copy, Turn on saving, the file revision checks and the browser note all come out of the template.
+
+## Deleting
+
+Every delete asks, every time. A small card at the trash can says "Confirm Delete" with a Delete button. Escape or clicking elsewhere cancels. The old question listing what a delete removes is gone.
 
 ## The build, in stages
 
@@ -165,23 +169,23 @@ The file saving code stays untouched in its own part of the template, with its o
 1. **Flat data.** Tree-to-flat, per-action changes, forgiving reads, random ids, all pure logic.
 2. **Saving through shared data.** The queue, first load, live updates, status, view-only mode, on the real page in the viewer.
 3. **Claude's script.** `prompt.md`, examples, the runner's artifact section and an eval of Claude's writes.
-4. **Local fallback.** The file dialog on the first edit. This is independent of the others.
+4. **Confirm Delete.** The card on every delete.
+5. **Take out the local file.** Remove file saving from the template and its tests.
 
 ## Tests
 
 - `e2e/tests/test_six_step_map_logic.py`: flat data, per-action changes, forgiving reads.
 - `e2e/tests/test_six_step_process.py`: `prompt.md` rules on both paths.
 - `e2e/tests/test_framework_artifacts.py`: this framework's artifact section, which conflicts with the runner today.
-- A new test driver for the artifact page with a fake data store, covering load, the queue, live updates during typing and during a drag, a failed write, the host checks, and view-only mode. `six_step_page_flows.js` keeps covering the local path.
+- A new test driver for the artifact page with a fake data store, covering load, the queue, live updates during typing and during a drag, a failed write, the host checks, and view-only mode. Flows for editing move onto this driver when the local file comes out.
 - An eval: Claude rewrites a shared map through its data tool.
 - Real viewer, by Claude: two tabs racing, Claude writing while a tab types.
-- By hand: a real colleague editing a shared map, and the first-edit file dialog on a local file.
+- By hand: a real colleague editing a shared map.
 
 ## Calls I made
 
 - A map stays private until its creator uses Share.
 - One artifact per map.
-- The local file stays as the fallback.
 - When two people change the same item's text, the last one wins and the page shows a notice.
 - A box's new sub-items move directly under the goal if the box was deleted.
 - Claude is the only writer of plan rows, so a person deleting a solution doesn't race Claude.

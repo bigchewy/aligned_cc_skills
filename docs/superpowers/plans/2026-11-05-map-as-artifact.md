@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** The 6-step map runs as a private Claude artifact that saves itself, updates live and can be shared, with the local file as the fallback.
+**Goal:** The 6-step map runs as a private Claude artifact that saves itself, updates live and can be shared. Eric removed the local file on 2026-11-05, so Tasks 9 and 10 replace the old fallback task.
 
 **Architecture:** One template works both ways. A new `<script id="map-store">` holds pure logic for flat data, per-action changes, forgiving reads, the write queue and the status text. `map-page` picks shared data when `window.claude` is defined and file saving otherwise, and the existing tree code keeps drawing and editing.
 
@@ -258,26 +258,38 @@ No code unless a fault appears, and then test first.
 - [ ] **Step 5: Run the full suite.** Expected: PASS.
 - [ ] **Step 6: Commit** with `git commit -m "feat: teach Claude to run the map as an artifact"`.
 
-### Task 9: Local file, with one dialog on the first edit
+### Task 9: Confirm Delete, every time
+
+Eric's words: the dialog comes up every time and it can be very simple. It says "Confirm Delete", and they can press Delete again. It must look much nicer.
 
 **Files:**
-- Modify: `frameworks/6-step-process/mind-map-template.html` (`map-page`, and `saveStatus` in `map-logic`), `frameworks/6-step-process/prompt.md`, `e2e/tests/six_step_page_flows.js`, `e2e/tests/test_six_step_map_logic.py`, `e2e/tests/test_six_step_process.py`
-
-**Interfaces:**
-- Consumes: `pickThenConnect`, `connect`, `remembered`, `holdingNewItem`, `askToWrite`.
+- Modify: `frameworks/6-step-process/mind-map-template.html`, `e2e/tests/six_step_hosted_flows.js`, `e2e/tests/six_step_page_flows.js`, `e2e/tests/test_six_step_process.py`, `e2e/tests/test_six_step_map_logic.py`
 
 - [ ] **Step 1: Write the failing flows**
-  - `the first real edit opens the picker once, with no button`
-  - `a remembered file asks for permission on the first edit, not by button`
-  - `cancelling the dialog says changes aren't saved, and the next edit asks again`
-  - `a blank new item opens no dialog; finishing its text does`
-  - `a dialog Chrome refuses says plainly that it needs a click, and the next edit asks again`
-  - `browsers with no picker still get the Save to Downloads button`
-  - `every refusal and stale path behaves as before`
-
-  In `test_six_step_process.py`: `test_prompt_tells_the_person_the_first_edit_asks_for_this_file`, naming the file.
+  - `the trash can asks every time, with nothing written until Delete`, on an item with nothing at stake and one with a star
+  - `the card says Confirm Delete and has one Delete button`, with no list of effects
+  - `Delete deletes the item and everything under it, and sends one change`
+  - `Escape cancels and puts focus back on the trash can`
+  - `clicking elsewhere cancels and writes nothing`
+  - `Enter on the focused Delete button deletes`
+  - `a remote delete of that item closes the card`
 - [ ] **Step 2: Run them.** Expected: FAIL.
-- [ ] **Step 3: Implement.** The picker must be called in the same turn as the person's Enter, click or drop, so call it from the place the edit finishes, not after an `await`. Remove "Turn on saving" and "Turn saving back on" from `saveStatus`, keeping the refusal and Save a copy paths.
-- [ ] **Step 4: Update `prompt.md`'s lines about those buttons.** Rebuild the example and run the full suite. Expected: PASS.
-- [ ] **Step 5: Check in Chrome on `http://127.0.0.1`, on a page with no unsaved edits left when you close it:** Enter opens the dialog, and so does a drag's release. Record anything that's refused.
-- [ ] **Step 6: Commit** with `git commit -m "feat: ask for the map file once, on the first edit"`.
+- [ ] **Step 3: Implement.** Remove `deleteEffects`, `listOf`, the Keep button and the question's wording. The card sits by the trash can, on the page's white look: rounded corners, a soft shadow, the words in the page's type, and a solid red Delete button with white text.
+- [ ] **Step 4: Rebuild the example and run the flows and the full suite.** Expected: PASS.
+- [ ] **Step 5: Publish to the test map** `https://claude.ai/artifact/P81Nau1vcwjsSYpNKL3Tbh` and look at a screenshot of the card in the viewer, opened by keyboard. Fix what looks wrong.
+- [ ] **Step 6: Commit** with `git commit -m "feat: ask Confirm Delete on every delete"`.
+
+### Task 10: Take out the local file
+
+**Files:**
+- Modify: `frameworks/6-step-process/mind-map-template.html`, `e2e/tests/six_step_hosted_flows.js`, `e2e/tests/test_six_step_hosted_flows.py`, `e2e/tests/six_step_page_stub.js`, `e2e/tests/test_six_step_process.py`, `e2e/tests/test_six_step_map_logic.py`, `e2e/tests/test_six_step_map_store.py`, `e2e/tests/test_playbook.py` and `e2e/tests/test_coach_eric.py` if they name removed things
+- Delete: `frameworks/6-step-process/example-map.html`, `e2e/tests/six_step_page_flows.js`, `e2e/tests/test_six_step_page_flows.py`
+- Create: `e2e/fixtures/six-step-example-map.json`, the example's flat document
+
+- [ ] **Step 1: Move every editing flow in `six_step_page_flows.js` onto the hosted driver:** selecting, typing, pluses, stars, dragging, zoom, the plan panel. Flows about files, handles, refusals, copies, revisions and the autosaver go. List in your report each flow removed and why. Run the moved flows. Expected: PASS.
+- [ ] **Step 2: Write the failing flow** `opened outside Claude says the map opens inside Claude, and allows no edits`, and a test that the template holds none of `showOpenFilePicker`, `indexedDB`, `createWritable`, `Save a copy`, `Turn on saving`, `map_id`, `map-data`.
+- [ ] **Step 3: Run them.** Expected: FAIL.
+- [ ] **Step 4: Remove from `map-page`:** `hosted` as a choice, `SOURCE`, handles, the autosaver, refusals, copies, downloads, the browser note, the save button, and `document.title`. Remove from `map-logic` whatever is then unused, including `parseMapData`, `replaceMapData`, `copyHtml`, `checkTarget`, `fileIsKnown`, `connectToHandle`, `createAutosaver`, `saveStatus` and the file messages. Remove the `<script id="map-data">` block. Keep the close warning for unconfirmed changes. Grep `skills/` and `frameworks/` for `example-map` and fix references.
+- [ ] **Step 5: Run the full suite.** Expected: PASS, with fewer tests. Report the old and new counts and the template's old and new line counts.
+- [ ] **Step 6: Republish the test map and check in the viewer by keyboard** that it draws, adds an item and saves. Wait for "All changes saved" before closing a tab.
+- [ ] **Step 7: Commit** with `git commit -m "feat: make the artifact the map's only home"`.
