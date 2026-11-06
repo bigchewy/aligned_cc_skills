@@ -144,12 +144,10 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 #panel dd { margin: 0 0 4px; overflow-wrap: anywhere; }
 .row-title { font-weight: 600; margin: 8px 0 2px; overflow-wrap: anywhere; }
 .none { color: var(--muted); margin: 0; }
-#appendix-open { position: fixed; z-index: 12; left: 16px; bottom: 16px; background: var(--box); }
-#appendix-window {
+#goal-more { position: fixed; z-index: 9; padding: 0 8px; line-height: 16px; font-weight: 700; background: var(--box); }
+#goal-window {
   position: fixed;
   z-index: 13;
-  left: 16px;
-  bottom: 56px;
   width: min(420px, calc(100vw - 32px));
   box-sizing: border-box;
   padding: 12px 16px 16px;
@@ -158,12 +156,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(31, 35, 40, 0.16), 0 1px 3px rgba(31, 35, 40, 0.1);
 }
-#appendix-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-#appendix-title { font-size: 15px; font-weight: 600; color: var(--ink); }
-#appendix-notes { display: block; width: 100%; height: 40vh; max-height: 320px; box-sizing: border-box; padding: 6px 8px; resize: none; font: inherit; font-size: 15px; color: inherit; background: transparent; border: 1px solid var(--edge); border-radius: 6px; }
-#appendix-notes[hidden], #appendix-read[hidden] { display: none; }
-#appendix-read { max-height: 320px; overflow: auto; font-size: 15px; overflow-wrap: anywhere; }
-#appendix-read p { margin: 0 0 8px; }
+#goal-window-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+#goal-window-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+#goal-notes { display: block; width: 100%; height: 200px; box-sizing: border-box; padding: 6px 8px; resize: none; font: inherit; font-size: 15px; color: inherit; background: transparent; border: 1px solid var(--edge); border-radius: 6px; }
+#goal-notes[hidden], #goal-read[hidden] { display: none; }
+#goal-read { max-height: 200px; overflow: auto; font-size: 15px; overflow-wrap: anywhere; }
+#goal-read p { margin: 0 0 8px; }
 
 #save-status { margin: 0; font-size: 14px; color: var(--muted); min-width: 125px; text-align: right; }
 #save-status.saved { color: var(--ink); }
@@ -275,6 +273,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 <div id="notices">
   <div id="message" role="status" hidden></div>
 </div>
+<button type="button" class="quiet" id="goal-more" aria-label="More about this goal" title="More about this goal" hidden>&hellip;</button>
 <div id="workspace">
   <div id="map"><div id="canvas-frame"><div id="canvas"></div><div id="drop-line" aria-hidden="true" hidden></div></div></div>
   <aside id="panel" hidden></aside>
@@ -287,14 +286,13 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   <button type="button" id="star-button" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
   <button type="button" id="delete-item" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
 </div>
-<button type="button" class="quiet" id="appendix-open" hidden>Appendix</button>
-<div id="appendix-window" role="dialog" aria-labelledby="appendix-title" hidden>
-  <div id="appendix-head">
-    <span id="appendix-title">Appendix</span>
-    <button type="button" class="quiet" id="appendix-close">Close</button>
+<div id="goal-window" role="dialog" aria-labelledby="goal-window-title" hidden>
+  <div id="goal-window-head">
+    <span id="goal-window-title">About this goal</span>
+    <button type="button" class="quiet" id="goal-window-close">Close</button>
   </div>
-  <textarea id="appendix-notes" aria-labelledby="appendix-title" placeholder="Add notes about this goal"></textarea>
-  <div id="appendix-read" hidden></div>
+  <textarea id="goal-notes" aria-labelledby="goal-window-title" placeholder="Add more detail about this goal"></textarea>
+  <div id="goal-read" hidden></div>
 </div>
 <div id="delete-card" role="alertdialog" aria-modal="true" aria-label="Confirm Delete" hidden>
   <span id="delete-title">Confirm Delete</span>
@@ -1285,7 +1283,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save-status', 'message',
     'typing', 'drag-ghost', 'drop-line', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
     'delete-card', 'delete-yes', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit',
-    'appendix-open', 'appendix-window', 'appendix-close', 'appendix-notes', 'appendix-read'].forEach(function (id) {
+    'goal-more', 'goal-window', 'goal-window-close', 'goal-notes', 'goal-read'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -1467,25 +1465,25 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return dl;
   }
 
-  /* The appendix: a small button, and a small window it opens. */
+  /* The goal's explanation: a small ... on the goal box, and a small window it opens. */
 
   // What the box held when the person started typing, or null when they aren't typing there.
   var notesOpened = null;
-  var appendixOpen = false;
+  var goalWindowOpen = false;
 
   function saveNotes() {
     if (notesOpened === null) return;
     var opened = notesOpened;
-    var text = el['appendix-notes'].value.trim();
+    var text = el['goal-notes'].value.trim();
     notesOpened = null;
     if (text === opened.trim()) {
-      drawAppendix();
+      drawGoalWindow();
       return;
     }
     if (!canEdit()) {
       notice = 'This map can\'t be changed right now, so your notes weren\'t saved.';
       showMessageForState();
-      drawAppendix();
+      drawGoalWindow();
       return;
     }
     var current = map.goal.detail || '';
@@ -1497,30 +1495,50 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
   }
 
-  function drawAppendix() {
+  function drawGoalWindow() {
     var editable = canEdit();
     var detail = map.goal.detail || '';
-    var available = ready && (editable || Boolean(detail));
-    if (!available) appendixOpen = false;
-    el['appendix-open'].hidden = !available;
-    el['appendix-open'].setAttribute('aria-expanded', String(appendixOpen));
-    el['appendix-window'].hidden = !appendixOpen;
-    el['appendix-notes'].hidden = !editable;
-    el['appendix-read'].hidden = editable;
-    if (notesOpened === null) el['appendix-notes'].value = detail;
-    el['appendix-read'].textContent = '';
+    var available = ready && (editable || Boolean(detail)) && !(editing && editing.ref.kind === 'goal');
+    if (!available) goalWindowOpen = false;
+    el['goal-more'].hidden = !available;
+    el['goal-more'].setAttribute('aria-expanded', String(goalWindowOpen));
+    el['goal-window'].hidden = !goalWindowOpen;
+    el['goal-notes'].hidden = !editable;
+    el['goal-read'].hidden = editable;
+    if (notesOpened === null) el['goal-notes'].value = detail;
+    el['goal-read'].textContent = '';
     if (!editable) {
       detail.split(/\n\s*\n/).forEach(function (part) {
-        el['appendix-read'].appendChild(make('p', '', part));
+        el['goal-read'].appendChild(make('p', '', part));
       });
     }
+    positionGoalMore();
   }
 
-  function closeAppendix() {
-    if (!appendixOpen) return;
+  // Both sit outside the canvas, so a redraw leaves them alone, and they follow the goal box at any zoom.
+  function positionGoalMore() {
+    var box = boxFor({ kind: 'goal' });
+    var more = el['goal-more'];
+    if (!box || more.hidden) return;
+    var rect = box.getBoundingClientRect();
+    var mapRect = el.map.getBoundingClientRect();
+    var inView = rect.bottom > mapRect.top && rect.top < mapRect.bottom && rect.right > mapRect.left && rect.left < mapRect.right;
+    more.style.visibility = inView ? 'visible' : 'hidden';
+    more.style.left = (rect.left + rect.right) / 2 - more.offsetWidth / 2 + 'px';
+    more.style.top = rect.bottom - more.offsetHeight / 2 + 'px';
+    if (!goalWindowOpen) return;
+    var shown = el['goal-window'];
+    var below = rect.bottom + more.offsetHeight;
+    var top = below + shown.offsetHeight > window.innerHeight - WINDOW_EDGE ? rect.top - shown.offsetHeight - CONTROL_GAP : below;
+    shown.style.top = clamp(top, WINDOW_EDGE, window.innerHeight - shown.offsetHeight - WINDOW_EDGE) + 'px';
+    shown.style.left = clamp(rect.left, WINDOW_EDGE, window.innerWidth - shown.offsetWidth - WINDOW_EDGE) + 'px';
+  }
+
+  function closeGoalWindow() {
+    if (!goalWindowOpen) return;
     saveNotes();
-    appendixOpen = false;
-    drawAppendix();
+    goalWindowOpen = false;
+    drawGoalWindow();
   }
 
   function drawPanel() {
@@ -1606,12 +1624,13 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     el['edit-hint'].hidden = !canEdit() || map.obstacles.length === 0;
     drawMap();
     drawPanel();
-    drawAppendix();
+    drawGoalWindow();
     showStatus();
     keepOnScreen(spot);
     // The boxes may have moved under a still pointer.
     if (drag) findDropTarget();
     showControls();
+    positionGoalMore();
     restoreFocus();
   }
 
@@ -1990,6 +2009,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     el['delete-card'].hidden = !questioning;
     if (questioning) nameCard(item);
     positionControls();
+    drawGoalWindow();
   }
 
   // The card shows two words. A screen reader also hears which item is going.
@@ -2408,24 +2428,24 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   document.addEventListener('pointerdown', function (e) {
     afterDrag = false;
     cancelDrag();
-    if (!el['appendix-window'].contains(e.target) && !el['appendix-open'].contains(e.target)) closeAppendix();
+    if (!el['goal-window'].contains(e.target) && !el['goal-more'].contains(e.target)) closeGoalWindow();
   }, true);
 
-  el['appendix-open'].addEventListener('click', function () {
-    if (appendixOpen) {
-      closeAppendix();
+  el['goal-more'].addEventListener('click', function () {
+    if (goalWindowOpen) {
+      closeGoalWindow();
       return;
     }
-    appendixOpen = true;
-    drawAppendix();
-    (canEdit() ? el['appendix-notes'] : el['appendix-close']).focus({ preventScroll: true });
+    goalWindowOpen = true;
+    drawGoalWindow();
+    (canEdit() ? el['goal-notes'] : el['goal-window-close']).focus({ preventScroll: true });
   });
-  el['appendix-close'].addEventListener('click', function () {
-    closeAppendix();
-    el['appendix-open'].focus({ preventScroll: true });
+  el['goal-window-close'].addEventListener('click', function () {
+    closeGoalWindow();
+    el['goal-more'].focus({ preventScroll: true });
   });
-  el['appendix-notes'].addEventListener('focus', function () { notesOpened = el['appendix-notes'].value; });
-  el['appendix-notes'].addEventListener('blur', saveNotes);
+  el['goal-notes'].addEventListener('focus', function () { notesOpened = el['goal-notes'].value; });
+  el['goal-notes'].addEventListener('blur', saveNotes);
 
   // No buttons held means the release was missed, as with a Control-click on a Mac.
   document.addEventListener('pointermove', function (e) {
@@ -2461,12 +2481,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       if (e.key === 'Escape') cancelDrag();
       return;
     }
-    if (e.key === 'Escape' && appendixOpen) {
-      closeAppendix();
-      el['appendix-open'].focus({ preventScroll: true });
+    if (e.key === 'Escape' && goalWindowOpen) {
+      closeGoalWindow();
+      el['goal-more'].focus({ preventScroll: true });
       return;
     }
-    if (e.target === el.typing || el['appendix-window'].contains(e.target)) return;
+    if (e.target === el.typing || el['goal-window'].contains(e.target)) return;
     if (e.key === 'Tab') {
       tabThroughControls(e);
     } else if (e.key === 'Escape' && editing) {
@@ -2547,7 +2567,10 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   el['zoom-in'].addEventListener('click', function () { zoomTo(L.stepScale(scale, 1)); });
   el['zoom-fit'].addEventListener('click', function () { zoomTo('whole'); });
 
-  el.map.addEventListener('scroll', positionControls);
+  el.map.addEventListener('scroll', function () {
+    positionControls();
+    positionGoalMore();
+  });
   window.addEventListener('resize', render);
   // A message or a wrapped header moves the map with no scroll and no window resize.
   if (window.ResizeObserver) new ResizeObserver(positionControls).observe(el.map);

@@ -189,21 +189,23 @@ def test_goal_questions_only_come_when_the_goal_is_unclear():
     assert "clarifying" not in section("## Opening").lower()
 
 
-def test_goal_explanation_goes_in_the_appendix_with_nothing_invented():
+def test_goal_explanation_opens_from_the_goal_with_nothing_invented():
     goal = section("## Step 2: Goal")
     line = next(l for l in goal.splitlines() if "`goal.detail`" in l)
     assert "a paragraph or two" in line
-    assert "appendix" in line
+    assert "appendix" not in line.lower()
+    assert "goal box" in line
     assert "Don't invent" in line
     assert "obstacles or solutions" in line
 
 
-def test_people_can_type_in_the_appendix_and_claude_keeps_their_words():
+def test_people_can_type_in_the_explanation_and_claude_keeps_their_words():
     rules = section("## The map")
     assert "the page never writes it" not in rules
     assert "People can also type in it on the page" in rules
     assert "type in it" in section("## Step 2: Goal")
-    assert "Appendix button" in section("## Step 2: Goal")
+    assert "Appendix" not in section("## Step 2: Goal")
+    assert "the ... on the goal" in section("## Step 2: Goal")
     assert "under Show plan" not in section("## Step 2: Goal")
 
 

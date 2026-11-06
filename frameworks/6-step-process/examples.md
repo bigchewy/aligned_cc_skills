@@ -52,7 +52,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **Advisor:** "If we talked at the end of Q2 and you'd succeeded, what would you be able to count?"
 
-> One nudge toward a number. If none comes, Claude takes the goal as it is. A qualitative goal is fine, and the explanation in the appendix carries the detail.
+> One nudge toward a number. If none comes, Claude takes the goal as it is. A qualitative goal is fine, and the explanation behind the ... on the goal carries the detail.
 
 ### Someone who doesn't know the goal yet
 
