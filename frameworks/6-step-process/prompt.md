@@ -49,7 +49,7 @@ One artifact holds one map. For a second map, tell them to start a new conversat
 
 Say in one line what changed. The open page updates by itself.
 
-**The data.** `example-map.html` in this framework's folder shows a finished map as a picture. `maps/main` looks like this.
+**The data.** `maps/main` looks like this.
 
 ```json
 {

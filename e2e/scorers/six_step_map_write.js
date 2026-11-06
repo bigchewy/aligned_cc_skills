@@ -174,9 +174,6 @@ function checkRows(main, seed, problems) {
 
 function checkInflate(main, code, problems) {
   const map = plain(code.S.inflate(main));
-  map.map_id = 'eval';
-  const problem = code.L.mapProblem(map);
-  if (problem) problems.push('the page could not draw the map: ' + problem);
   if (code.S.unknownVersion(main)) problems.push('the page would refuse this version field');
   const ids = plain(code.L.itemLabels(map));
   const byText = {};

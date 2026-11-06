@@ -12,7 +12,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
 TEMPLATE = REPO / "frameworks" / "6-step-process" / "mind-map-template.html"
-EXAMPLE = REPO / "frameworks" / "6-step-process" / "example-map.html"
+EXAMPLE = REPO / "e2e" / "fixtures" / "six-step-example-map.json"
 
 RUNNER = r"""
 const logic = %(logic)s;
@@ -60,8 +60,6 @@ def sol(id, text="", children=(), star=False):
 
 def make_map(**over):
     base = {
-        "map_id": "",
-        "revision": 1,
         "person": "Pat",
         "goal": {"text": "g"},
         "obstacles": [
@@ -72,16 +70,9 @@ def make_map(**over):
         "key_actions": [],
         "execute": [],
         "feedback": {"number": "", "check_on": "", "redraw_if": ""},
-        "baseline": {},
     }
     base.update(over)
     return base
-
-
-def example_map():
-    html = EXAMPLE.read_text()
-    m = re.search(r'<script id="map-data" type="application/json">(.*?)</script>', html, re.S)
-    return json.loads(m.group(1))
 
 
 def doc_of(**over):
@@ -114,17 +105,33 @@ def tree_ids(doc):
     return ids_of(inflate(doc)["obstacles"])
 
 
-def test_flatten_then_inflate_keeps_the_example_tree():
-    example = example_map()
+def test_inflate_then_flatten_gives_back_the_example_document():
+    doc = json.loads(EXAMPLE.read_text())
+    assert run("return S.flatten(S.inflate(D.doc));", doc=doc) == doc
+
+
+def test_inflate_keeps_only_the_fields_the_page_uses():
+    assert sorted(inflate(json.loads(EXAMPLE.read_text()))) == [
+        "execute", "feedback", "goal", "key_actions", "obstacles", "person"]
+
+
+def test_inflate_copies_a_row_key_named_proto_without_touching_the_prototype():
+    # The row comes from other people's data. JSON.parse makes __proto__ a plain key, and a plain assignment
+    # would turn it into the row's prototype.
+    row = '{"solution_id":"s1","first_move":"m","__proto__":{"sneaked":true}}'
+    action = '{"text":"k","risk":"low","solution_ids":["s1"],"__proto__":{"sneaked":true}}'
     out = run(
-        "const m = S.inflate(S.flatten(D.map)); m.map_id = 'x'; return {m: m, problem: L.mapProblem(m)};",
-        map=example,
+        "const doc = {version: 1, items: {s1: {kind: 'solution', text: 'x', star: false, parent: 'goal', order: 1}},"
+        " execute: [JSON.parse(D.row)], key_actions: [JSON.parse(D.action)], feedback: JSON.parse(D.feedback)};"
+        "const m = S.inflate(doc);"
+        "return [m.execute[0], m.key_actions[0], m.feedback].map((r) => ({"
+        " sneaked: r.sneaked === undefined ? null : r.sneaked,"
+        " plain: Object.getPrototypeOf(r) === Object.prototype,"
+        " own: Object.prototype.hasOwnProperty.call(r, '__proto__')}));",
+        row=row, action=action, feedback='{"number":"n","__proto__":{"sneaked":true}}',
     )
-    assert out["problem"] is None
-    for key in ("obstacles", "goal", "person", "key_actions", "execute", "feedback"):
-        assert out["m"][key] == example[key], key
-    assert out["m"]["revision"] == 1
-    assert out["m"]["baseline"] == {}
+    for each in out:
+        assert each == {"sneaked": None, "plain": True, "own": True}
 
 
 def test_flatten_orders_from_one_under_each_parent():
@@ -305,7 +312,7 @@ def test_change_never_names_the_plan():
         execute=[{"solution_id": "s1", "first_move": "", "owner": "", "others_decide": ""}],
     )
     after = run("return L.deleteItem(D.map, 's1');", map=before)
-    assert after["execute"] == [] or run("return L.deleteItem(D.map, 's1').execute;", map=before) == []
+    assert after["execute"] == []
     c = change(before, after)
     assert list(c.keys()) == ["items"]
 

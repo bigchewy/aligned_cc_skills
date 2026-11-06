@@ -1,6 +1,6 @@
 # 6-Step Process Examples
 
-All of these follow one case: Maya wants 80% in-office attendance by the end of Q2, up from 40%. `example-map.html` in this folder shows a map from the same case.
+All of these follow one case: Maya wants 80% in-office attendance by the end of Q2, up from 40%.
 
 ## Opening
 

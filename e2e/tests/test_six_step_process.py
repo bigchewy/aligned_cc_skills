@@ -1,4 +1,4 @@
-"""Static checks on the 6-step process mind map page and its example."""
+"""Static checks on the 6-step process mind map page and its example data."""
 
 import json
 import re
@@ -11,9 +11,8 @@ import yaml
 REPO = Path(__file__).resolve().parent.parent.parent
 FRAMEWORK = REPO / "frameworks" / "6-step-process"
 TEMPLATE = FRAMEWORK / "mind-map-template.html"
-EXAMPLE = FRAMEWORK / "example-map.html"
+EXAMPLE = REPO / "e2e" / "fixtures" / "six-step-example-map.json"
 
-SLOT = re.compile(r'(<script id="map-data" type="application/json">)(.*?)(</script>)', re.S)
 # Optional list of words that must stay out of shipped files, one per line. It lives
 # outside the repo because this repo is distributed. Without it, those checks skip.
 BANNED_WORDS_FILE = Path.home() / ".claude" / "aligned-banned-words.txt"
@@ -29,11 +28,9 @@ def template():
     return TEMPLATE.read_text()
 
 
-def test_template_has_data_and_logic_blocks():
+def test_template_has_its_three_script_blocks_in_order():
     html = template()
-    assert SLOT.search(html)
-    assert '<script id="map-logic">' in html
-    assert html.index('id="map-data"') < html.index('id="map-logic"') < html.index('id="map-page"')
+    assert html.index('<script id="map-logic">') < html.index('<script id="map-store">') < html.index('<script id="map-page">')
 
 
 def test_template_has_no_wrapper_tags():
@@ -42,20 +39,11 @@ def test_template_has_no_wrapper_tags():
     assert html.startswith("<!DOCTYPE html>\n")
 
 
-def test_template_sets_its_language_and_title_by_script():
+def test_template_sets_its_language_by_script_and_leaves_the_title_to_the_viewer():
     html = template()
     assert "document.documentElement.lang = 'en'" in html
-    assert "if (!window.claude) document.title = 'Mind map'" in html
     assert html.index("document.documentElement.lang") < html.index("<style>")
-    assert html.index("document.title") < html.index('id="map-data"')
-
-
-def test_template_data_is_an_empty_starter_map():
-    data = json.loads(SLOT.search(template()).group(2))
-    assert data["obstacles"] == []
-    assert "unplaced" not in data
-    assert "solutions" not in data
-    assert data["revision"] == 1
+    assert "document.title" not in html
 
 
 def test_template_has_no_outside_urls():
@@ -93,20 +81,6 @@ def test_template_says_not_compared_outside_the_side_panel():
     assert re.search(r'<header>.*id="strategy-note"[^>]*>Not compared to strategy\.<.*</header>', html, re.S)
 
 
-def test_refusal_copy_keeps_the_page_marked_unsaved():
-    html = template()
-    body = html[html.index("function saveACopy("):html.index("function showRefusal(")]
-    assert "markSaved" not in body
-    assert "L.replaceMapData(SOURCE, map)" in body
-    assert "L.copyMessage(location.pathname, reason)" in body
-
-
-def test_refusal_passes_its_reason_to_the_copy():
-    html = template()
-    body = html[html.index("function showRefusal("):html.index("async function writeToFile()")]
-    assert "saveACopy(reason)" in body
-
-
 def whole_function(name):
     """The source of one function in the page code, up to the next function at the same indent."""
     html = template()
@@ -118,38 +92,29 @@ def whole_function(name):
 
 def test_saving_sits_in_the_top_right_and_the_page_has_no_footer():
     html = template()
-    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
+    body = html[html.index("</style>"):html.index('<script id="map-logic">')]
     assert "<footer" not in body
     header = body[body.index("<header>"):body.index("</header>")]
     assert 'id="dirty"' not in html
     assert "el.dirty" not in html
-    assert "Not saved yet." not in header
-    assert ">Save<" not in header
-    assert header.count('id="save"') == 1
+    assert 'id="save"' not in html and "el.save" not in html
     assert "Click an item, then press a + to add under it. Double-click to change its words. Drag it onto a box to move it." in header
-    # The status and its button take the far right, after every other control.
-    assert header.index('id="toggle-plan"') < header.index('id="save-status"') < header.index('id="save"')
-    assert header.rindex("<button") == header.index('id="save"') - len('<button type="button" class="quiet" ')
+    # The status takes the far right, after every other control.
+    assert header.rindex("<button") < header.index('id="save-status"')
 
 
 def test_save_messages_appear_under_the_top_right_controls():
     html = template()
-    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
+    body = html[html.index("</style>"):html.index('<script id="map-logic">')]
     assert body.index("</header>") < body.index('id="notices"') < body.index('id="workspace"')
     notices = body[body.index('id="notices"'):body.index('id="workspace"')]
     assert 'id="message"' in notices
-    assert 'id="browser-note"' in notices
+    assert "browser-note" not in html
     assert re.search(r"#notices \{[^}]*text-align: right", html)
 
 
-def test_a_map_that_cant_be_drawn_hides_the_save_messages():
-    assert "'header, #notices, #workspace'" in template()
-
-
 def test_page_has_no_root_cause_tray_or_add_obstacle_button():
-    for page in (template(), EXAMPLE.read_text()):
-        # The check names the two old fields, to refuse a map that still has them.
-        html = page.replace("'root_cause' in item", "").replace("'unplaced' in map", "")
+    for html in (template(), EXAMPLE.read_text()):
         for gone in ("root_cause", "root-toggle", "setRootCause", "canBeRootCause", ".item.root", "Root cause",
                      "root cause", "unplaced", "#tray", 'id="tray"', "el.tray", "drawTray", "add-obstacle",
                      "Add an obstacle<", "hasChildOfKind"):
@@ -164,7 +129,7 @@ def test_empty_map_hint_points_at_the_goal():
 
 def test_toolbar_offers_a_star_button_with_no_words():
     html = template()
-    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
+    body = html[html.index("</style>"):html.index('<script id="map-logic">')]
     tools = body[body.index('id="item-tools"'):]
     star = tools[tools.index('id="star-button"'):tools.index("</button>", tools.index('id="star-button"'))]
     assert "<svg" in star and "currentColor" in star
@@ -181,153 +146,9 @@ def test_header_has_no_picks_key():
     assert "My picks" not in html and "picks-key" not in html
 
 
-def test_browser_note_says_chrome_saves_by_itself():
-    html = template()
-    note = html[html.index('id="browser-note"'):html.index('id="workspace"')]
-    assert "saves by itself" in note
-    assert "Open With" in note
-    assert "Downloads" in note
-
-
-def test_status_line_comes_from_the_logic_block():
-    assert "L.saveStatus(" in whole_function("showStatus")
+def test_status_line_comes_from_the_store_block():
+    assert "S.hostedStatus(" in whole_function("showStatus")
     assert "showStatus()" in whole_function("render")
-
-
-def test_status_does_not_call_a_blank_new_item_unsaved():
-    assert "holdingNewItem()" in whole_function("showStatus")
-
-
-def test_autosave_guards_against_retrying_the_same_json():
-    assert "askToWrite()" in whole_function("render")
-    body = whole_function("askToWrite")
-    assert "if (!handle" in body
-    assert body.index("savedJson") < body.index("autosaver.request()")
-    assert body.index("lastTried") < body.index("autosaver.request()")
-    assert "lastTried = L.serializeMap(saving)" in whole_function("writeToFile")
-
-
-def test_blank_new_item_stays_out_of_the_file_until_it_has_text():
-    assert "holdingNewItem()" in whole_function("askToWrite")
-
-
-def test_write_returns_its_result_so_the_autosaver_keeps_or_drops_its_queue():
-    body = whole_function("writeToFile")
-    assert body.count("return result;") == 2
-
-
-def test_edit_that_lands_on_the_old_file_contents_still_gets_written():
-    body = whole_function("writeToFile")
-    assert body.index("markSaved(saving)") < body.index("askToWrite()")
-    assert body.index("if (!result.ok)") < body.index("askToWrite()")
-
-
-def test_first_write_tells_the_person_to_tell_claude_once():
-    body = whole_function("writeToFile")
-    assert "When you finish, tell Claude you changed the map." in body
-    assert "toldToTellClaude = true" in body
-    assert "if (!toldToTellClaude)" in body
-
-
-def test_good_write_clears_a_failure():
-    assert "failed = false" in whole_function("writeToFile")
-
-
-def test_handle_store_is_keyed_by_path_and_map_id():
-    html = template()
-    page = html[html.index('id="map-page"'):]
-    assert "L.handleKey(location.pathname, map.map_id)" in page
-
-
-def test_handle_store_survives_a_storage_failure():
-    html = template()
-    page = html[html.index('id="map-page"'):]
-    uses = [m.start() for m in re.finditer(r"\bindexedDB\b", page)]
-    assert uses
-    for at in uses:
-        before = page[:at]
-        top_level_function = before.rindex("\n  async function ")
-        opened = before[top_level_function:]
-        assert opened.count("try {") > opened.count("} catch")
-
-
-def test_bad_files_are_forgotten():
-    body = whole_function("applyRefusal")
-    branch = body[:body.index("reason === 'permission'")]
-    for reason in ("wrong-map", "not-a-map", "unreadable"):
-        assert "'" + reason + "'" in branch
-    assert "forgetHandle()" in branch
-    assert "remembered = null" in branch
-
-
-def test_lost_permission_keeps_the_remembered_file():
-    body = whole_function("applyRefusal")
-    branch = body[body.index("reason === 'permission'"):body.index("} else {")]
-    assert "handle = null" in branch
-    assert "remembered = null" not in branch
-    assert "forgetHandle" not in branch
-
-
-def test_stale_and_failed_writes_stay_connected_and_marked_failed():
-    body = whole_function("applyRefusal")
-    assert "failed = true" in body[body.index("} else {"):]
-
-
-def test_stale_refusal_uses_the_approved_words():
-    assert (
-        "'stale': 'Claude changed this map, so your last edit is not in the file. "
-        "Reload to get the new version.'"
-    ) in template()
-
-
-def test_only_a_stale_refusal_offers_reload():
-    body = whole_function("showRefusal")
-    assert "reason === 'stale'" in body
-    assert "location.reload()" in body
-    assert body.index("reason === 'stale'") < body.index("location.reload()")
-
-
-def test_first_click_opens_the_picker_with_no_step_before_it():
-    body = whole_function("pickThenConnect")
-    assert "L.pickMessage(location.pathname)" in body
-    assert "await" not in body[:body.index("picked = await window.showOpenFilePicker")]
-    assert "connect(picked[0])" in body
-    assert "AbortError" in body
-
-
-def test_button_uses_the_remembered_file_before_any_dialog():
-    body = whole_function("onSave")
-    picker_gone = body.index("!window.showOpenFilePicker")
-    remembered = body.index("connect(remembered)")
-    pick = body.index("pickThenConnect()")
-    assert picker_gone < remembered < pick
-
-
-def test_connecting_remembers_the_file_then_writes_only_through_the_guard():
-    body = whole_function("startSaving")
-    assert "handle = file" in body
-    assert "rememberHandle(file)" in body
-    assert "askToWrite()" in body
-    assert "writeToFile" not in body
-
-
-def test_load_connects_only_when_permission_is_already_granted():
-    body = whole_function("reconnectOnLoad")
-    assert "queryPermission({ mode: 'readwrite' })" in body
-    assert body.index("queryPermission") < body.index("L.connectToHandle")
-    assert body.index("=== 'granted'") < body.index("L.connectToHandle")
-    assert "requestPermission" not in body
-
-
-def test_load_treats_a_stale_file_as_paused():
-    body = whole_function("reconnectOnLoad")
-    assert "result.reason !== 'stale'" in body
-    assert "showRefusal" not in body
-
-
-def test_load_and_autosave_code_stays_off_without_the_picker():
-    html = template()
-    assert "if (window.showOpenFilePicker) reconnectOnLoad();" in html
 
 
 def test_close_warning_is_unchanged():
@@ -336,26 +157,6 @@ def test_close_warning_is_unchanged():
 
 def test_no_save_file_picker():
     assert "showSaveFilePicker" not in template()
-    assert "showSaveFilePicker" not in EXAMPLE.read_text()
-
-
-def test_browser_without_the_picker_names_the_folder_and_file():
-    html = template()
-    body = html[html.index("function onSave()"):html.index("/* Events */")]
-    assert "L.moveCopyMessage(location.pathname)" in body
-    assert "A copy went to your Downloads folder" not in html
-
-
-def test_page_shows_a_message_when_the_data_cant_be_drawn():
-    html = template()
-    assert re.search(r'<div id="data-problem" role="alert" hidden>', html)
-    page_script = html[html.index('id="map-page"'):]
-    check = page_script.index("L.mapProblem(map)")
-    assert check < page_script.index("L.serializeMap(map)")
-    assert check < page_script.index("render();\n})();")
-    guard = page_script[check:page_script.index("L.serializeMap(map)")]
-    assert "showDataProblem" in guard
-    assert "return;" in guard
 
 
 def test_goal_has_one_text_box():
@@ -376,47 +177,16 @@ def test_prompt_puts_the_goal_in_one_sentence():
     assert "starting point not known yet" in goal
 
 
-def test_template_holds_no_escape_a_file_tool_could_decode():
-    assert "\\u003c" not in template()
-    assert "'\\\\' + 'u003c'" in template()
-
-
-def test_template_has_downloads_note():
-    html = template()
-    assert "Downloads" in html
-    assert "Open With" in html
-
-
-def test_template_tells_person_to_tell_claude():
-    html = template()
-    assert "tell Claude you changed the map" in html
-
-
 def test_template_copy_has_no_long_dashes():
     for page in (template(), EXAMPLE.read_text()):
         assert "—" not in page
         assert "–" not in page
 
 
-def test_template_captures_source_before_drawing():
-    html = template()
-    page_script = html[html.index('id="map-page"'):]
-    assert page_script.index("document.documentElement.outerHTML") < page_script.index("render()")
-    assert '<div id="canvas"></div>' in html
-
-
 def test_template_has_quiet_zoom_controls():
     html = template()
     for control in ("zoom-out", "zoom-in", "zoom-fit"):
         assert re.search(r'<button type="button" class="quiet" id="' + control + '"', html), control
-
-
-def test_page_takes_the_baseline_from_the_save_result():
-    html = template()
-    body = html[html.index("async function writeToFile()"):html.index("async function pickThenConnect()")]
-    assert "saving.baseline = result.baseline" in body
-    assert "map.baseline = result.baseline" in body
-    assert body.index("map.baseline = result.baseline") < body.index("markSaved(saving)")
 
 
 def test_template_no_longer_draws_a_missing_solution():
@@ -464,29 +234,16 @@ def test_item_boxes_are_wide_so_text_wraps_less():
     assert "var BOX_W = 240;" in html
 
 
-def test_refusal_messages_cover_every_save_reason():
-    html = template()
-    for reason in ("wrong-map", "not-a-map", "stale", "permission", "unreadable", "write-failed"):
-        assert re.search(r"['\"]" + reason + r"['\"]\s*:", html), reason
-    assert "Save a copy" in html
-    assert "AbortError" in html
+def test_template_ships_no_drawn_map():
+    assert '<div id="canvas"></div>' in template()
 
 
-def test_example_map_parses():
-    data = json.loads(SLOT.search(EXAMPLE.read_text()).group(2))
-    assert data["map_id"]
-    assert "attendance" in data["goal"]["text"].lower()
-    assert data["obstacles"]
-    assert data["baseline"]["obstacles"] == data["obstacles"]
-
-
-def test_example_map_is_the_template_with_new_data():
-    strip = lambda html: SLOT.sub("", html)
-    assert strip(EXAMPLE.read_text()) == strip(template())
-
-
-def test_example_map_escapes_every_angle_bracket_in_its_data():
-    assert "<" not in SLOT.search(EXAMPLE.read_text()).group(2)
+def test_example_data_is_a_flat_document_the_page_can_read():
+    doc = json.loads(EXAMPLE.read_text())
+    assert doc["version"] == 1
+    assert "attendance" in doc["goal"]["text"].lower()
+    assert doc["items"]
+    assert "baseline" not in doc
 
 
 # The framework prompt
@@ -819,7 +576,7 @@ def page_function(name, next_name):
 
 
 def example_items():
-    data = json.loads(SLOT.search(EXAMPLE.read_text()).group(2))
+    data = page_store("return S.inflate(D.doc);", doc=json.loads(EXAMPLE.read_text()))
     labels = {}
 
     def walk(items, depth, prefix, counter):
@@ -887,16 +644,16 @@ def test_page_has_no_form_editor_left():
 
 
 def test_page_has_no_move_to():
-    for page in (template(), EXAMPLE.read_text()):
-        for gone in ("move-to", "move-control", "moveControl", "showMoveList", "moveListKey", "moveTargets", "Move to",
-                     "<select", "subItems", "checkbox"):
-            assert gone not in page, gone
-        assert "canMove" in page
+    page = template()
+    for gone in ("move-to", "move-control", "moveControl", "showMoveList", "moveListKey", "moveTargets", "Move to",
+                 "<select", "subItems", "checkbox"):
+        assert gone not in page, gone
+    assert "canMove" in page
 
 
 def test_the_drag_ghost_sits_outside_the_canvas_and_takes_no_pointer():
     html = template()
-    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
+    body = html[html.index("</style>"):html.index('<script id="map-logic">')]
     workspace = body[body.index('id="workspace"'):body.index('id="typing"')]
     assert 'id="drag-ghost"' in body and 'id="drag-ghost"' not in workspace
     rule = re.search(r"#drag-ghost \{([^}]*)\}", html)
@@ -938,7 +695,7 @@ def test_the_example_says_that_obstacle_sits_there():
 
 def test_the_controls_sit_outside_the_canvas():
     html = template()
-    body = html[html.index('<script id="map-data"'):html.index('<script id="map-logic">')]
+    body = html[html.index("</style>"):html.index('<script id="map-logic">')]
     workspace = body[body.index('id="workspace"'):body.index('id="typing"')]
     for part in ('id="typing"', 'id="plus-obstacle"', 'id="plus-solution"', 'id="item-tools"'):
         assert part in body, part
@@ -950,7 +707,6 @@ def test_selecting_never_draws_the_map_or_asks_for_a_write():
         body = whole_function(name)
         assert "render()" not in body, name
         assert "setMap(" not in body, name
-        assert "askToWrite" not in body, name
 
 
 def test_the_layout_uses_the_pure_layout_code():
@@ -967,7 +723,7 @@ def test_labels_have_a_muted_bold_style():
 def test_template_has_no_chain_code_left():
     html = template()
     for gone in ("whys", "solution_at", "addWhy", "deleteWhy", "markRootCause", "chainPlaces", "function rowLayout"):
-        assert gone not in html.replace("'whys' in item", "").replace("'solution_at' in item", ""), gone
+        assert gone not in html, gone
 
 
 def test_example_map_shows_real_branching():
@@ -975,7 +731,6 @@ def test_example_map_shows_real_branching():
     assert "attendance" in data["goal"]["text"].lower()
     for label in ("1A", "1B", "1B1"):
         assert label in labels, label
-    assert data["baseline"]["obstacles"] == data["obstacles"]
 
 
 def test_example_map_shows_the_new_format():
@@ -1197,6 +952,32 @@ def test_prompt_lets_a_solution_sit_under_a_solution_and_explains_the_star():
 
 
 # The map as an artifact
+
+def test_template_holds_nothing_of_the_local_file():
+    html = template()
+    for gone in ("showOpenFilePicker", "indexedDB", "createWritable", "Save a copy", "Turn on saving", "map_id",
+                 "map-data"):
+        assert gone not in html, gone
+
+
+def test_outside_claude_the_page_says_where_the_map_opens():
+    html = template()
+    assert re.search(r'<div id="outside-claude" hidden>\s*<h1>This map opens inside Claude\.</h1>', html)
+    page = html[html.index('id="map-page"'):]
+    check = page.index("window.claude === undefined")
+    # The check comes before any map data or drawing, and nothing after it runs.
+    assert check < page.index("S.inflate({})") and check < page.index("function render()")
+    guard = page[check:page.index("S.inflate({})")]
+    assert "'header, #notices, #workspace'" in guard and "return;" in guard
+
+
+def test_the_delete_card_words_live_only_in_the_markup():
+    html = template()
+    assert "Confirm Delete</span>" in html and ">Delete</button>" in html
+    page = html[html.index('id="map-page"'):]
+    assert "'delete-title'" not in page
+    assert "el['delete-yes'].textContent" not in page
+
 
 def map_json():
     rules = section("## The map")

@@ -1,15 +1,13 @@
 // Runs the real page code of a map page as the Claude viewer would, against a fake shared data store.
 // Usage: node six_step_hosted_flows.js <path to a map page>. Exits 1 if any flow fails.
-// test_six_step_hosted_flows.py runs it against the template and the example map.
+// test_six_step_hosted_flows.py runs it against the template.
 const fs = require('fs');
 const assert = require('assert');
+const vm = require('vm');
 const { settle, makePage } = require('./six_step_page_stub.js');
 
 const HTML = fs.readFileSync(process.argv[2], 'utf8');
-const SLOT = /(<script id="map-data" type="application\/json">)([\s\S]*?)(<\/script>)/;
-const fileMap = { map_id: 'm1', revision: 1, person: 'Pat', goal: { text: 'g' }, obstacles: [], key_actions: [], execute: [],
-  feedback: { number: '', check_on: '', redraw_if: '' }, baseline: {} };
-const page = makePage(HTML, () => HTML.replace(SLOT, (w, a, b, c) => a + JSON.stringify(fileMap) + c));
+const page = makePage(HTML);
 
 const json = (value) => JSON.parse(JSON.stringify(value));
 const isObject = (v) => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
@@ -84,6 +82,21 @@ function fakeStore(body, options) {
   return s;
 }
 
+// The page's own store code, so a test can build a document from a tree and read the stored document as a tree.
+const storeCode = vm.createContext({});
+vm.runInContext(/<script id="map-store">([\s\S]*?)<\/script>/.exec(HTML)[1], storeCode);
+const Store = storeCode.MapStore;
+const node = (id, text, children) => ({ id, kind: 'obstacle', text, star: false, children: children || [] });
+const sol = (id, text, children, star) => ({ id, kind: 'solution', text, star: Boolean(star), children: children || [] });
+const tree = (obstacles, more) => json(Store.flatten(Object.assign({ person: 'Pat', goal: { text: 'g' }, obstacles,
+  key_actions: [], execute: [], feedback: { number: '', check_on: '', redraw_if: '' } }, more)));
+const stored = (s) => json(Store.inflate(s.body));
+function findIn(items, id) {
+  for (const it of items) { if (it.id === id) return it; const hit = findIn(it.children, id); if (hit) return hit; }
+  return null;
+}
+const selectedId = (p) => JSON.parse(p.el('canvas').walk().find((k) => k.classList.contains('selected')).dataset.ref).id;
+
 function fakeTimers() {
   const t = { list: [], count: 0,
     set(f, ms) { t.count += 1; t.list.push({ id: t.count, f, ms }); return t.count; },
@@ -132,39 +145,73 @@ function assertNoEditing(p, s, id) {
 }
 
 const flows = {
-  async 'no window.claude uses file saving, with no store call'() {
-    const s = fakeStore(twoItems());
-    const p = page({ picker: {} }); await settle();
-    assert.deepEqual(s.useNames, []);
-    assert.equal(p.status(), "Changes aren't being saved yet."); assert.equal(p.button(), 'Turn on saving');
-    assert.equal(p.el('data-problem-reason').textContent, '');
-    p.edit('x'); await settle();
-    assert.equal(p.status(), "Changes aren't being saved yet."); assert.equal(p.warnsOnClose(), true);
+  async 'opened outside Claude says the map opens inside Claude, and allows no edits'() {
+    for (const opts of [{}, { claude: undefined }]) {
+      const p = page(opts); await settle();
+      assert.equal(p.el('outside-claude').hidden, false, 'the message is hidden');
+      for (const part of ['header', 'notices', 'workspace']) assert.equal(p.el(part).hidden, true, part + ' showed');
+      assert.equal(p.el('canvas').kids.length, 0, 'the map drew');
+      assert.equal(p.status(), '');
+      p.fire(p.el('canvas'), 'dblclick');
+      assert.equal(p.el('typing').hidden, true, 'typing opened');
+      assert.deepEqual(p.pluses(), [], 'a plus showed');
+      assert.equal(p.el('item-tools').hidden, true, 'the toolbar showed');
+      assert.equal(p.warnsOnClose(), false, 'nothing can be lost');
+    }
   },
-  async 'window.claude with a null db shows it can\'t open, allows no edits and never uses the picker'() {
+  async 'inside Claude the outside message stays hidden, even when the data can\'t open'() {
+    const { p } = await opened();
+    assert.equal(p.el('outside-claude').hidden, true);
+    assert.equal(p.el('workspace').hidden, false);
+    const q = page({ claude: { use: () => Promise.resolve(null) } }); await settle();
+    assert.equal(q.el('outside-claude').hidden, true);
+    assert.equal(q.status(), CANT_OPEN);
+  },
+  async 'window.claude with a null db shows it can\'t open and allows no edits'() {
     const claude = { use: () => Promise.resolve(null) };
-    const p = page({ claude, picker: {} }); await settle();
+    const p = page({ claude }); await settle();
     assert.equal(p.status(), CANT_OPEN);
-    assert.equal(p.el('data-problem-reason').textContent, '', 'the data problem page showed');
-    assert.equal(p.button(), '');
     assertNoEditing(p);
-    p.clickSave(); await settle();
-    assert.equal(p.sandbox.pickerCalls, 0); assert.equal(p.idbUses(), 0);
+  },
+  async 'an item or plan row the page can\'t use is left out, and the rest draws'() {
+    const doc = mapDoc({
+      a1: item('obstacle', 'still here', 'goal', 1),
+      s1: item('solution', 'a real fix', 'a1', 1),
+      goal: item('obstacle', 'uses the goal id', 'goal', 2),
+      'o"1': item('obstacle', 'has a quote mark', 'goal', 3),
+      old: { text: 'old shape', whys: ['w'], root_cause: 'r', solution_ids: [] },
+      odd: item('note', 'another kind', 'goal', 4)
+    }, {
+      solutions: [],
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 'gone', 'a1'] }],
+      execute: [{ solution_id: 'gone', first_move: 'a gone move', owner: '', others_decide: '' },
+        { solution_id: 'a1', first_move: 'an obstacle move', owner: '', others_decide: '' },
+        { solution_id: 's1', first_move: 'a real move', owner: '', others_decide: '' }]
+    });
+    const { p, s } = await opened(doc);
+    const seen = p.canvasText();
+    assert.ok(seen.includes('still here') && seen.includes('a real fix'), seen);
+    for (const gone of ['uses the goal id', 'has a quote mark', 'old shape', 'another kind']) assert.ok(!seen.includes(gone), gone);
+    const panel = p.panelText();
+    assert.ok(panel.includes('a real move') && panel.includes('the action'), panel);
+    assert.ok(!panel.includes('a gone move') && !panel.includes('an obstacle move') && !panel.includes('undefined'), panel);
+    assert.equal(p.status(), 'All changes saved');
+    assert.equal(s.writes.length, 0, 'a repair was written back');
+    p.typeOn('a1'); p.typeAndEnter('changed'); await settle();
+    assert.deepEqual(s.writes, [{ items: { a1: { text: 'changed' } } }]);
   },
   async 'a window.claude with no use, or a use that fails, counts as can\'t open'() {
     for (const claude of [{}, { use() { throw new Error('no'); } }, { use: () => Promise.reject(new Error('no')) }]) {
-      const p = page({ claude, picker: {} }); await settle();
+      const p = page({ claude }); await settle();
       assert.equal(p.status(), CANT_OPEN);
       assertNoEditing(p);
-      assert.equal(p.sandbox.pickerCalls, 0);
     }
   },
   async 'no map in the data says the map isn\'t set up and allows no edits'() {
-    const s = fakeStore(null); const p = page({ claude: s.claude, picker: {} }); await settle();
+    const s = fakeStore(null); const p = page({ claude: s.claude }); await settle();
     s.deliver(null); await settle();
     assert.ok(p.status().includes("isn't set up"), p.status());
     assertNoEditing(p, s);
-    assert.equal(p.sandbox.pickerCalls, 0);
     s.body = twoItems(); s.deliver(s.body); await settle();
     assert.equal(p.status(), 'All changes saved');
     p.typeOn('a1'); assert.equal(p.el('typing').hidden, false);
@@ -204,7 +251,7 @@ const flows = {
   },
   async 'no edits until the first snapshot, and 10 seconds of silence says it can\'t reach the map'() {
     const s = fakeStore(twoItems()); const timers = fakeTimers();
-    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear, picker: {} });
+    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear });
     assert.equal(p.status(), 'Opening...');
     await settle();
     assert.equal(p.status(), 'Opening...');
@@ -801,10 +848,10 @@ const flows = {
     p.clickItem('s1'); p.tool('star-button'); await settle();
     assert.deepEqual(s.writes[1], { items: { s1: { star: true } } });
   },
-  async 'the hosted page hides Save a copy, Turn on saving and the browser note, and shows no reload or file-name text'() {
+  async 'no state of the page says anything about reloading, a file or a copy'() {
     const { p, s, timers } = await opened(undefined, { hold: true, echo: false });
     const seen = [];
-    const look = () => { seen.push(p.status(), p.message()); assert.equal(p.el('save').hidden, true); assert.equal(p.el('browser-note').hidden, true); };
+    const look = () => { seen.push(p.status(), p.message()); };
     look();
     p.typeOn('a1'); p.typeAndEnter('one'); await settle(); look();
     timers.run((x) => x.ms === 15000); await settle(); look();
@@ -815,7 +862,6 @@ const flows = {
     s.error({ code: 'unavailable' }); await settle(); look();
     s.error({ code: 'revoked' }); await settle(); look();
     for (const t of seen) assert.ok(!/reload|\.html|file|save a copy|turn on saving|picker|download/i.test(t), t);
-    assert.equal(p.button(), '');
   },
   async 'closing the tab warns only while a change is unconfirmed'() {
     const { p, s } = await opened(undefined, { hold: true, echo: false });
@@ -988,6 +1034,999 @@ const flows = {
     const ids = Object.keys(b.s.writes[0].items);
     assert.deepEqual(b.s.writes[0].items[ids[0]], { kind: 'obstacle', text: 'kept', star: false, parent: 'a1', order: 2 });
     assert.deepEqual(b.s.writes[1], { items: { a2: { parent: 's1', order: 1 } } });
+  },
+
+  // Editing: selecting, typing, pluses, stars, dragging, zoom, the plan panel, deleting and focus.
+  async 'an edit back to the old words during a write still goes out'() {
+    const { p, s } = await opened(tree([]), { hold: true });
+    p.edit('first'); await settle();
+    p.edit('g'); await settle();
+    assert.equal(s.writes.length, 1); assert.equal(p.status(), 'Saving...');
+    s.release(); await settle();
+    s.release(); await settle();
+    assert.deepEqual(s.writes, [{ goal: { text: 'first' } }, { goal: { text: 'g' } }]);
+    assert.equal(stored(s).goal.text, 'g'); assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a blank new item stays out of the data until it has text'() {
+    const { p, s } = await opened(tree([]));
+    p.addObstacle(); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    p.typeAndEnter('blocker'); await settle();
+    assert.equal(s.writes.length, 1); assert.equal(stored(s).obstacles[0].text, 'blocker');
+  },
+  async 'the star button shows on a placed solution, pressed for a star'() {
+    const { p } = await opened(tree([node('o1', 'ob', [sol('s1', 'sol', [], true)])]));
+    p.clickItem('s1');
+    assert.equal(p.el('star-button').hidden, false);
+    assert.equal(p.el('star-button').getAttribute('aria-pressed'), 'true');
+    assert.equal(p.el('star-button').getAttribute('aria-label'), 'Star');
+    assert.equal(p.el('star-button').textContent, '');
+    p.clickItem('o1');
+    assert.equal(p.el('star-button').hidden, true);
+  },
+  async 'the trash can asks every time, with nothing written until Delete'() {
+    const { p, s } = await opened(tree([node('o1', 'plain', []), node('o2', 'first', [sol('s1', 'picked', [], true)])]));
+    for (const id of ['o1', 'o2']) {
+      p.clickItem(id); assert.equal(p.el('delete-card').hidden, true, id);
+      p.tool('delete-item'); await settle();
+      assert.equal(p.el('delete-card').hidden, false, id);
+      assert.equal(s.writes.length, 0, id); assert.equal(p.status(), 'All changes saved');
+      assert.ok(findIn(stored(s).obstacles, id));
+    }
+  },
+  async 'the card says Confirm Delete and has one Delete button, with no list of effects'() {
+    const { p } = await opened(tree([node('o1', 'first', [sol('s1', 'the picked fix', [], true)])], {
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1'] }],
+      execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' }]
+    }));
+    p.clickItem('o1'); p.tool('delete-item');
+    const card = p.el('delete-card');
+    assert.ok(p.el('delete-yes').getAttribute('aria-label').startsWith('Delete'));
+    assert.ok(p.el('delete-yes').getAttribute('aria-label').includes('first'));
+    assert.ok(card.getAttribute('aria-label').includes('first'));
+    assert.equal(p.active(), p.el('delete-yes'));
+    assert.equal(p.el('delete-item').hidden, false, 'the toolbar keeps its size, so the map does not jump');
+    assert.equal(p.el('item-tools').classList.contains('asking'), false);
+  },
+  async 'Delete deletes the item and everything under it, and sends one change'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [node('o2', 'kid', [node('o3', 'grandkid')]), sol('s1', 'picked', [], true)]), node('o4', 'other')], {
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1'] }],
+      execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' }]
+    }));
+    p.clickItem('o1'); p.tool('delete-item'); await settle();
+    assert.equal(s.writes.length, 0);
+    p.tool('delete-yes'); await settle();
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['o4']);
+    assert.deepEqual(saved.execute, []);
+    assert.equal(saved.key_actions.length, 1); assert.deepEqual(saved.key_actions[0].solution_ids, []);
+    assert.equal(s.writes.length, 1);
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.active(), p.box('goal'));
+  },
+  async 'Escape cancels, writes nothing, and puts focus back on the trash can'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [sol('s1', 'picked', [], true)])]));
+    p.clickItem('o1'); p.tool('delete-item');
+    p.fire(p.el('delete-yes'), 'keydown', { key: 'Escape' });
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('delete-item').hidden, false);
+    assert.equal(p.isSelected('o1'), true); assert.equal(p.active(), p.el('delete-item'));
+    assert.equal(s.writes.length, 0);
+  },
+  async 'clicking elsewhere cancels and writes nothing'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [sol('s1', 'picked', [], true)]), node('o2', 'other')]));
+    p.clickItem('o1'); p.tool('delete-item');
+    p.clickItem('o2');
+    assert.equal(p.el('delete-card').hidden, true);
+    p.clickItem('o1'); assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('delete-item').hidden, false);
+    p.tool('delete-item'); p.clickEmpty();
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('item-tools').hidden, true);
+    p.clickItem('o1'); p.tool('delete-item'); p.fire(p.el('zoom-in'), 'click');
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('item-tools').hidden, false);
+    p.tool('delete-item'); p.fire(p.el('delete-card'), 'click');
+    assert.equal(p.el('delete-card').hidden, false, 'a click on the card itself keeps it open');
+    assert.equal(s.writes.length, 0); assert.ok(findIn(stored(s).obstacles, 's1'));
+  },
+  async 'Enter on the focused Delete button is left to the button, and Delete then deletes'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.clickItem('o1'); p.tool('delete-item');
+    assert.equal(p.active(), p.el('delete-yes'));
+    assert.ok(!p.fire(p.el('delete-yes'), 'keydown', { key: 'Enter' }).prevented, 'the page must not swallow Enter');
+    assert.equal(s.writes.length, 0);
+    p.fire(p.el('delete-yes'), 'click'); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['o2']); assert.equal(s.writes.length, 1);
+  },
+  async 'Tab and Shift+Tab stay on the Delete button while the card is open'() {
+    const { p } = await opened(tree([node('o1', 'first', [sol('s1', 'picked', [], true)]), node('o2', 'other')]));
+    const tab = (target, shiftKey) => p.fire(target, 'keydown', { key: 'Tab', shiftKey });
+    p.clickItem('o1'); p.tool('delete-item');
+    p.resize();
+    assert.equal(p.el('delete-card').hidden, false); assert.equal(p.active(), p.el('delete-yes'));
+    assert.ok(tab(p.el('delete-yes')).prevented); assert.equal(p.active(), p.el('delete-yes'));
+    assert.ok(tab(p.el('delete-yes'), true).prevented); assert.equal(p.active(), p.el('delete-yes'));
+    p.box('o1').focus();
+    assert.ok(tab(p.box('o1')).prevented); assert.equal(p.active(), p.el('delete-yes'));
+  },
+  async 'the card sits by the trash can and stays inside the window'() {
+    const { p } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.tool('delete-item');
+    const card = p.el('delete-card');
+    const left = parseFloat(card.style.left), top = parseFloat(card.style.top);
+    assert.ok(left >= 12 && left <= p.sandbox.innerWidth - card.offsetWidth - 12, String(left));
+    assert.ok(top >= 12 && top <= p.sandbox.innerHeight - card.offsetHeight - 12, String(top));
+    p.el('map').scrollLeft = 5000;
+    p.el('map').listeners.scroll.forEach((f) => f());
+    assert.equal(card.style.visibility, 'hidden');
+  },
+  async 'a plus pressed while the card shows closes it and opens the new item, with no write'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [sol('s1', 'picked', [], true)])]));
+    p.clickItem('o1'); p.tool('delete-item');
+    p.plus('obstacle'); await settle();
+    assert.equal(p.el('delete-card').hidden, true);
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
+    assert.equal(s.writes.length, 0); assert.ok(findIn(stored(s).obstacles, 's1'));
+  },
+  async 'the star button changes the star, keeps focus, and has no key in the header'() {
+    const { p, s } = await opened(tree([node('o1', 'ob', [sol('s1', 'sol')])]));
+    p.clickItem('s1');
+    const star = p.el('star-button');
+    assert.equal(star.getAttribute('aria-pressed'), 'false');
+    star.focus(); p.fire(star, 'click'); await settle();
+    assert.equal(s.writes.length, 1);
+    assert.equal(findIn(stored(s).obstacles, 's1').star, true);
+    assert.equal(star.getAttribute('aria-pressed'), 'true');
+    assert.equal(p.status(), 'All changes saved');
+    assert.equal(p.isSelected('s1'), true); assert.equal(p.active(), star);
+    p.fire(star, 'click'); await settle();
+    assert.equal(findIn(stored(s).obstacles, 's1').star, false);
+    assert.equal(star.getAttribute('aria-pressed'), 'false');
+  },
+  async 'a write waiting its turn never carries a blank new item'() {
+    const { p, s } = await opened(tree([]), { hold: true });
+    p.edit('one'); await settle();
+    p.edit('two'); await settle();
+    p.addObstacle(); await settle();
+    s.release(); await settle();
+    s.release(); await settle();
+    assert.deepEqual(s.writes, [{ goal: { text: 'one' } }, { goal: { text: 'two' } }]);
+    assert.deepEqual(stored(s).obstacles, []); assert.equal(stored(s).goal.text, 'two');
+    s.hold = false;
+    p.typeAndEnter('blocker'); await settle();
+    assert.equal(stored(s).goal.text, 'two'); assert.equal(stored(s).obstacles[0].text, 'blocker');
+    assert.equal(p.status(), 'All changes saved'); assert.equal(p.warnsOnClose(), false);
+  },
+  async 'a write waiting its turn still goes out when a blank new item is cancelled'() {
+    const { p, s } = await opened(tree([]), { hold: true });
+    p.edit('one'); await settle();
+    p.edit('two'); await settle();
+    p.addObstacle(); await settle();
+    p.typeAndEnter(''); await settle();
+    s.release(); await settle();
+    s.release(); await settle();
+    assert.equal(stored(s).goal.text, 'two'); assert.deepEqual(stored(s).obstacles, []);
+    assert.equal(s.writes.length, 2);
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'add a sub-obstacle and see its label, and the data gets the child'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    p.typeAndEnter('why one'); await settle();
+    assert.ok(p.canvasText().includes('1A'), p.canvasText());
+    assert.ok(p.canvasText().includes('why one'));
+    const saved = stored(s).obstacles[0];
+    assert.equal(saved.children.length, 1); assert.equal(saved.children[0].text, 'why one');
+    assert.deepEqual(Object.keys(saved.children[0]).sort(), ['children', 'id', 'kind', 'star', 'text']);
+    assert.ok(!JSON.stringify(stored(s).obstacles).includes('1A'));
+    p.clickItem(saved.children[0].id); p.plus('obstacle'); await settle();
+    p.typeAndEnter('deeper'); await settle();
+    assert.ok(p.canvasText().includes('1A1'), p.canvasText());
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a new obstacle and a new sub-obstacle get ids nothing else on the map uses'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [node('o7', 'kid')])]));
+    p.clickItem('o7'); p.plus('obstacle'); p.typeAndEnter('deep');
+    p.addObstacle(); p.typeAndEnter('top'); await settle();
+    const ids = p.el('canvas').kids.map((k) => k.dataset.ref).filter(Boolean).map(JSON.parse)
+      .filter((r) => r.kind === 'obstacle').map((r) => r.id);
+    assert.equal(ids.length, 4); assert.equal(new Set(ids).size, 4);
+    assert.ok(ids.includes('o1') && ids.includes('o7'));
+    assert.equal(s.writes.length, 2);
+  },
+  async 'a blank new sub-item stays out of the data until it has text'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [node('o2', 'kid')])]));
+    p.clickItem('o2'); p.plus('obstacle'); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    assert.equal(stored(s).obstacles[0].children[0].children.length, 0);
+    p.typeAndEnter('now it has text'); await settle();
+    assert.equal(s.writes.length, 1); assert.equal(stored(s).obstacles[0].children[0].children[0].text, 'now it has text');
+  },
+  async 'a blank new sub-item closed empty leaves no trace in the data or on the page'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    assert.ok(p.canvasText().includes('1A'));
+    p.typeAndEnter(''); await settle();
+    assert.ok(!p.canvasText().includes('1A'));
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved'); assert.equal(p.warnsOnClose(), false);
+  },
+  async 'a write waiting its turn never carries a blank new sub-item'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]), { hold: true });
+    p.edit('one'); await settle();
+    p.edit('two'); await settle();
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    s.release(); await settle();
+    s.release(); await settle();
+    assert.deepEqual(stored(s).obstacles[0].children, []); assert.equal(stored(s).goal.text, 'two');
+    s.hold = false;
+    p.typeAndEnter('kid'); await settle();
+    assert.equal(stored(s).goal.text, 'two'); assert.equal(stored(s).obstacles[0].children[0].text, 'kid');
+  },
+  async 'delete a branch: the whole branch goes, its solutions with it, later siblings renumber'() {
+    const { p, s } = await opened(tree([
+      node('o1', 'first', [
+        node('o2', 'kid a', [node('o3', 'grandkid', [sol('s1', 'gone with it')])]),
+        node('o4', 'kid b')
+      ]),
+      node('o5', 'other', [sol('s2', 'stays')])
+    ]));
+    p.clickItem('o2');
+    p.tool('delete-item'); p.tool('delete-yes'); await settle();
+    const saved = stored(s);
+    assert.equal(findIn(saved.obstacles, 'o2'), null); assert.equal(findIn(saved.obstacles, 's1'), null);
+    assert.ok(findIn(saved.obstacles, 's2'));
+    assert.ok(p.canvasText().includes('1A'), p.canvasText()); assert.ok(p.canvasText().includes('kid b'));
+    assert.ok(!p.canvasText().includes('1B'));
+  },
+  async 'delete an item and see its plan row go, while the key action stays'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [sol('s1', 'fix it'), sol('s2', 'other fix')])], {
+      key_actions: [{ text: 'the action', risk: 'low', solution_ids: ['s1', 's2'] }],
+      execute: [{ solution_id: 's1', first_move: 'the first move', owner: 'o', others_decide: '' },
+        { solution_id: 's2', first_move: 'the other move', owner: 'o', others_decide: '' }]
+    }));
+    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
+    assert.ok(p.panelText().includes('the first move'));
+    p.clickItem('s1'); p.tool('delete-item'); p.tool('delete-yes'); await settle();
+    assert.ok(!p.panelText().includes('the first move'));
+    assert.ok(p.panelText().includes('the other move'));
+    assert.ok(p.panelText().includes('the action'));
+    const saved = stored(s);
+    assert.deepEqual(saved.execute.map((e) => e.solution_id), ['s2']);
+    assert.deepEqual(saved.key_actions[0].solution_ids, ['s2']);
+  },
+  async 'add an obstacle under a solution and see its label continue the numbering'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [node('o2', 'kid a'), node('o3', 'kid b', [node('o4', 'child'), sol('s1', 'the fix')])])]));
+    p.clickItem('s1'); p.plus('obstacle'); await settle();
+    p.typeAndEnter('in the way'); await settle();
+    assert.ok(p.canvasText().includes('1B1'), p.canvasText());
+    assert.ok(p.canvasText().includes('1B2'), p.canvasText());
+    const under = findIn(stored(s).obstacles, 's1').children[0];
+    assert.equal(under.text, 'in the way'); assert.equal(under.kind, 'obstacle');
+  },
+  async 'a blank new solution stays out of the data, and closing it empty leaves no trace'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.plus('solution'); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    p.typeAndEnter(''); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.warnsOnClose(), false);
+    assert.deepEqual(stored(s).obstacles[0].children, []);
+  },
+  async 'the delete control is an icon with no visible words'() {
+    const { p } = await opened(tree([node('o1', 'first', [node('o2', 'a', [node('o3', 'b')]), node('o4', 'c')])]));
+    for (const id of ['o1', 'o4']) {
+      p.clickItem(id);
+      assert.equal(p.el('delete-item').textContent, '');
+      assert.equal(p.el('delete-item').getAttribute('aria-label'), 'Delete');
+      assert.equal(p.el('delete-item').title, 'Delete');
+    }
+  },
+  async 'a small press is a click and selects'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.press('o1');
+    p.pointerTo('o2', 103, 103);
+    assert.equal(p.ghost().hidden, true); assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    p.release();
+    p.fire(p.box('o1'), 'click', { detail: 1 }); await settle();
+    assert.equal(p.isSelected('o1'), true); assert.equal(s.writes.length, 0);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['o1', 'o2']);
+    p.press('o1'); p.release();
+    p.fire(p.box('o1'), 'click', { detail: 2 }); p.fire(p.box('o1'), 'dblclick');
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.el('typing').value, 'first');
+  },
+  async 'dragging onto a box makes it a sub and renumbers'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'second', [node('o3', 'kid')]), node('o4', 'third')]));
+    p.press('o2');
+    p.pointerTo('o4', 300, 320);
+    assert.equal(p.ghost().hidden, false); assert.equal(p.ghost().textContent, 'second');
+    assert.ok(parseFloat(p.ghost().style.left) >= 300); assert.ok(parseFloat(p.ghost().style.top) >= 320);
+    assert.equal(p.box('o2').classList.contains('drag-source'), true);
+    assert.equal(p.box('o4').classList.contains('drop-target'), true);
+    assert.equal(p.el('canvas').contains(p.ghost()), false);
+    p.pointerTo('o1', 300, 200);
+    assert.equal(p.box('o4').classList.contains('drop-target'), false);
+    assert.equal(p.box('o1').classList.contains('drop-target'), true);
+    p.pointerTo('o4');
+    p.release(); p.clickAfter(); await settle();
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['o1', 'o4']);
+    assert.deepEqual(saved.obstacles[1].children.map((o) => o.id), ['o2']);
+    assert.equal(saved.obstacles[1].children[0].children[0].id, 'o3');
+    assert.ok(p.canvasText().includes('2A'), p.canvasText());
+    assert.equal(p.ghost().hidden, true);
+    assert.equal(p.sandbox.document.body.classList.contains('dragging'), false);
+    assert.equal(p.box('o2').classList.contains('drag-source'), false);
+    assert.equal(p.box('o4').classList.contains('drop-target'), false);
+  },
+  async 'a drop writes once and keeps the item selected'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [node('o2', 'kid')]), node('o3', 'other')]));
+    p.clickItem('o3');
+    p.dragOnto('o2', 'o3'); await settle();
+    assert.equal(s.writes.length, 1);
+    assert.equal(p.isSelected('o2'), true); assert.equal(p.isSelected('o3'), false);
+    assert.equal(p.active(), p.box('o2'));
+    assert.equal(p.el('item-tools').hidden, false); assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a drop holds the box it landed on still on screen'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'second'), node('o3', 'third', [node('o4', 'a'), node('o5', 'b'), node('o6', 'c')])]));
+    p.press('o1'); p.pointerTo('o2');
+    const top = p.box('o2').getBoundingClientRect().top;
+    p.release(); p.clickAfter();
+    assert.equal(p.box('o2').getBoundingClientRect().top, top);
+  },
+  async 'an item drags onto the goal, and a solution keeps its star and what is under it'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [sol('s1', 'fix', [node('o2', 'kid')], true)])]));
+    p.dragOnto('s1', 'goal'); await settle();
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['o1', 's1']);
+    assert.equal(saved.obstacles[1].star, true); assert.equal(saved.obstacles[1].children[0].id, 'o2');
+    assert.equal(p.isSelected('s1'), true);
+  },
+  async 'dragging onto the item\'s own parent or a descendant changes nothing'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [node('o2', 'kid', [node('o3', 'grandkid')])])]));
+    for (const target of ['o1', 'o3', 'o2']) {
+      p.press('o2'); p.pointerTo(target);
+      assert.equal(p.ghost().hidden, false);
+      assert.equal(p.box(target).classList.contains('drop-target'), false, target);
+      p.release(); p.clickAfter(); await settle();
+      assert.equal(p.ghost().hidden, true);
+    }
+    p.press('o1'); p.pointerTo('goal');
+    assert.equal(p.box('goal').classList.contains('drop-target'), false);
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    assert.equal(findIn(stored(s).obstacles, 'o1').children[0].children[0].id, 'o3');
+  },
+  async 'escape cancels a drag with no write'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other'), node('o3', 'third')]));
+    p.clickItem('o3');
+    p.press('o1'); p.pointerTo('o2');
+    assert.equal(p.el('item-tools').hidden, true); assert.deepEqual(p.pluses(), []);
+    const enter = p.fire(p.box('o1'), 'keydown', { key: 'Enter' });
+    assert.ok(enter.prevented); assert.equal(p.el('typing').hidden, true);
+    p.fire(p.box('o1'), 'keydown', { key: 'Escape' });
+    assert.equal(p.ghost().hidden, true); assert.equal(p.box('o1').classList.contains('drag-source'), false);
+    assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    assert.equal(p.isSelected('o3'), true); assert.equal(p.el('item-tools').hidden, false);
+    // The button is still down. Moving on and letting go does nothing, and neither does its click.
+    p.pointerTo('o2'); assert.equal(p.ghost().hidden, true);
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.isSelected('o3'), true);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['o1', 'o2', 'o3']);
+  },
+  async 'release on empty space cancels with no write'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.press('o1'); p.pointerTo('o2'); p.pointerTo(undefined);
+    assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(p.ghost().hidden, true); assert.equal(s.writes.length, 0);
+    p.press('o1'); p.pointerTo('o2'); p.pointerTo(null);
+    assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 0); assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['o1', 'o2']);
+  },
+  async 'pointercancel, a lost window and a lost button each cancel with no write'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    const stops = [
+      () => p.fire(p.el('map'), 'pointercancel'),
+      () => p.loseWindow(),
+      () => p.pointerTo('o2', 400, 400, { buttons: 0 })
+    ];
+    for (const stop of stops) {
+      p.press('o1'); p.pointerTo('o2');
+      assert.equal(p.ghost().hidden, false);
+      stop();
+      assert.equal(p.ghost().hidden, true); assert.equal(p.box('o2').classList.contains('drop-target'), false);
+      p.pointerTo('o2'); assert.equal(p.ghost().hidden, true);
+      p.release(); await settle();
+    }
+    assert.equal(s.writes.length, 0);
+  },
+  async 'a drag with a blank new item open drops the blank and writes no blank'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.clickItem('o1'); p.plus('obstacle');
+    assert.ok(p.canvasText().includes('1A'));
+    p.press('o2'); p.pointerTo('o1');
+    assert.equal(p.el('typing').hidden, true); assert.ok(!p.canvasText().includes('New sub-obstacle'));
+    assert.equal(p.box('o1').classList.contains('drop-target'), true);
+    await settle(); assert.equal(s.writes.length, 0);
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 1);
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['o1']);
+    assert.deepEqual(saved.obstacles[0].children.map((o) => o.id), ['o2']);
+    assert.equal(p.isSelected('o2'), true);
+  },
+  async 'dragging the blank new item itself cancels, because finishing removes it'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.clickItem('o1'); p.plus('obstacle');
+    p.press(selectedId(p)); p.pointerTo('o2');
+    assert.equal(p.ghost().hidden, true); assert.equal(p.el('typing').hidden, true);
+    assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    assert.equal(p.sandbox.document.body.classList.contains('dragging'), false);
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.isSelected('o1'), true);
+    assert.deepEqual(stored(s).obstacles[0].children, []);
+  },
+  async 'a drag keeps what was typed on the item being dragged'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.typeOn('o1'); p.el('typing').value = 'better';
+    p.press('o1'); p.pointerTo('o2');
+    assert.equal(p.ghost().textContent, 'better'); assert.equal(p.el('typing').hidden, true);
+    p.release(); p.clickAfter(); await settle();
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['o2']);
+    assert.equal(saved.obstacles[0].children[0].text, 'better');
+  },
+  async 'the click after a drag selects nothing new'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other'), node('o3', 'third')]));
+    p.clickItem('o3');
+    p.press('o1'); p.pointerTo(undefined); p.release();
+    p.fire(p.box('o1'), 'click', { detail: 1 });
+    assert.equal(p.isSelected('o3'), true); assert.equal(p.isSelected('o1'), false);
+    p.press('o1'); p.pointerTo(undefined); p.release();
+    p.fire(p.el('map'), 'click', { detail: 1 });
+    assert.equal(p.isSelected('o3'), true);
+    p.dragOnto('o1', 'o2');
+    assert.equal(p.isSelected('o1'), true);
+    // That click was the only one held back. A later press and click works as usual.
+    p.press('o2'); p.release(); p.fire(p.box('o2'), 'click', { detail: 1 });
+    assert.equal(p.isSelected('o2'), true);
+  },
+  async 'a drag whose click never comes holds back no later click'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other'), node('o3', 'third')]));
+    p.dragOnto('o1', 'o2');
+    p.press('o1'); p.pointerTo('o3'); p.release();
+    p.press('o3'); p.release(); p.fire(p.box('o3'), 'click', { detail: 1 });
+    assert.equal(p.isSelected('o3'), true);
+    p.press('o3'); p.pointerTo('o2'); p.release();
+    p.fire(p.box('goal'), 'click', { detail: 0 });
+    assert.equal(p.isSelected('goal'), true);
+  },
+  async 'the goal cannot be dragged'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.press('goal'); p.pointerTo('o1');
+    assert.equal(p.ghost().hidden, true); assert.equal(p.box('o1').classList.contains('drop-target'), false);
+    p.release(); p.fire(p.box('goal'), 'click', { detail: 1 }); await settle();
+    assert.equal(p.isSelected('goal'), true); assert.equal(s.writes.length, 0);
+  },
+  async 'a press on a control starts no drag'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [sol('s1', 'fix')]), node('o2', 'other')]));
+    p.clickItem('s1');
+    for (const id of ['plus-obstacle', 'plus-solution', 'star-button', 'delete-item', 'typing']) {
+      p.fire(p.el(id), 'pointerdown', { button: 0, buttons: 1, clientX: 100, clientY: 100 });
+      p.pointerTo('o2');
+      assert.equal(p.ghost().hidden, true, id); assert.equal(p.box('o2').classList.contains('drop-target'), false, id);
+      p.release();
+    }
+    assert.equal(s.writes.length, 0); assert.equal(p.isSelected('s1'), true); assert.equal(p.el('item-tools').hidden, false);
+  },
+  async 'only the main button starts a drag'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.press('o1', { button: 2, buttons: 2 }); p.pointerTo('o2');
+    assert.equal(p.ghost().hidden, true);
+  },
+  async 'a drag hides the controls and clears the delete question, and cancelling brings back only the controls'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [sol('s1', 'picked', [], true)]), node('o2', 'other')]));
+    p.clickItem('o1'); p.tool('delete-item');
+    assert.equal(p.el('delete-card').hidden, false);
+    p.press('o2'); p.pointerTo('o1');
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('item-tools').hidden, true); assert.deepEqual(p.pluses(), []);
+    p.fire(p.box('o2'), 'keydown', { key: 'Escape' });
+    assert.equal(p.el('delete-card').hidden, true); assert.equal(p.el('delete-item').hidden, false);
+    assert.equal(p.isSelected('o1'), true); assert.equal(s.writes.length, 0);
+  },
+  async 'text cannot be selected from a press on an item'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    assert.ok(!p.fire(p.el('map'), 'selectstart').prevented);
+    p.press('o1');
+    assert.ok(p.fire(p.box('o1'), 'selectstart').prevented);
+    p.pointerTo('o2');
+    assert.equal(p.sandbox.document.body.classList.contains('dragging'), true);
+    assert.ok(p.fire(p.box('o2'), 'selectstart').prevented);
+    p.release(); p.clickAfter();
+    assert.ok(!p.fire(p.el('map'), 'selectstart').prevented);
+  },
+  async 'a pointer near an edge of the map scrolls it, and the scroll stops with the drag'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    const map = p.el('map'); map.scrollLeft = 200; map.scrollTop = 200;
+    p.press('o1'); p.pointerTo(undefined, 500, 400);
+    assert.ok(p.runFrame());
+    assert.equal(map.scrollLeft, 200); assert.equal(map.scrollTop, 200);
+    p.pointerTo(undefined, 995, 795);
+    assert.ok(p.runFrame());
+    assert.ok(map.scrollLeft > 200); assert.ok(map.scrollTop > 200);
+    const left = map.scrollLeft; const top = map.scrollTop;
+    p.pointerTo(undefined, 5, 5);
+    assert.ok(p.runFrame());
+    assert.ok(map.scrollLeft < left); assert.ok(map.scrollTop < top);
+    p.release();
+    assert.equal(p.runFrame(), false);
+  },
+  async 'a scroll under a still pointer changes which box is highlighted'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other'), node('o3', 'third')]));
+    p.press('o1'); p.pointerTo('o2');
+    assert.equal(p.box('o2').classList.contains('drop-target'), true);
+    p.sandbox.document.elementFromPoint = () => p.box('o3');
+    assert.ok(p.runFrame());
+    assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    assert.equal(p.box('o3').classList.contains('drop-target'), true);
+  },
+  async 'a redraw during a drag keeps the dim item and the highlight'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.press('o1'); p.pointerTo('o2');
+    p.resize();
+    assert.equal(p.box('o1').classList.contains('drag-source'), true);
+    assert.equal(p.box('o2').classList.contains('drop-target'), true);
+    assert.equal(p.ghost().hidden, false);
+    assert.equal(p.el('item-tools').hidden, true);
+    p.release(); p.clickAfter();
+    assert.ok(p.canvasText().includes('1A'), p.canvasText());
+  },
+  async 'a press whose release was lost cannot start a drag from a press outside the canvas'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.press('o1');
+    p.fire(p.el('zoom-out'), 'pointerdown', { button: 0, buttons: 1, clientX: 10, clientY: 10 });
+    p.pointerTo('o2');
+    assert.equal(p.ghost().hidden, true);
+    assert.equal(p.box('o2').classList.contains('drop-target'), false);
+    p.release(); await settle();
+    assert.equal(s.writes.length, 0);
+    p.press('o1'); p.pointerTo('o2');
+    assert.equal(p.ghost().hidden, false);
+    // The same goes for a drag whose release was lost: the next press ends it, and nothing moves.
+    p.fire(p.el('zoom-out'), 'pointerdown', { button: 0, buttons: 1, clientX: 10, clientY: 10 });
+    assert.equal(p.ghost().hidden, true);
+    p.release(); await settle();
+    assert.equal(s.writes.length, 0);
+  },
+  async 'a drop while a write is out goes next in the queue'() {
+    const { p, s } = await opened(tree([node('a', 'A'), node('b', 'B'), node('c', 'C')]), { hold: true });
+    p.typeOn('a'); p.typeAndEnter('A2'); await settle();
+    assert.equal(s.writes.length, 1);
+    p.dragOnto('b', 'c'); await settle();
+    assert.equal(s.writes.length, 1);
+    s.release(); await settle();
+    assert.equal(s.writes.length, 2);
+    s.release(); await settle();
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['a', 'c']);
+    assert.equal(findIn(saved.obstacles, 'c').children[0].id, 'b');
+    assert.equal(findIn(saved.obstacles, 'a').text, 'A2');
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'closing during a drag warns only for real changes and leaves the drag whole'() {
+    const { p, s } = await opened(tree([node('a', 'A'), node('b', 'B'), node('c', 'C')]), { hold: true });
+    p.press('b'); p.pointerTo('c');
+    assert.equal(p.warnsOnClose(), false);
+    assert.equal(p.ghost().hidden, false);
+    p.release(); p.clickAfter(); await settle();
+    p.press('c'); p.pointerTo('a');
+    assert.equal(p.warnsOnClose(), true, 'the drop is still waiting for its write');
+    assert.equal(p.ghost().hidden, false);
+    p.fire(p.el('map'), 'keydown', { key: 'Escape' });
+    assert.equal(p.ghost().hidden, true);
+    s.release(); await settle();
+    assert.equal(p.warnsOnClose(), false);
+  },
+  async 'a drag dims the whole set of sub-items and no others, and cancelling clears it'() {
+    const { p, s } = await opened(tree([node('o1', 'top', [node('o2', 'kid', [node('o3', 'a'), sol('s1', 'b', [node('o4', 'c')])]), node('o5', 'next')]), node('o6', 'other')]));
+    const stops = [
+      () => p.fire(p.el('map'), 'keydown', { key: 'Escape' }),
+      () => p.fire(p.el('map'), 'pointercancel'),
+      () => p.loseWindow(),
+      () => { p.pointerTo(undefined); p.release(); }
+    ];
+    for (const stop of stops) {
+      p.press('o2'); p.pointerTo('o6');
+      assert.deepEqual(p.dimBoxes(), ['o2', 'o3', 'o4', 's1']);
+      assert.deepEqual(p.dimLines(), ['obstacle', 'obstacle', 'obstacle', 'solution']);
+      p.resize();
+      assert.deepEqual(p.dimBoxes(), ['o2', 'o3', 'o4', 's1']);
+      assert.deepEqual(p.dimLines(), ['obstacle', 'obstacle', 'obstacle', 'solution']);
+      stop();
+      assert.deepEqual(p.dimBoxes(), []); assert.deepEqual(p.dimLines(), []);
+      p.release(); p.clickAfter(); await settle();
+    }
+    assert.equal(s.writes.length, 0);
+    p.dragOnto('o2', 'o6'); await settle();
+    assert.deepEqual(p.dimBoxes(), []); assert.deepEqual(p.dimLines(), []);
+    assert.equal(s.writes.length, 1);
+  },
+  async 'a drag of a single item dims only that item and its own line'() {
+    const { p } = await opened(tree([node('o1', 'top', [node('o2', 'kid')]), node('o3', 'other')]));
+    p.press('o2'); p.pointerTo('o3');
+    assert.deepEqual(p.dimBoxes(), ['o2']); assert.deepEqual(p.dimLines(), ['obstacle']);
+  },
+  async 'the ghost looks stacked only when items sit under the dragged item'() {
+    const { p } = await opened(tree([node('o1', 'top', [node('o2', 'kid')]), node('o3', 'other')]));
+    p.press('o1'); p.pointerTo('o3');
+    assert.equal(p.ghost().classList.contains('stacked'), true); assert.equal(p.ghost().textContent, 'top');
+    p.fire(p.el('map'), 'keydown', { key: 'Escape' }); p.release(); p.clickAfter();
+    p.press('o2'); p.pointerTo('o3');
+    assert.equal(p.ghost().classList.contains('stacked'), false); assert.equal(p.ghost().textContent, 'kid');
+  },
+  async 'a click selects and writes nothing'() {
+    const { p, s } = await opened(tree([node('o1', 'first', [node('o2', 'kid')])]));
+    p.clickItem('o2'); await settle();
+    assert.equal(p.isSelected('o2'), true);
+    assert.equal(p.el('typing').hidden, true);
+    assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under 1A');
+    assert.equal(p.el('plus-solution').getAttribute('aria-label'), 'Add a solution under 1A');
+    assert.equal(p.el('item-tools').hidden, false);
+    p.clickItem('o1'); await settle();
+    assert.equal(p.isSelected('o2'), false); assert.equal(p.isSelected('o1'), true);
+    p.clickEmpty(); await settle();
+    assert.equal(p.isSelected('o1'), false);
+    assert.deepEqual(p.pluses(), []); assert.equal(p.el('item-tools').hidden, true);
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+  },
+  async 'selecting while a write was refused does not try the write again'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]), { refuse: ['invalid_argument'] });
+    p.edit('x'); await settle();
+    assert.equal(s.writes.length, 1); assert.equal(p.status(), 'Not saved');
+    p.clickItem('o1'); p.clickItem('goal'); p.clickEmpty(); await settle();
+    assert.equal(s.writes.length, 1); assert.equal(p.status(), 'Not saved');
+  },
+  async 'plus adds an obstacle, typing fills it, and only then the data changes'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    const text = p.el('typing');
+    assert.equal(text.hidden, false); assert.equal(text.value, ''); assert.equal(p.active(), text);
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    assert.deepEqual(p.pluses(), []); assert.equal(p.el('item-tools').hidden, true);
+    p.typeAndEnter('  why one  '); await settle();
+    assert.equal(s.writes.length, 1);
+    const child = stored(s).obstacles[0].children[0];
+    assert.equal(child.text, 'why one'); assert.equal(child.kind, 'obstacle');
+    assert.equal(text.hidden, true);
+    assert.equal(p.isSelected(child.id), true); assert.equal(p.isSelected('o1'), false);
+    assert.equal(p.active(), p.box(child.id));
+  },
+  async 'plus adds a solution under an obstacle, and the goal plus adds at the top'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.plus('solution'); p.typeAndEnter('the fix'); await settle();
+    assert.equal(stored(s).obstacles[0].children[0].kind, 'solution');
+    p.clickItem('goal'); p.plus('obstacle'); p.typeAndEnter('second'); await settle();
+    assert.equal(stored(s).obstacles[1].text, 'second');
+  },
+  async 'a blank new item is removed when something else is selected, with no write'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    assert.ok(p.canvasText().includes('1A'));
+    p.clickItem('o2'); await settle();
+    assert.ok(!p.canvasText().includes('1A'));
+    assert.equal(p.isSelected('o2'), true); assert.equal(p.el('typing').hidden, true);
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved'); assert.equal(p.warnsOnClose(), false);
+    assert.deepEqual(stored(s).obstacles[0].children, []);
+  },
+  async 'selecting something else keeps text typed on a new item'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.clickItem('o1'); p.plus('obstacle');
+    p.el('typing').value = 'kept';
+    p.clickItem('o2'); await settle();
+    assert.equal(stored(s).obstacles[0].children[0].text, 'kept');
+    assert.equal(p.isSelected('o2'), true);
+  },
+  async 'clicking empty space with a blank new item removes it and clears the selection'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.plus('obstacle');
+    p.clickEmpty(); await settle();
+    assert.ok(!p.canvasText().includes('1A')); assert.equal(p.isSelected('o1'), false);
+    assert.equal(s.writes.length, 0);
+  },
+  async 'escape on a new item removes it, with no write'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.plus('obstacle');
+    p.el('typing').value = 'typed then dropped';
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    assert.ok(!p.canvasText().includes('1A')); assert.ok(!p.canvasText().includes('typed then dropped'));
+    assert.equal(p.el('typing').hidden, true);
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    assert.equal(p.isSelected('o1'), true); assert.equal(p.active(), p.box('o1'));
+  },
+  async 'escape on an existing item keeps its old text'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.typeOn('o1');
+    assert.equal(p.el('typing').value, 'first');
+    p.el('typing').value = 'changed';
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    assert.equal(s.writes.length, 0); assert.ok(p.canvasText().includes('first'));
+    assert.equal(p.isSelected('o1'), true); assert.equal(p.active(), p.box('o1'));
+  },
+  async 'a double-click types on an item, and clicking away keeps the text'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.typeOn('o1');
+    assert.equal(p.active(), p.el('typing'));
+    p.el('typing').value = 'better';
+    p.clickItem('o2'); await settle();
+    assert.equal(stored(s).obstacles[0].text, 'better');
+    assert.equal(p.isSelected('o2'), true);
+  },
+  async 'clearing an existing item keeps its old text'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.typeOn('o1'); p.typeAndEnter('   '); await settle();
+    assert.equal(s.writes.length, 0); assert.ok(p.canvasText().includes('first'));
+  },
+  async 'shift and enter adds a line instead of finishing'() {
+    const { p } = await opened(tree([node('o1', 'first')]));
+    p.typeOn('o1');
+    const e = p.fire(p.el('typing'), 'keydown', { key: 'Enter', shiftKey: true });
+    assert.equal(p.el('typing').hidden, false); assert.ok(!e.prevented);
+  },
+  async 'a resize while typing keeps the text and focus'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.typeOn('o1');
+    const text = p.el('typing'); text.value = 'half typed';
+    p.resize(); await settle();
+    assert.equal(text.hidden, false); assert.equal(text.value, 'half typed'); assert.equal(p.active(), text);
+    assert.equal(s.writes.length, 0);
+    p.clickItem('goal'); p.plus('obstacle'); text.value = 'half new';
+    p.resize(); await settle();
+    assert.equal(text.value, 'half new'); assert.equal(p.active(), text); assert.equal(s.writes.length, 1);
+  },
+  async 'enter on the box of a blank new item goes back to typing, and nothing reaches the store'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.addObstacle(); await settle();
+    const id = selectedId(p);
+    p.box(id).focus();
+    const e = p.fire(p.box(id), 'keydown', { key: 'Enter' }); await settle();
+    assert.ok(e.prevented); assert.equal(p.active(), p.el('typing'));
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    p.resize(); await settle();
+    assert.equal(s.writes.length, 0); assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['o1']);
+    assert.ok(!p.canvasText().includes('New obstacle'));
+  },
+  async 'enter on the box of a new item keeps what was typed'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.addObstacle(); p.el('typing').value = 'typed words';
+    p.fire(p.box(selectedId(p)), 'keydown', { key: 'Enter' }); await settle();
+    assert.equal(p.el('typing').value, 'typed words'); assert.equal(p.active(), p.el('typing'));
+    assert.equal(s.writes.length, 0);
+  },
+  async 'enter on the box of an existing item keeps what was typed'() {
+    const { p } = await opened(tree([node('o1', 'first')]));
+    p.typeOn('o1'); p.el('typing').value = 'half typed';
+    p.box('o1').focus();
+    p.fire(p.box('o1'), 'keydown', { key: 'Enter' }); await settle();
+    assert.equal(p.el('typing').value, 'half typed'); assert.equal(p.active(), p.el('typing'));
+    p.box('o1').focus();
+    p.fire(p.box('o1'), 'keydown', { key: ' ' }); await settle();
+    assert.equal(p.el('typing').value, 'half typed'); assert.equal(p.active(), p.el('typing'));
+  },
+  async 'starting to type on another item finishes the open text box first'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.typeOn('o1'); p.el('typing').value = 'kept';
+    p.fire(p.box('o2'), 'dblclick'); await settle();
+    assert.equal(stored(s).obstacles[0].text, 'kept');
+    assert.equal(p.el('typing').value, 'other'); assert.equal(p.isSelected('o2'), true);
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    const writes = s.writes.length;
+    p.clickItem('o1'); p.plus('obstacle'); await settle();
+    p.fire(p.box('o2'), 'dblclick'); await settle();
+    assert.equal(s.writes.length, writes); assert.equal(p.el('typing').value, 'other');
+    assert.ok(!p.canvasText().includes('1A'));
+  },
+  async 'adding while a blank new item is open removes it, and neither blank reaches the store'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.addObstacle(); await settle();
+    p.addObstacle(); await settle();
+    assert.equal(s.writes.length, 0); assert.equal(p.status(), 'All changes saved');
+    p.typeAndEnter('second'); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.text), ['first', 'second']);
+  },
+  async 'escape cancels typing even after focus left the text box'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.typeOn('o1'); p.el('typing').value = 'changed';
+    p.box('o1').focus();
+    p.fire(p.box('o1'), 'keydown', { key: 'Escape' }); await settle();
+    assert.equal(p.el('typing').hidden, true); assert.equal(s.writes.length, 0);
+    assert.ok(p.canvasText().includes('first')); assert.equal(p.isSelected('o1'), true);
+  },
+  async 'escape on a new item returns focus to its parent'() {
+    const { p } = await opened(tree([node('o1', 'first', [sol('s1', 'fix')])]));
+    p.addObstacle();
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' });
+    assert.equal(p.active(), p.box('goal')); assert.equal(p.isSelected('goal'), true);
+    p.plus('solution'); p.pressEnter();
+    assert.equal(p.active(), p.box('goal')); assert.equal(p.isSelected('goal'), true);
+    p.clickItem('s1'); p.plus('obstacle');
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' });
+    assert.equal(p.active(), p.box('s1')); assert.equal(p.isSelected('s1'), true);
+    assert.ok(!p.canvasText().includes('1A'), p.canvasText());
+  },
+  async 'add the first obstacle on an empty map from the goal'() {
+    const { p, s } = await opened(tree([]));
+    assert.equal(p.el('first-hint').hidden, false); assert.equal(p.el('edit-hint').hidden, true);
+    p.clickItem('goal');
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    p.plus('obstacle'); p.typeAndEnter('the first one'); await settle();
+    const saved = stored(s);
+    assert.equal(saved.obstacles.length, 1); assert.equal(saved.obstacles[0].text, 'the first one');
+    assert.ok(p.canvasText().includes('1'), p.canvasText());
+    assert.equal(p.el('first-hint').hidden, true); assert.equal(p.el('edit-hint').hidden, false);
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'add the first solution on an empty map from the goal'() {
+    const { p, s } = await opened(tree([]));
+    p.clickItem('goal'); p.plus('solution'); p.typeAndEnter('a fix first'); await settle();
+    const saved = stored(s);
+    assert.equal(saved.obstacles[0].kind, 'solution'); assert.equal(saved.obstacles[0].text, 'a fix first');
+    assert.equal(p.el('first-hint').hidden, true);
+    assert.ok(p.canvasText().includes('a fix first'), p.canvasText());
+  },
+  async 'a solution on the goal has a star, both pluses and delete, and drags onto an obstacle'() {
+    const { p, s } = await opened(tree([node('o1', 'first'), sol('s1', 'on the goal')]));
+    p.clickItem('s1');
+    assert.equal(p.el('star-button').hidden, false);
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    assert.equal(p.el('delete-item').hidden, false);
+    p.dragOnto('s1', 'o1'); await settle();
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['o1']); assert.equal(saved.obstacles[0].children[0].id, 's1');
+    assert.equal(p.isSelected('s1'), true);
+  },
+  async 'the plan panel draws a solution on the goal and a solution under a solution'() {
+    const { p } = await opened(tree([node('o1', 'first', [sol('s1', 'outer', [sol('s2', 'inner')])]), sol('s3', 'on the goal')],
+      { execute: [{ solution_id: 's2', first_move: 'm', owner: '', others_decide: '' }, { solution_id: 's3', first_move: 'n', owner: '', others_decide: '' }] }));
+    assert.ok(p.panelText().includes('inner (1)'), p.panelText());
+    assert.ok(p.panelText().includes('on the goal'), p.panelText());
+    assert.ok(!p.panelText().includes('undefined'), p.panelText());
+  },
+  async 'a solution shows both pluses, and a solution can go under a solution'() {
+    const { p } = await opened(tree([node('o1', 'first', [sol('s1', 'the fix')])]));
+    p.clickItem('s1');
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under the fix');
+    assert.equal(p.el('plus-solution').getAttribute('aria-label'), 'Add a solution under the fix');
+    p.plus('solution'); p.typeAndEnter('nested');
+    assert.equal(p.canvasText().includes('nested'), true);
+  },
+  async 'the goal shows both pluses and no toolbar'() {
+    const { p } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('goal');
+    assert.deepEqual(p.pluses(), ['obstacle', 'solution']);
+    assert.equal(p.el('plus-obstacle').getAttribute('aria-label'), 'Add an obstacle under the goal');
+    assert.equal(p.el('plus-solution').getAttribute('aria-label'), 'Add a solution under the goal');
+    assert.equal(p.el('item-tools').hidden, true);
+  },
+  async 'selection returns focus after a render'() {
+    const { p } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1');
+    const before = p.box('o1');
+    assert.equal(p.active(), before);
+    p.resize();
+    assert.notEqual(p.box('o1'), before);
+    assert.equal(p.active(), p.box('o1')); assert.equal(p.isSelected('o1'), true);
+  },
+  async 'a render leaves focus on a header button'() {
+    const { p } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1');
+    const zoom = p.el('zoom-in'); zoom.focus();
+    p.fire(zoom, 'click');
+    assert.equal(p.active(), zoom); assert.equal(p.isSelected('o1'), true);
+  },
+  async 'the keyboard selects, types and clears'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    const enter = p.fire(p.box('o1'), 'keydown', { key: 'Enter' });
+    assert.ok(enter.prevented); assert.equal(p.isSelected('o1'), true); assert.equal(p.el('typing').hidden, true);
+    p.fire(p.box('o1'), 'keydown', { key: 'Enter' });
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
+    p.typeAndEnter('new words'); await settle();
+    assert.equal(stored(s).obstacles[0].text, 'new words');
+    assert.equal(p.el('typing').hidden, true); assert.equal(p.active(), p.box('o1'));
+    p.fire(p.box('o1'), 'keydown', { key: 'Escape' });
+    assert.equal(p.isSelected('o1'), false); assert.equal(p.active(), p.box('o1'));
+    p.fire(p.box('o1'), 'keydown', { key: ' ' });
+    assert.equal(p.isSelected('o1'), true); assert.equal(p.el('typing').hidden, true);
+  },
+  async 'tab goes from the selected item through its controls to the next item'() {
+    const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));
+    p.clickItem('o1');
+    const tab = (target, shiftKey) => p.fire(target, 'keydown', { key: 'Tab', shiftKey });
+    assert.ok(tab(p.box('o1')).prevented); assert.equal(p.active(), p.el('plus-obstacle'));
+    assert.ok(!tab(p.el('plus-obstacle')).prevented);
+    assert.ok(tab(p.el('plus-obstacle'), true).prevented); assert.equal(p.active(), p.box('o1'));
+    p.el('delete-item').focus();
+    assert.ok(tab(p.el('delete-item')).prevented); assert.equal(p.active(), p.box('o2'));
+  },
+  async 'the selected item stays in the same place on screen after a render'() {
+    const { p } = await opened(tree([node('o1', 'first', [node('o2', 'kid')]), node('o3', 'other')]));
+    p.clickItem('o1');
+    const top = p.box('o1').getBoundingClientRect().top;
+    const y = parseFloat(p.box('o1').style.top);
+    p.plus('obstacle');
+    assert.notEqual(parseFloat(p.box('o1').style.top), y);
+    assert.equal(p.box('o1').getBoundingClientRect().top, top);
+  },
+  async 'controls follow the item, and hide when it scrolls out of the map'() {
+    const { p } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1');
+    const plus = p.el('plus-obstacle');
+    assert.notEqual(plus.style.visibility, 'hidden');
+    const left = parseFloat(plus.style.left);
+    p.el('map').scrollLeft = 50;
+    p.el('map').listeners.scroll.forEach((f) => f());
+    assert.equal(parseFloat(plus.style.left), left - 50);
+    p.el('map').scrollLeft = 5000;
+    p.el('map').listeners.scroll.forEach((f) => f());
+    assert.equal(plus.style.visibility, 'hidden'); assert.equal(p.el('item-tools').style.visibility, 'hidden');
+  },
+  async 'deleting from the toolbar clears the selection and puts focus on the goal'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1'); p.tool('delete-item'); p.tool('delete-yes'); await settle();
+    assert.deepEqual(stored(s).obstacles, []);
+    assert.deepEqual(p.pluses(), []); assert.equal(p.el('item-tools').hidden, true);
+    assert.equal(p.active(), p.box('goal'));
+  },
+  async 'the plan panel names items by label'() {
+    const { p } = await opened(tree([node('o1', 'first', [node('o2', 'kid', [sol('s1', 'sol', [], true)])])],
+      { key_actions: [{ text: 'act', risk: 'low', solution_ids: ['s1'] }],
+        execute: [{ solution_id: 's1', first_move: 'm', owner: 'o', others_decide: '' }] }));
+    assert.ok(p.panelText().includes('sol (1A)'), p.panelText());
+  },
+  async 'the wide map draws every box apart from every other, right of the goal'() {
+    const { p } = await opened(tree([
+      node('a1', 'x', [node('a2', 'y', [node('a3', 'z', [node('a4', 'w', [sol('s1', 'sol')]), sol('s2', 'sol')]), sol('s3', 'sol')]), node('a5', 'v', [sol('s4', 'sol', [node('a6', 'u')])])]),
+      node('b1', 'x', [node('b2', 'y'), node('b3', 'z'), node('b4', 'w'), node('b5', 'v')]),
+      node('c1', 'x', [sol('s5', 'sol')])
+    ]));
+    const boxes = p.boxes();
+    assert.equal(boxes.length, 18);
+    const goal = boxes.find((b) => b.key === 'goal|');
+    boxes.filter((b) => b !== goal).forEach((b) => assert.ok(b.x > goal.x + goal.w, b.key));
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        const a = boxes[i]; const b = boxes[j];
+        const apart = a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y;
+        assert.ok(apart, a.key + ' overlaps ' + b.key);
+      }
+    }
+  },
+  async 'a press that starts in the text box and ends outside it keeps the box open'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.typeOn('o1');
+    p.el('typing').value = 'half typed';
+    p.fire(p.el('typing'), 'mousedown');
+    p.fire(p.el('map'), 'click', { detail: 1 }); await settle();
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.el('typing').value, 'half typed');
+    assert.equal(s.writes.length, 0);
+    p.fire(p.el('map'), 'click', { detail: 1 }); await settle();
+    assert.equal(p.el('typing').hidden, true); assert.equal(stored(s).obstacles[0].text, 'half typed');
+  },
+  async 'the second click of a double-click on a plus does not close the new item'() {
+    const { p, s } = await opened(tree([node('o1', 'first')]));
+    p.clickItem('o1');
+    p.fire(p.el('plus-solution'), 'click', { detail: 1 });
+    assert.equal(p.el('typing').hidden, false);
+    p.fire(p.el('map'), 'click', { detail: 2 }); await settle();
+    assert.equal(p.el('typing').hidden, false); assert.equal(p.active(), p.el('typing'));
+    p.typeAndEnter('a fix'); await settle();
+    assert.equal(stored(s).obstacles[0].children[0].text, 'a fix');
+  },
+  async 'editing the goal sends one sentence and nothing else'() {
+    const { p, s } = await opened(tree([]));
+    p.edit('80% in-office attendance by end of Q2, up from 40%'); await settle();
+    assert.deepEqual(stored(s).goal, { text: '80% in-office attendance by end of Q2, up from 40%' });
+    p.openGoal();
+    assert.equal(p.el('typing').value, '80% in-office attendance by end of Q2, up from 40%');
   }
 };
 

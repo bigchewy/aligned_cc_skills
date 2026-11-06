@@ -1,5 +1,4 @@
-// The stub DOM that runs the real scripts of a map page under node.
-// six_step_page_flows.js drives the file path with it and six_step_hosted_flows.js drives the viewer path.
+// The stub DOM that runs the real scripts of a map page under node. six_step_hosted_flows.js drives it.
 const vm = require('vm');
 const assert = require('assert');
 
@@ -49,28 +48,10 @@ class El {
     if (s === '[data-ref]') return this.walk().filter((k) => k.dataset.ref);
     return this.walk().filter((k) => k.tag === s.toUpperCase());
   }
-  button(text) { return this.walk().find((k) => k.tag === 'BUTTON' && k.textContent === text); }
 }
 
-function fakeIdb(store, opts) {
-  if (opts.idbThrows) return { open() { throw new Error('no idb'); } };
-  return { open() {
-    const open = {};
-    open.result = { createObjectStore() {}, close() {}, transaction() {
-      const tx = {};
-      setImmediate(() => tx.oncomplete && tx.oncomplete());
-      return Object.assign(tx, { objectStore: () => ({
-        get(k) { return { result: store.get(k) }; },
-        put(v, k) { store.set(k, v); return {}; },
-        delete(k) { store.delete(k); return {}; } }) });
-    } };
-    setImmediate(() => open.onsuccess());
-    return open;
-  } };
-}
-
-// A function that opens one map page. defaultHtml gives the page source when a flow doesn't name one.
-function makePage(html, defaultHtml) {
+// A function that opens one map page.
+function makePage(html) {
   const script = (id) => new RegExp('<script id="' + id + '">([\\s\\S]*?)<\\/script>').exec(html)[1];
   const logicSrc = script('map-logic');
   const storeSrc = script('map-store');
@@ -81,13 +62,13 @@ function makePage(html, defaultHtml) {
     const docListeners = {};
     const winListeners = {};
     const document = {
-      documentElement: { outerHTML: opts.html || defaultHtml() },
       body: new El('body'),
       get activeElement() { return El.active || this.body; },
       getElementById(id) { return els[id] || (els[id] = new El()); },
       createElement(t) { return new El(t); },
       createTextNode(t) { const n = new El('text'); n.textContent = t; return n; },
-      querySelectorAll() { return []; },
+      // Only the page's list of what to hide comes here.
+      querySelectorAll(s) { return s.split(',').map((part) => document.getElementById(part.trim().replace('#', ''))); },
       elementFromPoint() { return under(); },
       addEventListener(t, f, cap) { (docListeners[t] = docListeners[t] || []).push({ f, cap }); }
     };
@@ -95,8 +76,9 @@ function makePage(html, defaultHtml) {
     El.active = null;
     El.scroller = document.getElementById('map');
     El.scroller.appendChild(document.getElementById('canvas-frame')).appendChild(document.getElementById('canvas'));
-    document.getElementById('typing').hidden = true;
-    document.getElementById('drag-ghost').hidden = true;
+    ['typing', 'drag-ghost', 'plus-obstacle', 'plus-solution', 'item-tools', 'delete-card', 'outside-claude'].forEach((id) => {
+      document.getElementById(id).hidden = true;
+    });
     // What elementFromPoint finds: an item's box by id, the empty map, or nothing outside the window.
     let overId = undefined;
     const under = () => {
@@ -105,25 +87,15 @@ function makePage(html, defaultHtml) {
     };
     const frames = new Map();
     let frameId = 0;
-    let idbUses = 0;
-    const idb = fakeIdb(opts.store || new Map(), opts);
     const sandbox = { document, console, setTimeout: opts.setTimeout || setTimeout, clearTimeout: opts.clearTimeout || clearTimeout, Promise, JSON, Math, RegExp, Object, Array, Number, String, Boolean, decodeURIComponent, Date,
       innerWidth: 1200, innerHeight: 800,
-      location: { pathname: opts.path || '/a/b/m-map.html', reload() { sandbox.reloaded = (sandbox.reloaded || 0) + 1; } },
       getComputedStyle: () => ({ paddingTop: '0', paddingBottom: '0' }),
       requestAnimationFrame(f) { frames.set(++frameId, f); return frameId; },
       cancelAnimationFrame(n) { frames.delete(n); },
-      addEventListener(t, f) { (winListeners[t] = winListeners[t] || []).push(f); },
-      URL: { createObjectURL() { return 'x'; }, revokeObjectURL() {} },
-      Blob: function (parts) { sandbox.downloaded = parts[0]; }
+      addEventListener(t, f) { (winListeners[t] = winListeners[t] || []).push(f); }
     };
-    Object.defineProperty(sandbox, 'indexedDB', { get() { idbUses++; return idb; } });
     sandbox.window = sandbox;
     sandbox.globalThis = sandbox;
-    if (opts.picker) {
-      sandbox.pickerCalls = 0;
-      sandbox.showOpenFilePicker = async () => { sandbox.pickerCalls++; if (opts.pickAbort) { const e = new Error('x'); e.name = 'AbortError'; throw e; } return [opts.picker]; };
-    }
     if ('claude' in opts) sandbox.claude = opts.claude;
     vm.createContext(sandbox);
     vm.runInContext(logicSrc, sandbox);
@@ -133,10 +105,7 @@ function makePage(html, defaultHtml) {
     const api = {
       sandbox,
       status: () => document.getElementById('save-status').textContent,
-      button: () => { const b = document.getElementById('save'); return b.hidden ? '' : b.textContent; },
       message: () => { const m = document.getElementById('message'); return m.hidden ? '' : m.textContent; },
-      idbUses: () => idbUses,
-      clickSave() { docListeners.click.filter((l) => l.cap).forEach((l) => l.f({ target: document.getElementById('save') })); document.getElementById('save').listeners.click[0](); },
       el(id) { return document.getElementById(id); },
       active() { return document.activeElement; },
       // Capture listeners, then the target and what holds it, then bubble listeners on the document.
@@ -187,8 +156,8 @@ function makePage(html, defaultHtml) {
       // The ids of the dim boxes, and the kinds of the dim lines, as the page drew them.
       dimBoxes() { return api.el('canvas').walk().filter((k) => k.dataset.ref && k.classList.contains('drag-source')).map((k) => JSON.parse(k.dataset.ref).id).sort(); },
       dimLines() { return (api.el('canvas').inserted.match(/<path class="\w+ drag-source"/g) || []).map((m) => /"(\w+) /.exec(m)[1]).sort(); },
-      msgButton(t) { return document.getElementById('message').button(t); },
-      warnsOnClose() { const e = { preventDefault() { e.prevented = true; } }; winListeners.beforeunload[0](e); return Boolean(e.prevented); }
+      // Outside Claude the page sets up no close warning, because nothing can be lost.
+      warnsOnClose() { const e = { preventDefault() { e.prevented = true; } }; (winListeners.beforeunload || []).forEach((f) => f(e)); return Boolean(e.prevented); }
     };
     return api;
   }
@@ -196,4 +165,4 @@ function makePage(html, defaultHtml) {
   return page;
 }
 
-module.exports = { El, tick, settle, makePage };
+module.exports = { El, settle, makePage };

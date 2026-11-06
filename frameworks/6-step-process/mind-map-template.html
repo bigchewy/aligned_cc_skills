@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <script>
 document.documentElement.lang = 'en';
-if (!window.claude) document.title = 'Mind map';
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,8 +14,6 @@ if (!window.claude) document.title = 'Mind map';
   --edge: #e3e6ea;
   --box: #ffffff;
   --box-line: #c9ced4;
-  --goal: #1f3a5f;
-  --goal-ink: #ffffff;
   --obstacle-line: #ef6c46;
   --solution-line: #77c94b;
   --star: #b7791f;
@@ -36,9 +33,9 @@ body {
 button, input, textarea { font: inherit; color: inherit; }
 [hidden] { display: none !important; }
 
-#data-problem { max-width: 560px; margin: auto; padding: 24px 16px; }
-#data-problem h1 { font-size: 21px; margin: 0 0 8px; color: var(--warn); }
-#data-problem p { margin: 0 0 8px; overflow-wrap: anywhere; }
+#outside-claude { max-width: 560px; margin: auto; padding: 24px 16px; }
+#outside-claude h1 { font-size: 21px; margin: 0 0 8px; }
+#outside-claude p { margin: 0; }
 
 header {
   display: flex;
@@ -143,9 +140,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 #save-status { margin: 0; font-size: 14px; color: var(--muted); min-width: 125px; text-align: right; }
 #save-status.saved { color: var(--ink); }
 #save-status.unsaved { color: var(--warn); font-weight: 600; }
-#save { background: var(--goal); border-color: var(--goal); color: var(--goal-ink); font-weight: 600; }
 #notices { padding: 0 16px; font-size: 14px; color: var(--muted); text-align: right; }
-#notices p { margin: 0 0 8px; }
 #message { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px 10px; color: var(--ink); margin-bottom: 8px; }
 #message.refusal { color: var(--warn); }
 #message span { flex: 0 1 auto; }
@@ -232,11 +227,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 #delete-yes:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 </style>
-<script id="map-data" type="application/json">{"map_id":"","revision":1,"person":"","goal":{"text":""},"obstacles":[],"key_actions":[],"execute":[],"feedback":{"number":"","check_on":"","redraw_if":""},"baseline":{}}</script>
-<div id="data-problem" role="alert" hidden>
-  <h1>This map can't be drawn.</h1>
-  <p id="data-problem-reason"></p>
-  <p>Nothing in the file has changed. Tell Claude what this page says, and Claude can fix the file.</p>
+<div id="outside-claude" hidden>
+  <h1>This map opens inside Claude.</h1>
+  <p>Open the link Claude gave you.</p>
 </div>
 <header>
   <div id="who">
@@ -250,11 +243,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
   <button type="button" class="quiet" id="toggle-plan">Show plan</button>
   <p id="save-status" role="status"></p>
-  <button type="button" class="quiet" id="save" hidden></button>
 </header>
 <div id="notices">
   <div id="message" role="status" hidden></div>
-  <p id="browser-note" hidden>Open this file in Chrome (right-click, Open With) and it saves by itself. Otherwise, saves go to Downloads, and you move the file back into the folder under its original name, replacing the old one.</p>
 </div>
 <div id="workspace">
   <div id="map"><div id="canvas-frame"><div id="canvas"></div></div></div>
@@ -297,21 +288,18 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   // Runs fn(item, place) on every item, each parent before its children, and stops at the first truthy
   // result. This is the one place labels come from. An obstacle takes the next number from its owner and
   // starts a counter of its own. A solution takes nothing, and its children count on the same counter, so
-  // labels can't repeat. The page's check walks unchecked data with this, so a broken item counts as an
-  // obstacle and a bad children field isn't followed.
+  // labels can't repeat.
   function eachItem(items, fn, owner, depth, parent) {
     var counter = owner || labelOwner(0, '');
     for (var i = 0; i < items.length; i += 1) {
       var item = items[i];
-      var isObstacle = !(isObject(item) && item.kind === 'solution');
+      var isObstacle = item.kind !== 'solution';
       var label = isObstacle ? counter.prefix + labelPart(counter.depth, counter.count++) : null;
       var stop = fn(item, { label: label, depth: depth || 0, parent: parent || null });
       if (stop) return stop;
-      if (isObject(item) && Array.isArray(item.children)) {
-        var next = isObstacle ? labelOwner(counter.depth + 1, label) : counter;
-        stop = eachItem(item.children, fn, next, (depth || 0) + 1, item);
-        if (stop) return stop;
-      }
+      var next = isObstacle ? labelOwner(counter.depth + 1, label) : counter;
+      stop = eachItem(item.children, fn, next, (depth || 0) + 1, item);
+      if (stop) return stop;
     }
     return null;
   }
@@ -427,16 +415,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return next;
   }
 
-  // Scans the whole file, so an id still named in the side panel or baseline is never reused.
-  function nextId(map, prefix) {
-    var pattern = new RegExp('\\b' + prefix + '(\\d+)\\b', 'g');
-    var json = JSON.stringify(map);
-    var highest = 0;
-    var m;
-    while ((m = pattern.exec(json))) highest = Math.max(highest, Number(m[1]));
-    return prefix + (highest + 1);
-  }
-
   function canPick(map, itemId) {
     var item = findItem(map, itemId);
     return Boolean(item) && item.kind === 'solution';
@@ -474,7 +452,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return names;
   }
 
-  // The page's check refuses a plan row naming a missing solution, so every id here has a name.
+  // Inflate drops any plan row naming a missing solution, so every id here has a name.
   function panelRows(map) {
     var names = solutionNames(map);
     return {
@@ -596,353 +574,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return Math.min(1.5, Math.max(0.4, next));
   }
 
-  function pathParts(pathname) {
-    var decoded;
-    try {
-      decoded = decodeURIComponent(pathname);
-    } catch (e) {
-      decoded = pathname;
-    }
-    return decoded.split('/').filter(Boolean);
-  }
-
-  function fileName(pathname) {
-    var parts = pathParts(pathname);
-    return parts.length ? parts[parts.length - 1] : 'map.html';
-  }
-
-  function pickMessage(pathname) {
-    var parts = pathParts(pathname);
-    var file = fileName(pathname);
-    return parts.length > 1
-      ? 'Choose ' + file + ' in the ' + parts[parts.length - 2] + ' folder.'
-      : 'Choose ' + file + '.';
-  }
-
-  function moveCopyMessage(pathname) {
-    var parts = pathParts(pathname);
-    var folder = parts.length > 1 ? 'the ' + parts[parts.length - 2] + ' folder' : "the map's folder";
-    return 'Your browser should have saved a copy to Downloads. Move it into ' + folder +
-      ' as ' + fileName(pathname) + ', replacing the old one.';
-  }
-
-  // A copy from a stale tab is older than the map, so replacing the map would lose its newer changes.
-  // The suggested name still ends in -map.html, so Claude skips it while reading documents.
-  function staleCopyMessage(pathname) {
-    var parts = pathParts(pathname);
-    var folder = parts.length > 1 ? 'the ' + parts[parts.length - 2] + ' folder' : "the map's folder";
-    var copyName = fileName(pathname).replace(/(-map)?( ?\(\d+\))?\.html$/, '-copy-map.html');
-    return 'Your browser should have saved a copy to Downloads. The map has newer changes, ' +
-      "so don't replace it. Put the copy in " + folder + ' under another name, such as ' +
-      copyName + ', and tell Claude.';
-  }
-
-  function copyMessage(pathname, reason) {
-    return reason === 'stale' ? staleCopyMessage(pathname) : moveCopyMessage(pathname);
-  }
-
-  function isObject(value) {
-    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-  }
-
-  function isText(value) {
-    return typeof value === 'string';
-  }
-
-  function isTextList(value) {
-    return Array.isArray(value) && value.every(isText);
-  }
-
-  // Each flat list the page draws, and each field a row needs for the page to draw it.
-  var ROW_RULES = [
-    { field: 'key_actions', list: 'key actions', row: 'Key action', needs: [
-      ['solution_ids', isTextList, 'list of solutions']
-    ] },
-    { field: 'execute', list: 'execute rows', row: 'Execute row', needs: [
-      ['solution_id', isText, 'solution']
-    ] }
-  ];
-
-  function rowsProblem(rule, rows) {
-    if (!Array.isArray(rows)) return 'The map is missing its list of ' + rule.list + '.';
-    for (var i = 0; i < rows.length; i += 1) {
-      var name = rule.row + ' ' + (i + 1);
-      if (!isObject(rows[i])) return name + ' is missing.';
-      for (var n = 0; n < rule.needs.length; n += 1) {
-        var need = rule.needs[n];
-        if (!need[1](rows[i][need[0]])) return name + ' is missing its ' + need[2] + '.';
-      }
-    }
-    return null;
-  }
-
-  // Solutions have no label, so a sentence names one by its text, or by its id if it has no text. A broken
-  // item can have neither, so the caller says what to call it then.
-  function solutionName(item, fallback) {
-    if (item.text && isText(item.text)) return 'Solution "' + item.text + '"';
-    return item.id && isText(item.id) ? 'Solution ' + item.id : fallback;
-  }
-
-  // Every item has the same five fields.
-  function fieldsProblem(item, name) {
-    if (!isObject(item)) return name + ' is missing.';
-    if ('whys' in item || 'solution_at' in item || 'solution_ids' in item || 'root_cause' in item) {
-      return name + ' uses the old map shape.';
-    }
-    if (!item.id || !isText(item.id)) return name + ' is missing its id.';
-    if (item.id === 'goal') return name + ' uses the id goal, which the page keeps for the goal.';
-    if (item.id.indexOf('"') !== -1) return name + ' has a quote mark in its id.';
-    if (!('kind' in item)) return name + ' is missing its kind.';
-    if (item.kind !== 'obstacle' && item.kind !== 'solution') return name + ' needs a kind of obstacle or solution.';
-    if (!isText(item.text)) return name + ' is missing its text.';
-    if (typeof item.star !== 'boolean') return name + ' needs true or false for its star.';
-    if (!Array.isArray(item.children)) return name + ' is missing its list of what sits under it.';
-    return null;
-  }
-
-  // seen maps each id to the name of the item that has it, and has no built-in names, so any id is safe in it.
-  function idProblem(item, name, seen) {
-    if (seen[item.id]) return seen[item.id] + ' and ' + name + ' both use the id ' + item.id + '.';
-    seen[item.id] = name;
-    return null;
-  }
-
-  function starProblem(item, name) {
-    return item.star && item.kind !== 'solution' ? name + ' has a star, but only a solution can be a pick.' : null;
-  }
-
-  // The first problem anywhere in the tree, named by the label the item would have.
-  function treeProblem(items, seen) {
-    return eachItem(items, function (item, place) {
-      var name = isObject(item) && item.kind === 'solution' ? solutionName(item, 'A solution') : 'Obstacle ' + place.label;
-      return fieldsProblem(item, name) || idProblem(item, name, seen) || starProblem(item, name);
-    });
-  }
-
-  function planProblem(map) {
-    var solutions = Object.create(null);
-    function note(item) {
-      if (item.kind === 'solution') solutions[item.id] = true;
-    }
-    eachItem(map.obstacles, note);
-    function missing(name, id) {
-      return solutions[id] ? null : name + " names a solution that isn't on the map (" + id + ').';
-    }
-    for (var k = 0; k < map.key_actions.length; k += 1) {
-      var ids = map.key_actions[k].solution_ids;
-      for (var s = 0; s < ids.length; s += 1) {
-        var action = missing('Key action ' + (k + 1), ids[s]);
-        if (action) return action;
-      }
-    }
-    for (var e = 0; e < map.execute.length; e += 1) {
-      var row = missing('Execute row ' + (e + 1), map.execute[e].solution_id);
-      if (row) return row;
-    }
-    return null;
-  }
-
-  // One plain sentence on the first thing that stops the page drawing or saving this map, or null.
-  function mapProblem(map) {
-    if (!isObject(map)) return "The data in this file can't be read as a map.";
-    if (!map.map_id || !isText(map.map_id)) return 'The map has no id.';
-    if (typeof map.revision !== 'number') return 'The map has no revision number.';
-    if (!isObject(map.goal)) return 'The goal is missing.';
-    if (!isText(map.goal.text)) return 'The goal is missing its text.';
-    if ('solutions' in map || 'unplaced' in map) return 'The map uses the old map shape.';
-    if (!Array.isArray(map.obstacles)) return 'The map is missing its list of obstacles.';
-    var problem = treeProblem(map.obstacles, Object.create(null));
-    if (problem) return problem;
-    for (var r = 0; r < ROW_RULES.length; r += 1) {
-      problem = rowsProblem(ROW_RULES[r], map[ROW_RULES[r].field]);
-      if (problem) return problem;
-    }
-    problem = planProblem(map);
-    if (problem) return problem;
-    return isObject(map.feedback) ? null : 'The feedback section is missing.';
-  }
-
-  // Every "<" becomes the JSON escape. It is built in two parts so a file tool can't decode it here.
-  function serializeMap(map) {
-    return JSON.stringify(map).replace(/</g, '\\' + 'u003c');
-  }
-
-  var SLOT = /(<script\b[^>]*\bid="map-data"[^>]*>)([\s\S]*?)(<\/script>)/;
-
-  function parseMapData(html) {
-    var m = SLOT.exec(html);
-    if (!m) return null;
-    try {
-      var data = JSON.parse(m[2]);
-      return data && typeof data === 'object' ? data : null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // A function replacer keeps "$&", "$1" and similar text literal.
-  function replaceMapData(sourceHtml, map) {
-    var json = serializeMap(map);
-    return sourceHtml.replace(SLOT, function (whole, open, body, close) {
-      return open + json + close;
-    });
-  }
-
-  function copyHtml(sourceHtml, map) {
-    var next = copy(map);
-    next.revision = map.revision + 1;
-    return replaceMapData(sourceHtml, next);
-  }
-
-  function checkTarget(fileHtml, map) {
-    var file = parseMapData(fileHtml);
-    if (!file || !file.map_id || typeof file.revision !== 'number') {
-      return { ok: false, reason: 'not-a-map' };
-    }
-    if (file.map_id !== map.map_id) return { ok: false, reason: 'wrong-map' };
-    if (file.revision > map.revision) return { ok: false, reason: 'stale' };
-    return { ok: true };
-  }
-
-  // One string per set of values, so spacing and key order make no difference.
-  function canonicalJson(value) {
-    if (Array.isArray(value)) return '[' + value.map(canonicalJson).join(',') + ']';
-    if (!isObject(value)) return JSON.stringify(value);
-    return '{' + Object.keys(value).sort().map(function (key) {
-      return JSON.stringify(key) + ':' + canonicalJson(value[key]);
-    }).join(',') + '}';
-  }
-
-  // Claude can move baseline in the file and leave everything else alone, so it doesn't count.
-  function mapContent(data) {
-    var content = copy(data);
-    delete content.baseline;
-    return canonicalJson(content);
-  }
-
-  // Each autosave raises the page's revision, so a revision check alone misses a rewrite by Claude.
-  // The file must hold what the page last loaded or wrote, or a copy the page made for this file.
-  function fileIsKnown(fileHtml, savedJson, copiedJson) {
-    var file = mapContent(parseMapData(fileHtml));
-    return file === mapContent(JSON.parse(savedJson)) ||
-      (typeof copiedJson === 'string' && file === mapContent(JSON.parse(copiedJson)));
-  }
-
-  // Asks for write permission, reads the file and checks it is this map. Never writes.
-  async function openTarget(handle, map, savedJson, copiedJson) {
-    var granted;
-    try {
-      granted = await handle.requestPermission({ mode: 'readwrite' });
-    } catch (e) {
-      return { ok: false, reason: 'permission' };
-    }
-    if (granted !== 'granted') return { ok: false, reason: 'permission' };
-
-    var fileHtml;
-    try {
-      var file = await handle.getFile();
-      fileHtml = await file.text();
-    } catch (e) {
-      return { ok: false, reason: 'unreadable' };
-    }
-
-    var check = checkTarget(fileHtml, map);
-    if (!check.ok) return check;
-    if (typeof savedJson === 'string' && !fileIsKnown(fileHtml, savedJson, copiedJson)) {
-      return { ok: false, reason: 'stale' };
-    }
-    return { ok: true, fileHtml: fileHtml };
-  }
-
-  async function connectToHandle(handle, map, savedJson, copiedJson) {
-    var opened = await openTarget(handle, map, savedJson, copiedJson);
-    return opened.ok ? { ok: true } : opened;
-  }
-
-  function handleKey(pathname, mapId) {
-    return JSON.stringify([mapId, pathname]);
-  }
-
-  function saveStatus(s) {
-    if (!s.picker) {
-      return s.dirty
-        ? { text: 'Not saved yet.', tone: 'unsaved', button: 'Save to Downloads' }
-        : { text: '', tone: '', button: 'Save to Downloads' };
-    }
-    var tone = s.dirty ? 'unsaved' : '';
-    if (!s.connected) {
-      return s.remembered
-        ? { text: 'Saving is paused.', tone: tone, button: 'Turn saving back on' }
-        : { text: "Changes aren't being saved yet.", tone: tone, button: 'Turn on saving' };
-    }
-    if (s.failed) return { text: 'Not saved', tone: 'unsaved', button: '' };
-    if (s.writing || s.dirty) return { text: 'Saving...', tone: '', button: '' };
-    return { text: 'All changes saved', tone: 'saved', button: '' };
-  }
-
-  // One write at a time. Requests that arrive during a write share one follow-up write.
-  // A failed write drops the follow-up, and the next request tries again.
-  function createAutosaver(write) {
-    var running = false;
-    var queued = false;
-    var waiters = [];
-
-    async function run() {
-      running = true;
-      var last;
-      do {
-        queued = false;
-        try {
-          last = await write();
-        } catch (e) {
-          last = { ok: false, reason: 'write-failed' };
-        }
-        if (!last || !last.ok) queued = false;
-      } while (queued);
-      running = false;
-      var done = waiters;
-      waiters = [];
-      done.forEach(function (resolve) { resolve(last); });
-    }
-
-    return {
-      request: function () {
-        var promise = new Promise(function (resolve) { waiters.push(resolve); });
-        if (running) queued = true;
-        else run();
-        return promise;
-      }
-    };
-  }
-
-  async function saveToHandle(handle, sourceHtml, map, savedJson, copiedJson) {
-    var opened = await openTarget(handle, map, savedJson, copiedJson);
-    if (!opened.ok) return opened;
-    var fileHtml = opened.fileHtml;
-
-    // Claude can move baseline in the file and leave revision alone, so the file's copy wins.
-    var next = copy(map);
-    var fileBaseline = parseMapData(fileHtml).baseline;
-    if (fileBaseline) next.baseline = fileBaseline;
-
-    var writable;
-    try {
-      writable = await handle.createWritable();
-      await writable.write(copyHtml(sourceHtml, next));
-      await writable.close();
-    } catch (e) {
-      if (writable && typeof writable.abort === 'function') {
-        try {
-          await writable.abort();
-        } catch (ignored) {
-          // The write already failed, and that is the error the person needs to hear.
-        }
-      }
-      return { ok: false, reason: 'write-failed' };
-    }
-    return { ok: true, revision: map.revision + 1, baseline: next.baseline };
-  }
-
   globalThis.MapLogic = {
     itemLabels: itemLabels,
     findItem: findItem,
@@ -953,7 +584,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     isDragDistance: isDragDistance,
     idsFrom: idsFrom,
     deleteItem: deleteItem,
-    nextId: nextId,
     canPick: canPick,
     setStar: setStar,
     setItemText: setItemText,
@@ -963,23 +593,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     panelRows: panelRows,
     itemExists: itemExists,
     shouldWarnOnClose: shouldWarnOnClose,
-    moveCopyMessage: moveCopyMessage,
-    copyMessage: copyMessage,
-    mapProblem: mapProblem,
     fitScale: fitScale,
-    stepScale: stepScale,
-    fileName: fileName,
-    pickMessage: pickMessage,
-    serializeMap: serializeMap,
-    parseMapData: parseMapData,
-    replaceMapData: replaceMapData,
-    copyHtml: copyHtml,
-    checkTarget: checkTarget,
-    saveToHandle: saveToHandle,
-    connectToHandle: connectToHandle,
-    handleKey: handleKey,
-    saveStatus: saveStatus,
-    createAutosaver: createAutosaver
+    stepScale: stepScale
   };
 })();
 </script>
@@ -1093,8 +708,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   function withText(row, fields) {
-    var next = Object.assign({}, row);
-    fields.forEach(function (f) { next[f] = text(row[f]); });
+    var next = {};
+    Object.keys(row).forEach(function (key) { put(next, key, row[key]); });
+    fields.forEach(function (f) { put(next, f, text(row[f])); });
     return next;
   }
 
@@ -1137,8 +753,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     ids.forEach(function (id) { if (nodes[id].kind === 'solution') solutions[id] = true; });
 
     return {
-      map_id: '',
-      revision: 1,
       person: text(source.person),
       goal: { text: isObject(source.goal) ? text(source.goal.text) : '' },
       obstacles: obstacles,
@@ -1152,8 +766,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       }).map(function (row) {
         return withText(row, ['first_move', 'owner', 'others_decide']);
       }),
-      feedback: withText(isObject(source.feedback) ? source.feedback : {}, ['number', 'check_on', 'redraw_if']),
-      baseline: {}
+      feedback: withText(isObject(source.feedback) ? source.feedback : {}, ['number', 'check_on', 'redraw_if'])
     };
   }
 
@@ -1392,22 +1005,17 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 (function () {
   'use strict';
 
-  // Captured before any drawing, so a saved file holds no drawn map.
-  var SOURCE = '<!doctype html>\n' + document.documentElement.outerHTML;
-
   var L = globalThis.MapLogic;
   var S = globalThis.MapStore;
-  // No window.claude means a local file. Any window.claude means the viewer, which never saves to a file.
-  // This comes before any map data is read, because the map-data slot means nothing in the viewer.
-  var hosted = window.claude !== undefined;
-  var map = hosted ? S.inflate({}) : L.parseMapData(SOURCE);
-  var dataProblem = hosted ? null : L.mapProblem(map);
-  if (dataProblem) {
-    showDataProblem(dataProblem);
+  // The map lives only in Claude's shared data, so outside Claude there is nothing to show or edit.
+  if (window.claude === undefined) {
+    document.getElementById('outside-claude').hidden = false;
+    document.querySelectorAll('header, #notices, #workspace').forEach(function (part) {
+      part.hidden = true;
+    });
     return;
   }
-  var savedJson = hosted ? '' : L.serializeMap(map);
-  var handleKey = hosted ? '' : L.handleKey(location.pathname, map.map_id);
+  var map = S.inflate({});
   // The last snapshot's data, frozen by the platform. Null until a snapshot holds a map.
   var doc = null;
   // The maps/main reference and the queue of changes still waiting to be confirmed.
@@ -1441,23 +1049,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var notSetUp = false;
   var stale = false;
   var silenceTimer = null;
-  // The file writes go to. Null means saving is off or paused.
-  var handle = null;
-  // The file to use when saving turns back on. It outlives handle while saving is paused.
-  var remembered = null;
-  var autosaver = L.createAutosaver(writeToFile);
-  var writing = false;
-  var failed = false;
-  var failedReason = null;
-  // The JSON of the last copy this page made. The person may move that copy over the file.
-  var copiedJson = null;
-  // The refusal reason of the copy message on screen, so the same refusal doesn't cover it.
-  var copyMessageFor = null;
-  // The JSON of the last write, so a refused write isn't sent again until the map changes.
-  var lastTried = null;
-  var toldToTellClaude = false;
   // The item being typed on: { ref, isNew, from, openedText, parent }. from is what was selected before,
-  // openedText is the text when the box opened, and parent is where a new item goes in the viewer.
+  // openedText is the text when the box opened, and parent is where a new item goes.
   var editing = null;
   // The selected item as a ref, or null. Selecting changes nothing in the map and draws nothing.
   var selected = null;
@@ -1498,27 +1091,10 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var SLOW_MS = 15000;
   var MAY_WRITE_MS = 5000;
 
-  var REFUSALS = {
-    'wrong-map': 'That file holds a different map, so nothing was saved.',
-    'not-a-map': 'That file is not a map, so nothing was saved.',
-    'stale': 'Claude changed this map, so your last edit is not in the file. Reload to get the new version.',
-    'permission': 'Chrome did not get permission to change the file, so nothing was saved.',
-    'unreadable': 'Chrome could not read that file, so nothing was saved.',
-    'write-failed': 'Chrome could not write to the file, so the save did not finish.'
-  };
-
-  function showDataProblem(problem) {
-    document.getElementById('data-problem-reason').textContent = problem;
-    document.getElementById('data-problem').hidden = false;
-    document.querySelectorAll('header, #notices, #workspace').forEach(function (part) {
-      part.hidden = true;
-    });
-  }
-
   var el = {};
-  ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save', 'save-status', 'message',
-    'browser-note', 'typing', 'drag-ghost', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
-    'delete-card', 'delete-title', 'delete-yes', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+  ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save-status', 'message',
+    'typing', 'drag-ghost', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
+    'delete-card', 'delete-yes', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -1748,9 +1324,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
   }
 
+  // A confirmed change has reached the store, so only what is still waiting can be lost.
   function isDirty() {
-    if (hosted) return queue.pending().length > 0;
-    return L.serializeMap(map) !== savedJson;
+    return queue.pending().length > 0;
   }
 
   // A new item has no text until typing finishes, so there is nothing to save yet.
@@ -1758,7 +1334,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return Boolean(editing && editing.isNew);
   }
 
-  function showHostedStatus() {
+  function showStatus() {
     var status = notSetUp ? { text: "This map isn't set up yet.", tone: 'unsaved' } : S.hostedStatus({
       ready: ready,
       readOnly: viewOnly(),
@@ -1772,44 +1348,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     });
     el['save-status'].textContent = status.text;
     el['save-status'].className = status.tone;
-    el.save.hidden = true;
-  }
-
-  function showStatus() {
-    if (hosted) {
-      showHostedStatus();
-      return;
-    }
-    var status = L.saveStatus({
-      picker: Boolean(window.showOpenFilePicker),
-      connected: Boolean(handle),
-      remembered: Boolean(remembered),
-      dirty: isDirty() && !holdingNewItem(),
-      writing: writing,
-      failed: failed
-    });
-    el['save-status'].textContent = status.text;
-    el['save-status'].className = status.tone;
-    el.save.textContent = status.button;
-    el.save.hidden = !status.button;
-  }
-
-  // Comparing with the last write is what stops a refused write from looping. Going back to what the
-  // file holds clears it, so making the same edit again gets another try.
-  function askToWrite() {
-    if (hosted) return;
-    if (!handle || holdingNewItem()) return;
-    var json = L.serializeMap(map);
-    if (json === savedJson) {
-      lastTried = null;
-      // The page matches the file again, so a failed write no longer matters. A stale file is really newer.
-      if (failed && failedReason === 'write-failed') {
-        failed = false;
-        hideMessage();
-      }
-      return;
-    }
-    if (json !== lastTried) autosaver.request();
   }
 
   function render() {
@@ -1820,7 +1358,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     el['edit-hint'].hidden = !canEdit() || map.obstacles.length === 0;
     drawMap();
     drawPanel();
-    askToWrite();
     showStatus();
     keepOnScreen(spot);
     showControls();
@@ -1828,23 +1365,19 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   function setMap(next) {
-    if (hosted) {
-      notice = '';
-      sendChange(next);
-      showHostedMessage();
-      rebuildMap();
-    } else {
-      map = next;
-    }
+    notice = '';
+    sendChange(next);
+    showMessageForState();
+    rebuildMap();
     render();
   }
 
   /* The shared data. The screen is the last snapshot plus the changes still waiting, so a snapshot
      can't erase an edit waiting its turn. setMap is the only place a change gets sent. */
 
-  // True on the file path. In the viewer, true once a map has arrived that this page can read.
+  // True once a map has arrived that this page can read and this person can change.
   function canEdit() {
-    return !hosted || (ready && !stale && mayWrite !== 'asking' && !viewOnly() && !revoked);
+    return ready && !stale && mayWrite !== 'asking' && !viewOnly() && !revoked;
   }
 
   // The platform said this person can't write, or a write it hadn't promised was refused as not allowed.
@@ -1913,7 +1446,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       closeTyping();
       if (lost) {
         notice = "Editing is off, so the words you were typing weren't saved.";
-        showHostedMessage();
+        showMessageForState();
       }
     }
     keepTypingAfterDelete();
@@ -2023,7 +1556,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   // A failed write that is still true keeps its message. Only when none is left does a notice or nothing show.
-  function showHostedMessage() {
+  function showMessageForState() {
     if (queueState.failed) showMessage(failureText(queueState), true);
     else if (notice) showMessage(notice);
     else hideMessage();
@@ -2062,7 +1595,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       refusedForVisit = true;
       closed = true;
     }
-    showHostedMessage();
+    showMessageForState();
     if (closed) showSnapshot();
     else showStatus();
   }
@@ -2096,7 +1629,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   // The platform's first answer comes after this script's first run, and may be null.
-  function startHosted() {
+  function start() {
     queue = S.createChangeQueue({
       write: writeChange,
       wait: function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); },
@@ -2143,7 +1676,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     if (box) box.classList.add('selected');
   }
 
-  // Draws nothing, so the boxes stay put between the two clicks of a double-click, and no write gets asked for.
+  // Draws nothing, so the boxes stay put between the two clicks of a double-click, and nothing gets sent.
   function select(ref) {
     if (editing) finishTyping();
     asking = null;
@@ -2348,7 +1881,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     el.typing.value = '';
   }
 
-  // A blank new item was never in the file, so taking it out asks for no write. The selection goes back
+  // A blank new item was never in the data, so taking it out sends nothing. The selection goes back
   // to the item it came from, and the render puts focus there.
   function dropNewItem(e) {
     selected = e.from;
@@ -2369,11 +1902,11 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
     // Only a real overwrite earns the notice: someone else changed it, and these words are not what it holds now.
     var current = textOf(e.ref);
-    var overwrote = hosted && !e.isNew && current !== e.openedText && current !== text;
+    var overwrote = !e.isNew && current !== e.openedText && current !== text;
     setMap(e.ref.kind === 'goal' ? L.setGoal(map, { text: text }) : L.setItemText(map, e.ref.id, text));
     if (overwrote) {
       notice = 'Someone else changed this while you were typing. Your words replaced theirs.';
-      showHostedMessage();
+      showMessageForState();
     }
   }
 
@@ -2389,11 +1922,11 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     restoreFocus();
   }
 
-  // Finishes first, because the item added here must be the one holding back writes.
+  // Finishes first, because the item added here must be the only one held back from the data.
   function addUnder(parentId, kind) {
     if (!canEdit()) return;
     if (editing) finishTyping();
-    var id = hosted ? S.newId() : L.nextId(map, kind === 'solution' ? 's' : 'o');
+    var id = S.newId();
     map = L.addItem(map, parentId, id, kind, '');
     startTyping({ kind: kind, id: id }, true);
     if (editing) editing.parent = parentId;
@@ -2500,247 +2033,18 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     positionControls();
   }
 
-  /* Saving */
+  /* Messages */
 
   function showMessage(text, refusal) {
-    copyMessageFor = null;
     el.message.textContent = '';
     el.message.hidden = false;
     el.message.classList.toggle('refusal', Boolean(refusal));
     el.message.appendChild(make('span', '', text));
-    return el.message;
   }
 
   function hideMessage() {
-    copyMessageFor = null;
     el.message.hidden = true;
     el.message.textContent = '';
-  }
-
-  function quietButton(text, onClick) {
-    var b = make('button', 'quiet', text);
-    b.type = 'button';
-    b.addEventListener('click', onClick);
-    return b;
-  }
-
-  function download(html) {
-    var url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-    var a = make('a');
-    a.href = url;
-    a.download = L.fileName(location.pathname);
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
-  }
-
-  function markSaved(savedMap) {
-    savedJson = L.serializeMap(savedMap);
-    copiedJson = null;
-    showStatus();
-  }
-
-  // The copy keeps this page's revision, so once moved it can't look newer than the page.
-  // The file in the folder still lacks these edits, so the page stays marked unsaved.
-  // Save a copy stays on the message, because the refusal won't come back to offer it for later edits.
-  function saveACopy(reason) {
-    copiedJson = L.serializeMap(map);
-    download(L.replaceMapData(SOURCE, map));
-    var box = showMessage(L.copyMessage(location.pathname, reason));
-    box.appendChild(quietButton('Save a copy', function () { saveACopy(reason); }));
-    if (reason === 'stale') box.appendChild(quietButton('Reload', function () { location.reload(); }));
-    copyMessageFor = reason;
-  }
-
-  function showRefusal(reason) {
-    if (copyMessageFor === reason) return;
-    var box = showMessage(REFUSALS[reason] + ' Your edits are still on this page.', true);
-    box.appendChild(quietButton('Save a copy', function () { saveACopy(reason); }));
-    if (reason === 'stale') box.appendChild(quietButton('Reload', function () { location.reload(); }));
-    if (reason === 'permission') box.appendChild(quietButton('Choose the file', pickThenConnect));
-  }
-
-  // A bad file is forgotten, lost permission pauses saving, and anything else stays connected and
-  // shows as not saved. The edits stay on the page either way.
-  function applyRefusal(reason, file) {
-    if (reason === 'wrong-map' || reason === 'not-a-map' || reason === 'unreadable') {
-      handle = null;
-      remembered = null;
-      forgetHandle();
-    } else if (reason === 'permission') {
-      handle = null;
-    } else {
-      handle = file;
-      remembered = file;
-      rememberHandle(file);
-      failed = true;
-      failedReason = reason;
-    }
-  }
-
-  function refuse(reason, file) {
-    applyRefusal(reason, file);
-    showRefusal(reason);
-    showStatus();
-  }
-
-  // The autosaver reads the result, so this returns it on both paths. An edit made during the write
-  // still shows as unsaved afterward, because savedJson comes from the map this write sent.
-  async function writeToFile() {
-    // A queued write can start while a new item is still blank. The render that finishes typing asks again.
-    if (holdingNewItem()) return { ok: true };
-    var saving = map;
-    var target = handle;
-    lastTried = L.serializeMap(saving);
-    writing = true;
-    showStatus();
-    var result = await L.saveToHandle(target, SOURCE, saving, savedJson, copiedJson);
-    writing = false;
-    if (!result.ok) {
-      refuse(result.reason, target);
-      return result;
-    }
-    saving.revision = result.revision;
-    map.revision = result.revision;
-    saving.baseline = result.baseline;
-    map.baseline = result.baseline;
-    if (failed) {
-      failed = false;
-      hideMessage();
-    }
-    markSaved(saving);
-    if (!toldToTellClaude) {
-      toldToTellClaude = true;
-      showMessage('When you finish, tell Claude you changed the map.');
-    }
-    // An edit back to what the file held before this write had no reason to ask, so ask now.
-    askToWrite();
-    return result;
-  }
-
-  // A write happens here only if the page already has edits.
-  function startSaving(file) {
-    handle = file;
-    remembered = file;
-    failed = false;
-    lastTried = null;
-    rememberHandle(file);
-    askToWrite();
-    showStatus();
-  }
-
-  async function connect(file) {
-    el.save.disabled = true;
-    var result = await L.connectToHandle(file, map, savedJson, copiedJson);
-    el.save.disabled = false;
-    if (result.ok) {
-      hideMessage();
-      startSaving(file);
-      return;
-    }
-    if (result.reason === 'stale') lastTried = L.serializeMap(map);
-    refuse(result.reason, file);
-  }
-
-  // The click must reach the picker with no wait before it, or Chrome refuses to open the dialog.
-  async function pickThenConnect() {
-    showMessage(L.pickMessage(location.pathname));
-    el.save.disabled = true;
-    var picked;
-    try {
-      picked = await window.showOpenFilePicker({
-        multiple: false,
-        types: [{ description: 'Map page', accept: { 'text/html': ['.html'] } }]
-      });
-    } catch (e) {
-      el.save.disabled = false;
-      if (e.name === 'AbortError') {
-        hideMessage();
-        return;
-      }
-      showRefusal('permission');
-      return;
-    }
-    await connect(picked[0]);
-  }
-
-  function onSave() {
-    if (hosted) return;
-    hideMessage();
-    if (!window.showOpenFilePicker) {
-      download(L.copyHtml(SOURCE, map));
-      map.revision += 1;
-      markSaved(map);
-      showMessage(L.moveCopyMessage(location.pathname));
-      return;
-    }
-    if (remembered) {
-      connect(remembered);
-      return;
-    }
-    pickThenConnect();
-  }
-
-  /* Remembering the file */
-
-  // Any failure here means nothing is remembered, and the person chooses the file after each reload.
-  async function handleStore(mode, act) {
-    try {
-      var db = await new Promise(function (resolve, reject) {
-        var open = indexedDB.open('six-step-map', 1);
-        open.onupgradeneeded = function () { open.result.createObjectStore('handles'); };
-        open.onsuccess = function () { resolve(open.result); };
-        open.onerror = function () { reject(open.error); };
-      });
-      try {
-        return await new Promise(function (resolve, reject) {
-          var tx = db.transaction('handles', mode);
-          var request = act(tx.objectStore('handles'));
-          tx.oncomplete = function () { resolve(request.result); };
-          tx.onerror = function () { reject(tx.error); };
-          tx.onabort = function () { reject(tx.error); };
-        });
-      } finally {
-        db.close();
-      }
-    } catch (e) {
-      return undefined;
-    }
-  }
-
-  function recallHandle() {
-    return handleStore('readonly', function (store) { return store.get(handleKey); });
-  }
-
-  function rememberHandle(file) {
-    return handleStore('readwrite', function (store) { return store.put(file, handleKey); });
-  }
-
-  function forgetHandle() {
-    return handleStore('readwrite', function (store) { return store.delete(handleKey); });
-  }
-
-  // No click happens here, so it connects only if Chrome already has permission. Without it, the
-  // status says paused and the button asks. A newer file can't happen in normal use, so it pauses too.
-  async function reconnectOnLoad() {
-    var found = await recallHandle();
-    if (!found || remembered) return;
-    remembered = found;
-    var permission;
-    try {
-      permission = await found.queryPermission({ mode: 'readwrite' });
-    } catch (e) {
-      permission = 'prompt';
-    }
-    if (permission === 'granted') {
-      el.save.disabled = true;
-      var result = await L.connectToHandle(found, map, savedJson, copiedJson);
-      el.save.disabled = false;
-      if (result.ok) startSaving(found);
-      else if (result.reason !== 'stale') applyRefusal(result.reason, found);
-    }
-    showStatus();
   }
 
   /* Events */
@@ -2912,8 +2216,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   });
 
   el['delete-yes'].addEventListener('click', deleteNow);
-  el['delete-title'].textContent = 'Confirm Delete';
-  el['delete-yes'].textContent = 'Delete';
 
   // A click anywhere else closes the card. A click on the card or on the trash can does not.
   document.addEventListener('click', function (e) {
@@ -2931,10 +2233,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   el['zoom-in'].addEventListener('click', function () { zoomTo(L.stepScale(scale, 1)); });
   el['zoom-fit'].addEventListener('click', function () { zoomTo('whole'); });
 
-  el.save.addEventListener('click', onSave);
   el.map.addEventListener('scroll', positionControls);
   window.addEventListener('resize', render);
-  // A save message or a wrapped header moves the map with no scroll and no window resize.
+  // A message or a wrapped header moves the map with no scroll and no window resize.
   if (window.ResizeObserver) new ResizeObserver(positionControls).observe(el.map);
 
   window.addEventListener('beforeunload', function (e) {
@@ -2944,9 +2245,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
   });
 
-  el['browser-note'].hidden = hosted || Boolean(window.showOpenFilePicker);
-  if (hosted) startHosted();
-  else if (window.showOpenFilePicker) reconnectOnLoad();
+  start();
   render();
 })();
 </script>
