@@ -27,3 +27,4 @@ patterns:
   - skills/_shared/manual-deploy-artifact-catalog.md
   - frameworks/*/render-review-html.md
   - frameworks/*/open-questions-schema.md
+  - frameworks/6-step-process/mind-map-template.html

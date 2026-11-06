@@ -27,9 +27,9 @@ An opportunity is a solution. It gets no separate type and gets placed the same 
 
 ## The map
 
-One map holds one goal. A map is private until its creator uses the Share menu. After that, several people can change it while you work, so you report edits you didn't make. You publish it when the goal is confirmed and write to it at each later step, so stopping early loses nothing.
+One map holds one goal. A map is private until its creator uses the Share menu. If the person is working in a Claude project, that project's members may be able to open it too. After that, several people can change it while you work, so you report edits you didn't make. You publish it when the goal is confirmed and write to it at each later step, so stopping early loses nothing.
 
-**Publishing.** Publish at the first write. Read all of `mind-map-template.html` from this framework's folder, because the Artifact tool needs that and the template is longer than one default read. If you can't find the template, say so plainly and stop. Don't build a page by hand. Publish that file directly, by its path, without changing it. Set the tool's title to the goal in a few words, and declare the capabilities `{"db": {}, "user": {}}`. If that's refused, read the whole file, write it unchanged to a working or temporary folder you can use, and publish that copy the same way. If that fails too, say so plainly and stop. There is no other place for the map. Otherwise give the person the link.
+**Publishing.** Publish at the first write. Read all of `mind-map-template.html` from this framework's folder, because the Artifact tool needs that and the template is longer than one default read. If you can't find the template, say so plainly and stop. Don't build a page by hand. Publish that file directly, by its path, without changing it. Set the tool's title to the goal in a few words, and declare the capabilities `{"db": {}}`. If that's refused, read the whole file, write it unchanged to a working or temporary folder you can use, and publish that copy the same way. If that fails too, say so plainly and stop. There is no other place for the map. Otherwise give the person the link.
 
 You never share it, and you can't. Only its creator can, from the Share menu on the page.
 
@@ -141,7 +141,7 @@ If the documents point to a goal, ask this instead: propose the goal in one sent
 
 If you don't know their first name, ask for it now, because the map shows it, and **WAIT for their name.**
 
-**Write the map.** This is the first write. Give the link and say to open it. Say in one line that it saves by itself. If you published it in this conversation, say in one line that it stays private until they use the Share menu. Say in one line that they can drag an item onto a box to move it. Then start 3a in the same message.
+**Write the map.** This is the first write. Give the link and say to open it. Say in one line that it saves by itself. If you published it in this conversation, say in one line that it stays private until they use the Share menu, and that if they are working in a Claude project, its members may be able to open it too. Say in one line that they can drag an item onto a box to move it. Then start 3a in the same message.
 
 ## Step 3: Root-cause the problems
 
@@ -257,7 +257,7 @@ Say:
 
 ## Close
 
-Give the link. Say Steps 5 and 6 are planned, not done. Say the map is theirs to edit and that it saves by itself. If you published it in this conversation, say it stays private until they use the Share menu, which is how they show it to others. To pick up later, they give you the link. If the goal has other stages, say each one gets its own run. End there.
+Give the link. Say Steps 5 and 6 are planned, not done. Say the map is theirs to edit and that it saves by itself. If you published it in this conversation, say it stays private until they use the Share menu, which is how they show it to others. If they are working in a Claude project, say its members may be able to open it too. To pick up later, they give you the link. If the goal has other stages, say each one gets its own run. End there.
 
 ## Picking up edits
 

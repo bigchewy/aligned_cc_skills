@@ -45,7 +45,7 @@ The work has failed if any of these is true:
 - Two people editing at once silently loses an edit to a different item.
 - Claude's or a colleague's change gets wiped by someone who opened a text box and didn't change anything.
 - The page says "All changes saved" when a write failed.
-- A map gets shared without its creator choosing to share it.
+- A map gets shared without its creator choosing to share it. A map made inside a Claude project is open to that project's members through the project, and that is fine.
 
 ## Approaches
 
@@ -136,7 +136,7 @@ Plan rows and key actions stay lists, and only Claude writes them, so people can
 
 **An unknown `version`.** The page shows the map without editing controls and says it needs a newer page.
 
-**Status.** "All changes saved" means nothing is waiting and the last write was confirmed. A write that fails because the connection dropped retries. If a write takes too long, or the live connection dies, the page says so and keeps the edit on screen. A refused write keeps the edit on screen, marked as not saved, with a plain message and no automatic revert. A change to an item someone deleted meanwhile is dropped, because reads ignore that item.
+**Status.** "All changes saved" means nothing is waiting and the last write was confirmed. A write that fails because the connection dropped retries. If a write takes too long, or the live connection dies, the page says so and keeps the edit on screen. A refused write keeps the edit on screen, marked as not saved, with a plain message and no automatic revert. A star or move on an item someone deleted meanwhile is dropped. Words typed on a deleted item are kept under the goal, with a notice saying the item was deleted.
 
 **During a live update:** an open text box and a drag keep going. A drag of an item someone just deleted cancels. A blank new item stays. An open Confirm Delete closes if the item is gone.
 
@@ -146,7 +146,7 @@ Plan rows and key actions stay lists, and only Claude writes them, so people can
 
 Without both the Artifact and ArtifactData tools, or if a publish fails, Claude says so plainly and stops.
 
-- **Publishing:** the template has no `<title>` or html, head and body tags of its own, and its language is set by script. Claude publishes that file directly, naming the artifact with the tool's title setting, and declares `db` and `user`.
+- **Publishing:** the template has no `<title>` or html, head and body tags of its own, and its language is set by script. Claude publishes that file directly, naming the artifact with the tool's title setting, and declares `db` only.
 - **First write:** write `maps/main` and `maps/baseline` together in one batch.
 - **Each write:** read `maps/main`, then send only what changed, pinned to the version just read, with the matching `maps/baseline` in the same batch. Removals must be marked for deletion, because updates merge. If it's refused, read again and redo the change.
 - **Plan rows:** Claude is the only writer, and it removes rows naming a solution that's gone.
@@ -184,7 +184,7 @@ Every delete asks, every time. A small card at the trash can says "Confirm Delet
 
 ## Calls I made
 
-- A map stays private until its creator uses Share.
+- A map stays private until its creator uses Share, except that members of the Claude project it was made in can open it.
 - One artifact per map.
 - When two people change the same item's text, the last one wins and the page shows a notice.
 - A box's new sub-items move directly under the goal if the box was deleted.

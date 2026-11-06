@@ -481,6 +481,23 @@ const flows = {
     assert.deepEqual(s.writes[0].items[ids[0]], { kind: 'solution', text: 'my words', star: false, parent: 'goal', order: 3 });
     assert.ok(p.canvasText().includes('my words'));
   },
+  async 'finishing words on an item someone deleted says it was deleted and the words were kept under the goal'() {
+    const { p, s } = await opened();
+    p.typeOn('s1'); p.el('typing').value = 'my words';
+    assert.equal(p.message(), '');
+    s.remote({ items: { s1: { __delete__: true } } }); await settle();
+    assert.equal(p.message(), '', 'no notice before the words are finished');
+    p.pressEnter(); await settle();
+    assert.equal(p.message(), 'Someone deleted this item, so your words were kept under the goal.');
+    assert.ok(p.canvasText().includes('my words'));
+  },
+  async 'escape after a remote delete of the item being typed on shows no notice'() {
+    const { p, s } = await opened();
+    p.typeOn('a2'); p.el('typing').value = 'my words';
+    s.remote({ items: { a2: { __delete__: true } } }); await settle();
+    p.fire(p.el('typing'), 'keydown', { key: 'Escape' }); await settle();
+    assert.equal(p.message(), '');
+  },
   async 'a remote delete of an item with an unchanged box stays deleted when the box closes'() {
     const { p, s } = await opened();
     p.typeOn('a2');

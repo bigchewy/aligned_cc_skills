@@ -1420,6 +1420,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     editing.ref = ref;
     editing.isNew = true;
     editing.parent = 'goal';
+    editing.wasDeleted = true;
   }
 
   // Everything that points at an item, after a snapshot may have removed that item.
@@ -1906,6 +1907,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     setMap(e.ref.kind === 'goal' ? L.setGoal(map, { text: text }) : L.setItemText(map, e.ref.id, text));
     if (overwrote) {
       notice = 'Someone else changed this while you were typing. Your words replaced theirs.';
+      showMessageForState();
+    } else if (e.wasDeleted) {
+      notice = 'Someone deleted this item, so your words were kept under the goal.';
       showMessageForState();
     }
   }

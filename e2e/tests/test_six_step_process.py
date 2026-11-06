@@ -1018,7 +1018,8 @@ def test_prompt_publishes_the_template_itself_with_its_capabilities():
     assert "mind-map-template.html" in rules
     assert "this framework's folder" in rules
     assert "Publish that file directly" in rules
-    assert '{"db": {}, "user": {}}' in rules
+    assert '{"db": {}}' in rules
+    assert '"user"' not in rules
     assert "title" in rules
     assert "Read all of" in rules
 
@@ -1122,6 +1123,28 @@ def test_prompt_stops_on_a_missing_or_newer_format():
     assert "is missing or isn't 1" in line
     assert "and stop" in line
     assert "don't write to it" in line
+
+
+def test_prompt_says_project_members_may_open_the_map():
+    first_write = next(l for l in section("## Step 2: Goal").splitlines() if "This is the first write" in l)
+    for text in (first_write, section("## Close"), section("## The map")):
+        assert "Claude project" in text and "members" in text
+
+
+def test_template_builds_no_html_from_strings_except_the_lines_drawing():
+    html = template()
+    assert "innerHTML" not in html
+    assert html.count("insertAdjacentHTML") == 1
+    draw = html[html.index("function drawLines"):]
+    assert draw.index("insertAdjacentHTML") < draw.index("\n  function ", 10)
+
+
+def test_everything_that_needs_claude_starts_hidden_in_the_markup():
+    html = template()
+    for ident in ("plus-obstacle", "plus-solution", "item-tools", "delete-card", "typing"):
+        tag = re.search(r'<[a-z]+ [^>]*id="%s"[^>]*>' % ident, html)
+        assert tag, ident
+        assert re.search(r"\shidden(\s|>|=)", tag.group(0)), ident
 
 
 def test_private_and_share_lines_only_for_a_map_published_here():

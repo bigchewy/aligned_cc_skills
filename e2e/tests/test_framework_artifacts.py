@@ -112,7 +112,7 @@ def test_runner_lets_a_framework_publish_for_itself():
     exception = next(line for line in step.splitlines() if "publishes for itself" in line)
     assert "## Artifact" in exception
     assert "nothing else in this step applies" in exception
-    # The exception comes first, because this framework's section also names a local file.
+    # The publishes-for-itself exception comes first, so it wins over the local-file rule that follows it.
     assert step.index("publishes for itself") < step.index("names a local file")
     assert step.index("publishes for itself") < step.index("Publish after the last phase")
     mistakes = section(text, "## Avoid These Mistakes")

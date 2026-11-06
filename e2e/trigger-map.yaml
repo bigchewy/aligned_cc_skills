@@ -444,6 +444,7 @@ triggers:
 
   - paths:
       - frameworks/6-step-process/prompt.md
+      - frameworks/6-step-process/mind-map-template.html
       - frameworks/6-step-process/examples.md
       - frameworks/6-step-process/anti-examples.md
     scenarios:
