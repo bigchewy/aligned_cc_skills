@@ -1387,14 +1387,31 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var SOURCE = '<!doctype html>\n' + document.documentElement.outerHTML;
 
   var L = globalThis.MapLogic;
-  var map = L.parseMapData(SOURCE);
-  var dataProblem = L.mapProblem(map);
+  var S = globalThis.MapStore;
+  // No window.claude means a local file. Any window.claude means the viewer, which never saves to a file.
+  // This comes before any map data is read, because the map-data slot means nothing in the viewer.
+  var hosted = window.claude !== undefined;
+  var map = hosted ? S.inflate({}) : L.parseMapData(SOURCE);
+  var dataProblem = hosted ? null : L.mapProblem(map);
   if (dataProblem) {
     showDataProblem(dataProblem);
     return;
   }
-  var savedJson = L.serializeMap(map);
-  var handleKey = L.handleKey(location.pathname, map.map_id);
+  var savedJson = hosted ? '' : L.serializeMap(map);
+  var handleKey = hosted ? '' : L.handleKey(location.pathname, map.map_id);
+  // The last snapshot's data, frozen by the platform. Null until a snapshot holds a map.
+  var doc = null;
+  // The maps/main reference and the queue of changes still waiting to be confirmed.
+  var mapRef = null;
+  var queue = null;
+  var queueState = { saving: false, failed: false };
+  // ready: a map has arrived. unreachable: no answer or no store. notSetUp: the store says there is no map.
+  // stale: the map's version is newer than this page.
+  var ready = false;
+  var unreachable = false;
+  var notSetUp = false;
+  var stale = false;
+  var silenceTimer = null;
   // The file writes go to. Null means saving is off or paused.
   var handle = null;
   // The file to use when saving turns back on. It outlives handle while saving is paused.
@@ -1410,7 +1427,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   // The JSON of the last write, so a refused write isn't sent again until the map changes.
   var lastTried = null;
   var toldToTellClaude = false;
-  // The item being typed on: { ref, isNew, from }, where from is what was selected before.
+  // The item being typed on: { ref, isNew, from, openedText, parent }. from is what was selected before,
+  // openedText is the text when the box opened, and parent is where a new item goes in the viewer.
   var editing = null;
   // The selected item as a ref, or null. Selecting changes nothing in the map and draws nothing.
   var selected = null;
@@ -1447,6 +1465,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var GHOST_GAP = 12;
   var SCROLL_EDGE = 40;
   var SCROLL_STEP = 8;
+  var SILENCE_MS = 10000;
 
   var REFUSALS = {
     'wrong-map': 'That file holds a different map, so nothing was saved.',
@@ -1509,7 +1528,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   function makeGoal() {
     var box = makeItem({ kind: 'goal' }, 'goal');
-    fillText(box, map.goal.text, 'Double-click to name the goal');
+    fillText(box, map.goal.text, canEdit() ? 'Double-click to name the goal' : '');
     return box;
   }
 
@@ -1699,7 +1718,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   function isDirty() {
-    return L.serializeMap(map) !== savedJson;
+    return !hosted && L.serializeMap(map) !== savedJson;
   }
 
   // A new item has no text until typing finishes, so there is nothing to save yet.
@@ -1707,7 +1726,24 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return Boolean(editing && editing.isNew);
   }
 
+  function showHostedStatus() {
+    var status = notSetUp ? { text: "This map isn't set up yet.", tone: 'unsaved' } : S.hostedStatus({
+      ready: ready,
+      unreachable: unreachable,
+      stale: stale,
+      saving: queueState.saving,
+      failed: queueState.failed
+    });
+    el['save-status'].textContent = status.text;
+    el['save-status'].className = status.tone;
+    el.save.hidden = true;
+  }
+
   function showStatus() {
+    if (hosted) {
+      showHostedStatus();
+      return;
+    }
     var status = L.saveStatus({
       picker: Boolean(window.showOpenFilePicker),
       connected: Boolean(handle),
@@ -1725,6 +1761,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   // Comparing with the last write is what stops a refused write from looping. Going back to what the
   // file holds clears it, so making the same edit again gets another try.
   function askToWrite() {
+    if (hosted) return;
     if (!handle || holdingNewItem()) return;
     var json = L.serializeMap(map);
     if (json === savedJson) {
@@ -1743,8 +1780,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     var spot = spotOnScreen(selected);
     el.person.textContent = map.person;
     el['strategy-note'].hidden = map.key_actions.length > 0;
-    el['first-hint'].hidden = map.obstacles.length > 0;
-    el['edit-hint'].hidden = map.obstacles.length === 0;
+    el['first-hint'].hidden = !canEdit() || map.obstacles.length > 0;
+    el['edit-hint'].hidden = !canEdit() || map.obstacles.length === 0;
     drawMap();
     drawPanel();
     askToWrite();
@@ -1755,8 +1792,142 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   function setMap(next) {
-    map = next;
+    if (hosted) {
+      hideMessage();
+      sendChange(next);
+      rebuildMap();
+    } else {
+      map = next;
+    }
     render();
+  }
+
+  /* The shared data. The screen is the last snapshot plus the changes still waiting, so a snapshot
+     can't erase an edit waiting its turn. setMap is the only place a change gets sent. */
+
+  // True on the file path. In the viewer, true once a map has arrived that this page can read.
+  function canEdit() {
+    return !hosted || (ready && !stale);
+  }
+
+  function storedWithPending() {
+    return S.overlay(doc || {}, queue.pending());
+  }
+
+  function view() {
+    return S.inflate(storedWithPending());
+  }
+
+  function sendChange(next) {
+    var heldId = holdingNewItem() ? editing.ref.id : null;
+    var change = S.changeBetween(storedWithPending(), view(), next, heldId);
+    if (change) queue.add(change);
+  }
+
+  // A blank new item isn't in the data, so it's put back here. Its parent may have gone since it opened.
+  function rebuildMap() {
+    var next = view();
+    if (holdingNewItem()) {
+      var parent = L.canAdd(next, editing.parent, editing.ref.kind) ? editing.parent : 'goal';
+      next = L.addItem(next, parent, editing.ref.id, editing.ref.kind, '');
+    }
+    map = next;
+  }
+
+  // The box stays open on an item someone deleted. Finishing adds the words as a new item under the goal,
+  // and it takes a new id, so the old item's plan rows don't come back with it.
+  function keepTypingAfterDelete() {
+    if (!editing || editing.isNew || editing.ref.kind === 'goal') return;
+    if (L.findItem(view(), editing.ref.id)) return;
+    var ref = { kind: editing.ref.kind, id: S.newId() };
+    if (selected && refKey(selected) === refKey(editing.ref)) selected = ref;
+    editing.ref = ref;
+    editing.isNew = true;
+    editing.parent = 'goal';
+  }
+
+  // Everything that points at an item, after a snapshot may have removed that item.
+  function forgetGone() {
+    if (selected && !L.itemExists(map, selected)) selected = null;
+    if (editing && editing.from && !L.itemExists(map, editing.from)) editing.from = null;
+    if (asking !== null && (!canEdit() || !L.findItem(map, asking))) asking = null;
+    if (press && !L.itemExists(map, press.ref)) press = null;
+    if (!drag) return;
+    if (!canEdit() || !L.itemExists(map, drag.ref)) {
+      cancelDrag();
+      return;
+    }
+    drag.moving = L.idsFrom(map, drag.ref.id);
+    if (drag.target && !L.itemExists(map, drag.target)) drag.target = null;
+  }
+
+  // A person with the keyboard on any box keeps it through someone else's change, even an unselected box.
+  function showSnapshot() {
+    var active = document.activeElement;
+    var focused = active && el.canvas.contains(active) ? refAt(active) : null;
+    if (editing && !canEdit()) closeTyping();
+    keepTypingAfterDelete();
+    rebuildMap();
+    forgetGone();
+    render();
+    if (focused && !editing && L.itemExists(map, focused)) focusBox(focused);
+  }
+
+  function stopSilenceTimer() {
+    clearTimeout(silenceTimer);
+    silenceTimer = null;
+  }
+
+  // Nothing here writes. A cached view with no map may only mean the store hasn't answered yet.
+  function onSnapshot(snap) {
+    var confirmed = !snap.metadata.fromCache;
+    if (confirmed) stopSilenceTimer();
+    if (!snap.exists && !confirmed) return;
+    doc = snap.exists ? snap.data() : null;
+    ready = snap.exists;
+    notSetUp = !snap.exists;
+    unreachable = false;
+    stale = snap.exists && S.unknownVersion(doc);
+    showSnapshot();
+  }
+
+  // Once a map is on screen, the page keeps showing it.
+  function cantReach() {
+    if (ready) return;
+    unreachable = true;
+    render();
+  }
+
+  function onSnapshotError() {
+    stopSilenceTimer();
+    cantReach();
+  }
+
+  function subscribe(db) {
+    mapRef = db.doc('maps/main');
+    silenceTimer = setTimeout(cantReach, SILENCE_MS);
+    mapRef.onSnapshot(onSnapshot, onSnapshotError);
+  }
+
+  // The store gets plain objects, because the page builds some of its changes with no prototype.
+  function writeChange(change) {
+    return mapRef.update(JSON.parse(JSON.stringify(change)));
+  }
+
+  // The platform's first answer comes after this script's first run, and may be null.
+  function startHosted() {
+    queue = S.createChangeQueue({
+      write: writeChange,
+      wait: function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); },
+      onChange: function (state) {
+        queueState = state;
+        showStatus();
+      }
+    });
+    new Promise(function (resolve) { resolve(window.claude.use('db')); }).then(function (db) {
+      if (db) subscribe(db);
+      else cantReach();
+    }).catch(cantReach);
   }
 
   /* Selecting */
@@ -1838,7 +2009,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   // Changes the controls in place, so a button keeps its focus through a render.
   function showControls() {
-    var open = selected && !editing && !drag;
+    var open = selected && !editing && !drag && canEdit();
     var parentId = open ? addTarget(selected) : null;
     var item = open && selected.kind !== 'goal' ? L.findItem(map, selected.id) : null;
     var name = open ? itemName(selected) : '';
@@ -1977,13 +2148,19 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return 'Obstacle ' + L.itemLabels(map)[ref.id];
   }
 
+  function textOf(ref) {
+    return ref.kind === 'goal' ? map.goal.text : L.findItem(map, ref.id).text;
+  }
+
   // A new item gets drawn while the old selection is still set, so the old selection holds still on screen.
   // One text box at a time, so what's open finishes first. Finishing can remove a blank new item.
   function startTyping(ref, isNew) {
+    if (!canEdit()) return;
     if (editing) finishTyping();
     if (!L.itemExists(map, ref)) return;
-    editing = { ref: ref, isNew: Boolean(isNew), from: selected };
-    el.typing.value = ref.kind === 'goal' ? map.goal.text : L.findItem(map, ref.id).text;
+    var openedText = textOf(ref);
+    editing = { ref: ref, isNew: Boolean(isNew), from: selected, openedText: openedText, parent: null };
+    el.typing.value = openedText;
     el.typing.setAttribute('aria-label', itemHeading(ref));
     el.typing.hidden = false;
     if (isNew) render();
@@ -2008,15 +2185,21 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     setMap(L.deleteItem(map, e.ref.id));
   }
 
+  // A box closed with no change sends nothing, so it can't put old words back over someone else's edit.
   function finishTyping() {
     if (!editing) return;
     var e = editing;
     var text = el.typing.value.trim();
     closeTyping();
-    if (e.ref.kind === 'goal') setMap(L.setGoal(map, { text: text }));
-    else if (text) setMap(L.setItemText(map, e.ref.id, text));
-    else if (e.isNew) dropNewItem(e);
-    else render();
+    var blankItem = !text && e.ref.kind !== 'goal';
+    if (blankItem || text === e.openedText.trim()) {
+      if (e.isNew) dropNewItem(e);
+      else render();
+      return;
+    }
+    var overwrote = hosted && !e.isNew && textOf(e.ref) !== e.openedText;
+    setMap(e.ref.kind === 'goal' ? L.setGoal(map, { text: text }) : L.setItemText(map, e.ref.id, text));
+    if (overwrote) showMessage('Someone else changed this while you were typing. Your words replaced theirs.');
   }
 
   function cancelTyping() {
@@ -2033,10 +2216,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   // Finishes first, because the item added here must be the one holding back writes.
   function addUnder(parentId, kind) {
+    if (!canEdit()) return;
     if (editing) finishTyping();
-    var id = L.nextId(map, kind === 'solution' ? 's' : 'o');
+    var id = hosted ? S.newId() : L.nextId(map, kind === 'solution' ? 's' : 'o');
     map = L.addItem(map, parentId, id, kind, '');
     startTyping({ kind: kind, id: id }, true);
+    if (editing) editing.parent = parentId;
   }
 
   /* Dragging an item onto a box. elementFromPoint finds the box, so the zoom scale never comes into it.
@@ -2066,6 +2251,10 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   // Finishing can redraw the map and can remove a blank new item, which may be the item being dragged.
   function startDrag() {
+    if (!canEdit()) {
+      press = null;
+      return;
+    }
     var ref = press.ref;
     afterDrag = true;
     if (editing) finishTyping();
@@ -2302,6 +2491,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   }
 
   function onSave() {
+    if (hosted) return;
     hideMessage();
     if (!window.showOpenFilePicker) {
       download(L.copyHtml(SOURCE, map));
@@ -2519,10 +2709,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   });
 
   el['star-button'].addEventListener('click', function () {
+    if (!canEdit()) return;
     setMap(L.setStar(map, selected.id, el['star-button'].getAttribute('aria-pressed') !== 'true'));
   });
 
   function deleteNow() {
+    if (!canEdit()) return;
     var id = selected.id;
     asking = null;
     selected = null;
@@ -2538,6 +2730,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   // Nothing at stake deletes straight away. Otherwise the question shows and nothing is written.
   el['delete-item'].addEventListener('click', function () {
+    if (!canEdit()) return;
     var effects = L.deleteEffects(map, selected.id);
     if (!effects.picks.length && !effects.rows.length && !effects.keyActions.length) {
       deleteNow();
@@ -2573,8 +2766,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
   });
 
-  el['browser-note'].hidden = Boolean(window.showOpenFilePicker);
-  if (window.showOpenFilePicker) reconnectOnLoad();
+  el['browser-note'].hidden = hosted || Boolean(window.showOpenFilePicker);
+  if (hosted) startHosted();
+  else if (window.showOpenFilePicker) reconnectOnLoad();
   render();
 })();
 </script>
