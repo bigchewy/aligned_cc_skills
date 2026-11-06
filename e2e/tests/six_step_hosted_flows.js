@@ -145,6 +145,31 @@ function assertNoEditing(p, s, id) {
 }
 
 const flows = {
+  async 'the appendix shows the goal explanation, one paragraph at a time'() {
+    const { p } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'First part.\n\nSecond part.' } }));
+    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
+    const paragraphs = p.el('panel').walk().filter((k) => k.tag === 'P').map((k) => k.textContent);
+    assert.ok(p.panelText().includes('Appendix'));
+    assert.ok(paragraphs.includes('First part.') && paragraphs.includes('Second part.'));
+  },
+
+  async 'a map with no goal explanation shows no appendix'() {
+    const { p } = await opened();
+    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
+    assert.ok(!p.panelText().includes('Appendix'));
+  },
+
+  async 'editing the goal on the page sends only its text and keeps the explanation'() {
+    const { p, s } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'Why this matters.' } }));
+    p.openGoal();
+    p.edit('new goal');
+    await settle();
+    assert.deepEqual(s.writes[s.writes.length - 1], { goal: { text: 'new goal' } });
+    assert.equal(s.body.goal.detail, 'Why this matters.');
+    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
+    assert.ok(p.panelText().includes('Why this matters.'));
+  },
+
   async 'opened outside Claude says the map opens inside Claude, and allows no edits'() {
     for (const opts of [{}, { claude: undefined }]) {
       const p = page(opts); await settle();

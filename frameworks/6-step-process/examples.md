@@ -52,7 +52,31 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **Advisor:** "If we talked at the end of Q2 and you'd succeeded, what would you be able to count?"
 
-> One nudge toward a number. If none comes, Claude takes the goal without one.
+> One nudge toward a number. If none comes, Claude takes the goal as it is. A qualitative goal is fine, and the explanation in the appendix carries the detail.
+
+### Someone who doesn't know the goal yet
+
+**User:** "I don't really know. I just know something's off with how we sell."
+
+**Advisor:** "What prompted this now?"
+
+**User:** "We lost three deals last month that we should have won."
+
+**Advisor:** "If this went well, what would be different six months from now?"
+
+**User:** "We'd stop losing to the same competitor, and I'd trust the forecast."
+
+**Advisor:** "So the goal might be: win the deals we're losing to our main competitor, and have a forecast you trust. Does that say it?"
+
+> One question at a time, only because they asked for help, and no obstacles or solutions. Claude stops as soon as it can propose the goal.
+
+### A clearly better advisor for this goal
+
+**User:** "Yes, that's the goal."
+
+**Advisor:** "April Dunford knows positioning against a competitor from years of doing it, so April may be a better guide on this one. Do you want April to guide the rest, or stay with Coach Eric?"
+
+> One offer, after the goal is confirmed and before the map is published. If nobody is clearly better, Claude says nothing and goes on. The steps stay the same whoever guides them.
 
 ## Step 3: Root-cause the problems
 

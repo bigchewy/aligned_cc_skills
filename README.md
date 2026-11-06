@@ -178,6 +178,7 @@ Semver, pre-1.0. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.js
 #### 0.33.x: Business Focus and the Org Chart (2026-08 to 2026-11)
 - The 6-step process map moved from a local file to a private shared Claude artifact, with no local fallback.
 - On the 6-step process map, you can drag an item between two others to reorder it.
+- The 6-step process helps you find the goal when you ask, explains the goal in the map's appendix, and offers a better-fit advisor once the goal is set.
 - New `/aligned:org-chart` skill with B2B and B2C org chart pages: every seat, its coverage, its jobs, and the command for each.
 - Narrowed to business and advisory work. Advisors built for single clients moved to those clients' repos as project-local advisors; nonprofit and solo-creator advisors were removed. Coach Eric is now a CEO coach.
 - New advisors since 0.33.1 include Adham Dannaway, Annie Duke, Jason Fried, Aleyda Solis, Michael Bolton, Adam Shostack, Michael Bierut, and Cole Nussbaumer Knaflic.

@@ -524,6 +524,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   function setGoal(map, goal) {
     var next = copy(map);
     next.goal = goal;
+    // The page only edits the goal's text. The explanation is Claude's, so it stays.
+    if (map.goal.detail && goal.detail === undefined) next.goal.detail = map.goal.detail;
     return next;
   }
 
@@ -761,7 +763,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return {
       version: FORMAT_VERSION,
       person: map.person,
-      goal: { text: map.goal.text },
+      goal: map.goal.detail ? { text: map.goal.text, detail: map.goal.detail } : { text: map.goal.text },
       items: items,
       key_actions: clone(map.key_actions),
       execute: clone(map.execute),
@@ -852,7 +854,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
     return {
       person: text(source.person),
-      goal: { text: isObject(source.goal) ? text(source.goal.text) : '' },
+      goal: goalFrom(source.goal),
       obstacles: obstacles,
       key_actions: (Array.isArray(source.key_actions) ? source.key_actions : []).filter(isObject).map(function (row) {
         var next = withText(row, ['text', 'risk']);
@@ -866,6 +868,13 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       }),
       feedback: withText(isObject(source.feedback) ? source.feedback : {}, ['number', 'check_on', 'redraw_if'])
     };
+  }
+
+  // A goal with no explanation has no detail field, so old maps read back exactly as they were stored.
+  function goalFrom(source) {
+    var goal = { text: isObject(source) ? text(source.text) : '' };
+    if (isObject(source) && typeof source.detail === 'string' && source.detail) goal.detail = source.detail;
+    return goal;
   }
 
   // Loop leftovers join the goal's own children, so the top level is put back in order.
@@ -1469,6 +1478,13 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
         ['Check on', f.check_on],
         ['Redraw if', f.redraw_if]
       ]));
+    }
+
+    if (map.goal.detail) {
+      el.panel.appendChild(heading('Appendix:', 'about this goal'));
+      map.goal.detail.split(/\n\s*\n/).forEach(function (part) {
+        el.panel.appendChild(make('p', '', part));
+      });
     }
   }
 

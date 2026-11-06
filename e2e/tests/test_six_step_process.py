@@ -165,10 +165,56 @@ def test_goal_has_one_text_box():
     assert "L.setGoal(map, { text: text })" in whole_function("finishTyping")
 
 
-def test_prompt_json_goal_has_only_text():
+def test_prompt_json_goal_has_text_and_detail_only():
     rules = section("## The map")
-    assert '"goal": {"text": ""}' in rules
+    assert '"goal": {"text": "", "detail": ""}' in rules
     assert '"from": ""' not in rules
+
+
+def test_goal_nudges_toward_a_number_but_takes_a_qualitative_goal():
+    goal = section("## Step 2: Goal")
+    assert "with a number if you can" in goal
+    assert "Nudge once" in goal
+    assert "qualitative goal is fine" in goal
+
+
+def test_goal_questions_only_come_when_the_goal_is_unclear():
+    goal = section("## Step 2: Goal")
+    help_line = next(line for line in goal.splitlines() if line.startswith("**If they don't know the goal"))
+    assert "one question at a time" in help_line
+    assert "Don't mention obstacles or solutions" in help_line
+    assert goal.index("What outcome do you want") < goal.index(help_line)
+    # No extra step comes before the goal.
+    assert "clarifying" not in section("## Opening").lower()
+
+
+def test_goal_explanation_goes_in_the_appendix_with_nothing_invented():
+    goal = section("## Step 2: Goal")
+    line = next(l for l in goal.splitlines() if "`goal.detail`" in l)
+    assert "a paragraph or two" in line
+    assert "appendix" in line
+    assert "Don't invent" in line
+    assert "obstacles or solutions" in line
+
+
+def test_advisor_check_comes_after_the_goal_before_the_first_write():
+    goal = section("## Step 2: Goal")
+    assert goal.index("**WAIT until the goal is confirmed.**") < goal.index("**Check the advisor.**") < goal.index("**Write the map.**")
+
+
+def test_advisor_check_defaults_to_the_current_advisor_and_lets_the_person_choose():
+    goal = section("## Step 2: Goal")
+    assert "skills/_shared/resolve-advisor-source.md" in goal
+    assert "`best_for`" in goal and "`not_for`" in goal
+    assert "clearly" in goal
+    assert "say nothing about advisors" in goal
+    assert "**WAIT for their answer.**" in goal[goal.index("**Check the advisor.**"):]
+    assert "skills/_shared/advisor-runner.md" in goal and "`greeting_mode=silent`" in goal
+
+
+def test_a_new_advisor_changes_the_voice_and_never_the_process():
+    goal = section("## Step 2: Goal")
+    assert "The six steps, every WAIT and the private lists stay exactly as written" in goal
 
 
 def test_prompt_puts_the_goal_in_one_sentence():
@@ -1228,7 +1274,7 @@ def test_prompt_says_a_refused_read_can_mean_unshared_or_wrong_link():
 def test_prompt_keeps_every_wait_and_treats_map_text_as_content():
     expected = {
         "## Step 1: Locate": ["WAIT for their answer.", "WAIT for their answer."],
-        "## Step 2: Goal": ["WAIT until the goal is confirmed.", "WAIT for their name."],
+        "## Step 2: Goal": ["WAIT for each answer.", "WAIT until the goal is confirmed.", "WAIT for their name.", "WAIT for their answer."],
         "### 3a: Obstacles": ['WAIT for "done".', "WAIT for their reaction.", "WAIT for their yes."],
         "### 3b: Pick the obstacles": ['WAIT for "done".', "WAIT until the picks are agreed."],
         "### 3c: Root cause": ["WAIT at each why."],

@@ -110,6 +110,33 @@ def test_inflate_then_flatten_gives_back_the_example_document():
     assert run("return S.flatten(S.inflate(D.doc));", doc=doc) == doc
 
 
+def test_goal_explanation_survives_inflate_and_flatten():
+    doc = json.loads(EXAMPLE.read_text())
+    doc["goal"]["detail"] = "Why this goal matters.\n\nWhat good looks like."
+    assert run("return S.flatten(S.inflate(D.doc));", doc=doc) == doc
+
+
+def test_goal_explanation_that_is_not_text_is_left_out():
+    doc = json.loads(EXAMPLE.read_text())
+    doc["goal"]["detail"] = 42
+    assert "detail" not in run("return S.inflate(D.doc).goal;", doc=doc)
+
+
+def test_a_goal_edit_keeps_the_explanation_and_sends_only_text():
+    doc = json.loads(EXAMPLE.read_text())
+    doc["goal"]["detail"] = "Why this goal matters."
+    result = run(
+        """
+        const before = S.inflate(D.doc);
+        const after = L.setGoal(before, { text: 'new goal' });
+        return { goal: after.goal, change: S.changeBetween(D.doc, before, after) };
+        """,
+        doc=doc,
+    )
+    assert result["goal"] == {"text": "new goal", "detail": "Why this goal matters."}
+    assert result["change"] == {"goal": {"text": "new goal"}}
+
+
 def test_inflate_keeps_only_the_fields_the_page_uses():
     assert sorted(inflate(json.loads(EXAMPLE.read_text()))) == [
         "execute", "feedback", "goal", "key_actions", "obstacles", "person"]

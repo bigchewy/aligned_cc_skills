@@ -16,7 +16,7 @@ Follow the steps in order. "The person's folder" means the folder they gave you 
 - **Wisdom of the group runs every list and every pick.** The person writes or picks privately and tells you nothing. Then you show yours, they react, and they add theirs. If you share first, the other person gravitates toward what you said.
 - **Before they say "done," give them nothing to lean on.** That means no examples, no hints, no categories to think about, and none of your list. Build your list only after "done," so it stays independent. If they ask for a hint, say a hint would pull their list toward yours, and ask them to write whatever comes first.
 - **If they type their list or picks in the chat anyway,** take it as theirs, say you have now heard it, and still show your own.
-- **Say where your lists come from.** Present every list and every pick as what the documents and the goal suggest, never as Eric's view.
+- **Say where your lists come from.** Present every list and every pick as what the documents and the goal suggest, never as Eric's view. If another advisor has taken over, what they know of the space counts too, and you say when an item comes from that.
 - **The person owns what they kept.** Merge lists without saying who wrote what. Show a merged list in no order of importance, because the order would hint at your picks.
 
 ## Solutions that come early
@@ -55,7 +55,7 @@ Say in one line what changed. The open page updates by itself.
 {
   "version": 1,
   "person": "",
-  "goal": {"text": ""},
+  "goal": {"text": "", "detail": ""},
   "items": {
     "k3f9a2xq": {"kind": "obstacle", "text": "", "star": false, "parent": "goal", "order": 1},
     "m2x7c4pw": {"kind": "solution", "text": "", "star": false, "parent": "k3f9a2xq", "order": 1}
@@ -66,7 +66,7 @@ Say in one line what changed. The open page updates by itself.
 }
 ```
 
-`version` names the data format, and it is 1. `items` holds every obstacle and solution by id. Make each id eight random lowercase letters and digits, because the page ignores any other key and two people adding at once must not collide. Every item has the same five fields. `kind` is obstacle or solution. `parent` is the id of the item it sits under, or `goal`. Any item can hold obstacles and solutions, at any depth, and so can the goal. `order` sets the order under a parent. A new or moved item goes last, taking the highest `order` under that parent plus one. `order` may be a decimal, and to place an item between two others, use a value between theirs. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists. Text stays as the person wrote it, with no escaping.
+`version` names the data format, and it is 1. `goal.detail` is your explanation of the goal, and the page never writes it. `items` holds every obstacle and solution by id. Make each id eight random lowercase letters and digits, because the page ignores any other key and two people adding at once must not collide. Every item has the same five fields. `kind` is obstacle or solution. `parent` is the id of the item it sits under, or `goal`. Any item can hold obstacles and solutions, at any depth, and so can the goal. `order` sets the order under a parent. A new or moved item goes last, taking the highest `order` under that parent plus one. `order` may be a decimal, and to place an item between two others, use a value between theirs. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists. Text stays as the person wrote it, with no escaping.
 
 `star` is true only on a solution.
 
@@ -132,16 +132,21 @@ Say:
 
 If the documents point to a goal, ask this instead: propose the goal in one sentence and ask them to confirm it. Don't mention obstacles or solutions from the documents.
 
+**If they don't know the goal, ask for help with it, or give an answer that leaves you unclear what they're after,** help them get to it. Start from what you read, then ask clarifying questions, one question at a time, about what prompted this and what would be different if it went well. Don't mention obstacles or solutions. Stop as soon as you can propose the goal in one sentence, and ask them to confirm it. **WAIT for each answer.** These questions are only for this. If they state a goal you understand, ask none of them.
+
 **WAIT until the goal is confirmed.** A goal they state themselves counts as confirmed.
 
 - If the goal comes in stages, like a funnel, they pick one stage. More than one stage means one run per stage, each with its own map.
 - Write the answer as one sentence in `goal.text`, such as "80% in-office attendance by end of Q2, up from 40%".
 - "From" can stay unknown. Write "starting point not known yet" into the sentence, and finding it becomes the first Execute item.
-- If they can't put a number on it, take the goal without one.
+- Nudge once toward a number if there isn't one, then take what they give you. A qualitative goal is fine.
+- Write a paragraph or two in `goal.detail` that explains the goal in more detail: what it means, why it matters now, and what good would look like. It shows in the map's appendix. Use what they said and the documents. Don't invent anything, so write less if that's all you know, and leave out obstacles or solutions, because they haven't written their list yet.
 
 If you don't know their first name, ask for it now, because the map shows it, and **WAIT for their name.**
 
-**Write the map.** This is the first write. Give the link and say to open it. Say in one line that it saves by itself. If you published it in this conversation, say in one line that it stays private until they use the Share menu, and that if they are working in a Claude project, its members may be able to open it too. Say in one line that they can drag an item onto a box to move it, or between two others to reorder it. Then start 3a in the same message.
+**Check the advisor.** Skip this if an advisor other than Coach Eric is already active. Otherwise read `skills/_shared/resolve-advisor-source.md` and follow it to get the advisors, including any in the person's project. Compare the confirmed goal with each one's `best_for` and `not_for`. If nobody is clearly better for this goal than Coach Eric, say nothing about advisors and go on, unless the person asked you to find one, and then say in one line that Coach Eric fits best. If someone clearly understands this space better, say who and why in one sentence, and ask whether they want that advisor to guide the rest or to stay with Coach Eric. **WAIT for their answer.** If they choose the new advisor, read `skills/_shared/advisor-runner.md` and follow it with that advisor's `absolute_prompt_path` and `greeting_mode=silent`. From here you speak as them. The six steps, every WAIT and the private lists stay exactly as written, and the advisor's own frameworks stay out of this run.
+
+**Write the map.** This is the first write. Give the link and say to open it. Say in one line that it saves by itself. If you published it in this conversation, say in one line that it stays private until they use the Share menu, and that if they are working in a Claude project, its members may be able to open it too. Say in one line that they can drag an item onto a box to move it, or between two others to reorder it. Say in one line that your explanation of the goal is in the appendix, under Show plan, and to tell you if it's off. Then start 3a in the same message.
 
 ## Step 3: Root-cause the problems
 
