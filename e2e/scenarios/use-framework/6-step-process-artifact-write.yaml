@@ -1,0 +1,43 @@
+# e2e/scenarios/use-framework/6-step-process-artifact-write.yaml
+# Claude changes a shared 6-step map through its data tool. The eval provider has no
+# tools, so Claude writes out the ArtifactData batch it would send. The scorer applies
+# that batch to a fake store with the tool's refusals, runs the template's own
+# MapStore.inflate and label code, and checks the plan rows and the labels Claude states.
+# The seed also holds edits someone else made since Claude's last write.
+
+description: "Framework: 6-Step Process changes a shared map through its data tool"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nThe seeded data, as read just now, with each document's own version:\n\n{{seed}}\n\n{{task_prompt}}"
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+  assert:
+    - type: javascript
+      value: file://../../scorers/six_step_map_write.js
+
+tests:
+  - description: "single — add an obstacle, move one and remove a solution on a shared map"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../frameworks/6-step-process/prompt.md
+      seed: file://../../fixtures/six-step-map/seed.json
+      task_prompt: |
+        In the seed, `link` is the map's link, `main` is what maps/main holds, at the document
+        version in `main_version`, and `baseline` is what maps/baseline holds, at the document
+        version in `baseline_version`. You already read both. Don't ask to read them again.
+
+        This is Maya. We're picking up this map, and I agree to all of these:
+        1. Add a new obstacle under the obstacle "Expectations are unclear". Its text is exactly: Nobody has said which days count
+        2. Move the obstacle "The commute got longer" so it sits directly under the goal.
+        3. Take the solution "Create in-person-only experiences" off the map.
+
+        Make those changes now, and tell me what changed since your last write that you didn't do. Then list every obstacle on the map with its label as it will be after this write, one per line, using each obstacle's exact text. Don't ask me anything first.
+
+        (Test harness note: tool calls aren't available in this conversation. Write the one ArtifactData call you would send as a single fenced json code block, in the form {"action": "batch", "url": "...", "writes": [...]}. The real tool's schema would give you this form: each entry in writes is {"op": "set" or "update", "collection": "...", "doc_id": "...", "if_version": 1, "data": {...}}. For a new item's id, make one up. Then write the reply the person sees, outside that block.)

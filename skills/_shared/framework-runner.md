@@ -72,6 +72,8 @@ A phase is complete when: (a) the scripted content for that phase has been deliv
 
 Skip this step when `publish_artifact` is `no`.
 
+Skip it too when the prompt's `## Artifact` section says the framework publishes for itself. That framework publishes at its own points and gives the user the link, so nothing else in this step applies.
+
 Skip it too when the prompt's `## Artifact` section names a local file as the result. Give the user that file's path, and nothing else in this step applies. Publishing stays the default for every other framework.
 
 Publish after the last phase is complete, never earlier. Every WAIT point comes first. If the
@@ -119,5 +121,5 @@ On framework completion, after Step 4, control returns to the caller (advisor mi
 - **Combining multiple frameworks** — Run one framework per session.
 - **Improvising structure** — Follow the framework's phases exactly as written.
 - **Ignoring anti-examples** — Treat anti-example patterns as hard constraints.
-- **Publishing early** — The artifact comes after the last phase. Don't build it from guesses to save the user's time.
+- **Publishing early** — The artifact comes after the last phase, unless the framework publishes for itself. Don't build it from guesses to save the user's time.
 - **Filling gaps on the artifact** — If the user didn't answer it, the page shows it as open.

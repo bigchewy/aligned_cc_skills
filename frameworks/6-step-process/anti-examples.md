@@ -98,21 +98,31 @@
 
 ### Rewriting the map without reading it first
 
-**Wrong:** Writing the Step 5 rows over the file from what you remember, which wipes out the obstacle the person renamed on the page.
+**Wrong:** Writing the whole map back from what you remember, which wipes out the obstacle someone renamed on the page.
 
-**Right:** Reading the JSON in the file first, seeing it differs from `baseline`, building on their version, and saying in one line what you kept.
+**Right:** Reading `maps/main` first, seeing it differs from `maps/baseline`, sending only what changed, pinned to the version you just read, and saying in one line what you kept.
 
-> The file is the source of truth. The person can edit it between any two of your writes.
+> `maps/main` is what counts. People can edit it between any two of your writes, and now also during one.
 
-### Publishing the map
+### Building another page from the map
 
 **User:** "Can you make this look nice?"
 
-**Wrong:** Building a page from the map and publishing it to claude.ai.
+**Wrong:** Building a new page from the map and publishing that.
 
-**Right:** "The map stays a file on your machine, and it's yours to show to whoever you want. Tell me what you'd change on it."
+**Right:** "The map already has its page, and it's yours to show to whoever you want with the Share menu. Tell me what you'd change on it."
 
-> The map is a local file and is never published.
+> You publish the template once, at the first write. After that, every change goes through the map's data.
+
+### Sharing the map for them
+
+**User:** "Send this to my team."
+
+**Wrong:** Saying you've shared it, or looking for a way to.
+
+**Right:** "You share it from the Share menu on the page. It stays private until you do."
+
+> Only the creator shares a map, and you can't.
 
 ### Ending without a feedback check
 

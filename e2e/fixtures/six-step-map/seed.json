@@ -1,0 +1,65 @@
+{
+  "link": "https://claude.ai/artifact/seededmaptest",
+  "main_version": 12,
+  "baseline_version": 9,
+  "main": {
+    "version": 1,
+    "person": "Maya",
+    "goal": {"text": "80% in-office attendance by the end of Q2, up from 40%"},
+    "items": {
+      "aa1": {"kind": "obstacle", "text": "People don't want to commute", "star": false, "parent": "goal", "order": 1},
+      "bb1": {"kind": "obstacle", "text": "The commute got longer", "star": false, "parent": "aa1", "order": 1},
+      "bb2": {"kind": "obstacle", "text": "The value of the office hasn't kept up", "star": false, "parent": "aa1", "order": 2},
+      "cc1": {"kind": "solution", "text": "Create in-person-only experiences", "star": true, "parent": "bb2", "order": 1},
+      "dd1": {"kind": "obstacle", "text": "Teams have no budget for getting together", "star": false, "parent": "cc1", "order": 1},
+      "cc2": {"kind": "obstacle", "text": "We haven't defined what the office is for", "star": false, "parent": "bb2", "order": 2},
+      "ee1": {"kind": "solution", "text": "Define the purpose of in-office time", "star": true, "parent": "cc2", "order": 1},
+      "aa2": {"kind": "obstacle", "text": "Expectations are unclear", "star": false, "parent": "goal", "order": 2},
+      "ff1": {"kind": "solution", "text": "Set clear expectations with managers", "star": false, "parent": "aa2", "order": 1},
+      "aa3": {"kind": "obstacle", "text": "The open-plan floor is too noisy", "star": false, "parent": "goal", "order": 2},
+      "zz9": {"kind": "obstacle", "text": "Some managers aren't enforcing the policy", "star": false, "parent": "gone1", "order": 3},
+      "xx1": {"star": true}
+    },
+    "key_actions": [
+      {"text": "Say what the office is for", "risk": "high", "solution_ids": ["cc1", "ee1"]},
+      {"text": "Give each team a reason to meet in person", "risk": "medium", "solution_ids": ["cc1"]},
+      {"text": "Hear how people feel each month", "risk": "low", "solution_ids": ["gg1"]}
+    ],
+    "execute": [
+      {"solution_id": "ee1", "first_move": "Draft one page on what the office is for", "owner": "Maya", "others_decide": "Leadership approves the page"},
+      {"solution_id": "cc1", "first_move": "List three events only possible in person", "owner": "Sam", "others_decide": "Team leads pick dates"},
+      {"solution_id": "gg1", "first_move": "Write five survey questions", "owner": "Maya", "others_decide": ""}
+    ],
+    "feedback": {"number": "In-office attendance", "check_on": "Every week", "redraw_if": "Under 55% by the middle of Q2"}
+  },
+  "baseline": {
+    "version": 1,
+    "person": "Maya",
+    "goal": {"text": "80% in-office attendance by the end of Q2, up from 40%"},
+    "items": {
+      "aa1": {"kind": "obstacle", "text": "People don't want to commute", "star": false, "parent": "goal", "order": 1},
+      "bb1": {"kind": "obstacle", "text": "The commute got longer", "star": false, "parent": "aa1", "order": 1},
+      "bb2": {"kind": "obstacle", "text": "The value of the office hasn't kept up", "star": false, "parent": "aa1", "order": 2},
+      "cc1": {"kind": "solution", "text": "Create in-person-only experiences", "star": true, "parent": "bb2", "order": 1},
+      "dd1": {"kind": "obstacle", "text": "Teams have no budget for getting together", "star": false, "parent": "cc1", "order": 1},
+      "cc2": {"kind": "obstacle", "text": "We haven't defined what the office is for", "star": false, "parent": "bb2", "order": 2},
+      "ee1": {"kind": "solution", "text": "Define the purpose of in-office time", "star": true, "parent": "cc2", "order": 1},
+      "aa2": {"kind": "obstacle", "text": "Expectations are unclear", "star": false, "parent": "goal", "order": 2},
+      "ff1": {"kind": "solution", "text": "Set clear expectations with managers", "star": false, "parent": "aa2", "order": 1},
+      "aa3": {"kind": "obstacle", "text": "The office is loud", "star": false, "parent": "goal", "order": 2},
+      "gg1": {"kind": "solution", "text": "Run a monthly pulse survey", "star": false, "parent": "aa3", "order": 1},
+      "zz9": {"kind": "obstacle", "text": "Some managers aren't enforcing the policy", "star": false, "parent": "goal", "order": 3}
+    },
+    "key_actions": [
+      {"text": "Say what the office is for", "risk": "high", "solution_ids": ["cc1", "ee1"]},
+      {"text": "Give each team a reason to meet in person", "risk": "medium", "solution_ids": ["cc1"]},
+      {"text": "Hear how people feel each month", "risk": "low", "solution_ids": ["gg1"]}
+    ],
+    "execute": [
+      {"solution_id": "ee1", "first_move": "Draft one page on what the office is for", "owner": "Maya", "others_decide": "Leadership approves the page"},
+      {"solution_id": "cc1", "first_move": "List three events only possible in person", "owner": "Sam", "others_decide": "Team leads pick dates"},
+      {"solution_id": "gg1", "first_move": "Write five survey questions", "owner": "Maya", "others_decide": ""}
+    ],
+    "feedback": {"number": "In-office attendance", "check_on": "Every week", "redraw_if": "Under 55% by the middle of Q2"}
+  }
+}

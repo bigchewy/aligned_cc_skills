@@ -6,7 +6,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 ### A new run
 
-**Advisor:** "We'll work through six steps: locate, goal, root-cause the problems, solutions, execute, feedback. You'll leave with a map you can edit and show to others. First, are you here to pick up a map you already have? If so, tell me the file name. If not, say new."
+**Advisor:** "We'll work through six steps: locate, goal, root-cause the problems, solutions, execute, feedback. You'll leave with a map you can edit and show to others. First, are you here to pick up a map you already have? If so, give me its link. If not, say new."
 
 **User:** "New."
 
@@ -42,9 +42,9 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "80% in-office attendance by the end of Q2. Right now we're at about 40%."
 
-**Advisor:** "40% to 80% by the end of Q2. Your map is at `~/attendance/office-attendance-maya-map.html`. Double-click it to open it. Write your own list of what stands between you and this goal. Use paper or a note, not here, and don't tell me what's on it. If I share first, you'll gravitate toward what I said. Say "done" when you have it."
+**Advisor:** "40% to 80% by the end of Q2. Your map is at https://claude.ai/artifact/abc123. Open it there. It saves by itself and stays private until you use the Share menu. You can drag an item onto a box to move it. Write your own list of what stands between you and this goal. Use paper or a note, not here, and don't tell me what's on it. If I share first, you'll gravitate toward what I said. Say "done" when you have it."
 
-> The confirmed goal starts the file. The message ends at the next stop.
+> The confirmed goal starts the map. Claude publishes it, writes `maps/main` and `maps/baseline` in one batch, and gives the link. The message ends at the next stop.
 
 ### A vague goal
 
@@ -130,7 +130,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **Advisor:** "It's on 1B. Next: which obstacle does set clear expectations with managers get past?"
 
-> The person named an item, so Claude adds the solution to that item's `children`. The page draws it one column out from 1B. Without a named item, Claude places a solution under the deepest obstacle it gets past.
+> The person named an item, so Claude sets the solution's `parent` to that item. The page draws it one column out from 1B. Without a named item, Claude places a solution under the deepest obstacle it gets past.
 
 ### 4a: A solution that serves two obstacles
 
@@ -179,19 +179,19 @@ Which ratings are wrong?"
 
 **User:** "In-office attendance, every week. If it's under 55% by the middle of Q2, I come back and redraw this."
 
-**Advisor:** "Your map is at `~/attendance/office-attendance-maya-map.html`. Steps 5 and 6 are planned, not done. The map is yours to edit and show to others. To keep your edits, click Turn on saving once in Chrome. When you change it, tell me."
+**Advisor:** "Your map is at https://claude.ai/artifact/abc123. Steps 5 and 6 are planned, not done. The map is yours to edit. It saves by itself and stays private until you use the Share menu, which is how you show it to others. To pick up later, give me the link."
 
 > A number, a date and a result that sends them back. The close ends there.
 
 ## Picking up edits
 
-### The file has edits
+### The map has edits
 
 **User:** "I changed the map."
 
 **Advisor:** "You renamed the noise obstacle, deleted the productivity obstacle and the pulse survey under it, and added 4A under expectations. The pulse survey had no Step 5 row, so nothing else went with it. Which step do you want to resume?"
 
-> Claude compares the file with `baseline` and lists the changes in plain words, including what went with a deleted item. If it only lists them, it moves `baseline` in the file to this version and leaves `revision` alone, so the next pick-up sees only newer edits.
+> Claude compares `maps/main` with `maps/baseline` and lists the changes in plain words, including what went with a deleted item. If it only lists them, it sets `maps/baseline` to this version, so the next pick-up sees only newer edits.
 
 ### A solution moved to another item
 
@@ -211,32 +211,38 @@ Which ratings are wrong?"
 
 ### No edits, and they didn't say they changed it
 
-**User:** "I want to keep going on `office-attendance-maya-map.html`."
+**User:** "I want to keep going on https://claude.ai/artifact/abc123."
 
 **Advisor:** "The map shows six obstacles, two with answers to why under them, one solution directly under the goal, and no stars. That doesn't tell me you wrote your solutions list, so I'd resume at 4a. Which step do you want to resume?"
 
-> They stopped early and came back, so the file having no edits is expected. Claude doesn't mention a lost save. The map can't prove 4a ran, so Claude says what it shows and asks.
+> They stopped early and came back, so the map having no edits is expected. Claude doesn't mention a lost save. The map can't prove 4a ran, so Claude says what it shows and asks.
 
-### They said they changed it, and the file has no edits
+### They said they changed it, and the map has no edits
 
 **User:** "I changed the map."
 
-**Advisor:** "The file in your folder doesn't have your edits, so the save probably went somewhere else. If the page is still open and says changes aren't being saved, click Turn on saving or Turn saving back on first. Otherwise look in Downloads, including for a copy with (1) in its name, and put it back in the folder under its original name, replacing the old one, then tell me. If the page said the map has newer changes, don't replace it. Put the copy in the folder under another name and tell me that name."
+**Advisor:** "The map doesn't show your edits yet. If the page says it's still saving, or says a change isn't saved, that change hasn't reached the map. Wait until the page says All changes saved, then tell me."
 
-> Claude says what it found and where to look, and doesn't guess at edits.
+> Claude says what it found and what to check, and doesn't guess at edits.
 
 ### The second read still shows no edits
 
-**User:** "I looked, and I can't find anything. Maybe I never saved."
+**User:** "The page says All changes saved, and I still don't see them."
 
-**Advisor:** "The file still shows no edits, so I'll go from what it holds. The map shows six obstacles, two with answers to why under them, one solution directly under the goal, and no stars. I'd resume at 4a. Which step do you want to resume?"
+**Advisor:** "The map still shows no edits, so I'll go from what it holds. The map shows six obstacles, two with answers to why under them, one solution directly under the goal, and no stars. I'd resume at 4a. Which step do you want to resume?"
 
-> Claude asks where to look once. After that, it resumes from the file.
+> Claude asks once. After that, it resumes from the map.
 
-### A copy with a lower revision than the map
+### A link you can't open
 
-**User:** "The page wouldn't save, so I put a copy in the folder as `office-attendance-maya-copy-map.html`."
+**User:** "Here's the link to the map my colleague started."
 
-**Advisor:** "That copy is older than the map. The copy renames the noise obstacle. The map has the Step 5 rows I wrote after your tab opened, and the copy doesn't. Should I bring the new name into the map and keep the Step 5 rows?"
+**Advisor:** "I can't open that map. Either it isn't shared with this account, or that's the wrong link. Its creator can share it from the Share menu on the page, or you can send me the right link."
 
-> Claude compares the copy with the map, not with the copy's own `baseline`, which would hide the Step 5 rows. It merges into the map after their yes.
+> A refused read looks the same as a missing map, so Claude says both and stops there.
+
+### Someone changed the map while Claude was working
+
+**Advisor:** "Since my last write, someone renamed the noise obstacle and deleted the pulse survey. I kept both. I added your new obstacle, and it's 2A."
+
+> Claude read `maps/main`, found it differed from `maps/baseline`, and built on what was there. It reports edits it didn't make and doesn't guess who made them. The deleted survey's rows came out of the plan in the same write.

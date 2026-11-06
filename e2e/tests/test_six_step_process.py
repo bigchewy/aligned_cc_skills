@@ -364,7 +364,7 @@ def test_goal_has_one_text_box():
 
 
 def test_prompt_json_goal_has_only_text():
-    rules = section("## The map file")
+    rules = section("## The map")
     assert '"goal": {"text": ""}' in rules
     assert '"from": ""' not in rules
 
@@ -637,21 +637,6 @@ def test_unknown_from_is_a_first_execute_item_with_no_star():
     assert "starred solution for it" not in execute
 
 
-def test_skips_map_files():
-    opening = section("## Opening")
-    assert "-map.html" in opening
-    assert re.search(r"skip", opening, re.I)
-    assert re.search(r"names? it", opening)
-
-
-def test_skip_rule_covers_copies_a_browser_downloads():
-    opening = section("## Opening")
-    assert "every copy of a map" in opening
-    assert "`-map` followed by an optional space and `(n)` before `.html`" in opening
-    assert "`x-map (1).html`" in opening
-    assert "`x-map(1).html`" in opening
-
-
 def test_skips_personal_notes_and_transcripts():
     opening = section("## Opening").lower()
     assert "personal notes" in opening
@@ -676,12 +661,6 @@ def test_file_written_at_each_step_after_goal():
     assert "**Write the map.**" not in section("## Step 1: Locate")
 
 
-def test_goal_gives_the_path_and_says_to_double_click():
-    goal = section("## Step 2: Goal")
-    assert "double-click" in goal
-    assert re.search(r"\bpath\b", goal)
-
-
 def test_goal_allows_stages_and_an_unknown_start():
     goal = section("## Step 2: Goal")
     assert "stage" in goal
@@ -689,106 +668,19 @@ def test_goal_allows_stages_and_an_unknown_start():
     assert "first" in goal and "Execute" in goal
 
 
-def test_map_file_rules():
-    rules = section("## The map file")
-    assert "mind-map-template.html" in rules
-    assert "this framework's folder" in rules
-    assert "{goal-slug}-{person}-map.html" in rules
-    assert '<script id="map-data"' in rules
-    assert "revision" in rules
-    assert "baseline" in rules
-    assert "map_id" in rules
-    assert re.search(r"`map_id`.*\bonce\b", rules)
-
-
-def test_map_id_comes_from_the_final_file_name():
-    rules = section("## The map file")
-    assert "{goal-slug}-{person}-{today's date}" not in rules
-    assert "`map_id` once, to the final file name without `.html`" in rules
-    assert rules.index("add `-2` before") < rules.index("`map_id` once")
-
-
 def test_missing_template_stops_and_never_builds_a_page_by_hand():
-    rules = section("## The map file")
+    rules = section("## The map")
     assert "If you can't find the template, say so plainly" in rules
     assert "Don't build a page by hand" in rules
-
-
-def test_read_back_checks_the_shape():
-    rules = section("## The map file")
-    read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
-    assert "non-empty `map_id`" in read_back
-    assert "`children`" in read_back
-    assert "`kind`" in read_back
-    assert "`star`" in read_back
-    assert re.search(r"fix it", read_back)
-
-
-def test_reload_line_warns_about_unsaved_edits():
-    rules = section("## The map file")
-    line = next(line for line in rules.splitlines() if "reload the page" in line)
-    assert "drops" in line
-    assert "Not saved" in line
-    assert "changes aren't being saved" in line
-    assert "saving is paused" in line
-    assert "Turn on saving" in line
-    assert "Turn saving back on" in line
-    assert "Save a copy" in line
-    assert "Save to Downloads" in line
-    assert "another name" in line
-
-
-def test_reload_line_sends_saving_off_to_the_button_the_page_shows():
-    # With saving off the page has no Save a copy until the button brings a refusal up.
-    rules = section("## The map file")
-    line = next(line for line in rules.splitlines() if "reload the page" in line)
-    off = line[line.index("changes aren't being saved"):line.index("Not saved")]
-    assert off.index("Turn on saving") < off.index("Save a copy")
-    assert "refuses" in off
-
-
-def test_handoff_names_the_button_and_telling_claude():
-    close = section("## Close")
-    assert "Turn on saving" in close
-    assert "tell" in close
-    assert "Turn saving back on" in section("## Picking up edits")
-
-
-def test_write_says_so_when_the_file_went_backward():
-    rules = section("## The map file")
-    assert re.search(r"`revision` is lower than the one you last wrote", rules)
-    line = next(line for line in rules.splitlines() if "lower than the one you last wrote" in line)
-    assert line.index("lower than") < line.index("Say so") < line.index("**WAIT")
-    assert "the higher of the file's number and the one you last wrote" in rules
-
-
-def test_map_file_states_the_escape_rule_in_words_and_as_characters():
-    rules = section("## The map file")
-    # Stated in words, because a file tool can turn the escape itself back into the character.
-    assert "six characters: a backslash, then the letters `u003c`" in rules
-    assert "never the less-than sign itself" in rules
-    assert "</script>" in rules
-    assert re.search(r"Read the data block back.*hold no less-than sign", rules)
-
-
-def test_map_file_reads_the_file_before_rewriting():
-    rules = section("## The map file")
-    assert re.search(r"Before (each|every) rewrite, read", rules)
-
-
-def test_baseline_gets_set_on_the_first_write_too():
-    every_write = section("## The map file").split("**At every write, including the first.**")[1]
-    assert re.search(r"Set `baseline` to a copy.*own `baseline` empty", every_write)
 
 
 def test_pick_up_covers_every_check():
     pick_up = section("## Picking up edits")
     assert "baseline" in pick_up
-    assert "(1)" in pick_up
+    assert "(1)" not in pick_up
     assert "directly under the goal" in pick_up
     assert re.search(r"star.*Step 5", pick_up)
     assert "key-action table" in pick_up
-    assert "Rewrite the file only when" not in pick_up
     assert "When you only list their edits" in pick_up
     assert "When you change content" in pick_up
 
@@ -807,13 +699,11 @@ def test_prompt_handles_a_pick_removed_on_the_page():
 def test_second_pick_up_compares_with_what_claude_last_read():
     pick_up = section("## Picking up edits")
     only_list = pick_up[pick_up.index("When you only list their edits"):pick_up.index("When you change content")]
-    assert "update `baseline` in the file to the version you just read" in only_list
-    assert "leave `revision` alone" in only_list
-    assert "no reload" in only_list
-    assert "a later save that went astray shows as no changes" in only_list
+    assert "pinned `set` of `maps/baseline` to `maps/main` as you just read it" in only_list
+    assert "Touch nothing else" in only_list
+    assert "shows only newer edits" in only_list
     change = pick_up[pick_up.index("When you change content"):]
     assert "Write the map" in change
-    assert "bumps `revision`" in change
 
 
 def test_new_conversation_asks_which_step_when_the_map_cant_prove_it():
@@ -826,14 +716,6 @@ def test_new_conversation_asks_which_step_when_the_map_cant_prove_it():
     assert "never count as 4a done" not in pick_up
 
 
-def test_no_change_reply_exists():
-    pick_up = section("## Picking up edits")
-    assert "doesn't have your edits" in pick_up
-    assert "somewhere else" in pick_up
-    assert "Downloads" in pick_up
-    assert pick_up.index("Turn on saving") < pick_up.index("Downloads")
-
-
 def test_prompt_no_longer_says_press_save():
     assert "press Save" not in PROMPT.read_text()
     assert "press Save" not in EXAMPLES.read_text()
@@ -841,14 +723,14 @@ def test_prompt_no_longer_says_press_save():
 
 def test_no_change_reply_needs_them_to_have_said_they_changed_it():
     pick_up = section("## Picking up edits")
-    assert "**If the file shows no changes and they said they changed it,**" in pick_up
-    reply = pick_up.index("doesn't have your edits")
+    assert "**If the map shows no changes and they said they changed it,**" in pick_up
+    reply = pick_up.index("doesn't show your edits")
     assert pick_up.index("they said they changed it") < reply
 
 
 def test_no_edits_or_a_second_empty_read_goes_to_resuming():
     pick_up = section("## Picking up edits")
-    no_edits = pick_up.index("**If the file shows no changes and they didn't say they changed it,**")
+    no_edits = pick_up.index("**If the map shows no changes and they didn't say they changed it,**")
     second = pick_up.index("If they say they made no edits, or the second read shows none")
     resume = pick_up.index("**Resuming.**")
     assert second < resume
@@ -856,32 +738,6 @@ def test_no_edits_or_a_second_empty_read_goes_to_resuming():
     resuming = pick_up[resume:]
     assert "carry on from the step you were on" in resuming
     assert "say what the map shows and ask which step to resume" in resuming
-
-
-def test_no_change_reply_warns_against_replacing_newer_changes():
-    pick_up = section("## Picking up edits")
-    assert "If the page said the map has newer changes, don't replace it." in pick_up
-
-
-def test_pick_up_merges_a_copy_with_a_lower_revision():
-    pick_up = section("## Picking up edits")
-    start = pick_up.index("**If they name a copy with a lower `revision` than the map,**")
-    paragraph = pick_up[start:pick_up.index("\n\n", start)]
-    assert "Compare the copy with the map" in paragraph
-    assert "**WAIT for their yes.**" in paragraph
-    assert "Write the map" in paragraph
-    assert paragraph.index("Compare the copy") < paragraph.index("**WAIT for their yes.**") < paragraph.index("Write the map")
-
-
-def test_no_shell_copy_checks_the_whole_file():
-    rules = section("## The map file")
-    assert "matches the template character by character everywhere outside the `<script id=\"map-data\">` block" in rules
-    assert "`<script id=\"map-logic\">` block" not in rules
-
-
-def test_no_shell_copy_says_to_read_the_whole_long_template():
-    rules = section("## The map file")
-    assert "longer than one default read, so read all of it before writing it out" in rules
 
 
 def test_steps_five_and_six_are_planned_not_done():
@@ -904,12 +760,6 @@ def test_prompt_files_have_no_long_dashes():
     for page in (prompt(), EXAMPLES.read_text(), ANTI_EXAMPLES.read_text()):
         assert "—" not in page
         assert "–" not in page
-
-
-def test_has_local_artifact_section():
-    artifact = section("## Artifact")
-    assert "local file" in artifact
-    assert "never published" in artifact
 
 
 def test_frontmatter_matches_the_registry():
@@ -951,7 +801,6 @@ def test_examples_match_the_new_opening_and_the_no_edit_path():
     assert "pick up edits" not in examples
     assert "### No edits, and they didn't say they changed it" in examples
     assert "### The second read still shows no edits" in examples
-    assert "### A copy with a lower revision than the map" in examples
 
 
 def test_no_edit_example_never_says_the_save_went_astray():
@@ -1007,7 +856,6 @@ def test_the_delete_control_is_a_trash_icon_with_no_words():
     assert "<svg" in button and "currentColor" in button
     assert "deleteLabel" not in html and "sub-item" not in html
     assert "['delete-item', 'Delete']" in html
-
 
 
 def test_page_has_no_form_editor_left():
@@ -1130,33 +978,10 @@ def test_example_map_shows_the_new_format():
     assert data["execute"], "plan rows"
 
 
-def prompt_json():
-    rules = section("## The map file")
-    block = rules[rules.index("```json"):rules.index("```\n", rules.index("```json") + 8)]
-    return block, json.loads(block[len("```json"):])
-
-
-def test_prompt_json_is_the_one_tree():
-    block, data = prompt_json()
-    assert "root_cause" not in block
-    assert "unplaced" not in data
-    assert '"children": [' in block
-    top = data["obstacles"][0]
-    fields = ["children", "id", "kind", "star", "text"]
-    assert sorted(top) == fields
-    assert top["kind"] == "obstacle"
-    kid = top["children"][0]
-    assert sorted(kid) == fields
-    assert kid["children"][0]["kind"] == "solution"
-    assert kid["children"][0]["children"][0]["kind"] == "obstacle"
-    assert data["obstacles"][1]["kind"] == "solution", "a solution directly under the goal"
-    assert sorted(data["obstacles"][1]) == fields
-
-
 def test_prompt_no_longer_names_solution_ids_or_a_solutions_list():
-    _, data = prompt_json()
+    data = map_json()
     assert "solutions" not in data
-    assert "solution_ids" not in data["obstacles"][0]
+    assert "solution_ids" not in next(iter(data["items"].values()))
     assert "solution_ids" in data["key_actions"][0]
     text = prompt()
     assert "`solutions`" not in text
@@ -1174,13 +999,13 @@ def test_prompt_asks_when_a_solution_serves_two_obstacles():
 
 
 def test_prompt_explains_numbers_under_solutions():
-    rules = section("## The map file")
+    rules = section("## The map")
     assert ("An obstacle under a solution continues the numbering of the nearest obstacle above it, so 1B2 can be "
             "an answer to why on 1B or an obstacle in the way of a solution on 1B. The map shows which.") in rules
 
 
 def test_prompt_lets_any_item_hold_either_kind():
-    rules = section("## The map file")
+    rules = section("## The map")
     assert "Any item can hold obstacles and solutions, at any depth, and so can the goal" in rules
     assert "same five fields" in rules
     assert "Only obstacles sit at the top level" not in rules
@@ -1244,20 +1069,8 @@ def test_prompt_no_longer_names_whys_or_solution_at():
         assert "end of the chain" not in page
 
 
-def test_read_back_checks_the_tree_at_every_depth():
-    rules = section("## The map file")
-    read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
-    assert "`children`" in read_back
-    assert "`kind`" in read_back
-    assert "`root_cause`" not in read_back
-    assert "no other fields" in read_back
-    assert "every depth" in read_back
-    assert "`id`" in read_back
-    assert "`text`" in read_back
-
-
 def test_prompt_explains_labels_and_says_never_to_store_them():
-    rules = section("## The map file")
+    rules = section("## The map")
     assert "`1B3`" in rules
     assert "AA" in rules
     assert re.search(r"Never store a label", rules)
@@ -1265,7 +1078,7 @@ def test_prompt_explains_labels_and_says_never_to_store_them():
 
 
 def test_prompt_says_what_delete_does():
-    rules = section("## The map file")
+    rules = section("## The map")
     assert "everything under it" in rules
     assert "Execute row" in rules
 
@@ -1311,32 +1124,9 @@ def test_anti_examples_cover_two_reasons_in_one_item():
 
 def test_pick_up_uses_current_labels_and_names_deleted_items_by_text():
     pick_up = section("## Picking up edits")
-    assert "Use labels from the file as it is now" in pick_up
+    assert "Use labels from the map as it is now" in pick_up
     assert "Name a deleted item by its text and say how many sub-items went with it" in pick_up
     assert "3c may need another look" not in pick_up
-
-
-def test_stale_copy_comparison_matches_by_id_and_reissues_clashing_ids():
-    pick_up = section("## Picking up edits")
-    line = next(line for line in pick_up.splitlines() if "lower `revision`" in line)
-    assert "Match items by `id`" in line
-    assert "new id" in line
-    assert "by their text" in line
-
-
-def test_read_back_names_the_item_fields_exactly():
-    rules = section("## The map file")
-    read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
-    assert "`id` and `text` as strings" in read_back
-    assert "`children` as a list even when it's empty" in read_back
-
-
-def test_read_back_gives_the_page_refusal_as_the_reason_for_every_rule():
-    rules = section("## The map file")
-    read_back = next(line for line in rules.splitlines() if "Read the data block back" in line)
-    assert "The page can't draw a map that breaks any of these" in read_back
-    assert "The page can't draw a map with a missing field" not in read_back
-    assert "no item has a `solution_ids` field" in read_back
 
 
 def test_template_defines_each_logic_function_once():
@@ -1351,8 +1141,8 @@ def test_examples_no_longer_say_a_root_cause_ends_its_branch():
 
 
 def test_mid_run_edits_point_to_the_pick_up_checks():
-    rules = section("## The map file")
-    line = next(line for line in rules.splitlines() if "differs from `baseline`" in line)
+    rules = section("## The map")
+    line = next(line for line in rules.splitlines() if "differs from `maps/baseline`" in line)
     assert "Picking up edits" in line
 
 
@@ -1384,3 +1174,189 @@ def test_prompt_lets_a_solution_sit_under_a_solution_and_explains_the_star():
     assert "Any item can hold obstacles and solutions" in text
     assert "click the star in the toolbar on any solution to add or remove a pick" in text
     assert "a star marks one of their picks" in text
+
+
+# The map as an artifact
+
+def map_json():
+    rules = section("## The map")
+    start = rules.index("```json") + len("```json")
+    return json.loads(rules[start:rules.index("```", start)])
+
+
+def test_prompt_stops_plainly_without_the_artifact_tools():
+    opening = section("## Opening")
+    assert "both the Artifact and ArtifactData tools" in opening
+    check = opening.index("both the Artifact and ArtifactData tools")
+    assert check < opening.index("We'll work through six steps")
+    assert "needs Claude's artifact tools" in opening
+    assert "Then stop" in opening
+    assert check < opening.index("Then stop") < opening.index("We'll work through six steps")
+
+
+def test_prompt_stops_plainly_when_a_publish_fails():
+    rules = section("## The map")
+    assert "If a publish fails, say so plainly and stop." in rules
+
+
+def test_prompt_publishes_the_template_itself_with_its_capabilities():
+    rules = section("## The map")
+    assert "mind-map-template.html" in rules
+    assert "this framework's folder" in rules
+    assert "Publish that file directly" in rules
+    assert '{"db": {}, "user": {}}' in rules
+    assert "title" in rules
+    assert "Read all of" in rules
+
+
+def test_prompt_gives_a_second_map_its_own_link():
+    rules = section("## The map")
+    # The tool reuses a link when the same file path publishes twice in one conversation.
+    assert "same file path" in rules
+    assert "second map" in rules
+    assert "temporary folder" in rules
+    assert "already holds a map" in rules
+
+
+def test_prompt_first_write_batches_main_and_baseline():
+    rules = section("## The map")
+    first = rules[rules.index("**The first write.**"):rules.index("**Every point marked")]
+    assert "`batch`" in first
+    assert "`maps/main`" in first
+    assert "`maps/baseline`" in first
+    assert "`set`" in first
+    assert "no `if_version`" in first
+
+
+def test_prompt_each_write_reads_then_pins_if_version():
+    rules = section("## The map")
+    each = rules[rules.index("**Every point marked"):rules.index("**The data.**")]
+    read = each.index("read `maps/main` and `maps/baseline`")
+    pin = each.index("`if_version`")
+    batch = each.index("`batch`")
+    refused = each.index("`version_mismatch`")
+    assert read < pin and read < batch < refused
+    assert "read both again and redo the change" in each
+    assert "only what changed" in each
+    assert '{"__delete__": true}' in each
+    assert "every item under it" in each
+    # The tool's document version and the map's format version are different numbers.
+    assert "not the `version` field" in each
+
+
+def test_prompt_shows_the_flat_shape_and_version_1():
+    data = map_json()
+    assert data["version"] == 1
+    assert sorted(data) == ["execute", "feedback", "goal", "items", "key_actions", "person", "version"]
+    for item in data["items"].values():
+        assert sorted(item) == ["kind", "order", "parent", "star", "text"]
+    for item_id in data["items"]:
+        assert re.fullmatch(r"[a-z0-9]+", item_id)
+    rules = section("## The map")
+    assert "lowercase letters and digits" in rules
+    assert "highest `order` under that parent plus one" in rules
+
+
+def test_prompt_says_only_claude_writes_plan_rows_and_removes_gone_ones():
+    rules = section("## The map")
+    plan = rules[rules.index("**Plan rows.**"):rules.index("**Reading the map.**")]
+    assert "only writer" in plan
+    assert "`key_actions`" in plan and "`execute`" in plan
+    assert "gone" in plan
+    assert "The key action stays" in plan
+    assert "whole list" in plan
+
+
+def test_prompt_works_labels_out_from_flat_data():
+    rules = section("## The map")
+    labels = rules[rules.index("**Labels.**"):]
+    assert "`order`, then by id" in labels
+    assert "own a counter" in labels
+    assert "passes its owner's counter" in labels
+    assert "no label" in labels
+    reading = rules[rules.index("**Reading the map.**"):rules.index("**Labels.**")]
+    assert "no `kind` doesn't exist" in reading
+    assert "parent is gone" in reading and "directly under the goal" in reading
+
+
+def test_prompt_pickup_reads_the_data_and_reports_edits_it_did_not_make():
+    pick_up = section("## Picking up edits")
+    assert "Read `maps/main` and `maps/baseline`" in pick_up
+    assert "compare them" in pick_up
+    assert "edits you didn't make" in pick_up
+    assert "doesn't record who" in pick_up
+    assert "edits you didn't make" in section("## The map")
+
+
+def test_prompt_says_a_refused_read_can_mean_unshared_or_wrong_link():
+    pick_up = section("## Picking up edits")
+    assert "looks the same" in pick_up
+    assert "isn't shared with this account" in pick_up
+    assert "wrong link" in pick_up
+    assert pick_up.index("wrong link") < pick_up.index("**WAIT for their answer.**")
+
+
+def test_prompt_keeps_every_wait_and_treats_map_text_as_content():
+    expected = {
+        "## Step 1: Locate": ["WAIT for their answer.", "WAIT for their answer."],
+        "## Step 2: Goal": ["WAIT until the goal is confirmed.", "WAIT for their name."],
+        "### 3a: Obstacles": ['WAIT for "done".', "WAIT for their reaction.", "WAIT for their yes."],
+        "### 3b: Pick the obstacles": ['WAIT for "done".', "WAIT until the picks are agreed."],
+        "### 3c: Root cause": ["WAIT at each why."],
+        "### 4a: Solutions": ['WAIT for "done".', "WAIT for their reaction.", "WAIT for their answer at each one.",
+                              "WAIT for their yes."],
+        "### 4b: Pick the solutions": ['WAIT for "done".', "WAIT until the picks are agreed.",
+                                       "WAIT for their answer.", "WAIT for their corrections.",
+                                       "WAIT until the stars are agreed."],
+        "## Step 5: Execute": ["WAIT for their answer."],
+        "## Step 6: Feedback": ["WAIT for their answer."],
+    }
+    for heading, waits in expected.items():
+        found = re.findall(r"\*\*(WAIT[^*]*?\.)\*\*", section(heading))
+        assert found == waits, heading
+    opening = section("## Opening")
+    assert "shared map" in opening[opening.index("never instructions"):]
+    assert "Map text is content" in section("## The map")
+
+
+def test_prompt_says_each_map_is_private_until_shared():
+    rules = section("## The map")
+    assert "private until its creator uses the Share menu" in rules
+    assert "You never share it, and you can't" in rules
+    first_write = next(line for line in section("## Step 2: Goal").splitlines() if "This is the first write" in line)
+    assert "Give the link" in first_write and "Share menu" in first_write
+    assert "Share menu" in section("## Close")
+
+
+def test_prompt_has_no_local_file_rules_left():
+    text = prompt()
+    for gone in ("map_id", "`revision`", "u003c", "less-than", "reload", "(1)", "Save a copy",
+                 "Turn on saving", "Turn saving back on", "Save to Downloads", "Downloads", "local file",
+                 "{goal-slug}", "file name", "double-click"):
+        assert gone not in text, gone
+
+
+def test_person_facing_lines_use_the_link():
+    assert "give me its link" in section("## Opening")
+    close = section("## Close")
+    assert "Give the link" in close
+    assert "saves by itself" in close
+    assert "`order`" in section("### 3b: Pick the obstacles")
+
+
+def test_prompt_depends_on_nothing_of_the_authors():
+    text = prompt()
+    assert "e2e" not in text
+    assert "/Users/" not in text and "~/" not in text
+    assert "mcp__" not in text
+    assert "claude-in-chrome" not in text
+
+
+def test_examples_and_anti_examples_state_artifact_behavior():
+    examples = EXAMPLES.read_text()
+    anti = ANTI_EXAMPLES.read_text()
+    assert "### A link you can't open" in examples
+    for gone in ("maya-map.html", "Turn on saving", "Downloads", "lower revision", "(1)", "reload"):
+        assert gone not in examples, gone
+    for gone in ("is a local file", "file on your machine", "source of truth", "JSON in the file"):
+        assert gone not in anti, gone

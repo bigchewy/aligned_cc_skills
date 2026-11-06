@@ -83,8 +83,31 @@ def test_add_framework_allows_local_file_result():
 
 
 def test_story_map_and_breadboard_declare_local_file():
-    for fw in ["6-step-process", "user-story-map", "breadboard-to-pages"]:
+    for fw in ["user-story-map", "breadboard-to-pages"]:
         text = read(f"frameworks/{fw}/prompt.md")
         art = section(text, "\n## Artifact")
         assert "local file" in art, fw
         assert "never published" in art.lower(), fw
+
+
+def test_six_step_publishes_for_itself():
+    art = section(read("frameworks/6-step-process/prompt.md"), "\n## Artifact")
+    assert "publishes for itself" in art
+    assert "private artifact" in art
+    assert "at the first write" in art
+    assert "only result" in art
+    assert "local file" not in art
+
+
+def test_runner_lets_a_framework_publish_for_itself():
+    text = read("skills/_shared/framework-runner.md")
+    step = section(text, "## Step 4: Publish the Result as an Artifact")
+    exception = next(line for line in step.splitlines() if "publishes for itself" in line)
+    assert "## Artifact" in exception
+    assert "nothing else in this step applies" in exception
+    # The exception comes first, because this framework's section also names a local file.
+    assert step.index("publishes for itself") < step.index("names a local file")
+    assert step.index("publishes for itself") < step.index("Publish after the last phase")
+    mistakes = section(text, "## Avoid These Mistakes")
+    early = next(line for line in mistakes.splitlines() if "Publishing early" in line)
+    assert "publishes for itself" in early
