@@ -846,6 +846,94 @@ const flows = {
     p.clickItem('s1'); p.tool('star-button'); await settle();
     assert.deepEqual(s.writes[1], { items: { s1: { star: true } } });
   },
+  async 'a cached snapshot with no map after a confirmation keeps the confirmed change in the overlay'() {
+    const { p, s } = await opened(undefined, { echo: false });
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    s.deliver(null, { fromCache: true }); await settle();
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.deepEqual(s.writes, [{ items: { a1: { text: 'one' } } }, { items: { s1: { star: true } } }]);
+  },
+  async 'a cached snapshot with a map after a confirmation keeps the confirmed change too'() {
+    const { p, s } = await opened(undefined, { echo: false });
+    const old = json(s.body);
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    s.deliver(old, { fromCache: true }); await settle();
+    assert.ok(p.canvasText().includes('one'), p.canvasText());
+    s.deliver(s.body); await settle();
+    assert.ok(p.canvasText().includes('one'));
+  },
+  async 'a pending snapshot holding a later write but not an earlier confirmed one keeps the earlier one on screen'() {
+    const { p, s } = await opened(undefined, { echo: false, hold: true });
+    const before = json(s.body);
+    p.typeOn('a1'); p.typeAndEnter('one'); await settle();
+    s.release(); await settle();
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    const stale = json(before); stale.items.s1.star = true;
+    s.deliver(stale, { hasPendingWrites: true }); await settle();
+    assert.ok(p.canvasText().includes('one'), 'the confirmed change left the screen');
+    s.release(); await settle();
+    s.deliver(s.body); await settle();
+    assert.ok(p.canvasText().includes('one'));
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a can that never answers falls to not told after 5 seconds, and a late false takes the controls away'() {
+    const s = fakeStore(twoItems()); const timers = fakeTimers();
+    let answer; s.user = { can: () => new Promise((r) => { answer = r; }) };
+    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear }); await settle();
+    s.deliver(s.body); await settle();
+    p.typeOn('a1');
+    assert.equal(p.el('typing').hidden, true, 'editing opened before any answer');
+    assert.equal(timers.has(5000), true);
+    timers.run((x) => x.ms === 5000); await settle();
+    p.typeOn('a1');
+    assert.equal(p.el('typing').hidden, false);
+    p.el('typing').value = 'half typed';
+    answer(false); await settle();
+    assert.equal(p.el('typing').hidden, true);
+    assert.ok(/weren't saved/.test(p.message()), p.message());
+    assert.equal(s.writes.length, 0);
+    assert.ok(/view only/i.test(p.status()), p.status());
+    assertNoEditing(p, s, 'a1');
+  },
+  async 'a late true after the 5 seconds keeps editing, and a refusal still decides before it'() {
+    const s = fakeStore(twoItems(), { refuse: ['invalid_argument'] }); const timers = fakeTimers();
+    let answer; s.user = { can: () => new Promise((r) => { answer = r; }) };
+    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear }); await settle();
+    s.deliver(s.body); await settle();
+    timers.run((x) => x.ms === 5000); await settle();
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.ok(/view only/i.test(p.status()), p.status());
+    answer(true); await settle();
+    assert.equal(timers.has(5000), false);
+    assertNoEditing(p, s, 'a1');
+  },
+  async 'an answer inside 5 seconds clears the timer'() {
+    const s = fakeStore(twoItems()); const timers = fakeTimers();
+    const p = page({ claude: s.claude, setTimeout: timers.set, clearTimeout: timers.clear }); await settle();
+    s.deliver(s.body); await settle();
+    assert.equal(timers.has(5000), false);
+    p.typeOn('a1'); assert.equal(p.el('typing').hidden, false);
+  },
+  async 'text in an open box that is thrown away because editing turned off says so'() {
+    const { p, s } = await opened();
+    p.typeOn('a1'); p.el('typing').value = 'half typed';
+    s.remote({ version: 2 }); await settle();
+    assert.equal(p.el('typing').hidden, true);
+    assert.ok(/weren't saved/.test(p.message()), p.message());
+    assert.ok(!/reload|file/i.test(p.message()), p.message());
+  },
+  async 'an unchanged open box that editing turned off shows no message'() {
+    const { p, s } = await opened();
+    p.typeOn('a1');
+    s.remote({ version: 2 }); await settle();
+    assert.equal(p.message(), '');
+  },
+  async 'a write rejected as revoked does not explain why'() {
+    const { p } = await opened(undefined, { refuse: ['revoked'] });
+    p.clickItem('s1'); p.tool('star-button'); await settle();
+    assert.ok(/Can't reach the saved map/.test(p.message()), p.message());
+    assert.ok(!/access/i.test(p.message()), p.message());
+  },
   async 'finishing text that is exactly what the item already holds shows no notice'() {
     const { p, s } = await opened();
     p.typeOn('a1');

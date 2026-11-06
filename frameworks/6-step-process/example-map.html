@@ -1427,6 +1427,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var slow = false;
   var slowTimer = null;
   var slowFor = 0;
+  var mayWriteTimer = null;
   // A short note about someone else's change, shown when no failed write needs the space.
   var notice = '';
   // ready: a map has arrived. unreachable: no answer or no store. notSetUp: the store says there is no map.
@@ -1491,6 +1492,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var SCROLL_STEP = 8;
   var SILENCE_MS = 10000;
   var SLOW_MS = 15000;
+  var MAY_WRITE_MS = 5000;
 
   var REFUSALS = {
     'wrong-map': 'That file holds a different map, so nothing was saved.',
@@ -1902,7 +1904,14 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   function showSnapshot() {
     var active = document.activeElement;
     var focused = active && el.canvas.contains(active) ? refAt(active) : null;
-    if (editing && !canEdit()) closeTyping();
+    if (editing && !canEdit()) {
+      var lost = el.typing.value.trim() !== editing.openedText.trim();
+      closeTyping();
+      if (lost) {
+        notice = "Editing is off, so the words you were typing weren't saved.";
+        showHostedMessage();
+      }
+    }
     keepTypingAfterDelete();
     rebuildMap();
     forgetGone();
@@ -1918,14 +1927,17 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   // Nothing here writes. A cached view with no map may only mean the store hasn't answered yet.
   function onSnapshot(snap) {
     var definitive = !snap.metadata.fromCache;
-    // This snapshot came after every write confirmed so far, so the data now holds those changes.
     snapCount += 1;
-    confirmed = confirmed.filter(function (c) { return c.after >= snapCount; });
     if (definitive) {
       stopSilenceTimer();
       outOfDate = false;
     }
     if (!snap.exists && !definitive) return;
+    // The platform promises no order between a write resolving and a snapshot arriving. Only a view the store
+    // has confirmed, with no write of ours still waiting in it, was surely built after the confirmation.
+    if (definitive && !snap.metadata.hasPendingWrites) {
+      confirmed = confirmed.filter(function (c) { return c.after >= snapCount; });
+    }
     doc = snap.exists ? snap.data() : null;
     ready = snap.exists;
     notSetUp = !snap.exists;
@@ -2001,7 +2013,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       return (viewOnly() ? "You can only view this map, so that change isn't saved." : "The shared map refused that change, so it isn't saved.") + kept;
     }
     if (state.code === 'quota_exceeded') return "The shared map is full, so that change isn't saved." + kept;
-    if (state.code === 'revoked') return "You no longer have access to this map, so that change isn't saved." + kept;
+    if (state.code === 'revoked') return "Can't reach the saved map, so that change isn't saved." + kept;
     if (state.code === 'resource_exhausted') return "Too many changes at once, so that change isn't saved yet." + kept + ' It will be sent again.';
     return "Can't reach the saved map, so that change isn't saved yet." + kept + ' It will be sent again.';
   }
@@ -2060,10 +2072,23 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }, function () {
       return null;
     }).then(function (answer) {
+      // After the wait ran out the page is already in the not-told state. A late answer of yes or no
+      // replaces it, so a person who can only view loses the controls when it arrives.
+      if (answer === null && mayWrite !== 'asking') return;
+      clearTimeout(mayWriteTimer);
+      mayWriteTimer = null;
       mayWrite = answer;
       if (ready) showSnapshot();
       else render();
     });
+    // No answer in 5 seconds counts as not told: the controls stay and a refused write decides.
+    mayWriteTimer = setTimeout(function () {
+      mayWriteTimer = null;
+      if (mayWrite !== 'asking') return;
+      mayWrite = null;
+      if (ready) showSnapshot();
+      else render();
+    }, MAY_WRITE_MS);
   }
 
   // The platform's first answer comes after this script's first run, and may be null.
