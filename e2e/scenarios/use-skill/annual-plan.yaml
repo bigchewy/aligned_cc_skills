@@ -1,0 +1,127 @@
+# e2e/scenarios/use-skill/annual-plan.yaml
+# Validates the annual-plan job: it asks which year, it flags a target that moved with no
+# decision logged and leaves alone a target that moved with a decision, and it says it
+# can't list vanished issues when fewer than two monthly reviews exist.
+# Loads the live SKILL.md and the team page rules, because a model running the scenario
+# can't read them otherwise. The page records are a made-up team's.
+
+description: "Skill: annual-plan job"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-page.md:\n\n{{team_page}}\n\n---\n\nThe team page record, as this session reads it:\n\n{{page_record}}\n\n---\n\nYou are running the annual-plan job as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "annual-a: asks which year and waits"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/annual-plan/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: "The page holds quarterly agendas, monthly reviews and WBRs for 2026."
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person is the CEO. They have not named a year."
+      user_message: "Get me ready for the annual offsite."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on WHICH YEAR: Does the reply ask which year, with 2026, the year
+          that is ending, as the default, and then stop without reading or summarizing
+          the record? Starting the pre-read before the year is named = 1. Asks which
+          year but also summarizes = 3. Asks which year with 2026 as the default and
+          nothing else = 5.
+
+  - description: "annual-b: a target that moved with no decision is flagged, one with a decision is not"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/annual-plan/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: |
+        ## offsites/2026-Q1
+        ## Key actions
+        - 1A Close 200 renewals by 2026-12-15, owner Bram, Green
+        - 2 Ship the self-serve checkout by 2026-06-30, owner Tobias, Green
+        ## Agenda
+        Retro, key action refresh, priorities, decisions.
+
+        ## offsites/2026-Q2
+        ## Key actions
+        - 1A Close 200 renewals by 2026-12-15, owner Bram, Green
+        - 2 Ship the self-serve checkout by 2026-06-30, owner Tobias, Yellow
+        ## Agenda
+        Retro, key action refresh, priorities, decisions.
+
+        ## offsites/2026-Q3
+        ## Key actions
+        - 1A Close 160 renewals by 2026-12-15, owner Bram, Green
+        - 2 Ship the self-serve checkout by 2026-11-06, owner Tobias, Red
+        ## Agenda
+        Retro, key action refresh, priorities, decisions.
+
+        ## reviews/2026-05
+        ## Issues
+        ### Checkout provider risk
+        Evidence: yellow for three weeks.
+
+        ## reviews/2026-09
+        ## Issues
+        ### Checkout provider risk
+        Evidence: red for four weeks.
+
+        ## decisions
+        ### decisions/2026-07-14-move-checkout-launch
+        - decision: Move the self-serve checkout launch from 2026-06-30 to 2026-11-06
+        - owner: Odalys
+        - date: 2026-07-14
+        - code: 2
+        - week: 2026-W29
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person is the CEO and named 2026 as the year. The job has read the quarterly agendas, the monthly reviews and the decision log. The page holds WBRs only from October."
+      user_message: "2026."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on MOVED TARGET: Key action 1A's target moved from 200 renewals to
+          160 in the Q3 agenda, and the decision log has no entry for it. Key action 2's
+          launch date moved from 2026-06-30 to 2026-11-06, and the decision log does
+          have an entry for that. A 5 means the reply flags 1A with the old target, the
+          new target, the quarter it moved in (Q3) and that the log has no entry, and
+          does not flag key action 2 as an unlogged move. Missing the 1A flag = 1.
+          Flagging 1A and also flagging key action 2 as having no decision = 3.
+
+  - description: "annual-c: fewer than two monthly reviews means the vanished-issues step is not run"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/annual-plan/SKILL.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      page_record: |
+        ## offsites/2026-Q3
+        ## Key actions
+        - 1A Close 200 renewals by 2026-12-15, owner Bram, Green
+        ## Agenda
+        Retro, key action refresh, priorities, decisions.
+
+        ## reviews/2026-09
+        ## Issues
+        ### Checkout provider risk
+        Evidence: red for four weeks.
+
+        There are no other monthly reviews and no other quarterly agendas on the page.
+      scenario_description: "The session can read the team page. Today is 2026-11-12. The person is the CEO and named 2026 as the year. The job has read what the page holds for the year."
+      user_message: "2026."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on SHORT HISTORY: The page holds one monthly review and one quarterly
+          agenda. A 5 means the reply says in plain words near the top that the record is
+          short, says it cannot list issues that vanished from monthly reviews because
+          fewer than two exist, and does not guess at issues from the agenda or from
+          memory. Listing vanished issues anyway = 1. Skipping the step without saying
+          why = 3.

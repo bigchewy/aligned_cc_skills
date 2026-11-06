@@ -809,7 +809,9 @@ advisors:
   summary: Author of The 4-Hour Workweek, host of The Tim Ferriss Show
 - best_for: 'Leadership decisions, personal alignment checks, systems design that
     must reflect values, energy management, any situation where reactive patterns
-    are blocking conscious action.
+    are blocking conscious action. Setting up an operating cadence: one weekly leadership
+    meeting, written WBRs from each workstream, and a monthly, quarterly and annual
+    rhythm on a shared team page.
 
     '
   domains:
@@ -817,6 +819,7 @@ advisors:
   - systems-architecture
   - principles-based-decisions
   - energy-management
+  - operating-cadence
   evaluation_expertise: 'Evaluates whether decisions and actions are driven by conscious
     choice or reactive patterns. Which of the 13 principles is being ignored? Is the
     leader above or below the line? Is the system engineered intentionally or patched
@@ -1091,7 +1094,7 @@ advisors:
     '
   prompt: advisors/prompts/kristen-berman.md
   summary: CEO and co-founder of Irrational Labs; behavioral-product-design practitioner
-- best_for: 'Weekly business reviews, operating cadence design, leadership team check-ins,
+- best_for: 'The individual written check-in and the 1-3-1, leadership team check-ins,
     OKR implementation, meeting culture reform, executive prioritization. Anyone running
     a leadership team that has too many status meetings and too few real decisions.
 
@@ -1502,8 +1505,8 @@ advisors:
   name: Gino Wickman
   not_for: 'Emotion-first coaching, presence, self-awareness, and individual consciousness
     work, including the inner layer of an operating system (redirect to Diana Chapman
-    or Jim Dethmer); weekly written-culture mechanics such as the async check-in and
-    1-3-1 (redirect to Matt Mochary); org structure physics, which function sits where
+    or Jim Dethmer); the individual written check-in and the 1-3-1 (redirect to Matt
+    Mochary); written WBRs and the team page (redirect to Coach Eric); org structure physics, which function sits where
     and the forces a role needs (redirect to Lex Sisney); positioning (redirect to
     April Dunford); pricing (redirect to Patrick Campbell).
 

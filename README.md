@@ -99,6 +99,13 @@ claude --plugin-dir /path/to/aligned_cc_skills
 | use-framework | `/aligned:use-framework` | Guide through a framework's phases interactively |
 | brainstorming | `/aligned:brainstorming` | Explore ideas and strategies across three modes: authoring, research, roadmap |
 | root-cause-analysis | `/aligned:root-cause-analysis` | Root cause investigation for business and process problems, with an optional multi-agent mode |
+| create-wbr | `/aligned:create-wbr` | Write your workstream's weekly business review (WBR) and save it to the team page |
+| wbr-rollup | `/aligned:wbr-rollup` | Turn the week's WBRs into one pre-read and agenda a day before the leadership meeting |
+| wbr-recap | `/aligned:wbr-recap` | Turn the meeting's notes or transcript into a recap, a decision log and a list of actions on the team page |
+| wbr-feedback | `/aligned:wbr-feedback` | Grade the real meeting against the template from its transcript and agenda, and write the team page and a private note |
+| monthly-review | `/aligned:monthly-review` | Read the month's weeks and prepare the monthly review, with 2 to 3 issues to decide |
+| quarterly-plan | `/aligned:quarterly-plan` | Prepare the quarterly offsite from the record: what slipped, what vanished, and the agenda |
+| annual-plan | `/aligned:annual-plan` | Prepare the annual planning offsite from the year's record |
 | persona-panel | `/aligned:persona-panel` | Test content against simulated buyer/user personas |
 | create-design-principles | `/aligned:create-design-principles` | Interactive design discovery producing tokens, patterns, and anti-patterns for a brand or product |
 | create-image | `/aligned:create-image` | Diagrams, charts, icons, illustrations, and brand visuals |
@@ -127,7 +134,7 @@ To add an advisor, run `/aligned:add-advisor`.
 
 ### Frameworks
 
-96 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (17), leadership (12), startup (10), psychology (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
+97 frameworks live in `frameworks/<id>/` (each with `prompt.md`, examples, and anti-examples) and are registered in `frameworks/registry.yaml`. The largest categories are strategy (17), leadership (12), startup (10), psychology (10), and sales (8), followed by product design (7) and positioning (6). Browse them in `docs/framework-catalog.html`.
 
 Framework prompts are interactive scripts with hard WAIT points. Run them through `/aligned:use-framework`, one question at a time.
 
@@ -210,7 +217,7 @@ Semver, pre-1.0. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.js
 - **154 frameworks** (+6)
 
 #### 0.26.0: Manual Deploy Artifact Catalog
-- **Manual-deploy artifact catalog** (`skills/_shared/manual-deploy-artifact-catalog.md`): detects files whose creation requires a manual production step (v1: Supabase migrations, env-var additions). Consumed by `writing-plans` (auto-populates the plan's Post-Automation section) and `finishing-a-development-branch` (Step 0.5 hard-gates merge on missing evidence). See the design doc at `docs/plans/2026-04-20-manual-deploy-artifacts-rca-design.md`.
+- **Manual-deploy artifact catalog** (`skills/_shared/manual-deploy-artifact-catalog.md`): detects files whose creation requires a manual production step (v1: Supabase migrations, env-var additions). Consumed by `writing-plans` (auto-populates the plan's Post-Automation section) and `finishing-a-development-branch` (Step 0.5 hard-gates merge on missing evidence).
 
 #### 0.22.0: Remove create-new-skill
 - Removed `create-new-skill` skill — no longer used

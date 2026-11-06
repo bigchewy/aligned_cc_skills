@@ -1,0 +1,418 @@
+<title>Weekly Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
+<style>
+/* Layout: a running doc. Search and navigation down the left, one document at a time on the right. */
+:root {
+  --bg: #f5f5f3; --panel: #ffffff; --ink: #1b1f2a; --ink-2: #474c5a; --ink-3: #737886;
+  --rule: #dcdde2; --accent: #1e2847; --accent-soft: #e8ebf2; --today: #b4552a; --code-bg: #eeeff2; --on-accent: #ffffff;
+  --green: #2c7a4b; --green-soft: #e3f1e8; --yellow: #8a6500; --yellow-soft: #f8efd2; --red: #b23a30; --red-soft: #f8e4e1;
+  --flag-bg: #f6e3d6; --flag-ink: #8a3a12;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --bg: #12141a; --panel: #1a1d25; --ink: #e6e7ec; --ink-2: #b5b8c2; --ink-3: #8a8e9b;
+  --rule: #2d313c; --accent: #a9b8e6; --accent-soft: #252b3e; --today: #e3895b; --code-bg: #21252f; --on-accent: #12141a;
+  --green: #7fcf9c; --green-soft: #1d3327; --yellow: #e2c267; --yellow-soft: #352c12; --red: #f0978d; --red-soft: #3c211e;
+  --flag-bg: #3a2418; --flag-ink: #f0b48f;
+} }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #12141a; --panel: #1a1d25; --ink: #e6e7ec; --ink-2: #b5b8c2; --ink-3: #8a8e9b;
+  --rule: #2d313c; --accent: #a9b8e6; --accent-soft: #252b3e; --today: #e3895b; --code-bg: #21252f; --on-accent: #12141a;
+  --green: #7fcf9c; --green-soft: #1d3327; --yellow: #e2c267; --yellow-soft: #352c12; --red: #f0978d; --red-soft: #3c211e;
+  --flag-bg: #3a2418; --flag-ink: #f0b48f;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 var(--sans); }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.app { display: grid; grid-template-columns: 272px minmax(0, 1fr); min-height: 100vh; }
+.side { background: var(--panel); border-right: 1px solid var(--rule); padding: 20px 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.brand { display: block; font: 600 13px/1.3 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; margin-bottom: 14px; }
+.side input { width: 100%; font: inherit; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.nav-group { margin-top: 20px; display: flex; flex-direction: column; gap: 2px; }
+.nav-h { font: 600 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 6px; }
+.nav-link { display: block; padding: 4px 8px; border-radius: 5px; color: var(--ink); text-decoration: none; font-size: 14px; line-height: 1.35; }
+.nav-link:hover { background: var(--accent-soft); }
+.nav-link.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.nav-toc { display: flex; flex-direction: column; margin: 2px 0 6px; }
+.nav-toc button { all: unset; cursor: pointer; padding: 3px 8px 3px 18px; font-size: 13px; color: var(--ink-2); line-height: 1.35; border-radius: 5px; }
+.nav-toc button:hover { background: var(--accent-soft); }
+.nav-toc button:focus-visible { outline: 2px solid var(--accent); }
+#results { margin-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+.hit { display: flex; flex-direction: column; gap: 2px; padding: 8px; border-radius: 6px; text-decoration: none; color: var(--ink); }
+.hit:hover { background: var(--accent-soft); }
+.hit-title { font-weight: 600; font-size: 14px; }
+.hit-line { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
+.hit mark { background: var(--accent-soft); color: var(--accent); padding: 0 1px; }
+.none { color: var(--ink-3); font-size: 14px; }
+.main { min-width: 0; padding-block: 28px 64px; padding-left: 40px; padding-right: max(40px, env(safe-area-inset-right, 0px)); }
+.view { max-width: 980px; }
+.menu { display: none; font: 600 13px/1 var(--sans); padding: 8px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); margin-bottom: 16px; min-height: 36px; cursor: pointer; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 8px; }
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.25; text-wrap: balance; }
+.title { font-size: 34px; margin: 0; }
+.built { font: 12px/1.5 var(--mono); color: var(--ink-3); margin: 10px 0 0; }
+.notice { background: var(--yellow-soft); color: var(--yellow); border-radius: 6px; padding: 8px 12px; font-size: 13px; margin-bottom: 16px; }
+.block { margin-top: 32px; border-top: 1px solid var(--rule); padding-top: 18px; }
+.block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.block-head h2 { font-size: 22px; margin: 0; }
+.more { font-size: 13px; white-space: nowrap; }
+.strip { list-style: none; margin: 16px 0 0; padding: 0 0 8px; display: flex; overflow-x: auto; }
+.ev { flex: 0 0 150px; padding: 14px 14px 0 0; border-top: 2px solid var(--rule); position: relative; }
+.ev::before { content: ""; position: absolute; top: -6px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.ev time { display: block; font: 500 12.5px/1.2 var(--mono); color: var(--accent); margin-bottom: 4px; }
+.ev span { font-size: 14px; line-height: 1.4; }
+.ev.today { border-top-color: var(--today); }
+.ev.today::before { background: var(--today); }
+.ev.today time { color: var(--today); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 14px; }
+.tile { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.tile-k { font: 500 11.5px/1.2 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.tile-v { font: 600 16px/1.3 var(--serif); font-variant-numeric: tabular-nums; }
+.items { margin: 14px 0 0; padding-left: 22px; max-width: 72ch; }
+.items > li { margin-bottom: 12px; padding-left: 4px; }
+.items > li::marker { font: 600 15px var(--serif); color: var(--ink-3); }
+.q-lead { font-weight: 600; }
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+table { border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; min-width: 100%; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 600; color: var(--ink-2); background: var(--code-bg); }
+.pdfs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 28px; }
+.pdfs-label { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.pdf { font-size: 13px; padding: 5px 10px; border: 1px solid var(--rule); border-radius: 999px; text-decoration: none; background: var(--panel); overflow-wrap: anywhere; }
+.pill { display: inline-block; font: 600 12px/1.5 var(--sans); padding: 0 8px; border-radius: 10px; white-space: nowrap; background: var(--code-bg); color: var(--ink-2); }
+.pill.Green { background: var(--green-soft); color: var(--green); }
+.pill.Yellow { background: var(--yellow-soft); color: var(--yellow); }
+.pill.Red { background: var(--red-soft); color: var(--red); }
+.doc { margin-top: 20px; overflow-wrap: anywhere; }
+.doc > :not(.table-wrap) { max-width: 76ch; }
+.doc h1 { display: none; }
+.doc h2 { font-size: 23px; margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.doc h2:first-child { margin-top: 0; }
+.doc h3 { font-size: 18px; margin-top: 26px; }
+.doc pre { background: var(--code-bg); padding: 12px; border-radius: 6px; overflow-x: auto; font: 13px/1.5 var(--mono); }
+.doc code { font: 13px var(--mono); background: var(--code-bg); padding: 1px 4px; border-radius: 3px; }
+.doc pre code { padding: 0; background: none; }
+.doc blockquote { margin: 16px 0; padding: 4px 16px; border-left: 3px solid var(--accent); color: var(--ink-2); }
+.raw { white-space: pre-wrap; font: 13px/1.5 var(--mono); }
+.flag { background: var(--flag-bg); color: var(--flag-ink); padding: 0 4px; border-radius: 3px; }
+.entry-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--rule); scroll-margin-top: 16px; }
+.entry-head h2 { font-size: 23px; margin: 0; }
+.entry-who { color: var(--ink-3); font-size: 14px; }
+.entry .doc { margin-top: 10px; }
+.entry .doc h2 { font: 500 12px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); border: 0; margin-top: 18px; padding: 0; }
+.empty { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; color: var(--ink-2); max-width: 72ch; margin-top: 20px; }
+.form { display: grid; gap: 10px; background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; margin-top: 36px; max-width: 76ch; }
+.form h2 { font-size: 18px; margin: 0; }
+.form label { display: grid; gap: 4px; font-size: 14px; }
+.form input, .form select, .form textarea { font: inherit; padding: 6px 8px; border: 1px solid var(--rule); border-radius: 6px; background: var(--bg); color: var(--ink); width: 100%; }
+.form textarea { min-height: 200px; font: 13px/1.5 var(--mono); }
+.form button { font: 600 14px var(--sans); background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+.note { color: var(--ink-3); font-size: 13px; margin: 0; }
+@media (max-width: 820px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .side { display: none; position: fixed; inset: 0 auto 0 0; width: min(320px, 88vw); z-index: 10; box-shadow: 0 0 40px rgba(0, 0, 0, .25); }
+  .side.open { display: block; }
+  .menu { display: inline-block; }
+  .main { padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .title { font-size: 28px; }
+}
+@media (max-width: 700px) {
+  .strip { flex-direction: column; overflow-x: visible; }
+  .ev { flex-basis: auto; border-top: 0; border-left: 2px solid var(--rule); padding: 0 0 14px 16px; }
+  .ev::before { top: 4px; left: -6px; }
+  .ev.today { border-left-color: var(--today); }
+}
+</style>
+
+<div class="app">
+  <aside class="side" id="side">
+    <a class="brand" id="brand" href="#home">Weekly Review</a>
+    <input id="q" type="search" placeholder="Search everything" aria-label="Search everything" autocomplete="off">
+    <nav id="nav" aria-label="Pages"></nav>
+    <div id="results" hidden></div>
+  </aside>
+  <main class="main">
+    <button class="menu" id="menu" type="button" aria-expanded="false" aria-controls="side">Menu</button>
+    <div class="notice" id="notice" hidden></div>
+    <div class="view" id="view"></div>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.12/marked.min.js" integrity="sha384-948ahk4ZmxYVYOc+rxN1H2gM1EJ2Duhp7uHtZ4WSLkV4Vtx5MUqnV+l7u9B+jFv+" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha384-+VfUPEb0PdtChMwmBcBmykRMDd+v6D/oFmB3rZM/puCMDYcIvF968OimRh4KQY9a" crossorigin="anonymous"></script>
+<script>
+const S = { settings: null, keyActions: [], workstreams: [], weeks: [], decisions: [], reviews: [], offsites: [], byWeek: {}, canWrite: true, loaded: false, db: null };
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const safeUrl = (u) => (/^https:\/\//i.test(u || "") ? esc(u) : "");
+const headings = (md) => [...String(md || "").matchAll(/^## (.+)$/gm)].map((m) => m[1].replace(/[*_`]/g, ""));
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const shortDate = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? `${MONTHS[+m[2] - 1]} ${+m[3]}` : (iso || ""); };
+const today = () => new Date().toISOString().slice(0, 10);
+
+// Team members write this text, so it is cleaned before it reaches the page. Only Markdown output is allowed through.
+const MD_ALLOW = {
+  ALLOWED_TAGS: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "li", "table", "thead", "tbody", "tfoot", "tr", "th", "td", "strong", "em", "code", "pre", "blockquote", "a", "br", "hr"],
+  ALLOWED_ATTR: ["href", "title"],
+};
+function renderMd(md) {
+  if (!window.marked || !window.DOMPurify) return `<div class="raw">${esc(md)}</div>`;
+  const div = document.createElement("div");
+  div.innerHTML = DOMPurify.sanitize(marked.parse(String(md || "")), MD_ALLOW);
+  div.querySelectorAll("h2, h3").forEach((h) => { h.id = slug(h.textContent); });
+  div.querySelectorAll("strong").forEach((s) => { if (/^(Missing|Not received|Off strategy)\b/.test(s.textContent)) s.className = "flag"; });
+  div.querySelectorAll("a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
+  div.querySelectorAll("table").forEach((t) => { const w = document.createElement("div"); w.className = "table-wrap"; t.replaceWith(w); w.appendChild(t); });
+  return div.innerHTML;
+}
+const pill = (color) => (color ? `<span class="pill ${esc(color)}">${esc(color)}</span>` : "");
+const active = () => S.workstreams.filter((w) => w.active !== false);
+const current = () => S.weeks[0] ? S.weeks[0].id : null;
+const weekData = (id) => S.byWeek[id] || { wbrs: [], docs: {} };
+const streamName = (id) => (S.workstreams.find((w) => w.id === id) || {}).name || id;
+const WEEK = "(\\d{4}-W\\d{2})";
+const DOC_ID = { reviews: /^\d{4}-\d{2}$/, offsites: /^\d{4}(-Q[1-4])?$/ };
+const ROUTE = new RegExp(`^(preread|wbrs|recap|feedback)-${WEEK}$`);
+
+function latestStatuses() {
+  const seen = {};
+  [...S.weeks].reverse().forEach((w) => weekData(w.id).wbrs.forEach((doc) => (doc.statuses || []).forEach((st) => { seen[st.code] = { ...st, week: w.id }; })));
+  return seen;
+}
+function missingList() {
+  const week = current(), out = [];
+  if (!S.settings) return [["home", "Setup", "Nobody has set this team up yet. Run /aligned:use-framework operating-cadence."]];
+  if (!week) return [["home", "First week", "No week has started. /aligned:create-wbr starts the first one."]];
+  const data = weekData(week), got = new Set(data.wbrs.map((w) => w.id));
+  const absent = active().filter((w) => !got.has(w.id)).map((w) => w.name);
+  if (absent.length) out.push([`wbrs-${week}`, "WBRs", `Not received this week: ${absent.join(", ")}.`]);
+  if (!data.docs.preread) out.push([`preread-${week}`, "Pre-read", "Not written. The facilitator runs /aligned:wbr-rollup after the WBRs are in."]);
+  const statuses = latestStatuses();
+  const silent = S.keyActions.filter((k) => !statuses[k.id] && !S.keyActions.some((c) => c.id !== k.id && c.id.startsWith(k.id) && statuses[c.id])).map((k) => k.id);
+  if (silent.length) out.push(["key-actions", "Key action status", `No status from any WBR: ${silent.join(", ")}.`]);
+  const nolink = S.keyActions.filter((k) => !safeUrl(k.dashboard)).map((k) => k.id);
+  if (nolink.length) out.push(["key-actions", "Dashboards", `No dashboard link yet: ${nolink.join(", ")}.`]);
+  const prev = S.weeks[1];
+  if (prev && !weekData(prev.id).docs.recap) out.push([`recap-${prev.id}`, "Last week's recap", "Not written. The note taker runs /aligned:wbr-recap."]);
+  return out;
+}
+
+function nav(cur) {
+  const link = (id, title, toc) => {
+    const on = id === cur;
+    let h = `<a class="nav-link${on ? " on" : ""}" href="#${esc(id)}">${esc(title)}</a>`;
+    if (on && toc && toc.length) h += `<div class="nav-toc">${toc.map((t) => `<button type="button" data-to="${esc(slug(t))}">${esc(t)}</button>`).join("")}</div>`;
+    return h;
+  };
+  const group = (name, inner) => `<div class="nav-group"><p class="nav-h">${esc(name)}</p>${inner}</div>`;
+  let h = group("Home", link("home", "Overview"));
+  const week = current();
+  const weekLinks = (id) => {
+    const d = weekData(id);
+    return link(`preread-${id}`, "Pre-read", headings(d.docs.preread && d.docs.preread.markdown))
+      + link(`wbrs-${id}`, `WBRs (${d.wbrs.length} of ${active().length})`, d.wbrs.map((w) => streamName(w.id)))
+      + link(`recap-${id}`, "Recap", headings(d.docs.recap && d.docs.recap.markdown))
+      + (d.docs.teampage ? link(`feedback-${id}`, "Meeting feedback", headings(d.docs.teampage.markdown)) : "");
+  };
+  if (week) h += group(`This week, ${week}`, weekLinks(week));
+  h += group("Standing", link("decisions", "Decision log") + link("key-actions", "Key actions and workstreams") + link("meeting", "How the meeting runs")
+    + S.reviews.map((r) => link(`review-${r.id}`, `Monthly review, ${r.id}`, headings(r.markdown))).join("")
+    + S.offsites.map((r) => link(`offsite-${r.id}`, `Offsite agenda, ${r.id}`, headings(r.markdown))).join(""));
+  const older = S.weeks.slice(1);
+  const curMatch = ROUTE.exec(cur);
+  if (older.length) h += group("Earlier weeks", older.map((w) => (curMatch && curMatch[2] === w.id ? `<p class="nav-h" style="margin:8px 0 4px 8px">${esc(w.id)}</p>${weekLinks(w.id)}` : link(`preread-${w.id}`, w.id))).join(""));
+  $("#nav").innerHTML = h;
+}
+
+function home() {
+  const s = S.settings || {}, week = current(), info = S.weeks[0] || {}, data = week ? weekData(week) : { wbrs: [], docs: {} };
+  const name = s.company ? `${s.company} Weekly Review` : "Weekly Review";
+  let h = `<p class="eyebrow">Running doc</p><h1 class="title">${esc(name)}</h1><p class="built">${esc(s.schedule || (S.loaded ? "No team set up yet" : "Loading the team's record"))}</p>`;
+  const events = S.weeks.map((w) => ({ date: w.meetingDate, event: `Weekly Review, ${w.facilitator ? "facilitator " + w.facilitator : w.id}`, week: w.id }))
+    .concat((s.dates || []).map((d) => ({ date: d.date, event: d.event })))
+    .filter((e) => e.date).sort((a, b) => a.date.localeCompare(b.date));
+  const nextIdx = events.findIndex((e) => e.date >= today());
+  const from = Math.max(0, (nextIdx < 0 ? events.length : nextIdx) - 4);
+  if (events.length) h += `<section class="block"><div class="block-head"><h2>Dates</h2></div><ol class="strip">${events.slice(from, from + 8).map((e) =>
+    `<li class="ev${events.indexOf(e) === nextIdx ? " today" : ""}"><time datetime="${esc(e.date)}">${esc(shortDate(e.date))}</time><span>${esc(e.event)}</span></li>`).join("")}</ol></section>`;
+  if (week) {
+    const statuses = latestStatuses(), colors = Object.values(statuses).filter((st) => st.week === week);
+    const reds = colors.filter((c) => c.color === "Red").length, yellows = colors.filter((c) => c.color === "Yellow").length;
+    const tiles = [["Week", week], ["Meeting", shortDate(info.meetingDate) || "Open"], ["WBRs in", `${data.wbrs.length} of ${active().length}`], ["Yellow", String(yellows)], ["Red", String(reds)], ["Facilitator", info.facilitator || "Open"], ["Note taker", info.noteTaker || "Open"]];
+    h += `<section class="block"><div class="block-head"><h2>This week</h2><a class="more" href="#preread-${esc(week)}">Pre-read</a></div><div class="tiles">${tiles.map(([k, v]) => `<div class="tile"><span class="tile-k">${esc(k)}</span><span class="tile-v">${esc(v)}</span></div>`).join("")}</div></section>`;
+  }
+  const decisions = sortedDecisions().slice(0, 5);
+  if (decisions.length) h += `<section class="block"><div class="block-head"><h2>Latest decisions</h2><a class="more" href="#decisions">Decision log</a></div><ol class="items">${decisions.map((d) => `<li><span class="q-lead">${esc(d.decision)}</span> ${esc(d.owner)}, ${esc(shortDate(d.date))}${d.code ? `, ${esc(d.code)}` : ""}.</li>`).join("")}</ol></section>`;
+  const missing = missingList();
+  h += `<section class="block"><div class="block-head"><h2>What's missing</h2></div>${missing.length ? `<ol class="items">${missing.map(([to, label, text]) => `<li><a class="q-lead" href="#${esc(to)}">${esc(label)}</a>. ${esc(text)}</li>`).join("")}</ol>` : `<p class="note" style="margin-top:12px">Nothing this week.</p>`}</section>`;
+  const files = [...(s.workstreamSource ? [["Workstream list", s.workstreamSource]] : []), ...(s.files || []).map((f) => [f.label, f.url]), ...S.keyActions.filter((k) => safeUrl(k.dashboard)).map((k) => [`${k.id} dashboard`, k.dashboard])].filter(([, u]) => safeUrl(u));
+  if (files.length) h += `<div class="pdfs"><span class="pdfs-label">Links</span>${files.map(([t, u]) => `<a class="pdf" href="${safeUrl(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}</div>`;
+  return h;
+}
+
+function sortedDecisions() { return S.decisions.slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))); }
+const head = (eyebrow, title, sub) => `<p class="eyebrow">${esc(eyebrow)}</p><h1 class="title">${esc(title)}</h1>${sub ? `<p class="built">${esc(sub)}</p>` : ""}`;
+
+function docPage(week, key, title, emptyText) {
+  const d = weekData(week).docs[key];
+  return head(week, title, d && d.writtenAt ? `Written ${d.writtenAt}` : "") + (d ? `<div class="doc">${renderMd(d.markdown)}</div>` : `<div class="empty">${esc(emptyText)}</div>`);
+}
+
+function wbrsPage(week) {
+  const data = weekData(week), got = new Set(data.wbrs.map((w) => w.id));
+  const missing = active().filter((w) => !got.has(w.id)).map((w) => w.name);
+  let h = head(week, "WBRs", missing.length ? `Not received: ${missing.join(", ")}` : "All received");
+  h += data.wbrs.map((w) => `<section class="entry"><div class="entry-head" id="${esc(slug(streamName(w.id)))}"><h2>${esc(streamName(w.id))}</h2><span class="entry-who">${esc(w.owner || "")}</span>${(w.statuses || []).map((st) => `<span>${esc(st.code)} ${pill(st.color)}</span>`).join(" ")}</div><div class="doc">${renderMd(w.markdown)}</div></section>`).join("");
+  if (!data.wbrs.length) h += `<div class="empty">No WBRs yet. Each workstream owner runs /aligned:create-wbr a day before the meeting.</div>`;
+  const options = active().map((w) => `<option value="${esc(w.id)}">${esc(w.name)}</option>`).join("");
+  const wk = S.weeks.find((w) => w.id === week) || {};
+  const open = wk.meetingDate && wk.meetingDate >= today();
+  if (S.canWrite && options && !wk.meetingDate) h += `<p class="note">This week hasn't started. Someone needs to run /aligned:create-wbr first, so the week exists before a WBR goes in.</p>`;
+  if (S.canWrite && options && open) h += `<form class="form" id="wbr-form"><h2>Add a WBR by hand</h2><p class="note">/aligned:create-wbr writes this for you. Use this box when your Claude session can't reach this page.</p>
+    <label for="wbr-stream">Workstream<select id="wbr-stream">${options}</select></label>
+    <label for="wbr-owner">Your name<input id="wbr-owner"></label>
+    <label for="wbr-body">WBR<textarea id="wbr-body" placeholder="Paste the finished WBR here."></textarea></label>
+    <div><button type="submit">Save WBR</button> <span class="note" id="wbr-result" role="status"></span></div></form>`;
+  return h;
+}
+
+function decisionsPage() {
+  const rows = sortedDecisions().map((d) => `<tr><td>${esc(shortDate(d.date))}</td><td>${esc(d.code)}</td><td>${esc(d.decision)}</td><td>${esc(d.owner)}</td><td>${esc(d.week)}</td></tr>`).join("");
+  return head("Standing", "Decision log") + (rows ? `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Code</th><th>Decision</th><th>Owner</th><th>Week</th></tr></thead><tbody>${rows}</tbody></table></div>` : `<div class="empty">No decisions yet. /aligned:wbr-recap adds each one with its owner, date and key action.</div>`);
+}
+
+function keyActionsPage() {
+  const statuses = latestStatuses(), s = S.settings || {};
+  const ka = S.keyActions.map((k) => { const st = statuses[k.id]; return `<tr><td>${esc(k.id)}</td><td>${esc(k.name)}${k.draft ? ' <span class="pill">Draft</span>' : ""}</td><td>${esc(k.owner)}</td><td>${st ? pill(st.color) : ""}</td><td>${st ? esc(st.due) : ""}</td><td>${safeUrl(k.dashboard) ? `<a href="${safeUrl(k.dashboard)}" target="_blank" rel="noopener">Open</a>` : '<strong class="flag">Missing</strong>'}</td></tr>`; }).join("");
+  const ws = active().map((w) => `<tr><td>${esc(w.name)}</td><td>${esc(w.owner)}</td><td>${esc((w.codes || []).join(", "))}</td></tr>`).join("");
+  return head("Standing", "Key actions and workstreams")
+    + `<section class="block"><div class="block-head"><h2>Key actions</h2></div><div class="table-wrap"><table><thead><tr><th>Code</th><th>Key action</th><th>Owner</th><th>Status</th><th>Due</th><th>Dashboard</th></tr></thead><tbody>${ka}</tbody></table></div></section>`
+    + `<section class="block"><div class="block-head"><h2>Workstreams</h2>${safeUrl(s.workstreamSource) ? `<a class="more" href="${safeUrl(s.workstreamSource)}" target="_blank" rel="noopener">Where this list comes from</a>` : ""}</div><div class="table-wrap"><table><thead><tr><th>Workstream</th><th>Owner</th><th>Key actions</th></tr></thead><tbody>${ws}</tbody></table></div></section>`;
+}
+
+function meetingPage() {
+  const s = S.settings || {};
+  const md = `## Purpose\n\n${s.purpose || "Set at setup."}\n\n## Roles\n\n- **Decision maker:** ${s.decisionMaker || "set at setup"}. Ranks the questions to answer in step 3.\n- **Facilitator:** rotates each week, prepares the agenda, runs it and keeps time. The CEO does not facilitate.\n- **Note taker:** last week's facilitator.\n\n## A day before\n\n- Each workstream owner runs /aligned:create-wbr.\n- The facilitator runs /aligned:wbr-rollup after the WBRs are in.\n- Everyone reads the pre-read before the meeting.\n\n## The 90 minutes\n\n1. **Set the stage.** Read the purpose. Each person gives one fear or frustration and one win or gratitude, in a minute or less.\n2. **Progress review.** A green key action with a date gets credit and no discussion. Review due action items, then ask for anything unspoken.\n3. **Prioritize.** The decision maker puts the questions to answer in order.\n4. **Work the questions.** Name the obstacle a fix answers before agreeing on the fix. Each question ends as an action item, a decision or a parking lot topic.\n5. **Close.** Read back the decisions and action items, then appreciations.\n\n## Ten rules\n\n${(s.rules || []).map((r, i) => `${i + 1}. ${r}`).join("\n") || "Set at setup."}`;
+  return head("Standing", "How the meeting runs", s.schedule) + `<div class="doc">${renderMd(md)}</div>`;
+}
+
+function route() {
+  const id = location.hash.slice(1) || "home";
+  const m = ROUTE.exec(id);
+  let html, cur = id;
+  if (m && m[1] === "preread") html = docPage(m[2], "preread", "Pre-read", "No pre-read for this week. The facilitator runs /aligned:wbr-rollup a day before the meeting, after the WBRs are in.");
+  else if (m && m[1] === "wbrs") html = wbrsPage(m[2]);
+  else if (m && m[1] === "recap") html = docPage(m[2], "recap", "Recap", "No recap for this week. The note taker runs /aligned:wbr-recap after the meeting.");
+  else if (m && m[1] === "feedback") html = docPage(m[2], "teampage", "Meeting feedback", "No feedback for this week. The leader runs /aligned:wbr-feedback when they want it.");
+  else if (id === "decisions") html = decisionsPage();
+  else if (id === "key-actions") html = keyActionsPage();
+  else if (id === "meeting") html = meetingPage();
+  else if (id.startsWith("review-") && S.reviews.some((r) => `review-${r.id}` === id)) { const r = S.reviews.find((x) => `review-${x.id}` === id); html = head("Monthly review", r.id, r.writtenAt ? `Written ${r.writtenAt}` : "") + `<div class="doc">${renderMd(r.markdown)}</div>`; }
+  else if (id.startsWith("offsite-") && S.offsites.some((r) => `offsite-${r.id}` === id)) { const r = S.offsites.find((x) => `offsite-${x.id}` === id); html = head("Offsite agenda", r.id, r.writtenAt ? `Written ${r.writtenAt}` : "") + `<div class="doc">${renderMd(r.markdown)}</div>`; }
+  else { cur = "home"; html = home(); }
+  const body = $("#wbr-body");
+  nav(cur);
+  $("#brand").textContent = S.settings && S.settings.company ? S.settings.company : "Weekly Review";
+  if (body && body.value && m && m[1] === "wbrs") return; // Keep what someone is typing when another person's write arrives.
+  $("#view").innerHTML = html;
+  const form = $("#wbr-form");
+  if (form) form.addEventListener("submit", (e) => saveWbr(e, m[2]));
+}
+
+async function saveWbr(event, week) {
+  event.preventDefault();
+  const form = event.currentTarget, result = form.querySelector("#wbr-result");
+  const stream = form.elements["wbr-stream"].value, owner = form.elements["wbr-owner"].value.trim(), body = form.elements["wbr-body"].value.trim();
+  if (!body) { result.textContent = "Paste the WBR first."; return; }
+  const path = `weeks/${week}/wbrs/${stream}`;
+  try {
+    const existing = await S.db.doc(path).get();
+    if (existing.exists) { result.textContent = "This workstream already has a WBR this week. Use /aligned:create-wbr to replace it after reading it."; return; }
+  } catch (error) {
+    result.textContent = "Can't check whether this workstream already has a WBR, so nothing was saved. Try again in a moment.";
+    return;
+  }
+  try {
+    await S.db.doc(path).set({ markdown: body, owner, statuses: [], writtenAt: today() });
+    form.elements["wbr-body"].value = "";
+    route();
+  } catch (error) {
+    result.textContent = "This account can only view the page. Ask the owner to make you a Contributor.";
+  }
+}
+
+function search(text) {
+  const box = $("#results"), q = text.trim().toLowerCase();
+  $("#nav").hidden = !!q; box.hidden = !q;
+  if (!q) return;
+  const hits = [];
+  const add = (to, title, body) => {
+    for (const line of String(body || "").split("\n")) {
+      const clean = line.replace(/[#*|`>]/g, " ").replace(/\s+/g, " ").trim(), j = clean.toLowerCase().indexOf(q);
+      if (j < 0 || hits.length > 60) continue;
+      const start = Math.max(0, j - 50), snip = (start ? "…" : "") + clean.slice(start, j + q.length + 70), k = snip.toLowerCase().indexOf(q);
+      hits.push({ to, title, html: `${esc(snip.slice(0, k))}<mark>${esc(snip.slice(k, k + q.length))}</mark>${esc(snip.slice(k + q.length))}` });
+    }
+  };
+  S.weeks.forEach((w) => { const d = weekData(w.id);
+    d.wbrs.forEach((doc) => add(`wbrs-${w.id}`, `${streamName(doc.id)}, ${w.id}`, doc.markdown));
+    Object.entries({ preread: "Pre-read", recap: "Recap", teampage: "Meeting feedback" }).forEach(([key, label]) => { if (d.docs[key]) add(`${key === "teampage" ? "feedback" : key}-${w.id}`, `${label}, ${w.id}`, d.docs[key].markdown); });
+  });
+  S.reviews.forEach((r) => add(`review-${r.id}`, `Monthly review, ${r.id}`, r.markdown));
+  S.offsites.forEach((r) => add(`offsite-${r.id}`, `Offsite agenda, ${r.id}`, r.markdown));
+  add("decisions", "Decision log", S.decisions.map((x) => `${x.decision} ${x.owner} ${x.code}`).join("\n"));
+  add("key-actions", "Key actions", S.keyActions.map((k) => `${k.id} ${k.name} ${k.owner}`).join("\n"));
+  box.innerHTML = hits.length ? hits.map((h) => `<a class="hit" href="#${esc(h.to)}"><span class="hit-title">${esc(h.title)}</span><span class="hit-line">${h.html}</span></a>`).join("") : '<p class="none">Nothing matches.</p>';
+}
+
+function showError() { const n = $("#notice"); n.textContent = "The team's record can't be reached right now. What's on screen may be out of date."; n.hidden = false; }
+const closeSide = () => { $("#side").classList.remove("open"); $("#menu").setAttribute("aria-expanded", "false"); };
+
+// The newest two weeks stay live. Older weeks load once, which keeps the page under its limit of live connections.
+const watching = {};
+function loadWeek(id, live) {
+  if (watching[id]) return;
+  watching[id] = true;
+  S.byWeek[id] = S.byWeek[id] || { wbrs: [], docs: {} };
+  const setWbrs = (snap) => { S.byWeek[id].wbrs = snap.docs.map((d) => ({ id: d.id, ...d.data() })); route(); };
+  const setDocs = (snap) => { S.byWeek[id].docs = Object.fromEntries(snap.docs.map((d) => [d.id, d.data()])); route(); };
+  const wbrs = S.db.collection(`weeks/${id}/wbrs`), docs = S.db.collection(`weeks/${id}/docs`);
+  if (live) { wbrs.onSnapshot(setWbrs, showError); docs.onSnapshot(setDocs, showError); }
+  else { wbrs.get().then(setWbrs, showError); docs.get().then(setDocs, showError); }
+}
+
+async function start() {
+  route();
+  const claude = window.claude;
+  S.db = claude && claude.use ? await claude.use("db") : null;
+  if (!S.db) { S.loaded = true; route(); $("#notice").textContent = "Sign in to Claude to see the team's record."; $("#notice").hidden = false; return; }
+  const user = await claude.use("user");
+  if (user && user.can) { const can = await user.can("data.write"); S.canWrite = can !== false; }
+  const timer = setTimeout(showError, 10000);
+  S.db.doc("settings/team").onSnapshot((snap) => { clearTimeout(timer); $("#notice").hidden = true; S.loaded = true; S.settings = snap.exists ? snap.data() : null; route(); }, showError);
+  S.db.collection("keyActions").onSnapshot((snap) => { S.keyActions = snap.docs.map((d) => ({ id: d.id, ...d.data() })); route(); }, showError);
+  S.db.collection("workstreams").onSnapshot((snap) => { S.workstreams = snap.docs.map((d) => ({ id: d.id, ...d.data() })); route(); }, showError);
+  S.db.collection("decisions").onSnapshot((snap) => { S.decisions = snap.docs.map((d) => ({ id: d.id, ...d.data() })); route(); }, showError);
+  ["reviews", "offsites"].forEach((name) => S.db.collection(name).onSnapshot((snap) => { S[name] = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((r) => DOC_ID[name].test(r.id)).sort((a, b) => b.id.localeCompare(a.id)); route(); }, showError));
+  S.db.collection("weeks").onSnapshot((snap) => {
+    S.weeks = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((w) => /^\d{4}-W\d{2}$/.test(w.id)).sort((a, b) => b.id.localeCompare(a.id));
+    S.weeks.forEach((w, i) => loadWeek(w.id, i < 2));
+    route();
+  }, showError);
+}
+
+$("#menu").addEventListener("click", () => { const open = $("#side").classList.toggle("open"); $("#menu").setAttribute("aria-expanded", String(open)); });
+$("#q").addEventListener("input", (e) => search(e.target.value));
+$("#results").addEventListener("click", () => { $("#q").value = ""; search(""); });
+$("#nav").addEventListener("click", (e) => { const to = e.target.dataset && e.target.dataset.to; if (to) { const el = document.getElementById(to); if (el) el.scrollIntoView(); closeSide(); } });
+window.addEventListener("hashchange", () => { closeSide(); route(); window.scrollTo(0, 0); });
+start();
+</script>

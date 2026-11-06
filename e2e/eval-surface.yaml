@@ -15,6 +15,14 @@ patterns:
   - skills/use-framework/SKILL.md
   - skills/brainstorming/SKILL.md
   - skills/create-design-principles/*.md
+  - skills/_shared/operating-cadence/*.md
+  - skills/create-wbr/SKILL.md
+  - skills/wbr-rollup/SKILL.md
+  - skills/wbr-recap/SKILL.md
+  - skills/wbr-feedback/SKILL.md
+  - skills/monthly-review/SKILL.md
+  - skills/quarterly-plan/SKILL.md
+  - skills/annual-plan/SKILL.md
   - skills/brainstorming/modes/authoring.md
   - skills/brainstorming/modes/roadmap.md
   - skills/_shared/contextual-recommendation.md

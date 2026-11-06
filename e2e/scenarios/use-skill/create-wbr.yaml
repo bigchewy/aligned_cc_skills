@@ -1,0 +1,294 @@
+# e2e/scenarios/use-skill/create-wbr.yaml
+# Validates the create-wbr job: an all-green week skips probing, a vague word is asked once
+# and not again, uncoded work goes to Off strategy / drop / question, codes past 4D are
+# flagged, pushback gets one push, a missing record is asked for rather than invented, and a
+# not-done item gets one line with no debate. A whole all-green week stops only three times,
+# and a vague word with no Definition line adds the one stop for that word. A WBR with no
+# Last week section is not saved, and a vague word that survives one push is written as
+# not defined.
+# Loads the live SKILL.md and the shared files it points to (the WBR form, the team page and
+# the team's tool), because a model running the scenario can't read them otherwise.
+
+description: "Skill: create-wbr job"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nShared file skills/_shared/operating-cadence/wbr-template.md:\n\n{{wbr_template}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-page.md:\n\n{{team_page}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-tool.md:\n\n{{team_tool}}\n\n---\n\nYou are running the create-wbr job as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "create-wbr-a: all green moves straight to new commitments and gives credit"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The team page can't be read from this session and the team's tool is not connected. The person owns the sales workstream. They pasted last week's WBR and the key action codes (1A, 1B, 2A). Last week's commitments are in the paste. The person has finished the brain dump: every commitment from last week was honored, all three key actions are green, and every date is holding. The goals have clear tests already."
+      user_message: "That's the week. Everything shipped, all three are green and the dates are holding."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ALL-GREEN RULE: Does the reply (1) give the person credit,
+          (2) NOT probe or ask follow-up questions about any green item or
+          honored commitment, and (3) move on to asking for new commitments for
+          this week? Probing a green item = 1. Credit given, no probing, and asks
+          about new commitments = 5.
+
+  - description: "create-wbr-b: a vague word with no test is asked about once"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The person pasted last week's WBR. Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's WBR has no Definition line for any word. The brain dump and last week's commitments are settled. The job is at the Vague words stop."
+      user_message: "1A is yellow because the pilot is only partly there. We have two customers using it."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on VAGUE WORD ASKED ONCE: The skill pushes for the number and
+          the comparison on a vague word: how many, and compared with what. Does the
+          reply ask once, about "promising", for the number and what it is compared
+          with? Asking for a number and a comparison in one sentence counts as one
+          question. A reply that does not address the vague word = 1. A reply that
+          asks once for the number and the comparison = 5. Piling on unrelated
+          questions scores low, 2 or below.
+
+  - description: "create-wbr-c: a recorded definition is not asked about again"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The person pasted last week's WBR. Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's WBR has the line: Definition: \"promising\" means five paying customers using it weekly. The brain dump, last week's commitments and status are settled. The job is at the Vague words stop."
+      user_message: "Right, so we are at two paying customers using it weekly."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on DEFINITION REUSED: Does the reply avoid asking again how
+          "promising" is defined, and instead use the recorded definition (five
+          paying customers using it weekly) or move on to the next step? Asking
+          for the definition again = 1. Uses or keeps the recorded definition
+          and moves on = 5.
+
+  - description: "create-wbr-d: work with no key action is asked once, then offered three choices"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The person pasted the key action codes (1A, 1B, 2A). The job is at the This week stop. The person has described a new piece of work, redesigning the office kitchen, that fits none of the three key actions. The job has not yet asked which key action it moves."
+      user_message: "I also want to commit to getting the office kitchen redesigned by the end of the month."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on UNCODED WORK: Does the reply ask which key action this
+          work moves, in a single question? A 5 also offers the three choices
+          when the answer is none (keep it as Off strategy with a line on why it
+          can't wait, drop it, or turn it into a question to answer), or says it
+          will offer them if the answer is none. Assigns a code without asking,
+          or silently accepts it = 1. Asks which key action = 4. Asks which key
+          action and names Off strategy, drop and question as the options = 5.
+
+  - description: "create-wbr-e: a code past 4D is flagged"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The person pasted the key action codes (1A, 1B, 2A). The job is at the This week stop. The person is giving a new commitment and has supplied the details except for the code."
+      user_message: "Put it under 1C3. Implementer is me, success is signed contracts from the top five customers, due the 14th."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on CODE LIMIT: Does the reply say that codes stop at 1A to 4D
+          (so 1C3 is not a valid code) and ask which code they mean? Accepting
+          1C3 = 1. Flags it but does not ask which one = 3. Flags that codes stop
+          at 1A to 4D and asks which one = 5.
+
+  - description: "create-wbr-f: pushback on a date gets one push, then it is recorded"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The person's key action 2A moved from the 10th to the 24th. The job already asked once whether the 24th is a real date. The person answered that they think so. The job pushed once more, and now the person is pushing back again: they say the 24th is the date and they want to move on."
+      user_message: "I told you, it's the 24th. I'm not going to defend it again. Can we move on?"
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on ONE PUSH: Does the reply stop pushing, record the date as
+          the person gave it (the 24th, moved from the 10th), and move on to the
+          next step? Pushing a third time or arguing about the date = 1. Records
+          what they said and moves on without further challenge = 5.
+
+  - description: "create-wbr-g: no page record and no prior WBR asks for a paste or confirms week one"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The session starts. The team has a page, but this session has no tool to read it. No team tool is connected, there is no file with last week's WBR, and the person has pasted nothing. The person has just asked for help with their WBR."
+      user_message: "Help me write my WBR."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NO RECORD: Does the reply ask the person to paste last
+          week's WBR (and the key action codes or open action items), or ask
+          whether this is week one, WITHOUT inventing any commitments, key
+          actions, or statuses? Inventing commitments = 1. Asks for a paste or
+          confirms week one, invents nothing = 5.
+
+  - description: "create-wbr-h: a not-done item records one line on why, with no debate"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The job is at the Last week's commitments stop. One of last week's commitments, 'Send the pricing proposal to the top five customers', was not done. The brain dump did not mention it. The person is explaining why."
+      user_message: "I didn't get to it. The week got eaten by the board prep and I ran out of time."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NOT DONE RECORDED: Does the reply record the reason in one
+          line (board prep took the week), and move on or ask only about the next
+          item, WITHOUT debating the excuse, challenging it, or asking how the
+          person feels? Debating, lecturing, or asking about feelings = 1.
+          Records one line and moves on = 5. A reply that also asks about the
+          new date or what they need from the group is acceptable.
+
+  - description: "create-wbr-i-1: a whole all-green week, stop 1 of 3, the brain dump"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The team's tool is not connected. The person already pasted last week's WBR, the key action codes (1A, 1B, 2A) and their open action items. The person named their workstream. Every goal has a clear test. The session has just started."
+      user_message: "That's everything from last week. Let's do my WBR."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on FIRST STOP: Does the reply ask only for the brain dump, about
+          two minutes on what happened on their key actions this week? Asking about
+          commitments, status or colors before the brain dump = 1. Asks for the brain
+          dump and nothing else = 5.
+
+  - description: "create-wbr-i-2: a whole all-green week, stop 2 of 3, new commitments with no stops in between"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). The person named their workstream. Every goal has a clear test, and last week's WBR carries the Definition line for its one vague word. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
+      user_message: "Both commitments from last week shipped. 1A, 1B and 2A are all green, and every date is holding."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NO EXTRA STOPS: Does the reply give credit and go straight to
+          asking for new commitments, as the second stop of the week? Stopping to ask
+          about last week's commitments, a color, a date, or a vague word = 1. It
+          proposes the colors in passing without asking anything about them, and asks
+          for new commitments = 5. Moving to the draft with no question about new
+          commitments = 2.
+
+  - description: "create-wbr-i-3: a whole all-green week, stop 3 of 3, the draft for approval"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). The person named their workstream. Both of last week's commitments were honored. 1A, 1B and 2A are green and every date holds. Every goal has a clear test. The job asked for new commitments, and this message is the answer."
+      user_message: "One new one. I'll sign the two remaining pilot customers. Success is both contracts signed, due the 14th, code 1A."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on APPROVAL STOP: Does the reply show a short draft WBR, about
+          three lines of content, and ask the person to edit and approve it? Asking
+          for a proposal, a question to answer, or anything about a green item before
+          the draft = 1. Shows the draft and asks for approval, with no other question
+          = 5. Posting anywhere before approval = 1.
+
+  - description: "create-wbr-j: a vague word with no Definition line stops an otherwise green week once"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The team's tool is not connected. The person pasted last week's WBR and the key action codes (1A, 1B, 2A). The person named their workstream. Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's WBR has no Definition line. The job asked for the brain dump, and this message is the answer. It settles every commitment from last week."
+      user_message: "Both commitments from last week shipped. 1A, 1B and 2A are all green, and every date is holding."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on VAGUE WORD IN A GREEN WEEK: Does the reply give credit and then
+          ask how "promising" was defined, in one question, before it moves to new
+          commitments? Going to new commitments with no question about the word = 1.
+          Asks about the word and also about something else = 3. Credit and one
+          question about the word = 5.
+
+  - description: "create-wbr-k: a WBR with no Last week section is not saved"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The job is at the Draft and save stop. Last week's WBR lists two commitments, 'Send paper to the top five accounts' and 'Book the November webinar'. The person never said whether either was done. The draft has a Status section and a This week section, and no Last week section. The person can write to the team page, and the draft has not been saved."
+      user_message: "Looks good. Save it, I'm out of time."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on REQUIRED SECTION: Status and Last week are required, and the
+          draft has no Last week section. A 5 means the reply will not save the WBR,
+          says Last week is the section that is missing, and asks for the result of
+          each of the two commitments (honored, renegotiated or not done). Saving, or
+          saying it saved = 1. Asking for the results without saying the WBR cannot
+          be saved without them = 3.
+
+  - description: "create-wbr-l: a vague word that survives one push is written as not defined"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/create-wbr/SKILL.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      scenario_description: "The job is at the Vague words stop. Key action 1A's goal reads: 'Get the pilot to a promising state.' Last week's WBR has no Definition line. The job asked how 'promising' was defined, and the person said it means customers like it. The job has already made one push for the number and the comparison: how many, and compared with what."
+      user_message: "It just means it feels better than before. I can't give you a number."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NOT DEFINED: Does the reply stop pushing, write the Definition
+          line for "promising" as not defined (or say it will record it as not
+          defined), and move on to the next step? Pushing a second time for a number
+          = 1. Accepts "feels better than before" as the test with no mention of not
+          defined = 3. Records not defined and moves on = 5.

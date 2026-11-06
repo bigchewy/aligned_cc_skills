@@ -12,6 +12,7 @@ aligned-cowork.zip
 .env*
 *.plugin
 docs/plans/
+docs/superpowers/
 docs/investigations/
 docs/kanban/board.html
 *.draft.yaml
@@ -19,3 +20,5 @@ docs/kanban/board.html
 __pycache__/
 .ralph-blocked-snapshot
 .superpowers/
+e2e/tests/.banned-words.local
+e2e/tests/.client-names.local

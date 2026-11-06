@@ -24,7 +24,8 @@ DECK_SCRIPT = KERNEL_DIR / "build-example-deck.py"
 DECK_PPTX = KERNEL_DIR / "example-strategy-kernel.pptx"
 TRIGGER_MAP = REPO_ROOT / "e2e" / "trigger-map.yaml"
 
-OTHER_CLIENT_MATERIAL = ("vindara", "paddy", "me/cfs", "long covid", "acme hr")
+# Client names are covered by test_no_client_names.py, whose list stays out of tracked files.
+OTHER_CLIENT_MATERIAL = ("me/cfs", "long covid", "acme hr")
 
 
 def _read(path: Path) -> str:

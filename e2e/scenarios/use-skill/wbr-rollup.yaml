@@ -1,0 +1,126 @@
+# e2e/scenarios/use-skill/wbr-rollup.yaml
+# Validates the wbr-rollup job: a workstream with no WBR is listed as not received and is
+# never dropped, a key action red three or more weeks running is flagged from the past
+# WBRs on the page, and a first run with no earlier record says so and invents no carry-forward.
+# Loads the live SKILL.md and the shared files it points to, because a model running the
+# scenario can't read them otherwise. The page record is a made-up team's.
+
+description: "Skill: wbr-rollup job"
+
+providers:
+  - file://../../providers/claude-login.yaml
+
+prompts:
+  - "{{system_context}}\n\n---\n\nShared file skills/_shared/operating-cadence/meeting-template.md:\n\n{{meeting_template}}\n\n---\n\nShared file skills/_shared/operating-cadence/wbr-template.md:\n\n{{wbr_template}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-page.md:\n\n{{team_page}}\n\n---\n\nShared file skills/_shared/operating-cadence/team-tool.md:\n\n{{team_tool}}\n\n---\n\nThe team page record, as this session reads it:\n\n{{page_record}}\n\n---\n\nYou are running the wbr-rollup job as written above.\n\nWhere the session is: {{scenario_description}}\n\nThe person's latest message: {{user_message}}\n\nWrite your next message to the person, exactly as you would send it."
+
+defaultTest:
+  options:
+    provider: file://../../providers/claude-login.yaml
+    rubricPrompt: file://../../providers/rubric-prompt.txt
+
+tests:
+  - description: "rollup-a: a workstream with no WBR is listed as not received, with its owner"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/wbr-rollup/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. The next meeting is 2026-11-10, which is week 2026-W46. The person is the facilitator for that meeting. The team's tool is not connected, so the open action items are not available. The person has not been asked anything yet."
+      user_message: "Write this week's pre-read and agenda."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on NOT RECEIVED: The support workstream, owned by Keiko, has no
+          WBR for the week of 2026-W46. A 5 means the reply lists support under
+          Not received with its owner, keeps the workstream in the pre-read instead of
+          dropping it, and states no status, metric or commitment for support this
+          week, apart from last week's if it is clearly labeled as last week's.
+          Dropping support from the pre-read = 1. Listing it as not received without
+          the owner = 3. Presenting support's week 2026-W45 status as this week's = 2.
+
+  - description: "rollup-b: a key action red for three or more weeks is flagged from the past WBRs"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/wbr-rollup/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      page_record: file://../../tests/fixtures/operating_cadence/wbrs.md
+      scenario_description: "The session can read the team page. The next meeting is 2026-11-10, which is week 2026-W46. The person is the facilitator for that meeting. The team's tool is not connected, so the open action items are not available."
+      user_message: "Write this week's pre-read and agenda."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on TREND FLAG: The self-serve checkout, key action 2 in the
+          product workstream, has been red in the WBRs for 2026-W42 through 2026-W46,
+          and its date moved in each of the last three weeks. It has never come up in
+          a recap. A 5 means the Flags section flags key action 2 as red for three or
+          more weeks running and says how many weeks (five, or at least three with the
+          weeks named), and also flags the moved dates with the old and new date, each
+          flag in a sentence that names the workstream. No flag for key action 2 = 1.
+          Flags it as red now with no count of weeks = 3.
+
+  - description: "rollup-c: a first run with no earlier record says first run and invents no carry-forward"
+    metadata:
+      arm: single
+    vars:
+      system_context: file://../../../skills/wbr-rollup/SKILL.md
+      meeting_template: file://../../../skills/_shared/operating-cadence/meeting-template.md
+      wbr_template: file://../../../skills/_shared/operating-cadence/wbr-template.md
+      team_page: file://../../../skills/_shared/operating-cadence/team-page.md
+      team_tool: file://../../../skills/_shared/operating-cadence/team-tool.md
+      page_record: |
+        ## settings/team
+        - company: Fernbank Studio
+        - schedule: Thursday at 14:00, WBRs due Wednesday
+        - decisionMaker: Marisol, the founder
+
+        ## workstreams
+        ### workstreams/design
+        - name: Design
+        - owner: Marisol
+        - codes: 1
+
+        ### workstreams/build
+        - name: Build
+        - owner: Ansel
+        - codes: 2
+
+        ## weeks
+        ### weeks/2026-W46
+        meetingDate 2026-11-12, facilitator Marisol, noteTaker Ansel
+
+        ### weeks/2026-W46/wbrs/design
+        Design, Marisol, week of 2026-11-12
+        ## Status
+        1 Brand refresh: Green, due 2026-12-01
+        ## Last week
+        1 Pick the type family: Honored
+
+        ### weeks/2026-W46/wbrs/build
+        Build, Ansel, week of 2026-11-12
+        ## Status
+        2 Client portal: Yellow, due 2026-12-10
+          Yellow or red: the login flow needs a second pass
+        ## Last week
+        2 Wire the login: Not done, the vendor key arrived late
+
+        There are no other weeks, no recaps and no decisions on the page.
+      scenario_description: "The session can read the team page, which was set up this week. The next meeting is 2026-11-12, which is week 2026-W46. The person is the facilitator and wants the first pre-read. The team's tool is not connected."
+      user_message: "Write this week's pre-read and agenda."
+    assert:
+      - type: llm-rubric
+        value: |
+          Score 1-5 on WEEK ONE: This is the team's first run. There is no earlier
+          recap, no earlier decision and no earlier WBR. A 5 means the Carry forward
+          section says first run, no carry-forward and moves on, and the reply invents
+          no earlier decision, open action or trend, and raises no flag that needs past
+          weeks, such as red for three weeks running. The Yellow login flow may be
+          raised as a question to answer. Inventing a carry-forward item or a past
+          trend = 1. Leaving Carry forward out of the pre-read = 3.
