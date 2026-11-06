@@ -144,7 +144,26 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 #panel dd { margin: 0 0 4px; overflow-wrap: anywhere; }
 .row-title { font-weight: 600; margin: 8px 0 2px; overflow-wrap: anywhere; }
 .none { color: var(--muted); margin: 0; }
-.goal-notes { display: block; width: 100%; box-sizing: border-box; min-height: 96px; padding: 6px 8px; overflow: hidden; resize: none; font: inherit; color: inherit; background: transparent; border: 1px solid var(--edge); border-radius: 6px; }
+#appendix-open { position: fixed; z-index: 12; left: 16px; bottom: 16px; background: var(--box); }
+#appendix-window {
+  position: fixed;
+  z-index: 13;
+  left: 16px;
+  bottom: 56px;
+  width: min(420px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 12px 16px 16px;
+  background: var(--box);
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(31, 35, 40, 0.16), 0 1px 3px rgba(31, 35, 40, 0.1);
+}
+#appendix-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+#appendix-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+#appendix-notes { display: block; width: 100%; height: 40vh; max-height: 320px; box-sizing: border-box; padding: 6px 8px; resize: none; font: inherit; font-size: 15px; color: inherit; background: transparent; border: 1px solid var(--edge); border-radius: 6px; }
+#appendix-notes[hidden], #appendix-read[hidden] { display: none; }
+#appendix-read { max-height: 320px; overflow: auto; font-size: 15px; overflow-wrap: anywhere; }
+#appendix-read p { margin: 0 0 8px; }
 
 #save-status { margin: 0; font-size: 14px; color: var(--muted); min-width: 125px; text-align: right; }
 #save-status.saved { color: var(--ink); }
@@ -267,6 +286,15 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 <div id="item-tools" role="toolbar" aria-label="What you can do with this item" hidden>
   <button type="button" id="star-button" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
   <button type="button" id="delete-item" class="icon"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+</div>
+<button type="button" class="quiet" id="appendix-open" hidden>Appendix</button>
+<div id="appendix-window" role="dialog" aria-labelledby="appendix-title" hidden>
+  <div id="appendix-head">
+    <span id="appendix-title">Appendix</span>
+    <button type="button" class="quiet" id="appendix-close">Close</button>
+  </div>
+  <textarea id="appendix-notes" aria-labelledby="appendix-title" placeholder="Add notes about this goal"></textarea>
+  <div id="appendix-read" hidden></div>
 </div>
 <div id="delete-card" role="alertdialog" aria-modal="true" aria-label="Confirm Delete" hidden>
   <span id="delete-title">Confirm Delete</span>
@@ -1256,7 +1284,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var el = {};
   ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save-status', 'message',
     'typing', 'drag-ghost', 'drop-line', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
-    'delete-card', 'delete-yes', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
+    'delete-card', 'delete-yes', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit',
+    'appendix-open', 'appendix-window', 'appendix-close', 'appendix-notes', 'appendix-read'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
 
@@ -1438,30 +1467,25 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return dl;
   }
 
-  // One box for the whole visit, so a redraw can't take the words or the focus from someone typing.
-  var notes = make('textarea', 'goal-notes');
-  var notesOpened = null;
-  notes.placeholder = 'Add notes about this goal';
-  notes.setAttribute('aria-label', 'Notes about this goal');
+  /* The appendix: a small button, and a small window it opens. */
 
-  function fitNotes() {
-    notes.style.height = 'auto';
-    if (notes.scrollHeight) notes.style.height = (notes.scrollHeight + 2) + 'px';
-  }
+  // What the box held when the person started typing, or null when they aren't typing there.
+  var notesOpened = null;
+  var appendixOpen = false;
 
   function saveNotes() {
     if (notesOpened === null) return;
     var opened = notesOpened;
-    var text = notes.value.trim();
+    var text = el['appendix-notes'].value.trim();
     notesOpened = null;
     if (text === opened.trim()) {
-      drawPanel();
+      drawAppendix();
       return;
     }
     if (!canEdit()) {
       notice = 'This map can\'t be changed right now, so your notes weren\'t saved.';
       showMessageForState();
-      drawPanel();
+      drawAppendix();
       return;
     }
     var current = map.goal.detail || '';
@@ -1473,21 +1497,35 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
   }
 
-  notes.addEventListener('focus', function () { notesOpened = notes.value; });
-  notes.addEventListener('input', fitNotes);
-  notes.addEventListener('blur', saveNotes);
-  notes.addEventListener('keydown', function (e) {
-    if (e.key !== 'Escape' || notesOpened === null) return;
-    notes.value = notesOpened;
-    notesOpened = null;
-    notes.blur();
-    drawPanel();
-  });
+  function drawAppendix() {
+    var editable = canEdit();
+    var detail = map.goal.detail || '';
+    var available = ready && (editable || Boolean(detail));
+    if (!available) appendixOpen = false;
+    el['appendix-open'].hidden = !available;
+    el['appendix-open'].setAttribute('aria-expanded', String(appendixOpen));
+    el['appendix-window'].hidden = !appendixOpen;
+    el['appendix-notes'].hidden = !editable;
+    el['appendix-read'].hidden = editable;
+    if (notesOpened === null) el['appendix-notes'].value = detail;
+    el['appendix-read'].textContent = '';
+    if (!editable) {
+      detail.split(/\n\s*\n/).forEach(function (part) {
+        el['appendix-read'].appendChild(make('p', '', part));
+      });
+    }
+  }
+
+  function closeAppendix() {
+    if (!appendixOpen) return;
+    saveNotes();
+    appendixOpen = false;
+    drawAppendix();
+  }
 
   function drawPanel() {
     el.panel.hidden = !panelOpen;
     el['toggle-plan'].textContent = panelOpen ? 'Hide plan' : 'Show plan';
-    if (notesOpened !== null) return;
     el.panel.textContent = '';
     var rows = L.panelRows(map);
 
@@ -1532,17 +1570,6 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       ]));
     }
 
-    if (canEdit()) {
-      el.panel.appendChild(heading('Appendix:', 'about this goal'));
-      notes.value = map.goal.detail || '';
-      el.panel.appendChild(notes);
-      fitNotes();
-    } else if (map.goal.detail) {
-      el.panel.appendChild(heading('Appendix:', 'about this goal'));
-      map.goal.detail.split(/\n\s*\n/).forEach(function (part) {
-        el.panel.appendChild(make('p', '', part));
-      });
-    }
   }
 
   // A confirmed change has reached the store, so only what is still waiting can be lost.
@@ -1579,6 +1606,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     el['edit-hint'].hidden = !canEdit() || map.obstacles.length === 0;
     drawMap();
     drawPanel();
+    drawAppendix();
     showStatus();
     keepOnScreen(spot);
     // The boxes may have moved under a still pointer.
@@ -2377,10 +2405,27 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   // Every press starts fresh, because a redraw or a lost window can mean the click after a drag never came,
   // and a lost release can leave an old press or drag behind. The canvas listener runs after this one.
-  document.addEventListener('pointerdown', function () {
+  document.addEventListener('pointerdown', function (e) {
     afterDrag = false;
     cancelDrag();
+    if (!el['appendix-window'].contains(e.target) && !el['appendix-open'].contains(e.target)) closeAppendix();
   }, true);
+
+  el['appendix-open'].addEventListener('click', function () {
+    if (appendixOpen) {
+      closeAppendix();
+      return;
+    }
+    appendixOpen = true;
+    drawAppendix();
+    (canEdit() ? el['appendix-notes'] : el['appendix-close']).focus({ preventScroll: true });
+  });
+  el['appendix-close'].addEventListener('click', function () {
+    closeAppendix();
+    el['appendix-open'].focus({ preventScroll: true });
+  });
+  el['appendix-notes'].addEventListener('focus', function () { notesOpened = el['appendix-notes'].value; });
+  el['appendix-notes'].addEventListener('blur', saveNotes);
 
   // No buttons held means the release was missed, as with a Control-click on a Mac.
   document.addEventListener('pointermove', function (e) {
@@ -2416,7 +2461,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       if (e.key === 'Escape') cancelDrag();
       return;
     }
-    if (e.target === el.typing || e.target === notes) return;
+    if (e.key === 'Escape' && appendixOpen) {
+      closeAppendix();
+      el['appendix-open'].focus({ preventScroll: true });
+      return;
+    }
+    if (e.target === el.typing || el['appendix-window'].contains(e.target)) return;
     if (e.key === 'Tab') {
       tabThroughControls(e);
     } else if (e.key === 'Escape' && editing) {

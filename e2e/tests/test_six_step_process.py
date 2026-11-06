@@ -203,6 +203,8 @@ def test_people_can_type_in_the_appendix_and_claude_keeps_their_words():
     assert "the page never writes it" not in rules
     assert "People can also type in it on the page" in rules
     assert "type in it" in section("## Step 2: Goal")
+    assert "Appendix button" in section("## Step 2: Goal")
+    assert "under Show plan" not in section("## Step 2: Goal")
 
 
 def test_advisor_check_comes_after_the_goal_before_the_first_write():
