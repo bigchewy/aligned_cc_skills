@@ -76,15 +76,27 @@ function makePage(html) {
     El.active = null;
     El.scroller = document.getElementById('map');
     El.scroller.appendChild(document.getElementById('canvas-frame')).appendChild(document.getElementById('canvas'));
-    ['typing', 'drag-ghost', 'plus-obstacle', 'plus-solution', 'item-tools', 'delete-card', 'outside-claude'].forEach((id) => {
+    ['typing', 'drag-ghost', 'drop-line', 'plus-obstacle', 'plus-solution', 'item-tools', 'delete-card', 'outside-claude'].forEach((id) => {
       document.getElementById(id).hidden = true;
     });
     // What elementFromPoint finds: an item's box by id, the empty map, or nothing outside the window.
+    // A box someone removed leaves the pointer over the empty map.
     let overId = undefined;
     const under = () => {
       if (overId === null) return null;
-      return overId === undefined ? document.getElementById('map') : api.box(overId);
+      if (overId === undefined) return document.getElementById('map');
+      return findBox(overId) || document.getElementById('map');
     };
+    const findBox = (id) => {
+      const end = id === 'goal' ? 'goal|' : '|' + id;
+      return document.getElementById('canvas').walk().find((k) => k.dataset.key && k.dataset.key.endsWith(end));
+    };
+    // The canvas draws at the page's zoom, so a spot on screen is its canvas position times that.
+    const zoomNow = () => { const m = /scale\(([\d.]+)\)/.exec(document.getElementById('canvas').style.transform || ''); return m ? parseFloat(m[1]) : 1; };
+    const onScreen = (x, y) => ({ x: x * zoomNow() - El.scroller.scrollLeft, y: y * zoomNow() - El.scroller.scrollTop });
+    // The empty column between the goal and the first items is never over a box.
+    const emptySpot = () => onScreen(320, 0).x;
+    let lastPointer = { x: 400, y: 400 };
     const frames = new Map();
     let frameId = 0;
     const sandbox = { document, console, setTimeout: opts.setTimeout || setTimeout, clearTimeout: opts.clearTimeout || clearTimeout, Promise, JSON, Math, RegExp, Object, Array, Number, String, Boolean, decodeURIComponent, Date,
@@ -141,12 +153,33 @@ function makePage(html) {
         key: k.dataset.key, x: parseFloat(k.style.left), y: parseFloat(k.style.top), w: parseFloat(k.style.width), h: k.offsetHeight })); },
       resize() { winListeners.resize[0](); },
       press(id, more) { return api.fire(api.box(id), 'pointerdown', Object.assign({ button: 0, buttons: 1, clientX: 100, clientY: 100 }, more)); },
-      // Moves the pointer over an item, or over the empty map with no id, or outside the window with null.
+      // Where a spot on a box is on screen: a share of 0 is its top and 1 its bottom.
+      spotOn(id, share) {
+        const b = api.box(id);
+        return onScreen(parseFloat(b.style.left) + parseFloat(b.style.width) / 2, parseFloat(b.style.top) + b.offsetHeight * share);
+      },
+      // Moves the pointer to the middle of an item, or over the empty map with no id, or outside the window with null.
       pointerTo(id, x, y, more) {
         overId = id;
-        return api.fire(api.el('map'), 'pointermove', Object.assign({ buttons: 1, clientX: x === undefined ? 400 : x, clientY: y === undefined ? 400 : y }, more));
+        let spot = { x: x === undefined ? 400 : x, y: y === undefined ? 400 : y };
+        if (x === undefined && id && findBox(id)) spot = api.spotOn(id, 0.5);
+        else if (x === undefined) spot.x = emptySpot();
+        lastPointer = spot;
+        return api.fire(api.el('map'), 'pointermove', Object.assign({ buttons: 1, clientX: spot.x, clientY: spot.y }, more));
       },
-      release() { return api.fire(api.el('map'), 'pointerup', { button: 0, buttons: 0, clientX: 400, clientY: 400 }); },
+      // A spot on a box, at a share of its height.
+      pointerOn(id, share) { const spot = api.spotOn(id, share); return api.pointerTo(id, spot.x, spot.y); },
+      // The empty space halfway between two boxes in one column.
+      pointerBetween(a, b) {
+        const low = api.spotOn(a, 1); const high = api.spotOn(b, 0);
+        return api.pointerTo(undefined, low.x, (low.y + high.y) / 2);
+      },
+      // The blue line as the page placed it, or null while it is hidden.
+      line() {
+        const l = api.el('drop-line');
+        return l.hidden ? null : { left: parseFloat(l.style.left), top: parseFloat(l.style.top), width: parseFloat(l.style.width) };
+      },
+      release() { return api.fire(api.el('map'), 'pointerup', { button: 0, buttons: 0, clientX: lastPointer.x, clientY: lastPointer.y }); },
       // The browser sends a click to what holds both the press and the release.
       clickAfter() { return api.fire(api.el('canvas'), 'click', { detail: 1 }); },
       dragOnto(id, targetId) { api.press(id); api.pointerTo(targetId); api.release(); api.clickAfter(); },

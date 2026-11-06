@@ -661,3 +661,148 @@ def test_queue_carries_on_when_on_change_throws():
       return { writes: writes.length, left: q2.pending().length };
     })()""")
     assert r == {"writes": 2, "left": 0}
+
+
+# Placing an item among its siblings.
+
+
+def row(*ids):
+    return make_map(obstacles=[item(i, i.upper()) for i in ids])
+
+
+def doc_with_orders(tree, **orders):
+    doc = run("return S.flatten(D.map);", map=tree)
+    for key, value in orders.items():
+        doc["items"][key]["order"] = value
+    return doc
+
+
+def placed(before, moving, parent, index, doc=None):
+    after = run("return L.placeItem(D.map, D.moving, D.parent, D.index);", map=before, moving=moving, parent=parent, index=index)
+    out = run(
+        "return S.changeBetween(D.doc, D.before, D.after, null, D.moving);",
+        doc=doc if doc is not None else run("return S.flatten(D.map);", map=before),
+        before=before,
+        after=after,
+        moving=moving,
+    )
+    return out, after
+
+
+def top_ids(doc):
+    return [i[0] for i in tree_ids(doc)]
+
+
+def test_change_for_a_placement_sends_parent_and_order_only():
+    out, _ = placed(row("a", "b", "c"), "c", "goal", 1)
+    assert out == {"items": {"c": {"parent": "goal", "order": 1.5}}}
+
+
+def test_placement_under_another_parent_sends_parent_and_order_only():
+    before = make_map(obstacles=[item("a", "A", [item("k1", "K"), item("k2", "K")]), item("c", "C")])
+    out, _ = placed(before, "c", "a", 1)
+    assert out == {"items": {"c": {"parent": "a", "order": 1.5}}}
+
+
+def test_placement_between_two_gets_an_order_between_them():
+    before = row("a", "b", "c")
+    doc = doc_with_orders(before, a=1, b=4, c=9)
+    assert placed(before, "c", "goal", 1, doc)[0]["items"]["c"]["order"] == 2.5
+    doc = doc_with_orders(before, a=1, b=1.5, c=9)
+    assert placed(before, "c", "goal", 1, doc)[0]["items"]["c"]["order"] == 1.25
+
+
+def test_placement_first_and_last():
+    before = row("a", "b", "c")
+    doc = doc_with_orders(before, a=5, b=6, c=7)
+    assert placed(before, "c", "goal", 0, doc)[0] == {"items": {"c": {"parent": "goal", "order": 4}}}
+    assert placed(before, "a", "goal", 2, doc)[0] == {"items": {"a": {"parent": "goal", "order": 8}}}
+
+
+def test_placement_between_equal_orders_renumbers_that_level_and_sorts_right():
+    before = row("a", "b", "c", "d")
+    # Ties go by id, so a, b and c read in that order.
+    doc = doc_with_orders(before, a=1, b=1, c=1, d=2)
+    out, after = placed(before, "d", "goal", 1, doc)
+    assert out == {"items": {"b": {"order": 3}, "c": {"order": 4}, "d": {"parent": "goal", "order": 2}}}
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["a", "d", "b", "c"]
+    assert [o["id"] for o in after["obstacles"]] == ["a", "d", "b", "c"]
+
+
+def test_placement_renumbers_when_the_midpoint_cant_be_told_from_a_neighbour():
+    before = row("a", "b", "c")
+    doc = doc_with_orders(before, a=1, b=1.0000000000000002, c=2)
+    out, _ = placed(before, "c", "goal", 1, doc)
+    assert set(out["items"]) == {"b", "c"}
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["a", "c", "b"]
+
+
+def test_placement_next_to_an_item_with_no_usable_order_renumbers():
+    # Items with no usable order sort last, by id, and readers never write the repair back.
+    before = row("a", "b", "c")
+    doc = doc_with_orders(before, a=1, b=2)
+    doc["items"]["c"]["order"] = "x"
+    out, _ = placed(before, "a", "goal", 2, doc)
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["b", "c", "a"]
+    out, _ = placed(before, "a", "goal", 1, doc)
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["b", "a", "c"]
+
+
+def test_placement_first_above_a_huge_order_renumbers():
+    before = row("a", "b")
+    doc = doc_with_orders(before, a=-1e300, b=0)
+    out, _ = placed(before, "b", "goal", 0, doc)
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["b", "a"]
+
+
+def test_placement_that_changes_nothing_sends_nothing():
+    before = row("a", "b", "c")
+    for index, moving in ((0, "a"), (1, "b"), (2, "c")):
+        assert placed(before, moving, "goal", index)[0] is None
+
+
+def test_a_change_with_no_placed_item_keeps_sending_only_what_changed():
+    before = row("a", "b", "c")
+    doc = doc_with_orders(before, a=1, b=1, c=1)
+    after = run("return L.setItemText(D.map, 'b', 'new');", map=before)
+    assert change(before, after, doc=doc) == {"items": {"b": {"text": "new"}}}
+
+
+def test_placement_skips_a_held_blank_item():
+    before = row("a", "b", "c")
+    with_blank = run("return L.addItem(D.map, 'goal', 'zz9', 'obstacle', '');", map=before)
+    after = run("return L.placeItem(D.map, 'c', 'goal', 0);", map=with_blank)
+    out = run(
+        "return S.changeBetween(D.doc, D.before, D.after, 'zz9', 'c');",
+        doc=run("return S.flatten(D.map);", map=before),
+        before=before,
+        after=after,
+    )
+    assert out == {"items": {"c": {"parent": "goal", "order": 0}}}
+
+
+def test_placement_round_trips_through_overlay_and_inflate():
+    before = make_map()
+    moves = [("s3", "goal", 0), ("o4", "o2", 0), ("o1", "goal", 2), ("s4", "o1", 1)]
+    doc = run("return S.flatten(D.map);", map=before)
+    tree = before
+    for moving, parent, index in moves:
+        out, after = placed(tree, moving, parent, index, doc)
+        doc = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+        tree = run("return S.inflate(D.doc);", doc=doc)
+        assert ids_of(tree["obstacles"]) == ids_of(after["obstacles"]), moving
+
+
+def test_two_people_placing_at_the_same_spot_keep_both_and_ties_go_by_id():
+    before = row("a", "b", "c", "d")
+    doc = run("return S.flatten(D.map);", map=before)
+    one, _ = placed(before, "d", "goal", 1, doc)
+    two, _ = placed(before, "c", "goal", 1, doc)
+    result = run("return S.overlay(D.doc, [D.one, D.two]);", doc=doc, one=one, two=two)
+    assert one["items"]["d"]["order"] == two["items"]["c"]["order"]
+    assert top_ids(result) == ["a", "c", "d", "b"]

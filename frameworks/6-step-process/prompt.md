@@ -66,7 +66,7 @@ Say in one line what changed. The open page updates by itself.
 }
 ```
 
-`version` names the data format, and it is 1. `items` holds every obstacle and solution by id. Make each id eight random lowercase letters and digits, because the page ignores any other key and two people adding at once must not collide. Every item has the same five fields. `kind` is obstacle or solution. `parent` is the id of the item it sits under, or `goal`. Any item can hold obstacles and solutions, at any depth, and so can the goal. `order` sets the order under a parent. A new or moved item goes last, taking the highest `order` under that parent plus one. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists. Text stays as the person wrote it, with no escaping.
+`version` names the data format, and it is 1. `items` holds every obstacle and solution by id. Make each id eight random lowercase letters and digits, because the page ignores any other key and two people adding at once must not collide. Every item has the same five fields. `kind` is obstacle or solution. `parent` is the id of the item it sits under, or `goal`. Any item can hold obstacles and solutions, at any depth, and so can the goal. `order` sets the order under a parent. A new or moved item goes last, taking the highest `order` under that parent plus one. `order` may be a decimal, and to place an item between two others, use a value between theirs. `risk` is high, medium or low. Empty fields stay as empty strings or empty lists. Text stays as the person wrote it, with no escaping.
 
 `star` is true only on a solution.
 
@@ -141,7 +141,7 @@ If the documents point to a goal, ask this instead: propose the goal in one sent
 
 If you don't know their first name, ask for it now, because the map shows it, and **WAIT for their name.**
 
-**Write the map.** This is the first write. Give the link and say to open it. Say in one line that it saves by itself. If you published it in this conversation, say in one line that it stays private until they use the Share menu, and that if they are working in a Claude project, its members may be able to open it too. Say in one line that they can drag an item onto a box to move it. Then start 3a in the same message.
+**Write the map.** This is the first write. Give the link and say to open it. Say in one line that it saves by itself. If you published it in this conversation, say in one line that it stays private until they use the Share menu, and that if they are working in a Claude project, its members may be able to open it too. Say in one line that they can drag an item onto a box to move it, or between two others to reorder it. Then start 3a in the same message.
 
 ## Step 3: Root-cause the problems
 

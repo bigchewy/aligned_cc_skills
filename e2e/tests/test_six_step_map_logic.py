@@ -753,3 +753,284 @@ def test_layout_connects_every_item_to_its_parent():
             assert start == (parent["x"] + SIZES["boxW"], parent["y"] + parent["height"] / 2), key
         else:
             assert start == (goal["x"] + SIZES["goalW"], goal["y"] + SIZES["goalH"] / 2), key
+
+
+# Placing an item among siblings.
+
+
+def ids_under(m, parent):
+    items = m["obstacles"] if parent == "goal" else obstacle(m, parent)["children"]
+    return [i["id"] for i in items]
+
+
+def test_place_item_lands_at_the_index_among_siblings():
+    m = make_map()
+    assert ids_under(call("placeItem", m, "s3", "goal", 0)["result"], "goal") == ["s3", "o1", "o2"]
+    assert ids_under(call("placeItem", m, "s3", "goal", 1)["result"], "goal") == ["o1", "s3", "o2"]
+    # The index counts the siblings without the item, so moving down uses the index it ends at.
+    assert ids_under(call("placeItem", m, "o1", "goal", 1)["result"], "goal") == ["o2", "o1", "s3"]
+    assert ids_under(call("placeItem", m, "o1", "goal", 2)["result"], "goal") == ["o2", "s3", "o1"]
+    # Another parent, at each end. An index past the end means last.
+    assert ids_under(call("placeItem", m, "o3", "o2", 0)["result"], "o2") == ["o3", "s4"]
+    assert ids_under(call("placeItem", m, "o3", "o2", 1)["result"], "o2") == ["s4", "o3"]
+    assert ids_under(call("placeItem", m, "o3", "o2", 99)["result"], "o2") == ["s4", "o3"]
+    assert ids_under(call("placeItem", m, "o4", "goal", 1)["result"], "goal") == ["o1", "o4", "o2", "s3"]
+
+
+def test_place_item_refuses_itself_and_anything_under_it():
+    m = make_map()
+    for parent in ("o1", "o3", "o4", "s1"):
+        assert call("canPlace", m, "o1", parent)["result"] is False, parent
+        assert call("placeItem", m, "o1", parent, 0)["result"] == m, parent
+
+
+def test_place_item_refuses_unknown_items_and_parents():
+    m = make_map()
+    assert call("canPlace", m, "nope", "goal")["result"] is False
+    assert call("canPlace", m, "o1", "nope")["result"] is False
+    assert call("canPlace", m, "goal", "o1")["result"] is False
+    assert call("placeItem", m, "nope", "goal", 0)["result"] == m
+    assert call("placeItem", m, "o1", "nope", 0)["result"] == m
+
+
+def test_can_place_allows_its_own_parent_where_can_move_does_not():
+    m = make_map()
+    assert call("canPlace", m, "s1", "o1")["result"] is True
+    assert call("canMove", m, "s1", "o1")["result"] is False
+    assert call("canPlace", m, "o1", "goal")["result"] is True
+
+
+def test_third_obstacle_becomes_second():
+    m = make_map(obstacles=[item("a", "first"), item("b", "second"), item("c", "third")])
+    assert call("itemLabels", m)["result"] == {"a": "1", "b": "2", "c": "3"}
+    assert call("itemLabels", call("placeItem", m, "c", "goal", 1)["result"])["result"] == {"a": "1", "c": "2", "b": "3"}
+
+
+EVERY_PLACE = r"""
+const logic = %(logic)s;
+const store = %(store)s;
+const doc = %(doc)s;
+(new Function(logic))();
+(new Function(store))();
+const L = globalThis.MapLogic;
+const data = globalThis.MapStore.inflate(doc);
+function places(map) {
+  const out = {};
+  (function walk(items, parent) {
+    items.forEach((it, i) => { out[it.id] = { parent, i, kids: it.children.map((c) => c.id) }; walk(it.children, it.id); });
+  })(map.obstacles, 'goal');
+  return out;
+}
+const before = places(data);
+const ids = Object.keys(before);
+let allowed = 0;
+const bad = [];
+ids.forEach((moved) => ['goal'].concat(ids).forEach((parent) => {
+  if (!L.canPlace(data, moved, parent)) return;
+  const others = ids.filter((id) => before[id].parent === parent && id !== moved);
+  for (let index = 0; index <= others.length; index += 1) {
+    allowed += 1;
+    const name = moved + ' at ' + index + ' under ' + parent + ': ';
+    const after = places(L.placeItem(data, moved, parent, index));
+    if (Object.keys(after).length !== ids.length) bad.push(name + 'the item count changed');
+    if (after[moved].parent !== parent || after[moved].i !== index) bad.push(name + 'landed wrong');
+    if (after[moved].kids.join() !== before[moved].kids.join()) bad.push(name + 'its subs changed');
+    ids.forEach((id) => {
+      if (id !== moved && after[id].parent !== before[id].parent) bad.push(name + id + ' changed parent');
+      if (id === moved || id === parent || id === before[moved].parent) return;
+      if (after[id].kids.join() !== before[id].kids.join()) bad.push(name + id + ' changed its subs');
+    });
+    const old = before[moved].parent;
+    if (old !== 'goal' && old !== parent) {
+      const left = before[old].kids.filter((id) => id !== moved);
+      if (after[old].kids.join() !== left.join()) bad.push(name + 'its old parent lost another sub');
+    }
+  }
+}));
+process.stdout.write(JSON.stringify({ allowed, bad }));
+"""
+
+
+def test_place_item_keeps_its_subs_and_changes_no_other_parent():
+    html = TEMPLATE.read_text()
+    store = re.search(r'<script id="map-store">(.*?)</script>', html, re.S).group(1)
+    program = EVERY_PLACE % {"logic": json.dumps(logic_block(html)), "store": json.dumps(store), "doc": EXAMPLE.read_text()}
+    proc = subprocess.run(["node", "-"], input=program, capture_output=True, text=True, cwd=REPO)
+    assert proc.returncode == 0, proc.stderr
+    out = json.loads(proc.stdout)
+    assert out["allowed"] > 516
+    assert out["bad"] == []
+
+
+# Where a pointer lands, in the map's own pixels.
+
+
+def spot_map():
+    return make_map(obstacles=[
+        item("a", "A", [item("a1", "A1"), item("a2", "A2")]),
+        item("b", "B", [item("b1", "B1")]),
+        item("c", "C"),
+    ])
+
+
+def spot_layout(m):
+    rows = call("drawnRows", m)["result"]
+    return call("wideLayout", m, {r["key"]: 40 for r in rows}, SIZES)["result"]
+
+
+def place_of(layout, key, share=0.5):
+    box = box_map(layout)[key]
+    return box["x"] + SIZES["boxW"] / 2, box["y"] + box["height"] * share
+
+
+def spot(m, layout, moving, x, y):
+    return call("dropSpot", m, layout, moving, x, y)["result"]
+
+
+def test_drop_spot_middle_half_of_a_box_means_onto():
+    m = spot_map()
+    layout = spot_layout(m)
+    for share in (0.25, 0.3, 0.5, 0.7, 0.75):
+        x, y = place_of(layout, "b", share)
+        assert spot(m, layout, "c", x, y)["onto"] == "b", share
+
+
+def test_the_goal_is_onto_at_any_height():
+    m = spot_map()
+    layout = spot_layout(m)
+    goal = layout["goal"]
+    for share in (0.02, 0.5, 0.98):
+        x, y = goal["x"] + 5, goal["y"] + SIZES["goalH"] * share
+        assert spot(m, layout, "a1", x, y)["onto"] == "goal"
+    assert spot(m, layout, "a", goal["x"] + 5, goal["y"] + 5) is None
+
+
+def test_drop_spot_top_quarter_is_above_the_box():
+    m = spot_map()
+    layout = spot_layout(m)
+    x, y = place_of(layout, "b", 0.1)
+    out = spot(m, layout, "c", x, y)
+    assert (out["parent"], out["index"], out["same"]) == ("goal", 1, False)
+    boxes = box_map(layout)
+    assert boxes["a"]["y"] + 40 <= out["y"] <= boxes["b"]["y"]
+    assert out["x"] == boxes["b"]["x"] and out["width"] == SIZES["boxW"]
+
+
+def test_drop_spot_bottom_quarter_is_below_the_box():
+    m = spot_map()
+    layout = spot_layout(m)
+    x, y = place_of(layout, "b", 0.9)
+    out = spot(m, layout, "a", x, y)
+    # The index counts without the item being dragged, which sits above this spot.
+    assert (out["parent"], out["index"], out["same"]) == ("goal", 1, False)
+
+
+def test_drop_spot_covers_above_the_first_and_below_the_last():
+    m = spot_map()
+    layout = spot_layout(m)
+    x, y = place_of(layout, "a", 0.1)
+    assert (spot(m, layout, "c", x, y)["parent"], spot(m, layout, "c", x, y)["index"]) == ("goal", 0)
+    x, y = place_of(layout, "c", 0.9)
+    assert spot(m, layout, "a", x, y)["index"] == 2
+    x, y = place_of(layout, "a1", 0.1)
+    assert (spot(m, layout, "c", x, y)["parent"], spot(m, layout, "c", x, y)["index"]) == ("a", 0)
+    x, y = place_of(layout, "a2", 0.9)
+    assert (spot(m, layout, "c", x, y)["parent"], spot(m, layout, "c", x, y)["index"]) == ("a", 2)
+
+
+def test_the_empty_space_between_two_siblings_is_between_them():
+    m = spot_map()
+    layout = spot_layout(m)
+    boxes = box_map(layout)
+    x = boxes["a"]["x"] + 5
+    y = (boxes["a"]["y"] + 40 + boxes["b"]["y"]) / 2
+    out = spot(m, layout, "c", x, y)
+    assert (out["parent"], out["index"]) == ("goal", 1)
+
+
+def test_the_line_stays_near_the_pointer_in_a_tall_gap():
+    m = make_map(obstacles=[item("a", "A", [item("k%d" % i, "k") for i in range(12)]), item("b", "B")])
+    layout = spot_layout(m)
+    boxes = box_map(layout)
+    x = boxes["a"]["x"] + 5
+    near_a = spot(m, layout, "k3", x, boxes["a"]["y"] + 39)
+    near_b = spot(m, layout, "k3", x, boxes["b"]["y"] + 1)
+    assert near_a["y"] < near_b["y"]
+    assert near_a["y"] == boxes["a"]["y"] + 40 + SIZES["stackGap"] / 2
+    assert near_b["y"] == boxes["b"]["y"] - SIZES["stackGap"] / 2
+
+
+def test_the_space_between_cousins_or_far_from_any_level_is_nothing():
+    m = spot_map()
+    layout = spot_layout(m)
+    boxes = box_map(layout)
+    x = boxes["a2"]["x"] + 5
+    # a2 and b1 sit in one column under different parents.
+    assert spot(m, layout, "c", x, (boxes["a2"]["y"] + 40 + boxes["b1"]["y"]) / 2) is None
+    # Above the first and below the last box of a level, outside the boxes.
+    assert spot(m, layout, "c", x, boxes["a1"]["y"] - 2) is None
+    assert spot(m, layout, "c", boxes["c"]["x"] + 5, boxes["c"]["y"] + 42) is None
+    # The space between two columns, and off the map altogether.
+    assert spot(m, layout, "c", boxes["a"]["x"] - 3, boxes["a"]["y"] + 5) is None
+    assert spot(m, layout, "c", -500, -500) is None
+
+
+def test_nothing_shows_inside_the_set_being_dragged():
+    m = spot_map()
+    layout = spot_layout(m)
+    boxes = box_map(layout)
+    for key in ("a", "a1", "a2"):
+        for share in (0.1, 0.5, 0.9):
+            x, y = place_of(layout, key, share)
+            assert spot(m, layout, "a", x, y) is None, (key, share)
+    x = boxes["a1"]["x"] + 5
+    assert spot(m, layout, "a", x, (boxes["a1"]["y"] + 40 + boxes["a2"]["y"]) / 2) is None
+
+
+def test_the_spots_beside_the_dragged_item_are_its_own_place():
+    m = spot_map()
+    layout = spot_layout(m)
+    boxes = box_map(layout)
+    x, y = place_of(layout, "a", 0.9)
+    assert spot(m, layout, "b", x, y)["same"] is True
+    x, y = place_of(layout, "c", 0.1)
+    assert spot(m, layout, "b", x, y)["same"] is True
+    x = boxes["a"]["x"] + 5
+    assert spot(m, layout, "b", x, (boxes["a"]["y"] + 40 + boxes["b"]["y"]) / 2)["same"] is True
+    assert spot(m, layout, "b", x, (boxes["b"]["y"] + 40 + boxes["c"]["y"]) / 2)["same"] is True
+    # Further off is a real move.
+    x, y = place_of(layout, "a", 0.1)
+    assert spot(m, layout, "b", x, y)["same"] is False
+
+
+def test_drop_spot_refuses_onto_where_can_move_does():
+    m = spot_map()
+    layout = spot_layout(m)
+    x, y = place_of(layout, "a", 0.5)
+    assert spot(m, layout, "a1", x, y) is None
+
+
+def test_drop_spot_names_a_box_that_holds_still():
+    m = spot_map()
+    layout = spot_layout(m)
+    x, y = place_of(layout, "b", 0.1)
+    assert spot(m, layout, "c", x, y)["stay"] == "a"
+    x, y = place_of(layout, "a", 0.1)
+    assert spot(m, layout, "c", x, y)["stay"] == "a"
+    only = make_map(obstacles=[item("a", "A", [item("k", "K")]), item("b", "B")])
+    layout = spot_layout(only)
+    x, y = place_of(layout, "k", 0.9)
+    assert spot(only, layout, "k", x, y) is None
+    x, y = place_of(layout, "k", 0.1)
+    assert spot(only, layout, "b", x, y)["stay"] == "k"
+
+
+def test_drop_spot_with_an_unknown_item_is_nothing():
+    m = spot_map()
+    layout = spot_layout(m)
+    x, y = place_of(layout, "b", 0.1)
+    assert spot(m, layout, "nope", x, y) is None
+
+
+def test_the_onto_share_is_a_named_constant():
+    assert re.search(r"var ONTO_SHARE = 0\.5;", logic_source())

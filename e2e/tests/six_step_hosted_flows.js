@@ -1041,12 +1041,13 @@ const flows = {
   async 'dragging during a held new item'() {
     const a = await opened();
     a.p.clickItem('a1'); a.p.plus('obstacle');
-    a.p.press('a2'); a.p.pointerTo('s1'); a.p.release(); a.p.clickAfter(); await settle();
+    // Starting the drag closes the new item and the boxes move, so the pointer moves on to s1 after that.
+    a.p.press('a2'); a.p.pointerTo('s1'); a.p.pointerTo('s1'); a.p.release(); a.p.clickAfter(); await settle();
     assert.deepEqual(a.s.writes, [{ items: { a2: { parent: 's1', order: 1 } } }]);
 
     const b = await opened();
     b.p.clickItem('a1'); b.p.plus('obstacle'); b.p.el('typing').value = 'kept';
-    b.p.press('a2'); b.p.pointerTo('s1'); b.p.release(); b.p.clickAfter(); await settle();
+    b.p.press('a2'); b.p.pointerTo('s1'); b.p.pointerTo('s1'); b.p.release(); b.p.clickAfter(); await settle();
     assert.equal(b.s.writes.length, 2);
     const ids = Object.keys(b.s.writes[0].items);
     assert.deepEqual(b.s.writes[0].items[ids[0]], { kind: 'obstacle', text: 'kept', star: false, parent: 'a1', order: 2 });
@@ -1349,13 +1350,14 @@ const flows = {
   async 'dragging onto a box makes it a sub and renumbers'() {
     const { p, s } = await opened(tree([node('o1', 'first'), node('o2', 'second', [node('o3', 'kid')]), node('o4', 'third')]));
     p.press('o2');
-    p.pointerTo('o4', 300, 320);
+    p.pointerTo('o4');
+    const spot = p.spotOn('o4', 0.5);
     assert.equal(p.ghost().hidden, false); assert.equal(p.ghost().textContent, 'second');
-    assert.ok(parseFloat(p.ghost().style.left) >= 300); assert.ok(parseFloat(p.ghost().style.top) >= 320);
+    assert.ok(parseFloat(p.ghost().style.left) >= spot.x); assert.ok(parseFloat(p.ghost().style.top) >= spot.y);
     assert.equal(p.box('o2').classList.contains('drag-source'), true);
     assert.equal(p.box('o4').classList.contains('drop-target'), true);
     assert.equal(p.el('canvas').contains(p.ghost()), false);
-    p.pointerTo('o1', 300, 200);
+    p.pointerTo('o1');
     assert.equal(p.box('o4').classList.contains('drop-target'), false);
     assert.equal(p.box('o1').classList.contains('drop-target'), true);
     p.pointerTo('o4');
@@ -1580,10 +1582,234 @@ const flows = {
     const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other'), node('o3', 'third')]));
     p.press('o1'); p.pointerTo('o2');
     assert.equal(p.box('o2').classList.contains('drop-target'), true);
-    p.sandbox.document.elementFromPoint = () => p.box('o3');
+    p.el('map').scrollTop += p.spotOn('o3', 0.5).y - p.spotOn('o2', 0.5).y;
     assert.ok(p.runFrame());
     assert.equal(p.box('o2').classList.contains('drop-target'), false);
     assert.equal(p.box('o3').classList.contains('drop-target'), true);
+  },
+  async 'dragging to the top quarter of a box shows the line above it and drops there'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]));
+    p.press('c'); p.pointerOn('b', 0.1);
+    const line = p.line();
+    assert.ok(line, 'no line');
+    const boxAt = (id) => p.boxes().find((b) => b.key.endsWith('|' + id));
+    assert.ok(line.top > boxAt('a').y + boxAt('a').h && line.top < boxAt('b').y, 'the line is not in the space');
+    assert.equal(line.left, boxAt('b').x);
+    assert.equal(p.box('b').classList.contains('drop-target'), false, 'a line and a highlight at once');
+    p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(s.writes, [{ items: { c: { parent: 'goal', order: 1.5 } } }]);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'c', 'b']);
+    assert.equal(p.line(), null);
+    const label = (id) => p.box(id).kids[0].textContent;
+    assert.deepEqual(['a', 'c', 'b'].map(label), ['1', '2', '3']);
+    assert.equal(p.isSelected('c'), true); assert.equal(p.active(), p.box('c'));
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'dragging to the bottom quarter shows the line below it and drops there'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]));
+    p.press('a'); p.pointerOn('b', 0.9);
+    const line = p.line();
+    assert.ok(line, 'no line');
+    const boxAt = (id) => p.boxes().find((b) => b.key.endsWith('|' + id));
+    assert.ok(line.top > boxAt('b').y + boxAt('b').h && line.top < boxAt('c').y, 'the line is not in the space');
+    p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(s.writes, [{ items: { a: { parent: 'goal', order: 2.5 } } }]);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['b', 'a', 'c']);
+    assert.equal(p.line(), null);
+  },
+  async 'above the first and below the last both work, under the goal and under an item'() {
+    const { p, s } = await opened(tree([node('a', 'first', [node('k1', 'kid'), node('k2', 'kid')]), node('b', 'second'), node('c', 'third')]));
+    p.press('c'); p.pointerOn('a', 0.1); assert.ok(p.line()); p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['c', 'a', 'b']);
+    p.press('c'); p.pointerOn('b', 0.9); assert.ok(p.line()); p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'b', 'c']);
+    p.press('c'); p.pointerOn('k1', 0.1); assert.ok(p.line()); p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(findIn(stored(s).obstacles, 'a').children.map((o) => o.id), ['c', 'k1', 'k2']);
+    p.press('b'); p.pointerOn('k2', 0.9); assert.ok(p.line()); p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(findIn(stored(s).obstacles, 'a').children.map((o) => o.id), ['c', 'k1', 'k2', 'b']);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a']);
+  },
+  async 'dragging to the middle of a box still makes a sub'() {
+    const { p, s } = await opened(tree([node('a', 'first', [node('k', 'kid')]), node('b', 'second')]));
+    for (const share of [0.3, 0.5, 0.7]) {
+      p.press('b'); p.pointerOn('a', share);
+      assert.equal(p.box('a').classList.contains('drop-target'), true, share);
+      assert.equal(p.line(), null, share);
+      p.fire(p.el('map'), 'keydown', { key: 'Escape' }); p.release(); p.clickAfter();
+    }
+    p.press('b'); p.pointerOn('a', 0.5); p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(s.writes, [{ items: { b: { parent: 'a', order: 2 } } }]);
+    assert.deepEqual(findIn(stored(s).obstacles, 'a').children.map((o) => o.id), ['k', 'b']);
+  },
+  async 'dragging into the empty space between two siblings shows the line'() {
+    const { p, s } = await opened(tree([node('a', 'first', [node('k', 'kid')]), node('b', 'second'), node('c', 'third')]));
+    p.press('c'); p.pointerBetween('a', 'b');
+    assert.ok(p.line(), 'no line');
+    p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'c', 'b']);
+    assert.equal(findIn(stored(s).obstacles, 'a').children[0].id, 'k');
+  },
+  async 'a move between items brings what is under it, and leaves everyone else their subs'() {
+    const { p, s } = await opened(tree([node('a', 'first', [node('a1', 'one'), node('a2', 'two', [sol('f', 'fix')])]), node('b', 'second', [node('b1', 'other')])]));
+    p.press('a2'); p.pointerOn('b', 0.1); p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(s.writes, [{ items: { a2: { parent: 'goal', order: 1.5 } } }]);
+    const saved = stored(s);
+    assert.deepEqual(saved.obstacles.map((o) => o.id), ['a', 'a2', 'b']);
+    assert.deepEqual(findIn(saved.obstacles, 'a').children.map((o) => o.id), ['a1']);
+    assert.deepEqual(findIn(saved.obstacles, 'a2').children.map((o) => o.id), ['f']);
+    assert.deepEqual(findIn(saved.obstacles, 'b').children.map((o) => o.id), ['b1']);
+  },
+  async 'the box beside the spot holds still when a drop lands'() {
+    const { p } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third', [node('k1', 'x'), node('k2', 'y'), node('k3', 'z')])]));
+    p.press('c'); p.pointerOn('b', 0.1);
+    const top = p.box('a').getBoundingClientRect().top;
+    p.release(); p.clickAfter();
+    assert.equal(p.box('a').getBoundingClientRect().top, top);
+  },
+  async 'the line and the middle hold at another zoom'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]));
+    p.fire(p.el('zoom-out'), 'click');
+    p.fire(p.el('zoom-out'), 'click');
+    assert.ok(p.el('canvas').style.transform.includes('0.8'), p.el('canvas').style.transform);
+    p.press('c'); p.pointerOn('b', 0.5);
+    assert.equal(p.box('b').classList.contains('drop-target'), true);
+    p.pointerOn('b', 0.1);
+    const line = p.line();
+    assert.ok(line, 'no line');
+    // The line sits in the frame, which isn't scaled, so the page scales its place.
+    const box = p.boxes().find((b) => b.key.endsWith('|b'));
+    assert.equal(line.left, box.x * 0.8); assert.equal(line.width, 240 * 0.8);
+    assert.ok(line.top < box.y * 0.8 && line.top > (box.y - 18) * 0.8, 'the line is not in the space');
+    p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'c', 'b']);
+  },
+  async 'a drop on its own place writes nothing'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]));
+    p.clickItem('a');
+    const moves = [() => p.pointerOn('a', 0.9), () => p.pointerOn('c', 0.1), () => p.pointerBetween('a', 'b'), () => p.pointerBetween('b', 'c')];
+    for (const move of moves) {
+      p.press('b'); move();
+      assert.ok(p.line(), 'no line');
+      p.release(); p.clickAfter(); await settle();
+      assert.equal(p.line(), null); assert.equal(p.ghost().hidden, true);
+    }
+    assert.equal(s.writes.length, 0);
+    assert.equal(p.status(), 'All changes saved');
+    assert.equal(p.isSelected('a'), true);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'b', 'c']);
+  },
+  async 'no line shows inside the dragged set'() {
+    const { p, s } = await opened(tree([node('a', 'first', [node('k1', 'x', [node('g1', 'deep')]), node('k2', 'y')]), node('b', 'second')]));
+    p.press('a');
+    const spots = [() => p.pointerOn('a', 0.1), () => p.pointerOn('a', 0.9), () => p.pointerOn('k1', 0.1), () => p.pointerOn('k1', 0.9), () => p.pointerOn('k2', 0.1), () => p.pointerOn('g1', 0.1), () => p.pointerBetween('k1', 'k2')];
+    for (const spot of spots) {
+      spot();
+      assert.equal(p.ghost().hidden, false);
+      assert.equal(p.line(), null);
+      assert.ok(!['a', 'k1', 'k2', 'g1'].some((id) => p.box(id).classList.contains('drop-target')));
+    }
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 0);
+  },
+  async 'empty space away from a level shows no line and cancels'() {
+    const { p, s } = await opened(tree([node('a', 'first', [node('k1', 'x')]), node('b', 'second', [node('k2', 'y')])]));
+    p.press('b');
+    p.pointerTo(undefined);
+    assert.equal(p.line(), null);
+    p.pointerBetween('k1', 'k2');
+    assert.equal(p.line(), null, 'a line between cousins');
+    p.pointerOn('a', 0.1); assert.ok(p.line());
+    p.pointerTo(null); assert.equal(p.line(), null, 'a line outside the map');
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 0);
+  },
+  async 'the line clears on every way a drag ends'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]));
+    const stops = [
+      () => p.fire(p.el('map'), 'keydown', { key: 'Escape' }),
+      () => p.fire(p.el('map'), 'pointercancel'),
+      () => p.loseWindow(),
+      () => p.pointerOn('b', 0.1) && p.fire(p.el('map'), 'pointermove', { buttons: 0, clientX: 0, clientY: 0 }),
+      () => { p.pointerTo(undefined); p.release(); },
+      () => p.fire(p.el('zoom-out'), 'pointerdown', { button: 0, buttons: 1, clientX: 10, clientY: 10 }),
+      () => { s.remote({ version: 2 }); }
+    ];
+    for (const stop of stops) {
+      p.press('c'); p.pointerOn('b', 0.1);
+      assert.ok(p.line(), 'no line');
+      stop(); await settle();
+      assert.equal(p.line(), null, String(stop));
+      assert.equal(p.ghost().hidden, true);
+      p.release(); p.clickAfter(); await settle();
+    }
+    assert.equal(s.writes.length, 0);
+  },
+  async 'the line clears when someone deletes the dragged item'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]));
+    p.press('c'); p.pointerOn('b', 0.1);
+    s.remote({ items: { c: { __delete__: true } } }); await settle();
+    assert.equal(p.line(), null); assert.equal(p.ghost().hidden, true);
+    assert.equal(s.writes.length, 0);
+  },
+  async 'a redraw during a drag keeps the line in the space'() {
+    const { p } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]));
+    p.press('c'); p.pointerOn('b', 0.1);
+    const before = p.line();
+    p.resize();
+    assert.deepEqual(p.line(), before);
+    assert.equal(p.el('item-tools').hidden, true);
+  },
+  async 'a refused write after a placement keeps it on screen, not saved'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]), { refuse: ['invalid_argument'] });
+    p.press('c'); p.pointerOn('b', 0.1); p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 1);
+    assert.equal(p.status(), 'Not saved');
+    assert.ok(p.message().includes('still on this page'), p.message());
+    const seen = p.boxes().filter((b) => b.key !== 'goal|').sort((x, y) => x.y - y.y).map((b) => b.key.split('|')[1]);
+    assert.deepEqual(seen, ['a', 'c', 'b']);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'b', 'c']);
+    assert.equal(p.warnsOnClose(), true);
+  },
+  async 'a placement whose write fails for a while goes again and lands'() {
+    const { p, s, timers } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]), { refuse: ['unavailable'] });
+    p.press('c'); p.pointerOn('b', 0.1); p.release(); p.clickAfter(); await settle();
+    assert.equal(s.writes.length, 1);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'b', 'c']);
+    timers.run((t) => t.ms >= 1000 && t.ms < 2000); await settle();
+    assert.equal(s.writes.length, 2);
+    assert.deepEqual(s.writes[1], s.writes[0]);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'c', 'b']);
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a remote delete of a neighbour during a drag doesn\'t throw'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third'), node('d', 'fourth')]));
+    p.press('d'); p.pointerOn('c', 0.1);
+    assert.ok(p.line());
+    s.remote({ items: { b: { __delete__: true } } }); await settle();
+    assert.equal(p.ghost().hidden, false, 'the drag ended');
+    p.pointerOn('c', 0.1);
+    assert.ok(p.line());
+    p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'd', 'c']);
+    assert.equal(p.status(), 'All changes saved');
+  },
+  async 'a remote delete of the level under the line leaves the drag whole, and a drop loses nothing'() {
+    const { p, s } = await opened(tree([node('a', 'first', [node('k1', 'x'), node('k2', 'y')]), node('b', 'second')]));
+    p.press('b'); p.pointerOn('k1', 0.9);
+    assert.ok(p.line());
+    s.remote({ items: { a: { __delete__: true }, k1: { __delete__: true }, k2: { __delete__: true } } }); await settle();
+    assert.equal(p.ghost().hidden, false, 'the drag ended');
+    p.release(); p.clickAfter(); await settle();
+    assert.equal(p.ghost().hidden, true); assert.equal(p.line(), null);
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['b']);
+  },
+  async 'a level reordered by someone else during a drag still lands where the line shows'() {
+    const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third'), node('d', 'fourth')]));
+    p.press('d'); p.pointerOn('b', 0.1);
+    s.remote({ items: { c: { order: 1.5 } } }); await settle();
+    p.pointerOn('b', 0.1);
+    p.release(); p.clickAfter(); await settle();
+    assert.deepEqual(stored(s).obstacles.map((o) => o.id), ['a', 'c', 'd', 'b']);
   },
   async 'a redraw during a drag keeps the dim item and the highlight'() {
     const { p } = await opened(tree([node('o1', 'first'), node('o2', 'other')]));

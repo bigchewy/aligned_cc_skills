@@ -98,7 +98,7 @@ def test_saving_sits_in_the_top_right_and_the_page_has_no_footer():
     assert 'id="dirty"' not in html
     assert "el.dirty" not in html
     assert 'id="save"' not in html and "el.save" not in html
-    assert "Click an item, then press a + to add under it. Double-click to change its words. Drag it onto a box to move it." in header
+    assert "Click an item, then press a + to add under it. Double-click to change its words. Drag it onto a box or between two to move it." in header
     # The status takes the far right, after every other control.
     assert header.rindex("<button") < header.index('id="save-status"')
 
@@ -677,7 +677,20 @@ def test_items_show_they_can_be_grabbed_but_the_goal_does_not():
 
 def test_the_first_write_tells_the_person_they_can_drag():
     first_write = next(line for line in section("## Step 2: Goal").splitlines() if "This is the first write" in line)
-    assert "they can drag an item onto a box to move it" in first_write
+    assert "they can drag an item onto a box to move it, or between two others to reorder it" in first_write
+
+
+def test_the_data_rules_say_how_to_place_an_item_between_two_others():
+    rules = section("## The map")
+    assert "`order` may be a decimal" in rules
+    assert "use a value between theirs" in rules
+
+
+def test_the_drop_line_is_blue_sits_in_the_unscaled_frame_and_takes_no_pointer():
+    html = template()
+    rule = re.search(r"#drop-line \{([^}]*)\}", html)
+    assert rule and "var(--focus)" in rule.group(1) and "pointer-events: none" in rule.group(1)
+    assert '<div id="canvas"></div><div id="drop-line" aria-hidden="true" hidden></div></div>' in html
 
 
 def test_solutions_under_the_goal_get_one_nudge_unless_they_said_it_belongs():

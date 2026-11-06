@@ -42,7 +42,7 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "80% in-office attendance by the end of Q2. Right now we're at about 40%."
 
-**Advisor:** "40% to 80% by the end of Q2. Your map is at https://claude.ai/artifact/abc123. Open it there. It saves by itself and stays private until you use the Share menu. You can drag an item onto a box to move it. Write your own list of what stands between you and this goal. Use paper or a note, not here, and don't tell me what's on it. If I share first, you'll gravitate toward what I said. Say "done" when you have it."
+**Advisor:** "40% to 80% by the end of Q2. Your map is at https://claude.ai/artifact/abc123. Open it there. It saves by itself and stays private until you use the Share menu. You can drag an item onto a box to move it, or between two others to reorder it. Write your own list of what stands between you and this goal. Use paper or a note, not here, and don't tell me what's on it. If I share first, you'll gravitate toward what I said. Say "done" when you have it."
 
 > The confirmed goal starts the map. Claude publishes it, writes `maps/main` and `maps/baseline` in one batch, and gives the link. The message ends at the next stop.
 

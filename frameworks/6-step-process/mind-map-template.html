@@ -101,6 +101,14 @@ header {
 body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 .drag-source { opacity: 0.4; }
 .drop-target { outline: 2px solid var(--focus); outline-offset: 2px; }
+#drop-line {
+  position: absolute;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 2px;
+  background: var(--focus);
+  pointer-events: none;
+}
 #drag-ghost {
   position: fixed;
   z-index: 12;
@@ -237,7 +245,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     <div id="strategy-note" hidden>Not compared to strategy.</div>
   </div>
   <p id="first-hint" hidden>Click the goal, then press a + to add the first obstacle or solution. Double-click to change its words.</p>
-  <p id="edit-hint">Click an item, then press a + to add under it. Double-click to change its words. Drag it onto a box to move it.</p>
+  <p id="edit-hint">Click an item, then press a + to add under it. Double-click to change its words. Drag it onto a box or between two to move it.</p>
   <button type="button" class="quiet" id="zoom-out" aria-label="Make the map smaller">&minus;</button>
   <button type="button" class="quiet" id="zoom-in" aria-label="Make the map bigger">+</button>
   <button type="button" class="quiet" id="zoom-fit" aria-label="Show the whole map">Fit</button>
@@ -248,7 +256,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   <div id="message" role="status" hidden></div>
 </div>
 <div id="workspace">
-  <div id="map"><div id="canvas-frame"><div id="canvas"></div></div></div>
+  <div id="map"><div id="canvas-frame"><div id="canvas"></div><div id="drop-line" aria-hidden="true" hidden></div></div></div>
   <aside id="panel" hidden></aside>
 </div>
 <textarea id="typing" rows="1" placeholder="Type here" hidden></textarea>
@@ -375,6 +383,86 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     next.obstacles = withoutItem(next.obstacles, itemId);
     attach(next, targetId, moving);
     return next;
+  }
+
+  // An item can go among the items under the goal or any other item, its own parent included, but not
+  // under itself or anything under it.
+  function canPlace(map, itemId, parentId) {
+    var item = findItem(map, itemId);
+    if (!item || itemId === parentId || !canAdd(map, parentId, item.kind)) return false;
+    return !eachItem(item.children, function (under) { return under.id === parentId; });
+  }
+
+  // The item lands at that index among its parent's other items, and takes what sits under it along.
+  function placeItem(map, itemId, parentId, index) {
+    var next = copy(map);
+    if (!canPlace(map, itemId, parentId)) return next;
+    var moving = findItem(next, itemId);
+    next.obstacles = withoutItem(next.obstacles, itemId);
+    (parentId === 'goal' ? next.obstacles : findItem(next, parentId).children).splice(index, 0, moving);
+    return next;
+  }
+
+  // How much of a box's height means "onto". The rest, shared by its top and bottom, means "between".
+  var ONTO_SHARE = 0.5;
+
+  // A spot among the items under one parent, with slot of them above it. The index leaves out the item being
+  // dragged, the line stays near the pointer when two siblings sit far apart, and stay names the box that
+  // should hold still when the drop lands.
+  function spotAmong(layout, itemId, parent, slot, y) {
+    var boxes = layout.boxes.filter(function (b) { return b.parent === parent; });
+    var above = boxes[slot - 1];
+    var below = boxes[slot];
+    var margin = layout.stackGap / 2;
+    var low = above ? above.y + above.height + margin : below.y - margin;
+    var high = below ? below.y - margin : low;
+    var others = boxes.filter(function (b) { return b.key !== itemId; });
+    var index = boxes.slice(0, slot).filter(function (b) { return b.key !== itemId; }).length;
+    var stay = others[index - 1] || others[index];
+    return {
+      parent: parent,
+      index: index,
+      same: Boolean((above && above.key === itemId) || (below && below.key === itemId)),
+      stay: stay ? stay.key : parent,
+      x: boxes[0].x,
+      width: boxes[0].width,
+      y: low < high ? Math.max(low, Math.min(y, high)) : (low + high) / 2
+    };
+  }
+
+  // What a pointer at x, y in the map's own pixels would drop on: { onto } for a box, a spot among siblings,
+  // or null. Only siblings share a line, so it can't come between a parent and its subs, and nothing under
+  // the dragged item counts. Boxes never overlap, and a column holds no other box between two siblings.
+  function dropSpot(map, layout, itemId, x, y) {
+    var item = findItem(map, itemId);
+    if (!item) return null;
+    var goal = layout.goal;
+    if (x >= goal.x && x <= goal.x + goal.width && y >= goal.y && y <= goal.y + goal.height) {
+      return canMove(map, itemId, 'goal') ? { onto: 'goal' } : null;
+    }
+    var moving = goneIds(item);
+    var column = layout.boxes.filter(function (b) { return x >= b.x && x <= b.x + b.width; });
+    var slotOf = function (box) {
+      return layout.boxes.filter(function (b) { return b.parent === box.parent; }).indexOf(box);
+    };
+    for (var i = 0; i < column.length; i += 1) {
+      var box = column[i];
+      var bottom = box.y + box.height;
+      if (y >= box.y && y <= bottom) {
+        if (moving[box.key]) return null;
+        var share = (y - box.y) / box.height;
+        var edge = (1 - ONTO_SHARE) / 2;
+        if (share < edge) return spotAmong(layout, itemId, box.parent, slotOf(box), y);
+        if (share > 1 - edge) return spotAmong(layout, itemId, box.parent, slotOf(box) + 1, y);
+        return canMove(map, itemId, box.key) ? { onto: box.key } : null;
+      }
+      var next = column[i + 1];
+      if (next && next.parent === box.parent && y > bottom && y < next.y) {
+        if (moving[box.key] && moving[next.key]) return null;
+        return spotAmong(layout, itemId, box.parent, slotOf(next), y);
+      }
+    }
+    return null;
   }
 
   // A press that moves less than this is still a click, so a shaky hand can still double-click.
@@ -546,7 +634,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     function placeBand(band, column, top, parentKey, fromX, fromY) {
       var x = firstColumn + column * step;
       var lineY = top + band.height / 2;
-      boxes.push({ key: band.id, x: x, y: lineY - band.boxHeight / 2, height: band.boxHeight });
+      boxes.push({ key: band.id, parent: parentKey, x: x, y: lineY - band.boxHeight / 2, width: sizes.boxW, height: band.boxHeight });
       lines.push({ from: parentKey, to: band.id, kind: band.kind, d: curve(fromX, fromY, x, lineY) });
       var kidTop = lineY - band.kidsHeight / 2;
       band.kids.forEach(function (kid) {
@@ -561,7 +649,14 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       y += band.height + sizes.rowGap;
     });
 
-    return { width: width, height: height, goal: { x: sizes.pad, y: midY - sizes.goalH / 2 }, boxes: boxes, lines: lines };
+    return {
+      width: width,
+      height: height,
+      stackGap: sizes.stackGap,
+      goal: { x: sizes.pad, y: midY - sizes.goalH / 2, width: sizes.goalW, height: sizes.goalH },
+      boxes: boxes,
+      lines: lines
+    };
   }
 
   function fitScale(mapWidth, mapHeight, availableWidth, availableHeight, floor) {
@@ -581,6 +676,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     addItem: addItem,
     canMove: canMove,
     moveItem: moveItem,
+    canPlace: canPlace,
+    placeItem: placeItem,
+    dropSpot: dropSpot,
     isDragDistance: isDragDistance,
     idsFrom: idsFrom,
     deleteItem: deleteItem,
@@ -808,12 +906,15 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return highest;
   }
 
-  // Exactly what the action changed, as a nested object. It never names the plan, and a new or moved
-  // item goes last under its parent, one above the highest order the stored document has there.
-  function changeBetween(doc, before, after, skipId) {
+  // Exactly what the action changed, as a nested object. It never names the plan. A new or moved item goes
+  // last under its parent, one above the highest order the stored document has there. placedId names an
+  // item put at a spot among its siblings, which gets an order between its new neighbours'. When that order
+  // can't sort right, that level's items get new orders too, in this one change.
+  function changeBetween(doc, before, after, skipId, placedId) {
     var was = flatItems(before);
     var now = flatItems(after);
     var highest = highestOrders(doc);
+    var stored = isObject(doc) && isObject(doc.items) ? doc.items : {};
     var items = Object.create(null);
     var any = false;
 
@@ -825,12 +926,56 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       items[id] = fields;
       any = true;
     }
+    function storedOrder(id) {
+      return has(stored, id) && isObject(stored[id]) ? stored[id].order : undefined;
+    }
+    // New, under another parent, or moved along its own siblings. The same index means the same place.
+    function isPlaced(id) {
+      if (!has(was, id) || was[id].parent !== now[id].parent) return true;
+      return id === placedId && was[id].order !== now[id].order;
+    }
+    function levelOf(parent) {
+      return Object.keys(now).filter(function (id) {
+        return id !== skipId && now[id].parent === parent;
+      }).sort(function (a, b) { return now[a].order - now[b].order; });
+    }
+    // A number that sorts right against what stays put around it, or undefined.
+    function orderFor(parent, level, i, orders) {
+      var hasPrev = i > 0;
+      var prev = hasPrev ? (has(orders, level[i - 1]) ? orders[level[i - 1]] : storedOrder(level[i - 1])) : undefined;
+      var nextId = level.slice(i + 1).filter(function (id) { return !isPlaced(id); })[0];
+      var next = nextId === undefined ? undefined : storedOrder(nextId);
+      var value;
+      if (nextId === undefined) value = last(parent);
+      else if (hasPrev) value = (prev + next) / 2;
+      else value = next - 1;
+      var fits = typeof value === 'number' && isFinite(value) &&
+        (!hasPrev || (typeof prev === 'number' && value > prev)) &&
+        (nextId === undefined || (typeof next === 'number' && value < next));
+      return fits ? value : undefined;
+    }
+    // Every level with a placed item, and the orders it needs. Ties and values too close to split renumber it.
+    var newOrders = Object.create(null);
+    Object.keys(now).forEach(function (id) {
+      if (id === skipId || !isPlaced(id) || has(newOrders, now[id].parent)) return;
+      var parent = now[id].parent;
+      var level = levelOf(parent);
+      var orders = Object.create(null);
+      var right = level.every(function (each, i) {
+        if (!isPlaced(each)) return true;
+        orders[each] = orderFor(parent, level, i, orders);
+        return orders[each] !== undefined;
+      });
+      if (!right) level.forEach(function (each, i) { orders[each] = i + 1; });
+      newOrders[parent] = orders;
+    });
 
     Object.keys(now).forEach(function (id) {
       if (id === skipId) return;
       var item = now[id];
+      var order = newOrders[item.parent] ? newOrders[item.parent][id] : undefined;
       if (!has(was, id)) {
-        note(id, { kind: item.kind, text: item.text, star: item.star, parent: item.parent, order: last(item.parent) });
+        note(id, { kind: item.kind, text: item.text, star: item.star, parent: item.parent, order: order });
         return;
       }
       var old = was[id];
@@ -838,9 +983,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       var changed = false;
       if (item.text !== old.text) { fields.text = item.text; changed = true; }
       if (item.star !== old.star) { fields.star = item.star; changed = true; }
-      if (item.parent !== old.parent) {
+      if (isPlaced(id)) {
         fields.parent = item.parent;
-        fields.order = last(item.parent);
+        fields.order = order;
+        changed = true;
+      } else if (order !== undefined && order !== storedOrder(id)) {
+        fields.order = order;
         changed = true;
       }
       if (changed) note(id, fields);
@@ -1058,8 +1206,8 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   var asking = null;
   // A press on an item that may become a drag: { ref, x, y }.
   var press = null;
-  // The drag under way, or null: { ref, moving, target, x, y, frame }. moving holds the ids of the item and
-  // everything under it, and target is the highlighted box's ref.
+  // The drag under way, or null: { ref, moving, target, spot, x, y, frame }. moving holds the ids of the item
+  // and everything under it, target is the highlighted box's ref, and spot is where the blue line shows.
   var drag = null;
   // A drag happened, so the click the browser sends when the button comes up must do nothing.
   var afterDrag = false;
@@ -1093,7 +1241,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   var el = {};
   ['person', 'strategy-note', 'edit-hint', 'first-hint', 'map', 'canvas-frame', 'canvas', 'panel', 'save-status', 'message',
-    'typing', 'drag-ghost', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
+    'typing', 'drag-ghost', 'drop-line', 'plus-obstacle', 'plus-solution', 'item-tools', 'star-button',
     'delete-card', 'delete-yes', 'delete-item', 'toggle-plan', 'zoom-out', 'zoom-in', 'zoom-fit'].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
@@ -1360,13 +1508,15 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     drawPanel();
     showStatus();
     keepOnScreen(spot);
+    // The boxes may have moved under a still pointer.
+    if (drag) findDropTarget();
     showControls();
     restoreFocus();
   }
 
-  function setMap(next) {
+  function setMap(next, placedId) {
     notice = '';
-    sendChange(next);
+    sendChange(next, placedId);
     showMessageForState();
     rebuildMap();
     render();
@@ -1394,9 +1544,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return S.inflate(storedWithPending());
   }
 
-  function sendChange(next) {
+  function sendChange(next, placedId) {
     var heldId = holdingNewItem() ? editing.ref.id : null;
-    var change = S.changeBetween(storedWithPending(), view(), next, heldId);
+    var change = S.changeBetween(storedWithPending(), view(), next, heldId, placedId);
     if (change) queue.add(change);
   }
 
@@ -1936,8 +2086,9 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     if (editing) editing.parent = parentId;
   }
 
-  /* Dragging an item onto a box. elementFromPoint finds the box, so the zoom scale never comes into it.
-     The ghost sits outside the canvas, so it isn't scaled either. */
+  /* Dragging an item onto a box or between two others. The pointer is turned into the map's own pixels and
+     checked against the layout the page drew, so zoom never changes what it lands on. The ghost and the
+     blue line sit outside the canvas, so they aren't scaled. */
 
   function setDropTarget(ref) {
     var old = drag.target && boxFor(drag.target);
@@ -1947,10 +2098,31 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     if (box) box.classList.add('drop-target');
   }
 
+  // Shows the blue line for a spot among siblings, or hides it.
+  function setDropSpot(spot) {
+    drag.spot = spot;
+    var line = el['drop-line'];
+    line.hidden = !spot;
+    if (!spot) return;
+    line.style.left = spot.x * scale + 'px';
+    line.style.top = spot.y * scale + 'px';
+    line.style.width = spot.width * scale + 'px';
+  }
+
+  function refFor(id) {
+    return id === 'goal' ? { kind: 'goal' } : { kind: L.findItem(map, id).kind, id: id };
+  }
+
+  // Over the panel, the header or outside the window, the canvas may still run underneath, so that counts as nothing.
   function findDropTarget() {
     var under = document.elementFromPoint(drag.x, drag.y);
-    var ref = under && refAt(under);
-    setDropTarget(ref && L.canMove(map, drag.ref.id, addTarget(ref)) ? ref : null);
+    var found = null;
+    if (under && el.map.contains(under)) {
+      var canvas = el.canvas.getBoundingClientRect();
+      found = L.dropSpot(map, drawnLayout, drag.ref.id, (drag.x - canvas.left) / scale, (drag.y - canvas.top) / scale);
+    }
+    setDropTarget(found && found.onto ? refFor(found.onto) : null);
+    setDropSpot(found && !found.onto ? found : null);
   }
 
   // Dims the item and all that moves with it, or clears that once the drag is over.
@@ -1976,7 +2148,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
     asking = null;
     var item = L.findItem(map, ref.id);
-    drag = { ref: ref, moving: L.idsFrom(map, ref.id), target: null, x: press.x, y: press.y, frame: requestAnimationFrame(dragFrame) };
+    drag = { ref: ref, moving: L.idsFrom(map, ref.id), target: null, spot: null, x: press.x, y: press.y, frame: requestAnimationFrame(dragFrame) };
     showMoving();
     el['drag-ghost'].textContent = item.text || 'A blank item';
     el['drag-ghost'].classList.toggle('stacked', item.children.length > 0);
@@ -2009,6 +2181,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 
   function endDrag() {
     setDropTarget(null);
+    setDropSpot(null);
     cancelAnimationFrame(drag.frame);
     el['drag-ghost'].hidden = true;
     document.body.classList.remove('dragging');
@@ -2025,16 +2198,29 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     focusBox(selected);
   }
 
-  // The box it landed on is selected during the redraw, so that box holds still under the pointer.
-  function dropOn(ref, target) {
+  // A box beside the landing spot is selected during the redraw, so that box holds still under the pointer.
+  function land(ref, stay, next, placedId) {
     endDrag();
-    selected = target;
-    setMap(L.moveItem(map, ref.id, addTarget(target)));
+    selected = stay;
+    setMap(next, placedId);
     markSelected(ref);
     showControls();
     focusBox(ref);
     boxFor(ref).scrollIntoView({ block: 'nearest', inline: 'nearest' });
     positionControls();
+  }
+
+  function dropOn(ref, target) {
+    land(ref, target, L.moveItem(map, ref.id, addTarget(target)));
+  }
+
+  // The spot beside the item's own place changes nothing, so it ends like a cancel.
+  function dropBetween(ref, spot) {
+    if (spot.same) {
+      cancelDrag();
+      return;
+    }
+    land(ref, refFor(spot.stay), L.placeItem(map, ref.id, spot.parent, spot.index), ref.id);
   }
 
   /* Messages */
@@ -2141,6 +2327,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     }
     moveDrag(e);
     if (drag.target) dropOn(drag.ref, drag.target);
+    else if (drag.spot) dropBetween(drag.ref, drag.spot);
     else cancelDrag();
   });
 
