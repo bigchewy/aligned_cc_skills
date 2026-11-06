@@ -85,7 +85,7 @@ Problems that keep coming back, and who makes which call.
 | ID | Name | Advisor | Use When |
 |----|------|---------|----------|
 | root-cause-analysis | Root Cause Analysis | coach-eric | something isn't working and the user needs to diagnose why before proposing fixes; the deliverable is a diagnostic document, not a brainstorm |
-| 6-step-process | 6-Step Process | coach-eric | someone has a goal or a problem and wants to work through it step by step, with Claude as the other member of the group, and end with a mind map they can edit on their own machine |
+| 6-step-process | 6-Step Process | coach-eric | someone has a goal or a problem and wants to work through it step by step, with Claude as the other member of the group, and end with a shared mind map they can edit with others |
 | believability-weighted-decision-making | Believability-Weighted Decision Making | ray-dalio | a team needs to make a high-stakes decision and wants to weight input by each person's track record and expertise |
 | type-1-type-2-decisions | Type 1 vs Type 2 Decisions | jeff-bezos | someone is applying the same heavyweight decision process to every decision and needs to distinguish reversible from irreversible choices |
 
@@ -141,7 +141,7 @@ Fix a process that keeps breaking.
 | ID | Name | Advisor | Use When |
 |----|------|---------|----------|
 | the-algorithm | The Algorithm | elon-musk | someone needs to dramatically improve a process or product using a systematic question-delete-simplify-accelerate-automate approach |
-| 6-step-process | 6-Step Process | coach-eric | someone has a goal or a problem and wants to work through it step by step, with Claude as the other member of the group, and end with a mind map they can edit on their own machine |
+| 6-step-process | 6-Step Process | coach-eric | someone has a goal or a problem and wants to work through it step by step, with Claude as the other member of the group, and end with a shared mind map they can edit with others |
 
 #### Product-market fit (11)
 

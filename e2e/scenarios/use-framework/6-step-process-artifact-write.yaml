@@ -38,6 +38,6 @@ tests:
         2. Move the obstacle "The commute got longer" so it sits directly under the goal.
         3. Take the solution "Create in-person-only experiences" off the map.
 
-        Make those changes now, and tell me what changed since your last write that you didn't do. Then list every obstacle on the map with its label as it will be after this write, one per line, using each obstacle's exact text. Don't ask me anything first.
+        Make those changes now. Then list every obstacle on the map with its label as it will be after this write, one per line, using each obstacle's exact text. Don't ask me anything first.
 
         (Test harness note: tool calls aren't available in this conversation. Write the one ArtifactData call you would send as a single fenced json code block, in the form {"action": "batch", "url": "...", "writes": [...]}. The real tool's schema would give you this form: each entry in writes is {"op": "set" or "update", "collection": "...", "doc_id": "...", "if_version": 1, "data": {...}}. For a new item's id, make one up. Then write the reply the person sees, outside that block.)

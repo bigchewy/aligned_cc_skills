@@ -177,6 +177,13 @@ def test_leaving_the_sub_item_behind_fails():
     assert_fails(score(reply(writes_with(change))), "dd1")
 
 
+def test_leaving_the_leftover_item_fails():
+    def change(writes):
+        del writes[0]["data"]["items"]["xx1"]
+        writes[1]["data"]["items"]["xx1"] = SEED["main"]["items"]["xx1"]
+    assert_fails(score(reply(writes_with(change))), "xx1")
+
+
 def test_no_baseline_in_the_batch_fails():
     assert_fails(score(reply(good_writes()[:1])), "baseline")
 
@@ -278,6 +285,8 @@ def test_scenario_uses_the_real_prompt_and_the_scorer():
     assert test["metadata"]["arm"] == "single"
     assert test["vars"]["system_context"] == "file://../../../frameworks/6-step-process/prompt.md"
     assert test["vars"]["seed"] == "file://../../fixtures/six-step-map/seed.json"
+    # The reply must report other people's edits because prompt.md says to, not because the task asks.
+    assert "didn't do" not in test["vars"]["task_prompt"]
     assert "{{seed}}" in data["prompts"][0]
 
 

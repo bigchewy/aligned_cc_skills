@@ -189,7 +189,7 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "You renamed the noise obstacle, deleted the productivity obstacle and the pulse survey under it, and added 4A under expectations. The pulse survey had no Step 5 row, so nothing else went with it. Which step do you want to resume?"
+**Advisor:** "The noise obstacle was renamed, the productivity obstacle and the pulse survey under it were deleted, and 4A was added under expectations. The pulse survey had no Step 5 row, so nothing else went with it. Which step do you want to resume?"
 
 > Claude compares `maps/main` with `maps/baseline` and lists the changes in plain words, including what went with a deleted item. If it only lists them, it sets `maps/baseline` to this version, so the next pick-up sees only newer edits.
 
@@ -197,7 +197,7 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "You moved create in-person-only experiences from 1B to 1, the commute obstacle itself. That's the only change. Which step do you want to resume?"
+**Advisor:** "Create in-person-only experiences moved from 1B to 1, the commute obstacle itself. That's the only change. Which step do you want to resume?"
 
 > The solution's parent changed, and Claude names both items by label. Claude compares items by `id` and parent, because a label can change when an item before it is deleted.
 
@@ -205,7 +205,7 @@ Which ratings are wrong?"
 
 **User:** "I changed the map."
 
-**Advisor:** "You moved the value of the office not keeping up from 1 to 5, along with the two sub-obstacles and the solutions under it. It's 5B now. Which step do you want to resume?"
+**Advisor:** "The value of the office not keeping up moved from 1 to 5, along with the two sub-obstacles and the solutions under it. It's 5B now. Which step do you want to resume?"
 
 > A moved obstacle gets reported with what's under it.
 

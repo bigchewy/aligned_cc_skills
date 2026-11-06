@@ -132,7 +132,7 @@ function checkMainWrite(write, seed, problems) {
 function checkItems(main, seed, problems) {
   const items = main.items || {};
   if (main.version !== 1) problems.push('the version field is ' + main.version + ', not 1');
-  ['cc1', 'dd1'].forEach((id) => {
+  ['cc1', 'dd1', 'xx1'].forEach((id) => {
     if (id in items) problems.push('removed item ' + id + ' is still in items');
   });
   const moved = items.bb1 || {};

@@ -2,6 +2,7 @@
 
 import json
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -807,7 +808,7 @@ def test_no_edit_example_never_says_the_save_went_astray():
     examples = EXAMPLES.read_text()
     start = examples.index("### No edits, and they didn't say they changed it")
     body = examples[start:examples.index("\n### ", start + 1)]
-    assert "doesn't have your edits" not in body
+    assert "doesn't show your edits" not in body
 
 
 # The tree in the page and the prompt
@@ -1194,9 +1195,22 @@ def test_prompt_stops_plainly_without_the_artifact_tools():
     assert check < opening.index("Then stop") < opening.index("We'll work through six steps")
 
 
+def test_prompt_counts_a_tool_it_can_load_before_deciding():
+    opening = section("## Opening")
+    load = opening.index("A tool you can load counts as one you have, so load it before deciding.")
+    assert load < opening.index("needs Claude's artifact tools") < opening.index("Then stop")
+
+
 def test_prompt_stops_plainly_when_a_publish_fails():
     rules = section("## The map")
-    assert "If a publish fails, say so plainly and stop." in rules
+    path_try = rules.index("Publish that file directly, by its path")
+    refused = rules.index("If that's refused")
+    whole = rules.index("read the whole file")
+    write = rules.index("write it unchanged to a working or temporary folder")
+    copy = rules.index("publish that copy")
+    stop = rules.index("If that fails too, say so plainly and stop.")
+    assert path_try < refused < whole < write < copy < stop
+    assert "If a publish fails" not in rules
 
 
 def test_prompt_publishes_the_template_itself_with_its_capabilities():
@@ -1211,11 +1225,12 @@ def test_prompt_publishes_the_template_itself_with_its_capabilities():
 
 def test_prompt_gives_a_second_map_its_own_link():
     rules = section("## The map")
-    # The tool reuses a link when the same file path publishes twice in one conversation.
-    assert "same file path" in rules
-    assert "second map" in rules
-    assert "temporary folder" in rules
+    assert "For a second map, tell them to start a new conversation and run the framework again there." in rules
+    # The tool reuses a link when one path publishes twice in a conversation, so the refusal stays as the guard.
     assert "already holds a map" in rules
+    assert "second map in one conversation" not in rules
+    assert "for a second map" not in section("## Opening")
+    assert "when a publish by path is refused" in section("## Opening")
 
 
 def test_prompt_first_write_batches_main_and_baseline():
@@ -1251,10 +1266,88 @@ def test_prompt_shows_the_flat_shape_and_version_1():
     for item in data["items"].values():
         assert sorted(item) == ["kind", "order", "parent", "star", "text"]
     for item_id in data["items"]:
-        assert re.fullmatch(r"[a-z0-9]+", item_id)
+        assert re.fullmatch(r"[a-z0-9]{8}", item_id)
+    for sample in re.findall(r'"([a-z0-9]+)": \{"(?:text|__delete__)"', section("## The map")):
+        assert sample == "goal" or len(sample) == 8, sample
     rules = section("## The map")
     assert "lowercase letters and digits" in rules
     assert "highest `order` under that parent plus one" in rules
+
+
+def page_store(code, **data):
+    html = template()
+    def block(name):
+        return re.search(r'<script id="%s">(.*?)</script>' % name, html, re.S).group(1)
+    program = (
+        "(new Function(%s))();(new Function(%s))();"
+        "const L = globalThis.MapLogic, S = globalThis.MapStore, D = %s;"
+        "process.stdout.write(JSON.stringify((function () { %s })()));"
+    ) % (json.dumps(block("map-logic")), json.dumps(block("map-store")), json.dumps(data), code)
+    proc = subprocess.run(["node", "-"], input=program, capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr
+    return json.loads(proc.stdout)
+
+
+def test_prompt_sample_draws_through_the_page_code():
+    sample = map_json()
+    obstacle_id, solution_id = list(sample["items"])
+    result = page_store(
+        "const map = S.inflate(D.doc); return {map: map, labels: L.itemLabels(map), stale: S.unknownVersion(D.doc)};",
+        doc=sample,
+    )
+    assert result["stale"] is False
+    top = result["map"]["obstacles"]
+    assert [item["id"] for item in top] == [obstacle_id]
+    assert top[0]["kind"] == "obstacle"
+    assert [item["id"] for item in top[0]["children"]] == [solution_id]
+    assert top[0]["children"][0]["kind"] == "solution"
+    assert result["labels"] == {obstacle_id: "1"}
+    assert [row["solution_id"] for row in result["map"]["execute"]] == [solution_id]
+    assert result["map"]["key_actions"][0]["solution_ids"] == [solution_id]
+
+
+def test_prompt_says_a_row_must_name_a_solution_in_items():
+    plan = section("## The map")
+    assert "A row must name a solution in `items`, because the page hides other rows with no message." in plan
+
+
+def test_prompt_first_write_stops_on_any_other_refusal():
+    rules = section("## The map")
+    first = rules[rules.index("**The first write.**"):rules.index("**Every point marked")]
+    assert "If it's refused for any other reason, or the result says only part applied, tell the person plainly and stop." in first
+
+
+def test_prompt_stops_on_a_missing_or_newer_format():
+    line = next(l for l in section("## Picking up edits").splitlines() if "`version` field" in l)
+    assert "is missing or isn't 1" in line
+    assert "and stop" in line
+    assert "don't write to it" in line
+
+
+def test_private_and_share_lines_only_for_a_map_published_here():
+    first_write = next(l for l in section("## Step 2: Goal").splitlines() if "This is the first write" in l)
+    for line in (first_write, section("## Close")):
+        at = line.index("If you published it in this conversation")
+        assert at < line.index("private until they use the Share menu")
+
+
+def test_examples_dont_say_who_made_an_edit():
+    examples = EXAMPLES.read_text()
+    start = examples.index("## Picking up edits")
+    body = examples[start:]
+    for gone in ("You renamed", "You moved", "You deleted"):
+        assert gone not in body, gone
+    assert "The noise obstacle was renamed" in body
+
+
+def test_catalog_wording_says_the_map_is_shared_not_on_a_machine():
+    entries = yaml.safe_load(REGISTRY.read_text())["frameworks"]
+    entry = next(e for e in entries if e["id"] == "6-step-process")
+    assert "own machine" not in entry["purpose"] and "own machine" not in entry["use_when"]
+    for rel in ("skills/playbook/pages/index.html", "skills/playbook/pages/frameworks/6-step-process.html",
+                "skills/org-chart/pages/seats/ceo.html", "skills/org-chart/pages/seats/coo.html",
+                "docs/framework-catalog.html", "frameworks/README.md"):
+        assert "on their own machine" not in (REPO / rel).read_text(), rel
 
 
 def test_prompt_says_only_claude_writes_plan_rows_and_removes_gone_ones():

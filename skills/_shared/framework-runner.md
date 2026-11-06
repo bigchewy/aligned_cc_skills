@@ -8,7 +8,7 @@ The calling skill passes:
 - **Matched framework path:** absolute path to the framework folder containing `prompt.md` / `examples.md` / `anti-examples.md`
 - **`intake_gate_mode`:** `strict` or `advisory` (default `advisory`)
 - **`framework_entry`** (optional): the framework's merged entry from `skills/_shared/resolve-framework-source.md`. When absent, the runner reads the advisor from the first line of `prompt.md` (see Step 0).
-- **`publish_artifact`:** `yes` or `no` (default `yes`). With `yes`, Step 4 publishes the framework's result as an artifact. A caller that builds its own page from the result passes `no`.
+- **`publish_artifact`:** `yes` or `no` (default `yes`). With `yes`, Step 4 publishes the framework's result as an artifact. A caller that builds its own page from the result passes `no`. This setting governs Step 4 only, so a framework that publishes for itself still publishes, because its data lives there.
 
 ## Configuration Validation (fail-closed)
 

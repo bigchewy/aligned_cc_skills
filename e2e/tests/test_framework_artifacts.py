@@ -99,6 +99,13 @@ def test_six_step_publishes_for_itself():
     assert "local file" not in art
 
 
+def test_publish_artifact_no_governs_step_4_only():
+    config = section(read("skills/_shared/framework-runner.md"), "## Configuration")
+    line = next(l for l in config.splitlines() if l.startswith("- **`publish_artifact`:**"))
+    assert "governs Step 4 only" in line
+    assert "publishes for itself still publishes" in line
+
+
 def test_runner_lets_a_framework_publish_for_itself():
     text = read("skills/_shared/framework-runner.md")
     step = section(text, "## Step 4: Publish the Result as an Artifact")
