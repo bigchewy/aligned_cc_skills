@@ -144,6 +144,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
 #panel dd { margin: 0 0 4px; overflow-wrap: anywhere; }
 .row-title { font-weight: 600; margin: 8px 0 2px; overflow-wrap: anywhere; }
 .none { color: var(--muted); margin: 0; }
+.goal-notes { display: block; width: 100%; box-sizing: border-box; min-height: 96px; padding: 6px 8px; overflow: hidden; resize: none; font: inherit; color: inherit; background: transparent; border: 1px solid var(--edge); border-radius: 6px; }
 
 #save-status { margin: 0; font-size: 14px; color: var(--muted); min-width: 125px; text-align: right; }
 #save-status.saved { color: var(--ink); }
@@ -524,7 +525,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   function setGoal(map, goal) {
     var next = copy(map);
     next.goal = goal;
-    // The page only edits the goal's text. The explanation is Claude's, so it stays.
+    // An edit to the goal's text leaves the explanation alone.
     if (map.goal.detail && goal.detail === undefined) next.goal.detail = map.goal.detail;
     return next;
   }
@@ -1009,6 +1010,10 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     var change = {};
     if (any) change.items = items;
     if (before.goal.text !== after.goal.text) change.goal = { text: after.goal.text };
+    if ((before.goal.detail || '') !== (after.goal.detail || '')) {
+      change.goal = change.goal || {};
+      change.goal.detail = after.goal.detail || '';
+    }
     return Object.keys(change).length ? change : null;
   }
 
@@ -1433,9 +1438,56 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return dl;
   }
 
+  // One box for the whole visit, so a redraw can't take the words or the focus from someone typing.
+  var notes = make('textarea', 'goal-notes');
+  var notesOpened = null;
+  notes.placeholder = 'Add notes about this goal';
+  notes.setAttribute('aria-label', 'Notes about this goal');
+
+  function fitNotes() {
+    notes.style.height = 'auto';
+    if (notes.scrollHeight) notes.style.height = (notes.scrollHeight + 2) + 'px';
+  }
+
+  function saveNotes() {
+    if (notesOpened === null) return;
+    var opened = notesOpened;
+    var text = notes.value.trim();
+    notesOpened = null;
+    if (text === opened.trim()) {
+      drawPanel();
+      return;
+    }
+    if (!canEdit()) {
+      notice = 'This map can\'t be changed right now, so your notes weren\'t saved.';
+      showMessageForState();
+      drawPanel();
+      return;
+    }
+    var current = map.goal.detail || '';
+    var overwrote = current !== opened && current !== text;
+    setMap(L.setGoal(map, { text: map.goal.text, detail: text }));
+    if (overwrote) {
+      notice = 'Someone else changed this while you were typing. Your words replaced theirs.';
+      showMessageForState();
+    }
+  }
+
+  notes.addEventListener('focus', function () { notesOpened = notes.value; });
+  notes.addEventListener('input', fitNotes);
+  notes.addEventListener('blur', saveNotes);
+  notes.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || notesOpened === null) return;
+    notes.value = notesOpened;
+    notesOpened = null;
+    notes.blur();
+    drawPanel();
+  });
+
   function drawPanel() {
     el.panel.hidden = !panelOpen;
     el['toggle-plan'].textContent = panelOpen ? 'Hide plan' : 'Show plan';
+    if (notesOpened !== null) return;
     el.panel.textContent = '';
     var rows = L.panelRows(map);
 
@@ -1480,7 +1532,12 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       ]));
     }
 
-    if (map.goal.detail) {
+    if (canEdit()) {
+      el.panel.appendChild(heading('Appendix:', 'about this goal'));
+      notes.value = map.goal.detail || '';
+      el.panel.appendChild(notes);
+      fitNotes();
+    } else if (map.goal.detail) {
       el.panel.appendChild(heading('Appendix:', 'about this goal'));
       map.goal.detail.split(/\n\s*\n/).forEach(function (part) {
         el.panel.appendChild(make('p', '', part));
@@ -2359,7 +2416,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       if (e.key === 'Escape') cancelDrag();
       return;
     }
-    if (e.target === el.typing) return;
+    if (e.target === el.typing || e.target === notes) return;
     if (e.key === 'Tab') {
       tabThroughControls(e);
     } else if (e.key === 'Escape' && editing) {
@@ -2446,7 +2503,7 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
   if (window.ResizeObserver) new ResizeObserver(positionControls).observe(el.map);
 
   window.addEventListener('beforeunload', function (e) {
-    if (L.shouldWarnOnClose(finishTyping, isDirty)) {
+    if (L.shouldWarnOnClose(function () { finishTyping(); saveNotes(); }, isDirty)) {
       e.preventDefault();
       e.returnValue = '';
     }

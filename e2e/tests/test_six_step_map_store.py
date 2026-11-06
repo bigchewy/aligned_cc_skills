@@ -116,6 +116,31 @@ def test_goal_explanation_survives_inflate_and_flatten():
     assert run("return S.flatten(S.inflate(D.doc));", doc=doc) == doc
 
 
+def test_changing_the_explanation_sends_only_the_explanation():
+    doc = json.loads(EXAMPLE.read_text())
+    doc["goal"]["detail"] = "Old."
+    change = run(
+        "const b = S.inflate(D.doc); return S.changeBetween(D.doc, b, L.setGoal(b, { text: b.goal.text, detail: D.next }));",
+        doc=doc, next="New.",
+    )
+    assert change == {"goal": {"detail": "New."}}
+
+
+def test_clearing_the_explanation_sends_an_empty_one_and_it_reads_back_as_none():
+    doc = json.loads(EXAMPLE.read_text())
+    doc["goal"]["detail"] = "Old."
+    result = run(
+        """
+        const b = S.inflate(D.doc);
+        const change = S.changeBetween(D.doc, b, L.setGoal(b, { text: b.goal.text, detail: '' }));
+        return { change, goal: S.inflate(S.overlay(D.doc, [change])).goal };
+        """,
+        doc=doc,
+    )
+    assert result["change"] == {"goal": {"detail": ""}}
+    assert "detail" not in result["goal"]
+
+
 def test_goal_explanation_that_is_not_text_is_left_out():
     doc = json.loads(EXAMPLE.read_text())
     doc["goal"]["detail"] = 42

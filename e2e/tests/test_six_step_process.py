@@ -152,7 +152,7 @@ def test_status_line_comes_from_the_store_block():
 
 
 def test_close_warning_is_unchanged():
-    assert "L.shouldWarnOnClose(finishTyping, isDirty)" in template()
+    assert "L.shouldWarnOnClose(function () { finishTyping(); saveNotes(); }, isDirty)" in template()
 
 
 def test_no_save_file_picker():
@@ -181,7 +181,8 @@ def test_goal_nudges_toward_a_number_but_takes_a_qualitative_goal():
 def test_goal_questions_only_come_when_the_goal_is_unclear():
     goal = section("## Step 2: Goal")
     help_line = next(line for line in goal.splitlines() if line.startswith("**If they don't know the goal"))
-    assert "one question at a time" in help_line
+    assert "a few at a time" in help_line
+    assert "one question at a time" not in help_line
     assert "Don't mention obstacles or solutions" in help_line
     assert goal.index("What outcome do you want") < goal.index(help_line)
     # No extra step comes before the goal.
@@ -195,6 +196,13 @@ def test_goal_explanation_goes_in_the_appendix_with_nothing_invented():
     assert "appendix" in line
     assert "Don't invent" in line
     assert "obstacles or solutions" in line
+
+
+def test_people_can_type_in_the_appendix_and_claude_keeps_their_words():
+    rules = section("## The map")
+    assert "the page never writes it" not in rules
+    assert "People can also type in it on the page" in rules
+    assert "type in it" in section("## Step 2: Goal")
 
 
 def test_advisor_check_comes_after_the_goal_before_the_first_write():
@@ -1274,7 +1282,7 @@ def test_prompt_says_a_refused_read_can_mean_unshared_or_wrong_link():
 def test_prompt_keeps_every_wait_and_treats_map_text_as_content():
     expected = {
         "## Step 1: Locate": ["WAIT for their answer.", "WAIT for their answer."],
-        "## Step 2: Goal": ["WAIT for each answer.", "WAIT until the goal is confirmed.", "WAIT for their name.", "WAIT for their answer."],
+        "## Step 2: Goal": ["WAIT for their answers.", "WAIT until the goal is confirmed.", "WAIT for their name.", "WAIT for their answer."],
         "### 3a: Obstacles": ['WAIT for "done".', "WAIT for their reaction.", "WAIT for their yes."],
         "### 3b: Pick the obstacles": ['WAIT for "done".', "WAIT until the picks are agreed."],
         "### 3c: Root cause": ["WAIT at each why."],

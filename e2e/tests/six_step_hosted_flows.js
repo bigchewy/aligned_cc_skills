@@ -144,30 +144,122 @@ function assertNoEditing(p, s, id) {
   if (s) assert.equal(s.writes.length, before, 'something wrote');
 }
 
+const openPlan = (p) => p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
+const notesBox = (p) => p.el('panel').walk().find((k) => k.tag === 'TEXTAREA');
+
 const flows = {
-  async 'the appendix shows the goal explanation, one paragraph at a time'() {
-    const { p } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'First part.\n\nSecond part.' } }));
-    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
-    const paragraphs = p.el('panel').walk().filter((k) => k.tag === 'P').map((k) => k.textContent);
-    assert.ok(p.panelText().includes('Appendix'));
-    assert.ok(paragraphs.includes('First part.') && paragraphs.includes('Second part.'));
+  async 'someone who can edit types directly in the appendix, and it saves when they leave the box'() {
+    const { p, s } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'Old words.' } }));
+    openPlan(p);
+    const box = notesBox(p);
+    assert.equal(box.value, 'Old words.');
+    p.fire(box, 'focus');
+    box.value = 'New words.\n\nA second note.';
+    p.fire(box, 'blur');
+    await settle();
+    assert.deepEqual(s.writes, [{ goal: { detail: 'New words.\n\nA second note.' } }]);
+    assert.equal(s.body.goal.text, 'g');
   },
 
-  async 'a map with no goal explanation shows no appendix'() {
-    const { p } = await opened();
-    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
+  async 'an empty appendix still offers a box to type in'() {
+    const { p, s } = await opened();
+    openPlan(p);
+    assert.ok(p.panelText().includes('Appendix'));
+    const box = notesBox(p);
+    assert.equal(box.value, '');
+    p.fire(box, 'focus');
+    p.fire(box, 'blur');
+    await settle();
+    assert.deepEqual(s.writes, [], 'leaving it unchanged wrote something');
+  },
+
+  async 'clearing the appendix removes the explanation'() {
+    const { p, s } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'Old words.' } }));
+    openPlan(p);
+    const box = notesBox(p);
+    p.fire(box, 'focus');
+    box.value = '  ';
+    p.fire(box, 'blur');
+    await settle();
+    assert.deepEqual(s.writes, [{ goal: { detail: '' } }]);
+  },
+
+  async 'Escape in the appendix puts the old words back and writes nothing'() {
+    const { p, s } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'Old words.' } }));
+    openPlan(p);
+    const box = notesBox(p);
+    p.fire(box, 'focus');
+    box.value = 'Changed my mind.';
+    p.fire(box, 'keydown', { key: 'Escape' });
+    await settle();
+    assert.equal(notesBox(p).value, 'Old words.');
+    assert.deepEqual(s.writes, []);
+  },
+
+  async 'a new snapshot while typing in the appendix keeps the box and the words'() {
+    const { p, s } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'Old words.' } }));
+    openPlan(p);
+    const box = notesBox(p);
+    box.focus();
+    p.fire(box, 'focus');
+    box.value = 'Half typed';
+    s.remote({ items: { a9: item('obstacle', 'from someone else', 'goal', 1) } });
+    await settle();
+    assert.equal(notesBox(p), box);
+    assert.equal(box.value, 'Half typed');
+    assert.equal(p.active(), box);
+  },
+
+  async 'overwriting what someone else just wrote in the appendix says so'() {
+    const { p, s } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'Old words.' } }));
+    openPlan(p);
+    const box = notesBox(p);
+    box.focus();
+    p.fire(box, 'focus');
+    box.value = 'Mine.';
+    s.remote({ goal: { detail: 'Theirs.' } });
+    await settle();
+    box.blur();
+    p.fire(box, 'blur');
+    await settle();
+    assert.equal(s.body.goal.detail, 'Mine.');
+    assert.ok(p.el('message').textContent.includes('Your words replaced theirs'));
+  },
+
+  async 'closing the page with words in the appendix saves them and warns until they land'() {
+    const { p, s } = await opened();
+    s.hold = true;
+    openPlan(p);
+    const box = notesBox(p);
+    p.fire(box, 'focus');
+    box.value = 'Typed, never left the box.';
+    assert.equal(p.warnsOnClose(), true);
+    assert.deepEqual(s.writes, [{ goal: { detail: 'Typed, never left the box.' } }]);
+  },
+
+  async 'a view-only person reads the appendix one paragraph at a time and gets no box'() {
+    const { p } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'First part.\n\nSecond part.' } }), { can: { 'data.write': false } });
+    openPlan(p);
+    const paragraphs = p.el('panel').walk().filter((k) => k.tag === 'P').map((k) => k.textContent);
+    assert.ok(paragraphs.includes('First part.') && paragraphs.includes('Second part.'));
+    assert.equal(notesBox(p), undefined);
+  },
+
+  async 'a view-only person sees no appendix when there is no explanation'() {
+    const { p } = await opened(undefined, { can: { 'data.write': false } });
+    openPlan(p);
     assert.ok(!p.panelText().includes('Appendix'));
+    assert.equal(notesBox(p), undefined);
   },
 
   async 'editing the goal on the page sends only its text and keeps the explanation'() {
     const { p, s } = await opened(mapDoc({}, { goal: { text: 'g', detail: 'Why this matters.' } }));
-    p.openGoal();
     p.edit('new goal');
     await settle();
     assert.deepEqual(s.writes[s.writes.length - 1], { goal: { text: 'new goal' } });
     assert.equal(s.body.goal.detail, 'Why this matters.');
-    p.sandbox.document.getElementById('toggle-plan').listeners.click[0]();
-    assert.ok(p.panelText().includes('Why this matters.'));
+    openPlan(p);
+    assert.equal(notesBox(p).value, 'Why this matters.');
   },
 
   async 'opened outside Claude says the map opens inside Claude, and allows no edits'() {

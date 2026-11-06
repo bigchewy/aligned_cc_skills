@@ -58,17 +58,13 @@ All of these follow one case: Maya wants 80% in-office attendance by the end of 
 
 **User:** "I don't really know. I just know something's off with how we sell."
 
-**Advisor:** "What prompted this now?"
+**Advisor:** "What prompted this now? If it went well, what would be different six months from now?"
 
-**User:** "We lost three deals last month that we should have won."
-
-**Advisor:** "If this went well, what would be different six months from now?"
-
-**User:** "We'd stop losing to the same competitor, and I'd trust the forecast."
+**User:** "We lost three deals last month that we should have won. We'd stop losing to the same competitor, and I'd trust the forecast."
 
 **Advisor:** "So the goal might be: win the deals we're losing to our main competitor, and have a forecast you trust. Does that say it?"
 
-> One question at a time, only because they asked for help, and no obstacles or solutions. Claude stops as soon as it can propose the goal.
+> A few questions at a time, only because they asked for help, and no obstacles or solutions. Claude stops as soon as it can propose the goal.
 
 ### A clearly better advisor for this goal
 
