@@ -1759,6 +1759,17 @@ const flows = {
     assert.deepEqual(p.line(), before);
     assert.equal(p.el('item-tools').hidden, true);
   },
+  async 'a drop onto a box and an add send only their own item, beside a bad order and an orphan'() {
+    const doc = mapDoc({ a1: item('obstacle', 'first', 'goal', 1), k1: item('obstacle', 'kid', 'a1', 'x'), a2: item('obstacle', 'second', 'goal', 2), o1: item('obstacle', 'lost', 'gone', 9) });
+    const { p, s } = await opened(doc);
+    p.dragOnto('a2', 'a1'); await settle();
+    assert.deepEqual(s.writes, [{ items: { a2: { parent: 'a1', order: 1 } } }]);
+    p.addObstacle(); p.typeAndEnter('new one'); await settle();
+    assert.equal(s.writes.length, 2);
+    const added = s.writes[1].items;
+    assert.equal(Object.keys(added).length, 1);
+    assert.equal(Object.values(added)[0].order, 10);
+  },
   async 'a refused write after a placement keeps it on screen, not saved'() {
     const { p, s } = await opened(tree([node('a', 'first'), node('b', 'second'), node('c', 'third')]), { refuse: ['invalid_argument'] });
     p.press('c'); p.pointerOn('b', 0.1); p.release(); p.clickAfter(); await settle();

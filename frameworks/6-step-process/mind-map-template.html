@@ -894,27 +894,36 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     return next;
   }
 
-  function highestOrders(doc) {
+  function usableOrder(value) {
+    return typeof value === 'number' && isFinite(value);
+  }
+
+  // The highest order under each parent, from what is stored and from where each item shows. An item shown
+  // under the goal with its parent gone counts there too, so whatever goes last lands below it.
+  function highestOrders(stored, shown) {
     var highest = Object.create(null);
-    var items = isObject(doc) && isObject(doc.items) ? doc.items : {};
-    Object.keys(items).forEach(function (id) {
-      var entry = items[id];
-      if (!isObject(entry) || typeof entry.order !== 'number' || !isFinite(entry.order)) return;
-      if (typeof entry.parent !== 'string') return;
-      if (!(entry.parent in highest) || entry.order > highest[entry.parent]) highest[entry.parent] = entry.order;
+    function raise(parent, entry) {
+      if (!isObject(entry) || !usableOrder(entry.order) || typeof parent !== 'string') return;
+      if (!(parent in highest) || entry.order > highest[parent]) highest[parent] = entry.order;
+    }
+    Object.keys(stored).forEach(function (id) {
+      if (isObject(stored[id])) raise(stored[id].parent, stored[id]);
+    });
+    Object.keys(shown).forEach(function (id) {
+      if (has(stored, id)) raise(shown[id].parent, stored[id]);
     });
     return highest;
   }
 
   // Exactly what the action changed, as a nested object. It never names the plan. A new or moved item goes
-  // last under its parent, one above the highest order the stored document has there. placedId names an
-  // item put at a spot among its siblings, which gets an order between its new neighbours'. When that order
-  // can't sort right, that level's items get new orders too, in this one change.
+  // last under its parent, one above the highest order there. placedId names an item put at a spot among its
+  // siblings, and only that item can make a repair: when no order for it can sort right, that level's items
+  // get new orders too, in this one change.
   function changeBetween(doc, before, after, skipId, placedId) {
     var was = flatItems(before);
     var now = flatItems(after);
-    var highest = highestOrders(doc);
     var stored = isObject(doc) && isObject(doc.items) ? doc.items : {};
+    var highest = highestOrders(stored, was);
     var items = Object.create(null);
     var any = false;
 
@@ -929,53 +938,40 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
     function storedOrder(id) {
       return has(stored, id) && isObject(stored[id]) ? stored[id].order : undefined;
     }
-    // New, under another parent, or moved along its own siblings. The same index means the same place.
-    function isPlaced(id) {
-      if (!has(was, id) || was[id].parent !== now[id].parent) return true;
-      return id === placedId && was[id].order !== now[id].order;
-    }
-    function levelOf(parent) {
-      return Object.keys(now).filter(function (id) {
-        return id !== skipId && now[id].parent === parent;
-      }).sort(function (a, b) { return now[a].order - now[b].order; });
-    }
-    // A number that sorts right against what stays put around it, or undefined.
-    function orderFor(parent, level, i, orders) {
+    // A number for the placed item that sorts right against its new neighbours, or undefined. An item with no
+    // usable order sorts after every number, so only placing below one has no number that works.
+    function orderAmong(parent, level, i) {
       var hasPrev = i > 0;
-      var prev = hasPrev ? (has(orders, level[i - 1]) ? orders[level[i - 1]] : storedOrder(level[i - 1])) : undefined;
-      var nextId = level.slice(i + 1).filter(function (id) { return !isPlaced(id); })[0];
-      var next = nextId === undefined ? undefined : storedOrder(nextId);
+      var prev = hasPrev ? storedOrder(level[i - 1]) : undefined;
+      var next = i + 1 < level.length ? storedOrder(level[i + 1]) : undefined;
+      if (hasPrev && !usableOrder(prev)) return undefined;
       var value;
-      if (nextId === undefined) value = last(parent);
-      else if (hasPrev) value = (prev + next) / 2;
-      else value = next - 1;
-      var fits = typeof value === 'number' && isFinite(value) &&
-        (!hasPrev || (typeof prev === 'number' && value > prev)) &&
-        (nextId === undefined || (typeof next === 'number' && value < next));
+      if (usableOrder(next)) value = hasPrev ? (prev + next) / 2 : next - 1;
+      else value = hasPrev ? prev + 1 : last(parent);
+      var fits = usableOrder(value) && (!hasPrev || value > prev) && (!usableOrder(next) || value < next);
       return fits ? value : undefined;
     }
-    // Every level with a placed item, and the orders it needs. Ties and values too close to split renumber it.
-    var newOrders = Object.create(null);
-    Object.keys(now).forEach(function (id) {
-      if (id === skipId || !isPlaced(id) || has(newOrders, now[id].parent)) return;
-      var parent = now[id].parent;
-      var level = levelOf(parent);
+    // The orders a placement needs, by id. The same index under the same parent is the same place.
+    function ordersForPlacement() {
       var orders = Object.create(null);
-      var right = level.every(function (each, i) {
-        if (!isPlaced(each)) return true;
-        orders[each] = orderFor(parent, level, i, orders);
-        return orders[each] !== undefined;
-      });
-      if (!right) level.forEach(function (each, i) { orders[each] = i + 1; });
-      newOrders[parent] = orders;
-    });
+      if (!has(was, placedId) || !has(now, placedId)) return orders;
+      var parent = now[placedId].parent;
+      if (was[placedId].parent === parent && was[placedId].order === now[placedId].order) return orders;
+      var level = Object.keys(now).filter(function (id) {
+        return id !== skipId && now[id].parent === parent;
+      }).sort(function (a, b) { return now[a].order - now[b].order; });
+      var order = orderAmong(parent, level, level.indexOf(placedId));
+      if (order !== undefined) orders[placedId] = order;
+      else level.forEach(function (id, i) { orders[id] = i + 1; });
+      return orders;
+    }
+    var placed = ordersForPlacement();
 
     Object.keys(now).forEach(function (id) {
       if (id === skipId) return;
       var item = now[id];
-      var order = newOrders[item.parent] ? newOrders[item.parent][id] : undefined;
       if (!has(was, id)) {
-        note(id, { kind: item.kind, text: item.text, star: item.star, parent: item.parent, order: order });
+        note(id, { kind: item.kind, text: item.text, star: item.star, parent: item.parent, order: last(item.parent) });
         return;
       }
       var old = was[id];
@@ -983,12 +979,16 @@ body.dragging, body.dragging .item { cursor: grabbing; user-select: none; }
       var changed = false;
       if (item.text !== old.text) { fields.text = item.text; changed = true; }
       if (item.star !== old.star) { fields.star = item.star; changed = true; }
-      if (isPlaced(id)) {
+      if (id === placedId && has(placed, id)) {
         fields.parent = item.parent;
-        fields.order = order;
+        fields.order = placed[id];
         changed = true;
-      } else if (order !== undefined && order !== storedOrder(id)) {
-        fields.order = order;
+      } else if (item.parent !== old.parent) {
+        fields.parent = item.parent;
+        fields.order = last(item.parent);
+        changed = true;
+      } else if (has(placed, id) && placed[id] !== storedOrder(id)) {
+        fields.order = placed[id];
         changed = true;
       }
       if (changed) note(id, fields);

@@ -745,11 +745,90 @@ def test_placement_next_to_an_item_with_no_usable_order_renumbers():
     doc = doc_with_orders(before, a=1, b=2)
     doc["items"]["c"]["order"] = "x"
     out, _ = placed(before, "a", "goal", 2, doc)
+    assert set(out["items"]) == {"a", "b", "c"}
     result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
     assert top_ids(result) == ["b", "c", "a"]
+
+
+def test_placement_just_before_an_item_with_no_usable_order_sends_only_the_placed_item():
+    before = row("a", "b", "c")
+    doc = doc_with_orders(before, a=1, b=2)
+    doc["items"]["c"]["order"] = "x"
     out, _ = placed(before, "a", "goal", 1, doc)
+    assert out == {"items": {"a": {"parent": "goal", "order": 3}}}
     result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
     assert top_ids(result) == ["b", "a", "c"]
+
+
+def test_placement_first_when_nothing_has_a_usable_order_sends_only_the_placed_item():
+    before = row("a", "b")
+    doc = doc_with_orders(before)
+    doc["items"]["a"]["order"] = "x"
+    doc["items"]["b"]["order"] = None
+    out, _ = placed(before, "b", "goal", 0, doc)
+    assert list(out["items"]) == ["b"]
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["b", "a"]
+
+
+def test_placement_last_above_an_orphan_uses_the_order_before_it():
+    doc = doc_of(items={"a": entry(order=1), "b": entry(order=2), "c": entry(parent="gone", order=9)})
+    tree = run("return S.inflate(D.doc);", doc=doc)
+    out, _ = placed(tree, "a", "goal", 2, doc)
+    assert out == {"items": {"a": {"parent": "goal", "order": 10}}}
+
+
+def with_bad_order(tree, key, value):
+    doc = run("return S.flatten(D.map);", map=tree)
+    doc["items"][key]["order"] = value
+    return doc
+
+
+def test_an_add_beside_a_sibling_with_no_usable_order_sends_only_the_new_item():
+    before = row("a", "b")
+    doc = with_bad_order(before, "b", "x")
+    after = run("return L.addItem(D.map, 'goal', 'zz9', 'obstacle', 'new');", map=before)
+    out = change(before, after, doc=doc)
+    assert list(out["items"]) == ["zz9"]
+    assert out["items"]["zz9"]["order"] == 2
+
+
+def test_an_onto_move_beside_a_sub_with_no_usable_order_sends_only_the_moved_item():
+    before = make_map(obstacles=[item("a", "A", [item("k1", "K"), item("k2", "K")]), item("c", "C")])
+    doc = with_bad_order(before, "k2", None)
+    after = run("return L.moveItem(D.map, 'c', 'a');", map=before)
+    assert change(before, after, doc=doc) == {"items": {"c": {"parent": "a", "order": 2}}}
+
+
+def test_an_add_beside_an_orphan_sends_only_the_new_item_and_lands_last():
+    doc = doc_of(items={"a": entry(order=1), "b": entry(parent="gone", order=9)})
+    before = run("return S.inflate(D.doc);", doc=doc)
+    after = run("return L.addItem(D.map, 'goal', 'zz9', 'obstacle', 'new');", map=before)
+    out = change(before, after, doc=doc)
+    assert list(out["items"]) == ["zz9"]
+    assert out["items"]["zz9"]["order"] == 10
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["a", "b", "zz9"]
+
+
+def test_an_onto_move_to_the_goal_beside_an_orphan_sends_only_the_moved_item_and_lands_last():
+    doc = doc_of(items={"a": entry(order=1), "b": entry(parent="gone", order=9), "c": entry(parent="a", order=1)})
+    before = run("return S.inflate(D.doc);", doc=doc)
+    after = run("return L.moveItem(D.map, 'c', 'goal');", map=before)
+    out = change(before, after, doc=doc)
+    assert out == {"items": {"c": {"parent": "goal", "order": 10}}}
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result) == ["a", "b", "c"]
+
+
+def test_an_add_beside_an_item_held_under_a_loop_lands_last():
+    doc = doc_of(items={"a": entry(parent="b", order=5), "b": entry(parent="a", order=1), "c": entry(order=1)})
+    before = run("return S.inflate(D.doc);", doc=doc)
+    after = run("return L.addItem(D.map, 'goal', 'zz9', 'obstacle', 'new');", map=before)
+    out = change(before, after, doc=doc)
+    assert list(out["items"]) == ["zz9"]
+    result = run("return S.overlay(D.doc, [D.change]);", doc=doc, change=out)
+    assert top_ids(result)[-1] == "zz9"
 
 
 def test_placement_first_above_a_huge_order_renumbers():
