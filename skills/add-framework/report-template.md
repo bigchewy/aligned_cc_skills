@@ -9,6 +9,11 @@ You wrote none of these files. Your job is to find problems, not to fix them. Yo
 framework folder and the registry path.
 
 1. **Files.** The folder has `prompt.md`, `examples.md`, `anti-examples.md` and `sources.md`.
+   **Examples.** List the phases in `prompt.md`. For each one, count its examples in
+   `examples.md` and write the number down. Every phase has at least 2 examples, the closing
+   phase included, and each example has a note saying why the response works.
+   **Anti-examples.** `anti-examples.md` has at least 3 failure modes, each with a wrong
+   response and a right one.
 2. **First line.** After any YAML frontmatter, the first line of `prompt.md` reads
    `You are {Advisor}, guiding someone through {Framework} - {purpose}.` The resolver and the
    runner read the advisor's name from it, so a different form leaves the framework unloadable.
@@ -43,7 +48,9 @@ What the main session tells the user, in this order:
 1. **Done:** the framework's name, its advisor, and its path, in one sentence.
 2. **Where it comes from:** the main source, and how many phases are marked `Added:`.
 3. **Eval:** the score, or the quoted error.
-4. **Check:** what the fresh agent found and how each problem was fixed, or "Found nothing."
+4. **Counts:** the last output of `check_framework.py`, pasted as it printed. Don't retype or
+   sum it up. If the script could not run, say why and give the check agent's counts.
+5. **Check:** what the fresh agent found and how each problem was fixed, or "Found nothing."
 
 ## What was skipped or not done
 

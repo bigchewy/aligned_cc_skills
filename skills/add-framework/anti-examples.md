@@ -1,6 +1,17 @@
 # Anti-Examples: How Add Framework Gets Run Badly
 
-Each of these happened in a real run between 2026-10-06 and 2026-10-28.
+Each of these happened in a real run between 2026-10-06 and 2026-11-17.
+
+## Examples written only where one came to mind
+
+Wrong: a run built three frameworks in one turn and reported them done. 12 of 24 phases had
+fewer than two examples, and the closing phase of all three had none. It never opened the model
+file. It wrote its own list for the check agent, and that list didn't count examples. Its
+"What was skipped" section didn't mention them.
+
+Right: every phase gets at least 2 examples, the closing phase included. Run
+`check_framework.py` and paste its output in the report. Give the check agent the template file
+as it is.
 
 ## Phases the expert never wrote
 

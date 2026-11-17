@@ -136,14 +136,15 @@ and name the file. The runner then publishes nothing and gives the path.
 
 ### 3. Create examples.md
 
-Reference `frameworks/clearing-model/examples.md` as the canonical example.
+Open `frameworks/clearing-model/examples.md` and read it before you write. Copy its layout: one
+`## PHASE N: Name` heading for each phase in `prompt.md`, one `###` heading for each example
+under it, and a `>` line after each example saying why the response works.
 
-Structure by phase with 2-3 examples each:
+Every phase gets at least 2 examples, and 3 is better. That includes the closing phase and any
+phase that looks too simple to need them. Step 9 counts them with a script. Pick from:
 - Golden path (user doing it right)
 - Common struggles (user needs redirection)
 - Edge cases (challenging scenarios)
-
-Include notes explaining WHY each response works.
 
 The user lines and coaching lines are written for the framework. Anything put in the expert's
 mouth as their own words or story has to be in `sources.md` with its URL.
@@ -288,9 +289,24 @@ If the project has a build script, run it to verify no compilation errors were i
 
 ### 9. Check and Report
 
-Start a fresh agent, one that wrote none of the files. Give it the framework folder, the
-registry path, and `{base-directory}/report-template.md`. It follows the template's "Check agent"
-section and returns a list of problems. Fix each problem.
+**First, count.** Run the script on the framework folder:
+
+```
+python3 {base-directory}/check_framework.py {detected-framework-path}/{framework-id}
+```
+
+It prints how many examples each phase has, then a list of problems. Fix every problem and run
+it again until it prints `Problems: none`. Keep the last output: the report pastes it. If
+`python3` is not installed, say so in the report, and the check agent counts by hand instead.
+
+**Then, a fresh agent.** Start an agent that wrote none of the files. Give it the framework
+folder, the registry path, and the path to `{base-directory}/report-template.md`, and tell it to
+follow that file's "Check agent" section. Don't write your own list of checks for it: a list you
+write only tests what you already thought of. Use one agent per framework, even when you built
+several in a row. It returns a list of problems. Fix each problem.
+
+**Then, reread your files against Steps 1 to 4.** The script and the agent each test part of
+this skill, not all of it. A pass from both does not mean the steps were followed.
 
 Then report to the user in the template's shape. The report always ends with
 **What was skipped or not done**. Write "Nothing" when nothing was.
@@ -302,7 +318,7 @@ Then report to the user in the template's shape. The report always ends with
 
 `anti-examples.md` shows each one with what to do instead. In short: phases invented for an
 expert who never wrote them, someone else's method voiced as the advisor's, a one-product
-framework put in the plugin, and the README counts missed.
+framework put in the plugin, the README counts missed, and phases left with one example or none.
 
 ## Notes
 
