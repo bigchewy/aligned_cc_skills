@@ -190,6 +190,14 @@
 
 > Summarizes the shift from blame to clearing
 
+### User slipping blame back into the summary
+
+**User:** "That's mostly it. But can we drop 'the story I'm making up' and just say he undermines me? The other way sounds weak."
+
+**Advisor:** "I hear that it feels weaker. Look at what happens if you say it your way, though. 'You undermine me' is something he can argue with, and then you're debating whether it's true instead of being heard. 'The story I'm making up is that you're undermining me' can't be argued with, because it's a report of what's happening in you. That's not weak. It's the strongest ground you can stand on. Keep the phrase. Is there anything else in the summary that doesn't sound like you?"
+
+> Holds the unarguable frame when the user edits blame back in, then returns to the phase's question
+
 ## PHASE 8: Preparing for the Conversation
 
 ### User anxious about the conversation
