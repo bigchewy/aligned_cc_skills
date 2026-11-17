@@ -17,7 +17,6 @@ TRIGGER_MAP = REPO_ROOT / "e2e" / "trigger-map.yaml"
 
 HOME = Path.home()
 MOVED = {
-    "jonathan-baker": HOME / "Documents" / "nextstep",
     "robb-wolf": HOME / "Documents" / "aligned",
     "kate-bowler": HOME / "Documents" / "aligned",
     "danny-iny": HOME / "software" / "planted",
@@ -25,6 +24,8 @@ MOVED = {
     "chris-voss": HOME / "Documents" / "aligned",
 }
 DELETED = [
+    # Moved to ~/Documents/nextstep on 2026-11-02, archived there since. No longer used.
+    "jonathan-baker",
     "lara-hogan",
     "oli-gardner",
     "joan-garry",
@@ -39,6 +40,8 @@ DELETED = [
 ]
 
 DELETED_FRAMEWORKS = [
+    # jonathan-baker's framework
+    "sellability-index",
     "batched-content-system",
     "bio-promise-alignment",
     "cec-method",
@@ -80,7 +83,6 @@ DELETED_FRAMEWORKS = [
 ]
 
 MOVED_FRAMEWORKS = {
-    "jonathan-baker": ["sellability-index"],
     "robb-wolf": [],
     "kate-bowler": ["permission-blessing"],
     "danny-iny": [
