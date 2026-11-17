@@ -32,7 +32,7 @@ Eric's rule going forward: simplify wherever two frameworks do the same job.
 | Homepage | Keep storybrand-homepage. Delete landing-page-assembly: it was the agent script for the epch app (epch.vercel.app), which now uses its own TypeScript pipeline. |
 | Positioning | Keep 5-components-positioning. Delete positioning-canvas; it re-asks the same five components. |
 | Personal focus | 80-20-audit first, then zone-of-genius. Delete past-year-review. |
-| Shirin Oreizy | Move science-of-design, homer-vs-spock, cognitive-friction-audit and her advisor to the `~/Documents/aligned` project. |
+| Shirin Oreizy | Move science-of-design, homer-vs-spock, cognitive-friction-audit and her advisor to the `~/Documents/aligned` project. Reversed on 2026-11-17: all four are back in the plugin, in the Marketing and growth area. |
 | Chris Voss | Move accusation-audit, calibrated-questions, tactical-empathy-labeling and his advisor to the `~/Documents/aligned` project. |
 | Kept on purpose | 100-percent-responsibility and pillars-of-integrity (the second is larger); fear-setting and regret-minimization (different people, different approach); living-into-values and personal-credo (different systems); the three Rumelt frameworks; ICE inside growth-hacking-process; chj-operating-review and mochary-weekly-check-in; both Aleyda Solis SEO frameworks; both Bierut logo frameworks; strategic-narrative feeding sales-pitch-structure; buyer-persona and mobilizer-taxonomy; the Steve Blank pair; breadboard-to-pages and interface-inventory. |
 

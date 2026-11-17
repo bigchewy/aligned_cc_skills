@@ -37,11 +37,11 @@ GONE_IDS = [
     "thirty-minute-daily-instagram", "three-by-three-content-batching",
     "big-bat-board-assessment", "organizational-readiness",
     # removed or moved to ~/Documents/aligned on 2026-11-02 (framework overlap cleanup)
-    "lara-hogan", "shirin-oreizy", "chris-voss",
+    # shirin-oreizy and her three frameworks came back on 2026-11-17
+    "lara-hogan", "chris-voss",
     "5-step-process", "positioning-canvas", "start-with-experience",
     "leadership-pipeline-passages", "management-level-progression",
     "landing-page-assembly", "past-year-review",
-    "science-of-design", "homer-vs-spock", "cognitive-friction-audit",
     "accusation-audit", "calibrated-questions", "tactical-empathy-labeling",
     # retired archetype, replaced by brad-frost
     "the-designer",

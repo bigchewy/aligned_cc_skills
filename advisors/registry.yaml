@@ -639,6 +639,30 @@ advisors:
     '
   prompt: advisors/prompts/seth-godin.md
   summary: Author of Purple Cow, The Dip, and This Is Marketing
+- best_for: 'Landing pages, CTAs, conversion flows, content that must drive action.
+    UX decisions where cognitive load matters.
+
+    '
+  domains:
+  - behavioral-science
+  - conversion
+  - ux-psychology
+  - cognitive-load
+  - friction
+  evaluation_expertise: 'Evaluates through behavioral science lens. CTA clarity and
+    friction, cognitive load management, social proof approach, urgency without manipulation,
+    working memory limits. Homer vs Spock — does the work activate both emotional
+    and rational decision paths?
+
+    '
+  id: shirin-oreizy
+  name: Shirin Oreizy
+  not_for: 'Pure infrastructure, backend architecture, strategy docs, early-stage
+    ideation.
+
+    '
+  prompt: advisors/prompts/shirin-oreizy.md
+  summary: Founder of Next Step, a behavioral design agency
 - best_for: 'Customer discovery before a product or pitch exists. Problem presentations
     and interview plans for testing which problem a market cares about. Separating
     guesses from facts in a business plan.

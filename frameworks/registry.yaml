@@ -160,6 +160,31 @@ frameworks:
     statements to restore connection
   use_when: two people have unresolved tension and need a structured process to clear
     it without blame
+- advisor: shirin-oreizy
+  default_critic_advisors:
+  - shirin-oreizy
+  - steve-krug
+  deliverable_type: analysis
+  domains:
+  - behavioral-science
+  - UX
+  - conversion-optimization
+  - decision-architecture
+  helpful_documents:
+  - doc: customer research
+    from: outside
+  - doc: product description
+    from: outside
+  id: cognitive-friction-audit
+  name: Cognitive Friction Audit
+  purpose: a systematic process for identifying and eliminating decision-making barriers
+    in user journeys. Every friction point costs conversions
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
+  use_when: a product or page has high drop-off and someone needs to identify and
+    remove cognitive friction points in the user journey
 - advisor: joe-pulizzi
   default_critic_advisors:
   - joe-pulizzi
@@ -434,6 +459,28 @@ frameworks:
   - milk-it
   use_when: a product team needs a repeatable process for generating, prioritizing,
     testing, and scaling growth experiments
+- advisor: shirin-oreizy
+  deliverable_type: analysis
+  domains:
+  - behavioral-science
+  - decision-making
+  - marketing-psychology
+  - persuasion
+  helpful_documents:
+  - doc: customer research
+    from: outside
+  - doc: sales materials
+    from: outside
+  id: homer-vs-spock
+  name: Homer vs Spock
+  purpose: checking whether copy speaks to emotion (Homer) before logic (Spock), finding
+    the emotional hook, and restructuring the page, email, or pitch Homer-first
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
+  use_when: someone's marketing leads with features and logic and they need to understand
+    why emotional appeal must come first
 - advisor: sean-ellis
   default_critic_advisors:
   - sean-ellis
@@ -825,6 +872,29 @@ frameworks:
   - milk-it
   use_when: someone has completed positioning work and needs to translate it into
     a compelling sales narrative
+- advisor: shirin-oreizy
+  deliverable_type: plan
+  domains:
+  - behavioral-science
+  - experimentation
+  - customer-decisions
+  - design-methodology
+  helpful_documents:
+  - doc: customer research
+    from: outside
+  - doc: product description
+    from: outside
+  id: science-of-design
+  name: Science of Design
+  purpose: 'a six-phase behavioral science method: learn Homer vs Spock, find the
+    friction in a conversion path, pick behavioral interventions, design an A/B test,
+    read the results, and keep a toolkit of quick wins'
+  stages:
+  - nail-it
+  - scale-it
+  - milk-it
+  use_when: someone needs a systematic approach to understand and influence how customers
+    make decisions using behavioral science
 - advisor: seth-godin
   deliverable_type: analysis
   domains:

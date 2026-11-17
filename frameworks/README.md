@@ -1,6 +1,6 @@
 # Framework Registry
 
-97 frameworks across 3 layers and 20 areas
+100 frameworks across 3 layers and 20 areas
 
 Frameworks are grouped by layer and area, in the order of `skills/playbook/layers.yaml`. A framework that sits in more than one area is listed under each.
 
@@ -198,7 +198,7 @@ Voice, the mark, and the story the brand tells.
 | small-size-and-print-test | The Small-Size and Print Test | michael-bierut | a mark is about to ship and nobody has seen it at 16 pixels, as a phone icon, in one color, or on a book spine; a new brand color has been picked on its own; or a team argues about a logo on taste |
 | the-carousel | The Carousel | don-draper | someone is selling features and benefits but hasn't found the emotional truth that makes their offering irresistible |
 
-#### Marketing and growth (8)
+#### Marketing and growth (11)
 
 Get found, turn visitors into customers, and run growth experiments.
 
@@ -212,6 +212,9 @@ Get found, turn visitors into customers, and run growth experiments.
 | growth-hacking-process | Growth Hacking Process | sean-ellis | a product team needs a repeatable process for generating, prioritizing, testing, and scaling growth experiments |
 | ice-prioritization | ICE Prioritization | sean-ellis | a team has too many growth experiment ideas and needs a fast scoring system to pick the highest-impact ones |
 | 3b-behavioral-design | 3B Framework (Behavior, Barriers, Benefits) | kristen-berman | a product, growth, or CX team faces a 'users aren't doing the thing' problem and needs to diagnose whether the lever is reducing a barrier, amplifying a benefit, or changing the target behavior itself |
+| cognitive-friction-audit | Cognitive Friction Audit | shirin-oreizy | a product or page has high drop-off and someone needs to identify and remove cognitive friction points in the user journey |
+| homer-vs-spock | Homer vs Spock | shirin-oreizy | someone's marketing leads with features and logic and they need to understand why emotional appeal must come first |
+| science-of-design | Science of Design | shirin-oreizy | someone needs a systematic approach to understand and influence how customers make decisions using behavioral science |
 
 #### Sales (8)
 

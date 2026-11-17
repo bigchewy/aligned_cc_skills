@@ -1,6 +1,6 @@
 # Advisor Registry
 
-59 advisors | 59 profiled | 0 unprofiled
+60 advisors | 60 profiled | 0 unprofiled
 
 ## Quick Reference
 
@@ -32,6 +32,7 @@
 | robbie-kellman-baxter | Robbie Kellman Baxter | subscription, membership, retention, forever-promise, recurring-revenue | Founder of Peninsula Strategies, author of The Membership Economy |
 | sean-ellis | Sean Ellis | growth-hacking, product-market-fit, experimentation, retention, north-star-metrics | Coined "growth hacking," scaled Dropbox, LogMeIn, Eventbrite to IPO |
 | seth-godin | Seth Godin | marketing, permission-marketing, remarkable-products, tribes | Author of Purple Cow, The Dip, and This Is Marketing |
+| shirin-oreizy | Shirin Oreizy | behavioral-science, conversion, ux-psychology, cognitive-load, friction | Founder of Next Step, a behavioral design agency |
 | steve-jobs | Steve Jobs | product-design, simplicity, UX, focus, user-experience | Co-founder of Apple who demanded insanely great products |
 | steve-krug | Steve Krug | usability, scanning, conventions, question-marks, trunk-test, clarity, happy-talk | Usability expert, author of Don't Make Me Think |
 | the-architect | The Architect | codebase-alignment, patterns, module-boundaries, integration-risk, blast-radius | Senior systems thinker who evaluates designs against the codebase |
@@ -98,6 +99,7 @@ These advisors have detailed evaluation expertise and can serve as design critic
 | **Robbie Kellman Baxter** | Evaluates whether content reflects membership thinking vs transaction thinking |
 | **Sean Ellis** | Evaluates whether growth is built on product-market fit or propped up by acquisition spend |
 | **Seth Godin** | Evaluates whether the work earns attention or steals it |
+| **Shirin Oreizy** | Evaluates through behavioral science lens |
 | **Steve Jobs** | Evaluates whether the work achieves simplicity and focus |
 | **Steve Krug** | Evaluates whether the user has to think |
 | **The Architect** | Evaluates whether the work aligns with existing codebase patterns and respects module boundaries |

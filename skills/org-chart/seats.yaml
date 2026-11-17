@@ -152,7 +152,8 @@ seats:
       - do: List every pattern the app already uses
         framework: interface-inventory
       - do: Find the steps where users stall or quit
-        framework: 3b-behavioral-design
+        framework: cognitive-friction-audit
+        also: [homer-vs-spock]
     also_ask: [steve-krug]
 
   - id: user-researcher
@@ -168,8 +169,8 @@ seats:
       - do: Find out what job customers hire the product for
         framework: jobs-to-be-done
       - do: Study how users decide, apart from what they say
-        framework: 3b-behavioral-design
-    also_ask: []
+        framework: science-of-design
+    also_ask: [kristen-berman]
 
   # ---------------------------------------------------------------- Engineering
   - id: cto
@@ -332,7 +333,7 @@ seats:
         also: [ice-prioritization]
       - do: Rewrite the homepage so a visitor gets it in five seconds
         framework: storybrand-homepage
-    also_ask: [julian-shapiro, rob-walling]
+    also_ask: [julian-shapiro, rob-walling, shirin-oreizy]
 
   - id: brand-and-design
     dept: mkt
@@ -375,7 +376,7 @@ seats:
       - do: Build a landing page that turns ad clicks into signups
         framework: storybrand-homepage
       - do: Cut the steps between install and first use
-        framework: 3b-behavioral-design
+        framework: cognitive-friction-audit
     also_ask: [julian-shapiro, joanna-wiebe]
     missing: >-
       Buying ads on each platform, app store listings and ratings, and tracking

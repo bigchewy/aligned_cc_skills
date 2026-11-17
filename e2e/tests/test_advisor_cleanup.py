@@ -22,7 +22,6 @@ MOVED = {
     "kate-bowler": HOME / "Documents" / "aligned",
     "danny-iny": HOME / "software" / "planted",
     "james-gurney": HOME / "software" / "moments",
-    "shirin-oreizy": HOME / "Documents" / "aligned",
     "chris-voss": HOME / "Documents" / "aligned",
 }
 DELETED = [
@@ -91,7 +90,6 @@ MOVED_FRAMEWORKS = {
         "pilot-program-methodology",
     ],
     "james-gurney": ["stage-the-picture"],
-    "shirin-oreizy": ["science-of-design", "homer-vs-spock", "cognitive-friction-audit"],
     "chris-voss": ["accusation-audit", "calibrated-questions", "tactical-empathy-labeling"],
 }
 ALL_MOVED_FRAMEWORKS = [f for fs in MOVED_FRAMEWORKS.values() for f in fs] + DELETED_FRAMEWORKS
@@ -205,7 +203,6 @@ REMOVED_NAMES = [
     "James Gurney",
     "Wise Eric",
     "creator-economy",
-    "Shirin Oreizy",
     "Chris Voss",
     "Lara Hogan",
     "Oli Gardner",
@@ -217,14 +214,11 @@ REMOVED_FRAMEWORK_NAMES = [
     "5-Step Process",
     "Accusation Audit",
     "Calibrated Questions",
-    "Cognitive Friction Audit",
-    "Homer vs Spock",
     "Landing Page Assembly",
     "Leadership Pipeline Passages",
     "Management Level Progression",
     "Past Year Review",
     "Positioning Canvas",
-    "Science of Design",
     "Start With Experience",
     "Tactical Empathy",
     "Personal Context Intake",

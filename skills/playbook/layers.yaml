@@ -101,7 +101,7 @@ layers:
         name: Marketing and growth
         note: Get found, turn visitors into customers, and run growth experiments.
         start: storybrand-homepage
-        frameworks: [storybrand-homepage, content-inc-model, why-my-page-doesnt-rank, ai-search-optimization-checklist, insane-honesty, growth-hacking-process, ice-prioritization, 3b-behavioral-design]
+        frameworks: [storybrand-homepage, content-inc-model, why-my-page-doesnt-rank, ai-search-optimization-checklist, insane-honesty, growth-hacking-process, ice-prioritization, 3b-behavioral-design, cognitive-friction-audit, homer-vs-spock, science-of-design]
       - id: sales
         name: Sales
         note: Find where revenue leaks and fix it.
